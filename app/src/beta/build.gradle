@@ -1,0 +1,16 @@
+apply from: 'src/beta/versions.gradle'
+
+android {
+    productFlavors {
+        def apiKeyProps = new Properties()
+        beta {
+            dimension "app"
+            versionCode betaApplication.versionCode
+            versionName betaApplication.versionName
+            applicationIdSuffix ".beta"
+            buildConfigField "String", "APPLICATION_NAME", '"pera-beta"'
+            apiKeyProps.load(new FileInputStream(file('../app/src/beta/api-key.properties')))
+            buildConfigField "String", "DEEPLINK_PREFIX", '"algorand://"'
+        }
+    }
+}

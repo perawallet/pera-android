@@ -1,0 +1,6 @@
+ext {
+    betaApplication = [
+            versionCode: 26,
+            versionName: "5.9.5-1"
+    ]
+}

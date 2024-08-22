@@ -20,7 +20,7 @@ import com.algorand.android.modules.swap.assetselection.toasset.domain.repositor
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
 import com.algorand.android.utils.toCsvString
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

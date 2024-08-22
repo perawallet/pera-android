@@ -17,7 +17,7 @@ import com.algorand.android.modules.accountblockpolling.data.local.AccountBlockP
 import com.algorand.android.modules.accountblockpolling.data.repository.AccountBlockPollingRepositoryImpl
 import com.algorand.android.modules.accountblockpolling.domain.repository.AccountBlockPollingRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

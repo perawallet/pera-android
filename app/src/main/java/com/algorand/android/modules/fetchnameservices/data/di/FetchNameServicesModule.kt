@@ -16,7 +16,7 @@ import com.algorand.android.modules.fetchnameservices.data.mapper.NameServicesDT
 import com.algorand.android.modules.fetchnameservices.data.repository.FetchNameServicesRepositoryImpl
 import com.algorand.android.modules.fetchnameservices.domain.repository.FetchNameServicesRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

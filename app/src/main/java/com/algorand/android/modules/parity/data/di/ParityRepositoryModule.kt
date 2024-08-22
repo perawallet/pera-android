@@ -17,7 +17,7 @@ import com.algorand.android.modules.parity.data.mapper.CurrencyDetailDTOMapper
 import com.algorand.android.modules.parity.data.repository.ParityRepositoryImpl
 import com.algorand.android.modules.parity.domain.repository.ParityRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

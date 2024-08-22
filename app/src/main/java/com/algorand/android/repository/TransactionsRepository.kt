@@ -22,7 +22,7 @@ import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.getMessageAsResultError
 import com.algorand.android.network.request
 import com.algorand.android.network.safeApiCall
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 import javax.inject.Singleton
 import okhttp3.MediaType.Companion.toMediaTypeOrNull

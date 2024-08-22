@@ -18,7 +18,7 @@ import com.algorand.android.models.Result
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
 import com.algorand.android.network.safeApiCall
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 
 class FeedbackRepository @Inject constructor(

@@ -21,7 +21,7 @@ import com.algorand.android.modules.parity.domain.repository.ParityRepository
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
 import com.algorand.android.utils.CacheResult
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import kotlinx.coroutines.flow.StateFlow
 
 class ParityRepositoryImpl(

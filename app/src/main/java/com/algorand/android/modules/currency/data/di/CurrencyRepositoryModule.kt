@@ -17,7 +17,7 @@ import com.algorand.android.modules.currency.data.mapper.CurrencyOptionMapper
 import com.algorand.android.modules.currency.data.repository.CurrencyRepositoryImpl
 import com.algorand.android.modules.currency.domain.repository.CurrencyRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

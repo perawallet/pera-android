@@ -20,7 +20,7 @@ import com.algorand.android.modules.currency.domain.repository.CurrencyRepositor
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
 import com.algorand.android.sharedpref.SharedPrefLocalSource
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 
 class CurrencyRepositoryImpl @Inject constructor(

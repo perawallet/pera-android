@@ -22,7 +22,7 @@ import com.algorand.android.modules.swap.assetswap.data.mapper.decider.SwapQuote
 import com.algorand.android.modules.swap.assetswap.data.repository.AssetSwapRepositoryImpl
 import com.algorand.android.modules.swap.assetswap.domain.repository.AssetSwapRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

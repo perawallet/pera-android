@@ -16,7 +16,7 @@ import com.algorand.android.modules.swap.assetselection.toasset.data.mapper.Avai
 import com.algorand.android.modules.swap.assetselection.toasset.data.repository.AvailableTargetSwapAssetsRepositoryImpl
 import com.algorand.android.modules.swap.assetselection.toasset.domain.repository.AvailableTargetSwapAssetsRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

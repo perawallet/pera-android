@@ -30,7 +30,7 @@ import com.algorand.android.modules.swap.confirmswap.data.mapper.SwapQuoteTransa
 import com.algorand.android.modules.swap.confirmswap.domain.model.SwapQuoteTransactionDTO
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.math.BigInteger

@@ -11,12 +11,7 @@
  */
 
 def peraGradlePath = 'src/pera/build.gradle'
-def betaGradlePath = 'src/beta/build.gradle'
 
 if (project.file(peraGradlePath).exists()) {
     apply from: peraGradlePath
-}
-
-if (project.file(betaGradlePath).exists()) {
-    apply from: betaGradlePath
 }

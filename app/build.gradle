@@ -29,6 +29,8 @@ if (project.file(offrampGradlePath).exists()) {
 android {
     compileSdkVersion targets.compileSdkVersion
     defaultConfig {
+        versionCode peraApplication.versionCode
+        versionName peraApplication.versionName
         applicationId application.applicationId
         minSdkVersion targets.minSdkVersion
         targetSdkVersion targets.targetSdkVersion
@@ -58,16 +60,8 @@ android {
     }
 
     buildTypes {
-        releaseLocal {
-            signingConfig signingConfigs.releaseLocal
-
-            multiDexEnabled true
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            manifestPlaceholders = [enableCrashReporting: "true", enableFirebasePerformanceLogcat: "false"]
-        }
-
         release {
+            // signingConfig signingConfigs.releaseLocal //enable this to sign the release
             multiDexEnabled true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -75,22 +69,30 @@ android {
         }
 
         debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix " (DEBUG)"
             multiDexEnabled true
             minifyEnabled false
             manifestPlaceholders = [enableCrashReporting: "false", enableFirebasePerformanceLogcat: "true"]
         }
     }
 
-    flavorDimensions "app", "server"
+    flavorDimensions "server"
     productFlavors {
         def apiKeyProps = new Properties()
+        def apiUrlProps = new Properties()
 
         staging {
             dimension "server"
             versionNameSuffix " (STAGING)"
             applicationIdSuffix ".staging"
+            buildConfigField "String", "APPLICATION_NAME", '"pera"'
+            buildConfigField "String", "DEEPLINK_PREFIX", '"algorand://"'
+
             apiKeyProps.load(new FileInputStream(file('../app/src/staging/api-key.properties')))
-            buildConfigField "String", "ALGORAND_BASE_URL", '"https://node-testnet.chain.perawallet.app/"'
+            apiUrlProps.load(new FileInputStream(file('../app/src/main/api-url.properties')))
+
+            buildConfigField "String", "ALGORAND_BASE_URL", apiUrlProps["NODE_TESTNET_URL"]
             buildConfigField "String", "ALGORAND_API_KEY", apiKeyProps["ALGORAND_API_KEY"]
             buildConfigField "String", "INDEXER_API_KEY", apiKeyProps["INDEXER_API_KEY"]
             buildConfigField "String", "MOBILE_API_KEY", apiKeyProps["MOBILE_API_KEY"]
@@ -103,12 +105,21 @@ android {
             buildConfigField "String", "DISCOVER_URL", '"https://discover-mobile-staging.perawallet.app/"'
             buildConfigField "String", "DISCOVER_BROWSE_DAPP_URL", '"https://discover-mobile-staging.perawallet.app/main/browser"'
             buildConfigField "String", "MELD_URL", '"https://mainnet.staging.api.perawallet.app/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="'
+            buildConfigField "String", "NODE_MAINNET_URL", apiUrlProps["NODE_MAINNET_URL"]
+            buildConfigField "String", "NODE_TESTNET_URL", apiUrlProps["NODE_TESTNET_URL"]
+            buildConfigField "String", "INDEXER_MAINNET_URL", apiUrlProps["INDEXER_MAINNET_URL"]
+            buildConfigField "String", "INDEXER_TESTNET_URL", apiUrlProps["INDEXER_TESTNET_URL"]
         }
 
         prod {
             dimension "server"
+            buildConfigField "String", "APPLICATION_NAME", '"pera"'
+            buildConfigField "String", "DEEPLINK_PREFIX", '"algorand://"'
+
             apiKeyProps.load(new FileInputStream(file('../app/src/prod/api-key.properties')))
-            buildConfigField "String", "ALGORAND_BASE_URL", '"https://node-mainnet.chain.perawallet.app/"'
+            apiUrlProps.load(new FileInputStream(file('../app/src/main/api-url.properties')))
+
+            buildConfigField "String", "ALGORAND_BASE_URL", apiUrlProps["NODE_MAINNET_URL"]
             buildConfigField "String", "ALGORAND_API_KEY", apiKeyProps["ALGORAND_API_KEY"]
             buildConfigField "String", "INDEXER_API_KEY", apiKeyProps["INDEXER_API_KEY"]
             buildConfigField "String", "MOBILE_API_KEY", apiKeyProps["MOBILE_API_KEY"]
@@ -121,6 +132,10 @@ android {
             buildConfigField "String", "DISCOVER_URL", '"https://discover-mobile.perawallet.app/"'
             buildConfigField "String", "DISCOVER_BROWSE_DAPP_URL", '"https://discover-mobile.perawallet.app/main/browser"'
             buildConfigField "String", "MELD_URL", '"https://mainnet.api.perawallet.app/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="'
+            buildConfigField "String", "NODE_MAINNET_URL", apiUrlProps["NODE_MAINNET_URL"]
+            buildConfigField "String", "NODE_TESTNET_URL", apiUrlProps["NODE_TESTNET_URL"]
+            buildConfigField "String", "INDEXER_MAINNET_URL", apiUrlProps["INDEXER_MAINNET_URL"]
+            buildConfigField "String", "INDEXER_TESTNET_URL", apiUrlProps["INDEXER_TESTNET_URL"]
         }
     }
 
@@ -211,8 +226,6 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:${libVersions.retrofit}"
     implementation "com.squareup.retrofit2:converter-gson:${libVersions.retrofit}"
     implementation "com.squareup.okhttp3:logging-interceptor:${libVersions.okhttp}"
-
-    implementation "com.hipo.macaron:hipoexceptions:${libVersions.hipoexceptions}"
 
     // Chart
     implementation "com.github.PhilJay:MPAndroidChart:${libVersions.mpAndroidChart}"

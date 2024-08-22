@@ -37,11 +37,10 @@ ext {
             ble             : '2.7.5',
             lottie          : '6.4.1',
             desugar         : '2.0.4',
-            hipoexceptions  : '1.0.0',
             mpAndroidChart  : '3.1.0',
             javaWebSocket   : '1.5.6',
             khex            : '1.1.2',
-            walletConnectBom: '1.32.1',
+            walletConnectBom: '1.34.1',
             moshi           : '1.15.1',
             exoPlayer       : '2.19.1',
             firebaseBom     : '33.1.1',
@@ -57,5 +56,10 @@ ext {
             junit   : '4.13.2',
             runner  : '1.5.2',
             espresso: '3.5.1'
+    ]
+
+    peraApplication = [
+            versionCode: 118,
+            versionName: "5.10.13"
     ]
 }

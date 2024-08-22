@@ -16,7 +16,7 @@ import com.algorand.android.modules.collectibles.detail.base.data.mapper.Collect
 import com.algorand.android.modules.collectibles.detail.base.data.repository.CollectibleDetailRepositoryImpl
 import com.algorand.android.modules.collectibles.detail.base.domain.repository.CollectibleDetailRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

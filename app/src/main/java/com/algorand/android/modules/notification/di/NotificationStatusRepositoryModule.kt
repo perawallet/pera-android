@@ -7,7 +7,7 @@ import com.algorand.android.modules.notification.data.mapper.LastSeenNotificatio
 import com.algorand.android.modules.notification.data.mapper.NotificationStatusDTOMapper
 import com.algorand.android.modules.notification.data.repository.NotificationStatusRepositoryImpl
 import com.algorand.android.network.MobileAlgorandApi
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

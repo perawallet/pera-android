@@ -17,7 +17,7 @@ import com.algorand.android.deviceregistration.data.mapper.PushTokenDeleteReques
 import com.algorand.android.deviceregistration.data.repository.FirebasePushTokenRepositoryImpl
 import com.algorand.android.deviceregistration.domain.repository.FirebasePushTokenRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -18,7 +18,7 @@ import com.algorand.android.banner.data.mapper.BannerDetailDTOMapper
 import com.algorand.android.banner.data.repository.BannerRepositoryImpl
 import com.algorand.android.banner.domain.repository.BannerRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

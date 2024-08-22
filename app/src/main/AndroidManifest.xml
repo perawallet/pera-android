@@ -142,6 +142,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Splash">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="*"
+                    android:scheme="algorand" />
+            </intent-filter>
+            <intent-filter>
                 <data android:scheme="wc" />
                 <action android:name="android.intent.action.VIEW" />
 

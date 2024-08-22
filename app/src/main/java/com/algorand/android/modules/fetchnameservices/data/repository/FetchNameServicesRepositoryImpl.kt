@@ -19,7 +19,7 @@ import com.algorand.android.modules.fetchnameservices.domain.model.NameServiceDT
 import com.algorand.android.modules.fetchnameservices.domain.repository.FetchNameServicesRepository
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 
 class FetchNameServicesRepositoryImpl(
     private val mobileAlgorandApi: MobileAlgorandApi,

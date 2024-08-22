@@ -29,7 +29,7 @@ import com.algorand.android.network.safeApiCall
 import com.algorand.android.utils.AlgoAssetInformationProvider
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.toQueryString
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 
 class AssetRepository @Inject constructor(

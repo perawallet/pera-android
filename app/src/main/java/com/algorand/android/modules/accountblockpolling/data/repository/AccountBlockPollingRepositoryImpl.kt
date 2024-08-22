@@ -20,7 +20,7 @@ import com.algorand.android.modules.accountblockpolling.domain.repository.Accoun
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
 import com.algorand.android.utils.CacheResult
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 
 class AccountBlockPollingRepositoryImpl(
     private val accountBlockPollingSingleLocalCache: AccountBlockPollingSingleLocalCache,

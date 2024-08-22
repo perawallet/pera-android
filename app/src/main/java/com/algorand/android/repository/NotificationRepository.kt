@@ -20,7 +20,7 @@ import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
 import com.algorand.android.sharedpref.NotificationRefreshTimeLocalSource
 import com.algorand.android.utils.Resource
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 
 class NotificationRepository @Inject constructor(

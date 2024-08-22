@@ -18,7 +18,7 @@ import com.algorand.android.modules.collectibles.detail.base.data.model.Collecti
 import com.algorand.android.modules.collectibles.detail.base.domain.repository.CollectibleDetailRepository
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.exceptions.RetrofitErrorHandler
 
 class CollectibleDetailRepositoryImpl(
     private val mobileAlgorandApi: MobileAlgorandApi,

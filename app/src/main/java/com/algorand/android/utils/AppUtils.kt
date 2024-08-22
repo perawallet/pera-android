@@ -15,6 +15,6 @@ package com.algorand.android.utils
 
 import com.algorand.android.BuildConfig
 
-fun isStagingApp(): Boolean = BuildConfig.FLAVOR_server == "staging"
+fun isStagingApp(): Boolean = BuildConfig.FLAVOR == "staging"
 
-fun isProductionApp(): Boolean = BuildConfig.FLAVOR_server == "prod"
+fun isProductionApp(): Boolean = BuildConfig.FLAVOR == "prod"

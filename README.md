@@ -10,6 +10,7 @@ While the Algorand community is always welcome to contribute, please note that n
 
 If you simply need help, want to report a bug, or want to suggest a feature, the best place to do so is via our community channels:
 
+## Community
 - [Discord](https://discord.io/Pera)
 - [Reddit](https://www.reddit.com/r/PeraWallet/)
 - [Telegram](https://t.me/PeraWallet)

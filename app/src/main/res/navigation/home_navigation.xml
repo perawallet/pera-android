@@ -72,7 +72,7 @@
 
     <include app:graph="@navigation/wallet_connect_connection_navigation" />
 
-    <include app:graph="@navigation/discover_home_navigation" />
+    <include app:graph="@navigation/discover_navigation" />
 
     <include app:graph="@navigation/discover_detail_navigation" />
 
@@ -98,8 +98,6 @@
 
     <include app:graph="@navigation/backup_passphrase_info_navigation" />
 
-    <include app:graph="@navigation/discover_url_viewer_navigation" />
-
     <action
         android:id="@+id/action_global_showQrNavigation"
         app:destination="@id/showQrNavigation">
@@ -123,8 +121,8 @@
     </action>
 
     <action
-        android:id="@+id/action_global_discoverHomeNavigation"
-        app:destination="@id/discoverHomeNavigation">
+        android:id="@+id/action_global_discoverNavigation"
+        app:destination="@id/discoverNavigation">
         <argument
             android:name="url"
             android:defaultValue="@null"
@@ -151,14 +149,6 @@
         <argument
             android:name="sessionProposal"
             app:argType="com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal" />
-    </action>
-
-    <action
-        android:id="@+id/action_global_discoverUrlViewerNavigation"
-        app:destination="@id/discoverUrlViewerNavigation">
-        <argument
-            android:name="webUrl"
-            app:argType="string" />
     </action>
 
     <action
@@ -249,7 +239,7 @@
         app:destination="@id/webImportNavigation">
         <argument
             android:name="webImportQrCode"
-            app:argType="com.algorand.android.modules.webimport.common.data.model.WebImportQrCode" />
+            app:argType="com.algorand.android.deeplink.model.WebImportQrCode" />
     </action>
 
 
@@ -558,20 +548,18 @@
         android:name="com.algorand.android.ui.contacts.ContactInfoFragment"
         android:label="ContactInfoFragment"
         tools:layout="@layout/fragment_contact_info">
-        <argument
-            android:name="contact"
-            app:argType="com.algorand.android.models.User" />
+
         <action
             android:id="@+id/action_contactInfoFragment_to_editContactFragment"
             app:destination="@id/editContactFragment"
             app:popUpTo="@id/contactInfoFragment"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_contactInfoFragment_to_accountSelectionBottomSheet"
-            app:destination="@id/accountSelectionBottomSheet" />
-        <action
             android:id="@+id/action_contactInfoFragment_to_assetTransferAmountFragment"
             app:destination="@id/assetTransferAmountFragment" />
+        <argument
+            android:name="contact"
+            app:argType="com.algorand.android.contacts.component.domain.model.Contact" />
     </fragment>
 
     <fragment
@@ -790,7 +778,7 @@
             app:destination="@id/dateFilterNavigation">
             <argument
                 android:name="selectedDateFilter"
-                app:argType="com.algorand.android.models.DateFilter" />
+                app:argType="com.algorand.android.dateui.model.DateFilter" />
         </action>
         <action
             android:id="@+id/action_accountDetailFragment_to_dateFilterPickerBottomSheet"
@@ -937,31 +925,6 @@
         android:label="RateExperienceBottomSheet"
         tools:layout="@layout/bottom_sheet_rate_experience" />
 
-    <dialog
-        android:id="@+id/accountSelectionBottomSheet"
-        android:name="com.algorand.android.ui.common.accountselector.AccountSelectionBottomSheet"
-        android:label="AccountSelectionBottomSheet"
-        tools:layout="@layout/bottom_sheet_account_selection">
-        <argument
-            android:name="assetId"
-            app:argType="long" />
-        <argument
-            android:name="titleResId"
-            app:argType="integer" />
-        <argument
-            android:name="showBalance"
-            android:defaultValue="true"
-            app:argType="boolean" />
-        <argument
-            android:name="selectedAccountAddress"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="showBackButton"
-            android:defaultValue="false"
-            app:argType="boolean" />
-    </dialog>
 
     <dialog
         android:id="@+id/renameAccountBottomSheet"
@@ -1007,10 +970,6 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
-        <argument
-            android:name="contactDatabaseId"
-            android:defaultValue="-1"
-            app:argType="integer" />
         <action
             android:id="@+id/action_editContactFragment_to_editContactQrScannerFragment"
             app:destination="@id/editContactQrScannerFragment" />
@@ -1070,13 +1029,6 @@
             app:destination="@id/addAssetAccountSelectionFragment"
             app:popUpTo="@id/accountsQrScannerFragment"
             app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_accountsQrScannerFragment_discoverUrlViewerNavigation"
-            app:destination="@id/discoverUrlViewerNavigation">
-            <argument
-                android:name="webUrl"
-                app:argType="string" />
-        </action>
     </fragment>
 
     <dialog

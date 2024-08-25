@@ -14,16 +14,14 @@ package com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphra
 
 import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.R
-import com.algorand.android.core.AccountManager
+import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.android.accountinfo.component.domain.usecase.FetchRekeyedAccounts
+import com.algorand.android.core.component.detail.domain.model.AccountRegistrationType
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.customviews.passphraseinput.usecase.PassphraseInputGroupUseCase
 import com.algorand.android.customviews.passphraseinput.util.PassphraseInputConfigurationUtil
-import com.algorand.android.models.Account
-import com.algorand.android.models.Account.Detail
-import com.algorand.android.models.Account.Type
-import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
-import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.domain.usecase.GetRekeyedAccountUseCase
+import com.algorand.android.models.CreateAccount
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.mapper.RecoverWithPassphrasePreviewMapper
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.model.RecoverWithPassphrasePreview
 import com.algorand.android.utils.Event
@@ -32,17 +30,17 @@ import com.algorand.android.utils.PassphraseKeywordUtils.ACCOUNT_PASSPHRASES_WOR
 import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
-import kotlinx.coroutines.flow.flow
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val recoverWithPassphrasePreviewMapper: RecoverWithPassphrasePreviewMapper,
     private val passphraseInputGroupUseCase: PassphraseInputGroupUseCase,
     private val passphraseInputConfigurationUtil: PassphraseInputConfigurationUtil,
-    private val accountManager: AccountManager,
-    private val getRekeyedAccountUseCase: GetRekeyedAccountUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase
+    private val fetchRekeyedAccounts: FetchRekeyedAccounts,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
+    private val getAccountDetail: GetAccountDetail
 ) {
 
     fun getRecoverWithPassphraseInitialPreview(): RecoverWithPassphrasePreview {
@@ -121,7 +119,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         )
     }
 
-    fun validateEnteredMnemonics(preview: RecoverWithPassphrasePreview) = flow {
+    fun validateEnteredMnemonics(preview: RecoverWithPassphrasePreview, isQrRecovery: Boolean) = flow {
         try {
             emit(preview.copy(showLoadingDialogEvent = Event(Unit)))
             val mnemonics = passphraseInputConfigurationUtil.getOrderedInput(preview.passphraseInputGroupConfiguration)
@@ -134,38 +132,36 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                 return@flow
             }
             val accountAddress = Sdk.generateAddressFromSK(privateKey)
-            val isThereAnyAccountWithPublicKey = accountManager.isThereAnyAccountWithPublicKey(accountAddress)
+            val isThereAnyAccountWithPublicKey = isThereAnyAccountWithAddress(accountAddress)
             if (isThereAnyAccountWithPublicKey) {
-                val account = accountManager.getAccount(accountAddress)
-                val isAccountPromotable = when (account?.type) {
-                    Type.STANDARD -> !accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                    Type.LEDGER -> false
-                    else -> true
-                }
-                if (account != null && !isAccountPromotable) {
+                val accountDetail = getAccountDetail(accountAddress)
+                val isWatchAccount = accountDetail.accountRegistrationType == AccountRegistrationType.NoAuth
+                if (accountAddress != null && !isWatchAccount) {
                     emit(preview.copy(onGlobalErrorEvent = Event(R.string.this_account_already_exists)))
                     return@flow
                 }
             }
-            val recoveredAccount = Account.create(
-                publicKey = accountAddress,
-                detail = Detail.Standard(privateKey),
-                accountName = accountAddress.toShortenedAddress()
+            val createAccount = CreateAccount.Algo25(
+                address = accountAddress,
+                secretKey = privateKey,
+                customName = accountAddress.toShortenedAddress(),
+                isBackedUp = isQrRecovery.not(),
+                creationType = RECOVER
             )
-            val accountCreation = AccountCreation(recoveredAccount, RECOVER)
-            getRekeyedAccountUseCase.invoke(accountAddress).useSuspended(
+
+            fetchRekeyedAccounts(accountAddress).use(
                 onSuccess = {
                     val updatedPreview = if (it.isEmpty()) {
-                        preview.copy(navToNameRegistrationEvent = Event(accountCreation))
+                        preview.copy(navToNameRegistrationEvent = Event(createAccount))
                     } else {
                         val rekeyedAccountAddresses = it.map { it.address }
-                        preview.copy(navToImportRekeyedAccountEvent = Event(accountCreation to rekeyedAccountAddresses))
+                        preview.copy(navToImportRekeyedAccountEvent = Event(createAccount to rekeyedAccountAddresses))
                     }
                     emit(updatedPreview)
                 },
-                onFailed = {
+                onFailed = { _, _ ->
                     val updatedPreview = preview.copy(
-                        navToNameRegistrationEvent = Event(accountCreation),
+                        navToNameRegistrationEvent = Event(createAccount),
                         showErrorEvent = Event(AnnotatedString(R.string.failed_to_fetch_rekeyed))
                     )
                     emit(updatedPreview)
@@ -174,9 +170,5 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         } catch (exception: Exception) {
             emit(preview.copy(onAccountNotFoundEvent = Event(AnnotatedString(R.string.account_not_found_please_try))))
         }
-    }
-
-    private fun getAccountIfExist(publicKey: String): Account? {
-        return accountManager.getAccounts().find { account -> account.address == publicKey }
     }
 }

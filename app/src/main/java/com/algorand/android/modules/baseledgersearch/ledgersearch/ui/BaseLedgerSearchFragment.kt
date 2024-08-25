@@ -20,27 +20,25 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.coroutineScope
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
+import com.algorand.android.accountinfo.component.domain.model.AccountInformation
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.LoadingDialogFragment
-import com.algorand.android.databinding.FragmentLedgerSearchBinding
-import com.algorand.android.ledger.LedgerBleOperationManager
-import com.algorand.android.ledger.operations.AccountFetchAllOperation
-import com.algorand.android.models.AccountInformation
-import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
-import com.algorand.android.models.LedgerBleResult
+import com.algorand.android.databinding.FragmentLedgerSearchBinding
+import com.algorand.android.foundation.Event
+import com.algorand.android.ledger.domain.model.LedgerBleResult
+import com.algorand.android.ledger.domain.model.LedgerOperation.AccountFetchAllOperation
+import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.adapter.LedgerSearchAdapter
 import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.model.LedgerBaseItem
 import com.algorand.android.modules.baseledgersearch.pairinginstruction.ui.LedgerPairInstructionsBottomSheet.Companion.BLUETOOTH_DEVICE_KEY
-import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.adapter.LedgerSearchAdapter
-import com.algorand.android.utils.Event
 import com.algorand.android.utils.checkIfBluetoothPermissionAreTaken
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.isLocationEnabled
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.showEnableBluetoothPopup
@@ -49,16 +47,11 @@ import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import java.util.Timer
 import java.util.TimerTask
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 abstract class BaseLedgerSearchFragment :
     DaggerBaseFragment(R.layout.fragment_ledger_search), LoadingDialogFragment.DismissListener {
-
-    @Inject
-    lateinit var ledgerBleOperationManager: LedgerBleOperationManager
 
     protected abstract val fragmentId: Int
 
@@ -125,12 +118,12 @@ abstract class BaseLedgerSearchFragment :
                 is LedgerBleResult.AccountResult -> {
                     onLedgerConnected(accountList, bluetoothDevice)
                 }
-                is LedgerBleResult.AppErrorResult -> {
-                    showError(getString(errorMessageId))
-                }
-                is LedgerBleResult.LedgerErrorResult -> {
-                    showError(errorMessage)
-                }
+//                is LedgerBleResult.AppErrorResult -> {
+//                    showError(getString(errorMessageId))
+//                }
+//                is LedgerBleResult.LedgerErrorResult -> {
+//                    showError(errorMessage)
+//                }
                 is LedgerBleResult.OnBondingFailed -> {
                     showError(getString(R.string.pairing_failed))
                 }
@@ -161,7 +154,7 @@ abstract class BaseLedgerSearchFragment :
     }
 
     private fun setupLedgerBleOperationManager() {
-        ledgerBleOperationManager.setup(viewLifecycleOwner.lifecycle)
+        ledgerSearchViewModel.setupLedgerOperationManager(viewLifecycleOwner.lifecycle)
     }
 
     private fun setupRecyclerView() {
@@ -185,14 +178,15 @@ abstract class BaseLedgerSearchFragment :
     }
 
     override fun onLoadingDialogDismissed() {
-        ledgerBleOperationManager.stopAllResources()
+        ledgerSearchViewModel.stopLedgerOperation()
     }
 
     private fun initObservers() {
         ledgerSearchViewModel.ledgerDevicesLiveData.observe(viewLifecycleOwner, ledgerDevicesObserver)
-        viewLifecycleOwner.lifecycle.coroutineScope.launch {
-            ledgerBleOperationManager.ledgerBleResultFlow.collect { ledgerResultObserver.invoke(it) }
-        }
+        collectLatestOnLifecycle(
+            flow = ledgerSearchViewModel.getLedgerBleOperationResultFlow(),
+            collection = ledgerResultObserver
+        )
     }
 
     private fun initPairInstructionResultListener() {
@@ -204,12 +198,7 @@ abstract class BaseLedgerSearchFragment :
     }
 
     private fun onLedgerSelected(bluetoothDevice: BluetoothDevice) {
-        val bluetoothAdapter = (context?.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
-        if (bluetoothAdapter != null && ledgerBleOperationManager.isBondingRequired(
-                address = bluetoothDevice.address,
-                bluetoothAdapter = bluetoothAdapter
-            )
-        ) {
+        if (ledgerSearchViewModel.isBleBondingRequired(bluetoothDevice.address)) {
             navToPairInstructionBottomSheet(bluetoothDevice)
         } else {
             connectLedger(bluetoothDevice)
@@ -233,7 +222,7 @@ abstract class BaseLedgerSearchFragment :
 
     private fun connectLedger(bluetoothDevice: BluetoothDevice) {
         setLoadingVisibility(isVisible = true)
-        ledgerBleOperationManager.startLedgerOperation(AccountFetchAllOperation(bluetoothDevice))
+        ledgerSearchViewModel.startFetchAllAccountsOperation(AccountFetchAllOperation(bluetoothDevice, mutableListOf()))
     }
 
     private fun showError(errorMessage: String, @StringRes titleResId: Int = R.string.error_default_title) {

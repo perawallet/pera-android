@@ -14,6 +14,7 @@ package com.algorand.android.discover.urlviewer.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.currency.domain.usecase.GetPrimaryCurrencyId
 import com.algorand.android.discover.common.ui.BaseDiscoverViewModel
 import com.algorand.android.discover.common.ui.model.DappFavoriteElement
 import com.algorand.android.discover.urlviewer.ui.model.DiscoverUrlViewerPreview
@@ -31,6 +32,7 @@ import kotlinx.coroutines.launch
 class DiscoverUrlViewerViewModel @Inject constructor(
     private val discoverUrlViewerPreviewUseCase: DiscoverUrlViewerPreviewUseCase,
     private val discoverUrlViewerUseCase: DiscoverUrlViewerUseCase,
+    private val getPrimaryCurrency: GetPrimaryCurrencyId,
     savedStateHandle: SavedStateHandle
 ) : BaseDiscoverViewModel() {
 
@@ -47,7 +49,7 @@ class DiscoverUrlViewerViewModel @Inject constructor(
             _discoverUrlViewerPreviewFlow
                 .emit(
                     discoverUrlViewerPreviewUseCase
-                    .onPageRequestedShouldOverrideUrlLoading(_discoverUrlViewerPreviewFlow.value)
+                        .onPageRequestedShouldOverrideUrlLoading(_discoverUrlViewerPreviewFlow.value)
                 )
         }
         return false
@@ -118,10 +120,10 @@ class DiscoverUrlViewerViewModel @Inject constructor(
     }
 
     fun getPrimaryCurrencyId(): String {
-        return discoverUrlViewerUseCase.getPrimaryCurrencyId()
+        return getPrimaryCurrency()
     }
 
     companion object {
-        private const val URL_KEY = "webUrl"
+        private const val URL_KEY = "url"
     }
 }

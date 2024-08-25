@@ -12,65 +12,49 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.models.BaseAccountAssetData
+import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.models.WCArbitraryData
-import com.algorand.android.models.WalletConnectAccount
 import com.algorand.android.models.WalletConnectArbitraryData
 import com.algorand.android.models.WalletConnectArbitraryDataSigner
 import com.algorand.android.models.WalletConnectAssetInformation
 import com.algorand.android.models.WalletConnectPeerMeta
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
-import com.algorand.android.usecase.AccountAlgoAmountUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
+import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
 import com.algorand.android.utils.extensions.mapNotBlank
-import com.algorand.android.utils.extensions.mapNotNull
 import com.algorand.android.utils.multiplyOrZero
 import java.math.BigInteger
 import javax.inject.Inject
 
 @SuppressWarnings("ReturnCount")
 class WalletConnectArbitraryDataMapper @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val errorProvider: WalletConnectErrorProvider,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
-    private val accountAlgoAmountUseCase: AccountAlgoAmountUseCase,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
-    private val walletConnectAssetInformationMapper: WalletConnectAssetInformationMapper
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
+    private val walletConnectAssetInformationMapper: WalletConnectAssetInformationMapper,
+    private val createWalletConnectAccount: CreateWalletConnectAccount,
+    private val getAccountInformation: GetAccountInformation,
+    private val getAccountDetail: GetAccountDetail
 ) {
 
-    fun createWalletConnectArbitraryData(
+    suspend fun createWalletConnectArbitraryData(
         peerMeta: WalletConnectPeerMeta,
         arbitraryData: WCArbitraryData,
-    ): WalletConnectArbitraryData? {
+    ): WalletConnectArbitraryData {
         return with(arbitraryData) {
-            val accountDetail = arbitraryData.signer?.mapNotBlank { safeAddress ->
-                accountDetailUseCase.getCachedAccountDetail(safeAddress)?.data
-            }
-            val wcAccount = WalletConnectAccount.create(
-                account = accountDetail?.account,
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(
-                    accountAddress = accountDetail?.account?.address.orEmpty()
-                )
-            )
-            val signerAddress = accountDetail?.account?.address.orEmpty()
-            val signerAccountData = signerAddress?.mapNotBlank { safeAddress ->
-                accountDetailUseCase.getCachedAccountDetail(publicKey = safeAddress)?.data
-            }
-            val amount = signerAccountData?.accountInformation?.amount ?: BigInteger.ZERO
-            val ownedAsset = signerAccountData.mapNotNull { accountDetail ->
-                getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(
-                    AssetInformation.ALGO_ID,
-                    accountDetail.account.address
-                )
-            }
+            val signerAddress = arbitraryData.signer.orEmpty()
+            val wcAccount = createWalletConnectAccount(signerAddress)
 
+            val amount = signerAddress.mapNotBlank { getAccountInformation(it)?.amount } ?: BigInteger.ZERO
+            val ownedAsset = signerAddress.mapNotBlank {
+                getAccountBaseOwnedAssetData(it, ALGO_ASSET_ID)
+            }
             val walletConnectAssetInformation = createWalletConnectAssetInformation(ownedAsset, amount)
             val wcSigner = signer?.let {
                 WalletConnectArbitraryDataSigner.create(
-                    signerAccountType = signerAccountData?.account?.type,
+                    signerAccountType = signerAddress.mapNotBlank { getAccountDetail(it).accountType },
                     signer,
                     errorProvider
                 )

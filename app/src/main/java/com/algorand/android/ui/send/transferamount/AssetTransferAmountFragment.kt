@@ -19,22 +19,24 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.SendAlgoNavigationDirections
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
-import com.algorand.android.core.TransactionBaseFragment
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.DialPadView
 import com.algorand.android.customviews.algorandamountinput.AlgorandAmountInputTextView
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentAssetTransferAmountBinding
+import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
 import com.algorand.android.models.AmountInput
+import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.AssetTransferAmountPreview
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
 import com.algorand.android.ui.common.warningconfirmation.BaseMaximumBalanceWarningBottomSheet
 import com.algorand.android.ui.send.shared.AddNoteBottomSheet
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.AccountIconDrawable
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
@@ -63,7 +65,7 @@ import kotlin.properties.Delegates
  */
 @SuppressWarnings("TooManyFunctions")
 @AndroidEntryPoint
-class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_asset_transfer_amount) {
+class AssetTransferAmountFragment : BaseFragment(R.layout.fragment_asset_transfer_amount) {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
@@ -165,7 +167,27 @@ class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_as
             insufficientBalanceToPayFeeEvent?.consume()?.let { onInsufficientBalanceToPayFee() }
             minimumBalanceIsViolatedResultEvent?.consume()?.let { onMinimumBalanceViolated(it) }
             assetNotFoundErrorEvent?.consume()?.let { onAssetNotFound() }
+            onFormattedMaxAmount?.consume()?.let { binding.amountTextView.setAmount(it) }
+            sendWithCalculatedSendableAmount?.consume()?.let { handleNextNavigation(it) }
+            navigateToAssetTransferPreview?.consume()?.let { navigateToAssetTransfer(it) }
+            navigateToReceiverAccountSelection?.consume()?.let { navigateToReceiverSelection(it) }
         }
+    }
+
+    private fun navigateToAssetTransfer(sendTransactionPayload: SendTransactionPayload) {
+        nav(
+            AssetTransferAmountFragmentDirections
+                .actionAssetTransferAmountFragmentToAssetTransferPreviewFragment(sendTransactionPayload)
+        )
+    }
+
+    private fun navigateToReceiverSelection(assetTransaction: AssetTransaction) {
+        nav(
+            AssetTransferAmountFragmentDirections
+                .actionAssetTransferAmountFragmentToReceiverAccountSelectionFragment(
+                    assetTransaction = assetTransaction
+                )
+        )
     }
 
     private fun updateToolbarWithPreview(preview: AssetTransferAmountPreview) {
@@ -179,7 +201,7 @@ class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_as
                 ).let { setSubtitleStartDrawable(it) }
             }
             preview.assetPreview?.let {
-                changeTitle(getString(R.string.send_format, it.shortName.getName()))
+                changeTitle(getString(R.string.send_format, it.shortName.assetName))
             }
         }
     }
@@ -226,7 +248,7 @@ class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_as
                     onResourceFailed = ::setStartIconDrawable
                 )
             }
-            setTitleText(fullName.getName(resources))
+            setTitleText(fullName.assetName)
             val descriptionText = if (isAlgo) {
                 ALGO_SHORT_NAME
             } else {
@@ -273,8 +295,7 @@ class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_as
     }
 
     private fun onMaxButtonClick() {
-        val formattedMaximumAmount = assetTransferAmountViewModel.getMaximumAmountOfAsset()
-        binding.amountTextView.setAmount(formattedMaximumAmount)
+        assetTransferAmountViewModel.updateUiWithMaxAmount()
     }
 
     private fun onAddButtonClick() {
@@ -306,7 +327,7 @@ class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_as
     }
 
     private fun sendWithCalculatedSendableAmount() {
-        assetTransferAmountViewModel.getCalculatedSendableAmount()?.let { handleNextNavigation(it) }
+        assetTransferAmountViewModel.sendWithCalculatedSendableAmount()
     }
 
     private fun showTransactionTipsIfNeed() {
@@ -320,25 +341,7 @@ class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_as
     }
 
     private fun handleNextNavigation(amount: BigInteger) {
-        val assetTransaction = assetTransferAmountViewModel.assetTransaction
-        if (assetTransaction.receiverUser != null) {
-            val transactionData = assetTransferAmountViewModel.createSendTransactionData(amount) ?: return
-            nav(
-                AssetTransferAmountFragmentDirections
-                    .actionAssetTransferAmountFragmentToAssetTransferPreviewFragment(transactionData)
-            )
-        } else {
-            nav(
-                AssetTransferAmountFragmentDirections
-                    .actionAssetTransferAmountFragmentToReceiverAccountSelectionFragment(
-                        assetTransaction = assetTransaction.copy(
-                            amount = amount,
-                            note = transactionNote,
-                            xnote = lockedNote
-                        )
-                    )
-            )
-        }
+        assetTransferAmountViewModel.handleNextNavigation(amount, transactionNote, lockedNote)
     }
 
     private fun handleTransactionNote() {

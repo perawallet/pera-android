@@ -12,56 +12,53 @@
 
 package com.algorand.android.modules.accountdetail.accountstatusdetail.ui.usecase
 
+import com.algorand.android.accountcore.ui.usecase.*
+import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetailFlow
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.decider.AccountStatusDetailPreviewDecider
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.mapper.AccountStatusDetailPreviewMapper
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.model.AccountStatusDetailPreview
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountOriginalStateIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.extensions.mapNotBlank
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collectLatest
 
 class AccountStatusDetailPreviewUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
-    private val createAccountOriginalStateIconDrawableUseCase: CreateAccountOriginalStateIconDrawableUseCase,
+    private val getAccountDetailFlow: GetAccountDetailFlow,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getAccountOriginalStateIconDrawablePreview: GetAccountOriginalStateIconDrawablePreview,
     private val accountStatusDetailPreviewMapper: AccountStatusDetailPreviewMapper,
     private val accountStatusDetailPreviewDecider: AccountStatusDetailPreviewDecider,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase
+    private val getAccountInformation: GetAccountInformation
 ) {
 
-    fun getAccountStatusDetailPreviewFlow(accountAddress: String) = channelFlow {
-        accountDetailUseCase.getAccountDetailCacheFlow(accountAddress).collectLatest { cachedAccountDetail ->
-            val account = cachedAccountDetail?.data?.account
-            val authAccountAddress = cachedAccountDetail?.data?.accountInformation?.rekeyAdminAddress
-            val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(account = account)
+    fun getAccountStatusDetailPreviewFlow(accountAddress: String) = channelFlow<AccountStatusDetailPreview> {
+        getAccountDetailFlow(accountAddress).collectLatest { accountDetail ->
+            if (accountDetail == null) return@collectLatest
+            val accountInformation = getAccountInformation(accountAddress)
+            val authAccountAddress = accountInformation?.rekeyAdminAddress
+            val hasAccountAuthority = accountDetail.accountType?.canSignTransaction() == true
             val preview = accountStatusDetailPreviewMapper.mapToAccountStatusDetailPreview(
-                titleString = accountStatusDetailPreviewDecider.decideTitleString(account = account),
-                accountOriginalTypeDisplayName = accountDisplayNameUseCase.invoke(accountAddress = accountAddress),
-                accountOriginalTypeIconDrawablePreview = createAccountOriginalStateIconDrawableUseCase.invoke(
-                    accountAddress = accountAddress
-                ),
+                titleString = accountStatusDetailPreviewDecider.decideTitleString(accountDetail.accountType),
+                accountOriginalTypeDisplayName = getAccountDisplayName(accountAddress),
+                accountOriginalTypeIconDrawablePreview = getAccountOriginalStateIconDrawablePreview(accountAddress),
                 accountOriginalActionButton = AccountAssetItemButtonState.COPY,
-                authAccountDisplayName = authAccountAddress?.mapNotBlank { _authAccountAddress ->
-                    accountDisplayNameUseCase.invoke(accountAddress = _authAccountAddress)
+                authAccountDisplayName = authAccountAddress?.mapNotBlank { safeAuthAddress ->
+                    getAccountDisplayName(safeAuthAddress)
                 },
-                authAccountIconDrawablePreview = authAccountAddress?.mapNotBlank { _authAccountAddress ->
-                    createAccountIconDrawableUseCase.invoke(accountAddress = _authAccountAddress)
+                authAccountIconDrawablePreview = authAccountAddress?.mapNotBlank { safeAuthAddress ->
+                    getAccountIconDrawablePreview(safeAuthAddress)
                 },
                 authAccountActionButton = accountStatusDetailPreviewDecider.decideAuthAccountActionButtonState(
-                    account = account
+                    accountType = accountDetail.accountType,
                 ),
-                accountTypeDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress = accountAddress),
-                accountTypeString = accountStatusDetailPreviewDecider.decideAccountTypeString(account = account),
+                accountTypeDrawablePreview = getAccountIconDrawablePreview(accountAddress),
+                accountTypeString = accountStatusDetailPreviewDecider.decideAccountTypeString(accountDetail),
                 descriptionAnnotatedString = accountStatusDetailPreviewDecider.decideDescriptionAnnotatedString(
-                    account = account
+                    accountDetail = accountDetail
                 ),
                 isRekeyToLedgerAccountAvailable = hasAccountAuthority,
                 isRekeyToStandardAccountAvailable = hasAccountAuthority

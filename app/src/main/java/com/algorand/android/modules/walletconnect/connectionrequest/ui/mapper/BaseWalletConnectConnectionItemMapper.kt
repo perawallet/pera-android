@@ -13,11 +13,11 @@
 package com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper
 
 import androidx.annotation.PluralsRes
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WalletConnectConnectionNetworkItem
-import com.algorand.android.utils.AccountDisplayName
 import javax.inject.Inject
 
 class BaseWalletConnectConnectionItemMapper @Inject constructor() {

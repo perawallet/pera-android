@@ -13,72 +13,99 @@
 
 package com.algorand.android.usecase
 
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
+import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.core.component.domain.usecase.GetAccountMinBalance
+import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.mapper.AssetTransferAmountAssetPreviewMapper
 import com.algorand.android.mapper.AssetTransferAmountPreviewMapper
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.AssetTransferAmountPreview
-import com.algorand.android.models.AssetTransferAmountValidationPreviewResult
-import com.algorand.android.models.TargetUser
-import com.algorand.android.models.TransactionData
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
-import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
+import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencyName
+import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
+import com.algorand.android.parity.domain.usecase.primary.GetUsdToPrimaryCurrencyConversionRate
+import com.algorand.android.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
+import com.algorand.android.parity.domain.usecase.secondary.GetUsdToSecondaryCurrencyConversionRate
+import com.algorand.android.transaction.domain.model.TransactionAmountValidationResult
+import com.algorand.android.transaction.domain.model.TransactionAmountValidationResult.AssetNotFoundError
+import com.algorand.android.transaction.domain.model.TransactionAmountValidationResult.InsufficientBalanceError
+import com.algorand.android.transaction.domain.model.TransactionAmountValidationResult.InsufficientBalanceToPayFeeError
+import com.algorand.android.transaction.domain.model.TransactionAmountValidationResult.MinBalanceViolationError
+import com.algorand.android.transaction.domain.model.TransactionAmountValidationResult.NetworkError
+import com.algorand.android.transaction.domain.model.TransactionAmountValidationResult.Valid
+import com.algorand.android.transaction.domain.model.ValidateTransactionAmountPayload
+import com.algorand.android.transaction.domain.usecase.ValidateTransactionAmount
+import com.algorand.android.transactionui.sendasset.domain.GetAssetTransferTargetUser
+import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
 import com.algorand.android.utils.Event
+import com.algorand.android.utils.MIN_FEE
+import com.algorand.android.utils.formatAmountAsBigInteger
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.getDecimalSeparator
 import com.algorand.android.utils.multiplyOrNull
-import com.algorand.android.utils.validator.AmountTransactionValidationUseCase
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
 class AssetTransferAmountPreviewUseCase @Inject constructor(
     private val assetTransferAmountPreviewMapper: AssetTransferAmountPreviewMapper,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
-    private val parityUseCase: ParityUseCase,
-    private val currencyUseCase: CurrencyUseCase,
-    private val amountTransactionValidationUseCase: AmountTransactionValidationUseCase,
+    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
+    private val getUsdToSecondaryCurrencyConversionRate: GetUsdToSecondaryCurrencyConversionRate,
+    private val getUsdToPrimaryCurrencyConversionRate: GetUsdToPrimaryCurrencyConversionRate,
+    private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol,
+    private val getPrimaryCurrencyName: GetPrimaryCurrencyName,
+    private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol,
     private val assetTransferAmountAssetPreviewMapper: AssetTransferAmountAssetPreviewMapper,
-    private val accountNameIconUseCase: AccountNameIconUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val transactionTipsUseCase: TransactionTipsUseCase,
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val validateTransactionAmount: ValidateTransactionAmount,
+    private val getAsset: GetAsset,
+    private val getAccountMinBalance: GetAccountMinBalance,
+    private val getAssetTransferTargetUser: GetAssetTransferTargetUser
 ) {
 
-    fun createSendTransactionData(
-        accountAddress: String,
-        note: String?,
-        selectedAsset: AssetInformation?,
+    fun shouldShowTransactionTips(): Boolean {
+        return transactionTipsUseCase.shouldShowTransactionTips()
+    }
+
+    suspend fun handleNextNavigation(
+        preview: AssetTransferAmountPreview,
+        assetTransaction: AssetTransaction,
         amount: BigInteger,
+        note: String?,
+        xnote: String?
+    ): AssetTransferAmountPreview {
+        return if (assetTransaction.receiverUser != null) {
+            val payload = getSendTransactionPayload(assetTransaction, amount, assetTransaction.receiverUser.address)
+            preview.copy(navigateToAssetTransferPreview = Event(payload))
+        } else {
+            val newAssetTransaction = assetTransaction.copy(amount = amount, note = note, xnote = xnote)
+            preview.copy(navigateToReceiverAccountSelection = Event(newAssetTransaction))
+        }
+    }
+
+    suspend fun updatePreviewWithMaximumAmount(
+        preview: AssetTransferAmountPreview,
         assetTransaction: AssetTransaction
-    ): TransactionData.Send? {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
-        return TransactionData.Send(
-            senderAccountAddress = accountDetail.account.address,
-            senderAccountDetail = accountDetail.account.detail,
-            senderAccountType = accountDetail.account.type,
-            senderAuthAddress = accountDetail.accountInformation.rekeyAdminAddress,
-            senderAccountName = accountDetail.account.name,
-            isSenderRekeyedToAnotherAccount = accountDetail.accountInformation.isRekeyed(),
-            minimumBalance = accountDetail.accountInformation.getMinAlgoBalance().toLong(),
-            amount = amount,
-            assetInformation = selectedAsset ?: return null,
-            note = note,
-            targetUser = TargetUser(
-                contact = assetTransaction.receiverUser,
-                publicKey = assetTransaction.receiverUser?.publicKey.orEmpty(),
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
-            )
+    ): AssetTransferAmountPreview {
+        val baseAssetData = getAccountBaseOwnedAssetData(assetTransaction.senderAddress, assetTransaction.assetId)
+        val formattedAmount = baseAssetData?.formattedAmount ?: return preview
+        return preview.copy(
+            onFormattedMaxAmount = Event(formattedAmount)
         )
     }
 
-    fun getAssetTransferAmountPreview(
+    suspend fun getAssetTransferAmountPreview(
         senderAddress: String,
         assetId: Long,
         amount: BigDecimal? = null
     ): AssetTransferAmountPreview {
-        val accountAssetData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, senderAddress)
+        val accountAssetData = getAccountBaseOwnedAssetData(senderAddress, assetId)
             ?: return assetTransferAmountPreviewMapper.mapToAssetNotFoundStatePreview()
         val enteredAmountSelectedCurrencyValue = formatEnteredAmount(
             amount = amount ?: BigDecimal.ZERO,
@@ -87,68 +114,74 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
             displayCurrencySymbol = getDisplayCurrencySymbol(assetId)
         )
         val decimalSeparator = getDecimalSeparator()
-        val (accountName, accountIconDrawablePreview) = accountNameIconUseCase.getAccountDisplayTextAndIcon(
-            accountAddress = senderAddress
-        )
         return assetTransferAmountPreviewMapper.mapToSuccessPreview(
             assetTransferAmountAssetPreview = assetTransferAmountAssetPreviewMapper.mapTo(accountAssetData),
             enteredAmountSelectedCurrencyValue = enteredAmountSelectedCurrencyValue,
             decimalSeparator = decimalSeparator,
             selectedAmount = amount,
             senderAddress = senderAddress,
-            accountName = accountName,
-            accountIconDrawablePreview = accountIconDrawablePreview
+            accountName = getAccountDisplayName(senderAddress).primaryDisplayName,
+            accountIconDrawablePreview = getAccountIconDrawablePreview(senderAddress)
         )
     }
 
-    fun getAmountValidatedPreview(
+    suspend fun getAmountValidatedPreview(
         preview: AssetTransferAmountPreview,
         amount: BigDecimal
     ): AssetTransferAmountPreview {
-        // TODO: Discuss this approach with the team, and think on possible namings instead of "..PreviewResult"
-        return when (val amountValidationPreviewResult = getAssetTransferAmountValidationResult(preview, amount)) {
-            is AssetTransferAmountValidationPreviewResult.AmountIsValidResult -> {
-                preview.copy(amountIsValidEvent = Event(amountValidationPreviewResult.selectedAmount))
-            }
-            is AssetTransferAmountValidationPreviewResult.AmountIsMoreThanBalanceResult -> {
-                preview.copy(amountIsMoreThanBalanceEvent = Event(Unit))
-            }
-            is AssetTransferAmountValidationPreviewResult.InsufficientBalanceToPayFeeResult -> {
-                preview.copy(insufficientBalanceToPayFeeEvent = Event(Unit))
-            }
-            is AssetTransferAmountValidationPreviewResult.MinimumBalanceIsViolatedResult -> {
-                preview.copy(minimumBalanceIsViolatedResultEvent = Event(preview.senderAddress))
-            }
-            else -> preview
+
+        val senderAddress = preview.senderAddress
+        val assetId = preview.assetPreview?.assetId
+        if (senderAddress == null || assetId == null) return preview
+
+        return when (val result = getTransactionAmountValidationResult(amount, senderAddress, assetId)) {
+            AssetNotFoundError -> preview.copy(assetNotFoundErrorEvent = Event(Unit))
+            InsufficientBalanceError -> preview.copy(amountIsMoreThanBalanceEvent = Event(Unit))
+            InsufficientBalanceToPayFeeError -> preview.copy(insufficientBalanceToPayFeeEvent = Event(Unit))
+            MinBalanceViolationError -> preview.copy(minimumBalanceIsViolatedResultEvent = Event(preview.senderAddress))
+            NetworkError -> preview.copy(anErrorOccurred = Event(Unit))
+            is Valid -> preview.copy(amountIsValidEvent = Event(result.amount))
         }
     }
 
-    fun getCalculatedSendableAmount(address: String, assetId: Long, amount: BigDecimal): BigInteger? {
-        with(amountTransactionValidationUseCase) {
-            val amountInBigInteger = getAmountAsBigInteger(amount, assetId) ?: return null
-            val maximumSendableAmount = getMaximumSendableAmount(address, assetId) ?: return null
-            return minOf(amountInBigInteger, maximumSendableAmount)
-        }
+    suspend fun getCalculatedSendableAmount(address: String, assetId: Long, amount: BigDecimal): BigInteger? {
+        val amountInBigInteger = getAmountAsBigInteger(assetId, amount)
+        val maximumSendableAmount = getMaximumSendableAmount(address, assetId) ?: return null
+        return minOf(amountInBigInteger, maximumSendableAmount)
+    }
+
+    private suspend fun getSendTransactionPayload(
+        assetTransaction: AssetTransaction,
+        amount: BigInteger,
+        receiverAddress: String
+    ): SendTransactionPayload {
+        return SendTransactionPayload(
+            assetId = assetTransaction.assetId,
+            senderAddress = assetTransaction.senderAddress,
+            note = SendTransactionPayload.Note(assetTransaction.note, assetTransaction.xnote),
+            amount = amount,
+            targetUser = getAssetTransferTargetUser(receiverAddress)
+        )
     }
 
     private fun getUsdToDisplayedCurrencyConversionRate(assetId: Long): BigDecimal {
         return if (shouldUseSecondaryCurrency(assetId)) {
-            parityUseCase.getUsdToSecondaryCurrencyConversionRate()
+            getUsdToSecondaryCurrencyConversionRate()
         } else {
-            parityUseCase.getUsdToPrimaryCurrencyConversionRate()
+            getUsdToPrimaryCurrencyConversionRate()
         }
     }
 
     private fun getDisplayCurrencySymbol(assetId: Long): String {
         return if (shouldUseSecondaryCurrency(assetId)) {
-            parityUseCase.getSecondaryCurrencySymbol()
+            getSecondaryCurrencySymbol()
         } else {
-            parityUseCase.getPrimaryCurrencySymbolOrName()
+            getPrimaryCurrencySymbol() ?: getPrimaryCurrencyName()
         }
     }
 
     private fun shouldUseSecondaryCurrency(assetId: Long): Boolean {
-        return assetId == ALGO_ID && currencyUseCase.isPrimaryCurrencyAlgo()
+        return assetId == ALGO_ASSET_ID && isPrimaryCurrencyAlgo()
     }
 
     private fun formatEnteredAmount(
@@ -162,38 +195,27 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
             ?.formatAsCurrency(displayCurrencySymbol)
     }
 
-    private fun getAssetTransferAmountValidationResult(
-        preview: AssetTransferAmountPreview,
-        amount: BigDecimal
-    ): AssetTransferAmountValidationPreviewResult? {
-        // Even though we are not passing PreviewResult to UI anymore, I think it a good a idea to still keep it
-        // It enforces to create a single UI result, even though we are still passing Events separately to the fragment
-        // TODO: Discuss this approach with the team, and think on possible namings instead of "..PreviewResult"
-        if (preview.senderAddress == null || preview.assetPreview?.assetId == null) return null
-        with(
-            amountTransactionValidationUseCase.validateAssetAmount(
-                amountInBigDecimal = amount,
-                senderAddress = preview.senderAddress,
-                assetId = preview.assetPreview.assetId
-            )
-        ) {
-            return when {
-                isAmountMoreThanBalance == true -> {
-                    AssetTransferAmountValidationPreviewResult.AmountIsMoreThanBalanceResult
-                }
-                isBalanceInsufficientForPayingFee == true -> {
-                    AssetTransferAmountValidationPreviewResult.InsufficientBalanceToPayFeeResult
-                }
-                isMinimumBalanceViolated == true -> {
-                    AssetTransferAmountValidationPreviewResult.MinimumBalanceIsViolatedResult
-                }
-                isAmountMoreThanBalance == false &&
-                    isBalanceInsufficientForPayingFee == false &&
-                    isMinimumBalanceViolated == false -> {
-                    AssetTransferAmountValidationPreviewResult.AmountIsValidResult(selectedAmount)
-                }
-                else -> null
-            }
+    private suspend fun getTransactionAmountValidationResult(
+        amount: BigDecimal,
+        senderAddress: String,
+        assetId: Long
+    ): TransactionAmountValidationResult {
+        val amountAsBigInt = getAmountAsBigInteger(assetId, amount)
+        val payload = ValidateTransactionAmountPayload(amountAsBigInt, senderAddress, assetId)
+        return validateTransactionAmount(payload)
+    }
+
+    private suspend fun getAmountAsBigInteger(assetId: Long, amount: BigDecimal): BigInteger {
+        val assetDecimal = getAsset(assetId)?.getDecimalsOrZero() ?: 0
+        return amount.formatAmountAsBigInteger(assetDecimal)
+    }
+
+    private suspend fun getMaximumSendableAmount(address: String, assetId: Long): BigInteger? {
+        val ownedAssetData = getAccountBaseOwnedAssetData(address, assetId) ?: return null
+        return if (assetId == ALGO_ASSET_ID) {
+            ownedAssetData.amount - getAccountMinBalance(address) - MIN_FEE.toBigInteger()
+        } else {
+            ownedAssetData.amount
         }
     }
 }

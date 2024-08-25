@@ -13,7 +13,7 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.models.BaseAccountAssetData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.models.WalletConnectAssetInformation
 import com.algorand.android.utils.formatAsCurrency
 import java.math.BigDecimal

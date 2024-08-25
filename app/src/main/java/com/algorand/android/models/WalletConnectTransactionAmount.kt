@@ -12,7 +12,7 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
 import com.algorand.android.utils.AssetName
 import java.math.BigInteger
 

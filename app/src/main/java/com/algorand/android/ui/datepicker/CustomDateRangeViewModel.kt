@@ -12,16 +12,18 @@
 
 package com.algorand.android.ui.datepicker
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.DateFilter.CustomRange
-import com.algorand.android.models.ui.CustomDateRangePreview
-import com.algorand.android.usecase.CustomDateRangeUseCase
+import com.algorand.android.dateui.model.CustomDateRangePreview
+import com.algorand.android.dateui.model.DateFilter.CustomRange
+import com.algorand.android.dateui.usecase.GetCustomDateRangePreview
+import com.algorand.android.dateui.usecase.GetDefaultCustomRange
+import com.algorand.android.dateui.usecase.GetUpdatedCustomRange
 import com.algorand.android.utils.getOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.ZonedDateTime
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -30,13 +32,12 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class CustomDateRangeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val customDateRangeUseCase: CustomDateRangeUseCase
+    private val getCustomDateRangePreview: GetCustomDateRangePreview,
+    private val getUpdatedCustomRange: GetUpdatedCustomRange,
+    getDefaultCustomRange: GetDefaultCustomRange
 ) : BaseViewModel() {
 
-    private val initialCustomRange = savedStateHandle.getOrElse(
-        CUSTOM_RANGE_KEY,
-        customDateRangeUseCase.getDefaultCustomRange()
-    )
+    private val initialCustomRange = savedStateHandle.getOrElse(CUSTOM_RANGE_KEY, getDefaultCustomRange())
 
     private val _customDateRangeFlow = MutableStateFlow(initialCustomRange)
     private val _isFromFocusedFlow = MutableStateFlow(true)
@@ -57,7 +58,7 @@ class CustomDateRangeViewModel @Inject constructor(
 
     fun updateCustomRange(datePickerYear: Int, datePickerMonth: Int, datePickerDay: Int) {
         viewModelScope.launch {
-            val customRange = customDateRangeUseCase.createUpdatedCustomRange(
+            val customRange = getUpdatedCustomRange(
                 customRange = _customDateRangeFlow.value,
                 isFromFocused = _isFromFocusedFlow.value,
                 datePickerYear = datePickerYear,
@@ -78,7 +79,7 @@ class CustomDateRangeViewModel @Inject constructor(
         latestCustomRange: CustomRange,
         isFromFocused: Boolean
     ): CustomDateRangePreview {
-        return customDateRangeUseCase.createCustomDateRangePreview(
+        return getCustomDateRangePreview(
             latestDateRange = latestCustomRange.customDateRange,
             isFromFocused = isFromFocused
         )

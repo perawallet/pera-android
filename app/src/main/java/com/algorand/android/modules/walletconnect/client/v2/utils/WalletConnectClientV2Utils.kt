@@ -18,7 +18,7 @@ object WalletConnectClientV2Utils {
 
     fun getWalletConnectV2VersionIdentifier() = WalletConnectVersionIdentifier.VERSION_2
 
-    fun isValidWalletConnectV2Url(url: String): Boolean {
+    fun isValidWalletConnectUrl(url: String): Boolean {
         return WalletConnectV2UriValidator.isValidWCUri(url)
     }
 }

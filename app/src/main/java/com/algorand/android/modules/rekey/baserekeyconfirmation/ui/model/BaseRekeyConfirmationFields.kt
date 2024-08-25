@@ -12,10 +12,11 @@
 
 package com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model
 
-import com.algorand.android.models.AnnotatedString
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.Event
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.foundation.Event
 
 interface BaseRekeyConfirmationFields {
     val isLoading: Boolean
@@ -33,6 +34,7 @@ interface BaseRekeyConfirmationFields {
     val showGlobalErrorEvent: Event<Pair<Int, String>>?
     val navToRekeyedAccountConfirmationBottomSheetEvent: Event<Unit>?
     val onSendTransactionEvent: Event<Unit>?
+    val accountInformation: AccountInformation?
 
     val isTransactionFeeGroupIsVisible: Boolean
         get() = !formattedTransactionFee.isNullOrBlank()

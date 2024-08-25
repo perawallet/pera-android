@@ -16,14 +16,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.databinding.ItemSelectionBinding
-import com.algorand.android.models.Node
+import com.algorand.android.ui.settings.node.ui.model.NodeItem
 
 class NodeViewHolder(val binding: ItemSelectionBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(node: Node) {
+    fun bind(item: NodeItem) {
         with(binding.selectionItemView) {
-            text = node.name
-            isSelected = node.isActive
+            text = item.name
+            isSelected = item.isActive
         }
     }
 

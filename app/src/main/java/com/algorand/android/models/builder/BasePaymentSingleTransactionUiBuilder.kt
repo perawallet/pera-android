@@ -14,6 +14,7 @@
 package com.algorand.android.models.builder
 
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
 import com.algorand.android.models.BasePaymentTransaction
 import com.algorand.android.models.WalletConnectTransactionAmount
 import com.algorand.android.models.WalletConnectTransactionShortDetail
@@ -23,7 +24,7 @@ import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 
 class BasePaymentSingleTransactionUiBuilder @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
+    private val verificationTierConfigurationMapper: VerificationTierConfigurationMapper
 ) : WalletConnectSingleTransactionUiBuilder<BasePaymentTransaction> {
 
     override fun buildToolbarTitleRes(txn: BasePaymentTransaction): Int {
@@ -52,8 +53,7 @@ class BasePaymentSingleTransactionUiBuilder @Inject constructor(
                 assetShortName = AssetName.createShortName(ALGO_SHORT_NAME),
                 isNeedCurrencyValue = true,
                 formattedSelectedCurrencyValue = assetInformation?.formattedSelectedCurrencyValue,
-                verificationTierConfiguration =
-                verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
+                verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier)
             )
         }
     }

@@ -17,5 +17,5 @@ import com.algorand.android.modules.baseintroduction.ui.model.BaseIntroductionFi
 import kotlinx.coroutines.flow.StateFlow
 
 abstract class BaseIntroductionViewModel : BaseViewModel() {
-    abstract val introductionPreviewFlow: StateFlow<BaseIntroductionFields>
+    abstract val introductionPreviewFlow: StateFlow<BaseIntroductionFields?>
 }

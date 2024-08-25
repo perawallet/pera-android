@@ -12,20 +12,20 @@
 
 package com.algorand.android.modules.sorting.assetsorting.ui.usecase
 
-import com.algorand.android.modules.sorting.assetsorting.domain.model.AssetSortPreference
-import com.algorand.android.modules.sorting.assetsorting.domain.usecase.AssetSortTypeUseCase
-import com.algorand.android.modules.sorting.assetsorting.ui.model.AssetSortableItem
+import com.algorand.android.accountcore.ui.assetsorting.AssetSortableItem
+import com.algorand.android.assetsorting.domain.model.AssetSortPreference
+import com.algorand.android.assetsorting.domain.usecase.GetAssetSortPreference
 import javax.inject.Inject
 
 class AssetItemSortUseCase @Inject constructor(
-    private val assetSortTypeUseCase: AssetSortTypeUseCase
+    private val getAssetSortPreference: GetAssetSortPreference
 ) {
     suspend fun <T : AssetSortableItem> sortAssets(assets: List<T>): List<T> {
         var sortedList = assets
         val alphabeticalSortComparator =
             compareBy<AssetSortableItem, String?>(nullsLast()) { it.assetSortingNameField?.uppercase() }
 
-        val preferenceComparator = when (assetSortTypeUseCase.getSortPreferenceType()) {
+        val preferenceComparator = when (getAssetSortPreference()) {
             AssetSortPreference.ALPHABETICALLY_ASCENDING -> {
                 alphabeticalSortComparator
             }

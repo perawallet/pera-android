@@ -14,8 +14,10 @@ package com.algorand.android.ui.settings.node
 
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.Node
 import com.algorand.android.modules.firebase.token.FirebaseTokenManager
+import com.algorand.android.node.domain.Node
+import com.algorand.android.node.domain.usecase.GetActiveNode
+import com.algorand.android.node.domain.usecase.SetSelectedNode
 import com.algorand.android.ui.settings.node.ui.model.NodeSettingsPreview
 import com.algorand.android.usecase.NodeSettingsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +30,9 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class NodeSettingsViewModel @Inject constructor(
     private val nodeSettingsUseCase: NodeSettingsUseCase,
-    private val firebaseTokenManager: FirebaseTokenManager
+    private val firebaseTokenManager: FirebaseTokenManager,
+    private val getActiveNode: GetActiveNode,
+    private val setSelectedNode: SetSelectedNode
 ) : BaseViewModel() {
 
     private val _nodeSettingsFlow = MutableStateFlow<NodeSettingsPreview?>(null)
@@ -48,9 +52,8 @@ class NodeSettingsViewModel @Inject constructor(
 
     fun onNodeChanged(activatedNode: Node) {
         viewModelScope.launch(Dispatchers.IO) {
-            val previousSelectedNode = nodeSettingsUseCase.getActiveNodeOrDefault()
-            val updatedNodeList = nodeSettingsUseCase.setSelectedNode(activatedNode)
-            nodeSettingsUseCase.setNodeListToDatabase(updatedNodeList)
+            val previousSelectedNode = getActiveNode()
+            setSelectedNode(activatedNode)
             firebaseTokenManager.refreshFirebasePushToken(previousSelectedNode)
         }
     }

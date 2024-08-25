@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.dapp.bidali.domain.mapper
 
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.modules.dapp.bidali.domain.model.BidaliAsset
 import com.algorand.android.modules.dapp.bidali.domain.model.MainnetBidaliSupportedCurrency
 import com.algorand.android.modules.dapp.bidali.domain.model.TestnetBidaliSupportedCurrency
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class BidaliAssetMapper @Inject constructor() {
 
     fun mapFromOwnedAssetData(
-        ownedAssetDataList: List<OwnedAssetData>,
+        ownedAssetDataList: List<BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData>,
         isMainnet: Boolean
     ): List<BidaliAsset> {
         return if (isMainnet) {

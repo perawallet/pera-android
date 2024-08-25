@@ -19,22 +19,16 @@ import com.algorand.android.models.ArbitraryDataRequestDataInfo
 import com.algorand.android.models.ArbitraryDataRequestInfo
 import com.algorand.android.models.WalletConnectArbitraryData
 import com.algorand.android.models.builder.ArbitraryDataDetailUiBuilder
-import com.algorand.android.network.AlgodInterceptor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ArbitraryDataRequestDetailViewModel @Inject constructor(
-    private val algodInterceptor: AlgodInterceptor,
     private val arbitraryDataDetailUiBuilder: ArbitraryDataDetailUiBuilder
 ) : ViewModel() {
 
-    fun getNetworkSlug(): String? {
-        return algodInterceptor.currentActiveNode?.networkSlug
-    }
-
     fun buildArbitraryDataRequestInfo(arbitraryData: WalletConnectArbitraryData):
-            ArbitraryDataRequestInfo? {
+        ArbitraryDataRequestInfo? {
         return arbitraryDataDetailUiBuilder.buildArbitraryDataRequestInfo(arbitraryData)
     }
 

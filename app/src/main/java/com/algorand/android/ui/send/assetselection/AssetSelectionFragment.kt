@@ -18,10 +18,11 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.core.TransactionBaseFragment
+import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentAssetSelectionBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.nft.ui.model.AssetSelectionOptInPayload
 import com.algorand.android.nft.ui.model.AssetSelectionPreview
 import com.algorand.android.nft.ui.model.RequestOptInConfirmationArgs
 import com.algorand.android.ui.send.assetselection.adapter.SelectSendingAssetAdapter
@@ -30,7 +31,7 @@ import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AssetSelectionFragment : TransactionBaseFragment(R.layout.fragment_asset_selection) {
+class AssetSelectionFragment : BaseFragment(R.layout.fragment_asset_selection) {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.select_the_asset_to_send,
@@ -38,7 +39,8 @@ class AssetSelectionFragment : TransactionBaseFragment(R.layout.fragment_asset_s
         startIconResId = R.drawable.ic_left_arrow
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val binding by viewBinding(FragmentAssetSelectionBinding::bind)
 
@@ -70,9 +72,7 @@ class AssetSelectionFragment : TransactionBaseFragment(R.layout.fragment_asset_s
                 isAssetListLoadingVisible || isReceiverAccountOptInCheckLoadingVisible
             assetList?.let { assetSelectionAdapter.submitList(it) }
             navigateToOptInEvent?.consume()?.run {
-                val receiverPublicKey = assetTransaction.receiverUser?.publicKey ?: return@run
-                val senderPublicKey = assetTransaction.senderAddress
-                navToRequestOptInBottomSheet(this, receiverPublicKey, senderPublicKey)
+                navToRequestOptInBottomSheet(this)
             }
             navigateToAssetTransferAmountFragmentEvent?.consume()?.run {
                 navToAssetTransferAmountFragment(this)
@@ -99,18 +99,14 @@ class AssetSelectionFragment : TransactionBaseFragment(R.layout.fragment_asset_s
         }
     }
 
-    private fun navToRequestOptInBottomSheet(
-        assetId: Long,
-        receiverPublicKey: String,
-        senderPublicKey: String
-    ) {
+    private fun navToRequestOptInBottomSheet(payload: AssetSelectionOptInPayload) {
         nav(
             AssetSelectionFragmentDirections.actionAssetSelectionFragmentToRequestOptInConfirmationNavigation(
                 RequestOptInConfirmationArgs(
-                    senderPublicKey = senderPublicKey,
-                    receiverPublicKey = receiverPublicKey,
-                    assetId = assetId,
-                    assetName = assetSelectionViewModel.getAssetOrCollectibleNameOrNull(assetId)
+                    senderPublicKey = payload.senderAddress,
+                    receiverPublicKey = payload.receiverAddress,
+                    assetId = payload.assetId,
+                    assetName = payload.assetName
                 )
             )
         )

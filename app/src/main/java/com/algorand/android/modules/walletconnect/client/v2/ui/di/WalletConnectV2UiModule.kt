@@ -35,9 +35,12 @@ object WalletConnectV2UiModule {
 
     @Provides
     @Named(WCConnectionLaunchBackDescriptionAnnotatedStringProviderV2Impl.INJECTION_NAME)
-    fun provideWcConnectionLaunchBackDescriptionAnnotatedStringProvider():
-            WCConnectionLaunchBackDescriptionAnnotatedStringProvider {
-        return WCConnectionLaunchBackDescriptionAnnotatedStringProviderV2Impl()
+    fun provideWcConnectionLaunchBackDescriptionAnnotatedStringProvider(
+        getFormattedWCSessionMaxExpirationDateUseCase: GetFormattedWCSessionMaxExpirationDateUseCase
+    ): WCConnectionLaunchBackDescriptionAnnotatedStringProvider {
+        return WCConnectionLaunchBackDescriptionAnnotatedStringProviderV2Impl(
+            getFormattedWCSessionMaxExpirationDateUseCase
+        )
     }
 
     @Provides

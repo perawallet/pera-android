@@ -16,8 +16,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import com.algorand.android.R
+import com.algorand.android.assetdetailui.detail.nftprofile.model.CollectibleTraitItem
 import com.algorand.android.databinding.CustomCollectiblePropertyViewBinding
-import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
 import com.algorand.android.utils.viewbinding.viewBinding
 
 class CollectibleTraitItemView(

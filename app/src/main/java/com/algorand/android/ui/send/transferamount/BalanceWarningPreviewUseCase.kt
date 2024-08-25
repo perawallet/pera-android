@@ -12,18 +12,18 @@
 
 package com.algorand.android.ui.send.transferamount
 
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
-import com.algorand.android.utils.MIN_BALANCE_TO_KEEP_PER_OPTED_IN_APPS
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.core.utils.BalanceConstants.MIN_BALANCE_TO_KEEP_PER_OPTED_IN_APPS
 import com.algorand.android.utils.toAlgoDisplayValue
 import javax.inject.Inject
 
 class BalanceWarningPreviewUseCase @Inject constructor(
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val balanceWarningPreviewMapper: BalanceWarningPreviewMapper
 ) {
-    fun getInitialPreview(accountAddress: String): BalanceWarningPreview {
+    suspend fun getInitialPreview(accountAddress: String): BalanceWarningPreview {
         return balanceWarningPreviewMapper.mapTo(
             formattedAlgoAmount = getFormattedAlgoAmount(accountAddress),
             formattedAlgoPrimaryCurrencyValue = getFormattedAlgoPrimaryCurrencyValue(accountAddress),
@@ -31,11 +31,11 @@ class BalanceWarningPreviewUseCase @Inject constructor(
         )
     }
 
-    private fun getFormattedAlgoAmount(accountAddress: String): String? {
+    private suspend fun getFormattedAlgoAmount(accountAddress: String): String? {
         return getAlgoData(accountAddress)?.formattedAmount
     }
 
-    private fun getFormattedAlgoPrimaryCurrencyValue(accountAddress: String): String? {
+    private suspend fun getFormattedAlgoPrimaryCurrencyValue(accountAddress: String): String? {
         return getAlgoData(accountAddress)?.getSelectedCurrencyParityValue()?.getFormattedCompactValue()
     }
 
@@ -47,7 +47,7 @@ class BalanceWarningPreviewUseCase @Inject constructor(
             .toPlainString()
     }
 
-    private fun getAlgoData(accountAddress: String): BaseAccountAssetData.BaseOwnedAssetData? {
-        return getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(AssetInformation.ALGO_ID, accountAddress)
+    private suspend fun getAlgoData(accountAddress: String): BaseAccountAssetData.BaseOwnedAssetData? {
+        return getAccountBaseOwnedAssetData(accountAddress, ALGO_ASSET_ID)
     }
 }

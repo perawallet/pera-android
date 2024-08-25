@@ -12,15 +12,16 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.models.BaseAccountSelectionListItem
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountItems
 import javax.inject.Inject
 
 class ReceiveAccountSelectionPreviewUseCase @Inject constructor(
-    private val accountSelectionListUseCase: AccountSelectionListUseCase
+    private val getAccountSelectionAccountItems: GetAccountSelectionAccountItems
 ) {
 
     suspend fun getReceiveAccountSelectionPreview(): List<BaseAccountSelectionListItem> {
-        return accountSelectionListUseCase.createAccountSelectionListAccountItems(
+        return getAccountSelectionAccountItems(
             showHoldings = true,
             showFailedAccounts = true
         )

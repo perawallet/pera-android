@@ -19,14 +19,13 @@ import androidx.navigation.NavDirections
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentSwapIntroductionBinding
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.utils.Event
 import com.algorand.android.utils.browser.openVestigeTermsOfServiceUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.setXmlStyledString
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
 class SwapIntroductionFragment : BaseFragment(R.layout.fragment_swap_introduction) {
@@ -61,7 +60,7 @@ class SwapIntroductionFragment : BaseFragment(R.layout.fragment_swap_introductio
 
     private fun initObservers() {
         viewLifecycleOwner.collectLatestOnLifecycle(
-            swapIntroductionViewModel.swapIntroductionPreviewFlow.map { it?.navigationDirectionEvent },
+            swapIntroductionViewModel.swapNavDirectionFlow,
             navToSwapAccountSelectionFragmentEvent
         )
     }

@@ -12,7 +12,7 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
+import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier
 import com.algorand.android.models.WalletConnectTransactionAssetDetail
 import javax.inject.Inject
 

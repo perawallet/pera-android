@@ -17,11 +17,11 @@ import android.view.View
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
-import com.algorand.android.databinding.FragmentLedgerAccountSelectionBinding
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountSelectionListItem
-import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
+import com.algorand.android.databinding.FragmentLedgerAccountSelectionBinding
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccounts
+import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.adapter.LedgerAccountSelectionAdapter
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -33,7 +33,7 @@ abstract class BaseLedgerAccountSelectionFragment : DaggerBaseFragment(R.layout.
 
     abstract val ledgerAccountListAdapter: LedgerAccountSelectionAdapter
 
-    abstract fun onConfirmationClick(selectedAccounts: List<Account>, allAuthAccounts: List<Account>)
+    abstract fun onConfirmationClick(selectedLedgerAccounts: SelectedLedgerAccounts)
 
     abstract fun changeToolbarTitle()
 
@@ -92,10 +92,7 @@ abstract class BaseLedgerAccountSelectionFragment : DaggerBaseFragment(R.layout.
     }
 
     private fun onConfirmationButtonClick() {
-        val selectedAccounts = baseLedgerAccountSelectionViewModel.selectedAccounts
-        val allAuthAccounts = baseLedgerAccountSelectionViewModel.allAuthAccounts
-        if (selectedAccounts.isNotEmpty() && allAuthAccounts.isNotEmpty()) {
-            onConfirmationClick(selectedAccounts, allAuthAccounts)
-        }
+        val selectedAccounts = baseLedgerAccountSelectionViewModel.getSelectedAccounts() ?: return
+        onConfirmationClick(selectedAccounts)
     }
 }

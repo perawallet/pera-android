@@ -12,15 +12,15 @@
 
 package com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.decider
 
-import com.algorand.android.R
-import com.algorand.android.models.AccountDetail
-import com.algorand.android.models.AnnotatedString
+import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.designsystem.R
 import javax.inject.Inject
 
 class RekeyToStandardAccountPreviewDecider @Inject constructor() {
 
-    fun decideDescriptionAnnotatedString(accountDetail: AccountDetail?): AnnotatedString {
-        return if (accountDetail?.accountInformation?.isRekeyed() == true) {
+    fun decideDescriptionAnnotatedString(accountInfo: AccountInformation?): AnnotatedString {
+        return if (accountInfo?.isRekeyed() == true) {
             AnnotatedString(R.string.you_are_about_to_rekey_this)
         } else {
             AnnotatedString(R.string.you_are_about_to_rekey)

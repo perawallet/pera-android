@@ -14,9 +14,9 @@ package com.algorand.android.modules.sorting.accountsorting.ui.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.databinding.ItemSortTypeBinding
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.sorting.accountsorting.domain.model.AccountSortingType
 import com.algorand.android.modules.sorting.accountsorting.domain.model.BaseAccountSortingListItem
 
 class SortTypeViewHolder(
@@ -27,14 +27,14 @@ class SortTypeViewHolder(
     override fun bind(item: BaseAccountSortingListItem) {
         if (item !is BaseAccountSortingListItem.SortTypeListItem) return
         with(binding.sortingTypeRadioButton) {
-            setText(item.accountSortingType.textResId)
+            setText(item.textResId)
             isChecked = item.isChecked
             setOnClickListener { listener.onClick(item.accountSortingType) }
         }
     }
 
     fun interface SortingTypeListener {
-        fun onClick(accountSortingType: AccountSortingType)
+        fun onClick(accountSortingType: AccountSortingTypeIdentifier)
     }
 
     companion object {

@@ -12,45 +12,54 @@
 
 package com.algorand.android.usecase
 
+import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem
+import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.accountinfo.component.domain.usecase.FetchAccountInformation
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
+import com.algorand.android.core.component.assetdata.usecase.GetAccountOwnedAssetsDataFlow
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleAudioData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleUnsupportedData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
+import com.algorand.android.core.component.domain.usecase.GetAccountCollectibleDataFlow
 import com.algorand.android.customviews.accountandassetitem.mapper.AssetItemConfigurationMapper
 import com.algorand.android.mapper.AssetSelectionMapper
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.AssetTransaction
-import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleAudioData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedUnsupportedCollectibleData
-import com.algorand.android.models.BaseSelectAssetItem
-import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.sorting.assetsorting.ui.usecase.AssetItemSortUseCase
 import com.algorand.android.nft.mapper.AssetSelectionPreviewMapper
+import com.algorand.android.nft.ui.model.AssetSelectionOptInPayload
 import com.algorand.android.nft.ui.model.AssetSelectionPreview
+import com.algorand.android.parity.domain.usecase.GetSelectedCurrencyDetailFlow
 import com.algorand.android.utils.Event
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class AssetSelectionUseCase @Inject constructor(
     private val transactionTipsUseCase: TransactionTipsUseCase,
     private val assetSelectionMapper: AssetSelectionMapper,
-    private val parityUseCase: ParityUseCase,
-    private val accountAssetDataUseCase: AccountAssetDataUseCase,
-    private val accountCollectibleDataUseCase: AccountCollectibleDataUseCase,
     private val assetSelectionPreviewMapper: AssetSelectionPreviewMapper,
-    private val accountInformationUseCase: AccountInformationUseCase,
+    private val fetchAccountInformation: FetchAccountInformation,
     private val assetItemConfigurationMapper: AssetItemConfigurationMapper,
-    private val assetItemSortUseCase: AssetItemSortUseCase
+    private val assetItemSortUseCase: AssetItemSortUseCase,
+    private val getAccountOwnedAssetsDataFlow: GetAccountOwnedAssetsDataFlow,
+    private val getAccountCollectibleDataFlow: GetAccountCollectibleDataFlow,
+    private val getSelectedCurrencyDetailFlow: GetSelectedCurrencyDetailFlow,
+    private val getAssetName: GetAssetName,
+    private val getAsset: GetAsset
 ) {
     fun getAssetSelectionListFlow(publicKey: String): Flow<List<BaseSelectAssetItem>> {
         return combine(
-            accountAssetDataUseCase.getAccountOwnedAssetDataFlow(publicKey = publicKey, includeAlgo = true),
-            accountCollectibleDataUseCase.getAccountOwnedCollectibleDataFlow(publicKey),
-            parityUseCase.getSelectedCurrencyDetailCacheFlow()
+            getAccountOwnedAssetsDataFlow(publicKey, includeAlgo = true),
+            getAccountCollectibleDataFlow(publicKey),
+            getSelectedCurrencyDetailFlow()
         ) { accountAssetData, accountCollectibleData, _ ->
             val assetList = mutableListOf<BaseSelectAssetItem>().apply {
                 addAll(createAssetSelectionItems(accountAssetData))
@@ -60,7 +69,7 @@ class AssetSelectionUseCase @Inject constructor(
         }.distinctUntilChanged()
     }
 
-    private fun createAssetSelectionItems(
+    private suspend fun createAssetSelectionItems(
         accountAssetData: List<BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData>
     ): List<BaseSelectAssetItem> {
         return accountAssetData.map { baseAccountAssetData ->
@@ -81,20 +90,32 @@ class AssetSelectionUseCase @Inject constructor(
         }
     }
 
-    private fun createCollectibleSelectionItems(
-        accountCollectibleData: List<BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData>
+    private suspend fun createCollectibleSelectionItems(
+        accountCollectibleData: List<BaseOwnedCollectibleData>
     ): List<BaseSelectAssetItem.BaseSelectCollectibleItem> {
         return accountCollectibleData.mapNotNull { ownedCollectibleData ->
             val isOwnedByTheUser = ownedCollectibleData.isOwnedByTheUser
             if (isOwnedByTheUser) {
                 when (ownedCollectibleData) {
-                    is OwnedCollectibleImageData -> assetSelectionMapper.mapToCollectibleImageItem(ownedCollectibleData)
-                    is OwnedCollectibleVideoData -> assetSelectionMapper.mapToCollectibleVideoItem(ownedCollectibleData)
-                    is OwnedCollectibleMixedData -> assetSelectionMapper.mapToCollectibleMixedItem(ownedCollectibleData)
-                    is OwnedUnsupportedCollectibleData -> {
+                    is OwnedCollectibleImageData -> assetSelectionMapper.mapToCollectibleImageItem(
+                        ownedCollectibleData
+                    )
+
+                    is OwnedCollectibleVideoData -> assetSelectionMapper.mapToCollectibleVideoItem(
+                        ownedCollectibleData
+                    )
+
+                    is OwnedCollectibleMixedData -> assetSelectionMapper.mapToCollectibleMixedItem(
+                        ownedCollectibleData
+                    )
+
+                    is OwnedCollectibleUnsupportedData -> {
                         assetSelectionMapper.mapToCollectibleNotSupportedItem(ownedCollectibleData)
                     }
-                    is OwnedCollectibleAudioData -> assetSelectionMapper.mapToCollectibleAudioItem(ownedCollectibleData)
+
+                    is OwnedCollectibleAudioData -> assetSelectionMapper.mapToCollectibleAudioItem(
+                        ownedCollectibleData
+                    )
                 }
             } else {
                 null
@@ -115,34 +136,60 @@ class AssetSelectionUseCase @Inject constructor(
         previousState: AssetSelectionPreview
     ) = flow<AssetSelectionPreview> {
         emit(previousState.copy(isReceiverAccountOptInCheckLoadingVisible = true))
-        val receiverAddress = previousState.assetTransaction.receiverUser?.publicKey
-        val loadingFinishedStatePreview = previousState.copy(isReceiverAccountOptInCheckLoadingVisible = false)
+        val receiverAddress = previousState.assetTransaction.receiverUser?.address
+        val loadingFinishedStatePreview =
+            previousState.copy(isReceiverAccountOptInCheckLoadingVisible = false)
         receiverAddress?.let {
-            accountInformationUseCase.getAccountInformation(it).collect {
-                it.useSuspended(
-                    onSuccess = { accountInformation ->
-                        val isReceiverOptedInToAsset = assetId == ALGO_ID || accountInformation.hasAsset(assetId)
-                        if (!isReceiverOptedInToAsset) {
-                            emit(loadingFinishedStatePreview.copy(navigateToOptInEvent = Event(assetId)))
-                        } else {
-                            emit(
-                                loadingFinishedStatePreview.copy(
-                                    navigateToAssetTransferAmountFragmentEvent = Event(assetId)
+            fetchAccountInformation(it)
+                .onSuccess { accountInformation ->
+                    val isReceiverOptedInToAsset =
+                        assetId == ALGO_ASSET_ID || accountInformation.hasAsset(assetId)
+                    val newState = if (!isReceiverOptedInToAsset) {
+                        val payload = getOptInPayload(assetId, previousState) ?: return@let
+                        loadingFinishedStatePreview.copy(navigateToOptInEvent = Event(payload))
+
+                    } else {
+                        loadingFinishedStatePreview.copy(
+                            navigateToAssetTransferAmountFragmentEvent = Event(assetId)
+                        )
+                    }
+                    emit(newState)
+                }
+                .onFailure {
+                    val exceptionMessage = it.message
+                    if (exceptionMessage != null) {
+                        emit(
+                            loadingFinishedStatePreview.copy(
+                                globalErrorTextEvent = Event(
+                                    exceptionMessage
                                 )
                             )
-                        }
-                    },
-                    onFailed = { errorDataResource ->
-                        val exceptionMessage = errorDataResource.exception?.message
-                        if (exceptionMessage != null) {
-                            emit(loadingFinishedStatePreview.copy(globalErrorTextEvent = Event(exceptionMessage)))
-                        } else {
-                            // TODO Show default error message
-                            emit(loadingFinishedStatePreview)
-                        }
+                        )
+                    } else {
+                        // TODO Show default error message
+                        emit(loadingFinishedStatePreview)
                     }
+                }
+        } ?: emit(
+            loadingFinishedStatePreview.copy(
+                navigateToAssetTransferAmountFragmentEvent = Event(
+                    assetId
                 )
-            }
-        } ?: emit(loadingFinishedStatePreview.copy(navigateToAssetTransferAmountFragmentEvent = Event(assetId)))
+            )
+        )
+    }
+
+    private suspend fun getOptInPayload(
+        assetId: Long,
+        previousState: AssetSelectionPreview
+    ): AssetSelectionOptInPayload? {
+        val receiverAddress = previousState.assetTransaction.receiverUser?.address ?: return null
+        val assetDetail = getAsset(assetId) ?: return null
+        return AssetSelectionOptInPayload(
+            assetId = assetId,
+            senderAddress = previousState.assetTransaction.senderAddress,
+            receiverAddress = receiverAddress,
+            assetName = getAssetName(assetDetail.fullName).assetName
+        )
     }
 }

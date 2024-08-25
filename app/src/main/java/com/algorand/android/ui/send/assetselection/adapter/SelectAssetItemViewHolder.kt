@@ -15,11 +15,11 @@ package com.algorand.android.ui.send.assetselection.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
 import com.algorand.android.databinding.ItemSendAssetSelectionBinding
-import com.algorand.android.models.BaseSelectAssetItem
+import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 
 class SelectAssetItemViewHolder(
     private val binding: ItemSendAssetSelectionBinding,
@@ -31,8 +31,8 @@ class SelectAssetItemViewHolder(
         binding.assetItemView.apply {
             with(item.assetItemConfiguration) {
                 setAssetStartIconDrawable(assetDrawableProvider = assetIconDrawableProvider)
-                setAssetTitleText(primaryAssetName?.getName(resources))
-                setAssetDescriptionText(secondaryAssetName?.getName(resources))
+                setAssetTitleText(primaryAssetName?.assetName)
+                setAssetDescriptionText(secondaryAssetName?.assetName)
                 setAssetPrimaryValue(primaryValueText)
                 setAssetSecondaryValue(secondaryValueText)
                 setOnClickListener { listener.onAssetItemClick(assetId) }

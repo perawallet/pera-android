@@ -137,7 +137,7 @@ abstract class AlgorandDatabase : RoomDatabase() {
                         )
                     """.trimIndent()
                 )
-                with(database.query("SELECT * FROM WalletConnectSessionEntity") ?: return) {
+                with(database.query("SELECT * FROM WalletConnectSessionEntity")) {
                     while (moveToNext()) {
                         // Get session id
                         val sessionIdIndex = getColumnIndexOrThrow("id")

@@ -15,10 +15,10 @@ package com.algorand.android.modules.swap.transactionsummary.ui.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.algorand.android.models.BaseDiffUtil
+import com.algorand.android.designsystem.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.swap.transactionsummary.ui.model.BaseSwapTransactionSummaryItem
-import com.algorand.android.modules.swap.transactionsummary.ui.model.BaseSwapTransactionSummaryItem.ItemType
+import com.algorand.android.swapui.txnsummary.model.BaseSwapTransactionSummaryItem
+import com.algorand.android.swapui.txnsummary.model.BaseSwapTransactionSummaryItem.ItemType
 
 class SwapTransactionSummaryAdapter(
     private val listener: SwapSummaryAdapterListener

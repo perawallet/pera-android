@@ -14,8 +14,8 @@ package com.algorand.android.modules.swap.assetselection.fromasset.ui
 
 import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionViewModel
-import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapAssetSelectionPreview
-import com.algorand.android.modules.swap.assetselection.fromasset.ui.usecase.SwapFromAssetSelectionPreviewUseCase
+import com.algorand.android.swapui.assetselection.fromasset.usecase.GetSwapFromAssetSelectionPreview
+import com.algorand.android.swapui.assetselection.model.SwapAssetSelectionPreview
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -23,14 +23,14 @@ import kotlinx.coroutines.flow.Flow
 
 @HiltViewModel
 class SwapFromAssetSelectionViewModel @Inject constructor(
-    private val swapFromAssetSelectionPreviewUseCase: SwapFromAssetSelectionPreviewUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val getSwapFromAssetSelectionPreview: GetSwapFromAssetSelectionPreview,
+    savedStateHandle: SavedStateHandle
 ) : BaseSwapAssetSelectionViewModel() {
 
     private val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
 
     override suspend fun onQueryChanged(query: String?): Flow<SwapAssetSelectionPreview> {
-        return swapFromAssetSelectionPreviewUseCase.getSwapAssetSelectionPreview(accountAddress, query)
+        return getSwapFromAssetSelectionPreview(accountAddress, query)
     }
 
     companion object {

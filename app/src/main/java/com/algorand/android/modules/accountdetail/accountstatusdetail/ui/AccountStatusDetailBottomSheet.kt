@@ -19,20 +19,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.model.*
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.databinding.BottomSheetAccountStatusDetailBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AccountIconDrawable
-import com.algorand.android.utils.Event
-import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
-import com.algorand.android.utils.browser.openUrl
+import com.algorand.android.utils.*
+import com.algorand.android.utils.browser.*
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
-import com.algorand.android.utils.getCustomClickableSpan
-import com.algorand.android.utils.getXmlStyledString
-import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -114,17 +109,17 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
 
     private val authAccountDisplayNameCollector: suspend (AccountDisplayName?) -> Unit = { displayName ->
         binding.authAccountItemView.apply {
-            setTitleText(displayName?.getAccountPrimaryDisplayName())
-            setDescriptionText(displayName?.getAccountSecondaryDisplayName(resources))
-            setOnLongClickListener { onAccountAddressCopied(displayName?.getRawAccountAddress().orEmpty()); true }
+            setTitleText(displayName?.primaryDisplayName)
+            setDescriptionText(displayName?.secondaryDisplayName)
+            setOnLongClickListener { onAccountAddressCopied(displayName?.accountAddress.orEmpty()); true }
         }
     }
 
     private val accountDisplayNameCollector: suspend (AccountDisplayName?) -> Unit = { displayName ->
         binding.accountItemView.apply {
-            setTitleText(displayName?.getAccountPrimaryDisplayName())
-            setDescriptionText(displayName?.getAccountSecondaryDisplayName(resources))
-            setOnLongClickListener { onAccountAddressCopied(displayName?.getRawAccountAddress().orEmpty()); true }
+            setTitleText(displayName?.primaryDisplayName)
+            setDescriptionText(displayName?.secondaryDisplayName)
+            setOnLongClickListener { onAccountAddressCopied(displayName?.accountAddress.orEmpty()); true }
         }
     }
 

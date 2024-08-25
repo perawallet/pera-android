@@ -13,31 +13,33 @@
 package com.algorand.android.modules.assets.profile.asaprofile.base
 
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.assetdetailui.detail.asaprofile.model.AsaProfilePreview
+import com.algorand.android.assetdetailui.detail.asaprofile.usecase.GetAsaProfilePreview
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AssetAction
-import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaProfilePreview
-import com.algorand.android.modules.assets.profile.asaprofile.ui.usecase.AsaProfilePreviewUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 abstract class BaseAsaProfileViewModel(
-    private val asaProfilePreviewUseCase: AsaProfilePreviewUseCase
+    private val getAsaProfilePreview: GetAsaProfilePreview
 ) : BaseViewModel() {
 
     abstract val accountAddress: String?
     abstract val assetId: Long
 
     private val _asaProfilePreviewFlow = MutableStateFlow<AsaProfilePreview?>(null)
-    val asaProfilePreviewFlow: StateFlow<AsaProfilePreview?> get() = _asaProfilePreviewFlow
+    val asaProfilePreviewFlow: StateFlow<AsaProfilePreview?> get() = _asaProfilePreviewFlow.asStateFlow()
 
     fun getAssetAction(): AssetAction {
-        return asaProfilePreviewUseCase.createAssetAction(assetId = assetId, accountAddress = accountAddress)
+        TODO()
     }
 
     protected fun initAsaPreviewFlow() {
         viewModelScope.launch {
-            asaProfilePreviewUseCase.getAsaProfilePreview(accountAddress, assetId).collect { asaProfilePreview ->
+            getAsaProfilePreview(accountAddress, assetId).distinctUntilChanged().collect { asaProfilePreview ->
                 _asaProfilePreviewFlow.emit(asaProfilePreview)
             }
         }

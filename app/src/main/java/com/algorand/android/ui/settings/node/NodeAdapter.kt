@@ -14,14 +14,15 @@ package com.algorand.android.ui.settings.node
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.algorand.android.models.Node
+import com.algorand.android.node.domain.Node
+import com.algorand.android.ui.settings.node.ui.model.NodeItem
 import com.algorand.android.utils.extensions.clearAndAddAll
 
 class NodeAdapter(
     private val onDifferentNodeSelected: (Node) -> Unit
 ) : RecyclerView.Adapter<NodeViewHolder>() {
 
-    private val currentList = mutableListOf<Node>()
+    private val currentList = mutableListOf<NodeItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeViewHolder {
         return createNodeViewHolder(parent)
@@ -33,7 +34,7 @@ class NodeAdapter(
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                     val activatedNode = currentList[bindingAdapterPosition]
                     if (!activatedNode.isActive) {
-                        onDifferentNodeSelected(activatedNode)
+                        onDifferentNodeSelected(activatedNode.node)
                     }
                 }
             }
@@ -46,7 +47,7 @@ class NodeAdapter(
 
     override fun getItemCount(): Int = currentList.size
 
-    fun setNewList(list: List<Node>) {
+    fun setNewList(list: List<NodeItem>) {
         currentList.clearAndAddAll(list)
         notifyDataSetChanged()
     }

@@ -12,18 +12,14 @@
 
 package com.algorand.android.modules.accountdetail.accountstatusdetail.ui
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.model.AccountStatusDetailPreview
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.usecase.AccountStatusDetailPreviewUseCase
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class AccountStatusDetailViewModel @Inject constructor(
@@ -34,7 +30,7 @@ class AccountStatusDetailViewModel @Inject constructor(
     private val navArgs = AccountStatusDetailBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
     val accountAddress = navArgs.accountAddress
     val authAccountAddress: String
-        get() = _accountStatusDetailPreviewFlow.value?.authAccountDisplayName?.getRawAccountAddress().orEmpty()
+        get() = _accountStatusDetailPreviewFlow.value?.authAccountDisplayName?.accountAddress.orEmpty()
 
     private val _accountStatusDetailPreviewFlow = MutableStateFlow<AccountStatusDetailPreview?>(null)
     val accountStatusDetailPreviewFlow: StateFlow<AccountStatusDetailPreview?> get() = _accountStatusDetailPreviewFlow

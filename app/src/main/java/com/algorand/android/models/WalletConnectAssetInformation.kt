@@ -14,8 +14,7 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import com.algorand.android.assetsearch.domain.model.VerificationTier
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
+import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier
 import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
 
@@ -28,27 +27,4 @@ data class WalletConnectAssetInformation(
     val amount: BigInteger? = null,
     val formattedSelectedCurrencyValue: String? = null,
     val verificationTier: VerificationTier?
-) : Parcelable {
-    val isAlgorand: Boolean
-        get() = assetId == ALGO_ID
-
-    companion object {
-        fun create(
-            assetInformation: AssetInformation?,
-            formattedSelectedCurrencyValue: String? = null
-        ): WalletConnectAssetInformation? {
-            with(assetInformation) {
-                if (this == null) return null
-                return WalletConnectAssetInformation(
-                    assetId = assetId,
-                    shortName = shortName,
-                    fullName = fullName,
-                    decimal = decimals,
-                    amount = amount,
-                    formattedSelectedCurrencyValue = formattedSelectedCurrencyValue,
-                    verificationTier = verificationTier
-                )
-            }
-        }
-    }
-}
+) : Parcelable

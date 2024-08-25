@@ -20,8 +20,8 @@ import android.graphics.drawable.shapes.OvalShape
 import androidx.annotation.DimenRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import com.algorand.android.models.AccountIconResource
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AccountIconResource
 
 class AccountIconDrawable(
     private val backgroundColor: Int,
@@ -75,7 +75,11 @@ class AccountIconDrawable(
             )
         }
 
-        fun create(context: Context, accountIconResource: AccountIconResource, size: Int): AccountIconDrawable? {
+        fun create(
+            context: Context,
+            accountIconResource: AccountIconResource,
+            size: Int
+        ): AccountIconDrawable? {
             return AccountIconDrawable(
                 backgroundColor = ContextCompat.getColor(context, accountIconResource.backgroundColorResId),
                 iconTint = ContextCompat.getColor(context, accountIconResource.iconTintResId),

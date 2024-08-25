@@ -15,18 +15,24 @@ package com.algorand.android.ui.lockpreference
 import android.content.SharedPreferences
 import com.algorand.android.MainActivity
 import com.algorand.android.MainNavigationDirections.Companion.actionToLockPreferenceNavigation
-import com.algorand.android.core.AccountManager
+import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.preference.DEFAULT_LOCK_PREFERENCE_COUNT
 import com.algorand.android.utils.preference.DONT_SHOW_AGAIN_COUNT
 import com.algorand.android.utils.preference.getLockPreferenceCount
 import com.algorand.android.utils.preference.isPasswordChosen
 import com.algorand.android.utils.preference.setLockPreferenceCount
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 class AutoLockSuggestionManager @Inject constructor(
     private val sharedPref: SharedPreferences,
-    private val accountManager: AccountManager
+    private val getLocalAccounts: GetLocalAccounts
 ) {
+
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private var isStarted = false
     private var lockPreferenceCount = DEFAULT_LOCK_PREFERENCE_COUNT
@@ -36,11 +42,14 @@ class AutoLockSuggestionManager @Inject constructor(
     }
 
     private fun initializeStartCount() {
-        if (sharedPref.isPasswordChosen().not() && accountManager.isThereAnyRegisteredAccount()) {
-            lockPreferenceCount = sharedPref.getLockPreferenceCount()
-            if (lockPreferenceCount != DONT_SHOW_AGAIN_COUNT && lockPreferenceCount < SUGGESTION_TRIGGER_COUNT) {
-                lockPreferenceCount++
-                sharedPref.setLockPreferenceCount(lockPreferenceCount)
+        coroutineScope.launchIO {
+            val isThereAnyRegisteredAccount = getLocalAccounts().isNotEmpty()
+            if (sharedPref.isPasswordChosen().not() && isThereAnyRegisteredAccount) {
+                lockPreferenceCount = sharedPref.getLockPreferenceCount()
+                if (lockPreferenceCount != DONT_SHOW_AGAIN_COUNT && lockPreferenceCount < SUGGESTION_TRIGGER_COUNT) {
+                    lockPreferenceCount++
+                    sharedPref.setLockPreferenceCount(lockPreferenceCount)
+                }
             }
         }
     }

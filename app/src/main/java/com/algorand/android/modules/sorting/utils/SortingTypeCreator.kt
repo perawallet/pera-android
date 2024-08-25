@@ -12,18 +12,18 @@
 
 package com.algorand.android.modules.sorting.utils
 
-import com.algorand.android.modules.sorting.accountsorting.domain.model.AccountSortingType
+import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
 import javax.inject.Inject
 
 class SortingTypeCreator @Inject constructor() {
 
-    fun createForAccountSorting(): List<AccountSortingType> {
-        return mutableListOf<AccountSortingType>().apply {
-            add(AccountSortingType.AlphabeticallyAscending)
-            add(AccountSortingType.AlphabeticallyDescending)
-            add(AccountSortingType.NumericalAscendingSort)
-            add(AccountSortingType.NumericalDescendingSort)
-            add(AccountSortingType.ManuallySort)
+    fun createForAccountSorting(): List<AccountSortingTypeIdentifier> {
+        return mutableListOf<AccountSortingTypeIdentifier>().apply {
+            add(AccountSortingTypeIdentifier.ALPHABETICALLY_ASCENDING)
+            add(AccountSortingTypeIdentifier.ALPHABETICALLY_DESCENDING)
+            add(AccountSortingTypeIdentifier.NUMERIC_ASCENDING)
+            add(AccountSortingTypeIdentifier.NUMERIC_DESCENDING)
+            add(AccountSortingTypeIdentifier.MANUAL)
         }
     }
 }

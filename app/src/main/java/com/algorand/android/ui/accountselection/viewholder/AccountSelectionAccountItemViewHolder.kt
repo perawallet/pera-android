@@ -16,9 +16,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.databinding.ItemAccountSimpleBinding
-import com.algorand.android.models.BaseAccountSelectionListItem
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.utils.AccountIconDrawable
 
 class AccountSelectionAccountItemViewHolder(
@@ -26,14 +26,12 @@ class AccountSelectionAccountItemViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: BaseAccountSelectionListItem.BaseAccountItem.AccountItem) {
-        with(binding) {
-            with(item.accountListItem.itemConfiguration) {
-                setAccountStartIconDrawable(accountIconDrawablePreview)
-                setAccountTitleText(accountDisplayName?.getAccountPrimaryDisplayName())
-                setAccountDescriptionText(accountDisplayName?.getAccountSecondaryDisplayName(root.resources))
-                setAccountPrimaryValueText(primaryValueText)
-                setAccountSecondaryValueText(secondaryValueText)
-            }
+        with(item.accountListItem.itemConfiguration) {
+            setAccountStartIconDrawable(accountIconDrawablePreview)
+            setAccountTitleText(accountDisplayName?.primaryDisplayName)
+            setAccountDescriptionText(accountDisplayName?.secondaryDisplayName)
+            setAccountPrimaryValueText(primaryValueText)
+            setAccountSecondaryValueText(secondaryValueText)
         }
     }
 

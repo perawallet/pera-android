@@ -12,29 +12,19 @@
 
 package com.algorand.android.deviceregistration.domain.usecase
 
-import com.algorand.android.utils.DataResource
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import java.net.HttpURLConnection
+import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
 import javax.inject.Inject
 
 class DeviceRegistrationUseCase @Inject constructor(
-    private val deviceIdUseCase: DeviceIdUseCase,
-    private val registerDeviceIdUseCase: RegisterDeviceIdUseCase,
-    private val updatePushTokenUseCase: UpdatePushTokenUseCase
+    private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
+    private val updatePushTokenUseCase: UpdatePushTokenUseCase,
+    private val registerDeviceIdUseCase: RegisterDeviceIdUseCase
 ) {
 
-    fun registerDevice(token: String): Flow<DataResource<String>> = flow {
-        when (val deviceId = deviceIdUseCase.getSelectedNodeDeviceId()) {
-            null -> registerDeviceIdUseCase.registerDevice(token).collect { emit(it) }
-            else -> updatePushTokenUseCase.updatePushToken(deviceId, token).collect {
-                if (it is DataResource.Error.Api && it.code == HttpURLConnection.HTTP_NOT_FOUND) {
-                    registerDeviceIdUseCase.registerDevice(token).collect { emit(it) }
-                } else {
-                    emit(it)
-                }
-            }
+    suspend fun registerDevice(token: String): Result<String> {
+        return when (val deviceId = getSelectedNodeDeviceId()) {
+            null -> registerDeviceIdUseCase(token)
+            else -> updatePushTokenUseCase(deviceId, token)
         }
     }
 }

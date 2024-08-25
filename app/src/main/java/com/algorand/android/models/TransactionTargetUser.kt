@@ -14,13 +14,14 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
+import com.algorand.android.accountcore.ui.model.AccountIconResource
+import com.algorand.android.contacts.component.domain.model.Contact
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class TransactionTargetUser(
-    val contact: User? = null,
+    val contact: Contact? = null,
     val publicKey: String,
     val displayName: String,
-    val accountName: String? = null,
     val accountIconResource: AccountIconResource? = null
 ) : Parcelable

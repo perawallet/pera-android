@@ -12,46 +12,37 @@
 
 package com.algorand.android.nft.domain.usecase
 
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountDetail
-import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
-import com.algorand.android.modules.collectibles.filter.domain.usecase.ClearCollectibleFiltersPreferencesUseCase
-import com.algorand.android.modules.collectibles.filter.domain.usecase.ShouldDisplayOptedInNFTPreferenceUseCase
-import com.algorand.android.modules.collectibles.filter.domain.usecase.ShouldDisplayWatchAccountNFTsPreferenceUseCase
+import com.algorand.android.accountinfo.component.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.android.appcache.usecase.IsAssetCacheStatusAtLeastEmpty
+import com.algorand.android.core.component.collectible.domain.usecase.GetAllAccountsAllCollectibleDataFlow
+import com.algorand.android.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountsDetailFlow
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.modules.collectibles.filter.domain.usecase.*
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
-import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.AddOnListingViewTypeChangeListenerUseCase
-import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.GetNFTListingViewTypePreferenceUseCase
-import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.RemoveOnListingViewTypeChangeListenerUseCase
-import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.SaveNFTListingViewTypePreferenceUseCase
+import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.*
 import com.algorand.android.modules.sorting.nftsorting.ui.usecase.CollectibleItemSortUseCase
 import com.algorand.android.nft.mapper.CollectibleListingItemMapper
-import com.algorand.android.nft.ui.model.BaseCollectibleListData
-import com.algorand.android.nft.ui.model.BaseCollectibleListItem
-import com.algorand.android.nft.ui.model.CollectiblesListingPreview
-import com.algorand.android.nft.utils.CollectibleUtils
+import com.algorand.android.nft.ui.model.*
 import com.algorand.android.repository.FailedAssetRepository
-import com.algorand.android.usecase.AccountCollectibleDataUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.AssetCacheManagerUseCase
-import com.algorand.android.utils.CacheResult
+import com.algorand.android.usecase.*
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.*
 
 @SuppressWarnings("LongParameterList")
 class CollectiblesListingPreviewUseCase @Inject constructor(
     private val collectibleListingItemMapper: CollectibleListingItemMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val failedAssetRepository: FailedAssetRepository,
-    private val assetCacheManagerUseCase: AssetCacheManagerUseCase,
-    private val accountCollectibleDataUseCase: AccountCollectibleDataUseCase,
+    private val isAssetCacheStatusAtLeastEmpty: IsAssetCacheStatusAtLeastEmpty,
     private val collectibleItemSortUseCase: CollectibleItemSortUseCase,
     private val shouldDisplayWatchAccountNFTsPreferenceUseCase: ShouldDisplayWatchAccountNFTsPreferenceUseCase,
     private val getNFTListingViewTypePreferenceUseCase: GetNFTListingViewTypePreferenceUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase,
+    private val getAccountsDetailFlow: GetAccountsDetailFlow,
+    private val getAllAccountsAllCollectibleDataFlow: GetAllAccountsAllCollectibleDataFlow,
+    isAssetOwnedByAccount: IsAssetOwnedByAccount,
     clearCollectibleFiltersPreferencesUseCase: ClearCollectibleFiltersPreferencesUseCase,
-    collectibleUtils: CollectibleUtils,
     shouldDisplayOptedInNFTPreferenceUseCase: ShouldDisplayOptedInNFTPreferenceUseCase,
     addOnListingViewTypeChangeListenerUseCase: AddOnListingViewTypeChangeListenerUseCase,
     removeOnListingViewTypeChangeListenerUseCase: RemoveOnListingViewTypeChangeListenerUseCase,
@@ -62,19 +53,19 @@ class CollectiblesListingPreviewUseCase @Inject constructor(
     addOnListingViewTypeChangeListenerUseCase,
     removeOnListingViewTypeChangeListenerUseCase,
     shouldDisplayOptedInNFTPreferenceUseCase,
-    collectibleUtils,
-    clearCollectibleFiltersPreferencesUseCase
+    clearCollectibleFiltersPreferencesUseCase,
+    isAssetOwnedByAccount
 ) {
 
     @SuppressWarnings("LongMethod")
     fun getCollectiblesListingPreviewFlow(searchKeyword: String): Flow<CollectiblesListingPreview> {
         return combine(
-            accountDetailUseCase.getAccountDetailCacheFlow(),
+            getAccountsDetailFlow(),
             failedAssetRepository.getFailedAssetCacheFlow(),
-            accountCollectibleDataUseCase.getAllAccountsAllCollectibleDataFlow()
+            getAllAccountsAllCollectibleDataFlow()
         ) { accountDetailList, failedAssets, accountsAllCollectibles ->
-            val hasAnyAccountAuthority = hasAnyAccountAuthority(accountDetailList.values)
-            if (assetCacheManagerUseCase.isCacheStatusAtLeastEmpty()) {
+            val hasAnyAccountAuthority = accountDetailList.any { it.accountType?.canSignTransaction() == true }
+            if (isAssetCacheStatusAtLeastEmpty()) {
                 val nftListingType = getNFTListingViewTypePreferenceUseCase()
                 val collectibleListData = prepareCollectiblesListItems(
                     searchKeyword = searchKeyword,
@@ -125,13 +116,13 @@ class CollectiblesListingPreviewUseCase @Inject constructor(
         var totalCollectibleCount = 0
         val baseCollectibleItemList = mutableListOf<BaseCollectibleListItem>().apply {
             allAccountAllCollectibles.filter { (accountDetail, nftsData) ->
-                filterWatchAccountsNFTsIfNeed(accountDetail).also { isNotFiltered ->
+                filterWatchAccountsNFTsIfNeed(accountDetail.accountType).also { isNotFiltered ->
                     if (!isNotFiltered) totalCollectibleCount += nftsData.count()
                 }
             }.forEach { (accountDetail, nftsData) ->
-                val isOwnedByWatchAccount = accountDetail.account.type == Account.Type.WATCH
+                val isOwnedByWatchAccount = accountDetail.accountType == AccountType.NoAuth
                 nftsData.filter { nftData ->
-                    filterOptedInNFTIfNeed(accountDetail, nftData).also { isNotFiltered ->
+                    filterOptedInNFTIfNeed(accountDetail.address, nftData.id).also { isNotFiltered ->
                         if (!isNotFiltered) totalCollectibleCount++
                     }
                 }.forEach { collectibleData ->
@@ -139,7 +130,7 @@ class CollectiblesListingPreviewUseCase @Inject constructor(
                     if (filterNFTBaseOnSearch(searchKeyword, collectibleData)) return@forEach
                     val collectibleItem = createCollectibleListItem(
                         accountAssetData = collectibleData,
-                        optedInAccountAddress = accountDetail.account.address,
+                        optedInAccountAddress = accountDetail.address,
                         nftListingType = nftListingType,
                         isOwnedByWatchAccount = isOwnedByWatchAccount
                     ) ?: return@forEach
@@ -154,13 +145,6 @@ class CollectiblesListingPreviewUseCase @Inject constructor(
             displayedCollectibleCount = displayedCollectibleCount,
             filteredOutCollectibleCount = totalCollectibleCount
         )
-    }
-
-    private fun hasAnyAccountAuthority(accountList: Collection<CacheResult<AccountDetail>?>): Boolean {
-        return accountList.any {
-            val publicKey = it?.data?.account?.address ?: return false
-            accountStateHelperUseCase.hasAccountAuthority(publicKey)
-        }
     }
 
     private fun createLoadingPreview(
@@ -187,8 +171,8 @@ class CollectiblesListingPreviewUseCase @Inject constructor(
         )
     }
 
-    private suspend fun filterWatchAccountsNFTsIfNeed(accountDetail: AccountDetail): Boolean {
-        return shouldDisplayWatchAccountNFTsPreferenceUseCase() || accountDetail.account.type != Account.Type.WATCH
+    private suspend fun filterWatchAccountsNFTsIfNeed(accountType: AccountType?): Boolean {
+        return shouldDisplayWatchAccountNFTsPreferenceUseCase() || accountType != AccountType.NoAuth
     }
 
     companion object {

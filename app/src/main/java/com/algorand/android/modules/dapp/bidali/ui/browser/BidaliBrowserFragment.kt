@@ -18,17 +18,17 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentBidaliBrowserBinding
 import com.algorand.android.discover.common.ui.model.PeraWebViewClient
 import com.algorand.android.discover.common.ui.model.WebViewError
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.dapp.bidali.domain.BidaliWebInterface
 import com.algorand.android.modules.dapp.bidali.ui.browser.model.BidaliBrowserPreview
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
 import com.algorand.android.ui.send.confirmation.ui.TransactionConfirmationFragment.Companion.TRANSACTION_CONFIRMATION_KEY
-import com.algorand.android.utils.Event
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.extensions.hide
@@ -72,7 +72,7 @@ class BidaliBrowserFragment :
                 loadUrl(preview)
             }
             pageStartedEvent?.consume()?.run {
-                handleBidaliJavascript()
+                basePeraWebViewViewModel.generateBidaliJavascript()
             }
             webViewGoBackEvent?.consume()?.run {
                 with(binding) {
@@ -89,13 +89,7 @@ class BidaliBrowserFragment :
                 }
             }
             onPaymentRequestEvent?.consume()?.run {
-                // TODO handle transaction not created successfully
-                val transaction = basePeraWebViewViewModel.getTransactionDataFromPaymentRequest(this)
-                transaction?.let {
-                    nav(
-                        BidaliBrowserFragmentDirections.actionBidaliBrowserFragmentToSendAlgoNavigation(it),
-                    )
-                }
+                nav(BidaliBrowserFragmentDirections.actionBidaliBrowserFragmentToSendAlgoNavigation(this))
             }
             openUrlRequestEvent?.consume()?.run {
                 binding.webView.loadUrl(this.url)
@@ -177,6 +171,12 @@ class BidaliBrowserFragment :
         }
     }
 
+    private val bidalyJavaScriptFlowCollector: suspend (Event<String>?) -> Unit = {
+        it?.consume()?.let { js ->
+            binding.webView.evaluateJavascript(js, null)
+        }
+    }
+
     private fun initObservers() {
         viewLifecycleOwner.collectLatestOnLifecycle(
             basePeraWebViewViewModel.bidaliBrowserPreviewFlow,
@@ -185,6 +185,10 @@ class BidaliBrowserFragment :
         viewLifecycleOwner.collectOnLifecycle(
             basePeraWebViewViewModel.bidaliBrowserPreviewFlow.map { it.pageUrlChangedEvent },
             bidaliBrowserControlsCollector,
+        )
+        viewLifecycleOwner.collectOnLifecycle(
+            basePeraWebViewViewModel.bidaliJavaScriptFlow,
+            bidalyJavaScriptFlowCollector,
         )
     }
 
@@ -227,10 +231,6 @@ class BidaliBrowserFragment :
             bottomDappNavigation.previousNavButton.isEnabled = webView.canGoBack()
             bottomDappNavigation.nextNavButton.isEnabled = webView.canGoForward()
         }
-    }
-
-    private fun handleBidaliJavascript() {
-        binding.webView.evaluateJavascript(basePeraWebViewViewModel.generateBidaliJavascript(), null)
     }
 
     private fun sendTransactionSuccessfulResultToWebView() {

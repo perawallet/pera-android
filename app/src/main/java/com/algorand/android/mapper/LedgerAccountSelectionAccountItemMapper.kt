@@ -14,38 +14,28 @@
 package com.algorand.android.mapper
 
 import androidx.annotation.DrawableRes
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountInformation
-import com.algorand.android.models.AccountSelectionListItem
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountCacheManager
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.toShortenedAddress
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import javax.inject.Inject
 
 class LedgerAccountSelectionAccountItemMapper @Inject constructor() {
 
     fun mapTo(
-        accountInformation: AccountInformation,
-        accountDetail: Account.Detail,
-        accountCacheManager: AccountCacheManager,
+        address: String,
         accountDisplayName: AccountDisplayName,
         accountIconDrawablePreview: AccountIconDrawablePreview,
-        @DrawableRes selectorDrawableRes: Int
+        @DrawableRes selectorDrawableRes: Int,
+        selectedLedgerAccount: SelectedLedgerAccount
     ): AccountSelectionListItem.AccountItem {
-        with(accountInformation) {
-            return AccountSelectionListItem.AccountItem(
-                assetInformationList = getAssetInformationList(accountCacheManager),
-                account = Account.create(
-                    publicKey = address,
-                    detail = accountDetail,
-                    accountName = address.toShortenedAddress()
-                ),
-                accountInformation = this,
-                selectorDrawableRes = selectorDrawableRes,
-                accountDisplayName = accountDisplayName,
-                accountIconDrawablePreview = accountIconDrawablePreview
-            )
-        }
+        return AccountSelectionListItem.AccountItem(
+            selectorDrawableRes = selectorDrawableRes,
+            accountDisplayName = accountDisplayName,
+            accountIconDrawablePreview = accountIconDrawablePreview,
+            isSelected = false,
+            address = address,
+            selectedLedgerAccount = selectedLedgerAccount
+        )
     }
 }

@@ -13,37 +13,42 @@
 
 package com.algorand.android.ui.send.transferpreview
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.AssetTransferPreview
-import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
-import com.algorand.android.usecase.AssetTransferPreviewUseCase
-import com.algorand.android.utils.DataResource
-import com.algorand.android.utils.Event
+import com.algorand.android.transaction.domain.creation.CreateSendTransaction
+import com.algorand.android.transaction.domain.creation.model.CreateTransactionResult
+import com.algorand.android.transaction.domain.creation.send.model.CreateSendTransactionPayload
+import com.algorand.android.transaction.domain.model.SignedTransaction
+import com.algorand.android.transaction.domain.usecase.SendSignedTransaction
+import com.algorand.android.transactionui.sendasset.domain.GetAssetTransferPreview
+import com.algorand.android.transactionui.sendasset.model.AssetTransferPreview
+import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
 import com.algorand.android.utils.Resource
-import com.algorand.android.utils.Resource.Error.GlobalWarning
+import com.algorand.android.utils.Resource.Error
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AssetTransferPreviewViewModel @Inject constructor(
-    private val assetTransferPreviewUserCase: AssetTransferPreviewUseCase,
+    private val getAssetTransferPreview: GetAssetTransferPreview,
+    private val sendSignedTransaction: SendSignedTransaction,
+    private val createSendTransaction: CreateSendTransaction,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private var sendAlgoJob: Job? = null
-    private val transactionData =
-        savedStateHandle.getOrThrow<TransactionData.Send>(TRANSACTION_DATA_KEY)
+
+    private val transactionPayload = savedStateHandle.getOrThrow<SendTransactionPayload>(TRANSACTION_DATA_KEY)
 
     private val _sendAlgoResponseFlow = MutableStateFlow<Event<Resource<String>>?>(null)
     val sendAlgoResponseFlow: StateFlow<Event<Resource<String>>?> = _sendAlgoResponseFlow
@@ -57,31 +62,51 @@ class AssetTransferPreviewViewModel @Inject constructor(
 
     private fun getAssetTransferPreview() {
         viewModelScope.launch {
-            val signedTransactionPreview = assetTransferPreviewUserCase.getAssetTransferPreview(transactionData)
+            val signedTransactionPreview = getAssetTransferPreview(transactionPayload)
             _assetTransferPreviewFlow.emit(signedTransactionPreview)
         }
     }
 
-    fun sendSignedTransaction(signedTransactionDetail: SignedTransactionDetail.Send) {
+    fun createAssetTransferTransaction() {
+        viewModelScope.launch {
+            val transactionResult = createSendTransaction(
+                CreateSendTransactionPayload(
+                    senderAddress = transactionPayload.senderAddress,
+                    receiverAddress = transactionPayload.targetUser.getReceiverAddress(),
+                    assetId = transactionPayload.assetId,
+                    amount = transactionPayload.amount,
+                    note = _assetTransferPreviewFlow.value?.note ?: transactionPayload.note?.note,
+                    xnote = transactionPayload.note?.xnote
+                )
+            ) as? CreateTransactionResult.TransactionCreated
+            val transaction = transactionResult?.transaction ?: return@launch
+            _assetTransferPreviewFlow.update {
+                it?.copy(
+                    onSendAssetTransaction = Event(transaction)
+                )
+            }
+        }
+    }
+
+    fun sendSignedTxn(signedTransaction: SignedTransaction) {
         if (sendAlgoJob?.isActive == true) {
             return
         }
         sendAlgoJob = viewModelScope.launch {
-            assetTransferPreviewUserCase.sendSignedTransaction(signedTransactionDetail).collectLatest {
-                when (it) {
-                    is DataResource.Loading -> _sendAlgoResponseFlow.emit(Event(Resource.Loading))
-                    is DataResource.Error -> {
-                        if (it.exception != null) {
-                            _sendAlgoResponseFlow.emit(Event(Resource.Error.Api(it.exception!!)))
-                        } else {
-                            _sendAlgoResponseFlow.emit(
-                                Event(GlobalWarning(R.string.error, AnnotatedString(R.string.an_error_occured)))
-                            )
-                        }
+            _sendAlgoResponseFlow.emit(Event(Resource.Loading))
+            sendSignedTransaction(signedTransaction, waitForConfirmation = false).use(
+                onSuccess = {
+                    _sendAlgoResponseFlow.emit(Event(Resource.Success(it.value)))
+                },
+                onFailed = { exception, _ ->
+                    if (exception.message != null) {
+                        _sendAlgoResponseFlow.emit(Event(Error.Api(exception)))
+                    } else {
+                        val error = Error.GlobalWarning(R.string.error, AnnotatedString(R.string.an_error_occured))
+                        _sendAlgoResponseFlow.emit(Event(error))
                     }
-                    is DataResource.Success -> _sendAlgoResponseFlow.emit(Event(Resource.Success(it.data)))
                 }
-            }
+            )
         }
     }
 
@@ -94,21 +119,7 @@ class AssetTransferPreviewViewModel @Inject constructor(
         }
     }
 
-    fun getTransactionData(): TransactionData.Send {
-        return if (_assetTransferPreviewFlow.value?.isNoteEditable == true) {
-            transactionData.copy(
-                note = _assetTransferPreviewFlow.value?.note,
-                xnote = null
-            )
-        } else {
-            transactionData.copy(
-                note = null,
-                xnote = _assetTransferPreviewFlow.value?.note
-            )
-        }
-    }
-
     companion object {
-        private const val TRANSACTION_DATA_KEY = "transactionData"
+        private const val TRANSACTION_DATA_KEY = "sendTransactionPayload"
     }
 }

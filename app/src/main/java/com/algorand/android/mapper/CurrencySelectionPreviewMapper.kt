@@ -12,15 +12,13 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.decider.CurrencySelectionScreenStateViewTypeDecider
+import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ui.CurrencySelectionPreview
 import com.algorand.android.ui.settings.selection.CurrencyListItem
 import com.algorand.android.utils.DataResource
 import javax.inject.Inject
 
-class CurrencySelectionPreviewMapper @Inject constructor(
-    private val currencySelectionScreenStateViewTypeDecider: CurrencySelectionScreenStateViewTypeDecider
-) {
+class CurrencySelectionPreviewMapper @Inject constructor() {
 
     fun mapToCurrencySelectionPreview(
         dataResource: DataResource<List<CurrencyListItem>>,
@@ -30,9 +28,17 @@ class CurrencySelectionPreviewMapper @Inject constructor(
         return CurrencySelectionPreview(
             isLoading = isLoading,
             isScreenStateViewVisible = isError,
-            screenStateViewType = currencySelectionScreenStateViewTypeDecider.decideScreenStateViewType(dataResource),
+            screenStateViewType = getScreenStateViewType(dataResource),
             isCurrencyListVisible = isError.not() && isLoading.not(),
             currencyList = (dataResource as? DataResource.Success)?.data
         )
+    }
+
+    private fun getScreenStateViewType(dataResource: DataResource<List<CurrencyListItem>>): ScreenState? {
+        return when (dataResource) {
+            is DataResource.Error.Api -> ScreenState.ConnectionError()
+            is DataResource.Error -> ScreenState.DefaultError()
+            else -> null
+        }
     }
 }

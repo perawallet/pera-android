@@ -13,30 +13,21 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.core.AccountManager
 import com.algorand.android.core.BaseUseCase
-import com.algorand.android.modules.asb.backedupaccountssource.domain.usecase.RemoveBackedUpAccountUseCase
-import com.algorand.android.repository.AccountRepository
-import com.algorand.android.repository.NotificationRepository
-import com.algorand.android.utils.AccountCacheManager
+import com.algorand.android.core.component.domain.usecase.DeleteAccount
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
+import com.algorand.android.notification.domain.usecase.DeleteNotificationFilterByAddress
 import javax.inject.Inject
 
 class AccountDeletionUseCase @Inject constructor(
     private val walletConnectManager: WalletConnectManager,
-    private val accountRepository: AccountRepository,
-    private val accountManager: AccountManager,
-    private val accountCacheManager: AccountCacheManager,
-    private val notificationRepository: NotificationRepository,
-    private val removeBackedUpAccountUseCase: RemoveBackedUpAccountUseCase
+    private val deleteNotificationFilterByAddress: DeleteNotificationFilterByAddress,
+    private val deleteAccount: DeleteAccount
 ) : BaseUseCase() {
 
     suspend fun removeAccount(publicKey: String) {
         walletConnectManager.killAllSessionsByPublicKey(publicKey)
-        accountManager.removeAccount(publicKey)
-        notificationRepository.deleteFilterFromDatabase(publicKey)
-        accountCacheManager.removeCacheData(publicKey)
-        accountRepository.removeCachedAccount(publicKey)
-        removeBackedUpAccountUseCase.invoke(publicKey)
+        deleteNotificationFilterByAddress(publicKey)
+        deleteAccount(publicKey)
     }
 }

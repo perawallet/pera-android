@@ -14,7 +14,8 @@ package com.algorand.android.discover.detail.ui.usecase
 
 import android.content.SharedPreferences
 import androidx.navigation.NavDirections
-import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
+import com.algorand.android.assetutils.getSafeAssetIdForResponse
+import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.discover.common.ui.model.OpenSystemBrowserRequest
 import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.discover.detail.domain.model.DetailActionRequest
@@ -26,9 +27,10 @@ import com.algorand.android.discover.detail.ui.model.DiscoverDetailPreview
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.discover.utils.getSendDeviceId
 import com.algorand.android.discover.utils.isValidDiscoverURL
-import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForResponse
-import com.algorand.android.modules.swap.utils.DiscoverSwapNavigationDestinationHelper
 import com.algorand.android.modules.tracking.discover.detail.DiscoverDetailEventTracker
+import com.algorand.android.swap.common.model.DiscoverNavigationDestination.AccountSelection
+import com.algorand.android.swap.common.model.DiscoverNavigationDestination.Introduction
+import com.algorand.android.swap.common.usecase.GetDiscoverSwapNavigationDestination
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.fromJson
 import com.algorand.android.utils.preference.getSavedThemePreference
@@ -38,9 +40,9 @@ import javax.inject.Inject
 class DiscoverDetailPreviewUseCase @Inject constructor(
     private val buySellActionRequestMapper: BuySellActionRequestMapper,
     private val sharedPreferences: SharedPreferences,
-    private val discoverSwapNavigationDestinationHelper: DiscoverSwapNavigationDestinationHelper,
+    private val getDiscoverSwapNavigationDestination: GetDiscoverSwapNavigationDestination,
     private val discoverDetailEventTracker: DiscoverDetailEventTracker,
-    private val deviceIdUseCase: DeviceIdUseCase,
+    private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
     private val gson: Gson
 ) {
 
@@ -105,22 +107,22 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
                 swapNavDirection = DiscoverDetailFragmentDirections.actionDiscoverDetailFragmentToMeldNavigation()
             }
             BuySellActionRequest.Destination.SWAP -> {
-                discoverSwapNavigationDestinationHelper.getSwapNavigationDestination(
-                    onNavToIntroduction = {
-                        swapNavDirection = DiscoverDetailFragmentDirections
-                            .actionDiscoverDetailFragmentToSwapIntroductionNavigation(
-                                fromAssetId = buySellActionRequest.assetInId ?: -1L,
-                                toAssetId = buySellActionRequest.assetOutId ?: -1L
-                            )
-                    },
-                    onNavToAccountSelection = {
+                when (getDiscoverSwapNavigationDestination()) {
+                    AccountSelection -> {
                         swapNavDirection = DiscoverDetailFragmentDirections
                             .actionDiscoverDetailFragmentToSwapAccountSelectionNavigation(
                                 fromAssetId = buySellActionRequest.assetInId ?: -1L,
                                 toAssetId = buySellActionRequest.assetOutId ?: -1L
                             )
                     }
-                )
+                    Introduction -> {
+                        swapNavDirection = DiscoverDetailFragmentDirections
+                            .actionDiscoverDetailFragmentToSwapIntroductionNavigation(
+                                fromAssetId = buySellActionRequest.assetInId ?: -1L,
+                                toAssetId = buySellActionRequest.assetOutId ?: -1L
+                            )
+                    }
+                }
             }
             BuySellActionRequest.Destination.ONRAMP -> {}
             else -> {}
@@ -131,7 +133,7 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
     }
 
     suspend fun getSendDeviceIdJSFunctionOrNull(callingUrl: String): String? {
-        val deviceId = deviceIdUseCase.getSelectedNodeDeviceId()
+        val deviceId = getSelectedNodeDeviceId()
         return if (deviceId != null && isValidDiscoverURL(callingUrl)) {
             getSendDeviceId(deviceId, gson)
         } else {

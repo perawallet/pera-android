@@ -18,9 +18,9 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.databinding.ItemAccountErrorSimpleBinding
-import com.algorand.android.models.BaseAccountSelectionListItem
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.utils.AccountIconDrawable
 
 class AccountSelectionAccountErrorItemViewHolder(
@@ -28,13 +28,11 @@ class AccountSelectionAccountErrorItemViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: BaseAccountSelectionListItem.BaseAccountItem.AccountErrorItem) {
-        with(binding) {
-            with(item.accountListItem.itemConfiguration) {
-                setAccountStartIconDrawable(accountIconDrawablePreview)
-                setAccountTitleText(accountDisplayName?.getAccountPrimaryDisplayName())
-                setAccountDescriptionText(accountDisplayName?.getAccountSecondaryDisplayName(root.resources))
-                setAccountEndIconDrawable()
-            }
+        with(item.accountListItem.itemConfiguration) {
+            setAccountStartIconDrawable(accountIconDrawablePreview)
+            setAccountTitleText(accountDisplayName?.primaryDisplayName)
+            setAccountDescriptionText(accountDisplayName?.secondaryDisplayName)
+            setAccountEndIconDrawable()
         }
     }
 

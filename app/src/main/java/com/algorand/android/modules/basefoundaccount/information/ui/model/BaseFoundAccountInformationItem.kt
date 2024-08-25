@@ -12,12 +12,12 @@
 
 package com.algorand.android.modules.basefoundaccount.information.ui.model
 
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
-import com.algorand.android.models.RecyclerListItem
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.designsystem.RecyclerListItem
+import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
 
 sealed class BaseFoundAccountInformationItem : RecyclerListItem {
 
@@ -57,7 +57,7 @@ sealed class BaseFoundAccountInformationItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountItem &&
-                accountDisplayName.getRawAccountAddress() == other.accountDisplayName.getRawAccountAddress()
+                accountDisplayName.accountAddress == other.accountDisplayName.accountAddress
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

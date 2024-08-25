@@ -24,8 +24,10 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.WalletConnectArbitraryData
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectSession
-import com.algorand.android.models.WalletConnectSignResult
 import com.algorand.android.models.builder.WalletConnectArbitraryDataListBuilder
+import com.algorand.android.module_new.walletconnect.SignWalletConnectArbitraryDataManager
+import com.algorand.android.module_new.walletconnect.SignWalletConnectArbitraryDataResult
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.ui.wcarbitrarydatarequest.ui.model.WalletConnectArbitraryDataRequestPreview
@@ -35,9 +37,9 @@ import com.algorand.android.utils.Resource
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.preference.getFirstWalletConnectRequestBottomSheetShown
 import com.algorand.android.utils.preference.setFirstWalletConnectRequestBottomSheetShown
-import com.algorand.android.utils.walletconnect.WalletConnectArbitraryDataSignManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -47,17 +49,17 @@ class WalletConnectArbitraryDataRequestViewModel @Inject constructor(
     private val walletConnectManager: WalletConnectManager,
     private val errorProvider: WalletConnectErrorProvider,
     private val sharedPreferences: SharedPreferences,
-    private val walletConnectArbitraryDataSignManager: WalletConnectArbitraryDataSignManager,
     private val arbitraryDataListBuilder: WalletConnectArbitraryDataListBuilder,
     private val walletConnectArbitraryDataRequestPreviewUseCase: WalletConnectArbitraryDataRequestPreviewUseCase,
+    private val signWalletConnectArbitraryDataManager: SignWalletConnectArbitraryDataManager,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
     val requestResultLiveData: LiveData<Event<Resource<AnnotatedString>>>
         get() = walletConnectManager.requestResultLiveData
 
-    val signResultLiveData: LiveData<WalletConnectSignResult>
-        get() = walletConnectArbitraryDataSignManager.signResultLiveData
+    val signResultFlow: Flow<com.algorand.android.foundation.Event<SignWalletConnectArbitraryDataResult>?>
+        get() = signWalletConnectArbitraryDataManager.signWalletConnectTransactionResultFlow
 
     val arbitraryData: WalletConnectArbitraryDataRequest?
         get() = walletConnectManager.wcRequest as? WalletConnectArbitraryDataRequest
@@ -72,7 +74,7 @@ class WalletConnectArbitraryDataRequestViewModel @Inject constructor(
         get() = _walletConnectArbitraryDataRequestPreviewFlow
 
     fun setupWalletConnectSignManager(lifecycle: Lifecycle) {
-        walletConnectArbitraryDataSignManager.setup(lifecycle)
+        signWalletConnectArbitraryDataManager.setup(lifecycle)
     }
 
     fun rejectRequest() {
@@ -95,24 +97,23 @@ class WalletConnectArbitraryDataRequestViewModel @Inject constructor(
 
     fun signArbitraryDataRequest(arbitraryData: WalletConnectArbitraryDataRequest) {
         viewModelScope.launch {
-            walletConnectArbitraryDataSignManager.signArbitraryData(arbitraryData)
+            signWalletConnectArbitraryDataManager.sign(arbitraryData)
         }
     }
 
-    fun signArbitraryData(arbitraryData: WalletConnectArbitraryDataRequest) {
+    fun processWalletConnectSignResult(result: SignWalletConnectArbitraryDataResult.TransactionsSigned) {
+        val txnSigned = SignWalletConnectTransactionResult.TransactionsSigned(
+            sessionIdentifier = result.sessionIdentifier,
+            requestId = result.requestId,
+            transactions = result.transactions
+        )
         viewModelScope.launch {
-            walletConnectArbitraryDataSignManager.signArbitraryData(arbitraryData)
-        }
-    }
-
-    fun processWalletConnectSignResult(result: WalletConnectSignResult) {
-        viewModelScope.launch {
-            walletConnectManager.processWalletConnectSignResult(result)
+            walletConnectManager.processWalletConnectSignResult(txnSigned)
         }
     }
 
     fun stopAllResources() {
-        walletConnectArbitraryDataSignManager.manualStopAllResources()
+        signWalletConnectArbitraryDataManager.stopAllResources()
     }
 
     fun isBluetoothNeededToSignTxns(arbitraryData: WalletConnectArbitraryDataRequest): Boolean {

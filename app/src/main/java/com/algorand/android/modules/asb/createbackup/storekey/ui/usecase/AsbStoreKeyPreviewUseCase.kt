@@ -13,58 +13,63 @@
 package com.algorand.android.modules.asb.createbackup.storekey.ui.usecase
 
 import com.algorand.android.R
+import com.algorand.android.account.localaccount.domain.usecase.GetSecretKey
+import com.algorand.android.asb.component.backupprotocol.model.BackUpAccount
+import com.algorand.android.asb.component.backupprotocol.model.BackUpPayload
+import com.algorand.android.asb.component.backupprotocol.usecase.CreateAsbBackUpFilePayload
+import com.algorand.android.asb.component.domain.usecase.CreateAsbMnemonic
+import com.algorand.android.asb.component.domain.usecase.SetAccountsAsbBackedUp
+import com.algorand.android.asb.component.mnemonics.domain.usecase.GetAsbBackUpMnemonics
+import com.algorand.android.asb.component.mnemonics.domain.usecase.SetAsbBackUpMnemonics
+import com.algorand.android.custominfo.component.domain.usecase.GetCustomInfoOrNull
+import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.modules.algosdk.backuputils.domain.usecase.CreateBackupCipherTextUseCase
-import com.algorand.android.modules.algosdk.backuputils.domain.usecase.CreateBackupMnemonicUseCase
-import com.algorand.android.modules.asb.backedupaccountssource.domain.usecase.AddBackedUpAccountsUseCase
 import com.algorand.android.modules.asb.createbackup.storekey.ui.mapper.AsbStoreKeyPreviewMapper
 import com.algorand.android.modules.asb.createbackup.storekey.ui.model.AsbStoreKeyPreview
-import com.algorand.android.modules.asb.mnemonics.domain.usecase.GetBackupMnemonicsUseCase
-import com.algorand.android.modules.asb.mnemonics.domain.usecase.StoreBackupMnemonicsUseCase
-import com.algorand.android.modules.backupprotocol.domain.usecase.CreateBackupProtocolContentUseCase
-import com.algorand.android.modules.backupprotocol.domain.usecase.CreateBackupProtocolPayloadUseCase
-import com.algorand.android.modules.peraserializer.PeraSerializer
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.browser.ASB_SUPPORT_URL
-import com.algorand.android.utils.extensions.encodeBase64
 import com.algorand.android.utils.joinMnemonics
 import com.algorand.android.utils.splitMnemonic
 import javax.inject.Inject
 
 class AsbStoreKeyPreviewUseCase @Inject constructor(
-    private val getBackupMnemonicsUseCase: GetBackupMnemonicsUseCase,
-    private val createBackupMnemonicUseCase: CreateBackupMnemonicUseCase,
+    private val getAsbBackUpMnemonics: GetAsbBackUpMnemonics,
+    private val createAsbMnemonic: CreateAsbMnemonic,
     private val asbStoreKeyPreviewMapper: AsbStoreKeyPreviewMapper,
-    private val createBackupCipherTextUseCase: CreateBackupCipherTextUseCase,
-    private val createBackupProtocolContentUseCase: CreateBackupProtocolContentUseCase,
-    private val addBackedUpAccountsUseCase: AddBackedUpAccountsUseCase,
-    private val storeBackupMnemonicsUseCase: StoreBackupMnemonicsUseCase,
-    private val createBackupProtocolPayloadUseCase: CreateBackupProtocolPayloadUseCase,
-    private val peraSerializer: PeraSerializer
+    private val setAccountsAsbBackedUp: SetAccountsAsbBackedUp,
+    private val setAsbBackUpMnemonics: SetAsbBackUpMnemonics,
+    private val createAsbBackUpFilePayload: CreateAsbBackUpFilePayload,
+    private val getCustomInfoOrNull: GetCustomInfoOrNull,
+    private val getSecretKey: GetSecretKey,
+    private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId
 ) {
 
     suspend fun saveBackedUpAccountToLocalStorage(accountList: Array<String>) {
-        addBackedUpAccountsUseCase.invoke(accountList.toSet())
+        setAccountsAsbBackedUp(accountList.toSet())
     }
 
     suspend fun updatePreviewAfterCreatingBackupFile(
         preview: AsbStoreKeyPreview?,
         accountList: List<String>
     ): AsbStoreKeyPreview? {
-        val backupProtocolPayload = createBackupProtocolPayloadUseCase.invoke(accountList)
-        val serializedPayload = peraSerializer.toJson(backupProtocolPayload)
-        val cipherText = createBackupCipherTextUseCase.invoke(
-            payload = serializedPayload,
-            mnemonics = preview?.mnemonics.orEmpty()
-        ) ?: return updatePreviewAfterFailure(preview)
+        val accounts = accountList.mapNotNull { address ->
+            BackUpAccount(
+                address = address,
+                name = getCustomInfoOrNull(address)?.customName.orEmpty(),
+                secretKey = getSecretKey(address) ?: return@mapNotNull null
+            )
+        }
 
-        val backupProtocolContent = createBackupProtocolContentUseCase.invoke(cipherText = cipherText)
-        val serializedContent = peraSerializer.toJson(payload = backupProtocolContent)
-        val encodedContent = serializedContent.encodeBase64().orEmpty()
+        val backUpPayload = BackUpPayload(
+            nodeDeviceId = getSelectedNodeDeviceId() ?: return null,
+            accounts = accounts,
+            mnemonics = preview?.mnemonics.orEmpty()
+        )
+        val encodedContent = createAsbBackUpFilePayload(backUpPayload) ?: return updatePreviewAfterFailure(preview)
         return preview?.copy(navToBackupReadyEvent = Event(encodedContent))
     }
 
-    suspend fun updatePreviewWithNewCreatedKey(): AsbStoreKeyPreview? {
+    suspend fun updatePreviewWithNewCreatedKey(): AsbStoreKeyPreview {
         return createPreviewForFirstBackup()
     }
 
@@ -93,8 +98,8 @@ class AsbStoreKeyPreviewUseCase @Inject constructor(
         return preview?.copy(onKeyCopiedEvent = Event(mnemonics))
     }
 
-    suspend fun getAsbStoreKeyPreview(): AsbStoreKeyPreview? {
-        val backupMnemonics = getBackupMnemonicsUseCase.invoke()
+    suspend fun getAsbStoreKeyPreview(): AsbStoreKeyPreview {
+        val backupMnemonics = getAsbBackUpMnemonics()
         return if (backupMnemonics == null) {
             createPreviewForFirstBackup()
         } else {
@@ -102,29 +107,25 @@ class AsbStoreKeyPreviewUseCase @Inject constructor(
         }
     }
 
-    private suspend fun createPreviewForFirstBackup(): AsbStoreKeyPreview? {
-        var asbStoreKeyPreview: AsbStoreKeyPreview? = null
-        createBackupMnemonicUseCase.invoke().useSuspended(
-            onSuccess = { mnemonics ->
-                storeBackupMnemonicsUseCase.invoke(mnemonics)
-                asbStoreKeyPreview = asbStoreKeyPreviewMapper.mapToAsbStoreKeyPreview(
-                    titleTextResId = R.string.store_your_n_12_word_key,
-                    isCreateNewKeyButtonVisible = false,
-                    descriptionAnnotatedString = AnnotatedString(stringResId = R.string.your_12_word_key_is),
-                    mnemonics = mnemonics.splitMnemonic()
-                )
-            },
-            onFailed = {
-                asbStoreKeyPreview = asbStoreKeyPreviewMapper.mapToAsbStoreKeyPreview(
-                    titleTextResId = R.string.store_your_n_12_word_key,
-                    isCreateNewKeyButtonVisible = false,
-                    descriptionAnnotatedString = AnnotatedString(stringResId = R.string.your_12_word_key_is),
-                    mnemonics = emptyList(),
-                    navToFailureScreenEvent = Event(Unit)
-                )
-            }
-        )
-        return asbStoreKeyPreview
+    private suspend fun createPreviewForFirstBackup(): AsbStoreKeyPreview {
+        val asbMnemonic = createAsbMnemonic()
+        return if (!asbMnemonic.isNullOrBlank()) {
+            setAsbBackUpMnemonics(asbMnemonic)
+            asbStoreKeyPreviewMapper.mapToAsbStoreKeyPreview(
+                titleTextResId = R.string.store_your_n_12_word_key,
+                isCreateNewKeyButtonVisible = false,
+                descriptionAnnotatedString = AnnotatedString(stringResId = R.string.your_12_word_key_is),
+                mnemonics = asbMnemonic.splitMnemonic()
+            )
+        } else {
+            asbStoreKeyPreviewMapper.mapToAsbStoreKeyPreview(
+                titleTextResId = R.string.store_your_n_12_word_key,
+                isCreateNewKeyButtonVisible = false,
+                descriptionAnnotatedString = AnnotatedString(stringResId = R.string.your_12_word_key_is),
+                mnemonics = emptyList(),
+                navToFailureScreenEvent = Event(Unit)
+            )
+        }
     }
 
     private fun createPreviewForSecondBackup(backupMnemonics: String): AsbStoreKeyPreview {

@@ -12,15 +12,14 @@
 
 package com.algorand.android.banner.ui.mapper
 
-import com.algorand.android.banner.domain.model.BaseBanner
-import com.algorand.android.banner.domain.model.BaseBanner.GovernanceBanner
+import com.algorand.android.banner.domain.model.Banner
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import javax.inject.Inject
 
 class BaseBannerItemMapper @Inject constructor() {
 
     fun mapToGovernanceBannerItem(
-        governanceBanner: GovernanceBanner,
+        governanceBanner: Banner.Governance,
         isButtonVisible: Boolean,
         isTitleVisible: Boolean,
         isDescriptionVisible: Boolean
@@ -38,7 +37,7 @@ class BaseBannerItemMapper @Inject constructor() {
     }
 
     fun mapToGenericBannerItem(
-        genericBanner: BaseBanner.GenericBanner,
+        genericBanner: Banner.Generic,
         isButtonVisible: Boolean,
         isTitleVisible: Boolean,
         isDescriptionVisible: Boolean

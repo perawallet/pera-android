@@ -12,9 +12,7 @@
 
 package com.algorand.android.modules.assets.remove.ui.decider
 
-import com.algorand.android.models.AssetStatus
-import com.algorand.android.models.AssetStatus.PENDING_FOR_ADDITION
-import com.algorand.android.models.AssetStatus.PENDING_FOR_REMOVAL
+import com.algorand.android.accountinfo.component.domain.model.AssetStatus
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import javax.inject.Inject
 
@@ -22,7 +20,7 @@ class RemoveAssetItemActionButtonStateDecider @Inject constructor() {
 
     fun decideRemoveAssetItemActionButtonState(assetHoldingStatus: AssetStatus?): AccountAssetItemButtonState {
         return when (assetHoldingStatus) {
-            PENDING_FOR_REMOVAL, PENDING_FOR_ADDITION -> AccountAssetItemButtonState.PROGRESS
+            AssetStatus.PENDING_FOR_REMOVAL, AssetStatus.PENDING_FOR_ADDITION -> AccountAssetItemButtonState.PROGRESS
             else -> AccountAssetItemButtonState.REMOVAL
         }
     }

@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model
 
-import com.algorand.android.models.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 
 data class RekeyLedgerAccountSelectionPreview(
     val isLoading: Boolean,

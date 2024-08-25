@@ -16,13 +16,13 @@ import androidx.navigation.NavDirections
 import com.algorand.android.modules.dapp.bidali.getBidaliUrl
 import com.algorand.android.modules.dapp.bidali.ui.intro.BidaliIntroFragmentDirections
 import com.algorand.android.modules.dapp.bidali.ui.intro.model.BidaliIntroPreview
-import com.algorand.android.usecase.IsOnMainnetUseCase
+import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.isStagingApp
 import javax.inject.Inject
 
 class BidaliIntroPreviewUseCase @Inject constructor(
-    private val isOnMainnetUseCase: IsOnMainnetUseCase
+    private val isSelectedNodeMainnet: IsSelectedNodeMainnet
 ) {
 
     fun getInitialStatePreview() = BidaliIntroPreview(
@@ -51,7 +51,7 @@ class BidaliIntroPreviewUseCase @Inject constructor(
         return if (accountAddress == null) {
             BidaliIntroFragmentDirections.actionBidaliIntroFragmentToBidaliAccountSelectionFragment()
         } else {
-            val isMainnet = isOnMainnetUseCase.invoke()
+            val isMainnet = isSelectedNodeMainnet()
             val url = getBidaliUrl(isMainnet = isMainnet)
             BidaliIntroFragmentDirections.actionBidaliIntroFragmentToBidaliBrowserFragment(
                 url = url,
@@ -61,6 +61,6 @@ class BidaliIntroPreviewUseCase @Inject constructor(
     }
 
     private fun isBidaliBrowserAllowed(): Boolean {
-        return isStagingApp() || isOnMainnetUseCase.invoke()
+        return isStagingApp() || isSelectedNodeMainnet()
     }
 }

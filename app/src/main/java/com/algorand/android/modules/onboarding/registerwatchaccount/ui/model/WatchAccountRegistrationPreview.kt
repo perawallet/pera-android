@@ -13,7 +13,7 @@
 package com.algorand.android.modules.onboarding.registerwatchaccount.ui.model
 
 import androidx.annotation.StringRes
-import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.*
 import com.algorand.android.utils.Event
 
 data class WatchAccountRegistrationPreview(
@@ -22,5 +22,5 @@ data class WatchAccountRegistrationPreview(
     @StringRes val errorMessageResId: Int?,
     val showAccountAlreadyExistErrorEvent: Event<Unit>?,
     val showAccountIsNotValidErrorEvent: Event<Unit>?,
-    val navToNameRegistrationEvent: Event<AccountCreation>?
+    val navToNameRegistrationEvent: Event<CreateAccount>?
 )

@@ -12,32 +12,29 @@
 
 package com.algorand.android.modules.asb.importbackup.accountselection.utils
 
-import com.algorand.android.core.AccountManager
-import com.algorand.android.models.Account
+import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.modules.algosdk.cryptoutil.domain.usecase.IsAccountAddressMatchWithSecretKeyUseCase
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.mapper.AsbAccountImportResultMapper
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult
-import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
-import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
-import com.algorand.android.utils.extensions.decodeBase64ToByteArray
+import com.algorand.android.modules.asb.importbackup.enterkey.ui.model.RestoredAccount
 import com.algorand.android.utils.isValidAddress
 import javax.inject.Inject
 
 class AsbAccountImportParser @Inject constructor(
-    private val accountManager: AccountManager,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
     private val asbAccountImportResultMapper: AsbAccountImportResultMapper,
     private val isAccountAddressMatchWithSecretKeyUseCase: IsAccountAddressMatchWithSecretKeyUseCase
 ) {
 
-    fun parseAsbImportedAccounts(
-        accountImportMap: List<Pair<String, BackupProtocolElement>>,
-        unsupportedAccounts: List<BackupProtocolElement>?
+    suspend fun parseAsbImportedAccounts(
+        accountImportMap: List<Pair<String, RestoredAccount>>,
+        unsupportedAccounts: List<RestoredAccount>?
     ): AsbAccountImportResult {
         val importedAccountList = mutableListOf<String>()
         val existingAccountList = mutableListOf<String>()
-        val unsupportedAccountList = unsupportedAccounts?.mapNotNull { it.address }.orEmpty()
+        val unsupportedAccountList = unsupportedAccounts?.map { it.address }.orEmpty()
         accountImportMap.forEach { (accountAddress, _) ->
-            val isAccountAlreadyExist = accountManager.isThereAnyAccountWithPublicKey(accountAddress)
+            val isAccountAlreadyExist = isThereAnyAccountWithAddress(accountAddress)
             if (isAccountAlreadyExist) {
                 existingAccountList.add(accountAddress)
                 return@forEach
@@ -52,35 +49,19 @@ class AsbAccountImportParser @Inject constructor(
         )
     }
 
-    suspend fun isAccountSupported(backupProtocolElement: BackupProtocolElement): Boolean {
-        val accountPrivateKey = backupProtocolElement.privateKey?.decodeBase64ToByteArray()
-        if (accountPrivateKey == null || accountPrivateKey.isEmpty()) {
+    suspend fun isAccountSupported(restoredAccount: RestoredAccount): Boolean {
+        if (restoredAccount.secretKey.isEmpty()) {
             return false
         }
 
         val isSecretKeyValid = isAccountAddressMatchWithSecretKeyUseCase.invoke(
-            accountAddress = backupProtocolElement.address.orEmpty(),
-            secretKey = accountPrivateKey
+            accountAddress = restoredAccount.address,
+            secretKey = restoredAccount.secretKey
         )
         if (!isSecretKeyValid) {
             return false
         }
 
-        val isAccountAddressValid = backupProtocolElement.address.isValidAddress()
-        if (!isAccountAddressValid) {
-            return false
-        }
-
-        val isAccountTypeEligible = isAccountTypeEligible(backupProtocolElement.accountType)
-        if (!isAccountTypeEligible) {
-            return false
-        }
-
-        return true
-    }
-
-    private fun isAccountTypeEligible(accountTypeName: String?): Boolean {
-        val accountType = Account.Type.valueOf(accountTypeName ?: return false)
-        return AlgorandSecureBackupUtils.eligibleAccountTypes.contains(accountType)
+        return restoredAccount.address.isValidAddress()
     }
 }

@@ -14,32 +14,34 @@ package com.algorand.android.modules.collectibles.detail.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.assetdetailui.nftdetail.model.CollectibleDetailPreview
+import com.algorand.android.assetdetailui.nftdetail.usecase.GetCollectibleDetailPreview
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailViewModel
-import com.algorand.android.modules.collectibles.detail.ui.model.NFTDetailPreview
-import com.algorand.android.modules.collectibles.detail.ui.usecase.CollectibleDetailPreviewUseCase
-import com.algorand.android.usecase.NetworkSlugUseCase
-import com.algorand.android.utils.AssetName
+import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CollectibleDetailViewModel @Inject constructor(
-    private val collectibleDetailPreviewUseCase: CollectibleDetailPreviewUseCase,
-    networkSlugUseCase: NetworkSlugUseCase,
+    private val getCollectibleDetailPreview: GetCollectibleDetailPreview,
+    getActiveNodeNetworkSlug: GetActiveNodeNetworkSlug,
     savedStateHandle: SavedStateHandle
-) : BaseCollectibleDetailViewModel(networkSlugUseCase) {
+) : BaseCollectibleDetailViewModel(getActiveNodeNetworkSlug) {
 
     val nftId = savedStateHandle.getOrThrow<Long>(COLLECTIBLE_ASSET_ID_KEY)
     val accountAddress = savedStateHandle.getOrThrow<String>(PUBLIC_KEY_KEY)
 
-    private val _nftDetailPreviewFlow = MutableStateFlow<NFTDetailPreview?>(null)
-    val nftDetailPreviewFlow: StateFlow<NFTDetailPreview?> get() = _nftDetailPreviewFlow
+    private val _nftDetailPreviewFlow = MutableStateFlow<CollectibleDetailPreview?>(null)
+    val nftDetailPreviewFlow: StateFlow<CollectibleDetailPreview?> get() = _nftDetailPreviewFlow
 
     init {
         getCollectibleDetailPreview()
@@ -55,23 +57,32 @@ class CollectibleDetailViewModel @Inject constructor(
 
     fun onSendNFTClick() {
         with(_nftDetailPreviewFlow) {
-            update { collectibleDetailPreviewUseCase.getSendEventPreviewAccordingToNFTType(value) }
+            update { it?.copy(collectibleSendEvent = Event(Unit)) }
         }
     }
 
     fun onOptOutClick() {
-        with(_nftDetailPreviewFlow) {
-            update { collectibleDetailPreviewUseCase.getOptOutEventPreview(value, nftId, accountAddress) }
-        }
+        TODO()
+//        viewModelScope.launch {
+//            with(_nftDetailPreviewFlow) {
+//                update { collectibleDetailPreviewUseCase.getOptOutEventPreview(value, nftId, accountAddress) }
+//            }
+//        }
+//        val assetInformation = getAssetInformationOfGivenNFT(
+//            nftId = nftId,
+//            accountAddress = accountAddress
+//        ) ?: return null
+//        return preview?.copy(optOutNFTEvent = Event(assetInformation))
     }
 
     private fun getCollectibleDetailPreview() {
         viewModelScope.launch(Dispatchers.IO) {
-            val preview = collectibleDetailPreviewUseCase.getCollectibleDetailPreview(
+            getCollectibleDetailPreview(
                 nftId = nftId,
                 accountAddress = accountAddress
-            )
-            _nftDetailPreviewFlow.emit(preview)
+            ).collectLatest {
+                _nftDetailPreviewFlow.emit(it)
+            }
         }
     }
 

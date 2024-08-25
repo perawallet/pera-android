@@ -18,11 +18,11 @@ import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
+import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.customviews.AlgorandInputLayout
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OperationState
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.models.User
 import com.algorand.android.ui.contacts.BaseAddEditContactFragment
 import com.algorand.android.ui.contacts.addcontact.AddContactQrScannerFragment.Companion.ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY
 import com.algorand.android.utils.Event
@@ -52,7 +52,7 @@ class AddContactFragment : BaseAddEditContactFragment() {
 
     private val args: AddContactFragmentArgs by navArgs()
 
-    private val contractSearchingCollector: suspend (Event<OperationState<User?>>?) -> Unit = {
+    private val contractSearchingCollector: suspend (Event<OperationState<Contact?>>?) -> Unit = {
         it?.consume()?.let { operationState ->
             when (operationState) {
                 is OperationState.Read -> {
@@ -69,7 +69,7 @@ class AddContactFragment : BaseAddEditContactFragment() {
         }
     }
 
-    private val contactOperationCollector: suspend (Event<OperationState<User>>?) -> Unit = {
+    private val contactOperationCollector: suspend (Event<OperationState<Contact>>?) -> Unit = {
         it?.consume()?.let { operationState ->
             when (operationState) {
                 is OperationState.Create -> {
@@ -148,7 +148,7 @@ class AddContactFragment : BaseAddEditContactFragment() {
     }
 
     private fun onContactSave() {
-        val contact = User(contactName, contactAddress, contactImageUri)
+        val contact = Contact(contactAddress, contactName, contactImageUri)
         addContactViewModel.insertContactToDatabase(contact)
     }
 
@@ -165,7 +165,7 @@ class AddContactFragment : BaseAddEditContactFragment() {
         addContactViewModel.checkIsContactExist(contactAddress)
     }
 
-    private fun showContactIsAlreadyExistDialog(contact: User) {
+    private fun showContactIsAlreadyExistDialog(contact: Contact) {
         context?.alertDialog {
             setMessage(getString(R.string.this_address_is_already_in_your_contract, contact.name))
             setPositiveButton(getString(R.string.overwrite_existing_contract)) { dialog, _ ->

@@ -22,7 +22,7 @@ import com.algorand.android.modules.basefoundaccount.selection.ui.adapter.FoundA
 import com.algorand.android.modules.basefoundaccount.selection.ui.model.BaseFoundAccountSelectionItem
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 abstract class BaseFoundAccountSelectionFragment : BaseFragment(R.layout.fragment_base_found_account_selection) {
 
@@ -66,11 +66,11 @@ abstract class BaseFoundAccountSelectionFragment : BaseFragment(R.layout.fragmen
     open fun initObservers() {
         with(baseFoundAccountSelectionViewModel.foundAccountSelectionFieldsFlow) {
             collectLatestOnLifecycle(
-                flow = map { it.foundAccountSelectionListItem },
+                flow = mapNotNull { it?.foundAccountSelectionListItem },
                 collection = foundAccountSelectionListItemCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.isLoading },
+                flow = mapNotNull { it?.isLoading },
                 collection = loadingVisibilityCollector
             )
         }

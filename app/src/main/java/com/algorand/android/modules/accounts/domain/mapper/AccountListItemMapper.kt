@@ -12,26 +12,24 @@
 
 package com.algorand.android.modules.accounts.domain.mapper
 
-import com.algorand.android.models.BaseAccountAndAssetListItem
+import com.algorand.android.accountcore.ui.accountsorting.domain.model.AccountAndAssetListItem
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
-import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.BaseAccountItem.AccountErrorItem
-import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.BaseAccountItem.AccountItem
 import javax.inject.Inject
 
 class AccountListItemMapper @Inject constructor() {
 
     fun mapToErrorAccountItem(
-        accountListItem: BaseAccountAndAssetListItem.AccountListItem,
+        accountListItem: AccountAndAssetListItem.AccountListItem,
         canCopyable: Boolean
-    ): AccountErrorItem {
-        return AccountErrorItem(accountListItem, canCopyable)
+    ): BaseAccountListItem.BaseAccountItem.AccountErrorItem {
+        return BaseAccountListItem.BaseAccountItem.AccountErrorItem(accountListItem, canCopyable)
     }
 
     fun mapToAccountItem(
-        accountListItem: BaseAccountAndAssetListItem.AccountListItem,
+        accountListItem: AccountAndAssetListItem.AccountListItem,
         canCopyable: Boolean
-    ): AccountItem {
-        return AccountItem(accountListItem, canCopyable)
+    ): BaseAccountListItem.BaseAccountItem.AccountItem {
+        return BaseAccountListItem.BaseAccountItem.AccountItem(accountListItem, canCopyable)
     }
 
     fun mapToQuickActionsItem(isSwapButtonSelected: Boolean): BaseAccountListItem.QuickActionsItem {

@@ -12,9 +12,7 @@
 
 package com.algorand.android.ui.settings.node.ui.model
 
-import com.algorand.android.models.Node
-
 data class NodeSettingsPreview(
     val isLoading: Boolean,
-    val nodeList: List<Node>
+    val nodeList: List<NodeItem>
 )

@@ -13,31 +13,28 @@
 package com.algorand.android.modules.asb.importbackup.enterkey.ui.usecase
 
 import com.algorand.android.R
+import com.algorand.android.asb.component.backupprotocol.model.BackUpAccount
+import com.algorand.android.asb.component.restorebackup.domain.model.RestoreBackUpPayloadResult.*
+import com.algorand.android.asb.component.restorebackup.domain.usecase.RestoreBackUpPayload
+import com.algorand.android.asb.component.utils.AsbBackUpConstants
 import com.algorand.android.customviews.passphraseinput.usecase.PassphraseInputGroupUseCase
 import com.algorand.android.customviews.passphraseinput.util.PassphraseInputConfigurationUtil
-import com.algorand.android.modules.algosdk.backuputils.domain.usecase.CreateBackupCipherKeyUseCase
 import com.algorand.android.modules.asb.importbackup.enterkey.ui.mapper.AsbKeyEnterPreviewMapper
-import com.algorand.android.modules.asb.importbackup.enterkey.ui.model.AsbKeyEnterPreview
-import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
-import com.algorand.android.modules.backupprotocol.domain.usecase.RestoreEncryptedBackupProtocolPayloadUseCase
-import com.algorand.android.modules.backupprotocol.model.BackupProtocolPayload
-import com.algorand.android.utils.Event
-import com.algorand.android.utils.PassphraseKeywordUtils
-import com.algorand.android.utils.splitMnemonic
-import javax.inject.Inject
+import com.algorand.android.modules.asb.importbackup.enterkey.ui.model.*
+import com.algorand.android.utils.*
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class AsbKeyEnterPreviewUseCase @Inject constructor(
     private val recoverWithPassphrasePreviewMapper: AsbKeyEnterPreviewMapper,
     private val passphraseInputGroupUseCase: PassphraseInputGroupUseCase,
     private val passphraseInputConfigurationUtil: PassphraseInputConfigurationUtil,
-    private val createBackupCipherKeyUseCase: CreateBackupCipherKeyUseCase,
-    private val restoreEncryptedBackupProtocolPayloadUseCase: RestoreEncryptedBackupProtocolPayloadUseCase
+    private val restoreBackUpPayload: RestoreBackUpPayload
 ) {
 
     fun getRecoverWithPassphraseInitialPreview(): AsbKeyEnterPreview {
         val passphraseInputGroupConfiguration = passphraseInputGroupUseCase.createPassphraseInputGroupConfiguration(
-            itemCount = AlgorandSecureBackupUtils.BACKUP_PASSPHRASES_WORD_COUNT
+            itemCount = AsbBackUpConstants.BACKUP_PASSPHRASES_WORD_COUNT
         )
         return recoverWithPassphrasePreviewMapper.mapToAsbKeyEnterPreview(
             passphraseInputGroupConfiguration = passphraseInputGroupConfiguration,
@@ -48,7 +45,7 @@ class AsbKeyEnterPreviewUseCase @Inject constructor(
 
     fun updatePreviewAfterPastingClipboardData(preview: AsbKeyEnterPreview, clipboardData: String): AsbKeyEnterPreview {
         val splintedText = clipboardData.splitMnemonic()
-        return if (splintedText.size != AlgorandSecureBackupUtils.BACKUP_PASSPHRASES_WORD_COUNT) {
+        return if (splintedText.size != AsbBackUpConstants.BACKUP_PASSPHRASES_WORD_COUNT) {
             val globalErrorPair = R.string.wrong_12_word_key to R.string.please_try_again_by_entering
             preview.copy(onGlobalErrorEvent = Event(globalErrorPair))
         } else {
@@ -115,29 +112,24 @@ class AsbKeyEnterPreviewUseCase @Inject constructor(
         val enteredKey = passphraseInputConfigurationUtil.getOrderedInput(
             configuration = preview.passphraseInputGroupConfiguration
         )
-        createBackupCipherKeyUseCase.invoke(enteredKey).useSuspended(
-            onSuccess = { cipherKey ->
-                val decryptedContent = restoreEncryptedBackupProtocolPayloadUseCase.invoke(
-                    cipherText = cipherText,
-                    cipherKey = cipherKey
-                )
-                emit(validateDecryptedPayload(preview, decryptedContent))
-            },
-            onFailed = {
+
+        val updatedPreview = when (val result = restoreBackUpPayload(enteredKey, cipherText)) {
+            is Success -> preview.copy(navToAccountSelectionFragmentEvent = Event(getRestoredAccounts(result.accounts)))
+            UnableToCreateCipherKey, UnableToRestoreAccounts -> {
                 val globalErrorPair = R.string.wrong_12_word_key to R.string.please_try_again_by_entering
-                emit(preview.copy(onGlobalErrorEvent = Event(globalErrorPair)))
+                preview.copy(onGlobalErrorEvent = Event(globalErrorPair))
             }
-        )
+        }
+        emit(updatedPreview)
     }
 
-    private fun validateDecryptedPayload(
-        preview: AsbKeyEnterPreview,
-        backupProtocolPayload: BackupProtocolPayload?
-    ): AsbKeyEnterPreview {
-        if (backupProtocolPayload?.accounts == null) {
-            val globalErrorPair = R.string.wrong_12_word_key to R.string.please_try_again_by_entering
-            return preview.copy(onGlobalErrorEvent = Event(globalErrorPair))
+    private fun getRestoredAccounts(accounts: List<BackUpAccount>): List<RestoredAccount> {
+        return accounts.map {
+            RestoredAccount(
+                address = it.address,
+                name = it.name,
+                secretKey = it.secretKey
+            )
         }
-        return preview.copy(navToAccountSelectionFragmentEvent = Event(backupProtocolPayload.accounts))
     }
 }

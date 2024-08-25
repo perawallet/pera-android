@@ -68,4 +68,15 @@ class ScreenStateView @JvmOverloads constructor(
             }
         }
     }
+
+    fun setupUi(screenState: com.algorand.android.designsystem.ScreenState) {
+        with(binding) {
+            with(screenState) {
+                infoIconImageView.setImageResAndVisibility(icon)
+                titleTextView.setTextAndVisibility(title)
+                descriptionTextView.setTextAndVisibility(description)
+                neutralButton.setTextAndVisibility(buttonText)
+            }
+        }
+    }
 }

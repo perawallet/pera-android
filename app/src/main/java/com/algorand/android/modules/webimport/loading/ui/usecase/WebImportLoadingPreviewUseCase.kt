@@ -12,21 +12,19 @@
 
 package com.algorand.android.modules.webimport.loading.ui.usecase
 
-import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
+import com.algorand.android.core.component.caching.domain.usecase.FetchAccountInformationAndCacheAssets
+import com.algorand.android.deeplink.model.WebImportQrCode
 import com.algorand.android.modules.webimport.loading.domain.model.ImportedAccountResult
 import com.algorand.android.modules.webimport.loading.domain.usecase.WebImportAccountDecryptionUseCase
 import com.algorand.android.modules.webimport.loading.ui.model.WebImportLoadingPreview
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.Event
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 
 class WebImportLoadingPreviewUseCase @Inject constructor(
     private val webImportAccountDecryptionUseCase: WebImportAccountDecryptionUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase
+    private val fetchAccountInformationAndCacheAssets: FetchAccountInformationAndCacheAssets
 ) {
 
     fun getInitialPreview(): WebImportLoadingPreview {
@@ -36,7 +34,6 @@ class WebImportLoadingPreviewUseCase @Inject constructor(
     fun importEncryptedBackup(
         previousState: WebImportLoadingPreview,
         webImportQrCode: WebImportQrCode,
-        coroutineScope: CoroutineScope
     ) = flow {
         emit(previousState.copy(isLoadingVisible = true))
         webImportAccountDecryptionUseCase.importEncryptedBackup(
@@ -45,18 +42,19 @@ class WebImportLoadingPreviewUseCase @Inject constructor(
         ).collect {
             when (it) {
                 is DataResource.Success -> {
-                    cacheAccounts(it.data.importedAccountList, coroutineScope)
+                    cacheAccounts(it.data.importedAccountList)
                     emit(getSuccessStateOfImportRequest(previousState, it.data))
                 }
                 is DataResource.Error -> emit(getErrorStateOfImportRequest(previousState, it.exception))
-                is DataResource.Loading -> { /* TODO handle loading if needed in future */ }
+                is DataResource.Loading -> { /* TODO handle loading if needed in future */
+                }
             }
         }
     }
 
-    private suspend fun cacheAccounts(importedAccountList: List<String>, coroutineScope: CoroutineScope) {
+    private suspend fun cacheAccounts(importedAccountList: List<String>) {
         importedAccountList.forEach {
-            accountDetailUseCase.fetchAndCacheAccountDetail(it, coroutineScope).collect()
+            fetchAccountInformationAndCacheAssets(it)
         }
     }
 

@@ -12,8 +12,8 @@
 
 package com.algorand.android.ui.wctransactionrequest.ui.model
 
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
-import com.algorand.android.utils.Event
 
 data class WalletConnectTransactionRequestPreview(
     val navBackEvent: Event<Unit>?,

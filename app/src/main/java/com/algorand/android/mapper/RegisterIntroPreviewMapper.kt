@@ -12,20 +12,18 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.decider.RegisterIntroPreviewDecider
+import com.algorand.android.R
 import com.algorand.android.models.RegisterIntroPreview
 import javax.inject.Inject
 
-class RegisterIntroPreviewMapper @Inject constructor(
-    private val registerIntroPreviewDecider: RegisterIntroPreviewDecider
-) {
+class RegisterIntroPreviewMapper @Inject constructor() {
 
     fun mapTo(
         isSkipButtonVisible: Boolean,
         isCloseButtonVisible: Boolean,
         hasAccount: Boolean
     ): RegisterIntroPreview {
-        val titleRes = registerIntroPreviewDecider.decideTitleRes(hasAccount)
+        val titleRes = if (hasAccount) R.string.add_an_account else R.string.welcome_to_pera
         return RegisterIntroPreview(
             titleRes = titleRes,
             isSkipButtonVisible = isSkipButtonVisible,

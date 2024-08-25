@@ -12,14 +12,15 @@
 
 package com.algorand.android.usecase
 
+import com.algorand.android.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.utils.formatAsAlgoDisplayString
 import javax.inject.Inject
 
 class GetFormattedAccountMinimumBalanceUseCase @Inject constructor(
-    private val getAccountMinimumBalanceUseCase: GetAccountMinimumBalanceUseCase
+    private val getAccountMinBalance: GetAccountMinBalance
 ) {
 
-    fun getFormattedAccountMinimumBalance(accountAddress: String): String {
-        return getAccountMinimumBalanceUseCase.getAccountMinimumBalance(accountAddress).formatAsAlgoDisplayString()
+    suspend fun getFormattedAccountMinimumBalance(accountAddress: String): String {
+        return getAccountMinBalance(accountAddress).formatAsAlgoDisplayString()
     }
 }

@@ -17,7 +17,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.databinding.ItemDateFilterPickerBinding
-import com.algorand.android.models.DateFilter
+import com.algorand.android.dateui.model.DateFilter
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 

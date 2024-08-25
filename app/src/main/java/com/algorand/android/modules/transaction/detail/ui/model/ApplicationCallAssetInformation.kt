@@ -13,7 +13,7 @@
 package com.algorand.android.modules.transaction.detail.ui.model
 
 import android.os.Parcelable
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
 import com.algorand.android.utils.AssetName
 import kotlinx.parcelize.Parcelize
 

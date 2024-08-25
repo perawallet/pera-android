@@ -13,9 +13,9 @@
 package com.algorand.android.modules.dapp.bidali.ui.browser.model
 
 import com.algorand.android.discover.common.ui.model.WebViewError
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.dapp.bidali.domain.model.BidaliOpenUrlRequestDTO
-import com.algorand.android.modules.dapp.bidali.domain.model.BidaliPaymentRequestDTO
-import com.algorand.android.utils.Event
+import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
 
 data class BidaliBrowserPreview(
     val isLoading: Boolean = false,
@@ -25,7 +25,7 @@ data class BidaliBrowserPreview(
     val reloadPageEvent: Event<Unit>? = null,
     val webViewGoBackEvent: Event<Unit>? = null,
     val webViewGoForwardEvent: Event<Unit>? = null,
-    val onPaymentRequestEvent: Event<BidaliPaymentRequestDTO>? = null,
+    val onPaymentRequestEvent: Event<SendTransactionPayload>? = null,
     val openUrlRequestEvent: Event<BidaliOpenUrlRequestDTO>? = null,
     val title: String,
     val toolbarSubtitle: String,

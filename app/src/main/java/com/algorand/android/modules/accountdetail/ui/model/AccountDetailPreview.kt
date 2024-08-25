@@ -12,11 +12,11 @@
 
 package com.algorand.android.modules.accountdetail.ui.model
 
-import androidx.navigation.NavDirections
-import com.algorand.android.utils.Event
+import com.algorand.android.accountcore.ui.summary.model.AccountDetailSummary
+import com.algorand.android.foundation.Event
+import com.algorand.android.swap.common.model.SwapNavigationDestination
 
 data class AccountDetailPreview(
-    val copyAssetIDToClipboardEvent: Event<Long>?,
-    val showGlobalErrorEvent: Event<Int>?,
-    val onNavigationEvent: Event<NavDirections>?
+    val accountDetailSummary: AccountDetailSummary,
+    val swapNavigationDestinationEvent: Event<SwapNavigationDestination>?
 )

@@ -14,8 +14,8 @@ package com.algorand.android.modules.collectibles.detail.base.ui.viewpager
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.algorand.android.assetdetailui.detail.nftprofile.model.BaseCollectibleMediaItem
 import com.algorand.android.databinding.ItemNftMediaBinding
-import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
 
 class CollectibleNoMediaViewHolder(
     binding: ItemNftMediaBinding,

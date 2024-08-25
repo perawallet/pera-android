@@ -12,25 +12,24 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.core.AccountManager
+import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.android.mapper.RegisterIntroPreviewMapper
 import com.algorand.android.modules.tracking.onboarding.register.registerintro.RegisterIntroFragmentEventTracker
-import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class RegisterIntroPreviewUseCase @Inject constructor(
-    private val accountManager: AccountManager,
+    private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val registerIntroPreviewMapper: RegisterIntroPreviewMapper,
     private val registerIntroFragmentEventTracker: RegisterIntroFragmentEventTracker
 ) {
 
     fun getRegisterIntroPreview(isShowingCloseButton: Boolean) = flow {
-        val hasAccount = accountManager.accounts.value.isNotEmpty()
         val isSkipButtonVisible = !isShowingCloseButton
         val registerIntroPreview = registerIntroPreviewMapper.mapTo(
             isSkipButtonVisible = isSkipButtonVisible,
             isCloseButtonVisible = isShowingCloseButton,
-            hasAccount = hasAccount
+            hasAccount = isThereAnyLocalAccount()
         )
         emit(registerIntroPreview)
     }

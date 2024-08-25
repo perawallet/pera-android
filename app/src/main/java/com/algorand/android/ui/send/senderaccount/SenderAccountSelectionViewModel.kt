@@ -16,26 +16,35 @@ package com.algorand.android.ui.send.senderaccount
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.AccountCacheData
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
+import com.algorand.android.accountcore.ui.accountselection.model.SenderAccountSelectionPreview
+import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.AssetTransaction
-import com.algorand.android.models.SenderAccountSelectionPreview
-import com.algorand.android.models.TransactionData
-import com.algorand.android.usecase.SenderAccountSelectionPreviewUseCase
-import com.algorand.android.usecase.SenderAccountSelectionUseCase
+import com.algorand.android.module_new.accountselection.senderselection.usecase.SenderAccountSelectionPreviewUseCase
+import com.algorand.android.transactionui.sendasset.domain.GetAssetTransferTargetUser
+import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
+import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.AssetSelectionFragment
+import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.AssetTransferAmountFragment
+import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.AssetTransferPreviewFragment
+import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.ReceiverAccountSelectionFragment
+import com.algorand.android.usecase.TransactionTipsUseCase
 import com.algorand.android.utils.getOrElse
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SenderAccountSelectionViewModel @Inject constructor(
-    private val senderAccountSelectionUseCase: SenderAccountSelectionUseCase,
     private val senderAccountSelectionPreviewUseCase: SenderAccountSelectionPreviewUseCase,
+    private val transactionTipsUseCase: TransactionTipsUseCase,
+    private val getAssetTransferTargetUser: GetAssetTransferTargetUser,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -45,9 +54,13 @@ class SenderAccountSelectionViewModel @Inject constructor(
         MutableStateFlow(senderAccountSelectionPreviewUseCase.getInitialPreview())
     val senderAccountSelectionPreviewFlow: StateFlow<SenderAccountSelectionPreview> = _senderAccountSelectionPreviewFlow
 
+    private val _senderAccountSelectionNavigationDirectionFlow =
+        MutableStateFlow<Event<SenderAccountSelectionNavigationDirections>?>(null)
+    val senderAccountSelectionNavigationDirectionFlow = _senderAccountSelectionNavigationDirectionFlow.asStateFlow()
+
     init {
         // If user came with deeplink or qr code then we have to filter accounts that have incoming asset id
-        if (assetTransaction.assetId != -1L && assetTransaction.assetId != ALGO_ID) {
+        if (assetTransaction.assetId != -1L && assetTransaction.assetId != ALGO_ASSET_ID) {
             getAccountCacheWithSpecificAsset(assetTransaction.assetId)
         } else {
             getAccounts()
@@ -79,7 +92,6 @@ class SenderAccountSelectionViewModel @Inject constructor(
         viewModelScope.launch {
             senderAccountSelectionPreviewUseCase.getUpdatedPreviewFlowWithAccountInformation(
                 senderAccountAddress = senderAccountAddress,
-                viewModelScope = viewModelScope,
                 preview = _senderAccountSelectionPreviewFlow.value
             ).collectLatest {
                 _senderAccountSelectionPreviewFlow.emit(it)
@@ -88,27 +100,32 @@ class SenderAccountSelectionViewModel @Inject constructor(
     }
 
     fun shouldShowTransactionTips(): Boolean {
-        return senderAccountSelectionUseCase.shouldShowTransactionTips()
+        return transactionTipsUseCase.shouldShowTransactionTips()
     }
 
-    fun getAssetInformation(assetTransaction: AssetTransaction): AssetInformation? {
-        return senderAccountSelectionUseCase.getAssetInformation(
-            publicKey = assetTransaction.senderAddress,
-            assetId = assetTransaction.assetId
-        )
+    // If user enter Send Algo flow via deeplink or qr code, then we have to check asset transaction params then
+    // we should navigate user to proper screen
+    fun handleSenderAccountSelectionSuccessResult(accountInformation: AccountInformation) {
+        viewModelScope.launchIO {
+            assetTransaction.copy(senderAddress = accountInformation.address).run {
+                val result = when {
+                    assetId == -1L -> AssetSelectionFragment(this)
+                    amount == BigInteger.ZERO -> AssetTransferAmountFragment(this)
+                    receiverUser == null -> ReceiverAccountSelectionFragment(this)
+                    else -> AssetTransferPreviewFragment(createSendTransactionData(this))
+                }
+                _senderAccountSelectionNavigationDirectionFlow.emit(Event(result))
+            }
+        }
     }
 
-    fun getAccountCachedData(senderAddress: String): AccountCacheData? {
-        return senderAccountSelectionUseCase.getAccountInformation(senderAddress)
-    }
-
-    fun createSendTransactionData(assetTransaction: AssetTransaction): TransactionData.Send? {
-        return senderAccountSelectionPreviewUseCase.createSendTransactionData(
-            accountAddress = assetTransaction.senderAddress,
-            note = assetTransaction.xnote ?: assetTransaction.note,
-            selectedAsset = getAssetInformation(assetTransaction),
+    private suspend fun createSendTransactionData(assetTransaction: AssetTransaction): SendTransactionPayload {
+        return SendTransactionPayload(
+            assetId = assetTransaction.assetId,
+            senderAddress = assetTransaction.senderAddress,
             amount = assetTransaction.amount,
-            assetTransaction = assetTransaction
+            note = SendTransactionPayload.Note(assetTransaction.note, assetTransaction.xnote),
+            targetUser = getAssetTransferTargetUser(assetTransaction.receiverUser?.address.orEmpty())
         )
     }
 

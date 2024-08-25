@@ -29,6 +29,7 @@ import com.algorand.android.utils.setFragmentNavigationResult
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 @AndroidEntryPoint
 class RemoveAccountConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
@@ -52,12 +53,15 @@ class RemoveAccountConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
         }
     }
 
+    private val descriptionResIdCollector: suspend (Int) -> Unit = {
+        setDescriptionText(getString(it))
+    }
+
     override fun setTitleText(textView: TextView) {
         textView.setText(R.string.remove_account)
     }
 
     override fun setDescriptionText(textView: TextView) {
-        textView.setText(removeAccountConfirmationViewModel.descriptionTextResId)
     }
 
     override fun setAcceptButton(materialButton: MaterialButton) {
@@ -89,12 +93,16 @@ class RemoveAccountConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
     private fun initObservers() {
         with(removeAccountConfirmationViewModel.removeAccountConfirmationPreviewFlow) {
             collectLatestOnLifecycle(
-                flow = map { it.showGlobalErrorEvent },
+                flow = map { it?.showGlobalErrorEvent },
                 collection = showGlobalErrorEventCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.navBackEvent },
+                flow = map { it?.navBackEvent },
                 collection = navBackEventCollector
+            )
+            collectLatestOnLifecycle(
+                flow = mapNotNull { it?.descriptionResId },
+                collection = descriptionResIdCollector
             )
         }
     }

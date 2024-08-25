@@ -12,19 +12,37 @@
 
 package com.algorand.android.ui.common.warningconfirmation
 
-import android.widget.TextView
+import android.os.Bundle
+import android.view.View
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.formatAsAlgoString
 import dagger.hilt.android.AndroidEntryPoint
+import java.math.BigInteger
 
 @AndroidEntryPoint
 class TransactionMaximumBalanceWarningBottomSheet : BaseMaximumBalanceWarningBottomSheet() {
 
     private val args: TransactionMaximumBalanceWarningBottomSheetArgs by navArgs()
 
-    override fun setDescriptionText(descriptionTextView: TextView) {
-        val formattedMinBalance = maximumBalanceWarningViewModel.getMinimumBalance(args.publicKey).formatAsAlgoString()
-        descriptionTextView.text = getString(R.string.based_on_your_account, formattedMinBalance)
+    private val minBalanceCollector: suspend (BigInteger?) -> Unit = { minBalance ->
+        if (minBalance != null) {
+            setDescriptionText(getDescriptionText(minBalance))
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            maximumBalanceWarningViewModel.minRequiredBalanceFlow,
+            minBalanceCollector
+        )
+        maximumBalanceWarningViewModel.getMinimumBalance(args.publicKey)
+    }
+
+    private fun getDescriptionText(minRequiredBalance: BigInteger): CharSequence {
+        val formattedMinBalance = minRequiredBalance.formatAsAlgoString()
+        return getString(R.string.based_on_your_account, formattedMinBalance)
     }
 }

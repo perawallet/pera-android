@@ -12,14 +12,11 @@
 
 package com.algorand.android.decider
 
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset
+import com.algorand.android.assetdetail.component.asset.domain.model.detail.CollectibleDetail
+import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.assetsearch.domain.model.BaseSearchedAsset
-import com.algorand.android.models.AssetDetail
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.models.BaseAssetDetail
-import com.algorand.android.models.SimpleCollectibleDetail
-import com.algorand.android.nft.domain.model.BaseCollectibleDetail
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.assetdrawable.AlgoDrawableProvider
 import com.algorand.android.utils.assetdrawable.AssetDrawableProvider
@@ -28,28 +25,29 @@ import com.algorand.android.utils.assetdrawable.CollectibleDrawableProvider
 import javax.inject.Inject
 
 class AssetDrawableProviderDecider @Inject constructor(
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase
+    private val getAsset: GetAsset
 ) {
 
-    fun getAssetDrawableProvider(assetId: Long): BaseAssetDrawableProvider {
-        val isAlgo = assetId == AssetInformation.ALGO_ID
-        val isAsset = simpleAssetDetailUseCase.isAssetCached(assetId)
-        val isCollectible = simpleCollectibleUseCase.isCollectibleCached(assetId)
+    suspend fun getAssetDrawableProvider(assetId: Long): BaseAssetDrawableProvider {
+        val isAlgo = assetId == ALGO_ASSET_ID
+        val asset = getAsset(assetId)
         return when {
             isAlgo -> createAlgoDrawableProvider()
-            isCollectible -> createCollectibleDrawableProvider(assetId)
-            isAsset -> createAssetDrawableProvider(assetId)
-            else -> createAssetDrawableProvider(assetId)
+            asset is CollectibleDetail -> createCollectibleDrawableProvider(asset)
+            else -> createAssetDrawableProvider(asset)
         }
     }
 
-    fun getAssetDrawableProvider(assetId: Long, assetName: AssetName, logoUri: String?): BaseAssetDrawableProvider {
-        val isAlgo = assetId == AssetInformation.ALGO_ID
-        val isCollectible = simpleCollectibleUseCase.isCollectibleCached(assetId)
+    suspend fun getAssetDrawableProvider(
+        assetId: Long,
+        assetName: AssetName,
+        logoUri: String?
+    ): BaseAssetDrawableProvider {
+        val isAlgo = assetId == ALGO_ASSET_ID
+        val asset = getAsset(assetId)
         return when {
             isAlgo -> createAlgoDrawableProvider()
-            isCollectible -> CollectibleDrawableProvider(assetName, logoUri)
+            asset is CollectibleDetail -> CollectibleDrawableProvider(assetName, logoUri)
             else -> AssetDrawableProvider(assetName, logoUri)
         }
     }
@@ -58,19 +56,17 @@ class AssetDrawableProviderDecider @Inject constructor(
         return AlgoDrawableProvider()
     }
 
-    private fun createCollectibleDrawableProvider(assetId: Long): CollectibleDrawableProvider {
-        val collectibleDetail = simpleCollectibleUseCase.getCachedCollectibleById(assetId)?.data
+    private fun createCollectibleDrawableProvider(collectibleDetail: CollectibleDetail?): CollectibleDrawableProvider {
         return CollectibleDrawableProvider(
             assetName = AssetName.create(collectibleDetail?.fullName),
-            logoUri = collectibleDetail?.collectible?.primaryImageUrl
+            logoUri = collectibleDetail?.primaryImageUrl
         )
     }
 
-    private fun createAssetDrawableProvider(assetId: Long): AssetDrawableProvider {
-        val assetDetail = simpleAssetDetailUseCase.getCachedAssetDetail(assetId)?.data
+    private fun createAssetDrawableProvider(asset: Asset?): AssetDrawableProvider {
         return AssetDrawableProvider(
-            assetName = AssetName.create(assetDetail?.fullName),
-            logoUri = assetDetail?.logoUri
+            assetName = AssetName.create(asset?.fullName),
+            logoUri = asset?.logoUri
         )
     }
 
@@ -80,7 +76,7 @@ class AssetDrawableProviderDecider @Inject constructor(
      */
     fun getAssetDrawableProvider(searchedAsset: BaseSearchedAsset): BaseAssetDrawableProvider {
         return when {
-            searchedAsset.assetId == AssetInformation.ALGO_ID -> {
+            searchedAsset.assetId == ALGO_ASSET_ID -> {
                 // This is unnecessary check but to keep consistency, I added this check, too
                 AlgoDrawableProvider()
             }
@@ -99,41 +95,6 @@ class AssetDrawableProviderDecider @Inject constructor(
             else -> AssetDrawableProvider(
                 assetName = AssetName.create(searchedAsset.fullName),
                 logoUri = searchedAsset.logo
-            )
-        }
-    }
-
-    /**
-     * Since we are caching base asset detail of opened asset in asa profile screen in somewhere else, we should check
-     * by [BaseAssetDetail] if it's ASA or NFT in ASA profile screens
-     */
-    fun getAssetDrawableProvider(baseAssetDetail: BaseAssetDetail): BaseAssetDrawableProvider {
-        return when {
-            baseAssetDetail.assetId == AssetInformation.ALGO_ID -> {
-                // This is unnecessary check but to keep consistency, I added this check, too
-                AlgoDrawableProvider()
-            }
-            baseAssetDetail is AssetDetail -> {
-                AssetDrawableProvider(
-                    assetName = AssetName.create(baseAssetDetail.fullName),
-                    logoUri = baseAssetDetail.logoUri
-                )
-            }
-            baseAssetDetail is SimpleCollectibleDetail -> {
-                CollectibleDrawableProvider(
-                    assetName = AssetName.create(baseAssetDetail.fullName),
-                    logoUri = baseAssetDetail.collectible?.primaryImageUrl
-                )
-            }
-            baseAssetDetail is BaseCollectibleDetail -> {
-                CollectibleDrawableProvider(
-                    assetName = AssetName.create(baseAssetDetail.fullName),
-                    logoUri = baseAssetDetail.prismUrl
-                )
-            }
-            else -> AssetDrawableProvider(
-                assetName = AssetName.create(baseAssetDetail.fullName),
-                logoUri = baseAssetDetail.logoUri
             )
         }
     }

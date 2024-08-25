@@ -12,54 +12,31 @@
 
 package com.algorand.android.modules.settings.ui.usecase
 
-import com.algorand.android.modules.asb.backedupaccountssource.domain.usecase.AddBackedUpAccountListenerUseCase
-import com.algorand.android.modules.asb.backedupaccountssource.domain.usecase.GetBackedUpAccountsUseCase
-import com.algorand.android.modules.asb.backedupaccountssource.domain.usecase.RemoveBackedUpAccountListenerUseCase
-import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
+import com.algorand.android.accountcore.domain.utils.AlgorandSecureBackUpUtils
+import com.algorand.android.asb.component.domain.usecase.GetBackedUpAccountAddressesFlow
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountsDetail
 import com.algorand.android.modules.settings.ui.mapper.SettingsPreviewMapper
 import com.algorand.android.modules.settings.ui.model.SettingsPreview
-import com.algorand.android.sharedpref.SharedPrefLocalSource
-import com.algorand.android.usecase.GetLocalAccountsUseCase
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
 
 class SettingsPreviewUseCase @Inject constructor(
-    private val getLocalAccountsUseCase: GetLocalAccountsUseCase,
-    private val getBackedUpAccountsUseCase: GetBackedUpAccountsUseCase,
     private val settingsPreviewMapper: SettingsPreviewMapper,
-    private val removeBackedUpAccountListenerUseCase: RemoveBackedUpAccountListenerUseCase,
-    private val addBackedUpAccountListenerUseCase: AddBackedUpAccountListenerUseCase
+    private val getBackedUpAccountAddressesFlow: GetBackedUpAccountAddressesFlow,
+    private val getAccountsDetail: GetAccountsDetail
 ) {
 
-    private fun addBackedUpAccountListener(listener: SharedPrefLocalSource.OnChangeListener<Set<String>>) {
-        addBackedUpAccountListenerUseCase.invoke(listener)
+    fun getSettingsPreviewFlow(): Flow<SettingsPreview> = getBackedUpAccountAddressesFlow().map { accounts ->
+        createSettingsPreview(accounts)
     }
 
-    private fun removeBackedUpAccountListener(listener: SharedPrefLocalSource.OnChangeListener<Set<String>>) {
-        removeBackedUpAccountListenerUseCase.invoke(listener)
-    }
-
-    suspend fun getSettingsPreviewFlow() = callbackFlow<SettingsPreview> {
-        val backedUpAccounts = getBackedUpAccountsUseCase.invoke()
-        var preview = createSettingsPreview(backedUpAccounts)
-        send(preview)
-
-        val onChangeListener = SharedPrefLocalSource.OnChangeListener<Set<String>> { accounts ->
-            preview = createSettingsPreview(accounts.orEmpty())
-            trySend(preview)
-        }
-        addBackedUpAccountListener(onChangeListener)
-        awaitClose { removeBackedUpAccountListener(onChangeListener) }
-    }
-
-    private fun createSettingsPreview(backedUpAccounts: Set<String>): SettingsPreview {
-        val localAccounts = getLocalAccountsUseCase.getLocalAccountsFromAccountManagerCache().toSet()
-        val localAccountAddresses = localAccounts.map { it.address }
+    private suspend fun createSettingsPreview(backedUpAccounts: Set<String>): SettingsPreview {
+        val accountDetails = getAccountsDetail()
+        val localAccountAddresses = accountDetails.map { it.address }
         val remainingAccounts = localAccountAddresses - backedUpAccounts
         val eligibleLocalAccounts = remainingAccounts.filter { accountAddress ->
-            val account = localAccounts.firstOrNull { it.address == accountAddress } ?: return@filter false
-            AlgorandSecureBackupUtils.eligibleAccountTypes.contains(account.type)
+            val account = accountDetails.firstOrNull { it.address == accountAddress } ?: return@filter false
+            AlgorandSecureBackUpUtils.ELIGIBLE_ACCOUNT_TYPES.contains(account.accountType)
         }
         return settingsPreviewMapper.mapToSettingsPreview(
             isAlgorandSecureBackupDescriptionVisible = eligibleLocalAccounts.isNotEmpty(),

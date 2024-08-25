@@ -17,12 +17,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.navGraphViewModels
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.BaseLedgerAccountSelectionFragment
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.BaseLedgerAccountSelectionViewModel
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.adapter.LedgerAccountSelectionAdapter
 import com.algorand.android.modules.onboarding.pairledger.PairLedgerNavigationViewModel
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccounts
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -77,11 +78,8 @@ class RegisterLedgerAccountSelectionFragment : BaseLedgerAccountSelectionFragmen
         nav(MainNavigationDirections.actionGlobalLedgerTroubleshootFragment())
     }
 
-    override fun onConfirmationClick(selectedAccounts: List<Account>, allAuthAccounts: List<Account>) {
-        with(pairLedgerNavigationViewModel) {
-            this.selectedAccounts = selectedAccounts
-            this.allAuthAccounts = allAuthAccounts
-        }
+    override fun onConfirmationClick(selectedLedgerAccounts: SelectedLedgerAccounts) {
+        pairLedgerNavigationViewModel.selectedLedgerAccounts = selectedLedgerAccounts
         nav(
             RegisterLedgerAccountSelectionFragmentDirections
                 .actionRegisterLedgerAccountSelectionFragmentToVerifyLedgerAddressFragment()

@@ -16,8 +16,7 @@ import androidx.recyclerview.widget.DiffUtil
 
 class AccountNotificationOptionDiffUtil : DiffUtil.ItemCallback<AccountNotificationOption>() {
     override fun areItemsTheSame(oldItem: AccountNotificationOption, newItem: AccountNotificationOption): Boolean {
-        return oldItem.accountListItem.itemConfiguration.accountAddress ==
-            newItem.accountListItem.itemConfiguration.accountAddress
+        return oldItem.accountItemConfiguration.accountAddress == newItem.accountItemConfiguration.accountAddress
     }
 
     override fun areContentsTheSame(oldItem: AccountNotificationOption, newItem: AccountNotificationOption): Boolean {

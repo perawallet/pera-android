@@ -19,21 +19,21 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.algorand.android.R
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.assetdetailui.detail.asaprofile.model.AsaProfilePreview
+import com.algorand.android.assetdetailui.detail.asaprofile.model.AsaStatusPreview
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentAsaProfileBinding
+import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.action.addition.AddAssetActionBottomSheet
 import com.algorand.android.modules.assets.action.removal.RemoveAssetActionBottomSheet
 import com.algorand.android.modules.assets.profile.about.ui.AssetAboutFragment
-import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaProfilePreview
-import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaStatusPreview
 import com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.AsaProfileAccountSelectionFragment.Companion.ASA_PROFILE_ACCOUNT_SELECTION_RESULT_KEY
 import com.algorand.android.modules.collectibles.action.optin.CollectibleOptInActionBottomSheet
 import com.algorand.android.utils.AccountIconDrawable
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.extensions.show
@@ -64,7 +64,7 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
     }
 
     private val assetShortNameCollector: suspend (AssetName?) -> Unit = {
-        val toolbarTitle = it?.getName(binding.root.resources).orEmpty()
+        val toolbarTitle = it?.assetName.orEmpty()
         binding.toolbar.changeTitle(toolbarTitle)
     }
 
@@ -93,7 +93,7 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
     }
 
     protected val assetShortName: String?
-        get() = asaProfileViewModel.asaProfilePreviewFlow.value?.assetShortName?.getName(resources)
+        get() = asaProfileViewModel.asaProfilePreviewFlow.value?.assetShortName?.assetName
 
     abstract fun navToAccountSelection()
     abstract fun navToAssetAdditionFlow()
@@ -198,7 +198,7 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
                 verificationTierConfiguration.drawableResId?.run {
                     setDrawable(end = AppCompatResources.getDrawable(context, this))
                 }
-                text = assetFullName.getName(resources)
+                text = assetFullName.assetName
             }
             if (!isAlgo) {
                 assetIdTextView.apply {
@@ -237,33 +237,31 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
         binding.assetStatusConstraintLayout.statusValueTextView.apply {
             when (asaStatusPreview) {
                 is AsaStatusPreview.AdditionStatus -> {
-                    asaStatusPreview.accountName?.run {
-                        text = getDisplayAddress()
-                        setDrawable(
-                            start = AccountIconDrawable.create(
-                                context = context,
-                                accountIconDrawablePreview = accountIconDrawablePreview,
-                                sizeResId = R.dimen.spacing_large
-                            )
+                    text = asaStatusPreview.accountDisplayName.primaryDisplayName
+                    setDrawable(
+                        start = AccountIconDrawable.create(
+                            context = context,
+                            accountIconDrawablePreview = asaStatusPreview.accountIconDrawablePreview,
+                            sizeResId = R.dimen.spacing_large
                         )
-                        setOnLongClickListener {
-                            onAccountAddressCopied(publicKey)
-                            true
-                        }
+                    )
+                    setOnLongClickListener {
+                        onAccountAddressCopied(asaStatusPreview.accountDisplayName.accountAddress)
+                        true
                     }
                 }
                 is AsaStatusPreview.RemovalStatus.AssetRemovalStatus -> {
                     text = getString(
                         R.string.pair_value_format,
                         asaStatusPreview.formattedAccountBalance,
-                        asaStatusPreview.assetShortName?.getName(resources)
+                        asaStatusPreview.assetShortName?.assetName
                     )
                 }
                 is AsaStatusPreview.TransferStatus -> {
                     text = getString(
                         R.string.pair_value_format,
                         asaStatusPreview.formattedAccountBalance,
-                        asaStatusPreview.assetShortName?.getName(resources)
+                        asaStatusPreview.assetShortName?.assetName
                     )
                 }
                 is AsaStatusPreview.AccountSelectionStatus -> {

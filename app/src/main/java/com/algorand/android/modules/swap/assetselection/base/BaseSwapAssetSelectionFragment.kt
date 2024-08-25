@@ -19,11 +19,11 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.databinding.FragmentSwapAssetSelectionBinding
+import com.algorand.android.designsystem.ScreenState
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.swap.assetselection.base.SwapAssetSelectionAdapter.SwapAssetSelectionAdapterListener
-import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapAssetSelectionItem
+import com.algorand.android.swapui.assetselection.model.SwapAssetSelectionItem
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import kotlinx.coroutines.flow.distinctUntilChanged

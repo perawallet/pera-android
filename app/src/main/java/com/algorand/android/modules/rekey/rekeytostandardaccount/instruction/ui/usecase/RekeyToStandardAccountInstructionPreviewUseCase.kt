@@ -13,31 +13,30 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.AnnotatedString
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.decider.RekeyToStandardAccountIntroductionPreviewDecider
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.mapper.RekeyToStandardAccountIntroductionPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.model.RekeyToStandardAccountIntroductionPreview
-import com.algorand.android.usecase.AccountDetailUseCase
 import javax.inject.Inject
 
 class RekeyToStandardAccountInstructionPreviewUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
+    private val getAccountDetail: GetAccountDetail,
     private val rekeyToStandardAccountIntroductionPreviewMapper: RekeyToStandardAccountIntroductionPreviewMapper,
     private val rekeyToStandardAccountIntroductionPreviewDecider: RekeyToStandardAccountIntroductionPreviewDecider
 ) {
 
-    fun getInitialRekeyToStandardAccountInstructionPreview(
+    suspend fun getInitialRekeyToStandardAccountInstructionPreview(
         accountAddress: String
     ): RekeyToStandardAccountIntroductionPreview {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
-        val accountType = accountDetail?.account?.type
+        val accountDetail = getAccountDetail(accountAddress)
         val bannerDrawableResId = rekeyToStandardAccountIntroductionPreviewDecider.decideBannerDrawableResId(
-            accountType = accountType
+            accountType = accountDetail.accountType
         )
         val descriptionAnnotatedString = rekeyToStandardAccountIntroductionPreviewDecider
-            .decideDescriptionAnnotatedString(accountType = accountType)
+            .decideDescriptionAnnotatedString(accountType = accountDetail.accountType)
         val expectationListItems = rekeyToStandardAccountIntroductionPreviewDecider.decideExpectationListItems(
-            accountType = accountType
+            accountType = accountDetail.accountType
         )
         return rekeyToStandardAccountIntroductionPreviewMapper.mapToRekeyToStandardAccountInstructionPreview(
             bannerDrawableResId = bannerDrawableResId,

@@ -13,10 +13,8 @@
 package com.algorand.android.dependencyinjection
 
 import android.app.NotificationManager
-import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.core.content.ContextCompat
 import androidx.room.Room
 import com.algorand.android.core.AccountManager
 import com.algorand.android.database.AlgorandDatabase
@@ -34,14 +32,8 @@ import com.algorand.android.database.NodeDao
 import com.algorand.android.database.NotificationFilterDao
 import com.algorand.android.database.WalletConnectDao
 import com.algorand.android.database.WalletConnectTypeConverters
-import com.algorand.android.ledger.LedgerBleConnectionManager
-import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.notification.PeraNotificationManager
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.ALGORAND_KEYSTORE_URI
-import com.algorand.android.utils.AccountCacheManager
 import com.algorand.android.utils.ENCRYPTED_SHARED_PREF_NAME
 import com.algorand.android.utils.KEYSET_HANDLE
 import com.algorand.android.utils.KEY_TEMPLATE_AES256_GCM
@@ -141,45 +133,12 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAccountCacheManager(
-        accountManager: AccountManager,
-        accountDetailUseCase: AccountDetailUseCase,
-        assetDetailUseCase: SimpleAssetDetailUseCase
-    ): AccountCacheManager {
-        return AccountCacheManager(accountManager, accountDetailUseCase, assetDetailUseCase)
-    }
-
-    @Singleton
-    @Provides
     fun provideAccountManager(
         aead: Aead,
         gson: Gson,
-        sharedPref: SharedPreferences,
-        getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase
+        sharedPref: SharedPreferences
     ): AccountManager {
-        return AccountManager(aead, gson, sharedPref, getLocalAccountsFromSharedPrefUseCase)
-    }
-
-    @Singleton
-    @Provides
-    fun provideLedgerBleConnectionManager(@ApplicationContext appContext: Context): LedgerBleConnectionManager {
-        return LedgerBleConnectionManager(appContext)
-    }
-
-    @Singleton
-    @Provides
-    fun provideLedgerBleSearchManager(
-        @ApplicationContext appContext: Context,
-        bluetoothManager: BluetoothManager?,
-        ledgerBleConnectionManager: LedgerBleConnectionManager
-    ): LedgerBleSearchManager {
-        return LedgerBleSearchManager(appContext, bluetoothManager, ledgerBleConnectionManager)
-    }
-
-    @Singleton
-    @Provides
-    fun provideBluetoothManager(@ApplicationContext appContext: Context): BluetoothManager? {
-        return ContextCompat.getSystemService<BluetoothManager>(appContext, BluetoothManager::class.java)
+        return AccountManager(aead, gson, sharedPref)
     }
 
     @Singleton

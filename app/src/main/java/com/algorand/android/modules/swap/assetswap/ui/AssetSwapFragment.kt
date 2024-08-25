@@ -17,23 +17,23 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.SwapAssetInputView
 import com.algorand.android.databinding.FragmentAssetSwapBinding
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.swap.assetselection.fromasset.ui.SwapFromAssetSelectionFragment.Companion.SWAP_FROM_ASSET_ID_KEY
 import com.algorand.android.modules.swap.assetselection.toasset.ui.SwapToAssetSelectionFragment.Companion.SWAP_TO_ASSET_ID_KEY
-import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
-import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
-import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview.SelectedAssetAmountDetail
 import com.algorand.android.modules.swap.balancepercentage.ui.BalancePercentageBottomSheet.Companion.CHECKED_BALANCE_PERCENTAGE_KEY
-import com.algorand.android.utils.AccountDisplayName
+import com.algorand.android.swap.domain.model.SwapQuote
+import com.algorand.android.swapui.assetswap.model.AssetSwapPreview
+import com.algorand.android.swapui.assetswap.model.AssetSwapPreview.SelectedAssetAmountDetail
+import com.algorand.android.swapui.assetswap.model.SwapError
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.DecimalDigitsInputFilter
-import com.algorand.android.utils.ErrorResource
-import com.algorand.android.utils.Event
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -79,8 +79,8 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
         binding.progressBar.root.isVisible = isLoadingVisible == true
     }
 
-    private val isAccountCachedCollector: suspend (Boolean) -> Unit = { isAccountCached ->
-        handleAccountCacheStatus(isAccountCached)
+    private val isAccountCachedCollector: suspend (Boolean?) -> Unit = { isAccountCached ->
+        if (isAccountCached != null) handleAccountCacheStatus(isAccountCached)
     }
 
     private val fromAssetAmountDetailCollector: suspend (SelectedAssetAmountDetail?) -> Unit = { amountDetail ->
@@ -103,7 +103,7 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
         if (charSequence != null) assetSwapViewModel.onFromAmountChanged(charSequence.toString())
     }
 
-    private val swapErrorEventCollector: suspend (Event<ErrorResource>?) -> Unit = { errorEvent ->
+    private val swapErrorEventCollector: suspend (Event<SwapError>?) -> Unit = { errorEvent ->
         initSwapError(errorEvent)
     }
 
@@ -123,8 +123,8 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
 
     private val accountDisplayNameCollector: suspend (AccountDisplayName) -> Unit = { accountDisplayName ->
         getAppToolbar()?.run {
-            changeSubtitle(accountDisplayName.getAccountPrimaryDisplayName())
-            setOnTitleLongClickListener { onAccountAddressCopied(accountDisplayName.getRawAccountAddress()) }
+            changeSubtitle(accountDisplayName.primaryDisplayName)
+            setOnTitleLongClickListener { onAccountAddressCopied(accountDisplayName.accountAddress) }
         }
     }
 
@@ -150,62 +150,62 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
             assetSwapViewModel.isAccountCachedResultFlow,
             isAccountCachedCollector
         )
-        with(assetSwapViewModel.assetSwapPreviewFlow.mapNotNull { it }) {
+        with(assetSwapViewModel.assetSwapPreviewFlow.map { it }) {
             with(viewLifecycleOwner) {
                 collectLatestOnLifecycle(
-                    map { it.isLoadingVisible }.distinctUntilChanged(),
+                    mapNotNull { it?.isLoadingVisible }.distinctUntilChanged(),
                     loadingVisibilityCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.fromSelectedAssetAmountDetail }.distinctUntilChanged(),
+                    map { it?.fromSelectedAssetAmountDetail }.distinctUntilChanged(),
                     fromAssetAmountDetailCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.errorEvent }.distinctUntilChanged(),
+                    map { it?.errorEvent }.distinctUntilChanged(),
                     swapErrorEventCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.isSwapButtonEnabled }.distinctUntilChanged(),
+                    map { it?.isSwapButtonEnabled }.distinctUntilChanged(),
                     swapButtonEnableStatusCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.toSelectedAssetDetail }.distinctUntilChanged(),
+                    map { it?.toSelectedAssetDetail }.distinctUntilChanged(),
                     toAssetDetailCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.fromSelectedAssetDetail }.distinctUntilChanged(),
+                    map { it?.fromSelectedAssetDetail }.distinctUntilChanged(),
                     fromAssetDetailCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.toSelectedAssetAmountDetail }.distinctUntilChanged(),
+                    map { it?.toSelectedAssetAmountDetail }.distinctUntilChanged(),
                     toAssetAmountDetailCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.isSwitchAssetsButtonEnabled }.distinctUntilChanged(),
+                    mapNotNull { it?.isSwitchAssetsButtonEnabled }.distinctUntilChanged(),
                     switchAssetsButtonEnableCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.isMaxAndPercentageButtonEnabled }.distinctUntilChanged(),
+                    mapNotNull { it?.isMaxAndPercentageButtonEnabled }.distinctUntilChanged(),
                     maxAndPercentageButtonEnableCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.accountDisplayName }.distinctUntilChanged(),
+                    mapNotNull { it?.accountDisplayName }.distinctUntilChanged(),
                     accountDisplayNameCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.accountIconDrawablePreview }.distinctUntilChanged(),
+                    mapNotNull { it?.accountIconDrawablePreview }.distinctUntilChanged(),
                     accountIconResourceCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.clearToSelectedAssetDetailEvent }.distinctUntilChanged(),
+                    map { it?.clearToSelectedAssetDetailEvent }.distinctUntilChanged(),
                     clearToSelectedAssetDetailEventCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.navigateToConfirmSwapFragmentEvent }.distinctUntilChanged(),
+                    map { it?.navigateToConfirmSwapFragmentEvent }.distinctUntilChanged(),
                     navigateToConfirmSwapFragmentEventCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.formattedPercentageText }.distinctUntilChanged(),
+                    mapNotNull { it?.formattedPercentageText }.distinctUntilChanged(),
                     formattedPercentageTextCollector
                 )
             }
@@ -279,11 +279,11 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
         initSwapAssetInputViewDetails(assetDetail, binding.toAssetInputView)
     }
 
-    private fun initSwapError(errorEvent: Event<ErrorResource>?) {
+    private fun initSwapError(errorEvent: Event<SwapError>?) {
         binding.errorTextView.apply {
             isVisible = errorEvent != null && !errorEvent.consumed
             errorEvent?.consume()?.let { errorResource ->
-                text = errorResource.parseError(context)
+                text = errorResource.description
             }
         }
     }

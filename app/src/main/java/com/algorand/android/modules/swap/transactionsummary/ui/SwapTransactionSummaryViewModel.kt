@@ -12,24 +12,22 @@
 
 package com.algorand.android.modules.swap.transactionsummary.ui
 
-import android.content.res.Resources
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
-import com.algorand.android.modules.swap.transactionsummary.ui.model.SwapTransactionSummaryPreview
-import com.algorand.android.modules.swap.transactionsummary.ui.usecase.SwapTransactionSummaryPreviewUseCase
+import com.algorand.android.swap.domain.model.SwapQuote
+import com.algorand.android.swapui.txnsummary.GetSwapTransactionSummaryPreview
+import com.algorand.android.swapui.txnsummary.model.SwapTransactionSummaryPreview
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SwapTransactionSummaryViewModel @Inject constructor(
-    private val swapTransactionSummaryPreviewUseCase: SwapTransactionSummaryPreviewUseCase,
+    private val getSwapTransactionSummaryPreview: GetSwapTransactionSummaryPreview,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -41,16 +39,10 @@ class SwapTransactionSummaryViewModel @Inject constructor(
     val swapTransactionSummaryPreviewFlow: StateFlow<SwapTransactionSummaryPreview?>
         get() = _swapTransactionSummaryPreviewFlow
 
-    fun initSwapTransactionSummaryPreview(resources: Resources) {
+    fun initSwapTransactionSummaryPreview() {
         viewModelScope.launch {
-            swapTransactionSummaryPreviewUseCase.getSwapSummaryPreview(
-                resources,
-                swapQuote,
-                algorandTransactionFees,
-                optInTransactionFees
-            ).collectLatest { preview ->
-                _swapTransactionSummaryPreviewFlow.emit(preview)
-            }
+            val preview = getSwapTransactionSummaryPreview(swapQuote, algorandTransactionFees, optInTransactionFees)
+            _swapTransactionSummaryPreviewFlow.value = preview
         }
     }
 

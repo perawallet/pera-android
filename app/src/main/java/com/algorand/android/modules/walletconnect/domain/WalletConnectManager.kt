@@ -19,12 +19,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.algorand.android.R
-import com.algorand.android.models.AccountCacheStatus
+import com.algorand.android.appcache.model.AppCacheStatus
+import com.algorand.android.appcache.usecase.GetAppCacheStatusFlow
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
-import com.algorand.android.models.WalletConnectSignResult
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult
 import com.algorand.android.modules.walletconnect.client.v1.session.WalletConnectSessionTimer
 import com.algorand.android.modules.walletconnect.domain.decider.WalletConnectMethodDecider
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
@@ -38,7 +39,6 @@ import com.algorand.android.modules.walletconnect.ui.mapper.WalletConnectPreview
 import com.algorand.android.modules.walletconnect.ui.mapper.WalletConnectSessionIdentifierMapper
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
-import com.algorand.android.usecase.AccountCacheStatusUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.Resource.Error.Annotated
@@ -46,7 +46,6 @@ import com.algorand.android.utils.convertSecToMills
 import com.algorand.android.utils.coremanager.ApplicationStatusObserver
 import com.algorand.android.utils.exception.InvalidWalletConnectUrlException
 import com.algorand.android.utils.launchIO
-import com.algorand.android.utils.recordException
 import com.algorand.android.utils.walletconnect.WalletConnectCustomArbitraryDataHandler
 import com.algorand.android.utils.walletconnect.WalletConnectCustomTransactionHandler
 import com.algorand.android.utils.walletconnect.WalletConnectEventLogger
@@ -70,7 +69,6 @@ import kotlinx.coroutines.flow.filter
 @Singleton
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 class WalletConnectManager @Inject constructor(
-    accountCacheStatusUseCase: AccountCacheStatusUseCase,
     private val walletConnectCustomTransactionHandler: WalletConnectCustomTransactionHandler,
     private val walletConnectCustomArbitraryDataHandler: WalletConnectCustomArbitraryDataHandler,
     private val errorProvider: WalletConnectErrorProvider,
@@ -80,7 +78,8 @@ class WalletConnectManager @Inject constructor(
     private val walletConnectClientManager: WalletConnectClientManager,
     private val walletConnectPreviewMapper: WalletConnectPreviewMapper,
     private val walletConnectSessionIdentifierMapper: WalletConnectSessionIdentifierMapper,
-    private val walletConnectMethodDecider: WalletConnectMethodDecider
+    private val walletConnectMethodDecider: WalletConnectMethodDecider,
+    private val getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : DefaultLifecycleObserver {
 
     val sessionResultFlow: SharedFlow<Event<Resource<WalletConnectSessionProposal>>>
@@ -113,7 +112,7 @@ class WalletConnectManager @Inject constructor(
 
     private var coroutineScope: CoroutineScope? = null
 
-    private val accountCacheStatusFlow = accountCacheStatusUseCase.getAccountCacheStatusFlow()
+    private val appCacheStatusFlow = getAppCacheStatusFlow()
     private val sessionConnectionTimer by lazy { WalletConnectSessionTimer(onSessionTimedOut) }
 
     // TODO Find better solution for multiple transaction request
@@ -268,25 +267,19 @@ class WalletConnectManager @Inject constructor(
         _walletConnectRequestLiveData.postValue(null)
     }
 
-    suspend fun processWalletConnectSignResult(walletConnectSignResult: WalletConnectSignResult) {
-        with(walletConnectSignResult) {
-            if (this is WalletConnectSignResult.Success) {
-                walletConnectClientManager.approveRequest(
-                    sessionIdentifier = sessionIdentifier,
-                    requestId = requestId,
-                    signedTransaction = signedTransaction.map { it?.let { Base64.encodeToString(it, Base64.DEFAULT) } }
-                )
-                logWalletConnectRequestConfirmation()
-                _requestResultLiveData.postValue(
-                    Event(Resource.Success(AnnotatedString(R.string.transaction_succesfully_confirmed)))
-                )
-                _walletConnectRequestLiveData.postValue(null)
-            } else {
-                _requestResultLiveData.postValue(Event(Annotated(AnnotatedString(R.string.an_error_occured))))
-                val exception = Exception("Wallet connect sign result is not Success: $walletConnectSignResult")
-                recordException(exception)
-            }
+    suspend fun processWalletConnectSignResult(result: SignWalletConnectTransactionResult.TransactionsSigned) {
+        with(result) {
+            walletConnectClientManager.approveRequest(
+                sessionIdentifier = sessionIdentifier,
+                requestId = requestId,
+                signedTransaction = transactions.map { it?.let { Base64.encodeToString(it, Base64.DEFAULT) } }
+            )
         }
+        logWalletConnectRequestConfirmation()
+        _requestResultLiveData.postValue(
+            Event(Resource.Success(AnnotatedString(R.string.transaction_succesfully_confirmed)))
+        )
+        _walletConnectRequestLiveData.postValue(null)
     }
 
     private fun logWalletConnectRequestRejection() {
@@ -367,7 +360,7 @@ class WalletConnectManager @Inject constructor(
 
     private fun handleSessionProposal() {
         coroutineScope?.launchIO {
-            accountCacheStatusFlow.filter { it == AccountCacheStatus.DONE }.distinctUntilChanged().collectLatest {
+            appCacheStatusFlow.filter { it == AppCacheStatus.INITIALIZED }.distinctUntilChanged().collectLatest {
                 sessionEvent?.consume()?.run {
                     checkIfRequestedSessionIdMatchWithActiveNode(
                         sessionProposal = this,
@@ -463,7 +456,7 @@ class WalletConnectManager @Inject constructor(
 
         sessionRequestHandlingJob = coroutineScope?.launchIO {
 
-            accountCacheStatusFlow.filter { it == AccountCacheStatus.DONE }.distinctUntilChanged().collectLatest {
+            appCacheStatusFlow.filter { it == AppCacheStatus.INITIALIZED }.distinctUntilChanged().collectLatest {
                 if (latestTransactionRequestIdentifier != requestIdentifier) {
                     latestTransactionRequestIdentifier = requestIdentifier
                     val session = walletConnectClientManager.getSessionDetail(sessionIdentifier)

@@ -13,13 +13,14 @@
 package com.algorand.android.mapper
 
 import androidx.annotation.StringRes
+import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleAudioData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleUnsupportedData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleAudioData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedUnsupportedCollectibleData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.models.BaseRemoveAssetItem
 import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem.BaseRemoveCollectibleItem.RemoveCollectibleAudioItem
 import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem.BaseRemoveCollectibleItem.RemoveCollectibleImageItem
@@ -32,16 +33,15 @@ import com.algorand.android.models.BaseRemoveAssetItem.SearchViewItem
 import com.algorand.android.models.BaseRemoveAssetItem.TitleViewItem
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 
 class RemoveAssetItemMapper @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider
+    private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
+    private val verificationTierConfigurationMapper: VerificationTierConfigurationMapper
 ) {
 
-    fun mapToRemoveAssetItem(
+    suspend fun mapToRemoveAssetItem(
         ownedAssetData: OwnedAssetData,
         actionItemButtonState: AccountAssetItemButtonState
     ): RemoveAssetItem {
@@ -61,8 +61,7 @@ class RemoveAssetItemMapper @Inject constructor(
                 } else {
                     null
                 },
-                verificationTierConfiguration =
-                verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier),
+                verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier),
                 baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
                 actionItemButtonState = actionItemButtonState,
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency
@@ -70,7 +69,7 @@ class RemoveAssetItemMapper @Inject constructor(
         }
     }
 
-    fun mapToRemoveCollectibleImageItem(
+    suspend fun mapToRemoveCollectibleImageItem(
         ownedCollectibleImageData: OwnedCollectibleImageData,
         actionItemButtonState: AccountAssetItemButtonState
     ): RemoveCollectibleImageItem {
@@ -98,7 +97,7 @@ class RemoveAssetItemMapper @Inject constructor(
         }
     }
 
-    fun mapToRemoveCollectibleVideoItem(
+    suspend fun mapToRemoveCollectibleVideoItem(
         ownedCollectibleImageData: OwnedCollectibleVideoData,
         actionItemButtonState: AccountAssetItemButtonState
     ): RemoveCollectibleVideoItem {
@@ -126,7 +125,7 @@ class RemoveAssetItemMapper @Inject constructor(
         }
     }
 
-    fun mapTo(
+    suspend fun mapTo(
         ownedCollectibleAudioData: OwnedCollectibleAudioData,
         actionItemButtonState: AccountAssetItemButtonState
     ): RemoveCollectibleAudioItem {
@@ -150,7 +149,7 @@ class RemoveAssetItemMapper @Inject constructor(
         }
     }
 
-    fun mapToRemoveCollectibleMixedItem(
+    suspend fun mapToRemoveCollectibleMixedItem(
         ownedCollectibleMixedData: OwnedCollectibleMixedData,
         actionItemButtonState: AccountAssetItemButtonState
     ): RemoveCollectibleMixedItem {
@@ -178,8 +177,8 @@ class RemoveAssetItemMapper @Inject constructor(
         }
     }
 
-    fun mapToRemoveNotSupportedCollectibleItem(
-        ownedUnsupportedCollectibleData: OwnedUnsupportedCollectibleData,
+    suspend fun mapToRemoveNotSupportedCollectibleItem(
+        ownedUnsupportedCollectibleData: OwnedCollectibleUnsupportedData,
         actionItemButtonState: AccountAssetItemButtonState
     ): RemoveNotSupportedCollectibleItem {
         return with(ownedUnsupportedCollectibleData) {

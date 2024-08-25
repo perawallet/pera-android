@@ -13,6 +13,7 @@
 package com.algorand.android.utils
 
 import android.content.Context
+import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 
@@ -20,6 +21,10 @@ private const val DEFAULT_VIBRATE_DURATION = 500L
 
 fun Context.singleVibrate(duration: Long = DEFAULT_VIBRATE_DURATION) {
     (getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator)?.run {
-        vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            vibrate(duration)
+        }
     }
 }

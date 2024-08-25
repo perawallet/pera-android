@@ -13,74 +13,68 @@
 
 package com.algorand.android.usecase
 
+import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.core.BaseUseCase
+import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.core.component.domain.usecase.UpdateAccountName
 import com.algorand.android.mapper.NameRegistrationPreviewMapper
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.CreateAccount
 import com.algorand.android.models.ui.NameRegistrationPreview
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.toShortenedAddress
 import javax.inject.Inject
 
 class NameRegistrationPreviewUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val accountUpdateUseCase: AccountUpdateUseCase,
+    private val updateAccountName: UpdateAccountName,
     private val nameRegistrationPreviewMapper: NameRegistrationPreviewMapper,
-    private val accountAdditionUseCase: AccountAdditionUseCase
+    private val accountAdditionUseCase: AccountAdditionUseCase,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
+    private val getAccountDetail: GetAccountDetail
 ) : BaseUseCase() {
 
     fun getInitialPreview(): NameRegistrationPreview {
         return nameRegistrationPreviewMapper.mapToInitialPreview()
     }
 
-    fun getPreviewWithAccountCreation(accountCreation: AccountCreation?, inputName: String): NameRegistrationPreview? {
-        accountCreation?.tempAccount?.let { account ->
-            val address = account.address
-            val accountName = inputName.ifBlank { address.toShortenedAddress() }
-            account.name = accountName
-            val doesAccountAlreadyExists = isThereAnyAccountWithThisAddress(address)
-            if (doesAccountAlreadyExists.not()) {
-                return nameRegistrationPreviewMapper.mapToCreateAccountPreview(accountCreation)
-            }
-            if (shouldUpdateWatchAccountEvent(address, accountCreation.creationType)) {
-                return nameRegistrationPreviewMapper.mapToUpdateWatchAccountPreview(accountCreation)
-            }
-            return nameRegistrationPreviewMapper.mapToAccountAlreadyExistsPreview()
+    suspend fun getPreviewWithAccountCreation(
+        accountCreation: CreateAccount,
+        inputName: String
+    ): NameRegistrationPreview {
+        val address = accountCreation.address
+        val accountName = inputName.ifBlank { address.toShortenedAddress() }
+        accountCreation.customName = accountName
+        val doesAccountAlreadyExists = isThereAnyAccountWithAddress(address)
+        if (doesAccountAlreadyExists.not()) {
+            return nameRegistrationPreviewMapper.mapToCreateAccountPreview(accountCreation)
         }
-        return null
+        if (shouldUpdateWatchAccountEvent(address, accountCreation.creationType)) {
+            return nameRegistrationPreviewMapper.mapToUpdateWatchAccountPreview(accountCreation)
+        }
+        return nameRegistrationPreviewMapper.mapToAccountAlreadyExistsPreview()
     }
 
-    suspend fun updateTypeOfWatchAccount(accountCreation: AccountCreation) {
-        with(accountCreation.tempAccount) {
-            val updatedType = type ?: return
-            val updatedDetail = detail ?: return
-            accountUpdateUseCase.updateAccountType(address = address, type = updatedType, detail = updatedDetail)
-        }
+    suspend fun updateTypeOfWatchAccount(accountCreation: CreateAccount) {
+        accountAdditionUseCase.updateTypeOfWatchAccount(accountCreation)
     }
 
-    fun updateNameOfWatchAccount(accountCreation: AccountCreation) {
-        with(accountCreation.tempAccount) {
-            accountUpdateUseCase.updateAccountName(address = address, newAccountName = name)
-        }
+    suspend fun updateNameOfWatchAccount(accountCreation: CreateAccount) {
+        updateAccountName(accountCreation.address, accountCreation.customName)
     }
 
     fun getOnWatchAccountUpdatedPreview(): NameRegistrationPreview {
         return nameRegistrationPreviewMapper.mapToWatchAccountUpdatedPreview()
     }
 
-    fun addNewAccount(account: Account, creationType: CreationType?) {
-        accountAdditionUseCase.addNewAccount(account, creationType)
+    suspend fun addNewAccount(createAccount: CreateAccount) {
+        accountAdditionUseCase.addNewAccount(createAccount)
     }
 
-    private fun isThereAnyAccountWithThisAddress(address: String): Boolean {
-        return accountDetailUseCase.isThereAnyAccountWithPublicKey(address)
+    private suspend fun isThereAWatchAccountWithThisAddress(address: String): Boolean {
+        return getAccountDetail(address).accountType == AccountType.NoAuth
     }
 
-    private fun isThereAWatchAccountWithThisAddress(address: String): Boolean {
-        return accountDetailUseCase.getAccountType(address) == Account.Type.WATCH
-    }
-
-    private fun shouldUpdateWatchAccountEvent(address: String, creationType: CreationType): Boolean {
+    private suspend fun shouldUpdateWatchAccountEvent(address: String, creationType: CreationType): Boolean {
         val doesAccountExistAsWatchAccount = isThereAWatchAccountWithThisAddress(address)
         return doesAccountExistAsWatchAccount && creationType != CreationType.WATCH
     }

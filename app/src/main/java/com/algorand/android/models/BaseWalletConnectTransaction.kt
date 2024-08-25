@@ -13,7 +13,7 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.decodeBase64
 import com.algorand.android.utils.isRekeyedToAnotherAccount

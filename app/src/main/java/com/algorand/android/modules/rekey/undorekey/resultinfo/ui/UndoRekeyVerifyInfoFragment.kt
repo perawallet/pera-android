@@ -20,8 +20,10 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
+import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,6 +34,13 @@ class UndoRekeyVerifyInfoFragment : BaseInfoFragment() {
 
     private val undoRekeyVerifyInfoViewModel by viewModels<UndoRekeyVerifyInfoViewModel>()
 
+    private val accountDisplayNameCollector: suspend (AccountDisplayName?) -> Unit = {
+        if (it != null) {
+            val description = context?.getString(R.string.the_account_has_been_reverted, it.primaryDisplayName)
+            setDescriptionText(description.orEmpty())
+        }
+    }
+
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             popUndoRekeyNavigationUp()
@@ -41,6 +50,10 @@ class UndoRekeyVerifyInfoFragment : BaseInfoFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, onBackPressedCallback)
+        viewLifecycleOwner.collectOnLifecycle(
+            undoRekeyVerifyInfoViewModel.accountDisplayNameFlow,
+            accountDisplayNameCollector
+        )
     }
 
     override fun setImageView(imageView: ImageView) {
@@ -55,10 +68,7 @@ class UndoRekeyVerifyInfoFragment : BaseInfoFragment() {
     }
 
     override fun setDescriptionText(textView: TextView) {
-        textView.text = context?.getString(
-            R.string.the_account_has_been_reverted,
-            undoRekeyVerifyInfoViewModel.accountDisplayName.getAccountPrimaryDisplayName()
-        )
+        // TODO make this optional
     }
 
     override fun setFirstButton(materialButton: MaterialButton) {

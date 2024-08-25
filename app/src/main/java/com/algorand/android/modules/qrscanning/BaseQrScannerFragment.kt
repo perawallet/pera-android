@@ -22,12 +22,11 @@ import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentQrCodeScannerBinding
-import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetTransaction
+import com.algorand.android.deeplink.DeepLinkHandler
+import com.algorand.android.deeplink.model.BaseDeepLink
+import com.algorand.android.deeplink.model.BaseDeepLink.AssetTransferDeepLink
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.StatusBarConfiguration
-import com.algorand.android.modules.deeplink.domain.model.BaseDeepLink
-import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.utils.CAMERA_PERMISSION
 import com.algorand.android.utils.CAMERA_PERMISSION_REQUEST_CODE
@@ -59,7 +58,7 @@ import com.journeyapps.barcodescanner.DefaultDecoderFactory
  */
 abstract class BaseQrScannerFragment(
     private val fragmentId: Int
-) : BaseFragment(R.layout.fragment_qr_code_scanner), DeeplinkHandler.Listener {
+) : BaseFragment(R.layout.fragment_qr_code_scanner), DeepLinkHandler.Listener {
 
     private val isCameraPermissionGranted: Boolean
         get() = view?.context?.isPermissionGranted(CAMERA_PERMISSION) ?: false
@@ -222,11 +221,15 @@ abstract class BaseQrScannerFragment(
         showGlobalError(getString(R.string.scanned_qr_is_not_valid))
     }
 
-    override fun onAssetTransferDeepLink(assetTransaction: AssetTransaction): Boolean {
+    override fun onAssetTransferDeepLink(
+        deepLink: AssetTransferDeepLink,
+        receiverAddress: String,
+        receiverName: String
+    ): Boolean {
         return false
     }
 
-    override fun onAssetOptInDeepLink(assetAction: AssetAction): Boolean {
+    override fun onAssetOptInDeepLink(assetId: Long): Boolean {
         return false
     }
 

@@ -22,11 +22,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetInformation
+import com.algorand.android.assetdetailui.nftdetail.model.CollectibleDetailPreview
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailFragment
-import com.algorand.android.modules.collectibles.detail.ui.model.NFTDetailPreview
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.openTextShareBottomMenuChooser
 import com.google.android.material.transition.platform.MaterialContainerTransform
@@ -37,7 +35,7 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
 
     override val baseCollectibleDetailViewModel: CollectibleDetailViewModel by viewModels()
 
-    private val collectibleDetailPreviewCollector: suspend (value: NFTDetailPreview?) -> Unit = { preview ->
+    private val collectibleDetailPreviewCollector: suspend (value: CollectibleDetailPreview?) -> Unit = { preview ->
         if (preview != null) initCollectibleDetailPreview(preview)
     }
 
@@ -61,7 +59,7 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
         )
     }
 
-    private fun initCollectibleDetailPreview(nftDetailPreview: NFTDetailPreview) {
+    private fun initCollectibleDetailPreview(nftDetailPreview: CollectibleDetailPreview) {
         with(nftDetailPreview) {
             setProgressBarVisibility(isLoadingVisible)
             setCollectibleMedias(mediaListOfNFT)
@@ -74,30 +72,31 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
             setNFTDescription(nftDescription)
             setNFTOwnerAccount(optedInAccountTypeDrawableResId, optedInAccountDisplayName, formattedNFTAmount)
             setNFTId(nftId)
-            setCollectibleAssetIdClickListener(nftId, optedInAccountDisplayName.getRawAccountAddress())
+            setCollectibleAssetIdClickListener(nftId, optedInAccountDisplayName.accountAddress)
             setNFTCreatorAccount(creatorAccountAddressOfNFT)
             setNFTTraits(traitListOfNFT)
             setShowOnPeraExplorer(peraExplorerUrl)
             setNFTTotalSupply(formattedTotalSupply)
             globalErrorEvent?.consume()?.run { if (this.isNotBlank()) showGlobalError(this) }
             collectibleSendEvent?.consume()?.run {
-                navToSendAlgoNavigation(optedInAccountDisplayName.getRawAccountAddress(), nftId, isPureNFT)
+                navToSendAlgoNavigation(optedInAccountDisplayName.accountAddress, nftId, isPureNFT)
             }
-            optOutNFTEvent?.consume()?.run { navToOptOutNavigation(this) }
+            optOutNFTEvent?.consume()?.run { navToOptOutNavigation() }
         }
     }
 
-    private fun navToOptOutNavigation(assetInformation: AssetInformation) {
-        nav(
-            CollectibleDetailFragmentDirections
-                .actionCollectibleDetailFragmentToNftOptOutConfirmationNavigation(
-                    assetAction = AssetAction(
-                        assetId = baseCollectibleDetailViewModel.nftId,
-                        publicKey = baseCollectibleDetailViewModel.accountAddress,
-                        asset = assetInformation
-                    )
-                )
-        )
+    private fun navToOptOutNavigation() {
+        TODO()
+//        nav(
+//            CollectibleDetailFragmentDirections
+//                .actionCollectibleDetailFragmentToNftOptOutConfirmationNavigation(
+//                    assetAction = AssetAction(
+//                        assetId = baseCollectibleDetailViewModel.nftId,
+//                        publicKey = baseCollectibleDetailViewModel.accountAddress,
+//                        asset = assetInformation
+//                    )
+//                )
+//        )
     }
 
     private fun setSendButton(isSendButtonVisible: Boolean) {
@@ -170,7 +169,7 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
 
     override fun onShareButtonClick() {
         context?.openTextShareBottomMenuChooser(
-            title = baseCollectibleDetailViewModel.getAssetName()?.getName(resources).orEmpty(),
+            title = baseCollectibleDetailViewModel.getAssetName()?.assetName.orEmpty(),
             text = baseCollectibleDetailViewModel.getExplorerUrl().orEmpty()
         )
     }

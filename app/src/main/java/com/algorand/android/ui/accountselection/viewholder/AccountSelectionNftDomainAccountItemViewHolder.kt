@@ -16,8 +16,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.databinding.ItemNftDomainAccountBinding
-import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.utils.loadImage
 import com.algorand.android.utils.toShortenedAddress
 
@@ -27,7 +27,7 @@ class AccountSelectionNftDomainAccountItemViewHolder(
 
     fun bind(item: BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem) {
         with(binding) {
-            accountAddressTextView.text = item.publicKey.toShortenedAddress()
+            accountAddressTextView.text = item.address.toShortenedAddress()
             nftDomainTextview.text = item.displayName
             serviceLogoImageView.context.loadImage(
                 uri = item.serviceLogoUrl.orEmpty(),

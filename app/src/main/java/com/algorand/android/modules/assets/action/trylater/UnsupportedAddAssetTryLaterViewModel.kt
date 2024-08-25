@@ -13,35 +13,24 @@
 package com.algorand.android.modules.assets.action.trylater
 
 import androidx.lifecycle.SavedStateHandle
+import com.algorand.android.assetaction.AssetActionViewModel
+import com.algorand.android.assetaction.usecase.GetAssetActionPreview
 import com.algorand.android.models.AssetAction
-import com.algorand.android.modules.assets.action.base.BaseAssetActionViewModel
-import com.algorand.android.modules.assets.profile.about.domain.usecase.GetAssetDetailUseCase
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class UnsupportedAddAssetTryLaterViewModel @Inject constructor(
-    assetDetailUseCase: SimpleAssetDetailUseCase,
-    simpleCollectibleUseCase: SimpleCollectibleUseCase,
-    getAssetDetailUseCase: GetAssetDetailUseCase,
-    verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
+    getAssetActionPreview: GetAssetActionPreview,
     savedStateHandle: SavedStateHandle
-) : BaseAssetActionViewModel(
-    assetDetailUseCase,
-    simpleCollectibleUseCase,
-    getAssetDetailUseCase,
-    verificationTierConfigurationDecider
-) {
+) : AssetActionViewModel(getAssetActionPreview) {
 
     private val assetAction: AssetAction = savedStateHandle.getOrThrow(ASSET_ACTION_KEY)
 
     override val assetId: Long = assetAction.assetId
 
     init {
-        fetchAssetDescription(assetId)
+        initPreview(null)
     }
 }

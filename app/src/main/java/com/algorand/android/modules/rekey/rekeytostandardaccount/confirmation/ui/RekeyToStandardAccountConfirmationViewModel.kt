@@ -14,8 +14,7 @@ package com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.u
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRekeyConfirmationFields
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
@@ -23,13 +22,11 @@ import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RekeyToStandardAccountConfirmationViewModel @Inject constructor(
@@ -41,71 +38,72 @@ class RekeyToStandardAccountConfirmationViewModel @Inject constructor(
     val accountAddress = navArgs.accountAddress
     val authAccountAddress = navArgs.authAccountAddress
 
-    private val _rekeyToStandardAccountConfirmationPreviewFlow = MutableStateFlow(getInitialPreview())
-    override val baseRekeyConfirmationFieldsFlow: StateFlow<BaseRekeyConfirmationFields>
+    private val _rekeyToStandardAccountConfirmationPreviewFlow =
+        MutableStateFlow<RekeyToStandardAccountConfirmationPreview?>(null)
+    override val baseRekeyConfirmationFieldsFlow: StateFlow<BaseRekeyConfirmationFields?>
         get() = _rekeyToStandardAccountConfirmationPreviewFlow
 
     private var sendTransactionJob: Job? = null
 
     init {
-        updatePreviewWithCalculatedTransactionFee()
+        initPreview()
     }
 
-    fun createRekeyToStandardAccountTransaction(): TransactionData.RekeyToStandardAccount? {
-        return rekeyToStandardAccountConfirmationPreviewUseCase.createRekeyToStandardAccountTransaction(
-            accountAddress = accountAddress,
-            authAccountAddress = authAccountAddress,
-        )
-    }
+//    fun createRekeyToStandardAccountTransaction(): TransactionData.RekeyToStandardAccount? {
+//        return rekeyToStandardAccountConfirmationPreviewUseCase.createRekeyToStandardAccountTransaction(
+//            accountAddress = accountAddress,
+//            authAccountAddress = authAccountAddress,
+//        )
+//    }
 
     fun onTransactionSigningFailed() {
         _rekeyToStandardAccountConfirmationPreviewFlow.update { preview ->
-            rekeyToStandardAccountConfirmationPreviewUseCase.updatePreviewWithClearLoadingState(preview)
+            preview?.copy(isLoading = false)
         }
     }
 
     fun onTransactionSigningStarted() {
         _rekeyToStandardAccountConfirmationPreviewFlow.update { preview ->
-            rekeyToStandardAccountConfirmationPreviewUseCase.updatePreviewWithLoadingState(preview)
+            preview?.copy(isLoading = true)
         }
     }
 
-    fun sendRekeyTransaction(transactionDetail: SignedTransactionDetail.RekeyToStandardAccountOperation) {
-        if (sendTransactionJob?.isActive == true) {
-            return
-        }
-        sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
-            rekeyToStandardAccountConfirmationPreviewUseCase.sendRekeyToStandardAccountTransaction(
-                transactionDetail = transactionDetail,
-                preview = _rekeyToStandardAccountConfirmationPreviewFlow.value
-            ).collectLatest { preview ->
-                _rekeyToStandardAccountConfirmationPreviewFlow.emit(preview)
+//    fun sendRekeyTransaction(transactionDetail: SignedTransactionDetail.RekeyToStandardAccountOperation) {
+//        if (sendTransactionJob?.isActive == true) {
+//            return
+//        }
+//        sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
+//            rekeyToStandardAccountConfirmationPreviewUseCase.sendRekeyToStandardAccountTransaction(
+//                transactionDetail = transactionDetail,
+//                preview = _rekeyToStandardAccountConfirmationPreviewFlow.value
+//            ).collectLatest { preview ->
+//                _rekeyToStandardAccountConfirmationPreviewFlow.emit(preview)
+//            }
+//        }
+//    }
+
+    fun onConfirmRekeyClick() {
+        _rekeyToStandardAccountConfirmationPreviewFlow.update { preview ->
+            val isRekeyed = preview?.accountInformation?.isRekeyed() ?: return@update preview
+            if (isRekeyed) {
+                preview.copy(navToRekeyedAccountConfirmationBottomSheetEvent = Event(Unit))
+            } else {
+                preview.copy(onSendTransactionEvent = Event(Unit))
             }
         }
     }
 
-    fun onConfirmRekeyClick() {
-        _rekeyToStandardAccountConfirmationPreviewFlow.update { preview ->
-            rekeyToStandardAccountConfirmationPreviewUseCase.updatePreviewWithRekeyConfirmationClick(
-                accountAddress = accountAddress,
-                preview = preview
-            )
-        }
-    }
-
-    private fun getInitialPreview(): RekeyToStandardAccountConfirmationPreview {
-        return rekeyToStandardAccountConfirmationPreviewUseCase.getInitialRekeyToStandardAccountConfirmationPreview(
-            accountAddress = accountAddress,
-            authAccountAddress = authAccountAddress
-        )
-    }
-
-    private fun updatePreviewWithCalculatedTransactionFee() {
+    private fun initPreview() {
         viewModelScope.launchIO {
-            rekeyToStandardAccountConfirmationPreviewUseCase.updatePreviewWithTransactionFee(
-                preview = _rekeyToStandardAccountConfirmationPreviewFlow.value
-            ).collectLatest { preview ->
-                _rekeyToStandardAccountConfirmationPreviewFlow.emit(preview)
+            with(rekeyToStandardAccountConfirmationPreviewUseCase) {
+                val initialPreview = getInitialRekeyToStandardAccountConfirmationPreview(
+                    accountAddress,
+                    authAccountAddress
+                )
+                _rekeyToStandardAccountConfirmationPreviewFlow.value = initialPreview
+                updatePreviewWithTransactionFee(initialPreview).collectLatest { preview ->
+                    _rekeyToStandardAccountConfirmationPreviewFlow.value = preview
+                }
             }
         }
     }

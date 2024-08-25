@@ -12,7 +12,7 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.*
 import com.algorand.android.models.ui.NameRegistrationPreview
 import com.algorand.android.utils.Event
 import javax.inject.Inject
@@ -28,7 +28,7 @@ class NameRegistrationPreviewMapper @Inject constructor() {
         )
     }
 
-    fun mapToCreateAccountPreview(accountCreation: AccountCreation): NameRegistrationPreview {
+    fun mapToCreateAccountPreview(accountCreation: CreateAccount): NameRegistrationPreview {
         return NameRegistrationPreview(
             accountAlreadyExistsEvent = null,
             updateWatchAccountEvent = null,
@@ -37,7 +37,7 @@ class NameRegistrationPreviewMapper @Inject constructor() {
         )
     }
 
-    fun mapToUpdateWatchAccountPreview(accountCreation: AccountCreation): NameRegistrationPreview {
+    fun mapToUpdateWatchAccountPreview(accountCreation: CreateAccount): NameRegistrationPreview {
         return NameRegistrationPreview(
             accountAlreadyExistsEvent = null,
             updateWatchAccountEvent = Event(accountCreation),

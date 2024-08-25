@@ -12,21 +12,16 @@
 
 package com.algorand.android.modules.asb.importbackup.accountselection.ui
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbImportAccountSelectionPreview
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.usecase.AsbImportAccountSelectionPreviewUseCase
-import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
+import com.algorand.android.modules.asb.importbackup.enterkey.ui.model.RestoredAccount
 import com.algorand.android.modules.basemultipleaccountselection.ui.BaseMultipleAccountSelectionViewModel
-import com.algorand.android.utils.getOrThrow
-import com.algorand.android.utils.launchIO
+import com.algorand.android.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
+import javax.inject.Inject
 
 @HiltViewModel
 class AsbImportAccountSelectionViewModel @Inject constructor(
@@ -36,8 +31,8 @@ class AsbImportAccountSelectionViewModel @Inject constructor(
 
     private var accountImportJob: Job? = null
 
-    private val backupProtocolElements = savedStateHandle.getOrThrow<Array<BackupProtocolElement>>(
-        argKey = BACKUP_PROTOCOL_ELEMENTS_KEY
+    private val restoredAccounts = savedStateHandle.getOrThrow<Array<RestoredAccount>>(
+        argKey = RESTORED_ACCOUNTS_KEY
     )
 
     private val _asbImportAccountSelectionPreviewFlow = MutableStateFlow(getInitialPreview())
@@ -65,7 +60,7 @@ class AsbImportAccountSelectionViewModel @Inject constructor(
         accountImportJob = viewModelScope.launchIO {
             asbImportAccountSelectionPreviewUseCase.updatePreviewWithRestoredAccounts(
                 preview = _asbImportAccountSelectionPreviewFlow.value,
-                backupProtocolElements = backupProtocolElements
+                restoredAccounts = restoredAccounts
             ).collectLatest { preview ->
                 _asbImportAccountSelectionPreviewFlow.emit(preview)
             }
@@ -80,13 +75,13 @@ class AsbImportAccountSelectionViewModel @Inject constructor(
         viewModelScope.launchIO {
             val preview = asbImportAccountSelectionPreviewUseCase.getAsbImportAccountSelectionPreview(
                 preview = _asbImportAccountSelectionPreviewFlow.value,
-                backupProtocolElements = backupProtocolElements
+                restoredAccounts = restoredAccounts
             )
             _asbImportAccountSelectionPreviewFlow.value = preview
         }
     }
 
     companion object {
-        private const val BACKUP_PROTOCOL_ELEMENTS_KEY = "backupProtocolElements"
+        private const val RESTORED_ACCOUNTS_KEY = "restoredAccounts"
     }
 }

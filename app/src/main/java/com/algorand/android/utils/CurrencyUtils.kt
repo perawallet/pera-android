@@ -12,7 +12,7 @@
 
 package com.algorand.android.utils
 
-import com.algorand.android.modules.currency.domain.model.Currency
+import com.algorand.android.currency.domain.model.Currency
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode

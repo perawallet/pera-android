@@ -13,21 +13,32 @@
 package com.algorand.android.modules.assets.manage.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.assets.manage.ui.usecase.ManageAssetsPreviewUseCase
+import com.algorand.android.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ManageAssetsViewModel @Inject constructor(
-    private val manageAssetsPreviewUseCase: ManageAssetsPreviewUseCase,
+    private val getAccountDetail: GetAccountDetail,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
     private val navArgs = ManageAssetsBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
     val publicKey = navArgs.publicKey
 
-    fun hasAccountAuthority(): Boolean {
-        return manageAssetsPreviewUseCase.hasAccountAuthority(publicKey)
+    private val _accountDetailFlow = MutableStateFlow<AccountDetail?>(null)
+    val accountDetailFlow: StateFlow<AccountDetail?>
+        get() = _accountDetailFlow
+
+    fun initAccountDetail() {
+        viewModelScope.launch {
+            _accountDetailFlow.value = getAccountDetail(publicKey)
+        }
     }
 }

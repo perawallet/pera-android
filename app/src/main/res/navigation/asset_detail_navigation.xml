@@ -86,7 +86,7 @@
             app:destination="@id/dateFilterNavigation">
             <argument
                 android:name="selectedDateFilter"
-                app:argType="com.algorand.android.models.DateFilter" />
+                app:argType="com.algorand.android.dateui.model.DateFilter" />
         </action>
         <action
             android:id="@+id/action_assetDetailFragment_to_transactionDetailNavigation"

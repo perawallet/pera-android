@@ -23,18 +23,18 @@ import com.algorand.android.models.TransactionRequestOnlineKeyRegInfo
 import com.algorand.android.models.TransactionRequestSenderInfo
 import com.algorand.android.models.TransactionRequestTransactionInfo
 import com.algorand.android.models.decider.WalletConnectTransactionDetailUiDecider
-import com.algorand.android.network.AlgodInterceptor
+import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class TransactionRequestDetailViewModel @Inject constructor(
-    private val algodInterceptor: AlgodInterceptor,
-    private val walletConnectTransactionDetailUiDecider: WalletConnectTransactionDetailUiDecider
+    private val walletConnectTransactionDetailUiDecider: WalletConnectTransactionDetailUiDecider,
+    private val getActiveNodeNetworkSlug: GetActiveNodeNetworkSlug
 ) : ViewModel() {
 
-    fun getNetworkSlug(): String? {
-        return algodInterceptor.currentActiveNode?.networkSlug
+    fun getNetworkSlug(): String {
+        return getActiveNodeNetworkSlug()
     }
 
     fun buildTransactionRequestTransactionInfo(txn: BaseWalletConnectTransaction): TransactionRequestTransactionInfo? {

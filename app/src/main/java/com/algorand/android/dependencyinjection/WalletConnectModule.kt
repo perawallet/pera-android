@@ -12,7 +12,7 @@
 
 package com.algorand.android.dependencyinjection
 
-import com.algorand.android.network.AlgodInterceptor
+import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
 import com.algorand.android.utils.walletconnect.WalletConnectEventLogger
 import com.algorand.android.utils.walletconnect.WalletConnectFirebaseEventLogger
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -28,8 +28,8 @@ object WalletConnectModule {
     @Provides
     fun provideWalletConnectEventLogger(
         firebaseAnalytics: FirebaseAnalytics,
-        algodInterceptor: AlgodInterceptor
+        isSelectedNodeMainnet: IsSelectedNodeMainnet
     ): WalletConnectEventLogger {
-        return WalletConnectFirebaseEventLogger(firebaseAnalytics, algodInterceptor)
+        return WalletConnectFirebaseEventLogger(firebaseAnalytics, isSelectedNodeMainnet)
     }
 }

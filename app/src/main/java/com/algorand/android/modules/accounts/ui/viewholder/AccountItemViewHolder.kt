@@ -12,13 +12,11 @@
 
 package com.algorand.android.modules.accounts.ui.viewholder
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.databinding.ItemAccountBinding
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import com.algorand.android.utils.AccountIconDrawable
 
@@ -32,8 +30,8 @@ class AccountItemViewHolder(
         with(binding) {
             with(item.accountListItem.itemConfiguration) {
                 setAccountStartIconDrawable(accountIconDrawablePreview)
-                setAccountTitleText(accountDisplayName?.getAccountPrimaryDisplayName())
-                setAccountDescriptionText(accountDisplayName?.getAccountSecondaryDisplayName(root.resources))
+                setAccountTitleText(accountDisplayName?.primaryDisplayName)
+                setAccountDescriptionText(accountDisplayName?.secondaryDisplayName)
                 setAccountPrimaryValueText(primaryValueText)
                 setAccountSecondaryValueText(secondaryValueText)
                 setStartSmallIconDrawableResource(startSmallIconResource)

@@ -12,12 +12,12 @@
 
 package com.algorand.android.modules.basefoundaccount.information.ui.mapoer
 
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
 import com.algorand.android.modules.basefoundaccount.information.ui.model.BaseFoundAccountInformationItem
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import javax.inject.Inject
 
 class BaseFoundAccountInformationItemMapper @Inject constructor() {

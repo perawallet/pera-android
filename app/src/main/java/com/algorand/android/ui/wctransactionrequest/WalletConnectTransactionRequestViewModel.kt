@@ -17,27 +17,29 @@ import android.os.Bundle
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.models.WalletConnectSession
-import com.algorand.android.models.WalletConnectSignResult
 import com.algorand.android.models.builder.WalletConnectTransactionListBuilder
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionManager
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.ui.wctransactionrequest.ui.model.WalletConnectTransactionRequestPreview
 import com.algorand.android.ui.wctransactionrequest.ui.usecase.WalletConnectTransactionRequestPreviewUseCase
-import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.preference.getFirstWalletConnectRequestBottomSheetShown
 import com.algorand.android.utils.preference.setFirstWalletConnectRequestBottomSheetShown
-import com.algorand.android.utils.walletconnect.WalletConnectTransactionSignManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -47,17 +49,14 @@ class WalletConnectTransactionRequestViewModel @Inject constructor(
     private val walletConnectManager: WalletConnectManager,
     private val errorProvider: WalletConnectErrorProvider,
     private val sharedPreferences: SharedPreferences,
-    private val walletConnectSignManager: WalletConnectTransactionSignManager,
     private val transactionListBuilder: WalletConnectTransactionListBuilder,
     private val walletConnectTransactionRequestPreviewUseCase: WalletConnectTransactionRequestPreviewUseCase,
+    private val signWalletConnectTransactionManager: SignWalletConnectTransactionManager,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
     val requestResultLiveData: LiveData<Event<Resource<AnnotatedString>>>
-        get() = walletConnectManager.requestResultLiveData
-
-    val signResultLiveData: LiveData<WalletConnectSignResult>
-        get() = walletConnectSignManager.signResultLiveData
+        get() = walletConnectManager.requestResultLiveData.map { Event(it.peek()) }
 
     val transaction: WalletConnectTransaction?
         get() = walletConnectManager.wcRequest as? WalletConnectTransaction
@@ -71,8 +70,11 @@ class WalletConnectTransactionRequestViewModel @Inject constructor(
     val walletConnectTransactionRequestPreviewFlow: StateFlow<WalletConnectTransactionRequestPreview>
         get() = _walletConnectTransactionRequestPreviewFlow
 
-    fun setupWalletConnectSignManager(lifecycle: Lifecycle) {
-        walletConnectSignManager.setup(lifecycle)
+    val signWcTransactionResultFlow: Flow<Event<SignWalletConnectTransactionResult>?>
+        get() = signWalletConnectTransactionManager.signWalletConnectTransactionResultFlow
+
+    fun setup(lifecycle: Lifecycle) {
+        signWalletConnectTransactionManager.setup(lifecycle)
     }
 
     fun rejectRequest() {
@@ -87,30 +89,26 @@ class WalletConnectTransactionRequestViewModel @Inject constructor(
         }
     }
 
+    fun confirmRequest() {
+        transaction?.run {
+            signWalletConnectTransactionManager.sign(this)
+        }
+    }
+
+    fun processWaitingTransaction() {
+        signWalletConnectTransactionManager.signCachedTransaction()
+    }
+
     fun shouldShowFirstRequestBottomSheet(): Boolean {
         return !sharedPreferences.getFirstWalletConnectRequestBottomSheetShown().also {
             sharedPreferences.setFirstWalletConnectRequestBottomSheetShown()
         }
     }
 
-    fun signTransactionRequest(transaction: WalletConnectTransaction) {
-        viewModelScope.launch {
-            walletConnectSignManager.signTransaction(transaction)
-        }
-    }
-
-    fun processWalletConnectSignResult(result: WalletConnectSignResult) {
+    fun processWalletConnectSignResult(result: SignWalletConnectTransactionResult.TransactionsSigned) {
         viewModelScope.launch {
             walletConnectManager.processWalletConnectSignResult(result)
         }
-    }
-
-    fun stopAllResources() {
-        walletConnectSignManager.manualStopAllResources()
-    }
-
-    fun isBluetoothNeededToSignTxns(transaction: WalletConnectTransaction): Boolean {
-        return walletConnectTransactionRequestPreviewUseCase.isBluetoothNeededToSignTxns(transaction)
     }
 
     fun handleStartDestinationAndArgs(transactionList: List<WalletConnectTransactionListItem>): Pair<Int, Bundle?> {
@@ -153,6 +151,10 @@ class WalletConnectTransactionRequestViewModel @Inject constructor(
             )
             _walletConnectTransactionRequestPreviewFlow.emit(preview)
         }
+    }
+
+    fun stopAllResources() {
+        signWalletConnectTransactionManager.stopAllResources()
     }
 
     private fun getInitialPreview(): WalletConnectTransactionRequestPreview {

@@ -18,10 +18,10 @@ import android.widget.DatePicker
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
-import com.algorand.android.databinding.BottomSheetCustomDateRangeBinding
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
+import com.algorand.android.databinding.BottomSheetCustomDateRangeBinding
+import com.algorand.android.dateui.model.CustomDateRangePreview
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.models.ui.CustomDateRangePreview
 import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.setNavigationResult
 import com.algorand.android.utils.viewbinding.viewBinding

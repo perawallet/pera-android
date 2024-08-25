@@ -13,52 +13,43 @@
 package com.algorand.android.modules.asb.importbackup.accountselection.ui.usecase
 
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.usecase.*
+import com.algorand.android.core.component.detail.domain.model.AccountType
 import com.algorand.android.customviews.TriStatesCheckBox
-import com.algorand.android.customviews.accountandassetitem.mapper.AccountItemConfigurationMapper
-import com.algorand.android.mapper.AccountDisplayNameMapper
-import com.algorand.android.models.Account
-import com.algorand.android.models.ScreenState
+import com.algorand.android.models.*
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
-import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.mapper.AsbImportAccountSelectionPreviewMapper
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbImportAccountSelectionPreview
 import com.algorand.android.modules.asb.importbackup.accountselection.utils.AsbAccountImportParser
-import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
+import com.algorand.android.modules.asb.importbackup.enterkey.ui.model.RestoredAccount
 import com.algorand.android.modules.basemultipleaccountselection.ui.mapper.MultipleAccountSelectionListItemMapper
 import com.algorand.android.modules.basemultipleaccountselection.ui.model.MultipleAccountSelectionListItem
 import com.algorand.android.modules.basemultipleaccountselection.ui.usecase.BaseMultipleAccountSelectionPreviewUseCase
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.AccountSortPreferenceUseCase
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.GetSortedAccountsByPreferenceUseCase
 import com.algorand.android.usecase.AccountAdditionUseCase
-import com.algorand.android.utils.Event
+import com.algorand.android.utils.*
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.extensions.decodeBase64ToByteArray
-import com.algorand.android.utils.toShortenedAddress
-import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
     private val asbImportAccountSelectionPreviewMapper: AsbImportAccountSelectionPreviewMapper,
     private val multipleAccountSelectionListItemMapper: MultipleAccountSelectionListItemMapper,
     private val asbAccountImportParser: AsbAccountImportParser,
-    private val accountDisplayNameMapper: AccountDisplayNameMapper,
     private val accountAdditionUseCase: AccountAdditionUseCase,
-    private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
-    accountDisplayNameUseCase: AccountDisplayNameUseCase,
-    getSortedAccountsByPreferenceUseCase: GetSortedAccountsByPreferenceUseCase,
-    accountSortPreferenceUseCase: AccountSortPreferenceUseCase,
-    accountItemConfigurationMapper: AccountItemConfigurationMapper,
-    createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getAccountDisplayName: GetAccountDisplayName,
+    getSortedAccountsByPreference: GetSortedAccountsByPreference,
+    accountItemConfigurationMapper: com.algorand.android.accountcore.ui.mapper.AccountItemConfigurationMapper,
+    getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) : BaseMultipleAccountSelectionPreviewUseCase(
-    multipleAccountSelectionListItemMapper = multipleAccountSelectionListItemMapper,
-    getSortedAccountsByPreferenceUseCase = getSortedAccountsByPreferenceUseCase,
-    accountSortPreferenceUseCase = accountSortPreferenceUseCase,
-    accountItemConfigurationMapper = accountItemConfigurationMapper,
-    accountDisplayNameUseCase = accountDisplayNameUseCase,
-    createAccountIconDrawableUseCase = createAccountIconDrawableUseCase
+    multipleAccountSelectionListItemMapper,
+    getSortedAccountsByPreference,
+    accountItemConfigurationMapper,
+    getAccountDisplayName,
+    getAccountIconDrawablePreview
 ) {
     fun getInitialPreview(): AsbImportAccountSelectionPreview {
         val titleItem = createTitleItem(textResId = R.string.choose_accounts_n_to_restore)
@@ -115,12 +106,12 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
 
     fun updatePreviewWithRestoredAccounts(
         preview: AsbImportAccountSelectionPreview,
-        backupProtocolElements: Array<BackupProtocolElement>
+        restoredAccounts: Array<RestoredAccount>
     ) = flow {
         emit(preview.copy(isLoadingVisible = true))
         val selectedAccounts = getSelectedAccountAddressList(preview.multipleAccountSelectionList)
         val accountImportMap = selectedAccounts.mapNotNull { address ->
-            address to (backupProtocolElements.firstOrNull { it.address == address } ?: return@mapNotNull null)
+            address to (restoredAccounts.firstOrNull { it.address == address } ?: return@mapNotNull null)
         }
         val accountImportResult = asbAccountImportParser.parseAsbImportedAccounts(
             accountImportMap = accountImportMap,
@@ -128,7 +119,7 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
         )
 
         accountImportResult.importedAccountList.forEach { accountAddress ->
-            val importedAccount = backupProtocolElements.firstOrNull { it.address == accountAddress }
+            val importedAccount = restoredAccounts.firstOrNull { it.address == accountAddress }
             addImportedAccount(importedAccount)
         }
 
@@ -141,13 +132,13 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
 
     suspend fun getAsbImportAccountSelectionPreview(
         preview: AsbImportAccountSelectionPreview,
-        backupProtocolElements: Array<BackupProtocolElement>
+        restoredAccounts: Array<RestoredAccount>
     ): AsbImportAccountSelectionPreview {
         val titleItem = createTitleItem(textResId = R.string.choose_accounts_n_to_restore)
 
-        val supportedAccounts = mutableListOf<BackupProtocolElement>()
-        val unsupportedAccounts = mutableListOf<BackupProtocolElement>()
-        backupProtocolElements.forEach { payload ->
+        val supportedAccounts = mutableListOf<RestoredAccount>()
+        val unsupportedAccounts = mutableListOf<RestoredAccount>()
+        restoredAccounts.forEach { payload ->
             val isAccountSupported = asbAccountImportParser.isAccountSupported(payload)
             if (isAccountSupported) {
                 supportedAccounts.add(payload)
@@ -187,22 +178,20 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
         )
     }
 
-    private fun createAccountItemListByPayload(
-        backupProtocolElements: List<BackupProtocolElement>
+    private suspend fun createAccountItemListByPayload(
+        restoredAccounts: List<RestoredAccount>
     ): List<MultipleAccountSelectionListItem.AccountItem> {
-        return backupProtocolElements.mapNotNull { payload ->
-            val safeAccountType = Account.Type.valueOf(payload.accountType ?: return@mapNotNull null)
+        return restoredAccounts.map { payload ->
             // Since these accounts are not saved in local, we have to create [AccountDisplayName] model by using
             // mapper instead of using `AccountDisplayNameUseCase`
-            val accountDisplayName = accountDisplayNameMapper.mapToAccountDisplayName(
-                accountAddress = payload.address ?: return@mapNotNull null,
-                accountName = payload.name,
-                nfDomainName = null,
-                type = safeAccountType
+            val accountDisplayName = getAccountDisplayName(
+                address = payload.address,
+                name = payload.name,
+                type = AccountType.Algo25
             )
             // Since these account are not in our local, we have to create them manually BUT
             // do not forget that now are supporting only standard accounts in ASB
-            val accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
+            val accountIconDrawablePreview = AccountIconDrawablePreview(
                 iconResId = R.drawable.ic_wallet,
                 iconTintResId = R.color.wallet_4_icon,
                 backgroundColorResId = R.color.wallet_4
@@ -215,16 +204,18 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
         }
     }
 
-    private suspend fun addImportedAccount(importedAccount: BackupProtocolElement?) {
+    private suspend fun addImportedAccount(importedAccount: RestoredAccount?) {
         if (importedAccount == null) return
-        val safeAccountAddress = importedAccount.address ?: return
-        val safeAccountPrivateKey = importedAccount.privateKey?.decodeBase64ToByteArray() ?: return
-        val safeAccountName = importedAccount.name.orEmpty().ifBlank { safeAccountAddress.toShortenedAddress() }
-        val recoveredAccount = Account.create(
-            publicKey = safeAccountAddress,
-            detail = Account.Detail.Standard(safeAccountPrivateKey),
-            accountName = safeAccountName
+        val safeAccountAddress = importedAccount.address
+        val safeAccountPrivateKey = importedAccount.secretKey.decodeBase64ToByteArray() ?: return
+        val safeAccountName = importedAccount.name.ifBlank { safeAccountAddress.toShortenedAddress() }
+        val recoveredAccount = CreateAccount.Algo25(
+            address = safeAccountAddress,
+            secretKey = safeAccountPrivateKey,
+            customName = safeAccountName,
+            creationType = CreationType.RECOVER,
+            isBackedUp = true
         )
-        accountAdditionUseCase.addNewAccount(recoveredAccount, CreationType.RECOVER)
+        accountAdditionUseCase.addNewAccount(recoveredAccount)
     }
 }

@@ -13,46 +13,42 @@
 package com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.mapper.AccountDisplayNameMapper
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountInformation
-import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
+import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.accountinfo.component.domain.usecase.FetchRekeyedAccounts
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.core.component.caching.domain.usecase.FetchAccountInformationAndCacheAssets
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.modules.basefoundaccount.information.ui.mapoer.BaseFoundAccountInformationItemMapper
 import com.algorand.android.modules.basefoundaccount.information.ui.model.BaseFoundAccountInformationItem
 import com.algorand.android.modules.basefoundaccount.information.ui.usecase.BaseFoundAccountInformationItemUseCase
-import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.domain.usecase.GetRekeyedAccountUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.mapper.RekeyedAccountInformationPreviewMapper
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.model.RekeyedAccountInformationPreview
-import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.usecase.AccountAlgoAmountUseCase
-import com.algorand.android.usecase.AccountAssetAmountUseCase
-import com.algorand.android.usecase.AccountInformationUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
-import com.algorand.android.utils.AssetName
+import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
+import com.algorand.android.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
 import com.algorand.android.utils.extensions.mapNotBlank
 import com.algorand.android.utils.formatAsCurrency
-import com.algorand.android.utils.toShortenedAddress
 import java.math.BigDecimal
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.flow
 
 @SuppressWarnings("LongParameterList")
 class RekeyedAccountInformationPreviewUseCase @Inject constructor(
     private val rekeyedAccountInformationPreviewMapper: RekeyedAccountInformationPreviewMapper,
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val accountAssetAmountUseCase: AccountAssetAmountUseCase,
-    private val accountAlgoAmountUseCase: AccountAlgoAmountUseCase,
-    private val accountInformationUseCase: AccountInformationUseCase,
-    private val parityUseCase: ParityUseCase,
-    private val accountDisplayNameMapper: AccountDisplayNameMapper,
-    private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
-    private val getRekeyedAccountUseCase: GetRekeyedAccountUseCase,
+    private val verificationTierConfigurationMapper: VerificationTierConfigurationMapper,
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
+    private val getPrimaryCurrencySymbolOrName: GetPrimaryCurrencySymbolOrName,
+    private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol,
+    private val fetchRekeyedAccounts: FetchRekeyedAccounts,
+    private val fetchAccountInformationAndCacheAssets: FetchAccountInformationAndCacheAssets,
+    private val getAssetName: GetAssetName,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAssetDrawableProvider: GetAssetDrawableProvider,
     baseFoundAccountInformationItemMapper: BaseFoundAccountInformationItemMapper
 ) : BaseFoundAccountInformationItemUseCase(baseFoundAccountInformationItemMapper) {
 
@@ -65,50 +61,42 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
 
     suspend fun getRekeyedAccountInformationPreviewFlow(
         accountAddress: String,
-        coroutineScope: CoroutineScope,
         preview: RekeyedAccountInformationPreview
     ) = flow {
-        accountInformationUseCase.getAccountInformationAndFetchAssets(
-            publicKey = accountAddress,
-            coroutineScope = coroutineScope
-        ).use(
-            onSuccess = { accountInformation ->
-                lateinit var foundAccountInformationItemList: List<BaseFoundAccountInformationItem>
-                getRekeyedAccountUseCase.invoke(accountAddress).useSuspended(
-                    onSuccess = { rekeyedAccountInformation ->
-                        foundAccountInformationItemList = createBaseFoundAccountInformationItemList(
-                            accountInformation = accountInformation,
-                            rekeyedAccounts = rekeyedAccountInformation
-                        )
-                    },
-                    onFailed = {
-                        foundAccountInformationItemList = createBaseFoundAccountInformationItemList(
-                            accountInformation = accountInformation,
-                            rekeyedAccounts = emptyList()
-                        )
-                    }
-                )
-                val copiedPreview = preview.copy(
-                    isLoading = false,
-                    foundAccountInformationItemList = foundAccountInformationItemList
-                )
-
-                emit(copiedPreview)
-            }
-        )
+        fetchAccountInformationAndCacheAssets(accountAddress).onSuccess { accountInformation ->
+            lateinit var foundAccountInformationItemList: List<BaseFoundAccountInformationItem>
+            fetchRekeyedAccounts(accountAddress).use(
+                onSuccess = { rekeyedAccountInformation ->
+                    foundAccountInformationItemList = createBaseFoundAccountInformationItemList(
+                        accountInformation = accountInformation,
+                        rekeyedAccounts = rekeyedAccountInformation
+                    )
+                },
+                onFailed = { _, _ ->
+                    foundAccountInformationItemList = createBaseFoundAccountInformationItemList(
+                        accountInformation = accountInformation,
+                        rekeyedAccounts = emptyList()
+                    )
+                }
+            )
+            val copiedPreview = preview.copy(
+                isLoading = false,
+                foundAccountInformationItemList = foundAccountInformationItemList
+            )
+            emit(copiedPreview)
+        }
     }
 
-    private fun createBaseFoundAccountInformationItemList(
+    private suspend fun createBaseFoundAccountInformationItemList(
         accountInformation: AccountInformation,
         rekeyedAccounts: List<AccountInformation>
     ): List<BaseFoundAccountInformationItem> {
         var primaryAccountValue = BigDecimal.ZERO
         var secondaryAccountValue = BigDecimal.ZERO
-        val accountAssetDataList = accountInformation.assetHoldingMap.mapNotNull { (assetId, assetHolding) ->
-            val assetDetail = simpleAssetDetailUseCase.getCachedAssetDetail(assetId)?.data ?: return@mapNotNull null
-            accountAssetAmountUseCase.getAssetAmount(assetHolding, assetDetail)
+        val accountAssetDataList = accountInformation.assetHoldings.mapNotNull {
+            getAccountBaseOwnedAssetData(accountInformation.address, it.assetId)
         }
-        val algoAssetItem = accountAlgoAmountUseCase.getAccountAlgoAmount(accountInformation).run {
+        val algoAssetItem = getAccountBaseOwnedAssetData(accountInformation.address, ALGO_ASSET_ID)?.run {
             createAssetItem(
                 baseAccountAssetData = this,
                 onCalculationDone = { primaryValue, secondaryValue ->
@@ -157,7 +145,7 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun createAssetListItems(
+    private suspend fun createAssetListItems(
         accountAssetData: List<BaseAccountAssetData>,
         onCalculationDone: (BigDecimal, BigDecimal) -> Unit
     ): List<BaseFoundAccountInformationItem.AssetItem> {
@@ -179,20 +167,17 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
         }.also { onCalculationDone.invoke(primaryAssetsValue, secondaryAssetsValue) }
     }
 
-    private fun createAssetItem(
+    private suspend fun createAssetItem(
         baseAccountAssetData: BaseAccountAssetData,
         onCalculationDone: (BigDecimal, BigDecimal) -> Unit
     ): BaseFoundAccountInformationItem.AssetItem? {
         return (baseAccountAssetData as? BaseAccountAssetData.BaseOwnedAssetData)?.run {
             createAssetItem(
                 assetId = id,
-                name = AssetName.create(name),
-                shortName = AssetName.createShortName(shortName),
-                verificationTierConfiguration = verificationTierConfigurationDecider
-                    .decideVerificationTierConfiguration(verificationTier),
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                    assetId = id
-                ),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
+                verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier),
+                baseAssetDrawableProvider = getAssetDrawableProvider(id),
                 formattedPrimaryValue = parityValueInSelectedCurrency.getFormattedCompactValue(),
                 formattedSecondaryValue = parityValueInSecondaryCurrency.getFormattedCompactValue()
             ).also {
@@ -204,40 +189,28 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun createAccountItem(
+    private suspend fun createAccountItem(
         accountInformation: AccountInformation,
         primaryAccountValue: BigDecimal,
         secondaryAccountValue: BigDecimal
     ): BaseFoundAccountInformationItem.AccountItem {
-        val selectedCurrencySymbol = parityUseCase.getPrimaryCurrencySymbolOrName()
-        val secondaryCurrencySymbol = parityUseCase.getSecondaryCurrencySymbol()
         return createAccountItem(
-            accountDisplayName = accountDisplayNameMapper.mapToAccountDisplayName(
-                accountName = accountInformation.address.toShortenedAddress(),
-                accountAddress = accountInformation.address,
-                nfDomainName = null,
-                type = Account.Type.REKEYED
-            ),
-            accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
+            accountDisplayName = getAccountDisplayName(accountInformation.address),
+            accountIconDrawablePreview = AccountIconDrawablePreview(
                 backgroundColorResId = R.color.wallet_4,
                 iconTintResId = R.color.wallet_4_icon,
                 iconResId = R.drawable.ic_rekey_shield
             ),
-            formattedSecondaryValue = primaryAccountValue.formatAsCurrency(selectedCurrencySymbol),
-            formattedPrimaryValue = secondaryAccountValue.formatAsCurrency(secondaryCurrencySymbol),
+            formattedSecondaryValue = primaryAccountValue.formatAsCurrency(getPrimaryCurrencySymbolOrName()),
+            formattedPrimaryValue = secondaryAccountValue.formatAsCurrency(getSecondaryCurrencySymbol()),
         )
     }
 
-    private fun crateAuthAccount(rekeyAdminAddress: String?): BaseFoundAccountInformationItem.AccountItem? {
+    private suspend fun crateAuthAccount(rekeyAdminAddress: String?): BaseFoundAccountInformationItem.AccountItem? {
         return rekeyAdminAddress?.mapNotBlank { safeRekeyAdminAddress ->
             createAccountItem(
-                accountDisplayName = accountDisplayNameMapper.mapToAccountDisplayName(
-                    accountName = safeRekeyAdminAddress.toShortenedAddress(),
-                    accountAddress = safeRekeyAdminAddress,
-                    nfDomainName = null,
-                    type = Account.Type.STANDARD
-                ),
-                accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
+                accountDisplayName = getAccountDisplayName(safeRekeyAdminAddress),
+                accountIconDrawablePreview = AccountIconDrawablePreview(
                     backgroundColorResId = R.color.wallet_4,
                     iconTintResId = R.color.wallet_4_icon,
                     iconResId = R.drawable.ic_wallet
@@ -248,18 +221,13 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun createRekeyedAccounts(
+    private suspend fun createRekeyedAccounts(
         rekeyedAccountAddresses: List<String>
     ): List<BaseFoundAccountInformationItem.AccountItem> {
         return rekeyedAccountAddresses.map { rekeyedAccountAddress ->
             createAccountItem(
-                accountDisplayName = accountDisplayNameMapper.mapToAccountDisplayName(
-                    accountName = rekeyedAccountAddress.toShortenedAddress(),
-                    accountAddress = rekeyedAccountAddress,
-                    nfDomainName = null,
-                    type = Account.Type.REKEYED
-                ),
-                accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
+                accountDisplayName = getAccountDisplayName(rekeyedAccountAddress),
+                accountIconDrawablePreview = AccountIconDrawablePreview(
                     backgroundColorResId = R.color.wallet_4,
                     iconTintResId = R.color.wallet_4_icon,
                     iconResId = R.drawable.ic_rekey_shield

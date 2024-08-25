@@ -18,7 +18,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.databinding.ItemAccountHistoryTransactionBinding
-import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
+import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
 import com.algorand.android.utils.extensions.setTextAndVisibility
 
 class AccountHistoryTransactionItemViewHolder(

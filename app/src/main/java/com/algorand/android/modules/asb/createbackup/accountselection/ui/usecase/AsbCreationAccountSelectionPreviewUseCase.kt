@@ -13,38 +13,34 @@
 package com.algorand.android.modules.asb.createbackup.accountselection.ui.usecase
 
 import com.algorand.android.R
+import com.algorand.android.accountcore.domain.utils.AlgorandSecureBackUpUtils
+import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
+import com.algorand.android.accountcore.ui.mapper.AccountItemConfigurationMapper
+import com.algorand.android.accountcore.ui.usecase.*
 import com.algorand.android.customviews.TriStatesCheckBox
-import com.algorand.android.customviews.accountandassetitem.mapper.AccountItemConfigurationMapper
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.asb.createbackup.accountselection.ui.mapper.AsbCreationAccountSelectionPreviewMapper
 import com.algorand.android.modules.asb.createbackup.accountselection.ui.model.AsbCreationAccountSelectionPreview
-import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
 import com.algorand.android.modules.basemultipleaccountselection.ui.mapper.MultipleAccountSelectionListItemMapper
 import com.algorand.android.modules.basemultipleaccountselection.ui.model.MultipleAccountSelectionListItem
 import com.algorand.android.modules.basemultipleaccountselection.ui.usecase.BaseMultipleAccountSelectionPreviewUseCase
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.AccountSortPreferenceUseCase
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.GetSortedAccountsByPreferenceUseCase
 import com.algorand.android.utils.Event
 import javax.inject.Inject
 
 class AsbCreationAccountSelectionPreviewUseCase @Inject constructor(
     private val asbCreationAccountSelectionPreviewMapper: AsbCreationAccountSelectionPreviewMapper,
     multipleAccountSelectionListItemMapper: MultipleAccountSelectionListItemMapper,
-    getSortedAccountsByPreferenceUseCase: GetSortedAccountsByPreferenceUseCase,
-    accountSortPreferenceUseCase: AccountSortPreferenceUseCase,
+    getSortedAccountsByPreference: GetSortedAccountsByPreference,
     accountItemConfigurationMapper: AccountItemConfigurationMapper,
-    accountDisplayNameUseCase: AccountDisplayNameUseCase,
-    createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    getAccountDisplayName: GetAccountDisplayName,
+    getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) : BaseMultipleAccountSelectionPreviewUseCase(
-    multipleAccountSelectionListItemMapper = multipleAccountSelectionListItemMapper,
-    getSortedAccountsByPreferenceUseCase = getSortedAccountsByPreferenceUseCase,
-    accountSortPreferenceUseCase = accountSortPreferenceUseCase,
-    accountItemConfigurationMapper = accountItemConfigurationMapper,
-    accountDisplayNameUseCase = accountDisplayNameUseCase,
-    createAccountIconDrawableUseCase = createAccountIconDrawableUseCase
+    multipleAccountSelectionListItemMapper,
+    getSortedAccountsByPreference,
+    accountItemConfigurationMapper,
+    getAccountDisplayName,
+    getAccountIconDrawablePreview
 ) {
 
     fun getInitialPreview(): AsbCreationAccountSelectionPreview {
@@ -60,7 +56,7 @@ class AsbCreationAccountSelectionPreviewUseCase @Inject constructor(
 
     suspend fun getAsbCreationAccountSelectionPreview(): AsbCreationAccountSelectionPreview {
         val titleItem = createTitleItem(textResId = R.string.choose_accounts_n_to_backup)
-        val accountItemList = createAccountItemList(AlgorandSecureBackupUtils.excludedAccountTypes).ifEmpty {
+        val accountItemList = createAccountItemList(AlgorandSecureBackUpUtils.EXCLUDED_ACCOUNT_TYPES).ifEmpty {
             val emptyScreenState = ScreenState.CustomState(
                 title = R.string.we_couldn_t_find_any_accounts
             )

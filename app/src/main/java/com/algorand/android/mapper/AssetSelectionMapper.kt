@@ -12,24 +12,25 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.customviews.accountandassetitem.model.BaseItemConfiguration
-import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleAudioData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedUnsupportedCollectibleData
-import com.algorand.android.models.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectAudioCollectibleItem
-import com.algorand.android.models.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectCollectibleImageItem
-import com.algorand.android.models.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectMixedCollectibleItem
-import com.algorand.android.models.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectNotSupportedCollectibleItem
-import com.algorand.android.models.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectVideoCollectibleItem
-import com.algorand.android.models.BaseSelectAssetItem.SelectAssetItem
-import com.algorand.android.utils.AssetName
+import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectAudioCollectibleItem
+import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectCollectibleImageItem
+import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectMixedCollectibleItem
+import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectNotSupportedCollectibleItem
+import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectVideoCollectibleItem
+import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem.SelectAssetItem
+import com.algorand.android.accountcore.ui.model.BaseItemConfiguration
+import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleAudioData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleUnsupportedData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
 import javax.inject.Inject
 
 class AssetSelectionMapper @Inject constructor(
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider
+    private val getAssetDrawableProvider: GetAssetDrawableProvider,
+    private val getAssetName: GetAssetName
 ) {
 
     fun mapToAssetItem(
@@ -38,7 +39,7 @@ class AssetSelectionMapper @Inject constructor(
         return SelectAssetItem(assetItemConfiguration)
     }
 
-    fun mapToCollectibleImageItem(
+    suspend fun mapToCollectibleImageItem(
         ownedCollectibleImageData: OwnedCollectibleImageData
     ): SelectCollectibleImageItem {
         return SelectCollectibleImageItem(
@@ -54,16 +55,14 @@ class AssetSelectionMapper @Inject constructor(
             formattedSelectedCurrencyCompactValue = ownedCollectibleImageData.parityValueInSelectedCurrency
                 .getFormattedCompactValue(),
             isAmountInSelectedCurrencyVisible = ownedCollectibleImageData.isAmountInSelectedCurrencyVisible,
-            avatarDisplayText = AssetName.create(ownedCollectibleImageData.name),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                assetId = ownedCollectibleImageData.id
-            ),
+            avatarDisplayText = getAssetName(ownedCollectibleImageData.name),
+            baseAssetDrawableProvider = getAssetDrawableProvider(ownedCollectibleImageData.id),
             optedInAtRound = ownedCollectibleImageData.optedInAtRound,
             amountInSelectedCurrency = ownedCollectibleImageData.parityValueInSelectedCurrency.amountAsCurrency
         )
     }
 
-    fun mapToCollectibleVideoItem(
+    suspend fun mapToCollectibleVideoItem(
         ownedCollectibleVideoData: OwnedCollectibleVideoData
     ): SelectVideoCollectibleItem {
         return SelectVideoCollectibleItem(
@@ -79,16 +78,14 @@ class AssetSelectionMapper @Inject constructor(
             formattedSelectedCurrencyCompactValue = ownedCollectibleVideoData.parityValueInSelectedCurrency
                 .getFormattedCompactValue(),
             isAmountInSelectedCurrencyVisible = ownedCollectibleVideoData.isAmountInSelectedCurrencyVisible,
-            avatarDisplayText = AssetName.create(ownedCollectibleVideoData.name),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                assetId = ownedCollectibleVideoData.id
-            ),
+            avatarDisplayText = getAssetName(ownedCollectibleVideoData.name),
+            baseAssetDrawableProvider = getAssetDrawableProvider(ownedCollectibleVideoData.id),
             optedInAtRound = ownedCollectibleVideoData.optedInAtRound,
             amountInSelectedCurrency = ownedCollectibleVideoData.parityValueInSelectedCurrency.amountAsCurrency
         )
     }
 
-    fun mapToCollectibleAudioItem(
+    suspend fun mapToCollectibleAudioItem(
         ownedCollectibleAudioData: OwnedCollectibleAudioData
     ): SelectAudioCollectibleItem {
         return SelectAudioCollectibleItem(
@@ -104,16 +101,14 @@ class AssetSelectionMapper @Inject constructor(
             formattedSelectedCurrencyCompactValue = ownedCollectibleAudioData.parityValueInSelectedCurrency
                 .getFormattedCompactValue(),
             isAmountInSelectedCurrencyVisible = ownedCollectibleAudioData.isAmountInSelectedCurrencyVisible,
-            avatarDisplayText = AssetName.create(ownedCollectibleAudioData.name),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                assetId = ownedCollectibleAudioData.id
-            ),
+            avatarDisplayText = getAssetName(ownedCollectibleAudioData.name),
+            baseAssetDrawableProvider = getAssetDrawableProvider(ownedCollectibleAudioData.id),
             optedInAtRound = ownedCollectibleAudioData.optedInAtRound,
             amountInSelectedCurrency = ownedCollectibleAudioData.parityValueInSelectedCurrency.amountAsCurrency
         )
     }
 
-    fun mapToCollectibleMixedItem(
+    suspend fun mapToCollectibleMixedItem(
         ownedCollectibleMixedData: OwnedCollectibleMixedData
     ): SelectMixedCollectibleItem {
         return SelectMixedCollectibleItem(
@@ -129,17 +124,15 @@ class AssetSelectionMapper @Inject constructor(
             formattedSelectedCurrencyCompactValue = ownedCollectibleMixedData.parityValueInSelectedCurrency
                 .getFormattedCompactValue(),
             isAmountInSelectedCurrencyVisible = ownedCollectibleMixedData.isAmountInSelectedCurrencyVisible,
-            avatarDisplayText = AssetName.create(ownedCollectibleMixedData.name),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                assetId = ownedCollectibleMixedData.id
-            ),
+            avatarDisplayText = getAssetName(ownedCollectibleMixedData.name),
+            baseAssetDrawableProvider = getAssetDrawableProvider(ownedCollectibleMixedData.id),
             optedInAtRound = ownedCollectibleMixedData.optedInAtRound,
             amountInSelectedCurrency = ownedCollectibleMixedData.parityValueInSelectedCurrency.amountAsCurrency
         )
     }
 
-    fun mapToCollectibleNotSupportedItem(
-        ownedUnsupportedCollectibleData: OwnedUnsupportedCollectibleData
+    suspend fun mapToCollectibleNotSupportedItem(
+        ownedUnsupportedCollectibleData: OwnedCollectibleUnsupportedData
     ): SelectNotSupportedCollectibleItem {
         return SelectNotSupportedCollectibleItem(
             id = ownedUnsupportedCollectibleData.id,
@@ -154,10 +147,8 @@ class AssetSelectionMapper @Inject constructor(
             formattedSelectedCurrencyCompactValue = ownedUnsupportedCollectibleData.parityValueInSelectedCurrency
                 .getFormattedCompactValue(),
             isAmountInSelectedCurrencyVisible = ownedUnsupportedCollectibleData.isAmountInSelectedCurrencyVisible,
-            avatarDisplayText = AssetName.create(ownedUnsupportedCollectibleData.name),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                assetId = ownedUnsupportedCollectibleData.id
-            ),
+            avatarDisplayText = getAssetName(ownedUnsupportedCollectibleData.name),
+            baseAssetDrawableProvider = getAssetDrawableProvider(ownedUnsupportedCollectibleData.id),
             optedInAtRound = ownedUnsupportedCollectibleData.optedInAtRound,
             amountInSelectedCurrency = ownedUnsupportedCollectibleData.parityValueInSelectedCurrency.amountAsCurrency
         )

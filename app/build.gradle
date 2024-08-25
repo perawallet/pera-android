@@ -11,14 +11,11 @@ plugins {
     id 'com.google.firebase.firebase-perf'
 }
 
-apply from: 'https://raw.githubusercontent.com/Hipo/macaron/master/config/quality/quality.gradle'
+//apply from: 'https://raw.githubusercontent.com/Hipo/macaron/master/config/quality/quality.gradle'
 
-def flavorsGradlePath = 'flavors.gradle'
 def browsersGradlePath = 'browsers.gradle'
 def offrampGradlePath = 'offramp.gradle'
-if (project.file(flavorsGradlePath).exists()) {
-    apply from: flavorsGradlePath
-}
+
 if (project.file(browsersGradlePath).exists()) {
     apply from: browsersGradlePath
 }
@@ -168,94 +165,118 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${libVersions.coroutines}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${libVersions.coroutines}"
+    implementation project(path: ':account')
+    implementation project(path: ':nameservice-component')
+    implementation project(path: ':transaction-history-component')
+    implementation project(path: ':account-core-component')
+    implementation project(path: ':assetdetail-component')
+    implementation project(path: ':accountinfo-component')
+    implementation project(path: ':custominfo-component')
+    implementation project(path: ':parity')
+    implementation project(path: ':asb-component')
+    implementation project(path: ':accountcore-ui')
+    implementation project(path: ':foundation')
+    implementation project(path: ':deviceid-component')
+    implementation project(path: ':contacts-component')
+    implementation project(path: ':node-component')
+    implementation project(path: ':assetsorting-component')
+    implementation project(path: ':accountsorting-component')
+    implementation project(path: ':drawable-ui')
+    implementation project(path: ':designsystem')
+    implementation project(path: ':transaction-component')
+    implementation project(path: ':transaction-ui')
+    implementation project(path: ':currency')
+    implementation project(path: ':network-utils')
+    implementation project(path: ':ledger-component')
+    implementation project(path: ':banner-component')
+    implementation project(path: ':swap-component')
+    implementation project(path: ':swap-ui')
+    implementation project(path: ':asset-utils')
+    implementation project(path: ':date-ui')
+    implementation project(path: ':transactionhistory-ui')
+    implementation project(path: ':assetdetail-ui')
+    implementation project(path: ':caching')
+    implementation project(path: ':block-component')
+    implementation project(path: ':app-cache-component')
+    implementation project(path: ':notification-component')
+    implementation project(path: ':pushtoken-component')
+    implementation project(path: ':deeplink-component')
+    implementation project(path: ':assetaction-ui')
 
-    implementation "com.google.android.material:material:${libVersions.material}"
-    implementation "com.google.android.flexbox:flexbox:${libVersions.flexbox}"
-    implementation "androidx.appcompat:appcompat:${libVersions.appCompat}"
-    implementation "androidx.legacy:legacy-support-v4:${libVersions.legacySupport}"
-    implementation "androidx.lifecycle:lifecycle-extensions:${libVersions.lifecycleExt}"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${libVersions.lifecycle}"
-    implementation "androidx.lifecycle:lifecycle-common-java8:${libVersions.lifecycle}"
-    implementation "androidx.constraintlayout:constraintlayout:${libVersions.constraintLayout}"
-    implementation "androidx.core:core-ktx:${libVersions.coreKtx}"
+    implementation deps.kotlinx.coroutines_core
+    implementation deps.kotlinx.coroutines_android
 
-    implementation platform("com.google.firebase:firebase-bom:${libVersions.firebaseBom}")
+    implementation deps.support.material
+    implementation deps.support.flexbox
+    implementation deps.support.appcompat
+    implementation deps.support.constraintlayout
 
-    implementation "com.google.firebase:firebase-analytics"
-    implementation "com.google.firebase:firebase-messaging"
-    implementation "com.google.firebase:firebase-crashlytics"
-    implementation "com.google.firebase:firebase-perf"
+    implementation deps.android.navigation_fragment
+    implementation deps.android.navigation_ui
+    implementation deps.android.legacy
+    implementation deps.android.core
+    implementation deps.android.fragment_ktx
+    implementation deps.android.multidex
+    implementation deps.android.browser
+    implementation deps.android.paging
 
-    implementation "androidx.biometric:biometric:${libVersions.biometric}"
+    implementation deps.lifecycle.extensions
+    implementation deps.lifecycle.viewmodel
+    implementation deps.lifecycle.common
 
-    implementation "com.journeyapps:zxing-android-embedded:${libVersions.zxing}"
+    implementation platform(deps.firebase.platform)
+    implementation deps.firebase.analytics
+    implementation deps.firebase.messaging
+    implementation deps.firebase.crashlytics
+    implementation deps.firebase.perf
 
-    implementation "androidx.room:room-runtime:${libVersions.room}"
-    implementation "androidx.room:room-ktx:${libVersions.room}"
-    kapt "androidx.room:room-compiler:${libVersions.room}"
+    implementation deps.retrofit.core
+    implementation deps.retrofit.converter_gson
+    implementation deps.retrofit.logging_interceptor
 
-    implementation "androidx.navigation:navigation-fragment-ktx:${libVersions.navigation}"
-    implementation "androidx.navigation:navigation-ui-ktx:${libVersions.navigation}"
+    implementation deps.room.runtime
+    implementation deps.room.ktx
+    kapt deps.room.compiler
 
-    implementation "no.nordicsemi.android:ble:${libVersions.ble}"
+    implementation deps.hilt.core
+    kapt deps.hilt.android_compiler
+    kapt deps.hilt.compiler
 
-    implementation "androidx.fragment:fragment-ktx:${libVersions.fragment}"
+    implementation deps.glide.core
+    kapt deps.glide.compiler
 
-    implementation "androidx.multidex:multidex:${libVersions.multidex}"
-
-    implementation "androidx.browser:browser:${libVersions.browser}"
-
-    implementation "androidx.paging:paging-runtime-ktx:${libVersions.paging}"
-
-    implementation "com.google.crypto.tink:tink-android:${libVersions.tink}"
-
-    implementation "com.google.android.play:review-ktx:${libVersions.review}"
-
-    implementation "com.google.dagger:hilt-android:$dagger_gradle_version"
-    kapt "com.google.dagger:hilt-android-compiler:$dagger_gradle_version"
-
-    kapt "androidx.hilt:hilt-compiler:${libVersions.hiltCompiler}"
-
-    implementation "com.github.bumptech.glide:glide:${libVersions.glide}"
-    kapt "com.github.bumptech.glide:compiler:${libVersions.glide}"
-
-    implementation "com.airbnb.android:lottie:${libVersions.lottie}"
-
-    implementation "com.squareup.retrofit2:retrofit:${libVersions.retrofit}"
-    implementation "com.squareup.retrofit2:converter-gson:${libVersions.retrofit}"
-    implementation "com.squareup.okhttp3:logging-interceptor:${libVersions.okhttp}"
-
-    // Chart
-    implementation "com.github.PhilJay:MPAndroidChart:${libVersions.mpAndroidChart}"
-
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:${libVersions.desugar}"
+    implementation deps.moshi.core
+    implementation deps.moshi.kotlin
 
     // Wallet Connect v1
-    implementation "org.java-websocket:Java-WebSocket:${libVersions.javaWebSocket}"
-    implementation "com.github.komputing:khex:${libVersions.khex}"
-    implementation "com.squareup.moshi:moshi:${libVersions.moshi}"
-    implementation "com.squareup.moshi:moshi-kotlin:${libVersions.moshi}"
+    implementation deps.wallet_connect_v1.web_socket
+    implementation deps.wallet_connect_v1.khex
 
     // Wallet Connect v2
-    implementation(platform("com.walletconnect:android-bom:${libVersions.walletConnectBom}"))
-    implementation("com.walletconnect:android-core") {
+    implementation(platform(deps.wallet_connect_v2.platform))
+    implementation(deps.wallet_connect_v2.core) {
         exclude group: 'com.jakewharton.timber', module: 'timber'
     }
-    implementation "com.walletconnect:sign"
-    implementation "com.walletconnect:web3wallet"
+    implementation deps.wallet_connect_v2.sign
 
-    // ExoPlayer
-    implementation "com.google.android.exoplayer:exoplayer:${libVersions.exoPlayer}"
+    implementation deps.biometric
+    implementation deps.zxing
+    implementation deps.ble
+    implementation deps.tink
+    implementation deps.review
+    implementation deps.lottie
+    implementation deps.hipoexceptions
+    implementation deps.charts
+    implementation deps.exoplayer
+    coreLibraryDesugaring deps.desugar_libs
 
-    implementation("com.algorand:algosdk:${libVersions.algoSdk}") {
+    implementation(deps.algosdk) {
         exclude group: 'org.bouncycastle'
     }
 
     // Test
-    testImplementation "junit:junit:${testLibVersions.junit}"
-    androidTestImplementation "androidx.room:room-testing:${libVersions.room}"
-    androidTestImplementation "androidx.test:runner:${testLibVersions.runner}"
-    androidTestImplementation "androidx.test.espresso:espresso-core:${testLibVersions.espresso}"
+    testImplementation deps.junit
+    androidTestImplementation deps.room_testing
+    androidTestImplementation deps.runner
+    androidTestImplementation deps.espresso
 }

@@ -24,10 +24,10 @@ import androidx.navigation.fragment.findNavController
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentSwapTransactionStatusBinding
+import com.algorand.android.designsystem.getXmlStyledString
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.modules.swap.transactionstatus.ui.model.SwapTransactionStatusPreview
+import com.algorand.android.swapui.txnstatus.model.SwapTransactionStatusPreview
 import com.algorand.android.utils.browser.openGroupTransactionInPeraExplorer
-import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -49,7 +49,7 @@ class SwapTransactionStatusFragment : BaseFragment(R.layout.fragment_swap_transa
         super.onViewCreated(view, savedInstanceState)
         initObservers()
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, onBackPressedCallback)
-        swapTransactionStatusViewModel.initSwapTransactionStatusPreviewFlow(resources)
+        swapTransactionStatusViewModel.initSwapTransactionStatusPreviewFlow()
     }
 
     private fun initObservers() {

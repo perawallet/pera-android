@@ -29,8 +29,8 @@ class BalanceWarningBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_balance_
     private val binding by viewBinding(BottomSheetBalanceWarningBinding::bind)
     private val balanceWarningViewModel: BalanceWarningViewModel by viewModels()
 
-    private val balanceWarningPreviewCollector: suspend (BalanceWarningPreview) -> Unit = {
-        updateUiWithPreview(it)
+    private val balanceWarningPreviewCollector: suspend (BalanceWarningPreview?) -> Unit = { preview ->
+        if (preview != null) updateUiWithPreview(preview)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

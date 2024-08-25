@@ -13,6 +13,7 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
+import com.algorand.android.core.component.detail.domain.model.AccountType
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnectError
 import com.algorand.android.utils.isValidAddress
@@ -27,7 +28,7 @@ sealed class WalletConnectArbitraryDataSigner : Parcelable {
     companion object {
 
         fun create(
-            signerAccountType: Account.Type?,
+            signerAccountType: AccountType?,
             signerAddress: String,
             errorProvider: WalletConnectErrorProvider
         ): WalletConnectArbitraryDataSigner {
@@ -45,15 +46,15 @@ sealed class WalletConnectArbitraryDataSigner : Parcelable {
         }
 
         private fun returnInvalidInputIfSignerIsInvalid(
-            signerAccountType: Account.Type?,
+            signerAccountType: AccountType?,
             signer: WalletConnectArbitraryDataSigner,
             error: WalletConnectError
         ): WalletConnectArbitraryDataSigner {
             return signer.takeIf {
                 it.address?.isValidAddress() == true &&
-                        (signerAccountType == Account.Type.STANDARD ||
-                                signerAccountType == Account.Type.REKEYED ||
-                                signerAccountType == Account.Type.REKEYED_AUTH)
+                    (signerAccountType == AccountType.Algo25 ||
+                        signerAccountType == AccountType.Rekeyed ||
+                        signerAccountType == AccountType.RekeyedAuth)
             } ?: Unsignable(error)
         }
     }

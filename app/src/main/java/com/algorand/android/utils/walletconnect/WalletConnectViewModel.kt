@@ -70,7 +70,9 @@ class WalletConnectViewModel @Inject constructor(
     }
 
     fun handleWalletConnectUrl(url: String, listener: WalletConnectUrlHandler.Listener) {
-        walletConnectUrlHandler.checkWalletConnectUrl(url, listener)
+        viewModelScope.launch {
+            walletConnectUrlHandler.checkWalletConnectUrl(url, listener)
+        }
     }
 
     fun setWalletConnectSessionTimeoutListener(onSessionTimedOut: () -> Unit) {

@@ -17,7 +17,7 @@ import android.view.ViewGroup
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemSwapAccountBinding
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.swap.transactionsummary.ui.model.BaseSwapTransactionSummaryItem
+import com.algorand.android.swapui.txnsummary.model.BaseSwapTransactionSummaryItem
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.setDrawable
 
@@ -30,7 +30,7 @@ class SwapAccountItemViewHolder(
         if (item !is BaseSwapTransactionSummaryItem.SwapAccountItemTransaction) return
         with(item) {
             binding.accountTextView.apply {
-                text = accountDisplayName.getAccountPrimaryDisplayName()
+                text = accountDisplayName.primaryDisplayName
                 val accountIconDrawable = AccountIconDrawable.create(
                     context = context,
                     accountIconDrawablePreview = accountIconDrawablePreview,
@@ -38,7 +38,7 @@ class SwapAccountItemViewHolder(
                 )
                 setDrawable(start = accountIconDrawable)
                 setOnLongClickListener {
-                    listener.onAccountNameLongClick(accountDisplayName.getRawAccountAddress()); true
+                    listener.onAccountNameLongClick(accountDisplayName.accountAddress); true
                 }
             }
         }

@@ -35,10 +35,10 @@ class SingleAccountSelectionAccountItemViewHolder(
             )
             setStartIconDrawable(accountIconDrawable)
             with(item.accountDisplayName) {
-                setTitleText(getAccountPrimaryDisplayName())
-                setDescriptionText(getAccountSecondaryDisplayName(resources))
-                setOnLongClickListener { listener.onAccountItemLongClick(getRawAccountAddress()); true }
-                setOnClickListener { listener.onAccountItemClick(getRawAccountAddress()) }
+                setTitleText(primaryDisplayName)
+                setDescriptionText(secondaryDisplayName)
+                setOnLongClickListener { listener.onAccountItemLongClick(accountAddress); true }
+                setOnClickListener { listener.onAccountItemClick(accountAddress) }
             }
             setPrimaryValueText(item.accountFormattedPrimaryValue)
             setSecondaryValueText(item.accountFormattedSecondaryValue)

@@ -18,14 +18,14 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.algorand.android.R
+import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentContactsBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.models.User
-import com.algorand.android.ui.common.user.UserAdapter
+import com.algorand.android.ui.common.contact.ContactAdapter
 import com.algorand.android.utils.hideKeyboard
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,10 +51,10 @@ class ContactsFragment : DaggerBaseFragment(R.layout.fragment_contacts) {
 
     private val binding by viewBinding(FragmentContactsBinding::bind)
 
-    private var userAdapter: UserAdapter? = null
+    private var contactAdapter: ContactAdapter? = null
 
-    private val contactListObserver = Observer<List<User>> { contactList ->
-        userAdapter?.submitList(contactList)
+    private val contactListObserver = Observer<List<Contact>> { contactList ->
+        contactAdapter?.submitList(contactList)
         setEndButtonVisibility(isVisible = contactList.isNotEmpty())
         with(binding) {
             searchBar.isVisible = contactList.isNotEmpty() || searchBar.text.isNotEmpty()
@@ -63,13 +63,13 @@ class ContactsFragment : DaggerBaseFragment(R.layout.fragment_contacts) {
         }
     }
 
-    private val onContactClick: (contact: User) -> Unit = { contact ->
+    private val onContactClick: (contact: Contact) -> Unit = { contact ->
         view?.hideKeyboard()
         nav(ContactsFragmentDirections.actionContactsFragmentToContactInfoFragment(contact))
     }
 
-    private val onContactQrClick: (contact: User) -> Unit = { contact ->
-        nav(ContactsFragmentDirections.actionGlobalShowQrNavigation(contact.name, contact.publicKey))
+    private val onContactQrClick: (contact: Contact) -> Unit = { contact ->
+        nav(ContactsFragmentDirections.actionGlobalShowQrNavigation(contact.name, contact.address))
     }
 
     private val emptyScreenState by lazy {
@@ -111,8 +111,8 @@ class ContactsFragment : DaggerBaseFragment(R.layout.fragment_contacts) {
     }
 
     private fun setupRecyclerView() {
-        userAdapter = UserAdapter(onContactClick, onContactQrClick)
-        binding.contactsRecyclerView.adapter = userAdapter
+        contactAdapter = ContactAdapter(onContactClick, onContactQrClick)
+        binding.contactsRecyclerView.adapter = contactAdapter
     }
 
     private fun setupSearchQueryEditTextWatcher() {

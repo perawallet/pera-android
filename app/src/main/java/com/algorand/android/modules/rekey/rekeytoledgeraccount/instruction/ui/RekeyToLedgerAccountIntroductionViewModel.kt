@@ -13,9 +13,11 @@
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.baseintroduction.ui.BaseIntroductionViewModel
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.model.RekeyToLedgerAccountPreview
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.usecase.RekeyToLedgerAccountPreviewUseCase
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,11 +32,18 @@ class RekeyToLedgerAccountIntroductionViewModel @Inject constructor(
     private val navArgs = RekeyToLedgerAccountIntroductionFragmentArgs.fromSavedStateHandle(savedStateHandle)
     val accountAddress = navArgs.accountAddress
 
-    private val rekeyToLedgerAccountPreviewFlow = MutableStateFlow<RekeyToLedgerAccountPreview>(getInitialPreview())
-    override val introductionPreviewFlow: StateFlow<RekeyToLedgerAccountPreview>
+    private val rekeyToLedgerAccountPreviewFlow = MutableStateFlow<RekeyToLedgerAccountPreview?>(null)
+    override val introductionPreviewFlow: StateFlow<RekeyToLedgerAccountPreview?>
         get() = rekeyToLedgerAccountPreviewFlow
 
-    private fun getInitialPreview(): RekeyToLedgerAccountPreview {
-        return rekeyToLedgerAccountPreviewUseCase.getInitialRekeyToLedgerAccountPreview(accountAddress)
+    init {
+        initPreview()
+    }
+
+    private fun initPreview() {
+        viewModelScope.launchIO {
+            rekeyToLedgerAccountPreviewFlow.value = rekeyToLedgerAccountPreviewUseCase
+                .getInitialRekeyToLedgerAccountPreview(accountAddress)
+        }
     }
 }

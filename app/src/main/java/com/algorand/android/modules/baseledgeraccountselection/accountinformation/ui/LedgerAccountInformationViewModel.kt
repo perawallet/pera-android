@@ -30,9 +30,6 @@ class LedgerAccountInformationViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val navArgs = LedgerAccountInformationBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
-    private val selectedLedger = navArgs.selectedLedgerAccountSelectionListItem
-    private val authLedger = navArgs.authLedgerAccountSelectionListItem
-    private val rekeyedAccounts = navArgs.rekeyedAccountSelectionListItem
 
     private val _ledgerInformationFlow = MutableStateFlow<List<LedgerInformationListItem>?>(null)
     val ledgerInformationFlow: StateFlow<List<LedgerInformationListItem>?> = _ledgerInformationFlow
@@ -44,9 +41,9 @@ class LedgerAccountInformationViewModel @Inject constructor(
     private fun fetchLedgerInformationList() {
         viewModelScope.launchIO {
             val ledgerInformationList = ledgerInformationUseCase.getLedgerInformationListItem(
-                selectedLedgerAccount = selectedLedger,
-                rekeyedAccountSelectionListItem = rekeyedAccounts?.toList(),
-                authLedgerAccount = authLedger
+                selectedAccountItem = navArgs.selectedLedgerAccountSelectionListItem,
+                rekeyedAccountSelectionListItem = navArgs.rekeyedAccountSelectionListItem,
+                authLedgerAccount = navArgs.authLedgerAccountSelectionListItem
             )
             _ledgerInformationFlow.emit(ledgerInformationList)
         }

@@ -46,7 +46,6 @@ class RekeyedAccountInformationViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             rekeyedAccountInformationPreviewUseCase.getRekeyedAccountInformationPreviewFlow(
                 accountAddress = accountAddress,
-                coroutineScope = this,
                 preview = rekeyedAccountInformationPreviewFlow.value
             ).collectLatest { preview ->
                 rekeyedAccountInformationPreviewFlow.emit(preview)

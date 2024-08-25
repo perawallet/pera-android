@@ -12,9 +12,9 @@
 
 package com.algorand.android.ui.notificationfilter
 
-import com.algorand.android.models.BaseAccountAndAssetListItem
+import com.algorand.android.accountcore.ui.model.BaseItemConfiguration
 
 data class AccountNotificationOption(
-    val accountListItem: BaseAccountAndAssetListItem.AccountListItem,
+    val accountItemConfiguration: BaseItemConfiguration.AccountItemConfiguration,
     var isFiltered: Boolean
 )

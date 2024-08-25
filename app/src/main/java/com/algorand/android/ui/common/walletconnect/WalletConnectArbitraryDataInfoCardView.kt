@@ -18,10 +18,10 @@ import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.setPadding
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.databinding.CustomWalletConnectRequestInfoBinding
 import com.algorand.android.models.ArbitraryDataRequestInfo
 import com.algorand.android.models.BaseWalletConnectDisplayedAddress
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.AccountIconDrawable

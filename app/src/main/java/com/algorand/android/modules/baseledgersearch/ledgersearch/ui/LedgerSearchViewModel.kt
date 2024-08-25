@@ -13,30 +13,37 @@
 package com.algorand.android.modules.baseledgersearch.ledgersearch.ui
 
 import android.bluetooth.BluetoothDevice
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.ledger.CustomScanCallback
-import com.algorand.android.ledger.LedgerBleSearchManager
+import com.algorand.android.foundation.Event
+import com.algorand.android.ledger.domain.helper.IsBluetoothBondingRequired
+import com.algorand.android.ledger.domain.helper.LedgerBleScanCallback
+import com.algorand.android.ledger.domain.model.LedgerBleResult
+import com.algorand.android.ledger.domain.model.LedgerOperation
+import com.algorand.android.ledger.manager.LedgerBleOperationManager
+import com.algorand.android.ledger.manager.LedgerBleSearchManager
+import com.algorand.android.ledger.ui.LedgerFetchAllAccountsOperationViewModel
 import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.model.LedgerBaseItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class LedgerSearchViewModel @Inject constructor(
-    private val ledgerBleSearchManager: LedgerBleSearchManager
-) : BaseViewModel() {
+    private val ledgerBleSearchManager: LedgerBleSearchManager,
+    private val isBluetoothBondingRequired: IsBluetoothBondingRequired,
+    private val ledgerBleOperationManager: LedgerBleOperationManager
+) : BaseViewModel(), LedgerFetchAllAccountsOperationViewModel {
 
     val ledgerDevicesLiveData = MutableLiveData<List<LedgerBaseItem>>()
 
     private val addressLedgerDeviceMap = HashMap<String, BluetoothDevice>()
 
-    private val scanCallback = object : CustomScanCallback() {
-        override fun onLedgerScanned(
-            device: BluetoothDevice,
-            currentTransactionIndex: Int?,
-            totalTransactionCount: Int?
-        ) {
+    private val scanCallback = object : LedgerBleScanCallback() {
+        override fun onLedgerScanned(device: BluetoothDevice) {
             if (!addressLedgerDeviceMap.containsKey(device.address)) {
                 addressLedgerDeviceMap[device.address] = device
                 val ledgerDeviceSet = addressLedgerDeviceMap.values.toSet()
@@ -48,8 +55,7 @@ class LedgerSearchViewModel @Inject constructor(
             }
         }
 
-        override fun onScanError(errorMessageResId: Int, titleResId: Int) {
-            // NOT NEEDED
+        override fun onScanError() {
         }
     }
 
@@ -57,11 +63,33 @@ class LedgerSearchViewModel @Inject constructor(
         ledgerDevicesLiveData.postValue(listOf(LedgerBaseItem.LedgerLoadingItem))
     }
 
+    fun isBleBondingRequired(bleAddress: String): Boolean {
+        return isBluetoothBondingRequired(bleAddress)
+    }
+
     fun startBluetoothSearch() {
-        ledgerBleSearchManager.scan(newScanCallback = scanCallback, coroutineScope = viewModelScope)
+        viewModelScope.launch {
+            ledgerBleSearchManager.scan(scanCallback)
+        }
     }
 
     fun stopBluetoothSearch() {
         ledgerBleSearchManager.stop()
+    }
+
+    override fun startFetchAllAccountsOperation(operation: LedgerOperation.AccountFetchAllOperation) {
+        ledgerBleOperationManager.startFetchAllAccountsOperation(operation)
+    }
+
+    override fun stopLedgerOperation() {
+        ledgerBleOperationManager.stopAllProcess()
+    }
+
+    override fun getLedgerBleOperationResultFlow(): StateFlow<Event<LedgerBleResult>?> {
+        return ledgerBleOperationManager.ledgerBleResultFlow
+    }
+
+    override fun setupLedgerOperationManager(lifecycle: Lifecycle) {
+        ledgerBleOperationManager.setup(lifecycle)
     }
 }

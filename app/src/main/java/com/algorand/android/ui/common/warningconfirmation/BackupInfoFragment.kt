@@ -14,18 +14,14 @@ package com.algorand.android.ui.common.warningconfirmation
 
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.R
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountCreation
-import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.models.*
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToBackupPassphraseAccountNameNavigation
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToWriteDownInfoFragment
@@ -117,24 +113,20 @@ class BackupInfoFragment : BaseInfoFragment() {
     }
 
     // TODO move this into util class
-    private fun getAccountCreation(): AccountCreation? {
+    private fun getAccountCreation(): CreateAccount? {
         try {
-            val secretKeyByteArray: ByteArray?
-            secretKeyByteArray = Sdk.generateSK()
+            val secretKeyByteArray: ByteArray = Sdk.generateSK()
             val publicKey = Sdk.generateAddressFromSK(secretKeyByteArray)
-            val tempAccount = Account.create(
-                publicKey = publicKey,
-                detail = Account.Detail.Standard(secretKeyByteArray),
-                isBackedUp = false
+            return CreateAccount.Algo25(
+                address = publicKey,
+                secretKey = secretKeyByteArray,
+                customName = null,
+                isBackedUp = false,
+                creationType = CreationType.CREATE,
             )
-            return AccountCreation(tempAccount, CreationType.CREATE)
         } catch (exception: Exception) {
             navBack()
         }
         return null
-    }
-
-    companion object {
-        private const val ACCOUNT_CREATION_KEY = "accountCreation"
     }
 }

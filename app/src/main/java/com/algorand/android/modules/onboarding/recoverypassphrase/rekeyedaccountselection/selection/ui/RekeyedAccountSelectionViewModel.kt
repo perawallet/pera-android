@@ -13,9 +13,11 @@
 package com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.selection.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.basefoundaccount.selection.ui.BaseFoundAccountSelectionViewModel
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.selection.ui.model.RekeyedAccountSelectionPreview
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.selection.ui.usecase.RekeyedAccountSelectionPreviewUseCase
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,29 +34,49 @@ class RekeyedAccountSelectionViewModel @Inject constructor(
     private val accountCreation = navArgs.accountCreation
     private val rekeyedAccountAddresses = navArgs.rekeyedAccountAddresses
 
-    private val rekeyedAccountSelectionPreviewwFlow = MutableStateFlow(getInitialPreview())
-    override val foundAccountSelectionFieldsFlow: StateFlow<RekeyedAccountSelectionPreview>
-        get() = rekeyedAccountSelectionPreviewwFlow
+    private val rekeyedAccountSelectionPreviewFlow = MutableStateFlow<RekeyedAccountSelectionPreview?>(null)
+    override val foundAccountSelectionFieldsFlow: StateFlow<RekeyedAccountSelectionPreview?>
+        get() = rekeyedAccountSelectionPreviewFlow
+
+    init {
+        viewModelScope.launchIO {
+            rekeyedAccountSelectionPreviewFlow.update { getInitialPreview() }
+        }
+    }
 
     fun onAccountSelected(accountAddress: String) {
-        rekeyedAccountSelectionPreviewwFlow.update { preview ->
-            rekeyedAccountSelectionPreviewUseCase.updatePreviewWithSelectedAccount(preview, accountAddress)
+        rekeyedAccountSelectionPreviewFlow.update { preview ->
+            if (preview != null) {
+                rekeyedAccountSelectionPreviewUseCase.updatePreviewWithSelectedAccount(preview, accountAddress)
+            } else {
+                null
+            }
         }
     }
 
     fun onChosenAccountAddClick() {
-        rekeyedAccountSelectionPreviewwFlow.update { preview ->
-            rekeyedAccountSelectionPreviewUseCase.updatePreviewWithChosenAccount(preview, accountCreation)
+        viewModelScope.launchIO {
+            rekeyedAccountSelectionPreviewFlow.update { preview ->
+                if (preview != null) {
+                    rekeyedAccountSelectionPreviewUseCase.updatePreviewWithChosenAccount(preview, accountCreation)
+                } else {
+                    null
+                }
+            }
         }
     }
 
     fun onSkipForNowClick() {
-        rekeyedAccountSelectionPreviewwFlow.update { preview ->
-            rekeyedAccountSelectionPreviewUseCase.updatePreviewWithRecoveredAccount(preview, accountCreation)
+        rekeyedAccountSelectionPreviewFlow.update { preview ->
+            if (preview != null) {
+                rekeyedAccountSelectionPreviewUseCase.updatePreviewWithRecoveredAccount(preview, accountCreation)
+            } else {
+                null
+            }
         }
     }
 
-    private fun getInitialPreview(): RekeyedAccountSelectionPreview {
+    private suspend fun getInitialPreview(): RekeyedAccountSelectionPreview {
         return rekeyedAccountSelectionPreviewUseCase.getRekeyedAccountSelectionPreviewFlow(
             rekeyedAccountAddresses = rekeyedAccountAddresses
         )

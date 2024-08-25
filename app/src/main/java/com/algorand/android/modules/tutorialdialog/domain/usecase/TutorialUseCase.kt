@@ -12,10 +12,10 @@
 
 package com.algorand.android.modules.tutorialdialog.domain.usecase
 
-import com.algorand.android.models.Account
+import com.algorand.android.account.localaccount.domain.model.LocalAccount
+import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
 import com.algorand.android.modules.appopencount.domain.usecase.ApplicationOpenCountPreferenceUseCase
 import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
-import com.algorand.android.usecase.GetLocalAccountsUseCase
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
@@ -26,7 +26,7 @@ class TutorialUseCase @Inject constructor(
     private val removeDismissedTutorialFromCacheUseCase: RemoveDismissedTutorialFromCacheUseCase,
     private val setTutorialDismissedUseCase: SetTutorialDismissedUseCase,
     private val applicationOpenCountPreferenceUseCase: ApplicationOpenCountPreferenceUseCase,
-    private val getLocalAccountsUseCase: GetLocalAccountsUseCase
+    private val getLocalAccounts: GetLocalAccounts
 ) {
 
     suspend fun initializeTutorial() {
@@ -49,8 +49,7 @@ class TutorialUseCase @Inject constructor(
         removeDismissedTutorialFromCacheUseCase.removeDismissedTutorialFromCache(tutorialId)
     }
 
-    private fun isThereAnyNormalLocalAccount(): Boolean {
-        val localAccounts = getLocalAccountsUseCase.getLocalAccountsFromAccountManagerCache()
-        return localAccounts.any { account -> account.type != Account.Type.WATCH }
+    private suspend fun isThereAnyNormalLocalAccount(): Boolean {
+        return getLocalAccounts().any { it !is LocalAccount.NoAuth }
     }
 }

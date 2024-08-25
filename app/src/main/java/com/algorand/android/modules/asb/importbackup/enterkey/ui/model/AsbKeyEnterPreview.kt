@@ -13,7 +13,6 @@
 package com.algorand.android.modules.asb.importbackup.enterkey.ui.model
 
 import com.algorand.android.customviews.passphraseinput.model.PassphraseInputGroupConfiguration
-import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
 import com.algorand.android.utils.Event
 
 data class AsbKeyEnterPreview(
@@ -22,5 +21,5 @@ data class AsbKeyEnterPreview(
     val isNextButtonEnabled: Boolean,
     val onRestorePassphraseInputGroupEvent: Event<PassphraseInputGroupConfiguration>?,
     val onGlobalErrorEvent: Event<Pair<Int, Int>>?,
-    val navToAccountSelectionFragmentEvent: Event<List<BackupProtocolElement>>?
+    val navToAccountSelectionFragmentEvent: Event<List<RestoredAccount>>?
 )

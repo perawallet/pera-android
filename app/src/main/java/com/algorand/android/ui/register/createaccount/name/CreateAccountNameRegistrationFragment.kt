@@ -13,14 +13,14 @@
 package com.algorand.android.ui.register.createaccount.name
 
 import androidx.navigation.fragment.navArgs
-import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.CreateAccount
 import com.algorand.android.ui.register.nameregistration.BaseNameRegistrationFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class CreateAccountNameRegistrationFragment : BaseNameRegistrationFragment() {
 
-    override val accountCreation: AccountCreation?
+    override val accountCreation: CreateAccount
         get() = args.accountCreation
 
     private val args: CreateAccountNameRegistrationFragmentArgs by navArgs()

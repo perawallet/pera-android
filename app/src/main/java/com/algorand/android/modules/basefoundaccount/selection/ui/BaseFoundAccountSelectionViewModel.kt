@@ -17,5 +17,5 @@ import com.algorand.android.modules.basefoundaccount.selection.ui.model.FoundAcc
 import kotlinx.coroutines.flow.StateFlow
 
 abstract class BaseFoundAccountSelectionViewModel : BaseViewModel() {
-    abstract val foundAccountSelectionFieldsFlow: StateFlow<FoundAccountSelectionFields>
+    abstract val foundAccountSelectionFieldsFlow: StateFlow<FoundAccountSelectionFields?>
 }

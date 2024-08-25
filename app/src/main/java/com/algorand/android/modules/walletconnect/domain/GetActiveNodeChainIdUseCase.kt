@@ -14,20 +14,16 @@ package com.algorand.android.modules.walletconnect.domain
 
 import com.algorand.android.modules.walletconnect.domain.decider.WalletConnectNodeChainIdentifierDecider
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import com.algorand.android.usecase.GetActiveNodeUseCase
+import com.algorand.android.node.domain.usecase.GetActiveNode
 import javax.inject.Inject
 
 class GetActiveNodeChainIdUseCase @Inject constructor(
-    private val getActiveNodeUseCase: GetActiveNodeUseCase,
+    private val getActiveNode: GetActiveNode,
     private val nodeChainIdentifierDecider: WalletConnectNodeChainIdentifierDecider
 ) {
 
     fun getActiveNodeChainId(): WalletConnect.ChainIdentifier {
-        val activeNode = getActiveNodeUseCase.getActiveNode() ?: return DEFAULT_CHAIN_IDENTIFIER
+        val activeNode = getActiveNode()
         return nodeChainIdentifierDecider.decideNodeChainIdentifier(activeNode)
-    }
-
-    companion object {
-        private val DEFAULT_CHAIN_IDENTIFIER = WalletConnect.ChainIdentifier.MAINNET
     }
 }

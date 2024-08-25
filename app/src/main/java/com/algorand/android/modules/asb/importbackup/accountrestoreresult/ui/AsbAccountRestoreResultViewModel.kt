@@ -13,16 +13,18 @@
 package com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui
 
 import androidx.lifecycle.SavedStateHandle
-import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbAccountRestoreResultPreview
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.usecase.AsbAccountRestoreResultPreviewUseCase
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult
 import com.algorand.android.modules.baseresult.ui.BaseResultViewModel
 import com.algorand.android.modules.baseresult.ui.model.BaseResultPreviewFields
 import com.algorand.android.utils.getOrThrow
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class AsbAccountRestoreResultViewModel @Inject constructor(
@@ -34,11 +36,19 @@ class AsbAccountRestoreResultViewModel @Inject constructor(
         ASB_ACCOUNT_IMPORT_RESULT_KEY
     )
 
-    private val asbAccountRestoreResultFlow = MutableStateFlow(getInitialPreview())
-    override val baseResultPreviewFlow: StateFlow<BaseResultPreviewFields> get() = asbAccountRestoreResultFlow
+    private val asbAccountRestoreResultFlow = MutableStateFlow<BaseResultPreviewFields?>(null)
+    override val baseResultPreviewFlow: StateFlow<BaseResultPreviewFields?> get() = asbAccountRestoreResultFlow
 
-    private fun getInitialPreview(): AsbAccountRestoreResultPreview {
-        return asbAccountRestoreResultPreviewUseCase.getAsbAccountRestoreResultPreview(asbAccountImportResult)
+    init {
+        initPreview()
+    }
+
+    private fun initPreview() {
+        viewModelScope.launchIO {
+            asbAccountRestoreResultFlow.update {
+                asbAccountRestoreResultPreviewUseCase.getAsbAccountRestoreResultPreview(asbAccountImportResult)
+            }
+        }
     }
 
     companion object {

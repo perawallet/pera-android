@@ -15,18 +15,13 @@ package com.algorand.android.discover.urlviewer.ui.usecase
 import com.algorand.android.discover.common.ui.model.DappFavoriteElement
 import com.algorand.android.discover.home.ui.mapper.DiscoverDappFavoritesMapper
 import com.algorand.android.discover.utils.getAddToFavoriteFunction
-import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.google.gson.Gson
 import javax.inject.Inject
 
 class DiscoverUrlViewerUseCase @Inject constructor(
-    private val currencyUseCase: CurrencyUseCase,
     private val discoverDappFavoritesMapper: DiscoverDappFavoritesMapper,
     private val gson: Gson
 ) {
-    fun getPrimaryCurrencyId(): String {
-        return currencyUseCase.getPrimaryCurrencyId()
-    }
 
     fun getAddToFavoriteJSFunction(favorite: DappFavoriteElement): String {
         return getAddToFavoriteFunction(discoverDappFavoritesMapper.mapFromDappFavoriteElement(favorite), gson)

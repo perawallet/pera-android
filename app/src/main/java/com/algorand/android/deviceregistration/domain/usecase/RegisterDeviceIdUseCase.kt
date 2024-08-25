@@ -12,51 +12,34 @@
 
 package com.algorand.android.deviceregistration.domain.usecase
 
-import com.algorand.android.core.AccountManager
-import com.algorand.android.deviceregistration.domain.mapper.DeviceRegistrationDTOMapper
-import com.algorand.android.deviceregistration.domain.model.DeviceRegistrationDTO
-import com.algorand.android.deviceregistration.domain.repository.UserDeviceIdRepository
-import com.algorand.android.models.Result
-import com.algorand.android.utils.DataResource
+import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.deviceid.component.domain.model.DeviceRegistration
+import com.algorand.android.deviceid.component.domain.usecase.RegisterDeviceId
+import com.algorand.android.deviceid.component.domain.usecase.SetSelectedNodeDeviceId
 import javax.inject.Inject
-import javax.inject.Named
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
 
 class RegisterDeviceIdUseCase @Inject constructor(
-    @Named(UserDeviceIdRepository.USER_DEVICE_ID_REPOSITORY_INJECTION_NAME)
-    private val userDeviceIdRepository: UserDeviceIdRepository,
-    private val deviceRegisterDTOMapper: DeviceRegistrationDTOMapper,
-    private val deviceIdUseCase: DeviceIdUseCase,
-    accountManager: AccountManager
-) : BaseDeviceIdOperationUseCase(accountManager) {
+    private val registerDeviceId: RegisterDeviceId,
+    private val setSelectedNodeDeviceId: SetSelectedNodeDeviceId,
+    private val getLocalAccounts: GetLocalAccounts
+) {
 
-    fun registerDevice(token: String): Flow<DataResource<String>> = flow<DataResource<String>> {
-        val deviceRegistrationDTO = getDeviceRegistrationDTO(token)
-        userDeviceIdRepository.registerDeviceId(deviceRegistrationDTO).collect {
-            when (it) {
-                is Result.Success -> {
-                    val deviceId = it.data
-                    deviceIdUseCase.setSelectedNodeDeviceId(deviceId)
-                    emit(DataResource.Success(deviceId))
-                }
-                is Result.Error -> {
-                    delay(REGISTER_DEVICE_FAIL_DELAY)
-                    registerDevice(token)
-                }
+    suspend operator fun invoke(token: String): Result<String> {
+        val accountAddresses = getLocalAccounts().map { it.address }
+        return registerDeviceId(DeviceRegistration(token, accountAddresses))
+            .onSuccess { deviceId ->
+                setSelectedNodeDeviceId(deviceId)
+                Result.success(deviceId)
             }
-        }
+            .onFailure {
+                delay(REGISTER_DEVICE_FAIL_DELAY)
+                invoke(token)
+            }
+
     }
 
-    private fun getDeviceRegistrationDTO(token: String): DeviceRegistrationDTO {
-        return deviceRegisterDTOMapper.mapToDeviceRegistrationDTO(
-            token = token,
-            accountPublicKeyList = getAccountPublicKeys(),
-            application = getApplicationName(),
-            platform = PLATFORM_NAME,
-            locale = getLocaleLanguageCode()
-        )
+    private companion object {
+        const val REGISTER_DEVICE_FAIL_DELAY = 1500L
     }
 }

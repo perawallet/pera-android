@@ -12,19 +12,19 @@
 
 package com.algorand.android.ui.accounts
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.decider.TransactionUserUseCase
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.TransactionTargetUser
-import com.algorand.android.models.User
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
-import kotlinx.coroutines.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AccountsAddressScanActionViewModel @Inject constructor(
@@ -47,10 +47,10 @@ class AccountsAddressScanActionViewModel @Inject constructor(
 
     fun getAssetTransactionArg(): AssetTransaction {
         return AssetTransaction(
-            receiverUser = User(
+            receiverUser = Contact(
                 name = transactionTargetUser.displayName,
-                publicKey = accountAddress,
-                imageUriAsString = null
+                address = accountAddress,
+                imageUri = null
             )
         )
     }

@@ -83,7 +83,7 @@
         tools:layout="@layout/fragment_confirm_swap">
         <argument
             android:name="swapQuote"
-            app:argType="com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote" />
+            app:argType="com.algorand.android.swap.domain.model.SwapQuote" />
         <action
             android:id="@+id/action_confirmSwapFragment_to_slippageToleranceInfoBottomSheet"
             app:destination="@id/slippageToleranceInfoBottomSheet" />
@@ -102,9 +102,6 @@
             app:destination="@id/swapTransactionStatusFragment"
             app:popUpTo="@id/assetSwapFragment" />
         <action
-            android:id="@+id/action_confirmSwapFragment_to_swapPreviewSummaryBottomSheet"
-            app:destination="@id/swapPreviewSummaryBottomSheet" />
-        <action
             android:id="@+id/action_confirmSwapFragment_to_exchangeFeeInfoBottomSheet"
             app:destination="@id/exchangeFeeInfoBottomSheet" />
         <action
@@ -117,15 +114,12 @@
         android:name="com.algorand.android.modules.swap.transactionstatus.ui.SwapTransactionStatusFragment"
         android:label="swapTransactionStatusFragment"
         tools:layout="@layout/fragment_swap_transaction_status">
-        <argument
-            android:name="swapQuote"
-            app:argType="com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote" />
-        <argument
-            android:name="swapQuoteTransaction"
-            app:argType="com.algorand.android.modules.swap.confirmswap.domain.model.SwapQuoteTransaction[]" />
         <action
             android:id="@+id/action_swapTransactionStatusFragment_to_swapTransactionSummaryFragment"
             app:destination="@id/swapTransactionSummaryFragment" />
+        <argument
+            android:name="swapTransactionStatusNavArgs"
+            app:argType="com.algorand.android.swapui.txnstatus.model.SwapTransactionStatusNavArgs" />
     </fragment>
     <fragment
         android:id="@+id/swapTransactionSummaryFragment"
@@ -134,7 +128,7 @@
         tools:layout="@layout/fragment_swap_transaction_summary">
         <argument
             android:name="swapQuote"
-            app:argType="com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote" />
+            app:argType="com.algorand.android.swap.domain.model.SwapQuote" />
         <argument
             android:name="optInTransactionFees"
             app:argType="long" />
@@ -169,15 +163,6 @@
         <argument
             android:name="slippageTolerance"
             app:argType="float" />
-    </dialog>
-    <dialog
-        android:id="@+id/swapPreviewSummaryBottomSheet"
-        android:name="com.algorand.android.modules.swap.previewsummary.ui.SwapPreviewSummaryBottomSheet"
-        android:label="SwapPreviewSummaryBottomSheet"
-        tools:layout="@layout/bottom_sheet_swap_preview_summary">
-        <argument
-            android:name="swapQuote"
-            app:argType="com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote" />
     </dialog>
     <dialog
         android:id="@+id/exchangeFeeInfoBottomSheet"

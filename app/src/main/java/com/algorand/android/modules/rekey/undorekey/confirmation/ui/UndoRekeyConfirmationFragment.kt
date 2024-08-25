@@ -76,8 +76,8 @@ class UndoRekeyConfirmationFragment : BaseRekeyConfirmationFragment() {
     }
 
     override fun onSendTransaction() {
-        val rekeyTx = undoRekeyConfirmationViewModel.createRekeyToStandardAccountTransaction() ?: return
-        sendTransaction(rekeyTx)
+//        val rekeyTx = undoRekeyConfirmationViewModel.createRekeyToStandardAccountTransaction() ?: return
+//        sendTransaction(rekeyTx)
     }
 
     override fun onTransactionLoading() {

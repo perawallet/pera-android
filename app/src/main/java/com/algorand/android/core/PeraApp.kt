@@ -23,6 +23,7 @@ import com.algorand.android.migration.MigrationManager
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
+import com.algorand.android.node.domain.usecase.InitializeActiveNode
 import com.algorand.android.utils.coremanager.ApplicationStatusObserver
 import com.algorand.android.utils.preference.getSavedThemePreference
 import dagger.hilt.android.HiltAndroidApp
@@ -30,9 +31,6 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 open class PeraApp : Application() {
-
-    @Inject
-    lateinit var accountManager: AccountManager
 
     @Inject
     lateinit var sharedPref: SharedPreferences
@@ -55,6 +53,9 @@ open class PeraApp : Application() {
     @Inject
     lateinit var pendingIntentKeeper: PendingIntentKeeper
 
+    @Inject
+    lateinit var initializeActiveNode: InitializeActiveNode
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         MultiDex.install(this)
@@ -65,7 +66,7 @@ open class PeraApp : Application() {
         migrationManager.makeMigrations()
 
         AppCompatDelegate.setDefaultNightMode(sharedPref.getSavedThemePreference().convertToSystemAbbr())
-        accountManager.initAccounts()
+        initializeActiveNode()
         initializeWalletConnect()
         bindApplicationLifecycleAwareComponents()
         bindActivityLifecycleAwareComponents()

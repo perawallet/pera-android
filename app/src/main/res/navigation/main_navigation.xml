@@ -202,14 +202,14 @@
         tools:layout="@layout/bottom_sheet_ledger_information">
         <argument
             android:name="selectedLedgerAccountSelectionListItem"
-            app:argType="com.algorand.android.models.AccountSelectionListItem$AccountItem" />
+            app:argType="com.algorand.android.modules.rekey.model.AccountSelectionListItem$AccountItem" />
         <argument
             android:name="authLedgerAccountSelectionListItem"
-            app:argType="com.algorand.android.models.AccountSelectionListItem$AccountItem"
+            app:argType="com.algorand.android.modules.rekey.model.AccountSelectionListItem$AccountItem"
             app:nullable="true" />
         <argument
             android:name="rekeyedAccountSelectionListItem"
-            app:argType="com.algorand.android.models.AccountSelectionListItem$AccountItem[]"
+            app:argType="com.algorand.android.modules.rekey.model.AccountSelectionListItem$AccountItem[]"
             app:nullable="true" />
     </fragment>
 

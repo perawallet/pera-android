@@ -13,23 +13,24 @@
 
 package com.algorand.android.ui.accounts
 
-import javax.inject.Inject
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import com.algorand.android.core.AccountManager
+import androidx.lifecycle.*
+import com.algorand.android.custominfo.component.domain.usecase.SetCustomName
+import com.algorand.android.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class RenameAccountNameViewModel @Inject constructor(
-    private val accountManager: AccountManager,
-    private val savedStateHandle: SavedStateHandle
+    private val setCustomName: SetCustomName,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    // TODO: 16.08.2021 Find the way to use safeArgs in viewModel.
-    private val publicKey by lazy { savedStateHandle.get<String>(PUBLIC_KEY) }
+    val accountPublicKey: String = savedStateHandle.getOrThrow(PUBLIC_KEY)
 
     fun changeAccountName(accountName: String) {
-        accountManager.changeAccountName(publicKey, accountName)
+        viewModelScope.launchIO {
+            setCustomName(accountPublicKey, accountName)
+        }
     }
 
     companion object {

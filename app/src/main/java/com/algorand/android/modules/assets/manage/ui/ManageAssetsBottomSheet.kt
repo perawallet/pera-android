@@ -18,8 +18,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseBottomSheet
+import com.algorand.android.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.android.databinding.BottomSheetManageAssetsBinding
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,16 +36,28 @@ class ManageAssetsBottomSheet : DaggerBaseBottomSheet(
     private val binding by viewBinding(BottomSheetManageAssetsBinding::bind)
     private val manageAssetsViewModel by viewModels<ManageAssetsViewModel>()
 
+    private val accountDetailObserver: suspend (AccountDetail?) -> Unit = {
+        initAccountDetail(it)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
+        initObservers()
+        manageAssetsViewModel.initAccountDetail()
     }
 
     private fun initUi() {
         configureToolbar()
-        configureRemoveAssetsButton()
         configureSortAssetsButton()
         configureFilterAssetsButton()
+    }
+
+    private fun initObservers() {
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            manageAssetsViewModel.accountDetailFlow,
+            accountDetailObserver
+        )
     }
 
     private fun configureToolbar() {
@@ -50,10 +65,10 @@ class ManageAssetsBottomSheet : DaggerBaseBottomSheet(
         binding.customToolbar.configure(toolbarConfiguration)
     }
 
-    private fun configureRemoveAssetsButton() {
+    private fun initAccountDetail(accountDetail: AccountDetail?) {
         with(binding.removeAssetsButton) {
             setOnClickListener { navToRemoveAssetsFragment() }
-            isVisible = manageAssetsViewModel.hasAccountAuthority()
+            isVisible = accountDetail?.accountType?.canSignTransaction() == true
         }
     }
 

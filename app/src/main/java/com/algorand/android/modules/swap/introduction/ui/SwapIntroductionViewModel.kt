@@ -14,9 +14,14 @@ package com.algorand.android.modules.swap.introduction.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavDirections
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.swap.introduction.ui.model.SwapIntroductionPreview
-import com.algorand.android.modules.swap.introduction.ui.usecase.SwapIntroductionPreviewUseCase
+import com.algorand.android.foundation.Event
+import com.algorand.android.swap.common.model.SwapNavigationDestination.AccountSelection
+import com.algorand.android.swap.common.model.SwapNavigationDestination.Introduction
+import com.algorand.android.swap.common.model.SwapNavigationDestination.Swap
+import com.algorand.android.swap.common.usecase.GetSwapNavigationDestination
+import com.algorand.android.swap.introduction.domain.usecase.SetSwapFeatureIntroductionPageVisibility
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -26,7 +31,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SwapIntroductionViewModel @Inject constructor(
-    private val swapIntroductionPreviewUseCase: SwapIntroductionPreviewUseCase,
+    private val setSwapFeatureIntroductionPageVisibility: SetSwapFeatureIntroductionPageVisibility,
+    private val getSwapNavigationDestination: GetSwapNavigationDestination,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -36,9 +42,9 @@ class SwapIntroductionViewModel @Inject constructor(
     private val fromAssetId = navArgs.fromAssetId.takeIf { it != DEFAULT_ASSET_ID_ARG }
     private val toAssetId = navArgs.toAssetId.takeIf { it != DEFAULT_ASSET_ID_ARG }
 
-    private val _swapIntroductionPreviewFlow = MutableStateFlow<SwapIntroductionPreview?>(null)
-    val swapIntroductionPreviewFlow: StateFlow<SwapIntroductionPreview?>
-        get() = _swapIntroductionPreviewFlow
+    private val _swapNavDirectionFlow = MutableStateFlow<Event<NavDirections>?>(null)
+    val swapNavDirectionFlow: StateFlow<Event<NavDirections>?>
+        get() = _swapNavDirectionFlow
 
     init {
         setIntroductionPageAsShowed()
@@ -46,20 +52,37 @@ class SwapIntroductionViewModel @Inject constructor(
 
     fun onStartSwappingClick() {
         viewModelScope.launch {
-            val newPreview = swapIntroductionPreviewUseCase.getSwapClickUpdatedPreview(
-                accountAddress = accountAddress,
-                fromAssetId = fromAssetId,
-                toAssetId = toAssetId,
-                defaultFromAssetIdArg = DEFAULT_ASSET_ID_ARG,
-                defaultToAssetIdArg = DEFAULT_ASSET_ID_ARG
-            )
-            _swapIntroductionPreviewFlow.emit(newPreview)
+            val direction = getSwapNavDirection() ?: return@launch
+            _swapNavDirectionFlow.value = Event(direction)
         }
+    }
+
+    private suspend fun getSwapNavDirection(): NavDirections? {
+        return when (val swapNavigationDestination = getSwapNavigationDestination(accountAddress)) {
+            AccountSelection -> getAccountSelectionNavigationDirection()
+            is Swap -> getSwapNavigationDirection(swapNavigationDestination.address)
+            Introduction -> null
+        }
+    }
+
+    private fun getAccountSelectionNavigationDirection(): NavDirections {
+        return SwapIntroductionFragmentDirections.actionSwapIntroductionFragmentToSwapAccountSelectionNavigation(
+            fromAssetId = fromAssetId ?: DEFAULT_ASSET_ID_ARG,
+            toAssetId = toAssetId ?: DEFAULT_ASSET_ID_ARG
+        )
+    }
+
+    private fun getSwapNavigationDirection(address: String): NavDirections {
+        return SwapIntroductionFragmentDirections.actionSwapIntroductionFragmentToSwapNavigation(
+            accountAddress = address,
+            fromAssetId = fromAssetId ?: DEFAULT_ASSET_ID_ARG,
+            toAssetId = toAssetId ?: DEFAULT_ASSET_ID_ARG
+        )
     }
 
     private fun setIntroductionPageAsShowed() {
         viewModelScope.launchIO {
-            swapIntroductionPreviewUseCase.setIntroductionPageAsShowed()
+            setSwapFeatureIntroductionPageVisibility(false)
         }
     }
 

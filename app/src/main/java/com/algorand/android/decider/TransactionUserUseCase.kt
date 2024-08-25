@@ -13,34 +13,40 @@
 
 package com.algorand.android.decider
 
-import com.algorand.android.core.AccountManager
+import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.accountcore.ui.usecase.GetAccountIconResourceByAccountType
+import com.algorand.android.contacts.component.domain.usecase.GetContactByAddress
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.mapper.TransactionTargetUserMapper
 import com.algorand.android.models.TransactionTargetUser
-import com.algorand.android.repository.ContactRepository
 import com.algorand.android.utils.toShortenedAddress
 import javax.inject.Inject
 
 class TransactionUserUseCase @Inject constructor(
-    private val accountManager: AccountManager,
-    private val contactRepository: ContactRepository,
-    private val transactionTargetUserMapper: TransactionTargetUserMapper
+    private val getContactByAddress: GetContactByAddress,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
+    private val transactionTargetUserMapper: TransactionTargetUserMapper,
+    private val getAccountIconResourceByAccountType: GetAccountIconResourceByAccountType,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountDetail: GetAccountDetail
 ) {
 
     suspend fun getTransactionTargetUser(nonOwnerPublicKey: String): TransactionTargetUser {
-        val foundContact = contactRepository.getAllContacts().firstOrNull { it.publicKey == nonOwnerPublicKey }
+        val foundContact = getContactByAddress(nonOwnerPublicKey)
         if (foundContact != null) {
             return transactionTargetUserMapper.mapTo(
                 publicKey = nonOwnerPublicKey,
-                displayName = foundContact.name.ifEmpty { nonOwnerPublicKey.toShortenedAddress() },
+                displayName = getAccountDisplayName(nonOwnerPublicKey).primaryDisplayName,
                 contact = foundContact
             )
         }
-        val foundAccount = accountManager.getAccount(nonOwnerPublicKey)
-        if (foundAccount != null) {
+        if (isThereAnyAccountWithAddress(nonOwnerPublicKey)) {
+            val accountDetail = getAccountDetail(nonOwnerPublicKey)
             return transactionTargetUserMapper.mapTo(
                 publicKey = nonOwnerPublicKey,
-                displayName = foundAccount.name.ifEmpty { nonOwnerPublicKey.toShortenedAddress() },
-                account = foundAccount
+                displayName = getAccountDisplayName(accountDetail).primaryDisplayName,
+                accountIconResource = getAccountIconResourceByAccountType(accountDetail.accountType)
             )
         }
         return transactionTargetUserMapper.mapTo(

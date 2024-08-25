@@ -15,18 +15,16 @@ package com.algorand.android.modules.swap.assetselection.toasset.ui
 import androidx.fragment.app.viewModels
 import com.algorand.android.MainActivity
 import com.algorand.android.R
+import com.algorand.android.assetutils.AssetAdditionPayload
 import com.algorand.android.customviews.toolbar.CustomToolbar
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetActionResult
 import com.algorand.android.models.AssetOperationResult
-import com.algorand.android.modules.assets.action.addition.AddAssetActionBottomSheet.Companion.ADD_ASSET_ACTION_RESULT_KEY
 import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionFragment
 import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionViewModel
-import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapAssetSelectionItem
-import com.algorand.android.utils.Event
+import com.algorand.android.swapui.assetselection.model.SwapAssetSelectionItem
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.setFragmentNavigationResult
-import com.algorand.android.utils.useFragmentResultListenerValue
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -39,8 +37,8 @@ class SwapToAssetSelectionFragment : BaseSwapAssetSelectionFragment() {
     override val baseAssetSelectionViewModel: BaseSwapAssetSelectionViewModel
         get() = swapToAssetSelectionViewModel
 
-    private val navigateToAssetAdditionBottomSheetEventCollector: suspend (Event<AssetAction>?) -> Unit = { event ->
-        event?.consume()?.let { handleAssetAddition(it) }
+    private val navigateToAssetAdditionBottomSheetEventCollector: suspend (Event<AssetAdditionPayload>?) -> Unit = {
+        it?.consume()?.let { handleAssetAddition(it) }
     }
 
     private val assetSelectionSuccessEventCollector: suspend (Event<SwapAssetSelectionItem>?) -> Unit = {
@@ -61,13 +59,6 @@ class SwapToAssetSelectionFragment : BaseSwapAssetSelectionFragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        useFragmentResultListenerValue<AssetActionResult>(ADD_ASSET_ACTION_RESULT_KEY) { assetActionResult ->
-            (activity as? MainActivity)?.signAddAssetTransaction(assetActionResult)
-        }
-    }
-
     override fun onAssetSelected(assetItem: SwapAssetSelectionItem) {
         swapToAssetSelectionViewModel.onAssetSelected(assetItem)
     }
@@ -76,11 +67,13 @@ class SwapToAssetSelectionFragment : BaseSwapAssetSelectionFragment() {
         toolbar?.changeTitle(R.string.swap_to)
     }
 
-    private fun handleAssetAddition(assetAction: AssetAction) {
+    private fun handleAssetAddition(payload: AssetAdditionPayload) {
+        val assetAction = AssetAction(assetId = payload.assetId, publicKey = payload.address)
         nav(
             SwapToAssetSelectionFragmentDirections
                 .actionSwapToAssetSelectionFragmentToAssetAdditionActionNavigation(assetAction)
         )
+        // TODO change here
         (activity as? MainActivity)?.mainViewModel?.assetOperationResultLiveData?.observe(viewLifecycleOwner) {
             it.peek().use(
                 onSuccess = {

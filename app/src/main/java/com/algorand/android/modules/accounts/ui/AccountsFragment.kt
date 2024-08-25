@@ -36,7 +36,6 @@ import com.algorand.android.modules.accounts.ui.adapter.AccountAdapter
 import com.algorand.android.modules.tutorialdialog.util.showCopyAccountAddressTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showGiftCardsTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showSwapFeatureTutorialDialog
-import com.algorand.android.utils.BannerViewTypesDividerItemDecoration
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.TestnetBadgeDrawable
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
@@ -99,7 +98,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onBackupBannerActionButtonClick() {
-            navToBackupPassphraseInfoNavigation()
+            accountsViewModel.onBackupBannerActionButtonClick()
         }
 
         override fun onBannerActionButtonClick(url: String, isGovernance: Boolean) {
@@ -174,6 +173,16 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private val portfolioValuesBackgroundColorCollector: suspend (Int?) -> Unit = {
         if (it != null) binding.toolbarLayout.setBackgroundColor(ContextCompat.getColor(binding.root.context, it))
+    }
+
+    private val navigateToBackupPassphraseCollector: suspend (Event<List<String>>?) -> Unit = {
+        it?.consume()?.let { addresses ->
+            nav(
+                AccountsFragmentDirections.actionAccountsFragmentToBackupPassphraseInfoNavigation(
+                    publicKeysOfAccountsToBackup = addresses.toTypedArray()
+                )
+            )
+        }
     }
 
     private val successStateVisibilityCollector: suspend (Boolean?) -> Unit = { isVisible ->
@@ -266,12 +275,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         binding.accountsRecyclerView.apply {
             adapter = accountAdapter
             itemAnimator = null
-            addItemDecoration(
-                BannerViewTypesDividerItemDecoration(
-                    BaseAccountListItem.bannerItemTypes,
-                    resources.getDimensionPixelSize(R.dimen.spacing_normal)
-                )
-            )
         }
         binding.emptyScreenStateView.apply {
             setOnNeutralButtonClickListener(::onAddAccountClick)
@@ -346,6 +349,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 accountPreviewFlow.map { it?.notificationPermissionEvent }.distinctUntilChanged(),
                 askNotificationPermissionEventCollector
             )
+            viewLifecycleOwner.collectLatestOnLifecycle(
+                accountPreviewFlow.map { it?.navigateToBackUpPassphrase }.distinctUntilChanged(),
+                navigateToBackupPassphraseCollector
+            )
         }
     }
 
@@ -391,14 +398,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private fun navToSendAlgoNavigation() {
         nav(AccountsFragmentDirections.actionGlobalSendAlgoNavigation(null))
-    }
-
-    private fun navToBackupPassphraseInfoNavigation() {
-        nav(
-            AccountsFragmentDirections.actionAccountsFragmentToBackupPassphraseInfoNavigation(
-                publicKeysOfAccountsToBackup = accountsViewModel.getNotBackedUpAccounts().toTypedArray()
-            )
-        )
     }
 
     companion object {

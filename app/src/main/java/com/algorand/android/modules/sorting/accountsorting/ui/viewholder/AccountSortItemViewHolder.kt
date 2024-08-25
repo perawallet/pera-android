@@ -15,10 +15,10 @@ package com.algorand.android.modules.sorting.accountsorting.ui.viewholder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.databinding.ItemAccountSortBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.sorting.accountsorting.domain.model.BaseAccountSortingListItem
 import com.algorand.android.utils.AccountIconDrawable
 
@@ -32,8 +32,8 @@ class AccountSortItemViewHolder(
         with(binding) {
             with(item.accountListItem.itemConfiguration) {
                 setAccountStartIconDrawable(accountIconDrawablePreview)
-                setAccountTitleText(accountDisplayName?.getAccountPrimaryDisplayName())
-                setAccountDescriptionText(accountDisplayName?.getAccountSecondaryDisplayName(root.resources))
+                setAccountTitleText(accountDisplayName?.primaryDisplayName)
+                setAccountDescriptionText(accountDisplayName?.secondaryDisplayName)
                 setAccountItemDragButton()
             }
         }

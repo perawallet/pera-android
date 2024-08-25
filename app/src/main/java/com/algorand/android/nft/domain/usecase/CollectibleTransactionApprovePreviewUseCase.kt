@@ -12,22 +12,31 @@
 
 package com.algorand.android.nft.domain.usecase
 
-import com.algorand.android.models.Account
+import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.accountinfo.component.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.android.assetdetail.component.asset.domain.usecase.GetCollectibleDetail
+import com.algorand.android.contacts.component.domain.usecase.GetContactByAddress
+import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.nft.mapper.CollectibleTransactionApprovePreviewMapper
-import com.algorand.android.nft.utils.CollectibleUtils
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.AccountNameIconUseCase
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
+import com.algorand.android.utils.toShortenedAddress
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
 class CollectibleTransactionApprovePreviewUseCase @Inject constructor(
     private val collectibleTransactionApprovePreviewMapper: CollectibleTransactionApprovePreviewMapper,
-    private val accountNameIconUseCase: AccountNameIconUseCase,
-    private val collectibleUtils: CollectibleUtils,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase
+    private val getAccountDetail: GetAccountDetail,
+    private val isAssetOwnedByAccount: IsAssetOwnedByAccount,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getContactByAddress: GetContactByAddress,
+    private val getLocalAccounts: GetLocalAccounts,
+    private val getCollectibleDetail: GetCollectibleDetail
 ) {
 
     fun getCollectibleTransactionApprovePreviewFlow(
@@ -38,25 +47,20 @@ class CollectibleTransactionApprovePreviewUseCase @Inject constructor(
         nftDomainName: String?,
         nftDomainLogoUrl: String?
     ) = flow {
-        val (senderDisplayText, senderAccountIcon) = accountNameIconUseCase.getAccountDisplayTextAndIcon(
-            senderPublicKey
-        )
-        val (receiverDisplayText, receiverAccountIcon) = accountNameIconUseCase.getAccountOrContactDisplayTextAndIcon(
-            receiverPublicKey
-        )
-        val ownerAccountDetail = accountDetailUseCase.getCachedAccountDetail(senderPublicKey)?.data
-        val isHoldingByWatchAccount = ownerAccountDetail?.account?.type == Account.Type.WATCH
-        val isOwnedByTheUser = collectibleUtils.isCollectibleOwnedByTheUser(ownerAccountDetail, nftId)
-        val nftDetail = simpleCollectibleUseCase.getCachedCollectibleById(nftId)?.data
+        val (receiverDisplayText, receiverAccountIcon) = getAccountOrContactDisplayTextAndIcon(receiverPublicKey)
+        val ownerAccountDetail = getAccountDetail(senderPublicKey)
+        val isHoldingByWatchAccount = ownerAccountDetail.accountType == AccountType.NoAuth
+        val isOwnedByTheUser = isAssetOwnedByAccount(senderPublicKey, nftId)
+        val nftDetail = getCollectibleDetail(nftId)
         val isOptOutGroupVisible = isOwnedByTheUser &&
             !isHoldingByWatchAccount &&
-            nftDetail?.assetCreator?.publicKey != ownerAccountDetail?.account?.address &&
+            nftDetail?.creatorAddress != ownerAccountDetail.address &&
             senderPublicKey != receiverPublicKey
 
         val collectibleTransactionApprovePreview = collectibleTransactionApprovePreviewMapper.mapToPreview(
             senderAccountPublicKey = senderPublicKey,
-            senderAccountDisplayText = senderDisplayText,
-            senderAccountIconResource = senderAccountIcon,
+            senderAccountDisplayText = getAccountDisplayName(senderPublicKey).primaryDisplayName,
+            senderAccountIconResource = getAccountIconDrawablePreview(senderPublicKey),
             receiverAccountPublicKey = receiverPublicKey,
             receiverAccountDisplayText = receiverDisplayText,
             receiverAccountIconDrawablePreview = receiverAccountIcon,
@@ -66,5 +70,18 @@ class CollectibleTransactionApprovePreviewUseCase @Inject constructor(
             nftDomainLogoUrl = nftDomainLogoUrl
         )
         emit(collectibleTransactionApprovePreview)
+    }
+
+    private suspend fun getAccountOrContactDisplayTextAndIcon(
+        accountAddress: String
+    ): Pair<String, AccountIconDrawablePreview?> {
+        val localReceiver = getLocalAccounts().firstOrNull { it.address == accountAddress }
+        if (localReceiver != null) {
+            val accountName = getAccountDisplayName(accountAddress).primaryDisplayName
+            val accountIcon = getAccountIconDrawablePreview(accountAddress)
+            return accountName to accountIcon
+        }
+        val contactReceiver = getContactByAddress(accountAddress)
+        return (contactReceiver?.name ?: accountAddress.toShortenedAddress()) to null
     }
 }

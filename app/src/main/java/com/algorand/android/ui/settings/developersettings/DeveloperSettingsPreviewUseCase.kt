@@ -12,49 +12,44 @@
 
 package com.algorand.android.ui.settings.developersettings
 
-import com.algorand.android.customviews.accountandassetitem.mapper.AccountItemConfigurationMapper
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.modules.accounts.domain.usecase.GetAccountValueUseCase
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.AccountSortPreferenceUseCase
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.GetSortedAccountsByPreferenceUseCase
-import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
+import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
+import com.algorand.android.accountcore.ui.mapper.AccountItemConfigurationMapper
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.core.component.domain.usecase.GetAccountTotalValue
+import com.algorand.android.node.domain.usecase.IsSelectedNodeTestnet
 import javax.inject.Inject
 
 class DeveloperSettingsPreviewUseCase @Inject constructor(
-    private val getSortedAccountsByPreferenceUseCase: GetSortedAccountsByPreferenceUseCase,
-    private val accountSortPreferenceUseCase: AccountSortPreferenceUseCase,
-    private val getAccountValueUseCase: GetAccountValueUseCase,
     private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
-    private val getAccountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase
+    private val getSortedAccountsByPreference: GetSortedAccountsByPreference,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountTotalValue: GetAccountTotalValue,
+    private val isSelectedNodeTestnet: IsSelectedNodeTestnet
 ) {
 
     suspend fun getFirstAccountAddress(): String? {
-        val sortedAccountListItem = getSortedAccountsByPreferenceUseCase.getSortedAccountListItems(
-            sortingPreferences = accountSortPreferenceUseCase.getAccountSortPreference(),
+        val sortedAccountListItem = getSortedAccountsByPreference(
             onLoadedAccountConfiguration = {
-                val accountValue = getAccountValueUseCase.getAccountValue(this)
-                accountItemConfigurationMapper.mapTo(
-                    accountAddress = account.address,
-                    accountDisplayName = getAccountDisplayNameUseCase.invoke(account.address),
-                    accountType = account.type,
+                val accountValue = getAccountTotalValue(address, includeAlgo = true)
+                accountItemConfigurationMapper(
+                    accountAddress = address,
+                    accountDisplayName = getAccountDisplayName(address),
+                    accountType = accountType,
                     accountPrimaryValue = accountValue.primaryAccountValue
                 )
             },
             onFailedAccountConfiguration = {
-                this?.run {
-                    accountItemConfigurationMapper.mapTo(
-                        accountAddress = address,
-                        accountDisplayName = getAccountDisplayNameUseCase.invoke(address),
-                        accountType = type
-                    )
-                }
+                accountItemConfigurationMapper(
+                    accountAddress = this,
+                    accountDisplayName = getAccountDisplayName(this),
+                    accountType = null
+                )
             }
         )
         return sortedAccountListItem.firstOrNull()?.itemConfiguration?.accountAddress
     }
 
     fun isConnectedToTestnet(): Boolean {
-        return getIsActiveNodeTestnetUseCase.invoke()
+        return isSelectedNodeTestnet()
     }
 }

@@ -13,28 +13,24 @@
 package com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.core.AccountManager
-import com.algorand.android.mapper.AccountDisplayNameMapper
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.models.PluralAnnotatedString
-import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.mapper.AsbAccountRestoreResultPreviewMapper
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbAccountRestoreResultPreview
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult
 import com.algorand.android.modules.baseresult.ui.mapper.ResultListItemMapper
 import com.algorand.android.modules.baseresult.ui.model.ResultListItem
 import com.algorand.android.modules.baseresult.ui.usecase.BaseResultPreviewUseCase
-import com.algorand.android.utils.toShortenedAddress
 import javax.inject.Inject
 
 class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
     private val asbAccountRestoreResultPreviewMapper: AsbAccountRestoreResultPreviewMapper,
-    private val accountManager: AccountManager,
-    private val accountDisplayNameMapper: AccountDisplayNameMapper,
-    private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
+    private val getAccountDisplayName: GetAccountDisplayName,
     resultListItemMapper: ResultListItemMapper
 ) : BaseResultPreviewUseCase(resultListItemMapper) {
 
-    fun getAsbAccountRestoreResultPreview(
+    suspend fun getAsbAccountRestoreResultPreview(
         asbAccountImportResult: AsbAccountImportResult
     ): AsbAccountRestoreResultPreview {
         val importedAccountSize = asbAccountImportResult.importedAccountList.size
@@ -56,24 +52,15 @@ class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
             existingAccountCount = asbAccountImportResult.existingAccountList.size
         )
         val accountItems = asbAccountImportResult.importedAccountList.map { accountAddress ->
-            val account = accountManager.getAccount(accountAddress)
-            // Since these accounts are not cached, we have to create [AccountDisplayName] model by using
-            // mapper instead of using `AccountDisplayNameUseCase`
-            val accountDisplayName = accountDisplayNameMapper.mapToAccountDisplayName(
-                accountAddress = accountAddress,
-                accountName = account?.name.orEmpty().ifBlank { accountAddress.toShortenedAddress() },
-                nfDomainName = null,
-                type = account?.type
-            )
             // Since these account are not in our local, we have to create them manually BUT
             // do not forget that now are supporting only standard accounts in ASB
-            val accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
+            val accountIconDrawablePreview = AccountIconDrawablePreview(
                 iconResId = R.drawable.ic_wallet,
                 iconTintResId = R.color.wallet_4_icon,
                 backgroundColorResId = R.color.wallet_4
             )
             createAccountItem(
-                accountDisplayName = accountDisplayName,
+                accountDisplayName = getAccountDisplayName(accountAddress),
                 accountIconDrawablePreview = accountIconDrawablePreview
             )
         }

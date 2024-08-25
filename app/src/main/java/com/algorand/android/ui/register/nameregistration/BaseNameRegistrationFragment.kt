@@ -19,9 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentNameRegistrationBinding
-import com.algorand.android.models.AccountCreation
-import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.models.*
 import com.algorand.android.models.ui.NameRegistrationPreview
 import com.algorand.android.utils.KeyboardToggleListener
 import com.algorand.android.utils.addKeyboardToggleListener
@@ -34,7 +32,7 @@ import kotlinx.coroutines.launch
 
 abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragment_name_registration) {
 
-    abstract val accountCreation: AccountCreation?
+    abstract val accountCreation: CreateAccount
     abstract fun navToNextFragment()
 
     private val nameRegistrationViewModel: NameRegistrationViewModel by viewModels()
@@ -111,7 +109,7 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
                 context?.showAlertDialog(getString(R.string.error), getString(R.string.this_account_already_exists))
             }
             getCreateAccountEvent()?.consume()
-                ?.let { nameRegistrationViewModel.addNewAccount(it.tempAccount, it.creationType) }
+                ?.let { nameRegistrationViewModel.addNewAccount(it) }
             getUpdateWatchAccountEvent()?.consume()
                 ?.let { nameRegistrationViewModel.updateWatchAccount(it) }
             handleNextNavigationEvent?.consume()?.let { navToNextFragment() }

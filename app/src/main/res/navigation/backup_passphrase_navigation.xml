@@ -30,7 +30,7 @@
             app:argType="string" />
         <argument
             android:name="accountCreation"
-            app:argType="com.algorand.android.models.AccountCreation"
+            app:argType="com.algorand.android.models.CreateAccount"
             app:nullable="true" />
         <action
             android:id="@+id/action_backupPassphraseFragment_to_passphraseValidationFragment"
@@ -40,7 +40,7 @@
             app:destination="@id/backupPassphraseAccountNameNavigation">
             <argument
                 android:name="accountCreation"
-                app:argType="com.algorand.android.models.AccountCreation" />
+                app:argType="com.algorand.android.models.CreateAccount" />
         </action>
     </fragment>
 
@@ -54,7 +54,7 @@
             app:argType="string" />
         <argument
             android:name="accountCreation"
-            app:argType="com.algorand.android.models.AccountCreation"
+            app:argType="com.algorand.android.models.CreateAccount"
             app:nullable="true" />
         <action
             android:id="@+id/action_passphraseValidationFragment_to_passphraseVerifiedInfoFragment"
@@ -68,14 +68,14 @@
         tools:layout="@layout/fragment_base_info">
         <argument
             android:name="accountCreation"
-            app:argType="com.algorand.android.models.AccountCreation"
+            app:argType="com.algorand.android.models.CreateAccount"
             app:nullable="true" />
         <action
             android:id="@+id/action_passphraseVerifiedInfoFragment_to_backupPassphraseAccountNameNavigation"
             app:destination="@id/backupPassphraseAccountNameNavigation">
             <argument
                 android:name="accountCreation"
-                app:argType="com.algorand.android.models.AccountCreation" />
+                app:argType="com.algorand.android.models.CreateAccount" />
         </action>
         <action
             android:id="@+id/action_passphraseVerifiedInfoFragment_to_homeNavigation"

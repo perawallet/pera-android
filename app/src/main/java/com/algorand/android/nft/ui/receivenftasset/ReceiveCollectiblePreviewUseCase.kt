@@ -16,6 +16,10 @@ import androidx.paging.PagingData
 import androidx.paging.insertHeaderItem
 import androidx.paging.map
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformationFlow
 import com.algorand.android.assetsearch.domain.mapper.AssetSearchQueryMapper
 import com.algorand.android.assetsearch.domain.model.BaseSearchedAsset
 import com.algorand.android.assetsearch.domain.pagination.AssetSearchPagerBuilder
@@ -23,10 +27,7 @@ import com.algorand.android.assetsearch.domain.usecase.SearchAssetUseCase
 import com.algorand.android.assetsearch.ui.mapper.BaseAssetSearchItemMapper
 import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem
 import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.assets.addition.domain.usecase.AddAssetItemActionButtonStateDecider
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.AccountNameIconUseCase
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -37,9 +38,10 @@ class ReceiveCollectiblePreviewUseCase @Inject constructor(
     private val searchAssetUseCase: SearchAssetUseCase,
     private val assetSearchQueryMapper: AssetSearchQueryMapper,
     private val assetSearchItemMapper: BaseAssetSearchItemMapper,
-    private val accountNameIconUseCase: AccountNameIconUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val addAssetItemActionButtonStateDecider: AddAssetItemActionButtonStateDecider
+    private val getAccountInformationFlow: GetAccountInformationFlow,
+    private val addAssetItemActionButtonStateDecider: AddAssetItemActionButtonStateDecider,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getAccountDisplayName: GetAccountDisplayName
 ) {
 
     fun getSearchPaginationFlow(
@@ -59,9 +61,7 @@ class ReceiveCollectiblePreviewUseCase @Inject constructor(
             defaultQuery = assetSearchQuery
         )
 
-        val accountCollectiblesFlow = accountDetailUseCase.getAccountDetailCacheFlow(
-            publicKey = accountAddress
-        )
+        val accountCollectiblesFlow = getAccountInformationFlow(accountAddress)
 
         val searchViewItem = assetSearchItemMapper.mapToSearchViewItem(
             searchViewHintResId = R.string.search_asset_id_or_nft
@@ -69,10 +69,11 @@ class ReceiveCollectiblePreviewUseCase @Inject constructor(
 
         val infoViewItem = assetSearchItemMapper.mapToInfoViewItem()
 
-        return combine(searchedAssetsFlow, accountCollectiblesFlow) { searchedAssets, accountDetail ->
+        return combine(searchedAssetsFlow, accountCollectiblesFlow) { searchedAssets, accountInformation ->
             searchedAssets.map { baseSearchedAsset ->
-                val accountInformation = accountDetail?.data?.accountInformation
-                val assetHolding = accountInformation?.getAssetHoldingOrNull(baseSearchedAsset.assetId)
+                val assetHolding = accountInformation?.assetHoldings?.firstOrNull {
+                    it.assetId == baseSearchedAsset.assetId
+                }
                 val assetActionButtonState = addAssetItemActionButtonStateDecider.decideAddAssetItemActionButtonState(
                     assetHolding = assetHolding
                 )
@@ -117,7 +118,7 @@ class ReceiveCollectiblePreviewUseCase @Inject constructor(
         }
     }
 
-    fun getReceiverAccountDisplayTextAndIcon(publicKey: String): Pair<String, AccountIconDrawablePreview> {
-        return accountNameIconUseCase.getAccountDisplayTextAndIcon(publicKey)
+    suspend fun getReceiverAccountDisplayTextAndIcon(publicKey: String): Pair<String, AccountIconDrawablePreview> {
+        return getAccountDisplayName(publicKey).primaryDisplayName to getAccountIconDrawablePreview(publicKey)
     }
 }

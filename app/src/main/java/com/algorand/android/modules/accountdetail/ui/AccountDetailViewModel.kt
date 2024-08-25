@@ -16,13 +16,14 @@ package com.algorand.android.modules.accountdetail.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.AccountDetailSummary
+import com.algorand.android.accountcore.ui.summary.usecase.GetAccountDetailSummary
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetailFlow
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.AccountDetailTab
 import com.algorand.android.modules.accountdetail.ui.model.AccountDetailPreview
-import com.algorand.android.modules.accountdetail.ui.usecase.AccountDetailPreviewUseCase
 import com.algorand.android.modules.tracking.accountdetail.AccountDetailFragmentEventTracker
+import com.algorand.android.swap.common.usecase.GetSwapNavigationDestination
 import com.algorand.android.usecase.AccountDeletionUseCase
-import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,25 +40,25 @@ class AccountDetailViewModel @Inject constructor(
     private val accountDeletionUseCase: AccountDeletionUseCase,
     savedStateHandle: SavedStateHandle,
     private val accountDetailFragmentEventTracker: AccountDetailFragmentEventTracker,
-    private val accountDetailPreviewUseCase: AccountDetailPreviewUseCase
+    private val getSwapNavigationDestination: GetSwapNavigationDestination,
+    private val getAccountDetailFlow: GetAccountDetailFlow,
+    private val getAccountDetailSummary: GetAccountDetailSummary
 ) : ViewModel() {
 
     val accountPublicKey: String = savedStateHandle.getOrThrow(ACCOUNT_PUBLIC_KEY)
     private val accountDetailTab = savedStateHandle.get<AccountDetailTab?>(ACCOUNT_DETAIL_TAB)
 
-    val accountDetailSummaryFlow: StateFlow<AccountDetailSummary?> get() = _accountDetailSummaryFlow
-    private val _accountDetailSummaryFlow = MutableStateFlow<AccountDetailSummary?>(null)
-
     private val _accountDetailTabArgFlow = MutableStateFlow<Event<Int>?>(null)
     val accountDetailTabArgFlow: StateFlow<Event<Int>?> get() = _accountDetailTabArgFlow
 
-    // TODO Combine accountDetailSummaryFlow and accountDetailPreviewFlow
     private val _accountDetailPreviewFlow = MutableStateFlow<AccountDetailPreview?>(null)
     val accountDetailPreviewFlow: StateFlow<AccountDetailPreview?>
         get() = _accountDetailPreviewFlow
 
+    val canAccountSignTransaction: Boolean
+        get() = _accountDetailPreviewFlow.value?.accountDetailSummary?.accountDetail?.canSignTransaction() ?: false
+
     init {
-        initAccountDetailSummary()
         initAccountDetailPreview()
         checkAccountDetailTabArg()
     }
@@ -76,14 +77,14 @@ class AccountDetailViewModel @Inject constructor(
         }
     }
 
-    private fun initAccountDetailPreview() {
-        _accountDetailPreviewFlow.value = accountDetailPreviewUseCase.getInitialPreview()
-    }
-
-    fun initAccountDetailSummary() {
+    fun initAccountDetailPreview() {
         viewModelScope.launchIO {
-            accountDetailPreviewUseCase.getAccountSummaryFlow(accountPublicKey).collectLatest { accountDetailSummary ->
-                _accountDetailSummaryFlow.emit(accountDetailSummary)
+            getAccountDetailFlow(accountPublicKey).collectLatest { accountDetail ->
+                if (accountDetail != null) {
+                    _accountDetailPreviewFlow.update {
+                        AccountDetailPreview(getAccountDetailSummary(accountDetail), null)
+                    }
+                }
             }
         }
     }
@@ -109,46 +110,10 @@ class AccountDetailViewModel @Inject constructor(
     fun onSwapClick() {
         viewModelScope.launchIO {
             accountDetailFragmentEventTracker.logAccountDetailSwapButtonClickEvent()
-            _accountDetailPreviewFlow.update { preview ->
-                accountDetailPreviewUseCase.updatePreviewWithSwapNavigation(
-                    accountAddress = accountPublicKey,
-                    preview = preview
+            _accountDetailPreviewFlow.update {
+                it?.copy(
+                    swapNavigationDestinationEvent = Event(getSwapNavigationDestination(accountPublicKey))
                 )
-            }
-        }
-    }
-
-    fun onAddAssetClick() {
-        _accountDetailPreviewFlow.update { preview ->
-            accountDetailPreviewUseCase.updatePreviewWithAssetAdditionNavigation(
-                preview = preview,
-                accountAddress = accountPublicKey
-            )
-        }
-    }
-
-    fun onBuySellClick() {
-        _accountDetailPreviewFlow.update { preview ->
-            accountDetailPreviewUseCase.updatePreviewWithOfframpNavigation(
-                preview = preview,
-                accountAddress = accountPublicKey
-            )
-        }
-    }
-
-    fun onSendClick() {
-        _accountDetailPreviewFlow.update { preview ->
-            accountDetailPreviewUseCase.updatePreviewWithSendNavigation(
-                preview = preview,
-                accountAddress = accountPublicKey
-            )
-        }
-    }
-
-    fun onAssetLongClick(assetId: Long) {
-        viewModelScope.launch {
-            with(_accountDetailPreviewFlow) {
-                emit(accountDetailPreviewUseCase.getAssetLongClickUpdatedPreview(value ?: return@with, assetId))
             }
         }
     }

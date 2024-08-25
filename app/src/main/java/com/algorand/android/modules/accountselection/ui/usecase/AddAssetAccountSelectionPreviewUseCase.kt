@@ -12,24 +12,49 @@
 
 package com.algorand.android.modules.accountselection.ui.usecase
 
+import com.algorand.android.accountcore.ui.accountselection.mapper.AccountSelectionListItemMapper
+import com.algorand.android.accountcore.ui.accountselection.usecase.CreateLoadedAccountConfiguration
+import com.algorand.android.accountcore.ui.accountselection.usecase.CreateNotLoadedAccountConfiguration
+import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
 import com.algorand.android.modules.accountselection.ui.mapper.AddAssetAccountSelectionPreviewMapper
 import com.algorand.android.modules.accountselection.ui.model.AddAssetAccountSelectionPreview
-import com.algorand.android.usecase.AccountSelectionListUseCase
+import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
 import javax.inject.Inject
 
 class AddAssetAccountSelectionPreviewUseCase @Inject constructor(
-    private val accountSelectionListUseCase: AccountSelectionListUseCase,
-    private val addAssetAccountSelectionPreviewMapper: AddAssetAccountSelectionPreviewMapper
+    private val addAssetAccountSelectionPreviewMapper: AddAssetAccountSelectionPreviewMapper,
+    private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol,
+    private val getFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction: GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction,
+    private val createLoadedAccountConfiguration: CreateLoadedAccountConfiguration,
+    private val createNotLoadedAccountConfiguration: CreateNotLoadedAccountConfiguration,
+    private val accountSelectionListItemMapper: AccountSelectionListItemMapper
 ) {
 
     fun getInitialStatePreview() = addAssetAccountSelectionPreviewMapper.mapToAddAssetSelectionPreview(emptyList())
 
     suspend fun getAddAssetAccountSelectionPreview(): AddAssetAccountSelectionPreview {
-        val accountSelectionListItems = accountSelectionListUseCase
-            .createAccountSelectionListAccountItemsWhichCanSignTransaction(
-                showHoldings = true,
-                showFailedAccounts = true
-            )
+        val selectedCurrencySymbol = getPrimaryCurrencySymbol().orEmpty()
+        val sortedAccountListItems = getFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction(
+            accountFilterAssetId = null,
+            excludedAccountTypes = null,
+            onLoadedAccountConfiguration = {
+                createLoadedAccountConfiguration(
+                    accountDetail = this,
+                    showHoldings = true,
+                    selectedCurrencySymbol = selectedCurrencySymbol
+                )
+            },
+            onFailedAccountConfiguration = {
+                createNotLoadedAccountConfiguration(this)
+            }
+        )
+        val accountSelectionListItems = sortedAccountListItems.map { accountListItem ->
+            if (accountListItem.itemConfiguration.showWarning == true) {
+                accountSelectionListItemMapper.mapToErrorAccountItem(accountListItem)
+            } else {
+                accountSelectionListItemMapper.mapToAccountItem(accountListItem)
+            }
+        }
         return addAssetAccountSelectionPreviewMapper.mapToAddAssetSelectionPreview(accountSelectionListItems)
     }
 }

@@ -14,15 +14,14 @@ package com.algorand.android.ui.notificationfilter
 
 import android.content.SharedPreferences
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
+import com.algorand.android.accountcore.ui.mapper.AccountItemConfigurationMapper
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.customviews.accountandassetitem.mapper.AccountItemConfigurationMapper
+import com.algorand.android.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.database.NotificationFilterDao
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.modules.accounts.domain.usecase.GetAccountValueUseCase
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.AccountSortPreferenceUseCase
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.GetSortedAccountsByPreferenceUseCase
-import com.algorand.android.repository.NotificationRepository
+import com.algorand.android.notification.domain.usecase.SetNotificationFilter
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.preference.isNotificationActivated
 import com.algorand.android.utils.preference.setNotificationPreference
@@ -36,14 +35,13 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class NotificationFilterViewModel @Inject constructor(
     private val sharedPref: SharedPreferences,
-    private val notificationRepository: NotificationRepository,
     private val notificationFilterDao: NotificationFilterDao,
-    private val getSortedAccountsByPreferenceUseCase: GetSortedAccountsByPreferenceUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getAccountTotalValue: GetAccountTotalValue,
+    private val getSortedAccountsByPreference: GetSortedAccountsByPreference,
     private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
-    private val getAccountValueUseCase: GetAccountValueUseCase,
-    private val accountSortPreferenceUseCase: AccountSortPreferenceUseCase,
-    private val getAccountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val setNotificationFilter: SetNotificationFilter
 ) : BaseViewModel() {
 
     val notificationFilterOperation = MutableStateFlow<Resource<Unit>?>(null)
@@ -52,35 +50,31 @@ class NotificationFilterViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             notificationFilterDao.getAllAsFlow().collectLatest { notificationFilterList ->
-                val sortedAccountListItem = getSortedAccountsByPreferenceUseCase.getSortedAccountListItems(
-                    sortingPreferences = accountSortPreferenceUseCase.getAccountSortPreference(),
+                val sortedAccountListItem = getSortedAccountsByPreference(
                     onLoadedAccountConfiguration = {
-                        val accountValue = getAccountValueUseCase.getAccountValue(this)
-                        accountItemConfigurationMapper.mapTo(
-                            accountAddress = account.address,
-                            accountDisplayName = getAccountDisplayNameUseCase.invoke(account.address),
-                            accountType = account.type,
-                            accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(account.address),
-                            accountPrimaryValue = accountValue.primaryAccountValue
+                        accountItemConfigurationMapper(
+                            accountAddress = address,
+                            accountDisplayName = getAccountDisplayName(address),
+                            accountType = accountType,
+                            accountIconDrawablePreview = getAccountIconDrawablePreview(address),
+                            accountPrimaryValue = getAccountTotalValue(address, true).primaryAccountValue,
                         )
                     },
                     onFailedAccountConfiguration = {
-                        this?.run {
-                            accountItemConfigurationMapper.mapTo(
-                                accountAddress = address,
-                                accountDisplayName = getAccountDisplayNameUseCase.invoke(address),
-                                accountType = type,
-                                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(address),
-                                showWarningIcon = true
-                            )
-                        }
+                        accountItemConfigurationMapper(
+                            accountAddress = this,
+                            accountDisplayName = getAccountDisplayName(this),
+                            accountType = null,
+                            accountIconDrawablePreview = getAccountIconDrawablePreview(this),
+                            showWarningIcon = true
+                        )
                     }
                 )
                 val generatedList = sortedAccountListItem.map { accountListItem ->
                     val isAccountFiltered = notificationFilterList.any {
                         it.publicKey == accountListItem.itemConfiguration.accountAddress
                     }
-                    AccountNotificationOption(accountListItem = accountListItem, isFiltered = isAccountFiltered)
+                    AccountNotificationOption(accountListItem.itemConfiguration, isAccountFiltered)
                 }
                 notificationFilterListStateFlow.emit(generatedList)
             }
@@ -90,7 +84,14 @@ class NotificationFilterViewModel @Inject constructor(
     fun startFilterOperation(publicKey: String, isFiltered: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             notificationFilterOperation.value = Resource.Loading
-            notificationFilterOperation.value = notificationRepository.addNotificationFilter(publicKey, isFiltered)
+            notificationFilterOperation.value = setNotificationFilter(publicKey, isFiltered).use(
+                onSuccess = {
+                    Resource.Success(Unit)
+                },
+                onFailed = { exception, _ ->
+                    Resource.Error.Api(exception)
+                }
+            )
         }
     }
 

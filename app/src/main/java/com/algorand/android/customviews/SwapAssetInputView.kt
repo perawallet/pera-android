@@ -28,10 +28,10 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.algorand.android.R
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
 import com.algorand.android.databinding.CustomSwapAssetInputBinding
 import com.algorand.android.models.CustomInputSavedState
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.requestFocusAndShowKeyboard
@@ -133,7 +133,7 @@ class SwapAssetInputView(context: Context, attrs: AttributeSet? = null) : Constr
         setBalanceText(formattedBalance)
         with(binding) {
             assetShortNameTextView.apply {
-                text = assetShortName.getName(resources)
+                text = assetShortName.assetName
                 val verificationTierDrawable = verificationTierConfiguration.drawableResId?.let { drawableResId ->
                     AppCompatResources.getDrawable(context, drawableResId)
                 }
@@ -152,7 +152,7 @@ class SwapAssetInputView(context: Context, attrs: AttributeSet? = null) : Constr
     ) {
         with(binding) {
             assetShortNameTextView.apply {
-                text = assetShortName.getName(resources)
+                text = assetShortName.assetName
                 val verificationTierDrawable = verificationTierConfiguration.drawableResId?.let { drawableResId ->
                     AppCompatResources.getDrawable(context, drawableResId)
                 }

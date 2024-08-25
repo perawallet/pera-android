@@ -13,30 +13,29 @@
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.AnnotatedString
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.decider.RekeyToLedgerAccountPreviewDecider
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.mapper.RekeyToLedgerAccountPreviewMapper
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.model.RekeyToLedgerAccountPreview
-import com.algorand.android.usecase.AccountDetailUseCase
 import javax.inject.Inject
 
 class RekeyToLedgerAccountPreviewUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
+    private val getAccountDetail: GetAccountDetail,
     private val rekeyToLedgerAccountPreviewDecider: RekeyToLedgerAccountPreviewDecider,
     private val rekeyToLedgerAccountPreviewMapper: RekeyToLedgerAccountPreviewMapper
 ) {
 
-    fun getInitialRekeyToLedgerAccountPreview(accountAddress: String): RekeyToLedgerAccountPreview {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
-        val accountType = accountDetail?.account?.type
+    suspend fun getInitialRekeyToLedgerAccountPreview(accountAddress: String): RekeyToLedgerAccountPreview {
+        val accountDetail = getAccountDetail(accountAddress)
         val bannerDrawableResId = rekeyToLedgerAccountPreviewDecider.decideBannerDrawableResId(
-            accountType = accountType
+            accountType = accountDetail.accountType
         )
         val descriptionAnnotatedString = rekeyToLedgerAccountPreviewDecider.decideDescriptionAnnotatedString(
-            accountType = accountType
+            accountType = accountDetail.accountType
         )
         val expectationListItems = rekeyToLedgerAccountPreviewDecider.decideExpectationListItems(
-            accountType = accountType
+            accountType = accountDetail.accountType
         )
         return rekeyToLedgerAccountPreviewMapper.mapToRekeyToLedgerAccountPreview(
             bannerDrawableResId = bannerDrawableResId,

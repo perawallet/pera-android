@@ -27,7 +27,7 @@ sealed class LedgerBleResult {
     ) : LedgerBleResult()
 
     data class AccountResult(
-        val accountList: List<AccountInformation>,
+//        val accountList: List<AccountInformation>,
         val bluetoothDevice: BluetoothDevice
     ) : LedgerBleResult()
 

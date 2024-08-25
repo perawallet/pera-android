@@ -30,7 +30,7 @@ class TransactionCloseToAmountViewHolder(
             closeAmountLabelTextView.setText(item.labelTextRes)
             closeAmountView.apply {
                 setTextColor(ContextCompat.getColor(context, item.transactionSign.color))
-                val transactionSign = item.transactionSign.signTextRes?.run { context.getString(this) }.orEmpty()
+                val transactionSign = item.transactionSign.signText
                 text = context.getString(
                     R.string.pair_value_format_packed,
                     transactionSign,

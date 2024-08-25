@@ -13,49 +13,34 @@
 package com.algorand.android.modules.onboarding.pairledger.accountselection.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.mapper.AccountDisplayNameMapper
-import com.algorand.android.mapper.AccountInformationMapper
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AccountIconResource
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.accountinfo.component.domain.usecase.FetchRekeyedAccounts
+import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.android.mapper.LedgerAccountSelectionAccountItemMapper
 import com.algorand.android.mapper.LedgerAccountSelectionInstructionItemMapper
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountIconResource
-import com.algorand.android.models.AccountInformation
-import com.algorand.android.models.AccountSelectionListItem
-import com.algorand.android.models.AccountsResponse
-import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
-import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.model.SearchType
 import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.mapper.RegisterLedgerAccountSelectionPreviewMapper
+import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.model.RegisterLedgerAccountSelectionNavArgs
 import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.model.RegisterLedgerAccountSelectionPreview
-import com.algorand.android.repository.AccountRepository
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.AssetFetchAndCacheUseCase
-import com.algorand.android.usecase.LedgerAccountSelectionUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
-import com.algorand.android.utils.AccountCacheManager
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem.SearchType
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import com.algorand.android.utils.extensions.addFirst
-import com.algorand.android.utils.toShortenedAddress
-import com.algorand.android.utils.toShortenedAddress
+import javax.inject.Inject
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class RegisterLedgerAccountSelectionPreviewUseCase @Inject constructor(
-    private val accountCacheManager: AccountCacheManager,
     private val registerLedgerAccountSelectionPreviewMapper: RegisterLedgerAccountSelectionPreviewMapper,
     private val ledgerAccountSelectionInstructionItemMapper: LedgerAccountSelectionInstructionItemMapper,
     private val ledgerAccountSelectionAccountItemMapper: LedgerAccountSelectionAccountItemMapper,
-    private val accountRepository: AccountRepository,
-    private val accountInformationMapper: AccountInformationMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val accountDisplayNameMapper: AccountDisplayNameMapper,
-    private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
-    assetFetchAndCacheUseCase: AssetFetchAndCacheUseCase,
-    simpleAssetDetailUseCase: SimpleAssetDetailUseCase
-) : LedgerAccountSelectionUseCase(
-    assetFetchAndCacheUseCase = assetFetchAndCacheUseCase,
-    simpleAssetDetailUseCase = simpleAssetDetailUseCase
+    private val fetchRekeyedAccounts: FetchRekeyedAccounts,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val fetchAndCacheAssets: FetchAndCacheAssets,
 ) {
 
     fun getUpdatedPreviewAccordingToAccountSelection(
@@ -63,7 +48,7 @@ class RegisterLedgerAccountSelectionPreviewUseCase @Inject constructor(
         accountItem: AccountSelectionListItem.AccountItem
     ): RegisterLedgerAccountSelectionPreview {
         val updatedList = previousPreview.accountSelectionListItems.map {
-            if (it is AccountSelectionListItem.AccountItem && it.account.address == accountItem.account.address) {
+            if (it is AccountSelectionListItem.AccountItem && it.address == accountItem.address) {
                 it.copy(isSelected = !it.isSelected)
             } else {
                 it
@@ -79,7 +64,7 @@ class RegisterLedgerAccountSelectionPreviewUseCase @Inject constructor(
 
     @SuppressWarnings("LongMethod")
     fun getRegisterLedgerAccountSelectionPreview(
-        ledgerAccountsInformation: Array<AccountInformation>,
+        ledgerAccountsInformation: List<RegisterLedgerAccountSelectionNavArgs.LedgerAccountsNavArgs>,
         bluetoothAddress: String,
         bluetoothName: String?
     ) = flow {
@@ -87,40 +72,36 @@ class RegisterLedgerAccountSelectionPreviewUseCase @Inject constructor(
         val ledgerAccounts = mutableListOf<AccountSelectionListItem.AccountItem>().apply {
             ledgerAccountsInformation.forEachIndexed { index, ledgerAccountInformation ->
                 // Cache ledger accounts assets
-                cacheLedgerAccountAssets(accountInformation = ledgerAccountInformation)
+                fetchAndCacheAssets(ledgerAccountInformation.assetHoldingIds, false)
 
-                val authAccountDetail = Account.Detail.Ledger(
-                    bluetoothAddress = bluetoothAddress,
-                    bluetoothName = bluetoothName,
-                    positionInLedger = index
-                )
-                val isRekeyed = ledgerAccountInformation.isRekeyed()
-                val accountDisplayName = accountDisplayNameMapper.mapToAccountDisplayName(
-                    accountName = ledgerAccountInformation.address.toShortenedAddress(),
-                    accountAddress = ledgerAccountInformation.address,
-                    nfDomainName = null,
-                    type = if (isRekeyed) Account.Type.REKEYED else Account.Type.LEDGER
+                val isRekeyed = ledgerAccountInformation.isRekeyed
+                val accountDisplayName = getAccountDisplayName(ledgerAccountInformation.address)
+
+                val authAccountDetail = SelectedLedgerAccount.LedgerAccount(
+                    address = ledgerAccountInformation.address,
+                    bleAddress = bluetoothAddress,
+                    bleName = bluetoothName,
+                    indexInLedger = index
                 )
                 // Since we don't have ledger account in our local, we have to create their drawable manually
-                val accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
+                val accountIconDrawablePreview = AccountIconDrawablePreview(
                     backgroundColorResId = AccountIconResource.LEDGER.backgroundColorResId,
                     iconTintResId = AccountIconResource.LEDGER.iconTintResId,
                     iconResId = if (isRekeyed) R.drawable.ic_rekey_shield else AccountIconResource.LEDGER.iconResId
                 )
                 val authAccountSelectionListItem = ledgerAccountSelectionAccountItemMapper.mapTo(
-                    accountInformation = ledgerAccountInformation,
-                    accountDetail = authAccountDetail,
-                    accountCacheManager = accountCacheManager,
                     selectorDrawableRes = R.drawable.checkbox_selector,
                     accountDisplayName = accountDisplayName,
-                    accountIconDrawablePreview = accountIconDrawablePreview
+                    accountIconDrawablePreview = accountIconDrawablePreview,
+                    address = ledgerAccountInformation.address,
+                    selectedLedgerAccount = authAccountDetail
                 )
                 add(authAccountSelectionListItem)
 
                 val rekeyedAccountSelectionListItems = getRekeyedAccountsOfAuthAccount(
                     rekeyAdminAddress = ledgerAccountInformation.address,
                     ledgerDetail = authAccountDetail
-                ).filter { it.account.address !in ledgerAccountAddress }
+                ).filter { it.address !in ledgerAccountAddress }
                 addAll(rekeyedAccountSelectionListItems)
             }
         }.toMutableList<AccountSelectionListItem>().apply {
@@ -150,62 +131,49 @@ class RegisterLedgerAccountSelectionPreviewUseCase @Inject constructor(
 
     private suspend fun getRekeyedAccountsOfAuthAccount(
         rekeyAdminAddress: String,
-        ledgerDetail: Account.Detail.Ledger
+        ledgerDetail: SelectedLedgerAccount.LedgerAccount
     ): List<AccountSelectionListItem.AccountItem> {
-        val deferredAccountSelectionListItems = mutableListOf<AccountSelectionListItem.AccountItem>()
-        accountRepository.getRekeyedAccounts(rekeyAdminAddress).use(
-            onSuccess = { rekeyedAccountsListResponse ->
-                val rekeyedAccounts = createAccountListFromResponse(
-                    rekeyedAccountsListResponse = rekeyedAccountsListResponse,
+        return fetchRekeyedAccounts(rekeyAdminAddress).use(
+            onSuccess = { rekeyedAccountList ->
+                createAccountListFromResponse(
+                    rekeyedAccountsList = rekeyedAccountList,
                     rekeyAdminAddress = rekeyAdminAddress,
                     ledgerDetail = ledgerDetail
                 )
-                deferredAccountSelectionListItems.addAll(rekeyedAccounts)
+            },
+            onFailed = { _, _ ->
+                emptyList()
             }
         )
-        return deferredAccountSelectionListItems
     }
 
     private suspend fun createAccountListFromResponse(
-        rekeyedAccountsListResponse: AccountsResponse,
+        rekeyedAccountsList: List<AccountInformation>,
         rekeyAdminAddress: String,
-        ledgerDetail: Account.Detail.Ledger
+        ledgerDetail: SelectedLedgerAccount.LedgerAccount
     ): List<AccountSelectionListItem.AccountItem> {
-        return rekeyedAccountsListResponse.accountInformationList?.mapNotNull { payload ->
-            if (payload.address != rekeyAdminAddress) {
-                val accountInformation = accountInformationMapper.mapToAccountInformation(
-                    accountInformationPayload = payload,
-                    currentRound = rekeyedAccountsListResponse.currentRound
-                )
+        return rekeyedAccountsList.mapNotNull { accountInfo ->
+            if (accountInfo.address != rekeyAdminAddress) {
                 // Cache rekeyed accounts assets
-                cacheLedgerAccountAssets(accountInformation)
+                fetchAndCacheAssets(accountInfo.getAssetHoldingIds(), false)
 
-                val accountSecretKey = accountDetailUseCase.getCachedAccountSecretKey(payload.address)
-                val detail = Account.Detail.RekeyedAuth.create(
-                    authDetail = null,
-                    rekeyedAuthDetail = mapOf(rekeyAdminAddress to ledgerDetail),
-                    secretKey = accountSecretKey
-                )
-                val accountDisplayName = accountDisplayNameMapper.mapToAccountDisplayName(
-                    accountName = accountInformation.address.toShortenedAddress(),
-                    accountAddress = accountInformation.address,
-                    nfDomainName = null,
-                    type = Account.Type.REKEYED
-                )
+                val accountDisplayName = getAccountDisplayName(accountInfo.address)
                 // Since we don't have rekeyed accounts to ledger in our local, we have to
                 // create their drawable manually
-                val accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
+                val accountIconDrawablePreview = AccountIconDrawablePreview(
                     backgroundColorResId = R.color.wallet_3,
                     iconResId = R.drawable.ic_rekey_shield,
                     iconTintResId = R.color.wallet_3_icon
                 )
                 ledgerAccountSelectionAccountItemMapper.mapTo(
-                    accountInformation = accountInformation,
-                    accountDetail = detail,
-                    accountCacheManager = accountCacheManager,
+                    address = accountInfo.address,
                     selectorDrawableRes = R.drawable.checkbox_selector,
                     accountDisplayName = accountDisplayName,
-                    accountIconDrawablePreview = accountIconDrawablePreview
+                    accountIconDrawablePreview = accountIconDrawablePreview,
+                    selectedLedgerAccount = SelectedLedgerAccount.RekeyedAccount(
+                        address = accountInfo.address,
+                        authDetail = ledgerDetail
+                    )
                 )
             } else {
                 null

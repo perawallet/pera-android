@@ -13,8 +13,7 @@
 package com.algorand.android.modules.asb.importbackup.enterkey.ui.mapper
 
 import com.algorand.android.customviews.passphraseinput.model.PassphraseInputGroupConfiguration
-import com.algorand.android.modules.asb.importbackup.enterkey.ui.model.AsbKeyEnterPreview
-import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
+import com.algorand.android.modules.asb.importbackup.enterkey.ui.model.*
 import com.algorand.android.utils.Event
 import javax.inject.Inject
 
@@ -26,7 +25,7 @@ class AsbKeyEnterPreviewMapper @Inject constructor() {
         isNextButtonEnabled: Boolean,
         onRestorePassphraseInputGroupEvent: Event<PassphraseInputGroupConfiguration>? = null,
         onGlobalErrorEvent: Event<Pair<Int, Int>>? = null,
-        navToAccountSelectionFragment: Event<List<BackupProtocolElement>>? = null
+        navToAccountSelectionFragment: Event<List<RestoredAccount>>? = null
     ): AsbKeyEnterPreview {
         return AsbKeyEnterPreview(
             passphraseInputGroupConfiguration = passphraseInputGroupConfiguration,

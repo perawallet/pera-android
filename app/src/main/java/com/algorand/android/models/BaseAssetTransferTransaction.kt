@@ -12,7 +12,7 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
+import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.walletconnect.WalletConnectAssetDetail
 import java.math.BigInteger

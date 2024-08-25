@@ -18,11 +18,8 @@ import android.util.Base64
 import com.algorand.algosdk.sdk.BytesArray
 import com.algorand.algosdk.sdk.Encryption
 import com.algorand.algosdk.sdk.Sdk
-import com.algorand.algosdk.sdk.SuggestedParams
 import com.algorand.algosdk.sdk.Uint64
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.BaseWalletConnectTransaction
-import com.algorand.android.models.TransactionParams
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 
@@ -41,113 +38,6 @@ fun ByteArray.signArbitraryData(secretKey: ByteArray): ByteArray {
     return Sdk.signBytes(secretKey, this)
 }
 
-fun TransactionParams.makeAssetTx(
-    senderAddress: String,
-    receiverAddress: String,
-    amount: BigInteger,
-    assetId: Long,
-    noteInByteArray: ByteArray? = null
-): ByteArray {
-    return Sdk.makeAssetTransferTxn(
-        senderAddress,
-        receiverAddress,
-        "",
-        amount.toUint64(),
-        noteInByteArray,
-        toSuggestedParams(addGenesisId = false),
-        assetId
-    )
-}
-
-fun TransactionParams.makeAlgoTx(
-    senderAddress: String,
-    receiverAddress: String,
-    amount: BigInteger,
-    isMax: Boolean,
-    noteInByteArray: ByteArray? = null
-): ByteArray {
-    return Sdk.makePaymentTxn(
-        senderAddress,
-        receiverAddress,
-        amount.toUint64(),
-        noteInByteArray,
-        if (isMax) receiverAddress else "",
-        toSuggestedParams()
-    )
-}
-
-fun TransactionParams.makeRekeyTx(rekeyAddress: String, rekeyAdminAddress: String): ByteArray {
-    return Sdk.makeRekeyTxn(
-        rekeyAddress,
-        rekeyAdminAddress,
-        toSuggestedParams()
-    )
-}
-
-fun TransactionParams.makeAddAssetTx(publicKey: String, assetId: Long): ByteArray {
-    return Sdk.makeAssetAcceptanceTxn(
-        publicKey,
-        null,
-        toSuggestedParams(),
-        assetId
-    )
-}
-
-fun TransactionParams.makeRemoveAssetTx(
-    senderAddress: String,
-    creatorPublicKey: String,
-    assetId: Long
-): ByteArray {
-    return Sdk.makeAssetTransferTxn(
-        senderAddress,
-        creatorPublicKey,
-        creatorPublicKey,
-        0L.toUint64(),
-        null,
-        toSuggestedParams(addGenesisId = false),
-        assetId
-    )
-}
-
-fun TransactionParams.makeSendAndRemoveAssetTx(
-    senderAddress: String,
-    receiverAddress: String,
-    assetId: Long,
-    amount: BigInteger,
-    noteInByteArray: ByteArray? = null
-): ByteArray {
-    return Sdk.makeAssetTransferTxn(
-        senderAddress,
-        receiverAddress,
-        receiverAddress,
-        amount.toUint64(),
-        noteInByteArray,
-        toSuggestedParams(addGenesisId = false),
-        assetId
-    )
-}
-
-fun TransactionParams.makeTx(
-    senderAddress: String,
-    receiverAddress: String,
-    amount: BigInteger,
-    assetId: Long,
-    isMax: Boolean,
-    note: String? = null
-): ByteArray {
-    val noteInByteArray = note?.toByteArray(charset = Charsets.UTF_8)
-
-    return if (assetId == AssetInformation.ALGO_ID) {
-        makeAlgoTx(senderAddress, receiverAddress, amount, isMax, noteInByteArray)
-    } else {
-        makeAssetTx(senderAddress, receiverAddress, amount, assetId, noteInByteArray)
-    }
-}
-
-fun TransactionParams.getTxFee(signedTxData: ByteArray? = null): Long {
-    return ((signedTxData?.size ?: DATA_SIZE_FOR_MAX) * fee).coerceAtLeast(minFee ?: MIN_FEE)
-}
-
 fun String?.isValidAddress(): Boolean {
     if (isNullOrBlank()) {
         return false
@@ -157,18 +47,6 @@ fun String?.isValidAddress(): Boolean {
     } catch (exception: Exception) {
         recordException(exception)
         false
-    }
-}
-
-fun TransactionParams.toSuggestedParams(
-    addGenesisId: Boolean = true
-): SuggestedParams {
-    return SuggestedParams().apply {
-        fee = this@toSuggestedParams.fee
-        genesisID = if (addGenesisId) genesisId else ""
-        firstRoundValid = lastRound
-        lastRoundValid = lastRound + ROUND_THRESHOLD
-        genesisHash = Base64.decode(this@toSuggestedParams.genesisHash, Base64.DEFAULT)
     }
 }
 

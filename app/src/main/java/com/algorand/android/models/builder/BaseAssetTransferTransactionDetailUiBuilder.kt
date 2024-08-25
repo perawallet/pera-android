@@ -13,6 +13,7 @@
 
 package com.algorand.android.models.builder
 
+import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
 import com.algorand.android.models.BaseAssetTransferTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation
@@ -20,12 +21,11 @@ import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestSenderInfo
 import com.algorand.android.models.TransactionRequestTransactionInfo
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.MIN_FEE
 import javax.inject.Inject
 
 class BaseAssetTransferTransactionDetailUiBuilder @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
+    private val verificationTierConfigurationMapper: VerificationTierConfigurationMapper
 ) : WalletConnectTransactionDetailBuilder<BaseAssetTransferTransaction> {
 
     override fun buildTransactionRequestSenderInfo(txn: BaseAssetTransferTransaction): TransactionRequestSenderInfo? {
@@ -77,8 +77,7 @@ class BaseAssetTransferTransactionDetailUiBuilder @Inject constructor(
                 rekeyToAccountAddress = getRekeyToAccountAddress()?.decodedAddress,
                 assetInformation = TransactionRequestAssetInformation(
                     assetId = assetId,
-                    verificationTierConfiguration =
-                    verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier),
+                    verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier),
                     fullName = walletConnectTransactionAssetDetail?.fullName,
                     shortName = walletConnectTransactionAssetDetail?.shortName
                 )
@@ -96,8 +95,7 @@ class BaseAssetTransferTransactionDetailUiBuilder @Inject constructor(
                 accountBalance = assetInformation?.amount,
                 assetInformation = TransactionRequestAssetInformation(
                     assetId = assetId,
-                    verificationTierConfiguration =
-                    verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier),
+                    verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier),
                     shortName = walletConnectTransactionAssetDetail?.shortName,
                     fullName = walletConnectTransactionAssetDetail?.fullName,
                     decimals = assetDecimal

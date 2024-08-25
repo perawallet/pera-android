@@ -18,5 +18,5 @@ import kotlinx.coroutines.flow.StateFlow
 
 abstract class BaseResultViewModel : BaseViewModel() {
 
-    abstract val baseResultPreviewFlow: StateFlow<BaseResultPreviewFields>
+    abstract val baseResultPreviewFlow: StateFlow<BaseResultPreviewFields?>
 }

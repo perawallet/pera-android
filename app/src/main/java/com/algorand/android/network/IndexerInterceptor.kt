@@ -12,38 +12,37 @@
 
 package com.algorand.android.network
 
-import com.algorand.android.models.Node
+import com.algorand.android.network_utils.PeraInterceptor
 import javax.inject.Singleton
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.Response
 
 @Singleton
-class IndexerInterceptor : PeraInterceptor() {
-
-    var currentActiveNode: Node? = null
+class IndexerInterceptor(
+    private val getIndexerInterceptorNodeDetails: GetIndexerInterceptorNodeDetails
+) : PeraInterceptor() {
 
     override fun safeIntercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 
         val requestBuilder = request.newBuilder()
 
-        currentActiveNode?.let { currentActiveNode ->
-            requestBuilder.addHeader(NODE_TOKEN_HEADER_KEY, currentActiveNode.indexerApiKey)
+        val currentActiveNodeDetail = getIndexerInterceptorNodeDetails()
+        requestBuilder.addHeader(NODE_TOKEN_HEADER_KEY, currentActiveNodeDetail.apiKey)
 
-            val baseUrl = currentActiveNode.indexerAddress.toHttpUrlOrNull()
+        val baseUrl = currentActiveNodeDetail.baseUrl.toHttpUrlOrNull()
 
-            if (baseUrl != null) {
-                val newUrl = chain.request().url.newBuilder()
-                    .scheme(baseUrl.scheme)
-                    .host(baseUrl.toUrl().toURI().host)
-                    .port(baseUrl.port)
-                    .build()
+        if (baseUrl != null) {
+            val newUrl = chain.request().url.newBuilder()
+                .scheme(baseUrl.scheme)
+                .host(baseUrl.toUrl().toURI().host)
+                .port(baseUrl.port)
+                .build()
 
-                requestBuilder
-                    .url(newUrl)
-                    .build()
-            }
+            requestBuilder
+                .url(newUrl)
+                .build()
         }
         return chain.proceed(requestBuilder.build())
     }

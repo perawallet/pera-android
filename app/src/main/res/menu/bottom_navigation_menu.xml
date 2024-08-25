@@ -18,7 +18,7 @@
         android:title="@string/home" />
 
     <item
-        android:id="@id/discoverHomeNavigation"
+        android:id="@id/discoverNavigation"
         android:icon="@drawable/ic_global"
         android:title="@string/discover" />
 

@@ -21,12 +21,9 @@ import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentBackupPassphraseBinding
-import com.algorand.android.models.Account
-import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.models.*
 import com.algorand.android.ui.register.BackupPassphraseFragmentDirections.Companion.actionBackupPassphraseFragmentToBackupPassphraseAccountNameNavigation
-import com.algorand.android.utils.disableScreenCapture
-import com.algorand.android.utils.enableScreenCapture
+import com.algorand.android.utils.*
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -75,8 +72,7 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
     }
 
     private fun setupPassphrase() {
-        val secretKey = (args.accountCreation?.tempAccount?.detail as? Account.Detail.Standard)?.secretKey
-            ?: backupPassphraseViewModel.getAccountSecretKey(args.publicKeyOfAccountToBackup)
+        val secretKey = (args.accountCreation as? CreateAccount.Algo25)?.secretKey
         secretKey?.let {
             try {
                 val mnemonic = Sdk.mnemonicFromPrivateKey(it) ?: throw Exception("Mnemonic cannot be null.")

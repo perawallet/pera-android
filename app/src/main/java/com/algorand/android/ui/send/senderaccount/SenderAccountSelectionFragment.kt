@@ -15,23 +15,31 @@ package com.algorand.android.ui.send.senderaccount
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.core.TransactionBaseFragment
+import com.algorand.android.accountcore.ui.accountselection.model.SenderAccountSelectionPreview
+import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentSenderAccountSelectionBinding
-import com.algorand.android.models.AccountInformation
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.SenderAccountSelectionPreview
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.accountselection.AccountSelectionAdapter
+import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.AssetSelectionFragment
+import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.AssetTransferAmountFragment
+import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.AssetTransferPreviewFragment
+import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.ReceiverAccountSelectionFragment
+import com.algorand.android.utils.Resource
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.getXmlStyledString
+import com.algorand.android.utils.showAlertDialog
+import com.algorand.android.utils.showSnackbar
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import java.math.BigInteger
 
 @AndroidEntryPoint
-class SenderAccountSelectionFragment : TransactionBaseFragment(R.layout.fragment_sender_account_selection) {
+class SenderAccountSelectionFragment : BaseFragment(R.layout.fragment_sender_account_selection) {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.select_account,
@@ -57,6 +65,12 @@ class SenderAccountSelectionFragment : TransactionBaseFragment(R.layout.fragment
         updateUiWithPreview(it)
     }
 
+    private val senderAccountSelectionNavDirectionCollector: suspend (
+        Event<SenderAccountSelectionNavigationDirections>?
+    ) -> Unit = {
+        it?.consume()?.let { handleNextNavigation(it) }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showTransactionTipsIfNeed()
@@ -69,36 +83,26 @@ class SenderAccountSelectionFragment : TransactionBaseFragment(R.layout.fragment
             flow = senderAccountSelectionViewModel.senderAccountSelectionPreviewFlow,
             collection = senderAccountSelectionPreviewCollector
         )
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            flow = senderAccountSelectionViewModel.senderAccountSelectionNavigationDirectionFlow,
+            collection = senderAccountSelectionNavDirectionCollector
+        )
     }
 
-    // If user enter Send Algo flow via deeplink or qr code, then we have to check asset transaction params then
-    // we should navigate user to proper screen
-    private fun handleNextNavigation(accountInformation: AccountInformation) {
-        val assetTransaction = senderAccountSelectionViewModel.assetTransaction.copy(
-            senderAddress = accountInformation.address
-        )
-        // TODO: 26.08.2022 Remove all those checks from Fragment, and handle them in usecase, only call events here
-        when {
-            assetTransaction.assetId == -1L -> {
-                SenderAccountSelectionFragmentDirections
-                    .actionSenderAccountSelectionFragmentToAssetSelectionFragment(assetTransaction)
-            }
-            assetTransaction.amount == BigInteger.ZERO -> {
-                SenderAccountSelectionFragmentDirections
-                    .actionSenderAccountSelectionFragmentToAssetTransferAmountFragment(assetTransaction)
-            }
-            assetTransaction.receiverUser == null -> {
-                SenderAccountSelectionFragmentDirections
-                    .actionSenderAccountSelectionFragmentToReceiverAccountSelectionFragment(assetTransaction)
-            }
-            else -> {
-                val transactionData = senderAccountSelectionViewModel.createSendTransactionData(
-                    assetTransaction
-                ) ?: return
-                SenderAccountSelectionFragmentDirections
-                    .actionSenderAccountSelectionFragmentToAssetTransferPreviewFragment(transactionData)
-            }
-        }.apply { nav(this) }
+    private fun handleNextNavigation(navDirection: SenderAccountSelectionNavigationDirections) {
+        val direction = when (navDirection) {
+            is AssetSelectionFragment -> SenderAccountSelectionFragmentDirections
+                .actionSenderAccountSelectionFragmentToAssetSelectionFragment(navDirection.assetTransaction)
+            is AssetTransferAmountFragment -> SenderAccountSelectionFragmentDirections
+                .actionSenderAccountSelectionFragmentToAssetTransferAmountFragment(navDirection.assetTransaction)
+
+            is AssetTransferPreviewFragment -> SenderAccountSelectionFragmentDirections
+                .actionSenderAccountSelectionFragmentToAssetTransferPreviewFragment(navDirection.sendTransactionPayload)
+
+            is ReceiverAccountSelectionFragment -> SenderAccountSelectionFragmentDirections
+                .actionSenderAccountSelectionFragmentToReceiverAccountSelectionFragment(navDirection.assetTransaction)
+        }
+        nav(direction)
     }
 
     private fun updateUiWithPreview(preview: SenderAccountSelectionPreview) {
@@ -107,8 +111,12 @@ class SenderAccountSelectionFragment : TransactionBaseFragment(R.layout.fragment
             senderAccountSelectionAdapter.submitList(accountList)
             binding.screenStateView.isVisible = isEmptyStateVisible
 
-            senderAccountInformationSuccessEvent?.consume()?.let { handleNextNavigation(it) }
-            senderAccountInformationErrorEvent?.consume()?.let { handleError(it.getAsResourceError(), binding.root) }
+            senderAccountInformationSuccessEvent?.consume()?.let {
+                senderAccountSelectionViewModel.handleSenderAccountSelectionSuccessResult(it)
+            }
+            senderAccountInformationErrorEvent?.consume()?.let {
+                handleError(Resource.Error.Api(it.exception), binding.root)
+            }
         }
     }
 
@@ -118,6 +126,31 @@ class SenderAccountSelectionFragment : TransactionBaseFragment(R.layout.fragment
                 SenderAccountSelectionFragmentDirections
                     .actionSenderAccountSelectionFragmentToTransactionTipsBottomSheet()
             )
+        }
+    }
+
+    // TODO remove duplications
+    private fun handleError(error: Resource.Error, viewGroup: ViewGroup) {
+        when (error) {
+            is Resource.Error.Annotated -> {
+                showSnackbar(context?.getXmlStyledString(error.annotatedString).toString(), viewGroup)
+            }
+            is Resource.Error.Warning -> {
+                context?.showAlertDialog(
+                    getString(error.titleRes),
+                    context?.getXmlStyledString(error.annotatedString).toString()
+                )
+            }
+            is Resource.Error.Navigation -> {
+                nav(error.navDirections)
+            }
+            is Resource.Error.GlobalWarning -> {
+                val titleString = error.titleRes?.let { getString(it) }
+                context?.run { showGlobalError(error.parse(this), titleString) }
+            }
+            else -> {
+                context?.run { showGlobalError(error.parse(this)) }
+            }
         }
     }
 }

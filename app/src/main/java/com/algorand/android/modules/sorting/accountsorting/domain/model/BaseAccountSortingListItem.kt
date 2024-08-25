@@ -13,7 +13,8 @@
 package com.algorand.android.modules.sorting.accountsorting.domain.model
 
 import androidx.annotation.StringRes
-import com.algorand.android.models.BaseAccountAndAssetListItem
+import com.algorand.android.accountcore.ui.accountsorting.domain.model.AccountAndAssetListItem
+import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.models.RecyclerListItem
 
 sealed class BaseAccountSortingListItem : RecyclerListItem {
@@ -27,8 +28,9 @@ sealed class BaseAccountSortingListItem : RecyclerListItem {
     abstract val itemType: ItemType
 
     data class SortTypeListItem(
-        val accountSortingType: AccountSortingType,
-        var isChecked: Boolean
+        val accountSortingType: AccountSortingTypeIdentifier,
+        var isChecked: Boolean,
+        val textResId: Int
     ) : BaseAccountSortingListItem() {
 
         override val itemType: ItemType = ItemType.SORTING_TYPE
@@ -58,7 +60,7 @@ sealed class BaseAccountSortingListItem : RecyclerListItem {
     }
 
     data class AccountSortListItem(
-        val accountListItem: BaseAccountAndAssetListItem.AccountListItem
+        val accountListItem: AccountAndAssetListItem.AccountListItem
     ) : BaseAccountSortingListItem() {
 
         override val itemType: ItemType = ItemType.ACCOUNT_SORT

@@ -12,26 +12,26 @@
 
 package com.algorand.android.discover.home.ui.usecase
 
-import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
+import com.algorand.android.currency.domain.usecase.GetPrimaryCurrencyId
+import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.discover.common.ui.model.DappFavoriteElement
 import com.algorand.android.discover.home.ui.mapper.DiscoverDappFavoritesMapper
 import com.algorand.android.discover.home.ui.mapper.TokenDetailInfoMapper
 import com.algorand.android.discover.utils.getAddToFavoriteFunction
 import com.algorand.android.discover.utils.getSendDeviceId
 import com.algorand.android.discover.utils.isValidDiscoverURL
-import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.google.gson.Gson
 import javax.inject.Inject
 
 class DiscoverHomeUseCase @Inject constructor(
     private val discoverDappFavoritesMapper: DiscoverDappFavoritesMapper,
     private val tokenDetailInfoMapper: TokenDetailInfoMapper,
-    private val currencyUseCase: CurrencyUseCase,
-    private val deviceIdUseCase: DeviceIdUseCase,
+    private val getPrimaryCurrency: GetPrimaryCurrencyId,
     private val gson: Gson,
+    private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId
 ) {
     fun getPrimaryCurrencyId(): String {
-        return currencyUseCase.getPrimaryCurrencyId()
+        return getPrimaryCurrency()
     }
 
     fun getAddToFavoriteJSFunction(favorite: DappFavoriteElement): String {
@@ -43,7 +43,7 @@ class DiscoverHomeUseCase @Inject constructor(
     }
 
     suspend fun getSendDeviceIdJSFunctionOrNull(callingUrl: String): String? {
-        val deviceId = deviceIdUseCase.getSelectedNodeDeviceId()
+        val deviceId = getSelectedNodeDeviceId()
         return if (deviceId != null && isValidDiscoverURL(callingUrl)) {
             getSendDeviceId(deviceId, gson)
         } else {

@@ -13,7 +13,7 @@
 package com.algorand.android.modules.onboarding.registerwatchaccount.ui.mapper
 
 import androidx.annotation.StringRes
-import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.*
 import com.algorand.android.modules.onboarding.registerwatchaccount.ui.model.BasePasteableWatchAccountItem
 import com.algorand.android.modules.onboarding.registerwatchaccount.ui.model.WatchAccountRegistrationPreview
 import com.algorand.android.utils.Event
@@ -27,7 +27,7 @@ class WatchAccountRegistrationPreviewMapper @Inject constructor() {
         @StringRes errorMessageResId: Int?,
         showAccountAlreadyExistErrorEvent: Event<Unit>? = null,
         showAccountIsNotValidErrorEvent: Event<Unit>? = null,
-        navToNameRegistrationEvent: Event<AccountCreation>? = null
+        navToNameRegistrationEvent: Event<CreateAccount>? = null
     ): WatchAccountRegistrationPreview {
         return WatchAccountRegistrationPreview(
             pasteableAccounts = pasteableAccounts,

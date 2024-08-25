@@ -12,39 +12,65 @@
 
 package com.algorand.android.modules.swap.confirmswap.ui
 
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.customviews.SwapAssetInputView
 import com.algorand.android.databinding.FragmentConfirmSwapBinding
-import com.algorand.android.models.AnnotatedString
+import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.designsystem.getXmlStyledString
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.modules.swap.confirmswap.domain.model.SwapQuoteTransaction
-import com.algorand.android.modules.swap.confirmswap.ui.model.ConfirmSwapPreview
-import com.algorand.android.modules.swap.confirmswap.ui.model.ConfirmSwapPriceImpactWarningStatus
 import com.algorand.android.modules.swap.confirmswapconfirmation.SwapConfirmationBottomSheet.Companion.CONFIRMATION_SUCCESS_KEY
 import com.algorand.android.modules.swap.ledger.signwithledger.ui.model.LedgerDialogPayload
 import com.algorand.android.modules.swap.slippagetolerance.ui.SlippageToleranceBottomSheet.Companion.CHECKED_SLIPPAGE_TOLERANCE_KEY
-import com.algorand.android.utils.AccountDisplayName
+import com.algorand.android.swap.domain.model.swapquotetxns.SwapQuoteTransaction
+import com.algorand.android.swapui.assetswap.model.SwapError
+import com.algorand.android.swapui.confirmswap.model.ConfirmSwapPreview
+import com.algorand.android.swapui.confirmswap.model.ConfirmSwapPriceImpactWarningStatus
+import com.algorand.android.swapui.confirmswap.model.SignSwapTransactionResult
+import com.algorand.android.swapui.confirmswap.model.SignSwapTransactionResult.BluetoothNotEnabled
+import com.algorand.android.swapui.confirmswap.model.SignSwapTransactionResult.BluetoothPermissionsAreNotGranted
+import com.algorand.android.swapui.confirmswap.model.SignSwapTransactionResult.Error
+import com.algorand.android.swapui.confirmswap.model.SignSwapTransactionResult.LedgerDisconnected
+import com.algorand.android.swapui.confirmswap.model.SignSwapTransactionResult.LedgerOperationCancelled
+import com.algorand.android.swapui.confirmswap.model.SignSwapTransactionResult.LedgerScanFailed
+import com.algorand.android.swapui.confirmswap.model.SignSwapTransactionResult.LedgerWaitingForApproval
+import com.algorand.android.swapui.confirmswap.model.SignSwapTransactionResult.LocationNotEnabled
+import com.algorand.android.swapui.confirmswap.model.SignSwapTransactionResult.TransactionsSigned
 import com.algorand.android.utils.AccountIconDrawable
-import com.algorand.android.utils.ErrorResource
-import com.algorand.android.utils.Event
+import com.algorand.android.utils.BLUETOOTH_CONNECT_PERMISSION
+import com.algorand.android.utils.BLUETOOTH_CONNECT_PERMISSION_REQUEST_CODE
+import com.algorand.android.utils.BLUETOOTH_SCAN_PERMISSION
+import com.algorand.android.utils.BLUETOOTH_SCAN_PERMISSION_REQUEST_CODE
+import com.algorand.android.utils.LOCATION_PERMISSION
+import com.algorand.android.utils.LOCATION_PERMISSION_REQUEST_CODE
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
-import com.algorand.android.utils.getXmlStyledString
+import com.algorand.android.utils.extensions.hide
+import com.algorand.android.utils.requestPermissionFromUser
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 @AndroidEntryPoint
 class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
@@ -63,8 +89,27 @@ class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
 
     private var ledgerLoadingDialog: LedgerLoadingDialog? = null
 
-    private val confirmSwapPreviewCollector: suspend (ConfirmSwapPreview) -> Unit = { preview ->
-        initConfirmSwapPreview(preview)
+    private val bleRequestLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK) {
+            confirmSwapViewModel.processWaitingTransaction()
+        } else {
+            permissionDeniedOnTransactionData(R.string.error_bluetooth_message, R.string.error_bluetooth_title)
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+                confirmSwapViewModel.processWaitingTransaction()
+            } else {
+                permissionDeniedOnTransactionData(R.string.error_location_message, R.string.error_permission_title)
+            }
+        }
+    }
+
+    private val confirmSwapPreviewCollector: suspend (ConfirmSwapPreview?) -> Unit = { preview ->
+        if (preview != null) initConfirmSwapPreview(preview)
     }
 
     private val isLoadingVisibleCollector: suspend (Boolean) -> Unit = { isLoading ->
@@ -79,9 +124,9 @@ class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
         binding.minimumReceivedTextView.text = context?.getXmlStyledString(minimumReceivedAmount)
     }
 
-    private val errorEventCollector: suspend (Event<ErrorResource>?) -> Unit = { errorEvent ->
+    private val errorEventCollector: suspend (Event<SwapError>?) -> Unit = { errorEvent ->
         errorEvent?.consume()?.run {
-            showGlobalError(parseError(context ?: return@run), parseTitle(context ?: return@run))
+            showGlobalError(description, title)
         }
     }
 
@@ -89,27 +134,8 @@ class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
         updateSuccessEvent?.consume()?.run { showAlertSuccess(getString(R.string.slippage_tolerance_value_updated)) }
     }
 
-    private val navigateToTransactionStatusFragmentEventCollector: suspend (
-        Event<List<SwapQuoteTransaction>>?
-    ) -> Unit = {
-        it?.consume()?.run {
-            nav(
-                ConfirmSwapFragmentDirections.actionConfirmSwapFragmentToSwapTransactionStatusFragment(
-                    confirmSwapViewModel.swapQuote,
-                    this.toTypedArray()
-                )
-            )
-        }
-    }
-
-    private val navigateToLedgerWaitingForApprovalDialogEventCollector: suspend (
-        Event<LedgerDialogPayload>?
-    ) -> Unit = {
-        it?.consume()?.let { payload -> showLedgerWaitingForApprovalBottomSheet(payload) }
-    }
-
-    private val navigateToLedgerNotFoundDialogEventCollector: suspend (Event<Unit>?) -> Unit = {
-        it?.consume()?.run { nav(HomeNavigationDirections.actionGlobalLedgerConnectionIssueBottomSheet()) }
+    private val signSwapTransactionResultCollector: suspend (Event<SignSwapTransactionResult>?) -> Unit = {
+        it?.consume()?.let { result -> handleSignSwapTransactionResult(result) }
     }
 
     private val navigateToSwapConfirmationBottomSheetEventCollector: suspend (Event<Long>?) -> Unit = {
@@ -118,28 +144,19 @@ class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
         }
     }
 
-    private val dismissLedgerWaitingForApprovalDialogEventCollector: suspend (Event<Unit>?) -> Unit = {
-        it?.consume()?.run {
-            ledgerLoadingDialog?.dismissAllowingStateLoss()
-            ledgerLoadingDialog = null
-        }
-    }
-
-    private val ledgerLoadingDialogListener = LedgerLoadingDialog.Listener {
-        ledgerLoadingDialog = null
-        confirmSwapViewModel.onLedgerDialogCancelled()
-    }
-
     private fun showLedgerWaitingForApprovalBottomSheet(
         ledgerDialogPayload: LedgerDialogPayload
     ) {
         if (ledgerLoadingDialog == null) {
             ledgerLoadingDialog = LedgerLoadingDialog.createLedgerLoadingDialog(
                 ledgerName = ledgerDialogPayload.ledgerName,
-                listener = ledgerLoadingDialogListener,
                 currentTransactionIndex = ledgerDialogPayload.currentTransactionIndex,
                 totalTransactionCount = ledgerDialogPayload.totalTransactionCount,
-                isTransactionIndicatorVisible = ledgerDialogPayload.isTransactionIndicatorVisible
+                isTransactionIndicatorVisible = ledgerDialogPayload.isTransactionIndicatorVisible,
+                listener = {
+                    ledgerLoadingDialog = null
+                    confirmSwapViewModel.onLedgerDialogCancelled()
+                }
             )
             ledgerLoadingDialog?.showWithStateCheck(childFragmentManager, ledgerDialogPayload.ledgerName.orEmpty())
         } else {
@@ -195,47 +212,35 @@ class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
                     confirmSwapPreviewCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.minimumReceived }.distinctUntilChanged(),
+                    mapNotNull { it?.minimumReceived }.distinctUntilChanged(),
                     minimumReceivedAmountCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.isLoading }.distinctUntilChanged(),
+                    mapNotNull { it?.isLoading }.distinctUntilChanged(),
                     isLoadingVisibleCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.slippageTolerance }.distinctUntilChanged(),
+                    mapNotNull { it?.slippageTolerance }.distinctUntilChanged(),
                     slippageToleranceCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.errorEvent }.distinctUntilChanged(),
+                    mapNotNull { it?.errorEvent }.distinctUntilChanged(),
                     errorEventCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.slippageToleranceUpdateSuccessEvent }.distinctUntilChanged(),
+                    map { it?.slippageToleranceUpdateSuccessEvent }.distinctUntilChanged(),
                     updateSlippageToleranceSuccessEventCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.navigateToLedgerNotFoundDialogEvent }.distinctUntilChanged(),
-                    navigateToLedgerNotFoundDialogEventCollector
-                )
-                collectLatestOnLifecycle(
-                    map { it.navigateToLedgerWaitingForApprovalDialogEvent }.distinctUntilChanged(),
-                    navigateToLedgerWaitingForApprovalDialogEventCollector
-                )
-                collectLatestOnLifecycle(
-                    map { it.navigateToTransactionStatusFragmentEvent }.distinctUntilChanged(),
-                    navigateToTransactionStatusFragmentEventCollector
-                )
-                collectLatestOnLifecycle(
-                    map { it.dismissLedgerWaitingForApprovalDialogEvent }.distinctUntilChanged(),
-                    dismissLedgerWaitingForApprovalDialogEventCollector
-                )
-                collectLatestOnLifecycle(
-                    map { it.navToSwapConfirmationBottomSheetEvent }.distinctUntilChanged(),
+                    map { it?.navToSwapConfirmationBottomSheetEvent }.distinctUntilChanged(),
                     navigateToSwapConfirmationBottomSheetEventCollector
                 )
             }
         }
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            confirmSwapViewModel.signSwapTransactionResultFlow,
+            signSwapTransactionResultCollector
+        )
     }
 
     private fun initConfirmSwapPreview(preview: ConfirmSwapPreview) {
@@ -246,7 +251,7 @@ class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
                 priceImpactTextView.text = formattedPriceImpact
                 peraFeeTextView.text = formattedPeraFee
                 exchangeFeeTextView.text = formattedExchangeFee
-                priceRatioTextView.text = context?.getXmlStyledString(getPriceRatio(resources))
+                priceRatioTextView.text = context?.getXmlStyledString(getPriceRatio())
                 initPriceImpactWarningStatus(priceImpactWarningStatus)
                 initToolbarAccountDetail(accountDisplayName, accountIconDrawablePreview)
             }
@@ -284,13 +289,13 @@ class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
                 sizeResId = R.dimen.spacing_normal
             )
             setSubtitleStartDrawable(accountIconDrawable)
-            changeSubtitle(accountDisplayName.getAccountPrimaryDisplayName())
-            setOnTitleLongClickListener { onAccountAddressCopied(accountDisplayName.getRawAccountAddress()) }
+            changeSubtitle(accountDisplayName.primaryDisplayName)
+            setOnTitleLongClickListener { onAccountAddressCopied(accountDisplayName.accountAddress) }
         }
     }
 
     private fun onSwitchPriceRatioClick() {
-        val priceRatioAnnotatedString = confirmSwapViewModel.getSwitchedPriceRatio(resources)
+        val priceRatioAnnotatedString = confirmSwapViewModel.getSwitchedPriceRatio() ?: return
         binding.priceRatioTextView.text = context?.getXmlStyledString(priceRatioAnnotatedString)
     }
 
@@ -319,6 +324,72 @@ class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
                     secondaryValueTextColorResId = assetDetail.approximateValueTextColorResId
                 )
             }
+        }
+    }
+
+    private fun handleSignSwapTransactionResult(result: SignSwapTransactionResult) {
+        hideLoadings()
+        when (result) {
+            LedgerDisconnected -> showGlobalError(getString(R.string.an_error_occured))
+            BluetoothNotEnabled -> showEnableBluetoothPopup()
+            BluetoothPermissionsAreNotGranted -> requestBluetoothPermissions()
+            is Error.Api -> showSignSwapTransactionResultError(result)
+            is Error.Defined -> showSignSwapTransactionResultError(result)
+            LedgerOperationCancelled -> showOperationCancelledError()
+            LocationNotEnabled -> showLocationNotEnabledError()
+            is TransactionsSigned -> navToStatusFragment(result.swapQuoteTransactions)
+            LedgerScanFailed -> navToLedgerConnectionIssueBottomSheet()
+            is LedgerWaitingForApproval -> {
+                showLedgerWaitingForApprovalBottomSheet(LedgerDialogPayload(result.ledgerName, null, null, false))
+            }
+        }
+    }
+
+    private fun hideLoadings() {
+        binding.progressBar.root.hide()
+        ledgerLoadingDialog?.dismissAllowingStateLoss()
+        ledgerLoadingDialog = null
+    }
+
+    private fun navToLedgerConnectionIssueBottomSheet() {
+        nav(HomeNavigationDirections.actionGlobalLedgerConnectionIssueBottomSheet())
+    }
+
+    private fun navToStatusFragment(transactions: List<SwapQuoteTransaction>) {
+        val navArgs = confirmSwapViewModel.getSwapTxnStatusNavArgs(transactions)
+        nav(ConfirmSwapFragmentDirections.actionConfirmSwapFragmentToSwapTransactionStatusFragment(navArgs))
+    }
+
+    private fun showLocationNotEnabledError() {
+        showGlobalError(getString(R.string.please_ensure), getString(R.string.bluetooth_location_services))
+    }
+
+    private fun showOperationCancelledError() {
+        showGlobalError(getString(R.string.error_cancelled_message), getString(R.string.error_cancelled_title))
+    }
+
+    private fun showEnableBluetoothPopup() {
+        Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE).apply { bleRequestLauncher.launch(this) }
+    }
+
+    private fun permissionDeniedOnTransactionData(@StringRes errorResId: Int, @StringRes titleResId: Int) {
+        confirmSwapViewModel.clearCachedTransactions()
+        showGlobalError(getString(errorResId), getString(titleResId))
+    }
+
+    private fun requestBluetoothPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestPermissionFromUser(BLUETOOTH_SCAN_PERMISSION, BLUETOOTH_SCAN_PERMISSION_REQUEST_CODE, true)
+            requestPermissionFromUser(BLUETOOTH_CONNECT_PERMISSION, BLUETOOTH_CONNECT_PERMISSION_REQUEST_CODE, true)
+        } else {
+            requestPermissionFromUser(LOCATION_PERMISSION, LOCATION_PERMISSION_REQUEST_CODE, true)
+        }
+    }
+
+    private fun showSignSwapTransactionResultError(error: Error) {
+        context?.let {
+            val (title, message) = error.getMessage(it)
+            showGlobalError(message, title)
         }
     }
 }

@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.algosdk.data.di
 
-import com.algorand.algosdk.v2.client.common.AlgodClient
 import com.algorand.android.modules.algosdk.data.mapper.AlgorandAddressDTOMapper
 import com.algorand.android.modules.algosdk.data.mapper.PendingTransactionResponseDTOMapper
 import com.algorand.android.modules.algosdk.data.mapper.rawtransaction.RawTransactionDTOMapper
@@ -33,7 +32,6 @@ object AlgorandSDKUtilsModule {
     @Named(AlgorandSDKUtils.INJECTION_NAME)
     fun provideAlgorandSDKUtils(
         pendingTransactionResponseDTOMapper: PendingTransactionResponseDTOMapper,
-        algodClient: AlgodClient?,
         rawTransactionDTOMapper: RawTransactionDTOMapper,
         algorandAddressDTOMapper: AlgorandAddressDTOMapper,
         gson: Gson
@@ -42,7 +40,6 @@ object AlgorandSDKUtilsModule {
             pendingTransactionResponseDTOMapper = pendingTransactionResponseDTOMapper,
             rawTransactionDTOMapper = rawTransactionDTOMapper,
             algorandAddressDTOMapper = algorandAddressDTOMapper,
-            algodClient = algodClient,
             gson = gson
         )
     }

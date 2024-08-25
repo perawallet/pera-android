@@ -20,9 +20,8 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.algorand.android.BuildConfig
-import com.algorand.android.modules.walletconnect.client.v2.utils.WalletConnectClientV2Utils.isValidWalletConnectV2Url
 import com.algorand.android.utils.EMAIL_APPS_URI_SCHEME
-import com.algorand.android.utils.walletconnect.isValidWalletConnectV1Url
+import com.algorand.android.utils.walletconnect.isValidWalletConnectUrl
 import java.net.HttpURLConnection
 
 // TODO maybe refactor this in a different folder than discover as more parts use this (onramp)
@@ -41,20 +40,17 @@ class PeraWebViewClient(val listener: PeraWebViewClientListener?) : WebViewClien
     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
         with(request.url.toString()) {
             return when {
-                isValidWalletConnectV1Url(this) || isValidWalletConnectV2Url(this) -> {
+                isValidWalletConnectUrl(this) -> {
                     listener?.onWalletConnectUrlDetected(this)
                     true
                 }
-
                 startsWith(EMAIL_APPS_URI_SCHEME) -> {
                     listener?.onEmailRequested(this)
                     true
                 }
-
                 startsWith(BuildConfig.DEEPLINK_PREFIX) -> {
                     true
                 }
-
                 request.isForMainFrame -> {
                     if (listener?.onPageRequestedShouldOverrideUrlLoading(this) == true) {
                         true
@@ -62,7 +58,6 @@ class PeraWebViewClient(val listener: PeraWebViewClientListener?) : WebViewClien
                         super.shouldOverrideUrlLoading(view, request)
                     }
                 }
-
                 else -> {
                     super.shouldOverrideUrlLoading(view, request)
                 }
@@ -79,7 +74,6 @@ class PeraWebViewClient(val listener: PeraWebViewClientListener?) : WebViewClien
         super.onPageFinished(view, url)
         listener?.onPageFinished(view?.title, url)
     }
-
     override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
         super.onReceivedError(view, request, error)
         if (request?.isForMainFrame == true) {

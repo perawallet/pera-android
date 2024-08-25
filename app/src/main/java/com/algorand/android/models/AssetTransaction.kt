@@ -14,6 +14,7 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
+import com.algorand.android.contacts.component.domain.model.Contact
 import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
 
@@ -24,5 +25,5 @@ data class AssetTransaction(
     val amount: BigInteger = BigInteger.ZERO,
     val note: String? = null,
     val xnote: String? = null, // locked note
-    val receiverUser: User? = null
+    val receiverUser: Contact? = null
 ) : Parcelable

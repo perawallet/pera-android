@@ -13,21 +13,38 @@
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.resultinfo.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.rekey.rekeytoledgeraccount.resultinfo.ui.usecase.RekeyToLedgerAccountVerifyInfoPreviewUseCase
-import com.algorand.android.utils.AccountDisplayName
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class RekeyToLedgerAccountVerifyInfoViewModel @Inject constructor(
-    private val rekeyToLedgerAccountVerifyInfoPreviewUseCase: RekeyToLedgerAccountVerifyInfoPreviewUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
     private val navArgs = RekeyToLedgerAccountVerifyInfoFragmentArgs.fromSavedStateHandle(savedStateHandle)
-    private val accountAddress = navArgs.accountAddress
 
-    val accountDisplayName: AccountDisplayName
-        get() = rekeyToLedgerAccountVerifyInfoPreviewUseCase.getAccountDisplayName(accountAddress)
+    private val _accountDisplayNameFlow = MutableStateFlow<AccountDisplayName?>(null)
+    val accountDisplayNameFlow
+        get() = _accountDisplayNameFlow.asStateFlow()
+
+    init {
+        initPreview()
+    }
+
+    private fun initPreview() {
+        viewModelScope.launchIO {
+            _accountDisplayNameFlow.update {
+                getAccountDisplayName(navArgs.accountAddress)
+            }
+        }
+    }
 }

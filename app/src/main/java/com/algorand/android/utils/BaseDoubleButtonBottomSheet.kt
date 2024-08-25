@@ -59,6 +59,14 @@ abstract class BaseDoubleButtonBottomSheet : BaseBottomSheet(
         }
     }
 
+    protected fun getDescTextView(): TextView {
+        return binding.descriptionTextView
+    }
+
+    protected fun setDescriptionText(text: String) {
+        binding.descriptionTextView.text = text
+    }
+
     companion object {
         const val RESULT_KEY = "result_key"
     }

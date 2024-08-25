@@ -13,56 +13,27 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.models.Node
 import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
-import com.algorand.android.repository.NodeRepository
+import com.algorand.android.node.domain.usecase.GetAllNodes
 import com.algorand.android.ui.settings.node.ui.mapper.NodeSettingsPreviewMapper
 import com.algorand.android.ui.settings.node.ui.model.NodeSettingsPreview
-import com.algorand.android.utils.TESTNET_NETWORK_SLUG
-import com.algorand.android.utils.defaultNodeList
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 
 class NodeSettingsUseCase @Inject constructor(
-    private val nodeRepository: NodeRepository,
     private val firebaseTokenManager: FirebaseTokenManager,
-    private val nodeSettingsPreviewMapper: NodeSettingsPreviewMapper
+    private val nodeSettingsPreviewMapper: NodeSettingsPreviewMapper,
+    private val getAllNodes: GetAllNodes
 ) {
 
     fun getNodeSettingsPreviewFlow(): Flow<NodeSettingsPreview?> {
-        return combine(
-            nodeRepository.getAllNodesAsFlow(),
-            firebaseTokenManager.firebaseTokenResultFlow
-        ) { nodeList, firebaseTokenResult ->
+        return firebaseTokenManager.firebaseTokenResultFlow.map { tokenResult ->
             nodeSettingsPreviewMapper.mapToNodeSettingsPreview(
-                isLoading = firebaseTokenResult is FirebaseTokenResult.TokenLoading,
-                nodeList = nodeList
+                isLoading = tokenResult is FirebaseTokenResult.TokenLoading,
+                nodeList = getAllNodes()
             )
         }
-    }
-
-    suspend fun setNodeListToDatabase(nodeList: List<Node>) {
-        nodeRepository.setNodeListToDatabase(nodeList)
-    }
-
-    fun getAllNodeAsFlow(): Flow<List<Node>> {
-        return nodeRepository.getAllNodesAsFlow()
-    }
-
-    suspend fun isSelectedNodeTestnet(): Boolean {
-        return getActiveNodeOrDefault().networkSlug == TESTNET_NETWORK_SLUG
-    }
-
-    suspend fun setSelectedNode(selectedItem: Node): List<Node> {
-        return nodeRepository.getAllNodes().apply {
-            forEach { it.isActive = false }
-            firstOrNull { it.nodeDatabaseId == selectedItem.nodeDatabaseId }?.apply { isActive = true }
-        }
-    }
-
-    suspend fun getActiveNodeOrDefault(): Node {
-        return nodeRepository.getAllNodes().firstOrNull { it.isActive } ?: defaultNodeList.first()
     }
 }

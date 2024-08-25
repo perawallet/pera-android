@@ -12,22 +12,25 @@
 
 package com.algorand.android.modules.assets.profile.activity.ui
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.PagingData
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.DateFilter
-import com.algorand.android.models.ui.DateFilterPreview
-import com.algorand.android.models.ui.TransactionLoadStatePreview
+import com.algorand.android.core.component.domain.usecase.GetAccountTotalValueFlow
+import com.algorand.android.dateui.mapper.DateFilterPreviewMapper
+import com.algorand.android.dateui.model.DateFilter
+import com.algorand.android.dateui.model.DateFilterPreview
 import com.algorand.android.modules.transaction.csv.ui.model.CsvStatusPreview
 import com.algorand.android.modules.transaction.csv.ui.usecase.CsvStatusPreviewUseCase
-import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
+import com.algorand.android.transactionhistoryui.mapper.TransactionLoadStatePreviewMapper
+import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
+import com.algorand.android.transactionhistoryui.model.TransactionLoadStatePreview
 import com.algorand.android.usecase.AssetDetailUseCase
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -44,7 +47,10 @@ import kotlinx.coroutines.launch
 class AssetActivityViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val assetDetailUseCase: AssetDetailUseCase,
-    private val csvStatusPreviewUseCase: CsvStatusPreviewUseCase
+    private val csvStatusPreviewUseCase: CsvStatusPreviewUseCase,
+    private val dateFilterPreviewMapper: DateFilterPreviewMapper,
+    private val transactionLoadStatePreviewMapper: TransactionLoadStatePreviewMapper,
+    private val getAccountTotalValueFlow: GetAccountTotalValueFlow
 ) : BaseViewModel() {
 
     private val accountPublicKey = savedStateHandle.getOrThrow<String>(ADDRESS_KEY)
@@ -81,7 +87,7 @@ class AssetActivityViewModel @Inject constructor(
     fun setDateFilter(dateFilter: DateFilter) {
         viewModelScope.launch {
             dateFilterFlow.emit(dateFilter)
-            _dateFilterPreviewFlow.emit(assetDetailUseCase.createDateFilterPreview(dateFilter))
+            _dateFilterPreviewFlow.emit(dateFilterPreviewMapper(dateFilter))
         }
     }
 
@@ -98,7 +104,7 @@ class AssetActivityViewModel @Inject constructor(
         itemCount: Int,
         isLastStateError: Boolean
     ): TransactionLoadStatePreview {
-        return assetDetailUseCase.createTransactionLoadStatePreview(combinedLoadStates, itemCount, isLastStateError)
+        return transactionLoadStatePreviewMapper(combinedLoadStates, itemCount, isLastStateError)
     }
 
     fun refreshTransactionHistory() {
@@ -121,7 +127,7 @@ class AssetActivityViewModel @Inject constructor(
 
     private fun initRefreshTransactionsFlow() {
         viewModelScope.launch {
-            assetDetailUseCase.getAccountBalanceFlow(accountPublicKey).distinctUntilChanged().collectLatest {
+            getAccountTotalValueFlow(accountPublicKey, includeAlgo = true).distinctUntilChanged().collectLatest {
                 assetDetailUseCase.refreshTransactionHistory()
             }
         }
@@ -148,7 +154,7 @@ class AssetActivityViewModel @Inject constructor(
     }
 
     private fun getDefaultDateFilterPreview(): DateFilterPreview {
-        return assetDetailUseCase.createDateFilterPreview(DateFilter.DEFAULT_DATE_FILTER)
+        return assetDetailUseCase.createDateFilterPreview(DateFilter.AllTime)
     }
 
     companion object {

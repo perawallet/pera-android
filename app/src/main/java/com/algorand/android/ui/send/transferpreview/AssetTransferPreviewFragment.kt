@@ -22,17 +22,18 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.core.TransactionBaseFragment
+import com.algorand.android.core.transaction.TransactionBaseFragment
 import com.algorand.android.databinding.FragmentTransferAssetPreviewBinding
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.models.AssetTransferPreview
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TargetUser
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.transaction.domain.model.SignedTransaction
+import com.algorand.android.transactionui.sendasset.model.AssetTransferPreview
+import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser.Account
+import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser.Address
+import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser.ContactUser
+import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser.NfDomainUser
 import com.algorand.android.ui.send.shared.AddNoteBottomSheet
-import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.extensions.changeTextAppearance
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -40,14 +41,11 @@ import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.setTextAndVisibility
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.formatAsCurrency
-import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.toAlgoDisplayValue
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import java.math.BigDecimal
-import java.math.BigInteger
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
@@ -110,15 +108,16 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
             hideProgress()
         }
 
-        override fun onSignTransactionFinished(signedTransactionDetail: SignedTransactionDetail) {
-            when (signedTransactionDetail) {
-                is SignedTransactionDetail.Send -> {
-                    assetTransferPreviewViewModel.sendSignedTransaction(signedTransactionDetail)
-                }
-                else -> {
-                    sendErrorLog("Unhandled else case in ReceiverAccountSelectionFragment.transactionFragmentListener")
-                }
-            }
+        override fun onSignTransactionFinished(signedTransaction: SignedTransaction) {
+//            when (transaction) {
+//                is Transaction.AssetTransaction, is Transaction.AlgoTransaction -> {
+//
+//                }
+//                else -> {
+//                    sendErrorLog("Unhandled else case in ReceiverAccountSelectionFragment.transactionFragmentListener")
+//                }
+//            }
+            assetTransferPreviewViewModel.sendSignedTxn(signedTransaction)
         }
     }
 
@@ -157,17 +156,20 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
     }
 
     private fun onConfirmTransferClick() {
-        sendTransaction(assetTransferPreviewViewModel.getTransactionData())
+        assetTransferPreviewViewModel.createAssetTransferTransaction()
     }
 
     private fun updateUi(assetTransferPreview: AssetTransferPreview) {
         with(assetTransferPreview) {
             setConfirmTransferButton()
-            setCurrencyViews(assetInformation, exchangePrice, currencySymbol, amount)
-            setAssetViews(assetInformation, amount)
-            setAccountViews(targetUser, senderAccountAddress, senderAccountName, accountIconDrawablePreview)
+            setCurrencyViews(assetTransferPreview)
+            setAssetViews(assetTransferPreview)
+            setAccountViews(assetTransferPreview)
             setFee(fee)
             setTransactionNote(note, isNoteEditable)
+            onSendAssetTransaction?.consume()?.let { transaction ->
+                processTransaction(transaction)
+            }
         }
     }
 
@@ -175,63 +177,66 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
         binding.confirmTransferButton.setOnClickListener { onConfirmTransferClick() }
     }
 
-    private fun setCurrencyViews(
-        assetInformation: AssetInformation,
-        exchangePrice: BigDecimal,
-        currencySymbol: String,
-        amount: BigInteger
-    ) {
-        with(binding) {
-            if (assetInformation.isAlgo()) {
-                algoCurrencyValueTextView.setTextAndVisibility(
-                    amount.toAlgoDisplayValue().multiply(exchangePrice).formatAsCurrency(currencySymbol)
-                )
-                balanceCurrencyValueTextView.setTextAndVisibility(
-                    assetInformation.amount?.toAlgoDisplayValue()
-                        ?.multiply(exchangePrice)
-                        ?.formatAsCurrency(currencySymbol)
-                )
-            }
-        }
-    }
-
-    private fun setAssetViews(assetInformation: AssetInformation, amount: BigInteger) {
-        with(binding) {
-            assetBalanceTextView.setAmount(amount = assetInformation.amount, assetInformation = assetInformation)
-            assetAmountTextView.setAmount(amount = amount, assetInformation = assetInformation)
-            if (assetInformation.isAlgo()) {
-                assetBalanceTextView.setTextColor(ContextCompat.getColor(root.context, R.color.tertiary_text_color))
-            } else {
-                assetBalanceTextView.changeTextAppearance(R.style.TextAppearance_Body_Mono)
-            }
-        }
-    }
-
-    private fun setAccountViews(
-        targetUser: TargetUser,
-        senderAccountAddress: String,
-        senderAccountName: String,
-        accountIconDrawablePreview: AccountIconDrawablePreview
-    ) {
-        with(binding) {
-            accountUserView.setAccount(
-                name = senderAccountName,
-                accountIconDrawablePreview = accountIconDrawablePreview,
-                publicKey = senderAccountAddress
-            )
-            toUserView.setOnAddButtonClickListener(::onAddButtonClicked)
-            when {
-                targetUser.nftDomainAddress != null -> {
-                    toUserView.setNftDomainAddress(targetUser.nftDomainAddress, targetUser.nftDomainServiceLogoUrl)
-                }
-                targetUser.contact != null -> toUserView.setContact(targetUser.contact)
-                targetUser.account != null -> {
-                    toUserView.setAccount(
-                        targetUser.account,
-                        targetUser.accountIconDrawablePreview
+    private fun setCurrencyViews(assetTransferPreview: AssetTransferPreview) {
+        with(assetTransferPreview) {
+            with(binding) {
+                if (isAlgo) {
+                    algoCurrencyValueTextView.setTextAndVisibility(
+                        amount.toAlgoDisplayValue().multiply(exchangePrice).formatAsCurrency(currencySymbol)
+                    )
+                    balanceCurrencyValueTextView.setTextAndVisibility(
+                        accountBalance.toAlgoDisplayValue().multiply(exchangePrice).formatAsCurrency(currencySymbol)
                     )
                 }
-                else -> toUserView.setAddress(targetUser.publicKey, targetUser.publicKey)
+            }
+        }
+    }
+
+    private fun setAssetViews(assetTransferPreview: AssetTransferPreview) {
+        with(assetTransferPreview) {
+            with(binding) {
+                assetBalanceTextView.setAmount(
+                    amount = accountBalance,
+                    shortName = assetDetail.shortName,
+                    decimals = assetDetail.decimals
+                )
+                assetAmountTextView.setAmount(
+                    amount = amount,
+                    shortName = assetDetail.shortName,
+                    decimals = assetDetail.decimals
+                )
+                if (isAlgo) {
+                    assetBalanceTextView.setTextColor(ContextCompat.getColor(root.context, R.color.tertiary_text_color))
+                } else {
+                    assetBalanceTextView.changeTextAppearance(R.style.TextAppearance_Body_Mono)
+                }
+            }
+        }
+    }
+
+    private fun setAccountViews(assetTransferPreview: AssetTransferPreview) {
+        with(assetTransferPreview) {
+            with(binding) {
+                accountUserView.setAccount(
+                    name = senderAccountDisplayName.primaryDisplayName,
+                    accountIconDrawablePreview = accountIconDrawablePreview,
+                    publicKey = senderAccountDisplayName.accountAddress
+                )
+                toUserView.setOnAddButtonClickListener(::onAddButtonClicked)
+                when (targetUser) {
+                    is Account -> {
+                        (targetUser as Account).run {
+                            toUserView.setAccount(accountDisplayName, accountIconDrawablePreview, false)
+                        }
+                    }
+                    is Address -> (targetUser as Address).run { toUserView.setAddress(address, address) }
+                    is ContactUser -> toUserView.setContact((targetUser as ContactUser).value)
+                    is NfDomainUser -> {
+                        (targetUser as NfDomainUser).run {
+                            toUserView.setNftDomainAddress(nfDomainAddress, nfDomainServiceLogoUrl)
+                        }
+                    }
+                }
             }
         }
     }

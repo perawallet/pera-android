@@ -12,39 +12,13 @@
 
 package com.algorand.android.network
 
-import com.algorand.android.models.AccountInformationResponse
-import com.algorand.android.models.AccountsResponse
 import com.algorand.android.models.AssetResponse
 import com.algorand.android.modules.transaction.detail.data.model.TransactionDetailResponse
-import com.algorand.android.modules.transactionhistory.data.model.PaginatedTransactionsResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface IndexerApi {
-
-    @GET("v2/accounts/{public_key}?exclude=created-assets,created-apps")
-    suspend fun getAccountInformation(
-        @Path("public_key") publicKey: String,
-        @Query("include-all") includeClosedAccounts: Boolean = false
-    ): Response<AccountInformationResponse>
-
-    @GET("v2/accounts/{public_key}/transactions")
-    suspend fun getTransactions(
-        @Path("public_key") publicKey: String,
-        @Query("asset-id") assetId: Long?,
-        @Query("after-time") afterTime: String?,
-        @Query("before-time") beforeTime: String?,
-        @Query("next") nextToken: String?,
-        @Query("limit") limit: Int?,
-        @Query("tx-type") transactionType: String?
-    ): Response<PaginatedTransactionsResponse>
-
-    @GET("v2/accounts")
-    suspend fun getRekeyedAccounts(
-        @Query("auth-addr") rekeyAdminAddress: String
-    ): Response<AccountsResponse>
 
     @GET("v2/assets/{assetId}")
     suspend fun getAssetDescription(@Path("assetId") assetId: Long): Response<AssetResponse>

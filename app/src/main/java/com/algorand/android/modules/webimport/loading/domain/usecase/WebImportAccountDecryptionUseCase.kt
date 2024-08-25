@@ -13,30 +13,24 @@
 package com.algorand.android.modules.webimport.loading.domain.usecase
 
 import com.algorand.algosdk.sdk.Sdk
-import com.algorand.android.core.AccountManager
-import com.algorand.android.models.Account
-import com.algorand.android.models.Result
+import com.algorand.android.core.component.detail.domain.model.AccountRegistrationType
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.models.*
 import com.algorand.android.modules.webimport.loading.data.model.BackupTransferAccountElement
 import com.algorand.android.modules.webimport.loading.domain.model.ImportedAccountResult
 import com.algorand.android.modules.webimport.loading.domain.repository.WebImportAccountRepository
 import com.algorand.android.usecase.AccountAdditionUseCase
-import com.algorand.android.utils.DataResource
+import com.algorand.android.utils.*
 import com.algorand.android.utils.analytics.CreationType
-import com.algorand.android.utils.decodeBase64OrByteArray
-import com.algorand.android.utils.decrypt
-import com.algorand.android.utils.exceptions.DecryptionException
-import com.algorand.android.utils.exceptions.EmptyContentException
-import com.algorand.android.utils.fromJson
-import com.algorand.android.utils.toShortenedAddress
+import com.algorand.android.utils.exceptions.*
 import com.google.gson.Gson
+import javax.inject.*
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
-import javax.inject.Named
 
 class WebImportAccountDecryptionUseCase @Inject constructor(
     private val gson: Gson,
     private val accountAdditionUseCase: AccountAdditionUseCase,
-    private val accountManager: AccountManager,
+    private val getAccountDetail: GetAccountDetail,
     @Named(WebImportAccountRepository.REPOSITORY_INJECTION_NAME)
     private val webImportAccountRepository: WebImportAccountRepository
 ) {
@@ -90,12 +84,14 @@ class WebImportAccountDecryptionUseCase @Inject constructor(
                     if (shouldSkipImport(publicKey) || privateKey == null) {
                         unimportedAccounts.add(publicKey)
                     } else {
-                        val recoveredAccount = Account.create(
-                            publicKey,
-                            Account.Detail.Standard(privateKey),
-                            it.name ?: publicKey.toShortenedAddress()
+                        val recoveredAccount = CreateAccount.Algo25(
+                            address = publicKey,
+                            secretKey = privateKey,
+                            customName = it.name,
+                            isBackedUp = false,
+                            creationType = CreationType.RECOVER
                         )
-                        addNewAccount(recoveredAccount)
+                        accountAdditionUseCase.addNewAccount(recoveredAccount)
                         importedAccounts.add(publicKey)
                     }
                 }
@@ -107,18 +103,8 @@ class WebImportAccountDecryptionUseCase @Inject constructor(
         }
     }
 
-    private fun shouldSkipImport(publicKey: String): Boolean {
-        val sameAccount = getAccountIfExist(publicKey)
-        return sameAccount != null &&
-            sameAccount.type != Account.Type.REKEYED &&
-            sameAccount.type != Account.Type.WATCH
-    }
-
-    private suspend fun addNewAccount(account: Account, creationType: CreationType? = CreationType.RECOVER) {
-        accountAdditionUseCase.addNewAccount(account, creationType)
-    }
-
-    private fun getAccountIfExist(publicKey: String): Account? {
-        return accountManager.getAccounts().find { account -> account.address == publicKey }
+    private suspend fun shouldSkipImport(publicKey: String): Boolean {
+        val sameAccount = getAccountDetail(publicKey)
+        return sameAccount.accountRegistrationType != AccountRegistrationType.NoAuth
     }
 }

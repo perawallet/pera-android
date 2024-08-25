@@ -46,7 +46,7 @@
         tools:layout="@layout/fragment_name_registration">
         <argument
             android:name="accountCreation"
-            app:argType="com.algorand.android.models.AccountCreation" />
+            app:argType="com.algorand.android.models.CreateAccount" />
         <action
             android:id="@+id/action_recoverAccountNameRegistrationFragment_to_recoverAccountResultInfoFragment"
             app:destination="@id/recoverAccountResultInfoFragment"
@@ -94,7 +94,7 @@
         tools:layout="@layout/fragment_base_found_account_selection">
         <argument
             android:name="accountCreation"
-            app:argType="com.algorand.android.models.AccountCreation" />
+            app:argType="com.algorand.android.models.CreateAccount" />
         <argument
             android:name="rekeyedAccountAddresses"
             app:argType="string[]" />

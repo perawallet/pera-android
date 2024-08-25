@@ -16,16 +16,15 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.BuildConfig
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.tracking.meld.MeldAlgoBuyTapEventTracker
-import com.algorand.android.network.AlgodInterceptor
-import com.algorand.android.utils.MAINNET_NETWORK_SLUG
+import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MeldIntroViewModel @Inject constructor(
-    private val algodInterceptor: AlgodInterceptor,
-    private val meldAlgoBuyTapEventTracker: MeldAlgoBuyTapEventTracker
+    private val meldAlgoBuyTapEventTracker: MeldAlgoBuyTapEventTracker,
+    private val isSelectedNodeMainnet: IsSelectedNodeMainnet
 ) : BaseViewModel() {
 
     fun getMeldUrl(walletAddress: String): String {
@@ -33,7 +32,7 @@ class MeldIntroViewModel @Inject constructor(
     }
 
     fun isMainNet(): Boolean {
-        return algodInterceptor.currentActiveNode?.networkSlug == MAINNET_NETWORK_SLUG
+        return isSelectedNodeMainnet()
     }
 
     fun logBuyAlgoTapEvent() {

@@ -13,30 +13,30 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.models.BaseAccountAssetData
+import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.models.LedgerInformationListItem
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 
 class LedgerInformationAssetItemMapper @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider
+    private val verificationTierConfigurationMapper: VerificationTierConfigurationMapper,
+    private val getAssetDrawableProvider: GetAssetDrawableProvider
 ) {
 
-    fun mapTo(
-        accountAssetData: BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
+    suspend fun mapTo(
+        accountAssetData: OwnedAssetData,
+        assetName: AssetName,
+        assetShortName: AssetName
     ): LedgerInformationListItem.AssetInformationItem {
         return LedgerInformationListItem.AssetInformationItem(
             id = accountAssetData.id,
-            name = AssetName.create(accountAssetData.name),
-            shortName = AssetName.createShortName(accountAssetData.shortName),
+            name = assetName,
+            shortName = assetShortName,
             isAmountInDisplayedCurrencyVisible = accountAssetData.isAmountInSelectedCurrencyVisible,
-            verificationTierConfiguration = verificationTierConfigurationDecider.decideVerificationTierConfiguration(
-                accountAssetData.verificationTier
-            ),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData.id),
+            verificationTierConfiguration = verificationTierConfigurationMapper(accountAssetData.verificationTier),
+            baseAssetDrawableProvider = getAssetDrawableProvider(accountAssetData.id),
             formattedDisplayedCurrencyValue = accountAssetData.getSelectedCurrencyParityValue().getFormattedValue(),
             formattedAmount = accountAssetData.formattedAmount
         )

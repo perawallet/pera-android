@@ -13,8 +13,8 @@
 package com.algorand.android.modules.webimport.qrscanner.ui
 
 import com.algorand.android.R
+import com.algorand.android.deeplink.model.WebImportQrCode
 import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
-import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

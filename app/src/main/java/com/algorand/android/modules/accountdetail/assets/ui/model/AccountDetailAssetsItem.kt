@@ -13,10 +13,10 @@
 package com.algorand.android.modules.accountdetail.assets.ui.model
 
 import androidx.annotation.StringRes
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.accountcore.ui.assetsorting.AssetSortableItem
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.accountcore.ui.sorting.SortableItemPriority
 import com.algorand.android.models.RecyclerListItem
-import com.algorand.android.modules.sorting.assetsorting.ui.model.AssetSortableItem
-import com.algorand.android.modules.sorting.core.SortableItemPriority
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.nftindicatordrawable.BaseNFTIndicatorDrawable

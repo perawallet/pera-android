@@ -14,11 +14,11 @@
 package com.algorand.android.models
 
 import androidx.annotation.StringRes
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
 
 sealed class LedgerInformationListItem {
 

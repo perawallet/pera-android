@@ -17,8 +17,7 @@ import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDa
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
-import com.algorand.android.network.AlgodInterceptor
-import com.algorand.android.utils.MAINNET_NETWORK_SLUG
+import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
 import com.google.firebase.analytics.FirebaseAnalytics
 
 /**
@@ -26,14 +25,11 @@ import com.google.firebase.analytics.FirebaseAnalytics
  */
 class WalletConnectFirebaseEventLogger(
     private val firebaseAnalytics: FirebaseAnalytics,
-    private val algodInterceptor: AlgodInterceptor
+    private val isSelectedNodeMainnet: IsSelectedNodeMainnet
 ) : WalletConnectEventLogger {
 
-    private val isCurrentNetworkMainNet: Boolean
-        get() = algodInterceptor.currentActiveNode?.networkSlug == MAINNET_NETWORK_SLUG
-
     override fun logTransactionRequestConfirmation(transaction: WalletConnectTransaction) {
-        if (!isCurrentNetworkMainNet) return
+        if (!isSelectedNodeMainnet()) return
         val bundle = with(transaction) {
             bundleOf(
                 TRANSACTION_ID_PARAM to getTransactionIds(),
@@ -45,7 +41,7 @@ class WalletConnectFirebaseEventLogger(
     }
 
     override fun logTransactionRequestRejection(transaction: WalletConnectTransaction) {
-        if (!isCurrentNetworkMainNet) return
+        if (!isSelectedNodeMainnet()) return
         val bundle = with(transaction) {
             bundleOf(
                 DAPP_NAME_PARAM to session.peerMeta.name,
@@ -58,7 +54,7 @@ class WalletConnectFirebaseEventLogger(
     }
 
     override fun logArbitraryDataRequestConfirmation(arbitraryData: WalletConnectArbitraryDataRequest) {
-        if (!isCurrentNetworkMainNet) return
+        if (!isSelectedNodeMainnet()) return
         val bundle = with(arbitraryData) {
             bundleOf(
                 DAPP_NAME_PARAM to session.peerMeta.name,
@@ -69,7 +65,7 @@ class WalletConnectFirebaseEventLogger(
     }
 
     override fun logArbitraryDataRequestRejection(arbitraryData: WalletConnectArbitraryDataRequest) {
-        if (!isCurrentNetworkMainNet) return
+        if (!isSelectedNodeMainnet()) return
         val bundle = with(arbitraryData) {
             bundleOf(
                 DAPP_NAME_PARAM to session.peerMeta.name,
@@ -85,7 +81,7 @@ class WalletConnectFirebaseEventLogger(
         sessionProposal: WalletConnectSessionProposal,
         connectedAccountAddresses: List<String>
     ) {
-        if (!isCurrentNetworkMainNet) return
+        if (!isSelectedNodeMainnet()) return
         val bundle = with(sessionProposal) {
             bundleOf(
                 DAPP_NAME_PARAM to peerMeta.name,
@@ -99,7 +95,7 @@ class WalletConnectFirebaseEventLogger(
     }
 
     override fun logSessionDisconnection(session: WalletConnect.SessionDetail) {
-        if (!isCurrentNetworkMainNet) return
+        if (!isSelectedNodeMainnet()) return
         val bundle = with(session) {
             bundleOf(
                 DAPP_NAME_PARAM to peerMeta.name,
@@ -113,7 +109,7 @@ class WalletConnectFirebaseEventLogger(
     }
 
     override fun logSessionRejection(sessionProposal: WalletConnectSessionProposal) {
-        if (!isCurrentNetworkMainNet) return
+        if (!isSelectedNodeMainnet()) return
         val bundle = bundleOf(
             DAPP_NAME_PARAM to sessionProposal.peerMeta.name,
             DAPP_URL_PARAM to sessionProposal.peerMeta.url,

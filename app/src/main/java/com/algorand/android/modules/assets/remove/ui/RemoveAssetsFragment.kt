@@ -21,9 +21,9 @@ import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentRemoveAssetsBinding
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.AssetActionResult
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.BaseRemoveAssetItem
+import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem.BaseRemoveCollectibleItem
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.action.transferbalance.TransferBalanceActionBottomSheet.Companion.TRANSFER_ASSET_ACTION_RESULT
@@ -66,7 +66,7 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
         }
 
         override fun onCollectibleRemoveClick(
-            baseRemoveAssetItem: BaseRemoveAssetItem.BaseRemovableItem.BaseRemoveCollectibleItem
+            baseRemoveAssetItem: BaseRemoveCollectibleItem
         ) {
             onRemoveCollectibleClick(baseRemoveAssetItem)
         }
@@ -125,7 +125,7 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
     }
 
     private fun onRemoveCollectibleClick(
-        removeAssetItem: BaseRemoveAssetItem.BaseRemovableItem.BaseRemoveCollectibleItem
+        removeAssetItem: BaseRemoveCollectibleItem
     ) {
         val hasBalanceInAccount = removeAssetItem.amount isGreaterThan BigInteger.ZERO
         if (hasBalanceInAccount) {
@@ -156,14 +156,7 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
     private fun navToTransferBalanceActionBottomSheet(removeAssetItem: BaseRemoveAssetItem.BaseRemovableItem) {
         nav(
             RemoveAssetsFragmentDirections.actionRemoveAssetsFragmentToAssetTransferBalanceActionNavigation(
-                AssetAction(
-                    assetId = removeAssetItem.id,
-                    asset = AssetInformation.createAssetInformation(
-                        removeAssetItem = removeAssetItem,
-                        resources = binding.root.resources
-                    ),
-                    publicKey = removeAssetsViewModel.accountAddress
-                )
+                getAssetAction(removeAssetItem)
             )
         )
     }
@@ -171,37 +164,25 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
     private fun navToRemoveAssetActionBottomSheet(removeAssetItem: BaseRemoveAssetItem.BaseRemovableItem) {
         nav(
             RemoveAssetsFragmentDirections.actionRemoveAssetsFragmentToAssetRemovalActionNavigation(
-                AssetAction(
-                    assetId = removeAssetItem.id,
-                    publicKey = removeAssetsViewModel.accountAddress,
-                    asset = AssetInformation.createAssetInformation(
-                        removeAssetItem = removeAssetItem,
-                        resources = binding.root.resources
-                    )
-                )
+                getAssetAction(removeAssetItem)
             )
         )
     }
 
-    private fun navToOptOutCollectibleActionBottomSheet(
-        removeAssetItem: BaseRemoveAssetItem.BaseRemovableItem.BaseRemoveCollectibleItem
-    ) {
-        val assetAction = with(removeAssetItem) {
-            AssetAction(
-                assetId = id,
-                publicKey = removeAssetsViewModel.accountAddress,
-                asset = AssetInformation(
-                    assetId = id,
-                    creatorPublicKey = creatorPublicKey,
-                    fullName = name.getName(resources),
-                    verificationTier = null
-                )
-            )
-        }
+    private fun navToOptOutCollectibleActionBottomSheet(removeAssetItem: BaseRemoveCollectibleItem) {
         nav(
             RemoveAssetsFragmentDirections.actionRemoveAssetsFragmentToNftOptOutConfirmationNavigation(
-                assetAction = assetAction
+                assetAction = getAssetAction(removeAssetItem)
             )
+        )
+    }
+
+    private fun getAssetAction(item: BaseRemoveAssetItem.BaseRemovableItem): AssetAction {
+        return AssetAction(
+            assetId = item.id,
+            publicKey = removeAssetsViewModel.accountAddress,
+            assetFullName = item.name.getName(resources),
+            assetShortName = item.shortName.getName(resources)
         )
     }
 

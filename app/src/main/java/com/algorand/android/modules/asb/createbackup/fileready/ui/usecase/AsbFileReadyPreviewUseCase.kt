@@ -18,10 +18,11 @@ import android.net.Uri
 import android.text.format.Formatter
 import androidx.documentfile.provider.DocumentFile
 import com.algorand.android.R
+import com.algorand.android.asb.component.domain.usecase.CreateAsbBackUpFileName
+import com.algorand.android.asb.component.utils.AsbBackUpConstants
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.asb.createbackup.fileready.ui.mapper.AsbFileReadyPreviewMapper
 import com.algorand.android.modules.asb.createbackup.fileready.ui.model.AsbFileReadyPreview
-import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
 import com.algorand.android.modules.baseresult.ui.mapper.ResultListItemMapper
 import com.algorand.android.modules.baseresult.ui.usecase.BaseResultPreviewUseCase
 import com.algorand.android.utils.Event
@@ -33,13 +34,14 @@ import javax.inject.Inject
 class AsbFileReadyPreviewUseCase @Inject constructor(
     @ApplicationContext private val context: Context,
     private val asbFileReadyPreviewMapper: AsbFileReadyPreviewMapper,
+    private val createAsbBackUpFileName: CreateAsbBackUpFileName,
     resultListItemMapper: ResultListItemMapper
 ) : BaseResultPreviewUseCase(resultListItemMapper) {
 
     fun updatePreviewWithCreateDocumentIntent(preview: AsbFileReadyPreview): AsbFileReadyPreview {
         val documentTreeIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = AlgorandSecureBackupUtils.BACKUP_FILE_MIME_TYPE
+            type = AsbBackUpConstants.BACKUP_FILE_MIME_TYPE
             putExtra(Intent.EXTRA_TITLE, preview.fileName)
         }
         return preview.copy(launchCreateDocumentIntentEvent = Event(documentTreeIntent))
@@ -95,7 +97,7 @@ class AsbFileReadyPreviewUseCase @Inject constructor(
         val fileSizeBytes = encryptedContent.toByteArray().size.toLong()
         return asbFileReadyPreviewMapper.mapToAsbFileReadyPreview(
             resultListItems = resultItemList,
-            fileName = AlgorandSecureBackupUtils.createBackupFileName(),
+            fileName = createAsbBackUpFileName(),
             formattedFileSize = Formatter.formatShortFileSize(context, fileSizeBytes)
         )
     }

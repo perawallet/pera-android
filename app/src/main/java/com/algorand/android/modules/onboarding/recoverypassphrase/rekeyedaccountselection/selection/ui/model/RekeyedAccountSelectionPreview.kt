@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.selection.ui.model
 
-import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.*
 import com.algorand.android.modules.basefoundaccount.selection.ui.model.BaseFoundAccountSelectionItem
 import com.algorand.android.modules.basefoundaccount.selection.ui.model.FoundAccountSelectionFields
 import com.algorand.android.utils.Event
@@ -24,5 +24,5 @@ data class RekeyedAccountSelectionPreview(
     val primaryButtonTextResId: Int?,
     val secondaryButtonTextResId: Int?,
     val isPrimaryButtonEnable: Boolean,
-    val navToNameRegistrationEvent: Event<AccountCreation>?
+    val navToNameRegistrationEvent: Event<CreateAccount>?
 ) : FoundAccountSelectionFields

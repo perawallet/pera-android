@@ -13,14 +13,9 @@
 package com.algorand.android.modules.assets.action.transferbalance
 
 import androidx.lifecycle.SavedStateHandle
+import com.algorand.android.assetaction.AssetActionViewModel
+import com.algorand.android.assetaction.usecase.GetAssetActionPreview
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.BaseAccountAddress
-import com.algorand.android.modules.assets.action.base.BaseAssetActionViewModel
-import com.algorand.android.modules.assets.profile.about.domain.usecase.GetAssetDetailUseCase
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.usecase.AccountAddressUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,31 +23,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransferBalanceActionViewModel @Inject constructor(
-    private val accountAddressUseCase: AccountAddressUseCase,
-    assetDetailUseCase: SimpleAssetDetailUseCase,
-    simpleCollectibleUseCase: SimpleCollectibleUseCase,
-    getAssetDetailUseCase: GetAssetDetailUseCase,
-    verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
+    getAssetActionPreview: GetAssetActionPreview,
     savedStateHandle: SavedStateHandle
-) : BaseAssetActionViewModel(
-    assetDetailUseCase,
-    simpleCollectibleUseCase,
-    getAssetDetailUseCase,
-    verificationTierConfigurationDecider
-) {
+) : AssetActionViewModel(getAssetActionPreview) {
 
     private val assetAction: AssetAction = savedStateHandle.getOrThrow(ASSET_ACTION_KEY)
     val accountAddress: String = assetAction.publicKey.orEmpty()
 
     override val assetId: Long = assetAction.assetId
-    val assetFullName = AssetName.create(assetAction.asset?.fullName)
+    val assetFullName = AssetName.create(assetAction.assetFullName)
 
     init {
-        fetchAssetDescription(assetId)
-    }
-
-    // TODO: Create [AssetActionUseCase] and get the whole UI related things from there
-    fun getAccountName(): BaseAccountAddress.AccountAddress {
-        return accountAddressUseCase.createAccountAddress(accountAddress)
+        initPreview(accountAddress)
     }
 }

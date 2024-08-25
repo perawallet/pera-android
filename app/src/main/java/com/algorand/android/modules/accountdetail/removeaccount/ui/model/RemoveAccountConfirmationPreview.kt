@@ -17,5 +17,6 @@ import com.algorand.android.utils.Event
 
 data class RemoveAccountConfirmationPreview(
     val showGlobalErrorEvent: Event<PluralAnnotatedString>?,
-    val navBackEvent: Event<Boolean>?
+    val navBackEvent: Event<Boolean>?,
+    val descriptionResId: Int
 )

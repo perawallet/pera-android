@@ -14,7 +14,7 @@ package com.algorand.android.network
 
 import android.os.Build
 import com.algorand.android.BuildConfig
-import com.algorand.android.models.Node
+import com.algorand.android.network_utils.PeraInterceptor
 import java.util.Locale
 import javax.inject.Singleton
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -30,7 +30,8 @@ class MobileHeaderInterceptor(
     private val appName: String? = null,
     private val clientType: String = DEFAULT_CLIENT_TYPE,
     private val osVersion: String = Build.VERSION.SDK_INT.toString(),
-    private val deviceModel: String = Build.MODEL
+    private val deviceModel: String = Build.MODEL,
+    private val getMobileHeaderInterceptorNodeDetails: GetMobileHeaderInterceptorNodeDetails
 ) : PeraInterceptor() {
 
     private val localLanguageTag: String
@@ -40,24 +41,21 @@ class MobileHeaderInterceptor(
         .run { elementAtOrNull(THIRD_ITEM_INDEX) ?: elementAtOrNull(SECOND_ITEM_INDEX).orEmpty() }
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
-    var currentActiveNode: Node? = null
-
     override fun safeIntercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 
         val requestBuilder = request.newBuilder()
 
-        currentActiveNode?.let { currentActiveNode ->
-            val baseUrl = currentActiveNode.mobileAlgorandAddress.toHttpUrlOrNull()
-            if (baseUrl != null) {
-                val newUrl = chain.request().url.newBuilder()
-                    .scheme(baseUrl.scheme)
-                    .host(baseUrl.toUrl().toURI().host)
-                    .port(baseUrl.port)
-                    .build()
+        val currentActiveNodeDetails = getMobileHeaderInterceptorNodeDetails()
+        val baseUrl = currentActiveNodeDetails.baseUrl.toHttpUrlOrNull()
+        if (baseUrl != null) {
+            val newUrl = chain.request().url.newBuilder()
+                .scheme(baseUrl.scheme)
+                .host(baseUrl.toUrl().toURI().host)
+                .port(baseUrl.port)
+                .build()
 
-                requestBuilder.url(newUrl)
-            }
+            requestBuilder.url(newUrl)
         }
 
         requestBuilder.addHeader(KEY_APP_NAME, appName ?: defaultAppName)

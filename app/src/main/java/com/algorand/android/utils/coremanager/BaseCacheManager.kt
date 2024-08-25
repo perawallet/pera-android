@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 
 abstract class BaseCacheManager : DefaultLifecycleObserver {
 
-    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    protected val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var currentJob: Job? = null
     private var initializationJob: Job? = null
 

@@ -13,19 +13,19 @@
 
 package com.algorand.android.models.builder
 
+import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
 import com.algorand.android.models.BaseAssetConfigurationTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation
 import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestTransactionInfo
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.android.utils.decodeBase64IfUTF8
 import javax.inject.Inject
 
 class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
+    private val verificationTierConfigurationMapper: VerificationTierConfigurationMapper
 ) :
     WalletConnectTransactionDetailBuilder<BaseAssetConfigurationTransaction> {
 
@@ -84,8 +84,7 @@ class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor(
                     assetId = assetId,
                     fullName = assetName,
                     shortName = shortName,
-                    verificationTierConfiguration =
-                    verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
+                    verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier)
                 ),
                 rekeyToAccountAddress = getFromAddressAsDisplayAddress(
                     getRekeyToAccountAddress()?.decodedAddress.orEmpty()
@@ -130,8 +129,7 @@ class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor(
                     assetId = assetId,
                     fullName = assetName,
                     shortName = shortName,
-                    verificationTierConfiguration =
-                    verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
+                    verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier)
                 ),
                 showDeletionWarning = true,
                 rekeyToAccountAddress = getFromAddressAsDisplayAddress(

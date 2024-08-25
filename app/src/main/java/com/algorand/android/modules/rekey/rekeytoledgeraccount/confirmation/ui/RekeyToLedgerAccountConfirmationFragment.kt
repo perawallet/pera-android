@@ -61,7 +61,7 @@ class RekeyToLedgerAccountConfirmationFragment : BaseRekeyConfirmationFragment()
 
     override fun navToRekeyedAccountConfirmationBottomSheet() {
         val accountName = rekeyToLedgerAccountConfirmationViewModel.accountAddress
-        val authAccountName = rekeyToLedgerAccountConfirmationViewModel.authAccountAddress
+        val authAccountName = rekeyToLedgerAccountConfirmationViewModel.selectedLedgerAuthAccount.address
         nav(
             RekeyToLedgerAccountConfirmationFragmentDirections
                 .actionRekeyToLedgerAccountConfirmationFragmentToRekeyedAccountRekeyConfirmationNavigation(
@@ -76,8 +76,8 @@ class RekeyToLedgerAccountConfirmationFragment : BaseRekeyConfirmationFragment()
     }
 
     override fun onSendTransaction() {
-        val rekeyTx = rekeyToLedgerAccountConfirmationViewModel.createRekeyToLedgerAccountTransaction() ?: return
-        sendTransaction(rekeyTx)
+//        val rekeyTx = rekeyToLedgerAccountConfirmationViewModel.createRekeyToLedgerAccountTransaction() ?: return
+//        sendTransaction(rekeyTx)
     }
 
     override fun onTransactionLoading() {
@@ -89,8 +89,8 @@ class RekeyToLedgerAccountConfirmationFragment : BaseRekeyConfirmationFragment()
     }
 
     override fun onTransactionSigned(signedTransactionDetail: SignedTransactionDetail) {
-        if (signedTransactionDetail is SignedTransactionDetail.RekeyOperation) {
-            rekeyToLedgerAccountConfirmationViewModel.sendRekeyTransaction(signedTransactionDetail)
-        }
+//        if (signedTransactionDetail is SignedTransactionDetail.RekeyOperation) {
+//            rekeyToLedgerAccountConfirmationViewModel.sendRekeyTransaction(signedTransactionDetail)
+//        }
     }
 }

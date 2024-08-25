@@ -29,10 +29,9 @@ sealed class SignedTransactionDetail : Parcelable {
         val senderAccountType: Account.Type?,
         val senderAccountName: String,
         val senderAccountAddress: String,
-        val targetUser: TargetUser,
+//        val targetUser: TargetUser,
         val isMax: Boolean,
         var fee: Long,
-        val assetInformation: AssetInformation,
         val note: String? = null,
         val xnote: String? = null
     ) : SignedTransactionDetail()
@@ -40,20 +39,17 @@ sealed class SignedTransactionDetail : Parcelable {
     sealed class AssetOperation : SignedTransactionDetail() {
 
         abstract val senderAccountAddress: String
-        abstract val assetInformation: AssetInformation
 
         @Parcelize
         data class AssetAddition(
             override val signedTransactionData: ByteArray,
             override val senderAccountAddress: String,
-            override val assetInformation: AssetInformation
         ) : AssetOperation()
 
         @Parcelize
         data class AssetRemoval(
             override val signedTransactionData: ByteArray,
             override val senderAccountAddress: String,
-            override val assetInformation: AssetInformation
         ) : AssetOperation()
     }
 

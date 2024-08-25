@@ -16,7 +16,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.fragment.app.viewModels
-import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentViewPassphraseBinding
@@ -24,6 +23,7 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.disableScreenCapture
 import com.algorand.android.utils.enableScreenCapture
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -48,21 +48,27 @@ class ViewPassphraseFragment : DaggerBaseFragment(R.layout.fragment_view_passphr
         isScreenCaptureEnablingAllowed = hasFocus
     }
 
+    private val passphraseFlowObserver: suspend (String?) -> Unit = {
+        if (it == null) {
+            navBack()
+        }
+        if (it?.isNotBlank() == true) {
+            binding.passphraseBoxView.setPassphrases(it)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewPassphraseToolbar.configure(toolbarConfiguration)
-        setupPassphraseLayout()
+        initObserver()
+        viewPassphraseViewModel.initializePassphrase()
     }
 
-    private fun setupPassphraseLayout() {
-        viewPassphraseViewModel.getAccountSecretKey()?.let {
-            try {
-                val mnemonic = Sdk.mnemonicFromPrivateKey(it) ?: throw Exception("Mnemonic cannot be null.")
-                binding.passphraseBoxView.setPassphrases(mnemonic)
-            } catch (exception: Exception) {
-                navBack()
-            }
-        } ?: run { navBack() }
+    private fun initObserver() {
+        collectLatestOnLifecycle(
+            flow = viewPassphraseViewModel.passphraseFlow,
+            collection = passphraseFlowObserver
+        )
     }
 
     override fun onResume() {

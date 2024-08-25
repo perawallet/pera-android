@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.currency.ui.mapper
 
-import com.algorand.android.modules.currency.domain.model.Currency
-import com.algorand.android.modules.currency.domain.model.CurrencyOption
+import com.algorand.android.currency.domain.model.Currency
+import com.algorand.android.currency.domain.model.CurrencyOption
 import com.algorand.android.ui.settings.selection.CurrencyListItem
 import javax.inject.Inject
 

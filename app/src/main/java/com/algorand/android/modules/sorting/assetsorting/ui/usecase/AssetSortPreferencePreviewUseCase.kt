@@ -12,29 +12,31 @@
 
 package com.algorand.android.modules.sorting.assetsorting.ui.usecase
 
-import com.algorand.android.modules.sorting.assetsorting.domain.model.AssetSortPreference
-import com.algorand.android.modules.sorting.assetsorting.domain.model.AssetSortPreference.ALPHABETICALLY_ASCENDING
-import com.algorand.android.modules.sorting.assetsorting.domain.model.AssetSortPreference.ALPHABETICALLY_DESCENDING
-import com.algorand.android.modules.sorting.assetsorting.domain.model.AssetSortPreference.BALANCE_ASCENDING
-import com.algorand.android.modules.sorting.assetsorting.domain.model.AssetSortPreference.BALANCE_DESCENDING
-import com.algorand.android.modules.sorting.assetsorting.domain.usecase.AssetSortTypeUseCase
+import com.algorand.android.assetsorting.domain.model.AssetSortPreference
+import com.algorand.android.assetsorting.domain.model.AssetSortPreference.ALPHABETICALLY_ASCENDING
+import com.algorand.android.assetsorting.domain.model.AssetSortPreference.ALPHABETICALLY_DESCENDING
+import com.algorand.android.assetsorting.domain.model.AssetSortPreference.BALANCE_ASCENDING
+import com.algorand.android.assetsorting.domain.model.AssetSortPreference.BALANCE_DESCENDING
+import com.algorand.android.assetsorting.domain.usecase.GetAssetSortPreference
+import com.algorand.android.assetsorting.domain.usecase.SetAssetSortPreference
 import com.algorand.android.modules.sorting.assetsorting.ui.mapper.AssetSortPreferencePreviewMapper
 import com.algorand.android.modules.sorting.assetsorting.ui.model.AssetSortPreferencePreview
 import javax.inject.Inject
 
 class AssetSortPreferencePreviewUseCase @Inject constructor(
     private val assetSortPreferencePreviewMapper: AssetSortPreferencePreviewMapper,
-    private val assetSortTypeUseCase: AssetSortTypeUseCase
+    private val getAssetSortPreference: GetAssetSortPreference,
+    private val setAssetSortPreference: SetAssetSortPreference
 ) {
 
     suspend fun getAssetSortPreferencePreview(): AssetSortPreferencePreview {
-        val assetSortPreference = assetSortTypeUseCase.getSortPreferenceType()
+        val assetSortPreference = getAssetSortPreference()
         return getAssetSortPreferencePreview(assetSortPreference)
     }
 
     suspend fun saveAssetSortSelectedPreference(preview: AssetSortPreferencePreview) {
         val collectibleSortPreference = getCurrentlySelectedCollectibleSortPreference(preview)
-        assetSortTypeUseCase.saveSortPreferenceType(collectibleSortPreference)
+        setAssetSortPreference(collectibleSortPreference)
     }
 
     fun getUpdatedPreviewForAlphabeticallyAscending(): AssetSortPreferencePreview {
@@ -66,14 +68,14 @@ class AssetSortPreferencePreviewUseCase @Inject constructor(
 
     private fun getCurrentlySelectedCollectibleSortPreference(
         preview: AssetSortPreferencePreview
-    ): AssetSortPreference {
+    ): AssetSortPreference? {
         return with(preview) {
             when {
                 isAlphabeticallyAscendingSelected -> ALPHABETICALLY_ASCENDING
                 isAlphabeticallyDescendingSelected -> ALPHABETICALLY_DESCENDING
                 isBalanceAscendingSelected -> BALANCE_ASCENDING
                 isBalanceDescendingSelected -> BALANCE_DESCENDING
-                else -> AssetSortPreference.getDefaultSortPreference()
+                else -> null
             }
         }
     }

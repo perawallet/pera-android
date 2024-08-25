@@ -14,12 +14,12 @@ package com.algorand.android.modules.collectibles.profile.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.assetdetailui.detail.nftprofile.model.CollectibleProfilePreview
+import com.algorand.android.assetdetailui.detail.nftprofile.usecase.GetCollectibleProfilePreviewFlow
 import com.algorand.android.models.AssetAction
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailViewModel
-import com.algorand.android.modules.collectibles.profile.ui.model.CollectibleProfilePreview
-import com.algorand.android.modules.collectibles.profile.ui.usecase.CollectibleProfilePreviewUseCase
-import com.algorand.android.usecase.NetworkSlugUseCase
-import com.algorand.android.utils.AssetName
+import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -29,10 +29,10 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CollectibleProfileViewModel @Inject constructor(
-    private val collectibleProfilePreviewUseCase: CollectibleProfilePreviewUseCase,
-    networkSlugUseCase: NetworkSlugUseCase,
+    private val getCollectibleProfilePreviewFlow: GetCollectibleProfilePreviewFlow,
+    getActiveNodeNetworkSlug: GetActiveNodeNetworkSlug,
     savedStateHandle: SavedStateHandle
-) : BaseCollectibleDetailViewModel(networkSlugUseCase) {
+) : BaseCollectibleDetailViewModel(getActiveNodeNetworkSlug) {
 
     val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
     val collectibleId = savedStateHandle.getOrThrow<Long>(COLLECTIBLE_ID_KEY)
@@ -45,9 +45,11 @@ class CollectibleProfileViewModel @Inject constructor(
     }
 
     fun getAssetAction(): AssetAction {
-        return collectibleProfilePreviewUseCase.createAssetAction(
+        return AssetAction(
             assetId = collectibleId,
-            accountAddress = accountAddress
+            publicKey = accountAddress,
+            assetFullName = collectibleProfilePreviewFlow.value?.nftName?.assetName,
+            assetShortName = collectibleProfilePreviewFlow.value?.nftShortName?.assetName
         )
     }
 
@@ -61,7 +63,7 @@ class CollectibleProfileViewModel @Inject constructor(
 
     private fun initCollectibleProfilePreviewFlow() {
         viewModelScope.launch {
-            collectibleProfilePreviewUseCase.getCollectibleProfilePreviewFlow(
+            getCollectibleProfilePreviewFlow(
                 nftId = collectibleId,
                 accountAddress = accountAddress
             ).collect { preview -> _collectibleProfilePreviewFlow.emit(preview) }

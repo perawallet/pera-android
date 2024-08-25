@@ -16,18 +16,15 @@ package com.algorand.android.ui.send.receiveraccount
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.AccountCacheData
-import com.algorand.android.models.AssetInformation
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.models.AssetTransaction
-import com.algorand.android.models.BaseAccountSelectionListItem
-import com.algorand.android.models.Result
-import com.algorand.android.models.TargetUser
-import com.algorand.android.modules.accountasset.domain.model.AccountAssetDetail
+import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser
+import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
 import com.algorand.android.usecase.ReceiverAccountSelectionUseCase
-import com.algorand.android.utils.AccountCacheManager
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -35,12 +32,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ReceiverAccountSelectionViewModel @Inject constructor(
     private val receiverAccountSelectionUseCase: ReceiverAccountSelectionUseCase,
-    private val accountCacheManager: AccountCacheManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -49,17 +44,11 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
     private val _selectableAccountFlow = MutableStateFlow<List<BaseAccountSelectionListItem>?>(null)
     val selectableAccountFlow: StateFlow<List<BaseAccountSelectionListItem>?> = _selectableAccountFlow
 
-    private val _toAccountAddressValidationFlow = MutableStateFlow<Event<Resource<String>>?>(null)
-    val toAccountAddressValidationFlow: StateFlow<Event<Resource<String>>?> = _toAccountAddressValidationFlow
-
-    private val _toAccountInformationFlow = MutableStateFlow<Event<Resource<AccountAssetDetail>>?>(null)
-    val toAccountInformationFlow: StateFlow<Event<Resource<AccountAssetDetail>>?> = _toAccountInformationFlow
-
-    private val _toAccountTransactionRequirementsFlow = MutableStateFlow<Event<Resource<TargetUser>>?>(null)
-    val toAccountTransactionRequirementsFlow: StateFlow<Event<Resource<TargetUser>>?> =
+    private val _toAccountTransactionRequirementsFlow = MutableStateFlow<Event<Resource<AssetTransferTargetUser>>?>(
+        null
+    )
+    val toAccountTransactionRequirementsFlow: StateFlow<Event<Resource<AssetTransferTargetUser>>?> =
         _toAccountTransactionRequirementsFlow
-
-    private var nftDomainAddressServiceLogoPair: Pair<String, String?>? = null
 
     private val queryFlow = MutableStateFlow("")
 
@@ -75,62 +64,21 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
         }
     }
 
-    fun checkIsGivenAddressValid(toAccountPublicKey: String) {
-        viewModelScope.launch {
-            _toAccountAddressValidationFlow.emit(Event(Resource.Loading))
-            when (val result = receiverAccountSelectionUseCase.isAccountAddressValid(toAccountPublicKey)) {
-                is Result.Error -> _toAccountAddressValidationFlow.emit(Event(result.getAsResourceError()))
-                is Result.Success -> _toAccountAddressValidationFlow.emit(Event(Resource.Success(result.data)))
-            }
-        }
-    }
-
-    fun fetchToAccountInformation(
-        toAccountPublicKey: String,
+    fun validateReceiverAccount(
+        receiverAddress: String,
         nftDomainAddress: String? = null,
         nftDomainServiceLogoUrl: String? = null
     ) {
-        nftDomainAddressServiceLogoPair = nftDomainAddress?.run { Pair(this, nftDomainServiceLogoUrl) }
         viewModelScope.launch {
-            _toAccountInformationFlow.emit(Event(Resource.Loading))
-            val result = receiverAccountSelectionUseCase.fetchAccountInformationForAsset(
-                toAccountPublicKey,
-                assetTransaction.assetId
-            )
-            when (result) {
-                is Result.Success -> _toAccountInformationFlow.emit(Event(Resource.Success(result.data)))
-                is Result.Error -> _toAccountInformationFlow.emit(Event(result.getAsResourceError()))
-            }
-        }
-    }
-
-    fun checkToAccountTransactionRequirements(accountAssetDetail: AccountAssetDetail) {
-        viewModelScope.launch {
-            _toAccountTransactionRequirementsFlow.emit(Event(Resource.Loading))
             val result = receiverAccountSelectionUseCase.checkToAccountTransactionRequirements(
-                accountAssetDetail,
-                assetTransaction.assetId,
-                assetTransaction.senderAddress,
+                receiverAddress = receiverAddress,
+                assetId = assetTransaction.assetId,
+                fromAccountAddress = assetTransaction.senderAddress,
                 amount = assetTransaction.amount,
-                nftDomainAddress = nftDomainAddressServiceLogoPair?.first,
-                nftDomainServiceLogoUrl = nftDomainAddressServiceLogoPair?.second
+                nftDomainAddress = nftDomainAddress,
+                nftDomainServiceLogoUrl = nftDomainServiceLogoUrl
             )
-            when (result) {
-                is Result.Error -> _toAccountTransactionRequirementsFlow.emit(Event(result.getAsResourceError()))
-                is Result.Success -> {
-                    _toAccountTransactionRequirementsFlow.emit(Event(Resource.Success(result.data)))
-                }
-            }
-        }
-    }
-
-    fun getFromAccountCachedData(): AccountCacheData? {
-        return accountCacheManager.getCacheData(assetTransaction.senderAddress)
-    }
-
-    fun getSelectedAssetInformation(): AssetInformation? {
-        return with(assetTransaction) {
-            receiverAccountSelectionUseCase.getAssetInformation(assetId, senderAddress)
+            _toAccountTransactionRequirementsFlow.emit(Event(result))
         }
     }
 
@@ -154,6 +102,19 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
         viewModelScope.launch {
             latestCopiedMessageFlow.emit(copiedMessage)
         }
+    }
+
+    fun getSendTransactionPayload(receiver: AssetTransferTargetUser): SendTransactionPayload {
+        return SendTransactionPayload(
+            assetId = assetTransaction.assetId,
+            senderAddress = assetTransaction.senderAddress,
+            amount = assetTransaction.amount,
+            note = SendTransactionPayload.Note(
+                note = assetTransaction.note,
+                xnote = assetTransaction.xnote
+            ),
+            targetUser = receiver
+        )
     }
 
     companion object {

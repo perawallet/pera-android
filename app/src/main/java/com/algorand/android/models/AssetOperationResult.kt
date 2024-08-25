@@ -13,7 +13,7 @@
 package com.algorand.android.models
 
 import androidx.annotation.StringRes
-import com.algorand.android.utils.AssetName
+import com.algorand.android.accountcore.ui.model.AssetName
 
 sealed class AssetOperationResult {
 

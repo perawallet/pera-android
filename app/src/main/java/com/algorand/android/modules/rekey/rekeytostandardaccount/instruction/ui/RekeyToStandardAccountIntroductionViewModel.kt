@@ -13,9 +13,11 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.baseintroduction.ui.BaseIntroductionViewModel
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.model.RekeyToStandardAccountIntroductionPreview
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.usecase.RekeyToStandardAccountInstructionPreviewUseCase
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,13 +32,19 @@ class RekeyToStandardAccountIntroductionViewModel @Inject constructor(
     private val navArgs = RekeyToStandardAccountIntroductionFragmentArgs.fromSavedStateHandle(savedStateHandle)
     val accountAddress = navArgs.accountAddress
 
-    private val _rekeyToStandardAccountInstructionPreviewFlow = MutableStateFlow(getInitialPreview())
-    override val introductionPreviewFlow: StateFlow<RekeyToStandardAccountIntroductionPreview>
+    private val _rekeyToStandardAccountInstructionPreviewFlow =
+        MutableStateFlow<RekeyToStandardAccountIntroductionPreview?>(null)
+    override val introductionPreviewFlow: StateFlow<RekeyToStandardAccountIntroductionPreview?>
         get() = _rekeyToStandardAccountInstructionPreviewFlow
 
-    private fun getInitialPreview(): RekeyToStandardAccountIntroductionPreview {
-        return rekeyToStandardAccountInstructionPreviewUseCase.getInitialRekeyToStandardAccountInstructionPreview(
-            accountAddress = accountAddress
-        )
+    init {
+        initPreview()
+    }
+
+    private fun initPreview() {
+        viewModelScope.launchIO {
+            _rekeyToStandardAccountInstructionPreviewFlow.value = rekeyToStandardAccountInstructionPreviewUseCase
+                .getInitialRekeyToStandardAccountInstructionPreview(accountAddress)
+        }
     }
 }

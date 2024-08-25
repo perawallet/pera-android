@@ -33,7 +33,7 @@ class AsbFileReadyViewModel @Inject constructor(
     private val encryptedContent = savedStateHandle.getOrThrow<String>(ENCRYPTED_CONTENT_KEY)
 
     private val _asbFileReadyPreviewFlow = MutableStateFlow(getInitialPreview())
-    override val baseResultPreviewFlow: StateFlow<AsbFileReadyPreview> get() = _asbFileReadyPreviewFlow
+    override val baseResultPreviewFlow: StateFlow<AsbFileReadyPreview?> get() = _asbFileReadyPreviewFlow
 
     fun onFileContentCopy() {
         _asbFileReadyPreviewFlow.update { preview ->

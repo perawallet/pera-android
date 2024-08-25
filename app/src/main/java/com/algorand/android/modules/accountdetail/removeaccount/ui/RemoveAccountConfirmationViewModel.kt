@@ -13,14 +13,17 @@
 package com.algorand.android.modules.accountdetail.removeaccount.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.accountdetail.removeaccount.ui.model.RemoveAccountConfirmationPreview
 import com.algorand.android.modules.accountdetail.removeaccount.ui.usecase.RemoveAccountConfirmationPreviewUseCase
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RemoveAccountConfirmationViewModel @Inject constructor(
@@ -31,20 +34,30 @@ class RemoveAccountConfirmationViewModel @Inject constructor(
     private val navArgs = RemoveAccountConfirmationBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
     private val accountAddress = navArgs.accountAddress
 
-    val descriptionTextResId: Int
-        get() = removeAccountConfirmationPreviewUseCase.getDescriptionResId(accountAddress)
-
-    private val _removeAccountConfirmationPreviewFlow = MutableStateFlow(createInitialPreview())
-    val removeAccountConfirmationPreviewFlow: StateFlow<RemoveAccountConfirmationPreview>
+    private val _removeAccountConfirmationPreviewFlow = MutableStateFlow<RemoveAccountConfirmationPreview?>(null)
+    val removeAccountConfirmationPreviewFlow: StateFlow<RemoveAccountConfirmationPreview?>
         get() = _removeAccountConfirmationPreviewFlow
 
     fun onRemoveAccountClick() {
-        _removeAccountConfirmationPreviewFlow.update { preview ->
-            removeAccountConfirmationPreviewUseCase.updatePreviewWithRemoveAccountConfirmation(preview, accountAddress)
+        viewModelScope.launch {
+            _removeAccountConfirmationPreviewFlow.update { preview ->
+                removeAccountConfirmationPreviewUseCase.updatePreviewWithRemoveAccountConfirmation(
+                    preview,
+                    accountAddress
+                )
+            }
         }
     }
 
-    private fun createInitialPreview(): RemoveAccountConfirmationPreview {
-        return removeAccountConfirmationPreviewUseCase.getRemoveAccountConfirmationPreview()
+    init {
+        initPreview()
+    }
+
+    private fun initPreview() {
+        viewModelScope.launchIO {
+            _removeAccountConfirmationPreviewFlow.update {
+                removeAccountConfirmationPreviewUseCase.getRemoveAccountConfirmationPreview(accountAddress)
+            }
+        }
     }
 }

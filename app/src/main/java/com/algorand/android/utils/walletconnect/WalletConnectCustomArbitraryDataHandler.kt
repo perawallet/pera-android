@@ -12,21 +12,17 @@
 
 package com.algorand.android.utils.walletconnect
 
-import com.algorand.android.models.Account
-import com.algorand.android.models.WalletConnectArbitraryData
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.ui.mapper.WalletConnectArbitraryDataMapper
-import com.algorand.android.utils.AccountCacheManager
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult.Error
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult.Success
 import javax.inject.Inject
 
 class WalletConnectCustomArbitraryDataHandler @Inject constructor(
     private val walletConnectArbitraryDataMapper: WalletConnectArbitraryDataMapper,
-    private val errorProvider: WalletConnectErrorProvider,
-    private val accountCacheManager: AccountCacheManager,
+    private val errorProvider: WalletConnectErrorProvider
 ) {
 
     @SuppressWarnings("ReturnCount", "LongMethod")
@@ -75,15 +71,6 @@ class WalletConnectCustomArbitraryDataHandler @Inject constructor(
             onResult(Success(result))
         } catch (exception: Exception) {
             onResult(Error(sessionIdentifier, requestIdentifier, errorProvider.getUnableToParseArbitraryDataError()))
-        }
-    }
-
-    private fun areSignersValid(
-        arbitraryDataList: List<WalletConnectArbitraryData>
-    ): Boolean {
-        return arbitraryDataList.all { arbitraryData ->
-            val signerPublicKey = arbitraryData.signerAccount?.address
-            accountCacheManager.getCacheData(signerPublicKey)?.account?.type != Account.Type.LEDGER
         }
     }
 

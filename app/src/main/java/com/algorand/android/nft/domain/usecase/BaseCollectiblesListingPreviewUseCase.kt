@@ -14,22 +14,15 @@ package com.algorand.android.nft.domain.usecase
 
 import androidx.annotation.StringRes
 import com.algorand.android.R
-import com.algorand.android.models.AccountDetail
-import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
-import com.algorand.android.models.BaseAccountAssetData.PendingAssetData.BasePendingCollectibleData
-import com.algorand.android.modules.collectibles.filter.domain.usecase.ClearCollectibleFiltersPreferencesUseCase
-import com.algorand.android.modules.collectibles.filter.domain.usecase.ShouldDisplayOptedInNFTPreferenceUseCase
+import com.algorand.android.accountinfo.component.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.android.modules.collectibles.filter.domain.usecase.*
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
-import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType.GRID
-import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType.LINEAR_VERTICAL
-import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.AddOnListingViewTypeChangeListenerUseCase
-import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.RemoveOnListingViewTypeChangeListenerUseCase
-import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.SaveNFTListingViewTypePreferenceUseCase
+import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType.*
+import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.*
 import com.algorand.android.nft.mapper.CollectibleListingItemMapper
-import com.algorand.android.nft.ui.model.BaseCollectibleListData
-import com.algorand.android.nft.ui.model.BaseCollectibleListItem
-import com.algorand.android.nft.utils.CollectibleUtils
+import com.algorand.android.nft.ui.model.*
 import com.algorand.android.sharedpref.SharedPrefLocalSource
 import com.algorand.android.utils.Event
 import java.math.BigInteger
@@ -40,8 +33,8 @@ open class BaseCollectiblesListingPreviewUseCase(
     private val addOnListingViewTypeChangeListenerUseCase: AddOnListingViewTypeChangeListenerUseCase,
     private val removeOnListingViewTypeChangeListenerUseCase: RemoveOnListingViewTypeChangeListenerUseCase,
     private val shouldDisplayOptedInNFTPreferenceUseCase: ShouldDisplayOptedInNFTPreferenceUseCase,
-    private val collectibleUtils: CollectibleUtils,
-    private val clearCollectibleFiltersPreferencesUseCase: ClearCollectibleFiltersPreferencesUseCase
+    private val clearCollectibleFiltersPreferencesUseCase: ClearCollectibleFiltersPreferencesUseCase,
+    private val isAssetOwnedByAccount: IsAssetOwnedByAccount
 ) {
 
     fun addOnListingViewTypeChangeListener(listener: SharedPrefLocalSource.OnChangeListener<Int>) {
@@ -60,7 +53,7 @@ open class BaseCollectiblesListingPreviewUseCase(
         saveNFTListingViewTypePreferenceUseCase.invoke(nftListingViewType)
     }
 
-    protected fun createCollectibleListItem(
+    protected suspend fun createCollectibleListItem(
         accountAssetData: BaseAccountAssetData,
         optedInAccountAddress: String,
         nftListingType: NFTListingViewType,
@@ -75,7 +68,7 @@ open class BaseCollectiblesListingPreviewUseCase(
                     isOwnedByWatchAccount = isOwnedByWatchAccount
                 )
             }
-            is BasePendingCollectibleData -> {
+            is BaseAccountAssetData.PendingAssetData.BasePendingCollectibleData -> {
                 createPendingCollectibleListItem(
                     pendingCollectibleData = accountAssetData,
                     optedInAccountAddress = optedInAccountAddress,
@@ -103,15 +96,11 @@ open class BaseCollectiblesListingPreviewUseCase(
         }
     }
 
-    protected suspend fun filterOptedInNFTIfNeed(
-        accountDetail: AccountDetail?,
-        nftData: BaseAccountAssetData
-    ): Boolean {
-        return shouldDisplayOptedInNFTPreferenceUseCase() ||
-            collectibleUtils.isCollectibleOwnedByTheUser(accountDetail, nftData.id)
+    protected suspend fun filterOptedInNFTIfNeed(address: String, nftId: Long): Boolean {
+        return shouldDisplayOptedInNFTPreferenceUseCase() || isAssetOwnedByAccount(address, nftId)
     }
 
-    private fun createOwnedCollectibleListItem(
+    private suspend fun createOwnedCollectibleListItem(
         accountAssetData: BaseOwnedCollectibleData,
         optedInAccountAddress: String,
         nftListingType: NFTListingViewType,
@@ -132,8 +121,8 @@ open class BaseCollectiblesListingPreviewUseCase(
         }
     }
 
-    private fun createPendingCollectibleListItem(
-        pendingCollectibleData: BasePendingCollectibleData,
+    private suspend fun createPendingCollectibleListItem(
+        pendingCollectibleData: BaseAccountAssetData.PendingAssetData.BasePendingCollectibleData,
         optedInAccountAddress: String,
         nftListingType: NFTListingViewType,
     ): BaseCollectibleListItem.BaseCollectibleItem.BasePendingNFTItem {

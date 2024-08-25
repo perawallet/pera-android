@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/swapAccountSelectionFragment"
-        android:name="com.algorand.android.modules.swap.accountselection.ui.SwapAccountSelectionFragment"
+        android:name="com.algorand.android.modules.swap.accountselection.SwapAccountSelectionFragment"
         android:label="SwapAccountSelectionFragment"
         tools:layout="@layout/fragment_base_account_selection">
 

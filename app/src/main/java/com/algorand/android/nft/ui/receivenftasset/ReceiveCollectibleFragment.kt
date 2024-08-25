@@ -12,12 +12,15 @@
 
 package com.algorand.android.nft.ui.receivenftasset
 
+import android.os.Bundle
+import android.view.View
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.customviews.AccountCopyQrView
 import com.algorand.android.customviews.ScreenStateView
 import com.algorand.android.databinding.FragmentReceiveCollectibleBinding
@@ -28,6 +31,7 @@ import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetFragment
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetFragment.BaseAddAssetFragmentListener
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel
 import com.algorand.android.modules.assets.addition.ui.model.AssetAdditionType
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -74,6 +78,13 @@ class ReceiveCollectibleFragment : BaseAddAssetFragment(R.layout.fragment_receiv
 
     override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
+    private val receiverAccountDetailObserver: suspend (Pair<String, AccountIconDrawablePreview>?) -> Unit = {
+        it?.run {
+            binding.accountCopyQrView.setAccountName(first)
+            binding.accountCopyQrView.setAccountIcon(second)
+        }
+    }
+
     private val accountCopyQrViewListener = object : AccountCopyQrView.Listener {
         override fun onCopyClick() {
             onAccountAddressCopied(accountPublicKey)
@@ -89,16 +100,19 @@ class ReceiveCollectibleFragment : BaseAddAssetFragment(R.layout.fragment_receiv
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            receiveCollectibleViewModel.receiverAccountDetailsFlow,
+            receiverAccountDetailObserver
+        )
+    }
+
     override fun initUi() {
         with(binding) {
             collectiblesRecyclerView.adapter = assetSearchAdapter
-            accountCopyQrView.apply {
-                setListener(accountCopyQrViewListener)
-                val (senderDisplayText, senderAccountIcon) =
-                    receiveCollectibleViewModel.getReceiverAccountDisplayTextAndIcon(accountPublicKey)
-                setAccountName(senderDisplayText)
-                setAccountIcon(senderAccountIcon)
-            }
+            receiveCollectibleViewModel.initReceiverAccountDetails(accountPublicKey)
+            accountCopyQrView.setListener(accountCopyQrViewListener)
             screenStateView.setOnNeutralButtonClickListener {
                 receiveCollectibleViewModel.refreshReceiveCollectiblePreview()
             }

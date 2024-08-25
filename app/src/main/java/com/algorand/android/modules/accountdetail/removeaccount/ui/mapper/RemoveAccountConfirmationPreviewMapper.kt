@@ -20,12 +20,14 @@ import javax.inject.Inject
 class RemoveAccountConfirmationPreviewMapper @Inject constructor() {
 
     fun mapToRemoveAccountConfirmationPreview(
+        descriptionResId: Int,
         showGlobalErrorEvent: Event<PluralAnnotatedString>? = null,
         navBackEvent: Event<Boolean>? = null
     ): RemoveAccountConfirmationPreview {
         return RemoveAccountConfirmationPreview(
             showGlobalErrorEvent = showGlobalErrorEvent,
-            navBackEvent = navBackEvent
+            navBackEvent = navBackEvent,
+            descriptionResId
         )
     }
 }

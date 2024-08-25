@@ -22,7 +22,7 @@ import com.algorand.android.databinding.FragmentSwapTransactionSummaryBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.swap.transactionsummary.ui.adapter.SwapTransactionSummaryAdapter
-import com.algorand.android.modules.swap.transactionsummary.ui.model.SwapTransactionSummaryPreview
+import com.algorand.android.swapui.txnsummary.model.SwapTransactionSummaryPreview
 import com.algorand.android.utils.BaseCustomDividerItemDecoration
 import com.algorand.android.utils.addCustomDivider
 import com.algorand.android.utils.copyToClipboard
@@ -63,14 +63,13 @@ class SwapTransactionSummaryFragment : BaseFragment(R.layout.fragment_swap_trans
             )
         }
 
-    private val swapTransactionSummaryAdapter =
-        SwapTransactionSummaryAdapter(listener = swapTransactionSummaryAdapterListener)
+    private val swapTransactionSummaryAdapter = SwapTransactionSummaryAdapter(swapTransactionSummaryAdapterListener)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObservers()
-        swapTransactionSummaryViewModel.initSwapTransactionSummaryPreview(resources)
+        swapTransactionSummaryViewModel.initSwapTransactionSummaryPreview()
     }
 
     private fun initUi() {

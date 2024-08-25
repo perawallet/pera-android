@@ -39,6 +39,10 @@ abstract class BaseInfoFragment : DaggerBaseFragment(R.layout.fragment_base_info
     open fun setSecondButton(materialButton: MaterialButton) {}
     open fun setTopStartButton(materialButton: MaterialButton) {}
 
+    protected fun setDescriptionText(text: String) {
+        binding.descriptionTextView.text = text
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setImageView(binding.infoImageView)

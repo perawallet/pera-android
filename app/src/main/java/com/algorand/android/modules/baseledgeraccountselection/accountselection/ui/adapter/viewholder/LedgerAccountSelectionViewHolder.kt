@@ -16,7 +16,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemAccountSelectionBinding
-import com.algorand.android.models.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.utils.AccountIconDrawable
 
@@ -37,8 +37,8 @@ class LedgerAccountSelectionViewHolder(
                     accountIconDrawablePreview = item.accountIconDrawablePreview
                 )
                 setStartIconDrawable(accountIconDrawable)
-                setTitleText(item.accountDisplayName.getAccountPrimaryDisplayName())
-                setDescriptionText(item.accountDisplayName.getAccountSecondaryDisplayName(resources))
+                setTitleText(item.accountDisplayName.primaryDisplayName)
+                setDescriptionText(item.accountDisplayName.secondaryDisplayName)
                 setEndIconResource(R.drawable.ic_info)
                 setEndIconClickListener { listener.onAccountInfoClick(item) }
             }

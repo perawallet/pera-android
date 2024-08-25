@@ -40,7 +40,7 @@ import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 @AndroidEntryPoint
 class AsbFileReadyFragment : BaseResultFragment() {
@@ -143,27 +143,27 @@ class AsbFileReadyFragment : BaseResultFragment() {
         super.initObservers()
         with(asbFileReadyViewModel.baseResultPreviewFlow) {
             collectLatestOnLifecycle(
-                flow = map { it.fileName },
+                flow = mapNotNull { it?.fileName },
                 collection = backupFileNameCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.formattedFileSize },
+                flow = mapNotNull { it?.formattedFileSize },
                 collection = formattedBackupFileSizeCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.onFileContentCopyEvent },
+                flow = mapNotNull { it?.onFileContentCopyEvent },
                 collection = onFileContentCopyEventCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.onBackupFileSavedEvent },
+                flow = mapNotNull { it?.onBackupFileSavedEvent },
                 collection = onBackupFileSavedEventCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.navToFailureScreenEvent },
+                flow = mapNotNull { it?.navToFailureScreenEvent },
                 collection = navToFailureScreenEventCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.launchCreateDocumentIntentEvent },
+                flow = mapNotNull { it?.launchCreateDocumentIntentEvent },
                 collection = launchCreateDocumentIntentEventCollector
             )
         }

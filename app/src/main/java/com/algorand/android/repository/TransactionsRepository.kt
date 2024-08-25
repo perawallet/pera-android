@@ -12,17 +12,15 @@
 
 package com.algorand.android.repository
 
-import com.algorand.android.models.NextBlockResponse
 import com.algorand.android.models.Result
 import com.algorand.android.models.SendTransactionResponse
 import com.algorand.android.models.TrackTransactionRequest
-import com.algorand.android.models.TransactionParams
 import com.algorand.android.network.AlgodApi
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.getMessageAsResultError
 import com.algorand.android.network.request
 import com.algorand.android.network.safeApiCall
-import com.algorand.android.exceptions.RetrofitErrorHandler
+import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
 import javax.inject.Inject
 import javax.inject.Singleton
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -34,32 +32,6 @@ class TransactionsRepository @Inject constructor(
     private val algodApi: AlgodApi,
     private val hipoApiErrorHandler: RetrofitErrorHandler
 ) {
-
-    suspend fun getTransactionParams(): Result<TransactionParams> =
-        safeApiCall { requestGetTransactionParams() }
-
-    private suspend fun requestGetTransactionParams(): Result<TransactionParams> {
-        with(algodApi.getTransactionParams()) {
-            return if (isSuccessful && body() != null) {
-                Result.Success(body() as TransactionParams)
-            } else {
-                Result.Error(Exception())
-            }
-        }
-    }
-
-    suspend fun getWaitForBlock(waitedBlockNumber: Long): Result<NextBlockResponse> =
-        safeApiCall { requestGetWaitForBlock(waitedBlockNumber) }
-
-    private suspend fun requestGetWaitForBlock(waitedBlockNumber: Long): Result<NextBlockResponse> {
-        with(algodApi.getWaitForBlock(waitedBlockNumber)) {
-            return if (isSuccessful && body() != null) {
-                Result.Success(body() as NextBlockResponse)
-            } else {
-                Result.Error(Exception())
-            }
-        }
-    }
 
     suspend fun sendSignedTransaction(transactionData: ByteArray): Result<SendTransactionResponse> =
         safeApiCall { postSignedTransaction(transactionData) }

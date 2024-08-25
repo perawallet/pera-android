@@ -17,8 +17,36 @@ import android.os.Parcelable
 import com.algorand.android.utils.analytics.CreationType
 import kotlinx.parcelize.Parcelize
 
-@Parcelize
-data class AccountCreation(
-    val tempAccount: Account,
+sealed interface CreateAccount : Parcelable {
+    val address: String
+    var customName: String?
+    val isBackedUp: Boolean
     val creationType: CreationType
-) : Parcelable
+
+    @Parcelize
+    data class Algo25(
+        override val address: String,
+        val secretKey: ByteArray,
+        override var customName: String?,
+        override val isBackedUp: Boolean,
+        override val creationType: CreationType
+    ) : CreateAccount
+
+    @Parcelize
+    data class NoAuth(
+        override val address: String,
+        override var customName: String?,
+        override val isBackedUp: Boolean,
+        override val creationType: CreationType
+    ) : CreateAccount
+
+    @Parcelize
+    data class LedgerBle(
+        override val address: String,
+        override var customName: String?,
+        override val isBackedUp: Boolean,
+        val deviceMacAddress: String,
+        val indexInLedger: Int,
+        override val creationType: CreationType
+    ) : CreateAccount
+}

@@ -13,23 +13,16 @@
 
 package com.algorand.android.ui.register.nameregistration
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountCreation
+import androidx.lifecycle.*
+import com.algorand.android.models.*
 import com.algorand.android.models.ui.NameRegistrationPreview
-import com.algorand.android.usecase.IsAccountLimitExceedUseCase
-import com.algorand.android.usecase.NameRegistrationPreviewUseCase
+import com.algorand.android.usecase.*
+import com.algorand.android.utils.*
 import com.algorand.android.utils.analytics.CreationType
-import com.algorand.android.utils.getOrThrow
-import com.algorand.android.utils.launchIO
-import com.algorand.android.utils.toShortenedAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class NameRegistrationViewModel @Inject constructor(
@@ -42,25 +35,25 @@ class NameRegistrationViewModel @Inject constructor(
     val nameRegistrationPreviewFlow: Flow<NameRegistrationPreview>
         get() = _nameRegistrationPreviewFlow
 
-    private val accountCreation = savedStateHandle.getOrThrow<AccountCreation>(ACCOUNT_CREATION_KEY)
-    private val accountAddress = accountCreation.tempAccount.address
-    private val accountName = accountCreation.tempAccount.name
+    private val accountCreation = savedStateHandle.getOrThrow<CreateAccount>(ACCOUNT_CREATION_KEY)
+    private val accountAddress = accountCreation.address
+    private val accountName = accountCreation.customName.orEmpty()
 
     val predefinedAccountName: String
         get() = accountName.takeIf { it.isNotBlank() } ?: accountAddress.toShortenedAddress()
 
-    fun updatePreviewWithAccountCreation(accountCreation: AccountCreation?, inputName: String) {
+    fun updatePreviewWithAccountCreation(accountCreation: CreateAccount, inputName: String) {
         viewModelScope.launch {
             nameRegistrationPreviewUseCase.getPreviewWithAccountCreation(
                 accountCreation = accountCreation,
                 inputName = inputName
-            )?.let {
+            ).let {
                 _nameRegistrationPreviewFlow.emit(it)
             }
         }
     }
 
-    fun updateWatchAccount(accountCreation: AccountCreation) {
+    fun updateWatchAccount(accountCreation: CreateAccount) {
         viewModelScope.launch {
             nameRegistrationPreviewUseCase.updateTypeOfWatchAccount(accountCreation)
             nameRegistrationPreviewUseCase.updateNameOfWatchAccount(accountCreation)
@@ -68,9 +61,9 @@ class NameRegistrationViewModel @Inject constructor(
         }
     }
 
-    fun addNewAccount(account: Account, creationType: CreationType?) {
+    fun addNewAccount(createAccount: CreateAccount) {
         viewModelScope.launchIO {
-            nameRegistrationPreviewUseCase.addNewAccount(account, creationType)
+            nameRegistrationPreviewUseCase.addNewAccount(createAccount)
         }
     }
 

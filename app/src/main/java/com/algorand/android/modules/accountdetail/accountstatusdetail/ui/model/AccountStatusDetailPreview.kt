@@ -12,10 +12,9 @@
 
 package com.algorand.android.modules.accountdetail.accountstatusdetail.ui.model
 
+import com.algorand.android.accountcore.ui.model.*
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.Event
 
 data class AccountStatusDetailPreview(

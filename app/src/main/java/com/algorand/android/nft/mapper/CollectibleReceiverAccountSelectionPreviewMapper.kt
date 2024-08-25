@@ -12,7 +12,7 @@
 
 package com.algorand.android.nft.mapper
 
-import com.algorand.android.models.BaseAccountSelectionListItem
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.models.ScreenState
 import com.algorand.android.nft.ui.model.CollectibleReceiverAccountSelectionPreview
 import javax.inject.Inject

@@ -14,6 +14,6 @@ package com.algorand.android.models
 
 data class AccountDetail(
     val account: Account,
-    val accountInformation: AccountInformation,
+//    val accountInformation: AccountInformation,
     var nameServiceName: String? = null
 )

@@ -13,27 +13,61 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.core.AccountManager
+import com.algorand.android.account.localaccount.domain.usecase.*
 import com.algorand.android.core.BaseUseCase
-import com.algorand.android.models.Account
-import com.algorand.android.utils.analytics.CreationType
+import com.algorand.android.core.component.domain.usecase.AddAccount
+import com.algorand.android.models.CreateAccount
 import com.algorand.android.utils.analytics.logRegisterEvent
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
 
 class AccountAdditionUseCase @Inject constructor(
-    private val accountManager: AccountManager,
     private val firebaseAnalytics: FirebaseAnalytics,
-    private val registrationUseCase: RegistrationUseCase
+    private val registrationUseCase: RegistrationUseCase,
+    private val addAccount: AddAccount,
+    private val updateNoAuthAccountToAlgo25: UpdateNoAuthAccountToAlgo25,
+    private val updateNoAuthAccountToLedgerBle: UpdateNoAuthAccountToLedgerBle
 ) : BaseUseCase() {
 
-    fun addNewAccount(tempAccount: Account, creationType: CreationType?) {
-        if (tempAccount.isRegistrationCompleted()) {
-            firebaseAnalytics.logRegisterEvent(creationType)
-            accountManager.addNewAccount(tempAccount)
-            if (!registrationUseCase.getRegistrationSkipped()) {
-                registrationUseCase.setRegistrationSkipPreferenceAsSkipped()
+    suspend fun addNewAccount(createAccount: CreateAccount) {
+        firebaseAnalytics.logRegisterEvent(createAccount.creationType)
+        addAccount(createAccount)
+        if (!registrationUseCase.getRegistrationSkipped()) {
+            registrationUseCase.setRegistrationSkipPreferenceAsSkipped()
+        }
+    }
+
+    suspend fun updateTypeOfWatchAccount(accountCreation: CreateAccount) {
+        with(accountCreation) {
+            when (this) {
+                is CreateAccount.Algo25 -> updateNoAuthAccountToAlgo25(address, secretKey)
+                is CreateAccount.LedgerBle -> updateNoAuthAccountToLedgerBle(address, deviceMacAddress, indexInLedger)
+                is CreateAccount.NoAuth -> Unit
             }
         }
+    }
+
+    private suspend fun addAccount(createAccount: CreateAccount) {
+        when (createAccount) {
+            is CreateAccount.Algo25 -> createAlgo25Account(createAccount)
+            is CreateAccount.NoAuth -> createNoAuthAccount(createAccount)
+            is CreateAccount.LedgerBle -> createLedgerBleAccount(createAccount)
+        }
+    }
+
+    private suspend fun createAlgo25Account(createAccount: CreateAccount.Algo25) {
+        with(createAccount) {
+            addAccount.addAlgo25(address, secretKey, isBackedUp, customName)
+        }
+    }
+
+    private suspend fun createLedgerBleAccount(createAccount: CreateAccount.LedgerBle) {
+        with(createAccount) {
+            addAccount.addLedgerBle(address, deviceMacAddress, indexInLedger, customName)
+        }
+    }
+
+    private suspend fun createNoAuthAccount(createAccount: CreateAccount.NoAuth) {
+        addAccount.addNoAuth(createAccount.address, createAccount.customName)
     }
 }

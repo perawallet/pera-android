@@ -15,16 +15,19 @@ package com.algorand.android.nft.ui.receivenftasset
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel
 import com.algorand.android.modules.assets.addition.base.ui.domain.BaseAddAssetPreviewUseCase
 import com.algorand.android.utils.getOrThrow
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -45,6 +48,9 @@ class ReceiveCollectibleViewModel @Inject constructor(
         accountAddress = accountAddress
     ).cachedIn(viewModelScope)
 
+    private val _receiverAccountDetailsFlow = MutableStateFlow<Pair<String, AccountIconDrawablePreview>?>(null)
+    val receiverAccountDetailsFlow = _receiverAccountDetailsFlow.asStateFlow()
+
     init {
         initQueryTextFlow()
     }
@@ -53,8 +59,12 @@ class ReceiveCollectibleViewModel @Inject constructor(
         receiveCollectiblePreviewUseCase.invalidateDataSource()
     }
 
-    fun getReceiverAccountDisplayTextAndIcon(publicKey: String): Pair<String, AccountIconDrawablePreview> {
-        return receiveCollectiblePreviewUseCase.getReceiverAccountDisplayTextAndIcon(publicKey)
+    fun initReceiverAccountDetails(publicKey: String) {
+        viewModelScope.launchIO {
+            _receiverAccountDetailsFlow.update {
+                receiveCollectiblePreviewUseCase.getReceiverAccountDisplayTextAndIcon(publicKey)
+            }
+        }
     }
 
     fun updateQuery(query: String) {

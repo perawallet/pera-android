@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.transaction.csv.domain.repository
 
-import com.algorand.android.models.DateRange
+import com.algorand.android.dateui.model.DateRange
 import com.algorand.android.models.Result
 import java.io.File
 import java.io.InputStream

@@ -15,6 +15,7 @@ package com.algorand.android.modules.algosdk.data.repository
 import com.algorand.algosdk.sdk.Sdk
 import com.algorand.algosdk.v2.client.Utils
 import com.algorand.algosdk.v2.client.common.AlgodClient
+import com.algorand.algosdk.v2.client.model.PendingTransactionResponse
 import com.algorand.android.modules.algosdk.data.mapper.AlgorandAddressDTOMapper
 import com.algorand.android.modules.algosdk.data.mapper.PendingTransactionResponseDTOMapper
 import com.algorand.android.modules.algosdk.data.mapper.rawtransaction.RawTransactionDTOMapper
@@ -33,15 +34,15 @@ internal class AlgorandSDKUtilsImpl @Inject constructor(
     private val pendingTransactionResponseDTOMapper: PendingTransactionResponseDTOMapper,
     private val rawTransactionDTOMapper: RawTransactionDTOMapper,
     private val algorandAddressDTOMapper: AlgorandAddressDTOMapper,
-    private val algodClient: AlgodClient?,
+//    private val algodClient: AlgodClient?,
     private val gson: Gson
 ) : AlgorandSDKUtils {
 
     @Throws(Exception::class)
     override suspend fun waitForConfirmation(txnId: String, maxRoundToWait: Int): PendingTransactionResponseDTO {
-        val pendingTransactionResponse = Utils.waitForConfirmation(algodClient, txnId, maxRoundToWait)
+//        val pendingTransactionResponse = Utils.waitForConfirmation(algodClient, txnId, maxRoundToWait)
         return pendingTransactionResponseDTOMapper.mapToPendingTransactionResponseDTO(
-            pendingTransactionResponse
+            PendingTransactionResponse()
         )
     }
 

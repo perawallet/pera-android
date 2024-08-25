@@ -14,21 +14,18 @@ package com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.model.RekeyToLedgerAccountConfirmationPreview
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.usecase.RekeyToLedgerAccountConfirmationPreviewUseCase
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
@@ -38,76 +35,76 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
 
     private val navArgs = RekeyToLedgerAccountConfirmationFragmentArgs.fromSavedStateHandle(savedStateHandle)
     val accountAddress = navArgs.accountAddress
-    val authAccountAddress = navArgs.authAccountAddress
-    private val ledgerDetail = navArgs.ledgerDetail
+    val selectedLedgerAuthAccount = navArgs.selectedLedgerAccount
 
     private var sendTransactionJob: Job? = null
 
-    private val rekeyToLedgerAccountConfirmationPreviewFlow = MutableStateFlow(getInitialPreview())
-    override val baseRekeyConfirmationFieldsFlow: StateFlow<RekeyToLedgerAccountConfirmationPreview>
+    private val rekeyToLedgerAccountConfirmationPreviewFlow =
+        MutableStateFlow<RekeyToLedgerAccountConfirmationPreview?>(null)
+    override val baseRekeyConfirmationFieldsFlow: StateFlow<RekeyToLedgerAccountConfirmationPreview?>
         get() = rekeyToLedgerAccountConfirmationPreviewFlow
 
     init {
-        updatePreviewWithCalculatedTransactionFee()
+        initPreview()
     }
-
-    fun createRekeyToLedgerAccountTransaction(): TransactionData.Rekey? {
-        return rekeyToLedgerAccountConfirmationPreviewUseCase.createRekeyToLedgerAccountTransaction(
-            accountAddress = accountAddress,
-            authAccountAddress = authAccountAddress,
-            ledgerDetail = ledgerDetail
-        )
-    }
+//
+//    fun createRekeyToLedgerAccountTransaction(): TransactionData.Rekey? {
+//        return rekeyToLedgerAccountConfirmationPreviewUseCase.createRekeyToLedgerAccountTransaction(
+//            accountAddress = accountAddress,
+//            selectedLedgerAuthAccount = selectedLedgerAuthAccount
+//        )
+//    }
 
     fun onTransactionSigningFailed() {
         rekeyToLedgerAccountConfirmationPreviewFlow.update { preview ->
-            rekeyToLedgerAccountConfirmationPreviewUseCase.updatePreviewWithClearLoadingState(preview)
+            preview?.copy(isLoading = false)
         }
     }
 
     fun onTransactionSigningStarted() {
         rekeyToLedgerAccountConfirmationPreviewFlow.update { preview ->
-            rekeyToLedgerAccountConfirmationPreviewUseCase.updatePreviewWithLoadingState(preview)
+            preview?.copy(isLoading = true)
         }
     }
 
-    fun sendRekeyTransaction(transactionDetail: SignedTransactionDetail.RekeyOperation) {
-        if (sendTransactionJob?.isActive == true) {
-            return
-        }
-        sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
-            rekeyToLedgerAccountConfirmationPreviewUseCase.sendRekeyToLedgerAccountTransaction(
-                transactionDetail = transactionDetail,
-                preview = rekeyToLedgerAccountConfirmationPreviewFlow.value
-            ).collectLatest { preview ->
-                rekeyToLedgerAccountConfirmationPreviewFlow.emit(preview)
-            }
-        }
-    }
+//    fun sendRekeyTransaction(transactionDetail: SignedTransactionDetail.RekeyOperation) {
+//        if (sendTransactionJob?.isActive == true) {
+//            return
+//        }
+//        sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
+//            rekeyToLedgerAccountConfirmationPreviewUseCase.sendRekeyToLedgerAccountTransaction(
+//                transactionDetail = transactionDetail,
+//                preview = rekeyToLedgerAccountConfirmationPreviewFlow.value
+//            ).collectLatest { preview ->
+//                rekeyToLedgerAccountConfirmationPreviewFlow.emit(preview)
+//            }
+//        }
+//    }
 
     fun onConfirmRekeyClick() {
         rekeyToLedgerAccountConfirmationPreviewFlow.update { preview ->
-            rekeyToLedgerAccountConfirmationPreviewUseCase.updatePreviewWithRekeyConfirmationClick(
-                accountAddress = accountAddress,
-                preview = preview
-            )
+            val isRekeyed = preview?.accountInformation?.isRekeyed() ?: return@update preview
+            if (isRekeyed) {
+                preview.copy(navToRekeyedAccountConfirmationBottomSheetEvent = Event(Unit))
+            } else {
+                preview.copy(onSendTransactionEvent = Event(Unit))
+            }
         }
     }
 
-    private fun getInitialPreview(): RekeyToLedgerAccountConfirmationPreview {
-        return rekeyToLedgerAccountConfirmationPreviewUseCase.getInitialRekeyToStandardAccountConfirmationPreview(
-            accountAddress = accountAddress,
-            authAccountAddress = authAccountAddress
-        )
-    }
-
-    private fun updatePreviewWithCalculatedTransactionFee() {
+    private fun initPreview() {
         viewModelScope.launchIO {
-            rekeyToLedgerAccountConfirmationPreviewUseCase.updatePreviewWithTransactionFee(
-                preview = rekeyToLedgerAccountConfirmationPreviewFlow.value
-            ).collectLatest { preview ->
-                rekeyToLedgerAccountConfirmationPreviewFlow.emit(preview)
+            with(rekeyToLedgerAccountConfirmationPreviewUseCase) {
+                val initialPreview = getInitialRekeyToStandardAccountConfirmationPreview(
+                    accountAddress = accountAddress,
+                    authAccountAddress = selectedLedgerAuthAccount.address
+                )
+                rekeyToLedgerAccountConfirmationPreviewFlow.value = initialPreview
+                updatePreviewWithTransactionFee(initialPreview).collectLatest { preview ->
+                    rekeyToLedgerAccountConfirmationPreviewFlow.value = preview
+                }
             }
+
         }
     }
 }

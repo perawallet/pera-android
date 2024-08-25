@@ -20,17 +20,17 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.customviews.NumberedListItemView
 import com.algorand.android.databinding.LayoutRekeyIntroductionContentBinding
-import com.algorand.android.models.AnnotatedString
+import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.designsystem.getXmlStyledString
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.baseintroduction.ui.BaseIntroductionFragment
 import com.algorand.android.modules.baseintroduction.ui.BaseIntroductionViewModel
 import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
-import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 @AndroidEntryPoint
 class RekeyToStandardAccountIntroductionFragment : BaseIntroductionFragment() {
@@ -72,7 +72,7 @@ class RekeyToStandardAccountIntroductionFragment : BaseIntroductionFragment() {
         super.initObservers()
         with(rekeyToStandardAccountIntroductionViewModel.introductionPreviewFlow) {
             collectLatestOnLifecycle(
-                flow = map { it.expectationListItems },
+                flow = mapNotNull { it?.expectationListItems },
                 collection = expectationListItemsCollector
             )
         }

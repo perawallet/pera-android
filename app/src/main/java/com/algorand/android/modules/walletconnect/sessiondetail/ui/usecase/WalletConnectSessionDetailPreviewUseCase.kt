@@ -16,8 +16,9 @@ import android.content.Context
 import android.text.style.ForegroundColorSpan
 import androidx.core.content.ContextCompat
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.accountcore.ui.usecase.GetAccountIconResourceByAccountType
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.usecase.GetFormattedWCSessionExtendedExpirationDateUseCase
 import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.usecase.GetFormattedWCSessionMaxExpirationDateUseCase
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
@@ -27,7 +28,6 @@ import com.algorand.android.modules.walletconnect.sessiondetail.ui.mapper.Wallet
 import com.algorand.android.modules.walletconnect.sessiondetail.ui.model.WalletConnectSessionDetailConnectedAccountItem
 import com.algorand.android.modules.walletconnect.sessiondetail.ui.model.WalletConnectSessionDetailPreview
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.HOUR_MINUTE_AM_PM_PATTERN
@@ -45,12 +45,12 @@ class WalletConnectSessionDetailPreviewUseCase @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val walletConnectManager: WalletConnectManager,
     private val sessionDetailPreviewMapper: WalletConnectSessionDetailPreviewMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
     @Named(WalletConnectSessionDetailPreviewStateProvider.INJECTION_NAME)
     private val previewStateProvider: WalletConnectSessionDetailPreviewStateProvider,
     private val getFormattedWCSessionMaxExpirationDateUseCase: GetFormattedWCSessionMaxExpirationDateUseCase,
-    private val getFormattedWCSessionExtendedExpirationDateUseCase: GetFormattedWCSessionExtendedExpirationDateUseCase
+    private val getFormattedWCSessionExtendedExpirationDateUseCase: GetFormattedWCSessionExtendedExpirationDateUseCase,
+    private val getAccountIconResourceByAccountType: GetAccountIconResourceByAccountType,
+    private val getAccountDisplayName: GetAccountDisplayName
 ) {
 
     fun getInitialPreview(sessionIdentifier: WalletConnectSessionIdentifier) = flow<WalletConnectSessionDetailPreview> {
@@ -241,7 +241,7 @@ class WalletConnectSessionDetailPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun getConnectedAccountsList(
+    private suspend fun getConnectedAccountsList(
         sessionDetail: WalletConnect.SessionDetail
     ): List<WalletConnectSessionDetailConnectedAccountItem> {
         return sessionDetail.namespaces[WalletConnectBlockchain.ALGORAND]?.accounts?.groupBy {
@@ -249,14 +249,14 @@ class WalletConnectSessionDetailPreviewUseCase @Inject constructor(
         }?.map { (address, connectedAccount) ->
             val accountIconDrawable = AccountIconDrawable.create(
                 context = appContext,
-                accountIconResource = accountDetailUseCase.getAccountIcon(address),
+                accountIconResource = getAccountIconResourceByAccountType(address),
                 size = appContext.resources.getDimensionPixelSize(R.dimen.account_icon_size_large)
             )
-            val accountDisplayName = accountDisplayNameUseCase(address)
-            val accountSecondaryText = accountDisplayName.getAccountSecondaryDisplayName(appContext.resources)
+            val accountDisplayName = getAccountDisplayName(address)
+            val accountSecondaryText = accountDisplayName.secondaryDisplayName
             sessionDetailPreviewMapper.mapToConnectedAccountItem(
                 accountAddress = address,
-                accountPrimaryText = accountDisplayName.getAccountPrimaryDisplayName(),
+                accountPrimaryText = accountDisplayName.primaryDisplayName,
                 accountSecondaryText = accountSecondaryText.orEmpty(),
                 accountIconDrawable = accountIconDrawable,
                 isAccountSecondaryTextVisible = !accountSecondaryText.isNullOrBlank(),

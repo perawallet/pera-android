@@ -19,10 +19,10 @@ import androidx.navigation.fragment.navArgs
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentContactInfoBinding
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.extensions.setContactIconDrawable
 import com.algorand.android.utils.hideKeyboard
@@ -69,12 +69,12 @@ class ContactInfoFragment : DaggerBaseFragment(R.layout.fragment_contact_info) {
         with(args.contact) {
             with(binding) {
                 contactImageView.setContactIconDrawable(
-                    uri = imageUriAsString?.toUri(),
+                    uri = imageUri?.toUri(),
                     iconSize = R.dimen.account_icon_size_xlarge
                 )
                 nameTextView.text = name
-                addressBelowNameTextView.text = publicKey.toShortenedAddress()
-                addressTextView.text = publicKey
+                addressBelowNameTextView.text = address.toShortenedAddress()
+                addressTextView.text = address
             }
         }
         binding.showQrButton.setOnClickListener { onShowQrClick() }
@@ -86,22 +86,21 @@ class ContactInfoFragment : DaggerBaseFragment(R.layout.fragment_contact_info) {
         nav(
             ContactInfoFragmentDirections.actionGlobalShowQrNavigation(
                 title = args.contact.name,
-                qrText = args.contact.publicKey
+                qrText = args.contact.address
             )
         )
     }
 
     private fun onShareClick() {
-        context?.openTextShareBottomMenuChooser(args.contact.publicKey, getString(R.string.share_via))
+        context?.openTextShareBottomMenuChooser(args.contact.address, getString(R.string.share_via))
     }
 
     private fun onEditClick() {
         nav(
             ContactInfoFragmentDirections.actionContactInfoFragmentToEditContactFragment(
                 contactName = args.contact.name,
-                contactPublicKey = args.contact.publicKey,
-                contactDatabaseId = args.contact.contactDatabaseId,
-                contactProfileImageUri = args.contact.imageUriAsString
+                contactPublicKey = args.contact.address,
+                contactProfileImageUri = args.contact.imageUri
             )
         )
     }

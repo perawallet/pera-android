@@ -13,11 +13,10 @@
 package com.algorand.android.modules.transaction.detail.domain.model
 
 import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
 import com.algorand.android.R
 
-enum class TransactionSign(@ColorRes val color: Int, @StringRes val signTextRes: Int?) {
-    POSITIVE(color = R.color.positive, signTextRes = R.string.plus),
-    NEGATIVE(color = R.color.negative, signTextRes = R.string.minus),
-    NATURAL(color = R.color.text_main, signTextRes = null)
+enum class TransactionSign(@ColorRes val color: Int, val signText: String?) {
+    POSITIVE(color = R.color.positive, signText = "+"),
+    NEGATIVE(color = R.color.negative, signText = "-"),
+    NATURAL(color = R.color.text_main, signText = null)
 }

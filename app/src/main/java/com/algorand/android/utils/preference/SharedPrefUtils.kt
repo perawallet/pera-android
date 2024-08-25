@@ -72,13 +72,6 @@ fun SharedPreferences.setNotificationPreference(enableNotifications: Boolean) {
 
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc="NodeList">
-fun SharedPreferences.getDefaultNodeListVersion() = getInt(DEFAULT_NODE_LIST_VERSION, 0)
-
-fun SharedPreferences.setNodeListVersion(newVersion: Int) {
-    edit().putInt(DEFAULT_NODE_LIST_VERSION, newVersion).apply()
-}
-
 // </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="QRTutorialShown">

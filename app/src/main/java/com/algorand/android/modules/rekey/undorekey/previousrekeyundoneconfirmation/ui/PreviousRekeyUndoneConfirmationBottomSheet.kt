@@ -12,7 +12,9 @@
 
 package com.algorand.android.modules.rekey.undorekey.previousrekeyundoneconfirmation.ui
 
+import android.os.Bundle
 import android.text.method.LinkMovementMethod
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -22,6 +24,7 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.utils.BaseDoubleButtonBottomSheet
 import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
+import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.getCustomClickableSpan
 import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.setFragmentNavigationResult
@@ -33,16 +36,26 @@ class PreviousRekeyUndoneConfirmationBottomSheet : BaseDoubleButtonBottomSheet()
 
     private val previousRekeyUndoneConfirmationViewModel by viewModels<PreviousRekeyUndoneConfirmationViewModel>()
 
+    private val previewCollector: suspend (PreviousRekeyUndoneConfirmationPreview?) -> Unit = {
+        if (it != null) initUi(it)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.collectOnLifecycle(
+            previousRekeyUndoneConfirmationViewModel.previewFlow,
+            previewCollector
+        )
+    }
+
     override fun setTitleText(textView: TextView) {
         textView.setText(R.string.your_previous_rekey_will_be_undone)
     }
 
-    override fun setDescriptionText(textView: TextView) {
-        val accountAddress = previousRekeyUndoneConfirmationViewModel.accountDisplayName
-            .getAccountPrimaryDisplayName()
-        val authAccountAddress = previousRekeyUndoneConfirmationViewModel.authAccountDisplayName
-            .getAccountPrimaryDisplayName()
-        textView.apply {
+    private fun initUi(preview: PreviousRekeyUndoneConfirmationPreview) {
+        val accountAddress = preview.accountDisplayName.primaryDisplayName
+        val authAccountAddress = preview.authAccountDisplayName.primaryDisplayName
+        getDescTextView().apply {
             val linkTextColor = ContextCompat.getColor(context, R.color.link_primary)
             val clickSpannable = getCustomClickableSpan(
                 clickableColor = linkTextColor,
@@ -60,6 +73,10 @@ class PreviousRekeyUndoneConfirmationBottomSheet : BaseDoubleButtonBottomSheet()
             movementMethod = LinkMovementMethod.getInstance()
             text = context?.getXmlStyledString(annotatedString)
         }
+    }
+
+    override fun setDescriptionText(textView: TextView) {
+        // TODO make this function optional
     }
 
     override fun setAcceptButton(materialButton: MaterialButton) {

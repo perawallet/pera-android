@@ -14,7 +14,7 @@ package com.algorand.android.modules.basesingleaccountselection.ui.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.algorand.android.models.BaseDiffUtil
+import com.algorand.android.designsystem.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.basesingleaccountselection.ui.adapter.viewholder.SingleAccountSelectionAccountItemViewHolder
 import com.algorand.android.modules.basesingleaccountselection.ui.adapter.viewholder.SingleAccountSelectionDescriptionItemViewHolder
@@ -24,7 +24,7 @@ import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAc
 import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAccountSelectionListItem.ItemType.DESCRIPTION_ITEM
 import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAccountSelectionListItem.ItemType.TITLE_ITEM
 
-class BaseSingleAccountSelectionAdapter constructor(
+class BaseSingleAccountSelectionAdapter(
     private val listener: Listener
 ) : ListAdapter<SingleAccountSelectionListItem, BaseViewHolder<SingleAccountSelectionListItem>>(BaseDiffUtil()) {
 

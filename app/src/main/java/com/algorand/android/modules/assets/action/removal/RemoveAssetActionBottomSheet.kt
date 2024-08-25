@@ -17,13 +17,10 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.customviews.toolbar.CustomToolbar
-import com.algorand.android.models.AssetActionResult
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.action.base.BaseAssetActionBottomSheet
-import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.getXmlStyledString
-import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.setFragmentNavigationResult
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,12 +57,8 @@ class RemoveAssetActionBottomSheet : BaseAssetActionBottomSheet() {
         materialButton.apply {
             setText(R.string.remove)
             setOnClickListener {
-                asset?.let { assetDescription ->
-                    val assetActionResult = AssetActionResult(
-                        asset = assetDescription,
-                        publicKey = assetActionViewModel.accountAddress
-                    )
-                    (activity as? MainActivity)?.signRemoveAssetTransaction(assetActionResult)
+                with(assetActionViewModel) {
+                    (activity as? MainActivity)?.removeAsset(accountAddress, assetId)
                     setFragmentNavigationResult(REMOVE_ASSET_ACTION_RESULT_KEY, true)
                 }
                 navBack()
@@ -82,22 +75,6 @@ class RemoveAssetActionBottomSheet : BaseAssetActionBottomSheet() {
 
     override fun setTransactionFeeTextView(textView: TextView) {
         textView.text = assetActionViewModel.getTransactionFee()
-    }
-
-    override fun setAccountNameTextView(textView: TextView) {
-        textView.apply {
-            with(assetActionViewModel.getAccountName()) {
-                text = getDisplayAddress()
-                setDrawable(
-                    start = AccountIconDrawable.create(
-                        context = context,
-                        accountIconDrawablePreview = accountIconDrawablePreview,
-                        sizeResId = R.dimen.spacing_xlarge
-                    )
-                )
-                setOnLongClickListener { onAccountAddressCopied(publicKey); true }
-            }
-        }
     }
 
     companion object {

@@ -14,26 +14,31 @@ package com.algorand.android.modules.dapp.bidali.ui.browser
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.TransactionData
+import com.algorand.android.core.component.assetdata.usecase.GetAccountOwnedAssetsData
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.dapp.bidali.BIDALI_FAILED_TRANSACTION_JAVASCRIPT
 import com.algorand.android.modules.dapp.bidali.BIDALI_SUCCESSFUL_TRANSACTION_JAVASCRIPT
-import com.algorand.android.modules.dapp.bidali.domain.model.BidaliPaymentRequestDTO
+import com.algorand.android.modules.dapp.bidali.domain.mapper.BidaliAssetMapper
+import com.algorand.android.modules.dapp.bidali.getCompiledBidaliJavascript
 import com.algorand.android.modules.dapp.bidali.ui.browser.model.BidaliBrowserPreview
 import com.algorand.android.modules.dapp.bidali.ui.browser.usecase.BidaliBrowserPreviewUseCase
-import com.algorand.android.modules.dapp.bidali.ui.browser.usecase.BidaliBrowserUseCase
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
+import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class BidaliBrowserViewModel @Inject constructor(
     private val bidaliBrowserPreviewUseCase: BidaliBrowserPreviewUseCase,
-    private val bidaliBrowserUseCase: BidaliBrowserUseCase,
+    private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData,
+    private val bidaliAssetMapper: BidaliAssetMapper,
+    private val isSelectedNodeMainnet: IsSelectedNodeMainnet,
     savedStateHandle: SavedStateHandle
 ) : BasePeraWebViewViewModel() {
 
@@ -46,6 +51,9 @@ class BidaliBrowserViewModel @Inject constructor(
     )
     val bidaliBrowserPreviewFlow: StateFlow<BidaliBrowserPreview>
         get() = _bidaliBrowserPreviewFlow
+
+    private val _bidaliJavaScriptFlow: MutableStateFlow<Event<String>?> = MutableStateFlow(null)
+    val bidaliJavaScriptFlow: StateFlow<Event<String>?> = _bidaliJavaScriptFlow.asStateFlow()
 
     fun reloadPage() {
         clearLastError()
@@ -76,8 +84,17 @@ class BidaliBrowserViewModel @Inject constructor(
         }
     }
 
-    fun generateBidaliJavascript(): String {
-        return bidaliBrowserUseCase.generateBidaliJavascript(accountAddress)
+    fun generateBidaliJavascript() {
+        viewModelScope.launch {
+            val compiledJs = getCompiledBidaliJavascript(
+                currencies = bidaliAssetMapper.mapFromOwnedAssetData(
+                    ownedAssetDataList = getAccountOwnedAssetsData(accountAddress, true),
+                    isMainnet = isSelectedNodeMainnet()
+                ),
+                isMainnet = isSelectedNodeMainnet()
+            )
+            _bidaliJavaScriptFlow.value = Event(compiledJs)
+        }
     }
 
     fun generateTransactionSuccessfulJavascript(): String {
@@ -87,20 +104,16 @@ class BidaliBrowserViewModel @Inject constructor(
     fun generateUpdatedBalancesJavascript() {
         viewModelScope.launch {
             bidaliBrowserPreviewUseCase
-                .generateUpdatedBalancesJavascript(_bidaliBrowserPreviewFlow.value, accountAddress, viewModelScope)
+                .generateUpdatedBalancesJavascript(_bidaliBrowserPreviewFlow.value, accountAddress)
                 .collectLatest {
                     _bidaliBrowserPreviewFlow
                         .emit(it)
-            }
+                }
         }
     }
 
     fun generateTransactionFailedJavascript(): String {
         return BIDALI_FAILED_TRANSACTION_JAVASCRIPT
-    }
-
-    fun getTransactionDataFromPaymentRequest(paymentRequest: BidaliPaymentRequestDTO): TransactionData.Send? {
-        return bidaliBrowserUseCase.getTransactionDataFromPaymentRequest(paymentRequest, accountAddress)
     }
 
     override fun onPageStarted() {
@@ -147,7 +160,13 @@ class BidaliBrowserViewModel @Inject constructor(
     fun onPaymentRequest(data: String) {
         viewModelScope.launch {
             _bidaliBrowserPreviewFlow
-                .emit(bidaliBrowserPreviewUseCase.onPaymentRequest(data, _bidaliBrowserPreviewFlow.value))
+                .emit(
+                    bidaliBrowserPreviewUseCase.onPaymentRequest(
+                        data,
+                        _bidaliBrowserPreviewFlow.value,
+                        accountAddress
+                    )
+                )
         }
     }
 

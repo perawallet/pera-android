@@ -15,8 +15,6 @@ package com.algorand.android.ui.splash
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import com.algorand.android.MainActivity
 import com.algorand.android.MainActivity.Companion.DEEPLINK_KEY
 import com.algorand.android.core.BaseActivity
@@ -25,17 +23,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LauncherActivity : BaseActivity() {
 
-    private val launcherViewModel: LauncherViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initObservers()
-    }
-
-    private fun initObservers() {
-        launcherViewModel.isNodeOperationFinished.observe(this, Observer {
-            handleNavigation()
-        })
+        handleNavigation()
     }
 
     private fun handleNavigation() {

@@ -10,18 +10,15 @@ import androidx.lifecycle.Observer
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
-import com.algorand.android.databinding.FragmentNotificationCenterBinding
-import com.algorand.android.models.AccountDetailTab
-import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
+import com.algorand.android.databinding.FragmentNotificationCenterBinding
+import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.notification.ui.adapter.NotificationAdapter
-import com.algorand.android.modules.notification.ui.model.NotificationCenterPreview
 import com.algorand.android.modules.notification.ui.model.NotificationListItem
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.scrollToTop
@@ -57,10 +54,6 @@ class NotificationCenterFragment : DaggerBaseFragment(R.layout.fragment_notifica
     }
 
     private val notificationAdapter = NotificationAdapter(::onNewItemAddedToTop, ::onNotificationClick)
-
-    private val notificationCenterPreviewCollector: suspend (NotificationCenterPreview?) -> Unit = {
-        if (it != null) initPreview(it)
-    }
 
     private val notificationPaginationCollector: suspend (PagingData<NotificationListItem>) -> Unit = { pagingData ->
         notificationAdapter.submitData(pagingData)
@@ -103,14 +96,6 @@ class NotificationCenterFragment : DaggerBaseFragment(R.layout.fragment_notifica
         binding.screenStateView.setOnNeutralButtonClickListener(::handleErrorButtonClick)
     }
 
-    private fun initPreview(notificationCenterPreview: NotificationCenterPreview) {
-        with(notificationCenterPreview) {
-            onNotificationClickedEvent?.consume()?.run {
-                (activity as? MainActivity)?.handleDeepLink(this)
-            }
-        }
-    }
-
     private fun setupToolbar() {
         getAppToolbar()?.setEndButton(button = IconButton(R.drawable.ic_filter, onClick = ::onFilterClick))
     }
@@ -131,12 +116,8 @@ class NotificationCenterFragment : DaggerBaseFragment(R.layout.fragment_notifica
 
     private fun initObservers() {
         viewLifecycleOwner.collectLatestOnLifecycle(
-            notificationCenterViewModel.notificationPaginationFlow,
+            notificationCenterViewModel.notificationHistoryPagingFlow,
             notificationPaginationCollector
-        )
-        viewLifecycleOwner.collectLatestOnLifecycle(
-            notificationCenterViewModel.notificationCenterPreviewFlow,
-            notificationCenterPreviewCollector
         )
         notificationCenterViewModel.isRefreshNeededLiveData().observe(viewLifecycleOwner, isRefreshNeededObserver)
     }
@@ -175,7 +156,9 @@ class NotificationCenterFragment : DaggerBaseFragment(R.layout.fragment_notifica
     }
 
     private fun onNotificationClick(notificationListItem: NotificationListItem) {
-        notificationCenterViewModel.onNotificationClickEvent(notificationListItem)
+        if (!notificationListItem.isFailed && !notificationListItem.uri.isNullOrBlank()) {
+            (activity as? MainActivity)?.handleDeepLink(notificationListItem.uri)
+        }
     }
 
     private fun onNewItemAddedToTop() {
@@ -197,58 +180,6 @@ class NotificationCenterFragment : DaggerBaseFragment(R.layout.fragment_notifica
             NotificationCenterFragmentDirections.actionNotificationCenterFragmentToNotificationFilterFragment(
                 showDoneButton = false
             )
-        )
-    }
-
-    private fun navToCollectibleDetail(publicKey: String, assetId: Long) {
-        nav(
-            NotificationCenterFragmentDirections.actionNotificationCenterFragmentToCollectibleDetailFragment(
-                publicKey = publicKey,
-                collectibleAssetId = assetId
-            )
-        )
-    }
-
-    private fun navToAssetDetail(publicKey: String, assetId: Long) {
-        nav(HomeNavigationDirections.actionGlobalAssetProfileNavigation(accountAddress = publicKey, assetId = assetId))
-    }
-
-    private fun navToAsaProfile(accountAddress: String, assetId: Long) {
-        nav(
-            NotificationCenterFragmentDirections.actionNotificationCenterFragmentToAsaProfileNavigation(
-                accountAddress = accountAddress,
-                assetId = assetId
-            )
-        )
-    }
-
-    private fun navToCollectibleProfile(accountAddress: String, collectibleId: Long) {
-        nav(
-            NotificationCenterFragmentDirections.actionNotificationCenterFragmentToCollectibleProfileNavigation(
-                accountAddress = accountAddress,
-                collectibleId = collectibleId
-            )
-        )
-    }
-
-    private fun onHistoryNotAvailable(publicKey: String) {
-        navToAccountHistory(publicKey)
-        showUnavailableTransactionHistoryError()
-    }
-
-    private fun navToAccountHistory(publicKey: String) {
-        nav(
-            NotificationCenterFragmentDirections.actionNotificationCenterFragmentToAccountDetailFragment(
-                publicKey = publicKey,
-                accountDetailTab = AccountDetailTab.HISTORY
-            )
-        )
-    }
-
-    private fun showUnavailableTransactionHistoryError() {
-        showGlobalError(
-            errorMessage = getString(R.string.the_history_for_this_spesific),
-            title = getString(R.string.asset_history_not_available)
         )
     }
 }

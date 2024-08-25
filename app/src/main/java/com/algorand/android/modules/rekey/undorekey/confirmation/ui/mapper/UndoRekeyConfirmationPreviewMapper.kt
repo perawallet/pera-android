@@ -12,11 +12,12 @@
 
 package com.algorand.android.modules.rekey.undorekey.confirmation.ui.mapper
 
-import com.algorand.android.models.AnnotatedString
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.model.UndoRekeyConfirmationPreview
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.Event
 import javax.inject.Inject
 
 class UndoRekeyConfirmationPreviewMapper @Inject constructor() {
@@ -37,7 +38,8 @@ class UndoRekeyConfirmationPreviewMapper @Inject constructor() {
         navToRekeyResultInfoFragmentEvent: Event<Unit>? = null,
         showGlobalErrorEvent: Event<Pair<Int, String>>? = null,
         navToRekeyedAccountConfirmationBottomSheetEvent: Event<Unit>? = null,
-        onSendTransactionEvent: Event<Unit>? = null
+        onSendTransactionEvent: Event<Unit>? = null,
+        accountInformation: AccountInformation?
     ): UndoRekeyConfirmationPreview {
         return UndoRekeyConfirmationPreview(
             isLoading = isLoading,
@@ -54,7 +56,8 @@ class UndoRekeyConfirmationPreviewMapper @Inject constructor() {
             navToRekeyResultInfoFragmentEvent = navToRekeyResultInfoFragmentEvent,
             showGlobalErrorEvent = showGlobalErrorEvent,
             navToRekeyedAccountConfirmationBottomSheetEvent = navToRekeyedAccountConfirmationBottomSheetEvent,
-            onSendTransactionEvent = onSendTransactionEvent
+            onSendTransactionEvent = onSendTransactionEvent,
+            accountInformation = accountInformation
         )
     }
 }

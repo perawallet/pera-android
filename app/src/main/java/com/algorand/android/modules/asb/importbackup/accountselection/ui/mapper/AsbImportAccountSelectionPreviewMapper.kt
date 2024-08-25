@@ -13,9 +13,8 @@
 package com.algorand.android.modules.asb.importbackup.accountselection.ui.mapper
 
 import com.algorand.android.models.ScreenState
-import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult
-import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbImportAccountSelectionPreview
-import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
+import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.*
+import com.algorand.android.modules.asb.importbackup.enterkey.ui.model.RestoredAccount
 import com.algorand.android.modules.basemultipleaccountselection.ui.model.MultipleAccountSelectionListItem
 import com.algorand.android.utils.Event
 import javax.inject.Inject
@@ -28,7 +27,7 @@ class AsbImportAccountSelectionPreviewMapper @Inject constructor() {
         actionButtonTextResId: Int,
         checkedAccountCount: Int,
         isLoadingVisible: Boolean,
-        unsupportedAccounts: List<BackupProtocolElement>?,
+        unsupportedAccounts: List<RestoredAccount>?,
         emptyScreenState: ScreenState? = null,
         navToRestoreCompleteEvent: Event<AsbAccountImportResult>? = null
     ): AsbImportAccountSelectionPreview {

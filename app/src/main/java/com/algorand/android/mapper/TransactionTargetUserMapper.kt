@@ -13,10 +13,9 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountIconResource
+import com.algorand.android.accountcore.ui.model.AccountIconResource
+import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.models.TransactionTargetUser
-import com.algorand.android.models.User
 import javax.inject.Inject
 
 class TransactionTargetUserMapper @Inject constructor() {
@@ -24,15 +23,14 @@ class TransactionTargetUserMapper @Inject constructor() {
     fun mapTo(
         publicKey: String,
         displayName: String,
-        contact: User? = null,
-        account: Account? = null
+        contact: Contact? = null,
+        accountIconResource: AccountIconResource? = null
     ): TransactionTargetUser {
         return TransactionTargetUser(
             publicKey = publicKey,
             displayName = displayName,
             contact = contact,
-            accountName = account?.name.takeIf { it.isNullOrEmpty() },
-            accountIconResource = AccountIconResource.getAccountIconResourceByAccountType(account?.type)
+            accountIconResource = accountIconResource
         )
     }
 }

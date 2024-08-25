@@ -26,10 +26,7 @@ import com.algorand.android.customviews.passphraseinput.model.PassphraseInputCon
 import com.algorand.android.customviews.passphraseinput.model.PassphraseInputGroupConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentRecoverWithPassphraseBinding
-import com.algorand.android.models.AccountCreation
-import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.models.*
 import com.algorand.android.modules.onboarding.recoverypassphrase.options.ui.RecoverOptionsBottomSheet
 import com.algorand.android.modules.onboarding.recoverypassphrase.options.ui.RecoverOptionsBottomSheet.Companion.RESULT_KEY
 import com.algorand.android.utils.Event
@@ -142,12 +139,12 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         }
     }
 
-    private val navToNameRegistrationScreenEventCollector: suspend (Event<AccountCreation>?) -> Unit = {
+    private val navToNameRegistrationScreenEventCollector: suspend (Event<CreateAccount>?) -> Unit = {
         it?.consume()?.run { navigateToSuccess(this) }
     }
 
     private val navToImportRekeyedAccountEventCollector: suspend (
-        Event<Pair<AccountCreation, List<String>>>?
+        Event<Pair<CreateAccount, List<String>>>?
     ) -> Unit = { event ->
         event?.consume()?.let { (accountCreation, rekeyedAccountAddresses) ->
             navToImportRekeyedAccount(accountCreation, rekeyedAccountAddresses)
@@ -263,7 +260,7 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         recoverWithPassphraseViewModel.onClipboardTextPasted(pastedPassphrase)
     }
 
-    private fun navigateToSuccess(accountCreation: AccountCreation) {
+    private fun navigateToSuccess(accountCreation: CreateAccount) {
         nav(
             RecoverWithPassphraseFragmentDirections
                 .actionRecoverWithPassphraseFragmentToRecoverAccountNameRegistrationFragment(accountCreation)
@@ -324,7 +321,7 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         loadingDialogFragment = null
     }
 
-    private fun navToImportRekeyedAccount(accountCreation: AccountCreation, rekeyedAccountAddresses: List<String>) {
+    private fun navToImportRekeyedAccount(accountCreation: CreateAccount, rekeyedAccountAddresses: List<String>) {
         nav(
             RecoverWithPassphraseFragmentDirections
                 .actionRecoverWithPassphraseFragmentToRekeyedAccountSelectionFragment(

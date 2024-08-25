@@ -13,8 +13,8 @@
 package com.algorand.android.ui.wctransactionrequest
 
 import androidx.lifecycle.SavedStateHandle
+import com.algorand.android.assetdetailui.detail.asaprofile.usecase.GetAsaProfilePreview
 import com.algorand.android.modules.assets.profile.asaprofile.base.BaseAsaProfileViewModel
-import com.algorand.android.modules.assets.profile.asaprofile.ui.usecase.AsaProfilePreviewUseCase
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,9 +22,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WalletConnectBaseAsaProfileViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
-    asaProfilePreviewUseCase: AsaProfilePreviewUseCase
-) : BaseAsaProfileViewModel(asaProfilePreviewUseCase) {
+    getAsaProfilePreview: GetAsaProfilePreview,
+    private val savedStateHandle: SavedStateHandle
+) : BaseAsaProfileViewModel(getAsaProfilePreview) {
 
     override val accountAddress: String? get() = savedStateHandle.getOrElse<String?>(ACCOUNT_ADDRESS_KEY, null)
     override val assetId: Long = savedStateHandle.getOrThrow<Long>(ASSET_ID_KEY)

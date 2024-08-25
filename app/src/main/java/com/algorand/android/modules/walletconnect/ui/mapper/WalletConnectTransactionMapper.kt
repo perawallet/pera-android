@@ -72,7 +72,7 @@ class WalletConnectTransactionMapper @Inject constructor(
         }
     }
 
-    fun createWalletConnectTransaction(
+    suspend fun createWalletConnectTransaction(
         peerMeta: WalletConnect.PeerMeta,
         rawTxn: WCAlgoTransactionRequest
     ): BaseWalletConnectTransaction? {

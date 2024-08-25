@@ -12,18 +12,18 @@
 
 package com.algorand.android.modules.transaction.csv.domain.usecase
 
-import com.algorand.android.models.DateRange
+import com.algorand.android.dateui.model.DateRange
 import com.algorand.android.modules.transaction.csv.domain.repository.CsvRepository
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.recordException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Named
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 
 class CreateCsvUseCase @Inject constructor(
     @Named(CsvRepository.INJECTION_NAME)
@@ -84,6 +84,7 @@ class CreateCsvUseCase @Inject constructor(
             }
         )
     }
+
     companion object {
         private const val BYTEARRAY_SIZE = 4 * 1024
         private const val CSV_FILES_FOLDER = "csvFiles"

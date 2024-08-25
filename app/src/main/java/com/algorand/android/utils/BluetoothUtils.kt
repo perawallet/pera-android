@@ -23,7 +23,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.location.LocationManagerCompat
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
-import com.algorand.android.core.TransactionBaseFragment
 import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.BaseLedgerSearchFragment
 import com.algorand.android.ui.wctransactionrequest.WalletConnectTransactionRequestFragment
 
@@ -48,12 +47,12 @@ fun BaseFragment.isBluetoothEnabled(resultLauncher: ActivityResultLauncher<Inten
     }
     if (context?.isLocationEnabled() != true) {
         when (this) {
-            is TransactionBaseFragment -> {
-                permissionDeniedOnTransactionData(R.string.please_ensure, R.string.bluetooth_location_services)
-            }
-            is WalletConnectTransactionRequestFragment -> {
-                permissionDeniedOnTransaction(R.string.please_ensure, R.string.bluetooth_location_services)
-            }
+//            is TransactionBaseFragment -> {
+//                permissionDeniedOnTransactionData(R.string.please_ensure, R.string.bluetooth_location_services)
+//            }
+//            is WalletConnectTransactionRequestFragment -> {
+//                permissionDeniedOnTransaction(R.string.please_ensure, R.string.bluetooth_location_services)
+//            }
             is BaseLedgerSearchFragment -> {
                 showGlobalError(getString(R.string.please_ensure), getString(R.string.bluetooth_location_services))
                 navBack()

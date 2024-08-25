@@ -16,9 +16,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
-import com.algorand.android.models.BaseAccountSelectionListItem
-import com.algorand.android.models.BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem
-import com.algorand.android.models.BaseDiffUtil
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.designsystem.BaseDiffUtil
 import com.algorand.android.ui.accountselection.viewholder.AccountSelectionAccountErrorItemViewHolder
 import com.algorand.android.ui.accountselection.viewholder.AccountSelectionAccountItemViewHolder
 import com.algorand.android.ui.accountselection.viewholder.AccountSelectionContactItemViewHolder
@@ -37,7 +36,7 @@ class AccountSelectionAdapter(
             is BaseAccountSelectionListItem.BaseAccountItem.ContactItem -> R.layout.item_contact_simple
             is BaseAccountSelectionListItem.BaseAccountItem.AccountItem -> R.layout.item_account_simple
             is BaseAccountSelectionListItem.BaseAccountItem.AccountErrorItem -> R.layout.item_account_error_simple
-            is NftDomainAccountItem -> R.layout.item_nft_domain_account
+            is BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem -> R.layout.item_nft_domain_account
             else -> throw Exception("$logTag list item is unknown")
         }
     }
@@ -59,7 +58,7 @@ class AccountSelectionAdapter(
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                     (getItem(bindingAdapterPosition) as BaseAccountSelectionListItem.PasteItem).run {
-                        listener.onPasteItemClick(publicKey)
+                        listener.onPasteItemClick(address)
                     }
                 }
             }
@@ -75,7 +74,7 @@ class AccountSelectionAdapter(
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                     (getItem(bindingAdapterPosition) as BaseAccountSelectionListItem.BaseAccountItem.ContactItem).run {
-                        listener.onContactItemClick(publicKey)
+                        listener.onContactItemClick(address)
                     }
                 }
             }
@@ -87,7 +86,7 @@ class AccountSelectionAdapter(
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                     (getItem(bindingAdapterPosition) as BaseAccountSelectionListItem.BaseAccountItem.AccountItem).run {
-                        listener.onAccountItemClick(publicKey)
+                        listener.onAccountItemClick(address)
                     }
                 }
             }
@@ -104,9 +103,9 @@ class AccountSelectionAdapter(
         return AccountSelectionNftDomainAccountItemViewHolder.create(parent).apply {
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
-                    (getItem(bindingAdapterPosition) as NftDomainAccountItem).run {
+                    (getItem(bindingAdapterPosition) as BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem).run {
                         listener.onNftDomainItemClick(
-                            accountAddress = publicKey,
+                            accountAddress = address,
                             nftDomain = displayName,
                             logoUrl = serviceLogoUrl
                         )
@@ -134,7 +133,7 @@ class AccountSelectionAdapter(
                 holder.bind(getItem(position) as BaseAccountSelectionListItem.BaseAccountItem.AccountErrorItem)
             }
             is AccountSelectionNftDomainAccountItemViewHolder -> {
-                holder.bind(getItem(position) as NftDomainAccountItem)
+                holder.bind(getItem(position) as BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem)
             }
         }
     }

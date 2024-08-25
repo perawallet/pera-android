@@ -13,21 +13,21 @@
 
 package com.algorand.android.models.builder
 
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
+import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.models.BasePaymentTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation
 import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestTransactionInfo
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.ALGO_FULL_NAME
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.MIN_FEE
 import javax.inject.Inject
 
 class BasePaymentTransactionDetailUiBuilder @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
+    private val verificationTierConfigurationMapper: VerificationTierConfigurationMapper
 ) : WalletConnectTransactionDetailBuilder<BasePaymentTransaction> {
 
     override fun buildTransactionRequestTransactionInfo(
@@ -41,12 +41,11 @@ class BasePaymentTransactionDetailUiBuilder @Inject constructor(
                 toDisplayedAddress = getToAddressAsDisplayAddress(receiverAddress.decodedAddress.orEmpty()),
                 accountBalance = assetInformation?.amount,
                 assetInformation = TransactionRequestAssetInformation(
-                    assetId = ALGO_ID,
+                    assetId = ALGO_ASSET_ID,
                     shortName = ALGO_SHORT_NAME,
                     fullName = ALGO_FULL_NAME,
                     decimals = assetDecimal,
-                    verificationTierConfiguration =
-                    verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
+                    verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier)
                 ),
                 rekeyToAccountAddress = getFromAddressAsDisplayAddress(
                     getRekeyToAccountAddress()?.decodedAddress.orEmpty()

@@ -1,6 +1,6 @@
 package com.algorand.android.modules.notification.domain.usecase
 
-import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
+import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.models.Result
 import com.algorand.android.modules.notification.data.mapper.LastSeenNotificationDTOMapper
 import com.algorand.android.modules.notification.domain.repository.NotificationStatusRepository
@@ -11,12 +11,12 @@ import javax.inject.Named
 class NotificationStatusUseCase @Inject constructor(
     @Named(NotificationStatusRepository.REPOSITORY_INJECTION_NAME)
     private val notificationStatusRepository: NotificationStatusRepository,
-    private val deviceIdUseCase: DeviceIdUseCase,
+    private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
     private val lastSeenNotificationDTOMapper: LastSeenNotificationDTOMapper
 ) {
 
     suspend fun hasNewNotification(): Boolean {
-        return deviceIdUseCase.getSelectedNodeDeviceId()?.let { deviceId ->
+        return getSelectedNodeDeviceId()?.let { deviceId ->
             when (val response = notificationStatusRepository.getNotificationStatus(deviceId = deviceId)) {
                 is Result.Success -> response.data.hasNewNotification
                 is Result.Error -> false
@@ -26,7 +26,7 @@ class NotificationStatusUseCase @Inject constructor(
 
     suspend fun updateLastSeenNotificationId(notificationListItem: NotificationListItem) {
         if (isNotificationIdAlreadyExist(notificationId = notificationListItem.id)) return
-        val deviceId = deviceIdUseCase.getSelectedNodeDeviceId() ?: return
+        val deviceId = getSelectedNodeDeviceId() ?: return
         notificationStatusRepository.putLastSeenNotificationId(
             deviceId = deviceId,
             lastSeenNotificationDTO = lastSeenNotificationDTOMapper.mapToLastSeenNotificationDTO(

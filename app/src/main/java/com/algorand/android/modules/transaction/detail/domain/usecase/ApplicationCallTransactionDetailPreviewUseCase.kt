@@ -13,6 +13,7 @@
 package com.algorand.android.modules.transaction.detail.domain.usecase
 
 import com.algorand.android.R
+import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.modules.transaction.common.domain.model.OnCompletionDTO
 import com.algorand.android.modules.transaction.common.domain.model.OnCompletionDTO.CLEAR_STATE
 import com.algorand.android.modules.transaction.common.domain.model.OnCompletionDTO.CLOSE_OUT
@@ -27,14 +28,11 @@ import com.algorand.android.modules.transaction.detail.ui.mapper.ApplicationCall
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailPreviewMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
+import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.tooltip.domain.usecase.TransactionDetailTooltipDisplayPreferenceUseCase
-import com.algorand.android.usecase.GetActiveNodeUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.toShortenedAddress
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
 @SuppressWarnings("LongParameterList")
@@ -44,18 +42,16 @@ class ApplicationCallTransactionDetailPreviewUseCase @Inject constructor(
     private val getTransactionDetailUseCase: GetTransactionDetailUseCase,
     private val putInnerTransactionToStackCacheUseCase: PutInnerTransactionToStackCacheUseCase,
     private val applicationCallAssetInformationMapper: ApplicationCallAssetInformationMapper,
-    assetDetailUseCase: SimpleAssetDetailUseCase,
-    collectibleUseCase: SimpleCollectibleUseCase,
-    getActiveNodeUseCase: GetActiveNodeUseCase,
+    getAsset: GetAsset,
     transactionDetailTooltipDisplayPreferenceUseCase: TransactionDetailTooltipDisplayPreferenceUseCase,
-    clearInnerTransactionStackCacheUseCase: ClearInnerTransactionStackCacheUseCase
+    clearInnerTransactionStackCacheUseCase: ClearInnerTransactionStackCacheUseCase,
+    getActiveNodeNetworkSlug: GetActiveNodeNetworkSlug
 ) : BaseTransactionDetailPreviewUseCase(
-    assetDetailUseCase = assetDetailUseCase,
-    collectibleUseCase = collectibleUseCase,
     transactionDetailItemMapper = transactionDetailItemMapper,
-    getActiveNodeUseCase = getActiveNodeUseCase,
     transactionDetailTooltipDisplayPreferenceUseCase = transactionDetailTooltipDisplayPreferenceUseCase,
-    clearInnerTransactionStackCacheUseCase = clearInnerTransactionStackCacheUseCase
+    clearInnerTransactionStackCacheUseCase = clearInnerTransactionStackCacheUseCase,
+    getActiveNodeNetworkSlug = getActiveNodeNetworkSlug,
+    getAsset = getAsset
 ) {
 
     suspend fun putInnerTransactionToStackCache(transactions: List<BaseTransactionDetail>) {
@@ -74,17 +70,13 @@ class ApplicationCallTransactionDetailPreviewUseCase @Inject constructor(
                         isInnerTransaction = isInnerTransaction
                     )
                     emit(transactionDetailPreview)
-                },
-                onFailed = {
-                    // TODO: Currently, we don't have a design for this case. We should handle error cases after
-                    //  preparing the design for this case.
                 }
             )
         }
     }
 
     @SuppressWarnings("LongMethod")
-    fun createApplicationCallTransactionPreview(
+    suspend fun createApplicationCallTransactionPreview(
         applicationCallTransactionDetail: BaseTransactionDetail.ApplicationCallTransaction,
         transactionId: String,
         isInnerTransaction: Boolean
@@ -111,7 +103,7 @@ class ApplicationCallTransactionDetailPreviewUseCase @Inject constructor(
                 )
 
                 val applicationCallAssetInformationList = foreignAssetIds?.mapNotNull { assetId ->
-                    getAssetDetail(assetId)?.run {
+                    getAsset(assetId)?.run {
                         applicationCallAssetInformationMapper.mapToApplicationCallAssetInformation(
                             assetFullName = AssetName.create(fullName),
                             assetShortName = AssetName.create(shortName),

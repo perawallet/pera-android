@@ -34,28 +34,6 @@ data class Account(
     var isBackedUp: Boolean
 ) : Parcelable {
 
-    fun isRegistrationCompleted(): Boolean {
-        return !(address.isBlank() || name.isBlank())
-    }
-
-    fun getSecretKey(): ByteArray? {
-        return when (detail) {
-            is Detail.Standard -> detail.secretKey
-            is Detail.Rekeyed -> detail.secretKey
-            is Detail.RekeyedAuth -> detail.secretKey
-            else -> null // TODO may throw exception later.
-        }
-    }
-
-    fun getAuthTypeAndDetail(): Detail? {
-        return when (val accountDetail = detail) {
-            is Detail.RekeyedAuth -> accountDetail.authDetail
-            is Detail.Standard -> accountDetail
-            is Detail.Ledger -> accountDetail
-            else -> null
-        }
-    }
-
     // TODO Combine Detail class with Account.Type class
     sealed class Detail : Parcelable {
         @Parcelize

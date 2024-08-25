@@ -13,49 +13,49 @@
 package com.algorand.android
 
 import android.content.SharedPreferences
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
+import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyLocalAccount
+import com.algorand.android.algosdk.component.transaction.model.Transaction
+import com.algorand.android.appcache.InitializeAppCache
+import com.algorand.android.appcache.usecase.ClearAppSessionCache
+import com.algorand.android.appcache.usecase.GetAppCacheStatusFlow
+import com.algorand.android.appcache.usecase.RefreshAccountCacheManager
+import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.database.NodeDao
-import com.algorand.android.deviceregistration.domain.usecase.DeviceIdMigrationUseCase
-import com.algorand.android.models.AnnotatedString
+import com.algorand.android.deeplink.DeepLinkHandler
+import com.algorand.android.deeplink.model.BaseDeepLink
+import com.algorand.android.deeplink.usecase.CreateNotificationDeepLink
+import com.algorand.android.deviceregistration.domain.usecase.MigrateDeviceIdIfNeed
 import com.algorand.android.models.AssetOperationResult
-import com.algorand.android.models.Node
-import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
+import com.algorand.android.models.AssetTransaction
+import com.algorand.android.models.NotificationDeepLinkPayload
+import com.algorand.android.models.NotificationMetadata
 import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeningCountUseCase
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
-import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
-import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.modules.tracking.main.MainActivityEventTracker
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
-import com.algorand.android.network.AlgodInterceptor
-import com.algorand.android.network.IndexerInterceptor
-import com.algorand.android.network.MobileHeaderInterceptor
-import com.algorand.android.repository.NodeRepository
-import com.algorand.android.usecase.AccountCacheStatusUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.SendSignedTransactionUseCase
-import com.algorand.android.utils.AccountCacheManager
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.DataResource
+import com.algorand.android.node.domain.Node
+import com.algorand.android.node.domain.usecase.GetActiveNodeAsFlow
+import com.algorand.android.swap.common.model.SwapNavigationDestination.AccountSelection
+import com.algorand.android.swap.common.model.SwapNavigationDestination.Introduction
+import com.algorand.android.swap.common.model.SwapNavigationDestination.Swap
+import com.algorand.android.swap.common.usecase.GetSwapNavigationDestination
+import com.algorand.android.transaction.domain.model.SignedTransaction
+import com.algorand.android.transactionui.addasset.model.AddAssetTransactionPayload
+import com.algorand.android.transactionui.core.model.SignTransactionUiResult
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
-import com.algorand.android.utils.coremanager.AccountDetailCacheManager
-import com.algorand.android.utils.exception.AccountAlreadyOptedIntoAssetException
-import com.algorand.android.utils.exception.AssetAlreadyPendingForRemovalException
-import com.algorand.android.utils.exceptions.TransactionConfirmationAwaitException
-import com.algorand.android.utils.exceptions.TransactionIdNullException
-import com.algorand.android.utils.findAllNodes
-import com.algorand.android.utils.sendErrorLog
+import com.algorand.android.utils.launchIO
+import com.algorand.android.utils.preference.getRegisterSkip
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -63,46 +63,48 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val sharedPref: SharedPreferences,
-    private val nodeDao: NodeDao,
-    private val indexerInterceptor: IndexerInterceptor,
-    private val mobileHeaderInterceptor: MobileHeaderInterceptor,
-    private val algodInterceptor: AlgodInterceptor,
-    private val accountCacheManager: AccountCacheManager,
-    private val deviceIdMigrationUseCase: DeviceIdMigrationUseCase,
+    private val migrateDeviceIdIfNeed: MigrateDeviceIdIfNeed,
     private val mainActivityEventTracker: MainActivityEventTracker,
-    private val deepLinkHandler: DeeplinkHandler,
+    private val deepLinkHandler: DeepLinkHandler,
     private val increaseAppOpeningCountUseCase: IncreaseAppOpeningCountUseCase,
     private val tutorialUseCase: TutorialUseCase,
-    private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
-    private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val accountDetailCacheManager: AccountDetailCacheManager,
-    private val nodeRepository: NodeRepository,
-    accountCacheStatusUseCase: AccountCacheStatusUseCase,
-    private val autoLockManagerUseCase: AutoLockManagerUseCase
+    private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
+    private val getActiveNodeAsFlow: GetActiveNodeAsFlow,
+    private val autoLockManagerUseCase: AutoLockManagerUseCase,
+    private val getSwapNavigationDestination: GetSwapNavigationDestination,
+    private val initializeAppCache: InitializeAppCache,
+    private val refreshAccountCacheManager: RefreshAccountCacheManager,
+    private val getAppCacheStatusFlow: GetAppCacheStatusFlow,
+    private val createNotificationDeepLink: CreateNotificationDeepLink,
+    private val clearAppSessionCache: ClearAppSessionCache,
+    private val transactionProcessor: MainActivityTransactionProcessor
 ) : BaseViewModel() {
 
     // TODO: Replace this with Flow whenever have time
     val assetOperationResultLiveData = MutableLiveData<Event<Resource<AssetOperationResult>>>()
 
-    // TODO I'll change after checking usage of flow in activity.
-    val accountBalanceSyncStatus = accountCacheStatusUseCase.getAccountCacheStatusFlow().asLiveData()
-
     private val _swapNavigationResultFlow = MutableStateFlow<Event<NavDirections>?>(null)
     val swapNavigationResultFlow: StateFlow<Event<NavDirections>?>
         get() = _swapNavigationResultFlow
 
+    private val _startDestinationFlow = MutableStateFlow<Event<Int>?>(null)
+    val startDestinationFlow: StateFlow<Event<Int>?> get() = _startDestinationFlow.asStateFlow()
+
     private val _activeNodeFlow = MutableStateFlow<Node?>(null)
     val activeNodeFlow: StateFlow<Node?> get() = _activeNodeFlow
-    private var sendTransactionJob: Job? = null
-    var refreshBalanceJob: Job? = null
 
-    private var latestFailedAddAssetTransaction: TransactionData.AddAsset? = null
+    val signTransactionUiResultFlow: StateFlow<Event<SignTransactionUiResult>?>
+        get() = transactionProcessor.signTransactionUiResultFlow
+
+    private val _notificationDeepLinkFlow = MutableStateFlow<Event<NotificationDeepLinkPayload>?>(null)
+    val notificationDeepLinkFlow: StateFlow<Event<NotificationDeepLinkPayload>?>
+        get() = _notificationDeepLinkFlow.asStateFlow()
+
+    val appCacheStatusFlow = getAppCacheStatusFlow()
 
     init {
         initActiveNodeFlow()
-        initializeAccountCacheManager()
-        initializeNodeInterceptor()
+        migrateDeviceIdIfNecessary()
         initializeTutorial()
     }
 
@@ -110,115 +112,91 @@ class MainViewModel @Inject constructor(
         return autoLockManagerUseCase.shouldAppLocked()
     }
 
-    private fun initializeNodeInterceptor() {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (indexerInterceptor.currentActiveNode == null) {
-                val lastActivatedNode = findAllNodes(sharedPref, nodeDao).find { it.isActive }
-                lastActivatedNode?.activate(indexerInterceptor, mobileHeaderInterceptor, algodInterceptor)
+    fun cacheTransaction(payload: AddAssetTransactionPayload) {
+        transactionProcessor.cacheTransaction(payload)
+    }
+
+    fun cacheTransaction(address: String, assetId: Long, waitForConfirmation: Boolean) {
+        transactionProcessor.cacheTransaction(address, assetId, waitForConfirmation)
+    }
+
+    fun processTransaction(lifecycle: Lifecycle, transaction: Transaction) {
+        transactionProcessor.processTransaction(lifecycle, transaction, viewModelScope)
+    }
+
+    fun stopSignTransactionResources() {
+        transactionProcessor.stopSignTransactionResources()
+    }
+
+    fun initializeAppCoreCache(lifecycle: Lifecycle) {
+        viewModelScope.launch {
+            initializeAppCache(lifecycle)
+        }
+    }
+
+    fun initializeStartDestinationFlow() {
+        viewModelScope.launchIO {
+            val startDestinationFragmentId = if (isThereAnyLocalAccount() || sharedPref.getRegisterSkip()) {
+                R.id.homeNavigation
+            } else {
+                R.id.loginNavigation
             }
+            _startDestinationFlow.emit(Event(startDestinationFragmentId))
+        }
+    }
+
+    private fun migrateDeviceIdIfNecessary() {
+        viewModelScope.launch(Dispatchers.IO) {
             migrateDeviceIdIfNeed()
         }
     }
 
-    private suspend fun migrateDeviceIdIfNeed() {
-        deviceIdMigrationUseCase.migrateDeviceIdIfNeed()
+    fun onNewNodeActivated() {
+//        viewModelScope.launch { clearAppSessionCache() }
+//        resetBlockPolling()
     }
 
-    private fun initializeAccountCacheManager() {
-        viewModelScope.launch(Dispatchers.IO) {
-            accountCacheManager.initializeAccountCacheMap()
+    fun handleNewNotification(newNotificationData: NotificationMetadata) {
+        viewModelScope.launchIO {
+            val notificationDeepLink = createNotificationDeepLink(newNotificationData.url.orEmpty())
+            val payload = NotificationDeepLinkPayload(
+                metadata = newNotificationData,
+                deepLink = notificationDeepLink
+            )
+            _notificationDeepLinkFlow.emit(Event(payload))
         }
     }
 
-    fun onNewNodeActivated() {
-        resetBlockPolling()
+    fun getAssetTransaction(
+        deepLink: BaseDeepLink.AssetTransferDeepLink,
+        receiverAddress: String,
+        receiverName: String
+    ): AssetTransaction {
+        return AssetTransaction(
+            assetId = deepLink.assetId,
+            note = deepLink.note, // normal note
+            xnote = deepLink.xnote, // locked note
+            amount = deepLink.amount,
+            receiverUser = Contact(address = receiverAddress, name = receiverName, imageUri = null)
+        )
     }
 
     /**
      * If we are going to re-enable block polling manager again, we should enable this job here.
      */
     private fun resetBlockPolling() {
-        refreshBalanceJob?.cancel()
-        accountDetailCacheManager.startJob()
-        // blockPollingManager.startJob()
-    }
-
-    fun sendAssetOperationSignedTransaction(transaction: SignedTransactionDetail.AssetOperation) {
-        if (sendTransactionJob?.isActive == true) {
-            return
+        viewModelScope.launchIO {
+            refreshAccountCacheManager()
         }
-
-        sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
-            sendSignedTransactionUseCase.sendSignedTransaction(transaction).collectLatest { dataResource ->
-                when (dataResource) {
-                    is DataResource.Success -> {
-                        latestFailedAddAssetTransaction = null
-                        val assetActionResult = getAssetOperationResult(transaction)
-                        assetOperationResultLiveData.postValue(Event(Resource.Success(assetActionResult)))
-                    }
-
-                    is DataResource.Error.Api -> {
-                        assetOperationResultLiveData.postValue(Event(Resource.Error.Api(dataResource.exception)))
-                    }
-
-                    is DataResource.Error.Local -> {
-                        // TODO add specific strings for exceptions
-                        val errorResourceId = when (dataResource.exception) {
-                            is AccountAlreadyOptedIntoAssetException -> {
-                                R.string.you_are_already
-                            }
-
-                            is TransactionConfirmationAwaitException -> {
-                                R.string.transaction_confirmation_timed_out
-                            }
-
-                            is TransactionIdNullException -> {
-                                R.string.an_error_occured
-                            }
-
-                            is AssetAlreadyPendingForRemovalException -> {
-                                R.string.this_asset_is
-                            }
-
-                            else -> {
-                                R.string.an_error_occured
-                            }
-                        }
-                        val assetName = transaction.assetInformation.fullName.toString()
-                        assetOperationResultLiveData.postValue(
-                            Event(
-                                Resource.Error.GlobalWarning(
-                                    titleRes = R.string.error,
-                                    annotatedString = AnnotatedString(
-                                        stringResId = errorResourceId,
-                                        replacementList = listOf("asset_name" to assetName)
-                                    )
-                                )
-                            )
-                        )
-                    }
-
-                    else -> {
-                        sendErrorLog("Unhandled else case in MainViewModel.sendSignedTransaction")
-                    }
-                }
-            }
-        }
-    }
-
-    fun getLatestAddAssetTransaction(): TransactionData.AddAsset? {
-        return latestFailedAddAssetTransaction
-    }
-
-    fun setLatestAddAssetTransaction(transactionData: TransactionData.AddAsset) {
-        latestFailedAddAssetTransaction = transactionData
     }
 
     fun handleDeepLink(uri: String) {
-        deepLinkHandler.handleDeepLink(uri)
+        viewModelScope.launchIO {
+            deepLinkHandler.handleDeepLink(uri)
+        }
     }
 
-    fun setDeepLinkHandlerListener(listener: DeeplinkHandler.Listener) {
+    fun setDeepLinkHandlerListener(listener: DeepLinkHandler.Listener) {
         deepLinkHandler.setListener(listener)
     }
 
@@ -243,21 +221,25 @@ class MainViewModel @Inject constructor(
     fun onSwapActionButtonClick() {
         viewModelScope.launch {
             mainActivityEventTracker.logQuickActionSwapButtonClickEvent()
-            var swapNavDirection: NavDirections? = null
-            swapNavigationDestinationHelper.getSwapNavigationDestination(
-                onNavToIntroduction = {
-                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapIntroductionNavigation()
+            val navDestination = when (val destination = getSwapNavigationDestination(null)) {
+                AccountSelection -> HomeNavigationDirections.actionGlobalSwapAccountSelectionNavigation()
+                Introduction -> HomeNavigationDirections.actionGlobalSwapIntroductionNavigation()
+                is Swap -> HomeNavigationDirections.actionGlobalSwapNavigation(destination.address)
+            }
+            _swapNavigationResultFlow.emit(Event(navDestination))
+        }
+    }
+
+    fun sendSignedTransaction(signedTransaction: SignedTransaction) {
+        viewModelScope.launch {
+            transactionProcessor.sendSignedTransaction(signedTransaction)?.use(
+                onSuccess = {
+                    assetOperationResultLiveData.postValue(Event(Resource.Success(it)))
                 },
-                onNavToAccountSelection = {
-                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapAccountSelectionNavigation()
-                },
-                onNavToSwap = { accountAddress ->
-                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapNavigation(accountAddress)
+                onFailed = { exception, _ ->
+                    assetOperationResultLiveData.postValue(Event(Resource.Error.Api(exception)))
                 }
             )
-            swapNavDirection?.let { direction ->
-                _swapNavigationResultFlow.emit(Event(direction))
-            }
         }
     }
 
@@ -267,30 +249,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun getAssetOperationResult(transaction: SignedTransactionDetail.AssetOperation): AssetOperationResult {
-        val assetName = transaction.assetInformation.fullName ?: transaction.assetInformation.shortName
-        return when (transaction) {
-            is SignedTransactionDetail.AssetOperation.AssetAddition -> {
-                AssetOperationResult.AssetAdditionOperationResult(
-                    resultTitleResId = R.string.asset_successfully_opted_in,
-                    assetName = AssetName.create(assetName),
-                    assetId = transaction.assetInformation.assetId
-                )
-            }
-
-            is SignedTransactionDetail.AssetOperation.AssetRemoval -> {
-                AssetOperationResult.AssetRemovalOperationResult(
-                    resultTitleResId = R.string.asset_successfully_opted_out_from_your,
-                    assetName = AssetName.create(assetName),
-                    assetId = transaction.assetInformation.assetId
-                )
-            }
-        }
-    }
-
     private fun initActiveNodeFlow() {
         viewModelScope.launch(Dispatchers.IO) {
-            nodeRepository.getActiveNodeAsFlow().collectLatest {
+            getActiveNodeAsFlow().collectLatest {
                 _activeNodeFlow.value = it
             }
         }

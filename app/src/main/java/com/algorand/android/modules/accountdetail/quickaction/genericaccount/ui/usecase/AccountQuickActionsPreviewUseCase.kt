@@ -12,22 +12,24 @@
 
 package com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.usecase
 
-import androidx.navigation.NavDirections
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.AccountQuickActionsBottomSheetDirections
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.mapper.AccountQuickActionsPreviewMapper
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.model.AccountQuickActionsPreview
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
-import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
+import com.algorand.android.swap.common.model.SwapNavigationDestination.AccountSelection
+import com.algorand.android.swap.common.model.SwapNavigationDestination.Introduction
+import com.algorand.android.swap.common.model.SwapNavigationDestination.Swap
+import com.algorand.android.swap.common.usecase.GetSwapNavigationDestination
 import com.algorand.android.utils.Event
 import javax.inject.Inject
 
 class AccountQuickActionsPreviewUseCase @Inject constructor(
     private val accountQuickActionsPreviewMapper: AccountQuickActionsPreviewMapper,
-    private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase
+    private val getSwapNavigationDestination: GetSwapNavigationDestination,
+    private val getAccountDetail: GetAccountDetail
 ) {
 
     fun getInitialPreview(): AccountQuickActionsPreview {
@@ -38,21 +40,16 @@ class AccountQuickActionsPreviewUseCase @Inject constructor(
         preview: AccountQuickActionsPreview,
         accountAddress: String
     ): AccountQuickActionsPreview {
-        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-        return if (hasAccountAuthority) {
-            var swapNavDirection: NavDirections? = null
-            swapNavigationDestinationHelper.getSwapNavigationDestination(
-                accountAddress = accountAddress,
-                onNavToSwap = { address ->
-                    swapNavDirection = AccountQuickActionsBottomSheetDirections
-                        .actionAccountQuickActionsBottomSheetToSwapNavigation(address)
-                },
-                onNavToIntroduction = {
-                    swapNavDirection = AccountQuickActionsBottomSheetDirections
-                        .actionAccountQuickActionsBottomSheetToSwapIntroductionNavigation()
-                }
-            )
-            val safeDirection = swapNavDirection ?: return preview
+        val accountDetail = getAccountDetail(accountAddress)
+        return if (accountDetail.canSignTransaction()) {
+            val direction = when (getSwapNavigationDestination(accountAddress)) {
+                Introduction -> AccountQuickActionsBottomSheetDirections
+                    .actionAccountQuickActionsBottomSheetToSwapIntroductionNavigation()
+                is Swap -> AccountQuickActionsBottomSheetDirections
+                    .actionAccountQuickActionsBottomSheetToSwapNavigation(accountAddress)
+                AccountSelection -> null
+            }
+            val safeDirection = direction ?: return preview
             preview.copy(onNavigationEvent = Event(safeDirection))
         } else {
             preview.copy(showGlobalErrorEvent = Event(R.string.this_action_is_not_available))
@@ -61,10 +58,10 @@ class AccountQuickActionsPreviewUseCase @Inject constructor(
 
     fun updatePreviewWithAssetAdditionNavigation(
         preview: AccountQuickActionsPreview,
+        canAccountSignTransaction: Boolean,
         accountAddress: String
     ): AccountQuickActionsPreview {
-        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-        return if (hasAccountAuthority) {
+        return if (canAccountSignTransaction) {
             preview.copy(
                 onNavigationEvent = Event(
                     AccountQuickActionsBottomSheetDirections
@@ -78,10 +75,10 @@ class AccountQuickActionsPreviewUseCase @Inject constructor(
 
     fun updatePreviewWithOfframpNavigation(
         preview: AccountQuickActionsPreview,
+        canAccountSignTransaction: Boolean,
         accountAddress: String
     ): AccountQuickActionsPreview {
-        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-        return if (hasAccountAuthority) {
+        return if (canAccountSignTransaction) {
             preview.copy(
                 onNavigationEvent = Event(
                     AccountQuickActionsBottomSheetDirections
@@ -95,10 +92,10 @@ class AccountQuickActionsPreviewUseCase @Inject constructor(
 
     fun updatePreviewWithSendNavigation(
         preview: AccountQuickActionsPreview,
+        canAccountSignTransaction: Boolean,
         accountAddress: String
     ): AccountQuickActionsPreview {
-        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-        return if (hasAccountAuthority) {
+        return if (canAccountSignTransaction) {
             val assetTransaction = AssetTransaction(senderAddress = accountAddress)
             preview.copy(
                 onNavigationEvent = Event(HomeNavigationDirections.actionGlobalSendAlgoNavigation(assetTransaction))

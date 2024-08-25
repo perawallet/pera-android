@@ -51,10 +51,6 @@ class WalletConnectV2ClientWalletDelegate @Inject constructor(
         walletDelegateListener?.onSessionDelete(sessionDelete)
     }
 
-    override fun onSessionExtend(session: Sign.Model.Session) {
-        // TODO: Implement this method.
-    }
-
     override fun onSessionProposal(
         sessionProposal: Sign.Model.SessionProposal,
         verifyContext: Sign.Model.VerifyContext

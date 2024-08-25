@@ -13,36 +13,46 @@
 package com.algorand.android.modules.baseledgeraccountselection.accountselection.ui
 
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountSelectionListItem
-import com.algorand.android.usecase.LedgerAccountSelectionUseCase
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem.AccountItem
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccount.LedgerAccount
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccount.RekeyedAccount
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccounts
 
-abstract class BaseLedgerAccountSelectionViewModel constructor(
-    private val ledgerAccountSelectionUseCase: LedgerAccountSelectionUseCase
-) : BaseViewModel() {
+abstract class BaseLedgerAccountSelectionViewModel : BaseViewModel() {
 
-    abstract fun onNewAccountSelected(accountItem: AccountSelectionListItem.AccountItem)
+    abstract fun onNewAccountSelected(accountItem: AccountItem)
 
     abstract val accountSelectionList: List<AccountSelectionListItem>
 
-    private val accountSelectionAccountList: List<AccountSelectionListItem.AccountItem>
-        get() = accountSelectionList.filterIsInstance<AccountSelectionListItem.AccountItem>()
+    private val accountSelectionAccountList: List<AccountItem>
+        get() = accountSelectionList.filterIsInstance<AccountItem>()
 
-    val selectedAccounts: List<Account>
-        get() = accountSelectionAccountList.filter { it.isSelected }.map { it.account }
+    fun getSelectedAccounts(): SelectedLedgerAccounts? {
+        val rekeyedAccounts = accountSelectionAccountList.mapNotNull { accountItem ->
+            (accountItem.selectedLedgerAccount as? RekeyedAccount).takeIf { accountItem.isSelected }
+        }
 
-    val allAuthAccounts: List<Account>
-        get() = accountSelectionAccountList.filter { it.account.type == Account.Type.LEDGER }.map { it.account }
+        val ledgerAccounts = accountSelectionAccountList.mapNotNull { accountItem ->
+            (accountItem.selectedLedgerAccount as? LedgerAccount).takeIf { accountItem.isSelected }
+        }
+        if (rekeyedAccounts.isEmpty() && ledgerAccounts.isEmpty()) return null
+        return SelectedLedgerAccounts(rekeyedAccounts, ledgerAccounts)
+    }
 
     fun getAuthAccountOf(
-        accountSelectionListItem: AccountSelectionListItem.AccountItem
-    ): AccountSelectionListItem.AccountItem? {
-        return ledgerAccountSelectionUseCase.getAuthAccountOf(accountSelectionListItem, accountSelectionAccountList)
+        accountSelectionListItem: AccountItem
+    ): AccountItem? {
+        return accountSelectionAccountList.firstOrNull {
+            it.selectedLedgerAccount is LedgerAccount && it.address == accountSelectionListItem.address
+        }
     }
 
     fun getRekeyedAccountOf(
-        accountSelectionListItem: AccountSelectionListItem.AccountItem
-    ): Array<AccountSelectionListItem.AccountItem>? {
-        return ledgerAccountSelectionUseCase.getRekeyedAccountOf(accountSelectionListItem, accountSelectionAccountList)
+        accountSelectionListItem: AccountItem
+    ): Array<AccountItem> {
+        return accountSelectionAccountList.filter {
+            (it.selectedLedgerAccount as? RekeyedAccount)?.authDetail?.address == accountSelectionListItem.address
+        }.toTypedArray()
     }
 }

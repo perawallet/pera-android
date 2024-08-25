@@ -12,14 +12,18 @@
 
 package com.algorand.android.modules.swap.transactionstatus.ui
 
-import android.content.res.Resources
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
-import com.algorand.android.modules.swap.transactionstatus.ui.model.SwapTransactionStatusPreview
-import com.algorand.android.modules.swap.transactionstatus.ui.model.SwapTransactionStatusType
-import com.algorand.android.modules.swap.transactionstatus.ui.usecase.SwapTransactionStatusPreviewUseCase
+import com.algorand.android.foundation.Event
+import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
+import com.algorand.android.swap.domain.model.SwapQuote
+import com.algorand.android.swapui.txnstatus.model.SwapTransactionStatusPreview
+import com.algorand.android.swapui.txnstatus.model.SwapTransactionStatusType
+import com.algorand.android.swapui.txnstatus.model.SwapTransactionStatusType.COMPLETED
+import com.algorand.android.swapui.txnstatus.model.SwapTransactionStatusType.FAILED
+import com.algorand.android.swapui.txnstatus.model.SwapTransactionStatusType.SENDING
+import com.algorand.android.swapui.txnstatus.usecase.GetSwapTransactionStatusPreviewFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,68 +33,54 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SwapTransactionStatusViewModel @Inject constructor(
-    private val swapTransactionStatusPreviewUseCase: SwapTransactionStatusPreviewUseCase,
+    private val getSwapTransactionStatusPreviewFlow: GetSwapTransactionStatusPreviewFlow,
+    private val getActiveNodeNetworkSlug: GetActiveNodeNetworkSlug,
     savedStateHandle: SavedStateHandle
-) : BaseViewModel() {
+) : ViewModel() {
 
     private val args = SwapTransactionStatusFragmentArgs.fromSavedStateHandle(savedStateHandle)
     val swapQuote: SwapQuote
-        get() = args.swapQuote
+        get() = args.swapTransactionStatusNavArgs.swapQuote
 
     private val _swapTransactionStatusPreviewFlow = MutableStateFlow<SwapTransactionStatusPreview?>(null)
     val swapTransactionStatusPreviewFlow: StateFlow<SwapTransactionStatusPreview?>
         get() = _swapTransactionStatusPreviewFlow
 
-    fun getNetworkSlug(): String? {
-        return swapTransactionStatusPreviewUseCase.getNetworkSlug()
-    }
+    fun getNetworkSlug(): String = getActiveNodeNetworkSlug()
 
     fun onPrimaryButtonClicked(swapTransactionStatusType: SwapTransactionStatusType) {
         viewModelScope.launch {
             when (swapTransactionStatusType) {
-                SwapTransactionStatusType.FAILED -> onTryAgainClick()
-                SwapTransactionStatusType.COMPLETED -> onSwapDoneClick()
-                SwapTransactionStatusType.SENDING -> Unit
+                FAILED -> onTryAgainClick()
+                COMPLETED -> onSwapDoneClick()
+                SENDING -> Unit
             }
         }
     }
 
-    fun initSwapTransactionStatusPreviewFlow(resources: Resources) {
-        if (_swapTransactionStatusPreviewFlow.value == null)
-            updateTransactionStatusPreviewFlow(resources)
-    }
-
-    private fun updateTransactionStatusPreviewFlow(resources: Resources) {
-        viewModelScope.launch {
-            swapTransactionStatusPreviewUseCase.getSwapTransactionStatusPreviewFlow(
-                resources = resources,
-                swapQuote = args.swapQuote,
-                signedTransactions = args.swapQuoteTransaction
-            ).collectLatest { preview ->
-                _swapTransactionStatusPreviewFlow.emit(preview)
+    fun initSwapTransactionStatusPreviewFlow() {
+        if (_swapTransactionStatusPreviewFlow.value == null) {
+            viewModelScope.launch {
+                getSwapTransactionStatusPreviewFlow(args.swapTransactionStatusNavArgs).collectLatest { preview ->
+                    _swapTransactionStatusPreviewFlow.emit(preview)
+                }
             }
         }
     }
 
-    fun getOptInTransactionsFees(): Long {
-        return swapTransactionStatusPreviewUseCase.getOptInTransactionFees(args.swapQuoteTransaction)
-    }
+    fun getOptInTransactionsFees(): Long = args.swapTransactionStatusNavArgs.optInTransactionsFees
 
-    fun getAlgorandTransactionFees(): Long {
-        return swapTransactionStatusPreviewUseCase.getAlgorandTransactionFees(args.swapQuoteTransaction)
-    }
+    fun getAlgorandTransactionFees(): Long = args.swapTransactionStatusNavArgs.algorandTransactionsFees
 
     private fun onSwapDoneClick() {
         _swapTransactionStatusPreviewFlow.value?.let { preview ->
-            _swapTransactionStatusPreviewFlow.value = swapTransactionStatusPreviewUseCase
-                .updatePreviewWithNavigateBack(preview)
+            _swapTransactionStatusPreviewFlow.value = preview.copy(navigateBackEvent = Event(Unit))
         }
     }
 
     private fun onTryAgainClick() {
         _swapTransactionStatusPreviewFlow.value?.let { preview ->
-            _swapTransactionStatusPreviewFlow.value = swapTransactionStatusPreviewUseCase
-                .updatePreviewForTryAgain(preview)
+            _swapTransactionStatusPreviewFlow.value = preview.copy(navigateToAssetSwapFragmentEvent = Event(Unit))
         }
     }
 }

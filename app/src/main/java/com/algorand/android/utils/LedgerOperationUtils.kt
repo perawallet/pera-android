@@ -12,7 +12,6 @@
 
 package com.algorand.android.utils
 
-import com.algorand.android.ledger.LedgerBleConnectionManager
 import okhttp3.internal.and
 
 private const val CHUNK_SIZE = 0xFF
@@ -37,12 +36,4 @@ fun ByteArray.toHexString(): String {
         hexStringBuilder.append(String.format("%02X", byte))
     }
     return hexStringBuilder.toString()
-}
-
-fun getAccountIndexAsByteArray(accountIndex: Int): ByteArray {
-    return mutableListOf<Byte>().apply {
-        for (i in LedgerBleConnectionManager.ACCOUNT_INDEX_DATA_SIZE - 1 downTo 0) {
-            add(accountIndex.shr(i * Byte.Companion.SIZE_BITS).toByte())
-        }
-    }.toByteArray()
 }

@@ -14,10 +14,11 @@ package com.algorand.android.modules.collectibles.detail.base.ui.viewpager
 
 import android.view.View
 import androidx.core.view.isVisible
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.assetdetailui.detail.nftprofile.model.BaseCollectibleMediaItem
 import com.algorand.android.databinding.ItemNftMediaBinding
+import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
-import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.assetdrawable.CollectibleNameDrawable
 
 abstract class BaseCollectibleMediaViewHolder(
@@ -28,7 +29,7 @@ abstract class BaseCollectibleMediaViewHolder(
     private var nftMediaDrawableListener: NFTMediaDrawableListener? = null
 
     override fun bind(item: BaseCollectibleMediaItem) {
-        loadNFTImage(item.baseAssetDrawableProvider, item.shouldDecreaseOpacity)
+        loadNFTImage(item.baseAssetDrawableProvider, item.assetName, item.shouldDecreaseOpacity)
         initUi(item)
     }
 
@@ -46,14 +47,18 @@ abstract class BaseCollectibleMediaViewHolder(
         }
     }
 
-    private fun loadNFTImage(baseAssetDrawableProvider: BaseAssetDrawableProvider, shouldDecreaseOpacity: Boolean) {
+    private fun loadNFTImage(
+        baseAssetDrawableProvider: BaseAssetDrawableProvider,
+        assetName: AssetName,
+        shouldDecreaseOpacity: Boolean
+    ) {
         with(binding.nftMediaImageView) {
             setOpacity(shouldDecreaseOpacity)
             baseAssetDrawableProvider.provideAssetDrawable(
                 imageView = getImageView(),
                 onPreparePlaceHolder = { context, measuredWidth ->
                     CollectibleNameDrawable(
-                        collectibleName = baseAssetDrawableProvider.assetName.getName(resources),
+                        collectibleName = assetName.assetName,
                         width = measuredWidth
                     ).toDrawable(context)
                 },

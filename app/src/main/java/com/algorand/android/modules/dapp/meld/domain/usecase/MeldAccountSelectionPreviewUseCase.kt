@@ -12,16 +12,16 @@
 
 package com.algorand.android.modules.dapp.meld.domain.usecase
 
-import com.algorand.android.models.BaseAccountSelectionListItem
-import com.algorand.android.usecase.AccountSelectionListUseCase
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import javax.inject.Inject
 
 class MeldAccountSelectionPreviewUseCase @Inject constructor(
-    private val accountSelectionListUseCase: AccountSelectionListUseCase
+    private val getAccountSelectionAccountsWhichCanSignTransaction: GetAccountSelectionAccountsWhichCanSignTransaction
 ) {
 
     suspend fun getMeldAccountSelectionPreview(): List<BaseAccountSelectionListItem> {
-        return accountSelectionListUseCase.createAccountSelectionListAccountItemsWhichCanSignTransaction(
+        return getAccountSelectionAccountsWhichCanSignTransaction(
             showHoldings = true,
             showFailedAccounts = false
         )

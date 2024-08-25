@@ -14,31 +14,38 @@ package com.algorand.android.modules.walletconnect.client.v2.ui.launchback.conne
 
 import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.usecase.GetFormattedWCSessionMaxExpirationDateUseCase
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.launchback.connection.ui.model.WCConnectionLaunchBackDescriptionAnnotatedStringProvider
 
-class WCConnectionLaunchBackDescriptionAnnotatedStringProviderV2Impl :
-    WCConnectionLaunchBackDescriptionAnnotatedStringProvider {
+class WCConnectionLaunchBackDescriptionAnnotatedStringProviderV2Impl(
+    private val getFormattedWCSessionMaxExpirationDateUseCase: GetFormattedWCSessionMaxExpirationDateUseCase
+) : WCConnectionLaunchBackDescriptionAnnotatedStringProvider {
 
     override suspend fun provideAnnotatedString(
         sessionDetail: WalletConnect.SessionDetail,
         launchBackBrowserItemCount: Int
     ): AnnotatedString {
+        val formattedMaxExtendableExpiryDate = getFormattedWCSessionMaxExpirationDateUseCase(
+            sessionDetail.sessionIdentifier
+        )
         val peerMetaName = sessionDetail.peerMeta.name
         return when (launchBackBrowserItemCount) {
             0, 1 -> {
                 AnnotatedString(
-                    stringResId = R.string.please_return_to_complete_your_operation,
+                    stringResId = R.string.its_validity_will_be_automatically,
                     replacementList = listOf(
-                        "peer_name" to peerMetaName
+                        "session_expiry_date" to formattedMaxExtendableExpiryDate,
+                        "peer_name" to peerMetaName,
                     )
                 )
             }
             else -> {
                 AnnotatedString(
-                    stringResId = R.string.please_select_your_browser_to_return,
+                    stringResId = R.string.its_validity_will_be_automatically_extended,
                     replacementList = listOf(
-                        "peer_name" to peerMetaName
+                        "session_expiry_date" to formattedMaxExtendableExpiryDate,
+                        "peer_name" to peerMetaName,
                     )
                 )
             }

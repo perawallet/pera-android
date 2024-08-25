@@ -30,22 +30,15 @@ import com.algorand.android.core.BaseActivity
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.database.ContactDao
 import com.algorand.android.databinding.ActivityMainBinding
-import com.algorand.android.models.Node
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.network.IndexerInterceptor
+import com.algorand.android.node.domain.Node
 import com.algorand.android.notification.NotificationPermissionManager
 import com.algorand.android.notification.PeraNotificationManager
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.utils.TESTNET_NETWORK_SLUG
-import com.algorand.android.utils.coremanager.AccountDetailCacheManager
-import com.algorand.android.utils.coremanager.AssetCacheManager
 import com.algorand.android.utils.coremanager.LocalAccountsNameServiceManager
-import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.navigateSafe
-import com.algorand.android.utils.preference.getRegisterSkip
-import com.algorand.android.utils.setupWithNavController
 import com.algorand.android.utils.showDarkStatusBarIcons
 import com.algorand.android.utils.showLightStatusBarIcons
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -70,26 +63,16 @@ abstract class CoreMainActivity : BaseActivity() {
     lateinit var sharedPref: SharedPreferences
 
     @Inject
-    lateinit var parityManager: ParityManager
-
-    @Inject
-    lateinit var accountDetailCacheManager: AccountDetailCacheManager
-
-    @Inject
-    lateinit var assetCacheManager: AssetCacheManager
-
-    @Inject
     lateinit var localAccountsNameServiceManager: LocalAccountsNameServiceManager
 
     @Inject
     lateinit var notificationPermissionManager: NotificationPermissionManager
 
-    @Inject
-    lateinit var accountDetailUseCase: AccountDetailUseCase
-
     lateinit var navController: NavController
 
     protected val binding by viewBinding(ActivityMainBinding::inflate)
+
+    abstract fun setStartNavigation()
 
     var isBottomBarNavigationVisible by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
@@ -121,7 +104,7 @@ abstract class CoreMainActivity : BaseActivity() {
         setContentView(binding.root)
         navController = (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
             .navController
-        startNavigation()
+        setStartNavigation()
         if (savedInstanceState != null) {
             isBottomBarNavigationVisible = savedInstanceState.getBoolean(IS_BOTTOM_BAR_VISIBLE_KEY)
         }
@@ -130,32 +113,12 @@ abstract class CoreMainActivity : BaseActivity() {
 
     private fun initializeCoreManagers() {
         with(lifecycle) {
-            addObserver(parityManager)
-            addObserver(accountDetailCacheManager)
-            addObserver(assetCacheManager)
             addObserver(localAccountsNameServiceManager)
             addObserver(notificationPermissionManager)
         }
     }
 
-    private fun startNavigation() {
-        with(navController) {
-            graph = navInflater.inflate(R.navigation.main_navigation).apply {
-                setStartDestination(getStartDestinationFragmentId())
-            }
-            binding.bottomNavigationView.setupWithNavController(this, ::onMenuItemClicked)
-        }
-    }
-
     abstract fun onMenuItemClicked(item: MenuItem)
-
-    private fun getStartDestinationFragmentId(): Int {
-        return if (accountManager.isThereAnyRegisteredAccount() || sharedPref.getRegisterSkip()) {
-            R.id.homeNavigation
-        } else {
-            R.id.loginNavigation
-        }
-    }
 
     private fun handleStatusBarChanges(statusBarConfiguration: StatusBarConfiguration) {
         val intendedStatusBarColor =
@@ -187,7 +150,7 @@ abstract class CoreMainActivity : BaseActivity() {
     }
 
     fun checkIfConnectedToTestNet(activeNode: Node?) {
-        isConnectedToTestNet = activeNode?.networkSlug == TESTNET_NETWORK_SLUG
+        isConnectedToTestNet = activeNode == Node.Testnet
     }
 
     fun navBack() {
@@ -228,7 +191,7 @@ abstract class CoreMainActivity : BaseActivity() {
 
     private fun handleBottomBarNavigationForChosenNetwork() {
         binding.bottomNavigationView.menu.forEach { menuItem ->
-            if (menuItem.itemId == R.id.discoverHomeNavigation) {
+            if (menuItem.itemId == R.id.discoverNavigation) {
                 menuItem.isEnabled = isConnectedToTestNet.not()
             }
         }

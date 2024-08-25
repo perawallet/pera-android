@@ -12,22 +12,22 @@
 
 package com.algorand.android.ui.contacts
 
-import javax.inject.Inject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.contacts.component.domain.usecase.GetUsersWithNameFiltered
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.database.ContactDao
-import com.algorand.android.models.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
-    private val contractsDao: ContactDao
+    private val getUsersWithNameFiltered: GetUsersWithNameFiltered
 ) : BaseViewModel() {
-    val contactsListLiveData = MutableLiveData<List<User>>()
+    val contactsListLiveData = MutableLiveData<List<Contact>>()
 
     init {
         updateContactsListLiveDataWithSearchQuery("")
@@ -35,7 +35,7 @@ class ContactsViewModel @Inject constructor(
 
     fun updateContactsListLiveDataWithSearchQuery(searchQuery: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val filteredUserList = contractsDao.getUsersWithNameFiltered(searchQuery)
+            val filteredUserList = getUsersWithNameFiltered(searchQuery)
             withContext(Dispatchers.Main) {
                 contactsListLiveData.value = filteredUserList
             }

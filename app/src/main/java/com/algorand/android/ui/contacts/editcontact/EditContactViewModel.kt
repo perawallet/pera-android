@@ -13,36 +13,38 @@
 
 package com.algorand.android.ui.contacts.editcontact
 
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.database.ContactDao
+import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.contacts.component.domain.usecase.DeleteContact
+import com.algorand.android.contacts.component.domain.usecase.UpdateContact
 import com.algorand.android.models.OperationState
-import com.algorand.android.models.User
 import com.algorand.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class EditContactViewModel @Inject constructor(
-    private val contactDao: ContactDao
+    private val updateContact: UpdateContact,
+    private val deleteContact: DeleteContact
 ) : ViewModel() {
 
-    private val _contactOperationFlow = MutableStateFlow<Event<OperationState<User>>?>(null)
-    val contactOperationFlow: StateFlow<Event<OperationState<User>>?> get() = _contactOperationFlow
+    private val _contactOperationFlow = MutableStateFlow<Event<OperationState<Contact>>?>(null)
+    val contactOperationFlow: StateFlow<Event<OperationState<Contact>>?> get() = _contactOperationFlow
 
-    fun removeContactInDatabase(contactDatabaseId: Int) {
+    fun removeContactInDatabase(address: String) {
         viewModelScope.launch {
-            contactDao.deleteContact(contactDatabaseId)
+            deleteContact(address)
             _contactOperationFlow.emit(Event(OperationState.Delete))
         }
     }
 
-    fun updateContactInDatabase(contact: User) {
+    fun updateContactInDatabase(contact: Contact) {
         viewModelScope.launch {
-            contactDao.updateContact(contact)
+            updateContact(contact)
             _contactOperationFlow.emit(Event(OperationState.Update(contact)))
         }
     }

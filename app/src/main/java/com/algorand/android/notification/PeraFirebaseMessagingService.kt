@@ -21,18 +21,15 @@ import android.content.SharedPreferences
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.algorand.android.R
-import com.algorand.android.deviceregistration.domain.usecase.FirebasePushTokenUseCase
-import com.algorand.android.notification.domain.model.NotificationMetadata
-import com.algorand.android.notification.domain.model.NotificationWCData
+import com.algorand.android.models.NotificationMetadata
+import com.algorand.android.pushtoken.domain.usecase.SetPushToken
 import com.algorand.android.ui.splash.LauncherActivity
 import com.algorand.android.utils.Event
-import com.algorand.android.utils.extensions.decodeBase64ToString
 import com.algorand.android.utils.preference.isNotificationActivated
 import com.algorand.android.utils.recordException
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
-import com.walletconnect.android.Core
-import com.walletconnect.android.push.notifications.PushMessagingService
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Integer.parseInt
 import java.text.SimpleDateFormat
@@ -40,7 +37,7 @@ import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PeraFirebaseMessagingService : PushMessagingService() {
+class PeraFirebaseMessagingService : FirebaseMessagingService() {
 
     @Inject
     lateinit var peraNotificationManager: PeraNotificationManager
@@ -49,84 +46,48 @@ class PeraFirebaseMessagingService : PushMessagingService() {
     lateinit var sharedPref: SharedPreferences
 
     @Inject
-    lateinit var firebasePushTokenUseCase: FirebasePushTokenUseCase
-
-    @Inject
-    lateinit var gson: Gson
+    lateinit var setPushToken: SetPushToken
 
     override fun onNewToken(token: String) {
-        firebasePushTokenUseCase.setPushToken(token)
+        setPushToken(token)
     }
 
-    override fun registeringFailed(token: String, throwable: Throwable) {
-        // WC lib function. nothing to do here
-    }
-
-    override fun newToken(token: String) {
-        // WC lib function. nothing to do here
-    }
-
-    override fun onDefaultBehavior(message: RemoteMessage) {
-        // WC lib function. nothing to do here
-    }
-
-    override fun onError(throwable: Throwable, defaultMessage: RemoteMessage) {
-        // WC lib function. nothing to do here
-    }
-
-    override fun onMessage(message: Core.Model.Message, originalMessage: RemoteMessage) {
-        // WC lib function. nothing to do here
-    }
-
-    override fun onMessageReceived(message: RemoteMessage) {
+    @SuppressWarnings("LongMethod")
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
         if (sharedPref.isNotificationActivated().not()) {
             return
         }
 
-        val customDataJson = message.data[CUSTOM]
-
-        val notificationData = if (customDataJson != null) {
-            val alertMessage = message.data[ALERT]
-            parseCustomData(customDataJson, alertMessage)
-        } else {
-            val blobDataEncodedJson = message.data[BLOB]
-            parseBlobData(blobDataEncodedJson)
-        }
+        val notificationData = getNotificationData(remoteMessage)
+        notificationData.alertMessage = remoteMessage.data[ALERT].toString()
 
         if (peraNotificationManager.newNotificationLiveData.hasActiveObservers()) {
-            if (customDataJson != null) {
-                showInAppNotification(notificationData)
-            }
-        } else {
-            showNotification(notificationData)
+            peraNotificationManager.newNotificationLiveData.postValue(Event(notificationData))
+            return
         }
-    }
 
-    private fun showInAppNotification(notificationData: NotificationMetadata) {
-        peraNotificationManager.newNotificationLiveData.postValue(Event(notificationData))
-    }
-
-    @SuppressWarnings("LongMethod")
-    private fun showNotification(notificationData: NotificationMetadata) {
         val intent = if (notificationData.url != null) {
             LauncherActivity.newIntentWithDeeplink(context = this, deeplink = notificationData.url)
         } else {
             LauncherActivity.newIntent(context = this)
         }.apply { action = System.currentTimeMillis().toString() }
 
-        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        val pendingIntent: PendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
         } else {
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         }
-
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, flags)
 
         val notificationBuilder = NotificationCompat.Builder(this, DEFAULT_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification_small)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-            .setContentTitle(notificationData.title ?: getString(R.string.app_name))
+            .setContentTitle(getString(R.string.app_name))
             .setContentText(notificationData.alertMessage.orEmpty())
             .setStyle(NotificationCompat.BigTextStyle().bigText(notificationData.alertMessage.orEmpty()))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -134,15 +95,17 @@ class PeraFirebaseMessagingService : PushMessagingService() {
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val channelId = getString(R.string.app_name)
-        val channel = NotificationChannel(
-            channelId,
-            getString(R.string.app_name),
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = getString(R.string.app_name)
+            val channel = NotificationChannel(
+                channelId,
+                getString(R.string.app_name),
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(channel)
+            notificationBuilder.setChannelId(channelId)
+        }
 
-        notificationManager.createNotificationChannel(channel)
-        notificationBuilder.setChannelId(channelId)
         notificationManager.notify(getUniqueId(), notificationBuilder.build())
     }
 
@@ -152,27 +115,10 @@ class PeraFirebaseMessagingService : PushMessagingService() {
         return parseInt(SimpleDateFormat(dateFormatForNotificationId).format(now))
     }
 
-    private fun parseCustomData(customDataJson: String?, alertMessage: String?): NotificationMetadata {
+    private fun getNotificationData(remoteMessage: RemoteMessage): NotificationMetadata {
         return try {
-            gson.fromJson(customDataJson, NotificationMetadata::class.java).apply {
-                this.alertMessage = alertMessage
-            }
-        } catch (exception: Exception) {
-            recordException(exception)
-            NotificationMetadata()
-        }
-    }
-
-    private fun parseBlobData(blobDataEncodedJson: String?): NotificationMetadata {
-        return try {
-            val decodedData = blobDataEncodedJson?.decodeBase64ToString()
-            val parsedData = gson.fromJson(decodedData, NotificationWCData::class.java)
-            NotificationMetadata(
-                url = parsedData.url,
-                title = parsedData.title,
-                alertMessage = parsedData.body
-            )
-        } catch (exception: Exception) {
+            Gson().fromJson(remoteMessage.data[CUSTOM], NotificationMetadata::class.java)
+        } catch (exception: IllegalStateException) {
             recordException(exception)
             NotificationMetadata()
         }
@@ -182,6 +128,5 @@ class PeraFirebaseMessagingService : PushMessagingService() {
         private const val DEFAULT_CHANNEL_ID = "default"
         private const val ALERT = "alert"
         private const val CUSTOM = "custom"
-        private const val BLOB = "blob"
     }
 }

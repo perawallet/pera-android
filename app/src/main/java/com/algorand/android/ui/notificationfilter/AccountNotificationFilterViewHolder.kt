@@ -27,14 +27,12 @@ class AccountNotificationFilterViewHolder(
     fun bind(accountNotificationOption: AccountNotificationOption) {
         with(accountNotificationOption) {
             with(binding) {
-                nameTextView.text = accountListItem.itemConfiguration
-                    .accountDisplayName
-                    ?.getAccountPrimaryDisplayName()
+                nameTextView.text = accountItemConfiguration.accountDisplayName?.primaryDisplayName
 
-                if (accountListItem.itemConfiguration.accountIconDrawablePreview != null) {
+                if (accountItemConfiguration.accountIconDrawablePreview != null) {
                     val accountIconDrawable = AccountIconDrawable.create(
                         context = binding.root.context,
-                        accountIconDrawablePreview = accountListItem.itemConfiguration.accountIconDrawablePreview,
+                        accountIconDrawablePreview = accountItemConfiguration.accountIconDrawablePreview!!,
                         sizeResId = R.dimen.spacing_xxxxlarge
                     )
                     typeImageView.setImageDrawable(accountIconDrawable)
@@ -53,7 +51,7 @@ class AccountNotificationFilterViewHolder(
         binding.filterSwitch.setOnCheckedChangeListener { _, isChecked ->
             accountNotificationOption.isFiltered = !isChecked
             accountOptionChanged.invoke(
-                accountNotificationOption.accountListItem.itemConfiguration.accountAddress,
+                accountNotificationOption.accountItemConfiguration.accountAddress,
                 !isChecked
             )
         }

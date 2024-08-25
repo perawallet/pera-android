@@ -14,7 +14,7 @@ package com.algorand.android.modules.assets.remove.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
 import com.algorand.android.databinding.ItemRemoveAssetBinding
 import com.algorand.android.models.BaseRemoveAssetItem
 import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem.RemoveAssetItem

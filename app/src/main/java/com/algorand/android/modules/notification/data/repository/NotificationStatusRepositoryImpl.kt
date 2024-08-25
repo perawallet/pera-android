@@ -8,7 +8,7 @@ import com.algorand.android.modules.notification.data.mapper.LastSeenNotificatio
 import com.algorand.android.modules.notification.data.mapper.NotificationStatusDTOMapper
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
-import com.algorand.android.exceptions.RetrofitErrorHandler
+import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
 import javax.inject.Inject
 
 // TODO: Move to notification module

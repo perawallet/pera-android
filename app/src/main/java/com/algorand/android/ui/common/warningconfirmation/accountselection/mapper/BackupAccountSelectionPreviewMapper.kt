@@ -12,7 +12,7 @@
 
 package com.algorand.android.ui.common.warningconfirmation.accountselection.mapper
 
-import com.algorand.android.models.BaseAccountSelectionListItem
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.ui.common.warningconfirmation.accountselection.model.BackupAccountSelectionPreview
 import javax.inject.Inject
 

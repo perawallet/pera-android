@@ -13,9 +13,9 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
 
 data class AssetTransferAmountAssetPreview(
     val assetId: Long,

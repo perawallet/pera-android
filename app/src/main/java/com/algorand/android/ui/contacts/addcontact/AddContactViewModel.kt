@@ -13,39 +13,41 @@
 
 package com.algorand.android.ui.contacts.addcontact
 
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.database.ContactDao
+import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.contacts.component.domain.usecase.GetContactByAddress
+import com.algorand.android.contacts.component.domain.usecase.SaveContact
 import com.algorand.android.models.OperationState
-import com.algorand.android.models.User
 import com.algorand.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AddContactViewModel @Inject constructor(
-    private val contactDao: ContactDao
+    private val saveContact: SaveContact,
+    private val getContactByAddress: GetContactByAddress
 ) : ViewModel() {
 
-    private val _contactOperationFlow = MutableStateFlow<Event<OperationState<User>>?>(null)
-    val contactOperationFlow: StateFlow<Event<OperationState<User>>?> get() = _contactOperationFlow
+    private val _contactOperationFlow = MutableStateFlow<Event<OperationState<Contact>>?>(null)
+    val contactOperationFlow: StateFlow<Event<OperationState<Contact>>?> get() = _contactOperationFlow
 
-    private val _contractSearchingFlow = MutableStateFlow<Event<OperationState<User?>>?>(null)
-    val contractSearchingFlow: StateFlow<Event<OperationState<User?>>?> get() = _contractSearchingFlow
+    private val _contractSearchingFlow = MutableStateFlow<Event<OperationState<Contact?>>?>(null)
+    val contractSearchingFlow: StateFlow<Event<OperationState<Contact?>>?> get() = _contractSearchingFlow
 
-    fun insertContactToDatabase(contact: User) {
+    fun insertContactToDatabase(contact: Contact) {
         viewModelScope.launch {
-            contactDao.insertContact(contact)
+            saveContact(contact)
             _contactOperationFlow.emit(Event(OperationState.Create(contact)))
         }
     }
 
     fun checkIsContactExist(contactDatabaseAddress: String) {
         viewModelScope.launch {
-            val contact = contactDao.getContactByAddress(contactDatabaseAddress)
+            val contact = getContactByAddress(contactDatabaseAddress)
             _contractSearchingFlow.emit(Event(OperationState.Read(contact)))
         }
     }

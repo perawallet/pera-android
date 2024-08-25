@@ -32,10 +32,10 @@ class SendAlgoFragment : BaseFragment(R.layout.fragment_send_algo) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val assetTransaction = args.assetTransaction
-        val transactionData = args.transactionData
+        val transactionPayload = args.sendTransactionPayload
         when {
-            transactionData != null -> {
-                SendAlgoFragmentDirections.actionSendAlgoFragmentToAssetTransferPreviewFragment(transactionData)
+            transactionPayload != null -> {
+                SendAlgoFragmentDirections.actionSendAlgoFragmentToAssetTransferPreviewFragment(transactionPayload)
             }
             assetTransaction == null || assetTransaction.senderAddress.isEmpty() -> {
                 SendAlgoFragmentDirections.actionSendAlgoFragmentToSenderAccountSelectionFragment(assetTransaction)

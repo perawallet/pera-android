@@ -18,10 +18,9 @@ import com.algorand.android.models.SignedTransactionDetail.AssetOperation.AssetA
 import com.algorand.android.models.SignedTransactionDetail.Send
 import com.algorand.android.models.TrackTransactionRequest
 import com.algorand.android.modules.transaction.confirmation.domain.usecase.TransactionConfirmationUseCase
-import com.algorand.android.network.AlgodInterceptor
+import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
 import com.algorand.android.repository.TransactionsRepository
 import com.algorand.android.utils.DataResource
-import com.algorand.android.utils.MAINNET_NETWORK_SLUG
 import com.algorand.android.utils.analytics.logTransactionEvent
 import com.algorand.android.utils.exception.AccountAlreadyOptedIntoAssetException
 import com.algorand.android.utils.exception.AssetAlreadyPendingForRemovalException
@@ -34,12 +33,9 @@ import kotlinx.coroutines.flow.collectLatest
 
 class SendSignedTransactionUseCase @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
-    private val algodInterceptor: AlgodInterceptor,
     private val firebaseAnalytics: FirebaseAnalytics,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val assetAdditionUseCase: AssetAdditionUseCase,
-    private val accountAssetRemovalUseCase: AccountAssetRemovalUseCase,
-    private val transactionConfirmationUseCase: TransactionConfirmationUseCase
+    private val transactionConfirmationUseCase: TransactionConfirmationUseCase,
+    private val isSelectedNodeMainnet: IsSelectedNodeMainnet
 ) {
 
     suspend fun sendSignedTransaction(
@@ -92,7 +88,7 @@ class SendSignedTransactionUseCase @Inject constructor(
     ): DataResource<String> {
         txnId?.let { transactionId ->
             transactionsRepository.postTrackTransaction(TrackTransactionRequest(transactionId))
-            if (shouldLogTransaction && signedTransactionDetail is SignedTransactionDetail.Send) {
+            if (shouldLogTransaction && signedTransactionDetail is Send) {
                 logTransactionEvent(signedTransactionDetail, transactionId)
             }
         }
@@ -101,48 +97,53 @@ class SendSignedTransactionUseCase @Inject constructor(
     }
 
     private fun logTransactionEvent(signedTransactionDetail: Send, taxId: String?) {
-        if (algodInterceptor.currentActiveNode?.networkSlug == MAINNET_NETWORK_SLUG) {
+        if (isSelectedNodeMainnet()) {
             with(signedTransactionDetail) {
-                firebaseAnalytics.logTransactionEvent(
-                    amount = amount,
-                    assetId = assetInformation.assetId,
-                    accountType = senderAccountType ?: Account.Type.STANDARD,
-                    isMax = isMax,
-                    transactionId = taxId
-                )
+//                firebaseAnalytics.logTransactionEvent(
+//                    amount = amount,
+//                    assetId = assetInformation.assetId,
+//                    accountType = senderAccountType ?: Account.Type.STANDARD,
+//                    isMax = isMax,
+//                    transactionId = taxId
+//                ) TODO
             }
         }
     }
 
     private fun isAccountAlreadyOptedIntoAsset(transaction: AssetAddition): Boolean {
-        return accountDetailUseCase.isAssetOwnedByAccount(
-            publicKey = transaction.senderAccountAddress,
-            assetId = transaction.assetInformation.assetId
-        )
+        return false
+//        return accountDetailUseCase.isAssetOwnedByAccount(
+//            publicKey = transaction.senderAccountAddress,
+//            assetId = transaction.assetInformation.assetId
+//        )
     }
 
     private fun isAssetPendingForRemovalFromAccount(
         transaction: SignedTransactionDetail.AssetOperation.AssetRemoval
     ): Boolean {
-        return accountDetailUseCase.isAssetPendingForRemovalFromAccount(
-            accountAddress = transaction.senderAccountAddress,
-            assetId = transaction.assetInformation.assetId
-        )
+        return false
+//        return accountDetailUseCase.isAssetPendingForRemovalFromAccount(
+//            accountAddress = transaction.senderAccountAddress,
+//            assetId = transaction.assetInformation.assetId
+//        )
+        // TODO
     }
 
     private suspend fun cacheAssetIfAssetOperationTransaction(signedTransactionDetail: SignedTransactionDetail) {
         when (signedTransactionDetail) {
             is AssetAddition -> {
-                assetAdditionUseCase.addAssetAdditionToAccountCache(
-                    publicKey = signedTransactionDetail.senderAccountAddress,
-                    assetInformation = signedTransactionDetail.assetInformation
-                )
+//                assetAdditionUseCase.addAssetAdditionToAccountCache(
+//                    publicKey = signedTransactionDetail.senderAccountAddress,
+//                    assetInformation = signedTransactionDetail.assetInformation
+//                )
+                // TODO implement AddAssetAdditionToAccountAssetHoldings
             }
             is SignedTransactionDetail.AssetOperation.AssetRemoval -> {
-                accountAssetRemovalUseCase.addAssetDeletionToAccountCache(
-                    publicKey = signedTransactionDetail.senderAccountAddress,
-                    assetId = signedTransactionDetail.assetInformation.assetId
-                )
+//                accountAssetRemovalUseCase.addAssetDeletionToAccountCache(
+//                    publicKey = signedTransactionDetail.senderAccountAddress,
+//                    assetId = signedTransactionDetail.assetInformation.assetId
+//                )
+                // TODO implement AddAssetRemovalToAccountAssetHoldings
             }
             else -> Unit
         }

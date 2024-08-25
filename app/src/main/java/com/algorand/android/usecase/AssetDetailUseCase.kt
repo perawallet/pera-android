@@ -13,74 +13,56 @@
 
 package com.algorand.android.usecase
 
-import androidx.paging.CombinedLoadStates
 import androidx.paging.PagingData
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.core.BaseUseCase
-import com.algorand.android.decider.DateFilterUseCase
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
-import com.algorand.android.models.DateFilter
-import com.algorand.android.models.ui.DateFilterPreview
-import com.algorand.android.models.ui.TransactionLoadStatePreview
-import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO
-import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
-import com.algorand.android.modules.transactionhistory.ui.usecase.PendingTransactionsPreviewUseCase
-import com.algorand.android.modules.transactionhistory.ui.usecase.TransactionHistoryPreviewUseCase
+import com.algorand.android.dateui.mapper.DateFilterPreviewMapper
+import com.algorand.android.dateui.model.DateFilter
+import com.algorand.android.dateui.model.DateFilterPreview
+import com.algorand.android.transaction.pendingtxn.domain.model.TransactionType
+import com.algorand.android.transactionhistoryui.TransactionHistoryPreviewManager
+import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
+import com.algorand.android.transactionhistoryui.pendingtxn.domain.usecase.GetPendingTransactionItems
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
 @SuppressWarnings("LongParameterList")
 class AssetDetailUseCase @Inject constructor(
-    private val transactionHistoryPreviewUseCase: TransactionHistoryPreviewUseCase,
-    private val pendingTransactionsPreviewUseCase: PendingTransactionsPreviewUseCase,
-    private val dateFilterUseCase: DateFilterUseCase,
-    private val transactionLoadStateUseCase: TransactionLoadStateUseCase,
-    private val accountTotalBalanceUseCase: AccountTotalBalanceUseCase
+    private val transactionHistoryPreviewManager: TransactionHistoryPreviewManager,
+    private val getPendingTransactionItems: GetPendingTransactionItems,
+    private val dateFilterPreviewMapper: DateFilterPreviewMapper
 ) : BaseUseCase() {
 
     val pendingTransactionDistinctUntilChangedListener
-        get() = pendingTransactionsPreviewUseCase.pendingFlowDistinctUntilChangedListener
-
-    fun getAccountBalanceFlow(publicKey: String) = accountTotalBalanceUseCase.getAccountBalanceFlow(publicKey)
+        get() = getPendingTransactionItems.pendingFlowDistinctUntilChangedListener
 
     fun getTransactionFlow(
         publicKey: String,
         assetIdFilter: Long,
         cacheInScope: CoroutineScope
     ): Flow<PagingData<BaseTransactionItem>>? {
-        return transactionHistoryPreviewUseCase.getTransactionHistoryPaginationFlow(
+        return transactionHistoryPreviewManager.getTransactionHistoryPaginationFlow(
             publicKey,
             cacheInScope,
             assetIdFilter,
-            TransactionTypeDTO.PAY_TRANSACTION.takeIf { assetIdFilter == ALGO_ID }?.value
+            TransactionType.PAY_TRANSACTION.takeIf { assetIdFilter == ALGO_ASSET_ID }?.value
         )
     }
 
     suspend fun setDateFilter(dateFilter: DateFilter) {
-        transactionHistoryPreviewUseCase.filterHistoryByDate(dateFilter)
+        transactionHistoryPreviewManager.filterHistoryByDate(dateFilter)
     }
 
     fun createDateFilterPreview(dateFilter: DateFilter): DateFilterPreview {
-        return dateFilterUseCase.createDateFilterPreview(dateFilter)
-    }
-
-    fun createTransactionLoadStatePreview(
-        combinedLoadStates: CombinedLoadStates,
-        itemCount: Int,
-        isLastStateError: Boolean
-    ): TransactionLoadStatePreview {
-        return transactionLoadStateUseCase.createTransactionLoadStatePreview(
-            combinedLoadStates = combinedLoadStates,
-            itemCount = itemCount,
-            isLastStateError = isLastStateError
-        )
+        return dateFilterPreviewMapper(dateFilter)
     }
 
     fun refreshTransactionHistory() {
-        transactionHistoryPreviewUseCase.refreshTransactionHistory()
+        transactionHistoryPreviewManager.refreshTransactionHistory()
     }
 
     suspend fun fetchPendingTransactions(publicKey: String, assetId: Long): List<BaseTransactionItem> {
-        return pendingTransactionsPreviewUseCase.getPendingTransactionItems(publicKey, assetId)
+        return getPendingTransactionItems(publicKey, assetId).getDataOrNull().orEmpty()
     }
 }

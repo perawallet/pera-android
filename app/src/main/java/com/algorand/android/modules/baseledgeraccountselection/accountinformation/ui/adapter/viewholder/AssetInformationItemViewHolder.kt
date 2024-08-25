@@ -31,8 +31,8 @@ class AssetInformationItemViewHolder(
                         onResourceFailed = ::setStartIconDrawable
                     )
                 }
-                setTitleText(name.getName(resources))
-                setDescriptionText(shortName.getName(resources))
+                setTitleText(name.assetName)
+                setDescriptionText(shortName.assetName)
                 setPrimaryValueText(formattedAmount)
                 setSecondaryValueText(if (isAmountInDisplayedCurrencyVisible) formattedDisplayedCurrencyValue else null)
                 setTitleTextColor(verificationTierConfiguration.textColorResId)

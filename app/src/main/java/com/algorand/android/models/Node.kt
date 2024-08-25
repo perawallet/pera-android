@@ -16,9 +16,6 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.algorand.android.network.AlgodInterceptor
-import com.algorand.android.network.IndexerInterceptor
-import com.algorand.android.network.MobileHeaderInterceptor
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -54,15 +51,4 @@ data class Node(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var nodeDatabaseId: Int = 0
-) : Parcelable {
-
-    fun activate(
-        indexerInterceptor: IndexerInterceptor,
-        mobileHeaderInterceptor: MobileHeaderInterceptor,
-        algodInterceptor: AlgodInterceptor
-    ) {
-        algodInterceptor.currentActiveNode = this
-        indexerInterceptor.currentActiveNode = this
-        mobileHeaderInterceptor.currentActiveNode = this
-    }
-}
+) : Parcelable

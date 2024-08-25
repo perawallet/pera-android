@@ -12,25 +12,28 @@
 
 package com.algorand.android.ui.common.warningconfirmation
 
-import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.utils.AccountCacheManager
+import com.algorand.android.core.component.domain.usecase.GetAccountMinBalance
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.math.BigInteger
+import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class MaximumBalanceWarningViewModel @Inject constructor(
-    private val accountCacheManager: AccountCacheManager
+    private val getAccountMinBalance: GetAccountMinBalance
 ) : BaseViewModel() {
 
-    fun getMinimumBalance(address: String): BigInteger {
-        return accountCacheManager.getMinBalanceOfAccount(address)
-    }
+    private val _minRequiredBalanceFlow = MutableStateFlow<BigInteger?>(null)
+    val minRequiredBalanceFlow
+        get() = _minRequiredBalanceFlow.asStateFlow()
 
-    fun getAccountName(address: String) = accountCacheManager.getAccountName(address).orEmpty()
-
-    fun getAssetCountWithoutAlgoOfAnAccount(address: String): Int {
-        val assetCount = accountCacheManager.getAccountAssetCount(address) ?: return 0
-        return assetCount - 1
+    fun getMinimumBalance(address: String) {
+        viewModelScope.launchIO {
+            _minRequiredBalanceFlow.value = getAccountMinBalance(address)
+        }
     }
 }

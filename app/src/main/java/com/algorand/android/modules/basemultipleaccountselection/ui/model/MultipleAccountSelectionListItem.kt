@@ -12,14 +12,11 @@
 
 package com.algorand.android.modules.basemultipleaccountselection.ui.model
 
-import androidx.annotation.PluralsRes
-import androidx.annotation.StringRes
+import androidx.annotation.*
+import com.algorand.android.accountcore.ui.model.*
 import com.algorand.android.customviews.TriStatesCheckBox
-import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.RecyclerListItem
+import com.algorand.android.models.*
 import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
 
 abstract class MultipleAccountSelectionListItem : RecyclerListItem {
 
@@ -93,7 +90,7 @@ abstract class MultipleAccountSelectionListItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountItem &&
-                accountDisplayName.getRawAccountAddress() == other.accountDisplayName.getRawAccountAddress()
+                accountDisplayName.accountAddress == other.accountDisplayName.accountAddress
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

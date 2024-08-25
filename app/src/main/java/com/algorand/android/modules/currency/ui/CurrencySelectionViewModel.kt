@@ -12,18 +12,19 @@
 
 package com.algorand.android.modules.currency.ui
 
-import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.appcache.usecase.RefreshSelectedCurrencyDetailCache
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.currency.domain.model.SelectedCurrency
+import com.algorand.android.currency.domain.usecase.GetSelectedCurrency
+import com.algorand.android.currency.domain.usecase.SetPrimaryCurrencyId
 import com.algorand.android.models.ui.CurrencySelectionPreview
-import com.algorand.android.modules.currency.domain.model.SelectedCurrency
-import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.currency.ui.usecase.CurrencySelectionPreviewUseCase
 import com.algorand.android.ui.settings.selection.CurrencyListItem
 import com.algorand.android.utils.analytics.logCurrencyChange
-import com.algorand.android.utils.coremanager.ParityManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,9 +34,10 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class CurrencySelectionViewModel @Inject constructor(
     private val firebaseAnalytics: FirebaseAnalytics,
-    private val currencyUseCase: CurrencyUseCase,
+    private val setPrimaryCurrencyId: SetPrimaryCurrencyId,
+    private val getSelectedCurrency: GetSelectedCurrency,
     private val currencySelectionPreviewUseCase: CurrencySelectionPreviewUseCase,
-    private val parityManager: ParityManager
+    private val refreshSelectedCurrencyDetailCache: RefreshSelectedCurrencyDetailCache
 ) : BaseViewModel() {
 
     val currencySelectionPreviewFlow: Flow<CurrencySelectionPreview?>
@@ -44,7 +46,7 @@ class CurrencySelectionViewModel @Inject constructor(
 
     val selectedCurrencyFlow: Flow<SelectedCurrency>
         get() = _selectedCurrencyFlow
-    private val _selectedCurrencyFlow = MutableStateFlow(currencyUseCase.getSelectedCurrency())
+    private val _selectedCurrencyFlow = MutableStateFlow(getSelectedCurrency())
 
     private var previewJob: Job? = null
 
@@ -77,11 +79,11 @@ class CurrencySelectionViewModel @Inject constructor(
     }
 
     fun setCurrencySelected(currencyListItem: CurrencyListItem) {
-        currencyUseCase.setPrimaryCurrency(currencyListItem.currencyId)
+        setPrimaryCurrencyId(currencyListItem.currencyId)
         logCurrencyChange(currencyListItem.currencyId)
-        _selectedCurrencyFlow.value = currencyUseCase.getSelectedCurrency()
+        _selectedCurrencyFlow.value = getSelectedCurrency()
         viewModelScope.launch {
-            parityManager.refreshSelectedCurrencyDetailCache()
+            refreshSelectedCurrencyDetailCache()
         }
     }
 

@@ -13,16 +13,14 @@
 package com.algorand.android.modules.transaction.detail.domain.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
-import com.algorand.android.models.BaseAssetDetail
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.model.TransactionSign
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
+import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.tooltip.domain.usecase.TransactionDetailTooltipDisplayPreferenceUseCase
-import com.algorand.android.usecase.GetActiveNodeUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.AssetName
@@ -36,13 +34,12 @@ import com.algorand.android.utils.getZonedDateTimeFromTimeStamp
 import com.algorand.android.utils.isNotEqualTo
 import java.math.BigInteger
 
-open class BaseTransactionDetailPreviewUseCase constructor(
-    private val assetDetailUseCase: SimpleAssetDetailUseCase,
-    private val collectibleUseCase: SimpleCollectibleUseCase,
+open class BaseTransactionDetailPreviewUseCase(
     private val transactionDetailItemMapper: TransactionDetailItemMapper,
-    private val getActiveNodeUseCase: GetActiveNodeUseCase,
     private val transactionDetailTooltipDisplayPreferenceUseCase: TransactionDetailTooltipDisplayPreferenceUseCase,
-    private val clearInnerTransactionStackCacheUseCase: ClearInnerTransactionStackCacheUseCase
+    private val clearInnerTransactionStackCacheUseCase: ClearInnerTransactionStackCacheUseCase,
+    private val getActiveNodeNetworkSlug: GetActiveNodeNetworkSlug,
+    protected val getAsset: GetAsset
 ) {
 
     fun setCopyAddressTipShown() {
@@ -53,7 +50,10 @@ open class BaseTransactionDetailPreviewUseCase constructor(
         clearInnerTransactionStackCacheUseCase.clearInnerTransactionStackCacheUseCase()
     }
 
-    protected fun addNoteIfExist(transactionList: MutableList<TransactionDetailItem>, note: String?) {
+    protected fun addNoteIfExist(
+        transactionList: MutableList<TransactionDetailItem>,
+        note: String?
+    ) {
         if (!note.isNullOrBlank()) {
             transactionList.add(
                 transactionDetailItemMapper.mapToNoteItem(
@@ -125,7 +125,7 @@ open class BaseTransactionDetailPreviewUseCase constructor(
     }
 
     protected fun createTransactionChipGroupItem(transactionId: String): TransactionDetailItem.ChipGroupItem {
-        val networkSlug = getActiveNodeUseCase.getActiveNode()?.networkSlug
+        val networkSlug = getActiveNodeNetworkSlug()
         return transactionDetailItemMapper.mapToChipGroupItem(
             transactionId = transactionId,
             peraExplorerUrl = getPeraExplorerUrl(transactionId, networkSlug)
@@ -136,16 +136,11 @@ open class BaseTransactionDetailPreviewUseCase constructor(
         return when (baseTransactionDetail) {
             is BaseTransactionDetail.AssetConfigurationTransaction -> baseTransactionDetail.assetId
             is BaseTransactionDetail.AssetTransferTransaction -> baseTransactionDetail.assetId
-            is BaseTransactionDetail.PaymentTransaction -> ALGO_ID
+            is BaseTransactionDetail.PaymentTransaction -> ALGO_ASSET_ID
             is BaseTransactionDetail.ApplicationCallTransaction,
             is BaseTransactionDetail.UndefinedTransaction,
             is BaseTransactionDetail.BaseKeyRegTransaction -> null
-        } ?: ALGO_ID
-    }
-
-    protected fun getAssetDetail(assetId: Long): BaseAssetDetail? {
-        return assetDetailUseCase.getCachedAssetDetail(assetId)?.data
-            ?: collectibleUseCase.getCachedCollectibleById(assetId)?.data
+        } ?: ALGO_ASSET_ID
     }
 
     protected fun getTransactionDetailAmount(
@@ -163,6 +158,7 @@ open class BaseTransactionDetailPreviewUseCase constructor(
                     }
                 }
             }
+
             is BaseTransactionDetail.ApplicationCallTransaction,
             is BaseTransactionDetail.AssetConfigurationTransaction,
             is BaseTransactionDetail.UndefinedTransaction,
@@ -188,7 +184,8 @@ open class BaseTransactionDetailPreviewUseCase constructor(
     }
 
     protected fun getTransactionFormattedDate(roundTimeAsTimestamp: Long?): String {
-        return roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp()?.formatAsDateAndTime().orEmpty()
+        return roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp()?.formatAsDateAndTime()
+            .orEmpty()
     }
 
     protected fun isTransactionCloseTo(baseTransactionDetail: BaseTransactionDetail): Boolean {

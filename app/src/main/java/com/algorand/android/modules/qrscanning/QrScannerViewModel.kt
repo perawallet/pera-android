@@ -12,18 +12,18 @@
 
 package com.algorand.android.modules.qrscanning
 
-import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
+import com.algorand.android.deeplink.DeepLinkHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class QrScannerViewModel @Inject constructor(
-    private val deeplinkHandler: DeeplinkHandler
+    private val deepLinkHandler: DeepLinkHandler
 ) : BaseViewModel() {
 
     private val _isQrCodeInProgressFlow = MutableSharedFlow<Boolean>()
@@ -35,15 +35,17 @@ class QrScannerViewModel @Inject constructor(
         }
     }
 
-    fun setDeeplinkHandlerListener(listener: DeeplinkHandler.Listener) {
-        deeplinkHandler.setListener(listener)
+    fun setDeeplinkHandlerListener(listener: DeepLinkHandler.Listener) {
+        deepLinkHandler.setListener(listener)
     }
 
     fun handleDeeplink(uri: String) {
-        deeplinkHandler.handleDeepLink(uri)
+        viewModelScope.launch {
+            deepLinkHandler.handleDeepLink(uri)
+        }
     }
 
     fun removeDeeplinkHandlerListener() {
-        deeplinkHandler.setListener(null)
+        deepLinkHandler.setListener(null)
     }
 }

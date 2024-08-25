@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.transaction.detail.domain.mapper
 
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.modules.transaction.common.domain.model.TransactionDTO
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail.BaseKeyRegTransaction.OfflineKeyRegTransaction
@@ -61,7 +61,7 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),
                 noteInBase64 = noteInBase64,
                 assetId = assetTransfer?.assetId ?: assetFreezeTransaction?.assetId ?: assetConfiguration?.assetId
-                ?: applicationCall?.foreignAssets?.firstNotNullOfOrNull { it } ?: ALGO_ID,
+                ?: applicationCall?.foreignAssets?.firstNotNullOfOrNull { it } ?: ALGO_ASSET_ID,
                 transactionCloseAmount = closeAmount,
                 closeToAccountAddress = payment?.closeToAddress ?: assetTransfer?.closeTo
             )

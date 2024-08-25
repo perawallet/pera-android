@@ -12,12 +12,10 @@
 
 package com.algorand.android.modules.tracking.core
 
-import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -29,11 +27,5 @@ object TrackingModule {
     @Provides
     fun providePeraEventTracker(firebaseAnalytics: FirebaseAnalytics): PeraEventTracker {
         return FirebaseEventTracker(firebaseAnalytics)
-    }
-
-    @Singleton
-    @Provides
-    fun provideFirebaseAnalytics(@ApplicationContext appContext: Context): FirebaseAnalytics {
-        return FirebaseAnalytics.getInstance(appContext)
     }
 }

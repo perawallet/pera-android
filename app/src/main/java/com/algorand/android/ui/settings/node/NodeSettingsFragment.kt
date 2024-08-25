@@ -20,8 +20,8 @@ import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentNodeSettingsBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.Node
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.node.domain.Node
 import com.algorand.android.ui.settings.node.ui.model.NodeSettingsPreview
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding

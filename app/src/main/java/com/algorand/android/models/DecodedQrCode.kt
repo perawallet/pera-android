@@ -14,6 +14,7 @@ package com.algorand.android.models
 
 import android.os.Parcelable
 import androidx.annotation.StringRes
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
 
@@ -37,7 +38,7 @@ sealed class DecodedQrCode : Parcelable {
                 private val assetId: Long?
             ) : Deeplink() {
                 fun getDecodedAssetID(): Long {
-                    return assetId ?: AssetInformation.ALGO_ID
+                    return assetId ?: ALGO_ASSET_ID
                 }
             }
 

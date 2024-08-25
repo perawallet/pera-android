@@ -22,11 +22,11 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.databinding.CustomUserViewBinding
-import com.algorand.android.models.AccountCacheData
 import com.algorand.android.models.TooltipConfig
-import com.algorand.android.models.User
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.enableLongPressToCopyText
 import com.algorand.android.utils.extensions.changeTextAppearance
@@ -44,23 +44,23 @@ class AlgorandUserView @JvmOverloads constructor(
     private val binding = viewBinding(CustomUserViewBinding::inflate)
     private var onAddButtonClick: ((String) -> Unit?)? = null
 
-    fun setContact(user: User, enableAddressCopy: Boolean = true, showTooltip: Boolean = false) {
+    fun setContact(contact: Contact, enableAddressCopy: Boolean = true, showTooltip: Boolean = false) {
         with(binding) {
             mainTextView.apply {
                 maxLines = MAX_LINES_FOR_CONTACT
-                text = user.name
+                text = contact.name
                 changeTextAppearance(R.style.TextAppearance_Body_Sans)
             }
             accountIconImageView.apply {
                 setContactIconDrawable(
-                    uri = user.imageUriAsString?.toUri(),
+                    uri = contact.imageUri?.toUri(),
                     iconSize = R.dimen.account_icon_size_normal
                 )
                 show()
             }
             addContactButton.hide()
         }
-        if (enableAddressCopy) enableLongPressToCopyText(user.publicKey)
+        if (enableAddressCopy) enableLongPressToCopyText(contact.address)
         if (showTooltip) showCopyTutorial()
     }
 
@@ -140,33 +140,59 @@ class AlgorandUserView @JvmOverloads constructor(
     }
 
     fun setAccount(
-        accountCacheData: AccountCacheData?,
+        accountDisplayName: AccountDisplayName,
         accountIconDrawablePreview: AccountIconDrawablePreview?,
         enableAddressCopy: Boolean = true
     ) {
         with(binding) {
             mainTextView.apply {
                 maxLines = MAX_LINES_FOR_ACCOUNT
-                text = accountCacheData?.account?.name
+                text = accountDisplayName.primaryDisplayName
                 changeTextAppearance(R.style.TextAppearance_Body_Sans)
             }
-            if (accountCacheData?.account != null) {
-                if (accountIconDrawablePreview != null) {
-                    val accountIconDrawable = AccountIconDrawable.create(
-                        context,
-                        accountIconDrawablePreview = accountIconDrawablePreview,
-                        sizeResId = R.dimen.spacing_xlarge
-                    )
-                    accountIconImageView.apply {
-                        setImageDrawable(accountIconDrawable)
-                        show()
-                    }
+            if (accountIconDrawablePreview != null) {
+                val accountIconDrawable = AccountIconDrawable.create(
+                    context,
+                    accountIconDrawablePreview = accountIconDrawablePreview,
+                    sizeResId = R.dimen.spacing_xlarge
+                )
+                accountIconImageView.apply {
+                    setImageDrawable(accountIconDrawable)
+                    show()
                 }
-                if (enableAddressCopy) enableLongPressToCopyText(accountCacheData.account.address)
             }
+            if (enableAddressCopy) enableLongPressToCopyText(accountDisplayName.accountAddress)
             addContactButton.hide()
         }
     }
+
+//    fun setAccount(
+//        name: String,
+//        accountIconDrawablePreview: AccountIconDrawablePreview?,
+//        publicKey: String,
+//        enableAddressCopy: Boolean = true,
+//        showTooltip: Boolean = false
+//    ) {
+//        with(binding) {
+//            mainTextView.apply {
+//                maxLines = MAX_LINES_FOR_ACCOUNT
+//                text = name
+//                changeTextAppearance(R.style.TextAppearance_Body_Sans)
+//            }
+//            accountIconDrawablePreview?.let {
+//                val accountIconDrawable = AccountIconDrawable.create(
+//                    context = context,
+//                    accountIconDrawablePreview = it,
+//                    sizeResId = R.dimen.spacing_xlarge
+//                )
+//                accountIconImageView.setImageDrawable(accountIconDrawable)
+//                accountIconImageView.show()
+//            } ?: accountIconImageView.hide()
+//            addContactButton.hide()
+//            if (enableAddressCopy) enableLongPressToCopyText(publicKey)
+//        }
+//        if (showTooltip) showCopyTutorial()
+//    }
 
     fun setAccount(
         name: String,

@@ -26,11 +26,15 @@
 
 package com.algorand.android.ui.wctransactionrequest
 
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.StringRes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
@@ -43,24 +47,38 @@ import com.algorand.android.WalletConnectTransactionRequestNavigationDirections
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.databinding.FragmentWalletConnectTransactionRequestBinding
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ConfirmationBottomSheetParameters
 import com.algorand.android.models.ConfirmationBottomSheetResult
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.TransactionRequestAction
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
-import com.algorand.android.models.WalletConnectSignResult
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult.BluetoothNotEnabled
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult.BluetoothPermissionsAreNotGranted
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult.Error
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult.LedgerDisconnected
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult.LedgerOperationCancelled
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult.LedgerScanFailed
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult.LedgerWaitingForApproval
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult.LocationNotEnabled
+import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult.TransactionsSigned
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.android.ui.common.walletconnect.WalletConnectAppPreviewCardView
+import com.algorand.android.utils.BLUETOOTH_CONNECT_PERMISSION
+import com.algorand.android.utils.BLUETOOTH_CONNECT_PERMISSION_REQUEST_CODE
+import com.algorand.android.utils.BLUETOOTH_SCAN_PERMISSION
+import com.algorand.android.utils.BLUETOOTH_SCAN_PERMISSION_REQUEST_CODE
 import com.algorand.android.utils.BaseDoubleButtonBottomSheet.Companion.RESULT_KEY
-import com.algorand.android.utils.Event
+import com.algorand.android.utils.LOCATION_PERMISSION
+import com.algorand.android.utils.LOCATION_PERMISSION_REQUEST_CODE
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
-import com.algorand.android.utils.isBluetoothEnabled
 import com.algorand.android.utils.navigateSafe
-import com.algorand.android.utils.sendErrorLog
+import com.algorand.android.utils.requestPermissionFromUser
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
@@ -78,14 +96,33 @@ class WalletConnectTransactionRequestFragment :
     private val binding by viewBinding(FragmentWalletConnectTransactionRequestBinding::bind)
     private val transactionRequestViewModel: WalletConnectTransactionRequestViewModel by viewModels()
 
+    private val signTxnResultObserver: suspend (Event<SignWalletConnectTransactionResult>?) -> Unit = { result ->
+        result?.consume()?.let { handleSignResult(it) }
+    }
+
     private lateinit var walletConnectNavController: NavController
 
     private var ledgerLoadingDialog: LedgerLoadingDialog? = null
 
     private var walletConnectTransaction: WalletConnectTransaction? = null
 
-    private val signResultObserver = Observer<WalletConnectSignResult> {
-        handleSignResult(it)
+    private val bleRequestLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK) {
+            transactionRequestViewModel.confirmRequest()
+        } else {
+            showSigningError(getString(R.string.error_bluetooth_message), getString(R.string.error_bluetooth_title))
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+                transactionRequestViewModel.processWaitingTransaction()
+            } else {
+                showSigningError(getString(R.string.error_location_message), getString(R.string.error_permission_title))
+            }
+        }
     }
 
     private val requestResultObserver = Observer<Event<Resource<AnnotatedString>>> {
@@ -112,10 +149,6 @@ class WalletConnectTransactionRequestFragment :
         )
     }
 
-    private val bleRequestLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        // Nothing to do
-    }
-
     private val ledgerLoadingDialogListener = LedgerLoadingDialog.Listener { shouldStopResources ->
         hideLoading()
         if (shouldStopResources) {
@@ -137,9 +170,7 @@ class WalletConnectTransactionRequestFragment :
         }
     }
 
-    private val navBackEventCollector: suspend (
-        Event<Unit>?
-    ) -> Unit = { event ->
+    private val navBackEventCollector: suspend (Event<Unit>?) -> Unit = { event ->
         event?.consume()?.let { navBack() }
     }
 
@@ -149,15 +180,15 @@ class WalletConnectTransactionRequestFragment :
         initNavController()
         handleNextNavigation()
         configureScreenStateByDestination()
-        transactionRequestViewModel.setupWalletConnectSignManager(viewLifecycleOwner.lifecycle)
         initObservers()
         initUi()
+        transactionRequestViewModel.setup(viewLifecycleOwner.lifecycle)
     }
 
     private fun initNavController() {
         walletConnectNavController = (
-                childFragmentManager.findFragmentById(binding.walletConnectNavigationHostFragment.id) as NavHostFragment
-                ).navController
+            childFragmentManager.findFragmentById(binding.walletConnectNavigationHostFragment.id) as NavHostFragment
+            ).navController
     }
 
     private fun handleNextNavigation() {
@@ -203,9 +234,12 @@ class WalletConnectTransactionRequestFragment :
     }
 
     private fun initObservers() {
+        collectLatestOnLifecycle(
+            flow = transactionRequestViewModel.signWcTransactionResultFlow,
+            collection = signTxnResultObserver
+        )
         with(transactionRequestViewModel) {
             requestResultLiveData.observe(viewLifecycleOwner, requestResultObserver)
-            signResultLiveData.observe(viewLifecycleOwner, signResultObserver)
             with(walletConnectTransactionRequestPreviewFlow) {
                 collectLatestOnLifecycle(
                     flow = map { it.navBackEvent },
@@ -236,20 +270,11 @@ class WalletConnectTransactionRequestFragment :
     }
 
     private fun confirmTransaction() {
-        // TODO Check request id
-        with(transactionRequestViewModel) {
-            transaction?.let { transaction ->
-                val isBluetoothNeeded = transactionRequestViewModel.isBluetoothNeededToSignTxns(transaction)
-                if (isBluetoothNeeded) {
-                    if (isBluetoothEnabled(bleRequestLauncher)) signTransactionRequest(transaction)
-                } else {
-                    signTransactionRequest(transaction)
-                }
-            }
-        }
+        showLoading()
+        transactionRequestViewModel.confirmRequest()
     }
 
-    private fun onSigningSuccess(result: WalletConnectSignResult.Success) {
+    private fun onSigningSuccess(result: TransactionsSigned) {
         transactionRequestViewModel.processWalletConnectSignResult(result)
     }
 
@@ -307,32 +332,30 @@ class WalletConnectTransactionRequestFragment :
         nav(navDirection)
     }
 
-    private fun handleSignResult(result: WalletConnectSignResult) {
+    private fun handleSignResult(result: SignWalletConnectTransactionResult) {
+        binding.progressBar.root.hide()
         when (result) {
-            WalletConnectSignResult.Loading -> showLoading()
-            is WalletConnectSignResult.LedgerWaitingForApproval -> {
-                with(result) {
-                    showLedgerWaitingForApprovalBottomSheet(
-                        ledgerName = ledgerName,
-                        currentTransactionIndex = currentTransactionIndex,
-                        totalTransactionCount = totalTransactionCount,
-                        isTransactionIndicatorVisible = isTransactionIndicatorVisible
-                    )
-                }
+            is TransactionsSigned -> onSigningSuccess(result)
+            is Error -> result.getMessage(requireContext()).run { showSigningError(first, second) }
+            is LedgerWaitingForApproval -> {
+                showLedgerWaitingForApprovalBottomSheet(
+                    ledgerName = result.ledgerName,
+                    currentTransactionIndex = null, // TODO
+                    totalTransactionCount = null, // TODO
+                    isTransactionIndicatorVisible = false // TODO
+                )
             }
-
-            is WalletConnectSignResult.Success -> onSigningSuccess(result)
-            is WalletConnectSignResult.Error -> showSigningError(result)
-            is WalletConnectSignResult.TransactionCancelledByLedger -> {
-                showSigningError(result.error)
-                rejectRequest()
-            }
-
-            is WalletConnectSignResult.LedgerScanFailed -> showLedgerNotFoundDialog()
-            else -> {
-                sendErrorLog("Unhandled else case in WalletConnectTransactionRequestFragment.handleSignResult")
-            }
+            LedgerScanFailed -> showLedgerNotFoundDialog()
+            BluetoothNotEnabled -> showEnableBluetoothPopup()
+            BluetoothPermissionsAreNotGranted -> requestBluetoothPermissions()
+            LocationNotEnabled -> showLocationNotEnabledError()
+            LedgerDisconnected -> showGlobalError(getString(R.string.an_error_occured))
+            LedgerOperationCancelled -> handleLedgerCancellation()
         }
+    }
+
+    private fun showEnableBluetoothPopup() {
+        Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE).apply { bleRequestLauncher.launch(this) }
     }
 
     private fun rejectRequestOnBackPressed() {
@@ -343,8 +366,24 @@ class WalletConnectTransactionRequestFragment :
         transactionRequestViewModel.rejectRequest()
     }
 
-    internal fun permissionDeniedOnTransaction(@StringRes errorResId: Int, @StringRes titleResId: Int) {
-        showSigningError(WalletConnectSignResult.Error.Defined(AnnotatedString(errorResId), titleResId))
+    private fun showLocationNotEnabledError() {
+        showGlobalError(getString(R.string.please_ensure), getString(R.string.bluetooth_location_services))
+    }
+
+    private fun requestBluetoothPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestPermissionFromUser(BLUETOOTH_SCAN_PERMISSION, BLUETOOTH_SCAN_PERMISSION_REQUEST_CODE, true)
+            requestPermissionFromUser(BLUETOOTH_CONNECT_PERMISSION, BLUETOOTH_CONNECT_PERMISSION_REQUEST_CODE, true)
+        } else {
+            requestPermissionFromUser(LOCATION_PERMISSION, LOCATION_PERMISSION_REQUEST_CODE, true)
+        }
+    }
+
+    private fun handleLedgerCancellation() {
+        val errorMessage = getString(R.string.error_cancelled_message)
+        val title = getString(R.string.error_cancelled_title)
+        showSigningError(title, errorMessage)
+        rejectRequest()
     }
 
     private fun initAppPreview() {
@@ -372,9 +411,8 @@ class WalletConnectTransactionRequestFragment :
         binding.progressBar.root.show()
     }
 
-    private fun showSigningError(error: WalletConnectSignResult.Error) {
+    private fun showSigningError(title: String, errorMessage: CharSequence) {
         hideLoading()
-        val (title, errorMessage) = error.getMessage(requireContext())
         showGlobalError(errorMessage = errorMessage, title = title, tag = baseActivityTag)
     }
 

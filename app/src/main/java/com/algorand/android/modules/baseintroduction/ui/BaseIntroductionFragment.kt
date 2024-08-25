@@ -21,13 +21,13 @@ import androidx.core.view.isVisible
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentBaseIntroductionBinding
-import com.algorand.android.models.AnnotatedString
+import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.designsystem.getXmlStyledString
 import com.algorand.android.modules.baseintroduction.ui.model.FeatureTag
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.getCustomClickableSpan
-import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.viewbinding.viewBinding
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 abstract class BaseIntroductionFragment : BaseFragment(R.layout.fragment_base_introduction) {
 
@@ -99,23 +99,23 @@ abstract class BaseIntroductionFragment : BaseFragment(R.layout.fragment_base_in
     open fun initObservers() {
         with(baseIntroductionViewModel.introductionPreviewFlow) {
             collectLatestOnLifecycle(
-                flow = map { it.bannerDrawableResId },
+                flow = mapNotNull { it?.bannerDrawableResId },
                 collection = bannerDrawableResIdCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.titleAnnotatedString },
+                flow = mapNotNull { it?.titleAnnotatedString },
                 collection = titleAnnotatedStringCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.descriptionAnnotatedString },
+                flow = mapNotNull { it?.descriptionAnnotatedString },
                 collection = descriptionAnnotatedStringCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.actionButtonAnnotatedString },
+                flow = mapNotNull { it?.actionButtonAnnotatedString },
                 collection = actionButtonAnnotatedStringCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.featureTag },
+                flow = mapNotNull { it?.featureTag },
                 collection = featureTagCollector
             )
         }

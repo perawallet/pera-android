@@ -12,7 +12,7 @@
 
 package com.algorand.android.models.ui
 
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 
 data class CollectibleTransactionApprovePreview(
     val senderAccountPublicKey: String,

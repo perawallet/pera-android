@@ -12,31 +12,44 @@
 
 package com.algorand.android.modules.swap.confirmswap.ui
 
-import android.content.res.Resources
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.AnnotatedString
-import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
-import com.algorand.android.modules.swap.confirmswap.ui.model.ConfirmSwapPreview
-import com.algorand.android.modules.swap.confirmswap.ui.usecase.ConfirmSwapPreviewUseCase
+import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.tracking.swap.confirmswap.ConfirmSwapConfirmClickEventTracker
-import com.algorand.android.utils.Event
+import com.algorand.android.swap.domain.model.SwapQuote
+import com.algorand.android.swap.domain.model.swapquotetxns.SwapQuoteTransaction
+import com.algorand.android.swap.domain.usecase.CreateSwapQuoteTransactions
+import com.algorand.android.swapui.GetSwapError
+import com.algorand.android.swapui.confirmswap.SignSwapTransactionManager
+import com.algorand.android.swapui.confirmswap.model.ConfirmSwapPreview
+import com.algorand.android.swapui.confirmswap.model.SignSwapTransactionResult
+import com.algorand.android.swapui.confirmswap.usecase.GetConfirmSwapPreview
+import com.algorand.android.swapui.confirmswap.usecase.GetSwapTransactionStatusNavArgs
+import com.algorand.android.swapui.confirmswap.usecase.UpdateSlippageTolerance
+import com.algorand.android.swapui.txnstatus.model.SwapTransactionStatusNavArgs
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ConfirmSwapViewModel @Inject constructor(
-    private val confirmSwapPreviewUseCase: ConfirmSwapPreviewUseCase,
+    private val getConfirmSwapPreview: GetConfirmSwapPreview,
+    private val updateSlippageTolerance: UpdateSlippageTolerance,
     private val confirmClickEventTracker: ConfirmSwapConfirmClickEventTracker,
+    private val getSwapTransactionStatusNavArgs: GetSwapTransactionStatusNavArgs,
+    private val signSwapTransactionManager: SignSwapTransactionManager,
+    private val createSwapQuoteTransactions: CreateSwapQuoteTransactions,
+    private val getSwapError: GetSwapError,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -44,39 +57,58 @@ class ConfirmSwapViewModel @Inject constructor(
     val swapQuote: SwapQuote
         get() = _swapQuote
 
-    private val _confirmSwapPreviewFlow = MutableStateFlow(confirmSwapPreviewUseCase.getConfirmSwapPreview(swapQuote))
-    val confirmSwapPreviewFlow: StateFlow<ConfirmSwapPreview>
+    private val _confirmSwapPreviewFlow = MutableStateFlow<ConfirmSwapPreview?>(null)
+    val confirmSwapPreviewFlow: StateFlow<ConfirmSwapPreview?>
         get() = _confirmSwapPreviewFlow
 
-    fun getSwitchedPriceRatio(resources: Resources): AnnotatedString {
-        return _confirmSwapPreviewFlow.value.getSwitchedPriceRatio(resources)
+    val signSwapTransactionResultFlow: Flow<Event<SignSwapTransactionResult>?>
+        get() = signSwapTransactionManager.signSwapTransactionResultFlow
+
+    private var signSwapTransactionsJob: Job? = null
+
+    init {
+        initPreviewFlow()
+    }
+
+    private fun initPreviewFlow() {
+        viewModelScope.launchIO {
+            _confirmSwapPreviewFlow.value = getConfirmSwapPreview(swapQuote)
+        }
+    }
+
+    fun getSwitchedPriceRatio(): AnnotatedString? {
+        return _confirmSwapPreviewFlow.value?.getSwitchedPriceRatio()
     }
 
     fun setupSwapTransactionSignManager(lifecycle: Lifecycle) {
-        confirmSwapPreviewUseCase.setupSwapTransactionSignManager(lifecycle)
+        signSwapTransactionManager.setup(lifecycle)
+    }
+
+    fun getSwapTxnStatusNavArgs(signedTransaction: List<SwapQuoteTransaction>): SwapTransactionStatusNavArgs {
+        return getSwapTransactionStatusNavArgs(swapQuote, signedTransaction)
     }
 
     fun getSlippageTolerance() = _swapQuote.slippage
 
     fun onSlippageToleranceUpdated(slippageTolerance: Float) {
         viewModelScope.launch {
-            confirmSwapPreviewUseCase.updateSlippageTolerance(
-                slippageTolerance = slippageTolerance,
-                swapQuote = swapQuote,
-                previousState = _confirmSwapPreviewFlow.value
-            ).collectLatest { newPreview ->
-                _swapQuote = newPreview.swapQuote
-                _confirmSwapPreviewFlow.value = newPreview
+            _confirmSwapPreviewFlow.update {
+                if (it == null) return@update null
+                updateSlippageTolerance(
+                    slippageTolerance = slippageTolerance,
+                    swapQuote = swapQuote,
+                    preview = it
+                )
             }
         }
     }
 
     fun onConfirmSwapClick() {
-        val priceImpactWarningStatus = _confirmSwapPreviewFlow.value.priceImpactWarningStatus
+        val priceImpactWarningStatus = _confirmSwapPreviewFlow.value?.priceImpactWarningStatus ?: return
         if (priceImpactWarningStatus.isConfirmationRequired) {
             _confirmSwapPreviewFlow.update {
                 val basePriceImpactValue = priceImpactWarningStatus.percentageRange.first.toLong()
-                it.copy(navToSwapConfirmationBottomSheetEvent = Event(basePriceImpactValue))
+                it?.copy(navToSwapConfirmationBottomSheetEvent = Event(basePriceImpactValue))
             }
         } else {
             createQuoteAndUpdateUi()
@@ -88,20 +120,46 @@ class ConfirmSwapViewModel @Inject constructor(
     }
 
     private fun createQuoteAndUpdateUi() {
-        viewModelScope.launchIO {
+        _confirmSwapPreviewFlow.update {
+            it?.copy(isLoading = true)
+        }
+        viewModelScope.launch {
             confirmClickEventTracker.logConfirmSwapClickEvent()
-            confirmSwapPreviewUseCase.createQuoteAndUpdateUi(
-                quoteId = swapQuote.quoteId,
-                accountAddress = swapQuote.accountAddress,
-                previousState = _confirmSwapPreviewFlow.value
-            ).collectLatest { newState ->
-                _confirmSwapPreviewFlow.emit(newState)
-            }
+            createSwapQuoteTransactions(swapQuote.quoteId, swapQuote.accountAddress).use(
+                onSuccess = {
+                    signTransactions(it)
+                },
+                onFailed = { exception, _ ->
+                    _confirmSwapPreviewFlow.update {
+                        it?.copy(
+                            errorEvent = Event(getSwapError(exception.message.orEmpty())),
+                            isLoading = false
+                        )
+                    }
+                }
+            )
+        }
+    }
+
+    private fun signTransactions(transactions: List<SwapQuoteTransaction>) {
+        if (signSwapTransactionsJob?.isActive == true) {
+            signSwapTransactionsJob?.cancel()
+        }
+        signSwapTransactionsJob = viewModelScope.launch {
+            signSwapTransactionManager.sign(transactions)
         }
     }
 
     fun onLedgerDialogCancelled() {
-        confirmSwapPreviewUseCase.stopAllResources()
+        signSwapTransactionManager.stopAllResources()
+    }
+
+    fun clearCachedTransactions() {
+        signSwapTransactionManager.clearCachedTransactions()
+    }
+
+    fun processWaitingTransaction() {
+        signSwapTransactionManager.signCachedTransaction()
     }
 
     companion object {

@@ -27,7 +27,7 @@ class FoundAccountSelectionAccountViewHolder(
 
     override fun bind(item: BaseFoundAccountSelectionItem) {
         if (item !is BaseFoundAccountSelectionItem.AccountItem) return
-        val accountAddress = item.accountDisplayName.getRawAccountAddress()
+        val accountAddress = item.accountDisplayName.accountAddress
         binding.multipleAccountSelectionStatefulAccountView.apply {
             val accountIconDrawable = AccountIconDrawable.create(
                 context = context,
@@ -35,8 +35,8 @@ class FoundAccountSelectionAccountViewHolder(
                 accountIconDrawablePreview = item.accountIconDrawablePreview
             )
             setStartIconDrawable(accountIconDrawable)
-            setTitleText(item.accountDisplayName.getAccountPrimaryDisplayName())
-            setDescriptionText(item.accountDisplayName.getAccountSecondaryDisplayName(resources))
+            setTitleText(item.accountDisplayName.primaryDisplayName)
+            setDescriptionText(item.accountDisplayName.secondaryDisplayName)
             setEndIconResource(R.drawable.ic_info)
             setEndIconClickListener { listener.onAccountItemInformationClick(accountAddress) }
         }

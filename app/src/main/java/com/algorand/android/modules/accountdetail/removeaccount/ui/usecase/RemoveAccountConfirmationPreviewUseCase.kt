@@ -13,51 +13,57 @@
 package com.algorand.android.modules.accountdetail.removeaccount.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.Account
+import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountType
+import com.algorand.android.core.component.domain.usecase.GetRekeyedAccountAddresses
+import com.algorand.android.core.component.domain.usecase.HasAccountAnyRekeyedAccount
 import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.modules.accountdetail.removeaccount.ui.mapper.RemoveAccountConfirmationPreviewMapper
 import com.algorand.android.modules.accountdetail.removeaccount.ui.model.RemoveAccountConfirmationPreview
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.Event
 import javax.inject.Inject
 
 class RemoveAccountConfirmationPreviewUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val removeAccountConfirmationPreviewMapper: RemoveAccountConfirmationPreviewMapper,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase
+    private val hasAccountAnyRekeyedAccount: HasAccountAnyRekeyedAccount,
+    private val getRekeyedAccountAddresses: GetRekeyedAccountAddresses,
+    private val getAccountType: GetAccountType,
+    private val getAccountDetail: GetAccountDetail
 ) {
 
-    fun getRemoveAccountConfirmationPreview(): RemoveAccountConfirmationPreview {
-        return removeAccountConfirmationPreviewMapper.mapToRemoveAccountConfirmationPreview()
+    suspend fun getRemoveAccountConfirmationPreview(address: String): RemoveAccountConfirmationPreview {
+        val descriptionResId = getDescriptionResId(address)
+        return removeAccountConfirmationPreviewMapper.mapToRemoveAccountConfirmationPreview(descriptionResId)
     }
 
-    fun getDescriptionResId(accountAddress: String): Int {
-        return when (accountDetailUseCase.getAccountType(accountAddress)) {
-            Account.Type.STANDARD, Account.Type.LEDGER, Account.Type.REKEYED, Account.Type.REKEYED_AUTH -> {
+    private suspend fun getDescriptionResId(accountAddress: String): Int {
+        return when (getAccountType(accountAddress)) {
+            AccountType.Algo25, AccountType.LedgerBle, AccountType.Rekeyed, AccountType.RekeyedAuth -> {
                 R.string.you_are_about_to_remove_account
             }
 
-            Account.Type.WATCH -> R.string.you_are_about_to_remove_watch_account
+            AccountType.NoAuth -> R.string.you_are_about_to_remove_watch_account
             else -> R.string.you_are_about_to_remove_account
         }
     }
 
-    fun updatePreviewWithRemoveAccountConfirmation(
-        preview: RemoveAccountConfirmationPreview,
+    suspend fun updatePreviewWithRemoveAccountConfirmation(
+        preview: RemoveAccountConfirmationPreview?,
         accountAddress: String
-    ): RemoveAccountConfirmationPreview {
-        val accountType = accountDetailUseCase.getAccountType(accountAddress)
-        if (accountType == Account.Type.WATCH) {
+    ): RemoveAccountConfirmationPreview? {
+        if (preview == null) return null
+        val accountType = getAccountDetail(accountAddress).accountType
+        if (accountType == AccountType.NoAuth) {
             return preview.copy(navBackEvent = Event(true))
         }
 
-        val hasAccountAnyRekeyedAccount = accountDetailUseCase.hasAccountAnyRekeyedAccount(accountAddress)
+        val hasAccountAnyRekeyedAccount = hasAccountAnyRekeyedAccount(accountAddress)
         if (!hasAccountAnyRekeyedAccount) {
             return preview.copy(navBackEvent = Event(true))
         }
 
-        val rekeyedAccountAddresses = accountDetailUseCase.getRekeyedAccountAddresses(accountAddress)
+        val rekeyedAccountAddresses = getRekeyedAccountAddresses(accountAddress)
 
         return preview.copy(
             showGlobalErrorEvent = Event(

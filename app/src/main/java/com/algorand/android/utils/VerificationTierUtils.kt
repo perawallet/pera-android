@@ -28,3 +28,8 @@ fun TextView.setAssetNameTextColorByVerificationTier(verificationTierConfigurati
     val textColorResId = verificationTierConfiguration.textColorResId
     setTextColor(ColorStateList.valueOf(ContextCompat.getColor(context, textColorResId)))
 }
+
+fun TextView.setAssetNameTextColorByVerificationTier(verificationTierConfiguration: com.algorand.android.accountcore.ui.model.VerificationTierConfiguration) {
+    val textColorResId = verificationTierConfiguration.textColorResId
+    setTextColor(ColorStateList.valueOf(ContextCompat.getColor(context, textColorResId)))
+}

@@ -13,8 +13,7 @@
 package com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.mapper
 
 import com.algorand.android.customviews.passphraseinput.model.PassphraseInputGroupConfiguration
-import com.algorand.android.models.AccountCreation
-import com.algorand.android.models.AnnotatedString
+import com.algorand.android.models.*
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.model.RecoverWithPassphrasePreview
 import com.algorand.android.utils.Event
 import javax.inject.Inject
@@ -29,9 +28,9 @@ class RecoverWithPassphrasePreviewMapper @Inject constructor() {
         showLoadingDialogEvent: Event<Unit>? = null,
         onRestorePassphraseInputGroupEvent: Event<PassphraseInputGroupConfiguration>? = null,
         onDisplayWrongMnemonicEvent: Event<AnnotatedString>? = null,
-        navToImportRekeyedAccountEvent: Event<Pair<AccountCreation, List<String>>>? = null,
+        navToImportRekeyedAccountEvent: Event<Pair<CreateAccount, List<String>>>? = null,
         onAccountNotFoundEvent: Event<AnnotatedString>? = null,
-        navToNameRegistrationEvent: Event<AccountCreation>? = null,
+        navToNameRegistrationEvent: Event<CreateAccount>? = null,
         onGlobalErrorEvent: Event<Int>? = null,
         showErrorEvent: Event<AnnotatedString>? = null
     ): RecoverWithPassphrasePreview {

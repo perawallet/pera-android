@@ -13,7 +13,6 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import androidx.recyclerview.widget.DiffUtil
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
@@ -36,17 +35,4 @@ data class User(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var contactDatabaseId: Int = 0
-) : Parcelable {
-
-    companion object {
-        val DIFF_CALLBACK: DiffUtil.ItemCallback<User> = object : DiffUtil.ItemCallback<User>() {
-            override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
-                return oldItem.publicKey == newItem.publicKey
-            }
-
-            override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
-                return oldItem == newItem
-            }
-        }
-    }
-}
+) : Parcelable

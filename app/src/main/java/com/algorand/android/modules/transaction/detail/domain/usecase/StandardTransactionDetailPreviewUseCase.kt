@@ -13,7 +13,9 @@
 package com.algorand.android.modules.transaction.detail.domain.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.AssetInformation
+import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail.BaseKeyRegTransaction.OfflineKeyRegTransaction
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail.BaseKeyRegTransaction.OnlineKeyRegTransaction
@@ -21,16 +23,13 @@ import com.algorand.android.modules.transaction.detail.domain.model.TransactionD
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailPreviewMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
+import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.tooltip.domain.usecase.TransactionDetailTooltipDisplayPreferenceUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetActiveNodeUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.formatNumberWithDecimalSeparators
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 @SuppressWarnings("LongParameterList")
 class StandardTransactionDetailPreviewUseCase @Inject constructor(
@@ -39,18 +38,16 @@ class StandardTransactionDetailPreviewUseCase @Inject constructor(
     private val transactionDetailItemMapper: TransactionDetailItemMapper,
     private val transactionDetailTooltipDisplayPreferenceUseCase: TransactionDetailTooltipDisplayPreferenceUseCase,
     private val transactionDetailPreviewMapper: TransactionDetailPreviewMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    getActiveNodeUseCase: GetActiveNodeUseCase,
-    assetDetailUseCase: SimpleAssetDetailUseCase,
-    collectibleUseCase: SimpleCollectibleUseCase,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
+    getAsset: GetAsset,
+    getActiveNodeNetworkSlug: GetActiveNodeNetworkSlug,
     clearInnerTransactionStackCacheUseCase: ClearInnerTransactionStackCacheUseCase
 ) : BaseTransactionDetailPreviewUseCase(
-    assetDetailUseCase = assetDetailUseCase,
-    collectibleUseCase = collectibleUseCase,
     transactionDetailItemMapper = transactionDetailItemMapper,
-    getActiveNodeUseCase = getActiveNodeUseCase,
     transactionDetailTooltipDisplayPreferenceUseCase = transactionDetailTooltipDisplayPreferenceUseCase,
-    clearInnerTransactionStackCacheUseCase = clearInnerTransactionStackCacheUseCase
+    clearInnerTransactionStackCacheUseCase = clearInnerTransactionStackCacheUseCase,
+    getActiveNodeNetworkSlug = getActiveNodeNetworkSlug,
+    getAsset = getAsset
 ) {
 
     suspend fun getTransactionDetailPreview(
@@ -69,10 +66,6 @@ class StandardTransactionDetailPreviewUseCase @Inject constructor(
                         isInnerTransaction = isInnerTransaction
                     )
                     emit(transactionDetailPreview)
-                },
-                onFailed = {
-                    // TODO: Currently, we don't have a design for this case. We should handle error cases after
-                    //  preparing the design for this case.
                 }
             )
         }
@@ -86,18 +79,18 @@ class StandardTransactionDetailPreviewUseCase @Inject constructor(
         isInnerTransaction: Boolean
     ): TransactionDetailPreview {
         val assetId = getTransactionAssetId(baseTransactionDetail)
-        val assetDetail = getAssetDetail(assetId)
-        val assetDecimal = assetDetail?.fractionDecimals ?: DEFAULT_ASSET_DECIMAL
+        val assetDetail = getAsset(assetId)
+        val assetDecimal = assetDetail?.getDecimalsOrZero() ?: DEFAULT_ASSET_DECIMAL
         val assetName = AssetName.createShortName(assetDetail?.shortName)
-        val isAlgo = assetId == AssetInformation.ALGO_ID
+        val isAlgo = assetId == ALGO_ASSET_ID
 
         val transactionAmount = getTransactionDetailAmount(baseTransactionDetail, false)
 
         val receiverAccountPublicKey = baseTransactionDetail.receiverAccountAddress.orEmpty()
         val senderAccountPublicKey = baseTransactionDetail.senderAccountAddress.orEmpty()
 
-        val areAccountsInCache = accountDetailUseCase.isThereAnyAccountWithPublicKey(senderAccountPublicKey) ||
-            accountDetailUseCase.isThereAnyAccountWithPublicKey(receiverAccountPublicKey)
+        val areAccountsInCache = isThereAnyAccountWithAddress(senderAccountPublicKey) ||
+            isThereAnyAccountWithAddress(receiverAccountPublicKey)
 
         val transactionSign = getTransactionSign(
             receiverAccountPublicKey = receiverAccountPublicKey,

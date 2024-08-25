@@ -13,26 +13,20 @@
 package com.algorand.android.ui.register
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.core.AccountManager
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingCopyPassphraseEventTracker
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class BackupPassphraseViewModel @Inject constructor(
-    private val onboardingCopyPassphraseEventTracker: OnboardingCopyPassphraseEventTracker,
-    private val accountManager: AccountManager
+    private val onboardingCopyPassphraseEventTracker: OnboardingCopyPassphraseEventTracker
 ) : BaseViewModel() {
 
     fun logOnboardingNextClickEvent() {
         viewModelScope.launch {
             onboardingCopyPassphraseEventTracker.logOnboardingCopyPassphraseEvent()
         }
-    }
-
-    fun getAccountSecretKey(publicKey: String): ByteArray? {
-        return accountManager.getAccount(publicKey)?.getSecretKey()
     }
 }

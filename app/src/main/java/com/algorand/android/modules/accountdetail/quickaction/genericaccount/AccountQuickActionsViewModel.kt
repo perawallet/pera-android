@@ -15,6 +15,8 @@ package com.algorand.android.modules.accountdetail.quickaction.genericaccount
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.model.AccountQuickActionsPreview
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.usecase.AccountQuickActionsPreviewUseCase
 import com.algorand.android.utils.getOrThrow
@@ -28,16 +30,32 @@ import kotlinx.coroutines.flow.update
 @HiltViewModel
 class AccountQuickActionsViewModel @Inject constructor(
     private val accountQuickActionsPreviewUseCase: AccountQuickActionsPreviewUseCase,
+    private val getAccountDetail: GetAccountDetail,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
     val accountAddress: String = savedStateHandle.getOrThrow(ACCOUNT_ADDRESS_KEY)
+
+    private var accountDetail: AccountDetail? = null
+
+    private val canAccountSignTransaction: Boolean
+        get() = accountDetail?.canSignTransaction() ?: false
 
     private val _accountQuickActionsPreviewFlow = MutableStateFlow(
         accountQuickActionsPreviewUseCase.getInitialPreview()
     )
     val accountQuickActionsPreviewFlow: StateFlow<AccountQuickActionsPreview>
         get() = _accountQuickActionsPreviewFlow
+
+    init {
+        initAccountDetail()
+    }
+
+    private fun initAccountDetail() {
+        viewModelScope.launchIO {
+            accountDetail = getAccountDetail(accountAddress)
+        }
+    }
 
     fun onSwapClick() {
         viewModelScope.launchIO {
@@ -54,6 +72,7 @@ class AccountQuickActionsViewModel @Inject constructor(
         _accountQuickActionsPreviewFlow.update { preview ->
             accountQuickActionsPreviewUseCase.updatePreviewWithAssetAdditionNavigation(
                 preview = preview,
+                canAccountSignTransaction = canAccountSignTransaction,
                 accountAddress = accountAddress
             )
         }
@@ -63,6 +82,7 @@ class AccountQuickActionsViewModel @Inject constructor(
         _accountQuickActionsPreviewFlow.update { preview ->
             accountQuickActionsPreviewUseCase.updatePreviewWithOfframpNavigation(
                 preview = preview,
+                canAccountSignTransaction = canAccountSignTransaction,
                 accountAddress = accountAddress
             )
         }
@@ -72,6 +92,7 @@ class AccountQuickActionsViewModel @Inject constructor(
         _accountQuickActionsPreviewFlow.update { preview ->
             accountQuickActionsPreviewUseCase.updatePreviewWithSendNavigation(
                 preview = preview,
+                canAccountSignTransaction = canAccountSignTransaction,
                 accountAddress = accountAddress
             )
         }

@@ -13,25 +13,26 @@
 package com.algorand.android.usecase
 
 import android.app.NotificationManager
-import com.algorand.android.banner.domain.usecase.BannersUseCase
+import com.algorand.android.appcache.usecase.ClearAppSessionCache
+import com.algorand.android.banner.domain.usecase.ClearDismissedBannerIds
+import com.algorand.android.contacts.component.domain.usecase.DeleteAllContacts
 import com.algorand.android.core.AccountManager
-import com.algorand.android.repository.ContactRepository
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import javax.inject.Inject
 
 class DeleteAllDataUseCase @Inject constructor(
-    private val contactRepository: ContactRepository,
+    private val deleteAllContacts: DeleteAllContacts,
     private val accountManager: AccountManager,
     private val walletConnectManager: WalletConnectManager,
-    private val coreCacheUseCase: CoreCacheUseCase,
-    private val bannersUseCase: BannersUseCase
+    private val clearAppSessionCache: ClearAppSessionCache,
+    private val clearDismissedBannerIds: ClearDismissedBannerIds
 ) {
     suspend fun deleteAllData(notificationManager: NotificationManager?, onDeletionCompleted: suspend (() -> Unit)) {
         accountManager.removeAllData()
-        contactRepository.deleteAllContacts()
+        deleteAllContacts()
         walletConnectManager.killAllSessions()
-        coreCacheUseCase.clearAllCachedData()
-        bannersUseCase.clearBannerCacheAndDismissedBannerIdList()
+        clearAppSessionCache()
+        clearDismissedBannerIds()
         notificationManager?.cancelAll()
         onDeletionCompleted()
     }

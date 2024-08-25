@@ -13,21 +13,36 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.resultinfo.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.rekey.rekeytostandardaccount.resultinfo.ui.usecase.RekeyToStandardAccountVerifyInfoPreviewUseCase
-import com.algorand.android.utils.AccountDisplayName
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class RekeyToStandardAccountVerifyInfoViewModel @Inject constructor(
-    private val rekeyToStandardAccountVerifyInfoPreviewUseCase: RekeyToStandardAccountVerifyInfoPreviewUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
     private val navArgs = RekeyToStandardAccountVerifyInfoFragmentArgs.fromSavedStateHandle(savedStateHandle)
     private val accountAddress = navArgs.accountAddress
 
-    val accountDisplayName: AccountDisplayName
-        get() = rekeyToStandardAccountVerifyInfoPreviewUseCase.getAccountDisplayName(accountAddress)
+    private val _accountDisplayNameFlow = MutableStateFlow<AccountDisplayName?>(null)
+    val accountDisplayNameFlow
+        get() = _accountDisplayNameFlow.asStateFlow()
+
+    init {
+        initPreview()
+    }
+
+    private fun initPreview() {
+        viewModelScope.launchIO {
+            _accountDisplayNameFlow.value = getAccountDisplayName(accountAddress)
+        }
+    }
 }

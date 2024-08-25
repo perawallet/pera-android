@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
+import com.algorand.android.asb.component.utils.AsbBackUpConstants
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.perafileuploadview.PeraFileUploadView
 import com.algorand.android.customviews.perafileuploadview.model.FileUploadState
@@ -27,7 +28,6 @@ import com.algorand.android.databinding.FragmentAsbFileSelectionBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -152,7 +152,7 @@ class AsbFileSelectionFragment : BaseFragment(R.layout.fragment_asb_file_selecti
         val openDocumentIntent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             type = "*/*"
             addCategory(Intent.CATEGORY_OPENABLE)
-            putExtra(Intent.EXTRA_MIME_TYPES, AlgorandSecureBackupUtils.IMPORT_BACKUP_FILE_MIME_TYPES)
+            putExtra(Intent.EXTRA_MIME_TYPES, AsbBackUpConstants.IMPORT_BACKUP_FILE_MIME_TYPES)
         }
         fileSelectorLauncher.launch(openDocumentIntent)
     }

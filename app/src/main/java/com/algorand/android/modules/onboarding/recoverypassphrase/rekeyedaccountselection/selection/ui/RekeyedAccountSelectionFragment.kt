@@ -14,7 +14,7 @@ package com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccoun
 
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.CreateAccount
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.basefoundaccount.selection.ui.BaseFoundAccountSelectionFragment
@@ -24,6 +24,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 @AndroidEntryPoint
 class RekeyedAccountSelectionFragment : BaseFoundAccountSelectionFragment() {
@@ -42,7 +43,7 @@ class RekeyedAccountSelectionFragment : BaseFoundAccountSelectionFragment() {
         event?.consume()?.run { showMaxAccountLimitExceededError() }
     }
 
-    private val navToNameRegistrationEventCollector: suspend (Event<AccountCreation>?) -> Unit = { event ->
+    private val navToNameRegistrationEventCollector: suspend (Event<CreateAccount>?) -> Unit = { event ->
         event?.consume()?.run { navToNameRegistration(this) }
     }
 
@@ -74,23 +75,23 @@ class RekeyedAccountSelectionFragment : BaseFoundAccountSelectionFragment() {
         super.initObservers()
         with(rekeyedAccountSelectionViewModel.foundAccountSelectionFieldsFlow) {
             collectLatestOnLifecycle(
-                flow = map { it.primaryButtonTextResId },
+                flow = map { it?.primaryButtonTextResId },
                 collection = primaryButtonTextResIdCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.secondaryButtonTextResId },
+                flow = map { it?.secondaryButtonTextResId },
                 collection = secondaryButtonTextResIdCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.isPrimaryButtonEnable },
+                flow = mapNotNull { it?.isPrimaryButtonEnable },
                 collection = primaryButtonStateCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.navToNameRegistrationEvent },
+                flow = map { it?.navToNameRegistrationEvent },
                 collection = navToNameRegistrationEventCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.showAccountCountExceedErrorEvent },
+                flow = map { it?.showAccountCountExceedErrorEvent },
                 collection = showAccountCountExceedErrorEventCollector
             )
         }
@@ -107,7 +108,7 @@ class RekeyedAccountSelectionFragment : BaseFoundAccountSelectionFragment() {
         rekeyedAccountSelectionViewModel.onAccountSelected(accountAddress)
     }
 
-    private fun navToNameRegistration(accountCreation: AccountCreation) {
+    private fun navToNameRegistration(accountCreation: CreateAccount) {
         nav(
             RekeyedAccountSelectionFragmentDirections
                 .actionRekeyedAccountSelectionFragmentToRecoverAccountNameRegistrationFragment(accountCreation)

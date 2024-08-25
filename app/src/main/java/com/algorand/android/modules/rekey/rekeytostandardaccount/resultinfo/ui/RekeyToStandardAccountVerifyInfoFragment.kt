@@ -21,8 +21,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.RekeyToStandardAccountNavigationDirections
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
+import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,6 +35,16 @@ class RekeyToStandardAccountVerifyInfoFragment : BaseInfoFragment() {
 
     private val rekeyToStandardAccountVerifyInfoViewModel by viewModels<RekeyToStandardAccountVerifyInfoViewModel>()
 
+    private val accountDisplayNameCollector: suspend (AccountDisplayName?) -> Unit = {
+        if (it != null) {
+            val description = getString(
+                R.string.the_account_name_was_successfully_rekeyed_formatted,
+                it.primaryDisplayName
+            )
+            setDescriptionText(description)
+        }
+    }
+
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             popRekeyToStandardAccountNavigationUp()
@@ -42,6 +54,10 @@ class RekeyToStandardAccountVerifyInfoFragment : BaseInfoFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, onBackPressedCallback)
+        viewLifecycleOwner.collectOnLifecycle(
+            rekeyToStandardAccountVerifyInfoViewModel.accountDisplayNameFlow,
+            accountDisplayNameCollector
+        )
     }
 
     override fun setImageView(imageView: ImageView) {
@@ -56,10 +72,7 @@ class RekeyToStandardAccountVerifyInfoFragment : BaseInfoFragment() {
     }
 
     override fun setDescriptionText(textView: TextView) {
-        textView.text = getString(
-            R.string.the_account_name_was_successfully_rekeyed_formatted,
-            rekeyToStandardAccountVerifyInfoViewModel.accountDisplayName.getAccountPrimaryDisplayName()
-        )
+        // TODO make this optional
     }
 
     override fun setFirstButton(materialButton: MaterialButton) {

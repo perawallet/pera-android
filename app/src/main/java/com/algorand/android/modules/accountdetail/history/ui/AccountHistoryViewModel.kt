@@ -13,23 +13,27 @@
 
 package com.algorand.android.modules.accountdetail.history.ui
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.PagingData
-import com.algorand.android.models.DateFilter
-import com.algorand.android.models.ui.DateFilterPreview
-import com.algorand.android.models.ui.TransactionLoadStatePreview
+import com.algorand.android.core.component.domain.usecase.GetAccountTotalValueFlow
+import com.algorand.android.dateui.mapper.DateFilterPreviewMapper
+import com.algorand.android.dateui.model.DateFilter
+import com.algorand.android.dateui.model.DateFilterPreview
 import com.algorand.android.modules.tracking.accountdetail.accounthistory.AccountHistoryFragmentEventTracker
 import com.algorand.android.modules.transaction.csv.ui.model.CsvStatusPreview
 import com.algorand.android.modules.transaction.csv.ui.usecase.CsvStatusPreviewUseCase
-import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
-import com.algorand.android.usecase.AccountHistoryUseCase
+import com.algorand.android.transactionhistoryui.TransactionHistoryPreviewManager
+import com.algorand.android.transactionhistoryui.mapper.TransactionLoadStatePreviewMapper
+import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
+import com.algorand.android.transactionhistoryui.model.TransactionLoadStatePreview
+import com.algorand.android.transactionhistoryui.pendingtxn.domain.usecase.GetPendingTransactionItems
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -44,9 +48,13 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AccountHistoryViewModel @Inject constructor(
-    private val accountHistoryUseCase: AccountHistoryUseCase,
+    private val transactionHistoryPreviewManager: TransactionHistoryPreviewManager,
     private val csvStatusPreviewUseCase: CsvStatusPreviewUseCase,
     private val accountHistoryFragmentEventTracker: AccountHistoryFragmentEventTracker,
+    private val getAccountTotalValueFlow: GetAccountTotalValueFlow,
+    private val dateFilterPreviewMapper: DateFilterPreviewMapper,
+    private val transactionLoadStatePreviewMapper: TransactionLoadStatePreviewMapper,
+    private val getPendingTransactionItems: GetPendingTransactionItems,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -61,7 +69,7 @@ class AccountHistoryViewModel @Inject constructor(
     private val _pendingTransactionsFlow = MutableStateFlow<List<BaseTransactionItem>?>(null)
     val pendingTransactionsFlow: Flow<List<BaseTransactionItem>?>
         get() = _pendingTransactionsFlow
-            .distinctUntilChanged(accountHistoryUseCase.pendingTransactionDistinctUntilChangedListener)
+            .distinctUntilChanged(getPendingTransactionItems.pendingFlowDistinctUntilChangedListener)
 
     val csvStatusPreview: Flow<CsvStatusPreview?>
         get() = _csvStatusPreviewFlow
@@ -81,12 +89,12 @@ class AccountHistoryViewModel @Inject constructor(
     fun setDateFilter(dateFilter: DateFilter) {
         viewModelScope.launch {
             dateFilterFlow.emit(dateFilter)
-            _dateFilterPreviewFlow.emit(accountHistoryUseCase.createDateFilterPreview(dateFilter))
+            _dateFilterPreviewFlow.emit(dateFilterPreviewMapper(dateFilter))
         }
     }
 
     fun getAccountHistoryFlow(): Flow<PagingData<BaseTransactionItem>>? {
-        return accountHistoryUseCase.getTransactionPaginationFlow(accountAddress, viewModelScope)
+        return transactionHistoryPreviewManager.getTransactionHistoryPaginationFlow(accountAddress, viewModelScope)
     }
 
     fun activatePendingTransaction() {
@@ -102,11 +110,11 @@ class AccountHistoryViewModel @Inject constructor(
         itemCount: Int,
         isLastStateError: Boolean
     ): TransactionLoadStatePreview {
-        return accountHistoryUseCase.createTransactionLoadStatePreview(combinedLoadStates, itemCount, isLastStateError)
+        return transactionLoadStatePreviewMapper(combinedLoadStates, itemCount, isLastStateError)
     }
 
     fun refreshTransactionHistory() {
-        accountHistoryUseCase.refreshTransactionHistory()
+        transactionHistoryPreviewManager.refreshTransactionHistory()
     }
 
     fun createCsvFile(cacheDirectory: File) {
@@ -124,22 +132,22 @@ class AccountHistoryViewModel @Inject constructor(
 
     private fun initDateFilterFlow() {
         dateFilterFlow
-            .onEach { accountHistoryUseCase.setDateFilter(it) }
+            .onEach { transactionHistoryPreviewManager.filterHistoryByDate(it) }
             .distinctUntilChanged()
             .flowOn(Dispatchers.Default)
             .launchIn(viewModelScope)
     }
 
     private fun refreshAccountHistoryData() {
-        accountHistoryUseCase.refreshAccountHistoryData()
+        transactionHistoryPreviewManager.refreshTransactionHistory()
     }
 
     private fun activatePendingTransactionsPolling() {
         pendingTransactionPolling = viewModelScope.launch(Dispatchers.IO) {
             while (true) {
-                val pendingTransactions = accountHistoryUseCase.fetchPendingTransactions(accountAddress)
+                val pendingTransactions = getPendingTransactionItems(accountAddress, null)
                 synchronized(_pendingTransactionsFlow) {
-                    _pendingTransactionsFlow.value = pendingTransactions
+                    _pendingTransactionsFlow.value = pendingTransactions.getDataOrNull().orEmpty()
                 }
                 delay(PENDING_TRANSACTION_DELAY)
             }
@@ -147,12 +155,12 @@ class AccountHistoryViewModel @Inject constructor(
     }
 
     private fun getDefaultDateFilterPreview(): DateFilterPreview {
-        return accountHistoryUseCase.createDateFilterPreview(DateFilter.DEFAULT_DATE_FILTER)
+        return dateFilterPreviewMapper(DateFilter.AllTime)
     }
 
     private fun startAccountBalanceFlow() {
         viewModelScope.launch {
-            accountHistoryUseCase.getAccountTotalValueFlow(accountAddress).distinctUntilChanged().collectLatest {
+            getAccountTotalValueFlow(accountAddress, true).collectLatest {
                 refreshAccountHistoryData()
             }
         }

@@ -13,26 +13,30 @@
 package com.algorand.android.modules.accounts.ui
 
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.appcache.usecase.RefreshSelectedCurrencyDetailCache
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.core.component.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.android.modules.accounts.domain.model.AccountPreview
 import com.algorand.android.modules.accounts.domain.usecase.AccountsPreviewUseCase
 import com.algorand.android.modules.tracking.accounts.AccountsEventTracker
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
-import com.algorand.android.utils.coremanager.ParityManager
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AccountsViewModel @Inject constructor(
     private val accountsPreviewUseCase: AccountsPreviewUseCase,
     private val accountsEventTracker: AccountsEventTracker,
-    private val parityManager: ParityManager,
-    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase
+    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
+    private val getNotBackedUpAccounts: GetNotBackedUpAccounts,
+    private val refreshSelectedCurrencyDetailCache: RefreshSelectedCurrencyDetailCache
 ) : BaseViewModel() {
 
     private val _accountPreviewFlow = MutableStateFlow<AccountPreview?>(null)
@@ -45,7 +49,7 @@ class AccountsViewModel @Inject constructor(
 
     fun refreshCachedAlgoPrice() {
         viewModelScope.launch {
-            parityManager.refreshSelectedCurrencyDetailCache()
+            refreshSelectedCurrencyDetailCache()
         }
     }
 
@@ -132,8 +136,12 @@ class AccountsViewModel @Inject constructor(
         // TODO add logging?
     }
 
-    fun getNotBackedUpAccounts(): List<String> {
-        return accountsPreviewUseCase.getNotBackedUpAccounts()
+    fun onBackupBannerActionButtonClick() {
+        viewModelScope.launchIO {
+            _accountPreviewFlow.update {
+                it?.copy(navigateToBackUpPassphrase = Event(getNotBackedUpAccounts()))
+            }
+        }
     }
 
     private suspend fun updatePreviewForSwapNavigation() {

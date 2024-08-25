@@ -13,17 +13,22 @@
 package com.algorand.android.dependencyinjection
 
 import com.algorand.android.BuildConfig
+import com.algorand.android.algosdk.component.network.ProvideAlgorandApiKey
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountDeserializer
 import com.algorand.android.network.AlgodApi
 import com.algorand.android.network.AlgodInterceptor
+import com.algorand.android.network.GetAlgodInterceptorNodeDetails
+import com.algorand.android.network.GetIndexerInterceptorNodeDetails
+import com.algorand.android.network.GetMobileHeaderInterceptorNodeDetails
 import com.algorand.android.network.IndexerApi
 import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.MobileHeaderInterceptor
+import com.algorand.android.node.domain.usecase.GetActiveNode
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.algorand.android.exceptions.RetrofitErrorHandler
+import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,20 +54,50 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNodeInterceptor(): IndexerInterceptor {
-        return IndexerInterceptor()
+    fun provideNodeInterceptor(getIndexerInterceptorNodeDetails: GetIndexerInterceptorNodeDetails): IndexerInterceptor {
+        return IndexerInterceptor(getIndexerInterceptorNodeDetails)
     }
 
     @Provides
     @Singleton
-    fun provideAlgodInterceptor(): AlgodInterceptor {
-        return AlgodInterceptor()
+    fun provideAlgodInterceptor(getAlgodInterceptorNodeDetails: GetAlgodInterceptorNodeDetails): AlgodInterceptor {
+        return AlgodInterceptor(getAlgodInterceptorNodeDetails)
     }
 
     @Provides
     @Singleton
-    fun provideNodeHeaderInterceptor(): MobileHeaderInterceptor {
-        return MobileHeaderInterceptor()
+    fun provideAlgorandApiKey(): ProvideAlgorandApiKey {
+        return ProvideAlgorandApiKey { BuildConfig.ALGORAND_API_KEY }
+    }
+
+    @Provides
+    @Singleton
+    fun provideNodeHeaderInterceptor(
+        getMobileHeaderInterceptorNodeDetails: GetMobileHeaderInterceptorNodeDetails
+    ): MobileHeaderInterceptor {
+        return MobileHeaderInterceptor(
+            getMobileHeaderInterceptorNodeDetails = getMobileHeaderInterceptorNodeDetails
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetIndexerInterceptorNodeDetails(getActiveNode: GetActiveNode): GetIndexerInterceptorNodeDetails {
+        return GetIndexerInterceptorNodeDetails(getActiveNode)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetAlgodInterceptorNodeDetails(getActiveNode: GetActiveNode): GetAlgodInterceptorNodeDetails {
+        return GetAlgodInterceptorNodeDetails(getActiveNode)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetMobileHeaderInterceptorNodeDetails(
+        getActiveNode: GetActiveNode
+    ): GetMobileHeaderInterceptorNodeDetails {
+        return GetMobileHeaderInterceptorNodeDetails(getActiveNode)
     }
 
     @Provides

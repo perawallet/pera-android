@@ -13,10 +13,10 @@
 package com.algorand.android.models
 
 import androidx.annotation.StringRes
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.accountcore.ui.assetsorting.AssetSortableItem
+import com.algorand.android.accountcore.ui.assetsorting.CollectibleSortableItem
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
 import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.modules.sorting.assetsorting.ui.model.AssetSortableItem
-import com.algorand.android.modules.sorting.nftsorting.ui.model.CollectibleSortableItem
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import java.math.BigDecimal

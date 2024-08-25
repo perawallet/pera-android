@@ -45,8 +45,8 @@
         android:label="AsbImportAccountSelectionFragment"
         tools:layout="@layout/fragment_base_multiple_account_selection">
         <argument
-            android:name="backupProtocolElements"
-            app:argType="com.algorand.android.modules.backupprotocol.model.BackupProtocolElement[]" />
+            android:name="restoredAccounts"
+            app:argType="com.algorand.android.modules.asb.importbackup.enterkey.ui.model.RestoredAccount[]" />
         <action
             android:id="@+id/action_asbImportAccountSelectionFragment_to_asbAccountRestoreResultFragment"
             app:destination="@id/asbAccountRestoreResultFragment" />

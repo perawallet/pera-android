@@ -14,27 +14,27 @@ package com.algorand.android.modules.assets.profile.detail.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.assetdetailui.detail.model.AssetDetailPreview
+import com.algorand.android.assetdetailui.detail.usecase.GetAssetDetailPreviewFlow
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
-import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
-import com.algorand.android.modules.assets.profile.detail.ui.usecase.AssetDetailPreviewUseCase
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.tracking.swap.assetdetail.AssetDetailAlgoSwapClickEventTracker
-import com.algorand.android.usecase.AccountDeletionUseCase
+import com.algorand.android.swap.common.usecase.GetSwapNavigationDestination
+import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AssetDetailViewModel @Inject constructor(
-    private val assetDetailPreviewUseCase: AssetDetailPreviewUseCase,
-    private val accountDeletionUseCase: AccountDeletionUseCase,
     private val algoSwapClickEventTracker: AssetDetailAlgoSwapClickEventTracker,
+    private val getAssetDetailPreviewFlow: GetAssetDetailPreviewFlow,
+    private val getSwapNavigationDestination: GetSwapNavigationDestination,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -45,72 +45,37 @@ class AssetDetailViewModel @Inject constructor(
     private val _assetDetailPreviewFlow = MutableStateFlow<AssetDetailPreview?>(null)
     val assetDetailPreviewFlow: StateFlow<AssetDetailPreview?> get() = _assetDetailPreviewFlow
 
+    val canAccountSignTransaction
+        get() = _assetDetailPreviewFlow.value?.accountDetailSummary?.accountDetail?.canSignTransaction() ?: false
+
     init {
         initAssetDetailPreview()
     }
 
     fun onSwapClick() {
         viewModelScope.launchIO {
-            if (assetId == ALGO_ID) algoSwapClickEventTracker.logAlgoSwapClickEvent()
+            if (assetId == ALGO_ASSET_ID) algoSwapClickEventTracker.logAlgoSwapClickEvent()
             _assetDetailPreviewFlow.update { preview ->
-                assetDetailPreviewUseCase.updatePreviewWithSwapNavigation(
-                    assetId = assetId,
-                    preview = preview,
-                    accountAddress = accountAddress
+                preview?.copy(
+                    swapNavigationDestinationEvent = Event(getSwapNavigationDestination(accountAddress))
                 )
             }
         }
     }
 
-    fun onAddAssetClick() {
-        _assetDetailPreviewFlow.update { preview ->
-            assetDetailPreviewUseCase.updatePreviewWithAssetAdditionNavigation(
-                preview = preview,
-                accountAddress = accountAddress
-            )
-        }
-    }
-
-    fun onBuySellClick() {
-        _assetDetailPreviewFlow.update { preview ->
-            assetDetailPreviewUseCase.updatePreviewWithOfframpNavigation(
-                preview = preview,
-                accountAddress = accountAddress
-            )
-        }
-    }
-
-    fun onSendClick() {
-        _assetDetailPreviewFlow.update { preview ->
-            assetDetailPreviewUseCase.updatePreviewWithSendNavigation(
-                preview = preview,
-                accountAddress = accountAddress,
-                assetId = assetId
-            )
-        }
-    }
-
-    fun removeAccount() {
-        viewModelScope.launch(Dispatchers.IO) {
-            accountDeletionUseCase.removeAccount(accountAddress)
-        }
-    }
-
     fun onMarketClick() {
-        with(_assetDetailPreviewFlow) {
-            val currentPreview = value ?: return@with
-            value = assetDetailPreviewUseCase.updatePreviewForDiscoverMarketEvent(currentPreview)
+        _assetDetailPreviewFlow.update { preview ->
+            val safeTokenId = if (preview?.assetId == ALGO_ASSET_ID) ALGO_SHORT_NAME else preview?.assetId.toString()
+            preview?.copy(
+                navigateToDiscoverMarket = Event(safeTokenId)
+            )
         }
     }
 
     private fun initAssetDetailPreview() {
-        viewModelScope.launch {
-            assetDetailPreviewUseCase.initAssetDetailPreview(
-                accountAddress = accountAddress,
-                assetId = assetId,
-                isQuickActionButtonsVisible = isQuickActionButtonsVisible
-            ).collect {
-                _assetDetailPreviewFlow.emit(it)
+        viewModelScope.launchIO {
+            getAssetDetailPreviewFlow(accountAddress, assetId, isQuickActionButtonsVisible).collect {
+                _assetDetailPreviewFlow.value = it
             }
         }
     }

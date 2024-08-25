@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.selection.ui.mapper
 
-import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.*
 import com.algorand.android.modules.basefoundaccount.selection.ui.model.BaseFoundAccountSelectionItem
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.selection.ui.model.RekeyedAccountSelectionPreview
 import com.algorand.android.utils.Event
@@ -26,7 +26,7 @@ class RekeyedAccountSelectionPreviewMapper @Inject constructor() {
         primaryButtonTextResId: Int?,
         secondaryButtonTextResId: Int?,
         isPrimaryButtonEnable: Boolean,
-        navToNameRegistrationEvent: Event<AccountCreation>? = null,
+        navToNameRegistrationEvent: Event<CreateAccount>? = null,
         showAccountCountExceedErrorEvent: Event<Unit>? = null
     ): RekeyedAccountSelectionPreview {
         return RekeyedAccountSelectionPreview(

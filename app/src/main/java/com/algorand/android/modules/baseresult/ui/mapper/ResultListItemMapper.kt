@@ -16,11 +16,11 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.PluralAnnotatedString
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.baseresult.ui.model.ResultListItem
-import com.algorand.android.utils.AccountDisplayName
 import javax.inject.Inject
 
 class ResultListItemMapper @Inject constructor() {
@@ -70,26 +70,6 @@ class ResultListItemMapper @Inject constructor() {
         return ResultListItem.DescriptionItem.Plural(
             pluralAnnotatedString = pluralAnnotatedString,
             isClickable = isClickable
-        )
-    }
-
-    fun mapToSingularInfoBoxItem(
-        @DrawableRes infoIconResId: Int,
-        @ColorRes infoIconTintResId: Int,
-        @StringRes infoTitleTextResId: Int,
-        @ColorRes infoTitleTintResId: Int,
-        infoDescriptionAnnotatedString: AnnotatedString,
-        @ColorRes infoDescriptionTintResId: Int,
-        @ColorRes infoBoxTintColorResId: Int
-    ): ResultListItem.InfoBoxItem.Singular {
-        return ResultListItem.InfoBoxItem.Singular(
-            infoIconResId = infoIconResId,
-            infoIconTintResId = infoIconTintResId,
-            infoTitleTextResId = infoTitleTextResId,
-            infoTitleTintResId = infoTitleTintResId,
-            infoDescriptionAnnotatedString = infoDescriptionAnnotatedString,
-            infoDescriptionTintResId = infoDescriptionTintResId,
-            infoBoxTintColorResId = infoBoxTintColorResId
         )
     }
 

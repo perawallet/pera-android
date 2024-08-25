@@ -24,11 +24,11 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import com.algorand.android.R
+import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.AlgorandInputLayout
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.databinding.FragmentBaseAddEditContactBinding
-import com.algorand.android.models.User
 import com.algorand.android.utils.extensions.setContactIconDrawable
 import com.algorand.android.utils.hideKeyboard
 import com.algorand.android.utils.isPermissionGranted
@@ -132,7 +132,7 @@ abstract class BaseAddEditContactFragment : DaggerBaseFragment(R.layout.fragment
         }
     }
 
-    protected fun navigateBackWithResult(selectedContact: User) {
+    protected fun navigateBackWithResult(selectedContact: Contact) {
         setNavigationResult(CONTACT_ADDED_KEY, selectedContact)
         navBack()
     }

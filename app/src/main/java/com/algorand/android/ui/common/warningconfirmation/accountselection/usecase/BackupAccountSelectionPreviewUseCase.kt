@@ -12,24 +12,47 @@
 
 package com.algorand.android.ui.common.warningconfirmation.accountselection.usecase
 
+import com.algorand.android.accountcore.ui.accountselection.mapper.AccountSelectionListItemMapper
+import com.algorand.android.accountcore.ui.accountselection.usecase.CreateLoadedAccountConfiguration
+import com.algorand.android.accountcore.ui.accountselection.usecase.CreateNotLoadedAccountConfiguration
+import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListWhichNotBackedUp
+import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
 import com.algorand.android.ui.common.warningconfirmation.accountselection.mapper.BackupAccountSelectionPreviewMapper
 import com.algorand.android.ui.common.warningconfirmation.accountselection.model.BackupAccountSelectionPreview
-import com.algorand.android.usecase.AccountSelectionListUseCase
 import javax.inject.Inject
 
 class BackupAccountSelectionPreviewUseCase @Inject constructor(
-    private val accountSelectionListUseCase: AccountSelectionListUseCase,
-    private val backupAccountSelectionPreviewMapper: BackupAccountSelectionPreviewMapper
+    private val backupAccountSelectionPreviewMapper: BackupAccountSelectionPreviewMapper,
+    private val getFilteredSortedAccountListWhichNotBackedUp: GetFilteredSortedAccountListWhichNotBackedUp,
+    private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol,
+    private val createLoadedAccountConfiguration: CreateLoadedAccountConfiguration,
+    private val createNotLoadedAccountConfiguration: CreateNotLoadedAccountConfiguration,
+    private val accountSelectionListItemMapper: AccountSelectionListItemMapper
 ) {
 
     fun getInitialStatePreview() = backupAccountSelectionPreviewMapper.mapToBackupAccountSelectionPreview(emptyList())
 
     suspend fun getBackupAccountSelectionPreview(): BackupAccountSelectionPreview {
-        val accountSelectionListItems = accountSelectionListUseCase
-            .createAccountSelectionListAccountItemsWhichNotBackedUp(
-                showHoldings = true,
-                showFailedAccounts = true
-            )
-        return backupAccountSelectionPreviewMapper.mapToBackupAccountSelectionPreview(accountSelectionListItems)
+        val selectedCurrencySymbol = getPrimaryCurrencySymbol().orEmpty()
+        val sortedAccountListItems = getFilteredSortedAccountListWhichNotBackedUp(
+            onLoadedAccountConfiguration = {
+                createLoadedAccountConfiguration(
+                    accountDetail = this,
+                    showHoldings = true,
+                    selectedCurrencySymbol = selectedCurrencySymbol
+                )
+            },
+            onFailedAccountConfiguration = {
+                createNotLoadedAccountConfiguration(this)
+            }
+        )
+        val accountListItems = sortedAccountListItems.map { accountListItem ->
+            if (accountListItem.itemConfiguration.showWarning == true) {
+                accountSelectionListItemMapper.mapToErrorAccountItem(accountListItem)
+            } else {
+                accountSelectionListItemMapper.mapToAccountItem(accountListItem)
+            }
+        }
+        return backupAccountSelectionPreviewMapper.mapToBackupAccountSelectionPreview(accountListItems)
     }
 }

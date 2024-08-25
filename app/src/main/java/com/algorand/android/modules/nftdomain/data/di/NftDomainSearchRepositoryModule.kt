@@ -16,7 +16,7 @@ import com.algorand.android.modules.nftdomain.data.mapper.NftDomainSearchResultD
 import com.algorand.android.modules.nftdomain.data.repository.NftDomainSearchRepositoryImpl
 import com.algorand.android.modules.nftdomain.domain.repository.NftDomainSearchRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.exceptions.RetrofitErrorHandler
+import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

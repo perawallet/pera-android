@@ -15,9 +15,10 @@ package com.algorand.android.modules.onboarding.pairledger.search.ui
 import android.bluetooth.BluetoothDevice
 import androidx.navigation.navGraphViewModels
 import com.algorand.android.R
-import com.algorand.android.models.AccountInformation
+import com.algorand.android.accountinfo.component.domain.model.AccountInformation
 import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.BaseLedgerSearchFragment
 import com.algorand.android.modules.onboarding.pairledger.PairLedgerNavigationViewModel
+import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.model.RegisterLedgerAccountSelectionNavArgs
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -32,12 +33,28 @@ class RegisterLedgerSearchFragment : BaseLedgerSearchFragment() {
     override fun onLedgerConnected(accountList: List<AccountInformation>, ledgerDevice: BluetoothDevice) {
         setLoadingVisibility(isVisible = false)
         pairLedgerNavigationViewModel.pairedLedger = ledgerDevice
+        val navArgs = getLedgerAccountSelectionNavArgs(accountList, ledgerDevice)
         nav(
-            RegisterLedgerSearchFragmentDirections.actionRegisterLedgerSearchFragmentToLedgerAccountSelectionFragment(
-                ledgerAccountsInformation = accountList.toTypedArray(),
-                bluetoothName = ledgerDevice.name,
-                bluetoothAddress = ledgerDevice.address
-            )
+            RegisterLedgerSearchFragmentDirections
+                .actionRegisterLedgerSearchFragmentToLedgerAccountSelectionFragment(navArgs)
+        )
+    }
+
+    private fun getLedgerAccountSelectionNavArgs(
+        accounts: List<AccountInformation>,
+        device: BluetoothDevice
+    ): RegisterLedgerAccountSelectionNavArgs {
+        return RegisterLedgerAccountSelectionNavArgs(
+            bluetoothAddress = device.address,
+            bluetoothName = device.name,
+            ledgerAccounts = accounts.map {
+                RegisterLedgerAccountSelectionNavArgs.LedgerAccountsNavArgs(
+                    isRekeyed = it.isRekeyed(),
+                    address = it.address,
+                    assetHoldingIds = it.getAssetHoldingIds(),
+                    authAddress = it.rekeyAdminAddress
+                )
+            }
         )
     }
 

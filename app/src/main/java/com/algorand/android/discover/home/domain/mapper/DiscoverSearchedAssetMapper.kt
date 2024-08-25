@@ -15,7 +15,7 @@ package com.algorand.android.discover.home.domain.mapper
 import com.algorand.android.assetsearch.domain.mapper.VerificationTierDecider
 import com.algorand.android.assetsearch.domain.model.AssetSearchDTO
 import com.algorand.android.assetsearch.domain.model.BaseSearchedAsset.DiscoverSearchedAsset
-import com.algorand.android.modules.currency.domain.model.Currency
+import com.algorand.android.currency.domain.model.Currency
 import com.algorand.android.utils.formatAsCurrency
 import java.math.BigDecimal
 import javax.inject.Inject

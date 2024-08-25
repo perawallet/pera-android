@@ -17,48 +17,37 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.text.buildSpannedString
-import androidx.lifecycle.Observer
 import com.algorand.android.R
-import com.algorand.android.assetsearch.domain.model.VerificationTier
+import com.algorand.android.assetaction.AssetActionViewModel
+import com.algorand.android.assetaction.model.AssetActionInformation
+import com.algorand.android.assetaction.model.AssetActionPreview
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.databinding.BottomSheetAssetActionBinding
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.utils.Resource
-import com.algorand.android.utils.addUnnamedAssetName
+import com.algorand.android.foundation.Event
+import com.algorand.android.foundation.lifecycle.collectLatestOnLifecycle
+import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.setAssetNameTextColorByVerificationTier
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.google.android.material.button.MaterialButton
 
-// TODO Refactor this class whenever have a time
 abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_asset_action) {
 
     protected val binding by viewBinding(BottomSheetAssetActionBinding::bind)
 
-    abstract val assetActionViewModel: BaseAssetActionViewModel
+    abstract val assetActionViewModel: AssetActionViewModel
 
-    protected var asset: AssetInformation? = null
-
-    // region Observers
-
-    // TODO: Replace this with flow
-    // TODO: We shouldn't use [Resource] in UI layer anymore
-    private val assetDescriptionObserver = Observer<Resource<AssetInformation>> { resource ->
-        resource.use(
-            onSuccess = { assetDescription ->
-                asset = assetDescription
-                setAssetDetails(assetDescription)
-            },
-            onLoading = { binding.loadingProgressBar.visibility = View.VISIBLE },
-            onLoadingFinished = { binding.loadingProgressBar.visibility = View.GONE },
-            onFailed = { showErrorAndNavBack(it) }
-        )
+    private val assetActionPreviewCollector: suspend (AssetActionPreview?) -> Unit = {
+        if (it != null) initPreview(it)
     }
 
-    //endregion
+    private fun initPreview(preview: AssetActionPreview) {
+        setAssetDetails(preview.assetActionInformation)
+        initAccountDetailTextView(preview.accountDetail)
+        preview.showError?.let { showErrorAndNavBack(it) }
+    }
 
     abstract fun setDescriptionTextView(textView: TextView)
     abstract fun setToolbar(customToolbar: CustomToolbar)
@@ -67,7 +56,8 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
 
     open fun setTransactionFeeTextView(textView: TextView) {}
     open fun setWarningIconImageView(imageView: ImageView) {}
-    open fun setAccountNameTextView(textView: TextView) {}
+
+    protected fun getAssetId(): Long = assetActionViewModel.assetId
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -81,7 +71,6 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
             setNegativeButton(negativeButton)
             setTransactionFeeTextView(transactionFeeTextView)
             setWarningIconImageView(warningIconImageView)
-            setAccountNameTextView(accountTextView)
         }
     }
 
@@ -90,44 +79,52 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
     open fun initArgs() {}
 
     open fun initObservers() {
-        assetActionViewModel.assetInformationLiveData.observe(viewLifecycleOwner, assetDescriptionObserver)
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            assetActionViewModel.assetActionPreviewFlow,
+            assetActionPreviewCollector
+        )
     }
 
-    private fun setAssetDetails(asset: AssetInformation) {
+    private fun setAssetDetails(asset: AssetActionInformation?) {
+        if (asset == null) return
         with(binding) {
-            with(asset) {
-                assetFullNameTextView.text = fullName
-                updateAssetShortNameTextView(shortName, verificationTier)
-                assetIdTextView.text = assetId.toString()
-                copyIDButton.setOnClickListener { onCopyClick() }
-            }
-        }
-    }
-
-    private fun updateAssetShortNameTextView(shortName: String?, verificationTier: VerificationTier?) {
-        binding.assetShortNameTextView.apply {
-            text = if (shortName.isNullOrBlank()) {
-                buildSpannedString { context?.let { addUnnamedAssetName(it) } }
-            } else {
-                shortName
-            }
-            assetActionViewModel.getVerificationTierConfiguration(verificationTier).run {
-                setAssetNameTextColorByVerificationTier(this@run)
-                if (drawableResId != null) {
-                    setDrawable(end = AppCompatResources.getDrawable(context, drawableResId))
+            assetIdTextView.text = asset.assetId.toString()
+            assetFullNameTextView.text = asset.fullName
+            binding.assetShortNameTextView.apply {
+                text = asset.shortName
+                asset.verificationTierConfiguration.run {
+                    setAssetNameTextColorByVerificationTier(this)
+                    if (drawableResId != null) {
+                        setDrawable(end = AppCompatResources.getDrawable(context, drawableResId!!))
+                    }
                 }
             }
+            copyIDButton.setOnClickListener { onCopyClick(asset.assetId) }
         }
     }
 
-    private fun onCopyClick() {
-        context?.copyToClipboard(assetActionViewModel.assetId.toString(), ASSET_ID_COPY_LABEL)
+    private fun initAccountDetailTextView(assetActionAccountDetail: com.algorand.android.assetaction.model.AssetActionAccountDetail?) {
+        if (assetActionAccountDetail == null) return
+        binding.accountTextView.apply {
+            text = assetActionAccountDetail.displayName
+            setDrawable(
+                start = AccountIconDrawable.create(
+                    context = context,
+                    accountIconDrawablePreview = assetActionAccountDetail.iconDrawablePreview,
+                    sizeResId = R.dimen.spacing_xlarge
+                )
+            )
+            setOnLongClickListener { onAccountAddressCopied(assetActionAccountDetail.address); true }
+        }
     }
 
-    private fun showErrorAndNavBack(error: Resource.Error) {
+    private fun onCopyClick(assetId: Long) {
+        context?.copyToClipboard(assetId.toString(), ASSET_ID_COPY_LABEL)
+    }
+
+    private fun showErrorAndNavBack(error: Event<String?>) {
         context?.run {
-            val errorMessage = error.parse(this).toString()
-            showGlobalError(errorMessage = errorMessage, tag = baseActivityTag)
+            showGlobalError(errorMessage = error.consume(), tag = baseActivityTag)
             navBack()
         }
     }

@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.mapper
 
-import com.algorand.android.models.AnnotatedString
+import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.model.RekeyToStandardAccountIntroductionPreview
 import javax.inject.Inject
 

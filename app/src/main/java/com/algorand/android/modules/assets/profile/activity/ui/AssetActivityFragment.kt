@@ -25,15 +25,15 @@ import androidx.recyclerview.widget.ConcatAdapter
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentAssetActivityBinding
-import com.algorand.android.models.DateFilter
+import com.algorand.android.dateui.model.DateFilter
+import com.algorand.android.dateui.model.DateFilterPreview
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.ui.DateFilterPreview
-import com.algorand.android.models.ui.TransactionLoadStatePreview
 import com.algorand.android.modules.transaction.csv.ui.model.CsvStatusPreview
 import com.algorand.android.modules.transactionhistory.ui.AccountHistoryAdapter
 import com.algorand.android.modules.transactionhistory.ui.PendingTransactionAdapter
 import com.algorand.android.modules.transactionhistory.ui.StickyAccountHistoryHeaderDecoration
-import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
+import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
+import com.algorand.android.transactionhistoryui.model.TransactionLoadStatePreview
 import com.algorand.android.ui.datepicker.DateFilterListBottomSheet
 import com.algorand.android.utils.CSV_FILE_MIME_TYPE
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -253,7 +253,7 @@ class AssetActivityFragment : BaseFragment(R.layout.fragment_asset_activity) {
                     useIconsOwnTint = useFilterIconsOwnTint
                 )
                 assetActivityToolbar.apply {
-                    if (titleResId != null) setTitle(titleResId) else if (title != null) setTitle(title)
+                    if (titleResId != null) setTitle(titleResId!!) else if (title != null) setTitle(title!!)
                 }
             }
         }

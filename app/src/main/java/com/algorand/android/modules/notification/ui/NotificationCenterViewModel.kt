@@ -15,76 +15,53 @@ package com.algorand.android.modules.notification.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
-import com.algorand.android.modules.notification.domain.pagination.NotificationDataSource
 import com.algorand.android.modules.notification.domain.usecase.NotificationStatusUseCase
-import com.algorand.android.modules.notification.ui.model.NotificationCenterPreview
+import com.algorand.android.modules.notification.ui.mapper.NotificationListItemMapper
 import com.algorand.android.modules.notification.ui.model.NotificationListItem
-import com.algorand.android.modules.notification.ui.usecase.NotificationCenterPreviewUseCase
 import com.algorand.android.notification.PeraNotificationManager
-import com.algorand.android.repository.NotificationRepository
+import com.algorand.android.notification.domain.usecase.GetNotificationHistoryPagingFlow
+import com.algorand.android.notification.domain.usecase.GetNotificationLastRefreshDateTime
+import com.algorand.android.notification.domain.usecase.SetNotificationLastRefreshDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.ZonedDateTime
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class NotificationCenterViewModel @Inject constructor(
     private val peraNotificationManager: PeraNotificationManager,
-    private val deviceIdUseCase: DeviceIdUseCase,
-    private val notificationRepository: NotificationRepository,
-    private val notificationCenterPreviewUseCase: NotificationCenterPreviewUseCase,
-    private val notificationStatusUseCase: NotificationStatusUseCase
+    private val notificationStatusUseCase: NotificationStatusUseCase,
+    private val getNotificationLastRefreshDateTime: GetNotificationLastRefreshDateTime,
+    private val setNotificationLastRefreshDateTime: SetNotificationLastRefreshDateTime,
+    private val getNotificationHistoryPagingFlow: GetNotificationHistoryPagingFlow,
+    private val notificationListItemMapper: NotificationListItemMapper
 ) : BaseViewModel() {
 
-    private var notificationDataSource: NotificationDataSource? = null
-
-    val notificationPaginationFlow = Pager(
-        config = PagingConfig(
-            pageSize = DEFAULT_NOTIFICATION_COUNT
-        ),
-        pagingSourceFactory = {
-            NotificationDataSource(
-                notificationRepository = notificationRepository,
-                deviceIdUseCase = deviceIdUseCase
-            ).also { notificationDataSource = it }
-        }
-    ).flow
-        .cachedIn(viewModelScope)
-        .shareIn(viewModelScope, SharingStarted.Lazily)
-
-    private val _notificationCenterPreviewFlow = MutableStateFlow<NotificationCenterPreview?>(null)
-    val notificationCenterPreviewFlow: StateFlow<NotificationCenterPreview?> get() = _notificationCenterPreviewFlow
+    val notificationHistoryPagingFlow = getNotificationHistoryItemFlow()
+        ?.cachedIn(viewModelScope)
+        ?.shareIn(viewModelScope, SharingStarted.Lazily)
 
     fun refreshNotificationData(refreshDateTime: ZonedDateTime? = null) {
         if (refreshDateTime != null) {
             setLastRefreshedDateTime(refreshDateTime)
         }
-        notificationDataSource?.invalidate()
+        getNotificationHistoryPagingFlow.refresh()
     }
 
     fun getLastRefreshedDateTime(): ZonedDateTime {
-        return notificationCenterPreviewUseCase.getLastRefreshedDateTime()
+        return getNotificationLastRefreshDateTime()
     }
 
     fun setLastRefreshedDateTime(zonedDateTime: ZonedDateTime) {
-        notificationCenterPreviewUseCase.setLastRefreshedDateTime(zonedDateTime)
-    }
-
-    fun onNotificationClickEvent(notificationListItem: NotificationListItem) {
-        viewModelScope.launch {
-            notificationCenterPreviewUseCase.onNotificationClickEvent(notificationListItem).collect {
-                _notificationCenterPreviewFlow.emit(it)
-            }
-        }
+        setNotificationLastRefreshDateTime(zonedDateTime)
     }
 
     fun isRefreshNeededLiveData(): LiveData<Boolean> {
@@ -103,7 +80,9 @@ class NotificationCenterViewModel @Inject constructor(
         }
     }
 
-    companion object {
-        private const val DEFAULT_NOTIFICATION_COUNT = 15
+    private fun getNotificationHistoryItemFlow(): Flow<PagingData<NotificationListItem>>? {
+        return getNotificationHistoryPagingFlow()?.map { pagingData ->
+            pagingData.map { notificationListItemMapper.map(it) }
+        }
     }
 }

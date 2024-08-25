@@ -12,21 +12,23 @@
 
 package com.algorand.android.customviews.accountandassetitem.mapper
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
-import com.algorand.android.customviews.accountandassetitem.model.BaseItemConfiguration
-import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.utils.AssetName
+import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.accountcore.ui.model.BaseItemConfiguration
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier
 import java.math.BigDecimal
 import javax.inject.Inject
 
 class AssetItemConfigurationMapper @Inject constructor(
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
+    private val getAssetName: GetAssetName,
+    private val getAssetDrawableProvider: GetAssetDrawableProvider,
+    private val verificationTierConfigurationMapper: VerificationTierConfigurationMapper
 ) {
 
-    fun mapTo(
+    suspend fun mapTo(
         isAmountInSelectedCurrencyVisible: Boolean,
         secondaryValueText: String,
         assetId: Long,
@@ -38,19 +40,17 @@ class AssetItemConfigurationMapper @Inject constructor(
     ): BaseItemConfiguration.BaseAssetItemConfiguration.AssetItemConfiguration {
         return BaseItemConfiguration.BaseAssetItemConfiguration.AssetItemConfiguration(
             assetId = assetId,
-            assetIconDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetId),
-            primaryAssetName = AssetName.create(name),
-            secondaryAssetName = AssetName.createShortName(shortName),
+            assetIconDrawableProvider = getAssetDrawableProvider(assetId),
+            primaryAssetName = getAssetName(name),
+            secondaryAssetName = getAssetName(shortName),
             primaryValueText = formattedCompactAmount,
             secondaryValueText = secondaryValueText.takeIf { isAmountInSelectedCurrencyVisible },
-            verificationTierConfiguration = verificationTierConfigurationDecider.decideVerificationTierConfiguration(
-                verificationTier
-            ),
+            verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier),
             primaryValue = primaryValue
         )
     }
 
-    fun mapTo(
+    suspend fun mapTo(
         assetId: Long,
         assetFullName: AssetName,
         assetShortName: AssetName,
@@ -59,7 +59,7 @@ class AssetItemConfigurationMapper @Inject constructor(
     ): BaseItemConfiguration.BaseAssetItemConfiguration.AssetItemConfiguration {
         return BaseItemConfiguration.BaseAssetItemConfiguration.AssetItemConfiguration(
             assetId = assetId,
-            assetIconDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetId),
+            assetIconDrawableProvider = getAssetDrawableProvider(assetId),
             primaryAssetName = assetFullName,
             secondaryAssetName = assetShortName,
             showWithAssetId = showWithAssetId,

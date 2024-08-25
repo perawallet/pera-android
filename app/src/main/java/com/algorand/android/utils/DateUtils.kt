@@ -16,8 +16,6 @@ package com.algorand.android.utils
 import android.content.res.Resources
 import android.text.format.DateUtils
 import com.algorand.android.R
-import com.algorand.android.models.DateRange
-import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -25,7 +23,6 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
-import java.time.temporal.TemporalAdjusters
 
 const val MONTH_DAY_YEAR_PATTERN = "MMMM dd, yyyy"
 const val MONTH_DAY_YEAR_WITH_DOT_PATTERN = "MM.dd.yyyy"
@@ -81,18 +78,6 @@ fun getBeginningOfDay(dayBefore: Long = 0): ZonedDateTime {
 
 fun getEndOfDay(dayBefore: Long = 0): ZonedDateTime {
     return ZonedDateTime.now().minusDays(dayBefore).with(LocalTime.MAX)
-}
-
-fun getLastWeekRange(): DateRange {
-    val beginningOfWeek = ZonedDateTime.now().minusWeeks(1).with(DayOfWeek.MONDAY).with(LocalTime.MIN)
-    val endOfWeek = beginningOfWeek.plusDays(WEEK_IN_DAYS - 1).with(LocalTime.MAX)
-    return DateRange(from = beginningOfWeek, to = endOfWeek)
-}
-
-fun getLastMonthRange(): DateRange {
-    val beginningOfMonth = ZonedDateTime.now().minusMonths(1).withDayOfMonth(1).with(LocalTime.MIN)
-    val endOfMonth = beginningOfMonth.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX)
-    return DateRange(from = beginningOfMonth, to = endOfMonth)
 }
 
 fun ZonedDateTime?.formatAsRFC3339Version(): String? {

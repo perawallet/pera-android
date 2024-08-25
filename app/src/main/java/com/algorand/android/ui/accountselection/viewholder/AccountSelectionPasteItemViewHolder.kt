@@ -15,15 +15,15 @@ package com.algorand.android.ui.accountselection.viewholder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.databinding.ItemPasteAddressBinding
-import com.algorand.android.models.BaseAccountSelectionListItem
 
 class AccountSelectionPasteItemViewHolder(
     private val binding: ItemPasteAddressBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: BaseAccountSelectionListItem.PasteItem) {
-        binding.copiedAddressTextView.text = item.publicKey
+        binding.copiedAddressTextView.text = item.address
     }
 
     companion object {

@@ -16,7 +16,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.databinding.ItemSwapAssetSelectionBinding
-import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapAssetSelectionItem
+import com.algorand.android.swapui.assetselection.model.SwapAssetSelectionItem
 
 class SwapAssetSelectionViewHolder(
     private val binding: ItemSwapAssetSelectionBinding,
@@ -26,9 +26,9 @@ class SwapAssetSelectionViewHolder(
     fun bind(item: SwapAssetSelectionItem) {
         with(binding.assetItemView) {
             rootView.setOnClickListener { listener.onAssetItemSelected(item) }
-            setTitleText(item.assetFullName.getName(resources))
+            setTitleText(item.assetFullName.assetName)
             setTrailingIconOfTitleText(item.verificationTier.drawableResId)
-            setDescriptionText(item.assetShortName.getName(resources))
+            setDescriptionText(item.assetShortName.assetName)
             setPrimaryValueText(item.formattedPrimaryValue, item.arePrimaryAndSecondaryValueVisible)
             setSecondaryValueText(item.formattedSecondaryValue, item.arePrimaryAndSecondaryValueVisible)
             getStartIconImageView().apply {

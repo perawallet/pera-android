@@ -13,55 +13,37 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.accountselection.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.core.AccountManager
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountDetail
-import com.algorand.android.models.AnnotatedString
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.accountsorting.component.domain.usecase.GetSortedLocalAccounts
+import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountType
+import com.algorand.android.core.component.domain.usecase.GetAccountTotalValue
+import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.models.ScreenState
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.modules.accounts.domain.usecase.GetAccountValueUseCase
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.basesingleaccountselection.ui.mapper.SingleAccountSelectionListItemMapper
 import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAccountSelectionListItem
-import com.algorand.android.modules.basesingleaccountselection.ui.usecase.BaseSingleAccountSelectionUsePreviewCase
-import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
-import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.rekey.rekeytostandardaccount.accountselection.ui.mapper.RekeyToStandardAccountSelectionPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.accountselection.ui.model.RekeyToStandardAccountSelectionPreview
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.AccountSortPreferenceUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetSortedLocalAccountsUseCase
+import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
+import com.algorand.android.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
+import com.algorand.android.utils.formatAsCurrency
 import javax.inject.Inject
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 
 @SuppressWarnings("LongParameterList")
 class RekeyToStandardAccountSelectionPreviewUseCase @Inject constructor(
     private val rekeyToStandardAccountSelectionPreviewMapper: RekeyToStandardAccountSelectionPreviewMapper,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase,
-    accountDetailUseCase: AccountDetailUseCase,
-    getAccountValueUseCase: GetAccountValueUseCase,
-    accountSortPreferenceUseCase: AccountSortPreferenceUseCase,
-    accountDisplayNameUseCase: AccountDisplayNameUseCase,
-    parityUseCase: ParityUseCase,
-    currencyUseCase: CurrencyUseCase,
-    singleAccountSelectionListItemMapper: SingleAccountSelectionListItemMapper,
-    getSortedLocalAccountsUseCase: GetSortedLocalAccountsUseCase,
-    accountManager: AccountManager,
-    createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
-) : BaseSingleAccountSelectionUsePreviewCase(
-    singleAccountSelectionListItemMapper = singleAccountSelectionListItemMapper,
-    getSortedLocalAccountsUseCase = getSortedLocalAccountsUseCase,
-    accountDisplayNameUseCase = accountDisplayNameUseCase,
-    getAccountValueUseCase = getAccountValueUseCase,
-    parityUseCase = parityUseCase,
-    currencyUseCase = currencyUseCase,
-    accountManager = accountManager,
-    accountSortPreferenceUseCase = accountSortPreferenceUseCase,
-    accountDetailUseCase = accountDetailUseCase,
-    createAccountIconDrawableUseCase = createAccountIconDrawableUseCase
+    private val getSortedLocalAccounts: GetSortedLocalAccounts,
+    private val getAccountType: GetAccountType,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getPrimaryCurrencySymbolOrName: GetPrimaryCurrencySymbolOrName,
+    private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol,
+    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
+    private val getAccountTotalValue: GetAccountTotalValue,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val singleAccountSelectionListItemMapper: SingleAccountSelectionListItemMapper,
 ) {
 
     fun getInitialRekeyToAccountSingleAccountSelectionPreview(): RekeyToStandardAccountSelectionPreview {
@@ -72,42 +54,63 @@ class RekeyToStandardAccountSelectionPreviewUseCase @Inject constructor(
         )
     }
 
-    fun getRekeyToAccountSingleAccountSelectionPreviewFlow(accountAddress: String) = channelFlow {
-        getSortedCachedAccountDetailFlow().map { accountsDetails ->
-            accountsDetails.mapNotNull { accountDetail ->
-                val isAccountEligibleToRekey = isAccountEligibleToRekey(accountDetail, accountAddress)
-                if (!isAccountEligibleToRekey) return@mapNotNull null
-                createAccountItemListFromAccountDetail(accountDetail)
-            }
-        }.collectLatest { singleAccountItems ->
-            val screenState = if (singleAccountItems.isEmpty()) {
-                ScreenState.CustomState(title = R.string.no_account_found)
-            } else {
-                null
-            }
-            val titleItem = createTitleItem(textResId = R.string.select_account)
-            val descriptionItem = createDescriptionItem(
-                descriptionAnnotatedString = AnnotatedString(stringResId = R.string.choose_the_account)
-            )
-            val singleAccountSelectionListItems = mutableListOf<SingleAccountSelectionListItem>().apply {
-                add(titleItem)
-                add(descriptionItem)
-                addAll(singleAccountItems)
-            }
-            val preview = rekeyToStandardAccountSelectionPreviewMapper.mapToRekeyToStandardAccountSelectionPreview(
-                screenState = screenState,
-                singleAccountSelectionListItems = singleAccountSelectionListItems,
-                isLoading = false
-            )
-            send(preview)
+    suspend fun getRekeyToAccountSelectionPreviewFlow(address: String): RekeyToStandardAccountSelectionPreview {
+        val accountItems = getSortedLocalAccounts().mapNotNull { accountOrderIndex ->
+            val localAccountAddress = accountOrderIndex.address
+            val isAccountEligibleToRekey = isAccountEligibleToRekey(localAccountAddress, address)
+            if (!isAccountEligibleToRekey) return@mapNotNull null
+            createAccountItemListFromAccountDetail(localAccountAddress)
         }
+        val screenState = if (accountItems.isEmpty()) {
+            ScreenState.CustomState(title = R.string.no_account_found)
+        } else {
+            null
+        }
+        val titleItem = singleAccountSelectionListItemMapper.mapToTitleItem(textResId = R.string.select_account)
+        val descriptionItem = singleAccountSelectionListItemMapper.mapToDescriptionItem(
+            descriptionAnnotatedString = AnnotatedString(stringResId = R.string.choose_the_account)
+        )
+        val singleAccountSelectionListItems = mutableListOf<SingleAccountSelectionListItem>().apply {
+            add(titleItem)
+            add(descriptionItem)
+            addAll(accountItems)
+        }
+        return rekeyToStandardAccountSelectionPreviewMapper.mapToRekeyToStandardAccountSelectionPreview(
+            screenState = screenState,
+            singleAccountSelectionListItems = singleAccountSelectionListItems,
+            isLoading = false
+        )
     }
 
-    private fun isAccountEligibleToRekey(accountDetail: AccountDetail, accountAddress: String): Boolean {
-        return with(accountDetail.account) {
-            type == Account.Type.STANDARD &&
-                address != accountAddress &&
-                accountStateHelperUseCase.hasAccountValidSecretKey(this)
-        }
+    private suspend fun createAccountItemListFromAccountDetail(address: String): SingleAccountSelectionListItem.AccountItem {
+        val selectedCurrencySymbol = getPrimaryCurrencySymbolOrName()
+        val secondaryCurrencySymbol = getSecondaryCurrencySymbol()
+        val isPrimaryCurrencyAlgo = isPrimaryCurrencyAlgo()
+        val accountDisplayName = getAccountDisplayName(address)
+        val accountValue = getAccountTotalValue(address, true)
+        val accountFormattedPrimaryValue = accountValue.primaryAccountValue.formatAsCurrency(
+            symbol = selectedCurrencySymbol,
+            isCompact = true,
+            isFiat = !isPrimaryCurrencyAlgo
+        )
+        val accountFormattedSecondaryValue = accountValue.secondaryAccountValue.formatAsCurrency(
+            symbol = secondaryCurrencySymbol,
+            isCompact = true,
+            isFiat = !isPrimaryCurrencyAlgo
+        )
+        return singleAccountSelectionListItemMapper.mapToAccountItem(
+            accountDisplayName = accountDisplayName,
+            accountIconDrawablePreview = getAccountIconDrawablePreview(address),
+            accountFormattedPrimaryValue = accountFormattedPrimaryValue,
+            accountFormattedSecondaryValue = accountFormattedSecondaryValue
+        )
+    }
+
+    private suspend fun isAccountEligibleToRekey(localAccountAddress: String, accountAddress: String): Boolean {
+        val accountType = getAccountType(localAccountAddress)
+        val isAlgo25Account = accountType == AccountType.Algo25
+        val isSameAddress = localAccountAddress == accountAddress
+
+        return isAlgo25Account && !isSameAddress && accountType?.canSignTransaction() == true
     }
 }

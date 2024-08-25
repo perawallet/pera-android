@@ -13,9 +13,8 @@
 package com.algorand.android.modules.asb.importbackup.accountselection.ui.model
 
 import com.algorand.android.models.ScreenState
-import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
-import com.algorand.android.modules.basemultipleaccountselection.ui.model.BaseMultipleAccountSelectionFields
-import com.algorand.android.modules.basemultipleaccountselection.ui.model.MultipleAccountSelectionListItem
+import com.algorand.android.modules.asb.importbackup.enterkey.ui.model.RestoredAccount
+import com.algorand.android.modules.basemultipleaccountselection.ui.model.*
 import com.algorand.android.utils.Event
 
 data class AsbImportAccountSelectionPreview(
@@ -26,5 +25,5 @@ data class AsbImportAccountSelectionPreview(
     override val isLoadingVisible: Boolean,
     override val emptyScreenState: ScreenState?,
     val navToRestoreCompleteEvent: Event<AsbAccountImportResult>?,
-    val unsupportedAccounts: List<BackupProtocolElement>?
+    val unsupportedAccounts: List<RestoredAccount>?
 ) : BaseMultipleAccountSelectionFields

@@ -14,15 +14,17 @@ package com.algorand.android.modules.swap.assetswap.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
-import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
-import com.algorand.android.modules.swap.assetswap.ui.usecase.AssetSwapPreviewUseCase
 import com.algorand.android.modules.tracking.swap.assetswap.AssetSwapSwapButtonClickEventTracker
+import com.algorand.android.swapui.assetswap.model.AssetSwapPreview
+import com.algorand.android.swapui.assetswap.usecase.main.AssetSwapPreviewProcessor
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -30,11 +32,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class AssetSwapViewModel @Inject constructor(
-    private val assetSwapPreviewUseCase: AssetSwapPreviewUseCase,
+    private val assetSwapPreviewProcessor: AssetSwapPreviewProcessor,
+    private val getAccountInformation: GetAccountInformation,
     private val assetSwapButtonClickEventTracker: AssetSwapSwapButtonClickEventTracker,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
@@ -43,25 +45,17 @@ class AssetSwapViewModel @Inject constructor(
 
     var fromAssetId: Long = savedStateHandle.getOrElse(FROM_ASSET_ID_KEY, DEFAULT_ASSET_ID_ARG)
         .takeIf { it != DEFAULT_ASSET_ID_ARG }
-        ?: ALGO_ID
+        ?: ALGO_ASSET_ID
         private set
     private var toAssetId: Long? = savedStateHandle.getOrElse(TO_ASSET_ID_KEY, DEFAULT_ASSET_ID_ARG)
         .takeIf { it != DEFAULT_ASSET_ID_ARG }
     private var percentageCacheEvent: Event<Float>? = null
     private var previewUpdateJob: Job? = null
 
-    private val _assetSwapPreviewFlow = MutableStateFlow(
-        assetSwapPreviewUseCase.getAssetSwapPreviewInitializationState(
-            accountAddress = accountAddress,
-            fromAssetId = fromAssetId,
-            toAssetId = toAssetId
-        )
-    )
+    private val _assetSwapPreviewFlow = MutableStateFlow<AssetSwapPreview?>(null)
 
-    private val _isAccountCachedResultFlow = MutableStateFlow<Boolean>(
-        assetSwapPreviewUseCase.isAccountCachedSuccessfully(accountAddress)
-    )
-    val isAccountCachedResultFlow: StateFlow<Boolean>
+    private val _isAccountCachedResultFlow = MutableStateFlow<Boolean?>(null)
+    val isAccountCachedResultFlow: StateFlow<Boolean?>
         get() = _isAccountCachedResultFlow
 
     val assetSwapPreviewFlow: StateFlow<AssetSwapPreview?>
@@ -69,6 +63,27 @@ class AssetSwapViewModel @Inject constructor(
 
     private val latestFromAmount: String?
         get() = _assetSwapPreviewFlow.value?.fromSelectedAssetAmountDetail?.amount
+
+    init {
+        initAssetSwapPreviewFlow()
+        initAccountCacheResultFlow()
+    }
+
+    private fun initAssetSwapPreviewFlow() {
+        viewModelScope.launch {
+            assetSwapPreviewProcessor.getAssetSwapPreviewInitializationState(
+                accountAddress = accountAddress,
+                fromAssetId = fromAssetId,
+                toAssetId = toAssetId
+            )?.let { _assetSwapPreviewFlow.value = it }
+        }
+    }
+
+    private fun initAccountCacheResultFlow() {
+        viewModelScope.launch {
+            _isAccountCachedResultFlow.value = getAccountInformation(accountAddress) != null
+        }
+    }
 
     fun onFromAmountChanged(rawAmount: String) {
         updateSwapQuote(amount = rawAmount, shouldInterruptActiveJob = true)
@@ -80,7 +95,7 @@ class AssetSwapViewModel @Inject constructor(
                 viewModelScope.launch {
                     toAssetId = fromAssetId
                     fromAssetId = safeToAssetId
-                    assetSwapPreviewUseCase.getAssetsSwitchedUpdatedPreview(
+                    assetSwapPreviewProcessor.getAssetsSwitchedUpdatedPreview(
                         fromAssetId = fromAssetId,
                         toAssetId = toAssetId!!,
                         accountAddress = accountAddress,
@@ -102,7 +117,7 @@ class AssetSwapViewModel @Inject constructor(
         val safeToAssetId = toAssetId!!
         withPreviewUpdateJob(shouldInterruptActiveJob = true) {
             viewModelScope.launch {
-                with(assetSwapPreviewUseCase) {
+                with(assetSwapPreviewProcessor) {
                     getBalanceForSelectedPercentage(
                         previousAmount = latestFromAmount.orEmpty(),
                         fromAssetId = fromAssetId,
@@ -137,7 +152,7 @@ class AssetSwapViewModel @Inject constructor(
             assetSwapButtonClickEventTracker.logSwapButtonClickEvent()
         }
         with(_assetSwapPreviewFlow) {
-            value = assetSwapPreviewUseCase.getSwapButtonClickUpdatedPreview(value ?: return@with)
+            value = assetSwapPreviewProcessor.getSwapButtonClickUpdatedPreview(value ?: return@with)
         }
     }
 
@@ -152,7 +167,7 @@ class AssetSwapViewModel @Inject constructor(
         }
         withPreviewUpdateJob(shouldInterruptActiveJob = true) {
             viewModelScope.launch(Dispatchers.IO) {
-                assetSwapPreviewUseCase.getFromAssetUpdatedPreview(
+                assetSwapPreviewProcessor.getFromAssetUpdatedPreview(
                     fromAssetId = fromAssetId,
                     toAssetId = currentToAssetId,
                     amount = latestFromAmount,
@@ -171,7 +186,7 @@ class AssetSwapViewModel @Inject constructor(
             viewModelScope.launch(Dispatchers.IO) {
                 val fromAssetDecimal = _assetSwapPreviewFlow.value?.fromSelectedAssetDetail?.assetDecimal
                     ?: return@launch
-                assetSwapPreviewUseCase.getToAssetUpdatedPreview(
+                assetSwapPreviewProcessor.getToAssetUpdatedPreview(
                     fromAssetId = fromAssetId,
                     toAssetId = assetId,
                     amount = latestFromAmount,
@@ -196,7 +211,7 @@ class AssetSwapViewModel @Inject constructor(
         withPreviewUpdateJob(shouldInterruptActiveJob) {
             viewModelScope.launch {
                 delay(AMOUNT_UPDATE_DEBOUNCE_TIMEOUT)
-                assetSwapPreviewUseCase.getAmountUpdatedPreview(
+                assetSwapPreviewProcessor.getAmountUpdatedPreview(
                     fromAssetId = fromAssetId,
                     toAssetId = toAssetId,
                     amount = amount,

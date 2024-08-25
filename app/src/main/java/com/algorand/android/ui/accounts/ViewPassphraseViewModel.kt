@@ -15,20 +15,37 @@ package com.algorand.android.ui.accounts
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.algorand.android.core.AccountManager
+import androidx.lifecycle.viewModelScope
+import com.algorand.algosdk.sdk.Sdk
+import com.algorand.android.account.localaccount.domain.usecase.GetSecretKey
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class ViewPassphraseViewModel @Inject constructor(
-    private val accountManager: AccountManager,
+    private val getSecretKey: GetSecretKey,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val accountPublicKeyArg by lazy { savedStateHandle.get<String>(PUBLIC_KEY).orEmpty() }
 
-    fun getAccountSecretKey(): ByteArray? {
-        return accountManager.getAccount(accountPublicKeyArg)?.getSecretKey()
+    private val _passphraseFlow = MutableStateFlow<String?>("")
+    val passphraseFlow
+        get() = _passphraseFlow.asStateFlow()
+
+    fun initializePassphrase() {
+        viewModelScope.launchIO {
+            val secretKey = getSecretKey(accountPublicKeyArg)
+            try {
+                val mnemonic = Sdk.mnemonicFromPrivateKey(secretKey) ?: throw Exception("Mnemonic cannot be null.")
+                _passphraseFlow.value = mnemonic
+            } catch (exception: Exception) {
+                _passphraseFlow.value = null
+            }
+        }
     }
 
     companion object {

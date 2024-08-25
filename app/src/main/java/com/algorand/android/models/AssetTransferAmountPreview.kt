@@ -13,7 +13,8 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
 import com.algorand.android.utils.Event
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -31,5 +32,10 @@ data class AssetTransferAmountPreview(
     val minimumBalanceIsViolatedResultEvent: Event<String?>? = null,
     val assetNotFoundErrorEvent: Event<Unit>? = null,
     val accountName: String? = null,
-    val accountIconDrawablePreview: AccountIconDrawablePreview? = null
+    val accountIconDrawablePreview: AccountIconDrawablePreview? = null,
+    val onFormattedMaxAmount: Event<String>? = null,
+    val sendWithCalculatedSendableAmount: Event<BigInteger>? = null,
+    val anErrorOccurred: Event<Unit>? = null,
+    val navigateToAssetTransferPreview: Event<SendTransactionPayload>? = null,
+    val navigateToReceiverAccountSelection: Event<AssetTransaction>? = null
 )

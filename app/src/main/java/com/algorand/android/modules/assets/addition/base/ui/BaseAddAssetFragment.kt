@@ -24,7 +24,6 @@ import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.ScreenStateView
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.ui.AssetAdditionLoadStatePreview
 import com.algorand.android.modules.assets.addition.base.ui.model.BaseAddAssetPreview
 import com.algorand.android.modules.assets.addition.ui.adapter.AssetSearchAdapter
@@ -124,13 +123,8 @@ abstract class BaseAddAssetFragment(@LayoutRes layoutResId: Int) : BaseFragment(
     private fun onAddAssetClick(assetSearchItem: BaseAssetSearchListItem.AssetListItem) {
         val assetAdditionAssetAction = AssetAction(
             assetId = assetSearchItem.assetId,
-            asset = AssetInformation(
-                assetId = assetSearchItem.assetId,
-                fullName = assetSearchItem.fullName.getName(resources),
-                shortName = assetSearchItem.shortName.getName(resources),
-                verificationTier = (assetSearchItem as? BaseAssetSearchListItem.AssetListItem.AssetSearchItem)
-                    ?.verificationTierConfiguration?.toVerificationTier()
-            ),
+            assetFullName = assetSearchItem.fullName.getName(resources),
+            assetShortName = assetSearchItem.shortName.getName(resources),
             publicKey = accountPublicKey
         )
         navigateToAssetAdditionBottomSheet(assetAdditionAssetAction)

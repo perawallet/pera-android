@@ -16,15 +16,15 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.core.BaseUseCase
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.PluralAnnotatedString
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.baseresult.ui.mapper.ResultListItemMapper
 import com.algorand.android.modules.baseresult.ui.model.ResultListItem
-import com.algorand.android.utils.AccountDisplayName
 
-open class BaseResultPreviewUseCase constructor(
+open class BaseResultPreviewUseCase(
     private val resultListItemMapper: ResultListItemMapper
 ) : BaseUseCase() {
 
@@ -73,26 +73,6 @@ open class BaseResultPreviewUseCase constructor(
         return resultListItemMapper.mapToPluralDescriptionItem(
             pluralAnnotatedString = pluralAnnotatedString,
             isClickable = isClickable
-        )
-    }
-
-    protected fun createSingularInfoBoxItem(
-        @DrawableRes infoIconResId: Int,
-        @ColorRes infoIconTintResId: Int,
-        @StringRes infoTitleTextResId: Int,
-        @ColorRes infoTitleTintResId: Int,
-        infoDescriptionAnnotatedString: AnnotatedString,
-        @ColorRes infoDescriptionTintResId: Int,
-        @ColorRes infoBoxTintColorResId: Int
-    ): ResultListItem.InfoBoxItem.Singular {
-        return resultListItemMapper.mapToSingularInfoBoxItem(
-            infoIconResId = infoIconResId,
-            infoIconTintResId = infoIconTintResId,
-            infoTitleTextResId = infoTitleTextResId,
-            infoTitleTintResId = infoTitleTintResId,
-            infoDescriptionAnnotatedString = infoDescriptionAnnotatedString,
-            infoDescriptionTintResId = infoDescriptionTintResId,
-            infoBoxTintColorResId = infoBoxTintColorResId
         )
     }
 

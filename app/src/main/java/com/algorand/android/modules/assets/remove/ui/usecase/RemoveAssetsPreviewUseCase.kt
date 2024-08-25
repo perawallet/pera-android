@@ -13,25 +13,23 @@
 package com.algorand.android.modules.assets.remove.ui.usecase
 
 import com.algorand.android.R
+import com.algorand.android.accountinfo.component.domain.model.AssetHolding
+import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformationFlow
+import com.algorand.android.core.component.assetdata.usecase.GetAccountOwnedAssetsDataFlow
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleUnsupportedData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
+import com.algorand.android.core.component.domain.usecase.GetAccountCollectibleDataFlow
 import com.algorand.android.mapper.RemoveAssetItemMapper
-import com.algorand.android.models.AssetHolding
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedUnsupportedCollectibleData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.models.BaseRemoveAssetItem
 import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem
 import com.algorand.android.models.ScreenState
-import com.algorand.android.modules.assets.remove.ui.decider.RemoveAssetItemActionButtonStateDecider
+import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.assets.remove.ui.mapper.RemoveAssetsPreviewMapper
 import com.algorand.android.modules.assets.remove.ui.model.RemoveAssetsPreview
 import com.algorand.android.modules.sorting.assetsorting.ui.usecase.AssetItemSortUseCase
-import com.algorand.android.usecase.AccountAssetDataUseCase
-import com.algorand.android.usecase.AccountCollectibleDataUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.utils.extensions.getAssetHoldingList
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -39,20 +37,18 @@ import kotlinx.coroutines.flow.map
 
 class RemoveAssetsPreviewUseCase @Inject constructor(
     private val removeAssetsPreviewMapper: RemoveAssetsPreviewMapper,
-    private val accountAssetDataUseCase: AccountAssetDataUseCase,
-    private val accountCollectibleDataUseCase: AccountCollectibleDataUseCase,
     private val assetItemSortUseCase: AssetItemSortUseCase,
     private val removeAssetItemMapper: RemoveAssetItemMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val removeAssetItemActionButtonStateDecider: RemoveAssetItemActionButtonStateDecider
+    private val getAccountOwnedAssetsDataFlow: GetAccountOwnedAssetsDataFlow,
+    private val getAccountCollectibleDataFlow: GetAccountCollectibleDataFlow,
+    private val getAccountInformationFlow: GetAccountInformationFlow
 ) {
 
     fun initRemoveAssetsPreview(accountAddress: String, query: String): Flow<RemoveAssetsPreview?> {
         return combine(
-            accountAssetDataUseCase.getAccountOwnedAssetDataFlow(accountAddress, false),
-            accountCollectibleDataUseCase.getAccountOwnedCollectibleDataFlow(accountAddress),
-            accountDetailUseCase.getAccountDetailCacheFlow(accountAddress)
-                .map { it?.data?.getAssetHoldingList() }
+            getAccountOwnedAssetsDataFlow(accountAddress, false),
+            getAccountCollectibleDataFlow(accountAddress),
+            getAccountInformationFlow(accountAddress).map { it?.assetHoldings }
         ) { accountOwnedAssets, accountOwnedCollectibles, assetHoldingList ->
             val sortedRemovableListItems = mutableListOf<BaseRemovableItem>().apply {
                 addAll(
@@ -89,7 +85,7 @@ class RemoveAssetsPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun createBaseRemoveAssetItems(
+    private suspend fun createBaseRemoveAssetItems(
         accountOwnedAssets: List<OwnedAssetData>,
         query: String,
         accountAddress: String,
@@ -102,8 +98,7 @@ class RemoveAssetsPreviewUseCase @Inject constructor(
             ) {
                 removeAssetItemMapper.mapToRemoveAssetItem(
                     ownedAssetData = ownedAssetData,
-                    actionItemButtonState =
-                    removeAssetItemActionButtonStateDecider.decideRemoveAssetItemActionButtonState(assetHolding?.status)
+                    actionItemButtonState = AccountAssetItemButtonState.REMOVAL // TODO
                 )
             } else {
                 null
@@ -111,7 +106,7 @@ class RemoveAssetsPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun createBaseRemoveCollectibleItems(
+    private suspend fun createBaseRemoveCollectibleItems(
         accountOwnedCollectibles: List<BaseOwnedCollectibleData>,
         query: String,
         accountAddress: String,
@@ -119,8 +114,7 @@ class RemoveAssetsPreviewUseCase @Inject constructor(
     ): List<BaseRemovableItem> {
         return accountOwnedCollectibles.mapNotNull { ownedCollectible ->
             val assetHolding = assetHoldingList?.firstOrNull { it.assetId == ownedCollectible.id }
-            val actionItemButtonState =
-                removeAssetItemActionButtonStateDecider.decideRemoveAssetItemActionButtonState(assetHolding?.status)
+            val actionItemButtonState = AccountAssetItemButtonState.REMOVAL // TODO
             if (ownedCollectible.name?.contains(query, true) == true &&
                 ownedCollectible.creatorPublicKey != accountAddress
             ) {
@@ -131,7 +125,7 @@ class RemoveAssetsPreviewUseCase @Inject constructor(
                             actionItemButtonState = actionItemButtonState
                         )
                     }
-                    is OwnedUnsupportedCollectibleData -> {
+                    is OwnedCollectibleUnsupportedData -> {
                         removeAssetItemMapper.mapToRemoveNotSupportedCollectibleItem(
                             ownedUnsupportedCollectibleData = ownedCollectible,
                             actionItemButtonState = actionItemButtonState
@@ -143,7 +137,7 @@ class RemoveAssetsPreviewUseCase @Inject constructor(
                             actionItemButtonState = actionItemButtonState
                         )
                     }
-                    is OwnedCollectibleMixedData -> {
+                    is BaseOwnedCollectibleData.OwnedCollectibleMixedData -> {
                         removeAssetItemMapper.mapToRemoveCollectibleMixedItem(
                             ownedCollectibleMixedData = ownedCollectible,
                             actionItemButtonState = actionItemButtonState

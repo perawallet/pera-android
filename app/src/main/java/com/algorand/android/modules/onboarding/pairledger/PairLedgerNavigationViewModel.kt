@@ -13,32 +13,15 @@
 package com.algorand.android.modules.onboarding.pairledger
 
 import android.bluetooth.BluetoothDevice
-import javax.inject.Inject
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.Account
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccounts
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class PairLedgerNavigationViewModel @Inject constructor() : BaseViewModel() {
 
-    var selectedAccounts = listOf<Account>()
-
-    var allAuthAccounts = listOf<Account>()
+    var selectedLedgerAccounts: SelectedLedgerAccounts? = null
 
     var pairedLedger: BluetoothDevice? = null
-
-    fun getSelectedAuthAccounts(): List<Account> {
-        return allAuthAccounts.filter { authAccount ->
-            selectedAccounts.any { selectedAccount ->
-                if (authAccount.address == selectedAccount.address) {
-                    return@any true
-                }
-                if (selectedAccount.detail is Account.Detail.RekeyedAuth) {
-                    selectedAccount.detail.rekeyedAuthDetail[authAccount.address] != null
-                } else {
-                    false
-                }
-            }
-        }
-    }
 }

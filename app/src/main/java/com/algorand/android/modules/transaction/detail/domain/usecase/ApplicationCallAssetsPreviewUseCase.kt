@@ -15,31 +15,30 @@ package com.algorand.android.modules.transaction.detail.domain.usecase
 import com.algorand.android.customviews.accountandassetitem.mapper.AssetItemConfigurationMapper
 import com.algorand.android.modules.transaction.detail.domain.model.ApplicationCallAssetInformationPreview
 import com.algorand.android.modules.transaction.detail.ui.mapper.ApplicationCallAssetInformationPreviewMapper
-import com.algorand.android.modules.transaction.detail.ui.mapper.BaseApplicationCallAssetInformationListItemMapper
 import com.algorand.android.modules.transaction.detail.ui.model.ApplicationCallAssetInformation
 import javax.inject.Inject
 
 class ApplicationCallAssetsPreviewUseCase @Inject constructor(
     private val assetItemConfigurationMapper: AssetItemConfigurationMapper,
-    private val applicationCallAssetInformationPreviewMapper: ApplicationCallAssetInformationPreviewMapper,
-    private val baseApplicationCallAssetInformationListItemMapper: BaseApplicationCallAssetInformationListItemMapper
+    private val applicationCallAssetInformationPreviewMapper: ApplicationCallAssetInformationPreviewMapper
 ) {
 
-    fun initApplicationCallAssetInformationPreview(
+    suspend fun initApplicationCallAssetInformationPreview(
         applicationCallAssetInformationArray: Array<ApplicationCallAssetInformation>
     ): ApplicationCallAssetInformationPreview {
+        // TODO Enable this code block while refactoring this flow
         val assetInformationItemList = applicationCallAssetInformationArray.map {
-            val assetItemConfiguration = assetItemConfigurationMapper.mapTo(
-                assetId = it.assetId,
-                assetFullName = it.assetFullName,
-                assetShortName = it.assetShortName,
-                showWithAssetId = true,
-                verificationTierConfiguration = it.verificationTierConfiguration
-            )
-            baseApplicationCallAssetInformationListItemMapper.mapToAssetInformationItem(assetItemConfiguration)
+//            val assetItemConfiguration = assetItemConfigurationMapper.mapTo(
+//                assetId = it.assetId,
+//                assetFullName = it.assetFullName,
+//                assetShortName = it.assetShortName,
+//                showWithAssetId = true,
+//                verificationTierConfiguration = it.verificationTierConfiguration
+//            )
+//            baseApplicationCallAssetInformationListItemMapper.mapToAssetInformationItem(assetItemConfiguration)
         }
         return applicationCallAssetInformationPreviewMapper.mapToApplicationCallAssetInformationPreview(
-            applicationCallAssetInformationListItems = assetInformationItemList
+            applicationCallAssetInformationListItems = emptyList()
         )
     }
 }

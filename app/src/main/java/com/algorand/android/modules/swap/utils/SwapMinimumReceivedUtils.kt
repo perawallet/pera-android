@@ -13,9 +13,9 @@
 package com.algorand.android.modules.swap.utils
 
 import com.algorand.android.R
+import com.algorand.android.currency.domain.model.Currency
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.modules.currency.domain.model.Currency
-import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
+import com.algorand.android.swap.domain.model.SwapQuote
 
 private const val FIRST_PLACEHOLDER_KEY = "first"
 private const val SECOND_PLACEHOLDER_KEY = "second"
@@ -32,12 +32,11 @@ fun getFormattedMinimumReceivedAmount(swapQuote: SwapQuote): AnnotatedString {
                 )
             )
         } else {
-            val assetShortName = toAssetDetail.shortName.getName().orEmpty()
             AnnotatedString(
                 R.string.pair_value_format_annotated,
                 replacementList = listOf(
                     FIRST_PLACEHOLDER_KEY to minimumReceivedAmount,
-                    SECOND_PLACEHOLDER_KEY to assetShortName
+                    SECOND_PLACEHOLDER_KEY to toAssetDetail.shortName
                 )
             )
         }

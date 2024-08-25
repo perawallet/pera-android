@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.accountselection.ui.model
 
-import com.algorand.android.models.BaseAccountSelectionListItem
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
 
 data class AddAssetAccountSelectionPreview(
     val accountSelectionListItems: List<BaseAccountSelectionListItem>

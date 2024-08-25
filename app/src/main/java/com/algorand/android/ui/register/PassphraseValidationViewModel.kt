@@ -13,7 +13,7 @@
 package com.algorand.android.ui.register
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.core.AccountManager
+import com.algorand.android.asb.component.domain.usecase.SetAccountAsbBackUpStatus
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingVerifyPassphraseEventTracker
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class PassphraseValidationViewModel @Inject constructor(
     private val onboardingVerifyPassphraseEventTracker: OnboardingVerifyPassphraseEventTracker,
-    private val accountManager: AccountManager
+    private val setAccountAsbBackUpStatus: SetAccountAsbBackUpStatus
 ) : BaseViewModel() {
 
     fun logOnboardingNextClickEvent() {
@@ -32,11 +32,9 @@ class PassphraseValidationViewModel @Inject constructor(
         }
     }
 
-    fun getAccountSecretKey(publicKey: String): ByteArray? {
-        return accountManager.getAccount(publicKey)?.getSecretKey()
-    }
-
     fun updateAccountBackupState(publicKey: String, isBackedUp: Boolean) {
-        accountManager.updateAccountBackupState(publicKey, isBackedUp)
+        viewModelScope.launch {
+            setAccountAsbBackUpStatus(publicKey, isBackedUp)
+        }
     }
 }

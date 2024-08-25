@@ -14,11 +14,12 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
+import com.algorand.android.assetaction.model.AssetActionInformation
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AssetActionResult(
-    val asset: AssetInformation,
+    val asset: AssetActionInformation,
     val publicKey: String? = null,
     val shouldWaitForConfirmation: Boolean = false
 ) : Parcelable

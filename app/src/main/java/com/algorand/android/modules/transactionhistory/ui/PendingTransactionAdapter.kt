@@ -17,10 +17,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
-import com.algorand.android.models.BaseDiffUtil
-import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
+import com.algorand.android.designsystem.BaseDiffUtil
 import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryTitleViewHolder
 import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryTransactionItemViewHolder
+import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
 
 class PendingTransactionAdapter(
     private val listener: Listener

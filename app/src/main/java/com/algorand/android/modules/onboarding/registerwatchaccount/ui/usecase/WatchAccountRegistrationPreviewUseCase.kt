@@ -13,14 +13,13 @@
 package com.algorand.android.modules.onboarding.registerwatchaccount.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountCreation
+import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.android.models.CreateAccount
 import com.algorand.android.modules.nftdomain.domain.usecase.GetNftDomainSearchResultUseCase
 import com.algorand.android.modules.onboarding.registerwatchaccount.ui.mapper.BasePasteableWatchAccountItemMapper
 import com.algorand.android.modules.onboarding.registerwatchaccount.ui.mapper.WatchAccountRegistrationPreviewMapper
 import com.algorand.android.modules.onboarding.registerwatchaccount.ui.model.BasePasteableWatchAccountItem
 import com.algorand.android.modules.onboarding.registerwatchaccount.ui.model.WatchAccountRegistrationPreview
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.isValidAddress
@@ -30,13 +29,13 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
 class WatchAccountRegistrationPreviewUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val getNftDomainSearchResultUseCase: GetNftDomainSearchResultUseCase,
     private val basePasteableWatchAccountItemMapper: BasePasteableWatchAccountItemMapper,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
     private val watchAccountRegistrationPreviewMapper: WatchAccountRegistrationPreviewMapper
 ) {
 
-    fun updatePreviewAccordingAccountAddress(
+    suspend fun updatePreviewAccordingAccountAddress(
         currentPreview: WatchAccountRegistrationPreview,
         accountAddress: String,
         nfDomainName: String?
@@ -45,20 +44,17 @@ class WatchAccountRegistrationPreviewUseCase @Inject constructor(
             !accountAddress.isValidAddress() -> {
                 currentPreview.copy(showAccountIsNotValidErrorEvent = Event(Unit))
             }
-            accountDetailUseCase.isThereAnyAccountWithPublicKey(accountAddress) -> {
+            isThereAnyAccountWithAddress(accountAddress) -> {
                 currentPreview.copy(showAccountAlreadyExistErrorEvent = Event(Unit))
             }
             else -> {
-                val tempAccount = Account.create(
-                    publicKey = accountAddress,
-                    detail = Account.Detail.Watch,
-                    accountName = nfDomainName.orEmpty()
-                )
-                val newAccount = AccountCreation(
-                    tempAccount = tempAccount,
+                val noAuthAccount = CreateAccount.NoAuth(
+                    address = accountAddress,
+                    customName = nfDomainName,
+                    isBackedUp = true,
                     creationType = CreationType.WATCH
                 )
-                currentPreview.copy(navToNameRegistrationEvent = Event(newAccount))
+                currentPreview.copy(navToNameRegistrationEvent = Event(noAuthAccount))
             }
         }
     }

@@ -14,11 +14,11 @@ package com.algorand.android.discover.detail.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.currency.domain.usecase.GetPrimaryCurrencyId
 import com.algorand.android.discover.common.ui.BaseDiscoverViewModel
 import com.algorand.android.discover.detail.ui.model.DiscoverDetailPreview
 import com.algorand.android.discover.detail.ui.usecase.DiscoverDetailPreviewUseCase
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
-import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.preference.ThemePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class DiscoverDetailViewModel @Inject constructor(
     private val discoverDetailPreviewUseCase: DiscoverDetailPreviewUseCase,
-    private val currencyUseCase: CurrencyUseCase,
+    private val getPrimaryCurrency: GetPrimaryCurrencyId,
     savedStateHandle: SavedStateHandle
 ) : BaseDiscoverViewModel() {
 
@@ -51,7 +51,7 @@ class DiscoverDetailViewModel @Inject constructor(
     }
 
     fun getPrimaryCurrencyId(): String {
-        return currencyUseCase.getPrimaryCurrencyId()
+        return getPrimaryCurrency()
     }
 
     override fun onPageRequestedShouldOverrideUrlLoading(url: String): Boolean {

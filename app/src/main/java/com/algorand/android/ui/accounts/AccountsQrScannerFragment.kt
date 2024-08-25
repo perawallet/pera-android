@@ -15,10 +15,10 @@ package com.algorand.android.ui.accounts
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
+import com.algorand.android.deeplink.model.BaseDeepLink
+import com.algorand.android.deeplink.model.WebImportQrCode
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
-import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,9 +41,14 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
         }
     }
 
-    @SuppressWarnings("MaxLineLength")
-    override fun onAssetTransferDeepLink(assetTransaction: AssetTransaction): Boolean {
+    override fun onAssetTransferDeepLink(
+        deepLink: BaseDeepLink.AssetTransferDeepLink,
+        receiverAddress: String,
+        receiverName: String
+    ): Boolean {
         return true.also {
+            val assetTransaction =
+                accountsQrScannerViewModel.getAssetTransaction(deepLink, receiverAddress, receiverName)
             nav(AccountsQrScannerFragmentDirections.actionAccountsQrScannerFragmentToSendAlgoNavigation(assetTransaction))
         }
     }
@@ -60,12 +65,7 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
         }
     }
 
-    override fun onDiscoverBrowserDeepLink(webUrl: String): Boolean {
-        return true.also {
-            nav(AccountsQrScannerFragmentDirections.actionAccountsQrScannerFragmentDiscoverUrlViewerNavigation(webUrl))
-        }
-    }
-
+    @SuppressWarnings("MaxLineLength")
     override fun onImportAccountDeepLink(mnemonic: String): Boolean {
         return true.also {
             if (accountsQrScannerViewModel.isAccountLimitExceed()) {
@@ -90,11 +90,11 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
         }
     }
 
-    override fun onAssetOptInDeepLink(assetAction: AssetAction): Boolean {
+    override fun onAssetOptInDeepLink(assetId: Long): Boolean {
         return true.also {
             nav(
                 AccountsQrScannerFragmentDirections.actionAccountsQrScannerFragmentToAddAssetAccountSelectionFragment(
-                    assetId = assetAction.assetId
+                    assetId = assetId
                 )
             )
         }

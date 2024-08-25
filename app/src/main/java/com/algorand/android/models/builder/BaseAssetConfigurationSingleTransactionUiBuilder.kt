@@ -14,15 +14,15 @@
 package com.algorand.android.models.builder
 
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
 import com.algorand.android.models.BaseAssetConfigurationTransaction
 import com.algorand.android.models.WalletConnectTransactionAmount
 import com.algorand.android.models.WalletConnectTransactionShortDetail
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 
 class BaseAssetConfigurationSingleTransactionUiBuilder @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
+    private val verificationTierConfigurationMapper: VerificationTierConfigurationMapper
 ) : WalletConnectSingleTransactionUiBuilder<BaseAssetConfigurationTransaction> {
 
     override fun buildToolbarTitleRes(txn: BaseAssetConfigurationTransaction): Int {
@@ -71,8 +71,7 @@ class BaseAssetConfigurationSingleTransactionUiBuilder @Inject constructor(
                 assetId = assetId,
                 assetName = AssetName.create(assetName),
                 isAssetUnnamed = assetName == null,
-                verificationTierConfiguration =
-                verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
+                verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier)
             )
         }
     }
@@ -82,8 +81,7 @@ class BaseAssetConfigurationSingleTransactionUiBuilder @Inject constructor(
             WalletConnectTransactionAmount(
                 assetId = assetId,
                 assetName = AssetName.create(assetName),
-                verificationTierConfiguration =
-                verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
+                verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier)
             )
         }
     }

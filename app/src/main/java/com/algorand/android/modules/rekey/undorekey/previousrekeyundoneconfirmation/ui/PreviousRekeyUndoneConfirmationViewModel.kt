@@ -13,15 +13,18 @@
 package com.algorand.android.modules.rekey.undorekey.previousrekeyundoneconfirmation.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.rekey.undorekey.previousrekeyundoneconfirmation.ui.usecase.PreviousRekeyUndoneConfirmationPreviewUseCase
-import com.algorand.android.utils.AccountDisplayName
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class PreviousRekeyUndoneConfirmationViewModel @Inject constructor(
-    private val previousRekeyUndoneConfirmationPreviewUseCase: PreviousRekeyUndoneConfirmationPreviewUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -29,9 +32,19 @@ class PreviousRekeyUndoneConfirmationViewModel @Inject constructor(
     private val accountAddress = navArgs.accountAddress
     private val authAccountAddress = navArgs.authAccountAddress
 
-    val accountDisplayName: AccountDisplayName
-        get() = previousRekeyUndoneConfirmationPreviewUseCase.getAccountDisplayName(accountAddress)
+    private val _previewFlow = MutableStateFlow<PreviousRekeyUndoneConfirmationPreview?>(null)
+    val previewFlow
+        get() = _previewFlow.asStateFlow()
 
-    val authAccountDisplayName: AccountDisplayName
-        get() = previousRekeyUndoneConfirmationPreviewUseCase.getAccountDisplayName(authAccountAddress)
+    init {
+        initPreview()
+    }
+
+    private fun initPreview() {
+        viewModelScope.launchIO {
+            val accountDisplayName = getAccountDisplayName(accountAddress)
+            val authAccountDisplayName = getAccountDisplayName(authAccountAddress)
+            _previewFlow.value = PreviousRekeyUndoneConfirmationPreview(accountDisplayName, authAccountDisplayName)
+        }
+    }
 }

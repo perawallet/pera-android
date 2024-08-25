@@ -12,27 +12,27 @@
 
 package com.algorand.android.utils
 
+import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.models.Account
-import com.algorand.android.models.User
 import com.algorand.android.modules.transaction.common.domain.model.TransactionDTO
 
 fun getUserIfSavedLocally(
-    contactList: List<User>,
+    contactList: List<Contact>,
     accountList: List<Account>,
     nonOwnerPublicKey: String?
-): User? {
+): Contact? {
     if (nonOwnerPublicKey == null) {
         return null
     }
 
-    val foundContact = contactList.firstOrNull { it.publicKey == nonOwnerPublicKey }
+    val foundContact = contactList.firstOrNull { it.address == nonOwnerPublicKey }
     if (foundContact != null) {
         return foundContact
     }
 
     val foundAccount = accountList.firstOrNull { it.address == nonOwnerPublicKey }
     if (foundAccount != null) {
-        return User(foundAccount.name, foundAccount.address, null, -1)
+        return Contact(foundAccount.name, foundAccount.address, null)
     }
 
     return null

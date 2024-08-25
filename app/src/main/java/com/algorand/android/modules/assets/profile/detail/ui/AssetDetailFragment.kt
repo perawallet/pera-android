@@ -18,29 +18,33 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavDirections
 import com.algorand.android.R
-import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.accountcore.ui.summary.model.AccountDetailSummary
+import com.algorand.android.assetdetailui.detail.model.AssetDetailPreview
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.BaseAccountIconButton
 import com.algorand.android.databinding.FragmentAssetDetailBinding
+import com.algorand.android.dateui.model.DateFilter
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
-import com.algorand.android.models.AccountDetailSummary
+import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.DateFilter
+import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.profile.about.ui.AssetAboutFragment
 import com.algorand.android.modules.assets.profile.activity.ui.AssetActivityFragment
 import com.algorand.android.modules.assets.profile.detail.ui.adapter.AssetDetailPagerAdapter
-import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
-import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.Event
+import com.algorand.android.swap.common.model.SwapNavigationDestination
+import com.algorand.android.swap.common.model.SwapNavigationDestination.AccountSelection
+import com.algorand.android.swap.common.model.SwapNavigationDestination.Introduction
+import com.algorand.android.swap.common.model.SwapNavigationDestination.Swap
+import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
 import com.algorand.android.utils.PERA_VERIFICATION_MAIL_ADDRESS
-import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -88,17 +92,18 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         }
     }
 
-    private val onNavigationEventCollector: suspend (Event<NavDirections>?) -> Unit = {
-        it?.consume()?.run { nav(this) }
-    }
-
     private val baseAssetDrawableProviderCollector: suspend (BaseAssetDrawableProvider?) -> Unit = { drawableProvider ->
         drawableProvider?.let(::setAssetDrawable)
     }
 
-    private val navigateToDiscoverMarketEventCollector: suspend (Event<TokenDetailInfo>?) -> Unit = { event ->
-        event?.consume()?.run { navToDiscoverTokenDetailPage(this) }
+    private val navigateToDiscoverMarketEventCollector: suspend (Event<String>?) -> Unit = { event ->
+        event?.consume()?.run { navToDiscoverTokenDetailPage(TokenDetailInfo(this, null)) }
     }
+
+    private val swapNavigationDestinationEventCollector: suspend (Event<SwapNavigationDestination>?) -> Unit =
+        { event ->
+            event?.consume()?.run { handleSwapNavigationDestination(this) }
+        }
 
     override fun onDateFilterClick(currentFilter: DateFilter) {
         nav(AssetDetailFragmentDirections.actionAssetDetailFragmentToDateFilterNavigation(currentFilter))
@@ -155,8 +160,8 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
                 collection = accountDetailSummaryCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it?.onNavigationEvent },
-                collection = onNavigationEventCollector
+                flow = map { it?.swapNavigationDestinationEvent },
+                collection = swapNavigationDestinationEventCollector
             )
             collectLatestOnLifecycle(
                 flow = map { it?.onShowGlobalErrorEvent },
@@ -243,22 +248,22 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
 
     private fun setToolbarTitle(accountDisplayName: AccountDisplayName) {
         with(binding.toolbar) {
-            changeTitle(accountDisplayName.getAccountPrimaryDisplayName())
-            setOnTitleLongClickListener { onAccountAddressCopied(accountDisplayName.getRawAccountAddress()) }
-            accountDisplayName.getAccountSecondaryDisplayName(resources)?.let { changeSubtitle(it) }
+            changeTitle(accountDisplayName.primaryDisplayName)
+            setOnTitleLongClickListener { onAccountAddressCopied(accountDisplayName.accountAddress) }
+            accountDisplayName.secondaryDisplayName?.let { changeSubtitle(it) }
         }
     }
 
     private fun setToolbarEndButton(accountDetailSummary: AccountDetailSummary) {
         val endButton = if (accountDetailSummary.shouldDisplayAccountType) {
             BaseAccountIconButton.ExtendedAccountButton(
-                accountIconDrawablePreview = accountDetailSummary.accountIconDrawablePreview,
+                accountIconDrawablePreview = accountDetailSummary.accountIconDrawable,
                 accountTypeResId = accountDetailSummary.accountTypeResId,
                 onClick = ::navToAccountStatusDetailNavigation
             )
         } else {
             BaseAccountIconButton.AccountButton(
-                accountIconDrawablePreview = accountDetailSummary.accountIconDrawablePreview,
+                accountIconDrawablePreview = accountDetailSummary.accountIconDrawable,
                 onClick = ::navToAccountStatusDetailNavigation
             )
         }
@@ -286,7 +291,7 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
                 verificationTierConfiguration.drawableResId?.run {
                     setDrawable(end = AppCompatResources.getDrawable(context, this))
                 }
-                text = assetFullName.getName(resources)
+                text = assetFullName.assetName
             }
             if (!isAlgo) {
                 assetIdTextView.apply {
@@ -314,10 +319,31 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
             }
             buyAlgoButton.apply {
                 isVisible = isAlgo && isQuickActionButtonsVisible
-                setOnClickListener { assetDetailViewModel.onBuySellClick() }
+                setOnClickListener { onBuySellClick() }
             }
-            sendButton.setOnClickListener { assetDetailViewModel.onSendClick() }
+            sendButton.setOnClickListener { onSendClick() }
             receiveButton.setOnClickListener { navToShowQRBottomSheet() }
+        }
+    }
+
+    private fun onBuySellClick() {
+        with(assetDetailViewModel) {
+            if (canAccountSignTransaction) {
+                nav(AssetDetailFragmentDirections.actionAssetDetailFragmentToMeldNavigation(accountAddress))
+            } else {
+                showGlobalError(title = getString(R.string.this_action_is_not_available), errorMessage = emptyString())
+            }
+        }
+    }
+
+    private fun onSendClick() {
+        with(assetDetailViewModel) {
+            if (canAccountSignTransaction) {
+                val assetTransaction = AssetTransaction(senderAddress = accountAddress, assetId = assetId)
+                nav(AssetDetailFragmentDirections.actionAssetDetailFragmentToSendAlgoNavigation(assetTransaction))
+            } else {
+                showGlobalError(title = getString(R.string.this_action_is_not_available), errorMessage = emptyString())
+            }
         }
     }
 
@@ -336,6 +362,23 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
                 assetDetailViewModel.accountAddress
             )
         )
+    }
+
+    private fun handleSwapNavigationDestination(swapNavigationDestination: SwapNavigationDestination) {
+        with(assetDetailViewModel) {
+            if (canAccountSignTransaction) {
+                val destination = with(AssetDetailFragmentDirections) {
+                    when (swapNavigationDestination) {
+                        Introduction -> actionAssetDetailFragmentToSwapNavigation(accountAddress, assetId)
+                        is Swap -> actionAssetDetailFragmentToSwapIntroductionNavigation(accountAddress)
+                        AccountSelection -> null
+                    }
+                }
+                destination?.run { nav(this) }
+            } else {
+                showGlobalError(title = getString(R.string.this_action_is_not_available), errorMessage = emptyString())
+            }
+        }
     }
 
     private fun setAssetValues(formattedPrimaryValue: String, formattedSecondaryValue: String) {

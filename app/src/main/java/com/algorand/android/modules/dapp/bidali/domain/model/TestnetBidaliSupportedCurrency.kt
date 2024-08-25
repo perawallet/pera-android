@@ -12,12 +12,13 @@
 
 package com.algorand.android.modules.dapp.bidali.domain.model
 
-import com.algorand.android.models.AssetInformation
+import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.assetdetail.component.AssetConstants.USDC_TESTNET_ID
 
 enum class TestnetBidaliSupportedCurrency(
     override val key: String,
     override val assetId: Long
 ) : BidaliSupportedCurrency {
-    ALGORAND("algorand", AssetInformation.ALGO_ID),
-    USDC("testusdcalgorand", AssetInformation.USDC_TESTNET_ID)
+    ALGORAND("algorand", ALGO_ASSET_ID),
+    USDC("testusdcalgorand", USDC_TESTNET_ID)
 }

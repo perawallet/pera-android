@@ -33,12 +33,4 @@ class ContactRepository @Inject constructor(
     suspend fun getAllContacts(): List<User> {
         return contactDao.getAll()
     }
-
-    suspend fun deleteAllContacts() {
-        contactDao.deleteAllContacts()
-    }
-
-    suspend fun getContactByAddress(accountAddress: String): User? {
-        return contactDao.getContactByAddress(accountAddress)
-    }
 }

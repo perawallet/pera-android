@@ -12,17 +12,17 @@
 
 package com.algorand.android.modules.dapp.bidali.ui.accountselection.usecase
 
-import com.algorand.android.models.BaseAccountSelectionListItem
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.modules.dapp.bidali.ui.accountselection.mapper.BidaliAccountSelectionPreviewMapper
 import com.algorand.android.modules.dapp.bidali.ui.accountselection.model.BidaliAccountSelectionPreview
-import com.algorand.android.usecase.AccountSelectionListUseCase
-import com.algorand.android.usecase.IsOnMainnetUseCase
+import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
 import javax.inject.Inject
 
 class BidaliAccountSelectionPreviewUseCase @Inject constructor(
-    private val accountSelectionListUseCase: AccountSelectionListUseCase,
     private val bidaliAccountSelectionPreviewMapper: BidaliAccountSelectionPreviewMapper,
-    private val isOnMainnetUseCase: IsOnMainnetUseCase
+    private val getAccountSelectionAccountsWhichCanSignTransaction: GetAccountSelectionAccountsWhichCanSignTransaction,
+    private val isSelectedNodeMainnet: IsSelectedNodeMainnet
 ) {
 
     fun getInitialPreview(): BidaliAccountSelectionPreview {
@@ -30,7 +30,7 @@ class BidaliAccountSelectionPreviewUseCase @Inject constructor(
     }
 
     suspend fun getBidaliAccountSelectionList(): List<BaseAccountSelectionListItem> {
-        return accountSelectionListUseCase.createAccountSelectionListAccountItemsWhichCanSignTransaction(
+        return getAccountSelectionAccountsWhichCanSignTransaction(
             showHoldings = true,
             showFailedAccounts = false
         )
@@ -43,7 +43,7 @@ class BidaliAccountSelectionPreviewUseCase @Inject constructor(
         return bidaliAccountSelectionPreviewMapper.mapToAccountSelectedPreview(
             previousState = previousState,
             accountAddress = accountAddress,
-            isMainnet = isOnMainnetUseCase.invoke()
+            isMainnet = isSelectedNodeMainnet()
         )
     }
 }

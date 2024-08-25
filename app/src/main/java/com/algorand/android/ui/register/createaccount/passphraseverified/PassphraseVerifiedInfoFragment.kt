@@ -12,8 +12,7 @@
 
 package com.algorand.android.ui.register.createaccount.passphraseverified
 
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
@@ -60,11 +59,7 @@ class PassphraseVerifiedInfoFragment : BaseInfoFragment() {
         args.accountCreation?.let { accountCreation ->
             nav(
                 PassphraseVerifiedInfoFragmentDirections
-                    .actionPassphraseVerifiedInfoFragmentToBackupPassphraseAccountNameNavigation(
-                        accountCreation.copy(
-                            tempAccount = accountCreation.tempAccount.copy(isBackedUp = true)
-                        )
-                    )
+                    .actionPassphraseVerifiedInfoFragmentToBackupPassphraseAccountNameNavigation(accountCreation)
             )
         } ?: navToHomeNavigation()
     }

@@ -17,13 +17,13 @@ import android.widget.ImageView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
+import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.customviews.AlgorandInputLayout
 import com.algorand.android.customviews.toolbar.CustomToolbar
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OperationState
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.models.User
 import com.algorand.android.models.WarningConfirmation
 import com.algorand.android.ui.common.warningconfirmation.WarningConfirmationBottomSheet
 import com.algorand.android.ui.contacts.BaseAddEditContactFragment
@@ -50,9 +50,9 @@ class EditContactFragment : BaseAddEditContactFragment() {
 
     override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
-    private val contactDatabaseId: Int by lazy { args.contactDatabaseId }
+    private val address: String? by lazy { args.contactPublicKey }
 
-    private val contactOperationCollector: suspend (Event<OperationState<User>>?) -> Unit = {
+    private val contactOperationCollector: suspend (Event<OperationState<Contact>>?) -> Unit = {
         it?.consume()?.let { operationState ->
             when (operationState) {
                 is OperationState.Update -> navigateBackWithResult(operationState.data)
@@ -71,7 +71,7 @@ class EditContactFragment : BaseAddEditContactFragment() {
     override fun initDialogSavedStateListener() {
         startSavedStateListener(R.id.editContactFragment) {
             useSavedStateValue<Boolean>(WarningConfirmationBottomSheet.WARNING_CONFIRMATION_KEY) {
-                editContactViewModel.removeContactInDatabase(contactDatabaseId)
+                editContactViewModel.removeContactInDatabase(address.orEmpty())
             }
             useSavedStateValue<String>(ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY) { accountAddress ->
                 setContactAddressInputLayoutText(accountAddress)
@@ -150,7 +150,7 @@ class EditContactFragment : BaseAddEditContactFragment() {
             showGlobalError(getString(R.string.contact_name_must), getString(R.string.warning))
             return
         }
-        val operatedContact = User(contactName, contactAddress, contactImageUri, contactDatabaseId)
+        val operatedContact = Contact(contactAddress, contactName, contactImageUri)
         editContactViewModel.updateContactInDatabase(operatedContact)
     }
 }

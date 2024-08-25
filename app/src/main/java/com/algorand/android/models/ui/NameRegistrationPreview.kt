@@ -12,14 +12,14 @@
 
 package com.algorand.android.models.ui
 
-import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.CreateAccount
 import com.algorand.android.utils.Event
 
 data class NameRegistrationPreview(
     val handleNextNavigationEvent: Event<Unit?>?,
     private val accountAlreadyExistsEvent: Event<Unit?>?,
-    private val createAccountEvent: Event<AccountCreation>?,
-    private val updateWatchAccountEvent: Event<AccountCreation>?
+    private val createAccountEvent: Event<CreateAccount>?,
+    private val updateWatchAccountEvent: Event<CreateAccount>?
 ) {
     fun getAccountAlreadyExistsEvent(): Event<Unit?>? {
         if (accountAlreadyExistsEvent?.consumed == false) {
@@ -29,7 +29,7 @@ data class NameRegistrationPreview(
         return accountAlreadyExistsEvent
     }
 
-    fun getCreateAccountEvent(): Event<AccountCreation>? {
+    fun getCreateAccountEvent(): Event<CreateAccount>? {
         if (createAccountEvent?.consumed == false) {
             accountAlreadyExistsEvent?.consume()
             updateWatchAccountEvent?.consume()
@@ -37,7 +37,7 @@ data class NameRegistrationPreview(
         return createAccountEvent
     }
 
-    fun getUpdateWatchAccountEvent(): Event<AccountCreation>? {
+    fun getUpdateWatchAccountEvent(): Event<CreateAccount>? {
         if (updateWatchAccountEvent?.consumed == false) {
             accountAlreadyExistsEvent?.consume()
             createAccountEvent?.consume()

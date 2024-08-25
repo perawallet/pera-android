@@ -33,8 +33,8 @@ class FoundAccountInformationAssetViewHolder(
                         onResourceFailed = ::setStartIconDrawable
                     )
                 }
-                setTitleText(name.getName(resources))
-                setDescriptionText(shortName.getName(resources))
+                setTitleText(name.assetName)
+                setDescriptionText(shortName.assetName)
                 setPrimaryValueText(formattedPrimaryValue)
                 setSecondaryValueText(formattedSecondaryValue)
                 setTitleTextColor(verificationTierConfiguration.textColorResId)

@@ -13,13 +13,13 @@
 package com.algorand.android.modules.collectibles.detail.base.ui
 
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.usecase.NetworkSlugUseCase
+import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
 
-abstract class BaseCollectibleDetailViewModel constructor(
-    private val networkSlugUseCase: NetworkSlugUseCase
+abstract class BaseCollectibleDetailViewModel(
+    private val getActiveNodeNetworkSlug: GetActiveNodeNetworkSlug
 ) : BaseViewModel() {
 
-    fun getActiveNodeSlug(): String? {
-        return networkSlugUseCase.getActiveNodeSlug()
+    fun getActiveNodeSlug(): String {
+        return getActiveNodeNetworkSlug()
     }
 }

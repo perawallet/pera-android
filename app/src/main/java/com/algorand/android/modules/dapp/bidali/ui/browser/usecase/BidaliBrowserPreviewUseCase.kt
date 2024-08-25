@@ -12,7 +12,10 @@
 
 package com.algorand.android.modules.dapp.bidali.ui.browser.usecase
 
+import com.algorand.android.core.component.assetdata.usecase.GetAccountOwnedAssetsData
+import com.algorand.android.core.component.caching.domain.usecase.FetchAccountInformationAndCacheAssets
 import com.algorand.android.discover.common.ui.model.WebViewError
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.dapp.bidali.data.mapper.BidaliOpenUrlRequestMapper
 import com.algorand.android.modules.dapp.bidali.data.mapper.BidaliPaymentRequestMapper
 import com.algorand.android.modules.dapp.bidali.data.model.BidaliOpenUrlRequest
@@ -20,24 +23,22 @@ import com.algorand.android.modules.dapp.bidali.data.model.BidaliPaymentRequest
 import com.algorand.android.modules.dapp.bidali.domain.mapper.BidaliAssetMapper
 import com.algorand.android.modules.dapp.bidali.getCompiledUpdatedBalancesJavascript
 import com.algorand.android.modules.dapp.bidali.ui.browser.model.BidaliBrowserPreview
-import com.algorand.android.usecase.AccountAssetDataUseCase
-import com.algorand.android.usecase.IsOnMainnetUseCase
-import com.algorand.android.utils.Event
+import com.algorand.android.modules.peraserializer.PeraSerializer
+import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.getBaseUrlOrNull
-import com.google.gson.Gson
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collectLatest
 
 class BidaliBrowserPreviewUseCase @Inject constructor(
-    private val accountAssetDataUseCase: AccountAssetDataUseCase,
     private val bidaliAssetMapper: BidaliAssetMapper,
-    private val isOnMainnetUseCase: IsOnMainnetUseCase,
-    private val gson: Gson,
+    private val isSelectedNodeMainnet: IsSelectedNodeMainnet,
+    private val peraSerializer: PeraSerializer,
     private val bidaliPaymentRequestMapper: BidaliPaymentRequestMapper,
-    private val bidaliOpenUrlRequestMapper: BidaliOpenUrlRequestMapper
+    private val bidaliOpenUrlRequestMapper: BidaliOpenUrlRequestMapper,
+    private val fetchAccountInformationAndCacheAssets: FetchAccountInformationAndCacheAssets,
+    private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData,
+    private val getBidaliPaymentSendTransactionPayload: GetBidaliPaymentSendTransactionPayload
 ) {
 
     fun getInitialStatePreview(
@@ -100,19 +101,16 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
         loadingErrorEvent = Event(WebViewError.HTTP_ERROR)
     )
 
-    fun onPaymentRequest(
+    suspend fun onPaymentRequest(
         data: String,
-        previousState: BidaliBrowserPreview
+        previousState: BidaliBrowserPreview,
+        accountAddress: String
     ): BidaliBrowserPreview {
-        // TODO if Bidali sends invalid data, we should show an error?
         return try {
-            val paymentRequest = bidaliPaymentRequestMapper
-                .mapToBidaliPaymentRequestDTO(gson.fromJson(data, BidaliPaymentRequest::class.java))
-            paymentRequest?.let {
-                previousState.copy(
-                    onPaymentRequestEvent = Event(it)
-                )
-            } ?: previousState
+            val payload = peraSerializer.fromJson(data, BidaliPaymentRequest::class.java) ?: return previousState
+            val request = bidaliPaymentRequestMapper.mapToBidaliPaymentRequestDTO(payload) ?: return previousState
+            val transaction = getBidaliPaymentSendTransactionPayload(request, accountAddress) ?: return previousState
+            previousState.copy(onPaymentRequestEvent = Event(transaction))
         } catch (exception: Exception) {
             previousState
         }
@@ -123,12 +121,10 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
         previousState: BidaliBrowserPreview
     ): BidaliBrowserPreview {
         return try {
-            val openUrlRequest = bidaliOpenUrlRequestMapper
-                .mapToBidaliOpenUrlRequestDTO(gson.fromJson(data, BidaliOpenUrlRequest::class.java))
+            val payload = peraSerializer.fromJson(data, BidaliOpenUrlRequest::class.java) ?: return previousState
+            val openUrlRequest = bidaliOpenUrlRequestMapper.mapToBidaliOpenUrlRequestDTO(payload)
             openUrlRequest?.let {
-                previousState.copy(
-                    openUrlRequestEvent = Event(it)
-                )
+                previousState.copy(openUrlRequestEvent = Event(it))
             } ?: previousState
         } catch (exception: Exception) {
             previousState
@@ -137,24 +133,18 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
 
     fun generateUpdatedBalancesJavascript(
         previousState: BidaliBrowserPreview,
-        accountAddress: String,
-        scope: CoroutineScope
+        accountAddress: String
     ) = channelFlow {
-        accountAssetDataUseCase.fetchAccountOwnedAssetData(
-            publicKey = accountAddress,
-            includeAlgo = true,
-            coroutineScope = scope
-        ).collectLatest {
-            send(
-                previousState.copy(
-                    updatedBalancesJavascript = getCompiledUpdatedBalancesJavascript(
-                        bidaliAssetMapper.mapFromOwnedAssetData(
-                            ownedAssetDataList = it,
-                            isMainnet = isOnMainnetUseCase.invoke()
-                        )
+        fetchAccountInformationAndCacheAssets(accountAddress)
+        send(
+            previousState.copy(
+                updatedBalancesJavascript = getCompiledUpdatedBalancesJavascript(
+                    bidaliAssetMapper.mapFromOwnedAssetData(
+                        ownedAssetDataList = getAccountOwnedAssetsData(accountAddress, true),
+                        isMainnet = isSelectedNodeMainnet()
                     )
                 )
             )
-        }
+        )
     }
 }

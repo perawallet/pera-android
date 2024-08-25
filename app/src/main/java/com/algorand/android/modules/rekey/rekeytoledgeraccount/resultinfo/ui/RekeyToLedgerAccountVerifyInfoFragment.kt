@@ -12,14 +12,18 @@
 
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.resultinfo.ui
 
+import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.RekeyLedgerNavigationDirections
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
+import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,6 +33,24 @@ class RekeyToLedgerAccountVerifyInfoFragment : BaseInfoFragment() {
     override val fragmentConfiguration = FragmentConfiguration()
 
     private val rekeyToLedgerAccountVerifyInfoViewModel: RekeyToLedgerAccountVerifyInfoViewModel by viewModels()
+
+    private val accountDisplayNameCollector: suspend (AccountDisplayName?) -> Unit = {
+        if (it != null) {
+            val description = getString(
+                R.string.the_account_name_was_successfully_rekeyed_formatted,
+                it.primaryDisplayName
+            )
+            setDescriptionText(description)
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.collectOnLifecycle(
+            rekeyToLedgerAccountVerifyInfoViewModel.accountDisplayNameFlow,
+            accountDisplayNameCollector
+        )
+    }
 
     override fun setImageView(imageView: ImageView) {
         with(imageView) {
@@ -42,10 +64,7 @@ class RekeyToLedgerAccountVerifyInfoFragment : BaseInfoFragment() {
     }
 
     override fun setDescriptionText(textView: TextView) {
-        textView.text = getString(
-            R.string.the_account_name_was_successfully_rekeyed_formatted,
-            rekeyToLedgerAccountVerifyInfoViewModel.accountDisplayName.getAccountPrimaryDisplayName()
-        )
+        // TODO Make this optional
     }
 
     override fun setFirstButton(materialButton: MaterialButton) {

@@ -14,9 +14,9 @@ package com.algorand.android.modules.swap.assetselection.base
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.algorand.android.models.BaseDiffUtil
+import com.algorand.android.designsystem.BaseDiffUtil
 import com.algorand.android.modules.swap.assetselection.base.SwapAssetSelectionViewHolder.SwapAssetSelectionViewHolderListener
-import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapAssetSelectionItem
+import com.algorand.android.swapui.assetselection.model.SwapAssetSelectionItem
 
 class SwapAssetSelectionAdapter(
     private val listener: SwapAssetSelectionAdapterListener

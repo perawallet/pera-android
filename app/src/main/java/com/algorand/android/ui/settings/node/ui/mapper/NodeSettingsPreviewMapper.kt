@@ -12,13 +12,23 @@
 
 package com.algorand.android.ui.settings.node.ui.mapper
 
-import com.algorand.android.models.Node
+import com.algorand.android.node.data.mapper.NodeNameMapper
+import com.algorand.android.node.domain.Node
+import com.algorand.android.node.domain.usecase.GetActiveNode
+import com.algorand.android.ui.settings.node.ui.model.NodeItem
 import com.algorand.android.ui.settings.node.ui.model.NodeSettingsPreview
 import javax.inject.Inject
 
-class NodeSettingsPreviewMapper @Inject constructor() {
+class NodeSettingsPreviewMapper @Inject constructor(
+    private val getActiveNode: GetActiveNode,
+    private val nodeNameMapper: NodeNameMapper
+) {
 
     fun mapToNodeSettingsPreview(isLoading: Boolean, nodeList: List<Node>): NodeSettingsPreview {
-        return NodeSettingsPreview(isLoading = isLoading, nodeList = nodeList)
+        val activeNode = getActiveNode()
+        val nodeItemList = nodeList.map {
+            NodeItem(it, nodeNameMapper(it), it == activeNode)
+        }
+        return NodeSettingsPreview(isLoading = isLoading, nodeList = nodeItemList)
     }
 }

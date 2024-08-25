@@ -13,28 +13,32 @@
 package com.algorand.android.modules.accountdetail.assets.ui.mapper
 
 import com.algorand.android.R
+import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.assetdetailui.detail.nftprofile.mapper.CollectibleAmountFormatter
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.PendingAssetData.AdditionAssetData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.PendingAssetData.BasePendingCollectibleData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.PendingAssetData.DeletionAssetData
 import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.android.models.BaseAccountAssetData.PendingAssetData
 import com.algorand.android.modules.accountdetail.assets.ui.decider.NFTIndicatorDrawableDecider
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.AdditionItem
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.RemovalItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
-import com.algorand.android.modules.collectibles.util.deciders.NFTAmountFormatDecider
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 
 // TODO Rename this function to make it screen independent
 class AccountDetailAssetItemMapper @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
+    private val verificationTierConfigurationMapper: VerificationTierConfigurationMapper,
     private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
     private val nftIndicatorDrawableDecider: NFTIndicatorDrawableDecider,
-    private val nftAmountFormatDecider: NFTAmountFormatDecider
+    private val collectibleAmountFormatter: CollectibleAmountFormatter
 ) {
 
-    fun mapToOwnedAssetItem(
-        accountAssetData: BaseAccountAssetData.BaseOwnedAssetData
+    suspend fun mapToOwnedAssetItem(
+        accountAssetData: BaseOwnedAssetData
     ): AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.AssetItem {
         return with(accountAssetData) {
             AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.AssetItem(
@@ -42,43 +46,37 @@ class AccountDetailAssetItemMapper @Inject constructor(
                 name = AssetName.create(name),
                 shortName = AssetName.createShortName(shortName),
                 formattedAmount = formattedCompactAmount,
-                formattedDisplayedCurrencyValue = getSelectedCurrencyParityValue()
-                    .getFormattedCompactValue(),
+                formattedDisplayedCurrencyValue = getSelectedCurrencyParityValue().getFormattedCompactValue(),
                 isAmountInDisplayedCurrencyVisible = isAmountInSelectedCurrencyVisible,
-                verificationTierConfiguration = verificationTierConfigurationDecider
-                    .decideVerificationTierConfiguration(verificationTier),
+                verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier),
                 baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
                 amountInSelectedCurrency = parityValueInSelectedCurrency.amountAsCurrency
             )
         }
     }
 
-    fun mapToPendingAdditionAssetItem(
-        accountAssetData: PendingAssetData.AdditionAssetData
-    ): AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.AdditionItem {
-        return AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.AdditionItem(
+    suspend fun mapToPendingAdditionAssetItem(
+        accountAssetData: AdditionAssetData
+    ): AdditionItem {
+        return AdditionItem(
             id = accountAssetData.id,
             name = AssetName.create(accountAssetData.name),
             shortName = AssetName.createShortName(accountAssetData.shortName),
             actionDescriptionResId = R.string.adding_asset,
-            verificationTierConfiguration = verificationTierConfigurationDecider.decideVerificationTierConfiguration(
-                accountAssetData.verificationTier
-            ),
+            verificationTierConfiguration = verificationTierConfigurationMapper(accountAssetData.verificationTier),
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData.id)
         )
     }
 
-    fun mapToPendingRemovalAssetItem(
-        accountAssetData: PendingAssetData.DeletionAssetData
-    ): AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.RemovalItem {
-        return AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.RemovalItem(
+    suspend fun mapToPendingRemovalAssetItem(
+        accountAssetData: DeletionAssetData
+    ): RemovalItem {
+        return RemovalItem(
             id = accountAssetData.id,
             name = AssetName.create(accountAssetData.name),
             shortName = AssetName.createShortName(accountAssetData.shortName),
             actionDescriptionResId = R.string.removing_asset,
-            verificationTierConfiguration = verificationTierConfigurationDecider.decideVerificationTierConfiguration(
-                accountAssetData.verificationTier
-            ),
+            verificationTierConfiguration = verificationTierConfigurationMapper(accountAssetData.verificationTier),
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData.id)
         )
     }
@@ -119,8 +117,8 @@ class AccountDetailAssetItemMapper @Inject constructor(
         )
     }
 
-    fun mapToOwnedNFTItem(
-        accountAssetData: BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData,
+    suspend fun mapToOwnedNFTItem(
+        accountAssetData: BaseOwnedAssetData.BaseOwnedCollectibleData,
         isHoldingByWatchAccount: Boolean,
         isOwned: Boolean,
         nftListingViewType: NFTListingViewType,
@@ -133,7 +131,7 @@ class AccountDetailAssetItemMapper @Inject constructor(
                 name = AssetName.create(name),
                 shortName = AssetName.createShortName(shortName),
                 baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
-                formattedAmount = nftAmountFormatDecider.decideNFTAmountFormat(
+                formattedAmount = collectibleAmountFormatter(
                     nftAmount = amount,
                     fractionalDecimal = decimals,
                     formattedAmount = formattedAmount,
@@ -151,8 +149,8 @@ class AccountDetailAssetItemMapper @Inject constructor(
         }
     }
 
-    fun mapToPendingAdditionNFTITem(
-        accountAssetData: PendingAssetData.BasePendingCollectibleData
+    suspend fun mapToPendingAdditionNFTITem(
+        accountAssetData: BasePendingCollectibleData
     ): AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.NFTItem.AdditionItem {
         return AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.NFTItem.AdditionItem(
             id = accountAssetData.id,
@@ -164,8 +162,8 @@ class AccountDetailAssetItemMapper @Inject constructor(
         )
     }
 
-    fun mapToPendingRemovalNFTItem(
-        accountAssetData: PendingAssetData.BasePendingCollectibleData
+    suspend fun mapToPendingRemovalNFTItem(
+        accountAssetData: BasePendingCollectibleData
     ): AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.NFTItem.RemovalItem {
         return AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.NFTItem.RemovalItem(
             id = accountAssetData.id,

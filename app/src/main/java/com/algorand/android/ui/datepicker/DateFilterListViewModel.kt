@@ -13,31 +13,28 @@
 
 package com.algorand.android.ui.datepicker
 
-import javax.inject.Inject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.DateFilter
-import com.algorand.android.models.DateFilter.Companion.DEFAULT_DATE_FILTER
-import com.algorand.android.usecase.DateFilterListUseCase
+import com.algorand.android.dateui.model.DateFilter
+import com.algorand.android.dateui.model.DateFilter.AllTime
+import com.algorand.android.dateui.usecase.GetDateFilterList
 import com.algorand.android.utils.getOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class DateFilterListViewModel @Inject constructor(
-    private val dateFilterListUseCase: DateFilterListUseCase,
+    private val getDateFilterList: GetDateFilterList,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val selectedDateFilter: DateFilter = savedStateHandle.getOrElse(
-        SELECTED_DATE_FILTER_KEY,
-        DEFAULT_DATE_FILTER
-    )
+    private val selectedDateFilter: DateFilter = savedStateHandle.getOrElse(SELECTED_DATE_FILTER_KEY, AllTime)
 
     private val dateFilterList = DateFilter.getDateFilterList()
 
@@ -55,7 +52,7 @@ class DateFilterListViewModel @Inject constructor(
     }
 
     private fun getDateFilterListPreview(dateFilter: DateFilter) {
-        _dateFilterListLiveData.postValue(dateFilterListUseCase.getDateFilterListPreview(dateFilter, dateFilterList))
+        _dateFilterListLiveData.postValue(getDateFilterList(dateFilter, dateFilterList))
     }
 
     fun updateSelectedDate(dateFilter: DateFilter) {

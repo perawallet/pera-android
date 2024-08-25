@@ -57,22 +57,12 @@
         android:name="com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.RekeyToLedgerAccountSelectionFragment"
         android:label="RekeyLedgerAccountSelectionFragment"
         tools:layout="@layout/fragment_ledger_account_selection">
-        <argument
-            android:name="bluetoothName"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="bluetoothAddress"
-            app:argType="string" />
-        <argument
-            android:name="ledgerAccountsInformation"
-            app:argType="com.algorand.android.models.AccountInformation[]" />
-        <argument
-            android:name="accountAddress"
-            app:argType="string" />
         <action
             android:id="@+id/rekeyLedgerAccountSelectionFragment_to_rekeyToLedgerAccountConfirmationFragment"
             app:destination="@id/rekeyToLedgerAccountConfirmationFragment" />
+        <argument
+            android:name="rekeyLedgerAccountSelectionNavArgs"
+            app:argType="com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionNavArgs" />
     </fragment>
 
     <dialog
@@ -94,11 +84,9 @@
             android:name="accountAddress"
             app:argType="string" />
         <argument
-            android:name="authAccountAddress"
-            app:argType="string" />
-        <argument
-            android:name="ledgerDetail"
-            app:argType="com.algorand.android.models.Account$Detail$Ledger" />
+            android:name="selectedLedgerAccount"
+            app:argType="com.algorand.android.modules.rekey.model.SelectedLedgerAccount$LedgerAccount" />
+
         <action
             android:id="@+id/action_rekeyConfirmationFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"

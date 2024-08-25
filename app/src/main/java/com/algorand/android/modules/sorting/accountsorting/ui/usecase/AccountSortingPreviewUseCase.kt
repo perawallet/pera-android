@@ -13,21 +13,21 @@
 package com.algorand.android.modules.sorting.accountsorting.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.customviews.accountandassetitem.mapper.AccountItemConfigurationMapper
-import com.algorand.android.models.ButtonConfiguration
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.modules.accounts.domain.usecase.GetAccountValueUseCase
+import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
+import com.algorand.android.accountcore.ui.mapper.AccountItemConfigurationMapper
+import com.algorand.android.accountcore.ui.model.ButtonConfiguration
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
+import com.algorand.android.accountsorting.component.domain.usecase.GetAccountSortingTypeIdentifier
+import com.algorand.android.accountsorting.component.domain.usecase.SaveAccountSortPreference
+import com.algorand.android.accountsorting.component.domain.usecase.SetAccountOrderIndex
+import com.algorand.android.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.sorting.accountsorting.domain.mapper.BaseSortingListItemMapper
 import com.algorand.android.modules.sorting.accountsorting.domain.mapper.SortingPreviewMapper
 import com.algorand.android.modules.sorting.accountsorting.domain.model.AccountSortingPreview
-import com.algorand.android.modules.sorting.accountsorting.domain.model.AccountSortingType
 import com.algorand.android.modules.sorting.accountsorting.domain.model.BaseAccountSortingListItem
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.AccountSortPreferenceUseCase
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.GetSortedAccountsByPreferenceUseCase
 import com.algorand.android.modules.sorting.utils.SortingTypeCreator
-import com.algorand.android.usecase.GetSortedLocalAccountsUseCase
-import com.algorand.android.usecase.SaveLocalAccountsUseCase
 import javax.inject.Inject
 
 // TODO: 8.08.2022 Move account sorting feature to UI layer
@@ -35,49 +35,47 @@ import javax.inject.Inject
 open class AccountSortingPreviewUseCase @Inject constructor(
     private val baseSortingListItemMapper: BaseSortingListItemMapper,
     private val sortingTypeCreator: SortingTypeCreator,
-    private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
     private val sortingPreviewMapper: SortingPreviewMapper,
-    private val accountSortPreferenceUseCase: AccountSortPreferenceUseCase,
-    private val getSortedAccountsByPreferenceUseCase: GetSortedAccountsByPreferenceUseCase,
-    private val getAccountValueUseCase: GetAccountValueUseCase,
-    private val getSortedLocalAccountsUseCase: GetSortedLocalAccountsUseCase,
-    private val saveLocalAccountsUseCase: SaveLocalAccountsUseCase,
-    private val getAccountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getSortedAccountsByPreference: GetSortedAccountsByPreference,
+    private val getAccountTotalValue: GetAccountTotalValue,
+    private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
+    private val setAccountOrderIndex: SetAccountOrderIndex,
+    private val saveAccountSortPreference: SaveAccountSortPreference,
+    private val getAccountSortingTypeIdentifier: GetAccountSortingTypeIdentifier
 ) {
 
     fun getInitialSortingPreview(): AccountSortingPreview {
         return sortingPreviewMapper.mapToInitialAccountSortingPreview()
     }
 
-    suspend fun getAccountSortingPreference(): AccountSortingType {
-        return accountSortPreferenceUseCase.getAccountSortPreference()
+    suspend fun getAccountSortingPreference(): AccountSortingTypeIdentifier {
+        return getAccountSortingTypeIdentifier()
     }
 
-    fun saveManuallySortedAccountList(
-        baseAccountSortingList: List<BaseAccountSortingListItem>,
-        sortingPreferences: AccountSortingType.ManuallySort
-    ) {
-        val sortedAccountItems = baseAccountSortingList
-            .filterIsInstance<BaseAccountSortingListItem.AccountSortListItem>()
-        val localAccounts = getSortedLocalAccountsUseCase.getSortedLocalAccounts()
-        val sortedAccounts = sortingPreferences.manualSort(
-            currentList = sortedAccountItems.map { it.accountListItem },
-            accounts = localAccounts
-        )
-        saveLocalAccountsUseCase.saveLocalAccounts(sortedAccounts)
+    suspend fun saveManuallySortedAccountList(baseAccountSortingList: List<BaseAccountSortingListItem>) {
+        val sortedAccountAddresses = baseAccountSortingList.mapNotNull {
+            if (it is BaseAccountSortingListItem.AccountSortListItem) {
+                it.accountListItem.itemConfiguration.accountAddress
+            } else {
+                null
+            }
+        }
+        sortedAccountAddresses.forEachIndexed { index, address ->
+            setAccountOrderIndex(address, index)
+        }
     }
 
-    suspend fun saveSortingPreferences(sortingPreferences: AccountSortingType) {
-        val selectedSortingPreferencesTypeIdentifier = sortingPreferences.typeIdentifier
-        accountSortPreferenceUseCase.saveAccountSortPreferences(selectedSortingPreferencesTypeIdentifier)
+    suspend fun saveSortingPreferences(sortingPreferences: AccountSortingTypeIdentifier) {
+        saveAccountSortPreference(sortingPreferences)
     }
 
     fun swapItemsAndUpdateList(
         currentPreview: AccountSortingPreview,
         fromPosition: Int,
         toPosition: Int,
-        sortingPreferences: AccountSortingType
+        sortingPreferences: AccountSortingTypeIdentifier
     ): AccountSortingPreview {
         val currentItemList = currentPreview.accountSortingListItems.toMutableList()
         val fromItem = currentItemList.removeAt(fromPosition)
@@ -90,10 +88,10 @@ open class AccountSortingPreviewUseCase @Inject constructor(
         )
     }
 
-    fun createSortingPreview(sortingPreferences: AccountSortingType): AccountSortingPreview {
-        val sortTypeListItems = getSortTypeListItems(sortingPreferences)
-        val accountSortingListItems = getAccountSortingListItems(sortingPreferences)
-        val isAccountListVisible = sortingPreferences == AccountSortingType.ManuallySort
+    suspend fun createSortingPreview(sortingIdentifier: AccountSortingTypeIdentifier): AccountSortingPreview {
+        val sortTypeListItems = getSortTypeListItems(sortingIdentifier)
+        val accountSortingListItems = getAccountSortingListItems(sortingIdentifier)
+        val isAccountListVisible = sortingIdentifier == AccountSortingTypeIdentifier.MANUAL
         return sortingPreviewMapper.mapToAccountSortingPreview(
             sortTypeListItems = sortTypeListItems,
             accountSortingListItems = if (isAccountListVisible) accountSortingListItems else emptyList()
@@ -101,22 +99,22 @@ open class AccountSortingPreviewUseCase @Inject constructor(
     }
 
     private fun getSortTypeListItems(
-        sortingPreferences: AccountSortingType
+        sortingIdentifier: AccountSortingTypeIdentifier
     ): List<BaseAccountSortingListItem.SortTypeListItem> {
         val sortingTypes = sortingTypeCreator.createForAccountSorting()
         return sortingTypes.map { sortingType ->
             baseSortingListItemMapper.mapToSortingTypeListItem(
-                accountSortingType = sortingType,
-                isChecked = sortingType == sortingPreferences
+                accountSortingTypeIdentifier = sortingType,
+                isChecked = sortingType == sortingIdentifier
             )
         }
     }
 
-    private fun getAccountSortingListItems(
-        sortingPreferences: AccountSortingType
+    private suspend fun getAccountSortingListItems(
+        sortingIdentifier: AccountSortingTypeIdentifier,
     ): MutableList<BaseAccountSortingListItem> {
         val headerListItem = createHeaderListItem()
-        val accountSortListItems = createAccountSortListItems(sortingPreferences)
+        val accountSortListItems = createAccountSortListItems(sortingIdentifier)
         return mutableListOf<BaseAccountSortingListItem>().apply {
             add(headerListItem)
             addAll(accountSortListItems)
@@ -127,18 +125,18 @@ open class AccountSortingPreviewUseCase @Inject constructor(
         return baseSortingListItemMapper.mapToHeaderListItem(R.string.reorganize_accounts_manually)
     }
 
-    private fun createAccountSortListItems(
-        sortingPreferences: AccountSortingType
+    private suspend fun createAccountSortListItems(
+        sortingIdentifier: AccountSortingTypeIdentifier
     ): List<BaseAccountSortingListItem.AccountSortListItem> {
-        val accountListItems = getSortedAccountsByPreferenceUseCase.getSortedAccountListItems(
-            sortingPreferences = sortingPreferences,
+        val accountListItems = getSortedAccountsByPreference(
+            sortingIdentifier = sortingIdentifier,
             onLoadedAccountConfiguration = {
-                val accountValue = getAccountValueUseCase.getAccountValue(this)
-                accountItemConfigurationMapper.mapTo(
-                    accountAddress = account.address,
-                    accountDisplayName = getAccountDisplayNameUseCase.invoke(account.address),
-                    accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(account.address),
-                    accountType = account.type,
+                val accountValue = getAccountTotalValue(address, true)
+                accountItemConfigurationMapper(
+                    accountAddress = address,
+                    accountDisplayName = getAccountDisplayName(address),
+                    accountIconDrawablePreview = getAccountIconDrawablePreview(address),
+                    accountType = accountType,
                     accountPrimaryValue = accountValue.primaryAccountValue,
                     dragButtonConfiguration = ButtonConfiguration(
                         iconDrawableResId = R.drawable.ic_reorder,
@@ -148,18 +146,15 @@ open class AccountSortingPreviewUseCase @Inject constructor(
                     )
                 )
             }, onFailedAccountConfiguration = {
-                this?.run {
-                    accountItemConfigurationMapper.mapTo(
-                        accountAddress = address,
-                        accountDisplayName = getAccountDisplayNameUseCase.invoke(address),
-                        accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(address),
-                        showWarningIcon = true
-                    )
-                }
+                accountItemConfigurationMapper(
+                    accountAddress = this,
+                    accountDisplayName = getAccountDisplayName(this),
+                    accountIconDrawablePreview = getAccountIconDrawablePreview(this),
+                    showWarningIcon = true
+                )
             }
         )
-        val sortedAccountList = sortingPreferences.sort(accountListItems)
-        return sortedAccountList.map { sortedAccountListItem ->
+        return accountListItems.map { sortedAccountListItem ->
             baseSortingListItemMapper.mapToAccountSortItem(accountListItem = sortedAccountListItem)
         }
     }

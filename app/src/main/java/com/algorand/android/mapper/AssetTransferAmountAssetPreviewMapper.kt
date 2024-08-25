@@ -13,34 +13,33 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.decider.AssetDrawableProviderDecider
+import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.models.AssetTransferAmountAssetPreview
-import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 
 class AssetTransferAmountAssetPreviewMapper @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider
+    private val getAssetDrawableProvider: GetAssetDrawableProvider,
+    private val verificationTierConfigurationMapper: VerificationTierConfigurationMapper,
+    private val getAssetName: GetAssetName
 ) {
 
-    fun mapTo(accountAssetData: BaseAccountAssetData.BaseOwnedAssetData): AssetTransferAmountAssetPreview {
+    suspend fun mapTo(accountAssetData: BaseAccountAssetData.BaseOwnedAssetData): AssetTransferAmountAssetPreview {
         return AssetTransferAmountAssetPreview(
-            shortName = AssetName.createShortName(accountAssetData.shortName),
+            shortName = getAssetName(accountAssetData.shortName),
             decimals = accountAssetData.decimals,
             formattedSelectedCurrencyValue = accountAssetData.getSelectedCurrencyParityValue()
                 .getFormattedCompactValue(),
             assetId = accountAssetData.id,
-            fullName = AssetName.create(accountAssetData.name),
+            fullName = getAssetName(accountAssetData.name),
             isAlgo = accountAssetData.isAlgo,
-            verificationTierConfiguration = verificationTierConfigurationDecider.decideVerificationTierConfiguration(
-                accountAssetData.verificationTier
-            ),
+            verificationTierConfiguration = verificationTierConfigurationMapper(accountAssetData.verificationTier),
             formattedAmount = accountAssetData.formattedCompactAmount,
             isAmountInSelectedCurrencyVisible = accountAssetData.isAmountInSelectedCurrencyVisible,
             prismUrl = accountAssetData.prismUrl,
-            assetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData.id)
+            assetDrawableProvider = getAssetDrawableProvider(accountAssetData.id)
         )
     }
 }

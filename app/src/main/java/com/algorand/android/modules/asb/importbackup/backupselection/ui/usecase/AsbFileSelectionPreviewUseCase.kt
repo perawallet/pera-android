@@ -16,23 +16,20 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.algorand.android.R
+import com.algorand.android.asb.component.restorebackup.domain.model.RestoreCipherTextResult
+import com.algorand.android.asb.component.restorebackup.domain.model.RestoreCipherTextResult.*
+import com.algorand.android.asb.component.restorebackup.domain.usecase.RestoreAsbCipherText
+import com.algorand.android.asb.component.restorebackup.validation.AsbFileContentValidator
 import com.algorand.android.customviews.perafileuploadview.mapper.FileUploadStateMapper
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.asb.importbackup.backupselection.ui.mapper.AsbFileSelectionPreviewMapper
 import com.algorand.android.modules.asb.importbackup.backupselection.ui.model.AsbFileSelectionPreview
-import com.algorand.android.modules.asb.importbackup.backupselection.utils.AsbFileContentValidator
-import com.algorand.android.modules.backupprotocol.model.BackupProtocolContent
-import com.algorand.android.modules.peraserializer.PeraSerializer
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.clipboard.manager.PeraClipboardManager
-import com.algorand.android.utils.extensions.decodeBase64ToString
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Named
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
+import javax.inject.*
 
 class AsbFileSelectionPreviewUseCase @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -41,7 +38,7 @@ class AsbFileSelectionPreviewUseCase @Inject constructor(
     private val peraClipboardManager: PeraClipboardManager,
     private val fileUploadStateMapper: FileUploadStateMapper,
     private val asbFileContentValidator: AsbFileContentValidator,
-    private val peraSerializer: PeraSerializer
+    private val restoreAsbCipherText: RestoreAsbCipherText,
 ) {
 
     fun updatePreviewWithNextNavigation(preview: AsbFileSelectionPreview): AsbFileSelectionPreview {
@@ -60,13 +57,9 @@ class AsbFileSelectionPreviewUseCase @Inject constructor(
             emit(preview.copy(showGlobalErrorEvent = Event(errorPair)))
             return@flow
         }
-        val decodedBackupProtocolContent = clipboardData.decodeBase64ToString().orEmpty()
-        val backupProtocolContent = peraSerializer.fromJson(
-            json = decodedBackupProtocolContent,
-            type = BackupProtocolContent::class.java
-        )
-        asbFileContentValidator.validateBackupProtocolContent(
-            deserializeContent = backupProtocolContent,
+
+        handleRestoreResult(
+            result = restoreAsbCipherText(clipboardData),
             onValidationFailed = { errorStatusAnnotatedString ->
                 emit(createClipboardDataErrorState(preview, errorStatusAnnotatedString))
             },
@@ -119,13 +112,8 @@ class AsbFileSelectionPreviewUseCase @Inject constructor(
         }
 
         val fileContent = fileInputStream.use { inputStream -> inputStream.readBytes().toString(Charsets.UTF_8) }
-        val decodedBackupProtocolContent = fileContent.decodeBase64ToString().orEmpty()
-        val backupProtocolContent = peraSerializer.fromJson(
-            json = decodedBackupProtocolContent,
-            type = BackupProtocolContent::class.java
-        )
-        asbFileContentValidator.validateBackupProtocolContent(
-            deserializeContent = backupProtocolContent,
+        handleRestoreResult(
+            result = restoreAsbCipherText(fileContent),
             onValidationFailed = { errorStatusAnnotatedString ->
                 val errorState = createUploadFileErrorState(
                     preview = preview,
@@ -197,5 +185,49 @@ class AsbFileSelectionPreviewUseCase @Inject constructor(
     ): AsbFileSelectionPreview {
         val errorPair = errorStatusAnnotatedString to null
         return preview.copy(showGlobalErrorEvent = Event(errorPair), fileCipherText = null)
+    }
+
+    private suspend fun handleRestoreResult(
+        result: RestoreCipherTextResult,
+        onValidationFailed: suspend (AnnotatedString) -> Unit,
+        onValidationSucceed: suspend (String) -> Unit
+    ) {
+        when (result) {
+            UnableToParseFile -> onValidationFailed.invoke(AnnotatedString(R.string.unable_to_parse_file))
+            InvalidBackUpVersion -> {
+                onValidationFailed.invoke(AnnotatedString(R.string.backup_file_was_generated_with))
+            }
+            InvalidSuite -> {
+                onValidationFailed.invoke(AnnotatedString(R.string.unable_to_parse_suite))
+            }
+            MissingCipherText -> {
+                val annotatedString = AnnotatedString(
+                    stringResId = R.string.unable_to_parse_key_name,
+                    replacementList = listOf("key_name" to CIPHER_TEXT_FIELD_KEY_NAME)
+                )
+                onValidationFailed.invoke(annotatedString)
+            }
+            MissingSuite -> {
+                val annotatedString = AnnotatedString(
+                    stringResId = R.string.unable_to_parse_key_name,
+                    replacementList = listOf("key_name" to SUITE_FIELD_KEY_NAME)
+                )
+                onValidationFailed.invoke(annotatedString)
+            }
+            MissingVersion -> {
+                val annotatedString = AnnotatedString(
+                    stringResId = R.string.unable_to_parse_key_name,
+                    replacementList = listOf("key_name" to VERSION_FIELD_KEY_NAME)
+                )
+                onValidationFailed.invoke(annotatedString)
+            }
+            is Success -> onValidationSucceed.invoke(result.cipherText)
+        }
+    }
+
+    companion object {
+        private const val VERSION_FIELD_KEY_NAME = "Version"
+        private const val SUITE_FIELD_KEY_NAME = "Suite"
+        private const val CIPHER_TEXT_FIELD_KEY_NAME = "Ciphertext"
     }
 }

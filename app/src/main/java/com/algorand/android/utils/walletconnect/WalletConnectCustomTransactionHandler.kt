@@ -12,6 +12,7 @@
 
 package com.algorand.android.utils.walletconnect
 
+import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
 import com.algorand.android.models.BaseAssetTransferTransaction
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
@@ -20,8 +21,7 @@ import com.algorand.android.models.WalletConnectTransactionSigner.Sender
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.ui.mapper.WalletConnectTransactionMapper
-import com.algorand.android.repository.TransactionsRepository
-import com.algorand.android.utils.AccountCacheManager
+import com.algorand.android.transaction.domain.usecase.GetTransactionParams
 import com.algorand.android.utils.groupWalletConnectTransactions
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult.Error
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult.Success
@@ -29,10 +29,10 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 
 class WalletConnectCustomTransactionHandler @Inject constructor(
-    private val transactionsRepository: TransactionsRepository,
+    private val getTransactionParams: GetTransactionParams,
     private val walletConnectTransactionMapper: WalletConnectTransactionMapper,
     private val errorProvider: WalletConnectErrorProvider,
-    private val accountCacheManager: AccountCacheManager,
+    private val getLocalAccounts: GetLocalAccounts,
     private val walletConnectCustomTransactionAssetDetailHandler: WalletConnectCustomTransactionAssetDetailHandler
 ) {
 
@@ -155,10 +155,9 @@ class WalletConnectCustomTransactionHandler @Inject constructor(
     private suspend fun checkIfNodesMatchesAndSetTransactionLastRound(
         txnRequestList: List<BaseWalletConnectTransaction>
     ): Boolean {
-        var isNodesMatches = false
-        transactionsRepository.getTransactionParams().use(
+        return getTransactionParams().use(
             onSuccess = { txnParams ->
-                isNodesMatches = txnRequestList.all { txn ->
+                txnRequestList.all { txn ->
                     with(txn) {
                         requestedBlockCurrentRound = txnParams.lastRound
                         with(walletConnectTransactionParams) {
@@ -167,9 +166,8 @@ class WalletConnectCustomTransactionHandler @Inject constructor(
                     }
                 }
             },
-            onFailed = { _, _ -> isNodesMatches = false }
+            onFailed = { _, _ -> false }
         )
-        return isNodesMatches
     }
 
     private fun hasInvalidAssetTransfer(walletConnectTxnList: List<BaseWalletConnectTransaction>): Boolean {
@@ -219,13 +217,14 @@ class WalletConnectCustomTransactionHandler @Inject constructor(
         }
     }
 
-    private fun doAppHaveAtLeastOneSignerAccountInTxn(
+    private suspend fun doAppHaveAtLeastOneSignerAccountInTxn(
         groupedTxnList: List<List<BaseWalletConnectTransaction>>
     ): Boolean {
+        val localAccountAddresses = getLocalAccounts().map { it.address }
         return groupedTxnList.all { txnList ->
             txnList.any { txn ->
                 val signerPublicKey = txn.signer.address?.decodedAddress
-                accountCacheManager.getCacheData(signerPublicKey) != null
+                localAccountAddresses.contains(signerPublicKey)
             }
         }
     }

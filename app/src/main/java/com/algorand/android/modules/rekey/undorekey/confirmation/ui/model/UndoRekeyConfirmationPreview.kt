@@ -12,11 +12,12 @@
 
 package com.algorand.android.modules.rekey.undorekey.confirmation.ui.model
 
-import com.algorand.android.models.AnnotatedString
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRekeyConfirmationFields
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.Event
 
 data class UndoRekeyConfirmationPreview(
     override val isLoading: Boolean,
@@ -33,5 +34,6 @@ data class UndoRekeyConfirmationPreview(
     override val navToRekeyResultInfoFragmentEvent: Event<Unit>?,
     override val showGlobalErrorEvent: Event<Pair<Int, String>>?,
     override val navToRekeyedAccountConfirmationBottomSheetEvent: Event<Unit>?,
-    override val onSendTransactionEvent: Event<Unit>?
+    override val onSendTransactionEvent: Event<Unit>?,
+    override val accountInformation: AccountInformation?
 ) : BaseRekeyConfirmationFields

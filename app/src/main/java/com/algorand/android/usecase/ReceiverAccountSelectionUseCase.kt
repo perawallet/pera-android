@@ -14,52 +14,31 @@
 package com.algorand.android.usecase
 
 import com.algorand.android.R
-import com.algorand.android.SendAlgoNavigationDirections
-import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
-import com.algorand.android.models.AssetSupportRequest
-import com.algorand.android.models.BaseAccountSelectionListItem
-import com.algorand.android.models.Result
-import com.algorand.android.models.TargetUser
-import com.algorand.android.models.User
-import com.algorand.android.modules.accountasset.GetAccountAssetUseCase
-import com.algorand.android.modules.accountasset.domain.model.AccountAssetDetail
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.nft.ui.model.RequestOptInConfirmationArgs
-import com.algorand.android.repository.AssetRepository
-import com.algorand.android.repository.ContactRepository
-import com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionFragmentDirections
-import com.algorand.android.utils.AccountCacheManager
-import com.algorand.android.utils.exceptions.GlobalException
-import com.algorand.android.utils.exceptions.NavigationException
-import com.algorand.android.utils.exceptions.WarningException
-import com.algorand.android.utils.formatAsAlgoString
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountItems
+import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionContactItems
+import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionItemsFromAccountAddress
+import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionNameServiceItems
+import com.algorand.android.transaction.domain.model.ValidateReceiverAccountPayload
+import com.algorand.android.transaction.domain.usecase.ValidateReceiverAccount
+import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser
+import com.algorand.android.ui.send.receiveraccount.mapper.GetReceiverAccountSelectionValidationResult
+import com.algorand.android.utils.Resource
 import com.algorand.android.utils.isValidAddress
-import com.algorand.android.utils.validator.AccountTransactionValidator
+import java.math.BigInteger
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
-import java.math.BigInteger
-import javax.inject.Inject
 
-@Suppress("LongParameterList")
 class ReceiverAccountSelectionUseCase @Inject constructor(
-    private val contactRepository: ContactRepository,
-    private val accountCacheManager: AccountCacheManager,
-    private val accountTransactionValidator: AccountTransactionValidator,
-    private val assetRepository: AssetRepository,
-    private val accountSelectionListUseCase: AccountSelectionListUseCase,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase,
-    private val assetDataProviderDecider: AssetDrawableProviderDecider, // TODO Remove decider after refactor AssetInfo
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
-    accountInformationUseCase: AccountInformationUseCase,
-    getAccountAssetUseCase: GetAccountAssetUseCase
-) : BaseSendAccountSelectionUseCase(accountInformationUseCase, getAccountAssetUseCase) {
+    private val getAccountSelectionContactItems: GetAccountSelectionContactItems,
+    private val getAccountSelectionNameServiceItems: GetAccountSelectionNameServiceItems,
+    private val getAccountSelectionItemsFromAccountAddress: GetAccountSelectionItemsFromAccountAddress,
+    private val getAccountSelectionAccountItems: GetAccountSelectionAccountItems,
+    private val validateReceiverAccount: ValidateReceiverAccount,
+    private val getReceiverAccountSelectionValidationResult: GetReceiverAccountSelectionValidationResult
+) {
 
     fun getToAccountList(
         query: String,
@@ -77,8 +56,8 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
             mutableListOf<BaseAccountSelectionListItem>().apply {
                 createPasteItem(latestCopiedMessage)?.run { add(this) }
                 createQueriedAccountItem(
-                    accountAddresses = accounts.map { it.publicKey },
-                    contactAddresses = contacts.map { it.publicKey },
+                    accountAddresses = accounts.map { it.address },
+                    contactAddresses = contacts.map { it.address },
                     queriedAddress = queriedAddress
                 )?.run {
                     add(BaseAccountSelectionListItem.HeaderItem(R.string.account))
@@ -106,7 +85,7 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
         }
     }
 
-    private fun createQueriedAccountItem(
+    private suspend fun createQueriedAccountItem(
         queriedAddress: String?,
         accountAddresses: List<String>,
         contactAddresses: List<String>
@@ -118,9 +97,7 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
             queriedAccount = queriedAddress
         )
         if (!shouldInsertQueriedAccount) return null
-        return accountSelectionListUseCase.createAccountSelectionItemFromAccountAddress(
-            accountAddress = queriedAddress
-        )
+        return getAccountSelectionItemsFromAccountAddress(accountAddress = queriedAddress)
     }
 
     private fun shouldInsertQueriedAccount(
@@ -132,152 +109,47 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
     }
 
     private fun fetchContactList(query: String) = flow {
-        val contacts = accountSelectionListUseCase.createAccountSelectionListContactItems().filter {
-            it.displayName.contains(query, true) || it.publicKey.contains(query, true)
+        val contacts = getAccountSelectionContactItems().filter {
+            it.displayName.contains(query, true) || it.address.contains(query, true)
         }
         emit(contacts)
     }
 
     private fun fetchNftDomainAccountList(query: String) = flow {
-        val nftDomainAccounts = accountSelectionListUseCase.createAccountSelectionNftDomainItems(query)
+        val nftDomainAccounts = getAccountSelectionNameServiceItems(query)
         emit(nftDomainAccounts)
     }
 
     private fun fetchAccountList(query: String) = flow {
-        val localAccounts = accountSelectionListUseCase.createAccountSelectionListAccountItems(
+        val localAccounts = getAccountSelectionAccountItems(
             showHoldings = false,
             showFailedAccounts = false
-        ).filter { it.displayName.contains(query, true) || it.publicKey.contains(query, true) }
+        ).filter { it.displayName.contains(query, true) || it.address.contains(query, true) }
         emit(localAccounts)
-    }
-
-    fun isAccountAddressValid(toAccountPublicKey: String): Result<String> {
-        return accountTransactionValidator.isAccountAddressValid(toAccountPublicKey)
     }
 
     @SuppressWarnings("ReturnCount", "LongMethod")
     suspend fun checkToAccountTransactionRequirements(
-        accountAssetDetail: AccountAssetDetail,
+        receiverAddress: String,
         assetId: Long,
         fromAccountAddress: String,
         amount: BigInteger,
         nftDomainAddress: String?,
         nftDomainServiceLogoUrl: String?
-    ): Result<TargetUser> {
-        val isSelectedAssetValid = accountTransactionValidator.isSelectedAssetValid(fromAccountAddress, assetId)
-        if (!isSelectedAssetValid) {
-            // TODO: 18.03.2022 Find better exception message
-            return Result.Error(Exception())
-        }
-
-        if (accountAssetDetail.assetDetail == null && assetId != ALGO_ID) {
-            val nextDirection = ReceiverAccountSelectionFragmentDirections
-                .actionReceiverAccountSelectionFragmentToRequestOptInConfirmationNavigation(
-                    RequestOptInConfirmationArgs(
-                        fromAccountAddress,
-                        accountAssetDetail.address,
-                        assetId,
-                        getAssetOrCollectibleNameOrNull(assetId)
-                    )
-                )
-            return Result.Error(NavigationException(nextDirection))
-        }
-
-        if (assetId == ALGO_ID) {
-            val minBalance = accountAssetDetail.minBalanceRequired
-            val toAccountAlgoBalance = accountAssetDetail.algoAmount
-            val isSendingAmountValid = accountTransactionValidator.isSendingAmountLesserThanMinimumBalance(
-                toAccountAlgoBalance,
-                amount,
-                minBalance
-            )
-            if (isSendingAmountValid) {
-                val warningBodyMessage = AnnotatedString(
-                    R.string.you_re_trying_to_send,
-                    listOf("amount" to (minBalance - toAccountAlgoBalance).formatAsAlgoString())
-                )
-                return Result.Error(WarningException(R.string.warning, warningBodyMessage))
-            }
-        }
-
-        val fromAccountCacheData = accountCacheManager.getCacheData(fromAccountAddress)
-        val selectedAsset = getAssetInformation(assetId = assetId, accountAddress = fromAccountAddress)
-        val isSendingMaxAmountToSameAccount = accountTransactionValidator.isSendingMaxAmountToTheSameAccount(
-            fromAccount = fromAccountAddress,
-            toAccount = accountAssetDetail.address,
-            maxAmount = selectedAsset?.amount ?: BigInteger.ZERO,
-            amount = amount,
-            isAlgo = selectedAsset?.isAlgo() ?: false
+    ): Resource<AssetTransferTargetUser> {
+        val validationPayload = ValidateReceiverAccountPayload(
+            senderAddress = fromAccountAddress,
+            receiverAddress = receiverAddress,
+            assetId = assetId,
+            amount = amount
         )
+        val validationResult = validateReceiverAccount(validationPayload)
 
-        if (isSendingMaxAmountToSameAccount) {
-            return Result.Error(GlobalException(descriptionRes = R.string.you_can_not_send_your))
-        }
-
-        val isCloseTransactionToSameAccount = accountTransactionValidator.isCloseTransactionToSameAccount(
-            fromAccountCacheData,
-            accountAssetDetail.address,
-            selectedAsset,
-            amount
-        )
-
-        if (isCloseTransactionToSameAccount) {
-            return Result.Error(GlobalException(descriptionRes = R.string.you_can_not_send_your))
-        }
-
-        val isAccountNewlyOpenedAndBalanceInvalid = accountTransactionValidator.isAccountNewlyOpenedAndBalanceInvalid(
-            accountAssetDetail,
-            amount,
-            assetId
-        )
-        if (isAccountNewlyOpenedAndBalanceInvalid) {
-            // TODO: 18.02.2022 Move all navigation logic into the presentation layer
-            return Result.Error(
-                NavigationException(
-                    SendAlgoNavigationDirections.actionGlobalSingleButtonBottomSheet(
-                        titleAnnotatedString = AnnotatedString(R.string.minimum_amount_required),
-                        descriptionAnnotatedString = AnnotatedString(R.string.this_is_the_first_transaction),
-                        buttonStringResId = R.string.i_understand,
-                        drawableResId = R.drawable.ic_info,
-                        drawableTintResId = R.color.error_tint_color
-                    )
-                )
-            )
-        }
-
-        val toAccountPublicKey = accountAssetDetail.address
-        val contact = getContactByAddressIfExists(toAccountPublicKey)
-        val toAccountCacheData = accountCacheManager.getCacheData(toAccountPublicKey)
-        val targetUser = TargetUser(
-            contact = contact,
-            publicKey = toAccountPublicKey,
-            account = toAccountCacheData,
+        return getReceiverAccountSelectionValidationResult(
+            payload = validationPayload,
+            validationResult = validationResult,
             nftDomainAddress = nftDomainAddress,
-            nftDomainServiceLogoUrl = nftDomainServiceLogoUrl,
-            accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(toAccountPublicKey)
+            nftDomainServiceLogoUrl = nftDomainServiceLogoUrl
         )
-        return Result.Success(targetUser)
-    }
-
-    private suspend fun sendAssetSupportRequest(requestedAddress: String?, fromAddress: String?, assetId: Long) {
-        if (requestedAddress == null || fromAddress == null) return
-        assetRepository.postAssetSupportRequest(AssetSupportRequest(fromAddress, requestedAddress, assetId))
-    }
-
-    private suspend fun getContactByAddressIfExists(accountAddress: String): User? {
-        return contactRepository.getAllContacts().firstOrNull { it.publicKey == accountAddress }
-    }
-
-    fun getAssetInformation(assetId: Long, accountAddress: String): AssetInformation? {
-        val ownedAssetData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, accountAddress)
-        return AssetInformation.createAssetInformation(
-            baseOwnedAssetData = ownedAssetData ?: return null,
-            assetDrawableProvider = assetDataProviderDecider.getAssetDrawableProvider(assetId)
-        )
-    }
-
-    fun getAssetOrCollectibleNameOrNull(assetId: Long): String? {
-        return simpleAssetDetailUseCase.getCachedAssetDetail(assetId)?.data?.fullName
-            ?: simpleCollectibleUseCase.getCachedCollectibleById(assetId)?.data?.fullName
     }
 }

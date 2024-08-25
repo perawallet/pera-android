@@ -19,7 +19,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentAssetAboutBinding
@@ -29,9 +28,9 @@ import com.algorand.android.modules.assets.profile.about.ui.model.AssetAboutPrev
 import com.algorand.android.utils.browser.openAccountAddressInPeraExplorer
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.composeReportAssetEmail
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class AssetAboutFragment : BaseFragment(R.layout.fragment_asset_about) {
@@ -96,9 +95,10 @@ class AssetAboutFragment : BaseFragment(R.layout.fragment_asset_about) {
     }
 
     private fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            assetAboutViewModel.assetAboutPreviewFlow.collectLatest(assetAboutPreviewCollector)
-        }
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            assetAboutViewModel.assetAboutPreviewFlow,
+            assetAboutPreviewCollector
+        )
     }
 
     private fun updatePreview(preview: AssetAboutPreview) {

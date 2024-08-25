@@ -81,8 +81,8 @@
             android:id="@+id/action_bidaliBrowserFragment_to_sendAlgoNavigation"
             app:destination="@id/sendAlgoNavigation">
             <argument
-                android:name="transactionData"
-                app:argType="com.algorand.android.models.TransactionData$Send" />
+                android:name="sendTransactionPayload"
+                app:argType="com.algorand.android.transactionui.sendasset.model.SendTransactionPayload" />
             <argument
                 android:name="assetTransaction"
                 app:argType="com.algorand.android.models.AssetTransaction"

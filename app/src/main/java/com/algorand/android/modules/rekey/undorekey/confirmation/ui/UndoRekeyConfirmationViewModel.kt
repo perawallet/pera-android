@@ -14,16 +14,14 @@ package com.algorand.android.modules.rekey.undorekey.confirmation.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.foundation.Event
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRekeyConfirmationFields
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.model.UndoRekeyConfirmationPreview
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.usecase.UndoRekeyConfirmationPreviewUseCase
-import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,70 +38,74 @@ class UndoRekeyConfirmationViewModel @Inject constructor(
     private val navArgs = UndoRekeyConfirmationFragmentArgs.fromSavedStateHandle(savedStateHandle)
     val accountAddress = navArgs.accountAddress
 
-    private val _undoRekeyConfirmationPreviewFlow = MutableStateFlow(getInitialPreview())
-    override val baseRekeyConfirmationFieldsFlow: StateFlow<BaseRekeyConfirmationFields>
+    private val _undoRekeyConfirmationPreviewFlow = MutableStateFlow<UndoRekeyConfirmationPreview?>(null)
+    override val baseRekeyConfirmationFieldsFlow: StateFlow<BaseRekeyConfirmationFields?>
         get() = _undoRekeyConfirmationPreviewFlow
 
     private var sendTransactionJob: Job? = null
 
     init {
-        updatePreviewWithCalculatedTransactionFee()
+        initPreview()
     }
 
-    fun createRekeyToStandardAccountTransaction(): TransactionData? {
-        return undoRekeyConfirmationPreviewUseCase.createUndoRekeyTransaction(
-            accountAddress = accountAddress
-        )
-    }
+//    fun createRekeyToStandardAccountTransaction(): TransactionData? {
+//        return undoRekeyConfirmationPreviewUseCase.createUndoRekeyTransaction(
+//            accountAddress = accountAddress
+//        )
+//    }
 
     fun onTransactionSigningFailed() {
         _undoRekeyConfirmationPreviewFlow.update { preview ->
-            undoRekeyConfirmationPreviewUseCase.updatePreviewWithClearLoadingState(preview)
+            preview?.copy(isLoading = false)
         }
     }
 
     fun onTransactionSigningStarted() {
         _undoRekeyConfirmationPreviewFlow.update { preview ->
-            undoRekeyConfirmationPreviewUseCase.updatePreviewWithLoadingState(preview)
+            preview?.copy(isLoading = true)
         }
     }
 
     fun sendRekeyTransaction(transactionDetail: SignedTransactionDetail) {
-        if (sendTransactionJob?.isActive == true) {
-            return
-        }
-        sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
-            undoRekeyConfirmationPreviewUseCase.sendUndoRekeyTransaction(
-                transactionDetail = transactionDetail,
-                preview = _undoRekeyConfirmationPreviewFlow.value
-            ).collectLatest { preview ->
-                _undoRekeyConfirmationPreviewFlow.emit(preview)
-            }
-        }
+        // TODO
+//        if (sendTransactionJob?.isActive == true) {
+//            return
+//        }
+//        sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
+//            undoRekeyConfirmationPreviewUseCase.sendUndoRekeyTransaction(
+//                transactionDetail = transactionDetail,
+//                preview = _undoRekeyConfirmationPreviewFlow.value
+//            ).collectLatest { preview ->
+//                _undoRekeyConfirmationPreviewFlow.emit(preview)
+//            }
+//        }
     }
 
     fun onConfirmRekeyClick() {
         _undoRekeyConfirmationPreviewFlow.update { preview ->
-            undoRekeyConfirmationPreviewUseCase.updatePreviewWithRekeyConfirmationClick(
-                accountAddress = accountAddress,
-                preview = preview
-            )
+            if (preview?.accountInformation?.isRekeyed() == true) {
+                preview.copy(navToRekeyedAccountConfirmationBottomSheetEvent = Event(Unit))
+            } else {
+                preview?.copy(onSendTransactionEvent = Event(Unit))
+            }
         }
     }
 
     fun getAccountAuthAddress(): String {
-        return undoRekeyConfirmationPreviewUseCase.getAccountAuthAddress(accountAddress)
+        return _undoRekeyConfirmationPreviewFlow.value?.authAccountDisplayName?.accountAddress.orEmpty()
     }
 
-    private fun getInitialPreview(): UndoRekeyConfirmationPreview {
-        return undoRekeyConfirmationPreviewUseCase.getInitialUndoRekeyConfirmationPreview(accountAddress)
+    private fun initPreview() {
+        viewModelScope.launch {
+            val preview = undoRekeyConfirmationPreviewUseCase.getInitialUndoRekeyConfirmationPreview(accountAddress)
+            _undoRekeyConfirmationPreviewFlow.emit(preview)
+            updatePreviewWithCalculatedTransactionFee()
+        }
     }
 
-    private fun updatePreviewWithCalculatedTransactionFee() {
-        viewModelScope.launchIO {
-            undoRekeyConfirmationPreviewUseCase.updatePreviewWithTransactionFee(
-                preview = _undoRekeyConfirmationPreviewFlow.value
-            ).collectLatest { preview ->
+    private suspend fun updatePreviewWithCalculatedTransactionFee() {
+        _undoRekeyConfirmationPreviewFlow.value?.run {
+            undoRekeyConfirmationPreviewUseCase.updatePreviewWithTransactionFee(this).collectLatest { preview ->
                 _undoRekeyConfirmationPreviewFlow.emit(preview)
             }
         }

@@ -13,62 +13,52 @@
 package com.algorand.android.modules.accounticon.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountIconResource
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
-import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.usecase.AccountDetailUseCase
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.model.AccountIconResource
+import com.algorand.android.core.component.detail.domain.model.AccountRegistrationType
+import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
 import javax.inject.Inject
 
 class CreateAccountOriginalStateIconDrawableUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase
+    private val getAccountDetail: GetAccountDetail
 ) {
 
-    operator fun invoke(accountAddress: String): AccountIconDrawablePreview {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
-        val accountIconResId = getAccountIconResId(accountDetail?.account)
-        val accountIconTintResId = getAccountIconTintResId(accountDetail?.account)
-        val accountIconBackgroundColorResId = getAccountIconBackgroundColorResId(accountDetail?.account)
-        return accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
+    suspend operator fun invoke(accountAddress: String): AccountIconDrawablePreview {
+        val accountDetail = getAccountDetail(accountAddress)
+        val accountIconResId = getAccountIconResId(accountDetail.accountRegistrationType)
+        val accountIconTintResId = getAccountIconTintResId(accountDetail.accountRegistrationType)
+        val accountIconBackgroundColorResId = getAccountIconBackgroundColorResId(accountDetail.accountRegistrationType)
+        return AccountIconDrawablePreview(
             backgroundColorResId = accountIconBackgroundColorResId,
             iconResId = accountIconResId,
             iconTintResId = accountIconTintResId
         )
     }
 
-    private fun getAccountIconBackgroundColorResId(account: Account?): Int {
-        return when (account?.type) {
-            Account.Type.LEDGER -> AccountIconResource.LEDGER.backgroundColorResId
-            Account.Type.WATCH -> AccountIconResource.WATCH.backgroundColorResId
-            Account.Type.STANDARD, Account.Type.REKEYED_AUTH, Account.Type.REKEYED, null -> {
-                val hasValidSecretKey = accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                if (hasValidSecretKey) AccountIconResource.STANDARD.backgroundColorResId else R.color.layer_gray_lighter
-            }
+    private fun getAccountIconBackgroundColorResId(registrationType: AccountRegistrationType?): Int {
+        return when (registrationType) {
+            AccountRegistrationType.LedgerBle -> AccountIconResource.LEDGER.backgroundColorResId
+            AccountRegistrationType.NoAuth -> AccountIconResource.WATCH.backgroundColorResId
+            AccountRegistrationType.Algo25 -> AccountIconResource.STANDARD.backgroundColorResId
+            null -> R.color.layer_gray_lighter
         }
     }
 
-    private fun getAccountIconTintResId(account: Account?): Int {
-        return when (account?.type) {
-            Account.Type.LEDGER -> AccountIconResource.LEDGER.iconTintResId
-            Account.Type.WATCH -> AccountIconResource.WATCH.iconTintResId
-            Account.Type.STANDARD, Account.Type.REKEYED_AUTH, Account.Type.REKEYED, null -> {
-                val hasValidSecretKey = accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                if (hasValidSecretKey) AccountIconResource.STANDARD.iconTintResId else R.color.text_gray_lighter
-            }
+    private fun getAccountIconTintResId(registrationType: AccountRegistrationType?): Int {
+        return when (registrationType) {
+            AccountRegistrationType.LedgerBle -> AccountIconResource.LEDGER.iconTintResId
+            AccountRegistrationType.NoAuth -> AccountIconResource.WATCH.iconTintResId
+            AccountRegistrationType.Algo25 -> AccountIconResource.STANDARD.iconTintResId
+            null -> R.color.text_gray_lighter
         }
     }
 
-    private fun getAccountIconResId(account: Account?): Int {
-        return when (account?.type) {
-            Account.Type.LEDGER -> AccountIconResource.LEDGER.iconResId
-            Account.Type.WATCH -> AccountIconResource.WATCH.iconResId
-            Account.Type.STANDARD, Account.Type.REKEYED, Account.Type.REKEYED_AUTH, null -> {
-                val hasValidSecretKey = accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                if (hasValidSecretKey) AccountIconResource.STANDARD.iconResId else R.drawable.ic_question
-            }
+    private fun getAccountIconResId(registrationType: AccountRegistrationType?): Int {
+        return when (registrationType) {
+            AccountRegistrationType.LedgerBle -> AccountIconResource.LEDGER.iconResId
+            AccountRegistrationType.NoAuth -> AccountIconResource.WATCH.iconResId
+            AccountRegistrationType.Algo25 -> AccountIconResource.STANDARD.iconResId
+            null -> R.drawable.ic_question
         }
     }
 }

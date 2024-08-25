@@ -46,19 +46,12 @@
         android:name="com.algorand.android.modules.onboarding.pairledger.accountselection.ui.RegisterLedgerAccountSelectionFragment"
         android:label="RegisterLedgerAccountSelectionFragment"
         tools:layout="@layout/fragment_ledger_account_selection">
-        <argument
-            android:name="bluetoothName"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="bluetoothAddress"
-            app:argType="string" />
-        <argument
-            android:name="ledgerAccountsInformation"
-            app:argType="com.algorand.android.models.AccountInformation[]" />
         <action
             android:id="@+id/action_registerLedgerAccountSelectionFragment_to_verifyLedgerAddressFragment"
             app:destination="@id/verifyLedgerAddressFragment" />
+        <argument
+            android:name="registerLedgerAccountSelectionNavArgs"
+            app:argType="com.algorand.android.modules.onboarding.pairledger.accountselection.ui.model.RegisterLedgerAccountSelectionNavArgs" />
     </fragment>
 
     <fragment

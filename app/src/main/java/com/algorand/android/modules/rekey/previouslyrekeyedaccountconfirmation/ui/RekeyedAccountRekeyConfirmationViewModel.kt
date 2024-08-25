@@ -13,15 +13,18 @@
 package com.algorand.android.modules.rekey.previouslyrekeyedaccountconfirmation.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.rekey.previouslyrekeyedaccountconfirmation.ui.usecase.RekeyedAccountRekeyConfirmationPreviewUseCase
-import com.algorand.android.utils.AccountDisplayName
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class RekeyedAccountRekeyConfirmationViewModel @Inject constructor(
-    private val rekeyedAccountRekeyConfirmationPreviewUseCase: RekeyedAccountRekeyConfirmationPreviewUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -29,9 +32,19 @@ class RekeyedAccountRekeyConfirmationViewModel @Inject constructor(
     private val accountAddress: String = navArgs.accountAddress
     private val authAccountAddress: String = navArgs.authAccountAddress
 
-    val accountDisplayName: AccountDisplayName
-        get() = rekeyedAccountRekeyConfirmationPreviewUseCase.getAccountDisplayName(accountAddress)
+    private val _previewFlow = MutableStateFlow<RekeyedAccountRekeyConfirmationPreview?>(null)
+    val previewFlow
+        get() = _previewFlow.asStateFlow()
 
-    val authAccountDisplayName: AccountDisplayName
-        get() = rekeyedAccountRekeyConfirmationPreviewUseCase.getAccountDisplayName(authAccountAddress)
+    init {
+        initPreview()
+    }
+
+    private fun initPreview() {
+        viewModelScope.launchIO {
+            val accountDisplayName = getAccountDisplayName(accountAddress)
+            val authAccountDisplayName = getAccountDisplayName(authAccountAddress)
+            _previewFlow.value = RekeyedAccountRekeyConfirmationPreview(accountDisplayName, authAccountDisplayName)
+        }
+    }
 }

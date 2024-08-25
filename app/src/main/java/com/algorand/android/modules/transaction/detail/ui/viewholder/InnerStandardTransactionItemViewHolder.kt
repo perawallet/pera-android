@@ -29,7 +29,7 @@ class InnerStandardTransactionItemViewHolder(
         with(binding) {
             transactionAddressTextView.text = item.accountAddress
             transactionAmountTextView.apply {
-                val transactionSign = item.transactionSign.signTextRes?.run { context.getString(this) }.orEmpty()
+                val transactionSign = item.transactionSign.signText
                 text = context.getString(
                     R.string.pair_value_format_packed,
                     transactionSign,

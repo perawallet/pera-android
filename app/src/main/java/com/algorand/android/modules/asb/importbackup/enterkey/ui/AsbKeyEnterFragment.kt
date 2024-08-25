@@ -19,17 +19,13 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.PassphraseWordSuggestor
 import com.algorand.android.customviews.passphraseinput.PassphraseInputGroup
-import com.algorand.android.customviews.passphraseinput.model.PassphraseInputConfiguration
-import com.algorand.android.customviews.passphraseinput.model.PassphraseInputGroupConfiguration
+import com.algorand.android.customviews.passphraseinput.model.*
 import com.algorand.android.databinding.FragmentAsbKeyEnterBinding
-import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
-import com.algorand.android.utils.Event
-import com.algorand.android.utils.delegation.keyboardvisibility.KeyboardHandlerDelegation
-import com.algorand.android.utils.delegation.keyboardvisibility.KeyboardHandlerDelegationImpl
+import com.algorand.android.models.*
+import com.algorand.android.modules.asb.importbackup.enterkey.ui.model.RestoredAccount
+import com.algorand.android.utils.*
+import com.algorand.android.utils.delegation.keyboardvisibility.*
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
-import com.algorand.android.utils.hideKeyboard
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.map
@@ -114,7 +110,7 @@ class AsbKeyEnterFragment : BaseFragment(R.layout.fragment_asb_key_enter),
         binding.passphraseWordSuggestor.setSuggestedWords(suggestedWords)
     }
 
-    private val navToAccountSelectionFragmentEventCollector: suspend (Event<List<BackupProtocolElement>>?) -> Unit =
+    private val navToAccountSelectionFragmentEventCollector: suspend (Event<List<RestoredAccount>>?) -> Unit =
         { event ->
             event?.consume()?.run { navToAccountSelection(this) }
         }
@@ -188,10 +184,10 @@ class AsbKeyEnterFragment : BaseFragment(R.layout.fragment_asb_key_enter),
         }
     }
 
-    private fun navToAccountSelection(backupProtocolElements: List<BackupProtocolElement>) {
+    private fun navToAccountSelection(restoredAccounts: List<RestoredAccount>) {
         nav(
             AsbKeyEnterFragmentDirections.actionAsbKeyEnterFragmentToAsbImportAccountSelectionFragment(
-                backupProtocolElements.toTypedArray()
+                restoredAccounts.toTypedArray()
             )
         )
     }

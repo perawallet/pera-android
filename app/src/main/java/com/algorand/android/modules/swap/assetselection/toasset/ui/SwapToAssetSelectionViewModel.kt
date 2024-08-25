@@ -15,27 +15,28 @@ package com.algorand.android.modules.swap.assetselection.toasset.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionViewModel
-import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapAssetSelectionItem
-import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapAssetSelectionPreview
-import com.algorand.android.modules.swap.assetselection.toasset.ui.usecase.SwapToAssetSelectionPreviewUseCase
+import com.algorand.android.swapui.assetselection.model.SwapAssetSelectionItem
+import com.algorand.android.swapui.assetselection.model.SwapAssetSelectionPreview
+import com.algorand.android.swapui.assetselection.toasset.usecase.GetSwapToAssetSelectionPreview
+import com.algorand.android.swapui.assetselection.toasset.usecase.GetUpdatedPreviewWithAssetSelection
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SwapToAssetSelectionViewModel @Inject constructor(
-    private val swapToAssetSelectionPreviewUseCase: SwapToAssetSelectionPreviewUseCase,
-    private val savedState: SavedStateHandle
+    private val getSwapToAssetSelectionPreview: GetSwapToAssetSelectionPreview,
+    private val getUpdatedPreviewWithAssetSelection: GetUpdatedPreviewWithAssetSelection,
+    savedState: SavedStateHandle
 ) : BaseSwapAssetSelectionViewModel() {
 
     private val fromAssetId: Long = savedState.getOrThrow(ASSET_ID_KEY)
-    private val accountAddress: String = savedState.getOrThrow(ACCOUNT_ADDRESS)
+    val accountAddress: String = savedState.getOrThrow(ACCOUNT_ADDRESS)
 
     override suspend fun onQueryChanged(query: String?): Flow<SwapAssetSelectionPreview> {
-        return swapToAssetSelectionPreviewUseCase.getSwapAssetSelectionPreview(
+        return getSwapToAssetSelectionPreview(
             assetId = fromAssetId,
             accountAddress = accountAddress,
             query = searchQuery
@@ -45,13 +46,12 @@ class SwapToAssetSelectionViewModel @Inject constructor(
     fun onAssetSelected(swapAssetSelectionItem: SwapAssetSelectionItem) {
         val previousState = swapAssetSelectionPreviewFlow.value ?: return
         viewModelScope.launch {
-            swapToAssetSelectionPreviewUseCase.updatePreviewWithAssetSelection(
+            val newPreview = getUpdatedPreviewWithAssetSelection(
                 accountAddress,
                 swapAssetSelectionItem,
                 previousState
-            ).collectLatest { preview ->
-                updatePreview(preview)
-            }
+            )
+            updatePreview(newPreview)
         }
     }
 

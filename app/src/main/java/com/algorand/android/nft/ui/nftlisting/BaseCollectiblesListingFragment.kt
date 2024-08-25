@@ -13,6 +13,7 @@
 package com.algorand.android.nft.ui.nftlisting
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
@@ -98,6 +99,7 @@ abstract class BaseCollectiblesListingFragment : DaggerBaseFragment(R.layout.fra
 
     private fun initCollectibleListingPreview(nftListingPreview: CollectiblesListingPreview) {
         with(nftListingPreview) {
+            Log.e("test", baseCollectibleListItems.toString())
             with(binding) {
                 emptyStateScrollView.isVisible = isEmptyStateVisible
                 receiveCollectiblesButton.isVisible = isReceiveButtonVisible

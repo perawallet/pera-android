@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ledger_account">Ledger Account</string>
+    <string name="rekeyed_account">Rekeyed Account</string>
+    <string name="watch_account">Watch Account</string>
+</resources>

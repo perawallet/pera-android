@@ -1,0 +1,43 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.algorand.android.caching'
+    compileSdkVersion targets.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion targets.minSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+}
+
+dependencies {
+
+    implementation project(path: ':test-utils')
+
+    implementation deps.android.core
+    implementation deps.kotlinx.coroutines_core
+
+    testImplementation deps.junit
+    testImplementation deps.mockito
+    testImplementation deps.kotlinx.coroutines_test
+}

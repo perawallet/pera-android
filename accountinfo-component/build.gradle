@@ -1,0 +1,52 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+}
+
+android {
+    namespace 'com.algorand.android.accountinfo.component'
+    compileSdkVersion targets.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion targets.minSdkVersion
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+release {
+        multiDexEnabled true
+        minifyEnabled true
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    }
+
+    debug {
+        multiDexEnabled true
+        minifyEnabled false
+    }
+    compileOptions {
+        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+}
+
+dependencies {
+
+    implementation project(':shared-db')
+    implementation project(':encryption')
+    implementation project(path: ':foundation')
+    implementation project(path: ':network-utils')
+
+    implementation deps.retrofit.core
+    implementation deps.retrofit.converter_gson
+    implementation deps.retrofit.logging_interceptor
+
+    implementation deps.hilt.core
+    kapt deps.hilt.android_compiler
+    kapt deps.hilt.compiler
+}

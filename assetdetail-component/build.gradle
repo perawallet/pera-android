@@ -1,0 +1,58 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'com.algorand.android.assetdetail.component'
+    compileSdkVersion targets.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion targets.minSdkVersion
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+release {
+        multiDexEnabled true
+        minifyEnabled true
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    }
+
+    debug {
+        multiDexEnabled true
+        minifyEnabled false
+    }
+    compileOptions {
+        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+}
+
+dependencies {
+
+    implementation project(path: ':shared-db')
+    implementation project(path: ':test-utils')
+    api project(path: ':caching')
+    implementation project(path: ':network-utils')
+    implementation project(path: ':foundation')
+
+    implementation deps.hilt.core
+    kapt deps.hilt.android_compiler
+    kapt deps.hilt.compiler
+
+    implementation deps.retrofit.core
+    implementation deps.retrofit.converter_gson
+    implementation deps.retrofit.logging_interceptor
+
+    implementation deps.hipoexceptions
+
+    testImplementation deps.junit
+    testImplementation deps.mockito
+    testImplementation deps.kotlinx.coroutines_test
+}

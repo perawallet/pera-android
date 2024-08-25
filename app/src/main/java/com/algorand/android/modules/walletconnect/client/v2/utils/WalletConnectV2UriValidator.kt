@@ -66,7 +66,9 @@ object WalletConnectV2UriValidator {
         return WalletConnectUri(
             topic = Topic(pairUri.userInfo),
             relay = RelayProtocolOptions(protocol = relayProtocol, data = relayData),
-            symKey = SymmetricKey(symKey)
+            symKey = SymmetricKey(symKey),
+            expiry = null,
+            methods = null
         )
     }
 }

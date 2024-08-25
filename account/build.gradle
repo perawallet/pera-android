@@ -14,16 +14,18 @@ android {
         consumerProguardFiles "consumer-rules.pro"
     }
 
-release {
-        multiDexEnabled true
-        minifyEnabled true
-        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    buildTypes {
+        release {
+            multiDexEnabled true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            multiDexEnabled true
+            minifyEnabled false
+        }
     }
 
-    debug {
-        multiDexEnabled true
-        minifyEnabled false
-    }
     compileOptions {
         targetCompatibility = JavaVersion.VERSION_17
         sourceCompatibility = JavaVersion.VERSION_17
@@ -59,7 +61,6 @@ dependencies {
 
     testImplementation deps.junit
     testImplementation deps.mockito
-    testImplementation deps.netmock
     testImplementation deps.kotlinx.coroutines_test
     androidTestImplementation deps.room_testing
     androidTestImplementation deps.runner

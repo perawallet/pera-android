@@ -487,10 +487,10 @@ class MainActivity :
             collection = activeNodeCollector
         )
 
-        collectLatestOnLifecycle(
-            flow = firebaseTokenManager.firebaseTokenResultFlow,
-            collection = firebaseTokenResultCollector
-        )
+//        collectLatestOnLifecycle(
+//            flow = firebaseTokenManager.firebaseTokenResultFlow,
+//            collection = firebaseTokenResultCollector
+//        )
 
         collectLatestOnLifecycle(
             flow = mainViewModel.signTransactionUiResultFlow,

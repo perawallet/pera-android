@@ -71,6 +71,7 @@ android {
             multiDexEnabled true
             minifyEnabled false
             manifestPlaceholders = [enableCrashReporting: "false", enableFirebasePerformanceLogcat: "true"]
+            resValue("string", "app_name", "Pera Wallet (Dev)")
         }
     }
 

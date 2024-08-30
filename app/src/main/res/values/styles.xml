@@ -706,14 +706,11 @@
     </style>
 
     <style name="BannerTextStyle.BannerTitleTextStyle">
-        <item name="android:textAppearance">@style/BannerTextAppearance.BannerTitleTextAppearance
-        </item>
+        <item name="android:textAppearance">@style/BannerTextAppearance.BannerTitleTextAppearance</item>
     </style>
 
     <style name="BannerTextStyle.BannerDescriptionTextStyle">
-        <item name="android:textAppearance">
-            @style/BannerTextAppearance.BannerDescriptionTextAppearance
-        </item>
+        <item name="android:textAppearance">@style/BannerTextAppearance.BannerDescriptionTextAppearance</item>
     </style>
 
     <style name="Button.Primary.Banner">

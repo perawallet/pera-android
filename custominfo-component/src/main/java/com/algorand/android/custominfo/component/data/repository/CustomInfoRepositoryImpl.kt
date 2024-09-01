@@ -45,4 +45,11 @@ internal class CustomInfoRepositoryImpl(
             customInfoDao.updateCustomName(encryptedAddress, name)
         }
     }
+
+    override suspend fun deleteCustomInfo(address: String) {
+        withContext(coroutineDispatcher) {
+            val encryptedAddress = encryptionManager.encrypt(address)
+            customInfoDao.delete(encryptedAddress)
+        }
+    }
 }

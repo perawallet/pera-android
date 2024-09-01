@@ -34,4 +34,10 @@ internal object CustomInfoModule {
     fun provideGetCustomInfo(
         repository: CustomInfoRepository
     ): GetCustomInfo = GetCustomInfo(repository::getCustomInfo)
+
+    @Provides
+    @Singleton
+    fun provideDeleteCustomInfo(
+        repository: CustomInfoRepository
+    ): DeleteCustomInfo = DeleteCustomInfo(repository::deleteCustomInfo)
 }

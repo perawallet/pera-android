@@ -16,12 +16,11 @@ internal class DeleteAccountUseCase @Inject constructor(
 ) : DeleteAccount {
 
     override suspend fun invoke(address: String) {
-        deleteLocalAccount(address)
-        deleteAccountInformation(address)
         deleteAccountAsbBackUpStatus(address)
         deleteAccountOrderIndex(address)
         deleteCustomInfo(address)
-        // custom info still has account
+        deleteAccountInformation(address)
+        deleteLocalAccount(address)
         /*
         TODO
         walletConnectManager.killAllSessionsByPublicKey(publicKey)

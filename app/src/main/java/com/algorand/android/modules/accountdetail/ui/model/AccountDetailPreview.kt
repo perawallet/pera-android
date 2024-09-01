@@ -18,5 +18,6 @@ import com.algorand.android.swap.common.model.SwapNavigationDestination
 
 data class AccountDetailPreview(
     val accountDetailSummary: AccountDetailSummary,
-    val swapNavigationDestinationEvent: Event<SwapNavigationDestination>?
+    val swapNavigationDestinationEvent: Event<SwapNavigationDestination>?,
+    val navBackEvent: Event<Unit>? = null
 )

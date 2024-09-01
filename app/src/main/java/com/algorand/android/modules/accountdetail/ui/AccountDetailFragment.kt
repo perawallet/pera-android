@@ -105,6 +105,10 @@ class AccountDetailFragment :
         it?.consume()?.run { handleSwapNavigationDestination(this) }
     }
 
+    private val navBackEventCollector: suspend (Event<Unit>?) -> Unit = {
+        it?.consume()?.run { navBack() }
+    }
+
     private lateinit var accountDetailPagerAdapter: AccountDetailPagerAdapter
 
     override fun onStandardTransactionClick(transaction: BaseTransactionItem.TransactionItem) {
@@ -272,7 +276,6 @@ class AccountDetailFragment :
         useFragmentResultListenerValue<Boolean>(ACCOUNT_REMOVE_CONFIRMATION_KEY) { isConfirmed ->
             if (isConfirmed) {
                 accountDetailViewModel.removeAccount(args.publicKey)
-                navBack()
             }
         }
         useFragmentResultListenerValue<Boolean>(InAppPinFragment.IN_APP_PIN_CONFIRMATION_KEY) { isConfirmed ->
@@ -307,6 +310,10 @@ class AccountDetailFragment :
         viewLifecycleOwner.collectOnLifecycle(
             flow = accountDetailViewModel.accountDetailPreviewFlow.map { it?.swapNavigationDestinationEvent },
             collection = swapNavigationDestinationCollector
+        )
+        viewLifecycleOwner.collectOnLifecycle(
+            flow = accountDetailViewModel.accountDetailPreviewFlow.map { it?.navBackEvent },
+            collection = navBackEventCollector
         )
     }
 

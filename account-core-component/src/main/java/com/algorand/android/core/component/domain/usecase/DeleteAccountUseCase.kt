@@ -4,20 +4,24 @@ import com.algorand.android.account.localaccount.domain.usecase.DeleteLocalAccou
 import com.algorand.android.accountinfo.component.domain.usecase.DeleteAccountInformation
 import com.algorand.android.accountsorting.component.domain.usecase.RemoveAccountOrderIndex
 import com.algorand.android.asb.component.domain.usecase.RemoveAccountAsbBackUpStatus
+import com.algorand.android.custominfo.component.domain.usecase.DeleteCustomInfo
 import javax.inject.Inject
 
 internal class DeleteAccountUseCase @Inject constructor(
     private val deleteLocalAccount: DeleteLocalAccount,
     private val deleteAccountInformation: DeleteAccountInformation,
-    private val removeAccountAsbBackUpStatus: RemoveAccountAsbBackUpStatus,
-    private val removeAccountOrderIndex: RemoveAccountOrderIndex
+    private val deleteAccountAsbBackUpStatus: RemoveAccountAsbBackUpStatus,
+    private val deleteAccountOrderIndex: RemoveAccountOrderIndex,
+    private val deleteCustomInfo: DeleteCustomInfo
 ) : DeleteAccount {
 
     override suspend fun invoke(address: String) {
         deleteLocalAccount(address)
         deleteAccountInformation(address)
-        removeAccountAsbBackUpStatus(address)
-        removeAccountOrderIndex(address)
+        deleteAccountAsbBackUpStatus(address)
+        deleteAccountOrderIndex(address)
+        deleteCustomInfo(address)
+        // custom info still has account
         /*
         TODO
         walletConnectManager.killAllSessionsByPublicKey(publicKey)

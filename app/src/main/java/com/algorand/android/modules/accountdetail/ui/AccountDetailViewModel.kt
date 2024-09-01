@@ -18,12 +18,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.accountcore.ui.summary.usecase.GetAccountDetailSummary
 import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetailFlow
+import com.algorand.android.core.component.domain.usecase.DeleteAccount
 import com.algorand.android.foundation.Event
 import com.algorand.android.models.AccountDetailTab
 import com.algorand.android.modules.accountdetail.ui.model.AccountDetailPreview
 import com.algorand.android.modules.tracking.accountdetail.AccountDetailFragmentEventTracker
 import com.algorand.android.swap.common.usecase.GetSwapNavigationDestination
-import com.algorand.android.usecase.AccountDeletionUseCase
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AccountDetailViewModel @Inject constructor(
-    private val accountDeletionUseCase: AccountDeletionUseCase,
+    private val deleteAccount: DeleteAccount,
     savedStateHandle: SavedStateHandle,
     private val accountDetailFragmentEventTracker: AccountDetailFragmentEventTracker,
     private val getSwapNavigationDestination: GetSwapNavigationDestination,
@@ -73,7 +73,12 @@ class AccountDetailViewModel @Inject constructor(
 
     fun removeAccount(publicKey: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            accountDeletionUseCase.removeAccount(publicKey)
+            deleteAccount(publicKey)
+            _accountDetailPreviewFlow.update {
+                it?.copy(
+                    navBackEvent = Event(Unit),
+                )
+            }
         }
     }
 

@@ -14,6 +14,7 @@ package com.algorand.android.ui.accountoptions
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.modules.accountdetail.removeaccount.ui.RemoveAccountConfirmationBottomSheet.Companion.ACCOUNT_REMOVE_CONFIRMATION_KEY
@@ -25,6 +26,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class AccountErrorOptionsBottomSheet : BaseAccountOptionsBottomSheet() {
 
     private val args by navArgs<AccountErrorOptionsBottomSheetArgs>()
+
+    private val accountErrorOptionsViewModel by viewModels<AccountErrorOptionsViewModel>()
 
     override val publicKey: String
         get() = args.publicKey
@@ -54,8 +57,9 @@ class AccountErrorOptionsBottomSheet : BaseAccountOptionsBottomSheet() {
     private fun initSavedStateListener() {
         useFragmentResultListenerValue<Boolean>(ACCOUNT_REMOVE_CONFIRMATION_KEY) { isConfirmed ->
             if (isConfirmed) {
-                accountOptionsViewModel.removeAccount(publicKey)
-                navBack()
+                accountErrorOptionsViewModel.removeAccount(publicKey) {
+                    navBack()
+                }
             }
         }
     }

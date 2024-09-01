@@ -29,7 +29,7 @@ abstract class BaseAccountOptionsBottomSheet : DaggerBaseBottomSheet(
 
     protected val binding by viewBinding(BottomSheetAccountsOptionsBinding::bind)
 
-    protected val accountOptionsViewModel: AccountOptionsViewModel by viewModels()
+    private val accountOptionsViewModel: AccountOptionsViewModel by viewModels()
 
     abstract val publicKey: String
 

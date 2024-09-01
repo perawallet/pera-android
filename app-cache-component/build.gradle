@@ -49,6 +49,8 @@ dependencies {
     implementation project(path: ':parity')
     implementation project(path: ':currency')
     implementation project(path: ':caching')
+    implementation project(path: ':pushtoken-component')
+    implementation project(path: ':deviceid-component')
 
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler

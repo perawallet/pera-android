@@ -3,19 +3,37 @@ package com.algorand.android.deviceid.component.di
 import android.content.SharedPreferences
 import com.algorand.android.deviceid.component.data.repository.DeviceIdRepositoryImpl
 import com.algorand.android.deviceid.component.data.service.DeviceIdApiService
-import com.algorand.android.deviceid.component.data.storage.*
+import com.algorand.android.deviceid.component.data.storage.MainnetDeviceIdLocalSource
+import com.algorand.android.deviceid.component.data.storage.NotificationUserIdLocalSource
+import com.algorand.android.deviceid.component.data.storage.TestnetDeviceIdLocalSource
 import com.algorand.android.deviceid.component.domain.repository.DeviceIdRepository
-import com.algorand.android.deviceid.component.domain.usecase.*
+import com.algorand.android.deviceid.component.domain.usecase.GetMainnetDeviceId
+import com.algorand.android.deviceid.component.domain.usecase.GetNodeDeviceId
+import com.algorand.android.deviceid.component.domain.usecase.GetNotificationUserId
+import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
+import com.algorand.android.deviceid.component.domain.usecase.GetTestnetDeviceId
+import com.algorand.android.deviceid.component.domain.usecase.RegisterDeviceId
+import com.algorand.android.deviceid.component.domain.usecase.SetMainnetDeviceId
+import com.algorand.android.deviceid.component.domain.usecase.SetNotificationUserId
+import com.algorand.android.deviceid.component.domain.usecase.SetSelectedNodeDeviceId
+import com.algorand.android.deviceid.component.domain.usecase.SetTestnetDeviceId
+import com.algorand.android.deviceid.component.domain.usecase.UnregisterDeviceId
+import com.algorand.android.deviceid.component.domain.usecase.UpdateDeviceId
 import com.algorand.android.deviceid.component.domain.usecase.implementation.GetNodeDeviceIdUseCase
 import com.algorand.android.deviceid.component.domain.usecase.implementation.GetSelectedNodeDeviceIdUseCase
+import com.algorand.android.deviceid.component.domain.usecase.implementation.RegisterDeviceIdUseCase
 import com.algorand.android.deviceid.component.domain.usecase.implementation.SetSelectedNodeDeviceIdUseCase
-import com.algorand.android.deviceid.component.utils.*
+import com.algorand.android.deviceid.component.domain.usecase.implementation.UnregisterDeviceIdUseCase
+import com.algorand.android.deviceid.component.utils.ProvideDeviceIdPlatform
+import com.algorand.android.deviceid.component.utils.ProvideDeviceIdPlatformImpl
 import com.algorand.android.foundation.app.ProvideApplicationName
 import com.algorand.android.foundation.locale.LocaleProvider
-import dagger.*
+import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.*
+import javax.inject.Named
+import javax.inject.Singleton
 import retrofit2.Retrofit
 
 @Module
@@ -108,11 +126,7 @@ internal object DeviceIdModule {
 
     @Provides
     @Singleton
-    fun provideRegisterDeviceId(
-        deviceIdRepository: DeviceIdRepository
-    ): RegisterDeviceId {
-        return RegisterDeviceId(deviceIdRepository::registerDeviceId)
-    }
+    fun provideRegisterDeviceId(useCase: RegisterDeviceIdUseCase): RegisterDeviceId = useCase
 
     @Provides
     @Singleton
@@ -131,4 +145,8 @@ internal object DeviceIdModule {
     @Provides
     @Singleton
     fun provideSetSelectedNodeDeviceId(useCase: SetSelectedNodeDeviceIdUseCase): SetSelectedNodeDeviceId = useCase
+
+    @Provides
+    @Singleton
+    fun provideUnregisterDeviceId(useCase: UnregisterDeviceIdUseCase): UnregisterDeviceId = useCase
 }

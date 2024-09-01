@@ -6,6 +6,7 @@ import com.algorand.android.deviceid.component.data.service.DeviceIdApiService
 import com.algorand.android.deviceid.component.domain.model.*
 import com.algorand.android.deviceid.component.domain.repository.DeviceIdRepository
 import com.algorand.android.deviceid.component.utils.ProvideDeviceIdPlatform
+import com.algorand.android.foundation.PeraResult
 import com.algorand.android.foundation.app.ProvideApplicationName
 import com.algorand.android.foundation.locale.LocaleProvider
 
@@ -35,23 +36,23 @@ internal class DeviceIdRepositoryImpl(
         return testnetDeviceIdLocalSource.getDataOrNull()
     }
 
-    override suspend fun registerDeviceId(deviceRegistration: DeviceRegistration): Result<String> {
+    override suspend fun registerDeviceId(deviceRegistration: DeviceRegistration): PeraResult<String> {
         return try {
             val payload = getDeviceRegistrationRequestPayload(deviceRegistration)
             val response = deviceIdApiService.postRegisterDevice(payload)
-            Result.success(response.userId.orEmpty())
+            PeraResult.Success(response.userId.orEmpty())
         } catch (exception: Exception) {
-            Result.failure(exception)
+            PeraResult.Error(exception)
         }
     }
 
-    override suspend fun updateDeviceId(deviceUpdate: DeviceUpdate): Result<String> {
+    override suspend fun updateDeviceId(deviceUpdate: DeviceUpdate): PeraResult<String> {
         return try {
             val payload = getDeviceUpdateRequestPayload(deviceUpdate)
             val response = deviceIdApiService.putUpdateDevice(deviceUpdate.deviceId, payload)
-            Result.success(response.userId.orEmpty())
+            PeraResult.Success(response.userId.orEmpty())
         } catch (exception: Exception) {
-            Result.failure(exception)
+            PeraResult.Error(exception)
         }
     }
 

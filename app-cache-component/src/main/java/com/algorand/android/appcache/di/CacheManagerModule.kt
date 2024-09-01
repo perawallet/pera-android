@@ -18,6 +18,8 @@ import com.algorand.android.appcache.InitializeAppCacheImpl
 import com.algorand.android.appcache.manager.InitializeManagerImpl
 import com.algorand.android.appcache.manager.InitializeManagers
 import com.algorand.android.appcache.manager.ParityCacheManager
+import com.algorand.android.appcache.manager.PushTokenManager
+import com.algorand.android.appcache.manager.PushTokenManagerImpl
 import com.algorand.android.appcache.usecase.ClearAppSessionCache
 import com.algorand.android.appcache.usecase.ClearAppSessionCacheUseCase
 import com.algorand.android.appcache.usecase.ClearPreviousSessionCache
@@ -102,4 +104,8 @@ internal object CacheManagerModule {
     fun provideClearAppSessionCache(
         useCase: ClearAppSessionCacheUseCase
     ): ClearAppSessionCache = useCase
+
+    @Provides
+    @Singleton
+    fun providePushTokenManager(impl: PushTokenManagerImpl): PushTokenManager = impl
 }

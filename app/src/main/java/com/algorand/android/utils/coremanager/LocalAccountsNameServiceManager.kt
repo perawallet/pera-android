@@ -12,20 +12,23 @@
 
 package com.algorand.android.utils.coremanager
 
-import com.algorand.android.account.localaccount.domain.usecase.*
-import com.algorand.android.modules.firebase.token.FirebaseTokenManager
-import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
+import com.algorand.android.account.localaccount.domain.usecase.GetAllLocalAccountAddressesAsFlow
+import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.appcache.manager.PushTokenManager
+import com.algorand.android.appcache.model.PushTokenStatus
 import com.algorand.android.nameservice.domain.usecase.InitializeAccountNameService
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
-import javax.inject.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 
 /**
  * Helper class to manage local accounts name services continuously.
  */
 @Singleton
 class LocalAccountsNameServiceManager @Inject constructor(
-    private val firebaseTokenManager: FirebaseTokenManager,
+    private val pushTokenManager: PushTokenManager,
     private val initializeAccountNameService: InitializeAccountNameService,
     private val getLocalAccounts: GetLocalAccounts,
     private val getLocalAccountAddressesFlow: GetAllLocalAccountAddressesAsFlow
@@ -46,9 +49,9 @@ class LocalAccountsNameServiceManager @Inject constructor(
     private suspend fun initObservers() {
         combine(
             getLocalAccountAddressesFlow(),
-            firebaseTokenManager.firebaseTokenResultFlow
-        ) { localAccounts, firebaseTokenResult ->
-            if (localAccounts.isNotEmpty() && firebaseTokenResult is FirebaseTokenResult.TokenLoaded) {
+            pushTokenManager.pushTokenStatusFlow
+        ) { localAccounts, pushTokenStatusFlow ->
+            if (localAccounts.isNotEmpty() && pushTokenStatusFlow == PushTokenStatus.INITIALIZED) {
                 startJob()
             } else {
                 stopCurrentJob()

@@ -13,27 +13,20 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.modules.firebase.token.FirebaseTokenManager
-import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
 import com.algorand.android.node.domain.usecase.GetAllNodes
 import com.algorand.android.ui.settings.node.ui.mapper.NodeSettingsPreviewMapper
 import com.algorand.android.ui.settings.node.ui.model.NodeSettingsPreview
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
-class NodeSettingsUseCase @Inject constructor(
-    private val firebaseTokenManager: FirebaseTokenManager,
+class NodeSettingsPreviewUseCase @Inject constructor(
     private val nodeSettingsPreviewMapper: NodeSettingsPreviewMapper,
     private val getAllNodes: GetAllNodes
 ) {
 
-    fun getNodeSettingsPreviewFlow(): Flow<NodeSettingsPreview?> {
-        return firebaseTokenManager.firebaseTokenResultFlow.map { tokenResult ->
-            nodeSettingsPreviewMapper.mapToNodeSettingsPreview(
-                isLoading = tokenResult is FirebaseTokenResult.TokenLoading,
-                nodeList = getAllNodes()
-            )
-        }
+    fun getInitialPreview(): NodeSettingsPreview {
+        return nodeSettingsPreviewMapper.mapToNodeSettingsPreview(
+            isLoading = false,
+            nodeList = getAllNodes()
+        )
     }
 }

@@ -57,8 +57,6 @@ import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
-import com.algorand.android.modules.firebase.token.FirebaseTokenManager
-import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
 import com.algorand.android.modules.qrscanning.QrScannerViewModel
@@ -86,7 +84,10 @@ import com.algorand.android.transactionui.core.model.SignTransactionUiResult.Blu
 import com.algorand.android.transactionui.core.model.SignTransactionUiResult.BluetoothPermissionsAreNotGranted
 import com.algorand.android.transactionui.core.model.SignTransactionUiResult.Error.GlobalWarningError
 import com.algorand.android.transactionui.core.model.SignTransactionUiResult.Error.SnackbarError
+import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LedgerScanFailed
+import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LedgerWaitingForApproval
 import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LocationNotEnabled
+import com.algorand.android.transactionui.core.model.SignTransactionUiResult.TransactionSigned
 import com.algorand.android.transactionui.removeasset.CreateRemoveAssetTransactionViewModel
 import com.algorand.android.ui.accountselection.receive.ReceiveAccountSelectionFragment
 import com.algorand.android.ui.lockpreference.AutoLockSuggestionManager
@@ -135,9 +136,6 @@ class MainActivity :
 
     @Inject
     lateinit var autoLockSuggestionManager: AutoLockSuggestionManager
-
-    @Inject
-    lateinit var firebaseTokenManager: FirebaseTokenManager
 
     @Inject
     lateinit var autoLockManager: AutoLockManager
@@ -373,16 +371,6 @@ class MainActivity :
         checkIfConnectedToTestNet(activatedNode)
     }
 
-    private val firebaseTokenResultCollector: suspend (FirebaseTokenResult) -> Unit = { firebaseTokenResult ->
-        when (firebaseTokenResult) {
-            FirebaseTokenResult.TokenLoaded -> onNewNodeActivated()
-            // TODO: do not show activity loading while token is loading
-            FirebaseTokenResult.TokenLoading -> onNewNodeLoading()
-
-            FirebaseTokenResult.TokenFailed -> onNewTokenFailed()
-        }
-    }
-
     private fun retryLatestAssetAdditionTransaction() {
         createAddAssetTransactionViewModel.retryAddAssetTransaction()
     }
@@ -486,11 +474,6 @@ class MainActivity :
             flow = mainViewModel.activeNodeFlow,
             collection = activeNodeCollector
         )
-
-//        collectLatestOnLifecycle(
-//            flow = firebaseTokenManager.firebaseTokenResultFlow,
-//            collection = firebaseTokenResultCollector
-//        )
 
         collectLatestOnLifecycle(
             flow = mainViewModel.signTransactionUiResultFlow,
@@ -691,19 +674,6 @@ class MainActivity :
         }
     }
 
-    private fun onNewNodeActivated() {
-        hideProgress()
-        mainViewModel.onNewNodeActivated()
-    }
-
-    private fun onNewNodeLoading() {
-        showProgress()
-    }
-
-    private fun onNewTokenFailed() {
-        hideProgress()
-    }
-
     override fun onSessionRequestResult(wCSessionRequestResult: WCSessionRequestResult) {
         with(walletConnectViewModel) {
             when (wCSessionRequestResult) {
@@ -853,13 +823,13 @@ class MainActivity :
                     .build()
                     .show(binding.root)
             }
-            SignTransactionUiResult.LedgerScanFailed -> {
+            LedgerScanFailed -> {
                 hideLedgerLoadingDialog()
                 navigateToConnectionIssueBottomSheet()
             }
-            is SignTransactionUiResult.LedgerWaitingForApproval -> showLedgerLoadingDialog(result.ledgerName)
+            is LedgerWaitingForApproval -> showLedgerLoadingDialog(result.ledgerName)
             SignTransactionUiResult.Loading -> showProgress()
-            is SignTransactionUiResult.TransactionSigned -> {
+            is TransactionSigned -> {
                 hideLedgerLoadingDialog()
                 mainViewModel.sendSignedTransaction(result.signedTransaction)
             }

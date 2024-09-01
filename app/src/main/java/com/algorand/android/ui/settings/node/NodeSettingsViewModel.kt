@@ -13,48 +13,74 @@
 package com.algorand.android.ui.settings.node
 
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.appcache.manager.PushTokenManager
+import com.algorand.android.appcache.usecase.ClearAppSessionCache
+import com.algorand.android.appcache.usecase.RefreshAccountCacheManager
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.firebase.token.FirebaseTokenManager
+import com.algorand.android.deviceid.component.domain.usecase.GetNodeDeviceId
+import com.algorand.android.deviceid.component.domain.usecase.UnregisterDeviceId
 import com.algorand.android.node.domain.Node
 import com.algorand.android.node.domain.usecase.GetActiveNode
 import com.algorand.android.node.domain.usecase.SetSelectedNode
 import com.algorand.android.ui.settings.node.ui.model.NodeSettingsPreview
-import com.algorand.android.usecase.NodeSettingsUseCase
+import com.algorand.android.usecase.NodeSettingsPreviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class NodeSettingsViewModel @Inject constructor(
-    private val nodeSettingsUseCase: NodeSettingsUseCase,
-    private val firebaseTokenManager: FirebaseTokenManager,
+    nodeSettingsPreviewUseCase: NodeSettingsPreviewUseCase,
     private val getActiveNode: GetActiveNode,
-    private val setSelectedNode: SetSelectedNode
+    private val setSelectedNode: SetSelectedNode,
+    private val unregisterDeviceId: UnregisterDeviceId,
+    private val getNodeDeviceId: GetNodeDeviceId,
+    private val pushTokenManager: PushTokenManager,
+    private val clearAppSessionCache: ClearAppSessionCache,
+    private val refreshAccountCacheManager: RefreshAccountCacheManager
 ) : BaseViewModel() {
 
-    private val _nodeSettingsFlow = MutableStateFlow<NodeSettingsPreview?>(null)
-    val nodeSettingsFlow: StateFlow<NodeSettingsPreview?> get() = _nodeSettingsFlow
+    private val _nodeSettingsFlow = MutableStateFlow(nodeSettingsPreviewUseCase.getInitialPreview())
+    val nodeSettingsFlow: StateFlow<NodeSettingsPreview> get() = _nodeSettingsFlow
 
-    init {
-        initNodeSettingsPreview()
-    }
-
-    private fun initNodeSettingsPreview() {
-        viewModelScope.launch(Dispatchers.IO) {
-            nodeSettingsUseCase.getNodeSettingsPreviewFlow().collect {
-                _nodeSettingsFlow.value = it
-            }
-        }
-    }
+    fun canNavigateBack(): Boolean = !_nodeSettingsFlow.value.isLoading
 
     fun onNodeChanged(activatedNode: Node) {
         viewModelScope.launch(Dispatchers.IO) {
+            showLoading()
             val previousSelectedNode = getActiveNode()
             setSelectedNode(activatedNode)
-            firebaseTokenManager.refreshFirebasePushToken(previousSelectedNode)
+            unregisterNodeDeviceId(previousSelectedNode)
+            clearAppSessionCache()
+            refreshAccountCacheManager()
+            pushTokenManager.refreshPushToken()
+            updateUiWithSelectedNode(activatedNode)
         }
+    }
+
+    private fun showLoading() {
+        _nodeSettingsFlow.update {
+            it.copy(isLoading = true)
+        }
+    }
+
+    private fun updateUiWithSelectedNode(node: Node) {
+        _nodeSettingsFlow.update {
+            it.copy(
+                isLoading = false,
+                nodeList = it.nodeList.map { nodeItem ->
+                    nodeItem.copy(isActive = nodeItem.node == node)
+                }
+            )
+        }
+    }
+
+    private suspend fun unregisterNodeDeviceId(node: Node) {
+        val deviceId = getNodeDeviceId(node) ?: return
+        unregisterDeviceId(deviceId)
     }
 }

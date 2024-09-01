@@ -20,9 +20,7 @@ import androidx.navigation.NavDirections
 import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.android.algosdk.component.transaction.model.Transaction
 import com.algorand.android.appcache.InitializeAppCache
-import com.algorand.android.appcache.usecase.ClearAppSessionCache
 import com.algorand.android.appcache.usecase.GetAppCacheStatusFlow
-import com.algorand.android.appcache.usecase.RefreshAccountCacheManager
 import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.deeplink.DeepLinkHandler
@@ -73,10 +71,8 @@ class MainViewModel @Inject constructor(
     private val autoLockManagerUseCase: AutoLockManagerUseCase,
     private val getSwapNavigationDestination: GetSwapNavigationDestination,
     private val initializeAppCache: InitializeAppCache,
-    private val refreshAccountCacheManager: RefreshAccountCacheManager,
     private val getAppCacheStatusFlow: GetAppCacheStatusFlow,
     private val createNotificationDeepLink: CreateNotificationDeepLink,
-    private val clearAppSessionCache: ClearAppSessionCache,
     private val transactionProcessor: MainActivityTransactionProcessor
 ) : BaseViewModel() {
 
@@ -151,11 +147,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun onNewNodeActivated() {
-//        viewModelScope.launch { clearAppSessionCache() }
-//        resetBlockPolling()
-    }
-
     fun handleNewNotification(newNotificationData: NotificationMetadata) {
         viewModelScope.launchIO {
             val notificationDeepLink = createNotificationDeepLink(newNotificationData.url.orEmpty())
@@ -179,15 +170,6 @@ class MainViewModel @Inject constructor(
             amount = deepLink.amount,
             receiverUser = Contact(address = receiverAddress, name = receiverName, imageUri = null)
         )
-    }
-
-    /**
-     * If we are going to re-enable block polling manager again, we should enable this job here.
-     */
-    private fun resetBlockPolling() {
-        viewModelScope.launchIO {
-            refreshAccountCacheManager()
-        }
     }
 
     fun handleDeepLink(uri: String) {

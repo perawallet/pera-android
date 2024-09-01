@@ -1,6 +1,7 @@
 package com.algorand.android.deviceid.component.domain.repository
 
 import com.algorand.android.deviceid.component.domain.model.*
+import com.algorand.android.foundation.PeraResult
 
 internal interface DeviceIdRepository {
 
@@ -12,9 +13,9 @@ internal interface DeviceIdRepository {
 
     fun getTestnetDeviceId(): String?
 
-    suspend fun registerDeviceId(deviceRegistration: DeviceRegistration): Result<String>
+    suspend fun registerDeviceId(deviceRegistration: DeviceRegistration): PeraResult<String>
 
-    suspend fun updateDeviceId(deviceUpdate: DeviceUpdate): Result<String>
+    suspend fun updateDeviceId(deviceUpdate: DeviceUpdate): PeraResult<String>
 
     /**
      * Functions below (NotificationUserId) are being used to support previously held user device IDs.

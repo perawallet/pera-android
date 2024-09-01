@@ -14,6 +14,8 @@
 package com.algorand.android.pushtoken.di
 
 import com.algorand.android.caching.SingleInMemoryLocalCache
+import com.algorand.android.pushtoken.FirebaseMessagingTokenProvider
+import com.algorand.android.pushtoken.MessagingTokenProvider
 import com.algorand.android.pushtoken.data.repository.PushTokenRepositoryImpl
 import com.algorand.android.pushtoken.domain.repository.PushTokenRepository
 import com.algorand.android.pushtoken.domain.usecase.GetPushTokenCacheFlow
@@ -43,4 +45,10 @@ internal object PushTokenModule {
     @Provides
     @Singleton
     fun provideSetPushToken(repository: PushTokenRepository): SetPushToken = SetPushToken(repository::setPushToken)
+
+    @Provides
+    @Singleton
+    fun provideMessagingTokenProvider(
+        firebaseMessagingTokenProvider: FirebaseMessagingTokenProvider
+    ): MessagingTokenProvider = firebaseMessagingTokenProvider
 }

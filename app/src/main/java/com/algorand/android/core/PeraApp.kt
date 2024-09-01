@@ -19,9 +19,9 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDex
+import com.algorand.android.appcache.manager.PushTokenManager
 import com.algorand.android.migration.MigrationManager
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
-import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.node.domain.usecase.InitializeActiveNode
 import com.algorand.android.utils.coremanager.ApplicationStatusObserver
@@ -39,7 +39,7 @@ open class PeraApp : Application() {
     lateinit var migrationManager: MigrationManager
 
     @Inject
-    lateinit var firebaseTokenManager: FirebaseTokenManager
+    lateinit var pushTokenManager: PushTokenManager
 
     @Inject
     lateinit var autoLockManager: AutoLockManager
@@ -80,7 +80,7 @@ open class PeraApp : Application() {
         with(ProcessLifecycleOwner.get().lifecycle) {
             addObserver(autoLockManager)
             addObserver(applicationStatusObserver)
-            addObserver(firebaseTokenManager)
+            addObserver(pushTokenManager)
             addObserver(pendingIntentKeeper)
         }
     }

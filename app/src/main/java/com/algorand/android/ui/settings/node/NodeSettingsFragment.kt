@@ -14,6 +14,7 @@ package com.algorand.android.ui.settings.node
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
@@ -36,8 +37,16 @@ class NodeSettingsFragment : DaggerBaseFragment(R.layout.fragment_node_settings)
         startIconClick = ::navBack
     )
 
-    private val nodeSettingsPreviewCollector: suspend (value: NodeSettingsPreview?) -> Unit = { preview ->
-        if (preview != null) initPreview(preview)
+    private val nodeSettingsPreviewCollector: suspend (value: NodeSettingsPreview) -> Unit = { preview ->
+        initPreview(preview)
+    }
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (nodeSettingsViewModel.canNavigateBack()) {
+                navBack()
+            }
+        }
     }
 
     override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
@@ -50,6 +59,7 @@ class NodeSettingsFragment : DaggerBaseFragment(R.layout.fragment_node_settings)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, onBackPressedCallback)
         setupRecyclerView()
         initObserver()
     }
@@ -63,7 +73,6 @@ class NodeSettingsFragment : DaggerBaseFragment(R.layout.fragment_node_settings)
 
     private fun initPreview(nodeSettingsPreview: NodeSettingsPreview) {
         with(nodeSettingsPreview) {
-            // TODO: block user back-press event while isLoading is true instead of displaying loading bar.
             binding.loadingLayout.root.isVisible = isLoading
             nodeAdapter.setNewList(nodeList)
         }

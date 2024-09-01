@@ -39,6 +39,10 @@ android {
 dependencies {
 
     implementation project(path: ':caching')
+    implementation project(path: ':foundation')
+
+    implementation platform(deps.firebase.platform)
+    implementation deps.firebase.messaging
 
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler

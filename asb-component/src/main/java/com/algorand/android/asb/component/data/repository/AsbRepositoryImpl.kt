@@ -39,9 +39,7 @@ internal class AsbRepositoryImpl @Inject constructor(
 
     override suspend fun removeAccount(accountAddress: String) {
         val encryptedAddress = encryptionManager.encrypt(accountAddress)
-        algorandSecureBackUpDao.get(encryptedAddress)?.let {
-            algorandSecureBackUpDao.insert(it.copy(isBackedUp = false))
-        }
+        algorandSecureBackUpDao.delete(encryptedAddress)
     }
 
     override suspend fun setBackedUp(accountAddress: String, isBackedUp: Boolean) {

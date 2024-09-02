@@ -40,6 +40,5 @@ data class CollectibleDetailPreview(
     val isSendButtonVisible: Boolean,
     val isOptOutButtonVisible: Boolean,
     val globalErrorEvent: Event<String>?,
-    val collectibleSendEvent: Event<Unit>?,
-    val optOutNFTEvent: Event<CollectibleDetail>?
+    val collectibleSendEvent: Event<Unit>?
 )

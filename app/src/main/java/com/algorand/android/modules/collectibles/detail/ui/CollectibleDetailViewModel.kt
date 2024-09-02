@@ -18,6 +18,7 @@ import com.algorand.android.accountcore.ui.model.AssetName
 import com.algorand.android.assetdetailui.nftdetail.model.CollectibleDetailPreview
 import com.algorand.android.assetdetailui.nftdetail.usecase.GetCollectibleDetailPreview
 import com.algorand.android.foundation.Event
+import com.algorand.android.models.AssetAction
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailViewModel
 import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.utils.getOrThrow
@@ -61,18 +62,12 @@ class CollectibleDetailViewModel @Inject constructor(
         }
     }
 
-    fun onOptOutClick() {
-        TODO()
-//        viewModelScope.launch {
-//            with(_nftDetailPreviewFlow) {
-//                update { collectibleDetailPreviewUseCase.getOptOutEventPreview(value, nftId, accountAddress) }
-//            }
-//        }
-//        val assetInformation = getAssetInformationOfGivenNFT(
-//            nftId = nftId,
-//            accountAddress = accountAddress
-//        ) ?: return null
-//        return preview?.copy(optOutNFTEvent = Event(assetInformation))
+    fun getOptOutAssetAction(): AssetAction {
+        return AssetAction(
+            publicKey = accountAddress,
+            assetId = nftId,
+            assetFullName = getAssetName()?.assetName
+        )
     }
 
     private fun getCollectibleDetailPreview() {

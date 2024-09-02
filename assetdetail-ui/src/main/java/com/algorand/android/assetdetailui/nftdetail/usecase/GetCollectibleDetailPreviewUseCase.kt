@@ -30,6 +30,8 @@ import com.algorand.android.core.component.collectible.domain.usecase.GetAccount
 import com.algorand.android.core.component.detail.domain.model.AccountType
 import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.foundation.common.isGreaterThan
+import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -65,7 +67,8 @@ internal class GetCollectibleDetailPreviewUseCase @Inject constructor(
     ): CollectibleDetailPreview {
         val accountDetail = getAccountDetail(accountAddress)
         val accountCollectibleDetail = getAccountCollectibleDetail(accountAddress, collectibleDetail)
-        val isOwnedByTheUser = accountCollectibleDetail != null
+        val hasAmount = accountCollectibleDetail?.amount?.isGreaterThan(BigInteger.ZERO) == true
+        val isOwnedByTheUser = accountCollectibleDetail != null && hasAmount
         val isOwnedByWatchAccount = accountDetail.accountType == AccountType.NoAuth
         return with(collectibleDetail) {
             val assetName = getAssetName(title ?: fullName)
@@ -95,8 +98,7 @@ internal class GetCollectibleDetailPreviewUseCase @Inject constructor(
                 isSendButtonVisible = isOwnedByTheUser && !isOwnedByWatchAccount,
                 isOptOutButtonVisible = !isOwnedByTheUser && accountDetail.address != creatorAddress && !isOwnedByWatchAccount,
                 globalErrorEvent = null,
-                collectibleSendEvent = null,
-                optOutNFTEvent = null
+                collectibleSendEvent = null
             )
         }
     }

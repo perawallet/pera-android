@@ -81,22 +81,7 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
             collectibleSendEvent?.consume()?.run {
                 navToSendAlgoNavigation(optedInAccountDisplayName.accountAddress, nftId, isPureNFT)
             }
-            optOutNFTEvent?.consume()?.run { navToOptOutNavigation() }
         }
-    }
-
-    private fun navToOptOutNavigation() {
-        TODO()
-//        nav(
-//            CollectibleDetailFragmentDirections
-//                .actionCollectibleDetailFragmentToNftOptOutConfirmationNavigation(
-//                    assetAction = AssetAction(
-//                        assetId = baseCollectibleDetailViewModel.nftId,
-//                        publicKey = baseCollectibleDetailViewModel.accountAddress,
-//                        asset = assetInformation
-//                    )
-//                )
-//        )
     }
 
     private fun setSendButton(isSendButtonVisible: Boolean) {
@@ -108,9 +93,17 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
 
     private fun setOptOutButton(isOptOutButtonVisible: Boolean) {
         with(binding.nftOptOutButton) {
-            setOnClickListener { baseCollectibleDetailViewModel.onOptOutClick() }
+            setOnClickListener { onOptOutClick() }
             isVisible = isOptOutButtonVisible
         }
+    }
+
+    private fun onOptOutClick() {
+        val assetAction = baseCollectibleDetailViewModel.getOptOutAssetAction()
+        nav(
+            CollectibleDetailFragmentDirections
+                .actionCollectibleDetailFragmentToNftOptOutConfirmationNavigation(assetAction = assetAction)
+        )
     }
 
     private fun navToSendAlgoNavigation(ownerAccountAddress: String, nftId: Long, isPureNFT: Boolean) {

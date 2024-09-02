@@ -1,5 +1,9 @@
 package com.algorand.android.accountinfo.component.di
 
+import com.algorand.android.accountinfo.component.data.helper.fetch.AccountAssetHoldingsFetchHelper
+import com.algorand.android.accountinfo.component.data.helper.fetch.AccountAssetHoldingsFetchHelperImpl
+import com.algorand.android.accountinfo.component.data.helper.fetch.AccountInformationFetchHelper
+import com.algorand.android.accountinfo.component.data.helper.fetch.AccountInformationFetchHelperImpl
 import com.algorand.android.accountinfo.component.data.mapper.AccountInformationResponseMapper
 import com.algorand.android.accountinfo.component.data.mapper.AccountInformationResponseMapperImpl
 import com.algorand.android.accountinfo.component.data.mapper.entity.AccountInformationEntityMapper
@@ -83,7 +87,8 @@ internal object AccountInformationModule {
         assetHoldingMapper: AssetHoldingMapper,
         @Named(DETERMINISTIC_ENCRYPTION_MANAGER) encryptionManager: EncryptionManager,
         accountInformationResponseMapper: AccountInformationResponseMapper,
-        accountInformationCacheHelper: AccountInformationCacheHelper
+        accountInformationCacheHelper: AccountInformationCacheHelper,
+        accountInformationFetchHelper: AccountInformationFetchHelper
     ): AccountInformationRepository {
         return AccountInformationRepositoryImpl(
             indexerApi,
@@ -93,7 +98,8 @@ internal object AccountInformationModule {
             assetHoldingMapper,
             encryptionManager,
             accountInformationResponseMapper,
-            accountInformationCacheHelper
+            accountInformationCacheHelper,
+            accountInformationFetchHelper
         )
     }
 
@@ -275,4 +281,24 @@ internal object AccountInformationModule {
     @Provides
     @Singleton
     fun provideAssetHoldingCacheHelper(impl: AssetHoldingCacheHelperImpl): AssetHoldingCacheHelper = impl
+
+    @Provides
+    @Singleton
+    fun provideAccountInformationFetchHelper(
+        @Named("accountIndexerApi") indexerApi: IndexerApi,
+        accountAssetHoldingsFetchHelper: AccountAssetHoldingsFetchHelper,
+        accountInformationResponseMapper: AccountInformationResponseMapper,
+    ): AccountInformationFetchHelper {
+        return AccountInformationFetchHelperImpl(
+            indexerApi,
+            accountAssetHoldingsFetchHelper,
+            accountInformationResponseMapper
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideAccountAssetHoldingsFetchHelper(
+        @Named("accountIndexerApi") indexerApi: IndexerApi,
+    ): AccountAssetHoldingsFetchHelper = AccountAssetHoldingsFetchHelperImpl(indexerApi)
 }

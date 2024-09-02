@@ -1,9 +1,9 @@
 package com.algorand.android.accountinfo.component.data.repository
 
+import com.algorand.android.accountinfo.component.data.helper.fetch.AccountInformationFetchHelper
 import com.algorand.android.accountinfo.component.data.mapper.AccountInformationResponseMapper
 import com.algorand.android.accountinfo.component.data.mapper.model.AccountInformationMapper
 import com.algorand.android.accountinfo.component.data.mapper.model.AssetHoldingMapper
-import com.algorand.android.accountinfo.component.data.model.AccountInformationResponse
 import com.algorand.android.accountinfo.component.data.service.IndexerApi
 import com.algorand.android.accountinfo.component.domain.model.AccountInformation
 import com.algorand.android.accountinfo.component.domain.repository.AccountInformationRepository
@@ -34,17 +34,20 @@ internal class AccountInformationRepositoryImpl(
     private val encryptionManager: EncryptionManager,
     private val accountInformationResponseMapper: AccountInformationResponseMapper,
     private val accountInformationCacheHelper: AccountInformationCacheHelper,
+    private val accountInformationFetchHelper: AccountInformationFetchHelper,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AccountInformationRepository {
 
     override suspend fun fetchAccountInformation(address: String): Result<AccountInformation> {
-        return try {
-            val response = fetchAccount(address)
-            val accountInformation = accountInformationMapper(response)
-            if (accountInformation == null) Result.failure(Exception()) else Result.success(accountInformation)
-        } catch (exception: Exception) {
-            Result.failure(exception)
-        }
+        return accountInformationFetchHelper.fetchAccount(address).use(
+            onSuccess = { response ->
+                val accountInformation = accountInformationMapper(response)
+                if (accountInformation == null) Result.failure(Exception()) else Result.success(accountInformation)
+            },
+            onFailed = { exception, _ ->
+                Result.failure(exception)
+            }
+        )
     }
 
     override fun getCachedAccountInformationCountFlow(): Flow<Int> {
@@ -62,12 +65,14 @@ internal class AccountInformationRepositoryImpl(
             val result = mutableMapOf<String, AccountInformation?>()
             addresses.map { address ->
                 async {
-                    result[address] = try {
-                        val response = fetchAccount(address)
-                        accountInformationCacheHelper.cacheAccountInformation(address, response)
-                    } catch (exception: Exception) {
-                        null
-                    }
+                    result[address] = accountInformationFetchHelper.fetchAccount(address).use(
+                        onSuccess = { response ->
+                            accountInformationCacheHelper.cacheAccountInformation(address, response)
+                        },
+                        onFailed = { _, _ ->
+                            null
+                        }
+                    )
                 }
             }.awaitAll()
             result
@@ -173,21 +178,6 @@ internal class AccountInformationRepositoryImpl(
                     }
                 } else {
                     PeraResult.Error(exception)
-                }
-            }
-        )
-    }
-
-    private suspend fun fetchAccount(address: String): AccountInformationResponse {
-        return request { indexerApi.getAccountInformation(address) }.use(
-            onSuccess = { response ->
-                response
-            },
-            onFailed = { exception, errorCode ->
-                if (errorCode == 404) {
-                    accountInformationResponseMapper.createEmptyAccount(address)
-                } else {
-                    throw exception
                 }
             }
         )

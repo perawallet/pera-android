@@ -39,7 +39,7 @@ internal class NewAccountBalanceValidator : TransactionValidator<Payload, Unit> 
     }
 
     private fun isAmountLessThanMinRequiredBalancePerAsset(payload: Payload): Boolean {
-        return payload.amount < TransactionConstants.MIN_REQUIRED_BALANCE_PER_ASSET
+        return payload.amount < BigInteger.ONE
     }
 
     internal data class Payload(

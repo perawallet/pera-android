@@ -114,7 +114,11 @@ internal class AssetRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAsset(assetId: Long): Asset? {
-        return assetDetailCacheHelper.getAsset(assetId)
+        return if (assetId == ALGO_ASSET_ID) {
+            algoAssetDetailMapper()
+        } else {
+            assetDetailCacheHelper.getAsset(assetId)
+        }
     }
 
     override suspend fun clearCache() {

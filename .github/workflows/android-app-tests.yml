@@ -1,0 +1,52 @@
+name: "Android App Tests"
+
+on:
+
+  push:
+  pull_request:
+
+jobs:
+
+    android-unit-tests:
+      name: "Android App Unit Tests"
+      runs-on: ubuntu-latest
+      steps:
+        - name: "Checkout"
+          uses: actions/checkout@v4
+        - name: "Install JDK 17"
+          uses: actions/setup-java@v4
+          with:
+            distribution: "zulu"
+            java-version: "17"
+            cache: "gradle"
+        - name: "Run Unit Tests"
+          run: ./gradlew test
+        - name: "Archive App Unit Tests Report"
+          uses: actions/upload-artifact@v4
+          if: ${{ always() }}
+          with:
+            name: "app-unit-tests-results"
+            path: ./**/build/reports/**
+            overwrite: true
+
+    android-lint:
+      name: "Android App Lint Checks"
+      runs-on: ubuntu-latest
+      steps:
+        - name: "Checkout"
+          uses: actions/checkout@v4
+        - name: "Install JDK 17"
+          uses: actions/setup-java@v4
+          with:
+            distribution: "zulu"
+            java-version: "17"
+            cache: "gradle"
+        - name: "Run Lint Checks"
+          run: ./gradlew lint
+        - name: "Archive App Lint Test Results"
+          uses: actions/upload-artifact@v4
+          if: ${{ always() }}
+          with:
+            name: "app-lint-results"
+            path: ./**/build/reports/**
+            overwrite: true

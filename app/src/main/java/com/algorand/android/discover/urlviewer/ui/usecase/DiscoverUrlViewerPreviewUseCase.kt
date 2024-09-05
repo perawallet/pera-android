@@ -86,8 +86,7 @@ class DiscoverUrlViewerPreviewUseCase @Inject constructor(
         return if (!dappInfo.url.isNullOrBlank()) {
             previousState.copy(
                 dappViewerScreenRequestEvent = Event(
-                    DiscoverUrlViewerFragmentDirections
-                        .actionDiscoverUrlViewerFragmentToDiscoverDappFragment(
+                    DiscoverUrlViewerFragmentDirections.actionDiscoverUrlViewerFragmentToDiscoverDappNavigation(
                             dappUrl = dappInfo.url,
                             dappTitle = dappInfo.name.orEmpty(),
                             favorites = dappInfo.favorites?.map {

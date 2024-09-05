@@ -72,7 +72,7 @@
 
     <include app:graph="@navigation/wallet_connect_connection_navigation" />
 
-    <include app:graph="@navigation/discover_navigation" />
+    <include app:graph="@navigation/discover_home_navigation" />
 
     <include app:graph="@navigation/discover_detail_navigation" />
 
@@ -98,6 +98,8 @@
 
     <include app:graph="@navigation/backup_passphrase_info_navigation" />
 
+    <include app:graph="@navigation/discover_url_viewer_navigation" />
+
     <action
         android:id="@+id/action_global_showQrNavigation"
         app:destination="@id/showQrNavigation">
@@ -110,6 +112,16 @@
     </action>
 
     <action
+        android:id="@+id/action_global_discoverHomeNavigation"
+        app:destination="@id/discoverHomeNavigation">
+        <argument
+            android:name="url"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </action>
+
+    <action
         android:id="@+id/action_global_assetProfileNavigation"
         app:destination="@id/assetDetailNavigation">
         <argument
@@ -118,16 +130,6 @@
         <argument
             android:name="accountAddress"
             app:argType="string" />
-    </action>
-
-    <action
-        android:id="@+id/action_global_discoverNavigation"
-        app:destination="@id/discoverNavigation">
-        <argument
-            android:name="url"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
     </action>
 
     <action
@@ -202,6 +204,14 @@
     <action
         android:id="@+id/action_global_addAssetAccountSelectionFragment"
         app:destination="@id/addAssetAccountSelectionFragment" />
+
+    <action
+        android:id="@+id/action_global_discoverUrlViewerNavigation"
+        app:destination="@id/discoverUrlViewerNavigation">
+        <argument
+            android:name="webUrl"
+            app:argType="string" />
+    </action>
 
     <action
         android:id="@+id/action_global_contactAdditionNavigation"
@@ -1029,6 +1039,13 @@
             app:destination="@id/addAssetAccountSelectionFragment"
             app:popUpTo="@id/accountsQrScannerFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_accountsQrScannerFragment_discoverUrlViewerNavigation"
+            app:destination="@id/discoverUrlViewerNavigation">
+            <argument
+                android:name="webUrl"
+                app:argType="string" />
+        </action>
     </fragment>
 
     <dialog

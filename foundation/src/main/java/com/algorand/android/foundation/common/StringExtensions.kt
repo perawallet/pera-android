@@ -32,3 +32,12 @@ fun String.encodeToURL(charset: String = Charsets.UTF_8.name()): String {
 fun String.addHashtagToStart(): String {
     return "#$this"
 }
+
+fun String.decodeBase64ToString(): String? {
+    return try {
+        val stringInByteArray = Base64.decode(this, Base64.NO_WRAP)
+        String(stringInByteArray, Charsets.UTF_8)
+    } catch (exception: Exception) {
+        null
+    }
+}

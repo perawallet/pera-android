@@ -105,4 +105,10 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
         handleWalletConnectUrl(wcUrl)
         return true.also { navBack() }
     }
+
+    override fun onDiscoverBrowserDeepLink(webUrl: String): Boolean {
+        return true.also {
+            nav(AccountsQrScannerFragmentDirections.actionAccountsQrScannerFragmentDiscoverUrlViewerNavigation(webUrl))
+        }
+    }
 }

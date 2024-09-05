@@ -38,7 +38,7 @@ import androidx.core.view.forEach
 import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
-import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverNavigation
+import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
 import com.algorand.android.appcache.model.AppCacheStatus
 import com.algorand.android.customviews.CoreActionsTabBarView
 import com.algorand.android.customviews.LedgerLoadingDialog
@@ -324,6 +324,11 @@ class MainActivity :
                 NotificationGroupType.TRANSACTIONS -> handleAssetTransactionDeepLink(deepLink)
                 NotificationGroupType.OPT_IN -> handleAssetOptInRequestDeepLink(deepLink)
             }
+            return true
+        }
+
+        override fun onDiscoverBrowserDeepLink(webUrl: String): Boolean {
+            navToDiscoverUrlViewerNavigation(webUrl)
             return true
         }
 
@@ -752,8 +757,8 @@ class MainActivity :
     private fun handleBrowseDappsClick() {
         binding.apply {
             coreActionsTabBarView.hideWithAnimation()
-            bottomNavigationView.menu.findItem(R.id.discoverNavigation).isChecked = true
-            navController.navigateSafe(actionGlobalDiscoverNavigation(BuildConfig.DISCOVER_BROWSE_DAPP_URL))
+            bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true
+            navController.navigateSafe(actionGlobalDiscoverHomeNavigation(BuildConfig.DISCOVER_BROWSE_DAPP_URL))
         }
     }
 
@@ -874,6 +879,10 @@ class MainActivity :
             is NetworkError -> showGlobalErrorWithActivityTag(R.string.an_error_occured)
             else -> Unit
         }
+    }
+
+    private fun navToDiscoverUrlViewerNavigation(webUrl: String) {
+        nav(HomeNavigationDirections.actionGlobalDiscoverUrlViewerNavigation(webUrl))
     }
 
     private fun showGlobalErrorWithActivityTag(@StringRes messageResId: Int) {

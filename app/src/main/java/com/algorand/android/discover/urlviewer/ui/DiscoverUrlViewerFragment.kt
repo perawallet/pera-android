@@ -33,7 +33,8 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
-import com.algorand.android.utils.listenToNavigationResult
+import com.algorand.android.utils.startSavedStateListener
+import com.algorand.android.utils.useSavedStateValue
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
@@ -104,8 +105,10 @@ class DiscoverUrlViewerFragment :
     }
 
     private fun initSavedStateListener() {
-        listenToNavigationResult<DappFavoriteElement?>(DiscoverDappFragment.ADD_FAVORITE_RESULT_KEY) { favorite ->
-            favorite?.let { discoverViewModel.onFavoritesUpdate(it) }
+        startSavedStateListener(R.id.discoverUrlViewerFragment) {
+            useSavedStateValue<DappFavoriteElement?>(DiscoverDappFragment.ADD_FAVORITE_RESULT_KEY) { favorite ->
+                favorite?.let { discoverViewModel.onFavoritesUpdate(it) }
+            }
         }
     }
 

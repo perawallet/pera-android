@@ -71,5 +71,7 @@ sealed interface BaseDeepLink {
         val isThereAnyAccountWithPublicKey: Boolean
     ) : BaseDeepLink
 
+    data class DiscoverBrowserDeepLink(val webUrl: String): BaseDeepLink
+
     data class UndefinedDeepLink internal constructor(val url: String) : BaseDeepLink
 }

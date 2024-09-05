@@ -47,9 +47,10 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.hideKeyboard
-import com.algorand.android.utils.listenToNavigationResult
 import com.algorand.android.utils.preference.ThemePreference
 import com.algorand.android.utils.scrollToTop
+import com.algorand.android.utils.startSavedStateListener
+import com.algorand.android.utils.useSavedStateValue
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
@@ -187,8 +188,10 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
     }
 
     private fun initSavedStateListener() {
-        listenToNavigationResult<DappFavoriteElement?>(ADD_FAVORITE_RESULT_KEY) { favorite ->
-            favorite?.let { discoverViewModel.onFavoritesUpdate(it) }
+        startSavedStateListener(R.id.discoverHomeFragment) {
+            useSavedStateValue<DappFavoriteElement?>(ADD_FAVORITE_RESULT_KEY) { favorite ->
+                favorite?.let { discoverViewModel.onFavoritesUpdate(it) }
+            }
         }
     }
 
@@ -341,7 +344,7 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
         favorites: Array<DappFavoriteElement>
     ) {
         nav(
-            DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToDiscoverDappFragment(
+            DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToDiscoverDappNavigation(
                 dappUrl = url,
                 dappTitle = title ?: "",
                 favorites = favorites
@@ -351,8 +354,8 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
 
     private fun navigateToSimpleUrlViewer(url: String) {
         nav(
-            DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToDiscoverUrlViewerFragment(
-                url = url
+            DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToDiscoverUrlViewerNavigation(
+                webUrl = url
             )
         )
     }

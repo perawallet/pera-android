@@ -21,6 +21,7 @@ import com.algorand.android.deeplink.model.BaseDeepLink
 import com.algorand.android.deeplink.model.BaseDeepLink.AccountAddressDeepLink
 import com.algorand.android.deeplink.model.BaseDeepLink.AssetOptInDeepLink
 import com.algorand.android.deeplink.model.BaseDeepLink.AssetTransferDeepLink
+import com.algorand.android.deeplink.model.BaseDeepLink.DiscoverBrowserDeepLink
 import com.algorand.android.deeplink.model.BaseDeepLink.MnemonicDeepLink
 import com.algorand.android.deeplink.model.BaseDeepLink.NotificationDeepLink
 import com.algorand.android.deeplink.model.BaseDeepLink.UndefinedDeepLink
@@ -28,6 +29,8 @@ import com.algorand.android.deeplink.model.BaseDeepLink.WalletConnectConnectionD
 import com.algorand.android.deeplink.model.BaseDeepLink.WebImportQrCodeDeepLink
 import com.algorand.android.deeplink.usecase.ParseDeepLink
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 internal class DeepLinkHandlerImpl @Inject constructor(
     private val parseDeepLink: ParseDeepLink,
@@ -57,33 +60,34 @@ internal class DeepLinkHandlerImpl @Inject constructor(
             is UndefinedDeepLink -> handleUndefinedDeepLink(baseDeeplink)
             is WebImportQrCodeDeepLink -> handleWebImportQrCodeDeepLink(baseDeeplink)
             is NotificationDeepLink -> handleNotificationDeepLink(baseDeeplink)
+            is DiscoverBrowserDeepLink -> handleDiscoverBrowserDeepLink(baseDeeplink)
         }
         if (!isDeeplinkHandled) listener?.onDeepLinkNotHandled(baseDeeplink)
     }
 
-    private fun handleAccountAddressDeepLink(deepLink: AccountAddressDeepLink): Boolean {
+    private suspend fun handleAccountAddressDeepLink(deepLink: AccountAddressDeepLink): Boolean {
         return triggerListener { it.onAccountAddressDeeplink(deepLink.accountAddress, deepLink.label) }
     }
 
-    private fun handleAssetOptInDeepLink(assetId: Long): Boolean {
+    private suspend fun handleAssetOptInDeepLink(assetId: Long): Boolean {
         return triggerListener { it.onAssetOptInDeepLink(assetId) }
     }
 
-    private fun handleMnemonicDeepLink(mnemonicDeeplink: MnemonicDeepLink): Boolean {
+    private suspend fun handleMnemonicDeepLink(mnemonicDeeplink: MnemonicDeepLink): Boolean {
         return triggerListener { it.onImportAccountDeepLink(mnemonicDeeplink.mnemonic) }
     }
 
-    private fun handleWalletConnectConnectionDeepLink(wcConnectionDeeplink: WalletConnectConnectionDeepLink): Boolean {
+    private suspend fun handleWalletConnectConnectionDeepLink(wcConnectionDeeplink: WalletConnectConnectionDeepLink): Boolean {
         return triggerListener {
             it.onWalletConnectConnectionDeeplink(wcUrl = wcConnectionDeeplink.url)
         }
     }
 
-    private fun handleUndefinedDeepLink(undefinedDeeplink: UndefinedDeepLink): Boolean {
+    private suspend fun handleUndefinedDeepLink(undefinedDeeplink: UndefinedDeepLink): Boolean {
         return triggerListener { it.onUndefinedDeepLink(undefinedDeeplink); true }
     }
 
-    private fun handleWebImportQrCodeDeepLink(webImportQrCodeDeepLink: WebImportQrCodeDeepLink): Boolean {
+    private suspend fun handleWebImportQrCodeDeepLink(webImportQrCodeDeepLink: WebImportQrCodeDeepLink): Boolean {
         return triggerListener {
             it.onWebImportQrCodeDeepLink(
                 webImportQrCode = webImportQrCodeDeepLink.webImportQrCode
@@ -113,13 +117,19 @@ internal class DeepLinkHandlerImpl @Inject constructor(
         }
     }
 
-    private fun handleNotificationDeepLink(notificationDeepLink: NotificationDeepLink): Boolean {
+    private suspend fun handleNotificationDeepLink(notificationDeepLink: NotificationDeepLink): Boolean {
         return triggerListener {
             it.onNotificationDeepLink(notificationDeepLink)
         }
     }
 
-    private fun triggerListener(action: (DeepLinkHandler.Listener) -> Boolean): Boolean {
-        return listener?.run(action) ?: false
+    private suspend fun handleDiscoverBrowserDeepLink(discoverBrowserDeepLink: DiscoverBrowserDeepLink): Boolean {
+        return triggerListener { it.onDiscoverBrowserDeepLink(discoverBrowserDeepLink.webUrl); true }
+    }
+
+    private suspend fun triggerListener(action: (DeepLinkHandler.Listener) -> Boolean): Boolean {
+        return withContext(Dispatchers.Main) {
+            listener?.run(action) ?: false
+        }
     }
 }

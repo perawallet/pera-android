@@ -36,6 +36,7 @@ interface DeepLinkHandler {
         fun onAssetTransferWithNotOptInDeepLink(assetId: Long): Boolean = false
         fun onWebImportQrCodeDeepLink(webImportQrCode: WebImportQrCode): Boolean = false
         fun onNotificationDeepLink(deepLink: BaseDeepLink.NotificationDeepLink): Boolean = false
+        fun onDiscoverBrowserDeepLink(webUrl: String): Boolean = false
 
         fun onUndefinedDeepLink(undefinedDeeplink: BaseDeepLink.UndefinedDeepLink)
         fun onDeepLinkNotHandled(deepLink: BaseDeepLink)

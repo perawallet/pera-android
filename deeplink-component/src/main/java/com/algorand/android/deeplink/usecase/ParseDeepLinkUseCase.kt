@@ -20,6 +20,7 @@ import com.algorand.android.deeplink.model.RawDeepLink
 import com.algorand.android.deeplink.model.RawMnemonicPayload
 import com.algorand.android.deeplink.model.WebImportQrCode
 import com.algorand.android.deeplink.model.WebQrCode
+import com.algorand.android.foundation.common.decodeBase64ToString
 import com.algorand.android.foundation.json.JsonSerializer
 import com.algorand.android.transaction.domain.usecase.IsValidAlgorandAddress
 import java.math.BigInteger
@@ -46,7 +47,8 @@ internal class ParseDeepLinkUseCase @Inject constructor(
             transactionId = getTransactionId(parsedUri),
             transactionStatus = getTransactionStatus(parsedUri),
             webImportQrCode = getWebImportData(parsedUri),
-            notificationGroupType = getNotificationGroupType(parsedUri)
+            notificationGroupType = getNotificationGroupType(parsedUri),
+            url = getUrl(parsedUri)
         )
     }
 
@@ -78,6 +80,10 @@ internal class ParseDeepLinkUseCase @Inject constructor(
 
     private fun getTransactionStatus(parsedUri: Uri): String? {
         return parseQueryIfExist(TRANSACTION_STATUS_KEY, parsedUri)
+    }
+
+    private fun getUrl(parsedUri: Uri): String? {
+        return parseQueryIfExist(URL_QUERY_KEY, parsedUri)?.decodeBase64ToString()
     }
 
     private fun getAccountAddress(uri: Uri): String? {
@@ -164,6 +170,7 @@ internal class ParseDeepLinkUseCase @Inject constructor(
         private const val TRANSACTION_STATUS_KEY = "transactionStatus"
         private const val NOTIFICATION_ACTION_ASSET_TRANSACTIONS = "asset/transactions"
         private const val NOTIFICATION_ACTION_ASSET_OPTIN = "asset/opt-in"
+        private const val URL_QUERY_KEY = "url"
 
         private const val AUTH_SEPARATOR = "//"
         private const val PATH_SEPARATOR = "/"

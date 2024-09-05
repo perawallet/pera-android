@@ -24,7 +24,8 @@ internal class DeepLinkFactoryImpl @Inject constructor(
     private val mnemonicDeepLinkCreator: MnemonicDeepLinkCreator,
     private val notificationDeepLinkCreator: NotificationDeepLinkCreator,
     private val walletConnectConnectionDeepLinkCreator: WalletConnectConnectionDeepLinkCreator,
-    private val webImportQrCodeDeepLinkCreator: WebImportQrCodeDeepLinkCreator
+    private val webImportQrCodeDeepLinkCreator: WebImportQrCodeDeepLinkCreator,
+    private val discoverBrowserDeepLinkCreator: DiscoverBrowserDeepLinkCreator
 ) : DeepLinkFactory {
 
     override suspend fun invoke(rawDeepLink: RawDeepLink): BaseDeepLink {
@@ -49,6 +50,9 @@ internal class DeepLinkFactoryImpl @Inject constructor(
             }
             webImportQrCodeDeepLinkCreator.doesDeeplinkMeetTheRequirements(rawDeepLink) -> {
                 webImportQrCodeDeepLinkCreator.createDeepLink(rawDeepLink)
+            }
+            discoverBrowserDeepLinkCreator.doesDeeplinkMeetTheRequirements(rawDeepLink) -> {
+                discoverBrowserDeepLinkCreator.createDeepLink(rawDeepLink)
             }
             else -> BaseDeepLink.UndefinedDeepLink(rawDeepLink.rawUrl)
         }

@@ -19,6 +19,7 @@ import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConf
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRekeyConfirmationFields
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.usecase.RekeyToStandardAccountConfirmationPreviewUseCase
+import com.algorand.android.transaction.domain.model.SignedTransaction
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -49,13 +50,6 @@ class RekeyToStandardAccountConfirmationViewModel @Inject constructor(
         initPreview()
     }
 
-//    fun createRekeyToStandardAccountTransaction(): TransactionData.RekeyToStandardAccount? {
-//        return rekeyToStandardAccountConfirmationPreviewUseCase.createRekeyToStandardAccountTransaction(
-//            accountAddress = accountAddress,
-//            authAccountAddress = authAccountAddress,
-//        )
-//    }
-
     fun onTransactionSigningFailed() {
         _rekeyToStandardAccountConfirmationPreviewFlow.update { preview ->
             preview?.copy(isLoading = false)
@@ -68,19 +62,19 @@ class RekeyToStandardAccountConfirmationViewModel @Inject constructor(
         }
     }
 
-//    fun sendRekeyTransaction(transactionDetail: SignedTransactionDetail.RekeyToStandardAccountOperation) {
-//        if (sendTransactionJob?.isActive == true) {
-//            return
-//        }
-//        sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
-//            rekeyToStandardAccountConfirmationPreviewUseCase.sendRekeyToStandardAccountTransaction(
-//                transactionDetail = transactionDetail,
-//                preview = _rekeyToStandardAccountConfirmationPreviewFlow.value
-//            ).collectLatest { preview ->
-//                _rekeyToStandardAccountConfirmationPreviewFlow.emit(preview)
-//            }
-//        }
-//    }
+    fun sendSignedTransaction(signedTransaction: SignedTransaction) {
+        if (sendTransactionJob?.isActive == true) {
+            return
+        }
+        sendTransactionJob = viewModelScope.launchIO {
+            rekeyToStandardAccountConfirmationPreviewUseCase.sendSignedTransaction(
+                preview = _rekeyToStandardAccountConfirmationPreviewFlow.value ?: return@launchIO,
+                signedTransaction = signedTransaction
+            ).collectLatest { preview ->
+                _rekeyToStandardAccountConfirmationPreviewFlow.value = preview
+            }
+        }
+    }
 
     fun onConfirmRekeyClick() {
         _rekeyToStandardAccountConfirmationPreviewFlow.update { preview ->

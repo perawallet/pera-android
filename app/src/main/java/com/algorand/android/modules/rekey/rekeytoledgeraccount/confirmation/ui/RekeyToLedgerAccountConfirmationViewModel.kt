@@ -18,6 +18,7 @@ import com.algorand.android.foundation.Event
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.model.RekeyToLedgerAccountConfirmationPreview
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.usecase.RekeyToLedgerAccountConfirmationPreviewUseCase
+import com.algorand.android.transaction.domain.model.SignedTransaction
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -47,13 +48,6 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
     init {
         initPreview()
     }
-//
-//    fun createRekeyToLedgerAccountTransaction(): TransactionData.Rekey? {
-//        return rekeyToLedgerAccountConfirmationPreviewUseCase.createRekeyToLedgerAccountTransaction(
-//            accountAddress = accountAddress,
-//            selectedLedgerAuthAccount = selectedLedgerAuthAccount
-//        )
-//    }
 
     fun onTransactionSigningFailed() {
         rekeyToLedgerAccountConfirmationPreviewFlow.update { preview ->
@@ -67,19 +61,19 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
         }
     }
 
-//    fun sendRekeyTransaction(transactionDetail: SignedTransactionDetail.RekeyOperation) {
-//        if (sendTransactionJob?.isActive == true) {
-//            return
-//        }
-//        sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
-//            rekeyToLedgerAccountConfirmationPreviewUseCase.sendRekeyToLedgerAccountTransaction(
-//                transactionDetail = transactionDetail,
-//                preview = rekeyToLedgerAccountConfirmationPreviewFlow.value
-//            ).collectLatest { preview ->
-//                rekeyToLedgerAccountConfirmationPreviewFlow.emit(preview)
-//            }
-//        }
-//    }
+    fun sendRekeyTransaction(signedTransaction: SignedTransaction) {
+        if (sendTransactionJob?.isActive == true) {
+            return
+        }
+        sendTransactionJob = viewModelScope.launchIO {
+            rekeyToLedgerAccountConfirmationPreviewUseCase.sendRekeyToLedgerAccountTransaction(
+                preview = rekeyToLedgerAccountConfirmationPreviewFlow.value ?: return@launchIO,
+                signedTransaction = signedTransaction
+            ).collectLatest { preview ->
+                rekeyToLedgerAccountConfirmationPreviewFlow.emit(preview)
+            }
+        }
+    }
 
     fun onConfirmRekeyClick() {
         rekeyToLedgerAccountConfirmationPreviewFlow.update { preview ->

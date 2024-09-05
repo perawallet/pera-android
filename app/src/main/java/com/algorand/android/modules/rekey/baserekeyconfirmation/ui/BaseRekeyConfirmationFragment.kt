@@ -17,16 +17,23 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
-import com.algorand.android.core.BaseFragment
+import com.algorand.android.core.transaction.TransactionBaseFragment
 import com.algorand.android.customviews.LoadingDialogFragment
 import com.algorand.android.databinding.FragmentBaseRekeyConfirmationBinding
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.designsystem.getXmlStyledString
 import com.algorand.android.foundation.Event
-import com.algorand.android.models.SignedTransactionDetail
+import com.algorand.android.transaction.domain.creation.model.CreateTransactionResult
+import com.algorand.android.transaction.domain.creation.model.CreateTransactionResult.AccountNotFound
+import com.algorand.android.transaction.domain.creation.model.CreateTransactionResult.MinBalanceViolated
+import com.algorand.android.transaction.domain.creation.model.CreateTransactionResult.NetworkError
+import com.algorand.android.transaction.domain.creation.model.CreateTransactionResult.TransactionCreated
+import com.algorand.android.transaction.domain.model.SignedTransaction
+import com.algorand.android.transactionui.rekey.CreateRekeyTransactionViewModel
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
@@ -36,29 +43,45 @@ import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 import kotlinx.coroutines.flow.mapNotNull
 
-abstract class BaseRekeyConfirmationFragment : BaseFragment(R.layout.fragment_base_rekey_confirmation) {
+abstract class BaseRekeyConfirmationFragment : TransactionBaseFragment(R.layout.fragment_base_rekey_confirmation) {
 
     private var loadingDialogFragment: LoadingDialogFragment? = null
 
     private val binding by viewBinding(FragmentBaseRekeyConfirmationBinding::bind)
-//
-//    override val transactionFragmentListener = object : TransactionFragmentListener {
-//        override fun onSignTransactionLoadingFinished() {
-//            loadingDialogFragment?.dismissAllowingStateLoss()
-//        }
-//
-//        override fun onSignTransactionFailed() {
-//            onTransactionFailed()
-//        }
-//
-//        override fun onSignTransactionLoading() {
-//            onTransactionLoading()
-//        }
-//
-//        override fun onSignTransactionFinished(signedTransactionDetail: SignedTransactionDetail) {
-//            onTransactionSigned(signedTransactionDetail)
-//        }
-//    }
+
+    private val createRekeyTransactionViewModel: CreateRekeyTransactionViewModel by viewModels()
+
+    private val createTransactionResultCollector: suspend (Event<CreateTransactionResult>?) -> Unit = { event ->
+        event?.consume()?.let { handleCreateTransactionResult(it) }
+    }
+
+    private fun handleCreateTransactionResult(result: CreateTransactionResult) {
+        when (result) {
+            is AccountNotFound -> showGlobalError(getString(R.string.account_not_found))
+            is MinBalanceViolated -> showGlobalError(getString(R.string.minimum_balance_required))
+            is NetworkError -> showGlobalError(getString(R.string.an_error_occured))
+            is TransactionCreated -> processTransaction(result.transaction)
+            else -> Unit
+        }
+    }
+
+    override val transactionFragmentListener = object : TransactionFragmentListener {
+        override fun onSignTransactionLoadingFinished() {
+            loadingDialogFragment?.dismissAllowingStateLoss()
+        }
+
+        override fun onSignTransactionFailed() {
+            onTransactionFailed()
+        }
+
+        override fun onSignTransactionFinished(signedTransaction: SignedTransaction) {
+            onTransactionSigned(signedTransaction)
+        }
+
+        override fun onSignTransactionLoading() {
+            onTransactionLoading()
+        }
+    }
 
     abstract val baseRekeyConfirmationViewModel: BaseRekeyConfirmationViewModel
 
@@ -167,7 +190,7 @@ abstract class BaseRekeyConfirmationFragment : BaseFragment(R.layout.fragment_ba
     abstract fun onSendTransaction()
     abstract fun onTransactionLoading()
     abstract fun onTransactionFailed()
-    abstract fun onTransactionSigned(signedTransactionDetail: SignedTransactionDetail)
+    abstract fun onTransactionSigned(signedTransaction: SignedTransaction)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -183,6 +206,10 @@ abstract class BaseRekeyConfirmationFragment : BaseFragment(R.layout.fragment_ba
                 movementMethod = LinkMovementMethod.getInstance()
             }
         }
+    }
+
+    protected fun createTransaction(address: String, authAddress: String) {
+        createRekeyTransactionViewModel.create(address, authAddress)
     }
 
     @SuppressWarnings("LongMethod")
@@ -255,6 +282,10 @@ abstract class BaseRekeyConfirmationFragment : BaseFragment(R.layout.fragment_ba
             collectLatestOnLifecycle(
                 flow = mapNotNull { it?.subtitleTextResId },
                 collection = subtitleTextResIdCollector
+            )
+            collectLatestOnLifecycle(
+                flow = createRekeyTransactionViewModel.createTransactionFlow,
+                collection = createTransactionResultCollector
             )
         }
     }

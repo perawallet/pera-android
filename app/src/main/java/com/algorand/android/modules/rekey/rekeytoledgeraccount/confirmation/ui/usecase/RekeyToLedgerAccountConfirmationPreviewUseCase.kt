@@ -21,11 +21,13 @@ import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.accountinfo.component.domain.model.AccountInformation
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
 import com.algorand.android.core.utils.toShortenedAddress
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.decider.RekeyToLedgerAccountConfirmationPreviewDecider
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.mapper.RekeyToLedgerAccountConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.model.RekeyToLedgerAccountConfirmationPreview
+import com.algorand.android.transaction.domain.model.SignedTransaction
 import com.algorand.android.transaction.domain.usecase.CalculateRekeyFee
-import com.algorand.android.usecase.*
+import com.algorand.android.transaction.domain.usecase.SendSignedTransaction
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
 import javax.inject.Inject
@@ -39,7 +41,8 @@ class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val rekeyToLedgerAccountConfirmationPreviewDecider: RekeyToLedgerAccountConfirmationPreviewDecider,
     private val getAccountInformation: GetAccountInformation,
-    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
+    private val sendSignedTransaction: SendSignedTransaction
 ) {
 
     suspend fun getInitialRekeyToStandardAccountConfirmationPreview(
@@ -74,46 +77,27 @@ class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
         emit(preview.copy(formattedTransactionFee = formattedFee))
     }
 
-//    fun sendRekeyToLedgerAccountTransaction(
-//        preview: RekeyToLedgerAccountConfirmationPreview,
-//        transactionDetail: SignedTransactionDetail.RekeyOperation
-//    ) = flow {
-//        emit(preview.copy(isLoading = true))
-//        sendSignedTransactionUseCase.invoke(transactionDetail).useSuspended(
-//            onSuccess = {
-//                emit(
-//                    preview.copy(
-//                        isLoading = false,
-//                        navToRekeyResultInfoFragmentEvent = Event(Unit)
-//                    )
-//                )
-//            },
-//            onFailed = {
-//                val title = R.string.error
-//                val description = it.exception?.message.orEmpty()
-//                emit(preview.copy(showGlobalErrorEvent = Event(title to description), isLoading = false))
-//            }
-//        )
-//    }
-
-//    fun createRekeyToLedgerAccountTransaction(
-//        accountAddress: String,
-//        selectedLedgerAuthAccount: SelectedLedgerAccount.LedgerAccount
-//    ): TransactionData.Rekey? {
-//        return null
-//        val senderAccountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
-//        return TransactionData.Rekey(
-//            senderAccountAddress = senderAccountDetail.account.address,
-//            senderAccountDetail = senderAccountDetail.account.detail,
-//            senderAccountType = senderAccountDetail.account.type,
-//            senderAuthAddress = senderAccountDetail.accountInformation.rekeyAdminAddress,
-//            senderAccountName = senderAccountDetail.account.name,
-//            isSenderRekeyedToAnotherAccount = senderAccountDetail.accountInformation.isRekeyed(),
-//            rekeyAdminAddress = authAccountAddress,
-//            ledgerDetail = ledgerDetail,
-//            senderAccountAuthTypeAndDetail = senderAccountDetail.account.getAuthTypeAndDetail()
-//        )
-//    }
+    fun sendRekeyToLedgerAccountTransaction(
+        preview: RekeyToLedgerAccountConfirmationPreview,
+        signedTransaction: SignedTransaction
+    ) = flow {
+        emit(preview.copy(isLoading = true))
+        sendSignedTransaction.invoke(signedTransaction, waitForConfirmation = false).use(
+            onSuccess = {
+                emit(
+                    preview.copy(
+                        isLoading = false,
+                        navToRekeyResultInfoFragmentEvent = Event(Unit)
+                    )
+                )
+            },
+            onFailed = { exception, _ ->
+                val title = R.string.error
+                val description = exception.message.orEmpty()
+                emit(preview.copy(showGlobalErrorEvent = Event(title to description), isLoading = false))
+            }
+        )
+    }
 
     private suspend fun createAccountDisplayNameAndDrawablePair(
         accountAddress: String

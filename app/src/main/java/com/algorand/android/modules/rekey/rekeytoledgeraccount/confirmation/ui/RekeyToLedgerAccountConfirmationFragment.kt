@@ -15,11 +15,11 @@ package com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationFragment
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
 import com.algorand.android.modules.rekey.previouslyrekeyedaccountconfirmation.ui.RekeyedAccountRekeyConfirmationBottomSheet.Companion.PREVIOUSLY_REKEYED_ACCOUNT_CONFIRMATION_KEY
+import com.algorand.android.transaction.domain.model.SignedTransaction
 import com.algorand.android.utils.useFragmentResultListenerValue
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -76,8 +76,10 @@ class RekeyToLedgerAccountConfirmationFragment : BaseRekeyConfirmationFragment()
     }
 
     override fun onSendTransaction() {
-//        val rekeyTx = rekeyToLedgerAccountConfirmationViewModel.createRekeyToLedgerAccountTransaction() ?: return
-//        sendTransaction(rekeyTx)
+        createTransaction(
+            address = rekeyToLedgerAccountConfirmationViewModel.accountAddress,
+            authAddress = rekeyToLedgerAccountConfirmationViewModel.selectedLedgerAuthAccount.address
+        )
     }
 
     override fun onTransactionLoading() {
@@ -88,9 +90,7 @@ class RekeyToLedgerAccountConfirmationFragment : BaseRekeyConfirmationFragment()
         rekeyToLedgerAccountConfirmationViewModel.onTransactionSigningFailed()
     }
 
-    override fun onTransactionSigned(signedTransactionDetail: SignedTransactionDetail) {
-//        if (signedTransactionDetail is SignedTransactionDetail.RekeyOperation) {
-//            rekeyToLedgerAccountConfirmationViewModel.sendRekeyTransaction(signedTransactionDetail)
-//        }
+    override fun onTransactionSigned(signedTransaction: SignedTransaction) {
+        rekeyToLedgerAccountConfirmationViewModel.sendRekeyTransaction(signedTransaction)
     }
 }

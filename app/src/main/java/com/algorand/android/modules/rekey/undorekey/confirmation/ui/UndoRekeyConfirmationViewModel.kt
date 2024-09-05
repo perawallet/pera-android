@@ -15,11 +15,12 @@ package com.algorand.android.modules.rekey.undorekey.confirmation.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.foundation.Event
-import com.algorand.android.models.SignedTransactionDetail
+import com.algorand.android.foundation.coroutine.CoroutineExtensions.launchIfInactive
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRekeyConfirmationFields
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.model.UndoRekeyConfirmationPreview
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.usecase.UndoRekeyConfirmationPreviewUseCase
+import com.algorand.android.transaction.domain.model.SignedTransaction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -48,12 +49,6 @@ class UndoRekeyConfirmationViewModel @Inject constructor(
         initPreview()
     }
 
-//    fun createRekeyToStandardAccountTransaction(): TransactionData? {
-//        return undoRekeyConfirmationPreviewUseCase.createUndoRekeyTransaction(
-//            accountAddress = accountAddress
-//        )
-//    }
-
     fun onTransactionSigningFailed() {
         _undoRekeyConfirmationPreviewFlow.update { preview ->
             preview?.copy(isLoading = false)
@@ -66,19 +61,15 @@ class UndoRekeyConfirmationViewModel @Inject constructor(
         }
     }
 
-    fun sendRekeyTransaction(transactionDetail: SignedTransactionDetail) {
-        // TODO
-//        if (sendTransactionJob?.isActive == true) {
-//            return
-//        }
-//        sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
-//            undoRekeyConfirmationPreviewUseCase.sendUndoRekeyTransaction(
-//                transactionDetail = transactionDetail,
-//                preview = _undoRekeyConfirmationPreviewFlow.value
-//            ).collectLatest { preview ->
-//                _undoRekeyConfirmationPreviewFlow.emit(preview)
-//            }
-//        }
+    fun sendRekeyTransaction(signedTransaction: SignedTransaction) {
+        sendTransactionJob = viewModelScope.launchIfInactive(sendTransactionJob) {
+            undoRekeyConfirmationPreviewUseCase.sendSignedTransaction(
+                preview = _undoRekeyConfirmationPreviewFlow.value ?: return@launchIfInactive,
+                signedTransaction = signedTransaction
+            ).collectLatest { transactionSendingResult ->
+                _undoRekeyConfirmationPreviewFlow.value = transactionSendingResult
+            }
+        }
     }
 
     fun onConfirmRekeyClick() {

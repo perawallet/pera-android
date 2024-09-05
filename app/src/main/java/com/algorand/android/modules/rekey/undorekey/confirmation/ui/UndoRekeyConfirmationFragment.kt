@@ -15,11 +15,11 @@ package com.algorand.android.modules.rekey.undorekey.confirmation.ui
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationFragment
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
 import com.algorand.android.modules.rekey.undorekey.previousrekeyundoneconfirmation.ui.PreviousRekeyUndoneConfirmationBottomSheet.Companion.PREVIOUS_REKEY_UNDONE_CONFIRMATION_KEY
+import com.algorand.android.transaction.domain.model.SignedTransaction
 import com.algorand.android.utils.useFragmentResultListenerValue
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -76,8 +76,10 @@ class UndoRekeyConfirmationFragment : BaseRekeyConfirmationFragment() {
     }
 
     override fun onSendTransaction() {
-//        val rekeyTx = undoRekeyConfirmationViewModel.createRekeyToStandardAccountTransaction() ?: return
-//        sendTransaction(rekeyTx)
+        createTransaction(
+            address = undoRekeyConfirmationViewModel.accountAddress,
+            authAddress = undoRekeyConfirmationViewModel.accountAddress
+        )
     }
 
     override fun onTransactionLoading() {
@@ -88,12 +90,7 @@ class UndoRekeyConfirmationFragment : BaseRekeyConfirmationFragment() {
         undoRekeyConfirmationViewModel.onTransactionSigningFailed()
     }
 
-    override fun onTransactionSigned(signedTransactionDetail: SignedTransactionDetail) {
-        if (
-            signedTransactionDetail is SignedTransactionDetail.RekeyToStandardAccountOperation ||
-            signedTransactionDetail is SignedTransactionDetail.RekeyOperation
-        ) {
-            undoRekeyConfirmationViewModel.sendRekeyTransaction(signedTransactionDetail)
-        }
+    override fun onTransactionSigned(signedTransaction: SignedTransaction) {
+        undoRekeyConfirmationViewModel.sendRekeyTransaction(signedTransaction)
     }
 }

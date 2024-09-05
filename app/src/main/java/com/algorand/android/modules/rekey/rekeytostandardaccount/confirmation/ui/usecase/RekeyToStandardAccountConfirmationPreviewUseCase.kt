@@ -19,10 +19,13 @@ import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.accountinfo.component.domain.model.AccountInformation
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.foundation.Event
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.decider.RekeyToStandardAccountPreviewDecider
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.mapper.RekeyToStandardAccountConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
+import com.algorand.android.transaction.domain.model.SignedTransaction
 import com.algorand.android.transaction.domain.usecase.CalculateRekeyFee
+import com.algorand.android.transaction.domain.usecase.SendSignedTransaction
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
@@ -35,47 +38,32 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
     private val calculateRekeyFee: CalculateRekeyFee,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-    private val getAccountInformation: GetAccountInformation
+    private val getAccountInformation: GetAccountInformation,
+    private val sendSignedTransaction: SendSignedTransaction
 ) {
 
-//    fun sendRekeyToStandardAccountTransaction(
-//        preview: RekeyToStandardAccountConfirmationPreview,
-//        transactionDetail: SignedTransactionDetail.RekeyToStandardAccountOperation
-//    ) = flow {
-//        emit(preview.copy(isLoading = true))
-//        sendSignedTransactionUseCase.invoke(transactionDetail).useSuspended(
-//            onSuccess = {
-//                emit(
-//                    preview.copy(
-//                        isLoading = false,
-//                        navToRekeyResultInfoFragmentEvent = Event(Unit)
-//                    )
-//                )
-//            },
-//            onFailed = {
-//                val title = R.string.error
-//                val description = it.exception?.message.orEmpty()
-//                emit(preview.copy(showGlobalErrorEvent = Event(title to description), isLoading = false))
-//            }
-//        )
-//    }
-//
-//    fun createRekeyToStandardAccountTransaction(
-//        accountAddress: String,
-//        authAccountAddress: String
-//    ): TransactionData.RekeyToStandardAccount? {
-//        val senderAccountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
-//        return TransactionData.RekeyToStandardAccount(
-//            senderAccountAddress = senderAccountDetail.account.address,
-//            senderAccountDetail = senderAccountDetail.account.detail,
-//            senderAccountType = senderAccountDetail.account.type,
-//            senderAuthAddress = senderAccountDetail.accountInformation.rekeyAdminAddress,
-//            senderAccountName = senderAccountDetail.account.name,
-//            isSenderRekeyedToAnotherAccount = senderAccountDetail.accountInformation.isRekeyed(),
-//            rekeyAdminAddress = authAccountAddress,
-//            senderAccountAuthTypeAndDetail = senderAccountDetail.account.getAuthTypeAndDetail()
-//        )
-//    }
+    fun sendSignedTransaction(
+        preview: RekeyToStandardAccountConfirmationPreview,
+        signedTransaction: SignedTransaction
+    ) = flow<RekeyToStandardAccountConfirmationPreview> {
+        emit(preview.copy(isLoading = true))
+
+        sendSignedTransaction.invoke(signedTransaction, waitForConfirmation = false).use(
+            onSuccess = {
+                emit(
+                    preview.copy(
+                        isLoading = false,
+                        navToRekeyResultInfoFragmentEvent = Event(Unit)
+                    )
+                )
+            },
+            onFailed = { exception, _ ->
+                val title = R.string.error
+                val description = exception.message.orEmpty()
+                emit(preview.copy(showGlobalErrorEvent = Event(title to description), isLoading = false))
+            }
+        )
+    }
 
     suspend fun getInitialRekeyToStandardAccountConfirmationPreview(
         accountAddress: String,

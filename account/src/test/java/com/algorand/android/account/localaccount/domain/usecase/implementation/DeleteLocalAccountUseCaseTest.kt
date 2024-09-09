@@ -1,7 +1,6 @@
-package com.algorand.android.account.localaccount.domain.usecase
+package com.algorand.android.account.localaccount.domain.usecase.implementation
 
 import com.algorand.android.account.localaccount.domain.repository.*
-import com.algorand.android.account.localaccount.domain.usecase.implementation.DeleteLocalAccountUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.mockito.kotlin.*

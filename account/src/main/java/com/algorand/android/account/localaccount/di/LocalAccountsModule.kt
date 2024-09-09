@@ -31,6 +31,7 @@ import com.algorand.android.account.localaccount.domain.repository.NoAuthAccount
 import com.algorand.android.account.localaccount.domain.usecase.GetLedgerBleAccount
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.android.account.localaccount.domain.usecase.implementation.GetLocalAccountCountFlowUseCase
+import com.algorand.android.encryption.Base64Manager
 import com.algorand.android.encryption.EncryptionManager
 import com.algorand.android.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
 import com.algorand.android.encryption.di.TINK_ENCRYPTION_MANAGER
@@ -93,9 +94,10 @@ internal object LocalAccountsModule {
     @Singleton
     fun provideAlgo25EntityMapper(
         @Named(DETERMINISTIC_ENCRYPTION_MANAGER) deterministicEncryptionManager: EncryptionManager,
-        @Named(TINK_ENCRYPTION_MANAGER) nondeterministicEncryptionManager: EncryptionManager
+        @Named(TINK_ENCRYPTION_MANAGER) nondeterministicEncryptionManager: EncryptionManager,
+        base64Manager: Base64Manager
     ): Algo25EntityMapper {
-        return Algo25EntityMapperImpl(deterministicEncryptionManager, nondeterministicEncryptionManager)
+        return Algo25EntityMapperImpl(deterministicEncryptionManager, nondeterministicEncryptionManager, base64Manager)
     }
 
     @Provides
@@ -126,9 +128,10 @@ internal object LocalAccountsModule {
     @Singleton
     fun provideAlgo25Mapper(
         @Named(DETERMINISTIC_ENCRYPTION_MANAGER) deterministicEncryptionManager: EncryptionManager,
-        @Named(TINK_ENCRYPTION_MANAGER) nondeterministicEncryptionManager: EncryptionManager
+        @Named(TINK_ENCRYPTION_MANAGER) nondeterministicEncryptionManager: EncryptionManager,
+        base64Manager: Base64Manager
     ): Algo25Mapper {
-        return Algo25MapperImpl(deterministicEncryptionManager, nondeterministicEncryptionManager)
+        return Algo25MapperImpl(deterministicEncryptionManager, nondeterministicEncryptionManager, base64Manager)
     }
 
     @Provides

@@ -1,6 +1,6 @@
 package com.algorand.android.encryption
 
-internal interface Base64Manager {
+interface Base64Manager {
 
     fun encode(byteArray: ByteArray): String
 

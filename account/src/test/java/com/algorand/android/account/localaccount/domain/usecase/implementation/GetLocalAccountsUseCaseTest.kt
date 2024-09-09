@@ -1,8 +1,7 @@
-package com.algorand.android.account.localaccount.domain.usecase
+package com.algorand.android.account.localaccount.domain.usecase.implementation
 
 import com.algorand.android.account.localaccount.domain.model.LocalAccount
 import com.algorand.android.account.localaccount.domain.repository.*
-import com.algorand.android.account.localaccount.domain.usecase.implementation.GetLocalAccountsUseCase
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

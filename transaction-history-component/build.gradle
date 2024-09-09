@@ -36,7 +36,7 @@ dependencies {
     implementation project(path: ':network-utils')
     implementation project(path: ':pagination-component')
     implementation project(path: ':date-component')
-    implementation project(path: ':account')
+    implementation project(path: ':account-component')
     implementation project(path: ':assetdetail-component')
     implementation project(path: ':foundation')
 

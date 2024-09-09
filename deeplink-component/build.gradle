@@ -43,7 +43,7 @@ dependencies {
     implementation project(path: ':assetdetail-component')
     implementation project(path: ':accountinfo-component')
     implementation project(path: ':account-core-component')
-    implementation project(path: ':account')
+    implementation project(path: ':account-component')
     implementation project(path: ':foundation')
     implementation project(path: ':asset-utils')
 

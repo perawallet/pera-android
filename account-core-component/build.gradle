@@ -39,7 +39,7 @@ android {
 dependencies {
 
     implementation project(path: ':assetdetail-component')
-    implementation project(path: ':account')
+    implementation project(path: ':account-component')
     implementation project(path: ':accountinfo-component')
     implementation project(path: ':parity')
     implementation project(path: ':foundation')

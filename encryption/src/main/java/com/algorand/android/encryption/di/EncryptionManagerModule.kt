@@ -31,8 +31,7 @@ internal object EncryptionManagerModule {
 
     @Provides
     @Singleton
-    internal fun provideBase64Manager(
+    fun provideBase64Manager(
         base64ManagerImpl: Base64ManagerImpl
     ): Base64Manager = base64ManagerImpl
-
 }

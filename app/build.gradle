@@ -166,7 +166,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation project(path: ':account')
+    implementation project(path: ':account-component')
     implementation project(path: ':nameservice-component')
     implementation project(path: ':transaction-history-component')
     implementation project(path: ':account-core-component')

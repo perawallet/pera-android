@@ -38,7 +38,7 @@ android {
 
 dependencies {
 
-    implementation project(path: ':account')
+    implementation project(path: ':account-component')
     implementation project(path: ':shared-db')
     implementation project(path: ':encryption')
     implementation project(path: ':caching')

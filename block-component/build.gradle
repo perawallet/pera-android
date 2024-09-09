@@ -42,7 +42,7 @@ dependencies {
     implementation project(path: ':foundation')
     implementation project(path: ':caching')
     implementation project(path: ':account-component')
-    implementation project(path: ':accountinfo-component')
+    implementation project(path: ':account-info-component')
 
     implementation deps.hipoexceptions
 

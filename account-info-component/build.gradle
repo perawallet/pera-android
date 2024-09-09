@@ -2,23 +2,28 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
-    namespace 'com.algorand.android.parity.component'
+    namespace 'com.algorand.android.accountinfo.component'
     compileSdkVersion targets.compileSdkVersion
 
     defaultConfig {
         minSdkVersion targets.minSdkVersion
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
         release {
+            multiDexEnabled true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            multiDexEnabled true
+            minifyEnabled false
         }
     }
     compileOptions {
@@ -33,24 +38,16 @@ android {
 
 dependencies {
 
-    implementation project(path: ':caching')
-    implementation project(path: ':network-utils')
-    implementation project(path: ':currency')
-    implementation project(path: ':test-utils')
+    implementation project(':shared-db')
+    implementation project(':encryption-component')
     implementation project(path: ':foundation')
-    implementation project(path: ':formatting-component')
-
-    implementation deps.hilt.core
-    kapt deps.hilt.android_compiler
-    kapt deps.hilt.compiler
+    implementation project(path: ':network-utils')
 
     implementation deps.retrofit.core
     implementation deps.retrofit.converter_gson
     implementation deps.retrofit.logging_interceptor
 
-    implementation deps.hipoexceptions
-
-    testImplementation deps.junit
-    testImplementation deps.mockito
-    testImplementation deps.kotlinx.coroutines_test
+    implementation deps.hilt.core
+    kapt deps.hilt.android_compiler
+    kapt deps.hilt.compiler
 }

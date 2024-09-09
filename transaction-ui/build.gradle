@@ -41,10 +41,10 @@ dependencies {
 
     implementation project(path: ':foundation')
     implementation project(path: ':transaction-component')
-    implementation project(path: ':accountcore-ui')
+    implementation project(path: ':account-core-ui')
     implementation project(path: ':contacts-component')
-    implementation project(path: ':assetdetail-component')
-    implementation project(path: ':parity')
+    implementation project(path: ':asset-detail-component')
+    implementation project(path: ':parity-component')
     implementation project(path: ':account-core-component')
     implementation project(path: ':designsystem')
 

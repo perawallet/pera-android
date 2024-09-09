@@ -38,18 +38,18 @@ android {
 
 dependencies {
 
-    implementation project(path: ':assetdetail-component')
+    implementation project(path: ':asset-detail-component')
     implementation project(path: ':account-component')
-    implementation project(path: ':accountinfo-component')
-    implementation project(path: ':parity')
+    implementation project(path: ':account-info-component')
+    implementation project(path: ':parity-component')
     implementation project(path: ':foundation')
     implementation project(path: ':nameservice-component')
-    implementation project(path: ':custominfo-component')
+    implementation project(path: ':custom-info-component')
     implementation project(path: ':designsystem')
     implementation project(path: ':test-utils')
-    implementation project(path: ':currency')
+    implementation project(path: ':currency-component')
     implementation project(path: ':asb-component')
-    implementation project(path: ':accountsorting-component')
+    implementation project(path: ':account-sorting-component')
     implementation project(path: ':formatting-component')
     implementation project(path: ':asset-utils')
 

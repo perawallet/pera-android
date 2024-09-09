@@ -39,8 +39,8 @@ android {
 dependencies {
 
     implementation project(path: ':test-utils')
-    implementation project(path: ':encryption')
-    implementation project(path: ':parity')
+    implementation project(path: ':encryption-component')
+    implementation project(path: ':parity-component')
     implementation project(path: ':foundation')
     implementation project(path: ':shared-db')
 

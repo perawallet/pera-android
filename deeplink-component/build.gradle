@@ -40,8 +40,8 @@ android {
 dependencies {
 
     implementation project(path: ':transaction-component')
-    implementation project(path: ':assetdetail-component')
-    implementation project(path: ':accountinfo-component')
+    implementation project(path: ':asset-detail-component')
+    implementation project(path: ':account-info-component')
     implementation project(path: ':account-core-component')
     implementation project(path: ':account-component')
     implementation project(path: ':foundation')

@@ -2,10 +2,11 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id "kotlin-parcelize"
 }
 
 android {
-    namespace 'com.algorand.android.accountsorting.component'
+    namespace 'com.algorand.android.assetdetailui'
     compileSdkVersion targets.compileSdkVersion
 
     defaultConfig {
@@ -38,10 +39,16 @@ android {
 
 dependencies {
 
-    implementation project(path: ':account-component')
-    implementation project(path: ':shared-db')
-    implementation project(path: ':encryption')
-    implementation project(path: ':caching')
+    implementation project(path: ':asset-detail-component')
+    implementation project(path: ':foundation')
+    implementation project(path: ':account-core-component')
+    implementation project(path: ':account-core-ui')
+    implementation project(path: ':drawable-ui')
+    implementation project(path: ':swap-component')
+    implementation project(path: ':account-info-component')
+    implementation project(path: ':designsystem')
+    implementation project(path: ':parity-component')
+    implementation project(path: ':formatting-component')
 
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler

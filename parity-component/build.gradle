@@ -2,11 +2,10 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
-    id "kotlin-parcelize"
 }
 
 android {
-    namespace 'com.algorand.android.assetdetailui'
+    namespace 'com.algorand.android.parity.component'
     compileSdkVersion targets.compileSdkVersion
 
     defaultConfig {
@@ -18,13 +17,8 @@ android {
 
     buildTypes {
         release {
-            multiDexEnabled true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        debug {
-            multiDexEnabled true
-            minifyEnabled false
         }
     }
     compileOptions {
@@ -39,18 +33,24 @@ android {
 
 dependencies {
 
-    implementation project(path: ':assetdetail-component')
+    implementation project(path: ':caching')
+    implementation project(path: ':network-utils')
+    implementation project(path: ':currency-component')
+    implementation project(path: ':test-utils')
     implementation project(path: ':foundation')
-    implementation project(path: ':account-core-component')
-    implementation project(path: ':accountcore-ui')
-    implementation project(path: ':drawable-ui')
-    implementation project(path: ':swap-component')
-    implementation project(path: ':accountinfo-component')
-    implementation project(path: ':designsystem')
-    implementation project(path: ':parity')
     implementation project(path: ':formatting-component')
 
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler
     kapt deps.hilt.compiler
+
+    implementation deps.retrofit.core
+    implementation deps.retrofit.converter_gson
+    implementation deps.retrofit.logging_interceptor
+
+    implementation deps.hipoexceptions
+
+    testImplementation deps.junit
+    testImplementation deps.mockito
+    testImplementation deps.kotlinx.coroutines_test
 }

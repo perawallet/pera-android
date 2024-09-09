@@ -2,11 +2,10 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
-    id 'kotlin-parcelize'
 }
 
 android {
-    namespace 'com.algorand.android.accountinfo.component'
+    namespace 'com.algorand.android.custominfo.component'
     compileSdkVersion targets.compileSdkVersion
 
     defaultConfig {
@@ -37,15 +36,12 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':shared-db')
+    implementation project(path: ':encryption-component')
 
-    implementation project(':shared-db')
-    implementation project(':encryption')
-    implementation project(path: ':foundation')
-    implementation project(path: ':network-utils')
-
-    implementation deps.retrofit.core
-    implementation deps.retrofit.converter_gson
-    implementation deps.retrofit.logging_interceptor
+    implementation deps.room.runtime
+    implementation deps.room.ktx
+    kapt deps.room.compiler
 
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler

@@ -39,17 +39,17 @@ android {
 
 dependencies {
 
-    implementation project(path: ':accountinfo-component')
+    implementation project(path: ':account-info-component')
     implementation project(path: ':account-core-component')
-    implementation project(path: ':accountcore-ui')
+    implementation project(path: ':account-core-ui')
     implementation project(path: ':swap-component')
     implementation project(path: ':foundation')
     implementation project(path: ':drawable-ui')
     implementation project(path: ':formatting-component')
-    implementation project(path: ':assetdetail-component')
-    implementation project(path: ':parity')
+    implementation project(path: ':asset-detail-component')
+    implementation project(path: ':parity-component')
     implementation project(path: ':designsystem')
-    implementation project(path: ':currency')
+    implementation project(path: ':currency-component')
     implementation project(path: ':designsystem')
     implementation project(path: ':asset-utils')
     implementation project(path: ':webview')

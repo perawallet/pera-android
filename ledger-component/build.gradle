@@ -40,7 +40,7 @@ dependencies {
 
     implementation project(path: ':foundation')
     implementation project(path: ':algosdk-component')
-    implementation project(path: ':accountinfo-component')
+    implementation project(path: ':account-info-component')
     implementation project(path: ':account-core-component')
 
     implementation deps.ble

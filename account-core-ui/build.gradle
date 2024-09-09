@@ -2,14 +2,16 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id "kotlin-parcelize"
 }
 
 android {
-    namespace 'com.algorand.android.custominfo.component'
+    namespace 'com.algorand.android.accountcore.ui'
     compileSdkVersion targets.compileSdkVersion
 
     defaultConfig {
         minSdkVersion targets.minSdkVersion
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -36,12 +38,22 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':shared-db')
-    implementation project(path: ':encryption')
 
-    implementation deps.room.runtime
-    implementation deps.room.ktx
-    kapt deps.room.compiler
+    implementation project(path: ':account-core-component')
+    implementation project(path: ':designsystem')
+    implementation project(path: ':account-sorting-component')
+    implementation project(path: ':custom-info-component')
+    implementation project(path: ':nameservice-component')
+    implementation project(path: ':asset-detail-component')
+    implementation project(path: ':account-info-component')
+    implementation project(path: ':asb-component')
+    implementation project(path: ':foundation')
+    implementation project(path: ':drawable-ui')
+    implementation project(path: ':formatting-component')
+    implementation project(path: ':parity-component')
+    implementation project(path: ':contacts-component')
+
+    implementation deps.support.appcompat
 
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler

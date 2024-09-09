@@ -39,8 +39,8 @@ android {
 dependencies {
 
     implementation project(path: ':caching')
-    implementation project(path: ':custominfo-component')
-    implementation project(path: ':encryption')
+    implementation project(path: ':custom-info-component')
+    implementation project(path: ':encryption-component')
     implementation project(path: ':date-component')
     implementation project(path: ':shared-db')
     implementation project(path: ':algosdk-component')

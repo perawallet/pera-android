@@ -2,11 +2,11 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
-    id "kotlin-parcelize"
+    id 'kotlin-parcelize'
 }
 
 android {
-    namespace 'com.algorand.android.assetaction'
+    namespace 'com.algorand.android.transactionhistoryui'
     compileSdkVersion targets.compileSdkVersion
 
     defaultConfig {
@@ -39,15 +39,20 @@ android {
 
 dependencies {
 
-    implementation project(path: ':assetdetail-component')
-    implementation project(path: ':accountcore-ui')
-    implementation project(path: ':foundation')
-    implementation project(path: ':transaction-component')
+    implementation project(path: ':transaction-history-component')
+    implementation project(path: ':designsystem')
+    implementation project(path: ':asset-detail-component')
+    implementation project(path: ':account-core-ui')
     implementation project(path: ':formatting-component')
+    implementation project(path: ':foundation')
+    implementation project(path: ':account-core-component')
+    implementation project(path: ':date-ui')
+    implementation project(path: ':transaction-component')
 
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler
     kapt deps.hilt.compiler
 
-    implementation deps.lifecycle.viewmodel
+    implementation deps.android.paging
+
 }

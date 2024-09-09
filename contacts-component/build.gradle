@@ -39,7 +39,7 @@ android {
 dependencies {
 
     implementation project(path: ':shared-db')
-    implementation project(path: ':encryption')
+    implementation project(path: ':encryption-component')
 
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler

@@ -39,7 +39,7 @@ android {
 dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation project(path: ':currency')
+    implementation project(path: ':currency-component')
     implementation project(path: ':asset-utils')
 
     implementation deps.hilt.core

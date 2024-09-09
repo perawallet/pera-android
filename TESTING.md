@@ -26,8 +26,16 @@ This helps maintain a clear relationship between the test classes and the classe
 ## Test Naming Conventions
 
 - **Unit Tests**: Follow the pattern `EXPECT expected result WHEN condition`.
+  - `EXPECT account with given id WHEN exists in DB` 
+- **Class names**: Follow the pattern `ClassNameTest`.
+  - If the class being tested is `AccountRepository`, then test class should be `AccountRepositoryTest`.
+- **Variable name**: Use `sut` (System Under Test) as the variable name for the class being tested.
+  - `private val sut = AccountRepositoryImpl()`
 
-```fun `EXPECT account with given id WHEN exists in DB` ```
+
+## Creating Test Arguments
+
+When creating test arguments, use `fixture` to generate test objects, ensuring consistency and reducing redundancy in your test setups.
 
 
 ## Writing Effective Tests
@@ -53,6 +61,46 @@ This helps maintain a clear relationship between the test classes and the classe
 - Avoid testing implementation details; focus on behavior and outcomes.
 - Refactor tests to remove duplication and improve readability.
 - Regularly review and update tests to reflect changes in the codebase.
+
+## Example Test
+
+```kotlin
+
+interface AccountRepository {
+    fun getAccount(): Account
+}
+
+interface AccountApiService {
+    fun getAccount(): AccountDto
+}
+
+interface AccountMapper {
+    fun map(accountDto: AccountDto): Account
+}
+
+class AccountRepositoryImplTest {
+    
+    private val accountApiService: AccountApiService = mock()
+    private val accountMapper: AccountMapper = mock()
+    
+    private val sut = AccountRepositoryImpl(accountApiService, accountMapper)
+    
+    @Test
+    fun `EXPECT account WHEN response is success`() {
+        whenever(accountApiService.getAccount()).thenReturn(ACCOUNT_DTO)
+        whenever(accountMapper.map(ACCOUNT_DTO)).thenReturn(ACCOUNT)
+        
+        val result = sut.getAccount()
+        
+        assertEquals(ACCOUNT, result)
+    }
+    
+    private companion object {
+        private val ACCOUNT = fixtureOf<Account>()
+        private val ACCOUNT_DTO = fixtureOf<AccountDto>()
+    }
+}
+```
 
 ## Contributing
 

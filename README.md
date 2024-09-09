@@ -19,3 +19,7 @@ And if you need support, our support knowledgebase and contact channels are here
 
 ## Building
 For instructions on how to build the applications in this repo, see [BUILDING.md](./BUILDING.md).
+
+## Testing
+For instructions on how to build the applications in this repo, see [TESTING.md](./TESTING.md).
+This documentation outlines the testing rules and best practices for Pera Wallet, including guidelines on package structure, naming conventions and libraries we use"

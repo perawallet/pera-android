@@ -21,7 +21,9 @@ import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.PassphraseValidationGroupView
 import com.algorand.android.databinding.FragmentPassphraseValidationBinding
-import com.algorand.android.models.*
+import com.algorand.android.models.CreateAccount
+import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.register.PassphraseValidationFragmentDirections.Companion.actionPassphraseValidationFragmentToPassphraseVerifiedInfoFragment
 import com.algorand.android.utils.singleVibrate
 import com.algorand.android.utils.viewbinding.viewBinding

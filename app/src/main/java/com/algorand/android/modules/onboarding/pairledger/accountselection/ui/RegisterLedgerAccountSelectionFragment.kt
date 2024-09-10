@@ -17,12 +17,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.navGraphViewModels
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.modules.rekey.model.AccountSelectionListItem
-import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.BaseLedgerAccountSelectionFragment
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.BaseLedgerAccountSelectionViewModel
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.adapter.LedgerAccountSelectionAdapter
 import com.algorand.android.modules.onboarding.pairledger.PairLedgerNavigationViewModel
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.modules.rekey.model.SelectedLedgerAccounts
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.google.android.material.button.MaterialButton

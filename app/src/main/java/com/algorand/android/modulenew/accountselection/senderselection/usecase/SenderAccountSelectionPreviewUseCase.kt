@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.module_new.accountselection.senderselection.usecase
+package com.algorand.android.modulenew.accountselection.senderselection.usecase
 
 import com.algorand.android.accountcore.ui.accountselection.model.SenderAccountSelectionPreview
 import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction

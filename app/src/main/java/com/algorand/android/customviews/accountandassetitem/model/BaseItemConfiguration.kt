@@ -56,6 +56,5 @@ sealed class BaseItemConfiguration {
             override val actionButtonConfiguration: ButtonConfiguration? = null,
             val isPending: Boolean? = null
         ) : BaseAssetItemConfiguration()
-
     }
 }

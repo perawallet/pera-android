@@ -19,6 +19,7 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import com.algorand.android.R
 import com.algorand.android.assetaction.AssetActionViewModel
+import com.algorand.android.assetaction.model.AssetActionAccountDetail
 import com.algorand.android.assetaction.model.AssetActionInformation
 import com.algorand.android.assetaction.model.AssetActionPreview
 import com.algorand.android.core.BaseBottomSheet
@@ -103,7 +104,7 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
         }
     }
 
-    private fun initAccountDetailTextView(assetActionAccountDetail: com.algorand.android.assetaction.model.AssetActionAccountDetail?) {
+    private fun initAccountDetailTextView(assetActionAccountDetail: AssetActionAccountDetail?) {
         if (assetActionAccountDetail == null) return
         binding.accountTextView.apply {
             text = assetActionAccountDetail.displayName

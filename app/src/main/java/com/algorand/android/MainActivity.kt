@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-@file:Suppress("TooManyFunctions") // TODO: We should remove this after function count decrease under 25
+@file:Suppress("TooManyFunctions", "LargeClass")
 
 /*
  * Copyright 2022 Pera Wallet, LDA
@@ -358,15 +358,17 @@ class MainActivity :
         }
     }
 
-    private val removeAssetCreateTransactionResultCollector: suspend (com.algorand.android.foundation.Event<CreateTransactionResult>?) -> Unit =
-        {
-            it?.consume()?.let { result -> handleRemoveAssetCreateTransactionResult(result) }
-        }
+    private val removeAssetCreateTransactionResultCollector: suspend (
+        com.algorand.android.foundation.Event<CreateTransactionResult>?
+    ) -> Unit = {
+        it?.consume()?.let { result -> handleRemoveAssetCreateTransactionResult(result) }
+    }
 
-    private val addAssetCreateTransactionResultCollector: suspend (com.algorand.android.foundation.Event<CreateTransactionResult>?) -> Unit =
-        {
-            it?.consume()?.let { result -> handleAddAssetCreateTransactionResult(result) }
-        }
+    private val addAssetCreateTransactionResultCollector: suspend (
+        com.algorand.android.foundation.Event<CreateTransactionResult>?
+    ) -> Unit = {
+        it?.consume()?.let { result -> handleAddAssetCreateTransactionResult(result) }
+    }
 
     private val alertDialogDelegationListener = AlertDialogDelegationImpl.Listener { deepLinkUri ->
         handleDeepLink(deepLinkUri)

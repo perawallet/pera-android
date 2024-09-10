@@ -11,12 +11,24 @@
  *   -->
  */
 
-package com.algorand.android.module_new.walletconnect
+package com.algorand.android.modulenew.walletconnect
 
-import com.algorand.android.models.WalletConnectSignResult
-import com.algorand.android.transaction.domain.sign.model.SignTransactionResult
+import androidx.lifecycle.Lifecycle
+import com.algorand.android.foundation.Event
+import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
+import kotlinx.coroutines.flow.Flow
 
-internal interface SignWalletConnectTransactionResultMapper {
-    operator fun invoke(result: SignTransactionResult): SignWalletConnectTransactionResult?
-    operator fun invoke(error: WalletConnectSignResult.Error): SignWalletConnectTransactionResult
+interface SignWalletConnectTransactionManager {
+
+    val signWalletConnectTransactionResultFlow: Flow<Event<SignWalletConnectTransactionResult>?>
+
+    fun setup(lifecycle: Lifecycle)
+
+    fun sign(transaction: WalletConnectTransaction)
+
+    fun stopAllResources()
+
+    fun clearCachedTransactions()
+
+    fun signCachedTransaction()
 }

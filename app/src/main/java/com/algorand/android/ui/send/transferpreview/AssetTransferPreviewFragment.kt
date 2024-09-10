@@ -109,14 +109,6 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
         }
 
         override fun onSignTransactionFinished(signedTransaction: SignedTransaction) {
-//            when (transaction) {
-//                is Transaction.AssetTransaction, is Transaction.AlgoTransaction -> {
-//
-//                }
-//                else -> {
-//                    sendErrorLog("Unhandled else case in ReceiverAccountSelectionFragment.transactionFragmentListener")
-//                }
-//            }
             assetTransferPreviewViewModel.sendSignedTxn(signedTransaction)
         }
     }

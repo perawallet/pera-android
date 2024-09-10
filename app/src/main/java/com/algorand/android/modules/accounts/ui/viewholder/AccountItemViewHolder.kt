@@ -12,7 +12,9 @@
 
 package com.algorand.android.modules.accounts.ui.viewholder
 
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.algorand.android.R
 import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.databinding.ItemAccountBinding

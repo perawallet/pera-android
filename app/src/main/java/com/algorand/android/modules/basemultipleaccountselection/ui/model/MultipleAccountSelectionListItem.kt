@@ -12,10 +12,13 @@
 
 package com.algorand.android.modules.basemultipleaccountselection.ui.model
 
-import androidx.annotation.*
-import com.algorand.android.accountcore.ui.model.*
+import androidx.annotation.PluralsRes
+import androidx.annotation.StringRes
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.customviews.TriStatesCheckBox
-import com.algorand.android.models.*
+import com.algorand.android.models.AnnotatedString
+import com.algorand.android.models.RecyclerListItem
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 
 abstract class MultipleAccountSelectionListItem : RecyclerListItem {

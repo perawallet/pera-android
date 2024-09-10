@@ -26,7 +26,10 @@ import com.algorand.android.customviews.passphraseinput.model.PassphraseInputCon
 import com.algorand.android.customviews.passphraseinput.model.PassphraseInputGroupConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentRecoverWithPassphraseBinding
-import com.algorand.android.models.*
+import com.algorand.android.models.AnnotatedString
+import com.algorand.android.models.CreateAccount
+import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.onboarding.recoverypassphrase.options.ui.RecoverOptionsBottomSheet
 import com.algorand.android.modules.onboarding.recoverypassphrase.options.ui.RecoverOptionsBottomSheet.Companion.RESULT_KEY
 import com.algorand.android.utils.Event

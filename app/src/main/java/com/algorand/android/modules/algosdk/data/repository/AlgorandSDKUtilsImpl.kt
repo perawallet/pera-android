@@ -13,14 +13,9 @@
 package com.algorand.android.modules.algosdk.data.repository
 
 import com.algorand.algosdk.sdk.Sdk
-import com.algorand.algosdk.v2.client.Utils
-import com.algorand.algosdk.v2.client.common.AlgodClient
-import com.algorand.algosdk.v2.client.model.PendingTransactionResponse
 import com.algorand.android.modules.algosdk.data.mapper.AlgorandAddressDTOMapper
-import com.algorand.android.modules.algosdk.data.mapper.PendingTransactionResponseDTOMapper
 import com.algorand.android.modules.algosdk.data.mapper.rawtransaction.RawTransactionDTOMapper
 import com.algorand.android.modules.algosdk.data.model.AlgorandAddressDTO
-import com.algorand.android.modules.algosdk.data.model.PendingTransactionResponseDTO
 import com.algorand.android.modules.algosdk.data.model.rawtransaction.RawTransactionPayload
 import com.algorand.android.modules.algosdk.data.service.AlgorandSDKUtils
 import com.algorand.android.modules.algosdk.domain.model.dto.RawTransactionDTO
@@ -31,20 +26,10 @@ import javax.inject.Inject
 
 // Provided by hilt
 internal class AlgorandSDKUtilsImpl @Inject constructor(
-    private val pendingTransactionResponseDTOMapper: PendingTransactionResponseDTOMapper,
     private val rawTransactionDTOMapper: RawTransactionDTOMapper,
     private val algorandAddressDTOMapper: AlgorandAddressDTOMapper,
-//    private val algodClient: AlgodClient?,
     private val gson: Gson
 ) : AlgorandSDKUtils {
-
-    @Throws(Exception::class)
-    override suspend fun waitForConfirmation(txnId: String, maxRoundToWait: Int): PendingTransactionResponseDTO {
-//        val pendingTransactionResponse = Utils.waitForConfirmation(algodClient, txnId, maxRoundToWait)
-        return pendingTransactionResponseDTOMapper.mapToPendingTransactionResponseDTO(
-            PendingTransactionResponse()
-        )
-    }
 
     override fun parseRawTransaction(txnByteArray: ByteArray): RawTransactionDTO? {
         val transactionJson = Sdk.transactionMsgpackToJson(txnByteArray)

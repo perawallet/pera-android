@@ -15,12 +15,16 @@ package com.algorand.android.nft.mapper
 import androidx.annotation.StringRes
 import com.algorand.android.assetdetailui.detail.nftprofile.mapper.CollectibleAmountFormatter
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.android.core.component.domain.model.BaseAccountAssetData.PendingAssetData
 import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.modules.accountdetail.assets.ui.decider.NFTIndicatorDrawableDecider
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
 import com.algorand.android.nft.domain.decider.BaseCollectibleListItemItemTypeDecider
-import com.algorand.android.nft.ui.model.*
-import com.algorand.android.utils.*
+import com.algorand.android.nft.ui.model.BaseCollectibleListData
+import com.algorand.android.nft.ui.model.BaseCollectibleListItem
+import com.algorand.android.nft.ui.model.CollectiblesListingPreview
+import com.algorand.android.utils.AssetName
+import com.algorand.android.utils.Event
 import javax.inject.Inject
 
 class CollectibleListingItemMapper @Inject constructor(
@@ -88,7 +92,7 @@ class CollectibleListingItemMapper @Inject constructor(
     }
 
     suspend fun mapToSimplePendingNFTItem(
-        collectible: com.algorand.android.core.component.domain.model.BaseAccountAssetData.PendingAssetData.BasePendingCollectibleData,
+        collectible: PendingAssetData.BasePendingCollectibleData,
         optedInAccountAddress: String,
         nftListingViewType: NFTListingViewType
     ): BaseCollectibleListItem.BaseCollectibleItem.BasePendingNFTItem.SimplePendingNFTItem {

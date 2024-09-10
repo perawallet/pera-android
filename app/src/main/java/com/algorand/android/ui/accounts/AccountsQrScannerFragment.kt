@@ -34,9 +34,8 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
         val assetAction = AssetAction(assetId)
         return true.also {
             nav(
-                AccountsQrScannerFragmentDirections.actionAccountsQrScannerFragmentToUnsupportedAddAssetTryLaterBottomSheet(
-                    assetAction
-                )
+                AccountsQrScannerFragmentDirections
+                    .actionAccountsQrScannerFragmentToUnsupportedAddAssetTryLaterBottomSheet(assetAction)
             )
         }
     }
@@ -49,7 +48,10 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
         return true.also {
             val assetTransaction =
                 accountsQrScannerViewModel.getAssetTransaction(deepLink, receiverAddress, receiverName)
-            nav(AccountsQrScannerFragmentDirections.actionAccountsQrScannerFragmentToSendAlgoNavigation(assetTransaction))
+            nav(
+                AccountsQrScannerFragmentDirections
+                    .actionAccountsQrScannerFragmentToSendAlgoNavigation(assetTransaction)
+            )
         }
     }
 
@@ -57,10 +59,8 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
     override fun onAccountAddressDeeplink(accountAddress: String, label: String?): Boolean {
         return true.also {
             nav(
-                AccountsQrScannerFragmentDirections.actionAccountsQrScannerFragmentToAccountsAddressScanActionBottomSheet(
-                    accountAddress,
-                    label
-                )
+                AccountsQrScannerFragmentDirections
+                    .actionAccountsQrScannerFragmentToAccountsAddressScanActionBottomSheet(accountAddress, label)
             )
         }
     }

@@ -13,7 +13,6 @@
 package com.algorand.android.utils
 
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
@@ -21,47 +20,6 @@ import android.os.Build
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import androidx.core.location.LocationManagerCompat
-import com.algorand.android.R
-import com.algorand.android.core.BaseFragment
-import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.BaseLedgerSearchFragment
-import com.algorand.android.ui.wctransactionrequest.WalletConnectTransactionRequestFragment
-
-fun BaseFragment.isBluetoothEnabled(resultLauncher: ActivityResultLauncher<Intent>): Boolean {
-
-    val bluetoothAdapter =
-        (context?.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter ?: return false
-
-    if (context?.areBluetoothPermissionsGranted() != true) {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            requestPermissionFromUser(BLUETOOTH_SCAN_PERMISSION, BLUETOOTH_SCAN_PERMISSION_REQUEST_CODE, true)
-            requestPermissionFromUser(BLUETOOTH_CONNECT_PERMISSION, BLUETOOTH_CONNECT_PERMISSION_REQUEST_CODE, true)
-            false
-        } else {
-            requestPermissionFromUser(LOCATION_PERMISSION, LOCATION_PERMISSION_REQUEST_CODE, true)
-            false
-        }
-    }
-    if (bluetoothAdapter.isEnabled.not()) {
-        showEnableBluetoothPopup(resultLauncher)
-        return false
-    }
-    if (context?.isLocationEnabled() != true) {
-        when (this) {
-//            is TransactionBaseFragment -> {
-//                permissionDeniedOnTransactionData(R.string.please_ensure, R.string.bluetooth_location_services)
-//            }
-//            is WalletConnectTransactionRequestFragment -> {
-//                permissionDeniedOnTransaction(R.string.please_ensure, R.string.bluetooth_location_services)
-//            }
-            is BaseLedgerSearchFragment -> {
-                showGlobalError(getString(R.string.please_ensure), getString(R.string.bluetooth_location_services))
-                navBack()
-            }
-        }
-        return false
-    }
-    return true
-}
 
 fun Context.isLocationEnabled(): Boolean {
     val locationManager = getSystemService(Context.LOCATION_SERVICE) as? LocationManager ?: return false
@@ -70,10 +28,6 @@ fun Context.isLocationEnabled(): Boolean {
 
 fun showEnableBluetoothPopup(resultLauncher: ActivityResultLauncher<Intent>) {
     Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE).apply { resultLauncher.launch(this) }
-}
-
-fun requestLocationRequestFromUser(resultLauncher: ActivityResultLauncher<String>) {
-    resultLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
 }
 
 fun Context.checkIfBluetoothPermissionAreTaken(

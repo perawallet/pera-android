@@ -25,6 +25,7 @@ import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.models.ScreenState
 import com.algorand.android.modules.basesingleaccountselection.ui.mapper.SingleAccountSelectionListItemMapper
 import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAccountSelectionListItem
+import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAccountSelectionListItem.AccountItem
 import com.algorand.android.modules.rekey.rekeytostandardaccount.accountselection.ui.mapper.RekeyToStandardAccountSelectionPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.accountselection.ui.model.RekeyToStandardAccountSelectionPreview
 import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
@@ -82,7 +83,7 @@ class RekeyToStandardAccountSelectionPreviewUseCase @Inject constructor(
         )
     }
 
-    private suspend fun createAccountItemListFromAccountDetail(address: String): SingleAccountSelectionListItem.AccountItem {
+    private suspend fun createAccountItemListFromAccountDetail(address: String): AccountItem {
         val selectedCurrencySymbol = getPrimaryCurrencySymbolOrName()
         val secondaryCurrencySymbol = getSecondaryCurrencySymbol()
         val isPrimaryCurrencyAlgo = isPrimaryCurrencyAlgo()

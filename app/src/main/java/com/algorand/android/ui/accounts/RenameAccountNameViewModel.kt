@@ -13,9 +13,12 @@
 
 package com.algorand.android.ui.accounts
 
-import androidx.lifecycle.*
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.custominfo.component.domain.usecase.SetCustomName
-import com.algorand.android.utils.*
+import com.algorand.android.utils.getOrThrow
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

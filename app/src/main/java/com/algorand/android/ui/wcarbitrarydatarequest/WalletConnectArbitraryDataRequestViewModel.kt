@@ -25,9 +25,9 @@ import com.algorand.android.models.WalletConnectArbitraryData
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectSession
 import com.algorand.android.models.builder.WalletConnectArbitraryDataListBuilder
-import com.algorand.android.module_new.walletconnect.SignWalletConnectArbitraryDataManager
-import com.algorand.android.module_new.walletconnect.SignWalletConnectArbitraryDataResult
-import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult
+import com.algorand.android.modulenew.walletconnect.SignWalletConnectArbitraryDataManager
+import com.algorand.android.modulenew.walletconnect.SignWalletConnectArbitraryDataResult
+import com.algorand.android.modulenew.walletconnect.SignWalletConnectTransactionResult
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.ui.wcarbitrarydatarequest.ui.model.WalletConnectArbitraryDataRequestPreview

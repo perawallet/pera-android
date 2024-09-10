@@ -39,7 +39,7 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
     private val walletConnectConnectionPreviewMapper: WalletConnectConnectionPreviewMapper,
     private val wcSessionRequestResultMapper: WCSessionRequestResultMapper,
     private val walletConnectNetworkItemMapper: WalletConnectNetworkItemMapper,
-    private val getFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction: GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction,
+    private val getAuthAccountItemsByAssetIds: GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction,
     private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
@@ -116,7 +116,7 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
     }
 
     private suspend fun createSortedAccountList(): List<BaseAccountAndAssetListItem.AccountListItem> {
-        return getFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction(
+        return getAuthAccountItemsByAssetIds(
             accountFilterAssetId = null,
             excludedAccountTypes = null,
             onLoadedAccountConfiguration = {

@@ -13,16 +13,21 @@
 
 package com.algorand.android.ui.register.nameregistration
 
-import androidx.lifecycle.*
-import com.algorand.android.models.*
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.algorand.android.models.CreateAccount
 import com.algorand.android.models.ui.NameRegistrationPreview
-import com.algorand.android.usecase.*
-import com.algorand.android.utils.*
-import com.algorand.android.utils.analytics.CreationType
+import com.algorand.android.usecase.IsAccountLimitExceedUseCase
+import com.algorand.android.usecase.NameRegistrationPreviewUseCase
+import com.algorand.android.utils.getOrThrow
+import com.algorand.android.utils.launchIO
+import com.algorand.android.utils.toShortenedAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class NameRegistrationViewModel @Inject constructor(

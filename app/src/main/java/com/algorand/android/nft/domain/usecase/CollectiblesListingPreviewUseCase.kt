@@ -20,16 +20,23 @@ import com.algorand.android.core.component.detail.domain.model.AccountType
 import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.android.core.component.detail.domain.usecase.GetAccountsDetailFlow
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData
-import com.algorand.android.modules.collectibles.filter.domain.usecase.*
+import com.algorand.android.modules.collectibles.filter.domain.usecase.ClearCollectibleFiltersPreferencesUseCase
+import com.algorand.android.modules.collectibles.filter.domain.usecase.ShouldDisplayOptedInNFTPreferenceUseCase
+import com.algorand.android.modules.collectibles.filter.domain.usecase.ShouldDisplayWatchAccountNFTsPreferenceUseCase
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
-import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.*
+import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.AddOnListingViewTypeChangeListenerUseCase
+import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.GetNFTListingViewTypePreferenceUseCase
+import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.RemoveOnListingViewTypeChangeListenerUseCase
+import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.SaveNFTListingViewTypePreferenceUseCase
 import com.algorand.android.modules.sorting.nftsorting.ui.usecase.CollectibleItemSortUseCase
 import com.algorand.android.nft.mapper.CollectibleListingItemMapper
-import com.algorand.android.nft.ui.model.*
+import com.algorand.android.nft.ui.model.BaseCollectibleListData
+import com.algorand.android.nft.ui.model.BaseCollectibleListItem
+import com.algorand.android.nft.ui.model.CollectiblesListingPreview
 import com.algorand.android.repository.FailedAssetRepository
-import com.algorand.android.usecase.*
 import javax.inject.Inject
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 
 @SuppressWarnings("LongParameterList")
 class CollectiblesListingPreviewUseCase @Inject constructor(

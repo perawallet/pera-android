@@ -63,7 +63,7 @@ class WalletConnectCustomTransactionAssetDetailHandler @Inject constructor(
     }
 
     private suspend fun fetchAssetsFromIndexerAndUpdateCache(assetIdList: List<Long>, scope: CoroutineScope) {
-        val chunkedAssetIds = assetIdList.toSet().chunked(100) // MAX_ASSET_FETCH_COUNT
+        val chunkedAssetIds = assetIdList.toSet().chunked(MAX_ASSET_TO_FETCH)
         chunkedAssetIds.map { assetIdChunk ->
             scope.async {
                 fetchAssets(assetIdChunk).use(
@@ -99,7 +99,9 @@ class WalletConnectCustomTransactionAssetDetailHandler @Inject constructor(
         assetCacheMap.clear()
     }
 
-    private suspend fun getAssetDetailIfAvailableInAssetDetailCache(assetId: Long): WalletConnectTransactionAssetDetail? {
+    private suspend fun getAssetDetailIfAvailableInAssetDetailCache(
+        assetId: Long
+    ): WalletConnectTransactionAssetDetail? {
         val cachedAssetDetail = getAsset(assetId)
         return with(cachedAssetDetail ?: return null) {
             walletConnectTransactionAssetDetailMapper.mapToWalletConnectTransactionAssetDetail(
@@ -122,5 +124,9 @@ class WalletConnectCustomTransactionAssetDetailHandler @Inject constructor(
                 verificationTier = verificationTier
             )
         }
+    }
+
+    private companion object {
+        const val MAX_ASSET_TO_FETCH = 100
     }
 }

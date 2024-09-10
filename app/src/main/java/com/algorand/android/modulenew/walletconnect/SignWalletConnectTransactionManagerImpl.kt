@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.module_new.walletconnect
+package com.algorand.android.modulenew.walletconnect
 
 import androidx.lifecycle.Lifecycle
 import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction

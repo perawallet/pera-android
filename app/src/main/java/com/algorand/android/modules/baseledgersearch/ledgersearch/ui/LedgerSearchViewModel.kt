@@ -56,6 +56,7 @@ class LedgerSearchViewModel @Inject constructor(
         }
 
         override fun onScanError() {
+            // Nothing to do here.
         }
     }
 

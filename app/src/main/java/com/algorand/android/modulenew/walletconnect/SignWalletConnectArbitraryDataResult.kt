@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.module_new.walletconnect
+package com.algorand.android.modulenew.walletconnect
 
 import android.content.Context
 import com.algorand.android.designsystem.AnnotatedString

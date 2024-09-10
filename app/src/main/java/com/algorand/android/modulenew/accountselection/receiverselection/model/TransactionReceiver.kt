@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.module_new.accountselection.receiverselection.model
+package com.algorand.android.modulenew.accountselection.receiverselection.model
 
 import android.os.Parcelable
 import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview

@@ -18,7 +18,6 @@ import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationM
 import com.algorand.android.models.BasePaymentTransaction
 import com.algorand.android.models.WalletConnectTransactionAmount
 import com.algorand.android.models.WalletConnectTransactionShortDetail
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.AssetName
 import javax.inject.Inject

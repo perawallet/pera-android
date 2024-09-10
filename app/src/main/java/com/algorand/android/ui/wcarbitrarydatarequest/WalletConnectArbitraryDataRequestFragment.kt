@@ -45,7 +45,7 @@ import com.algorand.android.models.ArbitraryDataRequestAction
 import com.algorand.android.models.ConfirmationBottomSheetResult
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
-import com.algorand.android.module_new.walletconnect.SignWalletConnectArbitraryDataResult
+import com.algorand.android.modulenew.walletconnect.SignWalletConnectArbitraryDataResult
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.android.ui.common.walletconnect.WalletConnectAppPreviewCardView
 import com.algorand.android.utils.BaseDoubleButtonBottomSheet.Companion.RESULT_KEY

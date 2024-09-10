@@ -62,6 +62,7 @@ class RemoveAccountConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
     }
 
     override fun setDescriptionText(textView: TextView) {
+        // Nothing to do here.
     }
 
     override fun setAcceptButton(materialButton: MaterialButton) {

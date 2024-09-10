@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
 import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem.BaseAccountItem
 import com.algorand.android.designsystem.BaseDiffUtil
 import com.algorand.android.ui.accountselection.viewholder.AccountSelectionAccountErrorItemViewHolder
 import com.algorand.android.ui.accountselection.viewholder.AccountSelectionAccountItemViewHolder
@@ -33,10 +34,10 @@ class AccountSelectionAdapter(
         return when (getItem(position)) {
             is BaseAccountSelectionListItem.PasteItem -> R.layout.item_paste_address
             is BaseAccountSelectionListItem.HeaderItem -> R.layout.item_header_simple
-            is BaseAccountSelectionListItem.BaseAccountItem.ContactItem -> R.layout.item_contact_simple
-            is BaseAccountSelectionListItem.BaseAccountItem.AccountItem -> R.layout.item_account_simple
-            is BaseAccountSelectionListItem.BaseAccountItem.AccountErrorItem -> R.layout.item_account_error_simple
-            is BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem -> R.layout.item_nft_domain_account
+            is BaseAccountItem.ContactItem -> R.layout.item_contact_simple
+            is BaseAccountItem.AccountItem -> R.layout.item_account_simple
+            is BaseAccountItem.AccountErrorItem -> R.layout.item_account_error_simple
+            is BaseAccountItem.NftDomainAccountItem -> R.layout.item_nft_domain_account
             else -> throw Exception("$logTag list item is unknown")
         }
     }
@@ -73,7 +74,7 @@ class AccountSelectionAdapter(
         return AccountSelectionContactItemViewHolder.create(parent).apply {
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
-                    (getItem(bindingAdapterPosition) as BaseAccountSelectionListItem.BaseAccountItem.ContactItem).run {
+                    (getItem(bindingAdapterPosition) as BaseAccountItem.ContactItem).run {
                         listener.onContactItemClick(address)
                     }
                 }
@@ -85,7 +86,7 @@ class AccountSelectionAdapter(
         return AccountSelectionAccountItemViewHolder.create(parent).apply {
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
-                    (getItem(bindingAdapterPosition) as BaseAccountSelectionListItem.BaseAccountItem.AccountItem).run {
+                    (getItem(bindingAdapterPosition) as BaseAccountItem.AccountItem).run {
                         listener.onAccountItemClick(address)
                     }
                 }
@@ -103,7 +104,7 @@ class AccountSelectionAdapter(
         return AccountSelectionNftDomainAccountItemViewHolder.create(parent).apply {
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
-                    (getItem(bindingAdapterPosition) as BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem).run {
+                    (getItem(bindingAdapterPosition) as BaseAccountItem.NftDomainAccountItem).run {
                         listener.onNftDomainItemClick(
                             accountAddress = address,
                             nftDomain = displayName,
@@ -124,16 +125,16 @@ class AccountSelectionAdapter(
                 holder.bind(getItem(position) as BaseAccountSelectionListItem.HeaderItem)
             }
             is AccountSelectionContactItemViewHolder -> {
-                holder.bind(getItem(position) as BaseAccountSelectionListItem.BaseAccountItem.ContactItem)
+                holder.bind(getItem(position) as BaseAccountItem.ContactItem)
             }
             is AccountSelectionAccountItemViewHolder -> {
-                holder.bind(getItem(position) as BaseAccountSelectionListItem.BaseAccountItem.AccountItem)
+                holder.bind(getItem(position) as BaseAccountItem.AccountItem)
             }
             is AccountSelectionAccountErrorItemViewHolder -> {
-                holder.bind(getItem(position) as BaseAccountSelectionListItem.BaseAccountItem.AccountErrorItem)
+                holder.bind(getItem(position) as BaseAccountItem.AccountErrorItem)
             }
             is AccountSelectionNftDomainAccountItemViewHolder -> {
-                holder.bind(getItem(position) as BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem)
+                holder.bind(getItem(position) as BaseAccountItem.NftDomainAccountItem)
             }
         }
     }

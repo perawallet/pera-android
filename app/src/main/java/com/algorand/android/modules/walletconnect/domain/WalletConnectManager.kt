@@ -25,7 +25,7 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
-import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult
+import com.algorand.android.modulenew.walletconnect.SignWalletConnectTransactionResult
 import com.algorand.android.modules.walletconnect.client.v1.session.WalletConnectSessionTimer
 import com.algorand.android.modules.walletconnect.domain.decider.WalletConnectMethodDecider
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect

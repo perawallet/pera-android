@@ -13,7 +13,8 @@
 package com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.model
 
 import com.algorand.android.customviews.passphraseinput.model.PassphraseInputGroupConfiguration
-import com.algorand.android.models.*
+import com.algorand.android.models.AnnotatedString
+import com.algorand.android.models.CreateAccount
 import com.algorand.android.utils.Event
 
 data class RecoverWithPassphrasePreview(

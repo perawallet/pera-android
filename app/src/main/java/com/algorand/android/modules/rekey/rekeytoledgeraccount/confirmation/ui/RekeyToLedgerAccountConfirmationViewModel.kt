@@ -98,7 +98,6 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
                     rekeyToLedgerAccountConfirmationPreviewFlow.value = preview
                 }
             }
-
         }
     }
 }

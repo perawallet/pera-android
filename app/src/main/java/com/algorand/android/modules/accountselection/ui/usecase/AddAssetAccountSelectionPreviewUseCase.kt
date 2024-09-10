@@ -24,7 +24,7 @@ import javax.inject.Inject
 class AddAssetAccountSelectionPreviewUseCase @Inject constructor(
     private val addAssetAccountSelectionPreviewMapper: AddAssetAccountSelectionPreviewMapper,
     private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol,
-    private val getFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction: GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction,
+    private val getAuthAccountItemsByAssetIds: GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction,
     private val createLoadedAccountConfiguration: CreateLoadedAccountConfiguration,
     private val createNotLoadedAccountConfiguration: CreateNotLoadedAccountConfiguration,
     private val accountSelectionListItemMapper: AccountSelectionListItemMapper
@@ -34,7 +34,7 @@ class AddAssetAccountSelectionPreviewUseCase @Inject constructor(
 
     suspend fun getAddAssetAccountSelectionPreview(): AddAssetAccountSelectionPreview {
         val selectedCurrencySymbol = getPrimaryCurrencySymbol().orEmpty()
-        val sortedAccountListItems = getFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction(
+        val sortedAccountListItems = getAuthAccountItemsByAssetIds(
             accountFilterAssetId = null,
             excludedAccountTypes = null,
             onLoadedAccountConfiguration = {

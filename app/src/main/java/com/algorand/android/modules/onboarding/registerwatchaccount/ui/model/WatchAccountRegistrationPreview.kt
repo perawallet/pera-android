@@ -13,7 +13,7 @@
 package com.algorand.android.modules.onboarding.registerwatchaccount.ui.model
 
 import androidx.annotation.StringRes
-import com.algorand.android.models.*
+import com.algorand.android.models.CreateAccount
 import com.algorand.android.utils.Event
 
 data class WatchAccountRegistrationPreview(

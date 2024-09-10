@@ -27,8 +27,8 @@ import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.models.WalletConnectSession
 import com.algorand.android.models.builder.WalletConnectTransactionListBuilder
-import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionManager
-import com.algorand.android.module_new.walletconnect.SignWalletConnectTransactionResult
+import com.algorand.android.modulenew.walletconnect.SignWalletConnectTransactionManager
+import com.algorand.android.modulenew.walletconnect.SignWalletConnectTransactionResult
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.ui.wctransactionrequest.ui.model.WalletConnectTransactionRequestPreview

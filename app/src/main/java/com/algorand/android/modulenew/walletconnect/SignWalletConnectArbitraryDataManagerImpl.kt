@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.module_new.walletconnect
+package com.algorand.android.modulenew.walletconnect
 
 import androidx.lifecycle.Lifecycle
 import com.algorand.android.account.localaccount.domain.usecase.GetSecretKey
@@ -21,8 +21,8 @@ import com.algorand.android.models.WalletConnectArbitraryData
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectSignResult.CanBeSigned
 import com.algorand.android.models.WalletConnectSignResult.Error
-import com.algorand.android.module_new.walletconnect.SignWalletConnectArbitraryDataResult.Error.Defined
-import com.algorand.android.module_new.walletconnect.SignWalletConnectArbitraryDataResult.TransactionsSigned
+import com.algorand.android.modulenew.walletconnect.SignWalletConnectArbitraryDataResult.Error.Defined
+import com.algorand.android.modulenew.walletconnect.SignWalletConnectArbitraryDataResult.TransactionsSigned
 import com.algorand.android.utils.ListQueuingHelper
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.signArbitraryData

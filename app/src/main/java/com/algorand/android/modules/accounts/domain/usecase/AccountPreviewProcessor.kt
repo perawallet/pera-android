@@ -34,6 +34,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+@Suppress("LongParameterList")
 class AccountPreviewProcessor @Inject constructor(
     private val baseBannerItemMapper: BaseBannerItemMapper,
     private val accountListItemMapper: AccountListItemMapper,

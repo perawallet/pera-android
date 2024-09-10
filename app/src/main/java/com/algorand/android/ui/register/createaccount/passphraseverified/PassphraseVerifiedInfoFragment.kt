@@ -12,7 +12,8 @@
 
 package com.algorand.android.ui.register.createaccount.passphraseverified
 
-import android.widget.*
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R

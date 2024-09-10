@@ -12,7 +12,8 @@
 
 package com.algorand.android.modules.accountdetail.accountstatusdetail.ui.mapper
 
-import com.algorand.android.accountcore.ui.model.*
+import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.model.AccountStatusDetailPreview

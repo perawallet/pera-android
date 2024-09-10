@@ -50,6 +50,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 class AssetTransferAmountPreviewUseCase @Inject constructor(
     private val assetTransferAmountPreviewMapper: AssetTransferAmountPreviewMapper,
     private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,

@@ -13,12 +13,9 @@
 package com.algorand.android.modules.algosdk.data.service
 
 import com.algorand.android.modules.algosdk.data.model.AlgorandAddressDTO
-import com.algorand.android.modules.algosdk.data.model.PendingTransactionResponseDTO
 import com.algorand.android.modules.algosdk.domain.model.dto.RawTransactionDTO
 
 interface AlgorandSDKUtils {
-
-    suspend fun waitForConfirmation(txnId: String, maxRoundToWait: Int): PendingTransactionResponseDTO
 
     fun parseRawTransaction(txnByteArray: ByteArray): RawTransactionDTO?
 

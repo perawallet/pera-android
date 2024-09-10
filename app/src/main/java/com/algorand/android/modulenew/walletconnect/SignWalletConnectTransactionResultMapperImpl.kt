@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.module_new.walletconnect
+package com.algorand.android.modulenew.walletconnect
 
 import com.algorand.android.models.WalletConnectSignResult.Error
 import com.algorand.android.transaction.domain.sign.model.SignTransactionResult

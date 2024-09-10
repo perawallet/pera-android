@@ -12,7 +12,7 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.models.*
+import com.algorand.android.models.CreateAccount
 import com.algorand.android.models.ui.NameRegistrationPreview
 import com.algorand.android.utils.Event
 import javax.inject.Inject

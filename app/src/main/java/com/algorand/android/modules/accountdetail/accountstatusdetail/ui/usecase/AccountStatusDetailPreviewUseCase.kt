@@ -12,7 +12,9 @@
 
 package com.algorand.android.modules.accountdetail.accountstatusdetail.ui.usecase
 
-import com.algorand.android.accountcore.ui.usecase.*
+import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreview
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
 import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetailFlow
@@ -22,8 +24,9 @@ import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.mapper.
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.model.AccountStatusDetailPreview
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.extensions.mapNotBlank
-import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collectLatest
 
 class AccountStatusDetailPreviewUseCase @Inject constructor(
     private val getAccountDetailFlow: GetAccountDetailFlow,

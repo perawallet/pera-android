@@ -147,7 +147,6 @@ class AssetSelectionUseCase @Inject constructor(
                     val newState = if (!isReceiverOptedInToAsset) {
                         val payload = getOptInPayload(assetId, previousState) ?: return@let
                         loadingFinishedStatePreview.copy(navigateToOptInEvent = Event(payload))
-
                     } else {
                         loadingFinishedStatePreview.copy(
                             navigateToAssetTransferAmountFragmentEvent = Event(assetId)

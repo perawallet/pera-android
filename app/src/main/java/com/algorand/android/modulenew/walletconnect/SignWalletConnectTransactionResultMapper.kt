@@ -11,22 +11,12 @@
  *   -->
  */
 
-package com.algorand.android.module_new.walletconnect
+package com.algorand.android.modulenew.walletconnect
 
-import androidx.lifecycle.Lifecycle
-import com.algorand.android.foundation.Event
-import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
-import kotlinx.coroutines.flow.Flow
+import com.algorand.android.models.WalletConnectSignResult
+import com.algorand.android.transaction.domain.sign.model.SignTransactionResult
 
-interface SignWalletConnectArbitraryDataManager {
-
-    val signWalletConnectTransactionResultFlow: Flow<Event<SignWalletConnectArbitraryDataResult>?>
-
-    fun setup(lifecycle: Lifecycle)
-
-    fun sign(transaction: WalletConnectArbitraryDataRequest)
-
-    fun stopAllResources()
-
-    fun clearCachedTransactions()
+internal interface SignWalletConnectTransactionResultMapper {
+    operator fun invoke(result: SignTransactionResult): SignWalletConnectTransactionResult?
+    operator fun invoke(error: WalletConnectSignResult.Error): SignWalletConnectTransactionResult
 }

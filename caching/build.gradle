@@ -32,7 +32,7 @@ android {
 
 dependencies {
 
-    implementation project(path: ':test-utils')
+    implementation project(path: ':test-util')
 
     implementation deps.android.core
     implementation deps.kotlinx.coroutines_core

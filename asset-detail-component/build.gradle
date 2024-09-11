@@ -38,7 +38,7 @@ android {
 dependencies {
 
     implementation project(path: ':shared-db')
-    implementation project(path: ':test-utils')
+    implementation project(path: ':test-util')
     api project(path: ':caching')
     implementation project(path: ':network-utils')
     implementation project(path: ':foundation')

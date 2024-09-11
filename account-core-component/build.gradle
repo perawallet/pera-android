@@ -46,7 +46,7 @@ dependencies {
     implementation project(path: ':nameservice-component')
     implementation project(path: ':custom-info-component')
     implementation project(path: ':designsystem')
-    implementation project(path: ':test-utils')
+    implementation project(path: ':test-util')
     implementation project(path: ':currency-component')
     implementation project(path: ':asb-component')
     implementation project(path: ':account-sorting-component')

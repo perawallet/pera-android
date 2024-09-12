@@ -196,7 +196,7 @@ sealed class BaseDeepLink {
 
             override fun doesDeeplinkMeetTheRequirements(rawDeepLink: RawDeepLink): Boolean {
                 return with(rawDeepLink) {
-                    val doesDeeplinkHaveAssetTransferQueries = accountAddress != null && assetId != null
+                    val doesDeeplinkHaveAssetTransferQueries = accountAddress != null && amount != null
                     doesDeeplinkHaveAssetTransferQueries && walletConnectUrl == null &&
                             webImportQrCode == null &&
                             notificationGroupType == null

@@ -17,8 +17,8 @@ import com.algorand.android.models.Result
 import com.algorand.android.modules.transaction.csv.domain.repository.CsvRepository
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
+import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import com.algorand.android.utils.ISO_EXTENDED_DATE_FORMAT
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
 import java.io.File
 import java.io.InputStream
 import java.time.format.DateTimeFormatter

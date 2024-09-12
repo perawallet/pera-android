@@ -53,8 +53,6 @@ dependencies {
     implementation project(path: ':event-tracker-component')
     implementation project(path: ':caching')
 
-    implementation deps.hipoexceptions
-
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler
     kapt deps.hilt.compiler

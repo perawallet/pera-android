@@ -19,8 +19,8 @@ import com.algorand.android.block.domain.repository.BlockPollingRepository
 import com.algorand.android.caching.CacheResult
 import com.algorand.android.caching.SingleInMemoryLocalCache
 import com.algorand.android.foundation.PeraResult
+import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import com.algorand.android.network_utils.requestWithHipoErrorHandler
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
 
 internal class BlockPollingRepositoryImpl(
     private val blockPollingApiService: BlockPollingApiService,

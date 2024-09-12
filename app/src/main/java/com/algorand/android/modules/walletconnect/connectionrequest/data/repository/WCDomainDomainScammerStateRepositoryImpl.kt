@@ -17,7 +17,7 @@ import com.algorand.android.modules.walletconnect.connectionrequest.data.model.G
 import com.algorand.android.modules.walletconnect.connectionrequest.domain.repository.WCDomainScammerStateRepository
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 
 class WCDomainDomainScammerStateRepositoryImpl @Inject constructor(

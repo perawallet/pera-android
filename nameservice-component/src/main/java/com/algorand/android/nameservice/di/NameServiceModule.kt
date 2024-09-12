@@ -6,7 +6,7 @@ import com.algorand.android.nameservice.data.repository.NameServiceRepositoryImp
 import com.algorand.android.nameservice.data.service.NameServiceApiService
 import com.algorand.android.nameservice.domain.repository.NameServiceRepository
 import com.algorand.android.nameservice.domain.usecase.*
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import dagger.*
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

@@ -2,6 +2,7 @@ package com.algorand.android.parity.di
 
 import com.algorand.android.caching.SingleInMemoryLocalCache
 import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import com.algorand.android.parity.data.mapper.*
 import com.algorand.android.parity.data.repository.ParityRepositoryImpl
 import com.algorand.android.parity.data.service.ParityApiService
@@ -13,7 +14,6 @@ import com.algorand.android.parity.domain.usecase.primary.*
 import com.algorand.android.parity.domain.usecase.primary.implementation.*
 import com.algorand.android.parity.domain.usecase.secondary.*
 import com.algorand.android.parity.domain.usecase.secondary.implementation.*
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
 import dagger.*
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

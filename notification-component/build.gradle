@@ -46,8 +46,6 @@ dependencies {
     implementation project(path: ':pagination-component')
     implementation project(path: ':deviceid-component')
 
-    implementation deps.hipoexceptions
-
     implementation deps.android.paging
 
     implementation deps.hilt.core

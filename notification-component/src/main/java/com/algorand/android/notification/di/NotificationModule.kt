@@ -14,6 +14,7 @@
 package com.algorand.android.notification.di
 
 import android.content.SharedPreferences
+import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import com.algorand.android.notification.data.mapper.NotificationHistoryMapper
 import com.algorand.android.notification.data.mapper.NotificationHistoryMapperImpl
 import com.algorand.android.notification.data.repository.NotificationRepositoryImpl
@@ -30,7 +31,6 @@ import com.algorand.android.notification.domain.usecase.SetNotificationFilterUse
 import com.algorand.android.notification.domain.usecase.SetNotificationLastRefreshDateTime
 import com.algorand.android.notification.domain.usecase.SetNotificationLastRefreshDateTimeUseCase
 import com.algorand.android.shared_db.notification.dao.NotificationFilterDao
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -13,7 +13,7 @@
 package com.algorand.android.network
 
 import com.algorand.android.models.Result
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import java.io.IOException
 import retrofit2.Response
 

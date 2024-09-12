@@ -23,7 +23,7 @@ import com.algorand.android.block.domain.usecase.ShouldUpdateAccountCacheUseCase
 import com.algorand.android.block.domain.usecase.UpdateLastKnownBlockNumber
 import com.algorand.android.block.domain.usecase.UpdateLastKnownBlockNumberUseCase
 import com.algorand.android.caching.SingleInMemoryLocalCache
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -18,7 +18,7 @@ import com.algorand.android.modules.nftdomain.domain.model.NftDomainSearchResult
 import com.algorand.android.modules.nftdomain.domain.repository.NftDomainSearchRepository
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 
 class NftDomainSearchRepositoryImpl(
     private val mobileAlgorandApi: MobileAlgorandApi,

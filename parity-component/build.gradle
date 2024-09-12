@@ -48,8 +48,6 @@ dependencies {
     implementation deps.retrofit.converter_gson
     implementation deps.retrofit.logging_interceptor
 
-    implementation deps.hipoexceptions
-
     testImplementation deps.junit
     testImplementation deps.mockito
     testImplementation deps.kotlinx.coroutines_test

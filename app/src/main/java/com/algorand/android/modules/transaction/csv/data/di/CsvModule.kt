@@ -15,7 +15,7 @@ package com.algorand.android.modules.transaction.csv.data.di
 import com.algorand.android.modules.transaction.csv.data.repository.CsvRepositoryImpl
 import com.algorand.android.modules.transaction.csv.domain.repository.CsvRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

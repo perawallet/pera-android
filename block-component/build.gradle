@@ -44,8 +44,6 @@ dependencies {
     implementation project(path: ':account-component')
     implementation project(path: ':account-info-component')
 
-    implementation deps.hipoexceptions
-
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler
     kapt deps.hilt.compiler

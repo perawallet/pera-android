@@ -7,7 +7,7 @@ import com.algorand.android.currency.data.storage.CurrencyLocalSource
 import com.algorand.android.currency.domain.repository.CurrencyRepository
 import com.algorand.android.currency.domain.usecase.*
 import com.algorand.android.currency.domain.usecase.implementation.*
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
+import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import dagger.*
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

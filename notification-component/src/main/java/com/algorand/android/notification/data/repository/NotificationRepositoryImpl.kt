@@ -14,6 +14,7 @@
 package com.algorand.android.notification.data.repository
 
 import com.algorand.android.foundation.PeraResult
+import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import com.algorand.android.network_utils.requestWithHipoErrorHandler
 import com.algorand.android.notification.data.mapper.NotificationHistoryMapper
 import com.algorand.android.notification.data.model.NotificationFilterRequest
@@ -24,7 +25,6 @@ import com.algorand.android.notification.domain.repository.NotificationRepositor
 import com.algorand.android.pagination.component.model.Pagination
 import com.algorand.android.shared_db.notification.dao.NotificationFilterDao
 import com.algorand.android.shared_db.notification.model.NotificationFilterEntity
-import com.hipo.hipoexceptionsandroid.RetrofitErrorHandler
 import javax.inject.Inject
 
 internal class NotificationRepositoryImpl @Inject constructor(

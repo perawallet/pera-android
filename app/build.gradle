@@ -266,7 +266,6 @@ dependencies {
     implementation deps.tink
     implementation deps.review
     implementation deps.lottie
-    implementation deps.hipoexceptions
     implementation deps.charts
     implementation deps.exoplayer
     coreLibraryDesugaring deps.desugar_libs

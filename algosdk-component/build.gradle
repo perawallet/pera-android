@@ -47,7 +47,7 @@ dependencies {
     kapt deps.hilt.android_compiler
     kapt deps.hilt.compiler
 
-    implementation(deps.algosdk) {
+    implementation(libs.algosdk) {
         exclude group: 'org.bouncycastle'
     }
 }

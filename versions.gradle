@@ -44,7 +44,6 @@ ext {
             moshi           : '1.15.1',
             exoPlayer       : '2.19.1',
             firebaseBom     : '33.1.1',
-            algoSdk         : '2.4.0',
             kotlinfixture   : "1.2.0",
             mockito         : "4.0.0"
     ]
@@ -153,7 +152,6 @@ deps.tink = "com.google.crypto.tink:tink-android:$versions.tink"
 deps.lottie = "com.airbnb.android:lottie:$versions.lottie"
 deps.charts = "com.github.PhilJay:MPAndroidChart:$versions.mpAndroidChart"
 deps.desugar_libs = "com.android.tools:desugar_jdk_libs:$versions.desugar"
-deps.algosdk = "com.algorand:algosdk:$versions.algoSdk"
 deps.review = "com.google.android.play:review-ktx:${versions.review}"
 
 // Test

@@ -272,7 +272,7 @@ dependencies {
     implementation deps.exoplayer
     coreLibraryDesugaring deps.desugar_libs
 
-    implementation(deps.algosdk) {
+    implementation(libs.algosdk) {
         exclude group: 'org.bouncycastle'
     }
 

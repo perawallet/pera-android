@@ -203,6 +203,8 @@ dependencies {
     implementation project(path: ':pushtoken-component')
     implementation project(path: ':deeplink-component')
     implementation project(path: ':asset-action-ui')
+    implementation project(path: ':algosdk-aar')
+    implementation project(path: ':peracompactdecimal-aar')
 
     implementation deps.kotlinx.coroutines_core
     implementation deps.kotlinx.coroutines_android

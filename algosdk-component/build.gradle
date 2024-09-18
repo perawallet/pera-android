@@ -38,11 +38,10 @@ android {
 
 dependencies {
 
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-
     implementation project(path: ':network-utils')
     implementation project(path: ':node-component')
     implementation project(path: ':foundation')
+    implementation project(path: ':algosdk-aar')
 
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler

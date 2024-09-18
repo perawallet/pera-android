@@ -194,12 +194,17 @@ sealed class BaseDeepLink {
                 )
             }
 
+            // If the assetId is null it's an algo transfer.
+            // The amount can be null
             override fun doesDeeplinkMeetTheRequirements(rawDeepLink: RawDeepLink): Boolean {
                 return with(rawDeepLink) {
-                    val doesDeeplinkHaveAssetTransferQueries = accountAddress != null && amount != null
-                    doesDeeplinkHaveAssetTransferQueries && walletConnectUrl == null &&
+                    val hasValidAssetQueries = amount != null || assetId != null
+                    val hasValidTransferQueries = accountAddress != null &&
+                            walletConnectUrl == null &&
                             webImportQrCode == null &&
                             notificationGroupType == null
+
+                    hasValidAssetQueries && hasValidTransferQueries
                 }
             }
         }

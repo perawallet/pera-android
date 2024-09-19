@@ -1,1 +1,1 @@
-PERA - 750: Open a webpage from deeplink
+PERA - 764: Generic banner - Dark mode color problem

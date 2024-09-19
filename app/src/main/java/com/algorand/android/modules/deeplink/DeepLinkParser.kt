@@ -163,32 +163,23 @@ class DeepLinkParser @Inject constructor(
         return uriString.removePrefix(AUTH_SEPARATOR)
     }
 
-    fun getAccountAddressForCoinbase(url: String): String? {
+    private fun getAccountAddressForCoinbase(url: String): String? {
         // algo:31566704/transfer?address=KG2HXWIOQSBOBGJEXSIBNEVNTRD4G4EFIJGRKBG2ZOT7NQ
         val regexAddress = COINBASE_ACCOUNT_ADDRESS_WITH_ASSET_ID_REGEX.toRegex()
-        val matchResultWithAddress = regexAddress.find(url)
-        if (matchResultWithAddress != null) {
-            return matchResultWithAddress.destructured.component1()
-        }
+        regexAddress.find(url)?.destructured?.component1()?.let { return it }
 
         // algo:Z7HJOZWPBM76GNERLD56IUMNMA7TNFMERU4KSDDXLUYGFBRLLVVGKGULCE
         val regexWithoutAssetId = COINBASE_ACCOUNT_ADDRESS_REGEX.toRegex()
-        val matchResultWithoutAssetId = regexWithoutAssetId.find(url)
-        if (matchResultWithoutAssetId != null) {
-            return matchResultWithoutAssetId.destructured.component1()
-        }
+        regexWithoutAssetId.find(url)?.destructured?.component1()?.let { return it }
+
         return null
     }
 
-    fun getAssetIdForCoinbase(url: String): String? {
+    private fun getAssetIdForCoinbase(url: String): String {
         // algo:31566704/transfer?address=KG2HXWIOQSBOBGJEXSIBNEVNTRD4G4EFIJGRKBG2ZOT7NQ
         val regexWithAssetId = COINBASE_ASSET_ID_REGEX.toRegex()
         val matchResultWithAssetId = regexWithAssetId.find(url)
-        if (matchResultWithAssetId != null) {
-            return matchResultWithAssetId.destructured.component1()
-        } else {
-            return ALGO_ID.toString()
-        }
+        return matchResultWithAssetId?.destructured?.component1() ?: ALGO_ID.toString()
     }
 
     companion object {

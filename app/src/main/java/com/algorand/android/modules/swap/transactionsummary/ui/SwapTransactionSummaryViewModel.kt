@@ -16,8 +16,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.swap.domain.model.SwapQuote
-import com.algorand.android.swapui.txnsummary.GetSwapTransactionSummaryPreview
-import com.algorand.android.swapui.txnsummary.model.SwapTransactionSummaryPreview
+import com.algorand.android.module.swap.ui.txnsummary.GetSwapTransactionSummaryPreview
+import com.algorand.android.module.swap.ui.txnsummary.model.SwapTransactionSummaryPreview
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

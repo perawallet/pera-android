@@ -15,10 +15,10 @@ package com.algorand.android.modules.swap.assetselection.toasset.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionViewModel
-import com.algorand.android.swapui.assetselection.model.SwapAssetSelectionItem
-import com.algorand.android.swapui.assetselection.model.SwapAssetSelectionPreview
-import com.algorand.android.swapui.assetselection.toasset.usecase.GetSwapToAssetSelectionPreview
-import com.algorand.android.swapui.assetselection.toasset.usecase.GetUpdatedPreviewWithAssetSelection
+import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionItem
+import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionPreview
+import com.algorand.android.module.swap.ui.assetselection.toasset.usecase.GetSwapToAssetSelectionPreview
+import com.algorand.android.module.swap.ui.assetselection.toasset.usecase.GetUpdatedPreviewWithAssetSelection
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

@@ -29,9 +29,9 @@ import com.algorand.android.modules.swap.assetselection.fromasset.ui.SwapFromAss
 import com.algorand.android.modules.swap.assetselection.toasset.ui.SwapToAssetSelectionFragment.Companion.SWAP_TO_ASSET_ID_KEY
 import com.algorand.android.modules.swap.balancepercentage.ui.BalancePercentageBottomSheet.Companion.CHECKED_BALANCE_PERCENTAGE_KEY
 import com.algorand.android.swap.domain.model.SwapQuote
-import com.algorand.android.swapui.assetswap.model.AssetSwapPreview
-import com.algorand.android.swapui.assetswap.model.AssetSwapPreview.SelectedAssetAmountDetail
-import com.algorand.android.swapui.assetswap.model.SwapError
+import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview
+import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview.SelectedAssetAmountDetail
+import com.algorand.android.module.swap.ui.assetswap.model.SwapError
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.DecimalDigitsInputFilter
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle

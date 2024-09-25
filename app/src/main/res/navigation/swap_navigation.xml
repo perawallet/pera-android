@@ -119,7 +119,7 @@
             app:destination="@id/swapTransactionSummaryFragment" />
         <argument
             android:name="swapTransactionStatusNavArgs"
-            app:argType="com.algorand.android.swapui.txnstatus.model.SwapTransactionStatusNavArgs" />
+            app:argType="com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusNavArgs" />
     </fragment>
     <fragment
         android:id="@+id/swapTransactionSummaryFragment"

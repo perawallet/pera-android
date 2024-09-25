@@ -22,7 +22,7 @@ import com.algorand.android.databinding.FragmentSwapTransactionSummaryBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.swap.transactionsummary.ui.adapter.SwapTransactionSummaryAdapter
-import com.algorand.android.swapui.txnsummary.model.SwapTransactionSummaryPreview
+import com.algorand.android.module.swap.ui.txnsummary.model.SwapTransactionSummaryPreview
 import com.algorand.android.utils.BaseCustomDividerItemDecoration
 import com.algorand.android.utils.addCustomDivider
 import com.algorand.android.utils.copyToClipboard

@@ -191,7 +191,6 @@ dependencies {
     implementation project(path: ':ledger-component')
     implementation project(path: ':banner-component')
     implementation project(path: ':swap-component')
-    implementation project(path: ':swap-ui')
     implementation project(path: ':asset-utils')
     implementation project(path: ':date-ui')
     implementation project(path: ':asset-detail-ui')

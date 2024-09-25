@@ -14,7 +14,7 @@ package com.algorand.android.modules.swap.assetselection.base
 
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.swapui.assetselection.model.SwapAssetSelectionPreview
+import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

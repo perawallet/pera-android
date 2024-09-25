@@ -17,7 +17,7 @@ import com.algorand.android.R
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionFragment
 import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionViewModel
-import com.algorand.android.swapui.assetselection.model.SwapAssetSelectionItem
+import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionItem
 import com.algorand.android.utils.setFragmentNavigationResult
 import dagger.hilt.android.AndroidEntryPoint
 

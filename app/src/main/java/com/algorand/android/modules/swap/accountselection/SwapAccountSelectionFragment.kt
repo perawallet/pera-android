@@ -28,9 +28,9 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.action.addition.AddAssetActionBottomSheet
-import com.algorand.android.swapui.accountselection.model.SwapAccountSelectionNavDirection
-import com.algorand.android.swapui.accountselection.model.SwapAccountSelectionNavDirection.SwapNavigation
-import com.algorand.android.swapui.accountselection.model.SwapAccountSelectionPreview
+import com.algorand.android.module.swap.ui.accountselection.model.SwapAccountSelectionNavDirection
+import com.algorand.android.module.swap.ui.accountselection.model.SwapAccountSelectionNavDirection.SwapNavigation
+import com.algorand.android.module.swap.ui.accountselection.model.SwapAccountSelectionPreview
 import com.algorand.android.ui.accountselection.BaseAccountSelectionFragment
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.show

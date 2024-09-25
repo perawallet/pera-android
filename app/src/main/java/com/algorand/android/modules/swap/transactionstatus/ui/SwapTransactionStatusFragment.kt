@@ -26,7 +26,7 @@ import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentSwapTransactionStatusBinding
 import com.algorand.android.designsystem.getXmlStyledString
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.swapui.txnstatus.model.SwapTransactionStatusPreview
+import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusPreview
 import com.algorand.android.utils.browser.openGroupTransactionInPeraExplorer
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint

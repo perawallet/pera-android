@@ -17,7 +17,7 @@ import android.view.ViewGroup
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemSwapAccountBinding
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.swapui.txnsummary.model.BaseSwapTransactionSummaryItem
+import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.setDrawable
 

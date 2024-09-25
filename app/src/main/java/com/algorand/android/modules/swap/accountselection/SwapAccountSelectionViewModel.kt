@@ -16,11 +16,11 @@ package com.algorand.android.modules.swap.accountselection
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.swapui.accountselection.model.SwapAccountSelectionPreview
-import com.algorand.android.swapui.accountselection.usecase.GetSwapAccountSelectedUpdatedPreview
-import com.algorand.android.swapui.accountselection.usecase.GetSwapAccountSelectionAssetAddedPreview
-import com.algorand.android.swapui.accountselection.usecase.GetSwapAccountSelectionInitialPreview
-import com.algorand.android.swapui.accountselection.usecase.GetSwapAccountSelectionPreview
+import com.algorand.android.module.swap.ui.accountselection.model.SwapAccountSelectionPreview
+import com.algorand.android.module.swap.ui.accountselection.usecase.GetSwapAccountSelectedUpdatedPreview
+import com.algorand.android.module.swap.ui.accountselection.usecase.GetSwapAccountSelectionAssetAddedPreview
+import com.algorand.android.module.swap.ui.accountselection.usecase.GetSwapAccountSelectionInitialPreview
+import com.algorand.android.module.swap.ui.accountselection.usecase.GetSwapAccountSelectionPreview
 import com.algorand.android.utils.getOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

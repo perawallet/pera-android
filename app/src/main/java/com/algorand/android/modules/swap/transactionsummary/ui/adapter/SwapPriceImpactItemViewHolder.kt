@@ -17,7 +17,7 @@ import android.view.ViewGroup
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemSwapPriceImpactBinding
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.swapui.txnsummary.model.BaseSwapTransactionSummaryItem
+import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem
 
 class SwapPriceImpactItemViewHolder(
     private val binding: ItemSwapPriceImpactBinding

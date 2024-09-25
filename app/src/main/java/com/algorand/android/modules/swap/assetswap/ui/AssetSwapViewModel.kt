@@ -18,8 +18,8 @@ import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInfor
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.tracking.swap.assetswap.AssetSwapSwapButtonClickEventTracker
-import com.algorand.android.swapui.assetswap.model.AssetSwapPreview
-import com.algorand.android.swapui.assetswap.usecase.main.AssetSwapPreviewProcessor
+import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview
+import com.algorand.android.module.swap.ui.assetswap.usecase.main.AssetSwapPreviewProcessor
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow

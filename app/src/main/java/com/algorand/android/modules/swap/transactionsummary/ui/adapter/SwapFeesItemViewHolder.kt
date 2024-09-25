@@ -17,7 +17,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.algorand.android.databinding.ItemSwapFeesBinding
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.swapui.txnsummary.model.BaseSwapTransactionSummaryItem
+import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem
 
 class SwapFeesItemViewHolder(
     private val binding: ItemSwapFeesBinding

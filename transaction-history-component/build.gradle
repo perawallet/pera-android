@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.algorand.android.transaction_history_component'
+    namespace 'com.algorand.android.module.transaction.history.component'
     compileSdkVersion targets.compileSdkVersion
 
     defaultConfig {

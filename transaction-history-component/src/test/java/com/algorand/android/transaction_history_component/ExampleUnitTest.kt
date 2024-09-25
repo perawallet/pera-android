@@ -1,4 +1,4 @@
-package com.algorand.android.transaction_history_component
+package com.algorand.android.module.transaction.history.component
 
 import org.junit.Test
 

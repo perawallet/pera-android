@@ -15,7 +15,7 @@ package com.algorand.android.module.transaction.history.ui.mapper
 
 import com.algorand.android.foundation.common.addHashtagToStart
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
-import com.algorand.android.transaction_history_component.domain.model.BaseTransactionHistoryItem
+import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem
 import javax.inject.Inject
 
 internal class BaseTransactionItemMapperImpl @Inject constructor() : BaseTransactionItemMapper {

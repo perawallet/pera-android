@@ -168,7 +168,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation project(path: ':account-component')
     implementation project(path: ':nameservice-component')
-    implementation project(path: ':transaction-history-component')
     implementation project(path: ':account-core-component')
     implementation project(path: ':asset-detail-component')
     implementation project(path: ':account-info-component')
@@ -202,6 +201,7 @@ dependencies {
     implementation project(path: ':asset-action-ui')
     implementation project(path: ':algosdk-aar')
     implementation project(path: ':peracompactdecimal-aar')
+    implementation project(path: ':date-component')
 
     implementation deps.kotlinx.coroutines_core
     implementation deps.kotlinx.coroutines_android

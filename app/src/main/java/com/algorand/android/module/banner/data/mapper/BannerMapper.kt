@@ -11,16 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.banner.data.model
+package com.algorand.android.module.banner.data.mapper
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.android.module.banner.data.model.BannerDetailResponse
+import com.algorand.android.module.banner.domain.model.Banner
 
-internal enum class BannerTypeResponse {
-    @SerializedName("generic")
-    GENERIC,
-
-    @SerializedName("governance")
-    GOVERNANCE,
-
-    OTHER
+internal interface BannerMapper {
+    operator fun invoke(bannerDetailResponse: BannerDetailResponse): Banner?
 }

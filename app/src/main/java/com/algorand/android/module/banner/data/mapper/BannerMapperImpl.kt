@@ -11,13 +11,13 @@
  *   -->
  */
 
-package com.algorand.android.banner.data.mapper
+package com.algorand.android.module.banner.data.mapper
 
-import com.algorand.android.banner.data.model.BannerDetailResponse
-import com.algorand.android.banner.data.model.BannerTypeResponse.GENERIC
-import com.algorand.android.banner.data.model.BannerTypeResponse.GOVERNANCE
-import com.algorand.android.banner.data.model.BannerTypeResponse.OTHER
-import com.algorand.android.banner.domain.model.Banner
+import com.algorand.android.module.banner.data.model.BannerDetailResponse
+import com.algorand.android.module.banner.data.model.BannerTypeResponse.GENERIC
+import com.algorand.android.module.banner.data.model.BannerTypeResponse.GOVERNANCE
+import com.algorand.android.module.banner.data.model.BannerTypeResponse.OTHER
+import com.algorand.android.module.banner.domain.model.Banner
 import javax.inject.Inject
 
 internal class BannerMapperImpl @Inject constructor() : BannerMapper {

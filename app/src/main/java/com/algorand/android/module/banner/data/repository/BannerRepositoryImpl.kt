@@ -11,13 +11,13 @@
  *   -->
  */
 
-package com.algorand.android.banner.data.repository
+package com.algorand.android.module.banner.data.repository
 
-import com.algorand.android.banner.data.mapper.BannerMapper
-import com.algorand.android.banner.data.model.BannerListResponse
-import com.algorand.android.banner.data.service.BannerApi
-import com.algorand.android.banner.domain.model.Banner
-import com.algorand.android.banner.domain.repository.BannerRepository
+import com.algorand.android.module.banner.data.mapper.BannerMapper
+import com.algorand.android.module.banner.data.model.BannerListResponse
+import com.algorand.android.module.banner.data.service.BannerApi
+import com.algorand.android.module.banner.domain.model.Banner
+import com.algorand.android.module.banner.domain.repository.BannerRepository
 import com.algorand.android.caching.CacheResult
 import com.algorand.android.caching.SharedPrefLocalSource
 import com.algorand.android.caching.SingleInMemoryLocalCache

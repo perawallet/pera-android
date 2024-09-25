@@ -11,21 +11,16 @@
  *   -->
  */
 
-package com.algorand.android.banner.domain.repository
+package com.algorand.android.module.banner.data.model
 
-import com.algorand.android.banner.domain.model.Banner
-import kotlinx.coroutines.flow.Flow
+import com.google.gson.annotations.SerializedName
 
-interface BannerRepository {
+internal enum class BannerTypeResponse {
+    @SerializedName("generic")
+    GENERIC,
 
-    suspend fun initializeBanners(deviceId: String)
+    @SerializedName("governance")
+    GOVERNANCE,
 
-    suspend fun getBannerFlow(): Flow<Banner?>
-
-    suspend fun dismissBanner(bannerId: Long)
-
-    suspend fun clearBanners()
-
-    suspend fun clearDismissedBannerIds()
-
+    OTHER
 }

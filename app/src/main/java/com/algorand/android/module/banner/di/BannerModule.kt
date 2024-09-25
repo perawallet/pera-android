@@ -11,21 +11,21 @@
  *   -->
  */
 
-package com.algorand.android.banner.di
+package com.algorand.android.module.banner.di
 
 import android.content.SharedPreferences
-import com.algorand.android.banner.data.mapper.BannerMapper
-import com.algorand.android.banner.data.mapper.BannerMapperImpl
-import com.algorand.android.banner.data.repository.BannerRepositoryImpl
-import com.algorand.android.banner.data.service.BannerApi
-import com.algorand.android.banner.data.storage.DismissedBannerIdsLocalSource
-import com.algorand.android.banner.domain.repository.BannerRepository
-import com.algorand.android.banner.domain.usecase.ClearBanners
-import com.algorand.android.banner.domain.usecase.ClearDismissedBannerIds
-import com.algorand.android.banner.domain.usecase.DismissBanner
-import com.algorand.android.banner.domain.usecase.GetBannerFlow
-import com.algorand.android.banner.domain.usecase.InitializeBanners
-import com.algorand.android.banner.domain.usecase.InitializeBannersUseCase
+import com.algorand.android.module.banner.data.mapper.BannerMapper
+import com.algorand.android.module.banner.data.mapper.BannerMapperImpl
+import com.algorand.android.module.banner.data.repository.BannerRepositoryImpl
+import com.algorand.android.module.banner.data.service.BannerApi
+import com.algorand.android.module.banner.data.storage.DismissedBannerIdsLocalSource
+import com.algorand.android.module.banner.domain.repository.BannerRepository
+import com.algorand.android.module.banner.domain.usecase.ClearBanners
+import com.algorand.android.module.banner.domain.usecase.ClearDismissedBannerIds
+import com.algorand.android.module.banner.domain.usecase.DismissBanner
+import com.algorand.android.module.banner.domain.usecase.GetBannerFlow
+import com.algorand.android.module.banner.domain.usecase.InitializeBanners
+import com.algorand.android.module.banner.domain.usecase.InitializeBannersUseCase
 import com.algorand.android.caching.SingleInMemoryLocalCache
 import com.algorand.android.foundation.json.JsonSerializer
 import dagger.Module

@@ -11,11 +11,19 @@
  *   -->
  */
 
-package com.algorand.android.banner.data.mapper
+package com.algorand.android.module.banner.domain.usecase
 
-import com.algorand.android.banner.data.model.BannerDetailResponse
-import com.algorand.android.banner.domain.model.Banner
+import com.algorand.android.module.banner.domain.repository.BannerRepository
+import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
+import javax.inject.Inject
 
-internal interface BannerMapper {
-    operator fun invoke(bannerDetailResponse: BannerDetailResponse): Banner?
+internal class InitializeBannersUseCase @Inject constructor(
+    private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
+    private val bannerRepository: BannerRepository
+) : InitializeBanners {
+
+    override suspend fun invoke() {
+        val selectedNodeDeviceId = getSelectedNodeDeviceId() ?: return
+        bannerRepository.initializeBanners(selectedNodeDeviceId)
+    }
 }

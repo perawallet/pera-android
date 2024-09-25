@@ -51,7 +51,6 @@ dependencies {
     implementation project(path: ':currency-component')
     implementation project(path: ':designsystem')
     implementation project(path: ':asset-utils')
-    implementation project(path: ':webview')
     implementation project(path: ':transaction-ui')
 
     implementation deps.hilt.core

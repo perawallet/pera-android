@@ -11,9 +11,9 @@
  *   -->
  */
 
-package com.algorand.android.banner.domain.usecase
+package com.algorand.android.module.banner.domain.usecase
 
-import com.algorand.android.banner.domain.model.Banner
+import com.algorand.android.module.banner.domain.model.Banner
 import kotlinx.coroutines.flow.Flow
 
 interface InitializeBanners {

@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.banner.domain.model
+package com.algorand.android.module.banner.domain.model
 
 sealed interface Banner {
 

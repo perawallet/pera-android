@@ -8,7 +8,7 @@ import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.accountinfo.component.domain.usecase.IsThereAnyCachedErrorAccount
 import com.algorand.android.accountinfo.component.domain.usecase.IsThereAnyCachedSuccessAccount
 import com.algorand.android.asb.component.domain.usecase.GetAccountAsbBackUpStatus
-import com.algorand.android.banner.domain.model.Banner
+import com.algorand.android.module.banner.domain.model.Banner
 import com.algorand.android.banner.ui.mapper.BaseBannerItemMapper
 import com.algorand.android.core.component.detail.domain.model.AccountType
 import com.algorand.android.core.component.domain.model.AccountTotalValue

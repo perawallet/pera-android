@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.banner.data.model
+package com.algorand.android.module.banner.data.model
 
 import com.google.gson.annotations.SerializedName
 

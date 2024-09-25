@@ -15,9 +15,9 @@ package com.algorand.android.modules.accounts.domain.usecase
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.appcache.model.AppCacheStatus
 import com.algorand.android.module.appcache.usecase.GetAppCacheStatusFlow
-import com.algorand.android.banner.domain.model.Banner
-import com.algorand.android.banner.domain.usecase.DismissBanner
-import com.algorand.android.banner.domain.usecase.GetBannerFlow
+import com.algorand.android.module.banner.domain.model.Banner
+import com.algorand.android.module.banner.domain.usecase.DismissBanner
+import com.algorand.android.module.banner.domain.usecase.GetBannerFlow
 import com.algorand.android.caching.CacheResult
 import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.modules.accounts.domain.mapper.PortfolioValueItemMapper

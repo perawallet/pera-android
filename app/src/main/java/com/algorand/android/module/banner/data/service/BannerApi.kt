@@ -11,15 +11,17 @@
  *   -->
  */
 
-package com.algorand.android.banner.data.model
+package com.algorand.android.module.banner.data.service
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.android.module.banner.data.model.BannerListResponse
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Path
 
-internal data class BannerDetailResponse(
-    @SerializedName("id") val bannerId: Long?,
-    @SerializedName("type") val bannerTypeResponse: BannerTypeResponse?,
-    @SerializedName("title") val title: String?,
-    @SerializedName("subtitle") val description: String?,
-    @SerializedName("button_label") val buttonText: String?,
-    @SerializedName("button_url") val buttonUrl: String?
-)
+internal interface BannerApi {
+
+    @GET("v1/devices/{device_id}/banners/")
+    suspend fun getBanners(
+        @Path("device_id") deviceId: String
+    ): Response<BannerListResponse>
+}

@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.banner.data.storage
+package com.algorand.android.module.banner.data.storage
 
 import android.content.SharedPreferences
 import com.algorand.android.caching.SharedPrefLocalSource

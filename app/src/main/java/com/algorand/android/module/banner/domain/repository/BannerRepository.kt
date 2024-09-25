@@ -11,19 +11,21 @@
  *   -->
  */
 
-package com.algorand.android.banner.domain.usecase
+package com.algorand.android.module.banner.domain.repository
 
-import com.algorand.android.banner.domain.repository.BannerRepository
-import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
-import javax.inject.Inject
+import com.algorand.android.module.banner.domain.model.Banner
+import kotlinx.coroutines.flow.Flow
 
-internal class InitializeBannersUseCase @Inject constructor(
-    private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
-    private val bannerRepository: BannerRepository
-) : InitializeBanners {
+interface BannerRepository {
 
-    override suspend fun invoke() {
-        val selectedNodeDeviceId = getSelectedNodeDeviceId() ?: return
-        bannerRepository.initializeBanners(selectedNodeDeviceId)
-    }
+    suspend fun initializeBanners(deviceId: String)
+
+    suspend fun getBannerFlow(): Flow<Banner?>
+
+    suspend fun dismissBanner(bannerId: Long)
+
+    suspend fun clearBanners()
+
+    suspend fun clearDismissedBannerIds()
+
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.algorand.android.account.localaccount.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.android.module.appcache.model.PushTokenStatus
 import com.algorand.android.module.appcache.model.PushTokenStatus.NOT_INITIALIZED
-import com.algorand.android.banner.domain.usecase.InitializeBanners
+import com.algorand.android.module.banner.domain.usecase.InitializeBanners
 import com.algorand.android.deviceid.component.domain.usecase.RegisterDeviceId
 import com.algorand.android.foundation.coroutine.CoroutineExtensions.launchIO
 import com.algorand.android.module.pushtoken.MessagingTokenProvider

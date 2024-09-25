@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.assetsorting.domain.model
+package com.algorand.android.module.asset.sorting.domain.model
 
 enum class AssetSortPreference {
     ALPHABETICALLY_ASCENDING,

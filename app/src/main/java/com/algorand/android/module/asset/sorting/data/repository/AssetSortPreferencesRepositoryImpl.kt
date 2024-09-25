@@ -11,10 +11,10 @@
  *   -->
  */
 
-package com.algorand.android.assetsorting.data.repository
+package com.algorand.android.module.asset.sorting.data.repository
 
-import com.algorand.android.assetsorting.domain.model.AssetSortPreference
-import com.algorand.android.assetsorting.domain.repository.AssetSortPreferencesRepository
+import com.algorand.android.module.asset.sorting.domain.model.AssetSortPreference
+import com.algorand.android.module.asset.sorting.domain.repository.AssetSortPreferencesRepository
 import com.algorand.android.caching.SharedPrefLocalSource
 import javax.inject.Inject
 

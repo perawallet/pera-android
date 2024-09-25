@@ -11,9 +11,9 @@
  *   -->
  */
 
-package com.algorand.android.assetsorting.domain.usecase
+package com.algorand.android.module.asset.sorting.domain.usecase
 
-import com.algorand.android.assetsorting.domain.model.AssetSortPreference
+import com.algorand.android.module.asset.sorting.domain.model.AssetSortPreference
 
 fun interface GetAssetSortPreference {
     suspend operator fun invoke(): AssetSortPreference

@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.assetsorting.data.storage
+package com.algorand.android.module.asset.sorting.data.storage
 
 import android.content.SharedPreferences
 import com.algorand.android.caching.SharedPrefLocalSource

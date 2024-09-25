@@ -12,13 +12,13 @@
 
 package com.algorand.android.modules.sorting.assetsorting.ui.usecase
 
-import com.algorand.android.assetsorting.domain.model.AssetSortPreference
-import com.algorand.android.assetsorting.domain.model.AssetSortPreference.ALPHABETICALLY_ASCENDING
-import com.algorand.android.assetsorting.domain.model.AssetSortPreference.ALPHABETICALLY_DESCENDING
-import com.algorand.android.assetsorting.domain.model.AssetSortPreference.BALANCE_ASCENDING
-import com.algorand.android.assetsorting.domain.model.AssetSortPreference.BALANCE_DESCENDING
-import com.algorand.android.assetsorting.domain.usecase.GetAssetSortPreference
-import com.algorand.android.assetsorting.domain.usecase.SetAssetSortPreference
+import com.algorand.android.module.asset.sorting.domain.model.AssetSortPreference
+import com.algorand.android.module.asset.sorting.domain.model.AssetSortPreference.ALPHABETICALLY_ASCENDING
+import com.algorand.android.module.asset.sorting.domain.model.AssetSortPreference.ALPHABETICALLY_DESCENDING
+import com.algorand.android.module.asset.sorting.domain.model.AssetSortPreference.BALANCE_ASCENDING
+import com.algorand.android.module.asset.sorting.domain.model.AssetSortPreference.BALANCE_DESCENDING
+import com.algorand.android.module.asset.sorting.domain.usecase.GetAssetSortPreference
+import com.algorand.android.module.asset.sorting.domain.usecase.SetAssetSortPreference
 import com.algorand.android.modules.sorting.assetsorting.ui.mapper.AssetSortPreferencePreviewMapper
 import com.algorand.android.modules.sorting.assetsorting.ui.model.AssetSortPreferencePreview
 import javax.inject.Inject

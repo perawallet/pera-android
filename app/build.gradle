@@ -179,7 +179,6 @@ dependencies {
     implementation project(path: ':deviceid-component')
     implementation project(path: ':contacts-component')
     implementation project(path: ':node-component')
-    implementation project(path: ':asset-sorting-component')
     implementation project(path: ':account-sorting-component')
     implementation project(path: ':drawable-ui')
     implementation project(path: ':designsystem')

@@ -11,14 +11,14 @@
  *   -->
  */
 
-package com.algorand.android.assetsorting.di
+package com.algorand.android.module.asset.sorting.di
 
 import android.content.SharedPreferences
-import com.algorand.android.assetsorting.data.repository.AssetSortPreferencesRepositoryImpl
-import com.algorand.android.assetsorting.data.storage.AssetSortPreferencesLocalSource
-import com.algorand.android.assetsorting.domain.repository.AssetSortPreferencesRepository
-import com.algorand.android.assetsorting.domain.usecase.GetAssetSortPreference
-import com.algorand.android.assetsorting.domain.usecase.SetAssetSortPreference
+import com.algorand.android.module.asset.sorting.data.repository.AssetSortPreferencesRepositoryImpl
+import com.algorand.android.module.asset.sorting.data.storage.AssetSortPreferencesLocalSource
+import com.algorand.android.module.asset.sorting.domain.repository.AssetSortPreferencesRepository
+import com.algorand.android.module.asset.sorting.domain.usecase.GetAssetSortPreference
+import com.algorand.android.module.asset.sorting.domain.usecase.SetAssetSortPreference
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

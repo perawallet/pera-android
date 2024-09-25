@@ -11,11 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.transactionhistoryui
+package com.algorand.android.module.transaction.history.ui
 
 import androidx.paging.PagingData
 import com.algorand.android.dateui.model.DateFilter
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 

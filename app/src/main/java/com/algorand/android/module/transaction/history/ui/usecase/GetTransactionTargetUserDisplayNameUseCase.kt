@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.transactionhistoryui.usecase
+package com.algorand.android.module.transaction.history.ui.usecase
 
 import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.transaction.pendingtxn.domain.model.PendingTransaction

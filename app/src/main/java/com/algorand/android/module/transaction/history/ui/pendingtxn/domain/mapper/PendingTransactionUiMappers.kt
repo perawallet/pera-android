@@ -11,12 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.transactionhistoryui.usecase
+package com.algorand.android.module.transaction.history.ui.pendingtxn.domain.mapper
 
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.transaction.pendingtxn.domain.model.PendingTransaction
-import com.algorand.android.transaction_history_component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory
 
-internal interface GetTransactionTargetUserDisplayName {
-    suspend operator fun invoke(transaction: BaseTransactionHistory, address: String): String?
-    suspend operator fun invoke(pendingTransaction: PendingTransaction, address: String): String?
+internal interface PendingTransactionItemMapper {
+    suspend operator fun invoke(pendingTransaction: PendingTransaction, address: String): BaseTransactionItem
 }

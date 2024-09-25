@@ -11,7 +11,7 @@ plugins {
     id 'com.google.firebase.firebase-perf'
 }
 
-apply from: 'https://raw.githubusercontent.com/Hipo/macaron/master/config/quality/quality.gradle'
+//apply from: 'https://raw.githubusercontent.com/Hipo/macaron/master/config/quality/quality.gradle'
 
 def browsersGradlePath = 'browsers.gradle'
 def offrampGradlePath = 'offramp.gradle'
@@ -194,7 +194,6 @@ dependencies {
     implementation project(path: ':swap-ui')
     implementation project(path: ':asset-utils')
     implementation project(path: ':date-ui')
-    implementation project(path: ':transaction-history-ui')
     implementation project(path: ':asset-detail-ui')
     implementation project(path: ':caching')
     implementation project(path: ':block-component')

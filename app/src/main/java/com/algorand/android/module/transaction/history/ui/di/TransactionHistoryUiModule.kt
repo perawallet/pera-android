@@ -11,22 +11,22 @@
  *   -->
  */
 
-package com.algorand.android.transactionhistoryui.di
+package com.algorand.android.module.transaction.history.ui.di
 
-import com.algorand.android.transactionhistoryui.TransactionHistoryPreviewManager
-import com.algorand.android.transactionhistoryui.TransactionHistoryPreviewManagerImpl
-import com.algorand.android.transactionhistoryui.TransactionHistoryProcessor
-import com.algorand.android.transactionhistoryui.TransactionHistoryProcessorImpl
-import com.algorand.android.transactionhistoryui.mapper.BaseTransactionItemMapper
-import com.algorand.android.transactionhistoryui.mapper.BaseTransactionItemMapperImpl
-import com.algorand.android.transactionhistoryui.mapper.TransactionLoadStatePreviewMapper
-import com.algorand.android.transactionhistoryui.mapper.TransactionLoadStatePreviewMapperImpl
-import com.algorand.android.transactionhistoryui.pendingtxn.domain.mapper.PendingTransactionItemMapper
-import com.algorand.android.transactionhistoryui.pendingtxn.domain.mapper.PendingTransactionItemMapperImpl
-import com.algorand.android.transactionhistoryui.pendingtxn.domain.usecase.GetPendingTransactionItems
-import com.algorand.android.transactionhistoryui.pendingtxn.domain.usecase.GetPendingTransactionItemsUseCase
-import com.algorand.android.transactionhistoryui.usecase.GetTransactionTargetUserDisplayName
-import com.algorand.android.transactionhistoryui.usecase.GetTransactionTargetUserDisplayNameUseCase
+import com.algorand.android.module.transaction.history.ui.TransactionHistoryPreviewManager
+import com.algorand.android.module.transaction.history.ui.TransactionHistoryPreviewManagerImpl
+import com.algorand.android.module.transaction.history.ui.TransactionHistoryProcessor
+import com.algorand.android.module.transaction.history.ui.TransactionHistoryProcessorImpl
+import com.algorand.android.module.transaction.history.ui.mapper.BaseTransactionItemMapper
+import com.algorand.android.module.transaction.history.ui.mapper.BaseTransactionItemMapperImpl
+import com.algorand.android.module.transaction.history.ui.mapper.TransactionLoadStatePreviewMapper
+import com.algorand.android.module.transaction.history.ui.mapper.TransactionLoadStatePreviewMapperImpl
+import com.algorand.android.module.transaction.history.ui.pendingtxn.domain.mapper.PendingTransactionItemMapper
+import com.algorand.android.module.transaction.history.ui.pendingtxn.domain.mapper.PendingTransactionItemMapperImpl
+import com.algorand.android.module.transaction.history.ui.pendingtxn.domain.usecase.GetPendingTransactionItems
+import com.algorand.android.module.transaction.history.ui.pendingtxn.domain.usecase.GetPendingTransactionItemsUseCase
+import com.algorand.android.module.transaction.history.ui.usecase.GetTransactionTargetUserDisplayName
+import com.algorand.android.module.transaction.history.ui.usecase.GetTransactionTargetUserDisplayNameUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

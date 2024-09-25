@@ -11,27 +11,27 @@
  *   -->
  */
 
-package com.algorand.android.transactionhistoryui.pendingtxn.domain.mapper
+package com.algorand.android.module.transaction.history.ui.pendingtxn.domain.mapper
 
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_DECIMALS
-import com.algorand.android.formatting.formatAmount
-import com.algorand.android.formatting.formatAsAlgoAmount
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem.ApplicationCallItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem.AssetConfigurationItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem.AssetTransferItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem.AssetTransferItem.BaseAssetSendItem.AssetSendItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem.AssetTransferItem.BaseReceiveItem.AssetReceiveItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem.PayItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem.PayItem.PayReceiveItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem.PayItem.PaySendItem
+import com.algorand.android.module.transaction.history.ui.usecase.GetTransactionTargetUserDisplayName
 import com.algorand.android.transaction.pendingtxn.domain.model.PendingTransaction
 import com.algorand.android.transaction.pendingtxn.domain.model.TransactionType.APP_TRANSACTION
 import com.algorand.android.transaction.pendingtxn.domain.model.TransactionType.ASSET_CONFIGURATION
 import com.algorand.android.transaction.pendingtxn.domain.model.TransactionType.ASSET_TRANSACTION
 import com.algorand.android.transaction.pendingtxn.domain.model.TransactionType.PAY_TRANSACTION
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem.TransactionItem.ApplicationCallItem
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem.TransactionItem.AssetConfigurationItem
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem.TransactionItem.AssetTransferItem
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem.TransactionItem.AssetTransferItem.BaseAssetSendItem.AssetSendItem
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem.TransactionItem.AssetTransferItem.BaseReceiveItem.AssetReceiveItem
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem.TransactionItem.PayItem
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem.TransactionItem.PayItem.PayReceiveItem
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem.TransactionItem.PayItem.PaySendItem
-import com.algorand.android.transactionhistoryui.usecase.GetTransactionTargetUserDisplayName
+import com.algorand.android.utils.formatAmount
+import com.algorand.android.utils.formatAsAlgoAmount
 import javax.inject.Inject
 
 internal class PendingTransactionItemMapperImpl @Inject constructor(

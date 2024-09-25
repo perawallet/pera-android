@@ -21,11 +21,11 @@ import com.algorand.android.core.component.domain.usecase.GetAccountTotalValueFl
 import com.algorand.android.dateui.mapper.DateFilterPreviewMapper
 import com.algorand.android.dateui.model.DateFilter
 import com.algorand.android.dateui.model.DateFilterPreview
+import com.algorand.android.module.transaction.history.ui.mapper.TransactionLoadStatePreviewMapper
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
+import com.algorand.android.module.transaction.history.ui.model.TransactionLoadStatePreview
 import com.algorand.android.modules.transaction.csv.ui.model.CsvStatusPreview
 import com.algorand.android.modules.transaction.csv.ui.usecase.CsvStatusPreviewUseCase
-import com.algorand.android.transactionhistoryui.mapper.TransactionLoadStatePreviewMapper
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
-import com.algorand.android.transactionhistoryui.model.TransactionLoadStatePreview
 import com.algorand.android.usecase.AssetDetailUseCase
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel

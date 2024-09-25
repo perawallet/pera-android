@@ -11,17 +11,14 @@
  *   -->
  */
 
-package com.algorand.android.transactionhistoryui.pendingtxn.domain.usecase
+package com.algorand.android.module.transaction.history.ui
 
-import com.algorand.android.foundation.PeraResult
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
+import com.algorand.android.transaction_history_component.domain.model.BaseTransactionHistoryItem
 
-interface GetPendingTransactionItems {
-
-    val pendingFlowDistinctUntilChangedListener: (
-        oldTransactions: List<BaseTransactionItem>?,
-        newTransactions: List<BaseTransactionItem>?
-    ) -> Boolean
-
-    suspend operator fun invoke(address: String, assetId: Long?): PeraResult<List<BaseTransactionItem>>
+internal interface TransactionHistoryProcessor {
+    suspend operator fun invoke(
+        address: String,
+        txn: BaseTransactionHistoryItem
+    ): BaseTransactionItem
 }

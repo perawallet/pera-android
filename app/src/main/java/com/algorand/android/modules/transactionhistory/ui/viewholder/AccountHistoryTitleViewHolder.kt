@@ -17,7 +17,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.databinding.ItemAccountHistoryTitleBinding
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 
 class AccountHistoryTitleViewHolder(
     private val binding: ItemAccountHistoryTitleBinding

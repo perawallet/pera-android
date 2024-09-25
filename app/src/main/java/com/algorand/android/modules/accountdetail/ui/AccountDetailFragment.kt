@@ -43,6 +43,7 @@ import com.algorand.android.foundation.Event
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragment
 import com.algorand.android.modules.accountdetail.collectibles.ui.AccountCollectiblesFragment
 import com.algorand.android.modules.accountdetail.haveyoubackedupconfirmation.ui.HaveYouBackedUpAccountConfirmationBottomSheet.Companion.HAVE_YOU_BACKED_UP_ACCOUNT_CONFIRMATION_KEY
@@ -53,7 +54,6 @@ import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetai
 import com.algorand.android.swap.common.model.SwapNavigationDestination
 import com.algorand.android.swap.common.model.SwapNavigationDestination.Introduction
 import com.algorand.android.swap.common.model.SwapNavigationDestination.Swap
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
 import com.algorand.android.ui.accountoptions.AccountOptionsBottomSheet.Companion.ACCOUNT_REMOVE_ACTION_KEY
 import com.algorand.android.ui.accounts.RenameAccountBottomSheet
 import com.algorand.android.utils.emptyString

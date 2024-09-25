@@ -11,16 +11,16 @@
  *   -->
  */
 
-package com.algorand.android.transactionhistoryui
+package com.algorand.android.module.transaction.history.ui
 
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset
 import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.core.utils.toShortenedAddress
 import com.algorand.android.designsystem.R
-import com.algorand.android.formatting.formatAmount
-import com.algorand.android.formatting.formatAsAlgoAmount
-import com.algorand.android.formatting.formatAsAssetAmount
+import com.algorand.android.module.transaction.history.ui.mapper.BaseTransactionItemMapper
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
+import com.algorand.android.module.transaction.history.ui.usecase.GetTransactionTargetUserDisplayName
 import com.algorand.android.transaction_history_component.domain.model.BaseTransactionHistoryItem
 import com.algorand.android.transaction_history_component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory
 import com.algorand.android.transaction_history_component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType.ApplicationCall
@@ -33,9 +33,9 @@ import com.algorand.android.transaction_history_component.domain.model.BaseTrans
 import com.algorand.android.transaction_history_component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType.Undefined
 import com.algorand.android.transaction_history_component.domain.model.BaseTransactionHistoryItem.PendingTransactionTitle
 import com.algorand.android.transaction_history_component.domain.model.BaseTransactionHistoryItem.TransactionDateTitle
-import com.algorand.android.transactionhistoryui.mapper.BaseTransactionItemMapper
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
-import com.algorand.android.transactionhistoryui.usecase.GetTransactionTargetUserDisplayName
+import com.algorand.android.utils.formatAmount
+import com.algorand.android.utils.formatAsAlgoAmount
+import com.algorand.android.utils.formatAsAssetAmount
 import javax.inject.Inject
 
 internal class TransactionHistoryProcessorImpl @Inject constructor(

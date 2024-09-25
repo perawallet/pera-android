@@ -18,10 +18,10 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
 import com.algorand.android.designsystem.BaseDiffUtil
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryTitleViewHolder
 import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryTransactionItemViewHolder
 import com.algorand.android.modules.transactionhistory.ui.viewholder.ApplicationCallItemViewHolder
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
 
 class AccountHistoryAdapter(
     private val listener: Listener

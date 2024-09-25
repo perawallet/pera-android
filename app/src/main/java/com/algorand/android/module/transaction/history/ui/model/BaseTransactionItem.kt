@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.transactionhistoryui.model
+package com.algorand.android.module.transaction.history.ui.model
 
 import android.os.Parcelable
 import androidx.annotation.StringRes

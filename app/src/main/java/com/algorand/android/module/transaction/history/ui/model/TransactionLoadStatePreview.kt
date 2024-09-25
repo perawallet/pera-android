@@ -11,11 +11,13 @@
  *   -->
  */
 
-package com.algorand.android.transactionhistoryui.pendingtxn.domain.mapper
+package com.algorand.android.module.transaction.history.ui.model
 
-import com.algorand.android.transaction.pendingtxn.domain.model.PendingTransaction
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
+import com.algorand.android.designsystem.ScreenState
 
-internal interface PendingTransactionItemMapper {
-    suspend operator fun invoke(pendingTransaction: PendingTransaction, address: String): BaseTransactionItem
-}
+data class TransactionLoadStatePreview(
+    val isScreenStateViewVisible: Boolean,
+    val isTransactionListVisible: Boolean,
+    val screenStateViewType: ScreenState?,
+    val isLoading: Boolean
+)

@@ -11,13 +11,17 @@
  *   -->
  */
 
-package com.algorand.android.transactionhistoryui.model
+package com.algorand.android.module.transaction.history.ui.pendingtxn.domain.usecase
 
-import com.algorand.android.designsystem.ScreenState
+import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 
-data class TransactionLoadStatePreview(
-    val isScreenStateViewVisible: Boolean,
-    val isTransactionListVisible: Boolean,
-    val screenStateViewType: ScreenState?,
-    val isLoading: Boolean
-)
+interface GetPendingTransactionItems {
+
+    val pendingFlowDistinctUntilChangedListener: (
+        oldTransactions: List<BaseTransactionItem>?,
+        newTransactions: List<BaseTransactionItem>?
+    ) -> Boolean
+
+    suspend operator fun invoke(address: String, assetId: Long?): PeraResult<List<BaseTransactionItem>>
+}

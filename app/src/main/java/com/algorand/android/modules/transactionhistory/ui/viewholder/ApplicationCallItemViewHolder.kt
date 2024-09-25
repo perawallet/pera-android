@@ -18,7 +18,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemApplicationCallTransactionBinding
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 
 // TODO: extend this from base view holder
 class ApplicationCallItemViewHolder(

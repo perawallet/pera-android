@@ -11,14 +11,15 @@
  *   -->
  */
 
-package com.algorand.android.transactionhistoryui
+package com.algorand.android.module.transaction.history.ui.mapper
 
-import com.algorand.android.transaction_history_component.domain.model.BaseTransactionHistoryItem
-import com.algorand.android.transactionhistoryui.model.BaseTransactionItem
+import androidx.paging.CombinedLoadStates
+import com.algorand.android.module.transaction.history.ui.model.TransactionLoadStatePreview
 
-internal interface TransactionHistoryProcessor {
-    suspend operator fun invoke(
-        address: String,
-        txn: BaseTransactionHistoryItem
-    ): BaseTransactionItem
+interface TransactionLoadStatePreviewMapper {
+    operator fun invoke(
+        combinedLoadStates: CombinedLoadStates,
+        itemCount: Int,
+        isLastStateError: Boolean
+    ): TransactionLoadStatePreview
 }

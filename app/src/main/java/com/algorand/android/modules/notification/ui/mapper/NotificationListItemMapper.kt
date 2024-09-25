@@ -15,7 +15,7 @@ package com.algorand.android.modules.notification.ui.mapper
 
 import com.algorand.android.modules.notification.ui.model.NotificationListItem
 import com.algorand.android.modules.notification.ui.utils.NotificationIconDrawableProvider
-import com.algorand.android.notification.domain.model.NotificationHistory
+import com.algorand.android.module.notification.domain.model.NotificationHistory
 import com.algorand.android.utils.getAlgorandMobileDateFormatter
 import com.algorand.android.utils.parseFormattedDate
 import java.time.ZonedDateTime

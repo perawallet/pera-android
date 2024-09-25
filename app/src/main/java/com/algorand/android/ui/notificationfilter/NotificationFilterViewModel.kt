@@ -21,7 +21,7 @@ import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.database.NotificationFilterDao
-import com.algorand.android.notification.domain.usecase.SetNotificationFilter
+import com.algorand.android.module.notification.domain.usecase.SetNotificationFilter
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.preference.isNotificationActivated
 import com.algorand.android.utils.preference.setNotificationPreference

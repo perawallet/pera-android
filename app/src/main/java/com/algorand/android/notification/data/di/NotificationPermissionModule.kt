@@ -1,8 +1,8 @@
-package com.algorand.android.notification.data.di
+package com.algorand.android.module.notification.data.di
 
-import com.algorand.android.notification.data.local.AskNotificationPermissionEventSingleLocalCache
-import com.algorand.android.notification.data.repository.NotificationPermissionRepositoryImpl
-import com.algorand.android.notification.domain.repository.NotificationPermissionRepository
+import com.algorand.android.module.notification.data.local.AskNotificationPermissionEventSingleLocalCache
+import com.algorand.android.module.notification.data.repository.NotificationPermissionRepositoryImpl
+import com.algorand.android.module.notification.domain.repository.NotificationPermissionRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

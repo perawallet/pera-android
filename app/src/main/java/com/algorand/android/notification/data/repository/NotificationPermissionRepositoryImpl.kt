@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.notification.data.repository
+package com.algorand.android.module.notification.data.repository
 
-import com.algorand.android.notification.data.local.AskNotificationPermissionEventSingleLocalCache
-import com.algorand.android.notification.domain.repository.NotificationPermissionRepository
+import com.algorand.android.module.notification.data.local.AskNotificationPermissionEventSingleLocalCache
+import com.algorand.android.module.notification.domain.repository.NotificationPermissionRepository
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.Event
 import kotlinx.coroutines.flow.StateFlow

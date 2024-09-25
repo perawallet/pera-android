@@ -18,8 +18,8 @@ import android.os.Build
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccountCountFlow
-import com.algorand.android.notification.domain.usecase.CacheAskNotificationPermissionEventUseCase
-import com.algorand.android.notification.domain.usecase.GetAskNotificationPermissionEventFlowUseCase
+import com.algorand.android.module.notification.domain.usecase.CacheAskNotificationPermissionEventUseCase
+import com.algorand.android.module.notification.domain.usecase.GetAskNotificationPermissionEventFlowUseCase
 import com.algorand.android.utils.isPermissionGranted
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.qualifiers.ApplicationContext

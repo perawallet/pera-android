@@ -10,9 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.notification.domain.usecase
+package com.algorand.android.module.notification.domain.usecase
 
-import com.algorand.android.notification.domain.repository.NotificationPermissionRepository
+import com.algorand.android.module.notification.domain.repository.NotificationPermissionRepository
 import javax.inject.Inject
 import javax.inject.Named
 

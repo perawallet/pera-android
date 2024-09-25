@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.notification.data.local
+package com.algorand.android.module.notification.data.local
 
 import com.algorand.android.cache.SingleLocalCache
 import com.algorand.android.utils.Event

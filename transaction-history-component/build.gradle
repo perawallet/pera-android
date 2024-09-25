@@ -33,13 +33,6 @@ android {
 
 dependencies {
 
-    implementation project(path: ':network-utils')
-    implementation project(path: ':pagination-component')
-    implementation project(path: ':date-component')
-    implementation project(path: ':account-component')
-    implementation project(path: ':asset-detail-component')
-    implementation project(path: ':foundation')
-
     implementation deps.android.paging
 
     implementation deps.hilt.core

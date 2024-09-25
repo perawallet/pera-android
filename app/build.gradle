@@ -191,12 +191,12 @@ dependencies {
     implementation project(path: ':date-ui')
     implementation project(path: ':caching')
     implementation project(path: ':block-component')
-    implementation project(path: ':notification-component')
     implementation project(path: ':algosdk-aar')
     implementation project(path: ':peracompactdecimal-aar')
     implementation project(path: ':date-component')
     implementation project(path: ':event-tracker-component')
     implementation project(path: ':algosdk-component')
+    implementation project(path: ':shared-db')
 
     implementation deps.kotlinx.coroutines_core
     implementation deps.kotlinx.coroutines_android

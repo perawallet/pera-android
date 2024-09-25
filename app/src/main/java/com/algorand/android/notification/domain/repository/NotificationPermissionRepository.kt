@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.notification.domain.repository
+package com.algorand.android.module.notification.domain.repository
 
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.Event

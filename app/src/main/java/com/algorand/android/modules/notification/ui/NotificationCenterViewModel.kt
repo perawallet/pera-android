@@ -19,13 +19,13 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.module.notification.domain.usecase.GetNotificationHistoryPagingFlow
+import com.algorand.android.module.notification.domain.usecase.GetNotificationLastRefreshDateTime
+import com.algorand.android.module.notification.domain.usecase.SetNotificationLastRefreshDateTime
 import com.algorand.android.modules.notification.domain.usecase.NotificationStatusUseCase
 import com.algorand.android.modules.notification.ui.mapper.NotificationListItemMapper
 import com.algorand.android.modules.notification.ui.model.NotificationListItem
 import com.algorand.android.notification.PeraNotificationManager
-import com.algorand.android.notification.domain.usecase.GetNotificationHistoryPagingFlow
-import com.algorand.android.notification.domain.usecase.GetNotificationLastRefreshDateTime
-import com.algorand.android.notification.domain.usecase.SetNotificationLastRefreshDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.ZonedDateTime
 import javax.inject.Inject

@@ -14,7 +14,7 @@
 package com.algorand.android.module.transaction.history.ui.usecase
 
 import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.transaction.pendingtxn.domain.model.PendingTransaction
+import com.algorand.android.module.transaction.component.pendingtxn.domain.model.PendingTransaction
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem
 import javax.inject.Inject
 

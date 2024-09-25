@@ -22,8 +22,8 @@ import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.models.WalletConnectSignResult.CanBeSigned
 import com.algorand.android.models.WalletConnectSignResult.Error
-import com.algorand.android.transaction.domain.sign.SignTransactionManager
-import com.algorand.android.transaction.domain.sign.model.SignTransactionResult
+import com.algorand.android.module.transaction.component.domain.sign.SignTransactionManager
+import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
 import com.algorand.android.utils.ListQueuingHelper.Listener
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.walletconnect.WalletConnectSignValidator

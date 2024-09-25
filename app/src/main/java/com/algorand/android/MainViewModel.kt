@@ -41,7 +41,7 @@ import com.algorand.android.module.swap.component.common.model.SwapNavigationDes
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Introduction
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Swap
 import com.algorand.android.module.swap.component.common.usecase.GetSwapNavigationDestination
-import com.algorand.android.transaction.domain.model.SignedTransaction
+import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 import com.algorand.android.module.transaction.ui.addasset.model.AddAssetTransactionPayload
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult
 import com.algorand.android.utils.Event

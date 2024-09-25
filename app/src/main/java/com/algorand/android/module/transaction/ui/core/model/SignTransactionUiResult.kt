@@ -17,7 +17,7 @@ import android.content.Context
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.designsystem.R
 import com.algorand.android.designsystem.getXmlStyledString
-import com.algorand.android.transaction.domain.model.SignedTransaction
+import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 
 sealed interface SignTransactionUiResult {
 

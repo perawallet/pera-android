@@ -23,9 +23,9 @@ import com.algorand.android.module.swap.component.domain.model.swapquotetxns.Uns
 import com.algorand.android.module.swap.ui.confirmswap.mapper.SignSwapTransactionResultMapper
 import com.algorand.android.module.swap.ui.confirmswap.model.SignSwapTransactionResult
 import com.algorand.android.module.swap.ui.confirmswap.model.SignSwapTransactionResult.TransactionsSigned
-import com.algorand.android.transaction.domain.model.SignedTransaction
-import com.algorand.android.transaction.domain.sign.SignTransactionManager
-import com.algorand.android.transaction.domain.sign.model.SignTransactionResult
+import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
+import com.algorand.android.module.transaction.component.domain.sign.SignTransactionManager
+import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
 import javax.inject.Inject
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow

@@ -16,7 +16,7 @@ package com.algorand.android.module.swap.ui.confirmswap.mapper
 import com.algorand.android.module.swap.ui.confirmswap.model.SignSwapTransactionResult
 import com.algorand.android.module.swap.ui.confirmswap.model.SignSwapTransactionResult.Error.Api
 import com.algorand.android.module.swap.ui.confirmswap.model.SignSwapTransactionResult.Error.Defined
-import com.algorand.android.transaction.domain.sign.model.SignTransactionResult
+import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
 import com.algorand.android.module.transaction.ui.core.mapper.SignTransactionUiResultMapper
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.BluetoothNotEnabled
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.BluetoothPermissionsAreNotGranted

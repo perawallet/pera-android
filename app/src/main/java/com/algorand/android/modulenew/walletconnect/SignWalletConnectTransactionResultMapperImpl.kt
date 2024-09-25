@@ -14,7 +14,7 @@
 package com.algorand.android.modulenew.walletconnect
 
 import com.algorand.android.models.WalletConnectSignResult.Error
-import com.algorand.android.transaction.domain.sign.model.SignTransactionResult
+import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
 import com.algorand.android.module.transaction.ui.core.mapper.SignTransactionUiResultMapper
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.BluetoothNotEnabled
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.BluetoothPermissionsAreNotGranted

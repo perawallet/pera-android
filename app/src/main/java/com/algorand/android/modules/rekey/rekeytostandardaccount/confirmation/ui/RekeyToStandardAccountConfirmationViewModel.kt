@@ -19,7 +19,7 @@ import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConf
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRekeyConfirmationFields
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.usecase.RekeyToStandardAccountConfirmationPreviewUseCase
-import com.algorand.android.transaction.domain.model.SignedTransaction
+import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

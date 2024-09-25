@@ -20,7 +20,7 @@ import com.algorand.android.module.swap.ui.confirmswap.model.ConfirmSwapPreview
 import com.algorand.android.module.swap.ui.confirmswap.model.ConfirmSwapPriceImpactWarningStatus
 import com.algorand.android.module.swap.ui.confirmswap.model.SignSwapTransactionResult
 import com.algorand.android.module.swap.ui.confirmswap.model.SwapPriceRatioProvider
-import com.algorand.android.transaction.domain.sign.model.SignTransactionResult
+import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
 
 internal interface ConfirmSwapPriceImpactWarningStatusMapper {
     operator fun invoke(priceImpact: Float): ConfirmSwapPriceImpactWarningStatus

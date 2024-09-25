@@ -183,7 +183,6 @@ dependencies {
     implementation project(path: ':account-sorting-component')
     implementation project(path: ':drawable-ui')
     implementation project(path: ':designsystem')
-    implementation project(path: ':transaction-component')
     implementation project(path: ':currency-component')
     implementation project(path: ':network-utils')
     implementation project(path: ':ledger-component')
@@ -199,6 +198,7 @@ dependencies {
     implementation project(path: ':peracompactdecimal-aar')
     implementation project(path: ':date-component')
     implementation project(path: ':event-tracker-component')
+    implementation project(path: ':algosdk-component')
 
     implementation deps.kotlinx.coroutines_core
     implementation deps.kotlinx.coroutines_android

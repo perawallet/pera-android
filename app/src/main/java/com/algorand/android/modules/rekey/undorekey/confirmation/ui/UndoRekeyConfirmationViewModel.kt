@@ -20,7 +20,7 @@ import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConf
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRekeyConfirmationFields
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.model.UndoRekeyConfirmationPreview
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.usecase.UndoRekeyConfirmationPreviewUseCase
-import com.algorand.android.transaction.domain.model.SignedTransaction
+import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job

@@ -19,11 +19,11 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
 import com.algorand.android.foundation.Event
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.transaction.domain.creation.CreateSendTransaction
-import com.algorand.android.transaction.domain.creation.model.CreateTransactionResult
-import com.algorand.android.transaction.domain.creation.send.model.CreateSendTransactionPayload
-import com.algorand.android.transaction.domain.model.SignedTransaction
-import com.algorand.android.transaction.domain.usecase.SendSignedTransaction
+import com.algorand.android.module.transaction.component.domain.creation.CreateSendTransaction
+import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult
+import com.algorand.android.module.transaction.component.domain.creation.send.model.CreateSendTransactionPayload
+import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
+import com.algorand.android.module.transaction.component.domain.usecase.SendSignedTransaction
 import com.algorand.android.module.transaction.ui.sendasset.domain.GetAssetTransferPreview
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferPreview
 import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload

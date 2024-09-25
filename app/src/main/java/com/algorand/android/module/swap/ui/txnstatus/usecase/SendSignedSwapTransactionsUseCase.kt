@@ -16,8 +16,8 @@ package com.algorand.android.module.swap.ui.txnstatus.usecase
 import com.algorand.android.foundation.PeraResult
 import com.algorand.android.foundation.PeraResult.Success
 import com.algorand.android.module.swap.ui.txnstatus.model.SignedSwapTransaction
-import com.algorand.android.transaction.domain.model.SignedTransaction
-import com.algorand.android.transaction.domain.usecase.SendSignedTransaction
+import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
+import com.algorand.android.module.transaction.component.domain.usecase.SendSignedTransaction
 import javax.inject.Inject
 
 internal class SendSignedSwapTransactionsUseCase @Inject constructor(

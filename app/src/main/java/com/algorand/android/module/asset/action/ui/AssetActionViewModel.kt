@@ -19,7 +19,7 @@ import com.algorand.android.foundation.coroutine.CoroutineExtensions.launchIO
 import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
 import com.algorand.android.module.asset.action.ui.model.AssetActionPreview
 import com.algorand.android.module.asset.action.ui.usecase.GetAssetActionPreview
-import com.algorand.android.transaction.domain.TransactionConstants.MIN_FEE
+import com.algorand.android.module.transaction.component.domain.TransactionConstants.MIN_FEE
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
 import kotlinx.coroutines.flow.MutableStateFlow

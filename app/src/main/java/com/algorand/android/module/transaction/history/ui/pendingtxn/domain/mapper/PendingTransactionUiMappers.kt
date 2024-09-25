@@ -14,7 +14,7 @@
 package com.algorand.android.module.transaction.history.ui.pendingtxn.domain.mapper
 
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
-import com.algorand.android.transaction.pendingtxn.domain.model.PendingTransaction
+import com.algorand.android.module.transaction.component.pendingtxn.domain.model.PendingTransaction
 
 internal interface PendingTransactionItemMapper {
     suspend operator fun invoke(pendingTransaction: PendingTransaction, address: String): BaseTransactionItem

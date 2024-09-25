@@ -17,8 +17,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.foundation.Event
 import com.algorand.android.foundation.coroutine.CoroutineExtensions.launchIfInactive
-import com.algorand.android.transaction.domain.creation.CreateRemoveAssetTransaction
-import com.algorand.android.transaction.domain.creation.model.CreateTransactionResult
+import com.algorand.android.module.transaction.component.domain.creation.CreateRemoveAssetTransaction
+import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job

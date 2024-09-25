@@ -25,11 +25,11 @@ import com.algorand.android.module.transaction.history.ui.model.BaseTransactionI
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem.PayItem.PayReceiveItem
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem.PayItem.PaySendItem
 import com.algorand.android.module.transaction.history.ui.usecase.GetTransactionTargetUserDisplayName
-import com.algorand.android.transaction.pendingtxn.domain.model.PendingTransaction
-import com.algorand.android.transaction.pendingtxn.domain.model.TransactionType.APP_TRANSACTION
-import com.algorand.android.transaction.pendingtxn.domain.model.TransactionType.ASSET_CONFIGURATION
-import com.algorand.android.transaction.pendingtxn.domain.model.TransactionType.ASSET_TRANSACTION
-import com.algorand.android.transaction.pendingtxn.domain.model.TransactionType.PAY_TRANSACTION
+import com.algorand.android.module.transaction.component.pendingtxn.domain.model.PendingTransaction
+import com.algorand.android.module.transaction.component.pendingtxn.domain.model.TransactionType.APP_TRANSACTION
+import com.algorand.android.module.transaction.component.pendingtxn.domain.model.TransactionType.ASSET_CONFIGURATION
+import com.algorand.android.module.transaction.component.pendingtxn.domain.model.TransactionType.ASSET_TRANSACTION
+import com.algorand.android.module.transaction.component.pendingtxn.domain.model.TransactionType.PAY_TRANSACTION
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoAmount
 import javax.inject.Inject

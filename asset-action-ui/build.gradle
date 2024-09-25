@@ -42,7 +42,6 @@ dependencies {
     implementation project(path: ':asset-detail-component')
     implementation project(path: ':account-core-ui')
     implementation project(path: ':foundation')
-    implementation project(path: ':transaction-component')
     implementation project(path: ':formatting-component')
 
     implementation deps.hilt.core

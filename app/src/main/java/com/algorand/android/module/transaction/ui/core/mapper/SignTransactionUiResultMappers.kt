@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.ui.core.mapper
 
-import com.algorand.android.transaction.domain.sign.model.SignTransactionResult
+import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult
 
 interface SignTransactionUiResultMapper {

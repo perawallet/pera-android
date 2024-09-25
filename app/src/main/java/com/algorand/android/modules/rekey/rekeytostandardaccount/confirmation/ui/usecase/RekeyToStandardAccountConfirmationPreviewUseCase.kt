@@ -23,9 +23,9 @@ import com.algorand.android.foundation.Event
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.decider.RekeyToStandardAccountPreviewDecider
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.mapper.RekeyToStandardAccountConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
-import com.algorand.android.transaction.domain.model.SignedTransaction
-import com.algorand.android.transaction.domain.usecase.CalculateRekeyFee
-import com.algorand.android.transaction.domain.usecase.SendSignedTransaction
+import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
+import com.algorand.android.module.transaction.component.domain.usecase.CalculateRekeyFee
+import com.algorand.android.module.transaction.component.domain.usecase.SendSignedTransaction
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString

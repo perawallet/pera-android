@@ -27,7 +27,7 @@ import com.algorand.android.databinding.FragmentTransferAssetPreviewBinding
 import com.algorand.android.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.transaction.domain.model.SignedTransaction
+import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferPreview
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser.Account
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser.Address

@@ -14,7 +14,7 @@
 package com.algorand.android.modulenew.walletconnect
 
 import com.algorand.android.models.WalletConnectSignResult
-import com.algorand.android.transaction.domain.sign.model.SignTransactionResult
+import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
 
 internal interface SignWalletConnectTransactionResultMapper {
     operator fun invoke(result: SignTransactionResult): SignWalletConnectTransactionResult?

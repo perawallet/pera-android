@@ -19,8 +19,8 @@ import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSe
 import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionContactItems
 import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionItemsFromAccountAddress
 import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionNameServiceItems
-import com.algorand.android.transaction.domain.model.ValidateReceiverAccountPayload
-import com.algorand.android.transaction.domain.usecase.ValidateReceiverAccount
+import com.algorand.android.module.transaction.component.domain.model.ValidateReceiverAccountPayload
+import com.algorand.android.module.transaction.component.domain.usecase.ValidateReceiverAccount
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser
 import com.algorand.android.ui.send.receiveraccount.mapper.GetReceiverAccountSelectionValidationResult
 import com.algorand.android.utils.Resource

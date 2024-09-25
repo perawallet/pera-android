@@ -11,16 +11,13 @@
  *   -->
  */
 
-package com.algorand.android.assetaction.model
+package com.algorand.android.module.asset.action.ui.model
 
-import android.os.Parcelable
-import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
-import kotlinx.parcelize.Parcelize
+import com.algorand.android.foundation.Event
 
-@Parcelize
-data class AssetActionInformation(
-    val assetId: Long,
-    val fullName: String,
-    val shortName: String,
-    val verificationTierConfiguration: VerificationTierConfiguration
-) : Parcelable
+data class AssetActionPreview(
+    val isLoading: Boolean,
+    val assetActionInformation: AssetActionInformation? = null,
+    val accountDetail: AssetActionAccountDetail? = null,
+    val showError: Event<String?>? = null
+)

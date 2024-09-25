@@ -11,13 +11,12 @@
  *   -->
  */
 
-package com.algorand.android.assetaction.model
+package com.algorand.android.module.asset.action.ui.model
 
-import com.algorand.android.foundation.Event
+import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
 
-data class AssetActionPreview(
-    val isLoading: Boolean,
-    val assetActionInformation: AssetActionInformation? = null,
-    val accountDetail: AssetActionAccountDetail? = null,
-    val showError: Event<String?>? = null
+data class AssetActionAccountDetail(
+    val address: String,
+    val displayName: String,
+    val iconDrawablePreview: AccountIconDrawablePreview
 )

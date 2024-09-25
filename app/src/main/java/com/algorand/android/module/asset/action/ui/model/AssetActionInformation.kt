@@ -11,11 +11,16 @@
  *   -->
  */
 
-package com.algorand.android.assetaction.mapper
+package com.algorand.android.module.asset.action.ui.model
 
-import com.algorand.android.assetaction.model.AssetActionInformation
-import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset
+import android.os.Parcelable
+import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import kotlinx.parcelize.Parcelize
 
-internal interface AssetActionInformationMapper {
-    operator fun invoke(asset: Asset): AssetActionInformation
-}
+@Parcelize
+data class AssetActionInformation(
+    val assetId: Long,
+    val fullName: String,
+    val shortName: String,
+    val verificationTierConfiguration: VerificationTierConfiguration
+) : Parcelable

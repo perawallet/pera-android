@@ -11,10 +11,10 @@
  *   -->
  */
 
-package com.algorand.android.assetaction.usecase
+package com.algorand.android.module.asset.action.ui.usecase
 
-import com.algorand.android.assetaction.mapper.AssetActionInformationMapper
-import com.algorand.android.assetaction.model.AssetActionInformation
+import com.algorand.android.module.asset.action.ui.mapper.AssetActionInformationMapper
+import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
 import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAsset
 import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.foundation.PeraResult

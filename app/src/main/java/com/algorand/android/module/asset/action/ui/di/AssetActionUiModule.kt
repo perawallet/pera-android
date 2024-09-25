@@ -11,16 +11,16 @@
  *   -->
  */
 
-package com.algorand.android.assetaction.di
+package com.algorand.android.module.asset.action.ui.di
 
-import com.algorand.android.assetaction.mapper.AssetActionInformationMapper
-import com.algorand.android.assetaction.mapper.AssetActionInformationMapperImpl
-import com.algorand.android.assetaction.usecase.GetAssetActionAccountDetail
-import com.algorand.android.assetaction.usecase.GetAssetActionAccountDetailUseCase
-import com.algorand.android.assetaction.usecase.GetAssetActionInformation
-import com.algorand.android.assetaction.usecase.GetAssetActionInformationUseCase
-import com.algorand.android.assetaction.usecase.GetAssetActionPreview
-import com.algorand.android.assetaction.usecase.GetAssetActionPreviewUseCase
+import com.algorand.android.module.asset.action.ui.mapper.AssetActionInformationMapper
+import com.algorand.android.module.asset.action.ui.mapper.AssetActionInformationMapperImpl
+import com.algorand.android.module.asset.action.ui.usecase.GetAssetActionAccountDetail
+import com.algorand.android.module.asset.action.ui.usecase.GetAssetActionAccountDetailUseCase
+import com.algorand.android.module.asset.action.ui.usecase.GetAssetActionInformation
+import com.algorand.android.module.asset.action.ui.usecase.GetAssetActionInformationUseCase
+import com.algorand.android.module.asset.action.ui.usecase.GetAssetActionPreview
+import com.algorand.android.module.asset.action.ui.usecase.GetAssetActionPreviewUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

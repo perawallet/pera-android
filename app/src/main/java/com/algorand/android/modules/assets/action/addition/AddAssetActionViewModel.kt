@@ -13,8 +13,8 @@
 package com.algorand.android.modules.assets.action.addition
 
 import androidx.lifecycle.SavedStateHandle
-import com.algorand.android.assetaction.AssetActionViewModel
-import com.algorand.android.assetaction.usecase.GetAssetActionPreview
+import com.algorand.android.module.asset.action.ui.AssetActionViewModel
+import com.algorand.android.module.asset.action.ui.usecase.GetAssetActionPreview
 import com.algorand.android.models.AssetAction
 import com.algorand.android.module.transaction.ui.addasset.model.AddAssetTransactionPayload
 import com.algorand.android.utils.getOrElse

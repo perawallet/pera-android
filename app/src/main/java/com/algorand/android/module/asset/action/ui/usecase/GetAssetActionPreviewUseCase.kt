@@ -11,11 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.assetaction.usecase
+package com.algorand.android.module.asset.action.ui.usecase
 
-import com.algorand.android.assetaction.model.AssetActionAccountDetail
-import com.algorand.android.assetaction.model.AssetActionInformation
-import com.algorand.android.assetaction.model.AssetActionPreview
+import com.algorand.android.module.asset.action.ui.model.AssetActionAccountDetail
+import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
+import com.algorand.android.module.asset.action.ui.model.AssetActionPreview
 import com.algorand.android.foundation.Event
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

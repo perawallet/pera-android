@@ -14,7 +14,7 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import com.algorand.android.assetaction.model.AssetActionInformation
+import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

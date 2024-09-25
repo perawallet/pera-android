@@ -18,10 +18,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import com.algorand.android.R
-import com.algorand.android.assetaction.AssetActionViewModel
-import com.algorand.android.assetaction.model.AssetActionAccountDetail
-import com.algorand.android.assetaction.model.AssetActionInformation
-import com.algorand.android.assetaction.model.AssetActionPreview
+import com.algorand.android.module.asset.action.ui.AssetActionViewModel
+import com.algorand.android.module.asset.action.ui.model.AssetActionAccountDetail
+import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
+import com.algorand.android.module.asset.action.ui.model.AssetActionPreview
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.databinding.BottomSheetAssetActionBinding

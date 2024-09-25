@@ -39,7 +39,6 @@ android {
 
 dependencies {
 
-    implementation project(path: ':transaction-component')
     implementation project(path: ':asset-detail-component')
     implementation project(path: ':account-info-component')
     implementation project(path: ':account-core-component')

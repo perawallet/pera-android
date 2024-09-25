@@ -11,12 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.assetaction.model
+package com.algorand.android.module.asset.action.ui.mapper
 
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
+import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset
 
-data class AssetActionAccountDetail(
-    val address: String,
-    val displayName: String,
-    val iconDrawablePreview: AccountIconDrawablePreview
-)
+internal interface AssetActionInformationMapper {
+    operator fun invoke(asset: Asset): AssetActionInformation
+}

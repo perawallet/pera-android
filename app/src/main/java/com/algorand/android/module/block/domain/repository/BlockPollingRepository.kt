@@ -11,10 +11,17 @@
  *   -->
  */
 
-package com.algorand.android.block.data.model
+package com.algorand.android.module.block.domain.repository
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.android.foundation.PeraResult
 
-internal data class ShouldRefreshResponse(
-    @SerializedName("refresh") val shouldRefresh: Boolean?
-)
+internal interface BlockPollingRepository {
+
+    suspend fun clearLastKnownBlockNumber()
+
+    suspend fun updateLastKnownBlockNumber(blockNumber: Long)
+
+    suspend fun getLastKnownAccountBlockNumber(): Long?
+
+    suspend fun shouldUpdateAccountCache(localAccountAddresses: List<String>): PeraResult<Boolean>
+}

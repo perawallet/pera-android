@@ -11,10 +11,10 @@
  *   -->
  */
 
-package com.algorand.android.block.domain.usecase
+package com.algorand.android.module.block.domain.usecase
 
 import com.algorand.android.accountinfo.component.domain.usecase.GetEarliestLastFetchedRound
-import com.algorand.android.block.domain.repository.BlockPollingRepository
+import com.algorand.android.module.block.domain.repository.BlockPollingRepository
 import javax.inject.Inject
 
 internal class UpdateLastKnownBlockNumberUseCase @Inject constructor(

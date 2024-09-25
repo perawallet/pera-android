@@ -11,17 +11,17 @@
  *   -->
  */
 
-package com.algorand.android.block.di
+package com.algorand.android.module.block.di
 
-import com.algorand.android.block.data.repository.BlockPollingRepositoryImpl
-import com.algorand.android.block.data.service.BlockPollingApiService
-import com.algorand.android.block.domain.repository.BlockPollingRepository
-import com.algorand.android.block.domain.usecase.ClearLastKnownBlockNumber
-import com.algorand.android.block.domain.usecase.GetLastKnownBlockNumber
-import com.algorand.android.block.domain.usecase.ShouldUpdateAccountCache
-import com.algorand.android.block.domain.usecase.ShouldUpdateAccountCacheUseCase
-import com.algorand.android.block.domain.usecase.UpdateLastKnownBlockNumber
-import com.algorand.android.block.domain.usecase.UpdateLastKnownBlockNumberUseCase
+import com.algorand.android.module.block.data.repository.BlockPollingRepositoryImpl
+import com.algorand.android.module.block.data.service.BlockPollingApiService
+import com.algorand.android.module.block.domain.repository.BlockPollingRepository
+import com.algorand.android.module.block.domain.usecase.ClearLastKnownBlockNumber
+import com.algorand.android.module.block.domain.usecase.GetLastKnownBlockNumber
+import com.algorand.android.module.block.domain.usecase.ShouldUpdateAccountCache
+import com.algorand.android.module.block.domain.usecase.ShouldUpdateAccountCacheUseCase
+import com.algorand.android.module.block.domain.usecase.UpdateLastKnownBlockNumber
+import com.algorand.android.module.block.domain.usecase.UpdateLastKnownBlockNumberUseCase
 import com.algorand.android.caching.SingleInMemoryLocalCache
 import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import dagger.Module

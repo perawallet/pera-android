@@ -11,11 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.block.domain.usecase
+package com.algorand.android.module.block.domain.usecase
 
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
 import com.algorand.android.accountinfo.component.domain.usecase.GetAllAccountInformation
-import com.algorand.android.block.domain.repository.BlockPollingRepository
+import com.algorand.android.module.block.domain.repository.BlockPollingRepository
 import com.algorand.android.foundation.PeraResult
 import javax.inject.Inject
 

@@ -16,7 +16,7 @@ package com.algorand.android.module.appcache.usecase
 import com.algorand.android.accountinfo.component.domain.usecase.ClearAccountInformationCache
 import com.algorand.android.assetdetail.component.asset.domain.usecase.ClearAssetCache
 import com.algorand.android.module.banner.domain.usecase.ClearBanners
-import com.algorand.android.block.domain.usecase.ClearLastKnownBlockNumber
+import com.algorand.android.module.block.domain.usecase.ClearLastKnownBlockNumber
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

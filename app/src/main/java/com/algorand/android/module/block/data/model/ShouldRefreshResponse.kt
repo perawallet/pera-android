@@ -11,11 +11,10 @@
  *   -->
  */
 
-package com.algorand.android.block.data.model
+package com.algorand.android.module.block.data.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class ShouldRefreshRequestBody(
-    @SerializedName("account_addresses") val accountAddresses: List<String>,
-    @SerializedName("last_known_round") val lastKnownRound: Long?
+internal data class ShouldRefreshResponse(
+    @SerializedName("refresh") val shouldRefresh: Boolean?
 )

@@ -11,16 +11,22 @@
  *   -->
  */
 
-package com.algorand.android.block.data.service
+package com.algorand.android.module.block.domain.usecase
 
-import com.algorand.android.block.data.model.ShouldRefreshRequestBody
-import com.algorand.android.block.data.model.ShouldRefreshResponse
-import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.POST
+import com.algorand.android.foundation.PeraResult
 
-internal interface BlockPollingApiService {
+fun interface ClearLastKnownBlockNumber {
+    suspend operator fun invoke()
+}
 
-    @POST("v1/algorand-indexer/should-refresh/")
-    suspend fun shouldRefresh(@Body body: ShouldRefreshRequestBody): Response<ShouldRefreshResponse>
+fun interface GetLastKnownBlockNumber {
+    suspend operator fun invoke()
+}
+
+interface UpdateLastKnownBlockNumber {
+    suspend operator fun invoke()
+}
+
+interface ShouldUpdateAccountCache {
+    suspend operator fun invoke(): PeraResult<Boolean>
 }

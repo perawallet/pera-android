@@ -11,22 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.block.domain.usecase
+package com.algorand.android.module.block.data.model
 
-import com.algorand.android.foundation.PeraResult
+import com.google.gson.annotations.SerializedName
 
-fun interface ClearLastKnownBlockNumber {
-    suspend operator fun invoke()
-}
-
-fun interface GetLastKnownBlockNumber {
-    suspend operator fun invoke()
-}
-
-interface UpdateLastKnownBlockNumber {
-    suspend operator fun invoke()
-}
-
-interface ShouldUpdateAccountCache {
-    suspend operator fun invoke(): PeraResult<Boolean>
-}
+internal data class ShouldRefreshRequestBody(
+    @SerializedName("account_addresses") val accountAddresses: List<String>,
+    @SerializedName("last_known_round") val lastKnownRound: Long?
+)

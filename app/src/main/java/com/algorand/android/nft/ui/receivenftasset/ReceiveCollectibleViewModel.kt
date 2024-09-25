@@ -15,7 +15,7 @@ package com.algorand.android.nft.ui.receivenftasset
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel
 import com.algorand.android.modules.assets.addition.base.ui.domain.BaseAddAssetPreviewUseCase
 import com.algorand.android.utils.getOrThrow

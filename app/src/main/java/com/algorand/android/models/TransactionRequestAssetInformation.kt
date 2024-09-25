@@ -13,7 +13,7 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 
 data class TransactionRequestAssetInformation(
     val assetId: Long?,

@@ -15,7 +15,7 @@ package com.algorand.android.modules.sorting.accountsorting.ui.viewholder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.databinding.ItemAccountSortBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.models.ui.AccountAssetItemButtonState

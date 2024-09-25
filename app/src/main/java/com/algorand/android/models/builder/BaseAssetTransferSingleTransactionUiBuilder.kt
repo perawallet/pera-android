@@ -14,7 +14,7 @@
 package com.algorand.android.models.builder
 
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
 import com.algorand.android.models.BaseAssetTransferTransaction
 import com.algorand.android.models.WalletConnectTransactionAmount
 import com.algorand.android.models.WalletConnectTransactionShortDetail

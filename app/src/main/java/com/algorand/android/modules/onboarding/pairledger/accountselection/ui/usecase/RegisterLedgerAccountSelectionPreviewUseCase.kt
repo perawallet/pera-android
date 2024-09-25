@@ -13,9 +13,9 @@
 package com.algorand.android.modules.onboarding.pairledger.accountselection.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
-import com.algorand.android.accountcore.ui.model.AccountIconResource
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconResource
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.accountinfo.component.domain.model.AccountInformation
 import com.algorand.android.accountinfo.component.domain.usecase.FetchRekeyedAccounts
 import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAndCacheAssets

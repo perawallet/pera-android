@@ -13,11 +13,11 @@
 package com.algorand.android.modules.sorting.accountsorting.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
-import com.algorand.android.accountcore.ui.mapper.AccountItemConfigurationMapper
-import com.algorand.android.accountcore.ui.model.ButtonConfiguration
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
+import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
+import com.algorand.android.module.account.core.ui.model.ButtonConfiguration
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.accountsorting.component.domain.usecase.GetAccountSortingTypeIdentifier
 import com.algorand.android.accountsorting.component.domain.usecase.SaveAccountSortPreference

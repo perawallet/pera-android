@@ -19,7 +19,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.accountselection.model.SenderAccountSelectionPreview
+import com.algorand.android.module.account.core.ui.accountselection.model.SenderAccountSelectionPreview
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentSenderAccountSelectionBinding
 import com.algorand.android.foundation.Event

@@ -12,12 +12,12 @@
 
 package com.algorand.android.customviews.accountandassetitem.mapper
 
-import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
-import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
-import com.algorand.android.accountcore.ui.model.AssetName
-import com.algorand.android.accountcore.ui.model.BaseItemConfiguration
-import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
-import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.module.account.core.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.module.account.core.ui.model.AssetName
+import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
+import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
+import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier
 import java.math.BigDecimal
 import javax.inject.Inject

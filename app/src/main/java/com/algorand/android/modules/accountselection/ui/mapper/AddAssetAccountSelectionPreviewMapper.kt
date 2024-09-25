@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.accountselection.ui.mapper
 
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.modules.accountselection.ui.model.AddAssetAccountSelectionPreview
 import javax.inject.Inject
 

@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.dapp.meld.domain.usecase
 
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
-import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import javax.inject.Inject
 
 class MeldAccountSelectionPreviewUseCase @Inject constructor(

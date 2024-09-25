@@ -14,7 +14,7 @@
 package com.algorand.android
 
 import androidx.lifecycle.Lifecycle
-import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.algosdk.component.transaction.model.Transaction
 import com.algorand.android.algosdk.component.transaction.model.Transaction.AddAssetTransaction
 import com.algorand.android.algosdk.component.transaction.model.Transaction.RemoveAssetTransaction

@@ -14,11 +14,11 @@
 package com.algorand.android.usecase
 
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
-import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountItems
-import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionContactItems
-import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionItemsFromAccountAddress
-import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionNameServiceItems
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionAccountItems
+import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionContactItems
+import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionItemsFromAccountAddress
+import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionNameServiceItems
 import com.algorand.android.module.transaction.component.domain.model.ValidateReceiverAccountPayload
 import com.algorand.android.module.transaction.component.domain.usecase.ValidateReceiverAccount
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser

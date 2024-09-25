@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.model
 
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 
 data class AsaProfileAccountSelectionPreview(
     val accountListItems: List<BaseAccountSelectionListItem>,

@@ -16,8 +16,8 @@ import androidx.annotation.StringRes
 import androidx.core.net.toUri
 import com.algorand.android.R
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.contacts.component.domain.usecase.GetContactByAddress
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem

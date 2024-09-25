@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.asaprofile.mapper
 
-import com.algorand.android.accountcore.ui.model.AssetName
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AssetName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaStatusPreview
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaStatusPreview.RemovalStatus.CollectibleRemovalStatus
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.PeraButtonState

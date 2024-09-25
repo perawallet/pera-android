@@ -13,10 +13,10 @@
 
 package com.algorand.android.module.asset.detail.ui.nftdetail.usecase
 
-import com.algorand.android.accountcore.ui.model.AssetName
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconResourceByAccountType
-import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.module.account.core.ui.model.AssetName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconResourceByAccountType
+import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.assetdetail.component.asset.domain.model.detail.CollectibleDetail
 import com.algorand.android.assetdetail.component.collectible.domain.usecase.FetchCollectibleDetail
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.mapper.CollectibleAmountFormatter

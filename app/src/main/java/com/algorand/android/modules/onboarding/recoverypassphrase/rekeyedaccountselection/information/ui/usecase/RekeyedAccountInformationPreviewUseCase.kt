@@ -13,11 +13,11 @@
 package com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
-import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.module.account.core.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.accountinfo.component.domain.model.AccountInformation
 import com.algorand.android.accountinfo.component.domain.usecase.FetchRekeyedAccounts
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID

@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.mapper
 
-import com.algorand.android.accountcore.ui.model.AccountDisplayName
-import com.algorand.android.accountcore.ui.summary.model.AccountDetailSummary
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
+import com.algorand.android.module.account.core.ui.summary.model.AccountDetailSummary
 import com.algorand.android.module.asset.detail.ui.detail.model.AssetDetailPreview
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData
 import java.math.BigDecimal

@@ -14,7 +14,7 @@ package com.algorand.android.modules.sorting.accountsorting.domain.mapper
 
 import androidx.annotation.StringRes
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.accountsorting.domain.model.AccountAndAssetListItem
+import com.algorand.android.module.account.core.ui.accountsorting.domain.model.AccountAndAssetListItem
 import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.modules.sorting.accountsorting.domain.model.BaseAccountSortingListItem
 import javax.inject.Inject

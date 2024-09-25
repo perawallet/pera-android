@@ -4,7 +4,7 @@ import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInfor
 import com.algorand.android.core.component.detail.domain.model.AccountRegistrationType
 import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import javax.inject.Inject
 
 class AccountOptionsPreviewUseCase @Inject constructor(

@@ -14,10 +14,10 @@ package com.algorand.android.modules.basemultipleaccountselection.ui.usecase
 
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
-import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
-import com.algorand.android.accountcore.ui.mapper.AccountItemConfigurationMapper
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
+import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.core.component.detail.domain.model.AccountType
 import com.algorand.android.customviews.TriStatesCheckBox
 import com.algorand.android.models.AnnotatedString

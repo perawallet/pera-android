@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.accountdetail.ui.model
 
-import com.algorand.android.accountcore.ui.summary.model.AccountDetailSummary
+import com.algorand.android.module.account.core.ui.summary.model.AccountDetailSummary
 import com.algorand.android.foundation.Event
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination
 

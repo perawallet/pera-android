@@ -13,9 +13,9 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
-import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
-import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.module.account.core.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.models.LedgerInformationListItem
 import javax.inject.Inject

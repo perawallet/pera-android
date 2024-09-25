@@ -33,7 +33,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.summary.model.AccountDetailSummary
+import com.algorand.android.module.account.core.ui.summary.model.AccountDetailSummary
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.BaseAccountIconButton

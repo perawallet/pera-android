@@ -12,15 +12,15 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
-import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectAudioCollectibleItem
-import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectCollectibleImageItem
-import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectMixedCollectibleItem
-import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectNotSupportedCollectibleItem
-import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectVideoCollectibleItem
-import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem.SelectAssetItem
-import com.algorand.android.accountcore.ui.model.BaseItemConfiguration
-import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.module.account.core.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectAudioCollectibleItem
+import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectCollectibleImageItem
+import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectMixedCollectibleItem
+import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectNotSupportedCollectibleItem
+import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectVideoCollectibleItem
+import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.SelectAssetItem
+import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
+import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleAudioData
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData

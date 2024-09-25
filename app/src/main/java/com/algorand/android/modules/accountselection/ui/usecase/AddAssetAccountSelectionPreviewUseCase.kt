@@ -12,10 +12,10 @@
 
 package com.algorand.android.modules.accountselection.ui.usecase
 
-import com.algorand.android.accountcore.ui.accountselection.mapper.AccountSelectionListItemMapper
-import com.algorand.android.accountcore.ui.accountselection.usecase.CreateLoadedAccountConfiguration
-import com.algorand.android.accountcore.ui.accountselection.usecase.CreateNotLoadedAccountConfiguration
-import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
+import com.algorand.android.module.account.core.ui.accountselection.mapper.AccountSelectionListItemMapper
+import com.algorand.android.module.account.core.ui.accountselection.usecase.CreateLoadedAccountConfiguration
+import com.algorand.android.module.account.core.ui.accountselection.usecase.CreateNotLoadedAccountConfiguration
+import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
 import com.algorand.android.modules.accountselection.ui.mapper.AddAssetAccountSelectionPreviewMapper
 import com.algorand.android.modules.accountselection.ui.model.AddAssetAccountSelectionPreview
 import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbol

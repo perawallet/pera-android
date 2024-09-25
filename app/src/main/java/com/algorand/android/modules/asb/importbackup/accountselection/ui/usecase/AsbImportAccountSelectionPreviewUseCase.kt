@@ -13,10 +13,10 @@
 package com.algorand.android.modules.asb.importbackup.accountselection.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.core.component.detail.domain.model.AccountType
 import com.algorand.android.customviews.TriStatesCheckBox
 import com.algorand.android.models.CreateAccount
@@ -45,7 +45,7 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
     private val accountAdditionUseCase: AccountAdditionUseCase,
     private val getAccountDisplayName: GetAccountDisplayName,
     getSortedAccountsByPreference: GetSortedAccountsByPreference,
-    accountItemConfigurationMapper: com.algorand.android.accountcore.ui.mapper.AccountItemConfigurationMapper,
+    accountItemConfigurationMapper: com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper,
     getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) : BaseMultipleAccountSelectionPreviewUseCase(
     multipleAccountSelectionListItemMapper,

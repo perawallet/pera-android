@@ -12,9 +12,9 @@
 
 package com.algorand.android.modules.accountdetail.accountstatusdetail.ui.usecase
 
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAccountOriginalStateIconDrawablePreview
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
 import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetailFlow

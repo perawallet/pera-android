@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.usecase
 
-import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
+import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.mapper.AsaProfileAccountSelectionPreviewMapper
 import com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.model.AsaProfileAccountSelectionPreview
 import javax.inject.Inject

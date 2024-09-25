@@ -12,9 +12,9 @@
 
 package com.algorand.android.modules.settings.ui.usecase
 
-import com.algorand.android.accountcore.domain.utils.AlgorandSecureBackUpUtils
 import com.algorand.android.asb.component.domain.usecase.GetBackedUpAccountAddressesFlow
 import com.algorand.android.core.component.detail.domain.usecase.GetAccountsDetail
+import com.algorand.android.module.account.core.AlgorandSecureBackUpUtils
 import com.algorand.android.modules.settings.ui.mapper.SettingsPreviewMapper
 import com.algorand.android.modules.settings.ui.model.SettingsPreview
 import javax.inject.Inject

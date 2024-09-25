@@ -13,8 +13,8 @@
 package com.algorand.android.nft.domain.usecase
 
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
-import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.mapper.ScreenStateMapper
 import com.algorand.android.models.ScreenState
 import com.algorand.android.nft.mapper.CollectibleReceiverAccountSelectionPreviewMapper

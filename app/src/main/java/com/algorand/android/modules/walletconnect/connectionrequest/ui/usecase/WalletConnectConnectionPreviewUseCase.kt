@@ -13,11 +13,11 @@
 package com.algorand.android.modules.walletconnect.connectionrequest.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.accountsorting.domain.model.BaseAccountAndAssetListItem
-import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
-import com.algorand.android.accountcore.ui.mapper.AccountItemConfigurationMapper
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem
+import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
+import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
 import com.algorand.android.models.ui.AccountAssetItemButtonState.UNCHECKED
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper.BaseWalletConnectConnectionItemMapper

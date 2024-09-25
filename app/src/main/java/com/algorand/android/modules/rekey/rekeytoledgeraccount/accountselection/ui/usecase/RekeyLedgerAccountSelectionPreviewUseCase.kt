@@ -13,8 +13,8 @@
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.android.mapper.LedgerAccountSelectionAccountItemMapper
 import com.algorand.android.mapper.LedgerAccountSelectionInstructionItemMapper

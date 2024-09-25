@@ -16,8 +16,8 @@ import android.content.Context
 import android.text.style.ForegroundColorSpan
 import androidx.core.content.ContextCompat
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconResourceByAccountType
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconResourceByAccountType
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.usecase.GetFormattedWCSessionExtendedExpirationDateUseCase
 import com.algorand.android.modules.walletconnect.client.v2.ui.launchback.usecase.GetFormattedWCSessionMaxExpirationDateUseCase

@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.swap.ui.txnsummary
 
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.assetutils.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.currency.domain.model.Currency
 import com.algorand.android.foundation.common.isGreaterThan

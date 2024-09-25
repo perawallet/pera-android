@@ -14,7 +14,7 @@ package com.algorand.android.modules.collectibles.detail.base.ui.viewpager
 
 import android.view.View
 import androidx.core.view.isVisible
-import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem
 import com.algorand.android.databinding.ItemNftMediaBinding
 import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider

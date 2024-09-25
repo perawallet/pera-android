@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.asset.action.ui.model
 
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 
 data class AssetActionAccountDetail(
     val address: String,

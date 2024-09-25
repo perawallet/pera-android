@@ -12,7 +12,7 @@
 
 package com.algorand.android.nft.mapper
 
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.models.ui.CollectibleTransactionApprovePreview
 import javax.inject.Inject
 

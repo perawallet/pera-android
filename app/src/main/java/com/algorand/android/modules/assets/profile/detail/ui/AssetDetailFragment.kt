@@ -19,10 +19,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.model.AccountDisplayName
-import com.algorand.android.accountcore.ui.model.AssetName
-import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
-import com.algorand.android.accountcore.ui.summary.model.AccountDetailSummary
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
+import com.algorand.android.module.account.core.ui.model.AssetName
+import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
+import com.algorand.android.module.account.core.ui.summary.model.AccountDetailSummary
 import com.algorand.android.module.asset.detail.ui.detail.model.AssetDetailPreview
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.BaseAccountIconButton

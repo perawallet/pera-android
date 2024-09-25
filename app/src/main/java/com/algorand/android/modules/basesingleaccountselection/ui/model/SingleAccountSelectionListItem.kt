@@ -13,8 +13,8 @@
 package com.algorand.android.modules.basesingleaccountselection.ui.model
 
 import androidx.annotation.StringRes
-import com.algorand.android.accountcore.ui.model.AccountDisplayName
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.designsystem.RecyclerListItem
 

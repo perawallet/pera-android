@@ -13,7 +13,7 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.accountcore.ui.model.AccountIconResource
+import com.algorand.android.module.account.core.ui.model.AccountIconResource
 import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.models.TransactionTargetUser
 import javax.inject.Inject

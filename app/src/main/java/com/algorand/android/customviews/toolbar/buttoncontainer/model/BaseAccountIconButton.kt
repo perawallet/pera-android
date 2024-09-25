@@ -17,7 +17,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.setDrawable
 

@@ -38,15 +38,6 @@ android {
 
 dependencies {
 
-    implementation project(path: ':network-utils')
-    implementation project(path: ':foundation')
-    api project(path: ':algosdk-component')
-    implementation project(path: ':account-info-component')
-    implementation project(path: ':account-core-component')
-    implementation project(path: ':asset-detail-component')
-    implementation project(path: ':account-component')
-    implementation project(path: ':ledger-component')
-
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler
     kapt deps.hilt.compiler

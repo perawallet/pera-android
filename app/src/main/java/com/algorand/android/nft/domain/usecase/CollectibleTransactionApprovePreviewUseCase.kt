@@ -13,9 +13,9 @@
 package com.algorand.android.nft.domain.usecase
 
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.accountinfo.component.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.android.assetdetail.component.asset.domain.usecase.GetCollectibleDetail
 import com.algorand.android.contacts.component.domain.usecase.GetContactByAddress

@@ -13,9 +13,9 @@
 package com.algorand.android.models
 
 import androidx.annotation.StringRes
-import com.algorand.android.accountcore.ui.assetsorting.AssetSortableItem
-import com.algorand.android.accountcore.ui.assetsorting.CollectibleSortableItem
-import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.module.account.core.ui.assetsorting.AssetSortableItem
+import com.algorand.android.module.account.core.ui.assetsorting.CollectibleSortableItem
+import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider

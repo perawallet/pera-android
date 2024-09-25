@@ -13,7 +13,7 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 import com.algorand.android.utils.Event
 import java.math.BigDecimal

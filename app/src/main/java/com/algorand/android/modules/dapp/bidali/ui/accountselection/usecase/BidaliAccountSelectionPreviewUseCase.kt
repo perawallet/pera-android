@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.dapp.bidali.ui.accountselection.usecase
 
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
-import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.modules.dapp.bidali.ui.accountselection.mapper.BidaliAccountSelectionPreviewMapper
 import com.algorand.android.modules.dapp.bidali.ui.accountselection.model.BidaliAccountSelectionPreview
 import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet

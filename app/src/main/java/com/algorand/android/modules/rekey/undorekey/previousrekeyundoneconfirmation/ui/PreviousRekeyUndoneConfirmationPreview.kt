@@ -13,7 +13,7 @@
 
 package com.algorand.android.modules.rekey.undorekey.previousrekeyundoneconfirmation.ui
 
-import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 
 data class PreviousRekeyUndoneConfirmationPreview(
     val accountDisplayName: AccountDisplayName,

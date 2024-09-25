@@ -13,8 +13,8 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData

@@ -12,10 +12,10 @@
 
 package com.algorand.android.ui.common.warningconfirmation.accountselection.usecase
 
-import com.algorand.android.accountcore.ui.accountselection.mapper.AccountSelectionListItemMapper
-import com.algorand.android.accountcore.ui.accountselection.usecase.CreateLoadedAccountConfiguration
-import com.algorand.android.accountcore.ui.accountselection.usecase.CreateNotLoadedAccountConfiguration
-import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListWhichNotBackedUp
+import com.algorand.android.module.account.core.ui.accountselection.mapper.AccountSelectionListItemMapper
+import com.algorand.android.module.account.core.ui.accountselection.usecase.CreateLoadedAccountConfiguration
+import com.algorand.android.module.account.core.ui.accountselection.usecase.CreateNotLoadedAccountConfiguration
+import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListWhichNotBackedUp
 import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
 import com.algorand.android.ui.common.warningconfirmation.accountselection.mapper.BackupAccountSelectionPreviewMapper
 import com.algorand.android.ui.common.warningconfirmation.accountselection.model.BackupAccountSelectionPreview

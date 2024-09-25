@@ -13,11 +13,11 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.mapper
 
-import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
-import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
-import com.algorand.android.accountcore.ui.model.AccountDisplayName
-import com.algorand.android.accountcore.ui.summary.model.AccountDetailSummary
-import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.module.account.core.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
+import com.algorand.android.module.account.core.ui.summary.model.AccountDetailSummary
+import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.module.asset.detail.ui.detail.model.AssetDetailPreview
 import com.algorand.android.module.asset.detail.ui.detail.usecase.GetAssetDetailIconResOfChangePercentage
 import com.algorand.android.module.asset.detail.ui.detail.usecase.GetAssetDetailTextColorResOfChangePercentage

@@ -14,7 +14,7 @@
 package com.algorand.android.module.asset.action.ui.model
 
 import android.os.Parcelable
-import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

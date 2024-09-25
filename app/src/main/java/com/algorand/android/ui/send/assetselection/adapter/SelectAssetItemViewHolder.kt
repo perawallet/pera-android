@@ -15,8 +15,8 @@ package com.algorand.android.ui.send.assetselection.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.algorand.android.accountcore.ui.asset.select.BaseSelectAssetItem
-import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem
+import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.databinding.ItemSendAssetSelectionBinding
 import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
 import com.algorand.android.models.BaseViewHolder

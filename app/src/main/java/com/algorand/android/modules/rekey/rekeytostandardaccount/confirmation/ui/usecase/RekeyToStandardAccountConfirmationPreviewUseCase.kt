@@ -13,10 +13,10 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.model.AccountDisplayName
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.accountinfo.component.domain.model.AccountInformation
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
 import com.algorand.android.foundation.Event

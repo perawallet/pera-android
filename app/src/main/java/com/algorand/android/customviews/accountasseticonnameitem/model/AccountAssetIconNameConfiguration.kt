@@ -16,7 +16,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 
 data class AccountAssetIconNameConfiguration(
     val accountIconDrawablePreview: AccountIconDrawablePreview,

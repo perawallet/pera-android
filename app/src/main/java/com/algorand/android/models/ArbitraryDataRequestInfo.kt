@@ -13,7 +13,7 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import java.math.BigInteger
 
 data class ArbitraryDataRequestInfo(

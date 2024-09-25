@@ -12,7 +12,7 @@
 
 package com.algorand.android.customviews.accountasseticonnameitem.mapper
 
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.customviews.accountasseticonnameitem.model.AccountAssetIconNameConfiguration
 import com.algorand.android.utils.toShortenedAddress
 import javax.inject.Inject

@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.transaction.ui.sendasset.domain
 
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset
 import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAsset

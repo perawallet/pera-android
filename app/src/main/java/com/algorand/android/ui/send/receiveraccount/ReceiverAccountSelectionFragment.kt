@@ -21,7 +21,7 @@ import android.view.ViewTreeObserver
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentReceiverAccountSelectionBinding
 import com.algorand.android.models.FragmentConfiguration

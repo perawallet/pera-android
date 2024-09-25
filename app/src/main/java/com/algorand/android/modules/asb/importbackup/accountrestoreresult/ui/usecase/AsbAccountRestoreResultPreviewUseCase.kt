@@ -13,8 +13,8 @@
 package com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.mapper.AsbAccountRestoreResultPreviewMapper
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbAccountRestoreResultPreview

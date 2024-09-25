@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.asaprofile.usecase
 
-import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
-import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
-import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.module.account.core.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.assetdetail.component.AssetConstants.MINIMUM_CURRENCY_VALUE_TO_DISPLAY_EXACT_AMOUNT
 import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier.SUSPICIOUS
 import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset

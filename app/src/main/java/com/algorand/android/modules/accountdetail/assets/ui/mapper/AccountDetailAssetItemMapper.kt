@@ -13,7 +13,7 @@
 package com.algorand.android.modules.accountdetail.assets.ui.mapper
 
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.mapper.CollectibleAmountFormatter
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData.PendingAssetData.AdditionAssetData

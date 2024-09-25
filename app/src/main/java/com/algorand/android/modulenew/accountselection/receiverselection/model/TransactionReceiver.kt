@@ -14,7 +14,7 @@
 package com.algorand.android.modulenew.accountselection.receiverselection.model
 
 import android.os.Parcelable
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.contacts.component.domain.model.Contact
 import kotlinx.parcelize.Parcelize
 

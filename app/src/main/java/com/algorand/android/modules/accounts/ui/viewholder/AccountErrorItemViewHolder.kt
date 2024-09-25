@@ -18,7 +18,7 @@ import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.databinding.ItemAccountErrorBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem

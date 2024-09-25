@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.swap.ui.assetswap.usecase
 
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.foundation.Event
 import com.algorand.android.foundation.common.toBigDecimalOrZero
 import com.algorand.android.module.swap.component.domain.model.GetSwapQuotePayload

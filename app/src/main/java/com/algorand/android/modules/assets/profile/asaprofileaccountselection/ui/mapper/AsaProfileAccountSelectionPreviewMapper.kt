@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.mapper
 
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.model.AsaProfileAccountSelectionPreview
 import javax.inject.Inject
 

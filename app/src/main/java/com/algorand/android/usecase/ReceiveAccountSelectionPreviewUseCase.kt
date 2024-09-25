@@ -12,8 +12,8 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
-import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountItems
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionAccountItems
 import javax.inject.Inject
 
 class ReceiveAccountSelectionPreviewUseCase @Inject constructor(

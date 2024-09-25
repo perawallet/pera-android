@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.sorting.assetsorting.ui.usecase
 
-import com.algorand.android.accountcore.ui.assetsorting.AssetSortableItem
+import com.algorand.android.module.account.core.ui.assetsorting.AssetSortableItem
 import com.algorand.android.module.asset.sorting.domain.model.AssetSortPreference
 import com.algorand.android.module.asset.sorting.domain.usecase.GetAssetSortPreference
 import javax.inject.Inject

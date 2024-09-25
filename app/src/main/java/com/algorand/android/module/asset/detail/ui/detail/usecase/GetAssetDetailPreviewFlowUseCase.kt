@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.usecase
 
-import com.algorand.android.accountcore.ui.summary.usecase.GetAccountDetailSummary
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.summary.usecase.GetAccountDetailSummary
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.accountinfo.component.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier.SUSPICIOUS
 import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset

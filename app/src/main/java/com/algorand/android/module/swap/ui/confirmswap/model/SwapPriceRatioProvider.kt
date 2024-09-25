@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.confirmswap.model
 
-import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.designsystem.R
 import com.algorand.android.utils.formatAmount

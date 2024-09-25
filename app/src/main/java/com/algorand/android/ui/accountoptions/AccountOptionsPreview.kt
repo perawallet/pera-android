@@ -1,6 +1,6 @@
 package com.algorand.android.ui.accountoptions
 
-import com.algorand.android.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 
 data class AccountOptionsPreview(
     val accountAddress: String,

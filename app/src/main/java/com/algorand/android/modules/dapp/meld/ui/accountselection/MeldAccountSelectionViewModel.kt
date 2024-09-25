@@ -14,7 +14,7 @@ package com.algorand.android.modules.dapp.meld.ui.accountselection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.modules.dapp.meld.domain.usecase.MeldAccountSelectionPreviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

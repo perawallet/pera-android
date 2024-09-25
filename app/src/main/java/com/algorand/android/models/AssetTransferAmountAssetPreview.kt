@@ -13,8 +13,8 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.accountcore.ui.model.AssetName
-import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.module.account.core.ui.model.AssetName
+import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
 
 data class AssetTransferAmountAssetPreview(

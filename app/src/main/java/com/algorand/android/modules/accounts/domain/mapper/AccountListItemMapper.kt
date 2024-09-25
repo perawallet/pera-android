@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.accounts.domain.mapper
 
-import com.algorand.android.accountcore.ui.accountsorting.domain.model.AccountAndAssetListItem
+import com.algorand.android.module.account.core.ui.accountsorting.domain.model.AccountAndAssetListItem
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import javax.inject.Inject
 

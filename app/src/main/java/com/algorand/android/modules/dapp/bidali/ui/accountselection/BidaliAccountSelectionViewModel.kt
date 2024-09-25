@@ -14,7 +14,7 @@ package com.algorand.android.modules.dapp.bidali.ui.accountselection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.modules.dapp.bidali.ui.accountselection.model.BidaliAccountSelectionPreview
 import com.algorand.android.modules.dapp.bidali.ui.accountselection.usecase.BidaliAccountSelectionPreviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

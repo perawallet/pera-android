@@ -12,7 +12,7 @@
 
 package com.algorand.android.nft.ui.model
 
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.models.ScreenState
 
 data class CollectibleReceiverAccountSelectionPreview(

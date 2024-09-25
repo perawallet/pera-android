@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.swap.ui.assetswap.usecase
 
-import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
-import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
-import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.module.account.core.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.assetdetail.component.AssetConstants.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.assetdetail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.core.component.assetdata.usecase.GetAccountOwnedAssetData

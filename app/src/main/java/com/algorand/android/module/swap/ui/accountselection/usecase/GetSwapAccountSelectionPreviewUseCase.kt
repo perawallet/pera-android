@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.accountselection.usecase
 
-import com.algorand.android.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
+import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.module.swap.ui.accountselection.model.SwapAccountSelectionPreview
 import javax.inject.Inject
 

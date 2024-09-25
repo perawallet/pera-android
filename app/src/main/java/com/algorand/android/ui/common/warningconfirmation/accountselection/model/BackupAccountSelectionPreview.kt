@@ -12,7 +12,7 @@
 
 package com.algorand.android.ui.common.warningconfirmation.accountselection.model
 
-import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 
 data class BackupAccountSelectionPreview(
     val accountSelectionListItems: List<BaseAccountSelectionListItem>

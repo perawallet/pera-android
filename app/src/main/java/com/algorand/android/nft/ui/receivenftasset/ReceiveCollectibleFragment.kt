@@ -20,7 +20,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.customviews.AccountCopyQrView
 import com.algorand.android.customviews.ScreenStateView
 import com.algorand.android.databinding.FragmentReceiveCollectibleBinding

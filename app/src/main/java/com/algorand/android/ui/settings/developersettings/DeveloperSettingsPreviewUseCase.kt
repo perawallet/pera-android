@@ -12,9 +12,9 @@
 
 package com.algorand.android.ui.settings.developersettings
 
-import com.algorand.android.accountcore.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
-import com.algorand.android.accountcore.ui.mapper.AccountItemConfigurationMapper
-import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
+import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.node.domain.usecase.IsSelectedNodeTestnet
 import javax.inject.Inject

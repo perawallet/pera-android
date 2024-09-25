@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.swap.ui.assetselection.mapper
 
-import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableProvider
-import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
-import com.algorand.android.accountcore.ui.usecase.GetAssetName
+import com.algorand.android.module.account.core.ui.asset.assetdrawable.GetAssetDrawableProvider
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.module.swap.component.domain.model.AvailableSwapAsset
 import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionItem

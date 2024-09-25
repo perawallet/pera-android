@@ -20,8 +20,8 @@ import android.graphics.drawable.shapes.OvalShape
 import androidx.annotation.DimenRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
-import com.algorand.android.accountcore.ui.model.AccountIconResource
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconResource
 
 class AccountIconDrawable(
     private val backgroundColor: Int,

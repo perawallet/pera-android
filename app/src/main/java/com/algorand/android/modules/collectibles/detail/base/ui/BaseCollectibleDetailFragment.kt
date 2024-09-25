@@ -21,8 +21,8 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import com.algorand.android.BuildConfig
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.model.AccountDisplayName
-import com.algorand.android.accountcore.ui.model.AssetName
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
+import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.CollectibleTraitItem
 import com.algorand.android.core.BaseFragment

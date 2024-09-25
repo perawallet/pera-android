@@ -19,8 +19,8 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.model.AssetName
-import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
+import com.algorand.android.module.account.core.ui.model.AssetName
+import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaProfilePreview
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaStatusPreview
 import com.algorand.android.core.BaseFragment

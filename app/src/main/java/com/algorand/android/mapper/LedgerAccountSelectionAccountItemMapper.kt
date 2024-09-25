@@ -14,8 +14,8 @@
 package com.algorand.android.mapper
 
 import androidx.annotation.DrawableRes
-import com.algorand.android.accountcore.ui.model.AccountDisplayName
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import javax.inject.Inject

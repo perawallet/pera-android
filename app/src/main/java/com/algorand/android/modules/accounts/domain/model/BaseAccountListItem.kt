@@ -13,7 +13,7 @@
 package com.algorand.android.modules.accounts.domain.model
 
 import androidx.annotation.StringRes
-import com.algorand.android.accountcore.ui.accountsorting.domain.model.AccountAndAssetListItem
+import com.algorand.android.module.account.core.ui.accountsorting.domain.model.AccountAndAssetListItem
 import com.algorand.android.models.RecyclerListItem
 
 sealed class BaseAccountListItem : RecyclerListItem {

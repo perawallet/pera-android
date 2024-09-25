@@ -20,7 +20,7 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.algorand.android.R
-import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.databinding.CustomAccountCopyQrViewBinding
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.extensions.hide

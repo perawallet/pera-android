@@ -22,7 +22,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.algorand.android.R
 import com.algorand.android.models.NotificationMetadata
-import com.algorand.android.pushtoken.domain.usecase.SetPushToken
+import com.algorand.android.module.pushtoken.domain.usecase.SetPushToken
 import com.algorand.android.ui.splash.LauncherActivity
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.preference.isNotificationActivated

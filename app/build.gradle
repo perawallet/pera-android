@@ -192,7 +192,6 @@ dependencies {
     implementation project(path: ':caching')
     implementation project(path: ':block-component')
     implementation project(path: ':notification-component')
-    implementation project(path: ':pushtoken-component')
     implementation project(path: ':algosdk-aar')
     implementation project(path: ':peracompactdecimal-aar')
     implementation project(path: ':date-component')

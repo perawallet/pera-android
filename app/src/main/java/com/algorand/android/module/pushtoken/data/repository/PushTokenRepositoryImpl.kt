@@ -11,11 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.pushtoken.data.repository
+package com.algorand.android.module.pushtoken.data.repository
 
 import com.algorand.android.caching.CacheResult
 import com.algorand.android.caching.SingleInMemoryLocalCache
-import com.algorand.android.pushtoken.domain.repository.PushTokenRepository
+import com.algorand.android.module.pushtoken.domain.repository.PushTokenRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

@@ -11,15 +11,15 @@
  *   -->
  */
 
-package com.algorand.android.pushtoken.di
+package com.algorand.android.module.pushtoken.di
 
 import com.algorand.android.caching.SingleInMemoryLocalCache
-import com.algorand.android.pushtoken.FirebaseMessagingTokenProvider
-import com.algorand.android.pushtoken.MessagingTokenProvider
-import com.algorand.android.pushtoken.data.repository.PushTokenRepositoryImpl
-import com.algorand.android.pushtoken.domain.repository.PushTokenRepository
-import com.algorand.android.pushtoken.domain.usecase.GetPushTokenCacheFlow
-import com.algorand.android.pushtoken.domain.usecase.SetPushToken
+import com.algorand.android.module.pushtoken.FirebaseMessagingTokenProvider
+import com.algorand.android.module.pushtoken.MessagingTokenProvider
+import com.algorand.android.module.pushtoken.data.repository.PushTokenRepositoryImpl
+import com.algorand.android.module.pushtoken.domain.repository.PushTokenRepository
+import com.algorand.android.module.pushtoken.domain.usecase.GetPushTokenCacheFlow
+import com.algorand.android.module.pushtoken.domain.usecase.SetPushToken
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

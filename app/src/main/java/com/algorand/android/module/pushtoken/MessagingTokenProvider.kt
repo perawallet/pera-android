@@ -1,4 +1,4 @@
-package com.algorand.android.pushtoken
+package com.algorand.android.module.pushtoken
 
 import com.algorand.android.foundation.PeraResult
 

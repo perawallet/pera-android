@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.pushtoken.domain.usecase
+package com.algorand.android.module.pushtoken.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 

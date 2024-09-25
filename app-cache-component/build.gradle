@@ -49,7 +49,6 @@ dependencies {
     implementation project(path: ':parity-component')
     implementation project(path: ':currency-component')
     implementation project(path: ':caching')
-    implementation project(path: ':pushtoken-component')
     implementation project(path: ':deviceid-component')
 
     implementation deps.hilt.core

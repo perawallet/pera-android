@@ -7,9 +7,9 @@ import com.algorand.android.module.appcache.model.PushTokenStatus.NOT_INITIALIZE
 import com.algorand.android.banner.domain.usecase.InitializeBanners
 import com.algorand.android.deviceid.component.domain.usecase.RegisterDeviceId
 import com.algorand.android.foundation.coroutine.CoroutineExtensions.launchIO
-import com.algorand.android.pushtoken.MessagingTokenProvider
-import com.algorand.android.pushtoken.domain.usecase.GetPushTokenCacheFlow
-import com.algorand.android.pushtoken.domain.usecase.SetPushToken
+import com.algorand.android.module.pushtoken.MessagingTokenProvider
+import com.algorand.android.module.pushtoken.domain.usecase.GetPushTokenCacheFlow
+import com.algorand.android.module.pushtoken.domain.usecase.SetPushToken
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

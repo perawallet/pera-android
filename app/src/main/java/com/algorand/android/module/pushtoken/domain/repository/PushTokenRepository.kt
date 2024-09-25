@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.pushtoken.domain.repository
+package com.algorand.android.module.pushtoken.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 

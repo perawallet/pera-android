@@ -11,10 +11,10 @@
  *   -->
  */
 
-package com.algorand.android.transactionui.core.mapper
+package com.algorand.android.module.transaction.ui.core.mapper
 
 import com.algorand.android.transaction.domain.sign.model.SignTransactionResult
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult
 
 interface SignTransactionUiResultMapper {
     operator fun invoke(result: SignTransactionResult): SignTransactionUiResult

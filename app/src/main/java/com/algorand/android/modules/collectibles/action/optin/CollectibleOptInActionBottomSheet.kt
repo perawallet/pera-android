@@ -7,7 +7,7 @@ import com.algorand.android.R
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.action.base.BaseAssetActionBottomSheet
-import com.algorand.android.transactionui.addasset.model.AddAssetTransactionPayload
+import com.algorand.android.module.transaction.ui.addasset.model.AddAssetTransactionPayload
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.setFragmentNavigationResult
 import com.google.android.material.button.MaterialButton

@@ -17,15 +17,15 @@ import com.algorand.android.module.swap.ui.confirmswap.model.SignSwapTransaction
 import com.algorand.android.module.swap.ui.confirmswap.model.SignSwapTransactionResult.Error.Api
 import com.algorand.android.module.swap.ui.confirmswap.model.SignSwapTransactionResult.Error.Defined
 import com.algorand.android.transaction.domain.sign.model.SignTransactionResult
-import com.algorand.android.transactionui.core.mapper.SignTransactionUiResultMapper
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.BluetoothNotEnabled
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.BluetoothPermissionsAreNotGranted
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.Error
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LedgerDisconnected
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LedgerOperationCancelled
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LedgerScanFailed
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LedgerWaitingForApproval
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LocationNotEnabled
+import com.algorand.android.module.transaction.ui.core.mapper.SignTransactionUiResultMapper
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.BluetoothNotEnabled
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.BluetoothPermissionsAreNotGranted
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.Error
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.LedgerDisconnected
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.LedgerOperationCancelled
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.LedgerScanFailed
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.LedgerWaitingForApproval
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.LocationNotEnabled
 import javax.inject.Inject
 
 internal class SignSwapTransactionResultMapperImpl @Inject constructor(

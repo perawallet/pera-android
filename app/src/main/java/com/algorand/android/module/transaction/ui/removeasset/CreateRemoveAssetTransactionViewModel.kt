@@ -11,15 +11,14 @@
  *   -->
  */
 
-package com.algorand.android.transactionui.addasset
+package com.algorand.android.module.transaction.ui.removeasset
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.foundation.Event
 import com.algorand.android.foundation.coroutine.CoroutineExtensions.launchIfInactive
-import com.algorand.android.transaction.domain.creation.CreateAddAssetTransaction
+import com.algorand.android.transaction.domain.creation.CreateRemoveAssetTransaction
 import com.algorand.android.transaction.domain.creation.model.CreateTransactionResult
-import com.algorand.android.transactionui.addasset.model.AddAssetTransactionPayload
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -28,8 +27,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
-class CreateAddAssetTransactionViewModel @Inject constructor(
-    private val createAddAssetTransaction: CreateAddAssetTransaction
+class CreateRemoveAssetTransactionViewModel @Inject constructor(
+    private val createRemoveAssetTransaction: CreateRemoveAssetTransaction
 ) : ViewModel() {
 
     private val _createTransactionFlow = MutableStateFlow<Event<CreateTransactionResult>?>(null)
@@ -37,18 +36,9 @@ class CreateAddAssetTransactionViewModel @Inject constructor(
 
     private var createTransactionJob: Job? = null
 
-    private var addAssetTransactionPayload: AddAssetTransactionPayload? = null
-
-    fun create(payload: AddAssetTransactionPayload) {
+    fun create(address: String, assetId: Long) {
         createTransactionJob = viewModelScope.launchIfInactive(createTransactionJob) {
-            addAssetTransactionPayload = payload
-            _createTransactionFlow.value = Event(createAddAssetTransaction(payload.address, payload.assetId))
-        }
-    }
-
-    fun retryAddAssetTransaction() {
-        addAssetTransactionPayload?.let { payload ->
-            create(payload)
+            _createTransactionFlow.value = Event(createRemoveAssetTransaction(address, assetId))
         }
     }
 }

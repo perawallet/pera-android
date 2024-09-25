@@ -1,4 +1,4 @@
-package com.algorand.android.transactionui.rekey
+package com.algorand.android.module.transaction.ui.rekey
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

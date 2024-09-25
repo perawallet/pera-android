@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.transactionui.sendasset.model
+package com.algorand.android.module.transaction.ui.sendasset.model
 
 import com.algorand.android.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.accountcore.ui.model.AccountIconDrawablePreview

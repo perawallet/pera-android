@@ -33,7 +33,7 @@ import com.algorand.android.transaction.domain.creation.model.CreateTransactionR
 import com.algorand.android.transaction.domain.creation.model.CreateTransactionResult.NetworkError
 import com.algorand.android.transaction.domain.creation.model.CreateTransactionResult.TransactionCreated
 import com.algorand.android.transaction.domain.model.SignedTransaction
-import com.algorand.android.transactionui.rekey.CreateRekeyTransactionViewModel
+import com.algorand.android.module.transaction.ui.rekey.CreateRekeyTransactionViewModel
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl

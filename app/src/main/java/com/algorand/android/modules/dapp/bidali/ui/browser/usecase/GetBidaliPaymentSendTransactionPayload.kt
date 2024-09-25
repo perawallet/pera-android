@@ -14,7 +14,7 @@
 package com.algorand.android.modules.dapp.bidali.ui.browser.usecase
 
 import com.algorand.android.modules.dapp.bidali.domain.model.BidaliPaymentRequestDTO
-import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
+import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 
 interface GetBidaliPaymentSendTransactionPayload {
     suspend operator fun invoke(request: BidaliPaymentRequestDTO, accountAddress: String): SendTransactionPayload?

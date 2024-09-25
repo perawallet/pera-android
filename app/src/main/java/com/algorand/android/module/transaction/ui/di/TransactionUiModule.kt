@@ -11,12 +11,10 @@
  *   -->
  */
 
-package com.algorand.android.transactionui.sendasset.di
+package com.algorand.android.module.transaction.ui.di
 
-import com.algorand.android.transactionui.sendasset.domain.GetAssetTransferPreview
-import com.algorand.android.transactionui.sendasset.domain.GetAssetTransferPreviewUseCase
-import com.algorand.android.transactionui.sendasset.domain.GetAssetTransferTargetUser
-import com.algorand.android.transactionui.sendasset.domain.GetAssetTransferTargetUserUseCase
+import com.algorand.android.module.transaction.ui.core.mapper.SignTransactionUiResultMapper
+import com.algorand.android.module.transaction.ui.core.mapper.SignTransactionUiResultMapperImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,15 +23,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal object AssetTransferUiModule {
+internal object TransactionUiModule {
 
     @Provides
     @Singleton
-    fun provideGetAssetTransferPreview(useCase: GetAssetTransferPreviewUseCase): GetAssetTransferPreview = useCase
-
-    @Provides
-    @Singleton
-    fun provideGetAssetTransferTargetUser(
-        useCase: GetAssetTransferTargetUserUseCase
-    ): GetAssetTransferTargetUser = useCase
+    fun provideSignTransactionUiResultMapper(
+        impl: SignTransactionUiResultMapperImpl
+    ): SignTransactionUiResultMapper = impl
 }

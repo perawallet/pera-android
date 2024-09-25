@@ -22,8 +22,8 @@ import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.foundation.Event
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modulenew.accountselection.senderselection.usecase.SenderAccountSelectionPreviewUseCase
-import com.algorand.android.transactionui.sendasset.domain.GetAssetTransferTargetUser
-import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
+import com.algorand.android.module.transaction.ui.sendasset.domain.GetAssetTransferTargetUser
+import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.AssetSelectionFragment
 import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.AssetTransferAmountFragment
 import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.AssetTransferPreviewFragment

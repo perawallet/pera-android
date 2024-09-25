@@ -11,11 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.transactionui.sendasset.domain
+package com.algorand.android.module.transaction.ui.sendasset.domain
 
-import com.algorand.android.transactionui.sendasset.model.AssetTransferPreview
-import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser
-import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferPreview
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser
+import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 
 interface GetAssetTransferPreview {
     suspend operator fun invoke(transactionPayload: SendTransactionPayload): AssetTransferPreview

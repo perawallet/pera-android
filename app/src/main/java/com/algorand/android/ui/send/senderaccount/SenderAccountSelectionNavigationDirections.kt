@@ -14,7 +14,7 @@
 package com.algorand.android.ui.send.senderaccount
 
 import com.algorand.android.models.AssetTransaction
-import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
+import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 
 sealed interface SenderAccountSelectionNavigationDirections {
 

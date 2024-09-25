@@ -11,14 +11,15 @@
  *   -->
  */
 
-package com.algorand.android.transactionui.removeasset
+package com.algorand.android.module.transaction.ui.addasset
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.foundation.Event
 import com.algorand.android.foundation.coroutine.CoroutineExtensions.launchIfInactive
-import com.algorand.android.transaction.domain.creation.CreateRemoveAssetTransaction
+import com.algorand.android.transaction.domain.creation.CreateAddAssetTransaction
 import com.algorand.android.transaction.domain.creation.model.CreateTransactionResult
+import com.algorand.android.module.transaction.ui.addasset.model.AddAssetTransactionPayload
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -27,8 +28,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
-class CreateRemoveAssetTransactionViewModel @Inject constructor(
-    private val createRemoveAssetTransaction: CreateRemoveAssetTransaction
+class CreateAddAssetTransactionViewModel @Inject constructor(
+    private val createAddAssetTransaction: CreateAddAssetTransaction
 ) : ViewModel() {
 
     private val _createTransactionFlow = MutableStateFlow<Event<CreateTransactionResult>?>(null)
@@ -36,9 +37,18 @@ class CreateRemoveAssetTransactionViewModel @Inject constructor(
 
     private var createTransactionJob: Job? = null
 
-    fun create(address: String, assetId: Long) {
+    private var addAssetTransactionPayload: AddAssetTransactionPayload? = null
+
+    fun create(payload: AddAssetTransactionPayload) {
         createTransactionJob = viewModelScope.launchIfInactive(createTransactionJob) {
-            _createTransactionFlow.value = Event(createRemoveAssetTransaction(address, assetId))
+            addAssetTransactionPayload = payload
+            _createTransactionFlow.value = Event(createAddAssetTransaction(payload.address, payload.assetId))
+        }
+    }
+
+    fun retryAddAssetTransaction() {
+        addAssetTransactionPayload?.let { payload ->
+            create(payload)
         }
     }
 }

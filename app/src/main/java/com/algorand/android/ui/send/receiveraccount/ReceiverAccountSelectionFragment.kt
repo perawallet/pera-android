@@ -26,7 +26,7 @@ import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentReceiverAccountSelectionBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser
 import com.algorand.android.ui.accountselection.AccountSelectionAdapter
 import com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionQrScannerFragment.Companion.ACCOUNT_ADDRESS_SCAN_RESULT_KEY
 import com.algorand.android.utils.Event

@@ -24,9 +24,9 @@ import com.algorand.android.transaction.domain.creation.model.CreateTransactionR
 import com.algorand.android.transaction.domain.creation.send.model.CreateSendTransactionPayload
 import com.algorand.android.transaction.domain.model.SignedTransaction
 import com.algorand.android.transaction.domain.usecase.SendSignedTransaction
-import com.algorand.android.transactionui.sendasset.domain.GetAssetTransferPreview
-import com.algorand.android.transactionui.sendasset.model.AssetTransferPreview
-import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
+import com.algorand.android.module.transaction.ui.sendasset.domain.GetAssetTransferPreview
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferPreview
+import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.Resource.Error
 import com.algorand.android.utils.getOrThrow

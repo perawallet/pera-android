@@ -11,14 +11,14 @@
  *   -->
  */
 
-package com.algorand.android.transactionui.sendasset.domain
+package com.algorand.android.module.transaction.ui.sendasset.domain
 
 import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.contacts.component.domain.usecase.GetContactByAddress
 import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser
-import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser.Account
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser.Account
 import javax.inject.Inject
 
 internal class GetAssetTransferTargetUserUseCase @Inject constructor(

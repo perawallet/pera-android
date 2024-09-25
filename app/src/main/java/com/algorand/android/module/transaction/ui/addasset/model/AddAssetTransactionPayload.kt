@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.transactionui.addasset.model
+package com.algorand.android.module.transaction.ui.addasset.model
 
 data class AddAssetTransactionPayload(
     val address: String,

@@ -185,7 +185,6 @@ dependencies {
     implementation project(path: ':drawable-ui')
     implementation project(path: ':designsystem')
     implementation project(path: ':transaction-component')
-    implementation project(path: ':transaction-ui')
     implementation project(path: ':currency-component')
     implementation project(path: ':network-utils')
     implementation project(path: ':ledger-component')

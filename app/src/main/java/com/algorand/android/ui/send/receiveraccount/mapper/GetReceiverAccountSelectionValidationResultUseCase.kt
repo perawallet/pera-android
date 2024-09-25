@@ -28,8 +28,8 @@ import com.algorand.android.transaction.domain.model.ReceiverAccountValidationRe
 import com.algorand.android.transaction.domain.model.ReceiverAccountValidationResult.SendingMaxAmountToSameAccount
 import com.algorand.android.transaction.domain.model.ReceiverAccountValidationResult.Valid
 import com.algorand.android.transaction.domain.model.ValidateReceiverAccountPayload
-import com.algorand.android.transactionui.sendasset.domain.GetAssetTransferTargetUser
-import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser
+import com.algorand.android.module.transaction.ui.sendasset.domain.GetAssetTransferTargetUser
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser
 import com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionFragmentDirections
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.formatAsAlgoString

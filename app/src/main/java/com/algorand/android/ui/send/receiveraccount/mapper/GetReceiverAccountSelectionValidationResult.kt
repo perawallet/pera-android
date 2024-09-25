@@ -15,7 +15,7 @@ package com.algorand.android.ui.send.receiveraccount.mapper
 
 import com.algorand.android.transaction.domain.model.ReceiverAccountValidationResult
 import com.algorand.android.transaction.domain.model.ValidateReceiverAccountPayload
-import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser
 import com.algorand.android.utils.Resource
 
 interface GetReceiverAccountSelectionValidationResult {

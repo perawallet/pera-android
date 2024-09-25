@@ -70,7 +70,7 @@
         <argument
             android:name="sendTransactionPayload"
             android:defaultValue="@null"
-            app:argType="com.algorand.android.transactionui.sendasset.model.SendTransactionPayload"
+            app:argType="com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload"
             app:nullable="true" />
         <argument
             android:name="shouldPopulateAmountWithMax"
@@ -231,7 +231,7 @@
         android:label="AssetTransferPreviewFragment">
         <argument
             android:name="sendTransactionPayload"
-            app:argType="com.algorand.android.transactionui.sendasset.model.SendTransactionPayload" />
+            app:argType="com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload" />
         <action
             android:id="@+id/action_assetTransferPreviewFragment_to_addNoteBottomSheet"
             app:destination="@id/addNoteBottomSheet" />

@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.transactionui.core.mapper
+package com.algorand.android.module.transaction.ui.core.mapper
 
 import android.bluetooth.BluetoothDevice
 import com.algorand.android.designsystem.AnnotatedString
@@ -33,10 +33,10 @@ import com.algorand.android.transaction.domain.sign.model.SignTransactionResult.
 import com.algorand.android.transaction.domain.sign.model.SignTransactionResult.Error.TransmissionError
 import com.algorand.android.transaction.domain.sign.model.SignTransactionResult.Error.UnsupportedDeviceError
 import com.algorand.android.transaction.domain.sign.model.SignTransactionResult.LedgerWaitingForApproval
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.Error.GlobalWarningError
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.Error.GlobalWarningError.Defined
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.Error.SnackbarError
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.Error.GlobalWarningError
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.Error.GlobalWarningError.Defined
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.Error.SnackbarError
 import javax.inject.Inject
 
 internal class SignTransactionUiResultMapperImpl @Inject constructor() : SignTransactionUiResultMapper {

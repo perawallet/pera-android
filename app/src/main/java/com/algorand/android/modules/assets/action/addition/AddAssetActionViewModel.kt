@@ -16,7 +16,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.assetaction.AssetActionViewModel
 import com.algorand.android.assetaction.usecase.GetAssetActionPreview
 import com.algorand.android.models.AssetAction
-import com.algorand.android.transactionui.addasset.model.AddAssetTransactionPayload
+import com.algorand.android.module.transaction.ui.addasset.model.AddAssetTransactionPayload
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel

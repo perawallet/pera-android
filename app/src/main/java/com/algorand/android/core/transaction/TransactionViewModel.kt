@@ -19,8 +19,8 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.algosdk.component.transaction.model.Transaction
 import com.algorand.android.foundation.Event
 import com.algorand.android.transaction.domain.sign.SignTransactionManager
-import com.algorand.android.transactionui.core.mapper.SignTransactionUiResultMapper
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult
+import com.algorand.android.module.transaction.ui.core.mapper.SignTransactionUiResultMapper
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

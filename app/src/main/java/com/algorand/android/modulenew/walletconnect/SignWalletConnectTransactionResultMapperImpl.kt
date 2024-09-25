@@ -15,15 +15,15 @@ package com.algorand.android.modulenew.walletconnect
 
 import com.algorand.android.models.WalletConnectSignResult.Error
 import com.algorand.android.transaction.domain.sign.model.SignTransactionResult
-import com.algorand.android.transactionui.core.mapper.SignTransactionUiResultMapper
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.BluetoothNotEnabled
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.BluetoothPermissionsAreNotGranted
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.Error.GlobalWarningError
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LedgerDisconnected
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LedgerOperationCancelled
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LedgerScanFailed
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LedgerWaitingForApproval
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult.LocationNotEnabled
+import com.algorand.android.module.transaction.ui.core.mapper.SignTransactionUiResultMapper
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.BluetoothNotEnabled
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.BluetoothPermissionsAreNotGranted
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.Error.GlobalWarningError
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.LedgerDisconnected
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.LedgerOperationCancelled
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.LedgerScanFailed
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.LedgerWaitingForApproval
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.LocationNotEnabled
 import javax.inject.Inject
 
 internal class SignWalletConnectTransactionResultMapperImpl @Inject constructor(

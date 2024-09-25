@@ -82,7 +82,7 @@
             app:destination="@id/sendAlgoNavigation">
             <argument
                 android:name="sendTransactionPayload"
-                app:argType="com.algorand.android.transactionui.sendasset.model.SendTransactionPayload" />
+                app:argType="com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload" />
             <argument
                 android:name="assetTransaction"
                 app:argType="com.algorand.android.models.AssetTransaction"

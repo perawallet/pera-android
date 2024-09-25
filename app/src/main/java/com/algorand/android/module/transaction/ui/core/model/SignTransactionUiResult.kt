@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.transactionui.core.model
+package com.algorand.android.module.transaction.ui.core.model
 
 import android.content.Context
 import com.algorand.android.designsystem.AnnotatedString

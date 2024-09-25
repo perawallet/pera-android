@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.transactionui.sendasset.domain
+package com.algorand.android.module.transaction.ui.sendasset.domain
 
 import com.algorand.android.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.accountcore.ui.usecase.GetAccountIconDrawablePreview
@@ -24,8 +24,8 @@ import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwned
 import com.algorand.android.parity.domain.usecase.GetSelectedCurrencyDetail
 import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
 import com.algorand.android.transaction.domain.TransactionConstants.MIN_FEE
-import com.algorand.android.transactionui.sendasset.model.AssetTransferPreview
-import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferPreview
+import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 import java.math.BigDecimal.ZERO
 import java.math.BigInteger
 import javax.inject.Inject

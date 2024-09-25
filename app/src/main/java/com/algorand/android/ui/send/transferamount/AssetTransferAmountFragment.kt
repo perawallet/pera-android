@@ -32,7 +32,7 @@ import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.AssetTransferAmountPreview
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
+import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 import com.algorand.android.ui.common.warningconfirmation.BaseMaximumBalanceWarningBottomSheet
 import com.algorand.android.ui.send.shared.AddNoteBottomSheet
 import com.algorand.android.utils.ALGO_SHORT_NAME

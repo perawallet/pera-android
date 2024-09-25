@@ -18,8 +18,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.accountcore.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.models.AssetTransaction
-import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser
-import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser
+import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 import com.algorand.android.usecase.ReceiverAccountSelectionUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource

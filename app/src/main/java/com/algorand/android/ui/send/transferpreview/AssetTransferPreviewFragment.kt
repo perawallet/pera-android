@@ -28,11 +28,11 @@ import com.algorand.android.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.transaction.domain.model.SignedTransaction
-import com.algorand.android.transactionui.sendasset.model.AssetTransferPreview
-import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser.Account
-import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser.Address
-import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser.ContactUser
-import com.algorand.android.transactionui.sendasset.model.AssetTransferTargetUser.NfDomainUser
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferPreview
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser.Account
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser.Address
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser.ContactUser
+import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser.NfDomainUser
 import com.algorand.android.ui.send.shared.AddNoteBottomSheet
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.extensions.changeTextAppearance

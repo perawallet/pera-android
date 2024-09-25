@@ -27,9 +27,9 @@ import com.algorand.android.transaction.domain.model.SignedTransaction
 import com.algorand.android.transaction.domain.sign.SignTransactionManager
 import com.algorand.android.transaction.domain.usecase.SendSignedAddAssetTransaction
 import com.algorand.android.transaction.domain.usecase.SendSignedRemoveAssetTransaction
-import com.algorand.android.transactionui.addasset.model.AddAssetTransactionPayload
-import com.algorand.android.transactionui.core.mapper.SignTransactionUiResultMapper
-import com.algorand.android.transactionui.core.model.SignTransactionUiResult
+import com.algorand.android.module.transaction.ui.addasset.model.AddAssetTransactionPayload
+import com.algorand.android.module.transaction.ui.core.mapper.SignTransactionUiResultMapper
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult
 import com.algorand.android.utils.Event
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope

@@ -38,8 +38,8 @@ import com.algorand.android.transaction.domain.model.TransactionAmountValidation
 import com.algorand.android.transaction.domain.model.TransactionAmountValidationResult.Valid
 import com.algorand.android.transaction.domain.model.ValidateTransactionAmountPayload
 import com.algorand.android.transaction.domain.usecase.ValidateTransactionAmount
-import com.algorand.android.transactionui.sendasset.domain.GetAssetTransferTargetUser
-import com.algorand.android.transactionui.sendasset.model.SendTransactionPayload
+import com.algorand.android.module.transaction.ui.sendasset.domain.GetAssetTransferTargetUser
+import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.android.utils.formatAmountAsBigInteger

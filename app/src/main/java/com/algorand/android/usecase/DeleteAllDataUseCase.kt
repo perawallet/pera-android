@@ -13,7 +13,7 @@
 package com.algorand.android.usecase
 
 import android.app.NotificationManager
-import com.algorand.android.appcache.usecase.ClearAppSessionCache
+import com.algorand.android.module.appcache.usecase.ClearAppSessionCache
 import com.algorand.android.banner.domain.usecase.ClearDismissedBannerIds
 import com.algorand.android.contacts.component.domain.usecase.DeleteAllContacts
 import com.algorand.android.core.AccountManager

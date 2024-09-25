@@ -11,15 +11,15 @@
  *   -->
  */
 
-package com.algorand.android.appcache.manager
+package com.algorand.android.module.appcache.manager
 
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
 import com.algorand.android.accountinfo.component.domain.usecase.GetAllAssetHoldingIds
-import com.algorand.android.appcache.model.AccountCacheStatus.INITIALIZED
-import com.algorand.android.appcache.model.AssetCacheStatus
-import com.algorand.android.appcache.model.AssetCacheStatus.EMPTY
-import com.algorand.android.appcache.usecase.GetAccountDetailCacheStatusFlow
+import com.algorand.android.module.appcache.model.AccountCacheStatus.INITIALIZED
+import com.algorand.android.module.appcache.model.AssetCacheStatus
+import com.algorand.android.module.appcache.model.AssetCacheStatus.EMPTY
+import com.algorand.android.module.appcache.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAndCacheAssets
 import javax.inject.Inject
 import javax.inject.Singleton

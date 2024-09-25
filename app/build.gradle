@@ -191,7 +191,6 @@ dependencies {
     implementation project(path: ':date-ui')
     implementation project(path: ':caching')
     implementation project(path: ':block-component')
-    implementation project(path: ':app-cache-component')
     implementation project(path: ':notification-component')
     implementation project(path: ':pushtoken-component')
     implementation project(path: ':algosdk-aar')

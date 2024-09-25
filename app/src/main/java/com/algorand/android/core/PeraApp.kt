@@ -19,7 +19,7 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDex
-import com.algorand.android.appcache.manager.PushTokenManager
+import com.algorand.android.module.appcache.manager.PushTokenManager
 import com.algorand.android.migration.MigrationManager
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper

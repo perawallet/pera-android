@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.appcache.manager
+package com.algorand.android.module.appcache.manager
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner

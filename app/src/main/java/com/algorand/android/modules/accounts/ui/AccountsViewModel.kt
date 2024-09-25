@@ -13,7 +13,7 @@
 package com.algorand.android.modules.accounts.ui
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.appcache.usecase.RefreshSelectedCurrencyDetailCache
+import com.algorand.android.module.appcache.usecase.RefreshSelectedCurrencyDetailCache
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.core.component.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.android.modules.accounts.domain.model.AccountPreview

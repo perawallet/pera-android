@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.appcache.usecase
+package com.algorand.android.module.appcache.usecase
 
 import com.algorand.android.accountinfo.component.domain.usecase.ClearAccountInformationCache
 import com.algorand.android.assetdetail.component.asset.domain.usecase.ClearAssetCache

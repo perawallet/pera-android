@@ -11,11 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.appcache.usecase
+package com.algorand.android.module.appcache.usecase
 
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.android.accountinfo.component.domain.usecase.GetCachedAccountInformationCountFlow
-import com.algorand.android.appcache.model.AccountCacheStatus
+import com.algorand.android.module.appcache.model.AccountCacheStatus
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

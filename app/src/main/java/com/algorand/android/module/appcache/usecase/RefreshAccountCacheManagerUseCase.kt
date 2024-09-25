@@ -11,11 +11,16 @@
  *   -->
  */
 
-package com.algorand.android.appcache.model
+package com.algorand.android.module.appcache.usecase
 
-enum class AccountCacheStatus {
-    IDLE,
-    LOADING,
-    INITIALIZED,
-    ERROR
+import com.algorand.android.module.appcache.manager.AccountCacheManager
+import javax.inject.Inject
+
+internal class RefreshAccountCacheManagerUseCase @Inject constructor(
+    private val accountCacheManager: AccountCacheManager
+) : RefreshAccountCacheManager {
+
+    override suspend fun invoke() {
+        accountCacheManager.startJob()
+    }
 }

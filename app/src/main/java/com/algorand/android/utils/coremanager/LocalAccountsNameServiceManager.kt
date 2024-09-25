@@ -14,8 +14,8 @@ package com.algorand.android.utils.coremanager
 
 import com.algorand.android.account.localaccount.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
-import com.algorand.android.appcache.manager.PushTokenManager
-import com.algorand.android.appcache.model.PushTokenStatus
+import com.algorand.android.module.appcache.manager.PushTokenManager
+import com.algorand.android.module.appcache.model.PushTokenStatus
 import com.algorand.android.nameservice.domain.usecase.InitializeAccountNameService
 import javax.inject.Inject
 import javax.inject.Singleton

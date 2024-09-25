@@ -11,11 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.appcache
+package com.algorand.android.module.appcache
 
 import androidx.lifecycle.Lifecycle
-import com.algorand.android.appcache.manager.InitializeManagers
-import com.algorand.android.appcache.usecase.ClearPreviousSessionCache
+import com.algorand.android.module.appcache.manager.InitializeManagers
+import com.algorand.android.module.appcache.usecase.ClearPreviousSessionCache
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

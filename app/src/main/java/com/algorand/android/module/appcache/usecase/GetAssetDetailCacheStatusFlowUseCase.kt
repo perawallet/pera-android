@@ -11,22 +11,18 @@
  *   -->
  */
 
-package com.algorand.android.appcache.manager
+package com.algorand.android.module.appcache.usecase
 
-import androidx.lifecycle.Lifecycle
+import com.algorand.android.module.appcache.manager.AssetDetailCacheManager
+import com.algorand.android.module.appcache.model.AssetCacheStatus
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
-internal class InitializeManagerImpl @Inject constructor(
-    private val accountCacheManager: AccountCacheManager,
-    private val assetDetailCacheManager: AssetDetailCacheManager,
-    private val parityCacheManager: ParityCacheManager
-) : InitializeManagers {
+internal class GetAssetDetailCacheStatusFlowUseCase @Inject constructor(
+    private val assetDetailCacheManager: AssetDetailCacheManager
+) : GetAssetDetailCacheStatusFlow {
 
-    override fun invoke(lifecycle: Lifecycle) {
-        with(lifecycle) {
-            addObserver(parityCacheManager)
-            addObserver(accountCacheManager)
-            addObserver(assetDetailCacheManager)
-        }
+    override fun invoke(): Flow<AssetCacheStatus> {
+        return assetDetailCacheManager.cacheStatusFlow
     }
 }

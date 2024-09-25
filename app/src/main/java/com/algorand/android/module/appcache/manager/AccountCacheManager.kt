@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.appcache.manager
+package com.algorand.android.module.appcache.manager
 
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts

@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.appcache
+package com.algorand.android.module.appcache
 
 import org.junit.Test
 

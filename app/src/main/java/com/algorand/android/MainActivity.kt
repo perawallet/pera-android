@@ -39,7 +39,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
-import com.algorand.android.appcache.model.AppCacheStatus
+import com.algorand.android.module.appcache.model.AppCacheStatus
 import com.algorand.android.customviews.CoreActionsTabBarView
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.customviews.alertview.ui.delegation.AlertDialogDelegation

@@ -13,7 +13,7 @@
 package com.algorand.android.modules.currency.ui
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.appcache.usecase.RefreshSelectedCurrencyDetailCache
+import com.algorand.android.module.appcache.usecase.RefreshSelectedCurrencyDetailCache
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.currency.domain.model.SelectedCurrency
 import com.algorand.android.currency.domain.usecase.GetSelectedCurrency

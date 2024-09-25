@@ -19,8 +19,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.android.algosdk.component.transaction.model.Transaction
-import com.algorand.android.appcache.InitializeAppCache
-import com.algorand.android.appcache.usecase.GetAppCacheStatusFlow
+import com.algorand.android.module.appcache.InitializeAppCache
+import com.algorand.android.module.appcache.usecase.GetAppCacheStatusFlow
 import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.module.deeplink.DeepLinkHandler

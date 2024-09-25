@@ -11,18 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.appcache.usecase
+package com.algorand.android.module.appcache.model
 
-import com.algorand.android.appcache.manager.AssetDetailCacheManager
-import com.algorand.android.appcache.model.AssetCacheStatus
-import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-
-internal class GetAssetDetailCacheStatusFlowUseCase @Inject constructor(
-    private val assetDetailCacheManager: AssetDetailCacheManager
-) : GetAssetDetailCacheStatusFlow {
-
-    override fun invoke(): Flow<AssetCacheStatus> {
-        return assetDetailCacheManager.cacheStatusFlow
-    }
+enum class AccountCacheStatus {
+    IDLE,
+    LOADING,
+    INITIALIZED,
+    ERROR
 }

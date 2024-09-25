@@ -11,17 +11,10 @@
  *   -->
  */
 
-package com.algorand.android.appcache.usecase
+package com.algorand.android.module.appcache.manager
 
-import com.algorand.android.appcache.manager.AssetDetailCacheManager
-import com.algorand.android.appcache.model.AssetCacheStatus
-import javax.inject.Inject
+import androidx.lifecycle.Lifecycle
 
-internal class IsAssetCacheStatusAtLeastEmptyUseCase @Inject constructor(
-    private val assetDetailCacheManager: AssetDetailCacheManager
-) : IsAssetCacheStatusAtLeastEmpty {
-
-    override fun invoke(): Boolean {
-        return assetDetailCacheManager.cacheStatusFlow.value isAtLeast AssetCacheStatus.EMPTY
-    }
+internal interface InitializeManagers {
+    operator fun invoke(lifecycle: Lifecycle)
 }

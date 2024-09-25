@@ -11,10 +11,22 @@
  *   -->
  */
 
-package com.algorand.android.appcache
+package com.algorand.android.module.appcache.manager
 
 import androidx.lifecycle.Lifecycle
+import javax.inject.Inject
 
-interface InitializeAppCache {
-    suspend operator fun invoke(lifecycle: Lifecycle)
+internal class InitializeManagerImpl @Inject constructor(
+    private val accountCacheManager: AccountCacheManager,
+    private val assetDetailCacheManager: AssetDetailCacheManager,
+    private val parityCacheManager: ParityCacheManager
+) : InitializeManagers {
+
+    override fun invoke(lifecycle: Lifecycle) {
+        with(lifecycle) {
+            addObserver(parityCacheManager)
+            addObserver(accountCacheManager)
+            addObserver(assetDetailCacheManager)
+        }
+    }
 }

@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.appcache.model
+package com.algorand.android.module.appcache.model
 
 enum class AssetCacheStatus {
     IDLE,

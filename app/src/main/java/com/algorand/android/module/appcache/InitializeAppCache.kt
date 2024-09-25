@@ -11,16 +11,10 @@
  *   -->
  */
 
-package com.algorand.android.appcache.usecase
+package com.algorand.android.module.appcache
 
-import com.algorand.android.appcache.manager.AccountCacheManager
-import javax.inject.Inject
+import androidx.lifecycle.Lifecycle
 
-internal class RefreshAccountCacheManagerUseCase @Inject constructor(
-    private val accountCacheManager: AccountCacheManager
-) : RefreshAccountCacheManager {
-
-    override suspend fun invoke() {
-        accountCacheManager.startJob()
-    }
+interface InitializeAppCache {
+    suspend operator fun invoke(lifecycle: Lifecycle)
 }

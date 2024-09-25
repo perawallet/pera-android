@@ -24,9 +24,9 @@ import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentVerifyLedgerAddressBinding
 import com.algorand.android.foundation.Event
-import com.algorand.android.ledger.domain.model.LedgerBleResult
-import com.algorand.android.ledger.domain.model.LedgerOperation.VerifyAddressOperation
-import com.algorand.android.ledger.manager.LedgerBleOperationManager
+import com.algorand.android.module.ledger.domain.model.LedgerBleResult
+import com.algorand.android.module.ledger.domain.model.LedgerOperation.VerifyAddressOperation
+import com.algorand.android.module.ledger.manager.LedgerBleOperationManager
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.onboarding.pairledger.PairLedgerNavigationViewModel

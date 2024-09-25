@@ -39,20 +39,6 @@ android {
 
 dependencies {
 
-    implementation project(path: ':account-core-component')
-    implementation project(path: ':designsystem')
-    implementation project(path: ':account-sorting-component')
-    implementation project(path: ':custom-info-component')
-    implementation project(path: ':nameservice-component')
-    implementation project(path: ':asset-detail-component')
-    implementation project(path: ':account-info-component')
-    implementation project(path: ':asb-component')
-    implementation project(path: ':foundation')
-    implementation project(path: ':drawable-ui')
-    implementation project(path: ':formatting-component')
-    implementation project(path: ':parity-component')
-    implementation project(path: ':contacts-component')
-
     implementation deps.support.appcompat
 
     implementation deps.hilt.core

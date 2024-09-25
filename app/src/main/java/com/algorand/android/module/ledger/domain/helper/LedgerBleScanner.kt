@@ -11,11 +11,13 @@
  *   -->
  */
 
-package com.algorand.android.module.transaction.component.domain.sign.mapper
+package com.algorand.android.module.ledger.domain.helper
 
-import com.algorand.android.module.ledger.domain.model.LedgerBleResult
-import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
+import android.bluetooth.le.ScanCallback
 
-interface LedgerBleResultSignTransactionResultMapper {
-    operator fun invoke(result: LedgerBleResult): SignTransactionResult
+internal interface LedgerBleScanner {
+
+    fun startScan(scanCallback: ScanCallback)
+
+    fun stopScan(scanCallback: ScanCallback)
 }

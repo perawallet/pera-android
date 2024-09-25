@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.algorand.android.ledger'
+    namespace 'com.algorand.android.module.ledger'
     compileSdkVersion targets.compileSdkVersion
 
     defaultConfig {
@@ -37,11 +37,6 @@ android {
 }
 
 dependencies {
-
-    implementation project(path: ':foundation')
-    implementation project(path: ':algosdk-component')
-    implementation project(path: ':account-info-component')
-    implementation project(path: ':account-core-component')
 
     implementation deps.ble
 

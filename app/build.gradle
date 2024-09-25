@@ -183,7 +183,6 @@ dependencies {
     implementation project(path: ':designsystem')
     implementation project(path: ':currency-component')
     implementation project(path: ':network-utils')
-    implementation project(path: ':ledger-component')
     implementation project(path: ':asset-utils')
     implementation project(path: ':date-ui')
     implementation project(path: ':caching')

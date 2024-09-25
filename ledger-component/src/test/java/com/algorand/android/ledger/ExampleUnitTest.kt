@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.ledger
+package com.algorand.android.module.ledger
 
 import org.junit.Test
 

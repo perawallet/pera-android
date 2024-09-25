@@ -11,11 +11,8 @@
  *   -->
  */
 
-package com.algorand.android.module.transaction.component.domain.sign.mapper
+package com.algorand.android.module.ledger.domain.payload
 
-import com.algorand.android.module.ledger.domain.model.LedgerBleResult
-import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
-
-interface LedgerBleResultSignTransactionResultMapper {
-    operator fun invoke(result: LedgerBleResult): SignTransactionResult
+internal interface CreateSendPublicKeyRequestPayload {
+    operator fun invoke(accountIndex: Int): ByteArray
 }

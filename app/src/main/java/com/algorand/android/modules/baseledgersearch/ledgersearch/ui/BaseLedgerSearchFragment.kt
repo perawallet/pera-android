@@ -30,8 +30,8 @@ import com.algorand.android.customviews.LoadingDialogFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentLedgerSearchBinding
 import com.algorand.android.foundation.Event
-import com.algorand.android.ledger.domain.model.LedgerBleResult
-import com.algorand.android.ledger.domain.model.LedgerOperation.AccountFetchAllOperation
+import com.algorand.android.module.ledger.domain.model.LedgerBleResult
+import com.algorand.android.module.ledger.domain.model.LedgerOperation.AccountFetchAllOperation
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.adapter.LedgerSearchAdapter

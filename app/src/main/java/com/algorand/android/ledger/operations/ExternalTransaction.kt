@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.ledger.operations
+package com.algorand.android.module.ledger.operations
 
 /**
  * This interface is being used for the transactions that we didn't create but need to be signed by the user

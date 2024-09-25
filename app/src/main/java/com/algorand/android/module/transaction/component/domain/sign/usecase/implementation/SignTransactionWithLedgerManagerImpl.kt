@@ -18,11 +18,11 @@ import android.util.Log
 import androidx.lifecycle.Lifecycle
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
 import com.algorand.android.foundation.Event
-import com.algorand.android.ledger.domain.helper.LedgerBleScanCallback
-import com.algorand.android.ledger.domain.model.LedgerBleResult
-import com.algorand.android.ledger.domain.model.LedgerOperation
-import com.algorand.android.ledger.manager.LedgerBleOperationManager
-import com.algorand.android.ledger.manager.LedgerBleSearchManager
+import com.algorand.android.module.ledger.domain.helper.LedgerBleScanCallback
+import com.algorand.android.module.ledger.domain.model.LedgerBleResult
+import com.algorand.android.module.ledger.domain.model.LedgerOperation
+import com.algorand.android.module.ledger.manager.LedgerBleOperationManager
+import com.algorand.android.module.ledger.manager.LedgerBleSearchManager
 import com.algorand.android.module.transaction.component.domain.sign.mapper.LedgerBleResultSignTransactionResultMapper
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionWithLedgerPayload

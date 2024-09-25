@@ -11,11 +11,16 @@
  *   -->
  */
 
-package com.algorand.android.module.transaction.component.domain.sign.mapper
+package com.algorand.android.module.ledger.ui
 
+import androidx.lifecycle.Lifecycle
+import com.algorand.android.foundation.Event
 import com.algorand.android.module.ledger.domain.model.LedgerBleResult
-import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
+import kotlinx.coroutines.flow.StateFlow
 
-interface LedgerBleResultSignTransactionResultMapper {
-    operator fun invoke(result: LedgerBleResult): SignTransactionResult
+interface LedgerOperationViewModel {
+
+    fun getLedgerBleOperationResultFlow(): StateFlow<Event<LedgerBleResult>?>
+
+    fun setupLedgerOperationManager(lifecycle: Lifecycle)
 }

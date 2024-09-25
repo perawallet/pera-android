@@ -13,7 +13,7 @@
 package com.algorand.android.modules.swap.confirmswap.domain.model
 
 import android.os.Parcelable
-import com.algorand.android.ledger.operations.ExternalTransaction
+import com.algorand.android.module.ledger.operations.ExternalTransaction
 import com.algorand.android.modules.algosdk.domain.model.RawTransaction
 import com.algorand.android.utils.decodeBase64
 import com.algorand.android.utils.isRekeyedToAnotherAccount

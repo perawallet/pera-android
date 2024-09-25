@@ -11,11 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.module.transaction.component.domain.sign.mapper
+package com.algorand.android.module.ledger.domain.helper
 
-import com.algorand.android.module.ledger.domain.model.LedgerBleResult
-import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
+internal interface LedgerBleSearchTimer {
 
-interface LedgerBleResultSignTransactionResultMapper {
-    operator fun invoke(result: LedgerBleResult): SignTransactionResult
+    suspend fun startTimer(onTimeout: () -> Unit)
+
+    fun stopTimer()
 }

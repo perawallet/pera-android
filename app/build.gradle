@@ -195,7 +195,6 @@ dependencies {
     implementation project(path: ':app-cache-component')
     implementation project(path: ':notification-component')
     implementation project(path: ':pushtoken-component')
-    implementation project(path: ':deeplink-component')
     implementation project(path: ':asset-action-ui')
     implementation project(path: ':algosdk-aar')
     implementation project(path: ':peracompactdecimal-aar')

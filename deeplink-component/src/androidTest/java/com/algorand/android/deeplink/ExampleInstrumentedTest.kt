@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.deeplink
+package com.algorand.android.module.deeplink
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -32,6 +32,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.algorand.android.deeplink.test", appContext.packageName)
+        assertEquals("com.algorand.android.module.deeplink.test", appContext.packageName)
     }
 }

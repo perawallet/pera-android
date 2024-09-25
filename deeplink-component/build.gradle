@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.algorand.android.deeplink'
+    namespace 'com.algorand.android.module.deeplink'
     compileSdkVersion targets.compileSdkVersion
 
     defaultConfig {

@@ -10,9 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.deeplink.deeplink
+package com.algorand.android.module.deeplink.deeplink
 
-import com.algorand.android.deeplink.RAW_MNEMONIC_JSON
+import com.algorand.android.module.deeplink.RAW_MNEMONIC_JSON
 import com.algorand.android.modules.deeplink.domain.model.RawDeepLink
 import com.squareup.moshi.Moshi
 import java.math.BigInteger

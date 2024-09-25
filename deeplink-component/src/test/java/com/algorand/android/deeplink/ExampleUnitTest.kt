@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.deeplink
+package com.algorand.android.module.deeplink
 
 import org.junit.Test
 

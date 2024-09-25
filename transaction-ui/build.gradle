@@ -40,7 +40,6 @@ android {
 dependencies {
 
     implementation project(path: ':foundation')
-    implementation project(path: ':transaction-component')
     implementation project(path: ':account-core-ui')
     implementation project(path: ':contacts-component')
     implementation project(path: ':asset-detail-component')

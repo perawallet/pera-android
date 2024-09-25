@@ -14,7 +14,7 @@ package com.algorand.android.modules.qrscanning
 
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.deeplink.DeepLinkHandler
+import com.algorand.android.module.deeplink.DeepLinkHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow

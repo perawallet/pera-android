@@ -13,9 +13,9 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.deeplink.model.BaseDeepLink
+import com.algorand.android.module.deeplink.model.BaseDeepLink
 
 data class NotificationDeepLinkPayload(
     val metadata: NotificationMetadata,
-    val deepLink: BaseDeepLink.NotificationDeepLink?
+    val deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink?
 )

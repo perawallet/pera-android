@@ -23,7 +23,7 @@
         tools:layout="@layout/fragment_web_import_intro">
         <argument
             android:name="webImportQrCode"
-            app:argType="com.algorand.android.deeplink.model.WebImportQrCode"
+            app:argType="com.algorand.android.module.deeplink.model.WebImportQrCode"
             app:nullable="true"
             android:defaultValue="@null"/>
         <action
@@ -34,7 +34,7 @@
             app:destination="@id/webImportLoadingFragment">
             <argument
                 android:name="webImportQrCode"
-                app:argType="com.algorand.android.deeplink.model.WebImportQrCode" />
+                app:argType="com.algorand.android.module.deeplink.model.WebImportQrCode" />
         </action>
     </fragment>
 
@@ -48,7 +48,7 @@
             app:destination="@id/webImportLoadingFragment">
             <argument
                 android:name="webImportQrCode"
-                app:argType="com.algorand.android.deeplink.model.WebImportQrCode" />
+                app:argType="com.algorand.android.module.deeplink.model.WebImportQrCode" />
         </action>
     </fragment>
 
@@ -59,7 +59,7 @@
         tools:layout="@layout/fragment_web_import_loading">
         <argument
             android:name="webImportQrCode"
-            app:argType="com.algorand.android.deeplink.model.WebImportQrCode" />
+            app:argType="com.algorand.android.module.deeplink.model.WebImportQrCode" />
         <action
             android:id="@+id/action_webImportLoadingFragment_to_webImportResultFragment"
             app:destination="@id/webImportResultFragment"

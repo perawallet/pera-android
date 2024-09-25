@@ -11,7 +11,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.deeplink.parser
+package com.algorand.android.module.deeplink.parser
 
 import com.squareup.moshi.Moshi
 import java.math.BigInteger

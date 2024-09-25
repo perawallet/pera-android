@@ -15,7 +15,7 @@ package com.algorand.android.modules.webimport.loading.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.deeplink.model.WebImportQrCode
+import com.algorand.android.module.deeplink.model.WebImportQrCode
 import com.algorand.android.modules.webimport.loading.ui.model.WebImportLoadingPreview
 import com.algorand.android.modules.webimport.loading.ui.usecase.WebImportLoadingPreviewUseCase
 import com.algorand.android.utils.getOrThrow

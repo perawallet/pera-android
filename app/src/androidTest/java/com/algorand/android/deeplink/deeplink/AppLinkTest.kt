@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.deeplink.deeplink
+package com.algorand.android.module.deeplink.deeplink
 
-import com.algorand.android.deeplink.APPLINK_BASE_URL
-import com.algorand.android.deeplink.APPLINK_PERA_WC_PATH
+import com.algorand.android.module.deeplink.APPLINK_BASE_URL
+import com.algorand.android.module.deeplink.APPLINK_PERA_WC_PATH
 import org.junit.Test
 
 class AppLinkTest : BaseDeepLinkTest() {

@@ -4,7 +4,7 @@ import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.contacts.component.domain.model.Contact
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.deeplink.model.BaseDeepLink
+import com.algorand.android.module.deeplink.model.BaseDeepLink
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.tracking.accounts.AccountsEventTracker
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +28,7 @@ class AccountsQrScannerViewModel @Inject constructor(
     }
 
     fun getAssetTransaction(
-        deepLink: BaseDeepLink.AssetTransferDeepLink,
+        deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink.AssetTransferDeepLink,
         receiverAddress: String,
         receiverName: String
     ): AssetTransaction {

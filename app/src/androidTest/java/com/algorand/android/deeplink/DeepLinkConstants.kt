@@ -11,7 +11,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.deeplink
+package com.algorand.android.module.deeplink
 
 const val APPLINK_BASE_URL = "https://perawallet.app/qr/"
 const val APPLINK_PERA_WC_PATH = "perawallet-wc/"

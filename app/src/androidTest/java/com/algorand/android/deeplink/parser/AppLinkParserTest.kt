@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.deeplink.parser
+package com.algorand.android.module.deeplink.parser
 
-import com.algorand.android.deeplink.APPLINK_BASE_URL
-import com.algorand.android.deeplink.APPLINK_PERA_PATH
-import com.algorand.android.deeplink.APPLINK_PERA_WC_PATH
+import com.algorand.android.module.deeplink.APPLINK_BASE_URL
+import com.algorand.android.module.deeplink.APPLINK_PERA_PATH
+import com.algorand.android.module.deeplink.APPLINK_PERA_WC_PATH
 import org.junit.Test
 
 class AppLinkParserTest : BaseDeepLinkParserTest() {

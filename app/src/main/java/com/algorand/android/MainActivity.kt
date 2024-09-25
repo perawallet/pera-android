@@ -45,9 +45,9 @@ import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.customviews.alertview.ui.delegation.AlertDialogDelegation
 import com.algorand.android.customviews.alertview.ui.delegation.AlertDialogDelegationImpl
 import com.algorand.android.customviews.customsnackbar.CustomSnackbar
-import com.algorand.android.deeplink.DeepLinkHandler
-import com.algorand.android.deeplink.model.BaseDeepLink
-import com.algorand.android.deeplink.model.NotificationGroupType
+import com.algorand.android.module.deeplink.DeepLinkHandler
+import com.algorand.android.module.deeplink.model.BaseDeepLink
+import com.algorand.android.module.deeplink.model.NotificationGroupType
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.AssetOperationResult
@@ -211,7 +211,7 @@ class MainActivity :
 
     private fun handleNotificationWithDeepLink(
         newNotificationData: NotificationMetadata,
-        deeplink: BaseDeepLink.NotificationDeepLink
+        deeplink: com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink
     ) {
         when (deeplink.notificationGroupType) {
             NotificationGroupType.OPT_IN -> handleAssetOptInRequestDeepLink(deeplink)
@@ -219,7 +219,7 @@ class MainActivity :
         }
     }
 
-    private fun handleAssetOptInRequestDeepLink(deepLink: BaseDeepLink.NotificationDeepLink) {
+    private fun handleAssetOptInRequestDeepLink(deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink) {
         if (!deepLink.isThereAnyAccountWithPublicKey) {
             showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
             return
@@ -233,7 +233,7 @@ class MainActivity :
         )
     }
 
-    private fun handleAssetTransactionDeepLink(deepLink: BaseDeepLink.NotificationDeepLink) {
+    private fun handleAssetTransactionDeepLink(deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink) {
         if (!deepLink.isThereAnyAccountWithPublicKey) {
             showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
             return
@@ -278,7 +278,7 @@ class MainActivity :
     private val deepLinkHandlerListener = object : DeepLinkHandler.Listener {
 
         override fun onAssetTransferDeepLink(
-            deepLink: BaseDeepLink.AssetTransferDeepLink,
+            deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink.AssetTransferDeepLink,
             receiverAddress: String,
             receiverName: String
         ): Boolean {
@@ -319,7 +319,7 @@ class MainActivity :
             }
         }
 
-        override fun onNotificationDeepLink(deepLink: BaseDeepLink.NotificationDeepLink): Boolean {
+        override fun onNotificationDeepLink(deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink): Boolean {
             when (deepLink.notificationGroupType) {
                 NotificationGroupType.TRANSACTIONS -> handleAssetTransactionDeepLink(deepLink)
                 NotificationGroupType.OPT_IN -> handleAssetOptInRequestDeepLink(deepLink)
@@ -332,11 +332,11 @@ class MainActivity :
             return true
         }
 
-        override fun onUndefinedDeepLink(undefinedDeeplink: BaseDeepLink.UndefinedDeepLink) {
+        override fun onUndefinedDeepLink(undefinedDeeplink: com.algorand.android.module.deeplink.model.BaseDeepLink.UndefinedDeepLink) {
             // TODO show error after discussing with the team
         }
 
-        override fun onDeepLinkNotHandled(deepLink: BaseDeepLink) {
+        override fun onDeepLinkNotHandled(deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink) {
             // TODO show error after discussing with the team
         }
     }

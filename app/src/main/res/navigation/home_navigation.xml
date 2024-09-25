@@ -249,7 +249,7 @@
         app:destination="@id/webImportNavigation">
         <argument
             android:name="webImportQrCode"
-            app:argType="com.algorand.android.deeplink.model.WebImportQrCode" />
+            app:argType="com.algorand.android.module.deeplink.model.WebImportQrCode" />
     </action>
 
 

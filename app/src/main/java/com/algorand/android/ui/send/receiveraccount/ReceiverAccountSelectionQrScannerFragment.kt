@@ -13,7 +13,7 @@
 package com.algorand.android.ui.send.receiveraccount
 
 import com.algorand.android.R
-import com.algorand.android.deeplink.model.BaseDeepLink
+import com.algorand.android.module.deeplink.model.BaseDeepLink
 import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
 import com.algorand.android.utils.setNavigationResult
 
@@ -24,7 +24,7 @@ class ReceiverAccountSelectionQrScannerFragment : BaseQrScannerFragment(
     override val titleTextResId: Int
         get() = R.string.scan_an_algorand
 
-    override fun onDeepLinkNotHandled(deepLink: BaseDeepLink) {
+    override fun onDeepLinkNotHandled(deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink) {
         showGlobalError(getString(R.string.the_scanned_qr_is_not))
     }
 

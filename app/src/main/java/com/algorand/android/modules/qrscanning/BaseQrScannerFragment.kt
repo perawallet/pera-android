@@ -22,9 +22,9 @@ import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentQrCodeScannerBinding
-import com.algorand.android.deeplink.DeepLinkHandler
-import com.algorand.android.deeplink.model.BaseDeepLink
-import com.algorand.android.deeplink.model.BaseDeepLink.AssetTransferDeepLink
+import com.algorand.android.module.deeplink.DeepLinkHandler
+import com.algorand.android.module.deeplink.model.BaseDeepLink
+import com.algorand.android.module.deeplink.model.BaseDeepLink.AssetTransferDeepLink
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
@@ -213,11 +213,11 @@ abstract class BaseQrScannerFragment(
         }
     }
 
-    override fun onUndefinedDeepLink(undefinedDeeplink: BaseDeepLink.UndefinedDeepLink) {
+    override fun onUndefinedDeepLink(undefinedDeeplink: com.algorand.android.module.deeplink.model.BaseDeepLink.UndefinedDeepLink) {
         showGlobalError(getString(R.string.scanned_qr_is_not_valid))
     }
 
-    override fun onDeepLinkNotHandled(deepLink: BaseDeepLink) {
+    override fun onDeepLinkNotHandled(deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink) {
         showGlobalError(getString(R.string.scanned_qr_is_not_valid))
     }
 

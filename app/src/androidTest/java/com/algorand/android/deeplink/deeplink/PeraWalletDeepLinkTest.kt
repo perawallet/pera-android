@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.deeplink.deeplink
+package com.algorand.android.module.deeplink.deeplink
 
-import com.algorand.android.deeplink.PERA_WALLET_BASE_URL
-import com.algorand.android.deeplink.PERA_WALLET_WC_URL
+import com.algorand.android.module.deeplink.PERA_WALLET_BASE_URL
+import com.algorand.android.module.deeplink.PERA_WALLET_WC_URL
 import org.junit.Test
 
 class PeraWalletDeepLinkTest : BaseDeepLinkTest() {

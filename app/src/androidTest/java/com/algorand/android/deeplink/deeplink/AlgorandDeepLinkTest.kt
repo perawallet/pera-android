@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.deeplink.deeplink
+package com.algorand.android.module.deeplink.deeplink
 
-import com.algorand.android.deeplink.ALGORAND_BASE_URL
-import com.algorand.android.deeplink.ALGORAND_WC_URL
+import com.algorand.android.module.deeplink.ALGORAND_BASE_URL
+import com.algorand.android.module.deeplink.ALGORAND_WC_URL
 import org.junit.Test
 
 class AlgorandDeepLinkTest : BaseDeepLinkTest() {

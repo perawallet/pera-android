@@ -15,8 +15,8 @@ package com.algorand.android.ui.accounts
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.deeplink.model.BaseDeepLink
-import com.algorand.android.deeplink.model.WebImportQrCode
+import com.algorand.android.module.deeplink.model.BaseDeepLink
+import com.algorand.android.module.deeplink.model.WebImportQrCode
 import com.algorand.android.models.AssetAction
 import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +41,7 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
     }
 
     override fun onAssetTransferDeepLink(
-        deepLink: BaseDeepLink.AssetTransferDeepLink,
+        deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink.AssetTransferDeepLink,
         receiverAddress: String,
         receiverName: String
     ): Boolean {

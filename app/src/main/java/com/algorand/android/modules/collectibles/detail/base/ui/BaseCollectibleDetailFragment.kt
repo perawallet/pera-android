@@ -23,8 +23,8 @@ import com.algorand.android.BuildConfig
 import com.algorand.android.R
 import com.algorand.android.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.accountcore.ui.model.AssetName
-import com.algorand.android.assetdetailui.detail.nftprofile.model.BaseCollectibleMediaItem
-import com.algorand.android.assetdetailui.detail.nftprofile.model.CollectibleTraitItem
+import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem
+import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.CollectibleTraitItem
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.CollectibleMediaPager
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton

@@ -32,6 +32,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.algorand.android.assetdetailui.test", appContext.packageName)
+        assertEquals("com.algorand.android.module.asset.detail.ui.test", appContext.packageName)
     }
 }

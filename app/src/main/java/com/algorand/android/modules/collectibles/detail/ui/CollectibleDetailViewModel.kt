@@ -15,8 +15,8 @@ package com.algorand.android.modules.collectibles.detail.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.accountcore.ui.model.AssetName
-import com.algorand.android.assetdetailui.nftdetail.model.CollectibleDetailPreview
-import com.algorand.android.assetdetailui.nftdetail.usecase.GetCollectibleDetailPreview
+import com.algorand.android.module.asset.detail.ui.nftdetail.model.CollectibleDetailPreview
+import com.algorand.android.module.asset.detail.ui.nftdetail.usecase.GetCollectibleDetailPreview
 import com.algorand.android.foundation.Event
 import com.algorand.android.models.AssetAction
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailViewModel

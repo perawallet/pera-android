@@ -19,7 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.MarginPageTransformer
 import com.algorand.android.R
-import com.algorand.android.assetdetailui.detail.nftprofile.model.BaseCollectibleMediaItem
+import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem
 import com.algorand.android.databinding.CustomCollectibleMediaPagerBinding
 import com.algorand.android.modules.collectibles.detail.base.ui.viewpager.CollectibleMediaAdapter
 import com.algorand.android.utils.viewbinding.viewBinding

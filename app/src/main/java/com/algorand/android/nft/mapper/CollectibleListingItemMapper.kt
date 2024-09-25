@@ -13,7 +13,7 @@
 package com.algorand.android.nft.mapper
 
 import androidx.annotation.StringRes
-import com.algorand.android.assetdetailui.detail.nftprofile.mapper.CollectibleAmountFormatter
+import com.algorand.android.module.asset.detail.ui.detail.nftprofile.mapper.CollectibleAmountFormatter
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData.PendingAssetData
 import com.algorand.android.decider.AssetDrawableProviderDecider

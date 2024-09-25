@@ -191,7 +191,6 @@ dependencies {
     implementation project(path: ':swap-component')
     implementation project(path: ':asset-utils')
     implementation project(path: ':date-ui')
-    implementation project(path: ':asset-detail-ui')
     implementation project(path: ':caching')
     implementation project(path: ':block-component')
     implementation project(path: ':app-cache-component')

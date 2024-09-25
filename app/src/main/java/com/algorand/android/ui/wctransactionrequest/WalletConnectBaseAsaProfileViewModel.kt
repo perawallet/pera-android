@@ -13,7 +13,7 @@
 package com.algorand.android.ui.wctransactionrequest
 
 import androidx.lifecycle.SavedStateHandle
-import com.algorand.android.assetdetailui.detail.asaprofile.usecase.GetAsaProfilePreview
+import com.algorand.android.module.asset.detail.ui.detail.asaprofile.usecase.GetAsaProfilePreview
 import com.algorand.android.modules.assets.profile.asaprofile.base.BaseAsaProfileViewModel
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow

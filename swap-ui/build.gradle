@@ -42,7 +42,6 @@ dependencies {
     implementation project(path: ':account-info-component')
     implementation project(path: ':account-core-component')
     implementation project(path: ':account-core-ui')
-    implementation project(path: ':swap-component')
     implementation project(path: ':foundation')
     implementation project(path: ':drawable-ui')
     implementation project(path: ':formatting-component')

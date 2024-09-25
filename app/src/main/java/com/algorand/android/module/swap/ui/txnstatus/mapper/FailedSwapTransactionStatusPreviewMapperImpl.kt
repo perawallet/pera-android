@@ -15,7 +15,7 @@ package com.algorand.android.module.swap.ui.txnstatus.mapper
 
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.designsystem.R
-import com.algorand.android.swap.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusPreview
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusType
 import javax.inject.Inject

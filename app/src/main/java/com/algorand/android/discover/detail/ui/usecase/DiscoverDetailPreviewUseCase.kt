@@ -28,9 +28,9 @@ import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.discover.utils.getSendDeviceId
 import com.algorand.android.discover.utils.isValidDiscoverURL
 import com.algorand.android.modules.tracking.discover.detail.DiscoverDetailEventTracker
-import com.algorand.android.swap.common.model.DiscoverNavigationDestination.AccountSelection
-import com.algorand.android.swap.common.model.DiscoverNavigationDestination.Introduction
-import com.algorand.android.swap.common.usecase.GetDiscoverSwapNavigationDestination
+import com.algorand.android.module.swap.component.common.model.DiscoverNavigationDestination.AccountSelection
+import com.algorand.android.module.swap.component.common.model.DiscoverNavigationDestination.Introduction
+import com.algorand.android.module.swap.component.common.usecase.GetDiscoverSwapNavigationDestination
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.fromJson
 import com.algorand.android.utils.preference.getSavedThemePreference

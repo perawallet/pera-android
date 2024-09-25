@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.algorand.android.swap'
+    namespace 'com.algorand.android.module.swap.component'
     compileSdkVersion targets.compileSdkVersion
 
     defaultConfig {

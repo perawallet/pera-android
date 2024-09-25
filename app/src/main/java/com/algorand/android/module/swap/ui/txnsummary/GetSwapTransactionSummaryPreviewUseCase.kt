@@ -25,7 +25,7 @@ import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionS
 import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem.SwapFeesItemTransaction
 import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem.SwapPriceImpactItemTransaction
 import com.algorand.android.module.swap.ui.txnsummary.model.SwapTransactionSummaryPreview
-import com.algorand.android.swap.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAssetAmount

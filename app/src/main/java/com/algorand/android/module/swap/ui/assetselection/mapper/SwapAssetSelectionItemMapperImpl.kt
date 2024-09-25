@@ -17,7 +17,7 @@ import com.algorand.android.accountcore.ui.asset.assetdrawable.GetAssetDrawableP
 import com.algorand.android.accountcore.ui.mapper.VerificationTierConfigurationMapper
 import com.algorand.android.accountcore.ui.usecase.GetAssetName
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData
-import com.algorand.android.swap.domain.model.AvailableSwapAsset
+import com.algorand.android.module.swap.component.domain.model.AvailableSwapAsset
 import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionItem
 import javax.inject.Inject
 

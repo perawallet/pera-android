@@ -14,7 +14,7 @@
 package com.algorand.android.module.swap.ui.assetselection.mapper
 
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData
-import com.algorand.android.swap.domain.model.AvailableSwapAsset
+import com.algorand.android.module.swap.component.domain.model.AvailableSwapAsset
 import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionItem
 
 interface SwapAssetSelectionItemMapper {

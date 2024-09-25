@@ -41,7 +41,7 @@ import com.algorand.android.parity.domain.usecase.GetSelectedCurrencyDetailFlow
 import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencyName
 import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
 import com.algorand.android.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
-import com.algorand.android.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibility
+import com.algorand.android.module.swap.component.reddot.domain.usecase.GetSwapFeatureRedDotVisibility
 import com.algorand.android.usecase.GetFormattedAccountMinimumBalanceUseCase
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsCurrency

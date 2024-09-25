@@ -37,10 +37,10 @@ import com.algorand.android.modules.tracking.main.MainActivityEventTracker
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.node.domain.Node
 import com.algorand.android.node.domain.usecase.GetActiveNodeAsFlow
-import com.algorand.android.swap.common.model.SwapNavigationDestination.AccountSelection
-import com.algorand.android.swap.common.model.SwapNavigationDestination.Introduction
-import com.algorand.android.swap.common.model.SwapNavigationDestination.Swap
-import com.algorand.android.swap.common.usecase.GetSwapNavigationDestination
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.AccountSelection
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Introduction
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Swap
+import com.algorand.android.module.swap.component.common.usecase.GetSwapNavigationDestination
 import com.algorand.android.transaction.domain.model.SignedTransaction
 import com.algorand.android.module.transaction.ui.addasset.model.AddAssetTransactionPayload
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult

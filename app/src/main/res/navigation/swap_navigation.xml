@@ -83,7 +83,7 @@
         tools:layout="@layout/fragment_confirm_swap">
         <argument
             android:name="swapQuote"
-            app:argType="com.algorand.android.swap.domain.model.SwapQuote" />
+            app:argType="com.algorand.android.module.swap.component.domain.model.SwapQuote" />
         <action
             android:id="@+id/action_confirmSwapFragment_to_slippageToleranceInfoBottomSheet"
             app:destination="@id/slippageToleranceInfoBottomSheet" />
@@ -128,7 +128,7 @@
         tools:layout="@layout/fragment_swap_transaction_summary">
         <argument
             android:name="swapQuote"
-            app:argType="com.algorand.android.swap.domain.model.SwapQuote" />
+            app:argType="com.algorand.android.module.swap.component.domain.model.SwapQuote" />
         <argument
             android:name="optInTransactionFees"
             app:argType="long" />

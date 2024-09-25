@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.swap.ui.txnstatus.usecase
 
-import com.algorand.android.swap.domain.tracking.usecase.LogSwapTransactionFailureEvent
-import com.algorand.android.swap.domain.tracking.usecase.LogSwapTransactionSuccessEvent
-import com.algorand.android.swap.domain.usecase.RecordSwapQuoteException
+import com.algorand.android.module.swap.component.domain.tracking.usecase.LogSwapTransactionFailureEvent
+import com.algorand.android.module.swap.component.domain.tracking.usecase.LogSwapTransactionSuccessEvent
+import com.algorand.android.module.swap.component.domain.usecase.RecordSwapQuoteException
 import com.algorand.android.module.swap.ui.txnstatus.mapper.CompletedSwapTransactionStatusPreviewMapper
 import com.algorand.android.module.swap.ui.txnstatus.mapper.FailedSwapTransactionStatusPreviewMapper
 import com.algorand.android.module.swap.ui.txnstatus.mapper.SendingSwapTransactionStatusPreviewMapper

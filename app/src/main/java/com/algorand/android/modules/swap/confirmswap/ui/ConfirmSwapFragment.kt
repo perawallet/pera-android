@@ -40,7 +40,7 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.swap.confirmswapconfirmation.SwapConfirmationBottomSheet.Companion.CONFIRMATION_SUCCESS_KEY
 import com.algorand.android.modules.swap.ledger.signwithledger.ui.model.LedgerDialogPayload
 import com.algorand.android.modules.swap.slippagetolerance.ui.SlippageToleranceBottomSheet.Companion.CHECKED_SLIPPAGE_TOLERANCE_KEY
-import com.algorand.android.swap.domain.model.swapquotetxns.SwapQuoteTransaction
+import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction
 import com.algorand.android.module.swap.ui.assetswap.model.SwapError
 import com.algorand.android.module.swap.ui.confirmswap.model.ConfirmSwapPreview
 import com.algorand.android.module.swap.ui.confirmswap.model.ConfirmSwapPriceImpactWarningStatus

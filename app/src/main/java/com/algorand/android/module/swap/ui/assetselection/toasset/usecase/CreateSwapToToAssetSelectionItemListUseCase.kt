@@ -19,7 +19,7 @@ import com.algorand.android.core.component.domain.model.BaseAccountAssetData.Bas
 import com.algorand.android.parity.domain.model.ParityValue
 import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
 import com.algorand.android.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
-import com.algorand.android.swap.domain.model.AvailableSwapAsset
+import com.algorand.android.module.swap.component.domain.model.AvailableSwapAsset
 import com.algorand.android.module.swap.ui.assetselection.mapper.SwapAssetSelectionItemMapper
 import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionItem
 import java.math.BigDecimal.ZERO

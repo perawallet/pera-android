@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.assetswap.usecase
 
-import com.algorand.android.swap.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview
 import javax.inject.Inject
 

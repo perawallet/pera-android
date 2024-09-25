@@ -26,7 +26,7 @@ import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
 import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
 import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
 import com.algorand.android.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
-import com.algorand.android.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibility
+import com.algorand.android.module.swap.component.reddot.domain.usecase.GetSwapFeatureRedDotVisibility
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.formatAsCurrency
 import java.math.BigDecimal

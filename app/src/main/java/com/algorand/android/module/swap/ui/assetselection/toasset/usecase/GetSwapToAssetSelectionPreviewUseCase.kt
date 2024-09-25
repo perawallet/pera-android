@@ -15,8 +15,8 @@ package com.algorand.android.module.swap.ui.assetselection.toasset.usecase
 
 import com.algorand.android.designsystem.R
 import com.algorand.android.designsystem.ScreenStateMapper.mapToCustomState
-import com.algorand.android.swap.domain.model.AvailableSwapAsset
-import com.algorand.android.swap.domain.usecase.GetAvailableTargetSwapAssets
+import com.algorand.android.module.swap.component.domain.model.AvailableSwapAsset
+import com.algorand.android.module.swap.component.domain.usecase.GetAvailableTargetSwapAssets
 import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionPreview
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

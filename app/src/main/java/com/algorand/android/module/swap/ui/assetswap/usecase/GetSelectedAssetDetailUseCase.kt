@@ -20,7 +20,7 @@ import com.algorand.android.assetdetail.component.AssetConstants.DEFAULT_ASSET_D
 import com.algorand.android.assetdetail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.core.component.assetdata.usecase.GetAccountOwnedAssetData
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
-import com.algorand.android.swap.domain.model.SwapQuoteAssetDetail
+import com.algorand.android.module.swap.component.domain.model.SwapQuoteAssetDetail
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview.SelectedAssetDetail
 import com.algorand.android.utils.formatAsTwoDecimals
 import java.math.BigDecimal

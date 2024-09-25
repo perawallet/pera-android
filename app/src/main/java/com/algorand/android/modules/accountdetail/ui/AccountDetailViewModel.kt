@@ -23,7 +23,7 @@ import com.algorand.android.foundation.Event
 import com.algorand.android.models.AccountDetailTab
 import com.algorand.android.modules.accountdetail.ui.model.AccountDetailPreview
 import com.algorand.android.modules.tracking.accountdetail.AccountDetailFragmentEventTracker
-import com.algorand.android.swap.common.usecase.GetSwapNavigationDestination
+import com.algorand.android.module.swap.component.common.usecase.GetSwapNavigationDestination
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel

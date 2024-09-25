@@ -16,7 +16,7 @@ package com.algorand.android.module.swap.ui.common
 import com.algorand.android.currency.domain.model.Currency
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.designsystem.R
-import com.algorand.android.swap.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
 
 private const val FIRST_PLACEHOLDER_KEY = "first"
 private const val SECOND_PLACEHOLDER_KEY = "second"

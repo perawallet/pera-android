@@ -17,9 +17,9 @@ import androidx.lifecycle.Lifecycle
 import com.algorand.android.foundation.Event
 import com.algorand.android.foundation.common.ListQueuingHelper
 import com.algorand.android.foundation.common.ListQueuingHelper.Listener
-import com.algorand.android.swap.domain.model.swapquotetxns.SignedSwapSingleTransactionData
-import com.algorand.android.swap.domain.model.swapquotetxns.SwapQuoteTransaction
-import com.algorand.android.swap.domain.model.swapquotetxns.UnsignedSwapSingleTransactionData
+import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SignedSwapSingleTransactionData
+import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction
+import com.algorand.android.module.swap.component.domain.model.swapquotetxns.UnsignedSwapSingleTransactionData
 import com.algorand.android.module.swap.ui.confirmswap.mapper.SignSwapTransactionResultMapper
 import com.algorand.android.module.swap.ui.confirmswap.model.SignSwapTransactionResult
 import com.algorand.android.module.swap.ui.confirmswap.model.SignSwapTransactionResult.TransactionsSigned

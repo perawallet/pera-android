@@ -40,10 +40,10 @@ import com.algorand.android.modules.assets.profile.about.ui.AssetAboutFragment
 import com.algorand.android.modules.assets.profile.activity.ui.AssetActivityFragment
 import com.algorand.android.modules.assets.profile.detail.ui.adapter.AssetDetailPagerAdapter
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
-import com.algorand.android.swap.common.model.SwapNavigationDestination
-import com.algorand.android.swap.common.model.SwapNavigationDestination.AccountSelection
-import com.algorand.android.swap.common.model.SwapNavigationDestination.Introduction
-import com.algorand.android.swap.common.model.SwapNavigationDestination.Swap
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.AccountSelection
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Introduction
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Swap
 import com.algorand.android.utils.PERA_VERIFICATION_MAIL_ADDRESS
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.emptyString

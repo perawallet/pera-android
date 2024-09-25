@@ -25,8 +25,8 @@ import com.algorand.android.designsystem.getXmlStyledString
 import com.algorand.android.foundation.Event
 import com.algorand.android.foundation.common.isEqualTo
 import com.algorand.android.foundation.common.isLesserThan
-import com.algorand.android.swap.data.SWAP_FEE_PADDING
-import com.algorand.android.swap.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.data.SWAP_FEE_PADDING
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.ui.assetswap.model.SwapError
 import java.math.BigDecimal
 

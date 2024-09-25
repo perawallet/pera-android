@@ -17,11 +17,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.foundation.Event
-import com.algorand.android.swap.common.model.SwapNavigationDestination.AccountSelection
-import com.algorand.android.swap.common.model.SwapNavigationDestination.Introduction
-import com.algorand.android.swap.common.model.SwapNavigationDestination.Swap
-import com.algorand.android.swap.common.usecase.GetSwapNavigationDestination
-import com.algorand.android.swap.introduction.domain.usecase.SetSwapFeatureIntroductionPageVisibility
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.AccountSelection
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Introduction
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Swap
+import com.algorand.android.module.swap.component.common.usecase.GetSwapNavigationDestination
+import com.algorand.android.module.swap.component.introduction.domain.usecase.SetSwapFeatureIntroductionPageVisibility
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

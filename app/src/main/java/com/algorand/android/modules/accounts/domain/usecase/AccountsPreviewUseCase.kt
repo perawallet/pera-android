@@ -31,10 +31,10 @@ import com.algorand.android.node.domain.usecase.IsSelectedNodeTestnet
 import com.algorand.android.notification.domain.usecase.GetAskNotificationPermissionEventFlowUseCase
 import com.algorand.android.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.parity.domain.usecase.GetSelectedCurrencyDetailFlow
-import com.algorand.android.swap.common.model.SwapNavigationDestination.AccountSelection
-import com.algorand.android.swap.common.model.SwapNavigationDestination.Introduction
-import com.algorand.android.swap.common.model.SwapNavigationDestination.Swap
-import com.algorand.android.swap.common.usecase.GetSwapNavigationDestination
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.AccountSelection
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Introduction
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Swap
+import com.algorand.android.module.swap.component.common.usecase.GetSwapNavigationDestination
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.combine
 import javax.inject.Inject

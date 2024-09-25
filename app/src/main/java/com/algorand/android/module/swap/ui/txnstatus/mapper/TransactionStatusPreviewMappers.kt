@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.txnstatus.mapper
 
-import com.algorand.android.swap.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusNavArgs
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusPreview
 

@@ -19,7 +19,7 @@ import com.algorand.android.accountcore.ui.model.VerificationTierConfiguration
 import com.algorand.android.accountcore.ui.summary.model.AccountDetailSummary
 import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
 import com.algorand.android.foundation.Event
-import com.algorand.android.swap.common.model.SwapNavigationDestination
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination
 import java.math.BigDecimal
 
 data class AssetDetailPreview(

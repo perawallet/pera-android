@@ -15,11 +15,11 @@ package com.algorand.android.module.swap.ui.confirmswap.usecase
 
 import com.algorand.android.assetutils.AssetConstants
 import com.algorand.android.utils.formatAmount
-import com.algorand.android.swap.domain.model.SwapQuote
-import com.algorand.android.swap.domain.model.swapquotetxns.SwapQuoteTransaction
-import com.algorand.android.swap.domain.model.swapquotetxns.SwapQuoteTransaction.SwapTransaction
-import com.algorand.android.swap.domain.usecase.GetSwapAlgorandTransactionFee
-import com.algorand.android.swap.domain.usecase.GetSwapOptInTransactionFee
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction
+import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction.SwapTransaction
+import com.algorand.android.module.swap.component.domain.usecase.GetSwapAlgorandTransactionFee
+import com.algorand.android.module.swap.component.domain.usecase.GetSwapOptInTransactionFee
 import com.algorand.android.module.swap.ui.txnstatus.model.SignedSwapTransaction
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusNavArgs
 import java.math.BigInteger

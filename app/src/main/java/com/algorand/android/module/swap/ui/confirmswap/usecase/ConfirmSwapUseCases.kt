@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.swap.ui.confirmswap.usecase
 
-import com.algorand.android.swap.domain.model.SwapQuote
-import com.algorand.android.swap.domain.model.swapquotetxns.SwapQuoteTransaction
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction
 import com.algorand.android.module.swap.ui.confirmswap.model.ConfirmSwapPreview
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusNavArgs
 

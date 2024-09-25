@@ -26,7 +26,7 @@ import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwned
 import com.algorand.android.core.component.detail.domain.model.AccountType
 import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetailFlow
 import com.algorand.android.parity.domain.usecase.GetAssetExchangeParityValue
-import com.algorand.android.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibility
+import com.algorand.android.module.swap.component.reddot.domain.usecase.GetSwapFeatureRedDotVisibility
 import java.math.BigDecimal
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

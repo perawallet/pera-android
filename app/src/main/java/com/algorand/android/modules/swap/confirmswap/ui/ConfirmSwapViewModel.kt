@@ -19,9 +19,9 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.foundation.Event
 import com.algorand.android.modules.tracking.swap.confirmswap.ConfirmSwapConfirmClickEventTracker
-import com.algorand.android.swap.domain.model.SwapQuote
-import com.algorand.android.swap.domain.model.swapquotetxns.SwapQuoteTransaction
-import com.algorand.android.swap.domain.usecase.CreateSwapQuoteTransactions
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction
+import com.algorand.android.module.swap.component.domain.usecase.CreateSwapQuoteTransactions
 import com.algorand.android.module.swap.ui.GetSwapError
 import com.algorand.android.module.swap.ui.confirmswap.SignSwapTransactionManager
 import com.algorand.android.module.swap.ui.confirmswap.model.ConfirmSwapPreview

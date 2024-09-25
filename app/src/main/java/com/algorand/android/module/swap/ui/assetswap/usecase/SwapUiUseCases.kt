@@ -16,8 +16,8 @@ package com.algorand.android.module.swap.ui.assetswap.usecase
 import com.algorand.android.assetdetail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.foundation.Event
-import com.algorand.android.swap.domain.model.SwapQuote
-import com.algorand.android.swap.domain.model.SwapQuoteAssetDetail
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.domain.model.SwapQuoteAssetDetail
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview.SelectedAssetAmountDetail
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview.SelectedAssetDetail

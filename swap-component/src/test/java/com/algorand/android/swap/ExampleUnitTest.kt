@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.swap
+package com.algorand.android.module.swap.component
 
 import org.junit.Test
 

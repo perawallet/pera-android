@@ -19,10 +19,10 @@ import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.AccountQuickActionsBottomSheetDirections
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.mapper.AccountQuickActionsPreviewMapper
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.model.AccountQuickActionsPreview
-import com.algorand.android.swap.common.model.SwapNavigationDestination.AccountSelection
-import com.algorand.android.swap.common.model.SwapNavigationDestination.Introduction
-import com.algorand.android.swap.common.model.SwapNavigationDestination.Swap
-import com.algorand.android.swap.common.usecase.GetSwapNavigationDestination
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.AccountSelection
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Introduction
+import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Swap
+import com.algorand.android.module.swap.component.common.usecase.GetSwapNavigationDestination
 import com.algorand.android.utils.Event
 import javax.inject.Inject
 

@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.txnsummary
 
-import com.algorand.android.swap.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.ui.txnsummary.model.SwapTransactionSummaryPreview
 
 interface GetSwapTransactionSummaryPreview {

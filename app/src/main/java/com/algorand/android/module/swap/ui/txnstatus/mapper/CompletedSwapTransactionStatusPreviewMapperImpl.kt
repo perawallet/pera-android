@@ -19,7 +19,7 @@ import com.algorand.android.designsystem.R
 import com.algorand.android.drawableui.core.ColorResourceProvider
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.foundation.common.encodeToURL
-import com.algorand.android.swap.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusNavArgs
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusPreview
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusType

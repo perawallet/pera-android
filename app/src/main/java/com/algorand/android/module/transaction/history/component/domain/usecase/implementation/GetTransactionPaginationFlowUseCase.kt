@@ -1,7 +1,7 @@
 package com.algorand.android.module.transaction.history.component.domain.usecase.implementation
 
 import androidx.paging.*
-import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAndCacheAssets
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.android.date.component.*
 import com.algorand.android.module.transaction.history.component.data.util.TransactionHistoryPaginationHelper
 import com.algorand.android.module.transaction.history.component.domain.mapper.BaseTransactionHistoryMapper

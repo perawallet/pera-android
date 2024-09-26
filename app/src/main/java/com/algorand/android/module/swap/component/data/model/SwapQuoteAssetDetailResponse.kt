@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.data.model
 
-import com.algorand.android.assetdetail.component.asset.data.model.VerificationTierResponse
+import com.algorand.android.module.asset.detail.component.asset.data.model.VerificationTierResponse
 import com.google.gson.annotations.SerializedName
 import java.math.BigInteger
 

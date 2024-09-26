@@ -34,7 +34,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.color
 import androidx.core.text.inSpans
 import com.algorand.android.R
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.customviews.CenteredImageSpan
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.PluralAnnotatedString

@@ -2,7 +2,7 @@ package com.algorand.android.module.account.core.component.caching.domain.usecas
 
 import com.algorand.android.module.account.info.domain.model.*
 import com.algorand.android.module.account.info.domain.usecase.FetchAndCacheAccountInformation
-import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAndCacheAssets
+import com.algorand.android.module.algosdk.domain.usecase.FetchAndCacheAssets
 import com.algorand.android.module.account.core.component.caching.domain.usecase.implementation.CacheAccountDetailUseCase
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.test.runTest

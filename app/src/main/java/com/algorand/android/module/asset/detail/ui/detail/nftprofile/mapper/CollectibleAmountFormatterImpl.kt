@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.nftprofile.mapper
 
-import com.algorand.android.assetdetail.component.AssetConstants.DEFAULT_ASSET_DECIMAL
+import com.algorand.android.module.asset.detail.component.AssetConstants.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.formatAmountByCollectibleFractionalDigit
 import java.math.BigDecimal
 import java.math.BigInteger

@@ -1,8 +1,8 @@
-package com.algorand.android.assetdetail.component.data.repository
+package com.algorand.android.module.asset.detail.component.data.repository
 
-import com.algorand.android.assetdetail.component.data.mapper.model.AssetDetailMapper
-import com.algorand.android.assetdetail.component.data.model.*
-import com.algorand.android.assetdetail.component.data.service.AssetDetailApi
+import com.algorand.android.module.asset.detail.component.data.mapper.model.AssetDetailMapper
+import com.algorand.android.module.asset.detail.component.data.model.*
+import com.algorand.android.module.asset.detail.component.data.service.AssetDetailApi
 import com.algorand.android.shared_db.assetdetail.dao.*
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.test.runTest
@@ -124,6 +124,6 @@ internal class AssetAssetInfoRepositoryImplTest {
 
         private val ASSET_DETAIL_RESPONSE = fixtureOf<AssetDetailResponse>()
         private val PAGINATED_ASSET_DETAIL_RESPONSE = Pagination(null, listOf(ASSET_DETAIL_RESPONSE))
-        private val ASSET_DETAIL = fixtureOf<com.algorand.android.assetdetail.component.domain.model.AssetDetail>()
+        private val ASSET_DETAIL = fixtureOf<com.algorand.android.module.asset.detail.component.domain.model.AssetDetail>()
     }
 }

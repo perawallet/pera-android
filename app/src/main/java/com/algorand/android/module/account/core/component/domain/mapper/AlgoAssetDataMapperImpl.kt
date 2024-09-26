@@ -1,6 +1,6 @@
 package com.algorand.android.module.account.core.component.domain.mapper
 
-import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier
+import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
 import com.algorand.android.assetutils.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.assetutils.AssetConstants.ALGO_FULL_NAME
 import com.algorand.android.assetutils.AssetConstants.ALGO_ID

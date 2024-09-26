@@ -13,7 +13,7 @@
 package com.algorand.android.modules.transaction.detail.ui.mapper
 
 import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
-import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier
+import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
 import com.algorand.android.modules.transaction.detail.ui.model.ApplicationCallAssetInformation
 import com.algorand.android.utils.AssetName
 import javax.inject.Inject

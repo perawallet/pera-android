@@ -14,7 +14,7 @@
 package com.algorand.android.module.transaction.component.domain.validator
 
 import com.algorand.android.module.account.info.domain.model.AccountInformation
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.module.transaction.component.domain.model.ValidationResult
 import com.algorand.android.module.transaction.component.domain.validator.CloseTransactionToSameAccountValidator.Payload
 import java.math.BigInteger

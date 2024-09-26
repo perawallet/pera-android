@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.domain.model
 
-import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier
+import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
 import java.math.BigDecimal
 
 data class AvailableSwapAsset(

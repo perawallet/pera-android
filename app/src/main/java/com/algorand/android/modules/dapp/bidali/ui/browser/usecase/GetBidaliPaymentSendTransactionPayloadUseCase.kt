@@ -13,7 +13,7 @@
 
 package com.algorand.android.modules.dapp.bidali.ui.browser.usecase
 
-import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAssetDetail
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAssetDetail
 import com.algorand.android.modules.dapp.bidali.domain.model.BidaliPaymentRequestDTO
 import com.algorand.android.modules.dapp.bidali.domain.model.MainnetBidaliSupportedCurrency
 import com.algorand.android.modules.dapp.bidali.domain.model.TestnetBidaliSupportedCurrency

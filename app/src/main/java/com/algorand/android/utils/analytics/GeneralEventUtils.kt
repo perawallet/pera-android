@@ -13,7 +13,7 @@
 package com.algorand.android.utils.analytics
 
 import androidx.core.os.bundleOf
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.google.firebase.analytics.FirebaseAnalytics
 
 private const val CURRENCY_CHANGE_EVENT_KEY = "currency_change"

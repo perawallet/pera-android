@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.transaction.history.ui.pendingtxn.domain.mapper
 
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_DECIMALS
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem.ApplicationCallItem
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem.AssetConfigurationItem

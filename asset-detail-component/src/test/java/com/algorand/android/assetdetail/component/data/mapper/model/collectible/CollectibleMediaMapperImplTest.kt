@@ -1,9 +1,9 @@
-package com.algorand.android.assetdetail.component.data.mapper.model.collectible
+package com.algorand.android.module.asset.detail.component.data.mapper.model.collectible
 
-import com.algorand.android.assetdetail.component.data.model.collectible.*
-import com.algorand.android.assetdetail.component.domain.model.*
-import com.algorand.android.assetdetail.component.domain.model.CollectibleMediaType.AUDIO
-import com.algorand.android.assetdetail.component.domain.model.CollectibleMediaTypeExtension.GIF
+import com.algorand.android.module.asset.detail.component.data.model.collectible.*
+import com.algorand.android.module.asset.detail.component.domain.model.*
+import com.algorand.android.module.asset.detail.component.domain.model.CollectibleMediaType.AUDIO
+import com.algorand.android.module.asset.detail.component.domain.model.CollectibleMediaTypeExtension.GIF
 import com.algorand.android.shared_db.assetdetail.model.*
 import com.algorand.android.testutil.fixtureOf
 import org.junit.Assert.*

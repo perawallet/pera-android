@@ -12,7 +12,7 @@
 
 package com.algorand.android.utils
 
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.dateui.model.DateRange
 import com.algorand.android.modules.transaction.csv.domain.model.TransactionCsvDetail
 import java.io.File

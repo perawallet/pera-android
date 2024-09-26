@@ -12,10 +12,10 @@
 
 package com.algorand.android.decider
 
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset
-import com.algorand.android.assetdetail.component.asset.domain.model.detail.CollectibleDetail
-import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
+import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.CollectibleDetail
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.assetsearch.domain.model.BaseSearchedAsset
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.assetdrawable.AlgoDrawableProvider

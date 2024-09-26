@@ -1,7 +1,7 @@
-package com.algorand.android.assetdetail.component.data.mapper.entity
+package com.algorand.android.module.asset.detail.component.data.mapper.entity
 
-import com.algorand.android.assetdetail.component.data.model.AssetDetailResponse
-import com.algorand.android.assetdetail.component.data.model.collectible.*
+import com.algorand.android.module.asset.detail.component.data.model.AssetDetailResponse
+import com.algorand.android.module.asset.detail.component.data.model.collectible.*
 import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaEntity
 import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaTypeEntity.IMAGE
 import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaTypeExtensionEntity.GIF
@@ -16,7 +16,7 @@ internal class CollectibleMediaEntityMapperImplTest {
     private val collectibleMediaTypeExtensionEntityMapper: CollectibleMediaTypeExtensionEntityMapper = mock()
 
     private val sut =
-        com.algorand.android.assetdetail.component.asset.data.mapper.entity.CollectibleMediaEntityMapperImpl(
+        com.algorand.android.module.asset.detail.component.asset.data.mapper.entity.CollectibleMediaEntityMapperImpl(
             collectibleMediaTypeEntityMapper,
             collectibleMediaTypeExtensionEntityMapper,
         )

@@ -16,7 +16,7 @@ package com.algorand.android.module.transaction.component.domain.creation.remove
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.algosdk.transaction.AlgoSdkTransaction
 import com.algorand.android.module.algosdk.transaction.model.payload.RemoveAssetTransactionPayload
-import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.module.transaction.component.domain.creation.CreateRemoveAssetTransaction
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult
 import com.algorand.android.module.transaction.component.domain.creation.removeasset.mapper.CreateRemoveAssetTransactionResultMapper

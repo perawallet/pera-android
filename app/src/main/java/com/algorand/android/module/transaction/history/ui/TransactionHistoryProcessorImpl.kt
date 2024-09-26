@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.transaction.history.ui
 
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_DECIMALS
-import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset
-import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_DECIMALS
+import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.module.account.core.component.utils.toShortenedAddress
 import com.algorand.android.designsystem.R
 import com.algorand.android.module.transaction.history.ui.mapper.BaseTransactionItemMapper

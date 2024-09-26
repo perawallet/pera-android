@@ -3,7 +3,7 @@ package com.algorand.android.module.account.core.component.polling.accountdetail
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.account.core.component.polling.accountdetail.domain.usecase.UpdateAccountCache
 import com.algorand.android.module.account.info.domain.usecase.FetchAndCacheAccountInformation
-import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAndCacheAssets
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.FetchAndCacheAssets
 import javax.inject.Inject
 
 internal class UpdateAccountCacheUseCase @Inject constructor(

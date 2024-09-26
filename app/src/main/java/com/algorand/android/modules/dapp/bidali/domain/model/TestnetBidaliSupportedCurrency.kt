@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.dapp.bidali.domain.model
 
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.assetdetail.component.AssetConstants.USDC_TESTNET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.USDC_TESTNET_ID
 
 enum class TestnetBidaliSupportedCurrency(
     override val key: String,

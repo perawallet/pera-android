@@ -18,7 +18,7 @@ import com.algorand.android.module.account.core.ui.model.AccountIconResource
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.account.info.domain.usecase.FetchRekeyedAccounts
-import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAndCacheAssets
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.android.mapper.LedgerAccountSelectionAccountItemMapper
 import com.algorand.android.mapper.LedgerAccountSelectionInstructionItemMapper
 import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.mapper.RegisterLedgerAccountSelectionPreviewMapper

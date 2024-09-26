@@ -15,8 +15,8 @@ package com.algorand.android.usecase
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem
 import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.module.account.info.domain.usecase.FetchAccountInformation
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetsDataFlow
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData

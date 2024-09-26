@@ -18,8 +18,8 @@ import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
-import com.algorand.android.assetdetail.component.asset.domain.model.detail.CollectibleDetail
-import com.algorand.android.assetdetail.component.collectible.domain.usecase.FetchCollectibleDetail
+import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.CollectibleDetail
+import com.algorand.android.module.asset.detail.component.collectible.domain.usecase.FetchCollectibleDetail
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.mapper.AsaStatusPreviewMapper
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaStatusPreview
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.mapper.CollectibleAmountFormatter

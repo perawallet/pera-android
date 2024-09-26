@@ -1,6 +1,6 @@
-package com.algorand.android.assetdetail.component.domain.usecase
+package com.algorand.android.module.asset.detail.component.domain.usecase
 
-import com.algorand.android.assetdetail.component.domain.repository.AssetDetailRepository
+import com.algorand.android.module.asset.detail.component.domain.repository.AssetDetailRepository
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

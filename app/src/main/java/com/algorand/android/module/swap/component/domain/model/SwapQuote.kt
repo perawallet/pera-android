@@ -14,7 +14,7 @@
 package com.algorand.android.module.swap.component.domain.model
 
 import android.os.Parcelable
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.utils.formatAmount
 import java.math.BigDecimal
 import kotlinx.parcelize.Parcelize

@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.assetswap.usecase
 
-import com.algorand.android.assetdetail.component.AssetConstants.DEFAULT_ASSET_DECIMAL
+import com.algorand.android.module.asset.detail.component.AssetConstants.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview.SelectedAssetAmountDetail
 import com.algorand.android.utils.formatAsCurrency
 import java.math.BigDecimal.ZERO

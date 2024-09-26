@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.nftprofile.mapper
 
-import com.algorand.android.assetdetail.component.asset.domain.model.CollectibleTrait
+import com.algorand.android.module.asset.detail.component.asset.domain.model.CollectibleTrait
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.CollectibleMediaItemMapperPayload
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.CollectibleTraitItem

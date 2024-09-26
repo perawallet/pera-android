@@ -14,7 +14,7 @@
 package com.algorand.android.models.builder
 
 import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.models.BasePaymentTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation

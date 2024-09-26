@@ -1,6 +1,6 @@
 package com.algorand.android.core.ui.mapper
 
-import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier
+import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
 import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration.*
 import org.junit.*
 

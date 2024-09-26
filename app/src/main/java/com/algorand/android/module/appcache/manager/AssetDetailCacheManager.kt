@@ -20,7 +20,7 @@ import com.algorand.android.module.appcache.model.AccountCacheStatus.INITIALIZED
 import com.algorand.android.module.appcache.model.AssetCacheStatus
 import com.algorand.android.module.appcache.model.AssetCacheStatus.EMPTY
 import com.algorand.android.module.appcache.usecase.GetAccountDetailCacheStatusFlow
-import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAndCacheAssets
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.FetchAndCacheAssets
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope

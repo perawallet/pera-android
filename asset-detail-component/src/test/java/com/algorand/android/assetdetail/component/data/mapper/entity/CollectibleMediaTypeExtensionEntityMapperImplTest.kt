@@ -1,6 +1,6 @@
-package com.algorand.android.assetdetail.component.data.mapper.entity
+package com.algorand.android.module.asset.detail.component.data.mapper.entity
 
-import com.algorand.android.assetdetail.component.data.model.collectible.CollectibleMediaTypeExtensionResponse
+import com.algorand.android.module.asset.detail.component.data.model.collectible.CollectibleMediaTypeExtensionResponse
 import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaTypeExtensionEntity
 import org.junit.Assert.assertEquals
 import org.junit.Test

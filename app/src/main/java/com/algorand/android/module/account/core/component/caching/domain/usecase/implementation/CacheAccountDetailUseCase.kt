@@ -2,7 +2,7 @@ package com.algorand.android.module.account.core.component.caching.domain.usecas
 
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.account.info.domain.usecase.FetchAndCacheAccountInformation
-import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAndCacheAssets
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.android.module.account.core.component.caching.domain.usecase.CacheAccountDetail
 import com.algorand.android.foundation.PeraResult
 import javax.inject.Inject

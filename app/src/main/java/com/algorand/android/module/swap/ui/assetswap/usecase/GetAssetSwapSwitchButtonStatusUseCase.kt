@@ -14,7 +14,7 @@
 package com.algorand.android.module.swap.ui.assetswap.usecase
 
 import com.algorand.android.module.account.info.domain.usecase.IsAssetOwnedByAccount
-import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier
+import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview
 import javax.inject.Inject
 

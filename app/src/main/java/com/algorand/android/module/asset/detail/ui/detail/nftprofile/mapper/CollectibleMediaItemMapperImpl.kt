@@ -14,7 +14,7 @@
 package com.algorand.android.module.asset.detail.ui.detail.nftprofile.mapper
 
 import com.algorand.android.module.account.core.ui.asset.assetdrawable.GetAssetDrawableProvider
-import com.algorand.android.assetdetail.component.collectible.domain.model.BaseCollectibleMedia
+import com.algorand.android.module.asset.detail.component.collectible.domain.model.BaseCollectibleMedia
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem.AudioCollectibleMediaItem
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem.GifCollectibleMediaItem

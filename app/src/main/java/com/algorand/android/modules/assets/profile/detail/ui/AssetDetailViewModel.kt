@@ -14,7 +14,7 @@ package com.algorand.android.modules.assets.profile.detail.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.module.asset.detail.ui.detail.model.AssetDetailPreview
 import com.algorand.android.module.asset.detail.ui.detail.usecase.GetAssetDetailPreviewFlow
 import com.algorand.android.core.BaseViewModel

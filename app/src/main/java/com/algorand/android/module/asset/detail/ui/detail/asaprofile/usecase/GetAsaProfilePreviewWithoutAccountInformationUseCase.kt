@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.asaprofile.usecase
 
-import com.algorand.android.assetdetail.component.assetabout.domain.usecase.GetAssetFlowFromAsaProfileCache
+import com.algorand.android.module.asset.detail.component.assetabout.domain.usecase.GetAssetFlowFromAsaProfileCache
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.mapper.AsaStatusPreviewMapper
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaProfilePreview
 import javax.inject.Inject

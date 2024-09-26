@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.account.core.component.assetdata.usecase
 
-import com.algorand.android.assetdetail.component.asset.domain.model.detail.AssetDetail
+import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.module.account.core.component.assetdata.mapper.PendingAdditionAssetDataMapper
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import javax.inject.Inject

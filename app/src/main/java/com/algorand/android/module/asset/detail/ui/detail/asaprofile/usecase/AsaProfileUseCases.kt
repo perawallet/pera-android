@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.asaprofile.usecase
 
-import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset
+import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaProfilePreview
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaStatusPreview
 import kotlinx.coroutines.flow.Flow

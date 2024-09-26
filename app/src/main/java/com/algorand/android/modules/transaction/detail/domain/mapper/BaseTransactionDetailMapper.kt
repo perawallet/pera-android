@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.transaction.detail.domain.mapper
 
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.modules.transaction.common.domain.model.TransactionDTO
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail.BaseKeyRegTransaction.OfflineKeyRegTransaction

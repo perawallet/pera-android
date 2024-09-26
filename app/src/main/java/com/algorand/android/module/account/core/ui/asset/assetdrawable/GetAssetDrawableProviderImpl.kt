@@ -15,11 +15,11 @@ package com.algorand.android.module.account.core.ui.asset.assetdrawable
 
 import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.account.core.ui.usecase.GetAssetName
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset
-import com.algorand.android.assetdetail.component.asset.domain.model.detail.AssetDetail
-import com.algorand.android.assetdetail.component.asset.domain.model.detail.CollectibleDetail
-import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
+import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.AssetDetail
+import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.CollectibleDetail
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.drawableui.asset.AlgoDrawableProvider
 import com.algorand.android.drawableui.asset.AssetDrawableProvider
 import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
@@ -92,7 +92,7 @@ internal class GetAssetDrawableProviderImpl @Inject constructor(
      */
     fun getAssetDrawableProvider(searchedAsset: BaseSearchedAsset): BaseAssetDrawableProvider {
         return when {
-            searchedAsset.assetId == com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID -> {
+            searchedAsset.assetId == com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID -> {
                 // This is unnecessary check but to keep consistency, I added this check, too
                 AlgoDrawableProvider()
             }

@@ -16,7 +16,7 @@ package com.algorand.android.module.transaction.component.domain.creation.addass
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.algosdk.transaction.AlgoSdkTransaction
 import com.algorand.android.module.algosdk.transaction.model.payload.AddAssetTransactionPayload
-import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.module.transaction.component.domain.creation.CreateAddAssetTransaction
 import com.algorand.android.module.transaction.component.domain.creation.addasset.mapper.AddAssetCreateTransactionResultMapper
 import com.algorand.android.module.transaction.component.domain.creation.addasset.model.CreateAddAssetTransactionResult

@@ -14,8 +14,8 @@
 package com.algorand.android.module.swap.ui.assetswap.usecase
 
 import android.content.Context
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_DECIMALS
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetData
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.currency.domain.model.Currency

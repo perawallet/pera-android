@@ -1,7 +1,7 @@
-package com.algorand.android.assetdetail.component.data.mapper.model
+package com.algorand.android.module.asset.detail.component.data.mapper.model
 
-import com.algorand.android.assetdetail.component.data.model.AssetCreatorResponse
-import com.algorand.android.assetdetail.component.domain.model.AssetCreator
+import com.algorand.android.module.asset.detail.component.data.model.AssetCreatorResponse
+import com.algorand.android.module.asset.detail.component.domain.model.AssetCreator
 import org.junit.Assert.*
 import org.junit.Test
 

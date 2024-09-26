@@ -1,9 +1,9 @@
-package com.algorand.android.assetdetail.component.data.repository
+package com.algorand.android.module.asset.detail.component.data.repository
 
-import com.algorand.android.assetdetail.component.data.mapper.entity.*
-import com.algorand.android.assetdetail.component.data.mapper.model.AssetDetailMapper
-import com.algorand.android.assetdetail.component.data.model.AssetDetailResponse
-import com.algorand.android.assetdetail.component.domain.model.AssetDetail
+import com.algorand.android.module.asset.detail.component.data.mapper.entity.*
+import com.algorand.android.module.asset.detail.component.data.mapper.model.AssetDetailMapper
+import com.algorand.android.module.asset.detail.component.data.model.AssetDetailResponse
+import com.algorand.android.module.asset.detail.component.domain.model.AssetDetail
 import com.algorand.android.shared_db.assetdetail.dao.*
 import com.algorand.android.shared_db.assetdetail.model.*
 import com.algorand.android.testutil.fixtureOf
@@ -19,11 +19,11 @@ internal class AssetAssetInfoCacheHelperImplTest {
     private val collectibleMediaDao: CollectibleMediaDao = mock()
     private val collectibleTraitDao: CollectibleTraitDao = mock()
     private val assetDetailMapper: AssetDetailMapper = mock()
-    private val assetDetailEntityMapper: com.algorand.android.assetdetail.component.asset.data.mapper.entity.AssetDetailEntityMapper =
+    private val assetDetailEntityMapper: com.algorand.android.module.asset.detail.component.asset.data.mapper.entity.AssetDetailEntityMapper =
         mock()
-    private val collectibleEntityMapper: com.algorand.android.assetdetail.component.asset.data.mapper.entity.CollectibleEntityMapper =
+    private val collectibleEntityMapper: com.algorand.android.module.asset.detail.component.asset.data.mapper.entity.CollectibleEntityMapper =
         mock()
-    private val collectibleMediaEntityMapper: com.algorand.android.assetdetail.component.asset.data.mapper.entity.CollectibleMediaEntityMapper =
+    private val collectibleMediaEntityMapper: com.algorand.android.module.asset.detail.component.asset.data.mapper.entity.CollectibleMediaEntityMapper =
         mock()
     private val collectibleTraitEntityMapper: CollectibleTraitEntityMapper = mock()
 

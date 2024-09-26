@@ -1,7 +1,7 @@
-package com.algorand.android.assetdetail.component.data.mapper.model.collectible
+package com.algorand.android.module.asset.detail.component.data.mapper.model.collectible
 
-import com.algorand.android.assetdetail.component.data.model.collectible.CollectibleSearchResponse
-import com.algorand.android.assetdetail.component.domain.model.CollectibleSearch
+import com.algorand.android.module.asset.detail.component.data.model.collectible.CollectibleSearchResponse
+import com.algorand.android.module.asset.detail.component.domain.model.CollectibleSearch
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

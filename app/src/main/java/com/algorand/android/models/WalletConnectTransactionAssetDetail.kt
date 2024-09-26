@@ -13,7 +13,7 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier
+import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

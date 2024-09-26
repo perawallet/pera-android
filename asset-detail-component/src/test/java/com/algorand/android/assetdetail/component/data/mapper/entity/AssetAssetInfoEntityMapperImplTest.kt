@@ -1,6 +1,6 @@
-package com.algorand.android.assetdetail.component.data.mapper.entity
+package com.algorand.android.module.asset.detail.component.data.mapper.entity
 
-import com.algorand.android.assetdetail.component.data.model.*
+import com.algorand.android.module.asset.detail.component.data.model.*
 import com.algorand.android.shared_db.assetdetail.model.*
 import com.algorand.android.testutil.fixtureOf
 import org.junit.Assert.*
@@ -12,7 +12,7 @@ internal class AssetAssetInfoEntityMapperImplTest {
 
     private val verificationTierEntityMapper: VerificationTierEntityMapper = mock()
 
-    private val sut = com.algorand.android.assetdetail.component.asset.data.mapper.entity.AssetDetailEntityMapperImpl(
+    private val sut = com.algorand.android.module.asset.detail.component.asset.data.mapper.entity.AssetDetailEntityMapperImpl(
         verificationTierEntityMapper
     )
 

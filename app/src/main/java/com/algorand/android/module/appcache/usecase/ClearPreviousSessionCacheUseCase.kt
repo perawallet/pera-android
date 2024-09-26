@@ -14,7 +14,7 @@
 package com.algorand.android.module.appcache.usecase
 
 import com.algorand.android.module.account.info.domain.usecase.ClearAccountInformationCache
-import com.algorand.android.assetdetail.component.asset.domain.usecase.ClearAssetCache
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.ClearAssetCache
 import javax.inject.Inject
 
 internal class ClearPreviousSessionCacheUseCase @Inject constructor(

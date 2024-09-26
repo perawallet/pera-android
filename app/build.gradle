@@ -168,7 +168,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation project(path: ':account-component')
     implementation project(path: ':nameservice-component')
-    implementation project(path: ':asset-detail-component')
     implementation project(path: ':custom-info-component')
     implementation project(path: ':parity-component')
     implementation project(path: ':foundation')

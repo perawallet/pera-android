@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.deeplink.factory
 
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.module.deeplink.model.BaseDeepLink
 import com.algorand.android.module.deeplink.model.RawDeepLink
 import java.math.BigInteger

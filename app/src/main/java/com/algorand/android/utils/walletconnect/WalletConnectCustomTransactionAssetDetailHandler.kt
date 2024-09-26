@@ -12,10 +12,10 @@
 
 package com.algorand.android.utils.walletconnect
 
-import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset
-import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAssetDetailFromNode
-import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAssets
-import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
+import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.FetchAssetDetailFromNode
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.FetchAssets
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.mapper.WalletConnectTransactionAssetDetailMapper
 import com.algorand.android.models.WalletConnectTransactionAssetDetail
 import javax.inject.Inject

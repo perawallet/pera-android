@@ -18,7 +18,7 @@ import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
 import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.module.account.core.ui.usecase.GetAssetName
-import com.algorand.android.assetdetail.component.asset.domain.model.VerificationTier
+import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
 import java.math.BigDecimal
 import javax.inject.Inject
 

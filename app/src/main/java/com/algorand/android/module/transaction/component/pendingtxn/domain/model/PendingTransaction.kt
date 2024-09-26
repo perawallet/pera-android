@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.pendingtxn.domain.model
 
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import java.math.BigInteger
 
 data class PendingTransaction(

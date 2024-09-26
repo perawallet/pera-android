@@ -14,7 +14,7 @@
 package com.algorand.android.module.asset.action.ui.mapper
 
 import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
-import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset
+import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
 
 internal interface AssetActionInformationMapper {
     operator fun invoke(asset: Asset): AssetActionInformation

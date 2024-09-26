@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.data.mapper
 
-import com.algorand.android.assetdetail.component.AssetConstants.DEFAULT_ASSET_DECIMAL
+import com.algorand.android.module.asset.detail.component.AssetConstants.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.assetutils.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.assetutils.AssetConstants.ALGO_ID
 import com.algorand.android.foundation.common.toBigDecimalOrZero

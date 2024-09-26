@@ -14,7 +14,7 @@
 package com.algorand.android.usecase
 
 import androidx.paging.PagingData
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.core.BaseUseCase
 import com.algorand.android.dateui.mapper.DateFilterPreviewMapper
 import com.algorand.android.dateui.model.DateFilter

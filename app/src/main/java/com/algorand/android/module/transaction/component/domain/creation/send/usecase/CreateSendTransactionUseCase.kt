@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.domain.creation.send.usecase
 
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.module.transaction.component.domain.creation.CreatePaymentTransaction
 import com.algorand.android.module.transaction.component.domain.creation.CreateSendAssetTransaction
 import com.algorand.android.module.transaction.component.domain.creation.CreateSendTransaction

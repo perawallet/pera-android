@@ -16,8 +16,8 @@ package com.algorand.android.module.account.core.ui.usecase.implementation
 import com.algorand.android.module.account.core.ui.model.AlgoAssetName
 import com.algorand.android.module.account.core.ui.usecase.GetAlgoAssetName
 import com.algorand.android.module.account.core.ui.usecase.GetAssetName
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_FULL_NAME
-import com.algorand.android.assetdetail.component.AssetConstants.ALGO_SHORT_NAME
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_FULL_NAME
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_SHORT_NAME
 import javax.inject.Inject
 
 internal class GetAlgoAssetNameUseCase @Inject constructor(

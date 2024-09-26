@@ -1,8 +1,8 @@
-package com.algorand.android.parity.domain.usecase.primary.implementation
+package com.algorand.android.module.parity.domain.usecase.primary.implementation
 
-import com.algorand.android.parity.domain.model.ParityValue
-import com.algorand.android.parity.domain.usecase.CalculateParityValue
-import com.algorand.android.parity.domain.usecase.primary.*
+import com.algorand.android.module.parity.domain.model.ParityValue
+import com.algorand.android.module.parity.domain.usecase.CalculateParityValue
+import com.algorand.android.module.parity.domain.usecase.primary.*
 import com.algorand.android.testutil.fixtureOf
 import org.junit.Test
 import org.mockito.kotlin.*

@@ -15,9 +15,9 @@ package com.algorand.android.module.account.core.component.assetdata.usecase
 
 import com.algorand.android.module.account.core.component.domain.mapper.AlgoAssetDataMapper
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
-import com.algorand.android.parity.domain.usecase.GetAlgoToUsdConversionRate
-import com.algorand.android.parity.domain.usecase.primary.GetPrimaryAlgoParityValue
-import com.algorand.android.parity.domain.usecase.secondary.GetSecondaryAlgoParityValue
+import com.algorand.android.module.parity.domain.usecase.GetAlgoToUsdConversionRate
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryAlgoParityValue
+import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryAlgoParityValue
 import java.math.BigInteger
 import javax.inject.Inject
 

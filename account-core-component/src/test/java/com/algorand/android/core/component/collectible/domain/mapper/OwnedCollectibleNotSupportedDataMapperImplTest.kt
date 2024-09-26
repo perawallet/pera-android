@@ -4,7 +4,7 @@ import com.algorand.android.module.asset.detail.component.AssetConstants
 import com.algorand.android.module.asset.detail.component.asset.domain.model.*
 import com.algorand.android.module.asset.detail.component.asset.domain.model.Collection
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleUnsupportedData
-import com.algorand.android.parity.domain.model.ParityValue
+import com.algorand.android.module.parity.domain.model.ParityValue
 import com.algorand.android.testutil.fixtureOf
 import org.junit.*
 import java.math.BigInteger

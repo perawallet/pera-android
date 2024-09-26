@@ -17,8 +17,8 @@ import com.algorand.android.module.asset.detail.component.AssetConstants.DEFAULT
 import com.algorand.android.assetutils.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.assetutils.AssetConstants.ALGO_ID
 import com.algorand.android.foundation.common.toBigDecimalOrZero
-import com.algorand.android.parity.domain.model.ParityValue
-import com.algorand.android.parity.domain.usecase.GetUsdValuePerAsset
+import com.algorand.android.module.parity.domain.model.ParityValue
+import com.algorand.android.module.parity.domain.usecase.GetUsdValuePerAsset
 import com.algorand.android.module.swap.component.data.SwapUtils.DEFAULT_EXCHANGE_SWAP_FEE
 import com.algorand.android.module.swap.component.data.SwapUtils.DEFAULT_PERA_SWAP_FEE
 import com.algorand.android.module.swap.component.data.model.SwapQuoteResponse

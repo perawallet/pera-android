@@ -28,8 +28,8 @@ import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAc
 import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAccountSelectionListItem.AccountItem
 import com.algorand.android.modules.rekey.rekeytostandardaccount.accountselection.ui.mapper.RekeyToStandardAccountSelectionPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.accountselection.ui.model.RekeyToStandardAccountSelectionPreview
-import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
-import com.algorand.android.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
+import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
 import com.algorand.android.utils.formatAsCurrency
 import javax.inject.Inject
 

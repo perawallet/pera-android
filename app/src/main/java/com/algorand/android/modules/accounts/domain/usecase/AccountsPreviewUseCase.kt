@@ -29,8 +29,8 @@ import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCas
 import com.algorand.android.module.node.domain.usecase.GetActiveNodeAsFlow
 import com.algorand.android.module.node.domain.usecase.IsSelectedNodeTestnet
 import com.algorand.android.module.notification.domain.usecase.GetAskNotificationPermissionEventFlowUseCase
-import com.algorand.android.parity.domain.model.SelectedCurrencyDetail
-import com.algorand.android.parity.domain.usecase.GetSelectedCurrencyDetailFlow
+import com.algorand.android.module.parity.domain.model.SelectedCurrencyDetail
+import com.algorand.android.module.parity.domain.usecase.GetSelectedCurrencyDetailFlow
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.AccountSelection
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Introduction
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Swap

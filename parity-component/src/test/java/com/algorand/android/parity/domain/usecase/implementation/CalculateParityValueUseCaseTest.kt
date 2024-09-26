@@ -1,4 +1,4 @@
-package com.algorand.android.parity.domain.usecase.implementation
+package com.algorand.android.module.parity.domain.usecase.implementation
 
 import org.junit.Test
 

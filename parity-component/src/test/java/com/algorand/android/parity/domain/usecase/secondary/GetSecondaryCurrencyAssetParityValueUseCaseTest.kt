@@ -1,8 +1,8 @@
-package com.algorand.android.parity.domain.usecase.secondary
+package com.algorand.android.module.parity.domain.usecase.secondary
 
-import com.algorand.android.parity.domain.model.ParityValue
-import com.algorand.android.parity.domain.usecase.*
-import com.algorand.android.parity.domain.usecase.secondary.implementation.GetSecondaryAlgoParityValueUseCase
+import com.algorand.android.module.parity.domain.model.ParityValue
+import com.algorand.android.module.parity.domain.usecase.*
+import com.algorand.android.module.parity.domain.usecase.secondary.implementation.GetSecondaryAlgoParityValueUseCase
 import com.algorand.android.testutil.fixtureOf
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -24,11 +24,11 @@ import com.algorand.android.mapper.AssetTransferAmountAssetPreviewMapper
 import com.algorand.android.mapper.AssetTransferAmountPreviewMapper
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.AssetTransferAmountPreview
-import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencyName
-import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
-import com.algorand.android.parity.domain.usecase.primary.GetUsdToPrimaryCurrencyConversionRate
-import com.algorand.android.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
-import com.algorand.android.parity.domain.usecase.secondary.GetUsdToSecondaryCurrencyConversionRate
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencyName
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
+import com.algorand.android.module.parity.domain.usecase.primary.GetUsdToPrimaryCurrencyConversionRate
+import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
+import com.algorand.android.module.parity.domain.usecase.secondary.GetUsdToSecondaryCurrencyConversionRate
 import com.algorand.android.module.transaction.component.domain.model.TransactionAmountValidationResult
 import com.algorand.android.module.transaction.component.domain.model.TransactionAmountValidationResult.AssetNotFoundError
 import com.algorand.android.module.transaction.component.domain.model.TransactionAmountValidationResult.InsufficientBalanceError

@@ -17,9 +17,9 @@ import com.algorand.android.caching.CacheResult
 import com.algorand.android.caching.SharedPrefLocalSource
 import com.algorand.android.currency.domain.usecase.RemovePrimaryCurrencyChangeListener
 import com.algorand.android.currency.domain.usecase.SetPrimaryCurrencyChangeListener
-import com.algorand.android.parity.domain.usecase.ClearSelectedCurrencyDetailCache
-import com.algorand.android.parity.domain.usecase.GetSelectedCurrencyDetailFlow
-import com.algorand.android.parity.domain.usecase.InitializeParityCache
+import com.algorand.android.module.parity.domain.usecase.ClearSelectedCurrencyDetailCache
+import com.algorand.android.module.parity.domain.usecase.GetSelectedCurrencyDetailFlow
+import com.algorand.android.module.parity.domain.usecase.InitializeParityCache
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope

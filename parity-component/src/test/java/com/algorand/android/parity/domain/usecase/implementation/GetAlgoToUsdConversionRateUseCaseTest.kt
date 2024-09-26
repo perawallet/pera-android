@@ -1,6 +1,6 @@
-package com.algorand.android.parity.domain.usecase.implementation
+package com.algorand.android.module.parity.domain.usecase.implementation
 
-import com.algorand.android.parity.domain.usecase.GetUsdToAlgoConversionRate
+import com.algorand.android.module.parity.domain.usecase.GetUsdToAlgoConversionRate
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mockito.kotlin.*

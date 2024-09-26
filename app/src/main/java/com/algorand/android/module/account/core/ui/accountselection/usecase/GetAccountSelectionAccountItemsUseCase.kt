@@ -17,7 +17,7 @@ import com.algorand.android.module.account.core.ui.accountselection.mapper.Accou
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
-import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
 import javax.inject.Inject
 
 internal class GetAccountSelectionAccountItemsUseCase @Inject constructor(

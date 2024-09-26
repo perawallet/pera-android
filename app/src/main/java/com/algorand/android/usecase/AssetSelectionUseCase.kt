@@ -33,7 +33,7 @@ import com.algorand.android.modules.sorting.assetsorting.ui.usecase.AssetItemSor
 import com.algorand.android.nft.mapper.AssetSelectionPreviewMapper
 import com.algorand.android.nft.ui.model.AssetSelectionOptInPayload
 import com.algorand.android.nft.ui.model.AssetSelectionPreview
-import com.algorand.android.parity.domain.usecase.GetSelectedCurrencyDetailFlow
+import com.algorand.android.module.parity.domain.usecase.GetSelectedCurrencyDetailFlow
 import com.algorand.android.utils.Event
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

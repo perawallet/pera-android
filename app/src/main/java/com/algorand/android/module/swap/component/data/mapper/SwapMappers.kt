@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.data.mapper
 
-import com.algorand.android.parity.domain.model.ParityValue
+import com.algorand.android.module.parity.domain.model.ParityValue
 import com.algorand.android.module.swap.component.data.model.AvailableSwapAssetListResponse
 import com.algorand.android.module.swap.component.data.model.PeraFeeResponse
 import com.algorand.android.module.swap.component.data.model.SwapQuoteAssetDetailResponse

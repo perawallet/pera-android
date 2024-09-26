@@ -4,10 +4,10 @@ import com.algorand.android.module.account.info.domain.model.*
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAssetDetail
 import com.algorand.android.module.account.core.component.domain.model.AccountTotalValue
-import com.algorand.android.parity.domain.model.*
-import com.algorand.android.parity.domain.usecase.GetAlgoAmountValue
-import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencyAssetParityValue
-import com.algorand.android.parity.domain.usecase.secondary.GetSecondaryCurrencyAssetParityValue
+import com.algorand.android.module.parity.domain.model.*
+import com.algorand.android.module.parity.domain.usecase.GetAlgoAmountValue
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencyAssetParityValue
+import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencyAssetParityValue
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

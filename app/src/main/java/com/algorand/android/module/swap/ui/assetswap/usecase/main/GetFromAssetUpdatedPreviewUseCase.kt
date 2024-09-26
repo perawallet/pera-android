@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.assetswap.usecase.main
 
-import com.algorand.android.parity.domain.usecase.GetDisplayedCurrencySymbol
+import com.algorand.android.module.parity.domain.usecase.GetDisplayedCurrencySymbol
 import com.algorand.android.module.swap.component.domain.SwapAmountUtils
 import com.algorand.android.module.swap.ui.assetswap.mapper.GetSwapQuoteUpdatedPreviewPayloadMapper
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview

@@ -1,9 +1,9 @@
-package com.algorand.android.parity.domain.usecase.primary.implementation
+package com.algorand.android.module.parity.domain.usecase.primary.implementation
 
 import com.algorand.android.caching.CacheResult.Success.Companion.create
 import com.algorand.android.currency.domain.usecase.GetPrimaryCurrencyId
-import com.algorand.android.parity.domain.model.SelectedCurrencyDetail
-import com.algorand.android.parity.domain.repository.ParityRepository
+import com.algorand.android.module.parity.domain.model.SelectedCurrencyDetail
+import com.algorand.android.module.parity.domain.repository.ParityRepository
 import com.algorand.android.testutil.fixtureOf
 import org.junit.Assert.assertEquals
 import org.junit.Test

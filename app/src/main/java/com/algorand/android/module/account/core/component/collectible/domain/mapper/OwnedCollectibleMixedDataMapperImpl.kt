@@ -2,7 +2,7 @@ package com.algorand.android.module.account.core.component.collectible.domain.ma
 
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.MixedCollectibleDetail
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
-import com.algorand.android.parity.domain.model.ParityValue
+import com.algorand.android.module.parity.domain.model.ParityValue
 import java.math.BigInteger
 import javax.inject.Inject
 

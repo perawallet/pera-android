@@ -1,7 +1,7 @@
-package com.algorand.android.parity.domain.usecase.secondary
+package com.algorand.android.module.parity.domain.usecase.secondary
 
 import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
-import com.algorand.android.parity.domain.usecase.secondary.implementation.GetSecondaryCurrencySymbolUseCase
+import com.algorand.android.module.parity.domain.usecase.secondary.implementation.GetSecondaryCurrencySymbolUseCase
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mockito.kotlin.*

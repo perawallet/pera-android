@@ -1,6 +1,6 @@
-package com.algorand.android.parity.data.mapper
+package com.algorand.android.module.parity.data.mapper
 
-import com.algorand.android.parity.data.model.CurrencyDetailResponse
+import com.algorand.android.module.parity.data.model.CurrencyDetailResponse
 import com.algorand.android.testutil.fixtureOf
 import org.junit.Assert.*
 import org.junit.Test

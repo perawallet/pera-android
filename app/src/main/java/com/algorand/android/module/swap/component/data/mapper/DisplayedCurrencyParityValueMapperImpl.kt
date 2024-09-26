@@ -14,9 +14,9 @@
 package com.algorand.android.module.swap.component.data.mapper
 
 import com.algorand.android.assetutils.AssetConstants.ALGO_ID
-import com.algorand.android.parity.domain.model.ParityValue
-import com.algorand.android.parity.domain.usecase.GetAlgoAmountValue
-import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencyAssetParityValue
+import com.algorand.android.module.parity.domain.model.ParityValue
+import com.algorand.android.module.parity.domain.usecase.GetAlgoAmountValue
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencyAssetParityValue
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject

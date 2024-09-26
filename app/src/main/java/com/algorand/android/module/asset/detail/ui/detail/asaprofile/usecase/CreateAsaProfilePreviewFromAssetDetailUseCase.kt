@@ -24,7 +24,7 @@ import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaSt
 import com.algorand.android.module.asset.detail.ui.detail.usecase.GetAssetDetailIconResOfChangePercentage
 import com.algorand.android.module.asset.detail.ui.detail.usecase.GetAssetDetailTextColorResOfChangePercentage
 import com.algorand.android.module.asset.detail.ui.detail.usecase.IsChangePercentageVisible
-import com.algorand.android.parity.domain.usecase.GetAssetExchangeParityValue
+import com.algorand.android.module.parity.domain.usecase.GetAssetExchangeParityValue
 import java.math.BigDecimal.ZERO
 import javax.inject.Inject
 

@@ -4,7 +4,7 @@ import com.algorand.android.module.account.local.domain.model.LocalAccount
 import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.account.info.domain.usecase.InitializeAccountInformation
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.InitializeAssets
-import com.algorand.android.parity.domain.usecase.InitializeParityCache
+import com.algorand.android.module.parity.domain.usecase.InitializeParityCache
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.mockito.kotlin.*

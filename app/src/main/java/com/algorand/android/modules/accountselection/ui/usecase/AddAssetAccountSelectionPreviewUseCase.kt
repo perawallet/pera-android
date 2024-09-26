@@ -18,7 +18,7 @@ import com.algorand.android.module.account.core.ui.accountselection.usecase.Crea
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
 import com.algorand.android.modules.accountselection.ui.mapper.AddAssetAccountSelectionPreviewMapper
 import com.algorand.android.modules.accountselection.ui.model.AddAssetAccountSelectionPreview
-import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
 import javax.inject.Inject
 
 class AddAssetAccountSelectionPreviewUseCase @Inject constructor(

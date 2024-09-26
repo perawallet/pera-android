@@ -29,8 +29,8 @@ import com.algorand.android.modules.basefoundaccount.information.ui.model.BaseFo
 import com.algorand.android.modules.basefoundaccount.information.ui.usecase.BaseFoundAccountInformationItemUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.mapper.RekeyedAccountInformationPreviewMapper
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.model.RekeyedAccountInformationPreview
-import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
-import com.algorand.android.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
+import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
 import com.algorand.android.utils.extensions.mapNotBlank
 import com.algorand.android.utils.formatAsCurrency
 import java.math.BigDecimal

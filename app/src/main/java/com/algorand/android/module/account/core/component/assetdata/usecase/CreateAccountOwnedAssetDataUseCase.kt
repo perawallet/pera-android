@@ -18,9 +18,9 @@ import com.algorand.android.module.asset.detail.component.asset.domain.model.det
 import com.algorand.android.module.account.core.component.domain.mapper.OwnedAssetDataMapper
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.formatting.formatAmount
-import com.algorand.android.parity.domain.model.ParityValue
-import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencyAssetParityValue
-import com.algorand.android.parity.domain.usecase.secondary.GetSecondaryCurrencyAssetParityValue
+import com.algorand.android.module.parity.domain.model.ParityValue
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencyAssetParityValue
+import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencyAssetParityValue
 import java.math.BigDecimal
 import javax.inject.Inject
 

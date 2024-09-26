@@ -33,8 +33,8 @@ import com.algorand.android.mapper.LedgerInformationTitleItemMapper
 import com.algorand.android.models.LedgerInformationListItem
 import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
-import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencyName
-import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencyName
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
 import com.algorand.android.utils.formatAsCurrency
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers

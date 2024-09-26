@@ -166,7 +166,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation project(path: ':parity-component')
     implementation project(path: ':foundation')
     implementation project(path: ':drawable-ui')
     implementation project(path: ':designsystem')

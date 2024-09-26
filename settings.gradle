@@ -1,7 +1,6 @@
 include ':app'
 rootProject.name = 'algorand-android'
 include ':caching'
-include ':parity-component'
 include ':network-utils'
 include ':currency-component'
 include ':foundation'

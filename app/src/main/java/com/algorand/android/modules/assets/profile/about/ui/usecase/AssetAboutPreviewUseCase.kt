@@ -31,7 +31,7 @@ import com.algorand.android.modules.assets.profile.about.ui.mapper.AssetAboutPre
 import com.algorand.android.modules.assets.profile.about.ui.mapper.BaseAssetAboutListItemMapper
 import com.algorand.android.modules.assets.profile.about.ui.model.AssetAboutPreview
 import com.algorand.android.modules.assets.profile.about.ui.model.BaseAssetAboutListItem
-import com.algorand.android.parity.domain.usecase.GetAssetExchangeParityValue
+import com.algorand.android.module.parity.domain.usecase.GetAssetExchangeParityValue
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.browser.addProtocolIfNeed
 import com.algorand.android.utils.browser.removeProtocolIfNeed

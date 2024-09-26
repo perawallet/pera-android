@@ -2,7 +2,7 @@ package com.algorand.android.module.account.core.component.domain.model
 
 import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
 import com.algorand.android.currency.domain.model.Currency
-import com.algorand.android.parity.domain.model.ParityValue
+import com.algorand.android.module.parity.domain.model.ParityValue
 import java.math.*
 
 sealed class BaseAccountAssetData {

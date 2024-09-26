@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.domain.usecase
 
-import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
+import com.algorand.android.module.deviceid.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.foundation.PeraResult
 import com.algorand.android.module.swap.component.domain.mapper.GetSwapQuoteRequestPayloadMapper
 import com.algorand.android.module.swap.component.domain.model.GetSwapQuotePayload

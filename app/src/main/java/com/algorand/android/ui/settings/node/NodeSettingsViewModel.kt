@@ -17,8 +17,8 @@ import com.algorand.android.module.appcache.manager.PushTokenManager
 import com.algorand.android.module.appcache.usecase.ClearAppSessionCache
 import com.algorand.android.module.appcache.usecase.RefreshAccountCacheManager
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.deviceid.component.domain.usecase.GetNodeDeviceId
-import com.algorand.android.deviceid.component.domain.usecase.UnregisterDeviceId
+import com.algorand.android.module.deviceid.domain.usecase.GetNodeDeviceId
+import com.algorand.android.module.deviceid.domain.usecase.UnregisterDeviceId
 import com.algorand.android.node.domain.Node
 import com.algorand.android.node.domain.usecase.GetActiveNode
 import com.algorand.android.node.domain.usecase.SetSelectedNode

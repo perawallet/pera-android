@@ -15,7 +15,7 @@ package com.algorand.android.discover.detail.ui.usecase
 import android.content.SharedPreferences
 import androidx.navigation.NavDirections
 import com.algorand.android.assetutils.getSafeAssetIdForResponse
-import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
+import com.algorand.android.module.deviceid.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.discover.common.ui.model.OpenSystemBrowserRequest
 import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.discover.detail.domain.model.DetailActionRequest

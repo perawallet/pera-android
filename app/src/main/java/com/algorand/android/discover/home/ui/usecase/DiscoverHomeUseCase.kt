@@ -13,7 +13,7 @@
 package com.algorand.android.discover.home.ui.usecase
 
 import com.algorand.android.currency.domain.usecase.GetPrimaryCurrencyId
-import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
+import com.algorand.android.module.deviceid.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.discover.common.ui.model.DappFavoriteElement
 import com.algorand.android.discover.home.ui.mapper.DiscoverDappFavoritesMapper
 import com.algorand.android.discover.home.ui.mapper.TokenDetailInfoMapper

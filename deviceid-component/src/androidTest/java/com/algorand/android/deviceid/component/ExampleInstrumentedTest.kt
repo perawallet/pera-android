@@ -1,4 +1,4 @@
-package com.algorand.android.deviceid.component
+package com.algorand.android.module.deviceid
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.algorand.android.deviceid.component.test", appContext.packageName)
+        assertEquals("com.algorand.android.module.deviceid.test", appContext.packageName)
     }
 }

@@ -1,6 +1,6 @@
 package com.algorand.android.modules.notification.domain.usecase
 
-import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
+import com.algorand.android.module.deviceid.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.models.Result
 import com.algorand.android.modules.notification.data.mapper.LastSeenNotificationDTOMapper
 import com.algorand.android.modules.notification.domain.repository.NotificationStatusRepository

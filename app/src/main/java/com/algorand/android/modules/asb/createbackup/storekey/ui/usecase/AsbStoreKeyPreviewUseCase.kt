@@ -22,7 +22,7 @@ import com.algorand.android.module.asb.domain.usecase.SetAccountsAsbBackedUp
 import com.algorand.android.module.asb.mnemonics.domain.usecase.GetAsbBackUpMnemonics
 import com.algorand.android.module.asb.mnemonics.domain.usecase.SetAsbBackUpMnemonics
 import com.algorand.android.module.custominfo.domain.usecase.GetCustomInfoOrNull
-import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
+import com.algorand.android.module.deviceid.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.asb.createbackup.storekey.ui.mapper.AsbStoreKeyPreviewMapper
 import com.algorand.android.modules.asb.createbackup.storekey.ui.model.AsbStoreKeyPreview

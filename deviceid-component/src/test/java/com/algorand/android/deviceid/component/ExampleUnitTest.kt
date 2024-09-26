@@ -1,4 +1,4 @@
-package com.algorand.android.deviceid.component
+package com.algorand.android.module.deviceid
 
 import org.junit.Test
 

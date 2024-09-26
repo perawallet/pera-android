@@ -15,7 +15,7 @@ package com.algorand.android.module.notification.domain.usecase
 
 import androidx.paging.PagingData
 import androidx.paging.PagingSource.LoadResult
-import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
+import com.algorand.android.module.deviceid.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.module.notification.domain.NotificationHistoryPaginationHelper
 import com.algorand.android.module.notification.domain.model.NotificationHistory
 import com.algorand.android.module.notification.domain.repository.NotificationRepository

@@ -1,9 +1,9 @@
 package com.algorand.android.deviceregistration.domain.usecase
 
-import com.algorand.android.deviceid.component.domain.usecase.GetNotificationUserId
-import com.algorand.android.deviceid.component.domain.usecase.SetMainnetDeviceId
-import com.algorand.android.deviceid.component.domain.usecase.SetNotificationUserId
-import com.algorand.android.deviceid.component.domain.usecase.SetTestnetDeviceId
+import com.algorand.android.module.deviceid.domain.usecase.GetNotificationUserId
+import com.algorand.android.module.deviceid.domain.usecase.SetMainnetDeviceId
+import com.algorand.android.module.deviceid.domain.usecase.SetNotificationUserId
+import com.algorand.android.module.deviceid.domain.usecase.SetTestnetDeviceId
 import com.algorand.android.node.domain.Node
 import com.algorand.android.node.domain.usecase.GetActiveNode
 import javax.inject.Inject

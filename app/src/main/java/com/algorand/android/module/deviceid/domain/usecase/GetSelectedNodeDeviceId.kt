@@ -11,19 +11,8 @@
  *   -->
  */
 
-package com.algorand.android.module.banner.domain.usecase
+package com.algorand.android.module.deviceid.domain.usecase
 
-import com.algorand.android.module.banner.domain.repository.BannerRepository
-import com.algorand.android.module.deviceid.domain.usecase.GetSelectedNodeDeviceId
-import javax.inject.Inject
-
-internal class InitializeBannersUseCase @Inject constructor(
-    private val getSelectedNodeDeviceId: GetSelectedNodeDeviceId,
-    private val bannerRepository: BannerRepository
-) : InitializeBanners {
-
-    override suspend fun invoke() {
-        val selectedNodeDeviceId = getSelectedNodeDeviceId() ?: return
-        bannerRepository.initializeBanners(selectedNodeDeviceId)
-    }
+interface GetSelectedNodeDeviceId {
+    operator fun invoke(): String?
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.algorand.android.deviceid.component'
+    namespace 'com.algorand.android.module.deviceid'
     compileSdkVersion targets.compileSdkVersion
 
     defaultConfig {

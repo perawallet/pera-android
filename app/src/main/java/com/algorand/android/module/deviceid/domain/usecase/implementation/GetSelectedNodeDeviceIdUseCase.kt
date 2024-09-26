@@ -16,8 +16,8 @@ package com.algorand.android.module.deviceid.domain.usecase.implementation
 import com.algorand.android.module.deviceid.domain.usecase.GetMainnetDeviceId
 import com.algorand.android.module.deviceid.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.module.deviceid.domain.usecase.GetTestnetDeviceId
-import com.algorand.android.node.domain.Node
-import com.algorand.android.node.domain.usecase.GetActiveNode
+import com.algorand.android.module.node.domain.Node
+import com.algorand.android.module.node.domain.usecase.GetActiveNode
 import javax.inject.Inject
 
 internal class GetSelectedNodeDeviceIdUseCase @Inject constructor(

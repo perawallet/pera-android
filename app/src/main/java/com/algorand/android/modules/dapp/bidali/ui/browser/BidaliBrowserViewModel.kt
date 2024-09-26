@@ -23,7 +23,7 @@ import com.algorand.android.modules.dapp.bidali.getCompiledBidaliJavascript
 import com.algorand.android.modules.dapp.bidali.ui.browser.model.BidaliBrowserPreview
 import com.algorand.android.modules.dapp.bidali.ui.browser.usecase.BidaliBrowserPreviewUseCase
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
-import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
+import com.algorand.android.module.node.domain.usecase.IsSelectedNodeMainnet
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

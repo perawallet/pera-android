@@ -17,7 +17,7 @@ import com.algorand.android.module.asset.detail.component.asset.domain.usecase.G
 import com.algorand.android.modules.dapp.bidali.domain.model.BidaliPaymentRequestDTO
 import com.algorand.android.modules.dapp.bidali.domain.model.MainnetBidaliSupportedCurrency
 import com.algorand.android.modules.dapp.bidali.domain.model.TestnetBidaliSupportedCurrency
-import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
+import com.algorand.android.module.node.domain.usecase.IsSelectedNodeMainnet
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser
 import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 import com.algorand.android.utils.formatAmountAsBigInteger

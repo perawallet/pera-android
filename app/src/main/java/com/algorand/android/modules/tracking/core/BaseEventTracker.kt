@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.tracking.core
 
-import com.algorand.android.node.domain.usecase.IsSelectedNodeTestnet
+import com.algorand.android.module.node.domain.usecase.IsSelectedNodeTestnet
 import javax.inject.Inject
 
 open class BaseEventTracker protected constructor(private val peraEventTracker: PeraEventTracker) {

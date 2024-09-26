@@ -17,7 +17,7 @@ import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDa
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
-import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
+import com.algorand.android.module.node.domain.usecase.IsSelectedNodeMainnet
 import com.google.firebase.analytics.FirebaseAnalytics
 
 /**

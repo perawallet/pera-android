@@ -14,7 +14,7 @@ package com.algorand.android.ui.settings.node
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.algorand.android.node.domain.Node
+import com.algorand.android.module.node.domain.Node
 import com.algorand.android.ui.settings.node.ui.model.NodeItem
 import com.algorand.android.utils.extensions.clearAndAddAll
 

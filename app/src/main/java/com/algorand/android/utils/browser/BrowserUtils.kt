@@ -32,7 +32,7 @@ import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
-import com.algorand.android.node.domain.NodeConstants.MAINNET_NETWORK_SLUG
+import com.algorand.android.module.node.domain.NodeConstants.MAINNET_NETWORK_SLUG
 import com.algorand.android.utils.extensions.appendAt
 import com.algorand.android.utils.recordException
 

@@ -64,7 +64,7 @@ import com.algorand.android.modules.walletconnect.connectionrequest.ui.WalletCon
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WCSessionRequestResult
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
-import com.algorand.android.node.domain.Node
+import com.algorand.android.module.node.domain.Node
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult.AccountAlreadyOptedIn
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult.AccountNotFound

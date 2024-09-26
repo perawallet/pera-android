@@ -14,8 +14,8 @@
 package com.algorand.android.module.algosdk.network
 
 import com.algorand.android.module.algosdk.transaction.model.AlgodInterceptorNodeDetails
-import com.algorand.android.node.domain.Node
-import com.algorand.android.node.domain.usecase.GetActiveNode
+import com.algorand.android.module.node.domain.Node
+import com.algorand.android.module.node.domain.usecase.GetActiveNode
 import javax.inject.Inject
 
 internal class GetAlgodInterceptorNodeDetailsImpl @Inject constructor(

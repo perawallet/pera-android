@@ -17,7 +17,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.assets.profile.about.ui.model.AssetAboutPreview
 import com.algorand.android.modules.assets.profile.about.ui.usecase.AssetAboutPreviewUseCase
-import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
+import com.algorand.android.module.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel

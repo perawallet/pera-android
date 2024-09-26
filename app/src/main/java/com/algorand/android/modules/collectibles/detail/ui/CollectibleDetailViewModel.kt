@@ -20,7 +20,7 @@ import com.algorand.android.module.asset.detail.ui.nftdetail.usecase.GetCollecti
 import com.algorand.android.foundation.Event
 import com.algorand.android.models.AssetAction
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailViewModel
-import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
+import com.algorand.android.module.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

@@ -19,9 +19,9 @@ import com.algorand.android.module.appcache.usecase.RefreshAccountCacheManager
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.module.deviceid.domain.usecase.GetNodeDeviceId
 import com.algorand.android.module.deviceid.domain.usecase.UnregisterDeviceId
-import com.algorand.android.node.domain.Node
-import com.algorand.android.node.domain.usecase.GetActiveNode
-import com.algorand.android.node.domain.usecase.SetSelectedNode
+import com.algorand.android.module.node.domain.Node
+import com.algorand.android.module.node.domain.usecase.GetActiveNode
+import com.algorand.android.module.node.domain.usecase.SetSelectedNode
 import com.algorand.android.ui.settings.node.ui.model.NodeSettingsPreview
 import com.algorand.android.usecase.NodeSettingsPreviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

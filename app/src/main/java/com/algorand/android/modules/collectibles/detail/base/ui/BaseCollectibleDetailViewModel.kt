@@ -13,7 +13,7 @@
 package com.algorand.android.modules.collectibles.detail.base.ui
 
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
+import com.algorand.android.module.node.domain.usecase.GetActiveNodeNetworkSlug
 
 abstract class BaseCollectibleDetailViewModel(
     private val getActiveNodeNetworkSlug: GetActiveNodeNetworkSlug

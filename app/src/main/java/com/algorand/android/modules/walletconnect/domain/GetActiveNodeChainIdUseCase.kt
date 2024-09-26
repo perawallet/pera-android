@@ -14,7 +14,7 @@ package com.algorand.android.modules.walletconnect.domain
 
 import com.algorand.android.modules.walletconnect.domain.decider.WalletConnectNodeChainIdentifierDecider
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import com.algorand.android.node.domain.usecase.GetActiveNode
+import com.algorand.android.module.node.domain.usecase.GetActiveNode
 import javax.inject.Inject
 
 class GetActiveNodeChainIdUseCase @Inject constructor(

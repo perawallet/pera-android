@@ -13,7 +13,7 @@
 
 package com.algorand.android.ui.settings.node.ui.model
 
-import com.algorand.android.node.domain.Node
+import com.algorand.android.module.node.domain.Node
 
 data class NodeItem(
     val node: Node,

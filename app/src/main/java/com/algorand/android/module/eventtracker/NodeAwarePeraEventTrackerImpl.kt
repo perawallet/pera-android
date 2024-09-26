@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.eventtracker
 
-import com.algorand.android.node.domain.usecase.IsSelectedNodeTestnet
+import com.algorand.android.module.node.domain.usecase.IsSelectedNodeTestnet
 import javax.inject.Inject
 
 internal class NodeAwarePeraEventTrackerImpl @Inject constructor(

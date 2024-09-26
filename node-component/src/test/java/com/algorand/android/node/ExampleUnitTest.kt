@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.node
+package com.algorand.android.module.node
 
 import org.junit.Test
 

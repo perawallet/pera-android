@@ -23,7 +23,7 @@ import com.algorand.android.models.TransactionRequestOnlineKeyRegInfo
 import com.algorand.android.models.TransactionRequestSenderInfo
 import com.algorand.android.models.TransactionRequestTransactionInfo
 import com.algorand.android.models.decider.WalletConnectTransactionDetailUiDecider
-import com.algorand.android.node.domain.usecase.GetActiveNodeNetworkSlug
+import com.algorand.android.module.node.domain.usecase.GetActiveNodeNetworkSlug
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

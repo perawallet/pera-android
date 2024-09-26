@@ -32,7 +32,7 @@ import com.algorand.android.database.ContactDao
 import com.algorand.android.databinding.ActivityMainBinding
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.network.IndexerInterceptor
-import com.algorand.android.node.domain.Node
+import com.algorand.android.module.node.domain.Node
 import com.algorand.android.notification.NotificationPermissionManager
 import com.algorand.android.notification.PeraNotificationManager
 import com.algorand.android.utils.coremanager.LocalAccountsNameServiceManager

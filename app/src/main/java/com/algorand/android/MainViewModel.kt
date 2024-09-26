@@ -35,8 +35,8 @@ import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeni
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
 import com.algorand.android.modules.tracking.main.MainActivityEventTracker
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
-import com.algorand.android.node.domain.Node
-import com.algorand.android.node.domain.usecase.GetActiveNodeAsFlow
+import com.algorand.android.module.node.domain.Node
+import com.algorand.android.module.node.domain.usecase.GetActiveNodeAsFlow
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.AccountSelection
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Introduction
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Swap

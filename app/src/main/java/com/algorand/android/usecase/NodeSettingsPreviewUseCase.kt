@@ -13,7 +13,7 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.node.domain.usecase.GetAllNodes
+import com.algorand.android.module.node.domain.usecase.GetAllNodes
 import com.algorand.android.ui.settings.node.ui.mapper.NodeSettingsPreviewMapper
 import com.algorand.android.ui.settings.node.ui.model.NodeSettingsPreview
 import javax.inject.Inject

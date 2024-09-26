@@ -16,7 +16,7 @@ import androidx.navigation.NavDirections
 import com.algorand.android.modules.dapp.bidali.getBidaliUrl
 import com.algorand.android.modules.dapp.bidali.ui.intro.BidaliIntroFragmentDirections
 import com.algorand.android.modules.dapp.bidali.ui.intro.model.BidaliIntroPreview
-import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
+import com.algorand.android.module.node.domain.usecase.IsSelectedNodeMainnet
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.isStagingApp
 import javax.inject.Inject

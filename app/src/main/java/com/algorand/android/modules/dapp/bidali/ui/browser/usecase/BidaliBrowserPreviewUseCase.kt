@@ -24,7 +24,7 @@ import com.algorand.android.modules.dapp.bidali.domain.mapper.BidaliAssetMapper
 import com.algorand.android.modules.dapp.bidali.getCompiledUpdatedBalancesJavascript
 import com.algorand.android.modules.dapp.bidali.ui.browser.model.BidaliBrowserPreview
 import com.algorand.android.modules.peraserializer.PeraSerializer
-import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
+import com.algorand.android.module.node.domain.usecase.IsSelectedNodeMainnet
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.getBaseUrlOrNull
 import javax.inject.Inject

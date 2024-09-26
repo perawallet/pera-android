@@ -20,8 +20,8 @@ import com.algorand.android.modules.algosdk.domain.model.RawTransactionType.PAY_
 import com.algorand.android.modules.swap.utils.MAINNET_TINYMAN_ID
 import com.algorand.android.modules.swap.utils.PERA_FEE_WALLET_ADDRESS
 import com.algorand.android.modules.swap.utils.TESTNET_TINYMAN_ID
-import com.algorand.android.node.domain.NodeConstants.MAINNET_NETWORK_SLUG
-import com.algorand.android.node.domain.NodeConstants.TESTNET_NETWORK_SLUG
+import com.algorand.android.module.node.domain.NodeConstants.MAINNET_NETWORK_SLUG
+import com.algorand.android.module.node.domain.NodeConstants.TESTNET_NETWORK_SLUG
 import com.algorand.android.utils.flatten
 import com.algorand.android.utils.isEqualTo
 import com.algorand.android.utils.mapToNotNullableListOrNull

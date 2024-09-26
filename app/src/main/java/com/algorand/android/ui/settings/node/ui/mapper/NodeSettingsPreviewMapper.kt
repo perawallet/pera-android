@@ -12,9 +12,9 @@
 
 package com.algorand.android.ui.settings.node.ui.mapper
 
-import com.algorand.android.node.data.mapper.NodeNameMapper
-import com.algorand.android.node.domain.Node
-import com.algorand.android.node.domain.usecase.GetActiveNode
+import com.algorand.android.module.node.data.mapper.NodeNameMapper
+import com.algorand.android.module.node.domain.Node
+import com.algorand.android.module.node.domain.usecase.GetActiveNode
 import com.algorand.android.ui.settings.node.ui.model.NodeItem
 import com.algorand.android.ui.settings.node.ui.model.NodeSettingsPreview
 import javax.inject.Inject

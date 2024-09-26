@@ -13,7 +13,7 @@
 package com.algorand.android.modules.walletconnect.domain.decider
 
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import com.algorand.android.node.domain.Node
+import com.algorand.android.module.node.domain.Node
 import javax.inject.Inject
 
 class WalletConnectNodeChainIdentifierDecider @Inject constructor() {

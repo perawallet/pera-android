@@ -12,7 +12,7 @@
 
 package com.algorand.android.dependencyinjection
 
-import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
+import com.algorand.android.module.node.domain.usecase.IsSelectedNodeMainnet
 import com.algorand.android.utils.walletconnect.WalletConnectEventLogger
 import com.algorand.android.utils.walletconnect.WalletConnectFirebaseEventLogger
 import com.google.firebase.analytics.FirebaseAnalytics

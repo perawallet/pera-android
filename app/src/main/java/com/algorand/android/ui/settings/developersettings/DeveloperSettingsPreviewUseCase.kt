@@ -16,7 +16,7 @@ import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase
 import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
-import com.algorand.android.node.domain.usecase.IsSelectedNodeTestnet
+import com.algorand.android.module.node.domain.usecase.IsSelectedNodeTestnet
 import javax.inject.Inject
 
 class DeveloperSettingsPreviewUseCase @Inject constructor(

@@ -16,7 +16,7 @@ import com.algorand.android.module.account.core.ui.accountselection.model.BaseAc
 import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.modules.dapp.bidali.ui.accountselection.mapper.BidaliAccountSelectionPreviewMapper
 import com.algorand.android.modules.dapp.bidali.ui.accountselection.model.BidaliAccountSelectionPreview
-import com.algorand.android.node.domain.usecase.IsSelectedNodeMainnet
+import com.algorand.android.module.node.domain.usecase.IsSelectedNodeMainnet
 import javax.inject.Inject
 
 class BidaliAccountSelectionPreviewUseCase @Inject constructor(

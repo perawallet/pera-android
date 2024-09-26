@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.deviceid.domain.usecase
 
-import com.algorand.android.node.domain.Node
+import com.algorand.android.module.node.domain.Node
 
 interface GetNodeDeviceId {
     operator fun invoke(node: Node): String?

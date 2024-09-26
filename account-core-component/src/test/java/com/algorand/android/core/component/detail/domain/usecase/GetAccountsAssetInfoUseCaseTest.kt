@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.component.detail.domain.usecase
 
-import com.algorand.android.account.localaccount.domain.model.LocalAccount
-import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.account.local.domain.model.LocalAccount
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.usecase.implementation.GetAccountsDetailUseCase
 import com.algorand.android.testutil.fixtureOf

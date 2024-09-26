@@ -38,10 +38,6 @@ android {
 
 dependencies {
 
-    implementation project(':shared-db')
-    implementation project(':encryption-component')
-    implementation project(path: ':foundation')
-    implementation project(path: ':network-utils')
 
     implementation deps.retrofit.core
     implementation deps.retrofit.converter_gson

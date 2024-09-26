@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.account.core.component.detail.domain.usecase.implementation
 
-import com.algorand.android.account.localaccount.domain.usecase.GetAllLocalAccountAddressesAsFlow
+import com.algorand.android.module.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.android.module.asb.domain.usecase.GetAccountAsbBackUpStatus
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountRegistrationType

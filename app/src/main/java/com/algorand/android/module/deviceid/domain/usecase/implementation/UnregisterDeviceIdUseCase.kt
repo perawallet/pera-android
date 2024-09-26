@@ -1,6 +1,6 @@
 package com.algorand.android.module.deviceid.domain.usecase.implementation
 
-import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.deviceid.domain.model.DeviceUpdate
 import com.algorand.android.module.deviceid.domain.usecase.UnregisterDeviceId
 import com.algorand.android.module.deviceid.domain.usecase.UpdateDeviceId

@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.transaction.component.domain.sign.usecase.implementation
 
-import com.algorand.android.account.localaccount.domain.usecase.GetLedgerBleAccount
-import com.algorand.android.account.localaccount.domain.usecase.GetSecretKey
+import com.algorand.android.module.account.local.domain.usecase.GetLedgerBleAccount
+import com.algorand.android.module.account.local.domain.usecase.GetSecretKey
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountRegistrationType

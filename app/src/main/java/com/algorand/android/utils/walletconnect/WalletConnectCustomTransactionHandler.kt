@@ -12,7 +12,7 @@
 
 package com.algorand.android.utils.walletconnect
 
-import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.models.BaseAssetTransferTransaction
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction

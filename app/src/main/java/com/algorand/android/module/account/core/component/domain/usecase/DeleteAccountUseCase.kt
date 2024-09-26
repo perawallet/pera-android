@@ -1,6 +1,6 @@
 package com.algorand.android.module.account.core.component.domain.usecase
 
-import com.algorand.android.account.localaccount.domain.usecase.DeleteLocalAccount
+import com.algorand.android.module.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.android.module.account.info.domain.usecase.DeleteAccountInformation
 import com.algorand.android.module.account.sorting.domain.usecase.RemoveAccountOrderIndex
 import com.algorand.android.module.asb.domain.usecase.RemoveAccountAsbBackUpStatus

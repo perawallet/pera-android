@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.component.polling.domain.usecase
 
-import com.algorand.android.account.localaccount.domain.model.LocalAccount
-import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.account.local.domain.model.LocalAccount
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.account.info.domain.usecase.GetEarliestLastFetchedRound
 import com.algorand.android.module.account.core.component.polling.accountdetail.domain.repository.AccountBlockPollingRepository
 import com.algorand.android.module.account.core.component.polling.accountdetail.domain.usecase.implementation.IsAccountCacheUpdateRequiredUseCase

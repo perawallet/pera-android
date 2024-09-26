@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.component.caching.domain.usecase
 
-import com.algorand.android.account.localaccount.domain.model.LocalAccount
-import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.account.local.domain.model.LocalAccount
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.account.info.domain.usecase.InitializeAccountInformation
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.InitializeAssets
 import com.algorand.android.parity.domain.usecase.InitializeParityCache

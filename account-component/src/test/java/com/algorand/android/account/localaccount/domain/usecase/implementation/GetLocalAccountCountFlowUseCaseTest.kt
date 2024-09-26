@@ -1,9 +1,9 @@
-package com.algorand.android.account.localaccount.domain.usecase.implementation
+package com.algorand.android.module.account.local.domain.usecase.implementation
 
-import com.algorand.android.account.localaccount.domain.repository.Algo25AccountRepository
-import com.algorand.android.account.localaccount.domain.repository.LedgerBleAccountRepository
-import com.algorand.android.account.localaccount.domain.repository.LedgerUsbAccountRepository
-import com.algorand.android.account.localaccount.domain.repository.NoAuthAccountRepository
+import com.algorand.android.module.account.local.domain.repository.Algo25AccountRepository
+import com.algorand.android.module.account.local.domain.repository.LedgerBleAccountRepository
+import com.algorand.android.module.account.local.domain.repository.LedgerUsbAccountRepository
+import com.algorand.android.module.account.local.domain.repository.NoAuthAccountRepository
 import com.algorand.android.testutil.test
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Test

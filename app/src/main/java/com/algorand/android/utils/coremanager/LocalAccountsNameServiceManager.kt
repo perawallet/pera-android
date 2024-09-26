@@ -12,8 +12,8 @@
 
 package com.algorand.android.utils.coremanager
 
-import com.algorand.android.account.localaccount.domain.usecase.GetAllLocalAccountAddressesAsFlow
-import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.appcache.manager.PushTokenManager
 import com.algorand.android.module.appcache.model.PushTokenStatus
 import com.algorand.android.module.nameservice.domain.usecase.InitializeAccountNameService

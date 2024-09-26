@@ -1,10 +1,10 @@
-package com.algorand.android.account.localaccount.data.repository
+package com.algorand.android.module.account.local.data.repository
 
-import com.algorand.android.account.localaccount.data.database.dao.NoAuthDao
-import com.algorand.android.account.localaccount.data.database.model.NoAuthEntity
-import com.algorand.android.account.localaccount.data.mapper.entity.NoAuthEntityMapper
-import com.algorand.android.account.localaccount.data.mapper.model.noauth.NoAuthMapper
-import com.algorand.android.account.localaccount.domain.model.LocalAccount
+import com.algorand.android.module.account.local.data.database.dao.NoAuthDao
+import com.algorand.android.module.account.local.data.database.model.NoAuthEntity
+import com.algorand.android.module.account.local.data.mapper.entity.NoAuthEntityMapper
+import com.algorand.android.module.account.local.data.mapper.model.noauth.NoAuthMapper
+import com.algorand.android.module.account.local.domain.model.LocalAccount
 import com.algorand.android.encryption.EncryptionManager
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.runTest

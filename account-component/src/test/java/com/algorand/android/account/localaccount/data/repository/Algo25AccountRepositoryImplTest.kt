@@ -1,10 +1,10 @@
-package com.algorand.android.account.localaccount.data.repository
+package com.algorand.android.module.account.local.data.repository
 
-import com.algorand.android.account.localaccount.data.database.dao.Algo25Dao
-import com.algorand.android.account.localaccount.data.database.model.Algo25Entity
-import com.algorand.android.account.localaccount.data.mapper.entity.Algo25EntityMapper
-import com.algorand.android.account.localaccount.data.mapper.model.algo25.Algo25Mapper
-import com.algorand.android.account.localaccount.domain.model.LocalAccount
+import com.algorand.android.module.account.local.data.database.dao.Algo25Dao
+import com.algorand.android.module.account.local.data.database.model.Algo25Entity
+import com.algorand.android.module.account.local.data.mapper.entity.Algo25EntityMapper
+import com.algorand.android.module.account.local.data.mapper.model.algo25.Algo25Mapper
+import com.algorand.android.module.account.local.domain.model.LocalAccount
 import com.algorand.android.encryption.EncryptionManager
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.runTest

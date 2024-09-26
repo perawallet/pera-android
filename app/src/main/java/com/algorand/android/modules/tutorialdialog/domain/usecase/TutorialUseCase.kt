@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.tutorialdialog.domain.usecase
 
-import com.algorand.android.account.localaccount.domain.model.LocalAccount
-import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.account.local.domain.model.LocalAccount
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.modules.appopencount.domain.usecase.ApplicationOpenCountPreferenceUseCase
 import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
 import javax.inject.Inject

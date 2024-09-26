@@ -17,7 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
-import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyLocalAccount
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.android.module.algosdk.transaction.model.Transaction
 import com.algorand.android.module.appcache.InitializeAppCache
 import com.algorand.android.module.appcache.usecase.GetAppCacheStatusFlow

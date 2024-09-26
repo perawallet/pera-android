@@ -1,7 +1,7 @@
-package com.algorand.android.account.localaccount.domain.usecase.implementation
+package com.algorand.android.module.account.local.domain.usecase.implementation
 
-import com.algorand.android.account.localaccount.domain.model.LocalAccount.Algo25
-import com.algorand.android.account.localaccount.domain.repository.Algo25AccountRepository
+import com.algorand.android.module.account.local.domain.model.LocalAccount.Algo25
+import com.algorand.android.module.account.local.domain.repository.Algo25AccountRepository
 import com.algorand.android.testutil.fixtureOf
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.test.runTest

@@ -1,6 +1,6 @@
 package com.algorand.android.module.account.core.component.domain.usecase
 
-import com.algorand.android.account.localaccount.domain.usecase.DeleteLocalAccount
+import com.algorand.android.module.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.android.module.account.info.domain.usecase.DeleteAccountInformation
 import com.algorand.android.module.account.core.component.domain.usecase.DeleteAccountUseCase
 import kotlinx.coroutines.test.runTest

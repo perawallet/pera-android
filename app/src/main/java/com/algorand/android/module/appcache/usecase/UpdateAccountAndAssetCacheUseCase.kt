@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.appcache.usecase
 
-import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.FetchAndCacheAssets
 import javax.inject.Inject

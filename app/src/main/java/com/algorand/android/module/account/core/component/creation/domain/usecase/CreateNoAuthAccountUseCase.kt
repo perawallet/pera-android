@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.component.creation.domain.usecase
 
-import com.algorand.android.account.localaccount.domain.model.LocalAccount
-import com.algorand.android.account.localaccount.domain.usecase.*
+import com.algorand.android.module.account.local.domain.model.LocalAccount
+import com.algorand.android.module.account.local.domain.usecase.*
 import com.algorand.android.module.account.core.component.caching.domain.usecase.CacheAccountDetail
 import javax.inject.Inject
 

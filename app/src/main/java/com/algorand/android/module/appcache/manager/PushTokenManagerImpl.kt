@@ -1,7 +1,7 @@
 package com.algorand.android.module.appcache.manager
 
 import androidx.lifecycle.LifecycleOwner
-import com.algorand.android.account.localaccount.domain.usecase.GetAllLocalAccountAddressesAsFlow
+import com.algorand.android.module.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.android.module.appcache.model.PushTokenStatus
 import com.algorand.android.module.appcache.model.PushTokenStatus.NOT_INITIALIZED
 import com.algorand.android.module.banner.domain.usecase.InitializeBanners

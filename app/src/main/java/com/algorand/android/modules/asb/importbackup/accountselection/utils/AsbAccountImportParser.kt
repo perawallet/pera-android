@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.asb.importbackup.accountselection.utils
 
-import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.modules.algosdk.cryptoutil.domain.usecase.IsAccountAddressMatchWithSecretKeyUseCase
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.mapper.AsbAccountImportResultMapper
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult

@@ -13,7 +13,7 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.models.BaseAssetConfigurationTransaction.BaseAssetDeletionTransaction

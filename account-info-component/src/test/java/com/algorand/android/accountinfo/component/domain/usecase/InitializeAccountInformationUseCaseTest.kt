@@ -4,8 +4,8 @@ import com.algorand.android.account.accountinformation.domain.mapper.AccountAsse
 import com.algorand.android.account.accountinformation.domain.model.*
 import com.algorand.android.account.accountinformation.domain.repository.AccountInformationRepository
 import com.algorand.android.account.accountinformation.domain.usecase.implementation.InitializeAccountInformationUseCase
-import com.algorand.android.account.localaccount.domain.model.LocalAccount
-import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.account.local.domain.model.LocalAccount
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*

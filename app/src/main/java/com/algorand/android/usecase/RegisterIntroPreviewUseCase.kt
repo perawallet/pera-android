@@ -12,7 +12,7 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyLocalAccount
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.android.mapper.RegisterIntroPreviewMapper
 import com.algorand.android.modules.tracking.onboarding.register.registerintro.RegisterIntroFragmentEventTracker
 import kotlinx.coroutines.flow.flow

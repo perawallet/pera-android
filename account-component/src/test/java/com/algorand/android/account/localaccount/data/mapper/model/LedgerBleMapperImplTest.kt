@@ -1,8 +1,8 @@
-package com.algorand.android.account.localaccount.data.mapper.model
+package com.algorand.android.module.account.local.data.mapper.model
 
-import com.algorand.android.account.localaccount.data.database.model.LedgerBleEntity
-import com.algorand.android.account.localaccount.data.mapper.model.ledgerble.LedgerBleMapperImpl
-import com.algorand.android.account.localaccount.domain.model.LocalAccount
+import com.algorand.android.module.account.local.data.database.model.LedgerBleEntity
+import com.algorand.android.module.account.local.data.mapper.model.ledgerble.LedgerBleMapperImpl
+import com.algorand.android.module.account.local.domain.model.LocalAccount
 import com.algorand.android.encryption.EncryptionManager
 import com.algorand.android.testutil.fixtureOf
 import org.junit.Assert.assertEquals

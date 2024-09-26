@@ -1,7 +1,7 @@
-package com.algorand.android.account.localaccount.domain.usecase.implementation
+package com.algorand.android.module.account.local.domain.usecase.implementation
 
-import com.algorand.android.account.localaccount.domain.model.LocalAccount.*
-import com.algorand.android.account.localaccount.domain.repository.*
+import com.algorand.android.module.account.local.domain.model.LocalAccount.*
+import com.algorand.android.module.account.local.domain.repository.*
 import com.algorand.android.testutil.*
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Test

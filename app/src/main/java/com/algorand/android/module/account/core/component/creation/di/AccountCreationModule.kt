@@ -1,6 +1,6 @@
 package com.algorand.android.module.account.core.component.creation.di
 
-import com.algorand.android.account.localaccount.domain.usecase.*
+import com.algorand.android.module.account.local.domain.usecase.*
 import com.algorand.android.module.account.core.component.creation.domain.usecase.*
 import dagger.*
 import dagger.hilt.InstallIn

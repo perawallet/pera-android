@@ -13,7 +13,7 @@
 
 package com.algorand.android.decider
 
-import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconResourceByAccountType
 import com.algorand.android.module.contacts.domain.usecase.GetContactByAddress

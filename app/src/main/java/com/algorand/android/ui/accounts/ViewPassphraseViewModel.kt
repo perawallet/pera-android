@@ -17,7 +17,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.algosdk.sdk.Sdk
-import com.algorand.android.account.localaccount.domain.usecase.GetSecretKey
+import com.algorand.android.module.account.local.domain.usecase.GetSecretKey
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

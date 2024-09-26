@@ -1,10 +1,10 @@
-package com.algorand.android.account.localaccount.data.repository
+package com.algorand.android.module.account.local.data.repository
 
-import com.algorand.android.account.localaccount.data.database.dao.LedgerUsbDao
-import com.algorand.android.account.localaccount.data.database.model.LedgerUsbEntity
-import com.algorand.android.account.localaccount.data.mapper.entity.LedgerUsbEntityMapper
-import com.algorand.android.account.localaccount.data.mapper.model.ledgerusb.LedgerUsbMapper
-import com.algorand.android.account.localaccount.domain.model.LocalAccount
+import com.algorand.android.module.account.local.data.database.dao.LedgerUsbDao
+import com.algorand.android.module.account.local.data.database.model.LedgerUsbEntity
+import com.algorand.android.module.account.local.data.mapper.entity.LedgerUsbEntityMapper
+import com.algorand.android.module.account.local.data.mapper.model.ledgerusb.LedgerUsbMapper
+import com.algorand.android.module.account.local.domain.model.LocalAccount
 import com.algorand.android.encryption.EncryptionManager
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.flow.*

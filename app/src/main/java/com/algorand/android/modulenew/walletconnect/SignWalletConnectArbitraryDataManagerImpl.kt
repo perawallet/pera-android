@@ -14,7 +14,7 @@
 package com.algorand.android.modulenew.walletconnect
 
 import androidx.lifecycle.Lifecycle
-import com.algorand.android.account.localaccount.domain.usecase.GetSecretKey
+import com.algorand.android.module.account.local.domain.usecase.GetSecretKey
 import com.algorand.android.foundation.Event
 import com.algorand.android.foundation.coroutine.LifecycleScopedCoroutineOwner
 import com.algorand.android.models.WalletConnectArbitraryData

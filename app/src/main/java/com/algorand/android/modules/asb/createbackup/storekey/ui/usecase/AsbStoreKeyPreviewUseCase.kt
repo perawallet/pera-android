@@ -13,7 +13,7 @@
 package com.algorand.android.modules.asb.createbackup.storekey.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.account.localaccount.domain.usecase.GetSecretKey
+import com.algorand.android.module.account.local.domain.usecase.GetSecretKey
 import com.algorand.android.module.asb.backupprotocol.model.BackUpAccount
 import com.algorand.android.module.asb.backupprotocol.model.BackUpPayload
 import com.algorand.android.module.asb.backupprotocol.usecase.CreateAsbBackUpFilePayload

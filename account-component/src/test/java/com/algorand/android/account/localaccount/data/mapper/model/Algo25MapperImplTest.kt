@@ -1,8 +1,8 @@
-package com.algorand.android.account.localaccount.data.mapper.model
+package com.algorand.android.module.account.local.data.mapper.model
 
-import com.algorand.android.account.localaccount.data.database.model.Algo25Entity
-import com.algorand.android.account.localaccount.data.mapper.model.algo25.Algo25MapperImpl
-import com.algorand.android.account.localaccount.domain.model.LocalAccount
+import com.algorand.android.module.account.local.data.database.model.Algo25Entity
+import com.algorand.android.module.account.local.data.mapper.model.algo25.Algo25MapperImpl
+import com.algorand.android.module.account.local.domain.model.LocalAccount
 import com.algorand.android.encryption.Base64Manager
 import com.algorand.android.encryption.EncryptionManager
 import org.junit.Assert.assertEquals

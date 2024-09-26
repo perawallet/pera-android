@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.accounts.domain.usecase
 
-import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.appcache.model.AppCacheStatus
 import com.algorand.android.module.appcache.usecase.GetAppCacheStatusFlow
 import com.algorand.android.module.banner.domain.model.Banner

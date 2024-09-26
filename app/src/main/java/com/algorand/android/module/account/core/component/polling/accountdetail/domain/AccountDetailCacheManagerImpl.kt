@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.component.polling.accountdetail.domain
 
 import androidx.lifecycle.LifecycleOwner
-import com.algorand.android.account.localaccount.domain.usecase.GetAllLocalAccountAddressesAsFlow
+import com.algorand.android.module.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.android.module.account.core.component.polling.accountdetail.domain.usecase.IsAccountCacheUpdateRequired
 import com.algorand.android.module.account.core.component.polling.accountdetail.domain.usecase.UpdateAccountCache
 import kotlinx.coroutines.*

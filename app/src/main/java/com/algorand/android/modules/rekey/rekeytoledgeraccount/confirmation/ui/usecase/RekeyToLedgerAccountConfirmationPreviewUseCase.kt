@@ -13,7 +13,7 @@
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName

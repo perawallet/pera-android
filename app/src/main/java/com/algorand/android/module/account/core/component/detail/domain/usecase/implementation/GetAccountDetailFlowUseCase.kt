@@ -4,7 +4,7 @@ import com.algorand.android.module.account.info.domain.usecase.GetAccountInforma
 import com.algorand.android.module.asb.domain.usecase.GetAccountAsbBackUpStatus
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.usecase.*
-import com.algorand.android.custominfo.component.domain.usecase.GetCustomInfo
+import com.algorand.android.module.custominfo.domain.usecase.GetCustomInfo
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 

@@ -1,16 +1,20 @@
-package com.algorand.android.custominfo.component.data.di
+package com.algorand.android.module.custominfo.data.di
 
-import com.algorand.android.custominfo.component.data.mapper.entity.*
-import com.algorand.android.custominfo.component.data.mapper.model.*
-import com.algorand.android.custominfo.component.data.repository.CustomInfoRepositoryImpl
-import com.algorand.android.custominfo.component.domain.repository.CustomInfoRepository
 import com.algorand.android.encryption.EncryptionManager
 import com.algorand.android.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
+import com.algorand.android.module.custominfo.data.mapper.entity.CustomInfoEntityMapper
+import com.algorand.android.module.custominfo.data.mapper.entity.CustomInfoEntityMapperImpl
+import com.algorand.android.module.custominfo.data.mapper.model.CustomInfoMapper
+import com.algorand.android.module.custominfo.data.mapper.model.CustomInfoMapperImpl
+import com.algorand.android.module.custominfo.data.repository.CustomInfoRepositoryImpl
+import com.algorand.android.module.custominfo.domain.repository.CustomInfoRepository
 import com.algorand.android.shared_db.custominfo.dao.CustomInfoDao
-import dagger.*
+import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.*
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

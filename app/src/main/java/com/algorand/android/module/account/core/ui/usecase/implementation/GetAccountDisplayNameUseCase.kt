@@ -11,7 +11,7 @@ import com.algorand.android.module.account.core.component.detail.domain.model.Ac
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.RekeyedAuth
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.module.account.core.component.utils.toShortenedAddress
-import com.algorand.android.custominfo.component.domain.usecase.GetCustomInfoOrNull
+import com.algorand.android.module.custominfo.domain.usecase.GetCustomInfoOrNull
 import com.algorand.android.designsystem.R
 import com.algorand.android.nameservice.domain.model.NameService
 import com.algorand.android.nameservice.domain.usecase.GetAccountNameService

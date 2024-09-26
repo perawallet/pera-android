@@ -1,6 +1,6 @@
-package com.algorand.android.custominfo.component.domain.repository
+package com.algorand.android.module.custominfo.domain.repository
 
-import com.algorand.android.custominfo.component.domain.model.CustomInfo
+import com.algorand.android.module.custominfo.domain.model.CustomInfo
 
 internal interface CustomInfoRepository {
 

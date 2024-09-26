@@ -1,9 +1,9 @@
 package com.algorand.android.account.custominfo.data.repository
 
 import com.algorand.android.shared_db.custominfo.dao.CustomInfoDao
-import com.algorand.android.custominfo.component.data.mapper.entity.CustomInfoEntityMapper
-import com.algorand.android.custominfo.component.data.mapper.model.CustomInfoMapper
-import com.algorand.android.custominfo.component.domain.model.CustomInfo
+import com.algorand.android.module.custominfo.data.mapper.entity.CustomInfoEntityMapper
+import com.algorand.android.module.custominfo.data.mapper.model.CustomInfoMapper
+import com.algorand.android.module.custominfo.domain.model.CustomInfo
 import com.algorand.android.encryption.EncryptionManager
 import com.algorand.android.shared_db.assetdetail.model.CustomInfoEntity
 import com.algorand.android.testutil.fixtureOf
@@ -14,14 +14,14 @@ import org.mockito.kotlin.*
 internal class CustomInfoRepositoryImplTest {
 
     private val customInfoDao: CustomInfoDao = mock()
-    private val customInfoMapper: com.algorand.android.custominfo.component.data.mapper.model.CustomInfoMapper = mock()
-    private val customInfoEntityMapper: com.algorand.android.custominfo.component.data.mapper.entity.CustomInfoEntityMapper =
+    private val customInfoMapper: com.algorand.android.module.custominfo.data.mapper.model.CustomInfoMapper = mock()
+    private val customInfoEntityMapper: com.algorand.android.module.custominfo.data.mapper.entity.CustomInfoEntityMapper =
         mock()
     private val encryptionManager: EncryptionManager = mock {
         on { encrypt("address") } doReturn "encrypted_address"
     }
 
-    private val sut = com.algorand.android.custominfo.component.data.repository.CustomInfoRepositoryImpl(
+    private val sut = com.algorand.android.module.custominfo.data.repository.CustomInfoRepositoryImpl(
         customInfoDao,
         customInfoMapper,
         customInfoEntityMapper,
@@ -73,7 +73,7 @@ internal class CustomInfoRepositoryImplTest {
     }
 
     companion object {
-        private val CUSTOM_INFO = fixtureOf<com.algorand.android.custominfo.component.domain.model.CustomInfo>()
+        private val CUSTOM_INFO = fixtureOf<com.algorand.android.module.custominfo.domain.model.CustomInfo>()
         private val CUSTOM_INFO_ENTITY = fixtureOf<CustomInfoEntity>()
     }
 }

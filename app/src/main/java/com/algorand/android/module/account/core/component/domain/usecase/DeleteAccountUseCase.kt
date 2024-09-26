@@ -4,7 +4,7 @@ import com.algorand.android.account.localaccount.domain.usecase.DeleteLocalAccou
 import com.algorand.android.module.account.info.domain.usecase.DeleteAccountInformation
 import com.algorand.android.module.account.sorting.domain.usecase.RemoveAccountOrderIndex
 import com.algorand.android.module.asb.domain.usecase.RemoveAccountAsbBackUpStatus
-import com.algorand.android.custominfo.component.domain.usecase.DeleteCustomInfo
+import com.algorand.android.module.custominfo.domain.usecase.DeleteCustomInfo
 import javax.inject.Inject
 
 internal class DeleteAccountUseCase @Inject constructor(

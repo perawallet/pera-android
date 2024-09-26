@@ -1,7 +1,11 @@
-package com.algorand.android.custominfo.component.di
+package com.algorand.android.module.custominfo.di
 
-import com.algorand.android.custominfo.component.domain.repository.CustomInfoRepository
-import com.algorand.android.custominfo.component.domain.usecase.*
+import com.algorand.android.module.custominfo.domain.repository.CustomInfoRepository
+import com.algorand.android.module.custominfo.domain.usecase.DeleteCustomInfo
+import com.algorand.android.module.custominfo.domain.usecase.GetCustomInfo
+import com.algorand.android.module.custominfo.domain.usecase.GetCustomInfoOrNull
+import com.algorand.android.module.custominfo.domain.usecase.SetCustomInfo
+import com.algorand.android.module.custominfo.domain.usecase.SetCustomName
 import dagger.*
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

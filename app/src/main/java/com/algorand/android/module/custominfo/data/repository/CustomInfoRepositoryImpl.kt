@@ -1,9 +1,9 @@
-package com.algorand.android.custominfo.component.data.repository
+package com.algorand.android.module.custominfo.data.repository
 
-import com.algorand.android.custominfo.component.data.mapper.entity.CustomInfoEntityMapper
-import com.algorand.android.custominfo.component.data.mapper.model.CustomInfoMapper
-import com.algorand.android.custominfo.component.domain.model.CustomInfo
-import com.algorand.android.custominfo.component.domain.repository.CustomInfoRepository
+import com.algorand.android.module.custominfo.data.mapper.entity.CustomInfoEntityMapper
+import com.algorand.android.module.custominfo.data.mapper.model.CustomInfoMapper
+import com.algorand.android.module.custominfo.domain.model.CustomInfo
+import com.algorand.android.module.custominfo.domain.repository.CustomInfoRepository
 import com.algorand.android.encryption.EncryptionManager
 import com.algorand.android.shared_db.custominfo.dao.CustomInfoDao
 import kotlinx.coroutines.*

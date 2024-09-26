@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.component.detail.domain.model
 
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.android.custominfo.component.domain.model.CustomInfo
+import com.algorand.android.module.custominfo.domain.model.CustomInfo
 
 data class AccountDetail(
     val address: String,

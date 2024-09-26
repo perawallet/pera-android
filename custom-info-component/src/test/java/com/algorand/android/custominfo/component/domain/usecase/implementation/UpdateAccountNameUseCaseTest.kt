@@ -1,13 +1,13 @@
 package com.algorand.android.account.custominfo.domain.usecase.implementation
 
-import com.algorand.android.custominfo.component.domain.repository.CustomInfoRepository
+import com.algorand.android.module.custominfo.domain.repository.CustomInfoRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.mockito.kotlin.*
 
 class UpdateAccountNameUseCaseTest {
 
-    private val customInfoRepository: com.algorand.android.custominfo.component.domain.repository.CustomInfoRepository =
+    private val customInfoRepository: com.algorand.android.module.custominfo.domain.repository.CustomInfoRepository =
         mock()
 
     private val sut = com.algorand.android.custominfo.component.domain.usecase.implementation.UpdateAccountNameUseCase(

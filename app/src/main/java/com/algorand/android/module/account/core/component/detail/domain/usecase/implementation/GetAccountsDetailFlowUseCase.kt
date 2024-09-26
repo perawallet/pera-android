@@ -19,7 +19,7 @@ import com.algorand.android.module.account.core.component.detail.domain.model.Ac
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountType
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountsDetailFlow
-import com.algorand.android.custominfo.component.domain.usecase.GetCustomInfo
+import com.algorand.android.module.custominfo.domain.usecase.GetCustomInfo
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

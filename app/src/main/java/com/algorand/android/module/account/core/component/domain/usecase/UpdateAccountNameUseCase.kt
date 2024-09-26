@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.component.domain.usecase
 
 import com.algorand.android.module.account.core.component.utils.toShortenedAddress
-import com.algorand.android.custominfo.component.domain.usecase.SetCustomName
+import com.algorand.android.module.custominfo.domain.usecase.SetCustomName
 import javax.inject.Inject
 
 internal class UpdateAccountNameUseCase @Inject constructor(

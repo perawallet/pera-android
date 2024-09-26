@@ -36,8 +36,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':shared-db')
-    implementation project(path: ':encryption-component')
 
     implementation deps.room.runtime
     implementation deps.room.ktx

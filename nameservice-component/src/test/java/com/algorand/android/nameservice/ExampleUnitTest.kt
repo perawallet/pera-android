@@ -1,4 +1,4 @@
-package com.algorand.android.nameservice
+package com.algorand.android.module.nameservice
 
 import org.junit.Test
 

@@ -15,8 +15,8 @@ package com.algorand.android.module.account.core.ui.accountselection.mapper
 
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem
-import com.algorand.android.nameservice.domain.model.NameService
-import com.algorand.android.nameservice.domain.model.NameServiceSearchResult
+import com.algorand.android.module.nameservice.domain.model.NameService
+import com.algorand.android.module.nameservice.domain.model.NameServiceSearchResult
 
 interface AccountSelectionListItemMapper {
 

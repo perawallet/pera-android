@@ -20,8 +20,8 @@ import com.algorand.android.module.account.core.ui.accountselection.model.BaseAc
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem.AccountListItem
 import com.algorand.android.module.account.core.component.utils.toShortenedAddress
-import com.algorand.android.nameservice.domain.model.NameService
-import com.algorand.android.nameservice.domain.model.NameServiceSearchResult
+import com.algorand.android.module.nameservice.domain.model.NameService
+import com.algorand.android.module.nameservice.domain.model.NameServiceSearchResult
 import javax.inject.Inject
 
 internal class AccountSelectionListItemMapperImpl @Inject constructor() : AccountSelectionListItemMapper {

@@ -6,7 +6,7 @@ import com.algorand.android.module.account.core.ui.usecase.*
 import com.algorand.android.module.account.core.ui.usecase.implementation.*
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.module.custominfo.domain.usecase.GetCustomInfoOrNull
-import com.algorand.android.nameservice.domain.usecase.GetAccountNameService
+import com.algorand.android.module.nameservice.domain.usecase.GetAccountNameService
 import dagger.*
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext

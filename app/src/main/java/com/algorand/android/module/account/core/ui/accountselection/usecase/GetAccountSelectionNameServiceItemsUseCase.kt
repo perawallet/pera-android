@@ -15,7 +15,7 @@ package com.algorand.android.module.account.core.ui.accountselection.usecase
 
 import com.algorand.android.module.account.core.ui.accountselection.mapper.AccountSelectionListItemMapper
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem.BaseAccountItem
-import com.algorand.android.nameservice.domain.usecase.GetNameServiceSearchResults
+import com.algorand.android.module.nameservice.domain.usecase.GetNameServiceSearchResults
 import javax.inject.Inject
 
 internal class GetAccountSelectionNameServiceItemsUseCase @Inject constructor(

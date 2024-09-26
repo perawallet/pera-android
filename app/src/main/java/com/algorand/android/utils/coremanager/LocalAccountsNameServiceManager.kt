@@ -16,7 +16,7 @@ import com.algorand.android.account.localaccount.domain.usecase.GetAllLocalAccou
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.appcache.manager.PushTokenManager
 import com.algorand.android.module.appcache.model.PushTokenStatus
-import com.algorand.android.nameservice.domain.usecase.InitializeAccountNameService
+import com.algorand.android.module.nameservice.domain.usecase.InitializeAccountNameService
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope

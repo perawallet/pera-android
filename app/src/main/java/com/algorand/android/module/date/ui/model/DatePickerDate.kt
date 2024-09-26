@@ -11,16 +11,6 @@
  *   -->
  */
 
-package com.algorand.android.dateui.model
+package com.algorand.android.module.date.ui.model
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-
-data class DateFilterPreview(
-    @DrawableRes
-    val filterButtonIconResId: Int,
-    val title: String? = null,
-    @StringRes
-    val titleResId: Int? = null,
-    val useFilterIconsOwnTint: Boolean
-)
+data class DatePickerDate(val year: Int, val month: Int, val day: Int)

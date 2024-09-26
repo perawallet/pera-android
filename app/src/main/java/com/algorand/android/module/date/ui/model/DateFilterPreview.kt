@@ -11,11 +11,16 @@
  *   -->
  */
 
-package com.algorand.android.dateui.mapper
+package com.algorand.android.module.date.ui.model
 
-import com.algorand.android.dateui.model.DateFilter
-import com.algorand.android.dateui.model.DateFilterPreview
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 
-interface DateFilterPreviewMapper {
-    operator fun invoke(dateFilter: DateFilter): DateFilterPreview
-}
+data class DateFilterPreview(
+    @DrawableRes
+    val filterButtonIconResId: Int,
+    val title: String? = null,
+    @StringRes
+    val titleResId: Int? = null,
+    val useFilterIconsOwnTint: Boolean
+)

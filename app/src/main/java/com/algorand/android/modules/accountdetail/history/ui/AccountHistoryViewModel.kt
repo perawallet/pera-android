@@ -19,9 +19,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.PagingData
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValueFlow
-import com.algorand.android.dateui.mapper.DateFilterPreviewMapper
-import com.algorand.android.dateui.model.DateFilter
-import com.algorand.android.dateui.model.DateFilterPreview
+import com.algorand.android.module.date.ui.mapper.DateFilterPreviewMapper
+import com.algorand.android.module.date.ui.model.DateFilter
+import com.algorand.android.module.date.ui.model.DateFilterPreview
 import com.algorand.android.module.transaction.history.ui.TransactionHistoryPreviewManager
 import com.algorand.android.module.transaction.history.ui.mapper.TransactionLoadStatePreviewMapper
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem

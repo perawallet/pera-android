@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.dateui.model
+package com.algorand.android.module.date.ui.model
 
 import android.os.Parcelable
 import java.time.ZonedDateTime

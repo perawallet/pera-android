@@ -38,14 +38,6 @@ android {
 
 dependencies {
 
-    implementation project(path: ':caching')
-    implementation project(path: ':foundation')
-    implementation project(path: ':network-utils')
-    implementation project(path: ':shared-db')
-    implementation project(path: ':date-component')
-    implementation project(path: ':pagination-component')
-    implementation project(path: ':deviceid-component')
-
     implementation deps.android.paging
 
     implementation deps.hilt.core

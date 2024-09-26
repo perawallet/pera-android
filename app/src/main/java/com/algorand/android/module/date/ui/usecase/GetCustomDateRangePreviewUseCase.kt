@@ -11,14 +11,14 @@
  *   -->
  */
 
-package com.algorand.android.dateui.usecase
+package com.algorand.android.module.date.ui.usecase
 
 import com.algorand.android.date.component.DEFAULT_DAY_DIFFERENCE_BETWEEN_FROM_AND_TO
 import com.algorand.android.date.component.getCurrentTimeAsZonedDateTime
 import com.algorand.android.date.component.getPreviousDayZonedDateTime
-import com.algorand.android.dateui.model.CustomDateRangePreview
-import com.algorand.android.dateui.model.DatePickerDate
-import com.algorand.android.dateui.model.DateRange
+import com.algorand.android.module.date.ui.model.CustomDateRangePreview
+import com.algorand.android.module.date.ui.model.DatePickerDate
+import com.algorand.android.module.date.ui.model.DateRange
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject

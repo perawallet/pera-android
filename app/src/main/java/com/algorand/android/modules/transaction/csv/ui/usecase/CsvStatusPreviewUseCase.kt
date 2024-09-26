@@ -14,7 +14,7 @@
 package com.algorand.android.modules.transaction.csv.ui.usecase
 
 import com.algorand.android.core.BaseUseCase
-import com.algorand.android.dateui.model.DateRange
+import com.algorand.android.module.date.ui.model.DateRange
 import com.algorand.android.modules.transaction.csv.domain.usecase.CreateCsvUseCase
 import com.algorand.android.modules.transaction.csv.ui.mapper.CsvStatusPreviewMapper
 import com.algorand.android.modules.transaction.csv.ui.model.CsvStatusPreview

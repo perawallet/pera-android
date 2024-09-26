@@ -11,9 +11,9 @@
  *   -->
  */
 
-package com.algorand.android.dateui.usecase
+package com.algorand.android.module.date.ui.usecase
 
-import com.algorand.android.dateui.model.DateFilter
+import com.algorand.android.module.date.ui.model.DateFilter
 import javax.inject.Inject
 
 internal class GetDateFilterListUseCase @Inject constructor() : GetDateFilterList {

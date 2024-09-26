@@ -25,8 +25,8 @@ import androidx.recyclerview.widget.ConcatAdapter
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentAssetActivityBinding
-import com.algorand.android.dateui.model.DateFilter
-import com.algorand.android.dateui.model.DateFilterPreview
+import com.algorand.android.module.date.ui.model.DateFilter
+import com.algorand.android.module.date.ui.model.DateFilterPreview
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.module.transaction.history.ui.model.TransactionLoadStatePreview

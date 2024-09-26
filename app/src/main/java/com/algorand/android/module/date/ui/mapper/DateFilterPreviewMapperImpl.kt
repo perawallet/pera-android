@@ -11,10 +11,10 @@
  *   -->
  */
 
-package com.algorand.android.dateui.mapper
+package com.algorand.android.module.date.ui.mapper
 
-import com.algorand.android.dateui.model.DateFilter
-import com.algorand.android.dateui.model.DateFilterPreview
+import com.algorand.android.module.date.ui.model.DateFilter
+import com.algorand.android.module.date.ui.model.DateFilterPreview
 import com.algorand.android.designsystem.R
 import javax.inject.Inject
 

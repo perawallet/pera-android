@@ -11,13 +11,13 @@
  *   -->
  */
 
-package com.algorand.android.dateui.usecase
+package com.algorand.android.module.date.ui.usecase
 
 import com.algorand.android.date.component.DEFAULT_DAY_DIFFERENCE_BETWEEN_FROM_AND_TO
 import com.algorand.android.date.component.getCurrentTimeAsZonedDateTime
 import com.algorand.android.date.component.getPreviousDayZonedDateTime
-import com.algorand.android.dateui.model.DateFilter
-import com.algorand.android.dateui.model.DateRange
+import com.algorand.android.module.date.ui.model.DateFilter
+import com.algorand.android.module.date.ui.model.DateRange
 import javax.inject.Inject
 
 internal class GetDefaultCustomRangeUseCase @Inject constructor() : GetDefaultCustomRange {

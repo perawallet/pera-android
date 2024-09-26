@@ -18,9 +18,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.dateui.model.DateFilter
-import com.algorand.android.dateui.model.DateFilter.AllTime
-import com.algorand.android.dateui.usecase.GetDateFilterList
+import com.algorand.android.module.date.ui.model.DateFilter
+import com.algorand.android.module.date.ui.model.DateFilter.AllTime
+import com.algorand.android.module.date.ui.usecase.GetDateFilterList
 import com.algorand.android.utils.getOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

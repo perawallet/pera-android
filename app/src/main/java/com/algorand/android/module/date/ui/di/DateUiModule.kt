@@ -11,18 +11,18 @@
  *   -->
  */
 
-package com.algorand.android.dateui.di
+package com.algorand.android.module.date.ui.di
 
-import com.algorand.android.dateui.mapper.DateFilterPreviewMapper
-import com.algorand.android.dateui.mapper.DateFilterPreviewMapperImpl
-import com.algorand.android.dateui.usecase.GetCustomDateRangePreview
-import com.algorand.android.dateui.usecase.GetCustomDateRangePreviewUseCase
-import com.algorand.android.dateui.usecase.GetDateFilterList
-import com.algorand.android.dateui.usecase.GetDateFilterListUseCase
-import com.algorand.android.dateui.usecase.GetDefaultCustomRange
-import com.algorand.android.dateui.usecase.GetDefaultCustomRangeUseCase
-import com.algorand.android.dateui.usecase.GetUpdatedCustomRange
-import com.algorand.android.dateui.usecase.GetUpdatedCustomRangeUseCase
+import com.algorand.android.module.date.ui.mapper.DateFilterPreviewMapper
+import com.algorand.android.module.date.ui.mapper.DateFilterPreviewMapperImpl
+import com.algorand.android.module.date.ui.usecase.GetCustomDateRangePreview
+import com.algorand.android.module.date.ui.usecase.GetCustomDateRangePreviewUseCase
+import com.algorand.android.module.date.ui.usecase.GetDateFilterList
+import com.algorand.android.module.date.ui.usecase.GetDateFilterListUseCase
+import com.algorand.android.module.date.ui.usecase.GetDefaultCustomRange
+import com.algorand.android.module.date.ui.usecase.GetDefaultCustomRangeUseCase
+import com.algorand.android.module.date.ui.usecase.GetUpdatedCustomRange
+import com.algorand.android.module.date.ui.usecase.GetUpdatedCustomRangeUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

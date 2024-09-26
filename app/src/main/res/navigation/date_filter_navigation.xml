@@ -23,7 +23,7 @@
         tools:layout="@layout/bottom_sheet_date_filter_list">
         <argument
             android:name="selectedDateFilter"
-            app:argType="com.algorand.android.dateui.model.DateFilter" />
+            app:argType="com.algorand.android.module.date.ui.model.DateFilter" />
         <action
             android:id="@+id/action_dateFilterPickerBottomSheet_to_customDateRangeBottomSheet"
             app:destination="@id/customDateRangeBottomSheet" />
@@ -36,7 +36,7 @@
         <argument
             android:name="customRange"
             android:defaultValue="@null"
-            app:argType="com.algorand.android.dateui.model.DateFilter$CustomRange"
+            app:argType="com.algorand.android.module.date.ui.model.DateFilter$CustomRange"
             app:nullable="true" />
     </dialog>
 

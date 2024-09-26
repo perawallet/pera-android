@@ -788,7 +788,7 @@
             app:destination="@id/dateFilterNavigation">
             <argument
                 android:name="selectedDateFilter"
-                app:argType="com.algorand.android.dateui.model.DateFilter" />
+                app:argType="com.algorand.android.module.date.ui.model.DateFilter" />
         </action>
         <action
             android:id="@+id/action_accountDetailFragment_to_dateFilterPickerBottomSheet"

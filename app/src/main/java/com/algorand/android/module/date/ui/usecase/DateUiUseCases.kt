@@ -11,11 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.dateui.usecase
+package com.algorand.android.module.date.ui.usecase
 
-import com.algorand.android.dateui.model.CustomDateRangePreview
-import com.algorand.android.dateui.model.DateFilter
-import com.algorand.android.dateui.model.DateRange
+import com.algorand.android.module.date.ui.model.CustomDateRangePreview
+import com.algorand.android.module.date.ui.model.DateFilter
+import com.algorand.android.module.date.ui.model.DateRange
 
 interface GetCustomDateRangePreview {
     operator fun invoke(latestDateRange: DateRange?, isFromFocused: Boolean): CustomDateRangePreview

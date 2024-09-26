@@ -11,15 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.dateui.model
+package com.algorand.android.module.date.ui.mapper
 
-data class CustomDateRangePreview(
-    val formattedFromDate: String,
-    val formattedToDate: String,
-    val focusedDateYear: Int,
-    val focusedDateMonth: Int,
-    val focusedDateDay: Int,
-    val minDateInMillis: Long,
-    val maxDateInMillis: Long,
-    val isFromFocused: Boolean
-)
+import com.algorand.android.module.date.ui.model.DateFilter
+import com.algorand.android.module.date.ui.model.DateFilterPreview
+
+interface DateFilterPreviewMapper {
+    operator fun invoke(dateFilter: DateFilter): DateFilterPreview
+}

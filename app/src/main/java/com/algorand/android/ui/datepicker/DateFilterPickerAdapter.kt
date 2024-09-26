@@ -15,7 +15,7 @@ package com.algorand.android.ui.datepicker
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.algorand.android.dateui.model.DateFilter
+import com.algorand.android.module.date.ui.model.DateFilter
 import com.algorand.android.designsystem.BaseDiffUtil
 
 class DateFilterPickerAdapter(

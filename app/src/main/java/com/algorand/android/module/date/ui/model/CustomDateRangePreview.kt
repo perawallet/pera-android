@@ -11,6 +11,15 @@
  *   -->
  */
 
-package com.algorand.android.dateui.model
+package com.algorand.android.module.date.ui.model
 
-data class DatePickerDate(val year: Int, val month: Int, val day: Int)
+data class CustomDateRangePreview(
+    val formattedFromDate: String,
+    val formattedToDate: String,
+    val focusedDateYear: Int,
+    val focusedDateMonth: Int,
+    val focusedDateDay: Int,
+    val minDateInMillis: Long,
+    val maxDateInMillis: Long,
+    val isFromFocused: Boolean
+)

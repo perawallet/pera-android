@@ -177,7 +177,6 @@ dependencies {
     implementation project(path: ':currency-component')
     implementation project(path: ':network-utils')
     implementation project(path: ':asset-utils')
-    implementation project(path: ':date-ui')
     implementation project(path: ':caching')
     implementation project(path: ':peracompactdecimal-aar')
     implementation project(path: ':date-component')

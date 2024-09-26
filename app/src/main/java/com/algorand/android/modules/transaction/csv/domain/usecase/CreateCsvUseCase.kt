@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.transaction.csv.domain.usecase
 
-import com.algorand.android.dateui.model.DateRange
+import com.algorand.android.module.date.ui.model.DateRange
 import com.algorand.android.modules.transaction.csv.domain.repository.CsvRepository
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.recordException

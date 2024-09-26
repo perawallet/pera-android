@@ -15,11 +15,11 @@ package com.algorand.android.ui.datepicker
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.dateui.model.CustomDateRangePreview
-import com.algorand.android.dateui.model.DateFilter.CustomRange
-import com.algorand.android.dateui.usecase.GetCustomDateRangePreview
-import com.algorand.android.dateui.usecase.GetDefaultCustomRange
-import com.algorand.android.dateui.usecase.GetUpdatedCustomRange
+import com.algorand.android.module.date.ui.model.CustomDateRangePreview
+import com.algorand.android.module.date.ui.model.DateFilter.CustomRange
+import com.algorand.android.module.date.ui.usecase.GetCustomDateRangePreview
+import com.algorand.android.module.date.ui.usecase.GetDefaultCustomRange
+import com.algorand.android.module.date.ui.usecase.GetUpdatedCustomRange
 import com.algorand.android.utils.getOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.ZonedDateTime

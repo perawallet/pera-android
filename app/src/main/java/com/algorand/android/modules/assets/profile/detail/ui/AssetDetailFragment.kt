@@ -27,7 +27,7 @@ import com.algorand.android.module.asset.detail.ui.detail.model.AssetDetailPrevi
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.BaseAccountIconButton
 import com.algorand.android.databinding.FragmentAssetDetailBinding
-import com.algorand.android.dateui.model.DateFilter
+import com.algorand.android.module.date.ui.model.DateFilter
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
 import com.algorand.android.foundation.Event

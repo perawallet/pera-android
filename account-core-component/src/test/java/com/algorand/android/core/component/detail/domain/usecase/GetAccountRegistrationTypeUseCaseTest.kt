@@ -1,9 +1,9 @@
-package com.algorand.android.core.component.detail.domain.usecase
+package com.algorand.android.module.account.core.component.detail.domain.usecase
 
 import com.algorand.android.account.localaccount.domain.model.LocalAccount
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
-import com.algorand.android.core.component.detail.domain.model.AccountRegistrationType.*
-import com.algorand.android.core.component.detail.domain.usecase.implementation.GetAccountRegistrationTypeUseCase
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountRegistrationType.*
+import com.algorand.android.module.account.core.component.detail.domain.usecase.implementation.GetAccountRegistrationTypeUseCase
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest

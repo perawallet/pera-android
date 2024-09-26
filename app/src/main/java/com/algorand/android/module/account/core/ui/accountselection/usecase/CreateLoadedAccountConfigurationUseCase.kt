@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.account.core.ui.accountselection.usecase
 
-import com.algorand.android.core.component.detail.domain.model.AccountDetail
-import com.algorand.android.core.component.domain.usecase.GetAccountTotalValue
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName

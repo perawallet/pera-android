@@ -12,7 +12,7 @@
 
 package com.algorand.android.utils
 
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 
 fun doesAssetPassSearchFilter(query: String?, baseAssetData: BaseAccountAssetData): Boolean {
     if (query == null) return true

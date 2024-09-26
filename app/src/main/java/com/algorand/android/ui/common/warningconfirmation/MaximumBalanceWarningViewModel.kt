@@ -14,7 +14,7 @@ package com.algorand.android.ui.common.warningconfirmation
 
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.core.component.domain.usecase.GetAccountMinBalance
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.math.BigInteger

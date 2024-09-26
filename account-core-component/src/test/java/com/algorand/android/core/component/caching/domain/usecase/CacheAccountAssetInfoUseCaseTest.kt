@@ -1,9 +1,9 @@
-package com.algorand.android.core.component.caching.domain.usecase
+package com.algorand.android.module.account.core.component.caching.domain.usecase
 
 import com.algorand.android.accountinfo.component.domain.model.*
 import com.algorand.android.accountinfo.component.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAndCacheAssets
-import com.algorand.android.core.component.caching.domain.usecase.implementation.CacheAccountDetailUseCase
+import com.algorand.android.module.account.core.component.caching.domain.usecase.implementation.CacheAccountDetailUseCase
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue

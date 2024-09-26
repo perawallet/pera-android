@@ -21,10 +21,10 @@ import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.core.BaseUseCase
-import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
-import com.algorand.android.core.component.assetdata.usecase.GetAccountOwnedAssetsData
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
-import com.algorand.android.core.component.domain.usecase.GetAccountTotalValue
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetsData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.mapper.LedgerInformationAccountItemMapper
 import com.algorand.android.mapper.LedgerInformationAssetItemMapper

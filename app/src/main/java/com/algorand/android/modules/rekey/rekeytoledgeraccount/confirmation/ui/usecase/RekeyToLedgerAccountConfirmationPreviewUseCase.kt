@@ -20,7 +20,7 @@ import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.accountinfo.component.domain.model.AccountInformation
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
-import com.algorand.android.core.utils.toShortenedAddress
+import com.algorand.android.module.account.core.component.utils.toShortenedAddress
 import com.algorand.android.foundation.Event
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.decider.RekeyToLedgerAccountConfirmationPreviewDecider
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.mapper.RekeyToLedgerAccountConfirmationPreviewMapper

@@ -13,8 +13,8 @@
 package com.algorand.android.utils.walletconnect
 
 import com.algorand.android.R
-import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountsDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountsDetail
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import javax.inject.Inject
 

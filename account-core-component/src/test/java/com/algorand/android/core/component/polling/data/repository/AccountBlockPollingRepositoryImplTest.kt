@@ -1,8 +1,8 @@
-package com.algorand.android.core.component.polling.data.repository
+package com.algorand.android.module.account.core.component.polling.data.repository
 
-import com.algorand.android.core.component.caching.data.service.MobileAlgorandApi
-import com.algorand.android.core.component.polling.accountdetail.data.model.*
-import com.algorand.android.core.component.polling.accountdetail.data.repository.AccountBlockPollingRepositoryImpl
+import com.algorand.android.module.account.core.component.caching.data.service.MobileAlgorandApi
+import com.algorand.android.module.account.core.component.polling.accountdetail.data.model.*
+import com.algorand.android.module.account.core.component.polling.accountdetail.data.repository.AccountBlockPollingRepositoryImpl
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue
 import org.junit.Test

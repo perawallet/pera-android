@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.common.usecase
 
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountsDetail
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountsDetail
 import com.algorand.android.module.swap.component.common.SwapNavigationDestinationHelper
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.AccountSelection

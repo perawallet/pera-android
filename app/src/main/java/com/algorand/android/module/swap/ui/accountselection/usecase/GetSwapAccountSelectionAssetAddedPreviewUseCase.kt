@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.accountselection.usecase
 
-import com.algorand.android.core.component.caching.domain.usecase.CacheAccountDetail
+import com.algorand.android.module.account.core.component.caching.domain.usecase.CacheAccountDetail
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.designsystem.R
 import com.algorand.android.foundation.Event

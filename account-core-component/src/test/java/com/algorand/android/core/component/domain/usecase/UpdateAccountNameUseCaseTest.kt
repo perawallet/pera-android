@@ -1,4 +1,4 @@
-package com.algorand.android.core.component.domain.usecase
+package com.algorand.android.module.account.core.component.domain.usecase
 
 import com.algorand.android.custominfo.component.domain.usecase.SetCustomName
 import kotlinx.coroutines.test.runTest

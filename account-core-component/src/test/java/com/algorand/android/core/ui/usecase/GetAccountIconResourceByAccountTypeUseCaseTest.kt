@@ -1,6 +1,6 @@
 package com.algorand.android.core.ui.usecase
 
-import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.core.ui.usecase.implementation.GetAccountIconResourceByAccountTypeUseCase
 import org.junit.Assert.assertEquals
 import org.junit.Test

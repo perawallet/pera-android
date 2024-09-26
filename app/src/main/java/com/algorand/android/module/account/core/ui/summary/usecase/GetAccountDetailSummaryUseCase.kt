@@ -16,14 +16,14 @@ package com.algorand.android.module.account.core.ui.summary.usecase
 import com.algorand.android.module.account.core.ui.summary.model.AccountDetailSummary
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.core.component.detail.domain.model.AccountDetail
-import com.algorand.android.core.component.detail.domain.model.AccountType
-import com.algorand.android.core.component.detail.domain.model.AccountType.Algo25
-import com.algorand.android.core.component.detail.domain.model.AccountType.LedgerBle
-import com.algorand.android.core.component.detail.domain.model.AccountType.NoAuth
-import com.algorand.android.core.component.detail.domain.model.AccountType.Rekeyed
-import com.algorand.android.core.component.detail.domain.model.AccountType.RekeyedAuth
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Algo25
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.LedgerBle
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.NoAuth
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Rekeyed
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.RekeyedAuth
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.designsystem.R
 import javax.inject.Inject
 

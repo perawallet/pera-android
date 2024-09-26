@@ -13,11 +13,11 @@
 package com.algorand.android.modules.accountdetail.removeaccount.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.core.component.detail.domain.model.AccountType
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountType
-import com.algorand.android.core.component.domain.usecase.GetRekeyedAccountAddresses
-import com.algorand.android.core.component.domain.usecase.HasAccountAnyRekeyedAccount
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountType
+import com.algorand.android.module.account.core.component.domain.usecase.GetRekeyedAccountAddresses
+import com.algorand.android.module.account.core.component.domain.usecase.HasAccountAnyRekeyedAccount
 import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.modules.accountdetail.removeaccount.ui.mapper.RemoveAccountConfirmationPreviewMapper
 import com.algorand.android.modules.accountdetail.removeaccount.ui.model.RemoveAccountConfirmationPreview

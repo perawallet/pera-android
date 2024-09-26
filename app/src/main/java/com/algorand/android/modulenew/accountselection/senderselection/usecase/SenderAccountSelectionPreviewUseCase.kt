@@ -15,7 +15,7 @@ package com.algorand.android.modulenew.accountselection.senderselection.usecase
 
 import com.algorand.android.module.account.core.ui.accountselection.model.SenderAccountSelectionPreview
 import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
-import com.algorand.android.core.component.caching.domain.usecase.FetchAccountInformationAndCacheAssets
+import com.algorand.android.module.account.core.component.caching.domain.usecase.FetchAccountInformationAndCacheAssets
 import com.algorand.android.foundation.Event
 import com.algorand.android.foundation.PeraResult
 import javax.inject.Inject

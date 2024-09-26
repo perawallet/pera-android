@@ -18,7 +18,7 @@ import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.Lifecycle
 import com.algorand.android.algosdk.component.AlgoSdkAddress
 import com.algorand.android.algosdk.component.transaction.AlgoTransactionSigner
-import com.algorand.android.core.component.caching.domain.usecase.CacheAccountDetail
+import com.algorand.android.module.account.core.component.caching.domain.usecase.CacheAccountDetail
 import com.algorand.android.foundation.Event
 import com.algorand.android.foundation.coroutine.LifecycleScopedCoroutineOwner
 import com.algorand.android.foundation.permission.PeraPermissionManager

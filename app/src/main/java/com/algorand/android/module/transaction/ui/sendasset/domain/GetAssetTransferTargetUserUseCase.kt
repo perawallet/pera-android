@@ -16,7 +16,7 @@ package com.algorand.android.module.transaction.ui.sendasset.domain
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.contacts.component.domain.usecase.GetContactByAddress
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser.Account
 import javax.inject.Inject

@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.ui.model
 
 import androidx.annotation.*
-import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.designsystem.R
 
 enum class AccountIconResource(

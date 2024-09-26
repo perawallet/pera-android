@@ -20,7 +20,7 @@ import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.assetdetail.component.asset.domain.model.detail.Asset
 import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAsset
 import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
-import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.parity.domain.usecase.GetSelectedCurrencyDetail
 import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
 import com.algorand.android.module.transaction.component.domain.TransactionConstants.MIN_FEE

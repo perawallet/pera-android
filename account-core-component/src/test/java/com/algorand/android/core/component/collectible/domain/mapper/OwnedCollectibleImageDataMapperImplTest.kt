@@ -1,8 +1,8 @@
-package com.algorand.android.core.component.collectible.domain.mapper
+package com.algorand.android.module.account.core.component.collectible.domain.mapper
 
 import com.algorand.android.assetdetail.component.asset.domain.model.*
 import com.algorand.android.assetdetail.component.asset.domain.model.Collection
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
 import com.algorand.android.parity.domain.model.ParityValue
 import com.algorand.android.testutil.fixtureOf
 import org.junit.Assert.assertEquals

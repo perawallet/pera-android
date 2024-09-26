@@ -18,7 +18,7 @@ import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase
 import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.customviews.TriStatesCheckBox
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED

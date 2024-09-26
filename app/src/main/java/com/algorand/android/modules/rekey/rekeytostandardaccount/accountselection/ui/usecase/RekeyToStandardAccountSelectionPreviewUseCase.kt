@@ -16,10 +16,10 @@ import com.algorand.android.R
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.accountsorting.component.domain.usecase.GetSortedLocalAccounts
-import com.algorand.android.core.component.detail.domain.model.AccountType
-import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountType
-import com.algorand.android.core.component.domain.usecase.GetAccountTotalValue
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountType
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.models.ScreenState

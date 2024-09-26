@@ -13,7 +13,7 @@
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.decider.RekeyToLedgerAccountPreviewDecider
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.mapper.RekeyToLedgerAccountPreviewMapper

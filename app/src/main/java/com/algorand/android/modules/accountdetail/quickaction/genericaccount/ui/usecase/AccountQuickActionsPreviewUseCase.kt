@@ -14,7 +14,7 @@ package com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui
 
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.AccountQuickActionsBottomSheetDirections
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.mapper.AccountQuickActionsPreviewMapper

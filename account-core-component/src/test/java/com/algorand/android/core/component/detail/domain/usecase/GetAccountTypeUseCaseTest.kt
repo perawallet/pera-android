@@ -1,10 +1,10 @@
-package com.algorand.android.core.component.detail.domain.usecase
+package com.algorand.android.module.account.core.component.detail.domain.usecase
 
 import com.algorand.android.account.localaccount.domain.model.LocalAccount.*
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
 import com.algorand.android.accountinfo.component.domain.model.AccountInformation
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
-import com.algorand.android.core.component.detail.domain.usecase.implementation.GetAccountTypeUseCase
+import com.algorand.android.module.account.core.component.detail.domain.usecase.implementation.GetAccountTypeUseCase
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -27,7 +27,7 @@ class GetAccountTypeUseCaseTest {
 
         val result = sut(ADDRESS)
 
-        assertEquals(com.algorand.android.core.component.detail.domain.model.AccountType.Rekeyed, result)
+        assertEquals(com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Rekeyed, result)
     }
 
     @Test
@@ -38,7 +38,7 @@ class GetAccountTypeUseCaseTest {
 
         val result = sut(ADDRESS)
 
-        assertEquals(com.algorand.android.core.component.detail.domain.model.AccountType.RekeyedAuth, result)
+        assertEquals(com.algorand.android.module.account.core.component.detail.domain.model.AccountType.RekeyedAuth, result)
     }
 
     @Test
@@ -49,7 +49,7 @@ class GetAccountTypeUseCaseTest {
 
         val result = sut(ADDRESS)
 
-        assertEquals(com.algorand.android.core.component.detail.domain.model.AccountType.NoAuth, result)
+        assertEquals(com.algorand.android.module.account.core.component.detail.domain.model.AccountType.NoAuth, result)
     }
 
     @Test
@@ -60,7 +60,7 @@ class GetAccountTypeUseCaseTest {
 
         val result = sut(ADDRESS)
 
-        assertEquals(com.algorand.android.core.component.detail.domain.model.AccountType.NoAuth, result)
+        assertEquals(com.algorand.android.module.account.core.component.detail.domain.model.AccountType.NoAuth, result)
     }
 
     @Test
@@ -71,7 +71,7 @@ class GetAccountTypeUseCaseTest {
 
         val result = sut(ADDRESS)
 
-        assertEquals(com.algorand.android.core.component.detail.domain.model.AccountType.Algo25, result)
+        assertEquals(com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Algo25, result)
     }
 
     @Test
@@ -82,7 +82,7 @@ class GetAccountTypeUseCaseTest {
 
         val result = sut(ADDRESS)
 
-        assertEquals(com.algorand.android.core.component.detail.domain.model.AccountType.LedgerBle, result)
+        assertEquals(com.algorand.android.module.account.core.component.detail.domain.model.AccountType.LedgerBle, result)
     }
 
     @Test

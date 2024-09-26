@@ -15,9 +15,9 @@ package com.algorand.android.usecase
 
 import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.core.BaseUseCase
-import com.algorand.android.core.component.detail.domain.model.AccountType
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.core.component.domain.usecase.UpdateAccountName
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.domain.usecase.UpdateAccountName
 import com.algorand.android.mapper.NameRegistrationPreviewMapper
 import com.algorand.android.models.CreateAccount
 import com.algorand.android.models.ui.NameRegistrationPreview

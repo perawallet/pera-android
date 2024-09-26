@@ -13,9 +13,9 @@
 package com.algorand.android.ui.send.transferamount
 
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData
-import com.algorand.android.core.utils.BalanceConstants.MIN_BALANCE_TO_KEEP_PER_OPTED_IN_APPS
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.module.account.core.component.utils.BalanceConstants.MIN_BALANCE_TO_KEEP_PER_OPTED_IN_APPS
 import com.algorand.android.utils.toAlgoDisplayValue
 import javax.inject.Inject
 

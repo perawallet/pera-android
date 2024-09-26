@@ -2,7 +2,7 @@ package com.algorand.android.ui.accountoptions
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.core.component.domain.usecase.DeleteAccount
+import com.algorand.android.module.account.core.component.domain.usecase.DeleteAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers

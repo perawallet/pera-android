@@ -16,8 +16,8 @@ import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.R
 import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.accountinfo.component.domain.usecase.FetchRekeyedAccounts
-import com.algorand.android.core.component.detail.domain.model.AccountRegistrationType
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountRegistrationType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.customviews.passphraseinput.usecase.PassphraseInputGroupUseCase
 import com.algorand.android.customviews.passphraseinput.util.PassphraseInputConfigurationUtil
 import com.algorand.android.models.AnnotatedString

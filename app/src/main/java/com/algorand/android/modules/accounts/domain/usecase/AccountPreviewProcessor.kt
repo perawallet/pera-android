@@ -10,10 +10,10 @@ import com.algorand.android.accountinfo.component.domain.usecase.IsThereAnyCache
 import com.algorand.android.asb.component.domain.usecase.GetAccountAsbBackUpStatus
 import com.algorand.android.module.banner.domain.model.Banner
 import com.algorand.android.banner.ui.mapper.BaseBannerItemMapper
-import com.algorand.android.core.component.detail.domain.model.AccountType
-import com.algorand.android.core.component.domain.model.AccountTotalValue
-import com.algorand.android.core.component.domain.usecase.GetAccountTotalValue
-import com.algorand.android.core.component.domain.usecase.GetNotBackedUpAccounts
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.domain.model.AccountTotalValue
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
+import com.algorand.android.module.account.core.component.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.modules.accounts.domain.mapper.AccountListItemMapper

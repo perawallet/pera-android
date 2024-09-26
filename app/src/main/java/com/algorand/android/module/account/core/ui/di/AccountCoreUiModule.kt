@@ -4,7 +4,7 @@ import android.content.Context
 import com.algorand.android.module.account.core.ui.mapper.*
 import com.algorand.android.module.account.core.ui.usecase.*
 import com.algorand.android.module.account.core.ui.usecase.implementation.*
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.custominfo.component.domain.usecase.GetCustomInfoOrNull
 import com.algorand.android.nameservice.domain.usecase.GetAccountNameService
 import dagger.*

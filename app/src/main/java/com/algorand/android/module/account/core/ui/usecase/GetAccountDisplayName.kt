@@ -1,8 +1,8 @@
 package com.algorand.android.module.account.core.ui.usecase
 
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
-import com.algorand.android.core.component.detail.domain.model.AccountDetail
-import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 
 interface GetAccountDisplayName {
     suspend operator fun invoke(address: String): AccountDisplayName

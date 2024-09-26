@@ -17,7 +17,7 @@ import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInfor
 import com.algorand.android.algosdk.component.transaction.AlgoSdkTransaction
 import com.algorand.android.algosdk.component.transaction.model.Transaction.RekeyTransaction
 import com.algorand.android.algosdk.component.transaction.model.payload.RekeyTransactionPayload
-import com.algorand.android.core.component.domain.usecase.GetAccountMinBalance
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.module.transaction.component.domain.creation.CreateRekeyTransaction
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult
 import com.algorand.android.module.transaction.component.domain.creation.rekey.mapper.CreateRekeyTransactionResultMapper

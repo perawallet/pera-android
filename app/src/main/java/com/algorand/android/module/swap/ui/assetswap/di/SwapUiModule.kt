@@ -14,8 +14,8 @@
 package com.algorand.android.module.swap.ui.assetswap.di
 
 import android.content.Context
-import com.algorand.android.core.component.assetdata.usecase.GetAccountOwnedAssetData
-import com.algorand.android.core.component.domain.usecase.GetAccountMinBalance
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetData
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.module.swap.ui.GetSwapError
 import com.algorand.android.module.swap.ui.GetSwapErrorImpl
 import com.algorand.android.module.swap.ui.assetswap.mapper.GetSwapQuoteUpdatedPreviewPayloadMapper

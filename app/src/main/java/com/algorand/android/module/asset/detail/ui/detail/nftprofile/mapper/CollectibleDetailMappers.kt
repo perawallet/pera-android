@@ -17,7 +17,7 @@ import com.algorand.android.assetdetail.component.asset.domain.model.Collectible
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.CollectibleMediaItemMapperPayload
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.CollectibleTraitItem
-import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import java.math.BigDecimal
 import java.math.BigInteger
 

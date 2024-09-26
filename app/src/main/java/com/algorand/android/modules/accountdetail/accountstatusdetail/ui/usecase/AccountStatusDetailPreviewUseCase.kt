@@ -16,8 +16,8 @@ import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.module.account.core.ui.usecase.GetAccountOriginalStateIconDrawablePreview
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
-import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetailFlow
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetailFlow
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.decider.AccountStatusDetailPreviewDecider
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.mapper.AccountStatusDetailPreviewMapper

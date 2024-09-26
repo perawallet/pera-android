@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.webimport.loading.ui.usecase
 
-import com.algorand.android.core.component.caching.domain.usecase.FetchAccountInformationAndCacheAssets
+import com.algorand.android.module.account.core.component.caching.domain.usecase.FetchAccountInformationAndCacheAssets
 import com.algorand.android.module.deeplink.model.WebImportQrCode
 import com.algorand.android.modules.webimport.loading.domain.model.ImportedAccountResult
 import com.algorand.android.modules.webimport.loading.domain.usecase.WebImportAccountDecryptionUseCase

@@ -22,9 +22,9 @@ import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAsse
 import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAssetDetail
 import com.algorand.android.module.asset.detail.ui.detail.mapper.AssetDetailPreviewMapper
 import com.algorand.android.module.asset.detail.ui.detail.model.AssetDetailPreview
-import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
-import com.algorand.android.core.component.detail.domain.model.AccountType
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetailFlow
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetailFlow
 import com.algorand.android.parity.domain.usecase.GetAssetExchangeParityValue
 import com.algorand.android.module.swap.component.reddot.domain.usecase.GetSwapFeatureRedDotVisibility
 import java.math.BigDecimal

@@ -19,7 +19,7 @@ import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurati
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.core.component.domain.usecase.GetAccountTotalValue
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.database.NotificationFilterDao
 import com.algorand.android.module.notification.domain.usecase.SetNotificationFilter
 import com.algorand.android.utils.Resource

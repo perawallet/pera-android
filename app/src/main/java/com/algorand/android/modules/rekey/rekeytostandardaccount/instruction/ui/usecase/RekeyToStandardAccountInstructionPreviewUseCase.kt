@@ -13,7 +13,7 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.decider.RekeyToStandardAccountIntroductionPreviewDecider
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.mapper.RekeyToStandardAccountIntroductionPreviewMapper

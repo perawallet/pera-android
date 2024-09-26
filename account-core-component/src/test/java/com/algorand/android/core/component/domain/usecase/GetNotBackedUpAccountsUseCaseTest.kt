@@ -1,10 +1,10 @@
-package com.algorand.android.core.component.domain.usecase
+package com.algorand.android.module.account.core.component.domain.usecase
 
 import com.algorand.android.accountinfo.component.domain.model.AccountInformation
 import com.algorand.android.accountinfo.component.domain.usecase.GetAllAccountInformation
-import com.algorand.android.core.component.detail.domain.model.*
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.core.component.domain.model.AccountTotalValue
+import com.algorand.android.module.account.core.component.detail.domain.model.*
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.domain.model.AccountTotalValue
 import com.algorand.android.custominfo.component.domain.model.CustomInfo
 import com.algorand.android.custominfo.component.domain.usecase.GetCustomInfo
 import com.algorand.android.testutil.fixtureOf

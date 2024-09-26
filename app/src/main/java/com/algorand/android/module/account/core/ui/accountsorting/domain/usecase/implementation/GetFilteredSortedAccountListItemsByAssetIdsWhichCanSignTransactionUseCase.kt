@@ -21,10 +21,10 @@ import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
 import com.algorand.android.accountinfo.component.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.android.accountsorting.component.domain.usecase.GetSortedLocalAccounts
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.core.component.detail.domain.model.AccountDetail
-import com.algorand.android.core.component.detail.domain.model.AccountType
-import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountsDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountsDetail
 import javax.inject.Inject
 
 internal class GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransactionUseCase @Inject constructor(

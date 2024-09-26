@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.dapp.bidali.domain.mapper
 
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.modules.dapp.bidali.domain.model.BidaliAsset
 import com.algorand.android.modules.dapp.bidali.domain.model.MainnetBidaliSupportedCurrency
 import com.algorand.android.modules.dapp.bidali.domain.model.TestnetBidaliSupportedCurrency

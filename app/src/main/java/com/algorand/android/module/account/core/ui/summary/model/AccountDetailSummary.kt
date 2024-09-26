@@ -15,7 +15,7 @@ package com.algorand.android.module.account.core.ui.summary.model
 
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
-import com.algorand.android.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 
 data class AccountDetailSummary(
     val address: String,

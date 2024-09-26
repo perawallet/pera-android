@@ -14,7 +14,7 @@
 package com.algorand.android.module.transaction.component.domain.validator
 
 import com.algorand.android.accountinfo.component.domain.model.AccountInformation
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.module.transaction.component.domain.model.ValidationResult
 import com.algorand.android.module.transaction.component.domain.validator.SufficientBalanceValidator.Payload
 import java.math.BigInteger

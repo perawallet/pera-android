@@ -1,8 +1,8 @@
-package com.algorand.android.core.component.creation.domain.usecase
+package com.algorand.android.module.account.core.component.creation.domain.usecase
 
 import com.algorand.android.account.localaccount.domain.model.LocalAccount
 import com.algorand.android.account.localaccount.domain.usecase.AddAlgo25Account
-import com.algorand.android.core.component.caching.domain.usecase.CacheAccountDetail
+import com.algorand.android.module.account.core.component.caching.domain.usecase.CacheAccountDetail
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.mockito.kotlin.*

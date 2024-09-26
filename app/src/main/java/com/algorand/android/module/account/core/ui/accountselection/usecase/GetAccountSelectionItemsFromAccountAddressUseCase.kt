@@ -19,7 +19,7 @@ import com.algorand.android.module.account.core.ui.accountsorting.domain.model.B
 import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import javax.inject.Inject
 
 internal class GetAccountSelectionItemsFromAccountAddressUseCase @Inject constructor(

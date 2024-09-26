@@ -15,8 +15,8 @@ package com.algorand.android.modules.accountdetail.quickaction.genericaccount
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.core.component.detail.domain.model.AccountDetail
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.model.AccountQuickActionsPreview
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.usecase.AccountQuickActionsPreviewUseCase
 import com.algorand.android.utils.getOrThrow

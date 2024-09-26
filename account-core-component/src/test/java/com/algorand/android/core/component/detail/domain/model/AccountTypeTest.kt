@@ -1,6 +1,6 @@
-package com.algorand.android.core.component.detail.domain.model
+package com.algorand.android.module.account.core.component.detail.domain.model
 
-import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
 import org.junit.Assert.*
 import org.junit.Test
 

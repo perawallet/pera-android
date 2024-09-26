@@ -26,10 +26,10 @@ import com.algorand.android.module.asset.detail.ui.detail.nftprofile.mapper.Coll
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.CollectibleMediaItemMapperPayload
 import com.algorand.android.module.asset.detail.ui.nftdetail.model.CollectibleDetailPreview
-import com.algorand.android.core.component.collectible.domain.usecase.GetAccountCollectibleDetail
-import com.algorand.android.core.component.detail.domain.model.AccountType
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.module.account.core.component.collectible.domain.usecase.GetAccountCollectibleDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.foundation.common.isGreaterThan
 import java.math.BigInteger
 import javax.inject.Inject

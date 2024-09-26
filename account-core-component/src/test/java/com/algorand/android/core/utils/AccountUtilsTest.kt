@@ -1,5 +1,6 @@
 package com.algorand.android.core.utils
 
+import com.algorand.android.module.account.core.component.utils.toShortenedAddress
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

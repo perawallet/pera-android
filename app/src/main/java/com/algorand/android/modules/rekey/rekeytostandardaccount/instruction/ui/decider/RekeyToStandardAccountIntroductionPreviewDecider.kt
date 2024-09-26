@@ -13,7 +13,7 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.decider
 
 import com.algorand.android.R
-import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.designsystem.AnnotatedString
 import javax.inject.Inject
 

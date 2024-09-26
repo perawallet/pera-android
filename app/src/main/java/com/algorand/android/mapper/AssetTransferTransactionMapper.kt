@@ -13,8 +13,8 @@
 package com.algorand.android.mapper
 
 import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyAccountWithAddress
-import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.models.BaseAssetTransferTransaction
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WCAlgoTransactionRequest

@@ -14,7 +14,7 @@
 package com.algorand.android.module.swap.ui.assetselection.toasset.usecase
 
 import com.algorand.android.assetutils.AssetAdditionPayload
-import com.algorand.android.core.component.assetdata.usecase.GetAccountOwnedAssetData
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetData
 import com.algorand.android.foundation.Event
 import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionItem
 import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionPreview

@@ -14,12 +14,12 @@ package com.algorand.android.nft.domain.usecase
 
 import com.algorand.android.accountinfo.component.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.android.module.appcache.usecase.IsAssetCacheStatusAtLeastEmpty
-import com.algorand.android.core.component.collectible.domain.usecase.GetAllAccountsAllCollectibleDataFlow
-import com.algorand.android.core.component.detail.domain.model.AccountDetail
-import com.algorand.android.core.component.detail.domain.model.AccountType
-import com.algorand.android.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.android.core.component.detail.domain.usecase.GetAccountsDetailFlow
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.module.account.core.component.collectible.domain.usecase.GetAllAccountsAllCollectibleDataFlow
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountsDetailFlow
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.modules.collectibles.filter.domain.usecase.ClearCollectibleFiltersPreferencesUseCase
 import com.algorand.android.modules.collectibles.filter.domain.usecase.ShouldDisplayOptedInNFTPreferenceUseCase
 import com.algorand.android.modules.collectibles.filter.domain.usecase.ShouldDisplayWatchAccountNFTsPreferenceUseCase

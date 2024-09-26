@@ -1,4 +1,4 @@
-package com.algorand.android.core.component.caching.domain.usecase
+package com.algorand.android.module.account.core.component.caching.domain.usecase
 
 import com.algorand.android.account.localaccount.domain.model.LocalAccount
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts

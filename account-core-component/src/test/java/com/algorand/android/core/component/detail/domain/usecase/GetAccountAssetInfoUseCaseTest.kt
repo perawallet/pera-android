@@ -1,9 +1,9 @@
-package com.algorand.android.core.component.detail.domain.usecase
+package com.algorand.android.module.account.core.component.detail.domain.usecase
 
-import com.algorand.android.core.component.detail.domain.model.AccountDetail
-import com.algorand.android.core.component.detail.domain.model.AccountRegistrationType.Algo25
-import com.algorand.android.core.component.detail.domain.model.AccountType.Rekeyed
-import com.algorand.android.core.component.detail.domain.usecase.implementation.GetAccountDetailUseCase
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountRegistrationType.Algo25
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Rekeyed
+import com.algorand.android.module.account.core.component.detail.domain.usecase.implementation.GetAccountDetailUseCase
 import com.algorand.android.custominfo.component.domain.model.CustomInfo
 import com.algorand.android.custominfo.component.domain.usecase.GetCustomInfo
 import com.algorand.android.testutil.fixtureOf

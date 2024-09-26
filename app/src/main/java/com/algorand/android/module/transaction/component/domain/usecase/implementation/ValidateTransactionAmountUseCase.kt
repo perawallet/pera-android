@@ -15,9 +15,9 @@ package com.algorand.android.module.transaction.component.domain.usecase.impleme
 
 import com.algorand.android.accountinfo.component.domain.model.AccountInformation
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
-import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData
-import com.algorand.android.core.component.domain.usecase.GetAccountMinBalance
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.module.transaction.component.domain.model.TransactionAmountValidationResult
 import com.algorand.android.module.transaction.component.domain.model.TransactionAmountValidationResult.AssetNotFoundError
 import com.algorand.android.module.transaction.component.domain.model.TransactionAmountValidationResult.InsufficientBalanceError

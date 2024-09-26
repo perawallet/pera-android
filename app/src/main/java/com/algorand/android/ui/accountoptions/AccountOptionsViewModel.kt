@@ -15,7 +15,7 @@ package com.algorand.android.ui.accountoptions
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.core.component.domain.usecase.DeleteAccount
+import com.algorand.android.module.account.core.component.domain.usecase.DeleteAccount
 import com.algorand.android.database.NotificationFilterDao
 import com.algorand.android.module.notification.domain.usecase.SetNotificationFilter
 import com.algorand.android.usecase.SecurityUseCase

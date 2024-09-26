@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.ui.mapper
 
 import com.algorand.android.module.account.core.ui.model.*
-import com.algorand.android.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import java.math.BigDecimal
 

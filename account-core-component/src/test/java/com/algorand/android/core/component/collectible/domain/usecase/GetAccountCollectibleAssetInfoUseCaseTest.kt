@@ -1,9 +1,9 @@
-package com.algorand.android.core.component.collectible.domain.usecase
+package com.algorand.android.module.account.core.component.collectible.domain.usecase
 
 import com.algorand.android.accountinfo.component.domain.model.*
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
-import com.algorand.android.core.component.collectible.domain.mapper.BaseOwnedCollectibleDataFactory
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.android.module.account.core.component.collectible.domain.mapper.BaseOwnedCollectibleDataFactory
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*

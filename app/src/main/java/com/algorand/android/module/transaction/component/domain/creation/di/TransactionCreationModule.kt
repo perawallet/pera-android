@@ -16,8 +16,8 @@ package com.algorand.android.module.transaction.component.domain.creation.di
 import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
 import com.algorand.android.algosdk.component.transaction.AlgoSdkTransaction
 import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
-import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
-import com.algorand.android.core.component.domain.usecase.GetAccountMinBalance
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.module.transaction.component.domain.creation.CreateAddAssetTransaction
 import com.algorand.android.module.transaction.component.domain.creation.CreatePaymentTransaction
 import com.algorand.android.module.transaction.component.domain.creation.CreateRekeyTransaction

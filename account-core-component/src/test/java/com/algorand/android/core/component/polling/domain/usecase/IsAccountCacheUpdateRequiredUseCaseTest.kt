@@ -1,10 +1,10 @@
-package com.algorand.android.core.component.polling.domain.usecase
+package com.algorand.android.module.account.core.component.polling.domain.usecase
 
 import com.algorand.android.account.localaccount.domain.model.LocalAccount
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
 import com.algorand.android.accountinfo.component.domain.usecase.GetEarliestLastFetchedRound
-import com.algorand.android.core.component.polling.accountdetail.domain.repository.AccountBlockPollingRepository
-import com.algorand.android.core.component.polling.accountdetail.domain.usecase.implementation.IsAccountCacheUpdateRequiredUseCase
+import com.algorand.android.module.account.core.component.polling.accountdetail.domain.repository.AccountBlockPollingRepository
+import com.algorand.android.module.account.core.component.polling.accountdetail.domain.usecase.implementation.IsAccountCacheUpdateRequiredUseCase
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

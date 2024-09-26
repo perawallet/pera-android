@@ -19,9 +19,9 @@ import com.algorand.android.algosdk.component.transaction.AlgoSdkTransaction
 import com.algorand.android.algosdk.component.transaction.model.Transaction
 import com.algorand.android.algosdk.component.transaction.model.payload.AlgoTransactionPayload
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData
-import com.algorand.android.core.component.domain.usecase.GetAccountMinBalance
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.module.transaction.component.domain.creation.CreatePaymentTransaction
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult.AccountNotFound

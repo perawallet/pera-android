@@ -1,6 +1,6 @@
 package com.algorand.android.module.account.core
 
-import com.algorand.android.core.component.detail.domain.model.AccountType.*
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.*
 
 object AlgorandSecureBackUpUtils {
     val ELIGIBLE_ACCOUNT_TYPES = listOf(Algo25)

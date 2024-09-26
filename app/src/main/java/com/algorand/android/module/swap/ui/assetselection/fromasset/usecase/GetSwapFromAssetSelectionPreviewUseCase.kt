@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.swap.ui.assetselection.fromasset.usecase
 
-import com.algorand.android.core.component.assetdata.usecase.GetAccountOwnedAssetsData
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetsData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.foundation.common.isGreaterThan
 import com.algorand.android.module.swap.ui.assetselection.mapper.SwapAssetSelectionItemMapper
 import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionItem

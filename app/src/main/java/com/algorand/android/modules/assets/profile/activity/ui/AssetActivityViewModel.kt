@@ -17,7 +17,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.PagingData
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.core.component.domain.usecase.GetAccountTotalValueFlow
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValueFlow
 import com.algorand.android.dateui.mapper.DateFilterPreviewMapper
 import com.algorand.android.dateui.model.DateFilter
 import com.algorand.android.dateui.model.DateFilterPreview

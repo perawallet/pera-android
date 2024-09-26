@@ -22,7 +22,7 @@ import com.algorand.android.module.asset.detail.ui.detail.model.AssetDetailPrevi
 import com.algorand.android.module.asset.detail.ui.detail.usecase.GetAssetDetailIconResOfChangePercentage
 import com.algorand.android.module.asset.detail.ui.detail.usecase.GetAssetDetailTextColorResOfChangePercentage
 import com.algorand.android.module.asset.detail.ui.detail.usecase.IsChangePercentageVisible
-import com.algorand.android.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import java.math.BigDecimal
 import javax.inject.Inject
 

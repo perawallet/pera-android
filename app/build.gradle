@@ -172,7 +172,6 @@ dependencies {
     implementation project(path: ':parity-component')
     implementation project(path: ':foundation')
     implementation project(path: ':deviceid-component')
-    implementation project(path: ':contacts-component')
     implementation project(path: ':node-component')
     implementation project(path: ':drawable-ui')
     implementation project(path: ':designsystem')

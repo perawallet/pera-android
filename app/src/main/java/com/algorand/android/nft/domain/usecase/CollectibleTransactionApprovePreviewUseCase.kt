@@ -18,7 +18,7 @@ import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.module.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetCollectibleDetail
-import com.algorand.android.contacts.component.domain.usecase.GetContactByAddress
+import com.algorand.android.module.contacts.domain.usecase.GetContactByAddress
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.nft.mapper.CollectibleTransactionApprovePreviewMapper

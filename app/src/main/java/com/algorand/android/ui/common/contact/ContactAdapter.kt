@@ -16,7 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.module.contacts.domain.model.Contact
 
 class ContactAdapter(
     private val onContactClick: (contact: Contact) -> Unit,

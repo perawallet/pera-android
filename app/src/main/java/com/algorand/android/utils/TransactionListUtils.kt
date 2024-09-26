@@ -12,7 +12,7 @@
 
 package com.algorand.android.utils
 
-import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.models.Account
 import com.algorand.android.modules.transaction.common.domain.model.TransactionDTO
 

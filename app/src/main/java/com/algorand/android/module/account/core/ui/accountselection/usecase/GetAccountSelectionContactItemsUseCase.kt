@@ -15,7 +15,7 @@ package com.algorand.android.module.account.core.ui.accountselection.usecase
 
 import com.algorand.android.module.account.core.ui.accountselection.mapper.AccountSelectionListItemMapper
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
-import com.algorand.android.contacts.component.domain.usecase.GetAllContacts
+import com.algorand.android.module.contacts.domain.usecase.GetAllContacts
 import javax.inject.Inject
 
 internal class GetAccountSelectionContactItemsUseCase @Inject constructor(

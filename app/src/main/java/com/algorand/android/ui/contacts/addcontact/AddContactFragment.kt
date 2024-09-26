@@ -18,7 +18,7 @@ import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
-import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.customviews.AlgorandInputLayout
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OperationState

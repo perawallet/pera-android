@@ -16,7 +16,7 @@ package com.algorand.android.module.transaction.ui.sendasset.model
 import android.os.Parcelable
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
-import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.module.contacts.domain.model.Contact
 import kotlinx.parcelize.Parcelize
 
 sealed interface AssetTransferTargetUser : Parcelable {

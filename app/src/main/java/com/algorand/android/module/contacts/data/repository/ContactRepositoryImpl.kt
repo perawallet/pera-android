@@ -1,9 +1,9 @@
-package com.algorand.android.contacts.component.data.repository
+package com.algorand.android.module.contacts.data.repository
 
-import com.algorand.android.contacts.component.data.mapper.ContactEntityMapper
-import com.algorand.android.contacts.component.data.mapper.ContactMapper
-import com.algorand.android.contacts.component.domain.model.Contact
-import com.algorand.android.contacts.component.domain.repository.ContactRepository
+import com.algorand.android.module.contacts.data.mapper.ContactEntityMapper
+import com.algorand.android.module.contacts.data.mapper.ContactMapper
+import com.algorand.android.module.contacts.domain.model.Contact
+import com.algorand.android.module.contacts.domain.repository.ContactRepository
 import com.algorand.android.encryption.EncryptionManager
 import com.algorand.android.shared_db.contact.dao.ContactDao
 

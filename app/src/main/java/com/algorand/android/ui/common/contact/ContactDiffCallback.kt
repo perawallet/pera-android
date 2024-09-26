@@ -1,7 +1,7 @@
 package com.algorand.android.ui.common.contact
 
 import androidx.recyclerview.widget.DiffUtil
-import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.module.contacts.domain.model.Contact
 
 class ContactDiffCallback : DiffUtil.ItemCallback<Contact>() {
 

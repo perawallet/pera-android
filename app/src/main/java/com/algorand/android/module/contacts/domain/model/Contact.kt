@@ -1,4 +1,4 @@
-package com.algorand.android.contacts.component.domain.model
+package com.algorand.android.module.contacts.domain.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

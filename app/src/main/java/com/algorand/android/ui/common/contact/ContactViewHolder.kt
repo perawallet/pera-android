@@ -17,7 +17,7 @@ import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
-import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.databinding.ItemUserBinding
 import com.algorand.android.utils.extensions.setContactIconDrawable
 import com.algorand.android.utils.toShortenedAddress

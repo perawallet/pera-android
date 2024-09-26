@@ -15,7 +15,7 @@ package com.algorand.android.usecase
 import android.app.NotificationManager
 import com.algorand.android.module.appcache.usecase.ClearAppSessionCache
 import com.algorand.android.module.banner.domain.usecase.ClearDismissedBannerIds
-import com.algorand.android.contacts.component.domain.usecase.DeleteAllContacts
+import com.algorand.android.module.contacts.domain.usecase.DeleteAllContacts
 import com.algorand.android.core.AccountManager
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import javax.inject.Inject

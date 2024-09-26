@@ -24,7 +24,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import com.algorand.android.R
-import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.AlgorandInputLayout
 import com.algorand.android.customviews.toolbar.CustomToolbar

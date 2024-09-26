@@ -14,7 +14,7 @@ package com.algorand.android.ui.accounts
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.decider.TransactionUserUseCase
 import com.algorand.android.models.AssetTransaction

@@ -21,7 +21,7 @@ import com.algorand.android.account.localaccount.domain.usecase.IsThereAnyLocalA
 import com.algorand.android.module.algosdk.transaction.model.Transaction
 import com.algorand.android.module.appcache.InitializeAppCache
 import com.algorand.android.module.appcache.usecase.GetAppCacheStatusFlow
-import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.module.deeplink.DeepLinkHandler
 import com.algorand.android.module.deeplink.model.BaseDeepLink

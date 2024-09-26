@@ -15,9 +15,9 @@ package com.algorand.android.ui.contacts.addcontact
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.contacts.component.domain.model.Contact
-import com.algorand.android.contacts.component.domain.usecase.GetContactByAddress
-import com.algorand.android.contacts.component.domain.usecase.SaveContact
+import com.algorand.android.module.contacts.domain.model.Contact
+import com.algorand.android.module.contacts.domain.usecase.GetContactByAddress
+import com.algorand.android.module.contacts.domain.usecase.SaveContact
 import com.algorand.android.models.OperationState
 import com.algorand.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel

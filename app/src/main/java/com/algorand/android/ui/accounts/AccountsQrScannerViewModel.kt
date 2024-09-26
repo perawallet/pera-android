@@ -2,7 +2,7 @@ package com.algorand.android.ui.accounts
 
 import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.module.deeplink.model.BaseDeepLink
 import com.algorand.android.models.AssetTransaction

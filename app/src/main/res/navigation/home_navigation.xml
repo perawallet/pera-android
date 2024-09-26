@@ -569,7 +569,7 @@
             app:destination="@id/assetTransferAmountFragment" />
         <argument
             android:name="contact"
-            app:argType="com.algorand.android.contacts.component.domain.model.Contact" />
+            app:argType="com.algorand.android.module.contacts.domain.model.Contact" />
     </fragment>
 
     <fragment

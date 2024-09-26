@@ -14,7 +14,7 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.module.contacts.domain.model.Contact
 import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
 

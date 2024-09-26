@@ -1,4 +1,4 @@
-package com.algorand.android.contacts.component.domain.usecase
+package com.algorand.android.module.contacts.domain.usecase
 
 fun interface DeleteAllContacts {
     suspend operator fun invoke()

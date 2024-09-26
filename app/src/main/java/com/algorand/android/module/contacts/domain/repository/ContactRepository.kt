@@ -1,6 +1,6 @@
-package com.algorand.android.contacts.component.domain.repository
+package com.algorand.android.module.contacts.domain.repository
 
-import com.algorand.android.contacts.component.domain.model.Contact
+import com.algorand.android.module.contacts.domain.model.Contact
 
 internal interface ContactRepository {
     suspend fun getContactByAddress(address: String): Contact?

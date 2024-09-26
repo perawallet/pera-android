@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.eventtracker
+package com.algorand.android.module.eventtracker
 
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics

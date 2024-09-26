@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.domain.tracking.usecase
 
-import com.algorand.android.eventtracker.NodeAwarePeraEventTracker
+import com.algorand.android.module.eventtracker.NodeAwarePeraEventTracker
 import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.component.domain.tracking.SwapTrackingHelper
 import com.algorand.android.module.swap.component.domain.tracking.mapper.SwapFailedEventPayloadMapper

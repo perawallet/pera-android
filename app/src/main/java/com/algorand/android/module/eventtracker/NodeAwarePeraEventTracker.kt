@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.eventtracker
+package com.algorand.android.module.eventtracker
 
 interface NodeAwarePeraEventTracker {
     fun logEvent(eventName: String)

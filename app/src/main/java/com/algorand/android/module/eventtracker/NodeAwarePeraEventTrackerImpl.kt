@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.eventtracker
+package com.algorand.android.module.eventtracker
 
 import com.algorand.android.node.domain.usecase.IsSelectedNodeTestnet
 import javax.inject.Inject

@@ -1,7 +1,7 @@
 package com.algorand.android.module.asb.domain.usecase.implementation
 
-import com.algorand.android.algosdk.component.AlgoSdkEncryption
-import com.algorand.android.algosdk.component.joinMnemonics
+import com.algorand.android.module.algosdk.AlgoSdkEncryption
+import com.algorand.android.module.algosdk.joinMnemonics
 import com.algorand.android.module.asb.domain.usecase.CreateAsbCipherKey
 import com.algorand.android.module.asb.domain.usecase.CreateAsbCipherText
 import javax.inject.Inject

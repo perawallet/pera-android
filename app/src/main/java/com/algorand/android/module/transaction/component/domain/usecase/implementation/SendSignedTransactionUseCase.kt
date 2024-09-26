@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.domain.usecase.implementation
 
-import com.algorand.android.algosdk.component.transaction.AlgoSdkTransaction
+import com.algorand.android.module.algosdk.transaction.AlgoSdkTransaction
 import com.algorand.android.foundation.PeraResult
 import com.algorand.android.foundation.PeraResult.Error
 import com.algorand.android.foundation.PeraResult.Success

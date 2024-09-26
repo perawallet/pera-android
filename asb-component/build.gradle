@@ -38,14 +38,6 @@ android {
 
 dependencies {
 
-    implementation project(path: ':caching')
-    implementation project(path: ':custom-info-component')
-    implementation project(path: ':encryption-component')
-    implementation project(path: ':date-component')
-    implementation project(path: ':shared-db')
-    implementation project(path: ':algosdk-component')
-    implementation project(path: ':foundation')
-
     implementation deps.retrofit.converter_gson
 
     implementation deps.hilt.core

@@ -16,7 +16,7 @@ package com.algorand.android.core.transaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.algosdk.component.transaction.model.Transaction
+import com.algorand.android.module.algosdk.transaction.model.Transaction
 import com.algorand.android.foundation.Event
 import com.algorand.android.module.transaction.component.domain.sign.SignTransactionManager
 import com.algorand.android.module.transaction.ui.core.mapper.SignTransactionUiResultMapper

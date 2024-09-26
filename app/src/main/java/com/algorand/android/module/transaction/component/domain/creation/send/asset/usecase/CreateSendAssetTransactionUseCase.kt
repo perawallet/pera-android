@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.transaction.component.domain.creation.send.asset.usecase
 
-import com.algorand.android.algosdk.component.transaction.AlgoSdkTransaction
-import com.algorand.android.algosdk.component.transaction.model.payload.AssetTransactionPayload
+import com.algorand.android.module.algosdk.transaction.AlgoSdkTransaction
+import com.algorand.android.module.algosdk.transaction.model.payload.AssetTransactionPayload
 import com.algorand.android.module.transaction.component.domain.creation.CreateSendAssetTransaction
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult
 import com.algorand.android.module.transaction.component.domain.creation.send.asset.model.CreateSendAssetTransactionPayload

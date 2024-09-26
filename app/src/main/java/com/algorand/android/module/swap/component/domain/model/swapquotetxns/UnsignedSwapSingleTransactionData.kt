@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.domain.model.swapquotetxns
 
-import com.algorand.android.algosdk.component.transaction.model.RawTransaction
+import com.algorand.android.module.algosdk.transaction.model.RawTransaction
 import com.algorand.android.foundation.common.decodeBase64
 
 data class UnsignedSwapSingleTransactionData(

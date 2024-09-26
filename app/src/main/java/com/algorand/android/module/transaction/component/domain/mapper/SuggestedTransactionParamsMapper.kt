@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.domain.mapper
 
-import com.algorand.android.algosdk.component.transaction.model.SuggestedTransactionParams
+import com.algorand.android.module.algosdk.transaction.model.SuggestedTransactionParams
 import com.algorand.android.module.transaction.component.domain.model.TransactionParams
 
 internal interface SuggestedTransactionParamsMapper {

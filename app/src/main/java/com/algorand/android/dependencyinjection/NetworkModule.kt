@@ -13,7 +13,7 @@
 package com.algorand.android.dependencyinjection
 
 import com.algorand.android.BuildConfig
-import com.algorand.android.algosdk.component.network.ProvideAlgorandApiKey
+import com.algorand.android.module.algosdk.network.ProvideAlgorandApiKey
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountDeserializer
 import com.algorand.android.network.AlgodApi

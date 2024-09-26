@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.domain.sign.usecase.implementation
 
-import com.algorand.android.algosdk.component.transaction.AlgoTransactionSigner
+import com.algorand.android.module.algosdk.transaction.AlgoTransactionSigner
 import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 import com.algorand.android.module.transaction.component.domain.sign.usecase.SignTransactionWithSecretKey
 import javax.inject.Inject

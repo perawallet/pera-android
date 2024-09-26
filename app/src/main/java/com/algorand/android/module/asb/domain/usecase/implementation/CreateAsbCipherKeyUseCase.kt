@@ -1,6 +1,6 @@
 package com.algorand.android.module.asb.domain.usecase.implementation
 
-import com.algorand.android.algosdk.component.AlgoSdkBackUp
+import com.algorand.android.module.algosdk.AlgoSdkBackUp
 import com.algorand.android.module.asb.domain.usecase.CreateAsbCipherKey
 import javax.inject.Inject
 

@@ -15,7 +15,7 @@ package com.algorand.android.module.transaction.ui.sendasset.model
 
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
-import com.algorand.android.algosdk.component.transaction.model.Transaction
+import com.algorand.android.module.algosdk.transaction.model.Transaction
 import com.algorand.android.foundation.Event
 import java.math.BigDecimal
 import java.math.BigInteger

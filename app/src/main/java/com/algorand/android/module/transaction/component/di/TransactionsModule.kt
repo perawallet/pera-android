@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.di
 
-import com.algorand.android.algosdk.component.AlgoSdkAddress
+import com.algorand.android.module.algosdk.AlgoSdkAddress
 import com.algorand.android.module.transaction.component.data.mapper.TransactionParamsMapper
 import com.algorand.android.module.transaction.component.data.mapper.TransactionParamsMapperImpl
 import com.algorand.android.module.transaction.component.data.repository.TransactionRepositoryImpl

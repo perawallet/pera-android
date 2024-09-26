@@ -25,7 +25,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
-import com.algorand.android.algosdk.component.transaction.model.Transaction
+import com.algorand.android.module.algosdk.transaction.model.Transaction
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.designsystem.AnnotatedString

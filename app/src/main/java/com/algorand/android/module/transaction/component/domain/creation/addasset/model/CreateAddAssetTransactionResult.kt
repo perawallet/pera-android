@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.domain.creation.addasset.model
 
-import com.algorand.android.algosdk.component.transaction.model.Transaction
+import com.algorand.android.module.algosdk.transaction.model.Transaction
 import java.math.BigInteger
 
 sealed interface CreateAddAssetTransactionResult {

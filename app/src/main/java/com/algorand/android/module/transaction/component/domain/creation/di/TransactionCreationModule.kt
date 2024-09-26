@@ -14,7 +14,7 @@
 package com.algorand.android.module.transaction.component.domain.creation.di
 
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
-import com.algorand.android.algosdk.component.transaction.AlgoSdkTransaction
+import com.algorand.android.module.algosdk.transaction.AlgoSdkTransaction
 import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance

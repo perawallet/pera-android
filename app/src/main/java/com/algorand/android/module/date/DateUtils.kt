@@ -1,8 +1,8 @@
-package com.algorand.android.date.component
+package com.algorand.android.module.date
 
-import com.algorand.android.date.component.DateConstants.TXN_DATE_PATTERN
-import com.algorand.android.date.component.DateConstants.UNIX_TIME_STAMP_MULTIPLIER
-import com.algorand.android.date.component.DateConstants.WEEK_IN_DAYS
+import com.algorand.android.module.date.DateConstants.TXN_DATE_PATTERN
+import com.algorand.android.module.date.DateConstants.UNIX_TIME_STAMP_MULTIPLIER
+import com.algorand.android.module.date.DateConstants.WEEK_IN_DAYS
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalTime

@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.notification.domain.usecase
 
-import com.algorand.android.date.component.orNow
-import com.algorand.android.date.component.parseFormattedDate
+import com.algorand.android.module.date.orNow
+import com.algorand.android.module.date.parseFormattedDate
 import com.algorand.android.module.notification.domain.repository.NotificationRepository
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter

@@ -1,4 +1,4 @@
-package com.algorand.android.date.component.domain.usecase
+package com.algorand.android.module.date.domain.usecase
 
 import java.time.ZonedDateTime
 

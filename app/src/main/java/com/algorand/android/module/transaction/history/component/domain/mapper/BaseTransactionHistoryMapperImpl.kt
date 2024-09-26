@@ -1,6 +1,6 @@
 package com.algorand.android.module.transaction.history.component.domain.mapper
 
-import com.algorand.android.date.component.timeStampToZonedDateTime
+import com.algorand.android.module.date.timeStampToZonedDateTime
 import com.algorand.android.module.transaction.history.component.domain.model.*
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory
 import com.algorand.android.module.transaction.history.component.domain.model.TransactionType.*

@@ -1,7 +1,7 @@
-package com.algorand.android.date.component.domain.di
+package com.algorand.android.module.date.domain.di
 
-import com.algorand.android.date.component.domain.usecase.GetCurrentZonedDateTime
-import com.algorand.android.date.component.domain.usecase.implementation.GetCurrentZonedDateTimeUseCase
+import com.algorand.android.module.date.domain.usecase.GetCurrentZonedDateTime
+import com.algorand.android.module.date.domain.usecase.implementation.GetCurrentZonedDateTimeUseCase
 import dagger.*
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

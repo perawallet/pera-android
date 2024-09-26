@@ -1,4 +1,4 @@
-package com.algorand.android.date.component
+package com.algorand.android.module.date
 
 object DateConstants {
     const val MONTH_DAY_PATTERN = "MMM dd"

@@ -1,6 +1,6 @@
-package com.algorand.android.date.component.domain.usecase.implementation
+package com.algorand.android.module.date.domain.usecase.implementation
 
-import com.algorand.android.date.component.domain.usecase.GetCurrentZonedDateTime
+import com.algorand.android.module.date.domain.usecase.GetCurrentZonedDateTime
 import java.time.ZonedDateTime
 import javax.inject.Inject
 

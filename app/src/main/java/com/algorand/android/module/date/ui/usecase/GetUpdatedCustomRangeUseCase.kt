@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.date.ui.usecase
 
-import com.algorand.android.date.component.UTC_ZONE_ID
+import com.algorand.android.module.date.UTC_ZONE_ID
 import com.algorand.android.module.date.ui.model.DateFilter
 import com.algorand.android.module.date.ui.model.DateRange
 import java.time.LocalTime

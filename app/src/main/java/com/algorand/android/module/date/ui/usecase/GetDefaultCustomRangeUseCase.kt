@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.date.ui.usecase
 
-import com.algorand.android.date.component.DEFAULT_DAY_DIFFERENCE_BETWEEN_FROM_AND_TO
-import com.algorand.android.date.component.getCurrentTimeAsZonedDateTime
-import com.algorand.android.date.component.getPreviousDayZonedDateTime
+import com.algorand.android.module.date.DEFAULT_DAY_DIFFERENCE_BETWEEN_FROM_AND_TO
+import com.algorand.android.module.date.getCurrentTimeAsZonedDateTime
+import com.algorand.android.module.date.getPreviousDayZonedDateTime
 import com.algorand.android.module.date.ui.model.DateFilter
 import com.algorand.android.module.date.ui.model.DateRange
 import javax.inject.Inject

@@ -1,8 +1,10 @@
-package com.algorand.android.encryption.di
+package com.algorand.android.module.encryption.di
 
-import com.algorand.android.encryption.*
-import com.google.crypto.tink.*
-import com.google.crypto.tink.daead.*
+import com.algorand.android.module.encryption.Base64Manager
+import com.algorand.android.module.encryption.Base64ManagerImpl
+import com.algorand.android.module.encryption.DeterministicEncryptionManager
+import com.algorand.android.module.encryption.EncryptionManager
+import com.algorand.android.module.encryption.TinkEncryptionManager
 import dagger.*
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

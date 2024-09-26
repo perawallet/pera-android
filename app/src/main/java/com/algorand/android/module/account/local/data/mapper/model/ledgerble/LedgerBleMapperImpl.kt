@@ -2,7 +2,7 @@ package com.algorand.android.module.account.local.data.mapper.model.ledgerble
 
 import com.algorand.android.module.account.local.data.database.model.LedgerBleEntity
 import com.algorand.android.module.account.local.domain.model.LocalAccount
-import com.algorand.android.encryption.EncryptionManager
+import com.algorand.android.module.encryption.EncryptionManager
 
 internal class LedgerBleMapperImpl(
     private val encryptionManager: EncryptionManager

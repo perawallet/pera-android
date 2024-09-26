@@ -5,7 +5,7 @@ import com.algorand.android.module.account.local.data.mapper.entity.LedgerBleEnt
 import com.algorand.android.module.account.local.data.mapper.model.ledgerble.LedgerBleMapper
 import com.algorand.android.module.account.local.domain.model.LocalAccount.LedgerBle
 import com.algorand.android.module.account.local.domain.repository.LedgerBleAccountRepository
-import com.algorand.android.encryption.EncryptionManager
+import com.algorand.android.module.encryption.EncryptionManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 

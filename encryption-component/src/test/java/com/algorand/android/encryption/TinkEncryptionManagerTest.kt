@@ -6,10 +6,10 @@ import org.mockito.kotlin.*
 
 internal class TinkEncryptionManagerTest {
 
-    private val base64Manager: Base64Manager = mock()
+    private val base64Manager: com.algorand.android.module.encryption.Base64Manager = mock()
     private val aead: Aead = mock()
 
-    private val sut = TinkEncryptionManager(aead, base64Manager)
+    private val sut = com.algorand.android.module.encryption.TinkEncryptionManager(aead, base64Manager)
 
     @Test
     fun `EXPECT base64 encoded and encrypted value WHEN encrypt is invoked`() {

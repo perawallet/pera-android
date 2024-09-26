@@ -5,7 +5,7 @@ import com.algorand.android.module.account.local.data.mapper.entity.NoAuthEntity
 import com.algorand.android.module.account.local.data.mapper.model.noauth.NoAuthMapper
 import com.algorand.android.module.account.local.domain.model.LocalAccount.NoAuth
 import com.algorand.android.module.account.local.domain.repository.NoAuthAccountRepository
-import com.algorand.android.encryption.EncryptionManager
+import com.algorand.android.module.encryption.EncryptionManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 

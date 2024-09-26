@@ -5,7 +5,7 @@ import com.algorand.android.module.account.info.data.model.AccountInformationRes
 import com.algorand.android.module.account.info.data.model.RekeyedAccountsResponse
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.account.info.domain.model.AssetHolding
-import com.algorand.android.encryption.EncryptionManager
+import com.algorand.android.module.encryption.EncryptionManager
 import com.algorand.android.shared_db.accountinformation.model.AccountInformationEntity
 
 internal class AccountInformationMapperImpl(

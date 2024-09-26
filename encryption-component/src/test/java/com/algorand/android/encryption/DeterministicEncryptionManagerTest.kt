@@ -7,9 +7,10 @@ import org.mockito.kotlin.*
 internal class DeterministicEncryptionManagerTest {
 
     private val deterministicAead: DeterministicAead = mock()
-    private val base64Manager: Base64Manager = mock()
+    private val base64Manager: com.algorand.android.module.encryption.Base64Manager = mock()
 
-    private val sut = DeterministicEncryptionManager(deterministicAead, base64Manager)
+    private val sut =
+        com.algorand.android.module.encryption.DeterministicEncryptionManager(deterministicAead, base64Manager)
 
     @Test
     fun `EXPECT base64 encoded and encrypted value WHEN encrypt is invoked`() {

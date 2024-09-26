@@ -38,12 +38,6 @@ android {
 
 dependencies {
 
-    implementation project(path: ':test-util')
-    implementation project(path: ':encryption-component')
-    implementation project(path: ':parity-component')
-    implementation project(path: ':foundation')
-    implementation project(path: ':shared-db')
-
     implementation deps.kotlinx.coroutines_core
     implementation deps.kotlinx.coroutines_android
 

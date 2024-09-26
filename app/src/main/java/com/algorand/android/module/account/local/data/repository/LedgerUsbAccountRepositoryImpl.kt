@@ -5,7 +5,7 @@ import com.algorand.android.module.account.local.data.mapper.entity.LedgerUsbEnt
 import com.algorand.android.module.account.local.data.mapper.model.ledgerusb.LedgerUsbMapper
 import com.algorand.android.module.account.local.domain.model.LocalAccount.LedgerUsb
 import com.algorand.android.module.account.local.domain.repository.LedgerUsbAccountRepository
-import com.algorand.android.encryption.EncryptionManager
+import com.algorand.android.module.encryption.EncryptionManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 

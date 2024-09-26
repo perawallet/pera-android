@@ -5,7 +5,7 @@ import com.algorand.android.module.account.local.data.mapper.entity.Algo25Entity
 import com.algorand.android.module.account.local.data.mapper.model.algo25.Algo25Mapper
 import com.algorand.android.module.account.local.domain.model.LocalAccount.Algo25
 import com.algorand.android.module.account.local.domain.repository.Algo25AccountRepository
-import com.algorand.android.encryption.EncryptionManager
+import com.algorand.android.module.encryption.EncryptionManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

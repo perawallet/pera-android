@@ -7,7 +7,7 @@ import com.algorand.android.module.account.info.data.mapper.model.AssetHoldingMa
 import com.algorand.android.module.account.info.data.service.IndexerApi
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.account.info.domain.repository.AccountInformationRepository
-import com.algorand.android.encryption.EncryptionManager
+import com.algorand.android.module.encryption.EncryptionManager
 import com.algorand.android.foundation.PeraResult
 import com.algorand.android.network_utils.request
 import com.algorand.android.shared_db.accountinformation.dao.AccountInformationDao

@@ -1,9 +1,9 @@
 package com.algorand.android.module.account.local.di
 
-import com.algorand.android.encryption.Base64Manager
-import com.algorand.android.encryption.EncryptionManager
-import com.algorand.android.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
-import com.algorand.android.encryption.di.TINK_ENCRYPTION_MANAGER
+import com.algorand.android.module.encryption.Base64Manager
+import com.algorand.android.module.encryption.EncryptionManager
+import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
+import com.algorand.android.module.encryption.di.TINK_ENCRYPTION_MANAGER
 import com.algorand.android.module.account.local.data.database.dao.Algo25Dao
 import com.algorand.android.module.account.local.data.database.dao.LedgerBleDao
 import com.algorand.android.module.account.local.data.database.dao.LedgerUsbDao

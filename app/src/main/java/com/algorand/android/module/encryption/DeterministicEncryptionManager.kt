@@ -1,4 +1,4 @@
-package com.algorand.android.encryption
+package com.algorand.android.module.encryption
 
 import javax.inject.Inject
 

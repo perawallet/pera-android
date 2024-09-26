@@ -1,7 +1,7 @@
 package com.algorand.android.module.custominfo.data.di
 
-import com.algorand.android.encryption.EncryptionManager
-import com.algorand.android.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
+import com.algorand.android.module.encryption.EncryptionManager
+import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
 import com.algorand.android.module.custominfo.data.mapper.entity.CustomInfoEntityMapper
 import com.algorand.android.module.custominfo.data.mapper.entity.CustomInfoEntityMapperImpl
 import com.algorand.android.module.custominfo.data.mapper.model.CustomInfoMapper

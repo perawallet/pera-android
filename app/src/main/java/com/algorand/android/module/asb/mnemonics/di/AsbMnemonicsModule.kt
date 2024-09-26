@@ -1,8 +1,8 @@
 package com.algorand.android.module.asb.mnemonics.di
 
 import android.content.SharedPreferences
-import com.algorand.android.encryption.EncryptionManager
-import com.algorand.android.encryption.di.TINK_ENCRYPTION_MANAGER
+import com.algorand.android.module.encryption.EncryptionManager
+import com.algorand.android.module.encryption.di.TINK_ENCRYPTION_MANAGER
 import com.algorand.android.module.asb.mnemonics.data.repository.AsbMnemonicsRepositoryImpl
 import com.algorand.android.module.asb.mnemonics.data.storage.AsbMnemonicsLocalSource
 import com.algorand.android.module.asb.mnemonics.domain.repository.AsbMnemonicsRepository

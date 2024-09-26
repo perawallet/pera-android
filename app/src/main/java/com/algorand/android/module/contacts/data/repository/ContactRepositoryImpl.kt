@@ -4,7 +4,7 @@ import com.algorand.android.module.contacts.data.mapper.ContactEntityMapper
 import com.algorand.android.module.contacts.data.mapper.ContactMapper
 import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.module.contacts.domain.repository.ContactRepository
-import com.algorand.android.encryption.EncryptionManager
+import com.algorand.android.module.encryption.EncryptionManager
 import com.algorand.android.shared_db.contact.dao.ContactDao
 
 internal class ContactRepositoryImpl(

@@ -52,8 +52,8 @@ import com.algorand.android.module.account.info.domain.usecase.implementation.Is
 import com.algorand.android.module.account.info.domain.usecase.implementation.IsAssetOwnedByAnyAccountUseCase
 import com.algorand.android.module.account.info.domain.usecase.implementation.IsThereAnyCachedErrorAccountUseCase
 import com.algorand.android.module.account.info.domain.usecase.implementation.IsThereAnyCachedSuccessAccountUseCase
-import com.algorand.android.encryption.EncryptionManager
-import com.algorand.android.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
+import com.algorand.android.module.encryption.EncryptionManager
+import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
 import com.algorand.android.shared_db.accountinformation.dao.AccountInformationDao
 import com.algorand.android.shared_db.accountinformation.dao.AssetHoldingDao
 import dagger.Module

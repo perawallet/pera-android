@@ -2,8 +2,8 @@ package com.algorand.android.module.account.local.data.mapper.model.algo25
 
 import com.algorand.android.module.account.local.data.database.model.Algo25Entity
 import com.algorand.android.module.account.local.domain.model.LocalAccount
-import com.algorand.android.encryption.Base64Manager
-import com.algorand.android.encryption.EncryptionManager
+import com.algorand.android.module.encryption.Base64Manager
+import com.algorand.android.module.encryption.EncryptionManager
 
 internal class Algo25MapperImpl(
     private val deterministicEncryptionManager: EncryptionManager,

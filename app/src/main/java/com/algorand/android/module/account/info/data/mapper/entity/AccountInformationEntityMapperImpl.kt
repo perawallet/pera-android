@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.info.data.mapper.entity
 
 import com.algorand.android.module.account.info.data.model.AccountInformationResponse
-import com.algorand.android.encryption.EncryptionManager
+import com.algorand.android.module.encryption.EncryptionManager
 import com.algorand.android.shared_db.accountinformation.model.AccountInformationEntity
 
 internal class AccountInformationEntityMapperImpl(

@@ -1,8 +1,8 @@
 package com.algorand.android.module.account.sorting.di
 
 import android.content.SharedPreferences
-import com.algorand.android.encryption.EncryptionManager
-import com.algorand.android.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
+import com.algorand.android.module.encryption.EncryptionManager
+import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
 import com.algorand.android.module.account.sorting.data.repository.AccountSortingRepositoryImpl
 import com.algorand.android.module.account.sorting.data.storage.AccountSortPreferencesLocalSource
 import com.algorand.android.module.account.sorting.domain.repository.AccountSortingRepository

@@ -14,7 +14,7 @@ import com.algorand.android.module.nameservice.domain.usecase.GetAccountNameServ
 import com.algorand.android.module.nameservice.domain.usecase.GetNameServiceSearchResults
 import com.algorand.android.module.nameservice.domain.usecase.GetNameServiceSearchResultsUseCase
 import com.algorand.android.module.nameservice.domain.usecase.InitializeAccountNameService
-import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

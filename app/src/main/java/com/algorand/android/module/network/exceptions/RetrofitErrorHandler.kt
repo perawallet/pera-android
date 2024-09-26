@@ -1,4 +1,4 @@
-package com.algorand.android.network_utils.exceptions
+package com.algorand.android.module.network.exceptions
 
 import com.google.gson.Gson
 import com.google.gson.JsonElement

@@ -14,7 +14,7 @@ package com.algorand.android.network
 
 import android.os.Build
 import com.algorand.android.BuildConfig
-import com.algorand.android.network_utils.PeraInterceptor
+import com.algorand.android.module.network.PeraInterceptor
 import java.util.Locale
 import javax.inject.Singleton
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull

@@ -14,7 +14,7 @@ import com.algorand.android.module.currency.domain.usecase.SetPrimaryCurrencyCha
 import com.algorand.android.module.currency.domain.usecase.SetPrimaryCurrencyId
 import com.algorand.android.module.currency.domain.usecase.implementation.GetSelectedCurrencyImpl
 import com.algorand.android.module.currency.domain.usecase.implementation.IsPrimaryCurrencyAlgoUseCase
-import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -15,7 +15,7 @@ package com.algorand.android.module.transaction.component.pendingtxn.data.reposi
 
 import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.foundation.PeraResult
-import com.algorand.android.network_utils.safeApiCall
+import com.algorand.android.module.network.safeApiCall
 import com.algorand.android.module.transaction.component.pendingtxn.data.mapper.PendingTransactionMapper
 import com.algorand.android.module.transaction.component.pendingtxn.data.model.PendingTransactionsResponse
 import com.algorand.android.module.transaction.component.pendingtxn.data.service.PendingTransactionsApiService

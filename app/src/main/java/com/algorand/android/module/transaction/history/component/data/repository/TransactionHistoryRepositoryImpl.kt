@@ -1,7 +1,7 @@
 package com.algorand.android.module.transaction.history.component.data.repository
 
 import com.algorand.android.module.asset.detail.component.AssetConstants
-import com.algorand.android.network_utils.requestOld
+import com.algorand.android.module.network.requestOld
 import com.algorand.android.module.transaction.history.component.data.mapper.PaginatedTransactionMapper
 import com.algorand.android.module.transaction.history.component.data.service.TransactionHistoryApiService
 import com.algorand.android.module.transaction.history.component.domain.model.PaginatedTransactions

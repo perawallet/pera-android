@@ -12,7 +12,7 @@
 
 package com.algorand.android.network
 
-import com.algorand.android.network_utils.PeraInterceptor
+import com.algorand.android.module.network.PeraInterceptor
 import javax.inject.Singleton
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor

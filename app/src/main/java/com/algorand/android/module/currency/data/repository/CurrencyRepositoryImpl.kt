@@ -6,8 +6,8 @@ import com.algorand.android.module.currency.domain.model.Currency
 import com.algorand.android.module.currency.domain.model.CurrencyOption
 import com.algorand.android.module.currency.domain.repository.CurrencyRepository
 import com.algorand.android.foundation.PeraResult
-import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
-import com.algorand.android.network_utils.requestWithHipoErrorHandler
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.requestWithHipoErrorHandler
 import javax.inject.Inject
 
 internal class CurrencyRepositoryImpl @Inject constructor(

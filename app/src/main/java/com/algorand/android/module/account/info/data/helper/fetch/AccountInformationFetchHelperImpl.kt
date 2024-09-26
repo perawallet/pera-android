@@ -8,7 +8,7 @@ import com.algorand.android.module.account.info.data.mapper.AccountInformationRe
 import com.algorand.android.module.account.info.data.model.AccountInformationResponse
 import com.algorand.android.module.account.info.data.service.IndexerApi
 import com.algorand.android.foundation.PeraResult
-import com.algorand.android.network_utils.request
+import com.algorand.android.module.network.request
 import javax.inject.Inject
 import okio.IOException
 

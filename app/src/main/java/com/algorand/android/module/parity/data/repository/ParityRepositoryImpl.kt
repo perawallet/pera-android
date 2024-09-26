@@ -8,8 +8,8 @@ import com.algorand.android.module.parity.data.model.CurrencyDetailResponse
 import com.algorand.android.module.parity.data.service.ParityApiService
 import com.algorand.android.module.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.module.parity.domain.repository.ParityRepository
-import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
-import com.algorand.android.network_utils.requestWithHipoErrorHandler
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.requestWithHipoErrorHandler
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 

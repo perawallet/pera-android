@@ -21,8 +21,8 @@ import com.algorand.android.module.notification.data.service.NotificationApiServ
 import com.algorand.android.module.notification.data.storage.NotificationRefreshTimeLocalSource
 import com.algorand.android.module.notification.domain.model.NotificationHistory
 import com.algorand.android.module.notification.domain.repository.NotificationRepository
-import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
-import com.algorand.android.network_utils.requestWithHipoErrorHandler
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.requestWithHipoErrorHandler
 import com.algorand.android.shared_db.notification.dao.NotificationFilterDao
 import com.algorand.android.shared_db.notification.model.NotificationFilterEntity
 import javax.inject.Inject

@@ -22,7 +22,7 @@ import com.algorand.android.module.transaction.component.domain.model.SignedTran
 import com.algorand.android.module.transaction.component.domain.model.TransactionId
 import com.algorand.android.module.transaction.component.domain.model.TransactionParams
 import com.algorand.android.module.transaction.component.domain.repository.TransactionRepository
-import com.algorand.android.network_utils.request
+import com.algorand.android.module.network.request
 import javax.inject.Inject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody

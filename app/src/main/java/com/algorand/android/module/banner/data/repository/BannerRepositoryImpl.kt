@@ -21,7 +21,7 @@ import com.algorand.android.module.banner.domain.repository.BannerRepository
 import com.algorand.android.module.caching.CacheResult
 import com.algorand.android.module.caching.SharedPrefLocalSource
 import com.algorand.android.module.caching.SingleInMemoryLocalCache
-import com.algorand.android.network_utils.request
+import com.algorand.android.module.network.request
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

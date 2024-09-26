@@ -5,7 +5,7 @@ import com.algorand.android.module.asset.detail.component.asset.domain.model.det
 import com.algorand.android.module.asset.detail.component.collectible.data.mapper.CollectibleDetailMapper
 import com.algorand.android.module.asset.detail.component.collectible.domain.repository.CollectibleDetailRepository
 import com.algorand.android.foundation.PeraResult
-import com.algorand.android.network_utils.request
+import com.algorand.android.module.network.request
 import javax.inject.Inject
 
 internal class CollectibleDetailRepositoryImpl @Inject constructor(

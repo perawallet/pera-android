@@ -1,6 +1,5 @@
 include ':app'
 rootProject.name = 'algorand-android'
-include ':network-utils'
 include ':foundation'
 include ':shared-db'
 include ':designsystem'

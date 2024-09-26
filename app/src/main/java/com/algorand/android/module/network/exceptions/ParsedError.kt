@@ -1,4 +1,4 @@
-package com.algorand.android.network_utils.exceptions
+package com.algorand.android.module.network.exceptions
 
 data class ParsedError(
     val keyErrorMessageMap: Map<String, List<String>>,

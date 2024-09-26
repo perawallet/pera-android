@@ -9,7 +9,7 @@ import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.account.info.domain.repository.AccountInformationRepository
 import com.algorand.android.module.encryption.EncryptionManager
 import com.algorand.android.foundation.PeraResult
-import com.algorand.android.network_utils.request
+import com.algorand.android.module.network.request
 import com.algorand.android.shared_db.accountinformation.dao.AccountInformationDao
 import com.algorand.android.shared_db.accountinformation.dao.AssetHoldingDao
 import com.algorand.android.shared_db.accountinformation.model.AssetHoldingEntity

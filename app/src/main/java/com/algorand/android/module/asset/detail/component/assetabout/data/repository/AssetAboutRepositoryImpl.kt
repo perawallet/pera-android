@@ -19,8 +19,8 @@ import com.algorand.android.module.asset.detail.component.asset.domain.model.det
 import com.algorand.android.module.asset.detail.component.assetabout.domain.repository.AssetAboutRepository
 import com.algorand.android.module.caching.CacheResult
 import com.algorand.android.module.caching.SingleInMemoryLocalCache
-import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
-import com.algorand.android.network_utils.requestWithHipoErrorHandler
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.requestWithHipoErrorHandler
 import kotlinx.coroutines.flow.StateFlow
 
 internal class AssetAboutRepositoryImpl(

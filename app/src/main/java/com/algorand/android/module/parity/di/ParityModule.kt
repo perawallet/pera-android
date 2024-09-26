@@ -49,7 +49,7 @@ import com.algorand.android.module.parity.domain.usecase.secondary.implementatio
 import com.algorand.android.module.parity.domain.usecase.secondary.implementation.GetSecondaryCurrencyAssetParityValueUseCase
 import com.algorand.android.module.parity.domain.usecase.secondary.implementation.GetSecondaryCurrencySymbolUseCase
 import com.algorand.android.module.parity.domain.usecase.secondary.implementation.GetUsdToSecondaryCurrencyConversionRateUseCase
-import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

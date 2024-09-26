@@ -16,7 +16,7 @@ import com.algorand.android.modules.webimport.loading.data.mapper.ImportBackupRe
 import com.algorand.android.modules.webimport.loading.data.repository.WebImportAccountRepositoryImpl
 import com.algorand.android.modules.webimport.loading.domain.repository.WebImportAccountRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

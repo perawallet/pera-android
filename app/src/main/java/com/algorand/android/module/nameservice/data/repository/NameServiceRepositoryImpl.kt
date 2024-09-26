@@ -9,8 +9,8 @@ import com.algorand.android.module.nameservice.data.service.NameServiceApiServic
 import com.algorand.android.module.nameservice.domain.model.NameService
 import com.algorand.android.module.nameservice.domain.model.NameServiceSearchResult
 import com.algorand.android.module.nameservice.domain.repository.NameServiceRepository
-import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
-import com.algorand.android.network_utils.requestWithHipoErrorHandler
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.requestWithHipoErrorHandler
 import javax.inject.Inject
 
 internal class NameServiceRepositoryImpl @Inject constructor(

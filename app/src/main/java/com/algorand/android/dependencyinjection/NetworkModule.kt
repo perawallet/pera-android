@@ -25,7 +25,7 @@ import com.algorand.android.network.IndexerApi
 import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.MobileHeaderInterceptor
-import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import com.algorand.android.module.node.domain.usecase.GetActiveNode
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

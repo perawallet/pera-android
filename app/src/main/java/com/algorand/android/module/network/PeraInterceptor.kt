@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.network_utils
+package com.algorand.android.module.network
 
 import okhttp3.Interceptor
 import okhttp3.Protocol

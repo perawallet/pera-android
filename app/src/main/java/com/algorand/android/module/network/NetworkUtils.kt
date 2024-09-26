@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.network_utils
+package com.algorand.android.module.network
 
 import com.algorand.android.foundation.PeraResult
-import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import java.io.IOException
 import retrofit2.Response
 

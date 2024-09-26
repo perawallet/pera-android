@@ -3,7 +3,7 @@ package com.algorand.android.module.account.core.component.domain.usecase
 import com.algorand.android.account.localaccount.domain.usecase.DeleteLocalAccount
 import com.algorand.android.module.account.info.domain.usecase.DeleteAccountInformation
 import com.algorand.android.module.account.sorting.domain.usecase.RemoveAccountOrderIndex
-import com.algorand.android.asb.component.domain.usecase.RemoveAccountAsbBackUpStatus
+import com.algorand.android.module.asb.domain.usecase.RemoveAccountAsbBackUpStatus
 import com.algorand.android.custominfo.component.domain.usecase.DeleteCustomInfo
 import javax.inject.Inject
 

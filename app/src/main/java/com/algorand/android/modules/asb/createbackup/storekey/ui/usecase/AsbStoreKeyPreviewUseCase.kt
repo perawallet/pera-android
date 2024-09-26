@@ -14,13 +14,13 @@ package com.algorand.android.modules.asb.createbackup.storekey.ui.usecase
 
 import com.algorand.android.R
 import com.algorand.android.account.localaccount.domain.usecase.GetSecretKey
-import com.algorand.android.asb.component.backupprotocol.model.BackUpAccount
-import com.algorand.android.asb.component.backupprotocol.model.BackUpPayload
-import com.algorand.android.asb.component.backupprotocol.usecase.CreateAsbBackUpFilePayload
-import com.algorand.android.asb.component.domain.usecase.CreateAsbMnemonic
-import com.algorand.android.asb.component.domain.usecase.SetAccountsAsbBackedUp
-import com.algorand.android.asb.component.mnemonics.domain.usecase.GetAsbBackUpMnemonics
-import com.algorand.android.asb.component.mnemonics.domain.usecase.SetAsbBackUpMnemonics
+import com.algorand.android.module.asb.backupprotocol.model.BackUpAccount
+import com.algorand.android.module.asb.backupprotocol.model.BackUpPayload
+import com.algorand.android.module.asb.backupprotocol.usecase.CreateAsbBackUpFilePayload
+import com.algorand.android.module.asb.domain.usecase.CreateAsbMnemonic
+import com.algorand.android.module.asb.domain.usecase.SetAccountsAsbBackedUp
+import com.algorand.android.module.asb.mnemonics.domain.usecase.GetAsbBackUpMnemonics
+import com.algorand.android.module.asb.mnemonics.domain.usecase.SetAsbBackUpMnemonics
 import com.algorand.android.custominfo.component.domain.usecase.GetCustomInfoOrNull
 import com.algorand.android.deviceid.component.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.models.AnnotatedString

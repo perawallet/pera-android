@@ -20,7 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.asb.component.utils.AsbBackUpConstants
+import com.algorand.android.module.asb.utils.AsbBackUpConstants
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.perafileuploadview.PeraFileUploadView
 import com.algorand.android.customviews.perafileuploadview.model.FileUploadState

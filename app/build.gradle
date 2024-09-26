@@ -171,7 +171,6 @@ dependencies {
     implementation project(path: ':asset-detail-component')
     implementation project(path: ':custom-info-component')
     implementation project(path: ':parity-component')
-    implementation project(path: ':asb-component')
     implementation project(path: ':foundation')
     implementation project(path: ':deviceid-component')
     implementation project(path: ':contacts-component')

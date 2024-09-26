@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.component.detail.domain.usecase.implementation
 
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
-import com.algorand.android.asb.component.domain.usecase.GetAccountAsbBackUpStatus
+import com.algorand.android.module.asb.domain.usecase.GetAccountAsbBackUpStatus
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.usecase.*
 import com.algorand.android.custominfo.component.domain.usecase.GetCustomInfo

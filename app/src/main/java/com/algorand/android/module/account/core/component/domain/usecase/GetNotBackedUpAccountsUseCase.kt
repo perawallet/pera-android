@@ -2,7 +2,7 @@ package com.algorand.android.module.account.core.component.domain.usecase
 
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.account.info.domain.usecase.GetAllAccountInformation
-import com.algorand.android.asb.component.domain.usecase.GetBackedUpAccounts
+import com.algorand.android.module.asb.domain.usecase.GetBackedUpAccounts
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import java.math.BigDecimal.ZERO

@@ -2,7 +2,7 @@ package com.algorand.android.module.account.core.component.domain.usecase
 
 import com.algorand.android.account.localaccount.domain.usecase.*
 import com.algorand.android.module.account.sorting.domain.usecase.SetAccountOrderIndex
-import com.algorand.android.asb.component.domain.usecase.SetAccountAsbBackUpStatus
+import com.algorand.android.module.asb.domain.usecase.SetAccountAsbBackUpStatus
 import com.algorand.android.custominfo.component.domain.model.CustomInfo
 import com.algorand.android.custominfo.component.domain.usecase.SetCustomInfo
 import javax.inject.Inject

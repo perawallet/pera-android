@@ -13,7 +13,7 @@
 package com.algorand.android.ui.register
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.asb.component.domain.usecase.SetAccountAsbBackUpStatus
+import com.algorand.android.module.asb.domain.usecase.SetAccountAsbBackUpStatus
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingVerifyPassphraseEventTracker
 import dagger.hilt.android.lifecycle.HiltViewModel

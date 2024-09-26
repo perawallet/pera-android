@@ -20,7 +20,7 @@ import com.algorand.android.module.asset.detail.component.assetabout.domain.repo
 import com.algorand.android.module.asset.detail.component.assetabout.domain.usecase.CacheAssetDetailToAsaProfile
 import com.algorand.android.module.asset.detail.component.assetabout.domain.usecase.ClearAsaProfileCache
 import com.algorand.android.module.asset.detail.component.assetabout.domain.usecase.GetAssetFlowFromAsaProfileCache
-import com.algorand.android.caching.SingleInMemoryLocalCache
+import com.algorand.android.module.caching.SingleInMemoryLocalCache
 import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides

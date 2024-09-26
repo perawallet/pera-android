@@ -26,7 +26,7 @@ import com.algorand.android.module.banner.domain.usecase.DismissBanner
 import com.algorand.android.module.banner.domain.usecase.GetBannerFlow
 import com.algorand.android.module.banner.domain.usecase.InitializeBanners
 import com.algorand.android.module.banner.domain.usecase.InitializeBannersUseCase
-import com.algorand.android.caching.SingleInMemoryLocalCache
+import com.algorand.android.module.caching.SingleInMemoryLocalCache
 import com.algorand.android.foundation.json.JsonSerializer
 import dagger.Module
 import dagger.Provides

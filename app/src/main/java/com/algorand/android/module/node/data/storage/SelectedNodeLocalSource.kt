@@ -14,7 +14,7 @@
 package com.algorand.android.module.node.data.storage
 
 import android.content.SharedPreferences
-import com.algorand.android.caching.SharedPrefLocalSource
+import com.algorand.android.module.caching.SharedPrefLocalSource
 import com.algorand.android.module.node.data.mapper.NodeStorageMapper
 import com.algorand.android.module.node.domain.Node
 import javax.inject.Inject

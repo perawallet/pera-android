@@ -14,7 +14,7 @@
 package com.algorand.android.module.swap.component.reddot.data.storage
 
 import android.content.SharedPreferences
-import com.algorand.android.caching.SharedPrefLocalSource
+import com.algorand.android.module.caching.SharedPrefLocalSource
 import javax.inject.Inject
 
 internal class SwapFeatureRedDotPreferenceLocalSource @Inject constructor(

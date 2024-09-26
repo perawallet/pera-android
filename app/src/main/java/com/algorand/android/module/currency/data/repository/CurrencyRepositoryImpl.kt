@@ -1,6 +1,6 @@
 package com.algorand.android.module.currency.data.repository
 
-import com.algorand.android.caching.SharedPrefLocalSource
+import com.algorand.android.module.caching.SharedPrefLocalSource
 import com.algorand.android.module.currency.data.service.CurrencyApiService
 import com.algorand.android.module.currency.domain.model.Currency
 import com.algorand.android.module.currency.domain.model.CurrencyOption

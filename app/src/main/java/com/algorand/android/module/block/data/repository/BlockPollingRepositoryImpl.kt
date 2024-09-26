@@ -16,8 +16,8 @@ package com.algorand.android.module.block.data.repository
 import com.algorand.android.module.block.data.model.ShouldRefreshRequestBody
 import com.algorand.android.module.block.data.service.BlockPollingApiService
 import com.algorand.android.module.block.domain.repository.BlockPollingRepository
-import com.algorand.android.caching.CacheResult
-import com.algorand.android.caching.SingleInMemoryLocalCache
+import com.algorand.android.module.caching.CacheResult
+import com.algorand.android.module.caching.SingleInMemoryLocalCache
 import com.algorand.android.foundation.PeraResult
 import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import com.algorand.android.network_utils.requestWithHipoErrorHandler

@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.pushtoken.di
 
-import com.algorand.android.caching.SingleInMemoryLocalCache
+import com.algorand.android.module.caching.SingleInMemoryLocalCache
 import com.algorand.android.module.pushtoken.FirebaseMessagingTokenProvider
 import com.algorand.android.module.pushtoken.MessagingTokenProvider
 import com.algorand.android.module.pushtoken.data.repository.PushTokenRepositoryImpl

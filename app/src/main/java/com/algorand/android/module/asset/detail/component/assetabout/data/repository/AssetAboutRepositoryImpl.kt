@@ -17,8 +17,8 @@ import com.algorand.android.module.asset.detail.component.asset.data.mapper.mode
 import com.algorand.android.module.asset.detail.component.asset.data.service.AssetDetailApi
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
 import com.algorand.android.module.asset.detail.component.assetabout.domain.repository.AssetAboutRepository
-import com.algorand.android.caching.CacheResult
-import com.algorand.android.caching.SingleInMemoryLocalCache
+import com.algorand.android.module.caching.CacheResult
+import com.algorand.android.module.caching.SingleInMemoryLocalCache
 import com.algorand.android.network_utils.exceptions.RetrofitErrorHandler
 import com.algorand.android.network_utils.requestWithHipoErrorHandler
 import kotlinx.coroutines.flow.StateFlow

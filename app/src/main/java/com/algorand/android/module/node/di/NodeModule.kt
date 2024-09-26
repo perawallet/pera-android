@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.node.di
 
-import com.algorand.android.caching.SingleInMemoryLocalCache
+import com.algorand.android.module.caching.SingleInMemoryLocalCache
 import com.algorand.android.module.node.data.mapper.NodeNameMapper
 import com.algorand.android.module.node.data.mapper.NodeNameMapperImpl
 import com.algorand.android.module.node.data.mapper.NodeStorageMapper

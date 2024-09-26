@@ -14,7 +14,7 @@
 package com.algorand.android.module.asset.detail.component.assetabout.domain.repository
 
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
-import com.algorand.android.caching.CacheResult
+import com.algorand.android.module.caching.CacheResult
 import kotlinx.coroutines.flow.StateFlow
 
 internal interface AssetAboutRepository {

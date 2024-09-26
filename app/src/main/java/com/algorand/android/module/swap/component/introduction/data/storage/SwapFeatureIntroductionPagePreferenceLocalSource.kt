@@ -14,7 +14,7 @@
 package com.algorand.android.module.swap.component.introduction.data.storage
 
 import android.content.SharedPreferences
-import com.algorand.android.caching.SharedPrefLocalSource
+import com.algorand.android.module.caching.SharedPrefLocalSource
 import javax.inject.Inject
 
 internal class SwapFeatureIntroductionPagePreferenceLocalSource @Inject constructor(

@@ -1,6 +1,6 @@
 package com.algorand.android.module.nameservice.di
 
-import com.algorand.android.caching.InMemoryLocalCache
+import com.algorand.android.module.caching.InMemoryLocalCache
 import com.algorand.android.module.nameservice.data.mapper.NameServiceMapper
 import com.algorand.android.module.nameservice.data.mapper.NameServiceMapperImpl
 import com.algorand.android.module.nameservice.data.mapper.NameServiceSearchResultMapper

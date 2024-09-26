@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.reddot.data.repository
 
-import com.algorand.android.caching.SharedPrefLocalSource
+import com.algorand.android.module.caching.SharedPrefLocalSource
 import com.algorand.android.module.swap.component.reddot.data.storage.SwapFeatureRedDotPreferenceLocalSource.Companion.defaultSwapFeatureRedDotPreference
 import com.algorand.android.module.swap.component.reddot.domain.repository.SwapFeatureRedDotRepository
 

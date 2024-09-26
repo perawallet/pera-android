@@ -1,6 +1,6 @@
 package com.algorand.android.module.parity.domain.usecase.implementation
 
-import com.algorand.android.caching.CacheResult
+import com.algorand.android.module.caching.CacheResult
 import com.algorand.android.module.parity.domain.repository.ParityRepository
 import com.algorand.android.module.parity.domain.usecase.GetUsdToAlgoConversionRate
 import com.algorand.android.module.parity.domain.util.ParityConstants.SAFE_PARITY_DIVISION_DECIMALS

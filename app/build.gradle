@@ -171,7 +171,6 @@ dependencies {
     implementation project(path: ':designsystem')
     implementation project(path: ':network-utils')
     implementation project(path: ':asset-utils')
-    implementation project(path: ':caching')
     implementation project(path: ':peracompactdecimal-aar')
     implementation project(path: ':shared-db')
 

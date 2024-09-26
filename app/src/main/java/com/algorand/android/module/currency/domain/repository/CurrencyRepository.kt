@@ -1,6 +1,6 @@
 package com.algorand.android.module.currency.domain.repository
 
-import com.algorand.android.caching.SharedPrefLocalSource
+import com.algorand.android.module.caching.SharedPrefLocalSource
 import com.algorand.android.module.currency.domain.model.CurrencyOption
 import com.algorand.android.foundation.PeraResult
 

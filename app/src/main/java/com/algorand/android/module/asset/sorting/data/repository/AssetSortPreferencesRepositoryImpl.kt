@@ -15,7 +15,7 @@ package com.algorand.android.module.asset.sorting.data.repository
 
 import com.algorand.android.module.asset.sorting.domain.model.AssetSortPreference
 import com.algorand.android.module.asset.sorting.domain.repository.AssetSortPreferencesRepository
-import com.algorand.android.caching.SharedPrefLocalSource
+import com.algorand.android.module.caching.SharedPrefLocalSource
 import javax.inject.Inject
 
 internal class AssetSortPreferencesRepositoryImpl @Inject constructor(

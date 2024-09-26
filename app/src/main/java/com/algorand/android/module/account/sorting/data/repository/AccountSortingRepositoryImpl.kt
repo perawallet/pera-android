@@ -1,6 +1,6 @@
 package com.algorand.android.module.account.sorting.data.repository
 
-import com.algorand.android.caching.SharedPrefLocalSource
+import com.algorand.android.module.caching.SharedPrefLocalSource
 import com.algorand.android.module.encryption.EncryptionManager
 import com.algorand.android.module.account.sorting.domain.model.AccountOrderIndex
 import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier

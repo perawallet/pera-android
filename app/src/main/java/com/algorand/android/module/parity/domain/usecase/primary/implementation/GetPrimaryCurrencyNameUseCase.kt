@@ -1,6 +1,6 @@
 package com.algorand.android.module.parity.domain.usecase.primary.implementation
 
-import com.algorand.android.caching.CacheResult.Success
+import com.algorand.android.module.caching.CacheResult.Success
 import com.algorand.android.module.currency.domain.usecase.GetPrimaryCurrencyId
 import com.algorand.android.module.parity.domain.repository.ParityRepository
 import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencyName

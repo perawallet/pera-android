@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.node.data.repository
 
-import com.algorand.android.caching.CacheResult
-import com.algorand.android.caching.SingleInMemoryLocalCache
+import com.algorand.android.module.caching.CacheResult
+import com.algorand.android.module.caching.SingleInMemoryLocalCache
 import com.algorand.android.module.node.data.storage.SelectedNodeLocalSource
 import com.algorand.android.module.node.domain.Node
 import com.algorand.android.module.node.domain.repository.NodeRepository

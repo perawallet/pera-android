@@ -14,7 +14,7 @@
 package com.algorand.android.module.notification.data.storage
 
 import android.content.SharedPreferences
-import com.algorand.android.caching.SharedPrefLocalSource
+import com.algorand.android.module.caching.SharedPrefLocalSource
 
 // ISO-8601 ISO_DATE_TIME
 internal class NotificationRefreshTimeLocalSource(

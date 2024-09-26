@@ -1,4 +1,4 @@
-package com.algorand.android.caching
+package com.algorand.android.module.caching
 
 sealed class CacheResult<T> {
 

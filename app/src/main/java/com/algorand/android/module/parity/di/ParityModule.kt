@@ -1,6 +1,6 @@
 package com.algorand.android.module.parity.di
 
-import com.algorand.android.caching.SingleInMemoryLocalCache
+import com.algorand.android.module.caching.SingleInMemoryLocalCache
 import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.module.parity.data.mapper.SelectedCurrencyDetailMapper
 import com.algorand.android.module.parity.data.mapper.SelectedCurrencyDetailMapperImpl

@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.parity.domain.usecase
 
-import com.algorand.android.caching.CacheResult
+import com.algorand.android.module.caching.CacheResult
 import com.algorand.android.module.parity.domain.model.SelectedCurrencyDetail
 
 fun interface GetSelectedCurrencyDetail {

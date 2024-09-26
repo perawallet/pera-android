@@ -1,6 +1,6 @@
 package com.algorand.android.module.parity.domain.repository
 
-import com.algorand.android.caching.CacheResult
+import com.algorand.android.module.caching.CacheResult
 import com.algorand.android.module.parity.domain.model.SelectedCurrencyDetail
 import kotlinx.coroutines.flow.Flow
 

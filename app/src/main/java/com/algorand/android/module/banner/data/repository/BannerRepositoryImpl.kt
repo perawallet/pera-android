@@ -18,9 +18,9 @@ import com.algorand.android.module.banner.data.model.BannerListResponse
 import com.algorand.android.module.banner.data.service.BannerApi
 import com.algorand.android.module.banner.domain.model.Banner
 import com.algorand.android.module.banner.domain.repository.BannerRepository
-import com.algorand.android.caching.CacheResult
-import com.algorand.android.caching.SharedPrefLocalSource
-import com.algorand.android.caching.SingleInMemoryLocalCache
+import com.algorand.android.module.caching.CacheResult
+import com.algorand.android.module.caching.SharedPrefLocalSource
+import com.algorand.android.module.caching.SingleInMemoryLocalCache
 import com.algorand.android.network_utils.request
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

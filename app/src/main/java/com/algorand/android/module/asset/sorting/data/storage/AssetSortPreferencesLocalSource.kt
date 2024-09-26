@@ -14,7 +14,7 @@
 package com.algorand.android.module.asset.sorting.data.storage
 
 import android.content.SharedPreferences
-import com.algorand.android.caching.SharedPrefLocalSource
+import com.algorand.android.module.caching.SharedPrefLocalSource
 
 internal class AssetSortPreferencesLocalSource(
     sharedPreferences: SharedPreferences

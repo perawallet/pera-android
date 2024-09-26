@@ -1,7 +1,6 @@
 package com.algorand.android.module.deviceid.data.repository
 
-import com.algorand.android.caching.SharedPrefLocalSource
-import com.algorand.android.module.deviceid.data.model.*
+import com.algorand.android.module.caching.SharedPrefLocalSource
 import com.algorand.android.module.deviceid.data.service.DeviceIdApiService
 import com.algorand.android.module.deviceid.domain.model.*
 import com.algorand.android.module.deviceid.domain.repository.DeviceIdRepository

@@ -1,6 +1,6 @@
 package com.algorand.android.module.parity.data.mapper
 
-import com.algorand.android.currency.domain.model.Currency
+import com.algorand.android.module.currency.domain.model.Currency
 import com.algorand.android.module.parity.data.model.CurrencyDetailResponse
 import com.algorand.android.module.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.module.parity.domain.util.ParityConstants.SAFE_PARITY_DIVISION_DECIMALS

@@ -1,0 +1,8 @@
+package com.algorand.android.module.currency.domain.usecase
+
+import com.algorand.android.module.currency.domain.model.CurrencyOption
+import com.algorand.android.foundation.PeraResult
+
+fun interface GetCurrencyOptionList {
+    suspend operator fun invoke(): PeraResult<List<CurrencyOption>>
+}

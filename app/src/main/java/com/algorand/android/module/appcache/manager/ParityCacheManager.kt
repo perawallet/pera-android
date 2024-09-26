@@ -15,8 +15,8 @@ package com.algorand.android.module.appcache.manager
 
 import com.algorand.android.caching.CacheResult
 import com.algorand.android.caching.SharedPrefLocalSource
-import com.algorand.android.currency.domain.usecase.RemovePrimaryCurrencyChangeListener
-import com.algorand.android.currency.domain.usecase.SetPrimaryCurrencyChangeListener
+import com.algorand.android.module.currency.domain.usecase.RemovePrimaryCurrencyChangeListener
+import com.algorand.android.module.currency.domain.usecase.SetPrimaryCurrencyChangeListener
 import com.algorand.android.module.parity.domain.usecase.ClearSelectedCurrencyDetailCache
 import com.algorand.android.module.parity.domain.usecase.GetSelectedCurrencyDetailFlow
 import com.algorand.android.module.parity.domain.usecase.InitializeParityCache

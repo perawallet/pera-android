@@ -38,10 +38,6 @@ android {
 
 dependencies {
 
-    implementation project(path: ':peracompactdecimal-aar')
-    implementation project(path: ':currency-component')
-    implementation project(path: ':asset-utils')
-
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler
     kapt deps.hilt.compiler

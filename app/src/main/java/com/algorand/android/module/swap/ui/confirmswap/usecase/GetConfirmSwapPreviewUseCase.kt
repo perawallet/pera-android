@@ -16,7 +16,7 @@ package com.algorand.android.module.swap.ui.confirmswap.usecase
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.module.account.core.ui.usecase.GetAssetName
-import com.algorand.android.currency.domain.model.Currency
+import com.algorand.android.module.currency.domain.model.Currency
 import com.algorand.android.module.swap.ui.common.getFormattedMinimumReceivedAmount
 import com.algorand.android.module.swap.ui.confirmswap.mapper.ConfirmSwapPriceImpactWarningStatusMapper
 import com.algorand.android.module.swap.ui.confirmswap.mapper.SwapAssetDetailMapper

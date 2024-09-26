@@ -2,7 +2,7 @@ package com.algorand.android.module.parity.data.repository
 
 import com.algorand.android.caching.CacheResult
 import com.algorand.android.caching.SingleInMemoryLocalCache
-import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.module.parity.data.mapper.SelectedCurrencyDetailMapper
 import com.algorand.android.module.parity.data.model.CurrencyDetailResponse
 import com.algorand.android.module.parity.data.service.ParityApiService

@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.parity.domain.usecase.implementation
 
-import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.module.parity.domain.model.ParityValue
 import com.algorand.android.module.parity.domain.usecase.GetAssetExchangeParityValue
 import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryAlgoParityValue

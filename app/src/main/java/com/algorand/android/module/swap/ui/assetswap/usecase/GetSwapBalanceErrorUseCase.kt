@@ -18,7 +18,7 @@ import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_AS
 import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetData
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
-import com.algorand.android.currency.domain.model.Currency
+import com.algorand.android.module.currency.domain.model.Currency
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.designsystem.R
 import com.algorand.android.designsystem.getXmlStyledString

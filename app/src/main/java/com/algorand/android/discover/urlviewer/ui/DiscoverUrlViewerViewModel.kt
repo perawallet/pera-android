@@ -14,7 +14,7 @@ package com.algorand.android.discover.urlviewer.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.currency.domain.usecase.GetPrimaryCurrencyId
+import com.algorand.android.module.currency.domain.usecase.GetPrimaryCurrencyId
 import com.algorand.android.discover.common.ui.BaseDiscoverViewModel
 import com.algorand.android.discover.common.ui.model.DappFavoriteElement
 import com.algorand.android.discover.urlviewer.ui.model.DiscoverUrlViewerPreview

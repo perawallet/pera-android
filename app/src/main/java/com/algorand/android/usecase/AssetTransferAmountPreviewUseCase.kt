@@ -19,7 +19,7 @@ import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_AS
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
-import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.mapper.AssetTransferAmountAssetPreviewMapper
 import com.algorand.android.mapper.AssetTransferAmountPreviewMapper
 import com.algorand.android.models.AssetTransaction

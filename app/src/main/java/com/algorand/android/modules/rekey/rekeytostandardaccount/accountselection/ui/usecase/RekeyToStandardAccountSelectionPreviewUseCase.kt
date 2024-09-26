@@ -20,7 +20,7 @@ import com.algorand.android.module.account.core.component.detail.domain.model.Ac
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountType
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
-import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.models.ScreenState
 import com.algorand.android.modules.basesingleaccountselection.ui.mapper.SingleAccountSelectionListItemMapper

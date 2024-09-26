@@ -1,7 +1,7 @@
 package com.algorand.android.module.parity.domain.usecase.secondary.implementation
 
-import com.algorand.android.currency.domain.model.Currency
-import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.module.currency.domain.model.Currency
+import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
 import javax.inject.Inject
 

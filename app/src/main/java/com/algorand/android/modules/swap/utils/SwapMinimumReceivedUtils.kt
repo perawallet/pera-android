@@ -13,7 +13,7 @@
 package com.algorand.android.modules.swap.utils
 
 import com.algorand.android.R
-import com.algorand.android.currency.domain.model.Currency
+import com.algorand.android.module.currency.domain.model.Currency
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.module.swap.component.domain.model.SwapQuote
 

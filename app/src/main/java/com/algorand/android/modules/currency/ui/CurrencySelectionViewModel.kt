@@ -15,9 +15,9 @@ package com.algorand.android.modules.currency.ui
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.module.appcache.usecase.RefreshSelectedCurrencyDetailCache
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.currency.domain.model.SelectedCurrency
-import com.algorand.android.currency.domain.usecase.GetSelectedCurrency
-import com.algorand.android.currency.domain.usecase.SetPrimaryCurrencyId
+import com.algorand.android.module.currency.domain.model.SelectedCurrency
+import com.algorand.android.module.currency.domain.usecase.GetSelectedCurrency
+import com.algorand.android.module.currency.domain.usecase.SetPrimaryCurrencyId
 import com.algorand.android.models.ui.CurrencySelectionPreview
 import com.algorand.android.modules.currency.ui.usecase.CurrencySelectionPreviewUseCase
 import com.algorand.android.ui.settings.selection.CurrencyListItem

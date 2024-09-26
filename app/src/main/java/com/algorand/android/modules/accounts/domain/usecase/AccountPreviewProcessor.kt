@@ -14,7 +14,7 @@ import com.algorand.android.module.account.core.component.detail.domain.model.Ac
 import com.algorand.android.module.account.core.component.domain.model.AccountTotalValue
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.module.account.core.component.domain.usecase.GetNotBackedUpAccounts
-import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.modules.accounts.domain.mapper.AccountListItemMapper
 import com.algorand.android.modules.accounts.domain.mapper.PortfolioValueItemMapper

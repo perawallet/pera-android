@@ -13,10 +13,10 @@
 package com.algorand.android.modules.currency.ui.usecase
 
 import com.algorand.android.core.BaseUseCase
-import com.algorand.android.currency.domain.model.CurrencyOption
-import com.algorand.android.currency.domain.usecase.GetCurrencyOptionList
-import com.algorand.android.currency.domain.usecase.GetPrimaryCurrencyId
-import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.module.currency.domain.model.CurrencyOption
+import com.algorand.android.module.currency.domain.usecase.GetCurrencyOptionList
+import com.algorand.android.module.currency.domain.usecase.GetPrimaryCurrencyId
+import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.mapper.CurrencySelectionPreviewMapper
 import com.algorand.android.models.ui.CurrencySelectionPreview
 import com.algorand.android.modules.currency.ui.mapper.CurrencyListItemMapper

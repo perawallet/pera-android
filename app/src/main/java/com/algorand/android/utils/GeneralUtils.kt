@@ -21,7 +21,7 @@ import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import com.algorand.android.currency.domain.model.Currency
+import com.algorand.android.module.currency.domain.model.Currency
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.net.URLDecoder

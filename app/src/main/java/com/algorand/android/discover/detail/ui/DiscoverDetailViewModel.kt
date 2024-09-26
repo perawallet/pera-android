@@ -14,7 +14,7 @@ package com.algorand.android.discover.detail.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.currency.domain.usecase.GetPrimaryCurrencyId
+import com.algorand.android.module.currency.domain.usecase.GetPrimaryCurrencyId
 import com.algorand.android.discover.common.ui.BaseDiscoverViewModel
 import com.algorand.android.discover.detail.ui.model.DiscoverDetailPreview
 import com.algorand.android.discover.detail.ui.usecase.DiscoverDetailPreviewUseCase

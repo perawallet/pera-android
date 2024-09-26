@@ -1,8 +1,9 @@
 package com.algorand.android.module.parity.domain.usecase.implementation
 
 import com.algorand.android.caching.CacheResult
-import com.algorand.android.currency.domain.model.Currency
-import com.algorand.android.currency.domain.usecase.*
+import com.algorand.android.module.currency.domain.model.Currency
+import com.algorand.android.module.currency.domain.usecase.GetPrimaryCurrencyId
+import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.module.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.module.parity.domain.repository.ParityRepository
 import com.algorand.android.module.parity.domain.usecase.FetchAndCacheParity

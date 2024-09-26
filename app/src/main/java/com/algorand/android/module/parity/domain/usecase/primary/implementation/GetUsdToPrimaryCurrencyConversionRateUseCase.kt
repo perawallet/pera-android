@@ -1,7 +1,7 @@
 package com.algorand.android.module.parity.domain.usecase.primary.implementation
 
 import com.algorand.android.caching.CacheResult
-import com.algorand.android.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.module.parity.domain.repository.ParityRepository
 import com.algorand.android.module.parity.domain.usecase.primary.GetUsdToPrimaryCurrencyConversionRate
 import java.math.BigDecimal

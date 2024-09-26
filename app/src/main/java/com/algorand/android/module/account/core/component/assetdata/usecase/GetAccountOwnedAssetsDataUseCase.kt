@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.account.core.component.assetdata.usecase
 
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
-import com.algorand.android.accountinfo.component.domain.model.AssetHolding
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.model.AssetHolding
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAssetDetail
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import javax.inject.Inject

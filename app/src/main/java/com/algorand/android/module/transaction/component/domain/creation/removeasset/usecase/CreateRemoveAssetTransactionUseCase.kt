@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.domain.creation.removeasset.usecase
 
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.algosdk.component.transaction.AlgoSdkTransaction
 import com.algorand.android.algosdk.component.transaction.model.payload.RemoveAssetTransactionPayload
 import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset

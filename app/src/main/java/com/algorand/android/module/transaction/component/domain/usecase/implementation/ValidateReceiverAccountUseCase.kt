@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.transaction.component.domain.usecase.implementation
 
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
-import com.algorand.android.accountinfo.component.domain.usecase.FetchAccountInformation
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.usecase.FetchAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.transaction.component.domain.model.ReceiverAccountValidationResult
 import com.algorand.android.module.transaction.component.domain.model.ReceiverAccountValidationResult.CloseTransactionToSameAccount
 import com.algorand.android.module.transaction.component.domain.model.ReceiverAccountValidationResult.InvalidAlgorandAddress

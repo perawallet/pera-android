@@ -5,8 +5,8 @@ import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase
 import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.accountinfo.component.domain.usecase.IsThereAnyCachedErrorAccount
-import com.algorand.android.accountinfo.component.domain.usecase.IsThereAnyCachedSuccessAccount
+import com.algorand.android.module.account.info.domain.usecase.IsThereAnyCachedErrorAccount
+import com.algorand.android.module.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
 import com.algorand.android.asb.component.domain.usecase.GetAccountAsbBackUpStatus
 import com.algorand.android.module.banner.domain.model.Banner
 import com.algorand.android.banner.ui.mapper.BaseBannerItemMapper

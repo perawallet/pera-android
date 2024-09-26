@@ -15,7 +15,7 @@ package com.algorand.android.modules.rekey.rekeytoledgeraccount.search
 import android.bluetooth.BluetoothDevice
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.BaseLedgerSearchFragment
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionNavArgs
 import dagger.hilt.android.AndroidEntryPoint

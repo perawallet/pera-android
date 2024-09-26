@@ -1,6 +1,6 @@
 package com.algorand.android.module.account.core.component.domain.usecase
 
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.assetdetail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.module.account.core.component.domain.model.AccountTotalValue
 import com.algorand.android.parity.domain.model.ParityValue

@@ -24,7 +24,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.LoadingDialogFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton

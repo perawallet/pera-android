@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.account.core.component.collectible.domain.usecase
 
-import com.algorand.android.accountinfo.component.domain.usecase.GetAllAccountInformationFlow
+import com.algorand.android.module.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData

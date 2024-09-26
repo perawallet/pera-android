@@ -2,8 +2,8 @@ package com.algorand.android.module.account.core.component.detail.domain.usecase
 
 import com.algorand.android.account.localaccount.domain.model.LocalAccount
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountType
 import javax.inject.Inject

@@ -2,8 +2,8 @@ package com.algorand.android.module.account.core.component.detail.domain.usecase
 
 import com.algorand.android.account.localaccount.domain.model.LocalAccount.*
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.account.core.component.detail.domain.usecase.implementation.GetAccountTypeUseCase
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.runBlocking

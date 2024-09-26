@@ -1,6 +1,6 @@
 package com.algorand.android.module.account.core.component.collectible.domain.mapper
 
-import com.algorand.android.accountinfo.component.domain.model.AssetHolding
+import com.algorand.android.module.account.info.domain.model.AssetHolding
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.*
 import com.algorand.android.formatting.FormatAmountByCollectibleFractionalDigit
 import com.algorand.android.parity.domain.model.ParityValue

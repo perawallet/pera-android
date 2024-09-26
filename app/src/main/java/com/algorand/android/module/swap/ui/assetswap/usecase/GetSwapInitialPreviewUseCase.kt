@@ -15,7 +15,7 @@ package com.algorand.android.module.swap.ui.assetswap.usecase
 
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.accountinfo.component.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.android.module.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.android.parity.domain.usecase.GetDisplayedCurrencySymbol
 import com.algorand.android.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview

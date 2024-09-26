@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.domain.validator
 
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.transaction.component.domain.TransactionConstants.MIN_FEE
 import com.algorand.android.module.transaction.component.domain.model.ValidationResult
 import com.algorand.android.module.transaction.component.domain.validator.SufficientBalanceToPayFeeValidator.Payload

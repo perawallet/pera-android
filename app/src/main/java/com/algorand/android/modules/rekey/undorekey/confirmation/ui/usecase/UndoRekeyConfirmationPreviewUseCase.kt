@@ -15,7 +15,7 @@ package com.algorand.android.modules.rekey.undorekey.confirmation.ui.usecase
 import com.algorand.android.R
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.foundation.Event
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountOriginalStateIconDrawableUseCase

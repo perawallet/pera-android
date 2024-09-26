@@ -13,8 +13,8 @@
 package com.algorand.android.modules.assets.remove.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.accountinfo.component.domain.model.AssetHolding
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformationFlow
+import com.algorand.android.module.account.info.domain.model.AssetHolding
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetsDataFlow
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData

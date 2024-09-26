@@ -16,7 +16,7 @@ package com.algorand.android.module.transaction.component.domain.sign.usecase.im
 import android.bluetooth.BluetoothDevice
 import android.util.Log
 import androidx.lifecycle.Lifecycle
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.foundation.Event
 import com.algorand.android.module.ledger.domain.helper.LedgerBleScanCallback
 import com.algorand.android.module.ledger.domain.model.LedgerBleResult

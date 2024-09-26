@@ -192,6 +192,7 @@ dependencies {
     implementation project(path: ':algosdk-component')
     implementation project(path: ':shared-db')
     implementation project(path: ':formatting-component')
+    implementation project(path: ':encryption-component')
 
     implementation deps.kotlinx.coroutines_core
     implementation deps.kotlinx.coroutines_android

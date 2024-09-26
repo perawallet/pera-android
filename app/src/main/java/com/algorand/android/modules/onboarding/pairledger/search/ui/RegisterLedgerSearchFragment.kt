@@ -15,7 +15,7 @@ package com.algorand.android.modules.onboarding.pairledger.search.ui
 import android.bluetooth.BluetoothDevice
 import androidx.navigation.navGraphViewModels
 import com.algorand.android.R
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.BaseLedgerSearchFragment
 import com.algorand.android.modules.onboarding.pairledger.PairLedgerNavigationViewModel
 import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.model.RegisterLedgerAccountSelectionNavArgs

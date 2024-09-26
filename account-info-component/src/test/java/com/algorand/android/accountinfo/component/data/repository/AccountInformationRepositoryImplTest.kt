@@ -18,7 +18,7 @@ class AccountInformationRepositoryImplTest {
 
     private val indexerApi: IndexerApi = mock()
     private val accountInformationMapper: AccountInformationMapper = mock()
-    private val accountInformationEntityMapper: com.algorand.android.accountinfo.component.data.mapper.entity.AccountInformationEntityMapper =
+    private val accountInformationEntityMapper: com.algorand.android.module.account.info.data.mapper.entity.AccountInformationEntityMapper =
         mock()
     private val accountInformationErrorEntityMapper: AccountInformationErrorEntityMapper = mock()
     private val assetHoldingEntityMapper: AssetHoldingEntityMapper = mock()

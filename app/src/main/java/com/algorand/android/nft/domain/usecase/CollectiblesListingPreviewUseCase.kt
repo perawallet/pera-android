@@ -12,7 +12,7 @@
 
 package com.algorand.android.nft.domain.usecase
 
-import com.algorand.android.accountinfo.component.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.android.module.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.android.module.appcache.usecase.IsAssetCacheStatusAtLeastEmpty
 import com.algorand.android.module.account.core.component.collectible.domain.usecase.GetAllAccountsAllCollectibleDataFlow
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail

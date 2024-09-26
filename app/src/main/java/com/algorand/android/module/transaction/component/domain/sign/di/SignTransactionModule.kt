@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.transaction.component.domain.sign.di
 
-import com.algorand.android.accountinfo.component.domain.usecase.FetchAccountInformation
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.FetchAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.module.transaction.component.domain.usecase.IsValidAlgorandAddress

@@ -12,7 +12,7 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData

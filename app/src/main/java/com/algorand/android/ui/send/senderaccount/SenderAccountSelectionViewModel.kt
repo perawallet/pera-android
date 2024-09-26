@@ -17,7 +17,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.module.account.core.ui.accountselection.model.SenderAccountSelectionPreview
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.foundation.Event
 import com.algorand.android.models.AssetTransaction

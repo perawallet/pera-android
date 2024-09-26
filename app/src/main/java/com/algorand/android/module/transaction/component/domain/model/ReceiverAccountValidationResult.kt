@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.domain.model
 
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
 import java.math.BigInteger
 
 sealed interface ReceiverAccountValidationResult {

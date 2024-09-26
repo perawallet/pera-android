@@ -13,7 +13,7 @@
 package com.algorand.android.module.ledger.domain.model
 
 import android.bluetooth.BluetoothDevice
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
 
 sealed interface LedgerBleResult {
 

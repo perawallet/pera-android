@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.accountselection.usecase
 
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.assetutils.AssetAdditionPayload
 import com.algorand.android.designsystem.AnnotatedString
 import com.algorand.android.designsystem.R

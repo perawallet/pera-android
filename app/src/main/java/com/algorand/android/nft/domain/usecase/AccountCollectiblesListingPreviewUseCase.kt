@@ -12,7 +12,7 @@
 
 package com.algorand.android.nft.domain.usecase
 
-import com.algorand.android.accountinfo.component.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.android.module.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction

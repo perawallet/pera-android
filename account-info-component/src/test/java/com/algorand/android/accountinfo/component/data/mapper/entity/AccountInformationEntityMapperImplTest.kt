@@ -14,7 +14,7 @@ class AccountInformationEntityMapperImplTest {
     private val encryptionManager: EncryptionManager = mock {
         on { encrypt(com.algorand.android.account.accountinformation.data.mapper.entity.AccountInformationEntityMapperImplTest.Companion.ADDRESS) } doReturn com.algorand.android.account.accountinformation.data.mapper.entity.AccountInformationEntityMapperImplTest.Companion.ENCRYPTED_ADDRESS
     }
-    private val sut = com.algorand.android.accountinfo.component.data.mapper.entity.AccountInformationEntityMapperImpl(
+    private val sut = com.algorand.android.module.account.info.data.mapper.entity.AccountInformationEntityMapperImpl(
         encryptionManager
     )
 

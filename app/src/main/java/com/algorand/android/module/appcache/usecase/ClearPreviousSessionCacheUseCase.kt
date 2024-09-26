@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.appcache.usecase
 
-import com.algorand.android.accountinfo.component.domain.usecase.ClearAccountInformationCache
+import com.algorand.android.module.account.info.domain.usecase.ClearAccountInformationCache
 import com.algorand.android.assetdetail.component.asset.domain.usecase.ClearAssetCache
 import javax.inject.Inject
 

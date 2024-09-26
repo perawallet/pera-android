@@ -18,7 +18,7 @@ import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase
 import com.algorand.android.module.account.core.ui.accountsorting.domain.util.ItemConfigurationHelper
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem
 import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
-import com.algorand.android.accountinfo.component.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.android.module.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.android.accountsorting.component.domain.usecase.GetSortedLocalAccounts
 import com.algorand.android.assetdetail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail

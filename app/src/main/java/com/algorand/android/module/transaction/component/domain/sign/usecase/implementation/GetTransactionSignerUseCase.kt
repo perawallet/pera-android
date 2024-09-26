@@ -15,7 +15,7 @@ package com.algorand.android.module.transaction.component.domain.sign.usecase.im
 
 import com.algorand.android.account.localaccount.domain.usecase.GetLedgerBleAccount
 import com.algorand.android.account.localaccount.domain.usecase.GetSecretKey
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountRegistrationType
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Algo25

@@ -12,11 +12,11 @@
 
 package com.algorand.android.modules.assets.addition.domain.usecase
 
-import com.algorand.android.accountinfo.component.domain.model.AssetHolding
-import com.algorand.android.accountinfo.component.domain.model.AssetStatus.OWNED_BY_ACCOUNT
-import com.algorand.android.accountinfo.component.domain.model.AssetStatus.PENDING_FOR_ADDITION
-import com.algorand.android.accountinfo.component.domain.model.AssetStatus.PENDING_FOR_REMOVAL
-import com.algorand.android.accountinfo.component.domain.model.AssetStatus.PENDING_FOR_SENDING
+import com.algorand.android.module.account.info.domain.model.AssetHolding
+import com.algorand.android.module.account.info.domain.model.AssetStatus.OWNED_BY_ACCOUNT
+import com.algorand.android.module.account.info.domain.model.AssetStatus.PENDING_FOR_ADDITION
+import com.algorand.android.module.account.info.domain.model.AssetStatus.PENDING_FOR_REMOVAL
+import com.algorand.android.module.account.info.domain.model.AssetStatus.PENDING_FOR_SENDING
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import javax.inject.Inject
 

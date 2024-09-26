@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.transaction.component.domain.validator
 
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
-import com.algorand.android.accountinfo.component.domain.model.AssetStatus
+import com.algorand.android.module.account.info.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.model.AssetStatus
 import com.algorand.android.module.transaction.component.domain.model.ValidationResult
 import com.algorand.android.module.transaction.component.domain.validator.RemoveAssetAssetStatusValidator.Payload
 import javax.inject.Inject

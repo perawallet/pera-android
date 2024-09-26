@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.component.domain.usecase
 
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.account.core.component.utils.BalanceConstants.MIN_BALANCE
 import com.algorand.android.module.account.core.component.utils.BalanceConstants.MIN_BALANCE_TO_KEEP_PER_APP_EXTRA_PAGES
 import com.algorand.android.module.account.core.component.utils.BalanceConstants.MIN_BALANCE_TO_KEEP_PER_APP_TOTAL_SCHEMA_BYTE_SLICE

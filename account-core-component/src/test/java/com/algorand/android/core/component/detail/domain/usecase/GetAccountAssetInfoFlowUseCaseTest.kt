@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.component.detail.domain.usecase
 
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformationFlow
+import com.algorand.android.module.account.info.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.android.module.account.core.component.detail.domain.model.*
 import com.algorand.android.module.account.core.component.detail.domain.usecase.implementation.GetAccountDetailFlowUseCase
 import com.algorand.android.custominfo.component.domain.model.CustomInfo

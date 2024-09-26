@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.component.domain.usecase
 
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
-import com.algorand.android.accountinfo.component.domain.usecase.GetAllAccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAllAccountInformation
 import com.algorand.android.module.account.core.component.detail.domain.model.*
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.module.account.core.component.domain.model.AccountTotalValue

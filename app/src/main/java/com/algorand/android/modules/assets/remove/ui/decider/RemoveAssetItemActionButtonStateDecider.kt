@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.assets.remove.ui.decider
 
-import com.algorand.android.accountinfo.component.domain.model.AssetStatus
+import com.algorand.android.module.account.info.domain.model.AssetStatus
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import javax.inject.Inject
 

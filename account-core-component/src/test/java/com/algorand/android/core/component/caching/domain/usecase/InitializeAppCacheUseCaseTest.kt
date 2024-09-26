@@ -2,7 +2,7 @@ package com.algorand.android.module.account.core.component.caching.domain.usecas
 
 import com.algorand.android.account.localaccount.domain.model.LocalAccount
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
-import com.algorand.android.accountinfo.component.domain.usecase.InitializeAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.InitializeAccountInformation
 import com.algorand.android.assetdetail.component.asset.domain.usecase.InitializeAssets
 import com.algorand.android.parity.domain.usecase.InitializeParityCache
 import kotlinx.coroutines.test.runTest

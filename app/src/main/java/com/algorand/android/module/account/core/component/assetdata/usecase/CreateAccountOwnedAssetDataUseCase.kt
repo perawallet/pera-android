@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.account.core.component.assetdata.usecase
 
-import com.algorand.android.accountinfo.component.domain.model.AssetHolding
+import com.algorand.android.module.account.info.domain.model.AssetHolding
 import com.algorand.android.assetdetail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.module.account.core.component.domain.mapper.OwnedAssetDataMapper
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData

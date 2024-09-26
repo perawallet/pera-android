@@ -38,21 +38,6 @@ android {
 
 dependencies {
 
-    implementation project(path: ':asset-detail-component')
-    implementation project(path: ':account-component')
-    implementation project(path: ':account-info-component')
-    implementation project(path: ':parity-component')
-    implementation project(path: ':foundation')
-    implementation project(path: ':nameservice-component')
-    implementation project(path: ':custom-info-component')
-    implementation project(path: ':designsystem')
-    implementation project(path: ':test-util')
-    implementation project(path: ':currency-component')
-    implementation project(path: ':asb-component')
-    implementation project(path: ':account-sorting-component')
-    implementation project(path: ':formatting-component')
-    implementation project(path: ':asset-utils')
-
     implementation deps.hilt.core
     kapt deps.hilt.android_compiler
     kapt deps.hilt.compiler

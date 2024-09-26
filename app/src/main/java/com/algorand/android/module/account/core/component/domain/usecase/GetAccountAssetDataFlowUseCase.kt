@@ -1,6 +1,6 @@
 package com.algorand.android.module.account.core.component.domain.usecase
 
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformationFlow
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.android.module.account.core.component.assetdata.usecase.CreateAccountAssetData
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountAssetDataFlow
 import com.algorand.android.module.account.core.component.assetdata.model.AccountAssetData

@@ -2,8 +2,8 @@ package com.algorand.android.module.account.core.component.polling.domain.usecas
 
 import com.algorand.android.account.localaccount.domain.model.LocalAccount
 import com.algorand.android.account.localaccount.domain.usecase.GetLocalAccounts
-import com.algorand.android.accountinfo.component.domain.model.*
-import com.algorand.android.accountinfo.component.domain.usecase.FetchAndCacheAccountInformation
+import com.algorand.android.module.account.info.domain.model.*
+import com.algorand.android.module.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.android.assetdetail.component.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.android.module.account.core.component.polling.accountdetail.domain.usecase.implementation.UpdateAccountCacheUseCase
 import com.algorand.android.testutil.fixtureOf

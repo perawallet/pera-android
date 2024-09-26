@@ -13,7 +13,7 @@
 
 package com.algorand.android.modules.walletconnect.domain.usecase
 
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.models.WalletConnectTransactionSigner
 import javax.inject.Inject
 

@@ -13,7 +13,7 @@
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.decider
 
 import com.algorand.android.R
-import com.algorand.android.accountinfo.component.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.designsystem.AnnotatedString
 import javax.inject.Inject
 

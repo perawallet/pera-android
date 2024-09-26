@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.domain.usecase
 
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.assetutils.AssetConstants.ALGO_ID
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.foundation.PeraResult

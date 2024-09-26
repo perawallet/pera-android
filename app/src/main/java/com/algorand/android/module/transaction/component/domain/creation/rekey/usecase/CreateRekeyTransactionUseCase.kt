@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.domain.creation.rekey.usecase
 
-import com.algorand.android.accountinfo.component.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.algosdk.component.transaction.AlgoSdkTransaction
 import com.algorand.android.algosdk.component.transaction.model.Transaction.RekeyTransaction
 import com.algorand.android.algosdk.component.transaction.model.payload.RekeyTransactionPayload

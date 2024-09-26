@@ -15,7 +15,7 @@ package com.algorand.android.modules.sorting.accountsorting.ui.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.sorting.accountsorting.domain.model.BaseAccountSortingListItem

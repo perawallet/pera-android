@@ -19,7 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.algorand.android.R
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentAccountSortBinding

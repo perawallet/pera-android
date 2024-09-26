@@ -18,7 +18,7 @@ import com.algorand.android.module.account.core.ui.accountsorting.domain.model.B
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListWhichNotBackedUp
 import com.algorand.android.module.account.core.ui.accountsorting.domain.util.ItemConfigurationHelper.configureListItem
 import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
-import com.algorand.android.accountsorting.component.domain.usecase.GetSortedLocalAccounts
+import com.algorand.android.module.account.sorting.domain.usecase.GetSortedLocalAccounts
 import com.algorand.android.asb.component.domain.usecase.GetBackedUpAccounts
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction

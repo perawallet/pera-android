@@ -15,7 +15,7 @@ package com.algorand.android.modules.rekey.rekeytostandardaccount.accountselecti
 import com.algorand.android.R
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.accountsorting.component.domain.usecase.GetSortedLocalAccounts
+import com.algorand.android.module.account.sorting.domain.usecase.GetSortedLocalAccounts
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountType

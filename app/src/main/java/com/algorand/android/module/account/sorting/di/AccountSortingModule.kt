@@ -1,18 +1,24 @@
-package com.algorand.android.accountsorting.component.di
+package com.algorand.android.module.account.sorting.di
 
 import android.content.SharedPreferences
-import com.algorand.android.accountsorting.component.data.repository.AccountSortingRepositoryImpl
-import com.algorand.android.accountsorting.component.data.storage.AccountSortPreferencesLocalSource
-import com.algorand.android.accountsorting.component.domain.repository.AccountSortingRepository
-import com.algorand.android.accountsorting.component.domain.usecase.*
-import com.algorand.android.accountsorting.component.domain.usecase.implementation.GetSortedLocalAccountsUseCase
 import com.algorand.android.encryption.EncryptionManager
 import com.algorand.android.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
+import com.algorand.android.module.account.sorting.data.repository.AccountSortingRepositoryImpl
+import com.algorand.android.module.account.sorting.data.storage.AccountSortPreferencesLocalSource
+import com.algorand.android.module.account.sorting.domain.repository.AccountSortingRepository
+import com.algorand.android.module.account.sorting.domain.usecase.GetAccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.usecase.GetSortedLocalAccounts
+import com.algorand.android.module.account.sorting.domain.usecase.RemoveAccountOrderIndex
+import com.algorand.android.module.account.sorting.domain.usecase.SaveAccountSortPreference
+import com.algorand.android.module.account.sorting.domain.usecase.SetAccountOrderIndex
+import com.algorand.android.module.account.sorting.domain.usecase.implementation.GetSortedLocalAccountsUseCase
 import com.algorand.android.shared_db.accountsorting.dao.AccountIndexDao
-import dagger.*
+import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.*
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

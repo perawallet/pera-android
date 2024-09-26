@@ -14,8 +14,8 @@ package com.algorand.android.modules.sorting.accountsorting.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier.MANUAL
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier.MANUAL
 import com.algorand.android.modules.sorting.accountsorting.domain.model.AccountSortingPreview
 import com.algorand.android.modules.sorting.accountsorting.domain.model.BaseAccountSortingListItem
 import com.algorand.android.modules.sorting.accountsorting.ui.usecase.AccountSortingPreviewUseCase

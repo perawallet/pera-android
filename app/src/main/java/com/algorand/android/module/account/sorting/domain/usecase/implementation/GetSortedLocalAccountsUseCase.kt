@@ -1,8 +1,8 @@
-package com.algorand.android.accountsorting.component.domain.usecase.implementation
+package com.algorand.android.module.account.sorting.domain.usecase.implementation
 
-import com.algorand.android.accountsorting.component.domain.usecase.GetSortedLocalAccounts
-import com.algorand.android.accountsorting.component.domain.model.AccountOrderIndex
-import com.algorand.android.accountsorting.component.domain.repository.AccountSortingRepository
+import com.algorand.android.module.account.sorting.domain.usecase.GetSortedLocalAccounts
+import com.algorand.android.module.account.sorting.domain.model.AccountOrderIndex
+import com.algorand.android.module.account.sorting.domain.repository.AccountSortingRepository
 import javax.inject.Inject
 
 internal class GetSortedLocalAccountsUseCase @Inject constructor(

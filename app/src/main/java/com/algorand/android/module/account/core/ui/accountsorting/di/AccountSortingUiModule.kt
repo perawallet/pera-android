@@ -4,7 +4,7 @@ import com.algorand.android.module.account.core.ui.accountsorting.domain.mapper.
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.*
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.accountlistitemsorter.*
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.implementation.*
-import com.algorand.android.accountsorting.component.domain.usecase.GetAccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.usecase.GetAccountSortingTypeIdentifier
 import dagger.*
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

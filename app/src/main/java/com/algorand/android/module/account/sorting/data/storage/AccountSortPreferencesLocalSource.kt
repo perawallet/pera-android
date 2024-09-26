@@ -1,4 +1,4 @@
-package com.algorand.android.accountsorting.component.data.storage
+package com.algorand.android.module.account.sorting.data.storage
 
 import android.content.SharedPreferences
 import com.algorand.android.caching.SharedPrefLocalSource

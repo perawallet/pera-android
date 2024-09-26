@@ -5,13 +5,13 @@ import com.algorand.android.module.account.core.ui.accountsorting.domain.model.B
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.SortAccountsBySortingPreference
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.accountlistitemsorter.AccountListItemSorter
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.accountlistitemsorter.AccountListItemSorterByManually
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier.ALPHABETICALLY_ASCENDING
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier.ALPHABETICALLY_DESCENDING
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier.MANUAL
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier.NUMERIC_ASCENDING
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier.NUMERIC_DESCENDING
-import com.algorand.android.accountsorting.component.domain.usecase.GetAccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier.ALPHABETICALLY_ASCENDING
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier.ALPHABETICALLY_DESCENDING
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier.MANUAL
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier.NUMERIC_ASCENDING
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier.NUMERIC_DESCENDING
+import com.algorand.android.module.account.sorting.domain.usecase.GetAccountSortingTypeIdentifier
 import javax.inject.Inject
 
 internal class SortAccountsBySortingPreferenceUseCase @Inject constructor(

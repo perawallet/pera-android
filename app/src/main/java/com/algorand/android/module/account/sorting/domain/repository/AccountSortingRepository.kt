@@ -1,6 +1,7 @@
-package com.algorand.android.accountsorting.component.domain.repository
+package com.algorand.android.module.account.sorting.domain.repository
 
-import com.algorand.android.accountsorting.component.domain.model.*
+import com.algorand.android.module.account.sorting.domain.model.AccountOrderIndex
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
 
 internal interface AccountSortingRepository {
 

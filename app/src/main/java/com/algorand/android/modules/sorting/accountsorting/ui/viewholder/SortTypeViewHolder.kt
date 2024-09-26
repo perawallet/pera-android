@@ -14,7 +14,7 @@ package com.algorand.android.modules.sorting.accountsorting.ui.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.databinding.ItemSortTypeBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.sorting.accountsorting.domain.model.BaseAccountSortingListItem

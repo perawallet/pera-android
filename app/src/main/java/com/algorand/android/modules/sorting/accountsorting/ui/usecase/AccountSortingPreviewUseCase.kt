@@ -18,10 +18,10 @@ import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurati
 import com.algorand.android.module.account.core.ui.model.ButtonConfiguration
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
-import com.algorand.android.accountsorting.component.domain.usecase.GetAccountSortingTypeIdentifier
-import com.algorand.android.accountsorting.component.domain.usecase.SaveAccountSortPreference
-import com.algorand.android.accountsorting.component.domain.usecase.SetAccountOrderIndex
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.usecase.GetAccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.usecase.SaveAccountSortPreference
+import com.algorand.android.module.account.sorting.domain.usecase.SetAccountOrderIndex
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.sorting.accountsorting.domain.mapper.BaseSortingListItemMapper
 import com.algorand.android.modules.sorting.accountsorting.domain.mapper.SortingPreviewMapper

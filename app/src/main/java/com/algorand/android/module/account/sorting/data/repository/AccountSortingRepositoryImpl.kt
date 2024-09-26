@@ -1,9 +1,10 @@
-package com.algorand.android.accountsorting.component.data.repository
+package com.algorand.android.module.account.sorting.data.repository
 
-import com.algorand.android.accountsorting.component.domain.model.*
-import com.algorand.android.accountsorting.component.domain.repository.AccountSortingRepository
 import com.algorand.android.caching.SharedPrefLocalSource
 import com.algorand.android.encryption.EncryptionManager
+import com.algorand.android.module.account.sorting.domain.model.AccountOrderIndex
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.repository.AccountSortingRepository
 import com.algorand.android.shared_db.accountsorting.dao.AccountIndexDao
 import com.algorand.android.shared_db.accountsorting.model.AccountIndexEntity
 import javax.inject.Inject

@@ -2,7 +2,7 @@ package com.algorand.android.module.account.core.ui.accountsorting.domain.usecas
 
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.AccountSortingType
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetDefaultAccountSortingType
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
 import javax.inject.Inject
 
 internal class GetDefaultAccountSortingTypeUseCase @Inject constructor() : GetDefaultAccountSortingType {

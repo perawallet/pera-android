@@ -1,4 +1,4 @@
-package com.algorand.android.accountsorting.component.domain.model
+package com.algorand.android.module.account.sorting.domain.model
 
 enum class AccountSortingTypeIdentifier {
     MANUAL,

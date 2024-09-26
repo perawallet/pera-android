@@ -11,9 +11,9 @@
  *   -->
  */
 
-package com.algorand.android.accountsorting.component.domain.usecase
+package com.algorand.android.module.account.sorting.domain.usecase
 
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
 
 fun interface SaveAccountSortPreference {
     suspend operator fun invoke(typeIdentifier: AccountSortingTypeIdentifier)

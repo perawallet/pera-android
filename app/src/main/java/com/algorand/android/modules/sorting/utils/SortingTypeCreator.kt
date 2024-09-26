@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.sorting.utils
 
-import com.algorand.android.accountsorting.component.domain.model.AccountSortingTypeIdentifier
+import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
 import javax.inject.Inject
 
 class SortingTypeCreator @Inject constructor() {

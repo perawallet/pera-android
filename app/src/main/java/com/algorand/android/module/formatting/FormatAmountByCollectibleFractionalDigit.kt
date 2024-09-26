@@ -1,4 +1,4 @@
-package com.algorand.android.formatting
+package com.algorand.android.module.formatting
 
 import java.math.BigInteger
 

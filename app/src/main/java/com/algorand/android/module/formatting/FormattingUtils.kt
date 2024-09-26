@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.formatting
+package com.algorand.android.module.formatting
 
 import android.icu.text.NumberFormat
 import com.algorand.android.assetutils.AssetConstants.ALGO_DECIMALS

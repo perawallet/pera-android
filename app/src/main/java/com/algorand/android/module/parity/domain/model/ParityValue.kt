@@ -1,6 +1,6 @@
 package com.algorand.android.module.parity.domain.model
 
-import com.algorand.android.formatting.formatAsCurrency
+import com.algorand.android.module.formatting.formatAsCurrency
 import java.math.BigDecimal
 
 data class ParityValue(

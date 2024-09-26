@@ -11,10 +11,10 @@
  *   -->
  */
 
-package com.algorand.android.formatting.di
+package com.algorand.android.module.formatting.di
 
-import com.algorand.android.formatting.FormatAmountByCollectibleFractionalDigit
-import com.algorand.android.formatting.FormatAmountByCollectibleFractionalDigitUseCase
+import com.algorand.android.module.formatting.FormatAmountByCollectibleFractionalDigit
+import com.algorand.android.module.formatting.FormatAmountByCollectibleFractionalDigitUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

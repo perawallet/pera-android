@@ -6,7 +6,7 @@ import com.algorand.android.assetutils.AssetConstants.ALGO_FULL_NAME
 import com.algorand.android.assetutils.AssetConstants.ALGO_ID
 import com.algorand.android.assetutils.AssetConstants.ALGO_SHORT_NAME
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
-import com.algorand.android.formatting.formatAmount
+import com.algorand.android.module.formatting.formatAmount
 import com.algorand.android.module.parity.domain.model.ParityValue
 import java.math.BigDecimal
 import java.math.BigInteger

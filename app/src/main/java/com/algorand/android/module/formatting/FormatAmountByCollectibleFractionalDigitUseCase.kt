@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.formatting
+package com.algorand.android.module.formatting
 
 import com.mitsinsar.peracompactdecimalformat.utils.fractionaldigit.CollectibleFractionalDigit
 import com.mitsinsar.peracompactdecimalformat.utils.fractionaldigit.FractionalDigit

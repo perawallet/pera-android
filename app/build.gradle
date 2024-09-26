@@ -175,7 +175,6 @@ dependencies {
     implementation project(path: ':caching')
     implementation project(path: ':peracompactdecimal-aar')
     implementation project(path: ':shared-db')
-    implementation project(path: ':formatting-component')
 
     implementation deps.kotlinx.coroutines_core
     implementation deps.kotlinx.coroutines_android

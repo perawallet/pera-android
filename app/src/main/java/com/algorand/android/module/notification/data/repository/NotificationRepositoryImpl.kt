@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.notification.data.repository
 
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.models.Pagination
 import com.algorand.android.module.notification.data.mapper.NotificationHistoryMapper
 import com.algorand.android.module.notification.data.model.NotificationFilterRequest

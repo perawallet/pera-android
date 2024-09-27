@@ -47,7 +47,7 @@ import com.algorand.android.WalletConnectTransactionRequestNavigationDirections
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.databinding.FragmentWalletConnectTransactionRequestBinding
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ConfirmationBottomSheetParameters
 import com.algorand.android.models.ConfirmationBottomSheetResult

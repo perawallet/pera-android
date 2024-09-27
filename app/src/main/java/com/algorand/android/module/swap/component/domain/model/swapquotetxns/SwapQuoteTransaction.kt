@@ -14,7 +14,7 @@
 package com.algorand.android.module.swap.component.domain.model.swapquotetxns
 
 import com.algorand.android.module.algosdk.flatten
-import com.algorand.android.foundation.common.mapToNotNullableListOrNull
+import com.algorand.android.module.foundation.common.mapToNotNullableListOrNull
 
 sealed class SwapQuoteTransaction {
 

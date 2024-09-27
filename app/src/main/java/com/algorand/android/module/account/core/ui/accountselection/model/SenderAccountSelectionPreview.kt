@@ -14,8 +14,8 @@
 package com.algorand.android.module.account.core.ui.accountselection.model
 
 import com.algorand.android.module.account.info.domain.model.AccountInformation
-import com.algorand.android.foundation.Event
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.Event
+import com.algorand.android.module.foundation.PeraResult
 
 data class SenderAccountSelectionPreview(
     val accountList: List<BaseAccountSelectionListItem>,

@@ -26,7 +26,7 @@ import com.algorand.android.customviews.LoadingDialogFragment
 import com.algorand.android.databinding.FragmentBaseRekeyConfirmationBinding
 import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.module.drawable.getXmlStyledString
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult.AccountNotFound
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult.MinBalanceViolated

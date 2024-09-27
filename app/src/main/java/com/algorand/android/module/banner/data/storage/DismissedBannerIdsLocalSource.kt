@@ -15,8 +15,8 @@ package com.algorand.android.module.banner.data.storage
 
 import android.content.SharedPreferences
 import com.algorand.android.module.caching.SharedPrefLocalSource
-import com.algorand.android.foundation.json.JsonSerializer
-import com.algorand.android.foundation.json.PeraTypeToken
+import com.algorand.android.module.foundation.json.JsonSerializer
+import com.algorand.android.module.foundation.json.PeraTypeToken
 
 internal class DismissedBannerIdsLocalSource(
     sharedPreferences: SharedPreferences,

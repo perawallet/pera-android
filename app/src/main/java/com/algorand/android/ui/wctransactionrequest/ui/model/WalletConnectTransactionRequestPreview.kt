@@ -12,7 +12,7 @@
 
 package com.algorand.android.ui.wctransactionrequest.ui.model
 
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 
 data class WalletConnectTransactionRequestPreview(

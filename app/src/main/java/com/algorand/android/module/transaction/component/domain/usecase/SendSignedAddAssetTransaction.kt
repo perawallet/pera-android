@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.domain.usecase
 
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.transaction.component.domain.model.SendSignedAddAssetTransactionPayload
 import com.algorand.android.module.transaction.component.domain.model.TransactionId
 

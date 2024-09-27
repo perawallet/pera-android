@@ -29,7 +29,7 @@ import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.LoadingDialogFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentLedgerSearchBinding
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.ledger.domain.model.LedgerBleResult
 import com.algorand.android.module.ledger.domain.model.LedgerOperation.AccountFetchAllOperation
 import com.algorand.android.models.FragmentConfiguration

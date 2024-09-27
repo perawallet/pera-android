@@ -14,7 +14,7 @@
 package com.algorand.android.module.asset.detail.component.asset.domain.usecase
 
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 
 fun interface FetchAssets {
     suspend operator fun invoke(assetIds: List<Long>): PeraResult<List<Asset>>

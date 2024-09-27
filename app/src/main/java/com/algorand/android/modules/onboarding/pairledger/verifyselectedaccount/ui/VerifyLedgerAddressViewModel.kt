@@ -15,7 +15,7 @@ package com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.CreateAccount
 import com.algorand.android.models.CreateAccount.LedgerBle
 import com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount.ui.model.VerifiableLedgerAddressItemStatus

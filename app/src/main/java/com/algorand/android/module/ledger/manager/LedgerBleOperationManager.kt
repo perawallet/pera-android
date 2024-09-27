@@ -15,7 +15,7 @@ package com.algorand.android.module.ledger.manager
 
 import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.Lifecycle
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.ledger.domain.model.LedgerBleResult
 import com.algorand.android.module.ledger.domain.model.LedgerOperation
 import kotlinx.coroutines.flow.StateFlow

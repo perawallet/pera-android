@@ -12,7 +12,7 @@
 
 package com.algorand.android.ui.wctransactionrequest.ui.mapper
 
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.android.ui.wctransactionrequest.ui.model.WalletConnectTransactionRequestPreview
 import javax.inject.Inject

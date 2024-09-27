@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.transaction.component.data.repository
 
-import com.algorand.android.foundation.PeraResult
-import com.algorand.android.foundation.PeraResult.Error
-import com.algorand.android.foundation.PeraResult.Success
+import com.algorand.android.module.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult.Error
+import com.algorand.android.module.foundation.PeraResult.Success
 import com.algorand.android.module.transaction.component.data.mapper.TransactionParamsMapper
 import com.algorand.android.module.transaction.component.data.service.AlgodApiService
 import com.algorand.android.module.transaction.component.domain.model.SignedTransaction

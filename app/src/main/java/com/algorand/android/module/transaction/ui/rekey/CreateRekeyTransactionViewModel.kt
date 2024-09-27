@@ -2,8 +2,8 @@ package com.algorand.android.module.transaction.ui.rekey
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.foundation.Event
-import com.algorand.android.foundation.coroutine.CoroutineExtensions.launchIfInactive
+import com.algorand.android.module.foundation.Event
+import com.algorand.android.module.foundation.coroutine.CoroutineExtensions.launchIfInactive
 import com.algorand.android.module.transaction.component.domain.creation.CreateRekeyTransaction
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult
 import dagger.hilt.android.lifecycle.HiltViewModel

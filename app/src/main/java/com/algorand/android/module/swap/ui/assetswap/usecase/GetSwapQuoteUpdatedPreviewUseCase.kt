@@ -15,8 +15,8 @@ package com.algorand.android.module.swap.ui.assetswap.usecase
 
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.foundation.Event
-import com.algorand.android.foundation.common.toBigDecimalOrZero
+import com.algorand.android.module.foundation.Event
+import com.algorand.android.module.foundation.common.toBigDecimalOrZero
 import com.algorand.android.module.swap.component.domain.model.GetSwapQuotePayload
 import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.component.domain.usecase.GetSwapQuote

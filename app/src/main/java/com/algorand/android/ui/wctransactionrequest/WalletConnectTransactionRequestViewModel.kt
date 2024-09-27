@@ -21,7 +21,7 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction

@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.node.domain.usecase.implementation
 
-import com.algorand.android.foundation.app.AppFlavor
-import com.algorand.android.foundation.app.GetAppFlavor
+import com.algorand.android.module.foundation.app.AppFlavor
+import com.algorand.android.module.foundation.app.GetAppFlavor
 import com.algorand.android.module.node.domain.Node
 import com.algorand.android.module.node.domain.repository.NodeRepository
 import com.algorand.android.module.node.domain.usecase.InitializeActiveNode

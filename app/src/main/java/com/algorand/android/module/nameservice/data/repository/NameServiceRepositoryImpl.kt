@@ -1,7 +1,7 @@
 package com.algorand.android.module.nameservice.data.repository
 
 import com.algorand.android.module.caching.InMemoryLocalCache
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.nameservice.data.mapper.NameServiceMapper
 import com.algorand.android.module.nameservice.data.mapper.NameServiceSearchResultMapper
 import com.algorand.android.module.nameservice.data.model.SearchNameServiceRequestBody

@@ -1,6 +1,5 @@
 include ':app'
 rootProject.name = 'algorand-android'
-include ':foundation'
 include ':shared-db'
 include ':test-util'
 include ':peracompactdecimal-aar'

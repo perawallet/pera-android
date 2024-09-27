@@ -22,7 +22,7 @@ import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePrev
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.SwapAssetInputView
 import com.algorand.android.databinding.FragmentAssetSwapBinding
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.swap.assetselection.fromasset.ui.SwapFromAssetSelectionFragment.Companion.SWAP_FROM_ASSET_ID_KEY

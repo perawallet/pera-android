@@ -14,7 +14,7 @@
 package com.algorand.android.module.transaction.component.domain.sign
 
 import androidx.lifecycle.Lifecycle
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
 import kotlinx.coroutines.flow.Flow
 

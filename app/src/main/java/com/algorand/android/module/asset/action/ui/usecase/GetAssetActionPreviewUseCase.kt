@@ -16,7 +16,7 @@ package com.algorand.android.module.asset.action.ui.usecase
 import com.algorand.android.module.asset.action.ui.model.AssetActionAccountDetail
 import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
 import com.algorand.android.module.asset.action.ui.model.AssetActionPreview
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

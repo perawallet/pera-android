@@ -14,7 +14,7 @@
 package com.algorand.android.module.notification.domain.usecase
 
 import com.algorand.android.module.deviceid.domain.usecase.GetSelectedNodeDeviceId
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.notification.domain.repository.NotificationRepository
 import javax.inject.Inject
 

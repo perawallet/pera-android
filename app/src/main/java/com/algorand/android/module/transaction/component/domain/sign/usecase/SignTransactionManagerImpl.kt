@@ -14,7 +14,7 @@
 package com.algorand.android.module.transaction.component.domain.sign.usecase
 
 import androidx.lifecycle.Lifecycle
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.transaction.component.domain.sign.SignTransactionManager
 import com.algorand.android.module.transaction.component.domain.sign.mapper.SignTransactionNotReadyToSignToSignTransactionResultMapper
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionPreparednessResult.NotReadyToSign

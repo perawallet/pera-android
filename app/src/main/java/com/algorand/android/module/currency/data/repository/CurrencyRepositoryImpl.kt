@@ -5,7 +5,7 @@ import com.algorand.android.module.currency.data.service.CurrencyApiService
 import com.algorand.android.module.currency.domain.model.Currency
 import com.algorand.android.module.currency.domain.model.CurrencyOption
 import com.algorand.android.module.currency.domain.repository.CurrencyRepository
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import com.algorand.android.module.network.requestWithHipoErrorHandler
 import javax.inject.Inject

@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.ledger.manager.implementation
 
-import com.algorand.android.foundation.permission.PeraPermissionManager
+import com.algorand.android.module.foundation.permission.PeraPermissionManager
 import com.algorand.android.module.ledger.domain.helper.LedgerBleScanCallback
 import com.algorand.android.module.ledger.domain.helper.LedgerBleScanner
 import com.algorand.android.module.ledger.domain.helper.LedgerBleSearchTimer

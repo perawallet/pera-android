@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.block.domain.usecase
 
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 
 fun interface ClearLastKnownBlockNumber {
     suspend operator fun invoke()

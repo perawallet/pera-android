@@ -17,7 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.ledger.domain.helper.IsBluetoothBondingRequired
 import com.algorand.android.module.ledger.domain.helper.LedgerBleScanCallback
 import com.algorand.android.module.ledger.domain.model.LedgerBleResult

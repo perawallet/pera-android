@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.confirmswap.usecase
 
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.swap.component.domain.model.GetSwapQuotePayload
 import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.component.domain.model.SwapType

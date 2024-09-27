@@ -13,7 +13,7 @@
 package com.algorand.android.modules.dapp.bidali.ui.browser.model
 
 import com.algorand.android.discover.common.ui.model.WebViewError
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.modules.dapp.bidali.domain.model.BidaliOpenUrlRequestDTO
 import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 

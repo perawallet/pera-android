@@ -19,7 +19,7 @@ import android.text.method.MovementMethod
 import androidx.core.content.ContextCompat
 import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.R
-import com.algorand.android.foundation.ui.getCustomClickableSpan
+import com.algorand.android.module.foundation.ui.getCustomClickableSpan
 import com.algorand.android.utils.browser.openTinymanFaqPriceImpactUrl
 
 sealed class ConfirmSwapPriceImpactWarningStatus {

@@ -14,8 +14,8 @@
 package com.algorand.android.module.swap.component.data.repository
 
 import com.algorand.android.module.asset.utils.getSafeAssetIdForRequest
-import com.algorand.android.foundation.PeraResult
-import com.algorand.android.foundation.common.toCsvString
+import com.algorand.android.module.foundation.PeraResult
+import com.algorand.android.module.foundation.common.toCsvString
 import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import com.algorand.android.module.network.requestWithHipoErrorHandler
 import com.algorand.android.module.swap.component.data.mapper.AvailableSwapAssetsMapper

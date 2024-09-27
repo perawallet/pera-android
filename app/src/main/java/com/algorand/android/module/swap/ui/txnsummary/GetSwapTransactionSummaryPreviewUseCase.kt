@@ -18,7 +18,7 @@ import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawabl
 import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.module.asset.utils.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.module.currency.domain.model.Currency
-import com.algorand.android.foundation.common.isGreaterThan
+import com.algorand.android.module.foundation.common.isGreaterThan
 import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem
 import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem.SwapAccountItemTransaction
 import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem.SwapAmountsItemTransaction

@@ -16,7 +16,7 @@ package com.algorand.android.module.block.domain.usecase
 import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.account.info.domain.usecase.GetAllAccountInformation
 import com.algorand.android.module.block.domain.repository.BlockPollingRepository
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import javax.inject.Inject
 
 internal class ShouldUpdateAccountCacheUseCase @Inject constructor(

@@ -14,8 +14,8 @@
 package com.algorand.android.utils.app
 
 import com.algorand.android.BuildConfig
-import com.algorand.android.foundation.app.AppFlavor
-import com.algorand.android.foundation.app.GetAppFlavor
+import com.algorand.android.module.foundation.app.AppFlavor
+import com.algorand.android.module.foundation.app.GetAppFlavor
 import javax.inject.Inject
 
 class GetAppFlavorImpl @Inject constructor() : GetAppFlavor {

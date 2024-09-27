@@ -14,8 +14,8 @@
 package com.algorand.android.module.swap.ui.assetswap.usecase
 
 import com.algorand.android.utils.formatAsCurrency
-import com.algorand.android.foundation.common.isEqualTo
-import com.algorand.android.foundation.common.toBigDecimalOrZero
+import com.algorand.android.module.foundation.common.isEqualTo
+import com.algorand.android.module.foundation.common.toBigDecimalOrZero
 import com.algorand.android.module.parity.domain.usecase.GetDisplayedCurrencySymbol
 import com.algorand.android.module.swap.component.domain.SwapAmountUtils
 import com.algorand.android.module.swap.ui.assetswap.mapper.GetSwapQuoteUpdatedPreviewPayloadMapper

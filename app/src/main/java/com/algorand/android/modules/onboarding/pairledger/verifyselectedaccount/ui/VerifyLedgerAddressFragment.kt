@@ -23,7 +23,7 @@ import androidx.navigation.navGraphViewModels
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentVerifyLedgerAddressBinding
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.ledger.domain.model.LedgerBleResult
 import com.algorand.android.module.ledger.domain.model.LedgerOperation.VerifyAddressOperation
 import com.algorand.android.module.ledger.manager.LedgerBleOperationManager

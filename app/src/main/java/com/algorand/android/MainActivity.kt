@@ -359,13 +359,13 @@ class MainActivity :
     }
 
     private val removeAssetCreateTransactionResultCollector: suspend (
-        com.algorand.android.foundation.Event<CreateTransactionResult>?
+        com.algorand.android.module.foundation.Event<CreateTransactionResult>?
     ) -> Unit = {
         it?.consume()?.let { result -> handleRemoveAssetCreateTransactionResult(result) }
     }
 
     private val addAssetCreateTransactionResultCollector: suspend (
-        com.algorand.android.foundation.Event<CreateTransactionResult>?
+        com.algorand.android.module.foundation.Event<CreateTransactionResult>?
     ) -> Unit = {
         it?.consume()?.let { result -> handleAddAssetCreateTransactionResult(result) }
     }

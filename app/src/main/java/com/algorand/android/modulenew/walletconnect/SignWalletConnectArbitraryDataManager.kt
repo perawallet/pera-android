@@ -14,7 +14,7 @@
 package com.algorand.android.modulenew.walletconnect
 
 import androidx.lifecycle.Lifecycle
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import kotlinx.coroutines.flow.Flow
 

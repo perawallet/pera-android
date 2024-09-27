@@ -2,7 +2,7 @@ package com.algorand.android.module.asb.restorebackup.domain.usecase.implementat
 
 import android.util.Base64
 import com.algorand.android.module.algosdk.AlgoSdkEncryption
-import com.algorand.android.foundation.json.JsonSerializer
+import com.algorand.android.module.foundation.json.JsonSerializer
 import com.algorand.android.module.asb.backupprotocol.model.BackUpAccount
 import com.algorand.android.module.asb.backupprotocol.model.BackUpProtocolElement
 import com.algorand.android.module.asb.backupprotocol.model.BackUpProtocolPayload

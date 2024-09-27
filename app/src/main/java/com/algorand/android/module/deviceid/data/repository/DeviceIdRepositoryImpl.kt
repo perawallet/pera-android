@@ -5,9 +5,9 @@ import com.algorand.android.module.deviceid.data.service.DeviceIdApiService
 import com.algorand.android.module.deviceid.domain.model.*
 import com.algorand.android.module.deviceid.domain.repository.DeviceIdRepository
 import com.algorand.android.module.deviceid.utils.ProvideDeviceIdPlatform
-import com.algorand.android.foundation.PeraResult
-import com.algorand.android.foundation.app.ProvideApplicationName
-import com.algorand.android.foundation.locale.LocaleProvider
+import com.algorand.android.module.foundation.PeraResult
+import com.algorand.android.module.foundation.app.ProvideApplicationName
+import com.algorand.android.module.foundation.locale.LocaleProvider
 
 internal class DeviceIdRepositoryImpl(
     private val mainnetDeviceIdLocalSource: SharedPrefLocalSource<String?>,

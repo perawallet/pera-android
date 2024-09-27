@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.domain.repository
 
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.swap.component.domain.model.AvailableSwapAsset
 import com.algorand.android.module.swap.component.domain.model.GetSwapQuoteRequestPayload
 import com.algorand.android.module.swap.component.domain.model.PeraFee

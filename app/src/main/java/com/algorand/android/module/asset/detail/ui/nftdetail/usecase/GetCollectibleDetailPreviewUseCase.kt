@@ -30,7 +30,7 @@ import com.algorand.android.module.account.core.component.collectible.domain.use
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
-import com.algorand.android.foundation.common.isGreaterThan
+import com.algorand.android.module.foundation.common.isGreaterThan
 import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

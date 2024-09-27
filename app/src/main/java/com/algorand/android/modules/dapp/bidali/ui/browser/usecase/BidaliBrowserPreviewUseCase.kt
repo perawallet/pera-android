@@ -15,7 +15,7 @@ package com.algorand.android.modules.dapp.bidali.ui.browser.usecase
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.module.account.core.component.caching.domain.usecase.FetchAccountInformationAndCacheAssets
 import com.algorand.android.discover.common.ui.model.WebViewError
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.modules.dapp.bidali.data.mapper.BidaliOpenUrlRequestMapper
 import com.algorand.android.modules.dapp.bidali.data.mapper.BidaliPaymentRequestMapper
 import com.algorand.android.modules.dapp.bidali.data.model.BidaliOpenUrlRequest

@@ -19,7 +19,7 @@ import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.ui.assetswap.model.SwapError
 

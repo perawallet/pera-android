@@ -19,7 +19,7 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanSettings
 import android.os.ParcelUuid
-import com.algorand.android.foundation.permission.PeraPermissionManager
+import com.algorand.android.module.foundation.permission.PeraPermissionManager
 import com.algorand.android.module.ledger.manager.implementation.LedgerBleManagerImpl
 import javax.inject.Inject
 

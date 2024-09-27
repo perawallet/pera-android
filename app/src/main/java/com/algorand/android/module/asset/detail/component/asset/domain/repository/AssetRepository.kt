@@ -3,7 +3,7 @@ package com.algorand.android.module.asset.detail.component.asset.domain.reposito
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.CollectibleDetail
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 
 internal interface AssetRepository {
 

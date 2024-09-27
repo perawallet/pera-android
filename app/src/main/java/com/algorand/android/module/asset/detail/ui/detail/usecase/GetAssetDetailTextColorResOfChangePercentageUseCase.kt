@@ -14,8 +14,8 @@
 package com.algorand.android.module.asset.detail.ui.detail.usecase
 
 import com.algorand.android.R
-import com.algorand.android.foundation.common.isNegative
-import com.algorand.android.foundation.common.isPositive
+import com.algorand.android.module.foundation.common.isNegative
+import com.algorand.android.module.foundation.common.isPositive
 import java.math.BigDecimal
 import javax.inject.Inject
 

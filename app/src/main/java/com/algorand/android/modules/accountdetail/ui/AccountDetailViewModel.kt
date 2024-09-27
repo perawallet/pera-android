@@ -19,7 +19,7 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.module.account.core.ui.summary.usecase.GetAccountDetailSummary
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetailFlow
 import com.algorand.android.module.account.core.component.domain.usecase.DeleteAccount
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.AccountDetailTab
 import com.algorand.android.modules.accountdetail.ui.model.AccountDetailPreview
 import com.algorand.android.modules.tracking.accountdetail.AccountDetailFragmentEventTracker

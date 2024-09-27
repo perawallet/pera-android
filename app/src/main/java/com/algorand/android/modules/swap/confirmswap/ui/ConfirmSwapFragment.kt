@@ -34,7 +34,7 @@ import com.algorand.android.customviews.SwapAssetInputView
 import com.algorand.android.databinding.FragmentConfirmSwapBinding
 import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.module.drawable.getXmlStyledString
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.swap.confirmswapconfirmation.SwapConfirmationBottomSheet.Companion.CONFIRMATION_SUCCESS_KEY

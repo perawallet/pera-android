@@ -1,6 +1,6 @@
 package com.algorand.android.module.nameservice.domain.repository
 
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.nameservice.domain.model.NameService
 import com.algorand.android.module.nameservice.domain.model.NameServiceSearchResult
 

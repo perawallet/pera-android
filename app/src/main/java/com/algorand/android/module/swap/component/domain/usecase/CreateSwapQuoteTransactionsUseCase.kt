@@ -15,8 +15,8 @@ package com.algorand.android.module.swap.component.domain.usecase
 
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.algosdk.transaction.ParseTransactionMessagePack
-import com.algorand.android.foundation.PeraResult
-import com.algorand.android.foundation.common.decodeBase64
+import com.algorand.android.module.foundation.PeraResult
+import com.algorand.android.module.foundation.common.decodeBase64
 import com.algorand.android.module.swap.component.domain.factory.SwapTransactionItemFactory
 import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SignedSwapSingleTransactionData
 import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction

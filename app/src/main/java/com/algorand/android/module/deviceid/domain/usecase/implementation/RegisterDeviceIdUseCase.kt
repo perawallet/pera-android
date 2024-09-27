@@ -8,7 +8,7 @@ import com.algorand.android.module.deviceid.domain.usecase.GetSelectedNodeDevice
 import com.algorand.android.module.deviceid.domain.usecase.RegisterDeviceId
 import com.algorand.android.module.deviceid.domain.usecase.SetSelectedNodeDeviceId
 import com.algorand.android.module.deviceid.domain.usecase.UpdateDeviceId
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import javax.inject.Inject
 import kotlinx.coroutines.delay
 

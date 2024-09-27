@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.usecase
 
-import com.algorand.android.foundation.common.isZero
+import com.algorand.android.module.foundation.common.isZero
 import java.math.BigDecimal
 import javax.inject.Inject
 

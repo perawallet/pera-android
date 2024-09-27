@@ -16,7 +16,7 @@ package com.algorand.android.module.swap.ui.accountselection.model
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.module.asset.utils.AssetAdditionPayload
 import com.algorand.android.module.drawable.AnnotatedString
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 
 data class SwapAccountSelectionPreview(
     val accountListItems: List<BaseAccountSelectionListItem.BaseAccountItem>,

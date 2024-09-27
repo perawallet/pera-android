@@ -1,6 +1,6 @@
 package com.algorand.android.module.pushtoken
 
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.google.firebase.messaging.FirebaseMessaging
 import javax.inject.Inject
 import kotlin.coroutines.resume

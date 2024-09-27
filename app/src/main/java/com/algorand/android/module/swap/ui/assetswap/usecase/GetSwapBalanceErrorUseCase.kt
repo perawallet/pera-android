@@ -22,9 +22,9 @@ import com.algorand.android.module.currency.domain.model.Currency
 import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.R
 import com.algorand.android.module.drawable.getXmlStyledString
-import com.algorand.android.foundation.Event
-import com.algorand.android.foundation.common.isEqualTo
-import com.algorand.android.foundation.common.isLesserThan
+import com.algorand.android.module.foundation.Event
+import com.algorand.android.module.foundation.common.isEqualTo
+import com.algorand.android.module.foundation.common.isLesserThan
 import com.algorand.android.module.swap.component.data.SWAP_FEE_PADDING
 import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.ui.assetswap.model.SwapError

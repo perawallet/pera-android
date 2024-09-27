@@ -17,7 +17,7 @@ import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.module.algosdk.transaction.mapper.RawTransactionMapper
 import com.algorand.android.module.algosdk.transaction.model.RawTransaction
 import com.algorand.android.module.algosdk.transaction.model.payload.RawTransactionPayload
-import com.algorand.android.foundation.json.JsonSerializer
+import com.algorand.android.module.foundation.json.JsonSerializer
 import javax.inject.Inject
 
 internal class ParseTransactionMessagePackUseCase @Inject constructor(

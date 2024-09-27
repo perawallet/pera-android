@@ -18,7 +18,7 @@ import com.algorand.android.module.block.data.service.BlockPollingApiService
 import com.algorand.android.module.block.domain.repository.BlockPollingRepository
 import com.algorand.android.module.caching.CacheResult
 import com.algorand.android.module.caching.SingleInMemoryLocalCache
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import com.algorand.android.module.network.requestWithHipoErrorHandler
 

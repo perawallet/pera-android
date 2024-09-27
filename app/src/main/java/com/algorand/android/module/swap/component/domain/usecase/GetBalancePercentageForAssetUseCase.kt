@@ -17,8 +17,8 @@ import com.algorand.android.module.asset.utils.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.module.asset.utils.AssetConstants.ALGO_ID
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetData
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
-import com.algorand.android.foundation.PeraResult
-import com.algorand.android.foundation.common.isLesserThan
+import com.algorand.android.module.foundation.PeraResult
+import com.algorand.android.module.foundation.common.isLesserThan
 import com.algorand.android.module.swap.component.data.SWAP_FEE_PADDING
 import com.algorand.android.module.swap.component.domain.exceptions.InsufficientAlgoBalance
 import java.math.BigDecimal

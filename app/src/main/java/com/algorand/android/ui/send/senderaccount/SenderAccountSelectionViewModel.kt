@@ -19,7 +19,7 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.module.account.core.ui.accountselection.model.SenderAccountSelectionPreview
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modulenew.accountselection.senderselection.usecase.SenderAccountSelectionPreviewUseCase
 import com.algorand.android.module.transaction.ui.sendasset.domain.GetAssetTransferTargetUser

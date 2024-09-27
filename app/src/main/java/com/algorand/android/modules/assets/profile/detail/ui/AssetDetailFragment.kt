@@ -30,7 +30,7 @@ import com.algorand.android.databinding.FragmentAssetDetailBinding
 import com.algorand.android.module.date.ui.model.DateFilter
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.FragmentConfiguration

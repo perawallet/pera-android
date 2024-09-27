@@ -17,7 +17,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.module.transaction.component.domain.creation.CreateSendTransaction
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult

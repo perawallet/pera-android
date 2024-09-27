@@ -16,7 +16,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.AccountSelection
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Introduction
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Swap

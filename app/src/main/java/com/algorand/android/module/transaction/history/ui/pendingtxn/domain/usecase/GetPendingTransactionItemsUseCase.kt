@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.history.ui.pendingtxn.domain.usecase
 
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem
 import com.algorand.android.module.transaction.history.ui.pendingtxn.domain.mapper.PendingTransactionItemMapper

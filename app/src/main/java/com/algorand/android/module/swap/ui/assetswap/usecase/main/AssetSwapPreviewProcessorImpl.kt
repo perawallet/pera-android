@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.assetswap.usecase.main
 
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.swap.ui.GetSwapError
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview
 import com.algorand.android.module.swap.ui.assetswap.model.GetToAssetUpdatedPreviewPayload

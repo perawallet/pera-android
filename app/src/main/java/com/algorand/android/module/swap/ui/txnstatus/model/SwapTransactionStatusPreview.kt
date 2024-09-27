@@ -18,7 +18,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
 import com.algorand.android.module.drawable.AnnotatedString
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 
 data class SwapTransactionStatusPreview(
     val swapTransactionStatusType: SwapTransactionStatusType,

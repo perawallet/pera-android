@@ -19,9 +19,9 @@ import androidx.lifecycle.Lifecycle
 import com.algorand.android.module.algosdk.AlgoSdkAddress
 import com.algorand.android.module.algosdk.transaction.AlgoTransactionSigner
 import com.algorand.android.module.account.core.component.caching.domain.usecase.CacheAccountDetail
-import com.algorand.android.foundation.Event
-import com.algorand.android.foundation.coroutine.LifecycleScopedCoroutineOwner
-import com.algorand.android.foundation.permission.PeraPermissionManager
+import com.algorand.android.module.foundation.Event
+import com.algorand.android.module.foundation.coroutine.LifecycleScopedCoroutineOwner
+import com.algorand.android.module.foundation.permission.PeraPermissionManager
 import com.algorand.android.module.ledger.domain.LedgerBleObserver
 import com.algorand.android.module.ledger.domain.model.LedgerBleResult
 import com.algorand.android.module.ledger.domain.model.LedgerBleResult.ErrorResult.LedgerError

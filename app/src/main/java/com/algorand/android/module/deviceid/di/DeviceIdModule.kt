@@ -1,8 +1,8 @@
 package com.algorand.android.module.deviceid.di
 
 import android.content.SharedPreferences
-import com.algorand.android.foundation.app.ProvideApplicationName
-import com.algorand.android.foundation.locale.LocaleProvider
+import com.algorand.android.module.foundation.app.ProvideApplicationName
+import com.algorand.android.module.foundation.locale.LocaleProvider
 import com.algorand.android.module.deviceid.data.repository.DeviceIdRepositoryImpl
 import com.algorand.android.module.deviceid.data.service.DeviceIdApiService
 import com.algorand.android.module.deviceid.data.storage.MainnetDeviceIdLocalSource

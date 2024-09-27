@@ -12,7 +12,7 @@
 
 package com.algorand.android.module.network
 
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import java.io.IOException
 import retrofit2.Response

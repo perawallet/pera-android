@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.swap.component.domain
 
-import com.algorand.android.foundation.common.isGreaterThan
-import com.algorand.android.foundation.common.toBigDecimalOrZero
+import com.algorand.android.module.foundation.common.isGreaterThan
+import com.algorand.android.module.foundation.common.toBigDecimalOrZero
 import java.math.BigDecimal
 
 object SwapAmountUtils {

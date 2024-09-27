@@ -15,7 +15,7 @@ package com.algorand.android.modules.dapp.bidali.ui.browser
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetsData
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.modules.dapp.bidali.BIDALI_FAILED_TRANSACTION_JAVASCRIPT
 import com.algorand.android.modules.dapp.bidali.BIDALI_SUCCESSFUL_TRANSACTION_JAVASCRIPT
 import com.algorand.android.modules.dapp.bidali.domain.mapper.BidaliAssetMapper

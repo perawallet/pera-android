@@ -15,7 +15,7 @@ package com.algorand.android.module.asset.action.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.foundation.coroutine.CoroutineExtensions.launchIO
+import com.algorand.android.module.foundation.coroutine.CoroutineExtensions.launchIO
 import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
 import com.algorand.android.module.asset.action.ui.model.AssetActionPreview
 import com.algorand.android.module.asset.action.ui.usecase.GetAssetActionPreview

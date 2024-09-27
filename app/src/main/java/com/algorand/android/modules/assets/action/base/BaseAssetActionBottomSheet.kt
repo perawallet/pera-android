@@ -25,8 +25,8 @@ import com.algorand.android.module.asset.action.ui.model.AssetActionPreview
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.databinding.BottomSheetAssetActionBinding
-import com.algorand.android.foundation.Event
-import com.algorand.android.foundation.lifecycle.collectLatestOnLifecycle
+import com.algorand.android.module.foundation.Event
+import com.algorand.android.module.foundation.lifecycle.collectLatestOnLifecycle
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.setAssetNameTextColorByVerificationTier

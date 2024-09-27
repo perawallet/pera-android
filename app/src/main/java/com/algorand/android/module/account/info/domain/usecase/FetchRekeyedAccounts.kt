@@ -14,7 +14,7 @@
 package com.algorand.android.module.account.info.domain.usecase
 
 import com.algorand.android.module.account.info.domain.model.AccountInformation
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 
 fun interface FetchRekeyedAccounts {
     suspend operator fun invoke(address: String): PeraResult<List<AccountInformation>>

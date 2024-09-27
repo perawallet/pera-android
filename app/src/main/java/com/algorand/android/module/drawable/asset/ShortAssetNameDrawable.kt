@@ -20,7 +20,7 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import com.algorand.android.R
 import com.algorand.android.module.drawable.OvalTextDrawable
-import com.algorand.android.foundation.ui.calculateTextSizeInBounds
+import com.algorand.android.module.foundation.ui.calculateTextSizeInBounds
 
 internal class ShortAssetNameDrawable(private val assetName: String) {
 

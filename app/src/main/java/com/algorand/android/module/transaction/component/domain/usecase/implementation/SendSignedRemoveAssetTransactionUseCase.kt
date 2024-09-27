@@ -14,7 +14,7 @@
 package com.algorand.android.module.transaction.component.domain.usecase.implementation
 
 import com.algorand.android.module.account.info.domain.usecase.AddAssetRemovalToAccountAssetHoldings
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.transaction.component.domain.model.SendSignedRemoveAssetTransactionPayload
 import com.algorand.android.module.transaction.component.domain.model.TransactionId
 import com.algorand.android.module.transaction.component.domain.usecase.SendSignedRemoveAssetTransaction

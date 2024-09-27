@@ -30,7 +30,7 @@ import com.algorand.android.module.algosdk.transaction.model.Transaction
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.module.drawable.AnnotatedString
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.BluetoothNotEnabled

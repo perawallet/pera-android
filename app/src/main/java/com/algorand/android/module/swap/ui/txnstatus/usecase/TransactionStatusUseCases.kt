@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.txnstatus.usecase
 
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.swap.ui.txnstatus.model.SignedSwapTransaction
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusNavArgs
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusPreview

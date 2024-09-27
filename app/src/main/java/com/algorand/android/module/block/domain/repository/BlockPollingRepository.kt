@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.block.domain.repository
 
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 
 internal interface BlockPollingRepository {
 

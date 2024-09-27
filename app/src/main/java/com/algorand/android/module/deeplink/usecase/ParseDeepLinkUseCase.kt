@@ -20,8 +20,8 @@ import com.algorand.android.module.deeplink.model.RawDeepLink
 import com.algorand.android.module.deeplink.model.RawMnemonicPayload
 import com.algorand.android.module.deeplink.model.WebImportQrCode
 import com.algorand.android.module.deeplink.model.WebQrCode
-import com.algorand.android.foundation.common.decodeBase64ToString
-import com.algorand.android.foundation.json.JsonSerializer
+import com.algorand.android.module.foundation.common.decodeBase64ToString
+import com.algorand.android.module.foundation.json.JsonSerializer
 import com.algorand.android.module.transaction.component.domain.usecase.IsValidAlgorandAddress
 import java.math.BigInteger
 import javax.inject.Inject

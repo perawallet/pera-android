@@ -58,7 +58,7 @@ class WalletConnectArbitraryDataRequestViewModel @Inject constructor(
     val requestResultLiveData: LiveData<Event<Resource<AnnotatedString>>>
         get() = walletConnectManager.requestResultLiveData
 
-    val signResultFlow: Flow<com.algorand.android.foundation.Event<SignWalletConnectArbitraryDataResult>?>
+    val signResultFlow: Flow<com.algorand.android.module.foundation.Event<SignWalletConnectArbitraryDataResult>?>
         get() = signWalletConnectArbitraryDataManager.signWalletConnectTransactionResultFlow
 
     val arbitraryData: WalletConnectArbitraryDataRequest?

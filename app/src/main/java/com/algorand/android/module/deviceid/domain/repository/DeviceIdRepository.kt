@@ -1,7 +1,7 @@
 package com.algorand.android.module.deviceid.domain.repository
 
 import com.algorand.android.module.deviceid.domain.model.*
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 
 internal interface DeviceIdRepository {
 

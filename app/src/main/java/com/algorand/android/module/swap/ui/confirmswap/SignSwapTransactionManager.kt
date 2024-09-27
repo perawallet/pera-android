@@ -14,7 +14,7 @@
 package com.algorand.android.module.swap.ui.confirmswap
 
 import androidx.lifecycle.Lifecycle
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction
 import com.algorand.android.module.swap.ui.confirmswap.model.SignSwapTransactionResult
 import kotlinx.coroutines.flow.Flow

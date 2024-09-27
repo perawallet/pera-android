@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.asset.action.ui.model
 
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 
 data class AssetActionPreview(
     val isLoading: Boolean,

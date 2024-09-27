@@ -16,8 +16,8 @@ package com.algorand.android.modulenew.walletconnect
 import androidx.lifecycle.Lifecycle
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountsDetail
-import com.algorand.android.foundation.Event
-import com.algorand.android.foundation.coroutine.LifecycleScopedCoroutineOwner
+import com.algorand.android.module.foundation.Event
+import com.algorand.android.module.foundation.coroutine.LifecycleScopedCoroutineOwner
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.models.WalletConnectSignResult.CanBeSigned

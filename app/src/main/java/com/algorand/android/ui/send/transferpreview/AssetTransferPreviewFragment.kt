@@ -24,7 +24,7 @@ import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.transaction.TransactionBaseFragment
 import com.algorand.android.databinding.FragmentTransferAssetPreviewBinding
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.module.transaction.component.domain.model.SignedTransaction

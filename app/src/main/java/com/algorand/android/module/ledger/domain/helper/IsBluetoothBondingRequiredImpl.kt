@@ -15,7 +15,7 @@ package com.algorand.android.module.ledger.domain.helper
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
-import com.algorand.android.foundation.permission.PeraPermissionManager
+import com.algorand.android.module.foundation.permission.PeraPermissionManager
 import javax.inject.Inject
 
 internal class IsBluetoothBondingRequiredImpl @Inject constructor(

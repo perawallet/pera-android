@@ -14,7 +14,7 @@
 package com.algorand.android.module.ledger.ui
 
 import androidx.lifecycle.Lifecycle
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.ledger.domain.model.LedgerBleResult
 import kotlinx.coroutines.flow.StateFlow
 

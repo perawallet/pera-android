@@ -16,8 +16,8 @@ package com.algorand.android.modulenew.accountselection.senderselection.usecase
 import com.algorand.android.module.account.core.ui.accountselection.model.SenderAccountSelectionPreview
 import com.algorand.android.module.account.core.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.module.account.core.component.caching.domain.usecase.FetchAccountInformationAndCacheAssets
-import com.algorand.android.foundation.Event
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.Event
+import com.algorand.android.module.foundation.PeraResult
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

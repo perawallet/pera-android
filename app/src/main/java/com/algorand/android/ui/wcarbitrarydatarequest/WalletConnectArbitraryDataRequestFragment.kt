@@ -77,7 +77,7 @@ class WalletConnectArbitraryDataRequestFragment :
 
     private var arbitraryData: WalletConnectArbitraryDataRequest? = null
 
-    private val signResultObserver: suspend (com.algorand.android.foundation.Event<SignWalletConnectArbitraryDataResult>?) -> Unit =
+    private val signResultObserver: suspend (com.algorand.android.module.foundation.Event<SignWalletConnectArbitraryDataResult>?) -> Unit =
         {
             it?.consume()?.let { result -> handleSignResult(result) }
         }

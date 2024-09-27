@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.parity.domain.usecase.implementation
 
-import com.algorand.android.foundation.common.toBigDecimalOrZero
+import com.algorand.android.module.foundation.common.toBigDecimalOrZero
 import com.algorand.android.module.parity.domain.usecase.GetUsdValuePerAsset
 import java.math.BigDecimal
 import java.math.RoundingMode

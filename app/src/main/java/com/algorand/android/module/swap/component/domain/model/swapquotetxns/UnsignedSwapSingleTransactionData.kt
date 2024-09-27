@@ -14,7 +14,7 @@
 package com.algorand.android.module.swap.component.domain.model.swapquotetxns
 
 import com.algorand.android.module.algosdk.transaction.model.RawTransaction
-import com.algorand.android.foundation.common.decodeBase64
+import com.algorand.android.module.foundation.common.decodeBase64
 
 data class UnsignedSwapSingleTransactionData(
     override val parentListIndex: Int,

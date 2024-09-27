@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.component.pendingtxn.domain.usecase
 
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.transaction.component.pendingtxn.domain.model.PendingTransaction
 
 fun interface GetPendingTransactions {

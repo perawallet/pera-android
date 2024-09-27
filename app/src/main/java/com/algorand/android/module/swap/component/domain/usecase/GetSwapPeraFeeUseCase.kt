@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.domain.usecase
 
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.swap.component.domain.model.PeraFee
 import com.algorand.android.module.swap.component.domain.repository.AssetSwapRepository
 import java.math.BigDecimal

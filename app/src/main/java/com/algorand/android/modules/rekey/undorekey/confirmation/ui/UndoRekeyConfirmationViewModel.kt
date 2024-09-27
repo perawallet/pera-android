@@ -14,8 +14,8 @@ package com.algorand.android.modules.rekey.undorekey.confirmation.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.foundation.Event
-import com.algorand.android.foundation.coroutine.CoroutineExtensions.launchIfInactive
+import com.algorand.android.module.foundation.Event
+import com.algorand.android.module.foundation.coroutine.CoroutineExtensions.launchIfInactive
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRekeyConfirmationFields
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.model.UndoRekeyConfirmationPreview

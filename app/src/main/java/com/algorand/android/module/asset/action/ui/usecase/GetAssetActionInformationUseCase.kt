@@ -17,7 +17,7 @@ import com.algorand.android.module.asset.action.ui.mapper.AssetActionInformation
 import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.FetchAsset
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import javax.inject.Inject
 
 internal class GetAssetActionInformationUseCase @Inject constructor(

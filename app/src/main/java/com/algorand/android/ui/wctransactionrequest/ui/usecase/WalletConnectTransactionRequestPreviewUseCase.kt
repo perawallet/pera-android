@@ -12,7 +12,7 @@
 
 package com.algorand.android.ui.wctransactionrequest.ui.usecase
 
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.WalletConnectSession
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier

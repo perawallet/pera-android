@@ -15,7 +15,7 @@ package com.algorand.android.module.swap.ui.assetselection.model
 
 import com.algorand.android.module.asset.utils.AssetAdditionPayload
 import com.algorand.android.module.drawable.ScreenState
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 
 data class SwapAssetSelectionPreview(
     val swapAssetSelectionItemList: List<SwapAssetSelectionItem>,

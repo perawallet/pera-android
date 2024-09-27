@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.info.domain.repository
 
 import com.algorand.android.module.account.info.domain.model.AccountInformation
-import com.algorand.android.foundation.PeraResult
+import com.algorand.android.module.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
 
 internal interface AccountInformationRepository {

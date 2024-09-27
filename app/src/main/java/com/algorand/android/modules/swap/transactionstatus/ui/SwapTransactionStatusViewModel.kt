@@ -15,7 +15,7 @@ package com.algorand.android.modules.swap.transactionstatus.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.foundation.Event
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusPreview

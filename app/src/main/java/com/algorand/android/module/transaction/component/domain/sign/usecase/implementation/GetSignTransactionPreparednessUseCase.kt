@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.transaction.component.domain.sign.usecase.implementation
 
-import com.algorand.android.foundation.common.PeraSystemServiceManager
-import com.algorand.android.foundation.permission.PeraPermissionManager
+import com.algorand.android.module.foundation.common.PeraSystemServiceManager
+import com.algorand.android.module.foundation.permission.PeraPermissionManager
 import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner
 import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner.Algo25
 import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner.LedgerBle

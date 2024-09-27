@@ -1,11 +1,17 @@
 package com.algorand.android.module.transaction.history.component.data.util
 
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import androidx.paging.cachedIn
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory
 import com.algorand.android.module.transaction.history.component.domain.utils.TransactionHistoryConstants.DEFAULT_TRANSACTION_TO_FETCH_COUNT
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.shareIn
 
 internal class TransactionHistoryPaginationHelper @Inject constructor() {
 

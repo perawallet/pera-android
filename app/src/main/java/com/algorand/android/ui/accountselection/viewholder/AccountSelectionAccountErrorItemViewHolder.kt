@@ -18,9 +18,9 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
+import com.algorand.android.databinding.ItemAccountErrorSimpleBinding
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
-import com.algorand.android.databinding.ItemAccountErrorSimpleBinding
 import com.algorand.android.utils.AccountIconDrawable
 
 class AccountSelectionAccountErrorItemViewHolder(

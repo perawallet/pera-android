@@ -13,11 +13,11 @@
 package com.algorand.android.ui.register.recoveraccounttypeselection
 
 import android.content.SharedPreferences
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import com.algorand.android.core.AccountManager
 import com.algorand.android.utils.preference.setRegisterSkip
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class AccountRecoveryTypeSelectionViewModel @Inject constructor(

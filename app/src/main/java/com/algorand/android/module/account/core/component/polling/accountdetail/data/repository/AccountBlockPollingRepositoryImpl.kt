@@ -1,8 +1,8 @@
 package com.algorand.android.module.account.core.component.polling.accountdetail.data.repository
 
+import com.algorand.android.module.account.core.component.caching.data.service.MobileAlgorandApi
 import com.algorand.android.module.account.core.component.polling.accountdetail.data.model.AccountCacheRefreshRequestBody
 import com.algorand.android.module.account.core.component.polling.accountdetail.domain.repository.AccountBlockPollingRepository
-import com.algorand.android.module.account.core.component.caching.data.service.MobileAlgorandApi
 import javax.inject.Inject
 
 internal class AccountBlockPollingRepositoryImpl @Inject constructor(

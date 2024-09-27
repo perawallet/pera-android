@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.transaction.detail.ui.standardtransaction
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
@@ -21,7 +20,7 @@ import com.algorand.android.modules.transaction.detail.ui.BaseTransactionDetailV
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel

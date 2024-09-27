@@ -13,6 +13,7 @@
 package com.algorand.android.modules.asb.createbackup.storekey.ui.usecase
 
 import com.algorand.android.R
+import com.algorand.android.models.AnnotatedString
 import com.algorand.android.module.account.local.domain.usecase.GetSecretKey
 import com.algorand.android.module.asb.backupprotocol.model.BackUpAccount
 import com.algorand.android.module.asb.backupprotocol.model.BackUpPayload
@@ -23,7 +24,6 @@ import com.algorand.android.module.asb.mnemonics.domain.usecase.GetAsbBackUpMnem
 import com.algorand.android.module.asb.mnemonics.domain.usecase.SetAsbBackUpMnemonics
 import com.algorand.android.module.custominfo.domain.usecase.GetCustomInfoOrNull
 import com.algorand.android.module.deviceid.domain.usecase.GetSelectedNodeDeviceId
-import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.asb.createbackup.storekey.ui.mapper.AsbStoreKeyPreviewMapper
 import com.algorand.android.modules.asb.createbackup.storekey.ui.model.AsbStoreKeyPreview
 import com.algorand.android.utils.Event

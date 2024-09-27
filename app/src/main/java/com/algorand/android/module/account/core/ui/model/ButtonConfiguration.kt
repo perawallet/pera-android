@@ -12,7 +12,8 @@
 
 package com.algorand.android.module.account.core.ui.model
 
-import androidx.annotation.*
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 
 data class ButtonConfiguration(
     @DrawableRes val iconDrawableResId: Int? = null,

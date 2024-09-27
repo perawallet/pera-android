@@ -16,8 +16,8 @@ import android.app.Activity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.algorand.android.MainActivity
-import com.algorand.android.utils.ActivityLifecycleObserver
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
+import com.algorand.android.utils.ActivityLifecycleObserver
 import javax.inject.Inject
 import javax.inject.Singleton
 

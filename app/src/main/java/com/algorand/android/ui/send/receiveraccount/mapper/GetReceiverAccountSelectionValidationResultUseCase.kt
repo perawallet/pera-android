@@ -15,9 +15,8 @@ package com.algorand.android.ui.send.receiveraccount.mapper
 
 import com.algorand.android.R
 import com.algorand.android.SendAlgoNavigationDirections
-import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.nft.ui.model.RequestOptInConfirmationArgs
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.module.transaction.component.domain.model.ReceiverAccountValidationResult
 import com.algorand.android.module.transaction.component.domain.model.ReceiverAccountValidationResult.CloseTransactionToSameAccount
 import com.algorand.android.module.transaction.component.domain.model.ReceiverAccountValidationResult.NetworkError
@@ -30,6 +29,7 @@ import com.algorand.android.module.transaction.component.domain.model.ReceiverAc
 import com.algorand.android.module.transaction.component.domain.model.ValidateReceiverAccountPayload
 import com.algorand.android.module.transaction.ui.sendasset.domain.GetAssetTransferTargetUser
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser
+import com.algorand.android.nft.ui.model.RequestOptInConfirmationArgs
 import com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionFragmentDirections
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.formatAsAlgoString

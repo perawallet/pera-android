@@ -12,6 +12,11 @@
 
 package com.algorand.android.mapper
 
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleAudioData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleUnsupportedData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
 import com.algorand.android.module.account.core.ui.asset.assetdrawable.GetAssetDrawableProvider
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectAudioCollectibleItem
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectCollectibleImageItem
@@ -21,11 +26,6 @@ import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetI
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.SelectAssetItem
 import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
 import com.algorand.android.module.account.core.ui.usecase.GetAssetName
-import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleAudioData
-import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
-import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
-import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleUnsupportedData
-import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
 import javax.inject.Inject
 
 class AssetSelectionMapper @Inject constructor(

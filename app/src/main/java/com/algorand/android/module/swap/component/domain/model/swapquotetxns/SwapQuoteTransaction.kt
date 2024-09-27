@@ -70,7 +70,6 @@ sealed class SwapQuoteTransaction {
         override val signedTransactions: MutableList<SignedSwapSingleTransactionData>
     ) : SwapQuoteTransaction() {
         override val isTransactionConfirmationNeed: Boolean = true
-
     }
 
     data class PeraFeeTransaction(

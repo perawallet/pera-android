@@ -14,9 +14,9 @@ package com.algorand.android.ui.contacts
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.core.BaseViewModel
 import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.module.contacts.domain.usecase.GetUsersWithNameFiltered
-import com.algorand.android.core.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers

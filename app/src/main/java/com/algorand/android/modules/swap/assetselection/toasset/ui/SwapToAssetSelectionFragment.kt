@@ -15,14 +15,14 @@ package com.algorand.android.modules.swap.assetselection.toasset.ui
 import androidx.fragment.app.viewModels
 import com.algorand.android.MainActivity
 import com.algorand.android.R
-import com.algorand.android.module.asset.utils.AssetAdditionPayload
 import com.algorand.android.customviews.toolbar.CustomToolbar
-import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.AssetOperationResult
+import com.algorand.android.module.asset.utils.AssetAdditionPayload
+import com.algorand.android.module.foundation.Event
+import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionItem
 import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionFragment
 import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionViewModel
-import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionItem
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.setFragmentNavigationResult
 import dagger.hilt.android.AndroidEntryPoint

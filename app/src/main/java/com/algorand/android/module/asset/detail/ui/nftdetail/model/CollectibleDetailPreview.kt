@@ -15,7 +15,6 @@ package com.algorand.android.module.asset.detail.ui.nftdetail.model
 
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.model.AssetName
-import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.CollectibleDetail
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.CollectibleTraitItem
 import com.algorand.android.module.foundation.Event

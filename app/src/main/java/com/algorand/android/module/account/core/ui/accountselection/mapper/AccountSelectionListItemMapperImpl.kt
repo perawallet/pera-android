@@ -14,12 +14,12 @@
 package com.algorand.android.module.account.core.ui.accountselection.mapper
 
 import androidx.core.net.toUri
+import com.algorand.android.module.account.core.component.utils.toShortenedAddress
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem.BaseAccountItem.AccountErrorItem
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem.BaseAccountItem.AccountItem
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem.BaseAccountItem.ContactItem
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem.AccountListItem
-import com.algorand.android.module.account.core.component.utils.toShortenedAddress
 import com.algorand.android.module.nameservice.domain.model.NameService
 import com.algorand.android.module.nameservice.domain.model.NameServiceSearchResult
 import javax.inject.Inject

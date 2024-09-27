@@ -1,8 +1,9 @@
 package com.algorand.android.module.account.core.ui.model
 
-import androidx.annotation.*
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import com.algorand.android.R
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 
 enum class AccountIconResource(
     @DrawableRes val iconResId: Int,

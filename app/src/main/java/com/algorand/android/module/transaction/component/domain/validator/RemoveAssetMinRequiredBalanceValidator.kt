@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.transaction.component.domain.validator
 
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.algosdk.transaction.model.Transaction
-import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.module.transaction.component.domain.TransactionConstants.MIN_REQUIRED_BALANCE_PER_ASSET
 import com.algorand.android.module.transaction.component.domain.model.TransactionParams
 import com.algorand.android.module.transaction.component.domain.model.ValidationResult

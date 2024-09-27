@@ -13,13 +13,13 @@
 
 package com.algorand.android.module.account.core.ui.accountsorting.domain.mapper
 
-import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem
+import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem.AccountListItem
 import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
 import javax.inject.Inject
 
 internal class BaseAccountAndAssetListItemMapperImpl @Inject constructor() : BaseAccountAndAssetListItemMapper {
 
-    override fun invoke(itemConfiguration: BaseItemConfiguration.AccountItemConfiguration): BaseAccountAndAssetListItem.AccountListItem {
-        return BaseAccountAndAssetListItem.AccountListItem(itemConfiguration)
+    override fun invoke(itemConfiguration: BaseItemConfiguration.AccountItemConfiguration): AccountListItem {
+        return AccountListItem(itemConfiguration)
     }
 }

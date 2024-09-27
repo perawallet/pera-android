@@ -13,13 +13,13 @@
 
 package com.algorand.android.decider
 
-import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
-import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
-import com.algorand.android.module.account.core.ui.usecase.GetAccountIconResourceByAccountType
-import com.algorand.android.module.contacts.domain.usecase.GetContactByAddress
-import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.mapper.TransactionTargetUserMapper
 import com.algorand.android.models.TransactionTargetUser
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconResourceByAccountType
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.android.module.contacts.domain.usecase.GetContactByAddress
 import com.algorand.android.utils.toShortenedAddress
 import javax.inject.Inject
 

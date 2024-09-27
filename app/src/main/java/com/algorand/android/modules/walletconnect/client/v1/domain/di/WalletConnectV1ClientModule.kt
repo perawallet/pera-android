@@ -43,11 +43,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import org.walletconnect.impls.FileWCSessionStore
 import java.io.File
 import javax.inject.Named
 import javax.inject.Singleton
+import okhttp3.OkHttpClient
+import org.walletconnect.impls.FileWCSessionStore
 
 @Module
 @InstallIn(SingletonComponent::class)

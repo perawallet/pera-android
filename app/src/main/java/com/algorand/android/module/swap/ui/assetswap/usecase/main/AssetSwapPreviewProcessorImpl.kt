@@ -14,6 +14,9 @@
 package com.algorand.android.module.swap.ui.assetswap.usecase.main
 
 import com.algorand.android.module.foundation.Event
+import com.algorand.android.module.swap.component.domain.exceptions.InsufficientAlgoBalance
+import com.algorand.android.module.swap.component.domain.model.GetPercentageCalculatedBalanceForSwapPayload
+import com.algorand.android.module.swap.component.domain.usecase.GetPercentageCalculatedBalanceForSwap
 import com.algorand.android.module.swap.ui.GetSwapError
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview
 import com.algorand.android.module.swap.ui.assetswap.model.GetToAssetUpdatedPreviewPayload
@@ -21,9 +24,6 @@ import com.algorand.android.module.swap.ui.assetswap.model.SwapError
 import com.algorand.android.module.swap.ui.assetswap.usecase.main.model.AssetsSwitchedUpdatedPreviewPayload
 import com.algorand.android.module.swap.ui.assetswap.usecase.main.model.FromAssetUpdatedPreviewPayload
 import com.algorand.android.module.swap.ui.assetswap.usecase.main.model.SwapAmountUpdatedPreviewPayload
-import com.algorand.android.module.swap.component.domain.exceptions.InsufficientAlgoBalance
-import com.algorand.android.module.swap.component.domain.model.GetPercentageCalculatedBalanceForSwapPayload
-import com.algorand.android.module.swap.component.domain.usecase.GetPercentageCalculatedBalanceForSwap
 import com.algorand.android.utils.formatAsPercentage
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

@@ -13,23 +13,23 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.accountselection.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
-import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.module.account.sorting.domain.usecase.GetSortedLocalAccounts
+import com.algorand.android.models.ScreenState
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountType
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.module.account.sorting.domain.usecase.GetSortedLocalAccounts
 import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.module.drawable.AnnotatedString
-import com.algorand.android.models.ScreenState
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
+import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
 import com.algorand.android.modules.basesingleaccountselection.ui.mapper.SingleAccountSelectionListItemMapper
 import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAccountSelectionListItem
 import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAccountSelectionListItem.AccountItem
 import com.algorand.android.modules.rekey.rekeytostandardaccount.accountselection.ui.mapper.RekeyToStandardAccountSelectionPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.accountselection.ui.model.RekeyToStandardAccountSelectionPreview
-import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
-import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
 import com.algorand.android.utils.formatAsCurrency
 import javax.inject.Inject
 

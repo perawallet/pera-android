@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.algorand.android.module.asset.detail.component
 
 import java.math.BigDecimal

@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.swap.ui.common
 
+import com.algorand.android.R
 import com.algorand.android.module.currency.domain.model.Currency
 import com.algorand.android.module.drawable.AnnotatedString
-import com.algorand.android.R
 import com.algorand.android.module.swap.component.domain.model.SwapQuote
 
 private const val FIRST_PLACEHOLDER_KEY = "first"

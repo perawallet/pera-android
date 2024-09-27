@@ -14,8 +14,8 @@
 package com.algorand.android.module.transaction.ui.core.model
 
 import android.content.Context
-import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.R
+import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.module.drawable.getXmlStyledString
 import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 

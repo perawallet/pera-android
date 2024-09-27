@@ -13,14 +13,11 @@
 
 package com.algorand.android.module.transaction.history.ui
 
+import com.algorand.android.R
+import com.algorand.android.module.account.core.component.utils.toShortenedAddress
 import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
-import com.algorand.android.module.account.core.component.utils.toShortenedAddress
-import com.algorand.android.R
-import com.algorand.android.module.transaction.history.ui.mapper.BaseTransactionItemMapper
-import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
-import com.algorand.android.module.transaction.history.ui.usecase.GetTransactionTargetUserDisplayName
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType.ApplicationCall
@@ -33,6 +30,9 @@ import com.algorand.android.module.transaction.history.component.domain.model.Ba
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType.Undefined
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.PendingTransactionTitle
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.TransactionDateTitle
+import com.algorand.android.module.transaction.history.ui.mapper.BaseTransactionItemMapper
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
+import com.algorand.android.module.transaction.history.ui.usecase.GetTransactionTargetUserDisplayName
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAssetAmount

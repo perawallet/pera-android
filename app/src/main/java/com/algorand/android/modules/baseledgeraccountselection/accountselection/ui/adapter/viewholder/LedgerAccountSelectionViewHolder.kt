@@ -16,8 +16,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemAccountSelectionBinding
-import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.utils.AccountIconDrawable
 
 class LedgerAccountSelectionViewHolder(

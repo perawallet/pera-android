@@ -26,9 +26,9 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.module.algosdk.transaction.model.Transaction
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
+import com.algorand.android.module.algosdk.transaction.model.Transaction
 import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
@@ -84,7 +84,7 @@ abstract class TransactionBaseFragment(@LayoutRes layoutResId: Int) : BaseFragme
             is LedgerWaitingForApproval -> showLedgerLoading(result.ledgerName)
             Loading -> transactionFragmentListener?.onSignTransactionLoading()
             is TransactionSigned -> onTransactionSigned(result.signedTransaction)
-            LedgerDisconnected -> showGlobalError(getString(com.algorand.android.R.string.an_error_occured))
+            LedgerDisconnected -> showGlobalError(getString(R.string.an_error_occured))
             LedgerOperationCancelled -> onSignTransactionCancelledByLedger()
             is SnackbarError.Retry -> {
 //                Currently, we are showing this kind of error in case of ASA  adding failure. Since we are are
@@ -192,8 +192,8 @@ abstract class TransactionBaseFragment(@LayoutRes layoutResId: Int) : BaseFragme
 
     private fun showLocationNotEnabledError() {
         showGlobalError(
-            getString(com.algorand.android.R.string.please_ensure),
-            getString(com.algorand.android.R.string.bluetooth_location_services)
+            getString(R.string.please_ensure),
+            getString(R.string.bluetooth_location_services)
         )
     }
 

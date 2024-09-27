@@ -40,23 +40,3 @@ internal class WebImportQrCodeMapperImpl @Inject constructor() : WebImportQrCode
         const val ACTION_IMPORT_KEY = "import"
     }
 }
-
-/*
-fun mapFromWebQrCode(
-        webQrCode: WebQrCode,
-    ): WebImportQrCode? {
-        return if (isRecognized(webQrCode) && webQrCode.action == WebQrCode.ACTION_IMPORT_KEY) {
-            WebImportQrCode(
-                backupId = webQrCode.backupId,
-                encryptionKey = webQrCode.encryptionKey,
-            )
-        } else {
-            null
-        }
-    }
-
-    private fun isRecognized(webQrCode: WebQrCode): Boolean {
-        val intVersion = webQrCode.version.toIntOrNull() ?: return false
-        return intVersion <= WebQrCode.CURRENT_QR_CODE_VERSION
-    }
- */

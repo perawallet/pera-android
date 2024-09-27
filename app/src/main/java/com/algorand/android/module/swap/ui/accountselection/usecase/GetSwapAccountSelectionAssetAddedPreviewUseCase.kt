@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.swap.ui.accountselection.usecase
 
+import com.algorand.android.R
 import com.algorand.android.module.account.core.component.caching.domain.usecase.CacheAccountDetail
 import com.algorand.android.module.drawable.AnnotatedString
-import com.algorand.android.R
 import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.swap.ui.accountselection.model.SwapAccountSelectionNavDirection
 import com.algorand.android.module.swap.ui.accountselection.model.SwapAccountSelectionPreview

@@ -13,10 +13,10 @@
 
 package com.algorand.android.module.asset.action.ui.usecase
 
-import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.asset.action.ui.model.AssetActionAccountDetail
 import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
 import com.algorand.android.module.asset.action.ui.model.AssetActionPreview
+import com.algorand.android.module.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
 
 interface GetAssetActionPreview {

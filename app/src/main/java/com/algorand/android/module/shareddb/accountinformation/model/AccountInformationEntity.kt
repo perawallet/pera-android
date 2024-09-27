@@ -1,6 +1,8 @@
 package com.algorand.android.module.shareddb.accountinformation.model
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.algorand.android.module.shareddb.accountinformation.model.AccountInformationEntity.Companion.ACCOUNT_INFORMATION_TABLE_NAME
 import java.math.BigInteger
 

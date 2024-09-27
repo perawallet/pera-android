@@ -1,5 +1,7 @@
+@file:Suppress("LongMethod")
 package com.algorand.android.module.account.core.component.collectible.domain.mapper
 
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.module.account.info.domain.model.AssetHolding
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.AudioCollectibleDetail
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.CollectibleDetail
@@ -7,7 +9,6 @@ import com.algorand.android.module.asset.detail.component.asset.domain.model.det
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.MixedCollectibleDetail
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.UnsupportedCollectibleDetail
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.VideoCollectibleDetail
-import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.module.formatting.FormatAmountByCollectibleFractionalDigit
 import com.algorand.android.module.parity.domain.model.ParityValue
 import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencyAssetParityValue

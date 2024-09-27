@@ -20,9 +20,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.databinding.ItemTransactionApplicationCallAssetInformationBinding
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.modules.transaction.detail.domain.usecase.ApplicationCallTransactionDetailPreviewUseCase.Companion.MAX_ASSET_COUNT_TO_SHOW
 import com.algorand.android.modules.transaction.detail.ui.model.ApplicationCallAssetInformation
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem

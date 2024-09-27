@@ -19,8 +19,8 @@ import androidx.navigation.NavDirections
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentSwapIntroductionBinding
-import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.utils.browser.openVestigeTermsOfServiceUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.setXmlStyledString

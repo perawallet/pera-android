@@ -32,7 +32,7 @@ class AccountNotificationFilterViewHolder(
                 if (accountItemConfiguration.accountIconDrawablePreview != null) {
                     val accountIconDrawable = AccountIconDrawable.create(
                         context = binding.root.context,
-                        accountIconDrawablePreview = accountItemConfiguration.accountIconDrawablePreview!!,
+                        accountIconDrawablePreview = accountItemConfiguration.accountIconDrawablePreview,
                         sizeResId = R.dimen.spacing_xxxxlarge
                     )
                     typeImageView.setImageDrawable(accountIconDrawable)

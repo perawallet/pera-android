@@ -18,13 +18,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.algorand.android.R
-import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentContactsBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.ui.common.contact.ContactAdapter
 import com.algorand.android.utils.hideKeyboard
 import com.algorand.android.utils.viewbinding.viewBinding

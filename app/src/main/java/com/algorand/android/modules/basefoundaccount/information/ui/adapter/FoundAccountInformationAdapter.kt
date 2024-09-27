@@ -14,8 +14,8 @@ package com.algorand.android.modules.basefoundaccount.information.ui.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.algorand.android.module.drawable.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.module.drawable.BaseDiffUtil
 import com.algorand.android.modules.basefoundaccount.information.ui.adapter.viewholder.FoundAccountInformationAccountViewHolder
 import com.algorand.android.modules.basefoundaccount.information.ui.adapter.viewholder.FoundAccountInformationAssetViewHolder
 import com.algorand.android.modules.basefoundaccount.information.ui.adapter.viewholder.FoundAccountInformationTitleViewHolder

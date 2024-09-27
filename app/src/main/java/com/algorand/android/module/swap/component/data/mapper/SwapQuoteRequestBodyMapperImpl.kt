@@ -22,8 +22,7 @@ import com.algorand.android.module.swap.component.domain.model.SwapQuoteProvider
 import com.algorand.android.module.swap.component.domain.model.SwapType
 import javax.inject.Inject
 
-internal class SwapQuoteRequestBodyMapperImpl @Inject constructor(
-) : SwapQuoteRequestBodyMapper {
+internal class SwapQuoteRequestBodyMapperImpl @Inject constructor() : SwapQuoteRequestBodyMapper {
 
     override fun invoke(payload: GetSwapQuoteRequestPayload): SwapQuoteRequestBody {
         return with(payload) {

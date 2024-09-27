@@ -23,9 +23,9 @@ import com.algorand.android.modules.transaction.detail.domain.mapper.BaseTransac
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.repository.TransactionDetailRepository
 import com.algorand.android.utils.DataResource
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Named
+import kotlinx.coroutines.flow.flow
 
 class GetTransactionDetailUseCase @Inject constructor(
     @Named(TransactionDetailRepository.TRANSACTION_DETAIL_REPOSITORY_INJECTION_NAME)

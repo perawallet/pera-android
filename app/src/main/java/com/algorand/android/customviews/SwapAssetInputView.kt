@@ -28,10 +28,10 @@ import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.model.AssetName
-import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.databinding.CustomSwapAssetInputBinding
 import com.algorand.android.models.CustomInputSavedState
+import com.algorand.android.module.account.core.ui.model.AssetName
+import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.requestFocusAndShowKeyboard

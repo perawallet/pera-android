@@ -23,8 +23,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import com.algorand.android.R
-import com.algorand.android.databinding.CustomToolbarBinding
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.BaseToolbarButton
+import com.algorand.android.databinding.CustomToolbarBinding
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show

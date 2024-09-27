@@ -18,10 +18,10 @@ import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.setPadding
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.databinding.CustomWalletConnectArbitraryDataSummaryViewBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.WalletConnectArbitraryData
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.ui.wcarbitrarydatarequest.WalletConnectArbitraryDataListItem
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.extensions.changeTextAppearance

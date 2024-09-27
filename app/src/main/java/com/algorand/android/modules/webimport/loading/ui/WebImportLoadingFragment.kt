@@ -39,7 +39,7 @@ class WebImportLoadingFragment : BaseFragment(R.layout.fragment_web_import_loadi
                     .actionWebImportLoadingFragmentToWebImportResultFragment(
                         importedAccountList.toTypedArray(),
                         unimportedAccountList.toTypedArray()
-                )
+                    )
             )
         }
     }

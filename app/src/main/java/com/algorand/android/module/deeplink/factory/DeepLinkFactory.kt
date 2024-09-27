@@ -14,8 +14,7 @@
 package com.algorand.android.module.deeplink.factory
 
 import com.algorand.android.module.deeplink.model.BaseDeepLink
-import com.algorand.android.module.deeplink.model.RawDeepLink
 
 internal interface DeepLinkFactory {
-    suspend operator fun invoke(rawDeepLink: com.algorand.android.module.deeplink.model.RawDeepLink): com.algorand.android.module.deeplink.model.BaseDeepLink
+    suspend operator fun invoke(rawDeepLink: com.algorand.android.module.deeplink.model.RawDeepLink): BaseDeepLink
 }

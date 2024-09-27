@@ -31,10 +31,10 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.fromJson
 import com.algorand.android.utils.preference.getSavedThemePreference
 import com.google.gson.Gson
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 class DiscoverHomePreviewUseCase @Inject constructor(
     private val discoverSearchAssetUseCase: DiscoverSearchAssetUseCase,

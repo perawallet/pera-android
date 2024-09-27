@@ -15,6 +15,7 @@ package com.algorand.android.modules.collectibles.detail.base.ui.viewpager
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
+import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem.ItemType.AUDIO
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem.ItemType.GIF
@@ -23,7 +24,6 @@ import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseC
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem.ItemType.UNSUPPORTED
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem.ItemType.VIDEO
 import com.algorand.android.module.drawable.BaseDiffUtil
-import com.algorand.android.models.BaseViewHolder
 
 class CollectibleMediaAdapter(
     private val listener: MediaClickListener

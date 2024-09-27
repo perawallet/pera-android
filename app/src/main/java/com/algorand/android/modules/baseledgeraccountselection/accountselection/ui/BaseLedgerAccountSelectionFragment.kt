@@ -19,11 +19,11 @@ import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentLedgerAccountSelectionBinding
-import com.algorand.android.modules.rekey.model.AccountSelectionListItem
-import com.algorand.android.modules.rekey.model.SelectedLedgerAccounts
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.adapter.LedgerAccountSelectionAdapter
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccounts
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.google.android.material.button.MaterialButton
 

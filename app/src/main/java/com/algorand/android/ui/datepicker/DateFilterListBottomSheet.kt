@@ -19,8 +19,8 @@ import androidx.lifecycle.Observer
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseBottomSheet
 import com.algorand.android.databinding.BottomSheetDateFilterListBinding
-import com.algorand.android.module.date.ui.model.DateFilter
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.module.date.ui.model.DateFilter
 import com.algorand.android.utils.setNavigationResult
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue

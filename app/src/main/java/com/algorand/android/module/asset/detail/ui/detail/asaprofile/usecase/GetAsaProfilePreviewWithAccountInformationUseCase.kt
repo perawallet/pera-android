@@ -13,6 +13,7 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.asaprofile.usecase
 
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
@@ -20,7 +21,6 @@ import com.algorand.android.module.asset.detail.component.assetabout.domain.usec
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.mapper.AsaStatusPreviewMapper
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaProfilePreview
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaStatusPreview
-import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

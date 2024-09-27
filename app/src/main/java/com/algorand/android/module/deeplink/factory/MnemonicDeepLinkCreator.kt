@@ -19,11 +19,11 @@ import javax.inject.Inject
 
 internal class MnemonicDeepLinkCreator @Inject constructor() : DeepLinkCreator {
 
-    override suspend fun createDeepLink(rawDeeplink: com.algorand.android.module.deeplink.model.RawDeepLink): com.algorand.android.module.deeplink.model.BaseDeepLink {
-        return com.algorand.android.module.deeplink.model.BaseDeepLink.MnemonicDeepLink(rawDeeplink.mnemonic.orEmpty())
+    override suspend fun createDeepLink(rawDeeplink: RawDeepLink): BaseDeepLink {
+        return BaseDeepLink.MnemonicDeepLink(rawDeeplink.mnemonic.orEmpty())
     }
 
-    override fun doesDeeplinkMeetTheRequirements(rawDeepLink: com.algorand.android.module.deeplink.model.RawDeepLink): Boolean {
+    override fun doesDeeplinkMeetTheRequirements(rawDeepLink: RawDeepLink): Boolean {
         return with(rawDeepLink) {
             mnemonic != null &&
                 accountAddress == null &&

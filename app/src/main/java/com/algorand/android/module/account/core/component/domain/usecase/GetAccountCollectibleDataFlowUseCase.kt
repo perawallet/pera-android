@@ -1,9 +1,9 @@
 package com.algorand.android.module.account.core.component.domain.usecase
 
-import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
-import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetCollectibleDetail
 import com.algorand.android.module.account.core.component.collectible.domain.mapper.BaseOwnedCollectibleDataFactory
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetCollectibleDetail
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

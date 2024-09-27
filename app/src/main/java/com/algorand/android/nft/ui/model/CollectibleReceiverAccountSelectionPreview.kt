@@ -12,8 +12,8 @@
 
 package com.algorand.android.nft.ui.model
 
-import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.models.ScreenState
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 
 data class CollectibleReceiverAccountSelectionPreview(
     val isLoadingVisible: Boolean,

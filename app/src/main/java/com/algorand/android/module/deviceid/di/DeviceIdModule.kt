@@ -1,8 +1,8 @@
+@file:Suppress("TooManyFunctions")
+
 package com.algorand.android.module.deviceid.di
 
 import android.content.SharedPreferences
-import com.algorand.android.module.foundation.app.ProvideApplicationName
-import com.algorand.android.module.foundation.locale.LocaleProvider
 import com.algorand.android.module.deviceid.data.repository.DeviceIdRepositoryImpl
 import com.algorand.android.module.deviceid.data.service.DeviceIdApiService
 import com.algorand.android.module.deviceid.data.storage.MainnetDeviceIdLocalSource
@@ -28,6 +28,8 @@ import com.algorand.android.module.deviceid.domain.usecase.implementation.SetSel
 import com.algorand.android.module.deviceid.domain.usecase.implementation.UnregisterDeviceIdUseCase
 import com.algorand.android.module.deviceid.utils.ProvideDeviceIdPlatform
 import com.algorand.android.module.deviceid.utils.ProvideDeviceIdPlatformImpl
+import com.algorand.android.module.foundation.app.ProvideApplicationName
+import com.algorand.android.module.foundation.locale.LocaleProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

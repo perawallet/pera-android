@@ -18,9 +18,9 @@ import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository
 import com.algorand.android.models.AssetSearchResponse
 import com.algorand.android.models.Pagination
 import com.algorand.android.models.Result
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
-import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 
 class AssetSearchRepositoryImpl @Inject constructor(

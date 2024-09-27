@@ -1,11 +1,32 @@
+@file:Suppress("TooManyFunctions")
 package com.algorand.android.module.account.local.domain.di
 
-import com.algorand.android.module.account.local.domain.repository.*
 import com.algorand.android.module.account.local.domain.repository.Algo25AccountRepository
 import com.algorand.android.module.account.local.domain.repository.LedgerBleAccountRepository
-import com.algorand.android.module.account.local.domain.usecase.*
-import com.algorand.android.module.account.local.domain.usecase.implementation.*
-import dagger.*
+import com.algorand.android.module.account.local.domain.repository.LedgerUsbAccountRepository
+import com.algorand.android.module.account.local.domain.repository.NoAuthAccountRepository
+import com.algorand.android.module.account.local.domain.usecase.AddAlgo25Account
+import com.algorand.android.module.account.local.domain.usecase.AddLedgerBleAccount
+import com.algorand.android.module.account.local.domain.usecase.AddLedgerUsbAccount
+import com.algorand.android.module.account.local.domain.usecase.AddNoAuthAccount
+import com.algorand.android.module.account.local.domain.usecase.DeleteLocalAccount
+import com.algorand.android.module.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.account.local.domain.usecase.GetSecretKey
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyLocalAccount
+import com.algorand.android.module.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
+import com.algorand.android.module.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
+import com.algorand.android.module.account.local.domain.usecase.implementation.DeleteLocalAccountUseCase
+import com.algorand.android.module.account.local.domain.usecase.implementation.GetAllLocalAccountAddressesAsFlowUseCase
+import com.algorand.android.module.account.local.domain.usecase.implementation.GetLocalAccountsUseCase
+import com.algorand.android.module.account.local.domain.usecase.implementation.GetSecretKeyUseCase
+import com.algorand.android.module.account.local.domain.usecase.implementation.IsThereAnyAccountWithAddressUseCase
+import com.algorand.android.module.account.local.domain.usecase.implementation.IsThereAnyLocalAccountUseCase
+import com.algorand.android.module.account.local.domain.usecase.implementation.UpdateNoAuthAccountToAlgo25UseCase
+import com.algorand.android.module.account.local.domain.usecase.implementation.UpdateNoAuthAccountToLedgerBleUseCase
+import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton

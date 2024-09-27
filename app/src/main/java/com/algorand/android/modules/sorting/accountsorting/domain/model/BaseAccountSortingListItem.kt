@@ -13,9 +13,9 @@
 package com.algorand.android.modules.sorting.accountsorting.domain.model
 
 import androidx.annotation.StringRes
+import com.algorand.android.models.RecyclerListItem
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.AccountAndAssetListItem
 import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
-import com.algorand.android.models.RecyclerListItem
 
 sealed class BaseAccountSortingListItem : RecyclerListItem {
 

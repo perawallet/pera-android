@@ -13,11 +13,11 @@
 
 package com.algorand.android.usecase
 
+import com.algorand.android.core.BaseUseCase
+import com.algorand.android.models.CreateAccount
+import com.algorand.android.module.account.core.component.domain.usecase.AddAccount
 import com.algorand.android.module.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
 import com.algorand.android.module.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
-import com.algorand.android.core.BaseUseCase
-import com.algorand.android.module.account.core.component.domain.usecase.AddAccount
-import com.algorand.android.models.CreateAccount
 import com.algorand.android.utils.analytics.logRegisterEvent
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject

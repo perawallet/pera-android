@@ -21,8 +21,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.RekeyToStandardAccountNavigationDirections
-import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.google.android.material.button.MaterialButton

@@ -15,8 +15,8 @@ package com.algorand.android.modules.dapp.meld.ui.intro
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.BuildConfig
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.tracking.meld.MeldAlgoBuyTapEventTracker
 import com.algorand.android.module.node.domain.usecase.IsSelectedNodeMainnet
+import com.algorand.android.modules.tracking.meld.MeldAlgoBuyTapEventTracker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch

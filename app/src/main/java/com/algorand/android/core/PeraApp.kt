@@ -19,11 +19,11 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDex
-import com.algorand.android.module.appcache.manager.PushTokenManager
 import com.algorand.android.migration.MigrationManager
+import com.algorand.android.module.appcache.manager.PushTokenManager
+import com.algorand.android.module.node.domain.usecase.InitializeActiveNode
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
-import com.algorand.android.module.node.domain.usecase.InitializeActiveNode
 import com.algorand.android.utils.coremanager.ApplicationStatusObserver
 import com.algorand.android.utils.preference.getSavedThemePreference
 import dagger.hilt.android.HiltAndroidApp

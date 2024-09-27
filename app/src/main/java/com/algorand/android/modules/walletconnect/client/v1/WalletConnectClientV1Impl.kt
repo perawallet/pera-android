@@ -50,12 +50,12 @@ import com.algorand.android.utils.getCurrentTimeAsSec
 import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.recordException
 import com.algorand.android.utils.walletconnect.WalletConnectSessionRetryCounter
+import javax.inject.Named
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.walletconnect.Session
 import org.walletconnect.impls.WCSession
-import javax.inject.Named
 
 @Suppress("LongParameterList")
 class WalletConnectClientV1Impl(

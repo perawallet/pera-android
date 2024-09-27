@@ -1,10 +1,10 @@
 package com.algorand.android.module.account.core.ui.accountsorting.domain.usecase
 
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.AccountAndAssetListItem
 import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
 import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 
 interface GetSortedAccountsByPreference {
 

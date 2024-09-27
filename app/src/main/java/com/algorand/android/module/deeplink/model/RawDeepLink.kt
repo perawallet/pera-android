@@ -27,7 +27,7 @@ internal data class RawDeepLink(
     val label: String? = null,
     val transactionStatus: String? = null,
     val transactionId: String? = null,
-    val webImportQrCode: com.algorand.android.module.deeplink.model.WebImportQrCode? = null,
-    val notificationGroupType: com.algorand.android.module.deeplink.model.NotificationGroupType? = null,
+    val webImportQrCode: WebImportQrCode? = null,
+    val notificationGroupType: NotificationGroupType? = null,
     val url: String? = null
 )

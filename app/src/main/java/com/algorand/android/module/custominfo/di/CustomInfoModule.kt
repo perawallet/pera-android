@@ -6,7 +6,8 @@ import com.algorand.android.module.custominfo.domain.usecase.GetCustomInfo
 import com.algorand.android.module.custominfo.domain.usecase.GetCustomInfoOrNull
 import com.algorand.android.module.custominfo.domain.usecase.SetCustomInfo
 import com.algorand.android.module.custominfo.domain.usecase.SetCustomName
-import dagger.*
+import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton

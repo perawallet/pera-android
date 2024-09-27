@@ -1,3 +1,4 @@
+@file:Suppress("MaxLineLength", "ReturnCount")
 /*
  *   ~ Copyright 2022 Pera Wallet, LDA
  *   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,11 +14,11 @@
 
 package com.algorand.android.module.transaction.component.domain.usecase.implementation
 
-import com.algorand.android.module.account.info.domain.model.AccountInformation
-import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
+import com.algorand.android.module.account.info.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.transaction.component.domain.model.TransactionAmountValidationResult
 import com.algorand.android.module.transaction.component.domain.model.TransactionAmountValidationResult.AssetNotFoundError
 import com.algorand.android.module.transaction.component.domain.model.TransactionAmountValidationResult.InsufficientBalanceError
@@ -92,5 +93,4 @@ internal class ValidateTransactionAmountUseCase(
             SendAssetMinRequiredBalanceValidator.Payload(senderInfo, ownedAssetData, minRequiredBalance, amount)
         return sendAssetMinRequiredBalanceValidator(payload)
     }
-
 }

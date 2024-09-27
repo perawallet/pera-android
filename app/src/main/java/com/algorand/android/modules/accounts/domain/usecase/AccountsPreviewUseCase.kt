@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.accounts.domain.usecase
 
+import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.module.appcache.model.AppCacheStatus
 import com.algorand.android.module.appcache.usecase.GetAppCacheStatusFlow
@@ -19,13 +20,6 @@ import com.algorand.android.module.banner.domain.model.Banner
 import com.algorand.android.module.banner.domain.usecase.DismissBanner
 import com.algorand.android.module.banner.domain.usecase.GetBannerFlow
 import com.algorand.android.module.caching.CacheResult
-import com.algorand.android.mapper.AccountPreviewMapper
-import com.algorand.android.modules.accounts.domain.mapper.PortfolioValueItemMapper
-import com.algorand.android.modules.accounts.domain.model.AccountPreview
-import com.algorand.android.modules.accounts.ui.AccountsFragmentDirections
-import com.algorand.android.modules.peraconnectivitymanager.ui.PeraConnectivityManager
-import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
-import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.module.node.domain.usecase.GetActiveNodeAsFlow
 import com.algorand.android.module.node.domain.usecase.IsSelectedNodeTestnet
 import com.algorand.android.module.notification.domain.usecase.GetAskNotificationPermissionEventFlowUseCase
@@ -35,6 +29,12 @@ import com.algorand.android.module.swap.component.common.model.SwapNavigationDes
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Introduction
 import com.algorand.android.module.swap.component.common.model.SwapNavigationDestination.Swap
 import com.algorand.android.module.swap.component.common.usecase.GetSwapNavigationDestination
+import com.algorand.android.modules.accounts.domain.mapper.PortfolioValueItemMapper
+import com.algorand.android.modules.accounts.domain.model.AccountPreview
+import com.algorand.android.modules.accounts.ui.AccountsFragmentDirections
+import com.algorand.android.modules.peraconnectivitymanager.ui.PeraConnectivityManager
+import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
+import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.combine
 import javax.inject.Inject

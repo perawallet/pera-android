@@ -34,35 +34,35 @@ object WalletConnectV1UiModule {
     @Provides
     @Named(WcConnectionLaunchBackDescriptionAnnotatedStringProviderV1Impl.INJECTION_NAME)
     fun provideWcConnectionLaunchBackDescriptionAnnotatedStringProvider():
-            WCConnectionLaunchBackDescriptionAnnotatedStringProvider {
+        WCConnectionLaunchBackDescriptionAnnotatedStringProvider {
         return WcConnectionLaunchBackDescriptionAnnotatedStringProviderV1Impl()
     }
 
     @Provides
     @Named(WcConnectionLaunchBackSessionInformationAnnotatedStringProviderV1Impl.INJECTION_NAME)
     fun provideWcConnectionLaunchBackSessionInformationAnnotatedStringProvider():
-            WCConnectionLaunchBackSessionInformationAnnotatedStringProvider {
+        WCConnectionLaunchBackSessionInformationAnnotatedStringProvider {
         return WcConnectionLaunchBackSessionInformationAnnotatedStringProviderV1Impl()
     }
 
     @Provides
     @Named(WcConnectionLaunchBackTitleAnnotatedStringProviderV1Impl.INJECTION_NAME)
     fun provideWcConnectionLaunchBackTitleAnnotatedStringProvider():
-            WcConnectionLaunchBackTitleAnnotatedStringProvider {
+        WcConnectionLaunchBackTitleAnnotatedStringProvider {
         return WcConnectionLaunchBackTitleAnnotatedStringProviderV1Impl()
     }
 
     @Provides
     @Named(WcRequestLaunchBackDescriptionAnnotatedStringProviderV1Impl.INJECTION_NAME)
     fun provideWcTransactionLaunchBackDescriptionAnnotatedStringProvider():
-            WcRequestLaunchBackDescriptionAnnotatedStringProvider {
+        WcRequestLaunchBackDescriptionAnnotatedStringProvider {
         return WcRequestLaunchBackDescriptionAnnotatedStringProviderV1Impl()
     }
 
     @Provides
     @Named(WcArbitraryDataLaunchBackDescriptionAnnotatedStringProviderV1Impl.INJECTION_NAME)
     fun provideWcArbitraryDataLaunchBackDescriptionAnnotatedStringProvider():
-            WcRequestLaunchBackDescriptionAnnotatedStringProvider {
+        WcRequestLaunchBackDescriptionAnnotatedStringProvider {
         return WcArbitraryDataLaunchBackDescriptionAnnotatedStringProviderV1Impl()
     }
 }

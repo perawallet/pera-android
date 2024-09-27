@@ -18,7 +18,6 @@ import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.sendErrorLog
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
 class RequestOptInConfirmationPreviewUseCase @Inject constructor(

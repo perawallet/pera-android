@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.transaction.detail.ui.applicationcalltransaction
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
@@ -22,6 +21,7 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

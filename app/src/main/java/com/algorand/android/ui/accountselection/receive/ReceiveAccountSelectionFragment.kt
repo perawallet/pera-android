@@ -15,9 +15,9 @@ package com.algorand.android.ui.accountselection.receive
 import android.content.Context
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.ui.accountselection.BaseAccountSelectionFragment
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint

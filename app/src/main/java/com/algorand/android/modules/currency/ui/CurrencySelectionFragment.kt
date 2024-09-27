@@ -20,11 +20,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
-import com.algorand.android.module.currency.domain.model.SelectedCurrency
 import com.algorand.android.databinding.FragmentCurrencySelectionBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.ui.CurrencySelectionPreview
+import com.algorand.android.module.currency.domain.model.SelectedCurrency
 import com.algorand.android.ui.settings.selection.CurrencyListItem
 import com.algorand.android.ui.settings.selection.SelectionAdapter
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle

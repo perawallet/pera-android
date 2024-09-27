@@ -2,7 +2,6 @@ package com.algorand.android.module.asb.restorebackup.domain.usecase.implementat
 
 import android.util.Base64
 import com.algorand.android.module.algosdk.AlgoSdkEncryption
-import com.algorand.android.module.foundation.json.JsonSerializer
 import com.algorand.android.module.asb.backupprotocol.model.BackUpAccount
 import com.algorand.android.module.asb.backupprotocol.model.BackUpProtocolElement
 import com.algorand.android.module.asb.backupprotocol.model.BackUpProtocolPayload
@@ -12,6 +11,7 @@ import com.algorand.android.module.asb.restorebackup.domain.model.RestoreBackUpP
 import com.algorand.android.module.asb.restorebackup.domain.model.RestoreBackUpPayloadResult.UnableToCreateCipherKey
 import com.algorand.android.module.asb.restorebackup.domain.model.RestoreBackUpPayloadResult.UnableToRestoreAccounts
 import com.algorand.android.module.asb.restorebackup.domain.usecase.RestoreBackUpPayload
+import com.algorand.android.module.foundation.json.JsonSerializer
 import javax.inject.Inject
 
 internal class RestoreBackUpPayloadUseCase @Inject constructor(

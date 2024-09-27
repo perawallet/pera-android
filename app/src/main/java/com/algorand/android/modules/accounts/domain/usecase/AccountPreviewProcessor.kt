@@ -1,6 +1,12 @@
 package com.algorand.android.modules.accounts.domain.usecase
 
 import com.algorand.android.R
+import com.algorand.android.banner.ui.mapper.BaseBannerItemMapper
+import com.algorand.android.mapper.AccountPreviewMapper
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.domain.model.AccountTotalValue
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
+import com.algorand.android.module.account.core.component.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
 import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
@@ -9,13 +15,11 @@ import com.algorand.android.module.account.info.domain.usecase.IsThereAnyCachedE
 import com.algorand.android.module.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
 import com.algorand.android.module.asb.domain.usecase.GetAccountAsbBackUpStatus
 import com.algorand.android.module.banner.domain.model.Banner
-import com.algorand.android.banner.ui.mapper.BaseBannerItemMapper
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
-import com.algorand.android.module.account.core.component.domain.model.AccountTotalValue
-import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
-import com.algorand.android.module.account.core.component.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
-import com.algorand.android.mapper.AccountPreviewMapper
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
+import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
+import com.algorand.android.module.swap.component.reddot.domain.usecase.GetSwapFeatureRedDotVisibility
 import com.algorand.android.modules.accounts.domain.mapper.AccountListItemMapper
 import com.algorand.android.modules.accounts.domain.mapper.PortfolioValueItemMapper
 import com.algorand.android.modules.accounts.domain.model.AccountPreview
@@ -23,10 +27,6 @@ import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.notification.domain.usecase.NotificationStatusUseCase
 import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
-import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
-import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
-import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
-import com.algorand.android.module.swap.component.reddot.domain.usecase.GetSwapFeatureRedDotVisibility
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.formatAsCurrency
 import java.math.BigDecimal

@@ -13,14 +13,14 @@
 
 package com.algorand.android.models.builder
 
-import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
-import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.models.BasePaymentTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation
 import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestTransactionInfo
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.utils.ALGO_FULL_NAME
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.MIN_FEE

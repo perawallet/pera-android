@@ -4,7 +4,8 @@ import com.algorand.android.module.caching.CacheResult
 import com.algorand.android.module.parity.domain.repository.ParityRepository
 import com.algorand.android.module.parity.domain.usecase.GetUsdToAlgoConversionRate
 import com.algorand.android.module.parity.domain.util.ParityConstants.SAFE_PARITY_DIVISION_DECIMALS
-import java.math.*
+import java.math.BigDecimal
+import java.math.RoundingMode
 import javax.inject.Inject
 
 internal class GetUsdToAlgoConversionRateUseCase @Inject constructor(

@@ -74,6 +74,7 @@ class PeraWebViewClient(val listener: PeraWebViewClientListener?) : WebViewClien
         super.onPageFinished(view, url)
         listener?.onPageFinished(view?.title, url)
     }
+
     override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
         super.onReceivedError(view, request, error)
         if (request?.isForMainFrame == true) {

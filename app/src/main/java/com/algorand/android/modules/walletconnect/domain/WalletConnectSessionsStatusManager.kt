@@ -17,11 +17,11 @@ import com.algorand.android.MainActivity
 import com.algorand.android.utils.ActivityLifecycleObserver
 import com.algorand.android.utils.getCurrentSystemTimeAsMillis
 import com.algorand.android.utils.launchIO
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-import javax.inject.Inject
 
 class WalletConnectSessionsStatusManager @Inject constructor(
     private val walletConnectManager: WalletConnectManager

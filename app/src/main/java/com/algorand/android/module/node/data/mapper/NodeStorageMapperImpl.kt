@@ -22,7 +22,6 @@ internal class NodeStorageMapperImpl @Inject constructor() : NodeStorageMapper {
         return when (node) {
             is Node.Mainnet -> MAINNET
             is Node.Testnet -> TESTNET
-
         }
     }
 

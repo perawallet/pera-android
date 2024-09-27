@@ -12,8 +12,8 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
 import com.algorand.android.models.WalletConnectTransactionAssetDetail
+import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
 import javax.inject.Inject
 
 class WalletConnectTransactionAssetDetailMapper @Inject constructor() {

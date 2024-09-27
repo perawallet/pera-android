@@ -2,7 +2,8 @@ package com.algorand.android.module.currency.data.storage
 
 import android.content.SharedPreferences
 import com.algorand.android.module.caching.SharedPrefLocalSource
-import javax.inject.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class CurrencyLocalSource @Inject constructor(

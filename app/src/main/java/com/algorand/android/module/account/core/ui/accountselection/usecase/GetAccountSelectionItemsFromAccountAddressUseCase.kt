@@ -13,13 +13,13 @@
 
 package com.algorand.android.module.account.core.ui.accountselection.usecase
 
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.ui.accountselection.mapper.AccountSelectionListItemMapper
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem
 import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import javax.inject.Inject
 
 internal class GetAccountSelectionItemsFromAccountAddressUseCase @Inject constructor(

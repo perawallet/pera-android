@@ -24,7 +24,7 @@ class BackupBannerViewHolder(
     private val listener: Listener,
 ) : BaseViewHolder<BaseAccountListItem>(binding.root) {
 
-    protected open val actionButton: MaterialButton?
+    protected open val actionButton: MaterialButton
         get() = binding.bannerActionButton
 
     override fun bind(item: BaseAccountListItem) {

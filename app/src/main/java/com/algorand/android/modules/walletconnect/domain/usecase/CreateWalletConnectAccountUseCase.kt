@@ -13,9 +13,9 @@
 
 package com.algorand.android.modules.walletconnect.domain.usecase
 
-import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.models.WalletConnectAccount
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import javax.inject.Inject
 
 internal class CreateWalletConnectAccountUseCase @Inject constructor(

@@ -1,5 +1,7 @@
 package com.algorand.android.module.account.core.ui.usecase.implementation
 
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.module.account.core.ui.model.AccountIconResource
 import com.algorand.android.module.account.core.ui.model.AccountIconResource.LEDGER
 import com.algorand.android.module.account.core.ui.model.AccountIconResource.REKEYED
@@ -8,8 +10,6 @@ import com.algorand.android.module.account.core.ui.model.AccountIconResource.STA
 import com.algorand.android.module.account.core.ui.model.AccountIconResource.UNDEFINED
 import com.algorand.android.module.account.core.ui.model.AccountIconResource.WATCH
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconResourceByAccountType
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
-import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import javax.inject.Inject
 
 internal class GetAccountIconResourceByAccountTypeUseCase @Inject constructor(

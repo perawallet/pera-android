@@ -18,8 +18,8 @@ import android.view.View
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
-import com.algorand.android.databinding.BottomSheetAddNoteBinding
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
+import com.algorand.android.databinding.BottomSheetAddNoteBinding
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.setNavigationResult
 import com.algorand.android.utils.viewbinding.viewBinding

@@ -13,9 +13,25 @@
 
 package com.algorand.android.module.asset.action.ui.mapper
 
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
+import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
+import javax.inject.Inject
 
-internal interface AssetActionInformationMapper {
-    operator fun invoke(asset: Asset): AssetActionInformation
+internal class AssetActionInformationMapperImpl @Inject constructor(
+    private val getAssetName: GetAssetName,
+    private val verificationTierConfigurationMapper: VerificationTierConfigurationMapper
+) : AssetActionInformationMapper {
+
+    override fun invoke(asset: Asset): AssetActionInformation {
+        return with(asset) {
+            AssetActionInformation(
+                assetId = id,
+                fullName = getAssetName(fullName).assetName,
+                shortName = getAssetName(shortName).assetName,
+                verificationTierConfiguration = verificationTierConfigurationMapper(verificationTier)
+            )
+        }
+    }
 }

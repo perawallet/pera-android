@@ -20,13 +20,13 @@ import javax.inject.Inject
 
 internal class AssetOptInDeepLinkCreator @Inject constructor() : DeepLinkCreator {
 
-    override suspend fun createDeepLink(rawDeeplink: com.algorand.android.module.deeplink.model.RawDeepLink): com.algorand.android.module.deeplink.model.BaseDeepLink {
+    override suspend fun createDeepLink(rawDeeplink: RawDeepLink): BaseDeepLink {
         return rawDeeplink.assetId?.let { safeAssetId ->
-            com.algorand.android.module.deeplink.model.BaseDeepLink.AssetOptInDeepLink(safeAssetId)
-        } ?: com.algorand.android.module.deeplink.model.BaseDeepLink.UndefinedDeepLink(rawDeeplink.rawUrl)
+            BaseDeepLink.AssetOptInDeepLink(safeAssetId)
+        } ?: BaseDeepLink.UndefinedDeepLink(rawDeeplink.rawUrl)
     }
 
-    override fun doesDeeplinkMeetTheRequirements(rawDeepLink: com.algorand.android.module.deeplink.model.RawDeepLink): Boolean {
+    override fun doesDeeplinkMeetTheRequirements(rawDeepLink: RawDeepLink): Boolean {
         return with(rawDeepLink) {
             val doesDeeplinkHaveAssetOptInQueries = assetId != null && BigInteger.ZERO.equals(amount)
             doesDeeplinkHaveAssetOptInQueries &&

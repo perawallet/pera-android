@@ -12,9 +12,9 @@
 
 package com.algorand.android.modules.basefoundaccount.selection.ui.usecase
 
+import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
-import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.modules.basefoundaccount.selection.ui.mapper.BaseFoundAccountSelectionItemMapper
 import com.algorand.android.modules.basefoundaccount.selection.ui.model.BaseFoundAccountSelectionItem
 

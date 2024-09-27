@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.info.data.mapper.entity
 
-import com.algorand.android.module.shareddb.accountinformation.model.AccountInformationEntity
 import com.algorand.android.module.encryption.EncryptionManager
+import com.algorand.android.module.shareddb.accountinformation.model.AccountInformationEntity
 import java.math.BigInteger
 import javax.inject.Inject
 

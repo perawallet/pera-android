@@ -16,13 +16,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
+import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.modules.transaction.detail.ui.model.ApplicationCallAssetInformation
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.ui.BaseTransactionDetailFragment
 import com.algorand.android.modules.transaction.detail.ui.adapter.TransactionDetailAdapter
+import com.algorand.android.modules.transaction.detail.ui.model.ApplicationCallAssetInformation
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle

@@ -14,8 +14,8 @@ package com.algorand.android.modules.basesingleaccountselection.ui.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.algorand.android.module.drawable.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.module.drawable.BaseDiffUtil
 import com.algorand.android.modules.basesingleaccountselection.ui.adapter.viewholder.SingleAccountSelectionAccountItemViewHolder
 import com.algorand.android.modules.basesingleaccountselection.ui.adapter.viewholder.SingleAccountSelectionDescriptionItemViewHolder
 import com.algorand.android.modules.basesingleaccountselection.ui.adapter.viewholder.SingleAccountSelectionTitleItemViewHolder

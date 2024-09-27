@@ -14,7 +14,6 @@ package com.algorand.android.modules.assets.addition.ui.usecase
 
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.android.assetsearch.domain.mapper.AssetSearchQueryMapper
 import com.algorand.android.assetsearch.domain.model.BaseSearchedAsset
 import com.algorand.android.assetsearch.domain.pagination.AssetSearchPagerBuilder
@@ -22,6 +21,7 @@ import com.algorand.android.assetsearch.domain.usecase.SearchAssetUseCase
 import com.algorand.android.assetsearch.ui.mapper.BaseAssetSearchItemMapper
 import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.android.modules.assets.addition.domain.usecase.AddAssetItemActionButtonStateDecider
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope

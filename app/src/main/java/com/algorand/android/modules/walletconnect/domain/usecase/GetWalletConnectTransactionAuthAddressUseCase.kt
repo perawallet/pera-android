@@ -13,8 +13,8 @@
 
 package com.algorand.android.modules.walletconnect.domain.usecase
 
-import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.models.WalletConnectTransactionSigner
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import javax.inject.Inject
 
 internal class GetWalletConnectTransactionAuthAddressUseCase @Inject constructor(

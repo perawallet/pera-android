@@ -39,15 +39,11 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
-import com.algorand.android.module.appcache.model.AppCacheStatus
 import com.algorand.android.customviews.CoreActionsTabBarView
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.customviews.alertview.ui.delegation.AlertDialogDelegation
 import com.algorand.android.customviews.alertview.ui.delegation.AlertDialogDelegationImpl
 import com.algorand.android.customviews.customsnackbar.CustomSnackbar
-import com.algorand.android.module.deeplink.DeepLinkHandler
-import com.algorand.android.module.deeplink.model.BaseDeepLink
-import com.algorand.android.module.deeplink.model.NotificationGroupType
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.AssetOperationResult
@@ -56,14 +52,11 @@ import com.algorand.android.models.NotificationMetadata
 import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
-import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
-import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
-import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
-import com.algorand.android.modules.qrscanning.QrScannerViewModel
-import com.algorand.android.modules.walletconnect.connectionrequest.ui.WalletConnectConnectionBottomSheet
-import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WCSessionRequestResult
-import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
-import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
+import com.algorand.android.module.appcache.model.AppCacheStatus
+import com.algorand.android.module.deeplink.DeepLinkHandler
+import com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink
+import com.algorand.android.module.deeplink.model.BaseDeepLink.UndefinedDeepLink
+import com.algorand.android.module.deeplink.model.NotificationGroupType
 import com.algorand.android.module.node.domain.Node
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult
 import com.algorand.android.module.transaction.component.domain.creation.model.CreateTransactionResult.AccountAlreadyOptedIn
@@ -89,6 +82,14 @@ import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiRe
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.LocationNotEnabled
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.TransactionSigned
 import com.algorand.android.module.transaction.ui.removeasset.CreateRemoveAssetTransactionViewModel
+import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
+import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
+import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
+import com.algorand.android.modules.qrscanning.QrScannerViewModel
+import com.algorand.android.modules.walletconnect.connectionrequest.ui.WalletConnectConnectionBottomSheet
+import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WCSessionRequestResult
+import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
+import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
 import com.algorand.android.ui.accountselection.receive.ReceiveAccountSelectionFragment
 import com.algorand.android.ui.lockpreference.AutoLockSuggestionManager
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase.Companion.MAX_NUMBER_OF_ACCOUNTS
@@ -211,7 +212,7 @@ class MainActivity :
 
     private fun handleNotificationWithDeepLink(
         newNotificationData: NotificationMetadata,
-        deeplink: com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink
+        deeplink: NotificationDeepLink
     ) {
         when (deeplink.notificationGroupType) {
             NotificationGroupType.OPT_IN -> handleAssetOptInRequestDeepLink(deeplink)
@@ -219,7 +220,7 @@ class MainActivity :
         }
     }
 
-    private fun handleAssetOptInRequestDeepLink(deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink) {
+    private fun handleAssetOptInRequestDeepLink(deepLink: NotificationDeepLink) {
         if (!deepLink.isThereAnyAccountWithPublicKey) {
             showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
             return
@@ -233,7 +234,7 @@ class MainActivity :
         )
     }
 
-    private fun handleAssetTransactionDeepLink(deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink) {
+    private fun handleAssetTransactionDeepLink(deepLink: NotificationDeepLink) {
         if (!deepLink.isThereAnyAccountWithPublicKey) {
             showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
             return
@@ -319,7 +320,7 @@ class MainActivity :
             }
         }
 
-        override fun onNotificationDeepLink(deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink): Boolean {
+        override fun onNotificationDeepLink(deepLink: NotificationDeepLink): Boolean {
             when (deepLink.notificationGroupType) {
                 NotificationGroupType.TRANSACTIONS -> handleAssetTransactionDeepLink(deepLink)
                 NotificationGroupType.OPT_IN -> handleAssetOptInRequestDeepLink(deepLink)
@@ -332,7 +333,7 @@ class MainActivity :
             return true
         }
 
-        override fun onUndefinedDeepLink(undefinedDeeplink: com.algorand.android.module.deeplink.model.BaseDeepLink.UndefinedDeepLink) {
+        override fun onUndefinedDeepLink(undefinedDeeplink: UndefinedDeepLink) {
             // TODO show error after discussing with the team
         }
 

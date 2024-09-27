@@ -1,9 +1,17 @@
 package com.algorand.android.module.asset.detail.component.collectible.data.mapper
 
-import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.*
-import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleMediaTypeResponse.*
+import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleMediaResponse
+import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleMediaTypeExtensionResponse
+import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleMediaTypeResponse.AUDIO
+import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleMediaTypeResponse.IMAGE
+import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleMediaTypeResponse.UNKNOWN
+import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleMediaTypeResponse.VIDEO
 import com.algorand.android.module.asset.detail.component.collectible.domain.model.BaseCollectibleMedia
-import com.algorand.android.module.asset.detail.component.collectible.domain.model.BaseCollectibleMedia.*
+import com.algorand.android.module.asset.detail.component.collectible.domain.model.BaseCollectibleMedia.AudioCollectibleMedia
+import com.algorand.android.module.asset.detail.component.collectible.domain.model.BaseCollectibleMedia.GifCollectibleMedia
+import com.algorand.android.module.asset.detail.component.collectible.domain.model.BaseCollectibleMedia.ImageCollectibleMedia
+import com.algorand.android.module.asset.detail.component.collectible.domain.model.BaseCollectibleMedia.UnsupportedCollectibleMedia
+import com.algorand.android.module.asset.detail.component.collectible.domain.model.BaseCollectibleMedia.VideoCollectibleMedia
 import javax.inject.Inject
 
 internal class CollectibleMediaMapperImpl @Inject constructor() : CollectibleMediaMapper {

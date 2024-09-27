@@ -159,9 +159,9 @@ class SlippageTolerancePreviewUseCase @Inject constructor(
 
     private fun isCustomInputAlsoPredefinedValue(customSlippageTolerance: Float): Boolean {
         return customSlippageTolerance == ZERO_POINT_FIVE_PERCENTAGE_SLIPPAGE ||
-                customSlippageTolerance == TEN_PERCENTAGE_SLIPPAGE ||
-                customSlippageTolerance == TWENTY_PERCENTAGE_SLIPPAGE ||
-                customSlippageTolerance == FIFTY_PERCENTAGE_SLIPPAGE
+            customSlippageTolerance == TEN_PERCENTAGE_SLIPPAGE ||
+            customSlippageTolerance == TWENTY_PERCENTAGE_SLIPPAGE ||
+            customSlippageTolerance == FIFTY_PERCENTAGE_SLIPPAGE
     }
 
     companion object {

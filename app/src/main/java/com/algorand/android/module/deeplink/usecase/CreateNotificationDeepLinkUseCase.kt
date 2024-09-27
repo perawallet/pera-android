@@ -22,8 +22,8 @@ internal class CreateNotificationDeepLinkUseCase @Inject constructor(
     private val deepLinkFactory: DeepLinkFactory,
 ) : CreateNotificationDeepLink {
 
-    override suspend fun invoke(deepLink: String): com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink? {
+    override suspend fun invoke(deepLink: String): BaseDeepLink.NotificationDeepLink? {
         val rawDeepLink = parseDeepLink(deepLink)
-        return deepLinkFactory(rawDeepLink) as? com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink
+        return deepLinkFactory(rawDeepLink) as? BaseDeepLink.NotificationDeepLink
     }
 }

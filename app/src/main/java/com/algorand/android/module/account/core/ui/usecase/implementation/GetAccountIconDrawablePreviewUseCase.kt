@@ -1,11 +1,12 @@
 package com.algorand.android.module.account.core.ui.usecase.implementation
 
-import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
-import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.R
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.R
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconResource
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import javax.inject.Inject
 
 internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
@@ -34,33 +35,33 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
 
     private fun getAccountIconBackgroundColorResId(accountType: AccountType?): Int {
         return when (accountType) {
-            AccountType.Algo25 -> com.algorand.android.module.account.core.ui.model.AccountIconResource.STANDARD.backgroundColorResId
-            AccountType.LedgerBle -> com.algorand.android.module.account.core.ui.model.AccountIconResource.LEDGER.backgroundColorResId
+            AccountType.Algo25 -> AccountIconResource.STANDARD.backgroundColorResId
+            AccountType.LedgerBle -> AccountIconResource.LEDGER.backgroundColorResId
             AccountType.Rekeyed -> R.color.negative_lighter
-            AccountType.RekeyedAuth -> com.algorand.android.module.account.core.ui.model.AccountIconResource.REKEYED.backgroundColorResId
-            AccountType.NoAuth -> com.algorand.android.module.account.core.ui.model.AccountIconResource.WATCH.backgroundColorResId
+            AccountType.RekeyedAuth -> AccountIconResource.REKEYED.backgroundColorResId
+            AccountType.NoAuth -> AccountIconResource.WATCH.backgroundColorResId
             null -> R.color.layer_gray_lighter
         }
     }
 
     private fun getAccountIconTintResId(accountType: AccountType?): Int {
         return when (accountType) {
-            AccountType.Algo25 -> com.algorand.android.module.account.core.ui.model.AccountIconResource.STANDARD.iconTintResId
+            AccountType.Algo25 -> AccountIconResource.STANDARD.iconTintResId
             AccountType.Rekeyed -> R.color.negative
-            AccountType.LedgerBle -> com.algorand.android.module.account.core.ui.model.AccountIconResource.LEDGER.iconTintResId
-            AccountType.RekeyedAuth -> com.algorand.android.module.account.core.ui.model.AccountIconResource.LEDGER.iconTintResId
-            AccountType.NoAuth -> com.algorand.android.module.account.core.ui.model.AccountIconResource.WATCH.iconTintResId
+            AccountType.LedgerBle -> AccountIconResource.LEDGER.iconTintResId
+            AccountType.RekeyedAuth -> AccountIconResource.LEDGER.iconTintResId
+            AccountType.NoAuth -> AccountIconResource.WATCH.iconTintResId
             null -> R.color.text_gray
         }
     }
 
     private fun getAccountIconResId(accountType: AccountType?): Int {
         return when (accountType) {
-            AccountType.Algo25 -> com.algorand.android.module.account.core.ui.model.AccountIconResource.STANDARD.iconResId
-            AccountType.LedgerBle -> com.algorand.android.module.account.core.ui.model.AccountIconResource.LEDGER.iconResId
-            AccountType.NoAuth -> com.algorand.android.module.account.core.ui.model.AccountIconResource.WATCH.iconResId
+            AccountType.Algo25 -> AccountIconResource.STANDARD.iconResId
+            AccountType.LedgerBle -> AccountIconResource.LEDGER.iconResId
+            AccountType.NoAuth -> AccountIconResource.WATCH.iconResId
             AccountType.Rekeyed, AccountType.RekeyedAuth -> R.drawable.ic_rekey_shield
-            null -> com.algorand.android.module.account.core.ui.model.AccountIconResource.STANDARD.iconResId
+            null -> AccountIconResource.STANDARD.iconResId
         }
     }
 }

@@ -18,9 +18,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentCollectibleSortPreferenceBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.sorting.nftsorting.ui.model.CollectibleSortPreferencePreview
 import com.algorand.android.utils.viewbinding.viewBinding

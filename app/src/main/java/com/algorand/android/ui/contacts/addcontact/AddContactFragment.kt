@@ -18,11 +18,11 @@ import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
-import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.customviews.AlgorandInputLayout
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OperationState
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.ui.contacts.BaseAddEditContactFragment
 import com.algorand.android.ui.contacts.addcontact.AddContactQrScannerFragment.Companion.ACCOUNT_ADDRESS_QR_SCAN_RESULT_KEY
 import com.algorand.android.utils.Event

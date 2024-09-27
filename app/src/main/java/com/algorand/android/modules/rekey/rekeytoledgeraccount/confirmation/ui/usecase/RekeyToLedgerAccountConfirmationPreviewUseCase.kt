@@ -13,21 +13,21 @@
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.android.module.account.core.component.utils.toShortenedAddress
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
-import com.algorand.android.module.account.core.component.utils.toShortenedAddress
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.module.foundation.Event
-import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.decider.RekeyToLedgerAccountConfirmationPreviewDecider
-import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.mapper.RekeyToLedgerAccountConfirmationPreviewMapper
-import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.model.RekeyToLedgerAccountConfirmationPreview
 import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 import com.algorand.android.module.transaction.component.domain.usecase.CalculateRekeyFee
 import com.algorand.android.module.transaction.component.domain.usecase.SendSignedTransaction
+import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.decider.RekeyToLedgerAccountConfirmationPreviewDecider
+import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.mapper.RekeyToLedgerAccountConfirmationPreviewMapper
+import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.model.RekeyToLedgerAccountConfirmationPreview
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
 import javax.inject.Inject

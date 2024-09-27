@@ -20,5 +20,4 @@ interface SwapAccountSelectionNavDirection {
         val fromAssetId: Long,
         val toAssetId: Long
     ) : SwapAccountSelectionNavDirection
-
 }

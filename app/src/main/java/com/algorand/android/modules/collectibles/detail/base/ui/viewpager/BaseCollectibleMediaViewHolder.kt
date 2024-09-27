@@ -14,11 +14,11 @@ package com.algorand.android.modules.collectibles.detail.base.ui.viewpager
 
 import android.view.View
 import androidx.core.view.isVisible
+import com.algorand.android.databinding.ItemNftMediaBinding
+import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem
-import com.algorand.android.databinding.ItemNftMediaBinding
 import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
-import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.utils.assetdrawable.CollectibleNameDrawable
 
 abstract class BaseCollectibleMediaViewHolder(

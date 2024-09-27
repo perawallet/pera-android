@@ -13,10 +13,10 @@
 package com.algorand.android.modules.webimport.loading.domain.usecase
 
 import com.algorand.algosdk.sdk.Sdk
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountRegistrationType
-import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.models.CreateAccount
 import com.algorand.android.models.Result
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountRegistrationType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.modules.webimport.loading.data.model.BackupTransferAccountElement
 import com.algorand.android.modules.webimport.loading.domain.model.ImportedAccountResult
 import com.algorand.android.modules.webimport.loading.domain.repository.WebImportAccountRepository

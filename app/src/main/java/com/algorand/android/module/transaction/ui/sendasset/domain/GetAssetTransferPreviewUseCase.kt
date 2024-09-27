@@ -1,3 +1,4 @@
+@file:Suppress("MagicNumber")
 /*
  *   ~ Copyright 2022 Pera Wallet, LDA
  *   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +14,7 @@
 
 package com.algorand.android.module.transaction.ui.sendasset.domain
 
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.module.account.core.ui.usecase.GetAssetName
@@ -20,7 +22,6 @@ import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_AS
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.FetchAsset
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
-import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.module.parity.domain.usecase.GetSelectedCurrencyDetail
 import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
 import com.algorand.android.module.transaction.component.domain.TransactionConstants.MIN_FEE

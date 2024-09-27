@@ -37,7 +37,7 @@ class WalletConnectUrlHandler @Inject constructor(
 
     private suspend fun hasValidAccountForWalletConnect(): Boolean {
         return getAccountsDetail().any {
-            it.accountType != null && it.accountType?.canSignTransaction() == true
+            it.accountType != null && it.accountType.canSignTransaction() == true
         }
     }
 

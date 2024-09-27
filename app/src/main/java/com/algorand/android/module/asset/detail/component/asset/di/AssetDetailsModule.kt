@@ -1,3 +1,4 @@
+@file:Suppress("TooManyFunctions")
 package com.algorand.android.module.asset.detail.component.asset.di
 
 import com.algorand.android.module.asset.detail.component.asset.data.mapper.entity.AssetDetailEntityMapper

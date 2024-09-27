@@ -13,9 +13,9 @@
 package com.algorand.android.modules.swap.assetselection.fromasset.ui
 
 import androidx.lifecycle.SavedStateHandle
-import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionViewModel
 import com.algorand.android.module.swap.ui.assetselection.fromasset.usecase.GetSwapFromAssetSelectionPreview
 import com.algorand.android.module.swap.ui.assetselection.model.SwapAssetSelectionPreview
+import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionViewModel
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

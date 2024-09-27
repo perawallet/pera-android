@@ -12,10 +12,6 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
-import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
-import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.models.BasePaymentTransaction
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WCAlgoTransactionRequest
@@ -23,6 +19,10 @@ import com.algorand.android.models.WalletConnectAssetInformation
 import com.algorand.android.models.WalletConnectPeerMeta
 import com.algorand.android.models.WalletConnectTransactionRequest
 import com.algorand.android.models.WalletConnectTransactionSigner
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
 import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionAuthAddress

@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.deeplink
 
+import com.algorand.android.module.account.core.component.utils.toShortenedAddress
 import com.algorand.android.module.account.info.domain.usecase.IsAssetOwnedByAnyAccount
 import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.module.account.core.component.utils.toShortenedAddress
 import com.algorand.android.module.deeplink.factory.DeepLinkFactory
 import com.algorand.android.module.deeplink.model.BaseDeepLink
 import com.algorand.android.module.deeplink.model.BaseDeepLink.AccountAddressDeepLink
@@ -77,7 +77,9 @@ internal class DeepLinkHandlerImpl @Inject constructor(
         return triggerListener { it.onImportAccountDeepLink(mnemonicDeeplink.mnemonic) }
     }
 
-    private suspend fun handleWalletConnectConnectionDeepLink(wcConnectionDeeplink: WalletConnectConnectionDeepLink): Boolean {
+    private suspend fun handleWalletConnectConnectionDeepLink(
+        wcConnectionDeeplink: WalletConnectConnectionDeepLink
+    ): Boolean {
         return triggerListener {
             it.onWalletConnectConnectionDeeplink(wcUrl = wcConnectionDeeplink.url)
         }

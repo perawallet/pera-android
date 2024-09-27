@@ -14,12 +14,12 @@ package com.algorand.android.modules.collectibles.profile.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.models.AssetAction
 import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.CollectibleProfilePreview
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.usecase.GetCollectibleProfilePreviewFlow
-import com.algorand.android.models.AssetAction
-import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailViewModel
 import com.algorand.android.module.node.domain.usecase.GetActiveNodeNetworkSlug
+import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailViewModel
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

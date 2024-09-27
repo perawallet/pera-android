@@ -1,22 +1,30 @@
 package com.algorand.android.module.transaction.history.component.domain.usecase.implementation
 
-import androidx.paging.*
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import androidx.paging.insertSeparators
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.android.module.date.formatAsDate
 import com.algorand.android.module.date.formatAsRFC3339Version
 import com.algorand.android.module.date.timeStampToZonedDateTime
 import com.algorand.android.module.transaction.history.component.data.util.TransactionHistoryPaginationHelper
 import com.algorand.android.module.transaction.history.component.domain.mapper.BaseTransactionHistoryMapper
-import com.algorand.android.module.transaction.history.component.domain.model.*
+import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory
-import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType.*
+import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType.ApplicationCall
+import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType.AssetConfiguration
+import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType.AssetTransfer
+import com.algorand.android.module.transaction.history.component.domain.model.PaginatedTransactions
+import com.algorand.android.module.transaction.history.component.domain.model.TransactionHistory
 import com.algorand.android.module.transaction.history.component.domain.repository.TransactionHistoryRepository
 import com.algorand.android.module.transaction.history.component.domain.usecase.GetTransactionPaginationFlow
 import com.algorand.android.module.transaction.history.component.domain.utils.TransactionHistoryConstants.DEFAULT_TRANSACTION_TO_FETCH_COUNT
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
 import java.time.ZonedDateTime
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 
 internal class GetTransactionPaginationFlowUseCase @Inject constructor(
     private val transactionHistoryRepository: TransactionHistoryRepository,
@@ -152,7 +160,8 @@ internal class GetTransactionPaginationFlowUseCase @Inject constructor(
                     is AssetConfiguration -> it.type.assetId?.let { safeId -> add(safeId) }
                     is AssetTransfer -> add(it.type.assetId)
                     else -> {
-                        // TODO sendErrorLog("Unhandled else case in TransactionHistoryUseCase.getAssetIdsFromTransactions")
+                        // TODO
+                        //  sendErrorLog("Unhandled else case in TransactionHistoryUseCase.getAssetIdsFromTransactions")
                     }
                 }
             }

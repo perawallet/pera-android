@@ -76,10 +76,8 @@ class WalletConnectSingleArbitraryDataFragment : BaseFragment(
         val arbitraryDataShortDetail = walletConnectSingleArbitraryDataViewModel.buildArbitraryDataShortDetail(
             args.arbitraryData.arbitraryData
         )
-        binding.arbitraryDataMessageTextView.setText(
-            walletConnectSingleArbitraryDataViewModel
-                .buildArbitraryDataMessage(args.arbitraryData.arbitraryData)
-        )
+        binding.arbitraryDataMessageTextView.text = walletConnectSingleArbitraryDataViewModel
+            .buildArbitraryDataMessage(args.arbitraryData.arbitraryData)
         binding.arbitraryDataShortDetailView.setArbitraryDataShortDetail(
             arbitraryDataShortDetail,
             showArbitraryDataDetailListener

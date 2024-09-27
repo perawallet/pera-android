@@ -1,9 +1,6 @@
+@file:Suppress("TooManyFunctions")
 package com.algorand.android.module.account.local.di
 
-import com.algorand.android.module.encryption.Base64Manager
-import com.algorand.android.module.encryption.EncryptionManager
-import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
-import com.algorand.android.module.encryption.di.TINK_ENCRYPTION_MANAGER
 import com.algorand.android.module.account.local.data.database.dao.Algo25Dao
 import com.algorand.android.module.account.local.data.database.dao.LedgerBleDao
 import com.algorand.android.module.account.local.data.database.dao.LedgerUsbDao
@@ -35,6 +32,10 @@ import com.algorand.android.module.account.local.domain.repository.NoAuthAccount
 import com.algorand.android.module.account.local.domain.usecase.GetLedgerBleAccount
 import com.algorand.android.module.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.android.module.account.local.domain.usecase.implementation.GetLocalAccountCountFlowUseCase
+import com.algorand.android.module.encryption.Base64Manager
+import com.algorand.android.module.encryption.EncryptionManager
+import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
+import com.algorand.android.module.encryption.di.TINK_ENCRYPTION_MANAGER
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

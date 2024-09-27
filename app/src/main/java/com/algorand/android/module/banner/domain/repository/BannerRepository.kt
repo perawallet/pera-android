@@ -27,5 +27,4 @@ interface BannerRepository {
     suspend fun clearBanners()
 
     suspend fun clearDismissedBannerIds()
-
 }

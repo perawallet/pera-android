@@ -1,5 +1,8 @@
 package com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.implementation
 
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.module.account.core.ui.accountsorting.domain.mapper.AccountAndAssetAccountListItemMapper
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.AccountAndAssetListItem
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
@@ -8,9 +11,6 @@ import com.algorand.android.module.account.core.ui.accountsorting.domain.util.It
 import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
 import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.module.account.sorting.domain.usecase.GetSortedLocalAccounts
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
-import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import javax.inject.Inject
 
 internal class GetSortedAccountsByPreferenceUseCase @Inject constructor(
@@ -57,7 +57,7 @@ internal class GetSortedAccountsByPreferenceUseCase @Inject constructor(
             val accountDetail = getAccountDetail(account.address)
             val isAccountTypeValid = isAccountTypeValid(excludedAccountTypes, accountDetail.accountType)
             if (isAccountTypeValid) {
-                val accountItemConfiguration = com.algorand.android.module.account.core.ui.accountsorting.domain.util.ItemConfigurationHelper.configureListItem(
+                val accountItemConfiguration = ItemConfigurationHelper.configureListItem(
                     accountDetail = accountDetail,
                     accountAddress = account.address,
                     onLoadedAccountConfiguration = onLoadedAccountConfiguration,

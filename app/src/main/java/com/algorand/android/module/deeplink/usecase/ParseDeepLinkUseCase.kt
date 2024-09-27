@@ -16,7 +16,6 @@ package com.algorand.android.module.deeplink.usecase
 import android.net.Uri
 import com.algorand.android.module.deeplink.mapper.WebImportQrCodeMapper
 import com.algorand.android.module.deeplink.model.NotificationGroupType
-import com.algorand.android.module.deeplink.model.RawDeepLink
 import com.algorand.android.module.deeplink.model.RawMnemonicPayload
 import com.algorand.android.module.deeplink.model.WebImportQrCode
 import com.algorand.android.module.deeplink.model.WebQrCode

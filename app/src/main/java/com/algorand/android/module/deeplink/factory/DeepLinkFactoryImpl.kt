@@ -20,7 +20,7 @@ import javax.inject.Inject
 internal class DeepLinkFactoryImpl @Inject constructor(
     private val accountAddressDeepLinkCreator: AccountAddressDeepLinkCreator,
     private val assetOptInDeepLinkCreator: AssetOptInDeepLinkCreator,
-    private val assetTransferDeepLinkCreator: com.algorand.android.module.deeplink.factory.AssetTransferDeepLinkCreator,
+    private val assetTransferDeepLinkCreator: AssetTransferDeepLinkCreator,
     private val mnemonicDeepLinkCreator: MnemonicDeepLinkCreator,
     private val notificationDeepLinkCreator: NotificationDeepLinkCreator,
     private val walletConnectConnectionDeepLinkCreator: WalletConnectConnectionDeepLinkCreator,
@@ -28,7 +28,7 @@ internal class DeepLinkFactoryImpl @Inject constructor(
     private val discoverBrowserDeepLinkCreator: DiscoverBrowserDeepLinkCreator
 ) : DeepLinkFactory {
 
-    override suspend fun invoke(rawDeepLink: com.algorand.android.module.deeplink.model.RawDeepLink): com.algorand.android.module.deeplink.model.BaseDeepLink {
+    override suspend fun invoke(rawDeepLink: RawDeepLink): BaseDeepLink {
         return when {
             accountAddressDeepLinkCreator.doesDeeplinkMeetTheRequirements(rawDeepLink) -> {
                 accountAddressDeepLinkCreator.createDeepLink(rawDeepLink)
@@ -54,7 +54,7 @@ internal class DeepLinkFactoryImpl @Inject constructor(
             discoverBrowserDeepLinkCreator.doesDeeplinkMeetTheRequirements(rawDeepLink) -> {
                 discoverBrowserDeepLinkCreator.createDeepLink(rawDeepLink)
             }
-            else -> com.algorand.android.module.deeplink.model.BaseDeepLink.UndefinedDeepLink(rawDeepLink.rawUrl)
+            else -> BaseDeepLink.UndefinedDeepLink(rawDeepLink.rawUrl)
         }
     }
 }

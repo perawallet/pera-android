@@ -20,9 +20,9 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.customviews.NumberedListItemView
 import com.algorand.android.databinding.LayoutRekeyIntroductionContentBinding
+import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.module.drawable.getXmlStyledString
-import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.baseintroduction.ui.BaseIntroductionFragment
 import com.algorand.android.modules.baseintroduction.ui.BaseIntroductionViewModel
 import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL

@@ -13,27 +13,26 @@
 
 package com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.implementation
 
-import com.algorand.android.module.account.core.ui.accountsorting.domain.mapper.BaseAccountAndAssetListItemMapper
-import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
-import com.algorand.android.module.account.core.ui.accountsorting.domain.util.ItemConfigurationHelper
-import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem
-import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
-import com.algorand.android.module.account.info.domain.usecase.IsAssetOwnedByAccount
-import com.algorand.android.module.account.sorting.domain.usecase.GetSortedLocalAccounts
-import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountsDetail
+import com.algorand.android.module.account.core.ui.accountsorting.domain.mapper.BaseAccountAndAssetListItemMapper
+import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem
+import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
+import com.algorand.android.module.account.core.ui.accountsorting.domain.util.ItemConfigurationHelper
+import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
+import com.algorand.android.module.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.android.module.account.sorting.domain.usecase.GetSortedLocalAccounts
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import javax.inject.Inject
 
 internal class GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransactionUseCase @Inject constructor(
     private val getSortedLocalAccounts: GetSortedLocalAccounts,
     private val getAccountsDetail: GetAccountsDetail,
     private val baseAccountAndAssetListItemMapper: BaseAccountAndAssetListItemMapper,
-    private val isAssetOwnedByAccount: IsAssetOwnedByAccount,
-
-    ) : GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction {
+    private val isAssetOwnedByAccount: IsAssetOwnedByAccount
+) : GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction {
 
     override suspend operator fun invoke(
         accountFilterAssetId: Long?,
@@ -63,7 +62,7 @@ internal class GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransactio
         onLoadedAccountConfiguration: suspend AccountDetail.() -> BaseItemConfiguration.AccountItemConfiguration,
         onFailedAccountConfiguration: suspend String.() -> BaseItemConfiguration.AccountItemConfiguration?
     ): BaseAccountAndAssetListItem.AccountListItem? {
-        val accountItemConfiguration = com.algorand.android.module.account.core.ui.accountsorting.domain.util.ItemConfigurationHelper.configureListItem(
+        val accountItemConfiguration = ItemConfigurationHelper.configureListItem(
             accountDetail = accountDetail,
             accountAddress = accountDetail.address,
             onLoadedAccountConfiguration = onLoadedAccountConfiguration,

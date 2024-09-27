@@ -15,16 +15,16 @@ package com.algorand.android.module.transaction.component.domain.sign.usecase.im
 
 import com.algorand.android.module.foundation.common.PeraSystemServiceManager
 import com.algorand.android.module.foundation.permission.PeraPermissionManager
-import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner
-import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner.Algo25
-import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner.LedgerBle
-import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner.SignerNotFound
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionPreparednessResult
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionPreparednessResult.NotReadyToSign
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionPreparednessResult.NotReadyToSign.BluetoothNotEnabled
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionPreparednessResult.NotReadyToSign.BluetoothPermissionsNotGranted
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionPreparednessResult.NotReadyToSign.LocationNotEnabled
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionPreparednessResult.ReadyToSign
+import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner
+import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner.Algo25
+import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner.LedgerBle
+import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner.SignerNotFound
 import com.algorand.android.module.transaction.component.domain.sign.usecase.GetSignTransactionPreparedness
 import javax.inject.Inject
 

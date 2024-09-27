@@ -20,13 +20,13 @@ import com.algorand.android.models.BaseRemoveAssetItem
 import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem.BaseRemoveCollectibleItem
 import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem.RemoveAssetItem
 import com.algorand.android.models.BaseRemoveAssetItem.ItemType.DESCRIPTION_VIEW_ITEM
-import com.algorand.android.models.BaseRemoveAssetItem.ItemType.SCREEN_STATE_ITEM
 import com.algorand.android.models.BaseRemoveAssetItem.ItemType.REMOVE_ASSET_ITEM
 import com.algorand.android.models.BaseRemoveAssetItem.ItemType.REMOVE_COLLECTIBLE_AUDIO_ITEM
 import com.algorand.android.models.BaseRemoveAssetItem.ItemType.REMOVE_COLLECTIBLE_IMAGE_ITEM
 import com.algorand.android.models.BaseRemoveAssetItem.ItemType.REMOVE_COLLECTIBLE_MIXED_ITEM
 import com.algorand.android.models.BaseRemoveAssetItem.ItemType.REMOVE_COLLECTIBLE_NOT_SUPPORTED_ITEM
 import com.algorand.android.models.BaseRemoveAssetItem.ItemType.REMOVE_COLLECTIBLE_VIDEO_ITEM
+import com.algorand.android.models.BaseRemoveAssetItem.ItemType.SCREEN_STATE_ITEM
 import com.algorand.android.models.BaseRemoveAssetItem.ItemType.SEARCH_VIEW_ITEM
 import com.algorand.android.models.BaseRemoveAssetItem.ItemType.TITLE_VIEW_ITEM
 import com.algorand.android.models.BaseViewHolder

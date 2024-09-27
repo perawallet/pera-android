@@ -14,11 +14,11 @@ package com.algorand.android.modules.baseledgeraccountselection.accountselection
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.algorand.android.module.drawable.BaseDiffUtil
-import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.module.drawable.BaseDiffUtil
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.adapter.viewholder.LedgerAccountSelectionViewHolder
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.adapter.viewholder.LedgerSelectionInstructionViewHolder
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 
 class LedgerAccountSelectionAdapter(
     private val listener: Listener,

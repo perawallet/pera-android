@@ -25,9 +25,9 @@ import androidx.recyclerview.widget.ConcatAdapter
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentAccountHistoryBinding
+import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.module.date.ui.model.DateFilter
 import com.algorand.android.module.date.ui.model.DateFilterPreview
-import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.module.transaction.history.ui.model.TransactionLoadStatePreview
 import com.algorand.android.modules.transaction.csv.ui.model.CsvStatusPreview
@@ -235,7 +235,7 @@ class AccountHistoryFragment : BaseFragment(R.layout.fragment_account_history) {
             with(binding) {
                 transactionHistoryToolbar.apply {
                     setPrimaryButtonIcon(icon = filterButtonIconResId, useIconsOwnTint = useFilterIconsOwnTint)
-                    if (titleResId != null) setTitle(titleResId!!) else if (title != null) setTitle(title!!)
+                    if (titleResId != null) setTitle(titleResId) else if (title != null) setTitle(title)
                 }
             }
         }

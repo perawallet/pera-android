@@ -17,9 +17,9 @@ import android.view.View
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentLedgerInstructionBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.browser.LEDGER_HELP_WEB_URL
 import com.algorand.android.utils.browser.openUrl

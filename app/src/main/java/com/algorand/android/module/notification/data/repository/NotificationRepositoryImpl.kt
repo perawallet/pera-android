@@ -13,16 +13,16 @@
 
 package com.algorand.android.module.notification.data.repository
 
-import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.models.Pagination
+import com.algorand.android.module.foundation.PeraResult
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.requestWithHipoErrorHandler
 import com.algorand.android.module.notification.data.mapper.NotificationHistoryMapper
 import com.algorand.android.module.notification.data.model.NotificationFilterRequest
 import com.algorand.android.module.notification.data.service.NotificationApiService
 import com.algorand.android.module.notification.data.storage.NotificationRefreshTimeLocalSource
 import com.algorand.android.module.notification.domain.model.NotificationHistory
 import com.algorand.android.module.notification.domain.repository.NotificationRepository
-import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
-import com.algorand.android.module.network.requestWithHipoErrorHandler
 import com.algorand.android.module.shareddb.notification.dao.NotificationFilterDao
 import com.algorand.android.module.shareddb.notification.model.NotificationFilterEntity
 import javax.inject.Inject

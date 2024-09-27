@@ -1,7 +1,11 @@
 package com.algorand.android.module.asset.detail.component.collectible.domain.model
 
-import com.algorand.android.module.asset.detail.component.asset.domain.model.*
-import java.math.*
+import com.algorand.android.module.asset.detail.component.asset.domain.model.AssetCreator
+import com.algorand.android.module.asset.detail.component.asset.domain.model.CollectibleMediaType
+import com.algorand.android.module.asset.detail.component.asset.domain.model.CollectibleTrait
+import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
+import java.math.BigDecimal
+import java.math.BigInteger
 
 internal data class CollectibleDetail(
     val collectibleAssetId: Long,

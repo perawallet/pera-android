@@ -24,9 +24,9 @@ import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.transaction.TransactionBaseFragment
 import com.algorand.android.databinding.FragmentTransferAssetPreviewBinding
-import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferPreview
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser.Account
@@ -217,14 +217,14 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
                 toUserView.setOnAddButtonClickListener(::onAddButtonClicked)
                 when (targetUser) {
                     is Account -> {
-                        (targetUser as Account).run {
+                        targetUser.run {
                             toUserView.setAccount(accountDisplayName, accountIconDrawablePreview, false)
                         }
                     }
-                    is Address -> (targetUser as Address).run { toUserView.setAddress(address, address) }
-                    is ContactUser -> toUserView.setContact((targetUser as ContactUser).value)
+                    is Address -> targetUser.run { toUserView.setAddress(address, address) }
+                    is ContactUser -> toUserView.setContact(targetUser.value)
                     is NfDomainUser -> {
-                        (targetUser as NfDomainUser).run {
+                        targetUser.run {
                             toUserView.setNftDomainAddress(nfDomainAddress, nfDomainServiceLogoUrl)
                         }
                     }

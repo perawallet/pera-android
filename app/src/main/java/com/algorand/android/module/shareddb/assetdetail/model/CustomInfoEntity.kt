@@ -1,6 +1,8 @@
 package com.algorand.android.module.shareddb.assetdetail.model
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Entity(tableName = "custom_info")
 data class CustomInfoEntity(

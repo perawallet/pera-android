@@ -13,7 +13,6 @@
 package com.algorand.android.utils.walletconnect
 
 import com.algorand.android.R
-import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WalletConnectArbitraryData
 import com.algorand.android.models.WalletConnectArbitraryDataSigner
@@ -21,6 +20,7 @@ import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDa
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.models.WalletConnectSignResult
 import com.algorand.android.models.WalletConnectTransactionSigner
+import com.algorand.android.module.drawable.AnnotatedString
 import javax.inject.Inject
 
 class WalletConnectSignValidator @Inject constructor() {

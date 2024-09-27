@@ -12,13 +12,13 @@
 
 package com.algorand.android.ui.register.createaccount.result
 
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.tracking.onboarding.register.createaccountresultinfo.CreateAccountResultInfoFragmentEventTracker
 import com.algorand.android.usecase.CreateAccountResultInfoUseCase
 import com.algorand.android.usecase.LockPreferencesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel

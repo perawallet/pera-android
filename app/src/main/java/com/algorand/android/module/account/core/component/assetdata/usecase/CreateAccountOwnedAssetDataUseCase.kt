@@ -13,10 +13,10 @@
 
 package com.algorand.android.module.account.core.component.assetdata.usecase
 
-import com.algorand.android.module.account.info.domain.model.AssetHolding
-import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.module.account.core.component.domain.mapper.OwnedAssetDataMapper
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
+import com.algorand.android.module.account.info.domain.model.AssetHolding
+import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.module.formatting.formatAmount
 import com.algorand.android.module.parity.domain.model.ParityValue
 import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencyAssetParityValue

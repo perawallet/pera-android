@@ -16,8 +16,8 @@ import com.algorand.android.assetsearch.data.mapper.AssetSearchDTOMapper
 import com.algorand.android.assetsearch.data.repository.AssetSearchRepositoryImpl
 import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository
 import com.algorand.android.assetsearch.domain.repository.AssetSearchRepository.Companion.REPOSITORY_INJECTION_NAME
-import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
+import com.algorand.android.network.MobileAlgorandApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

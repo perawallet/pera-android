@@ -3,7 +3,8 @@ package com.algorand.android.module.account.core.component.domain.model
 import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
 import com.algorand.android.module.currency.domain.model.Currency
 import com.algorand.android.module.parity.domain.model.ParityValue
-import java.math.*
+import java.math.BigDecimal
+import java.math.BigInteger
 
 sealed class BaseAccountAssetData {
 

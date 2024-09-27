@@ -1,8 +1,8 @@
 package com.algorand.android.module.asb.mnemonics.data.repository
 
+import com.algorand.android.module.asb.mnemonics.domain.repository.AsbMnemonicsRepository
 import com.algorand.android.module.caching.SharedPrefLocalSource
 import com.algorand.android.module.encryption.EncryptionManager
-import com.algorand.android.module.asb.mnemonics.domain.repository.AsbMnemonicsRepository
 import javax.inject.Inject
 
 internal class AsbMnemonicsRepositoryImpl @Inject constructor(

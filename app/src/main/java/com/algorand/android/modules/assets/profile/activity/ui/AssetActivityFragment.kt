@@ -25,9 +25,9 @@ import androidx.recyclerview.widget.ConcatAdapter
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentAssetActivityBinding
+import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.module.date.ui.model.DateFilter
 import com.algorand.android.module.date.ui.model.DateFilterPreview
-import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.module.transaction.history.ui.model.TransactionLoadStatePreview
 import com.algorand.android.modules.transaction.csv.ui.model.CsvStatusPreview
@@ -253,7 +253,7 @@ class AssetActivityFragment : BaseFragment(R.layout.fragment_asset_activity) {
                     useIconsOwnTint = useFilterIconsOwnTint
                 )
                 assetActivityToolbar.apply {
-                    if (titleResId != null) setTitle(titleResId!!) else if (title != null) setTitle(title!!)
+                    if (titleResId != null) setTitle(titleResId) else if (title != null) setTitle(title)
                 }
             }
         }

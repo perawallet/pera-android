@@ -12,10 +12,11 @@
 
 package com.algorand.android.modules.dapp.bidali.ui.browser.usecase
 
+import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.module.account.core.component.caching.domain.usecase.FetchAccountInformationAndCacheAssets
-import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.module.foundation.Event
+import com.algorand.android.module.node.domain.usecase.IsSelectedNodeMainnet
 import com.algorand.android.modules.dapp.bidali.data.mapper.BidaliOpenUrlRequestMapper
 import com.algorand.android.modules.dapp.bidali.data.mapper.BidaliPaymentRequestMapper
 import com.algorand.android.modules.dapp.bidali.data.model.BidaliOpenUrlRequest
@@ -24,7 +25,6 @@ import com.algorand.android.modules.dapp.bidali.domain.mapper.BidaliAssetMapper
 import com.algorand.android.modules.dapp.bidali.getCompiledUpdatedBalancesJavascript
 import com.algorand.android.modules.dapp.bidali.ui.browser.model.BidaliBrowserPreview
 import com.algorand.android.modules.peraserializer.PeraSerializer
-import com.algorand.android.module.node.domain.usecase.IsSelectedNodeMainnet
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.getBaseUrlOrNull
 import javax.inject.Inject

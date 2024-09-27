@@ -18,7 +18,6 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.module.foundation.Event
-import com.algorand.android.modules.tracking.swap.confirmswap.ConfirmSwapConfirmClickEventTracker
 import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction
 import com.algorand.android.module.swap.component.domain.usecase.CreateSwapQuoteTransactions
@@ -30,6 +29,7 @@ import com.algorand.android.module.swap.ui.confirmswap.usecase.GetConfirmSwapPre
 import com.algorand.android.module.swap.ui.confirmswap.usecase.GetSwapTransactionStatusNavArgs
 import com.algorand.android.module.swap.ui.confirmswap.usecase.UpdateSlippageTolerance
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusNavArgs
+import com.algorand.android.modules.tracking.swap.confirmswap.ConfirmSwapConfirmClickEventTracker
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -24,7 +24,7 @@ interface DeepLinkHandler {
 
     interface Listener {
         fun onAssetTransferDeepLink(
-            deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink.AssetTransferDeepLink,
+            deepLink: BaseDeepLink.AssetTransferDeepLink,
             receiverAddress: String,
             receiverName: String
         ): Boolean = false
@@ -35,10 +35,10 @@ interface DeepLinkHandler {
         fun onWalletConnectConnectionDeeplink(wcUrl: String): Boolean = false
         fun onAssetTransferWithNotOptInDeepLink(assetId: Long): Boolean = false
         fun onWebImportQrCodeDeepLink(webImportQrCode: WebImportQrCode): Boolean = false
-        fun onNotificationDeepLink(deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink): Boolean = false
+        fun onNotificationDeepLink(deepLink: BaseDeepLink.NotificationDeepLink): Boolean = false
         fun onDiscoverBrowserDeepLink(webUrl: String): Boolean = false
 
-        fun onUndefinedDeepLink(undefinedDeeplink: com.algorand.android.module.deeplink.model.BaseDeepLink.UndefinedDeepLink)
-        fun onDeepLinkNotHandled(deepLink: com.algorand.android.module.deeplink.model.BaseDeepLink)
+        fun onUndefinedDeepLink(undefinedDeeplink: BaseDeepLink.UndefinedDeepLink)
+        fun onDeepLinkNotHandled(deepLink: BaseDeepLink)
     }
 }

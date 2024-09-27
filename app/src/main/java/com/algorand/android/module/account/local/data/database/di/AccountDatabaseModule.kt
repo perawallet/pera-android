@@ -16,8 +16,12 @@ import android.content.Context
 import androidx.room.Room
 import com.algorand.android.module.account.local.data.database.AccountDatabase
 import com.algorand.android.module.account.local.data.database.AccountDatabase.Companion.DATABASE_NAME
-import com.algorand.android.module.account.local.data.database.dao.*
-import dagger.*
+import com.algorand.android.module.account.local.data.database.dao.Algo25Dao
+import com.algorand.android.module.account.local.data.database.dao.LedgerBleDao
+import com.algorand.android.module.account.local.data.database.dao.LedgerUsbDao
+import com.algorand.android.module.account.local.data.database.dao.NoAuthDao
+import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent

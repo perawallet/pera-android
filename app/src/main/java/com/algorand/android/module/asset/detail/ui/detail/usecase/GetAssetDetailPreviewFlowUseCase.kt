@@ -1,3 +1,4 @@
+@file:Suppress("LongParameterList")
 /*
  *   ~ Copyright 2022 Pera Wallet, LDA
  *   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +14,9 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.usecase
 
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetailFlow
 import com.algorand.android.module.account.core.ui.summary.usecase.GetAccountDetailSummary
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.info.domain.usecase.IsAssetOwnedByAccount
@@ -22,9 +26,6 @@ import com.algorand.android.module.asset.detail.component.asset.domain.usecase.F
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAssetDetail
 import com.algorand.android.module.asset.detail.ui.detail.mapper.AssetDetailPreviewMapper
 import com.algorand.android.module.asset.detail.ui.detail.model.AssetDetailPreview
-import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
-import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetailFlow
 import com.algorand.android.module.parity.domain.usecase.GetAssetExchangeParityValue
 import com.algorand.android.module.swap.component.reddot.domain.usecase.GetSwapFeatureRedDotVisibility
 import java.math.BigDecimal

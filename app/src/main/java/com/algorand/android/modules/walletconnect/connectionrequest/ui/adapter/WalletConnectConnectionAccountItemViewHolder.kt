@@ -15,11 +15,11 @@ package com.algorand.android.modules.walletconnect.connectionrequest.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.model.AccountDisplayName
-import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.databinding.ItemWalletConnectConnectionAccountBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem
 import com.algorand.android.utils.AccountIconDrawable
 

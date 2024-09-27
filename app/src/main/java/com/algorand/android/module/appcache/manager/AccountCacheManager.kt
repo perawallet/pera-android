@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.appcache.manager
 
+import com.algorand.android.module.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.android.module.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
-import com.algorand.android.module.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.android.module.block.domain.usecase.ClearLastKnownBlockNumber
 import com.algorand.android.module.block.domain.usecase.ShouldUpdateAccountCache
 import com.algorand.android.module.block.domain.usecase.UpdateLastKnownBlockNumber

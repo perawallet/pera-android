@@ -14,9 +14,9 @@ package com.algorand.android.modules.rekey.rekeytoledgeraccount.resultinfo.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.core.BaseViewModel
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
-import com.algorand.android.core.BaseViewModel
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

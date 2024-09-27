@@ -15,8 +15,8 @@ package com.algorand.android.module.swap.component.domain.tracking
 
 import com.algorand.android.module.asset.utils.AssetConstants
 import com.algorand.android.module.date.getUTCZonedDateTime
-import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.parity.domain.usecase.GetUsdToAlgoConversionRate
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.utils.TWO_DECIMALS
 import java.math.BigDecimal
 import java.math.RoundingMode

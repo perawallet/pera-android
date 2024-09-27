@@ -16,12 +16,12 @@ import com.algorand.android.R
 import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
+import com.algorand.android.module.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.model.TransactionSign
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailPreviewMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
-import com.algorand.android.module.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.tooltip.domain.usecase.TransactionDetailTooltipDisplayPreferenceUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL

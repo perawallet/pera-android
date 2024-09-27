@@ -1,7 +1,8 @@
 package com.algorand.android.module.parity.domain.usecase.implementation
 
 import com.algorand.android.module.parity.domain.model.AlgoAmountValue
-import com.algorand.android.module.parity.domain.usecase.*
+import com.algorand.android.module.parity.domain.usecase.GetAlgoAmountValue
+import com.algorand.android.module.parity.domain.usecase.GetAlgoToUsdConversionRate
 import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryAlgoParityValue
 import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryAlgoParityValue
 import java.math.BigInteger

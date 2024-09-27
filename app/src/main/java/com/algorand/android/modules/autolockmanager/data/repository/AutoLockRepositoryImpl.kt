@@ -15,7 +15,7 @@ package com.algorand.android.modules.autolockmanager.data.repository
 import com.algorand.android.modules.autolockmanager.data.local.AppAtBackgroundPreferencesLocalSource
 import com.algorand.android.modules.autolockmanager.domain.repository.AutoLockRepository
 
-class AutoLockRepositoryImpl constructor(
+class AutoLockRepositoryImpl(
     private val appAtBackgroundPreferencesLocalSource: AppAtBackgroundPreferencesLocalSource
 ) : AutoLockRepository {
 

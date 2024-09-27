@@ -1,8 +1,11 @@
 package com.algorand.android.module.shareddb.assetdetail.model
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.algorand.android.module.shareddb.assetdetail.model.AssetDetailEntity.Companion.ASSET_DETAIL_TABLE_NAME
-import java.math.*
+import java.math.BigDecimal
+import java.math.BigInteger
 
 @Entity(tableName = ASSET_DETAIL_TABLE_NAME)
 data class AssetDetailEntity(

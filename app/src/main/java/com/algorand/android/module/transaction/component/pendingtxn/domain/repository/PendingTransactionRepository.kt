@@ -19,5 +19,4 @@ import com.algorand.android.module.transaction.component.pendingtxn.domain.model
 interface PendingTransactionRepository {
 
     suspend fun getPendingTransactions(address: String, assetId: Long? = null): PeraResult<List<PendingTransaction>>
-
 }

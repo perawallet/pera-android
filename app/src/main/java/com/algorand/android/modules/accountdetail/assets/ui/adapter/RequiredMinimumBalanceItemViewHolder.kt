@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemRequiredMinimumBalanceBinding
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
 
 class RequiredMinimumBalanceItemViewHolder(
     private val binding: ItemRequiredMinimumBalanceBinding,

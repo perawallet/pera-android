@@ -16,13 +16,13 @@ package com.algorand.android.module.transaction.component.data.repository
 import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.foundation.PeraResult.Error
 import com.algorand.android.module.foundation.PeraResult.Success
+import com.algorand.android.module.network.request
 import com.algorand.android.module.transaction.component.data.mapper.TransactionParamsMapper
 import com.algorand.android.module.transaction.component.data.service.AlgodApiService
 import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 import com.algorand.android.module.transaction.component.domain.model.TransactionId
 import com.algorand.android.module.transaction.component.domain.model.TransactionParams
 import com.algorand.android.module.transaction.component.domain.repository.TransactionRepository
-import com.algorand.android.module.network.request
 import javax.inject.Inject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody

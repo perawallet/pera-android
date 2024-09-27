@@ -12,16 +12,16 @@
 
 package com.algorand.android.utils.walletconnect
 
-import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.android.models.BaseAssetTransferTransaction
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.models.WalletConnectTransactionSigner.Rekeyed
 import com.algorand.android.models.WalletConnectTransactionSigner.Sender
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.transaction.component.domain.usecase.GetTransactionParams
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.ui.mapper.WalletConnectTransactionMapper
-import com.algorand.android.module.transaction.component.domain.usecase.GetTransactionParams
 import com.algorand.android.utils.groupWalletConnectTransactions
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult.Error
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult.Success

@@ -18,8 +18,8 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.customviews.PeraChipGroup
 import com.algorand.android.customviews.PeraChipGroup.PeraChipItem
-import com.algorand.android.databinding.BottomSheetPercentageSelectionBinding
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
+import com.algorand.android.databinding.BottomSheetPercentageSelectionBinding
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.hideKeyboard

@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.swap.ui.assetswap.usecase
 
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetData
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.FetchAsset
-import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetData
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview.SelectedAssetDetail
 import javax.inject.Inject
 

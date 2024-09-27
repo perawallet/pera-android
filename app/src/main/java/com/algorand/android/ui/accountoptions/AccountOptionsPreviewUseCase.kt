@@ -1,10 +1,10 @@
 package com.algorand.android.ui.accountoptions
 
-import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountRegistrationType
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import javax.inject.Inject
 
 class AccountOptionsPreviewUseCase @Inject constructor(

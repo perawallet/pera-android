@@ -15,9 +15,8 @@ package com.algorand.android.ui.accounts
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.module.deeplink.model.BaseDeepLink
-import com.algorand.android.module.deeplink.model.WebImportQrCode
 import com.algorand.android.models.AssetAction
+import com.algorand.android.module.deeplink.model.WebImportQrCode
 import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
 import dagger.hilt.android.AndroidEntryPoint
 

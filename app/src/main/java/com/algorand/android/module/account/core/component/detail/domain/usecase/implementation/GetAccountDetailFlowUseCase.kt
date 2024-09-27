@@ -1,12 +1,15 @@
 package com.algorand.android.module.account.core.component.detail.domain.usecase.implementation
 
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetailFlow
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountRegistrationType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountType
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.android.module.asb.domain.usecase.GetAccountAsbBackUpStatus
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
-import com.algorand.android.module.account.core.component.detail.domain.usecase.*
 import com.algorand.android.module.custominfo.domain.usecase.GetCustomInfo
-import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 internal class GetAccountDetailFlowUseCase @Inject constructor(
     private val getAccountInformationFlow: GetAccountInformationFlow,

@@ -13,6 +13,9 @@
 
 package com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.implementation
 
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountsDetail
 import com.algorand.android.module.account.core.ui.accountsorting.domain.mapper.BaseAccountAndAssetListItemMapper
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListWhichNotBackedUp
@@ -20,9 +23,6 @@ import com.algorand.android.module.account.core.ui.accountsorting.domain.util.It
 import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
 import com.algorand.android.module.account.sorting.domain.usecase.GetSortedLocalAccounts
 import com.algorand.android.module.asb.domain.usecase.GetBackedUpAccounts
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountsDetail
 import javax.inject.Inject
 
 internal class GetFilteredSortedAccountListWhichNotBackedUpUseCase @Inject constructor(

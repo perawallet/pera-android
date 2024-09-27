@@ -13,15 +13,15 @@
 
 package com.algorand.android.module.account.core.component.assetdata.usecase
 
+import com.algorand.android.module.account.core.component.assetdata.model.AccountAssetData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.PendingAssetData
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.account.info.domain.model.AssetStatus.OWNED_BY_ACCOUNT
 import com.algorand.android.module.account.info.domain.model.AssetStatus.PENDING_FOR_ADDITION
 import com.algorand.android.module.account.info.domain.model.AssetStatus.PENDING_FOR_REMOVAL
 import com.algorand.android.module.account.info.domain.model.AssetStatus.PENDING_FOR_SENDING
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAssetDetail
-import com.algorand.android.module.account.core.component.assetdata.model.AccountAssetData
-import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
-import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.PendingAssetData
 import javax.inject.Inject
 
 internal class CreateAccountAssetDataUseCase @Inject constructor(

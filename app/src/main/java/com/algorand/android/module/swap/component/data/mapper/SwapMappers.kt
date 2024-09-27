@@ -28,8 +28,8 @@ import com.algorand.android.module.swap.component.domain.model.PeraFee
 import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.component.domain.model.SwapQuoteAssetDetail
 import com.algorand.android.module.swap.component.domain.model.SwapQuoteProvider
-import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransactionResult
 import com.algorand.android.module.swap.component.domain.model.SwapType
+import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransactionResult
 import java.math.BigDecimal
 import java.math.BigInteger
 

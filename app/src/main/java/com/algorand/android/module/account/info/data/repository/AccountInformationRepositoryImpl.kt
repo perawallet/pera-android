@@ -1,3 +1,4 @@
+@file:Suppress("LongParameterList", "MagicNumber")
 package com.algorand.android.module.account.info.data.repository
 
 import com.algorand.android.module.account.info.data.helper.fetch.AccountInformationFetchHelper

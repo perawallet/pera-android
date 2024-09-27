@@ -1,8 +1,6 @@
 package com.algorand.android.module.account.sorting.di
 
 import android.content.SharedPreferences
-import com.algorand.android.module.encryption.EncryptionManager
-import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
 import com.algorand.android.module.account.sorting.data.repository.AccountSortingRepositoryImpl
 import com.algorand.android.module.account.sorting.data.storage.AccountSortPreferencesLocalSource
 import com.algorand.android.module.account.sorting.domain.repository.AccountSortingRepository
@@ -12,6 +10,8 @@ import com.algorand.android.module.account.sorting.domain.usecase.RemoveAccountO
 import com.algorand.android.module.account.sorting.domain.usecase.SaveAccountSortPreference
 import com.algorand.android.module.account.sorting.domain.usecase.SetAccountOrderIndex
 import com.algorand.android.module.account.sorting.domain.usecase.implementation.GetSortedLocalAccountsUseCase
+import com.algorand.android.module.encryption.EncryptionManager
+import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
 import com.algorand.android.module.shareddb.accountsorting.dao.AccountIndexDao
 import dagger.Module
 import dagger.Provides

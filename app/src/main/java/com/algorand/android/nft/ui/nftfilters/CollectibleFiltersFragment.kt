@@ -17,9 +17,9 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentCollectibleFiltersBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.nft.ui.nftfilters.model.CollectibleFiltersPreview
 import com.algorand.android.utils.Event

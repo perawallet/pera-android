@@ -13,8 +13,8 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.models.LedgerInformationListItem
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import javax.inject.Inject
 
 class LedgerInformationCanSignByItemMapper @Inject constructor() {

@@ -1,3 +1,4 @@
+@file:Suppress("MaxLineLength")
 /*
  *   ~ Copyright 2022 Pera Wallet, LDA
  *   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,15 +26,14 @@ sealed interface BaseDeepLink {
     data class AccountAddressDeepLink internal constructor(
         val accountAddress: String,
         val label: String?
-    ) : com.algorand.android.module.deeplink.model.BaseDeepLink
+    ) : BaseDeepLink
 
     /**
      * Examples;
      *  - algorand://?amount=0&asset=776191503
      *  - perawallet://?amount=0&asset=77619150
      */
-    data class AssetOptInDeepLink internal constructor(val assetId: Long) :
-        com.algorand.android.module.deeplink.model.BaseDeepLink
+    data class AssetOptInDeepLink internal constructor(val assetId: Long) : BaseDeepLink
 
     /**
      * ALGO transfer (public key, empty asset id, amount, note, xnote)
@@ -52,31 +52,27 @@ sealed interface BaseDeepLink {
         val note: String?,
         val xnote: String?,
         val label: String?
-    ) : com.algorand.android.module.deeplink.model.BaseDeepLink
+    ) : BaseDeepLink
 
     /**
      * Examples;
      * wc://wc:b562a118-0cbd-4f4f-92af-e58bf0a9dfb8@1?bridge=https%3A%2F%2Fwallet-connect-d.perawallet.app&key=672a4fbd212bfdbf6e0c8a858d9ab1577df169e7eac74c7175b9a3fd0faea889
      * perawallet-wc://wc:b562a118-0cbd-4f4f-92af-e58bf0a9dfb8@1?bridge=https%3A%2F%2Fwallet-connect-d.perawallet.app&key=672a4fbd212bfdbf6e0c8a858d9ab1577df169e7eac74c7175b9a3fd0faea889
      */
-    data class WalletConnectConnectionDeepLink internal constructor(val url: String) :
-        com.algorand.android.module.deeplink.model.BaseDeepLink
+    data class WalletConnectConnectionDeepLink internal constructor(val url: String) : BaseDeepLink
 
-    data class MnemonicDeepLink internal constructor(val mnemonic: String) :
-        com.algorand.android.module.deeplink.model.BaseDeepLink
+    data class MnemonicDeepLink internal constructor(val mnemonic: String) : BaseDeepLink
 
-    data class WebImportQrCodeDeepLink internal constructor(val webImportQrCode: com.algorand.android.module.deeplink.model.WebImportQrCode) :
-        com.algorand.android.module.deeplink.model.BaseDeepLink
+    data class WebImportQrCodeDeepLink internal constructor(val webImportQrCode: WebImportQrCode) : BaseDeepLink
 
     data class NotificationDeepLink internal constructor(
         val address: String,
         val assetId: Long,
-        val notificationGroupType: com.algorand.android.module.deeplink.model.NotificationGroupType,
+        val notificationGroupType: NotificationGroupType,
         val isThereAnyAccountWithPublicKey: Boolean
-    ) : com.algorand.android.module.deeplink.model.BaseDeepLink
+    ) : BaseDeepLink
 
-    data class DiscoverBrowserDeepLink(val webUrl: String): com.algorand.android.module.deeplink.model.BaseDeepLink
+    data class DiscoverBrowserDeepLink(val webUrl: String) : BaseDeepLink
 
-    data class UndefinedDeepLink internal constructor(val url: String) :
-        com.algorand.android.module.deeplink.model.BaseDeepLink
+    data class UndefinedDeepLink internal constructor(val url: String) : BaseDeepLink
 }

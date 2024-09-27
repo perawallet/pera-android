@@ -14,9 +14,9 @@
 package com.algorand.android.network
 
 import com.algorand.android.BuildConfig
-import com.algorand.android.network.model.IndexerInterceptorNodeDetails
 import com.algorand.android.module.node.domain.Node
 import com.algorand.android.module.node.domain.usecase.GetActiveNode
+import com.algorand.android.network.model.IndexerInterceptorNodeDetails
 
 class GetIndexerInterceptorNodeDetails(
     private val getActiveNode: GetActiveNode

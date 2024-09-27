@@ -14,9 +14,9 @@
 package com.algorand.android.module.swap.component.data.mapper
 
 import com.algorand.android.module.swap.component.data.model.SwapQuoteTransactionResponse
-import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransactionResult
 import com.algorand.android.module.swap.component.domain.model.SwapTransactionPurpose
 import com.algorand.android.module.swap.component.domain.model.SwapTransactionPurpose.Companion.fallbackTransactionPurpose
+import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransactionResult
 import javax.inject.Inject
 
 internal class SwapQuoteTransactionMapperImpl @Inject constructor() : SwapQuoteTransactionMapper {

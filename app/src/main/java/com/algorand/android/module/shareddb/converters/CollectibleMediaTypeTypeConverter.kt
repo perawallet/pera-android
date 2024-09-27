@@ -1,6 +1,7 @@
 package com.algorand.android.module.shareddb.converters
 
-import androidx.room.*
+import androidx.room.ProvidedTypeConverter
+import androidx.room.TypeConverter
 import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaTypeEntity
 
 @ProvidedTypeConverter

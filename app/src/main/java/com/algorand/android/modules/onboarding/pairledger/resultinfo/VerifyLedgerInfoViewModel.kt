@@ -12,13 +12,13 @@
 
 package com.algorand.android.modules.onboarding.pairledger.resultinfo
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.algorand.android.usecase.LedgerAccountAdditionResultInfoUseCase
 import com.algorand.android.usecase.LockPreferencesUseCase
 import com.algorand.android.utils.getOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class VerifyLedgerInfoViewModel @Inject constructor(

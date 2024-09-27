@@ -17,7 +17,6 @@ import androidx.paging.PagingData
 import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.notification.domain.model.NotificationHistory
 import java.time.ZonedDateTime
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
 fun interface GetNotificationLastRefreshDateTime {

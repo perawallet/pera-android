@@ -12,11 +12,11 @@
 
 package com.algorand.android.ui.register.watch
 
-import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingWatchAccountCreateWatchEventTracker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel

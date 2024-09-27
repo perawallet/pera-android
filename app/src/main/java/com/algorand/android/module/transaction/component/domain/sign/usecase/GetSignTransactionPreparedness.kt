@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.transaction.component.domain.sign.usecase
 
-import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionPreparednessResult
+import com.algorand.android.module.transaction.component.domain.sign.model.TransactionSigner
 
 interface GetSignTransactionPreparedness {
     operator fun invoke(signer: TransactionSigner): SignTransactionPreparednessResult

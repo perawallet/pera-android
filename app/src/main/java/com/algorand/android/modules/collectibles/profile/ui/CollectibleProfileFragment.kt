@@ -18,9 +18,9 @@ import androidx.core.view.doOnLayout
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import com.algorand.android.R
+import com.algorand.android.databinding.LayoutAsaStatusBinding
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaStatusPreview
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.CollectibleProfilePreview
-import com.algorand.android.databinding.LayoutAsaStatusBinding
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailFragment
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle

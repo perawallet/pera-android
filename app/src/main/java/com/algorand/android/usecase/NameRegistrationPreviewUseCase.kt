@@ -13,14 +13,14 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.core.BaseUseCase
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
-import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.module.account.core.component.domain.usecase.UpdateAccountName
 import com.algorand.android.mapper.NameRegistrationPreviewMapper
 import com.algorand.android.models.CreateAccount
 import com.algorand.android.models.ui.NameRegistrationPreview
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.domain.usecase.UpdateAccountName
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.toShortenedAddress
 import javax.inject.Inject

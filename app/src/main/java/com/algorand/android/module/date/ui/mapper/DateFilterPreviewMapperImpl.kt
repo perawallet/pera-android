@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.date.ui.mapper
 
+import com.algorand.android.R
 import com.algorand.android.module.date.ui.model.DateFilter
 import com.algorand.android.module.date.ui.model.DateFilterPreview
-import com.algorand.android.R
 import javax.inject.Inject
 
 internal class DateFilterPreviewMapperImpl @Inject constructor() : DateFilterPreviewMapper {

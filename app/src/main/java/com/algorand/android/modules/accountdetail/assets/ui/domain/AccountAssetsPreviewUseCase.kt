@@ -26,6 +26,11 @@ import com.algorand.android.module.account.core.component.domain.model.BaseAccou
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.PendingAssetData.BasePendingCollectibleData.PendingDeletionCollectibleData
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.PendingAssetData.DeletionAssetData
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountCollectibleDataFlow
+import com.algorand.android.module.parity.domain.usecase.GetSelectedCurrencyDetailFlow
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencyName
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
+import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
+import com.algorand.android.module.swap.component.reddot.domain.usecase.GetSwapFeatureRedDotVisibility
 import com.algorand.android.modules.accountdetail.assets.ui.mapper.AccountAssetsPreviewMapper
 import com.algorand.android.modules.accountdetail.assets.ui.mapper.AccountDetailAssetItemMapper
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountAssetsPreview
@@ -37,11 +42,6 @@ import com.algorand.android.modules.assets.filter.domain.usecase.ShouldDisplayOp
 import com.algorand.android.modules.assets.filter.domain.usecase.ShouldHideZeroBalanceAssetsPreferenceUseCase
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
 import com.algorand.android.modules.sorting.assetsorting.ui.usecase.AssetItemSortUseCase
-import com.algorand.android.module.parity.domain.usecase.GetSelectedCurrencyDetailFlow
-import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencyName
-import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
-import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
-import com.algorand.android.module.swap.component.reddot.domain.usecase.GetSwapFeatureRedDotVisibility
 import com.algorand.android.usecase.GetFormattedAccountMinimumBalanceUseCase
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsCurrency

@@ -36,7 +36,7 @@ fun View.requestFocusAndShowKeyboard() {
 fun addKeyboardToggleListener(
     rootView: View,
     onKeyboardToggleAction: (shown: Boolean) -> Unit
-): KeyboardToggleListener? {
+): KeyboardToggleListener {
     val listener = KeyboardToggleListener(rootView, onKeyboardToggleAction)
     rootView.viewTreeObserver.addOnGlobalLayoutListener(listener)
     return listener

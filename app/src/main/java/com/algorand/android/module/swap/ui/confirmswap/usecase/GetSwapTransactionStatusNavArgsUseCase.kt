@@ -14,7 +14,6 @@
 package com.algorand.android.module.swap.ui.confirmswap.usecase
 
 import com.algorand.android.module.asset.utils.AssetConstants
-import com.algorand.android.utils.formatAmount
 import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction
 import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction.SwapTransaction
@@ -22,6 +21,7 @@ import com.algorand.android.module.swap.component.domain.usecase.GetSwapAlgorand
 import com.algorand.android.module.swap.component.domain.usecase.GetSwapOptInTransactionFee
 import com.algorand.android.module.swap.ui.txnstatus.model.SignedSwapTransaction
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusNavArgs
+import com.algorand.android.utils.formatAmount
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -65,10 +65,10 @@ internal class GetSwapTransactionStatusNavArgsUseCase @Inject constructor(
         var receivedAssetAmount: BigInteger? = null
         swapTransaction?.unsignedTransactions?.forEach {
             if (it.decodedTransaction?.receiverAddress?.decodedAddress == it.accountAddress) {
-                receivedAssetAmount = it.decodedTransaction!!.amount?.toBigInteger() ?: BigInteger.ZERO
+                receivedAssetAmount = it.decodedTransaction.amount?.toBigInteger() ?: BigInteger.ZERO
                 return@forEach
             } else if (it.decodedTransaction?.assetReceiverAddress?.decodedAddress == it.accountAddress) {
-                receivedAssetAmount = it.decodedTransaction!!.assetAmount ?: BigInteger.ZERO
+                receivedAssetAmount = it.decodedTransaction.assetAmount ?: BigInteger.ZERO
                 return@forEach
             }
         }

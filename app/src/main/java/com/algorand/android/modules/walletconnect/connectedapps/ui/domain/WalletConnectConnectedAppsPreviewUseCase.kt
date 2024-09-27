@@ -13,13 +13,13 @@
 package com.algorand.android.modules.walletconnect.connectedapps.ui.domain
 
 import com.algorand.android.modules.walletconnect.connectedapps.ui.mapper.WalletConnectConnectedAppsPreviewMapper
+import com.algorand.android.modules.walletconnect.connectedapps.ui.mapper.WalletConnectSessionItemMapper
 import com.algorand.android.modules.walletconnect.connectedapps.ui.model.WalletConnectConnectedAppsPreview
+import com.algorand.android.modules.walletconnect.connectedapps.ui.model.WalletConnectSessionItem
 import com.algorand.android.modules.walletconnect.domain.ConnectToExistingSessionUseCase
 import com.algorand.android.modules.walletconnect.domain.GetWalletConnectLocalSessionsUseCase
 import com.algorand.android.modules.walletconnect.domain.KillWalletConnectSessionUseCase
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
-import com.algorand.android.modules.walletconnect.connectedapps.ui.mapper.WalletConnectSessionItemMapper
-import com.algorand.android.modules.walletconnect.connectedapps.ui.model.WalletConnectSessionItem
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.android.utils.Event
 import javax.inject.Inject

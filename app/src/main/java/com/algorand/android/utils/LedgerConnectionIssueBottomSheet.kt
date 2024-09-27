@@ -23,7 +23,7 @@ class LedgerConnectionIssueBottomSheet : BaseSingleButtonBottomSheet() {
         get() = R.drawable.ic_error
     override val iconDrawableTintResId: Int
         get() = R.color.error_tint_color
-    override val descriptionAnnotatedString: AnnotatedString?
+    override val descriptionAnnotatedString: AnnotatedString
         get() = AnnotatedString(R.string.make_sure_the_device_is)
 
     override fun onConfirmationButtonClick() {

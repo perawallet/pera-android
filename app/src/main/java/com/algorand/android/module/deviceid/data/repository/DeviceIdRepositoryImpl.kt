@@ -1,8 +1,11 @@
 package com.algorand.android.module.deviceid.data.repository
 
 import com.algorand.android.module.caching.SharedPrefLocalSource
+import com.algorand.android.module.deviceid.data.model.DeviceRegistrationRequest
+import com.algorand.android.module.deviceid.data.model.DeviceUpdateRequest
 import com.algorand.android.module.deviceid.data.service.DeviceIdApiService
-import com.algorand.android.module.deviceid.domain.model.*
+import com.algorand.android.module.deviceid.domain.model.DeviceRegistration
+import com.algorand.android.module.deviceid.domain.model.DeviceUpdate
 import com.algorand.android.module.deviceid.domain.repository.DeviceIdRepository
 import com.algorand.android.module.deviceid.utils.ProvideDeviceIdPlatform
 import com.algorand.android.module.foundation.PeraResult
@@ -55,9 +58,9 @@ internal class DeviceIdRepositoryImpl(
         }
     }
 
-    private fun getDeviceRegistrationRequestPayload(deviceRegistration: DeviceRegistration): com.algorand.android.module.deviceid.data.model.DeviceRegistrationRequest {
+    private fun getDeviceRegistrationRequestPayload(deviceRegistration: DeviceRegistration): DeviceRegistrationRequest {
         return with(deviceRegistration) {
-            com.algorand.android.module.deviceid.data.model.DeviceRegistrationRequest(
+            DeviceRegistrationRequest(
                 pushToken = pushToken,
                 application = provideApplicationName(),
                 accountPublicKeys = accountPublicKeys,
@@ -67,9 +70,9 @@ internal class DeviceIdRepositoryImpl(
         }
     }
 
-    private fun getDeviceUpdateRequestPayload(deviceUpdate: DeviceUpdate): com.algorand.android.module.deviceid.data.model.DeviceUpdateRequest {
+    private fun getDeviceUpdateRequestPayload(deviceUpdate: DeviceUpdate): DeviceUpdateRequest {
         return with(deviceUpdate) {
-            com.algorand.android.module.deviceid.data.model.DeviceUpdateRequest(
+            DeviceUpdateRequest(
                 id = deviceId,
                 pushToken = pushToken.orEmpty(),
                 application = provideApplicationName(),

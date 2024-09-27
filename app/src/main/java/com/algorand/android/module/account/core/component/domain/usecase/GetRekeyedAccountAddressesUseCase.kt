@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.account.core.component.domain.usecase
 
-import com.algorand.android.module.account.info.domain.usecase.GetAllAccountInformation
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountType
+import com.algorand.android.module.account.info.domain.usecase.GetAllAccountInformation
 import javax.inject.Inject
 
 internal class GetRekeyedAccountAddressesUseCase @Inject constructor(

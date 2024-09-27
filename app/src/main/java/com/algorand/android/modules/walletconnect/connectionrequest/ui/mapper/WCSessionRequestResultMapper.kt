@@ -33,7 +33,7 @@ class WCSessionRequestResultMapper @Inject constructor() {
     }
 
     fun mapToRejectScamRequest(sessionProposal: WalletConnectSessionProposal):
-            WCSessionRequestResult.RejectScamRequest {
+        WCSessionRequestResult.RejectScamRequest {
         return WCSessionRequestResult.RejectScamRequest(sessionProposal = sessionProposal)
     }
 }

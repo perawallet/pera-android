@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.webimport.loading.data.mapper
 
-import com.algorand.android.modules.webimport.loading.domain.model.ImportBackupResponseDTO
 import com.algorand.android.modules.webimport.loading.data.model.ImportBackupResponse
+import com.algorand.android.modules.webimport.loading.domain.model.ImportBackupResponseDTO
 import javax.inject.Inject
 
 class ImportBackupResponseDTOMapper @Inject constructor() {

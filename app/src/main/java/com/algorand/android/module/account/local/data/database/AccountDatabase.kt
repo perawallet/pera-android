@@ -12,10 +12,17 @@
 
 package com.algorand.android.module.account.local.data.database
 
-import androidx.room.*
+import androidx.room.Database
+import androidx.room.RoomDatabase
 import com.algorand.android.module.account.local.data.database.AccountDatabase.Companion.DATABASE_VERSION
-import com.algorand.android.module.account.local.data.database.dao.*
-import com.algorand.android.module.account.local.data.database.model.*
+import com.algorand.android.module.account.local.data.database.dao.Algo25Dao
+import com.algorand.android.module.account.local.data.database.dao.LedgerBleDao
+import com.algorand.android.module.account.local.data.database.dao.LedgerUsbDao
+import com.algorand.android.module.account.local.data.database.dao.NoAuthDao
+import com.algorand.android.module.account.local.data.database.model.Algo25Entity
+import com.algorand.android.module.account.local.data.database.model.LedgerBleEntity
+import com.algorand.android.module.account.local.data.database.model.LedgerUsbEntity
+import com.algorand.android.module.account.local.data.database.model.NoAuthEntity
 
 @Database(
     entities = [

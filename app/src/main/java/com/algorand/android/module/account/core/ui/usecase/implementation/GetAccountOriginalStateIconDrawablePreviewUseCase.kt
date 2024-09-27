@@ -1,12 +1,13 @@
 package com.algorand.android.module.account.core.ui.usecase.implementation
 
-import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
-import com.algorand.android.module.account.core.ui.model.AccountIconResource.STANDARD
-import com.algorand.android.module.account.core.ui.usecase.GetAccountOriginalStateIconDrawablePreview
+import com.algorand.android.R
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.R
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconResource
+import com.algorand.android.module.account.core.ui.model.AccountIconResource.STANDARD
+import com.algorand.android.module.account.core.ui.usecase.GetAccountOriginalStateIconDrawablePreview
 import javax.inject.Inject
 
 internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constructor(
@@ -26,8 +27,8 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
 
     private fun getAccountIconBackgroundColorResId(accountDetail: AccountDetail?): Int {
         return when (accountDetail?.accountType) {
-            AccountType.LedgerBle -> com.algorand.android.module.account.core.ui.model.AccountIconResource.LEDGER.backgroundColorResId
-            AccountType.NoAuth -> com.algorand.android.module.account.core.ui.model.AccountIconResource.WATCH.backgroundColorResId
+            AccountType.LedgerBle -> AccountIconResource.LEDGER.backgroundColorResId
+            AccountType.NoAuth -> AccountIconResource.WATCH.backgroundColorResId
             AccountType.Algo25 -> STANDARD.backgroundColorResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountDetail?.canSignTransaction() == true) {
@@ -41,8 +42,8 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
 
     private fun getAccountIconTintResId(accountDetail: AccountDetail?): Int {
         return when (accountDetail?.accountType) {
-            AccountType.LedgerBle -> com.algorand.android.module.account.core.ui.model.AccountIconResource.LEDGER.iconTintResId
-            AccountType.NoAuth -> com.algorand.android.module.account.core.ui.model.AccountIconResource.WATCH.iconTintResId
+            AccountType.LedgerBle -> AccountIconResource.LEDGER.iconTintResId
+            AccountType.NoAuth -> AccountIconResource.WATCH.iconTintResId
             AccountType.Algo25 -> STANDARD.iconTintResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountDetail?.canSignTransaction() == true) STANDARD.iconTintResId else R.color.text_gray_lighter
@@ -52,8 +53,8 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
 
     private fun getAccountIconResId(accountDetail: AccountDetail?): Int {
         return when (accountDetail?.accountType) {
-            AccountType.LedgerBle -> com.algorand.android.module.account.core.ui.model.AccountIconResource.LEDGER.iconResId
-            AccountType.NoAuth -> com.algorand.android.module.account.core.ui.model.AccountIconResource.WATCH.iconResId
+            AccountType.LedgerBle -> AccountIconResource.LEDGER.iconResId
+            AccountType.NoAuth -> AccountIconResource.WATCH.iconResId
             AccountType.Algo25 -> STANDARD.iconResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountDetail?.canSignTransaction() == true) STANDARD.iconResId else R.drawable.ic_question

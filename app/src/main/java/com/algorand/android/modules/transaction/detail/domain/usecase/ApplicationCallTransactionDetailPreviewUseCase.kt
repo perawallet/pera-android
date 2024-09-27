@@ -14,6 +14,7 @@ package com.algorand.android.modules.transaction.detail.domain.usecase
 
 import com.algorand.android.R
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
+import com.algorand.android.module.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.modules.transaction.common.domain.model.OnCompletionDTO
 import com.algorand.android.modules.transaction.common.domain.model.OnCompletionDTO.CLEAR_STATE
 import com.algorand.android.modules.transaction.common.domain.model.OnCompletionDTO.CLOSE_OUT
@@ -28,7 +29,6 @@ import com.algorand.android.modules.transaction.detail.ui.mapper.ApplicationCall
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailPreviewMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
-import com.algorand.android.module.node.domain.usecase.GetActiveNodeNetworkSlug
 import com.algorand.android.tooltip.domain.usecase.TransactionDetailTooltipDisplayPreferenceUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.toShortenedAddress

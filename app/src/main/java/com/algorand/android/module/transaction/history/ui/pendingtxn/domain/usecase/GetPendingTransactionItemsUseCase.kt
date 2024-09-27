@@ -14,10 +14,10 @@
 package com.algorand.android.module.transaction.history.ui.pendingtxn.domain.usecase
 
 import com.algorand.android.module.foundation.PeraResult
+import com.algorand.android.module.transaction.component.pendingtxn.domain.usecase.GetPendingTransactions
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem.TransactionItem
 import com.algorand.android.module.transaction.history.ui.pendingtxn.domain.mapper.PendingTransactionItemMapper
-import com.algorand.android.module.transaction.component.pendingtxn.domain.usecase.GetPendingTransactions
 import javax.inject.Inject
 
 internal class GetPendingTransactionItemsUseCase @Inject constructor(

@@ -14,10 +14,10 @@
 package com.algorand.android.models.builder
 
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
 import com.algorand.android.models.BaseAssetConfigurationTransaction
 import com.algorand.android.models.WalletConnectTransactionAmount
 import com.algorand.android.models.WalletConnectTransactionShortDetail
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
 import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 

@@ -1,3 +1,4 @@
+@file:Suppress("LongParameterList")
 package com.algorand.android.module.asset.detail.component.asset.data.repository
 
 import com.algorand.android.module.asset.detail.component.asset.data.mapper.entity.AssetDetailEntityMapper

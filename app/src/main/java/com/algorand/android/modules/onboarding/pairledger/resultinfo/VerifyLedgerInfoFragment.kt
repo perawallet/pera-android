@@ -45,6 +45,7 @@ class VerifyLedgerInfoFragment : BaseInfoFragment() {
     override fun setDescriptionText(textView: TextView) {
         textView.setText(verifyLedgerInfoViewModel.getPreviewDescription())
     }
+
     override fun setFirstButton(materialButton: MaterialButton) {
         with(materialButton) {
             setText(verifyLedgerInfoViewModel.getPreviewFirstButtonText())

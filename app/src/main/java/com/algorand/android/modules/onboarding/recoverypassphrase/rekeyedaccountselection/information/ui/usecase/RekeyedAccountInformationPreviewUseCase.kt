@@ -13,6 +13,9 @@
 package com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.usecase
 
 import com.algorand.android.R
+import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.module.account.core.component.caching.domain.usecase.FetchAccountInformationAndCacheAssets
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.module.account.core.ui.asset.assetdrawable.GetAssetDrawableProvider
 import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
@@ -21,16 +24,13 @@ import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.module.account.core.component.caching.domain.usecase.FetchAccountInformationAndCacheAssets
-import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
-import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
+import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
 import com.algorand.android.modules.basefoundaccount.information.ui.mapoer.BaseFoundAccountInformationItemMapper
 import com.algorand.android.modules.basefoundaccount.information.ui.model.BaseFoundAccountInformationItem
 import com.algorand.android.modules.basefoundaccount.information.ui.usecase.BaseFoundAccountInformationItemUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.mapper.RekeyedAccountInformationPreviewMapper
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.model.RekeyedAccountInformationPreview
-import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
-import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol
 import com.algorand.android.utils.extensions.mapNotBlank
 import com.algorand.android.utils.formatAsCurrency
 import java.math.BigDecimal

@@ -16,15 +16,17 @@ package com.algorand.android.module.deeplink.factory
 import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.module.asset.utils.getSafeAssetIdForResponse
+import com.algorand.android.module.deeplink.model.BaseDeepLink
 import com.algorand.android.module.deeplink.model.NotificationGroupType
+import com.algorand.android.module.deeplink.model.RawDeepLink
 import javax.inject.Inject
 
 internal class NotificationDeepLinkCreator @Inject constructor(
     private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress
 ) : DeepLinkCreator {
 
-    override suspend fun createDeepLink(rawDeeplink: com.algorand.android.module.deeplink.model.RawDeepLink): com.algorand.android.module.deeplink.model.BaseDeepLink {
-        return com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink(
+    override suspend fun createDeepLink(rawDeeplink: RawDeepLink): BaseDeepLink {
+        return BaseDeepLink.NotificationDeepLink(
             address = rawDeeplink.accountAddress.orEmpty(),
             assetId = getSafeAssetIdForResponse(rawDeeplink.assetId) ?: ALGO_ASSET_ID,
             notificationGroupType = rawDeeplink.notificationGroupType ?: NotificationGroupType.TRANSACTIONS,
@@ -32,7 +34,7 @@ internal class NotificationDeepLinkCreator @Inject constructor(
         )
     }
 
-    override fun doesDeeplinkMeetTheRequirements(rawDeepLink: com.algorand.android.module.deeplink.model.RawDeepLink): Boolean {
+    override fun doesDeeplinkMeetTheRequirements(rawDeepLink: RawDeepLink): Boolean {
         return with(rawDeepLink) {
             accountAddress != null &&
                 assetId != null &&

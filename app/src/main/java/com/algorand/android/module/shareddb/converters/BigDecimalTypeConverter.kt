@@ -1,6 +1,7 @@
 package com.algorand.android.module.shareddb.converters
 
-import androidx.room.*
+import androidx.room.ProvidedTypeConverter
+import androidx.room.TypeConverter
 import java.math.BigDecimal
 
 @ProvidedTypeConverter

@@ -12,11 +12,11 @@
 
 package com.algorand.android.modules.onboarding.recoverypassphrase.result.ui
 
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import com.algorand.android.usecase.LockPreferencesUseCase
 import com.algorand.android.usecase.RecoverAccountResultInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class RecoverAccountResultInfoViewModel @Inject constructor(

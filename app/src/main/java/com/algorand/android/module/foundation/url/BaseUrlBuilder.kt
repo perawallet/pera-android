@@ -15,6 +15,7 @@ package com.algorand.android.module.foundation.url
 
 import android.net.Uri
 
+@SuppressWarnings("UnnecessaryAbstractClass")
 abstract class BaseUrlBuilder(baseUrl: String) {
 
     private val builder: Uri.Builder = Uri.parse(baseUrl).buildUpon()

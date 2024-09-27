@@ -1,13 +1,13 @@
 package com.algorand.android.module.custominfo.data.di
 
-import com.algorand.android.module.encryption.EncryptionManager
-import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
 import com.algorand.android.module.custominfo.data.mapper.entity.CustomInfoEntityMapper
 import com.algorand.android.module.custominfo.data.mapper.entity.CustomInfoEntityMapperImpl
 import com.algorand.android.module.custominfo.data.mapper.model.CustomInfoMapper
 import com.algorand.android.module.custominfo.data.mapper.model.CustomInfoMapperImpl
 import com.algorand.android.module.custominfo.data.repository.CustomInfoRepositoryImpl
 import com.algorand.android.module.custominfo.domain.repository.CustomInfoRepository
+import com.algorand.android.module.encryption.EncryptionManager
+import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
 import com.algorand.android.module.shareddb.custominfo.dao.CustomInfoDao
 import dagger.Module
 import dagger.Provides

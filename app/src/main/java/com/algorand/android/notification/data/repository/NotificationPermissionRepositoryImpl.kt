@@ -18,7 +18,7 @@ import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.Event
 import kotlinx.coroutines.flow.StateFlow
 
-class NotificationPermissionRepositoryImpl constructor(
+class NotificationPermissionRepositoryImpl(
     private val askNotificationPermissionEventSingleLocalCache: AskNotificationPermissionEventSingleLocalCache
 ) : NotificationPermissionRepository {
 

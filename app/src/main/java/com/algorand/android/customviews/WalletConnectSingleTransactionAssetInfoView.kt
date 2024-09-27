@@ -21,11 +21,11 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.setPadding
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.databinding.CustomWalletConnectTransactionShortAmountViewBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.BaseAppCallTransaction
 import com.algorand.android.models.WalletConnectTransactionAmount
+import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.addUnnamedAssetName
 import com.algorand.android.utils.extensions.setTextAndVisibility

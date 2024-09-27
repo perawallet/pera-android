@@ -19,11 +19,10 @@ import com.algorand.android.module.deeplink.model.RawDeepLink
 import java.math.BigInteger
 import javax.inject.Inject
 
-internal class AssetTransferDeepLinkCreator @Inject constructor() :
-    com.algorand.android.module.deeplink.factory.DeepLinkCreator {
+internal class AssetTransferDeepLinkCreator @Inject constructor() : DeepLinkCreator {
 
-    override suspend fun createDeepLink(rawDeeplink: com.algorand.android.module.deeplink.model.RawDeepLink): com.algorand.android.module.deeplink.model.BaseDeepLink {
-        return com.algorand.android.module.deeplink.model.BaseDeepLink.AssetTransferDeepLink(
+    override suspend fun createDeepLink(rawDeeplink: RawDeepLink): BaseDeepLink {
+        return BaseDeepLink.AssetTransferDeepLink(
             receiverAccountAddress = rawDeeplink.accountAddress.orEmpty(),
             amount = rawDeeplink.amount ?: BigInteger.valueOf(0L),
             note = rawDeeplink.note,
@@ -33,7 +32,7 @@ internal class AssetTransferDeepLinkCreator @Inject constructor() :
         )
     }
 
-    override fun doesDeeplinkMeetTheRequirements(rawDeepLink: com.algorand.android.module.deeplink.model.RawDeepLink): Boolean {
+    override fun doesDeeplinkMeetTheRequirements(rawDeepLink: RawDeepLink): Boolean {
         return with(rawDeepLink) {
             val doesDeeplinkHaveAssetTransferQueries = accountAddress != null && amount != null
             doesDeeplinkHaveAssetTransferQueries && walletConnectUrl == null &&

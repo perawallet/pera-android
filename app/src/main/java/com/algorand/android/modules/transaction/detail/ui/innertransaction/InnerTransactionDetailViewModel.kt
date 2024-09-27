@@ -12,13 +12,13 @@
 
 package com.algorand.android.modules.transaction.detail.ui.innertransaction
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.transaction.detail.domain.usecase.InnerTransactionDetailPreviewUseCase
 import com.algorand.android.modules.transaction.detail.ui.BaseTransactionDetailViewModel
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel

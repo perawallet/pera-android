@@ -1,9 +1,14 @@
 package com.algorand.android.module.transaction.history.component.domain.mapper
 
 import com.algorand.android.module.date.timeStampToZonedDateTime
-import com.algorand.android.module.transaction.history.component.domain.model.*
+import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory
-import com.algorand.android.module.transaction.history.component.domain.model.TransactionType.*
+import com.algorand.android.module.transaction.history.component.domain.model.TransactionHistory
+import com.algorand.android.module.transaction.history.component.domain.model.TransactionType.APP_TRANSACTION
+import com.algorand.android.module.transaction.history.component.domain.model.TransactionType.ASSET_CONFIGURATION
+import com.algorand.android.module.transaction.history.component.domain.model.TransactionType.ASSET_TRANSACTION
+import com.algorand.android.module.transaction.history.component.domain.model.TransactionType.KEYREG_TRANSACTION
+import com.algorand.android.module.transaction.history.component.domain.model.TransactionType.PAY_TRANSACTION
 import com.algorand.android.module.transaction.history.component.domain.utils.TransactionUtils.getAllNestedTransactions
 import javax.inject.Inject
 

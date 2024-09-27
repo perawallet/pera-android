@@ -15,6 +15,7 @@ package com.algorand.android.ui.send.assetselection.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.ItemType.SELECT_ASSET_TEM
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_AUDIO_ITEM
@@ -23,7 +24,6 @@ import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetI
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_NOT_SUPPORTED_ITEM
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_VIDEO_ITEM
 import com.algorand.android.module.drawable.BaseDiffUtil
-import com.algorand.android.models.BaseViewHolder
 
 class SelectSendingAssetAdapter(onAssetClick: (Long) -> Unit) :
     ListAdapter<BaseSelectAssetItem, BaseViewHolder<BaseSelectAssetItem>>(BaseDiffUtil()) {

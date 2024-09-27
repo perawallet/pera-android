@@ -14,12 +14,12 @@ package com.algorand.android.modules.swap.assetswap.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.core.BaseViewModel
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.tracking.swap.assetswap.AssetSwapSwapButtonClickEventTracker
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview
 import com.algorand.android.module.swap.ui.assetswap.usecase.main.AssetSwapPreviewProcessor
+import com.algorand.android.modules.tracking.swap.assetswap.AssetSwapSwapButtonClickEventTracker
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow

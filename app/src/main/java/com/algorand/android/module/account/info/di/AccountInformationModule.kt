@@ -1,3 +1,4 @@
+@file:Suppress("TooManyFunctions")
 package com.algorand.android.module.account.info.di
 
 import com.algorand.android.module.account.info.data.helper.fetch.AccountAssetHoldingsFetchHelper

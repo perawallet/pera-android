@@ -13,10 +13,10 @@
 package com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.selection.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
-import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.models.CreateAccount
 import com.algorand.android.models.PluralAnnotatedString
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.basefoundaccount.selection.ui.mapper.BaseFoundAccountSelectionItemMapper
 import com.algorand.android.modules.basefoundaccount.selection.ui.model.BaseFoundAccountSelectionItem
 import com.algorand.android.modules.basefoundaccount.selection.ui.usecase.BaseFoundAccountSelectionItemUseCase

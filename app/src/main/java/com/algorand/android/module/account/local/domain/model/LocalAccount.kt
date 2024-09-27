@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.algorand.android.module.account.local.domain.model
 
 sealed interface LocalAccount {

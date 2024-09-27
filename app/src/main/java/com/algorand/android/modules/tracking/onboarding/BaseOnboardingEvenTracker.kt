@@ -16,7 +16,7 @@ import com.algorand.android.modules.tracking.core.BaseEventTracker
 import com.algorand.android.modules.tracking.core.PeraEventTracker
 import com.algorand.android.usecase.RegistrationUseCase
 
-abstract class BaseOnboardingEvenTracker constructor(
+abstract class BaseOnboardingEvenTracker(
     peraEventTracker: PeraEventTracker,
     private val registrationUseCase: RegistrationUseCase
 ) : BaseEventTracker(peraEventTracker) {

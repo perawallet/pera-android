@@ -1,3 +1,4 @@
+@file:Suppress("TooManyFunctions")
 package com.algorand.android.module.account.core.component.di
 
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountsDetailFlow

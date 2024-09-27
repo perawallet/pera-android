@@ -1,11 +1,11 @@
 package com.algorand.android.module.asb.restorebackup.domain.usecase.implementation
 
 import android.util.Base64
-import com.algorand.android.module.foundation.json.JsonSerializer
 import com.algorand.android.module.asb.backupprotocol.model.BackupProtocolContent
 import com.algorand.android.module.asb.restorebackup.domain.model.RestoreCipherTextResult
 import com.algorand.android.module.asb.restorebackup.domain.usecase.RestoreAsbCipherText
 import com.algorand.android.module.asb.restorebackup.validation.AsbBackUpProtocolContentValidator
+import com.algorand.android.module.foundation.json.JsonSerializer
 import javax.inject.Inject
 
 internal class RestoreAsbCipherTextUseCase @Inject constructor(

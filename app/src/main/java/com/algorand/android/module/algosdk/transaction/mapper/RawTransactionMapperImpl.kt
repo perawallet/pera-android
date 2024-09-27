@@ -43,7 +43,9 @@ internal class RawTransactionMapperImpl @Inject constructor(
             closeToAddress = payload.closeToAddress?.let { algoSdkAddress.generateAddressFromPublicKey(it) },
             rekeyAddress = payload.rekeyAddress?.let { algoSdkAddress.generateAddressFromPublicKey(it) },
             assetCloseToAddress = payload.assetCloseToAddress?.let { algoSdkAddress.generateAddressFromPublicKey(it) },
-            assetReceiverAddress = payload.assetReceiverAddress?.let { algoSdkAddress.generateAddressFromPublicKey(it) },
+            assetReceiverAddress = payload.assetReceiverAddress?.let {
+                algoSdkAddress.generateAddressFromPublicKey(it)
+                                                                     },
             assetAmount = payload.assetAmount,
             assetId = payload.assetId,
             appArgs = payload.appArgs,

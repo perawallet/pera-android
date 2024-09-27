@@ -18,10 +18,10 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
 import com.algorand.android.customviews.ScreenStateView
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentAddAssetBinding
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetFragment
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel

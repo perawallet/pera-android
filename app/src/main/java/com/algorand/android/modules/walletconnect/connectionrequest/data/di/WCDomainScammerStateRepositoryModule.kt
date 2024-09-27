@@ -12,10 +12,10 @@
 
 package com.algorand.android.modules.swap.assetswap.data.di
 
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import com.algorand.android.modules.walletconnect.connectionrequest.data.repository.WCDomainDomainScammerStateRepositoryImpl
 import com.algorand.android.modules.walletconnect.connectionrequest.domain.repository.WCDomainScammerStateRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

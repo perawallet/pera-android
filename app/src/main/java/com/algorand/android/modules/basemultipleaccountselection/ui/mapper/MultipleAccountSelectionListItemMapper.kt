@@ -14,11 +14,11 @@ package com.algorand.android.modules.basemultipleaccountselection.ui.mapper
 
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
-import com.algorand.android.module.account.core.ui.model.AccountDisplayName
-import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.customviews.TriStatesCheckBox
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.basemultipleaccountselection.ui.model.MultipleAccountSelectionListItem
 import javax.inject.Inject
 

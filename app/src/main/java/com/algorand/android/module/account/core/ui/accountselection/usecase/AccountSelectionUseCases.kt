@@ -13,10 +13,10 @@
 
 package com.algorand.android.module.account.core.ui.accountselection.usecase
 
-import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
-import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
+import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
 
 interface CreateLoadedAccountConfiguration {
     suspend operator fun invoke(

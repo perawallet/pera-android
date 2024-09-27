@@ -13,18 +13,18 @@
 package com.algorand.android.modules.walletconnect.connectionrequest.ui.usecase
 
 import com.algorand.android.R
+import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
+import com.algorand.android.models.ui.AccountAssetItemButtonState.UNCHECKED
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
 import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
-import com.algorand.android.models.ui.AccountAssetItemButtonState.UNCHECKED
+import com.algorand.android.modules.walletconnect.connectionrequest.domain.usecase.WCDomainScammerStateUseCase
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper.BaseWalletConnectConnectionItemMapper
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper.WCSessionRequestResultMapper
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper.WalletConnectConnectionPreviewMapper
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper.WalletConnectNetworkItemMapper
-import com.algorand.android.modules.walletconnect.connectionrequest.domain.usecase.WCDomainScammerStateUseCase
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WCSessionRequestResult
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WalletConnectConnectionPreview

@@ -1,6 +1,8 @@
 package com.algorand.android.module.shareddb.contact.model
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.algorand.android.module.shareddb.contact.model.ContactEntity.Companion.CONTACT_TABLE_NAME
 
 @Entity(tableName = CONTACT_TABLE_NAME)

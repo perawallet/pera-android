@@ -1,6 +1,8 @@
 package com.algorand.android.module.shareddb.assetdetail.model
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaEntity.Companion.COLLECTIBLE_MEDIA_TABLE_NAME
 
 @Entity(tableName = COLLECTIBLE_MEDIA_TABLE_NAME)

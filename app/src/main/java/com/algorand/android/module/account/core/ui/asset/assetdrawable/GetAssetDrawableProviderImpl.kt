@@ -84,34 +84,3 @@ internal class GetAssetDrawableProviderImpl @Inject constructor(
         )
     }
 }
-
-/*
-    /**
-     * Since the all assets are not cached in local, we should check by domain model if it's ASA or NFT in listed ASAs
-     * and NFTs in searching screens
-     */
-    fun getAssetDrawableProvider(searchedAsset: BaseSearchedAsset): BaseAssetDrawableProvider {
-        return when {
-            searchedAsset.assetId == com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID -> {
-                // This is unnecessary check but to keep consistency, I added this check, too
-                AlgoDrawableProvider()
-            }
-            searchedAsset is BaseSearchedAsset.SearchedAsset -> {
-                AssetDrawableProvider(
-                    assetName = AssetName.create(searchedAsset.fullName),
-                    logoUri = searchedAsset.logo
-                )
-            }
-            searchedAsset is BaseSearchedAsset.SearchedCollectible -> {
-                CollectibleDrawableProvider(
-                    assetName = AssetName.create(searchedAsset.fullName),
-                    logoUri = searchedAsset.collectible?.primaryImageUrl
-                )
-            }
-            else -> AssetDrawableProvider(
-                assetName = AssetName.create(searchedAsset.fullName),
-                logoUri = searchedAsset.logo
-            )
-        }
-    }
- */

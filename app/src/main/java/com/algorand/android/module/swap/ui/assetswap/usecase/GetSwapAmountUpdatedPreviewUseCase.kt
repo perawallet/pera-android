@@ -13,7 +13,6 @@
 
 package com.algorand.android.module.swap.ui.assetswap.usecase
 
-import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.module.foundation.common.isEqualTo
 import com.algorand.android.module.foundation.common.toBigDecimalOrZero
 import com.algorand.android.module.parity.domain.usecase.GetDisplayedCurrencySymbol
@@ -22,6 +21,7 @@ import com.algorand.android.module.swap.ui.assetswap.mapper.GetSwapQuoteUpdatedP
 import com.algorand.android.module.swap.ui.assetswap.model.AssetSwapPreview
 import com.algorand.android.module.swap.ui.assetswap.usecase.main.GetSwapAmountUpdatedPreview
 import com.algorand.android.module.swap.ui.assetswap.usecase.main.model.SwapAmountUpdatedPreviewPayload
+import com.algorand.android.utils.formatAsCurrency
 import java.math.BigDecimal.ZERO
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

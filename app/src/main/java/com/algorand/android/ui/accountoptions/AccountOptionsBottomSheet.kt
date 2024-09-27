@@ -18,9 +18,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.core.DaggerBaseBottomSheet
 import com.algorand.android.databinding.BottomSheetAccountDetailAccountsOptionsBinding
+import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.collectOnLifecycle

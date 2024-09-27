@@ -14,13 +14,13 @@ package com.algorand.android.ui.notificationfilter
 
 import android.content.SharedPreferences
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.core.BaseViewModel
+import com.algorand.android.database.NotificationFilterDao
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
 import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.core.BaseViewModel
-import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
-import com.algorand.android.database.NotificationFilterDao
 import com.algorand.android.module.notification.domain.usecase.SetNotificationFilter
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.preference.isNotificationActivated

@@ -1,8 +1,13 @@
 package com.algorand.android.module.nameservice.data.service
 
-import com.algorand.android.module.nameservice.data.model.*
+import com.algorand.android.module.nameservice.data.model.NameServiceSearchResponse
+import com.algorand.android.module.nameservice.data.model.SearchNameServiceRequestBody
+import com.algorand.android.module.nameservice.data.model.SearchNameServiceResponse
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Query
 
 internal interface NameServiceApiService {
 

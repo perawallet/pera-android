@@ -17,7 +17,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.core.widget.NestedScrollView
 
-class NonScrollableNestedScrollView constructor(
+class NonScrollableNestedScrollView(
     context: Context,
     attributeSet: AttributeSet?
 ) : NestedScrollView(context, attributeSet) {

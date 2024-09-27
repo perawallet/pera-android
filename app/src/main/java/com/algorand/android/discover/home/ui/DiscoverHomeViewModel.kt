@@ -24,6 +24,7 @@ import com.algorand.android.discover.home.ui.usecase.DiscoverHomeUseCase
 import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
 import com.algorand.android.utils.preference.ThemePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +33,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverHomeViewModel @Inject constructor(
@@ -192,7 +192,7 @@ class DiscoverHomeViewModel @Inject constructor(
             _discoverHomePreviewFlow
                 .emit(
                     discoverHomePreviewUseCase
-                    .onPageRequestedShouldOverrideUrlLoading(_discoverHomePreviewFlow.value),
+                        .onPageRequestedShouldOverrideUrlLoading(_discoverHomePreviewFlow.value),
                 )
         }
         return false

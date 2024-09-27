@@ -1,6 +1,7 @@
 package com.algorand.android.module.account.local.domain.usecase.implementation
 
-import com.algorand.android.module.account.local.domain.usecase.*
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import javax.inject.Inject
 
 internal class IsThereAnyAccountWithAddressUseCase @Inject constructor(

@@ -12,10 +12,10 @@
 
 package com.algorand.android.ui.lockpreference
 
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import com.algorand.android.usecase.BiometricRegistrationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class BiometricRegistrationViewModel @Inject constructor(

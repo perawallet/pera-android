@@ -3,13 +3,13 @@ package com.algorand.android.module.parity.data.repository
 import com.algorand.android.module.caching.CacheResult
 import com.algorand.android.module.caching.SingleInMemoryLocalCache
 import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.network.requestWithHipoErrorHandler
 import com.algorand.android.module.parity.data.mapper.SelectedCurrencyDetailMapper
 import com.algorand.android.module.parity.data.model.CurrencyDetailResponse
 import com.algorand.android.module.parity.data.service.ParityApiService
 import com.algorand.android.module.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.module.parity.domain.repository.ParityRepository
-import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
-import com.algorand.android.module.network.requestWithHipoErrorHandler
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 

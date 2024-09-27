@@ -14,12 +14,12 @@ package com.algorand.android.modules.assets.remove.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.databinding.ItemRemoveAssetBinding
 import com.algorand.android.models.BaseRemoveAssetItem
 import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem.RemoveAssetItem
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 
 class RemoveAssetItemViewHolder(

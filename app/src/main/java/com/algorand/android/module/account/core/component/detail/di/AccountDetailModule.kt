@@ -1,8 +1,17 @@
 package com.algorand.android.module.account.core.component.detail.di
 
-import com.algorand.android.module.account.core.component.detail.domain.usecase.*
-import com.algorand.android.module.account.core.component.detail.domain.usecase.implementation.*
-import dagger.*
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetailFlow
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountRegistrationType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountsDetail
+import com.algorand.android.module.account.core.component.detail.domain.usecase.implementation.GetAccountDetailFlowUseCase
+import com.algorand.android.module.account.core.component.detail.domain.usecase.implementation.GetAccountDetailUseCase
+import com.algorand.android.module.account.core.component.detail.domain.usecase.implementation.GetAccountRegistrationTypeUseCase
+import com.algorand.android.module.account.core.component.detail.domain.usecase.implementation.GetAccountTypeUseCase
+import com.algorand.android.module.account.core.component.detail.domain.usecase.implementation.GetAccountsDetailUseCase
+import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton

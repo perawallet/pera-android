@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.notification.domain.repository
 
-import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.models.Pagination
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.notification.domain.model.NotificationHistory
 
 internal interface NotificationRepository {

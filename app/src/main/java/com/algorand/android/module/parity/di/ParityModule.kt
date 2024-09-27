@@ -1,7 +1,9 @@
+@file:Suppress("TooManyFunctions")
 package com.algorand.android.module.parity.di
 
 import com.algorand.android.module.caching.SingleInMemoryLocalCache
 import com.algorand.android.module.currency.domain.usecase.IsPrimaryCurrencyAlgo
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import com.algorand.android.module.parity.data.mapper.SelectedCurrencyDetailMapper
 import com.algorand.android.module.parity.data.mapper.SelectedCurrencyDetailMapperImpl
 import com.algorand.android.module.parity.data.repository.ParityRepositoryImpl
@@ -49,7 +51,6 @@ import com.algorand.android.module.parity.domain.usecase.secondary.implementatio
 import com.algorand.android.module.parity.domain.usecase.secondary.implementation.GetSecondaryCurrencyAssetParityValueUseCase
 import com.algorand.android.module.parity.domain.usecase.secondary.implementation.GetSecondaryCurrencySymbolUseCase
 import com.algorand.android.module.parity.domain.usecase.secondary.implementation.GetUsdToSecondaryCurrencyConversionRateUseCase
-import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

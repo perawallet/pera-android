@@ -13,7 +13,6 @@
 package com.algorand.android.ui.register.watch
 
 import com.algorand.android.R
-import com.algorand.android.module.deeplink.model.BaseDeepLink
 import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
 import com.algorand.android.utils.setNavigationResult
 

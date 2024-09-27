@@ -14,11 +14,11 @@ package com.algorand.android.ui.accounts
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.decider.TransactionUserUseCase
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.TransactionTargetUser
+import com.algorand.android.module.contacts.domain.model.Contact
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow

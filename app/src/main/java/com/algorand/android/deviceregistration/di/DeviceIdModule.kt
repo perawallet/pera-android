@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package com.algorand.android.deviceregistration.di
 
 import com.algorand.android.deviceregistration.domain.usecase.MigrateDeviceIdIfNeed

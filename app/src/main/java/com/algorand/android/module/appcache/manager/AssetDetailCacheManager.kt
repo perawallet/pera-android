@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.appcache.manager
 
+import com.algorand.android.module.account.info.domain.usecase.GetAllAssetHoldingIds
 import com.algorand.android.module.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
-import com.algorand.android.module.account.info.domain.usecase.GetAllAssetHoldingIds
 import com.algorand.android.module.appcache.model.AccountCacheStatus.INITIALIZED
 import com.algorand.android.module.appcache.model.AssetCacheStatus
 import com.algorand.android.module.appcache.model.AssetCacheStatus.EMPTY

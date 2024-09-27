@@ -20,7 +20,6 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.module.asb.utils.AsbBackUpConstants
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.perafileuploadview.PeraFileUploadView
 import com.algorand.android.customviews.perafileuploadview.model.FileUploadState
@@ -28,6 +27,7 @@ import com.algorand.android.databinding.FragmentAsbFileSelectionBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.module.asb.utils.AsbBackUpConstants
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle

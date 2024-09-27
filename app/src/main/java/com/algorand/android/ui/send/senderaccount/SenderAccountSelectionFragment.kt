@@ -19,12 +19,12 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.accountselection.model.SenderAccountSelectionPreview
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentSenderAccountSelectionBinding
-import com.algorand.android.module.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.module.account.core.ui.accountselection.model.SenderAccountSelectionPreview
+import com.algorand.android.module.foundation.Event
 import com.algorand.android.ui.accountselection.AccountSelectionAdapter
 import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.AssetSelectionFragment
 import com.algorand.android.ui.send.senderaccount.SenderAccountSelectionNavigationDirections.AssetTransferAmountFragment

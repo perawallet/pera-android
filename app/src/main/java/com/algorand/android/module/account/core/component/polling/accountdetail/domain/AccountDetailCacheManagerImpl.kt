@@ -1,12 +1,18 @@
 package com.algorand.android.module.account.core.component.polling.accountdetail.domain
 
 import androidx.lifecycle.LifecycleOwner
-import com.algorand.android.module.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.android.module.account.core.component.polling.accountdetail.domain.usecase.IsAccountCacheUpdateRequired
 import com.algorand.android.module.account.core.component.polling.accountdetail.domain.usecase.UpdateAccountCache
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
+import com.algorand.android.module.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 internal class AccountDetailCacheManagerImpl @Inject constructor(
     private val getAllLocalAccountAddressesAsFlow: GetAllLocalAccountAddressesAsFlow,
@@ -74,4 +80,3 @@ internal class AccountDetailCacheManagerImpl @Inject constructor(
         private const val NEXT_BLOCK_DELAY_AFTER = 3500L
     }
 }
-

@@ -1,12 +1,12 @@
 package com.algorand.android.module.asb.backupprotocol.usecase.implementation
 
 import android.util.Base64
-import com.algorand.android.module.foundation.json.JsonSerializer
 import com.algorand.android.module.asb.backupprotocol.mapper.BackUpProtocolContentMapper
 import com.algorand.android.module.asb.backupprotocol.model.BackUpPayload
 import com.algorand.android.module.asb.backupprotocol.usecase.CreateAsbBackUpFilePayload
 import com.algorand.android.module.asb.backupprotocol.usecase.CreateBackUpProtocolPayload
 import com.algorand.android.module.asb.domain.usecase.CreateAsbCipherText
+import com.algorand.android.module.foundation.json.JsonSerializer
 import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 

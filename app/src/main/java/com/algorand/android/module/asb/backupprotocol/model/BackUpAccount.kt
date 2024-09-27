@@ -1,3 +1,4 @@
+@file:Suppress("MagicNumber")
 package com.algorand.android.module.asb.backupprotocol.model
 
 data class BackUpAccount(

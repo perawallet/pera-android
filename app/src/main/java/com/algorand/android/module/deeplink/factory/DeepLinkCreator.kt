@@ -17,6 +17,6 @@ import com.algorand.android.module.deeplink.model.BaseDeepLink
 import com.algorand.android.module.deeplink.model.RawDeepLink
 
 internal interface DeepLinkCreator {
-    suspend fun createDeepLink(rawDeeplink: com.algorand.android.module.deeplink.model.RawDeepLink): com.algorand.android.module.deeplink.model.BaseDeepLink
-    fun doesDeeplinkMeetTheRequirements(rawDeepLink: com.algorand.android.module.deeplink.model.RawDeepLink): Boolean
+    suspend fun createDeepLink(rawDeeplink: RawDeepLink): BaseDeepLink
+    fun doesDeeplinkMeetTheRequirements(rawDeepLink: RawDeepLink): Boolean
 }

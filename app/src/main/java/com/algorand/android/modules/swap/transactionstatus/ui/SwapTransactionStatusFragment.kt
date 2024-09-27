@@ -24,8 +24,8 @@ import androidx.navigation.fragment.findNavController
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentSwapTransactionStatusBinding
-import com.algorand.android.module.drawable.getXmlStyledString
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.module.drawable.getXmlStyledString
 import com.algorand.android.module.swap.ui.txnstatus.model.SwapTransactionStatusPreview
 import com.algorand.android.utils.browser.openGroupTransactionInPeraExplorer
 import com.algorand.android.utils.viewbinding.viewBinding

@@ -5,10 +5,12 @@ import com.algorand.android.module.encryption.Base64ManagerImpl
 import com.algorand.android.module.encryption.DeterministicEncryptionManager
 import com.algorand.android.module.encryption.EncryptionManager
 import com.algorand.android.module.encryption.TinkEncryptionManager
-import dagger.*
+import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.*
+import javax.inject.Named
+import javax.inject.Singleton
 
 const val TINK_ENCRYPTION_MANAGER = "TINK_ENCRYPTION_MANAGER"
 const val DETERMINISTIC_ENCRYPTION_MANAGER = "DETERMINISTIC_ENCRYPTION_MANAGER"

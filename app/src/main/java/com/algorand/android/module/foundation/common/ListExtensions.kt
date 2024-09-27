@@ -29,4 +29,3 @@ fun <T, R> List<T?>.mapToNotNullableListOrNull(transform: (T?) -> R?): List<R>? 
     }
     return safeList
 }
-

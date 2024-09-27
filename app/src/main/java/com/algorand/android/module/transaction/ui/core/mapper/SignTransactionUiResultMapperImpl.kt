@@ -14,8 +14,8 @@
 package com.algorand.android.module.transaction.ui.core.mapper
 
 import android.bluetooth.BluetoothDevice
-import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.R
+import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult.Error.AuthAccountNotFound
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult.Error.BluetoothNotEnabled
@@ -37,13 +37,14 @@ import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiRe
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.Error.GlobalWarningError
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.Error.GlobalWarningError.Defined
 import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.Error.SnackbarError
+import com.algorand.android.module.transaction.ui.core.model.SignTransactionUiResult.TransactionSigned
 import javax.inject.Inject
 
 internal class SignTransactionUiResultMapperImpl @Inject constructor() : SignTransactionUiResultMapper {
 
     override fun invoke(result: SignTransactionResult): SignTransactionUiResult {
         return when (result) {
-            is SignTransactionResult.TransactionSigned -> SignTransactionUiResult.TransactionSigned(result.signedTransaction)
+            is SignTransactionResult.TransactionSigned -> TransactionSigned(result.signedTransaction)
             is SignTransactionResult.Error -> {
                 when (result) {
                     BluetoothPermissionsNotGranted -> SignTransactionUiResult.BluetoothPermissionsAreNotGranted

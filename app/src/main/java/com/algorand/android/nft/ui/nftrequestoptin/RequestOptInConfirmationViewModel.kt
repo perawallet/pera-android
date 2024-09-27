@@ -12,7 +12,6 @@
 
 package com.algorand.android.nft.ui.nftrequestoptin
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
@@ -21,6 +20,7 @@ import com.algorand.android.nft.ui.model.RequestOptInConfirmationArgs
 import com.algorand.android.nft.ui.model.RequestOptInConfirmationPreview
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

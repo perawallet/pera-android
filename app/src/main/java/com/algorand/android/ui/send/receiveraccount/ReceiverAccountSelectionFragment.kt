@@ -21,11 +21,11 @@ import android.view.ViewTreeObserver
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentReceiverAccountSelectionBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser
 import com.algorand.android.ui.accountselection.AccountSelectionAdapter
 import com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionQrScannerFragment.Companion.ACCOUNT_ADDRESS_SCAN_RESULT_KEY

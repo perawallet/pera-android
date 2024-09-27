@@ -12,7 +12,9 @@
 
 package com.algorand.android.module.account.local.data.database.model
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Entity(tableName = "ledger_ble")
 internal data class LedgerBleEntity(

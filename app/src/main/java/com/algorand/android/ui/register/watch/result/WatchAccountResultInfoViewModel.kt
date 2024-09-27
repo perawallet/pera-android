@@ -12,11 +12,11 @@
 
 package com.algorand.android.ui.register.watch.result
 
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import com.algorand.android.usecase.LockPreferencesUseCase
 import com.algorand.android.usecase.WatchAccountAdditionResultInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class WatchAccountResultInfoViewModel @Inject constructor(

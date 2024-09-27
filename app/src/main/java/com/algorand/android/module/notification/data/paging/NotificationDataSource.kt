@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.notification.data.paging
 
+import com.algorand.android.models.Pagination
 import com.algorand.android.module.deviceid.domain.usecase.GetSelectedNodeDeviceId
 import com.algorand.android.module.foundation.PeraResult
-import com.algorand.android.models.Pagination
 import com.algorand.android.module.notification.domain.exception.MissingNotificationUserIdException
 import com.algorand.android.module.notification.domain.model.NotificationHistory
 import com.algorand.android.module.notification.domain.repository.NotificationRepository
@@ -46,7 +46,9 @@ internal class NotificationDataSource(
         return parseResult(result)
     }
 
-    private fun parseResult(result: PeraResult<Pagination<NotificationHistory>>): LoadResult<String, NotificationHistory> {
+    private fun parseResult(
+        result: PeraResult<Pagination<NotificationHistory>>
+    ): LoadResult<String, NotificationHistory> {
         return when (result) {
             is PeraResult.Success -> {
                 val notificationHistory = result.data.results

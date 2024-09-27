@@ -15,9 +15,9 @@ package com.algorand.android.modules.dapp.bidali.ui.accountselection
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.modules.dapp.bidali.ui.accountselection.model.BidaliAccountSelectionPreview
 import com.algorand.android.ui.accountselection.BaseAccountSelectionFragment
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle

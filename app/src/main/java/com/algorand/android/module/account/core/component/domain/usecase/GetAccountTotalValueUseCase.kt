@@ -1,8 +1,8 @@
 package com.algorand.android.module.account.core.component.domain.usecase
 
+import com.algorand.android.module.account.core.component.domain.model.AccountTotalValue
 import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
-import com.algorand.android.module.account.core.component.domain.model.AccountTotalValue
 import com.algorand.android.module.parity.domain.model.ParityValue
 import com.algorand.android.module.parity.domain.usecase.GetAlgoAmountValue
 import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencyAssetParityValue

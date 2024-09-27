@@ -19,12 +19,12 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.algorand.android.R
-import com.algorand.android.module.appcache.model.AppCacheStatus
-import com.algorand.android.module.appcache.usecase.GetAppCacheStatusFlow
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
+import com.algorand.android.module.appcache.model.AppCacheStatus
+import com.algorand.android.module.appcache.usecase.GetAppCacheStatusFlow
 import com.algorand.android.modulenew.walletconnect.SignWalletConnectTransactionResult
 import com.algorand.android.modules.walletconnect.client.v1.session.WalletConnectSessionTimer
 import com.algorand.android.modules.walletconnect.domain.decider.WalletConnectMethodDecider

@@ -1,6 +1,6 @@
+@file:Suppress("LongParameterList")
 package com.algorand.android.module.asset.detail.component.asset.data.repository
 
-import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.module.asset.detail.component.asset.data.mapper.model.AlgoAssetDetailMapper
 import com.algorand.android.module.asset.detail.component.asset.data.mapper.model.AssetMapper
@@ -12,6 +12,7 @@ import com.algorand.android.module.asset.detail.component.asset.domain.model.det
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.CollectibleDetail
 import com.algorand.android.module.asset.detail.component.asset.domain.repository.AssetRepository
+import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.network.request
 import com.algorand.android.module.shareddb.assetdetail.dao.AssetDetailDao
 import com.algorand.android.module.shareddb.assetdetail.dao.CollectibleDao

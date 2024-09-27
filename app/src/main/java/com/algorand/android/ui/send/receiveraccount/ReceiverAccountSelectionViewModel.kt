@@ -16,8 +16,8 @@ package com.algorand.android.ui.send.receiveraccount
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.models.AssetTransaction
+import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.module.transaction.ui.sendasset.model.AssetTransferTargetUser
 import com.algorand.android.module.transaction.ui.sendasset.model.SendTransactionPayload
 import com.algorand.android.usecase.ReceiverAccountSelectionUseCase

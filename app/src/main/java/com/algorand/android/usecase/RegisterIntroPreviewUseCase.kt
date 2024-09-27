@@ -12,11 +12,11 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.module.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.android.mapper.RegisterIntroPreviewMapper
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.android.modules.tracking.onboarding.register.registerintro.RegisterIntroFragmentEventTracker
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 class RegisterIntroPreviewUseCase @Inject constructor(
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,

@@ -32,7 +32,7 @@ class ArbitraryDataDetailUiBuilder @Inject constructor() {
 
     fun buildArbitraryDataRequestInfo(
         arbitraryData: WalletConnectArbitraryData
-    ): ArbitraryDataRequestInfo? {
+    ): ArbitraryDataRequestInfo {
         with(arbitraryData) {
             return ArbitraryDataRequestInfo(
                 fromDisplayedAddress = BaseWalletConnectDisplayedAddress.ShortenedAddress(
@@ -57,7 +57,7 @@ class ArbitraryDataDetailUiBuilder @Inject constructor() {
 
     fun buildArbitraryDataRequestDataInfo(
         arbitraryData: WalletConnectArbitraryData
-    ): ArbitraryDataRequestDataInfo? {
+    ): ArbitraryDataRequestDataInfo {
         return ArbitraryDataRequestDataInfo(
             data = arbitraryData.message.orEmpty()
         )

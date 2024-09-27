@@ -13,13 +13,13 @@
 
 package com.algorand.android.ui.wctransactionrequest.singletransaction
 
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.WalletConnectTransactionAmount
 import com.algorand.android.models.WalletConnectTransactionShortDetail
 import com.algorand.android.models.decider.WalletConnectSingleTransactionUiDecider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class WalletConnectSingleTransactionViewModel @Inject constructor(

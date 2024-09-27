@@ -13,11 +13,11 @@
 package com.algorand.android.modules.webimport.result.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
-import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.customviews.accountasseticonnameitem.mapper.AccountAssetIconNameConfigurationMapper
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.customviews.accountasseticonnameitem.mapper.AccountAssetIconNameConfigurationMapper
+import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
+import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.webimport.result.ui.mapper.BaseImportResultListItemMapper
 import com.algorand.android.modules.webimport.result.ui.mapper.WebImportResultPreviewMapper
 import com.algorand.android.modules.webimport.result.ui.model.BaseAccountResultListItem

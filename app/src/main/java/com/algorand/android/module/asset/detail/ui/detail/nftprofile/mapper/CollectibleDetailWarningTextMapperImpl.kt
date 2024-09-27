@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.asset.detail.ui.detail.nftprofile.mapper
 
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.R
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import javax.inject.Inject
 
 internal class CollectibleDetailWarningTextMapperImpl @Inject constructor() : CollectibleDetailWarningTextMapper {

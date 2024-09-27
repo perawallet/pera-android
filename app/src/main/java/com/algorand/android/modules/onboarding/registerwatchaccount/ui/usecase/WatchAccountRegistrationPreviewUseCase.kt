@@ -13,8 +13,8 @@
 package com.algorand.android.modules.onboarding.registerwatchaccount.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.models.CreateAccount
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.modules.nftdomain.domain.usecase.GetNftDomainSearchResultUseCase
 import com.algorand.android.modules.onboarding.registerwatchaccount.ui.mapper.BasePasteableWatchAccountItemMapper
 import com.algorand.android.modules.onboarding.registerwatchaccount.ui.mapper.WatchAccountRegistrationPreviewMapper

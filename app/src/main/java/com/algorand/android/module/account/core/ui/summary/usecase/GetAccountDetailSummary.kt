@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.account.core.ui.summary.usecase
 
-import com.algorand.android.module.account.core.ui.summary.model.AccountDetailSummary
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.ui.summary.model.AccountDetailSummary
 
 interface GetAccountDetailSummary {
     suspend operator fun invoke(address: String): AccountDetailSummary

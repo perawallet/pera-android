@@ -13,10 +13,10 @@
 package com.algorand.android.modules.assets.profile.asaprofile.base
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaProfilePreview
-import com.algorand.android.module.asset.detail.ui.detail.asaprofile.usecase.GetAsaProfilePreview
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AssetAction
+import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaProfilePreview
+import com.algorand.android.module.asset.detail.ui.detail.asaprofile.usecase.GetAsaProfilePreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

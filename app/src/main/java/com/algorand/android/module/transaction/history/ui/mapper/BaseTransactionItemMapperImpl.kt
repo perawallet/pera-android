@@ -14,8 +14,10 @@
 package com.algorand.android.module.transaction.history.ui.mapper
 
 import com.algorand.android.module.foundation.common.addHashtagToStart
-import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem
+import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType
+import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType.AssetTransfer
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import javax.inject.Inject
 
 internal class BaseTransactionItemMapperImpl @Inject constructor() : BaseTransactionItemMapper {
@@ -160,7 +162,7 @@ internal class BaseTransactionItemMapperImpl @Inject constructor() : BaseTransac
                 isPending = isPending,
                 formattedAmount = formattedAmount,
                 amountColorRes = amountColorRes,
-                closeToAddress = (transaction.type as? BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType.AssetTransfer.OptOut)?.closeToAddress.orEmpty()
+                closeToAddress = (transaction.type as? AssetTransfer.OptOut)?.closeToAddress.orEmpty()
             )
         }
     }
@@ -205,7 +207,7 @@ internal class BaseTransactionItemMapperImpl @Inject constructor() : BaseTransac
         transaction: BaseTransactionHistoryItem.BaseTransactionHistory
     ): BaseTransactionItem.TransactionItem.AssetConfigurationItem {
         val assetConfig =
-            transaction.type as BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType.AssetConfiguration
+            transaction.type as BaseTransactionType.AssetConfiguration
         return with(transaction) {
             BaseTransactionItem.TransactionItem.AssetConfigurationItem(
                 id = id,
@@ -222,7 +224,7 @@ internal class BaseTransactionItemMapperImpl @Inject constructor() : BaseTransac
     ): BaseTransactionItem.TransactionItem.ApplicationCallItem {
         return with(transaction) {
             val applicationCall =
-                transaction.type as BaseTransactionHistoryItem.BaseTransactionHistory.BaseTransactionType.ApplicationCall
+                transaction.type as BaseTransactionType.ApplicationCall
             BaseTransactionItem.TransactionItem.ApplicationCallItem(
                 id = id,
                 signature = signature,

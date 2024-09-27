@@ -13,9 +13,9 @@
 
 package com.algorand.android.module.swap.ui.assetselection.toasset.usecase
 
-import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData
+import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
 import com.algorand.android.module.parity.domain.model.ParityValue
 import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbolOrName
 import com.algorand.android.module.parity.domain.usecase.secondary.GetSecondaryCurrencySymbol

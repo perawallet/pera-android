@@ -16,10 +16,10 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationFragment
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
 import com.algorand.android.modules.rekey.previouslyrekeyedaccountconfirmation.ui.RekeyedAccountRekeyConfirmationBottomSheet.Companion.PREVIOUSLY_REKEYED_ACCOUNT_CONFIRMATION_KEY
-import com.algorand.android.module.transaction.component.domain.model.SignedTransaction
 import com.algorand.android.utils.useFragmentResultListenerValue
 import dagger.hilt.android.AndroidEntryPoint
 

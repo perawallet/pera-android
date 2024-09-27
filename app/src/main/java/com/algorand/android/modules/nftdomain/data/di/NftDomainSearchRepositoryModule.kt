@@ -12,11 +12,11 @@
 
 package com.algorand.android.modules.nftdomain.data.di
 
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import com.algorand.android.modules.nftdomain.data.mapper.NftDomainSearchResultDTOMapper
 import com.algorand.android.modules.nftdomain.data.repository.NftDomainSearchRepositoryImpl
 import com.algorand.android.modules.nftdomain.domain.repository.NftDomainSearchRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

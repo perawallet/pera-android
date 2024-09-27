@@ -13,6 +13,7 @@
 package com.algorand.android.modules.sorting.accountsorting.ui.usecase
 
 import com.algorand.android.R
+import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetSortedAccountsByPreference
 import com.algorand.android.module.account.core.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.module.account.core.ui.model.ButtonConfiguration
@@ -22,7 +23,6 @@ import com.algorand.android.module.account.sorting.domain.model.AccountSortingTy
 import com.algorand.android.module.account.sorting.domain.usecase.GetAccountSortingTypeIdentifier
 import com.algorand.android.module.account.sorting.domain.usecase.SaveAccountSortPreference
 import com.algorand.android.module.account.sorting.domain.usecase.SetAccountOrderIndex
-import com.algorand.android.module.account.core.component.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.sorting.accountsorting.domain.mapper.BaseSortingListItemMapper
 import com.algorand.android.modules.sorting.accountsorting.domain.mapper.SortingPreviewMapper
 import com.algorand.android.modules.sorting.accountsorting.domain.model.AccountSortingPreview

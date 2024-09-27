@@ -1,3 +1,4 @@
+@file:Suppress("LongParameterList", "MaxLineLength")
 /*
  *   ~ Copyright 2022 Pera Wallet, LDA
  *   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +14,10 @@
 
 package com.algorand.android.module.asset.detail.ui.nftdetail.usecase
 
+import com.algorand.android.module.account.core.component.collectible.domain.usecase.GetAccountCollectibleDetail
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
+import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconResourceByAccountType
@@ -26,10 +31,6 @@ import com.algorand.android.module.asset.detail.ui.detail.nftprofile.mapper.Coll
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.CollectibleMediaItemMapperPayload
 import com.algorand.android.module.asset.detail.ui.nftdetail.model.CollectibleDetailPreview
-import com.algorand.android.module.account.core.component.collectible.domain.usecase.GetAccountCollectibleDetail
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
-import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.module.foundation.common.isGreaterThan
 import java.math.BigInteger
 import javax.inject.Inject

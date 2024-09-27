@@ -27,11 +27,11 @@ import com.algorand.android.module.asset.detail.component.asset.domain.usecase.G
 import com.algorand.android.module.asset.detail.component.assetabout.domain.usecase.CacheAssetDetailToAsaProfile
 import com.algorand.android.module.asset.detail.component.assetabout.domain.usecase.ClearAsaProfileCache
 import com.algorand.android.module.asset.detail.component.assetabout.domain.usecase.GetAssetFlowFromAsaProfileCache
+import com.algorand.android.module.parity.domain.usecase.GetAssetExchangeParityValue
 import com.algorand.android.modules.assets.profile.about.ui.mapper.AssetAboutPreviewMapper
 import com.algorand.android.modules.assets.profile.about.ui.mapper.BaseAssetAboutListItemMapper
 import com.algorand.android.modules.assets.profile.about.ui.model.AssetAboutPreview
 import com.algorand.android.modules.assets.profile.about.ui.model.BaseAssetAboutListItem
-import com.algorand.android.module.parity.domain.usecase.GetAssetExchangeParityValue
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.browser.addProtocolIfNeed
 import com.algorand.android.utils.browser.removeProtocolIfNeed

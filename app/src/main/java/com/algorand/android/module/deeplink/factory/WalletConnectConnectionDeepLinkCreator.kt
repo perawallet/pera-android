@@ -19,11 +19,11 @@ import javax.inject.Inject
 
 internal class WalletConnectConnectionDeepLinkCreator @Inject constructor() : DeepLinkCreator {
 
-    override suspend fun createDeepLink(rawDeeplink: com.algorand.android.module.deeplink.model.RawDeepLink): com.algorand.android.module.deeplink.model.BaseDeepLink {
-        return com.algorand.android.module.deeplink.model.BaseDeepLink.WalletConnectConnectionDeepLink(rawDeeplink.walletConnectUrl.orEmpty())
+    override suspend fun createDeepLink(rawDeeplink: RawDeepLink): BaseDeepLink {
+        return BaseDeepLink.WalletConnectConnectionDeepLink(rawDeeplink.walletConnectUrl.orEmpty())
     }
 
-    override fun doesDeeplinkMeetTheRequirements(rawDeepLink: com.algorand.android.module.deeplink.model.RawDeepLink): Boolean {
+    override fun doesDeeplinkMeetTheRequirements(rawDeepLink: RawDeepLink): Boolean {
         return with(rawDeepLink) {
             walletConnectUrl != null &&
                 accountAddress == null &&

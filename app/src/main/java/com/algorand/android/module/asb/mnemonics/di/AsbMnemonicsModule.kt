@@ -1,13 +1,13 @@
 package com.algorand.android.module.asb.mnemonics.di
 
 import android.content.SharedPreferences
-import com.algorand.android.module.encryption.EncryptionManager
-import com.algorand.android.module.encryption.di.TINK_ENCRYPTION_MANAGER
 import com.algorand.android.module.asb.mnemonics.data.repository.AsbMnemonicsRepositoryImpl
 import com.algorand.android.module.asb.mnemonics.data.storage.AsbMnemonicsLocalSource
 import com.algorand.android.module.asb.mnemonics.domain.repository.AsbMnemonicsRepository
 import com.algorand.android.module.asb.mnemonics.domain.usecase.GetAsbBackUpMnemonics
 import com.algorand.android.module.asb.mnemonics.domain.usecase.SetAsbBackUpMnemonics
+import com.algorand.android.module.encryption.EncryptionManager
+import com.algorand.android.module.encryption.di.TINK_ENCRYPTION_MANAGER
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,5 +42,4 @@ internal object AsbMnemonicsModule {
     fun provideSetAsbBackUpMnemonics(
         repository: AsbMnemonicsRepository
     ): SetAsbBackUpMnemonics = SetAsbBackUpMnemonics(repository::storeBackupMnemonics)
-
 }

@@ -13,7 +13,6 @@
 package com.algorand.android.module.asset.detail.component.asset.data.model
 
 import com.google.gson.annotations.SerializedName
-import java.math.BigInteger
 
 internal data class AssetCreatorResponse(
     @SerializedName("id") val id: Long?,

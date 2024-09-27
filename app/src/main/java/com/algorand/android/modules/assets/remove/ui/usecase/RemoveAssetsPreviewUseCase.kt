@@ -13,8 +13,11 @@
 package com.algorand.android.modules.assets.remove.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.module.account.info.domain.model.AssetHolding
-import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.android.mapper.RemoveAssetItemMapper
+import com.algorand.android.models.BaseRemoveAssetItem
+import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem
+import com.algorand.android.models.ScreenState
+import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetsDataFlow
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
@@ -22,11 +25,8 @@ import com.algorand.android.module.account.core.component.domain.model.BaseAccou
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountCollectibleDataFlow
-import com.algorand.android.mapper.RemoveAssetItemMapper
-import com.algorand.android.models.BaseRemoveAssetItem
-import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem
-import com.algorand.android.models.ScreenState
-import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.module.account.info.domain.model.AssetHolding
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.android.modules.assets.remove.ui.mapper.RemoveAssetsPreviewMapper
 import com.algorand.android.modules.assets.remove.ui.model.RemoveAssetsPreview
 import com.algorand.android.modules.sorting.assetsorting.ui.usecase.AssetItemSortUseCase

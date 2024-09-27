@@ -13,9 +13,11 @@
 package com.algorand.android.dependencyinjection
 
 import com.algorand.android.BuildConfig
-import com.algorand.android.module.algosdk.network.ProvideAlgorandApiKey
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountDeserializer
+import com.algorand.android.module.algosdk.network.ProvideAlgorandApiKey
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
+import com.algorand.android.module.node.domain.usecase.GetActiveNode
 import com.algorand.android.network.AlgodApi
 import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.network.GetAlgodInterceptorNodeDetails
@@ -25,8 +27,6 @@ import com.algorand.android.network.IndexerApi
 import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.MobileHeaderInterceptor
-import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
-import com.algorand.android.module.node.domain.usecase.GetActiveNode
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module

@@ -13,11 +13,11 @@
 
 package com.algorand.android.module.account.core.component.collectible.domain.usecase
 
-import com.algorand.android.module.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountCollectiblesData
+import com.algorand.android.module.account.info.domain.usecase.GetAllAccountInformationFlow
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull

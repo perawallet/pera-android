@@ -13,10 +13,10 @@
 package com.algorand.android.nft.mapper
 
 import androidx.annotation.StringRes
-import com.algorand.android.module.asset.detail.ui.detail.nftprofile.mapper.CollectibleAmountFormatter
+import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.PendingAssetData
-import com.algorand.android.decider.AssetDrawableProviderDecider
+import com.algorand.android.module.asset.detail.ui.detail.nftprofile.mapper.CollectibleAmountFormatter
 import com.algorand.android.modules.accountdetail.assets.ui.decider.NFTIndicatorDrawableDecider
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
 import com.algorand.android.nft.domain.decider.BaseCollectibleListItemItemTypeDecider

@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.transaction.history.ui
 
-import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.module.transaction.history.component.domain.model.BaseTransactionHistoryItem
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 
 internal interface TransactionHistoryProcessor {
     suspend operator fun invoke(

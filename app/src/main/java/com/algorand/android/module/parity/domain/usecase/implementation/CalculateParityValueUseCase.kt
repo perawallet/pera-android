@@ -2,7 +2,8 @@ package com.algorand.android.module.parity.domain.usecase.implementation
 
 import com.algorand.android.module.parity.domain.model.ParityValue
 import com.algorand.android.module.parity.domain.usecase.CalculateParityValue
-import java.math.*
+import java.math.BigDecimal
+import java.math.BigInteger
 import javax.inject.Inject
 
 internal class CalculateParityValueUseCase @Inject constructor() : CalculateParityValue {

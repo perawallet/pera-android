@@ -1,3 +1,4 @@
+@file:Suppress("LongParameterList", "ReturnCount")
 /*
  *   ~ Copyright 2022 Pera Wallet, LDA
  *   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -89,7 +90,6 @@ internal class CreateRemoveAssetTransactionUseCase @Inject constructor(
         val suggestedTxnParams = suggestedTransactionParamsMapper(params)
         val txnPayload = RemoveAssetTransactionPayload(address, assetCreatorAddress, assetId)
         val txn = algoSdkTransaction.createRemoveAssetTransaction(txnPayload, suggestedTxnParams)
-
 
         minRequiredBalanceValidator(MinReqBalanceValidatorPayload(params, txn, accountInfo)).run {
             if (!this.isValid) {

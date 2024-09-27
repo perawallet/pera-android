@@ -22,9 +22,9 @@ import android.bluetooth.BluetoothProfile.STATE_DISCONNECTING
 import android.content.Context
 import android.util.Log
 import com.algorand.android.module.ledger.domain.LedgerBleObserver
+import com.algorand.android.module.ledger.domain.helper.LedgerDataReceivedCallback
 import com.algorand.android.module.ledger.domain.helper.PacketizeLedgerPayload
 import com.algorand.android.module.ledger.manager.LedgerBleManager
-import com.algorand.android.module.ledger.domain.helper.LedgerDataReceivedCallback
 import java.util.UUID
 import no.nordicsemi.android.ble.BleManager
 

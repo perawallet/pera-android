@@ -22,11 +22,11 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.algorand.android.R
+import com.algorand.android.databinding.CustomUserViewBinding
+import com.algorand.android.models.TooltipConfig
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.module.contacts.domain.model.Contact
-import com.algorand.android.databinding.CustomUserViewBinding
-import com.algorand.android.models.TooltipConfig
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.enableLongPressToCopyText
 import com.algorand.android.utils.extensions.changeTextAppearance

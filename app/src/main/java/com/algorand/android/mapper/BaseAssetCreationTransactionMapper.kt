@@ -13,7 +13,6 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.models.BaseAssetConfigurationTransaction.BaseAssetCreationTransaction
 import com.algorand.android.models.BaseAssetConfigurationTransaction.BaseAssetCreationTransaction.Companion.isTransactionWithCloseTo
 import com.algorand.android.models.BaseAssetConfigurationTransaction.BaseAssetCreationTransaction.Companion.isTransactionWithCloseToAndRekeyed
@@ -22,6 +21,7 @@ import com.algorand.android.models.WCAlgoTransactionRequest
 import com.algorand.android.models.WalletConnectPeerMeta
 import com.algorand.android.models.WalletConnectTransactionRequest
 import com.algorand.android.models.WalletConnectTransactionSigner
+import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
 import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionAuthAddress

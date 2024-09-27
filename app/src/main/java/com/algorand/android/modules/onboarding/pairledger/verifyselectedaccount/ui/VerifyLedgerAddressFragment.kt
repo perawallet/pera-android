@@ -23,12 +23,12 @@ import androidx.navigation.navGraphViewModels
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentVerifyLedgerAddressBinding
+import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.ledger.domain.model.LedgerBleResult
 import com.algorand.android.module.ledger.domain.model.LedgerOperation.VerifyAddressOperation
 import com.algorand.android.module.ledger.manager.LedgerBleOperationManager
-import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.onboarding.pairledger.PairLedgerNavigationViewModel
 import com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount.ui.adapter.VerifiableLedgerAddressesAdapter
 import com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount.ui.model.VerifyLedgerAddressListItem

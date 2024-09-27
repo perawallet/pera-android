@@ -14,7 +14,8 @@ package com.algorand.android.module.asset.detail.component.asset.data.model
 
 import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleResponse
 import com.google.gson.annotations.SerializedName
-import java.math.*
+import java.math.BigDecimal
+import java.math.BigInteger
 
 internal data class AssetResponse(
     @SerializedName("asset_id") val assetId: Long?,

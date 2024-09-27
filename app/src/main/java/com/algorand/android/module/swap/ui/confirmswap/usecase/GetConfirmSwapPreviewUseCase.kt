@@ -17,6 +17,10 @@ import com.algorand.android.module.account.core.ui.usecase.GetAccountDisplayName
 import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.module.currency.domain.model.Currency
+import com.algorand.android.module.parity.domain.usecase.GetUsdValuePerAsset
+import com.algorand.android.module.swap.component.data.mapper.DisplayedCurrencyParityValueMapper
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
+import com.algorand.android.module.swap.component.domain.model.SwapQuoteAssetDetail
 import com.algorand.android.module.swap.ui.common.getFormattedMinimumReceivedAmount
 import com.algorand.android.module.swap.ui.confirmswap.mapper.ConfirmSwapPriceImpactWarningStatusMapper
 import com.algorand.android.module.swap.ui.confirmswap.mapper.SwapAssetDetailMapper
@@ -24,10 +28,6 @@ import com.algorand.android.module.swap.ui.confirmswap.mapper.SwapPriceRatioProv
 import com.algorand.android.module.swap.ui.confirmswap.model.ConfirmSwapPreview
 import com.algorand.android.module.swap.ui.confirmswap.model.ConfirmSwapPriceImpactWarningStatus
 import com.algorand.android.module.swap.ui.confirmswap.model.ConfirmSwapPriceImpactWarningStatus.NoWarning
-import com.algorand.android.module.parity.domain.usecase.GetUsdValuePerAsset
-import com.algorand.android.module.swap.component.data.mapper.DisplayedCurrencyParityValueMapper
-import com.algorand.android.module.swap.component.domain.model.SwapQuote
-import com.algorand.android.module.swap.component.domain.model.SwapQuoteAssetDetail
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAssetAmount

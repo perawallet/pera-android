@@ -16,9 +16,9 @@ package com.algorand.android.module.ledger.manager.implementation
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.Lifecycle
+import com.algorand.android.module.account.core.component.caching.domain.usecase.CacheAccountDetail
 import com.algorand.android.module.algosdk.AlgoSdkAddress
 import com.algorand.android.module.algosdk.transaction.AlgoTransactionSigner
-import com.algorand.android.module.account.core.component.caching.domain.usecase.CacheAccountDetail
 import com.algorand.android.module.foundation.Event
 import com.algorand.android.module.foundation.coroutine.LifecycleScopedCoroutineOwner
 import com.algorand.android.module.foundation.permission.PeraPermissionManager

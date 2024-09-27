@@ -13,10 +13,10 @@
 package com.algorand.android.modules.accounticon.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
-import com.algorand.android.module.account.core.ui.model.AccountIconResource
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountRegistrationType
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
+import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
+import com.algorand.android.module.account.core.ui.model.AccountIconResource
 import javax.inject.Inject
 
 class CreateAccountOriginalStateIconDrawableUseCase @Inject constructor(

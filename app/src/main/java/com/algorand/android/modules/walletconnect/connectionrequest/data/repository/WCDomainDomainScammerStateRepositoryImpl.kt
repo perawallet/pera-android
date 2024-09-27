@@ -13,11 +13,11 @@
 package com.algorand.android.modules.walletconnect.connectionrequest.data.repository
 
 import com.algorand.android.models.Result
+import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import com.algorand.android.modules.walletconnect.connectionrequest.data.model.GetWCDomainScammerStateResponse
 import com.algorand.android.modules.walletconnect.connectionrequest.domain.repository.WCDomainScammerStateRepository
 import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
-import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import javax.inject.Inject
 
 class WCDomainDomainScammerStateRepositoryImpl @Inject constructor(

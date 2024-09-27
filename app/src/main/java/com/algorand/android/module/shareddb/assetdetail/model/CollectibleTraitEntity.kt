@@ -1,6 +1,8 @@
 package com.algorand.android.module.shareddb.assetdetail.model
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.algorand.android.module.shareddb.assetdetail.model.CollectibleTraitEntity.Companion.COLLECTIBLE_TRAIT_ENTITY_NAME
 
 @Entity(tableName = COLLECTIBLE_TRAIT_ENTITY_NAME)

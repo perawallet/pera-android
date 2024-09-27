@@ -1,9 +1,9 @@
 package com.algorand.android.module.account.core.component.creation.domain.usecase
 
+import com.algorand.android.module.account.core.component.caching.domain.usecase.CacheAccountDetail
 import com.algorand.android.module.account.local.domain.model.LocalAccount
 import com.algorand.android.module.account.local.domain.usecase.AddLedgerUsbAccount
 import com.algorand.android.module.account.local.domain.usecase.CreateLedgerUsbAccount
-import com.algorand.android.module.account.core.component.caching.domain.usecase.CacheAccountDetail
 import javax.inject.Inject
 
 internal class CreateLedgerUsbAccountUseCase @Inject constructor(

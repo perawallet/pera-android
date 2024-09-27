@@ -13,7 +13,6 @@
 
 package com.algorand.android.models.builder
 
-import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
 import com.algorand.android.models.BaseAssetTransferTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation
@@ -21,6 +20,7 @@ import com.algorand.android.models.TransactionRequestExtrasInfo
 import com.algorand.android.models.TransactionRequestNoteInfo
 import com.algorand.android.models.TransactionRequestSenderInfo
 import com.algorand.android.models.TransactionRequestTransactionInfo
+import com.algorand.android.module.account.core.ui.mapper.VerificationTierConfigurationMapper
 import com.algorand.android.utils.MIN_FEE
 import javax.inject.Inject
 

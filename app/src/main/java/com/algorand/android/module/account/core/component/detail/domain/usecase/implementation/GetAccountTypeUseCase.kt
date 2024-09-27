@@ -1,11 +1,11 @@
 package com.algorand.android.module.account.core.component.detail.domain.usecase.implementation
 
-import com.algorand.android.module.account.local.domain.model.LocalAccount
-import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
-import com.algorand.android.module.account.info.domain.model.AccountInformation
-import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountType
+import com.algorand.android.module.account.info.domain.model.AccountInformation
+import com.algorand.android.module.account.info.domain.usecase.GetAccountInformation
+import com.algorand.android.module.account.local.domain.model.LocalAccount
+import com.algorand.android.module.account.local.domain.usecase.GetLocalAccounts
 import javax.inject.Inject
 
 internal class GetAccountTypeUseCase @Inject constructor(

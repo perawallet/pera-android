@@ -14,11 +14,11 @@ package com.algorand.android.modules.accountdetail.accountstatusdetail.ui.decide
 
 import android.content.Context
 import com.algorand.android.R
+import com.algorand.android.models.AnnotatedString
+import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountRegistrationType
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
-import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.ui.AccountAssetItemButtonState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

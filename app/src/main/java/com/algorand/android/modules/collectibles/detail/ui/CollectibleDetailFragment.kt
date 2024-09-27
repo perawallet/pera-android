@@ -22,8 +22,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.module.asset.detail.ui.nftdetail.model.CollectibleDetailPreview
 import com.algorand.android.models.AssetTransaction
+import com.algorand.android.module.asset.detail.ui.nftdetail.model.CollectibleDetailPreview
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailFragment
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.openTextShareBottomMenuChooser

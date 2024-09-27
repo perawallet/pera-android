@@ -1,3 +1,4 @@
+@file:Suppress("MaxLineLength")
 /*
  *   ~ Copyright 2022 Pera Wallet, LDA
  *   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +14,10 @@
 
 package com.algorand.android.module.account.core.ui.accountselection.usecase
 
+import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.ui.accountselection.mapper.AccountSelectionListItemMapper
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.module.account.core.ui.accountsorting.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
-import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencySymbol
 import javax.inject.Inject
 

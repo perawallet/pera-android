@@ -15,8 +15,8 @@ package com.algorand.android.modules.transaction.detail.domain.model
 import android.os.Parcelable
 import com.algorand.android.R
 import com.algorand.android.modules.transaction.common.domain.model.OnCompletionDTO
-import kotlinx.parcelize.Parcelize
 import java.math.BigInteger
+import kotlinx.parcelize.Parcelize
 
 sealed class BaseTransactionDetail : Parcelable {
 

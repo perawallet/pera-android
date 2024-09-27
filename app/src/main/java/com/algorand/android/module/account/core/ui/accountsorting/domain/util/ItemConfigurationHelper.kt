@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.ui.accountsorting.domain.util
 
-import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
+import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
 
 internal object ItemConfigurationHelper {
 

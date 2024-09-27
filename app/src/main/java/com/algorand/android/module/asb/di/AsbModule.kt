@@ -1,7 +1,7 @@
+@file:Suppress("TooManyFunctions")
+
 package com.algorand.android.module.asb.di
 
-import com.algorand.android.module.encryption.EncryptionManager
-import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
 import com.algorand.android.module.asb.data.mapper.AlgorandSecureBackUpEntityMapper
 import com.algorand.android.module.asb.data.mapper.AlgorandSecureBackUpEntityMapperImpl
 import com.algorand.android.module.asb.data.repository.AsbRepositoryImpl
@@ -20,6 +20,8 @@ import com.algorand.android.module.asb.domain.usecase.implementation.CreateAsbBa
 import com.algorand.android.module.asb.domain.usecase.implementation.CreateAsbCipherKeyUseCase
 import com.algorand.android.module.asb.domain.usecase.implementation.CreateAsbCipherTextUseCase
 import com.algorand.android.module.asb.domain.usecase.implementation.CreateAsbMnemonicUseCase
+import com.algorand.android.module.encryption.EncryptionManager
+import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
 import com.algorand.android.module.shareddb.asb.dao.AlgorandSecureBackUpDao
 import dagger.Module
 import dagger.Provides

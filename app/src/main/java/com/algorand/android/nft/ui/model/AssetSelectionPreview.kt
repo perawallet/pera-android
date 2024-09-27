@@ -12,8 +12,8 @@
 
 package com.algorand.android.nft.ui.model
 
-import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem
 import com.algorand.android.models.AssetTransaction
+import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem
 import com.algorand.android.utils.Event
 
 data class AssetSelectionPreview(

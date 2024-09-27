@@ -19,13 +19,13 @@ import com.algorand.android.module.account.core.ui.usecase.GetAssetName
 import com.algorand.android.module.asset.utils.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.module.currency.domain.model.Currency
 import com.algorand.android.module.foundation.common.isGreaterThan
+import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem
 import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem.SwapAccountItemTransaction
 import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem.SwapAmountsItemTransaction
 import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem.SwapFeesItemTransaction
 import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem.SwapPriceImpactItemTransaction
 import com.algorand.android.module.swap.ui.txnsummary.model.SwapTransactionSummaryPreview
-import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAssetAmount

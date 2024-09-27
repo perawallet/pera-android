@@ -17,9 +17,9 @@ import com.algorand.android.module.deeplink.model.BaseDeepLink
 import com.algorand.android.module.deeplink.model.RawDeepLink
 
 interface CreateNotificationDeepLink {
-    suspend operator fun invoke(deepLink: String): com.algorand.android.module.deeplink.model.BaseDeepLink.NotificationDeepLink?
+    suspend operator fun invoke(deepLink: String): BaseDeepLink.NotificationDeepLink?
 }
 
 internal interface ParseDeepLink {
-    operator fun invoke(deepLink: String): com.algorand.android.module.deeplink.model.RawDeepLink
+    operator fun invoke(deepLink: String): RawDeepLink
 }

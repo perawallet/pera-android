@@ -11,11 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.module.asset.action.ui.mapper
+package com.algorand.android.module.transaction.history.ui.pendingtxn.domain.mapper
 
-import com.algorand.android.module.asset.action.ui.model.AssetActionInformation
-import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
+import com.algorand.android.module.transaction.component.pendingtxn.domain.model.PendingTransaction
+import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 
-internal interface AssetActionInformationMapper {
-    operator fun invoke(asset: Asset): AssetActionInformation
+internal interface PendingTransactionItemMapper {
+    suspend operator fun invoke(pendingTransaction: PendingTransaction, address: String): BaseTransactionItem
 }

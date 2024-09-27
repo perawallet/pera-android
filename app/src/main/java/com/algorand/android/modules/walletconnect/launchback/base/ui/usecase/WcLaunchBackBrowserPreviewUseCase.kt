@@ -23,7 +23,7 @@ import com.algorand.android.modules.walletconnect.launchback.base.ui.model.Launc
 import com.algorand.android.utils.emptyString
 import dagger.hilt.android.qualifiers.ApplicationContext
 
-open class WcLaunchBackBrowserPreviewUseCase constructor(
+open class WcLaunchBackBrowserPreviewUseCase(
     private val peraPackageManager: PeraPackageManager,
     private val launchBackBrowserSelectionUseCase: LaunchBackBrowserSelectionUseCase,
     private val launchBackBrowserListItemMapper: LaunchBackBrowserListItemMapper,

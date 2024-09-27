@@ -14,9 +14,9 @@ package com.algorand.android.nft.domain.usecase
 
 import androidx.annotation.StringRes
 import com.algorand.android.R
-import com.algorand.android.module.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.android.module.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.android.modules.collectibles.filter.domain.usecase.ClearCollectibleFiltersPreferencesUseCase
 import com.algorand.android.modules.collectibles.filter.domain.usecase.ShouldDisplayOptedInNFTPreferenceUseCase
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType

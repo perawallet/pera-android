@@ -20,11 +20,11 @@ import javax.inject.Inject
 
 internal class WebImportQrCodeDeepLinkCreator @Inject constructor() : DeepLinkCreator {
 
-    override suspend fun createDeepLink(rawDeeplink: com.algorand.android.module.deeplink.model.RawDeepLink): com.algorand.android.module.deeplink.model.BaseDeepLink {
-        return com.algorand.android.module.deeplink.model.BaseDeepLink.WebImportQrCodeDeepLink(rawDeeplink.webImportQrCode ?: WebImportQrCode("", ""))
+    override suspend fun createDeepLink(rawDeeplink: RawDeepLink): BaseDeepLink {
+        return BaseDeepLink.WebImportQrCodeDeepLink(rawDeeplink.webImportQrCode ?: WebImportQrCode("", ""))
     }
 
-    override fun doesDeeplinkMeetTheRequirements(rawDeepLink: com.algorand.android.module.deeplink.model.RawDeepLink): Boolean {
+    override fun doesDeeplinkMeetTheRequirements(rawDeepLink: RawDeepLink): Boolean {
         return with(rawDeepLink) {
             webImportQrCode != null &&
                 accountAddress == null &&

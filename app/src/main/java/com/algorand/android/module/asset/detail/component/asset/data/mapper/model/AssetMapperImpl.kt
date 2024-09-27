@@ -59,30 +59,3 @@ internal class AssetMapperImpl @Inject constructor(
         }
     }
 }
-
-/*
-AssetDetail(
-            assetId = response.assetId ?: return null,
-            fullName = response.fullName,
-            shortName = response.shortName,
-            fractionDecimals = response.fractionDecimals ?: 0,
-            usdValue = response.usdValue,
-            assetCreator = response.assetCreator?.let { assetCreatorMapper(it) },
-            verificationTier = response.verificationTier?.let { verificationTierMapper(it) } ?: UNKNOWN,
-            logoUri = response.logoUri,
-            logoSvgUri = response.logoSvgUri,
-            explorerUrl = response.explorerUrl,
-            projectUrl = response.projectUrl,
-            projectName = response.projectName,
-            discordUrl = response.discordUrl,
-            telegramUrl = response.telegramUrl,
-            twitterUsername = response.twitterUsername,
-            assetDescription = response.description,
-            totalSupply = response.totalSupply,
-            maxSupply = response.maxSupply,
-            url = response.url,
-            last24HoursAlgoPriceChangePercentage = response.last24HoursAlgoPriceChangePercentage,
-            isAvailableOnDiscoverMobile = response.isAvailableOnDiscoverMobile,
-            collectible = response.collectible?.let { collectibleMapper(it) }
-        )
- */

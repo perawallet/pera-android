@@ -16,12 +16,12 @@ package com.algorand.android.module.date.ui.model
 import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import com.algorand.android.R
 import com.algorand.android.module.date.getBeginningOfDay
 import com.algorand.android.module.date.getBeginningOfMonth
 import com.algorand.android.module.date.getBeginningOfWeek
 import com.algorand.android.module.date.getEndOfMonth
 import com.algorand.android.module.date.getEndOfWeek
-import com.algorand.android.R
 import com.algorand.android.module.drawable.RecyclerListItem
 import kotlinx.parcelize.Parcelize
 

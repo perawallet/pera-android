@@ -15,10 +15,8 @@ package com.algorand.android.module.deeplink.factory
 
 import com.algorand.android.module.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_ASSET_ID
-import com.algorand.android.assetutils.getSafeAssetIdForResponse
-import com.algorand.android.module.deeplink.model.BaseDeepLink
+import com.algorand.android.module.asset.utils.getSafeAssetIdForResponse
 import com.algorand.android.module.deeplink.model.NotificationGroupType
-import com.algorand.android.module.deeplink.model.RawDeepLink
 import javax.inject.Inject
 
 internal class NotificationDeepLinkCreator @Inject constructor(

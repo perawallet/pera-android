@@ -19,7 +19,7 @@ import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.algorand.android.MainActivity
 import com.algorand.android.R
-import com.algorand.android.assetutils.AssetAdditionPayload
+import com.algorand.android.module.asset.utils.AssetAdditionPayload
 import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.module.drawable.getXmlStyledString
 import com.algorand.android.foundation.Event

@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.ui.confirmswap.usecase
 
-import com.algorand.android.assetutils.AssetConstants
+import com.algorand.android.module.asset.utils.AssetConstants
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.module.swap.component.domain.model.SwapQuote
 import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction

@@ -13,8 +13,8 @@
 
 package com.algorand.android.module.swap.component.domain.usecase
 
-import com.algorand.android.assetutils.AssetConstants.ALGO_DECIMALS
-import com.algorand.android.assetutils.AssetConstants.ALGO_ID
+import com.algorand.android.module.asset.utils.AssetConstants.ALGO_DECIMALS
+import com.algorand.android.module.asset.utils.AssetConstants.ALGO_ID
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetData
 import com.algorand.android.module.account.core.component.domain.model.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.foundation.PeraResult

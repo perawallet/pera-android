@@ -11,9 +11,12 @@
  *   -->
  */
 
-package com.algorand.android.assetutils
+package com.algorand.android.module.asset.utils
 
-data class AssetAdditionPayload(
-    val assetId: Long,
-    val address: String
-)
+object AssetConstants {
+    const val ALGO_ID = -7L
+    const val ALGO_DECIMALS = 6
+
+    const val ALGO_FULL_NAME = "Algo"
+    const val ALGO_SHORT_NAME = "ALGO"
+}

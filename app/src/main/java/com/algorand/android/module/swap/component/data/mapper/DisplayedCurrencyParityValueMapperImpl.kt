@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.data.mapper
 
-import com.algorand.android.assetutils.AssetConstants.ALGO_ID
+import com.algorand.android.module.asset.utils.AssetConstants.ALGO_ID
 import com.algorand.android.module.parity.domain.model.ParityValue
 import com.algorand.android.module.parity.domain.usecase.GetAlgoAmountValue
 import com.algorand.android.module.parity.domain.usecase.primary.GetPrimaryCurrencyAssetParityValue

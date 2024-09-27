@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.data.mapper
 
-import com.algorand.android.assetutils.getSafeAssetIdForRequest
+import com.algorand.android.module.asset.utils.getSafeAssetIdForRequest
 import com.algorand.android.module.swap.component.data.model.SwapQuoteProviderResponse
 import com.algorand.android.module.swap.component.data.model.SwapQuoteRequestBody
 import com.algorand.android.module.swap.component.data.model.SwapTypeResponse

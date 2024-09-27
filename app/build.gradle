@@ -167,7 +167,6 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation project(path: ':foundation')
-    implementation project(path: ':asset-utils')
     implementation project(path: ':peracompactdecimal-aar')
     implementation project(path: ':shared-db')
 

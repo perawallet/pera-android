@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.data.mapper
 
-import com.algorand.android.assetutils.AssetConstants.ALGO_DECIMALS
+import com.algorand.android.module.asset.utils.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.module.swap.component.data.SwapUtils.DEFAULT_PERA_SWAP_FEE
 import com.algorand.android.module.swap.component.data.model.PeraFeeResponse
 import com.algorand.android.module.swap.component.domain.model.PeraFee

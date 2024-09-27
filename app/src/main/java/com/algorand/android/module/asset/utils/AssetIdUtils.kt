@@ -11,12 +11,14 @@
  *   -->
  */
 
-package com.algorand.android.assetutils
+package com.algorand.android.module.asset.utils
 
-object AssetConstants {
-    const val ALGO_ID = -7L
-    const val ALGO_DECIMALS = 6
+// Backend accepts ALGO with asset id 0. Remove this line if they accepts to change ALGO ID as -7
+fun getSafeAssetIdForRequest(assetId: Long): Long {
+    return if (assetId == AssetConstants.ALGO_ID) 0 else assetId
+}
 
-    const val ALGO_FULL_NAME = "Algo"
-    const val ALGO_SHORT_NAME = "ALGO"
+// Backend returns ALGO with asset id 0. Remove this line if they accepts to change ALGO ID as -7
+fun getSafeAssetIdForResponse(assetId: Long?): Long? {
+    return if (assetId == 0L) AssetConstants.ALGO_ID else assetId
 }

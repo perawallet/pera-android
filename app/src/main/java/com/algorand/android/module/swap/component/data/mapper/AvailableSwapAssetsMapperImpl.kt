@@ -15,7 +15,7 @@ package com.algorand.android.module.swap.component.data.mapper
 
 import com.algorand.android.module.asset.detail.component.asset.data.mapper.model.VerificationTierMapper
 import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier.UNKNOWN
-import com.algorand.android.assetutils.getSafeAssetIdForResponse
+import com.algorand.android.module.asset.utils.getSafeAssetIdForResponse
 import com.algorand.android.module.swap.component.data.model.AvailableSwapAssetListResponse
 import com.algorand.android.module.swap.component.domain.model.AvailableSwapAsset
 import java.math.BigDecimal

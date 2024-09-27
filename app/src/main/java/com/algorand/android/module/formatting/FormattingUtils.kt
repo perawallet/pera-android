@@ -14,7 +14,7 @@
 package com.algorand.android.module.formatting
 
 import android.icu.text.NumberFormat
-import com.algorand.android.assetutils.AssetConstants.ALGO_DECIMALS
+import com.algorand.android.module.asset.utils.AssetConstants.ALGO_DECIMALS
 import com.algorand.android.module.currency.domain.model.Currency
 import com.mitsinsar.peracompactdecimalformat.PeraCompactDecimalFormatBuilder
 import com.mitsinsar.peracompactdecimalformat.locals.ChineseLocale

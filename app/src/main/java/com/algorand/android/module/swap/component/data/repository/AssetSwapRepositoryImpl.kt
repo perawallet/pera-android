@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.swap.component.data.repository
 
-import com.algorand.android.assetutils.getSafeAssetIdForRequest
+import com.algorand.android.module.asset.utils.getSafeAssetIdForRequest
 import com.algorand.android.foundation.PeraResult
 import com.algorand.android.foundation.common.toCsvString
 import com.algorand.android.module.network.exceptions.RetrofitErrorHandler

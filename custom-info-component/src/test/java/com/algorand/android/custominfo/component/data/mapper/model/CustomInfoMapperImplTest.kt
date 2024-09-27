@@ -1,6 +1,6 @@
 package com.algorand.android.account.custominfo.data.mapper.model
 
-import com.algorand.android.shared_db.assetdetail.model.CustomInfoEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CustomInfoEntity
 import com.algorand.android.module.custominfo.domain.model.CustomInfo
 import com.algorand.android.encryption.EncryptionManager
 import org.junit.Assert.assertEquals

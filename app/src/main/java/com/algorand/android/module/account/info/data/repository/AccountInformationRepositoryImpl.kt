@@ -10,11 +10,11 @@ import com.algorand.android.module.account.info.domain.repository.AccountInforma
 import com.algorand.android.module.encryption.EncryptionManager
 import com.algorand.android.module.foundation.PeraResult
 import com.algorand.android.module.network.request
-import com.algorand.android.shared_db.accountinformation.dao.AccountInformationDao
-import com.algorand.android.shared_db.accountinformation.dao.AssetHoldingDao
-import com.algorand.android.shared_db.accountinformation.model.AssetHoldingEntity
-import com.algorand.android.shared_db.accountinformation.model.AssetStatusEntity.PENDING_FOR_ADDITION
-import com.algorand.android.shared_db.accountinformation.model.AssetStatusEntity.PENDING_FOR_REMOVAL
+import com.algorand.android.module.shareddb.accountinformation.dao.AccountInformationDao
+import com.algorand.android.module.shareddb.accountinformation.dao.AssetHoldingDao
+import com.algorand.android.module.shareddb.accountinformation.model.AssetHoldingEntity
+import com.algorand.android.module.shareddb.accountinformation.model.AssetStatusEntity.PENDING_FOR_ADDITION
+import com.algorand.android.module.shareddb.accountinformation.model.AssetStatusEntity.PENDING_FOR_REMOVAL
 import java.math.BigInteger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

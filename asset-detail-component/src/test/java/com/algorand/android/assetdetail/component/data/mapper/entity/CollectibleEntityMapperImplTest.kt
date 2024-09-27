@@ -2,9 +2,9 @@ package com.algorand.android.module.asset.detail.component.data.mapper.entity
 
 import com.algorand.android.module.asset.detail.component.data.model.AssetDetailResponse
 import com.algorand.android.module.asset.detail.component.data.model.collectible.CollectibleResponse
-import com.algorand.android.shared_db.assetdetail.model.CollectibleEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaTypeEntity.MIXED
-import com.algorand.android.shared_db.assetdetail.model.CollectibleStandardTypeEntity.ARC_3
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaTypeEntity.MIXED
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleStandardTypeEntity.ARC_3
 import com.algorand.android.testutil.fixtureOf
 import org.junit.Assert.assertEquals
 import org.junit.Test

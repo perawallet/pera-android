@@ -166,8 +166,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation project(path: ':peracompactdecimal-aar')
-    implementation project(path: ':shared-db')
 
     implementation deps.kotlinx.coroutines_core
     implementation deps.kotlinx.coroutines_android

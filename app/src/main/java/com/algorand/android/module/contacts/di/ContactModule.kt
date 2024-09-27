@@ -15,7 +15,7 @@ import com.algorand.android.module.contacts.domain.usecase.SaveContact
 import com.algorand.android.module.contacts.domain.usecase.UpdateContact
 import com.algorand.android.module.encryption.EncryptionManager
 import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
-import com.algorand.android.shared_db.contact.dao.ContactDao
+import com.algorand.android.module.shareddb.contact.dao.ContactDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

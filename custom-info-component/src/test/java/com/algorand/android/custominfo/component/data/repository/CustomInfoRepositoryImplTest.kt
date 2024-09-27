@@ -1,11 +1,11 @@
 package com.algorand.android.account.custominfo.data.repository
 
-import com.algorand.android.shared_db.custominfo.dao.CustomInfoDao
+import com.algorand.android.module.shareddb.custominfo.dao.CustomInfoDao
 import com.algorand.android.module.custominfo.data.mapper.entity.CustomInfoEntityMapper
 import com.algorand.android.module.custominfo.data.mapper.model.CustomInfoMapper
 import com.algorand.android.module.custominfo.domain.model.CustomInfo
 import com.algorand.android.encryption.EncryptionManager
-import com.algorand.android.shared_db.assetdetail.model.CustomInfoEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CustomInfoEntity
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.test.runTest
 import org.junit.*

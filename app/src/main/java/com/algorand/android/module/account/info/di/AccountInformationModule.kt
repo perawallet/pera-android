@@ -54,8 +54,8 @@ import com.algorand.android.module.account.info.domain.usecase.implementation.Is
 import com.algorand.android.module.account.info.domain.usecase.implementation.IsThereAnyCachedSuccessAccountUseCase
 import com.algorand.android.module.encryption.EncryptionManager
 import com.algorand.android.module.encryption.di.DETERMINISTIC_ENCRYPTION_MANAGER
-import com.algorand.android.shared_db.accountinformation.dao.AccountInformationDao
-import com.algorand.android.shared_db.accountinformation.dao.AssetHoldingDao
+import com.algorand.android.module.shareddb.accountinformation.dao.AccountInformationDao
+import com.algorand.android.module.shareddb.accountinformation.dao.AssetHoldingDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

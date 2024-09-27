@@ -11,10 +11,10 @@ import com.algorand.android.module.asset.detail.component.asset.domain.model.det
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.CollectibleDetail
 import com.algorand.android.module.asset.detail.component.collectible.data.mapper.CollectibleDetailMapper
-import com.algorand.android.shared_db.assetdetail.dao.AssetDetailDao
-import com.algorand.android.shared_db.assetdetail.dao.CollectibleDao
-import com.algorand.android.shared_db.assetdetail.dao.CollectibleMediaDao
-import com.algorand.android.shared_db.assetdetail.dao.CollectibleTraitDao
+import com.algorand.android.module.shareddb.assetdetail.dao.AssetDetailDao
+import com.algorand.android.module.shareddb.assetdetail.dao.CollectibleDao
+import com.algorand.android.module.shareddb.assetdetail.dao.CollectibleMediaDao
+import com.algorand.android.module.shareddb.assetdetail.dao.CollectibleTraitDao
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

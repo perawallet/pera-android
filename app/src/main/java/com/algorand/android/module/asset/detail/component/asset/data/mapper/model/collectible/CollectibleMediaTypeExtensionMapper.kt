@@ -2,7 +2,7 @@ package com.algorand.android.module.asset.detail.component.asset.data.mapper.mod
 
 import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleMediaTypeExtensionResponse
 import com.algorand.android.module.asset.detail.component.asset.domain.model.CollectibleMediaTypeExtension
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaTypeExtensionEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaTypeExtensionEntity
 
 internal interface CollectibleMediaTypeExtensionMapper {
     operator fun invoke(response: CollectibleMediaTypeExtensionResponse): CollectibleMediaTypeExtension

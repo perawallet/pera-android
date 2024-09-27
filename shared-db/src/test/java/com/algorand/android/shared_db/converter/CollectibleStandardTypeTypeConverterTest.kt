@@ -1,7 +1,7 @@
 package com.algorand.android.account.core.data.database.converter
 
-import com.algorand.android.shared_db.assetdetail.model.CollectibleStandardTypeEntity
-import com.algorand.android.shared_db.converters.CollectibleStandardTypeTypeConverter
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleStandardTypeEntity
+import com.algorand.android.module.shareddb.converters.CollectibleStandardTypeTypeConverter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

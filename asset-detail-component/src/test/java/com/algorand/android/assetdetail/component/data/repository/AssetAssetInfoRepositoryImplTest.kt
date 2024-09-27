@@ -3,7 +3,7 @@ package com.algorand.android.module.asset.detail.component.data.repository
 import com.algorand.android.module.asset.detail.component.data.mapper.model.AssetDetailMapper
 import com.algorand.android.module.asset.detail.component.data.model.*
 import com.algorand.android.module.asset.detail.component.data.service.AssetDetailApi
-import com.algorand.android.shared_db.assetdetail.dao.*
+import com.algorand.android.module.shareddb.assetdetail.dao.*
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*

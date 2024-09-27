@@ -3,7 +3,7 @@ package com.algorand.android.module.asset.detail.component.data.mapper.model
 import com.algorand.android.module.asset.detail.component.data.model.VerificationTierResponse
 import com.algorand.android.module.asset.detail.component.data.model.VerificationTierResponse.*
 import com.algorand.android.module.asset.detail.component.domain.model.VerificationTier
-import com.algorand.android.shared_db.assetdetail.model.VerificationTierEntity
+import com.algorand.android.module.shareddb.assetdetail.model.VerificationTierEntity
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

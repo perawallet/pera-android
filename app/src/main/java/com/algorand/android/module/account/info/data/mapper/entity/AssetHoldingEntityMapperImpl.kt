@@ -2,8 +2,8 @@ package com.algorand.android.module.account.info.data.mapper.entity
 
 import com.algorand.android.module.account.info.data.model.AssetHoldingResponse
 import com.algorand.android.module.encryption.EncryptionManager
-import com.algorand.android.shared_db.accountinformation.model.AssetHoldingEntity
-import com.algorand.android.shared_db.accountinformation.model.AssetStatusEntity
+import com.algorand.android.module.shareddb.accountinformation.model.AssetHoldingEntity
+import com.algorand.android.module.shareddb.accountinformation.model.AssetStatusEntity
 
 internal class AssetHoldingEntityMapperImpl(
     private val encryptionManager: EncryptionManager

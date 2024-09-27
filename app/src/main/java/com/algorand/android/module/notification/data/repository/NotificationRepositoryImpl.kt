@@ -23,8 +23,8 @@ import com.algorand.android.module.notification.domain.model.NotificationHistory
 import com.algorand.android.module.notification.domain.repository.NotificationRepository
 import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
 import com.algorand.android.module.network.requestWithHipoErrorHandler
-import com.algorand.android.shared_db.notification.dao.NotificationFilterDao
-import com.algorand.android.shared_db.notification.model.NotificationFilterEntity
+import com.algorand.android.module.shareddb.notification.dao.NotificationFilterDao
+import com.algorand.android.module.shareddb.notification.model.NotificationFilterEntity
 import javax.inject.Inject
 
 internal class NotificationRepositoryImpl @Inject constructor(

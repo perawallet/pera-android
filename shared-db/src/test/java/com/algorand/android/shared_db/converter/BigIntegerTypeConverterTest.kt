@@ -1,6 +1,6 @@
 package com.algorand.android.account.core.data.database.converter
 
-import com.algorand.android.shared_db.converters.BigIntegerTypeConverter
+import com.algorand.android.module.shareddb.converters.BigIntegerTypeConverter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger

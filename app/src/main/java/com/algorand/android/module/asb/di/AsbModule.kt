@@ -20,7 +20,7 @@ import com.algorand.android.module.asb.domain.usecase.implementation.CreateAsbBa
 import com.algorand.android.module.asb.domain.usecase.implementation.CreateAsbCipherKeyUseCase
 import com.algorand.android.module.asb.domain.usecase.implementation.CreateAsbCipherTextUseCase
 import com.algorand.android.module.asb.domain.usecase.implementation.CreateAsbMnemonicUseCase
-import com.algorand.android.shared_db.asb.dao.AlgorandSecureBackUpDao
+import com.algorand.android.module.shareddb.asb.dao.AlgorandSecureBackUpDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

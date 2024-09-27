@@ -4,8 +4,8 @@ import com.algorand.android.module.asset.detail.component.data.mapper.entity.*
 import com.algorand.android.module.asset.detail.component.data.mapper.model.AssetDetailMapper
 import com.algorand.android.module.asset.detail.component.data.model.AssetDetailResponse
 import com.algorand.android.module.asset.detail.component.domain.model.AssetDetail
-import com.algorand.android.shared_db.assetdetail.dao.*
-import com.algorand.android.shared_db.assetdetail.model.*
+import com.algorand.android.module.shareddb.assetdetail.dao.*
+import com.algorand.android.module.shareddb.assetdetail.model.*
 import com.algorand.android.testutil.fixtureOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*

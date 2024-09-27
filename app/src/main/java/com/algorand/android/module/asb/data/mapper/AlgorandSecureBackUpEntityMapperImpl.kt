@@ -1,6 +1,6 @@
 package com.algorand.android.module.asb.data.mapper
 
-import com.algorand.android.shared_db.asb.model.AlgorandSecureBackUpEntity
+import com.algorand.android.module.shareddb.asb.model.AlgorandSecureBackUpEntity
 import javax.inject.Inject
 
 internal class AlgorandSecureBackUpEntityMapperImpl @Inject constructor() : AlgorandSecureBackUpEntityMapper {

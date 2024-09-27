@@ -8,7 +8,7 @@ import com.algorand.android.module.custominfo.data.mapper.model.CustomInfoMapper
 import com.algorand.android.module.custominfo.data.mapper.model.CustomInfoMapperImpl
 import com.algorand.android.module.custominfo.data.repository.CustomInfoRepositoryImpl
 import com.algorand.android.module.custominfo.domain.repository.CustomInfoRepository
-import com.algorand.android.shared_db.custominfo.dao.CustomInfoDao
+import com.algorand.android.module.shareddb.custominfo.dao.CustomInfoDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

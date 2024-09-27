@@ -2,7 +2,7 @@ package com.algorand.android.module.asset.detail.component.asset.data.mapper.mod
 
 import com.algorand.android.module.asset.detail.component.asset.data.model.VerificationTierResponse
 import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
-import com.algorand.android.shared_db.assetdetail.model.VerificationTierEntity
+import com.algorand.android.module.shareddb.assetdetail.model.VerificationTierEntity
 
 interface VerificationTierMapper {
     operator fun invoke(response: VerificationTierResponse?): VerificationTier

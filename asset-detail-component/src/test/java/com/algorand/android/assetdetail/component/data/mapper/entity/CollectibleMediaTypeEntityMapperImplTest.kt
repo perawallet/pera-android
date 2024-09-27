@@ -1,7 +1,7 @@
 package com.algorand.android.module.asset.detail.component.data.mapper.entity
 
 import com.algorand.android.module.asset.detail.component.data.model.collectible.CollectibleMediaTypeResponse
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaTypeEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaTypeEntity
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -18,7 +18,7 @@ import com.algorand.android.module.asset.detail.component.asset.data.model.NodeA
 import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.module.asset.detail.component.mapper.AssetInfoMapper
-import com.algorand.android.shared_db.assetdetail.model.AssetDetailEntity
+import com.algorand.android.module.shareddb.assetdetail.model.AssetDetailEntity
 import javax.inject.Inject
 
 internal class AssetDetailMapperImpl @Inject constructor(

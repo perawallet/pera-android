@@ -1,7 +1,7 @@
 package com.algorand.android.account.core.data.database.converter
 
-import com.algorand.android.shared_db.assetdetail.model.VerificationTierEntity
-import com.algorand.android.shared_db.converters.VerificationTierTypeConverter
+import com.algorand.android.module.shareddb.assetdetail.model.VerificationTierEntity
+import com.algorand.android.module.shareddb.converters.VerificationTierTypeConverter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -6,7 +6,7 @@ import com.algorand.android.module.account.info.data.model.RekeyedAccountsRespon
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.account.info.domain.model.AssetHolding
 import com.algorand.android.module.encryption.EncryptionManager
-import com.algorand.android.shared_db.accountinformation.model.AccountInformationEntity
+import com.algorand.android.module.shareddb.accountinformation.model.AccountInformationEntity
 
 internal class AccountInformationMapperImpl(
     private val appStateSchemeMapper: AppStateSchemeMapper,

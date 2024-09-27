@@ -3,12 +3,12 @@ package com.algorand.android.module.account.info.data.mapper.model
 import com.algorand.android.module.account.info.data.model.AssetHoldingResponse
 import com.algorand.android.module.account.info.domain.model.AssetHolding
 import com.algorand.android.module.account.info.domain.model.AssetStatus
-import com.algorand.android.shared_db.accountinformation.model.AssetHoldingEntity
-import com.algorand.android.shared_db.accountinformation.model.AssetStatusEntity
-import com.algorand.android.shared_db.accountinformation.model.AssetStatusEntity.OWNED_BY_ACCOUNT
-import com.algorand.android.shared_db.accountinformation.model.AssetStatusEntity.PENDING_FOR_ADDITION
-import com.algorand.android.shared_db.accountinformation.model.AssetStatusEntity.PENDING_FOR_REMOVAL
-import com.algorand.android.shared_db.accountinformation.model.AssetStatusEntity.PENDING_FOR_SENDING
+import com.algorand.android.module.shareddb.accountinformation.model.AssetHoldingEntity
+import com.algorand.android.module.shareddb.accountinformation.model.AssetStatusEntity
+import com.algorand.android.module.shareddb.accountinformation.model.AssetStatusEntity.OWNED_BY_ACCOUNT
+import com.algorand.android.module.shareddb.accountinformation.model.AssetStatusEntity.PENDING_FOR_ADDITION
+import com.algorand.android.module.shareddb.accountinformation.model.AssetStatusEntity.PENDING_FOR_REMOVAL
+import com.algorand.android.module.shareddb.accountinformation.model.AssetStatusEntity.PENDING_FOR_SENDING
 import java.math.BigInteger
 import javax.inject.Inject
 

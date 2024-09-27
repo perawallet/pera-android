@@ -16,7 +16,7 @@ package com.algorand.android.module.asset.detail.component.mapper
 import com.algorand.android.module.asset.detail.component.asset.data.model.AssetResponse
 import com.algorand.android.module.asset.detail.component.asset.data.model.NodeAssetDetailResponse
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
-import com.algorand.android.shared_db.assetdetail.model.AssetDetailEntity
+import com.algorand.android.module.shareddb.assetdetail.model.AssetDetailEntity
 
 internal interface AssetInfoMapper {
     operator fun invoke(assetResponse: AssetResponse): Asset.AssetInfo

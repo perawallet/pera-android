@@ -2,9 +2,9 @@ package com.algorand.android.module.asset.detail.component.data.mapper.entity
 
 import com.algorand.android.module.asset.detail.component.data.model.AssetDetailResponse
 import com.algorand.android.module.asset.detail.component.data.model.collectible.*
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaTypeEntity.IMAGE
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaTypeExtensionEntity.GIF
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaTypeEntity.IMAGE
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaTypeExtensionEntity.GIF
 import com.algorand.android.testutil.fixtureOf
 import org.junit.Assert.*
 import org.junit.Test

@@ -2,7 +2,7 @@ package com.algorand.android.module.asset.detail.component.data.mapper.model.col
 
 import com.algorand.android.module.asset.detail.component.data.model.collectible.*
 import com.algorand.android.module.asset.detail.component.domain.model.*
-import com.algorand.android.shared_db.assetdetail.model.*
+import com.algorand.android.module.shareddb.assetdetail.model.*
 import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.kotlin.*

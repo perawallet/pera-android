@@ -1,7 +1,7 @@
 package com.algorand.android.account.core.data.database.converter
 
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaTypeExtensionEntity
-import com.algorand.android.shared_db.converters.CollectibleMediaTypeExtensionTypeConverter
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaTypeExtensionEntity
+import com.algorand.android.module.shareddb.converters.CollectibleMediaTypeExtensionTypeConverter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

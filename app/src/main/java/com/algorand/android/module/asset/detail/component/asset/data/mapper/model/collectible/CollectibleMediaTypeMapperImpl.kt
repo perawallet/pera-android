@@ -2,7 +2,7 @@ package com.algorand.android.module.asset.detail.component.asset.data.mapper.mod
 
 import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleMediaTypeResponse
 import com.algorand.android.module.asset.detail.component.asset.domain.model.CollectibleMediaType
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaTypeEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaTypeEntity
 import javax.inject.Inject
 
 internal class CollectibleMediaTypeMapperImpl @Inject constructor() : CollectibleMediaTypeMapper {

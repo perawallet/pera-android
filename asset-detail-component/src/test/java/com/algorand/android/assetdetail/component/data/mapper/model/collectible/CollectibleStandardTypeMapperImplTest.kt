@@ -2,7 +2,7 @@ package com.algorand.android.module.asset.detail.component.data.mapper.model.col
 
 import com.algorand.android.module.asset.detail.component.data.model.collectible.CollectibleStandardTypeResponse
 import com.algorand.android.module.asset.detail.component.domain.model.CollectibleStandardType
-import com.algorand.android.shared_db.assetdetail.model.CollectibleStandardTypeEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleStandardTypeEntity
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

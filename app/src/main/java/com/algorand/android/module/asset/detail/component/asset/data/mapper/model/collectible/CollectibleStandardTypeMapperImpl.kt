@@ -2,7 +2,7 @@ package com.algorand.android.module.asset.detail.component.asset.data.mapper.mod
 
 import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleStandardTypeResponse
 import com.algorand.android.module.asset.detail.component.asset.domain.model.CollectibleStandardType
-import com.algorand.android.shared_db.assetdetail.model.CollectibleStandardTypeEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleStandardTypeEntity
 import javax.inject.Inject
 
 internal class CollectibleStandardTypeMapperImpl @Inject constructor() : CollectibleStandardTypeMapper {

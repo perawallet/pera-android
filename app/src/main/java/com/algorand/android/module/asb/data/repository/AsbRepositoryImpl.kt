@@ -3,7 +3,7 @@ package com.algorand.android.module.asb.data.repository
 import com.algorand.android.module.encryption.EncryptionManager
 import com.algorand.android.module.asb.data.mapper.AlgorandSecureBackUpEntityMapper
 import com.algorand.android.module.asb.domain.repository.AsbRepository
-import com.algorand.android.shared_db.asb.dao.AlgorandSecureBackUpDao
+import com.algorand.android.module.shareddb.asb.dao.AlgorandSecureBackUpDao
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

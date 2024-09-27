@@ -30,7 +30,7 @@ import com.algorand.android.module.notification.domain.usecase.SetNotificationFi
 import com.algorand.android.module.notification.domain.usecase.SetNotificationLastRefreshDateTime
 import com.algorand.android.module.notification.domain.usecase.SetNotificationLastRefreshDateTimeUseCase
 import com.algorand.android.module.network.exceptions.RetrofitErrorHandler
-import com.algorand.android.shared_db.notification.dao.NotificationFilterDao
+import com.algorand.android.module.shareddb.notification.dao.NotificationFilterDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

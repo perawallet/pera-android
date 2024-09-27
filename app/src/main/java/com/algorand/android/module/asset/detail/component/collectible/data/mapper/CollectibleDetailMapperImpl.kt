@@ -7,11 +7,11 @@ import com.algorand.android.module.asset.detail.component.asset.data.model.colle
 import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleMediaTypeResponse.UNKNOWN
 import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleMediaTypeResponse.VIDEO
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.CollectibleDetail
-import com.algorand.android.shared_db.assetdetail.model.AssetDetailEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaTypeEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleTraitEntity
+import com.algorand.android.module.shareddb.assetdetail.model.AssetDetailEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaTypeEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleTraitEntity
 import javax.inject.Inject
 
 internal class CollectibleDetailMapperImpl @Inject constructor(

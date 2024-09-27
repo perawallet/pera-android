@@ -17,8 +17,8 @@ import com.algorand.android.module.account.info.data.mapper.entity.AssetHoldingE
 import com.algorand.android.module.account.info.data.mapper.model.AssetHoldingMapper
 import com.algorand.android.module.account.info.data.model.AssetHoldingResponse
 import com.algorand.android.module.account.info.domain.model.AssetHolding
-import com.algorand.android.shared_db.accountinformation.dao.AssetHoldingDao
-import com.algorand.android.shared_db.accountinformation.model.AssetHoldingEntity
+import com.algorand.android.module.shareddb.accountinformation.dao.AssetHoldingDao
+import com.algorand.android.module.shareddb.accountinformation.model.AssetHoldingEntity
 import javax.inject.Inject
 
 internal class AssetHoldingCacheHelperImpl @Inject constructor(

@@ -20,10 +20,10 @@ import com.algorand.android.module.asset.detail.component.asset.domain.model.det
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.MixedCollectibleDetail
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.UnsupportedCollectibleDetail
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.VideoCollectibleDetail
-import com.algorand.android.shared_db.assetdetail.model.AssetDetailEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleTraitEntity
+import com.algorand.android.module.shareddb.assetdetail.model.AssetDetailEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleTraitEntity
 
 internal interface ImageCollectibleDetailMapper {
     operator fun invoke(assetResponse: AssetResponse, collectibleResponse: CollectibleResponse): ImageCollectibleDetail?

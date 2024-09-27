@@ -2,10 +2,10 @@ package com.algorand.android.module.asset.detail.component.collectible.data.mapp
 
 import com.algorand.android.module.asset.detail.component.asset.data.model.AssetResponse
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.CollectibleDetail
-import com.algorand.android.shared_db.assetdetail.model.AssetDetailEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleTraitEntity
+import com.algorand.android.module.shareddb.assetdetail.model.AssetDetailEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleTraitEntity
 
 internal interface CollectibleDetailMapper {
     operator fun invoke(response: AssetResponse): CollectibleDetail?

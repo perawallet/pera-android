@@ -12,7 +12,7 @@ import com.algorand.android.module.account.sorting.domain.usecase.RemoveAccountO
 import com.algorand.android.module.account.sorting.domain.usecase.SaveAccountSortPreference
 import com.algorand.android.module.account.sorting.domain.usecase.SetAccountOrderIndex
 import com.algorand.android.module.account.sorting.domain.usecase.implementation.GetSortedLocalAccountsUseCase
-import com.algorand.android.shared_db.accountsorting.dao.AccountIndexDao
+import com.algorand.android.module.shareddb.accountsorting.dao.AccountIndexDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

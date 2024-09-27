@@ -1,6 +1,6 @@
 package com.algorand.android.account.accountinformation.data.mapper.entity
 
-import com.algorand.android.shared_db.accountinformation.model.AssetHoldingEntity
+import com.algorand.android.module.shareddb.accountinformation.model.AssetHoldingEntity
 import com.algorand.android.account.accountinformation.data.model.AssetHoldingResponse
 import com.algorand.android.encryption.EncryptionManager
 import org.junit.Assert.*

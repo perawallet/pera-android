@@ -19,8 +19,8 @@ import com.algorand.android.module.account.info.data.mapper.model.AccountInforma
 import com.algorand.android.module.account.info.data.model.AccountInformationResponse
 import com.algorand.android.module.account.info.domain.model.AccountInformation
 import com.algorand.android.module.account.info.domain.model.AssetHolding
-import com.algorand.android.shared_db.accountinformation.dao.AccountInformationDao
-import com.algorand.android.shared_db.accountinformation.model.AccountInformationEntity
+import com.algorand.android.module.shareddb.accountinformation.dao.AccountInformationDao
+import com.algorand.android.module.shareddb.accountinformation.model.AccountInformationEntity
 import javax.inject.Inject
 
 internal class AccountInformationCacheHelperImpl @Inject constructor(

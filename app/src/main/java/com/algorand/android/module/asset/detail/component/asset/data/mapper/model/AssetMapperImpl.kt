@@ -18,10 +18,10 @@ import com.algorand.android.module.asset.detail.component.asset.data.model.NodeA
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.module.asset.detail.component.collectible.data.mapper.CollectibleDetailMapper
-import com.algorand.android.shared_db.assetdetail.model.AssetDetailEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaEntity
-import com.algorand.android.shared_db.assetdetail.model.CollectibleTraitEntity
+import com.algorand.android.module.shareddb.assetdetail.model.AssetDetailEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleTraitEntity
 import javax.inject.Inject
 
 internal class AssetMapperImpl @Inject constructor(

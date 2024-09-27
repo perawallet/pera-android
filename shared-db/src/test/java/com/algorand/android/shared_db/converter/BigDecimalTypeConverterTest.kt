@@ -1,6 +1,6 @@
 package com.algorand.android.account.core.data.database.converter
 
-import com.algorand.android.shared_db.converters.BigDecimalTypeConverter
+import com.algorand.android.module.shareddb.converters.BigDecimalTypeConverter
 import org.junit.Assert.*
 import org.junit.Test
 import java.math.BigDecimal

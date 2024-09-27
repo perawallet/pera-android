@@ -5,8 +5,8 @@ import com.algorand.android.module.encryption.EncryptionManager
 import com.algorand.android.module.account.sorting.domain.model.AccountOrderIndex
 import com.algorand.android.module.account.sorting.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.module.account.sorting.domain.repository.AccountSortingRepository
-import com.algorand.android.shared_db.accountsorting.dao.AccountIndexDao
-import com.algorand.android.shared_db.accountsorting.model.AccountIndexEntity
+import com.algorand.android.module.shareddb.accountsorting.dao.AccountIndexDao
+import com.algorand.android.module.shareddb.accountsorting.model.AccountIndexEntity
 import javax.inject.Inject
 
 internal class AccountSortingRepositoryImpl @Inject constructor(

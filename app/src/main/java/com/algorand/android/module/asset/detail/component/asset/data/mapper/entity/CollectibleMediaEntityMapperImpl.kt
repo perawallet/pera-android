@@ -1,7 +1,7 @@
 package com.algorand.android.module.asset.detail.component.asset.data.mapper.entity
 
 import com.algorand.android.module.asset.detail.component.asset.data.model.AssetResponse
-import com.algorand.android.shared_db.assetdetail.model.CollectibleMediaEntity
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleMediaEntity
 import javax.inject.Inject
 
 internal class CollectibleMediaEntityMapperImpl @Inject constructor(

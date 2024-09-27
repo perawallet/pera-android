@@ -1,6 +1,6 @@
 package com.algorand.android.account.accountinformation.data.mapper.model
 
-import com.algorand.android.shared_db.accountinformation.model.AccountInformationEntity
+import com.algorand.android.module.shareddb.accountinformation.model.AccountInformationEntity
 import com.algorand.android.account.accountinformation.data.model.*
 import com.algorand.android.account.accountinformation.domain.model.*
 import com.algorand.android.encryption.EncryptionManager

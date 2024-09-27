@@ -4,7 +4,7 @@ import com.algorand.android.module.asset.detail.component.data.mapper.model.coll
 import com.algorand.android.module.asset.detail.component.data.model.*
 import com.algorand.android.module.asset.detail.component.data.model.collectible.CollectibleResponse
 import com.algorand.android.module.asset.detail.component.domain.model.*
-import com.algorand.android.shared_db.assetdetail.model.*
+import com.algorand.android.module.shareddb.assetdetail.model.*
 import com.algorand.android.testutil.fixtureOf
 import org.junit.Assert.*
 import org.junit.Test

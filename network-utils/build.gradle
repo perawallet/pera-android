@@ -32,8 +32,6 @@ android {
 
 dependencies {
 
-    implementation project(path: ":foundation")
-
     implementation deps.retrofit.core
     implementation deps.retrofit.converter_gson
     api deps.retrofit.logging_interceptor

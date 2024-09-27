@@ -25,7 +25,7 @@ import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaPr
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaStatusPreview
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentAsaProfileBinding
-import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
+import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.action.addition.AddAssetActionBottomSheet

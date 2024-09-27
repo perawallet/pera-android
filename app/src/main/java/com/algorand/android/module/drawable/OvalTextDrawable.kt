@@ -11,29 +11,27 @@
  *   -->
  */
 
-package com.algorand.android.drawableui
+package com.algorand.android.module.drawable
 
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import android.graphics.drawable.shapes.RectShape
-import android.graphics.drawable.shapes.Shape
+import android.graphics.drawable.shapes.OvalShape
 
-class RoundRectTextDrawable(
+class OvalTextDrawable(
     private val backgroundColor: Int,
     private val borderPaint: Paint? = null,
-    private val radiusAsPx: Float = 0f,
-    private val rectBackgroundColor: Int,
     text: String,
     textPaint: Paint,
     height: Int,
     width: Int
-) : TextDrawable(text, textPaint, height, width, RectShape()) {
+) : TextDrawable(text, textPaint, height, width, OvalShape()) {
 
     override fun drawBorder(canvas: Canvas) {
         borderPaint?.run {
             val rect = RectF(bounds)
-            canvas.drawRoundRect(rect, radiusAsPx, radiusAsPx, this)
+            rect.inset(strokeWidth / 2, strokeWidth / 2)
+            canvas.drawOval(rect, this)
         }
     }
 
@@ -42,11 +40,6 @@ class RoundRectTextDrawable(
         val backgroundPaint = Paint().apply {
             color = backgroundColor
         }
-        canvas.drawRoundRect(backgroundRectF, radiusAsPx, radiusAsPx, backgroundPaint)
-    }
-
-    override fun onDraw(shape: Shape?, canvas: Canvas?, paint: Paint?) {
-        super.onDraw(shape, canvas, paint)
-        canvas?.drawColor(rectBackgroundColor)
+        canvas.drawOval(backgroundRectF, backgroundPaint)
     }
 }

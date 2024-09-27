@@ -18,7 +18,7 @@ import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
-import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
+import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
 
 sealed class LedgerInformationListItem {
 

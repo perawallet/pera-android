@@ -15,7 +15,7 @@ package com.algorand.android.module.account.core.ui.asset.assetdrawable
 
 import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
-import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
+import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
 
 interface GetAssetDrawableProvider {
 

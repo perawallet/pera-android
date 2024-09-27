@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.drawableui.asset
+package com.algorand.android.module.drawable.asset
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -22,8 +22,8 @@ import com.algorand.android.foundation.url.createPrismUrl
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class AssetDrawableProvider(
-    val assetAvatarName: String,
+data class CollectibleDrawableProvider(
+    private val assetAvatarName: String,
     override val logoUri: String?
 ) : BaseAssetDrawableProvider() {
 
@@ -52,6 +52,6 @@ data class AssetDrawableProvider(
     }
 
     override fun createPlaceHolder(context: Context, width: Int): Drawable {
-        return ShortAssetNameDrawable(assetAvatarName).toDrawable(context)
+        return CollectibleNameDrawable(assetAvatarName, width).toDrawable(context)
     }
 }

@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.drawableui.asset
+package com.algorand.android.module.drawable.asset
 
 import android.content.Context
 import android.graphics.Paint
@@ -19,7 +19,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import com.algorand.android.designsystem.R
-import com.algorand.android.drawableui.OvalTextDrawable
+import com.algorand.android.module.drawable.OvalTextDrawable
 import com.algorand.android.foundation.ui.calculateTextSizeInBounds
 
 internal class ShortAssetNameDrawable(private val assetName: String) {

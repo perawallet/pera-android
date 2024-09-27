@@ -16,7 +16,7 @@ package com.algorand.android.module.swap.ui.assetselection.model
 import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.designsystem.RecyclerListItem
-import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
+import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
 
 data class SwapAssetSelectionItem(
     val assetId: Long,

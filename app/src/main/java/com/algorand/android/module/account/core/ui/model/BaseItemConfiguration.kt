@@ -1,7 +1,7 @@
 package com.algorand.android.module.account.core.ui.model
 
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
-import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
+import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
 import java.math.BigDecimal
 
 sealed class BaseItemConfiguration {

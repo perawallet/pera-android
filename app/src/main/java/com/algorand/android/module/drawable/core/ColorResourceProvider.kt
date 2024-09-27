@@ -11,18 +11,10 @@
  *   -->
  */
 
-package com.algorand.android.drawableui.core
+package com.algorand.android.module.drawable.core
 
-import android.content.res.Resources
 import androidx.annotation.ColorRes
-import androidx.core.content.res.ResourcesCompat
-import javax.inject.Inject
 
-internal class ColorResourceProviderImpl @Inject constructor(
-    private val resources: Resources
-) : ColorResourceProvider {
-
-    override fun invoke(@ColorRes colorResId: Int): Int {
-        return ResourcesCompat.getColor(resources, colorResId, null)
-    }
+interface ColorResourceProvider {
+    operator fun invoke(@ColorRes colorResId: Int): Int
 }

@@ -18,7 +18,7 @@ import android.view.ViewGroup
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem
 import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.databinding.ItemSendAssetSelectionBinding
-import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
+import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
 import com.algorand.android.models.BaseViewHolder
 
 class SelectAssetItemViewHolder(

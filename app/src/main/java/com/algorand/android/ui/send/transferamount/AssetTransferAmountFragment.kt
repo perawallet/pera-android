@@ -26,7 +26,7 @@ import com.algorand.android.customviews.DialPadView
 import com.algorand.android.customviews.algorandamountinput.AlgorandAmountInputTextView
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentAssetTransferAmountBinding
-import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
+import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
 import com.algorand.android.models.AmountInput
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.AssetTransferAmountPreview

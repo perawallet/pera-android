@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.drawableui
+package com.algorand.android.module.drawable
 
 import android.graphics.Canvas
 import android.graphics.ColorFilter

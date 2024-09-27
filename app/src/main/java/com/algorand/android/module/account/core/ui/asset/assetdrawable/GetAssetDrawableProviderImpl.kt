@@ -20,10 +20,10 @@ import com.algorand.android.module.asset.detail.component.asset.domain.model.det
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.AssetDetail
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.CollectibleDetail
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
-import com.algorand.android.drawableui.asset.AlgoDrawableProvider
-import com.algorand.android.drawableui.asset.AssetDrawableProvider
-import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
-import com.algorand.android.drawableui.asset.CollectibleDrawableProvider
+import com.algorand.android.module.drawable.asset.AlgoDrawableProvider
+import com.algorand.android.module.drawable.asset.AssetDrawableProvider
+import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
+import com.algorand.android.module.drawable.asset.CollectibleDrawableProvider
 import javax.inject.Inject
 
 internal class GetAssetDrawableProviderImpl @Inject constructor(

@@ -11,11 +11,11 @@
  *   -->
  */
 
-package com.algorand.android.drawableui.core.di
+package com.algorand.android.module.drawable.core.di
 
 import android.content.Context
-import com.algorand.android.drawableui.core.ColorResourceProvider
-import com.algorand.android.drawableui.core.ColorResourceProviderImpl
+import com.algorand.android.module.drawable.core.ColorResourceProvider
+import com.algorand.android.module.drawable.core.ColorResourceProviderImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.drawableui.asset
+package com.algorand.android.module.drawable.asset
 
 import android.content.Context
 import android.graphics.drawable.Drawable

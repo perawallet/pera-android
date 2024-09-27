@@ -16,7 +16,7 @@ package com.algorand.android.module.asset.detail.ui.detail.asaprofile.model
 import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.account.core.ui.model.VerificationTierConfiguration
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
-import com.algorand.android.drawableui.asset.BaseAssetDrawableProvider
+import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
 import java.math.BigDecimal
 
 data class AsaProfilePreview(

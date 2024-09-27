@@ -15,8 +15,8 @@ package com.algorand.android.module.transaction.history.ui.model
 
 import android.os.Parcelable
 import androidx.annotation.StringRes
-import com.algorand.android.designsystem.R
-import com.algorand.android.designsystem.RecyclerListItem
+import com.algorand.android.R
+import com.algorand.android.module.drawable.RecyclerListItem
 import kotlinx.parcelize.Parcelize
 
 sealed class BaseTransactionItem : RecyclerListItem, Parcelable {

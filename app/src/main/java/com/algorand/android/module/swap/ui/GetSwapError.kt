@@ -14,7 +14,7 @@
 package com.algorand.android.module.swap.ui
 
 import androidx.annotation.StringRes
-import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.module.swap.ui.assetswap.model.SwapError
 
 interface GetSwapError {

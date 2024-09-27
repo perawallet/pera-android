@@ -32,8 +32,8 @@ import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.customviews.SwapAssetInputView
 import com.algorand.android.databinding.FragmentConfirmSwapBinding
-import com.algorand.android.designsystem.AnnotatedString
-import com.algorand.android.designsystem.getXmlStyledString
+import com.algorand.android.module.drawable.AnnotatedString
+import com.algorand.android.module.drawable.getXmlStyledString
 import com.algorand.android.foundation.Event
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration

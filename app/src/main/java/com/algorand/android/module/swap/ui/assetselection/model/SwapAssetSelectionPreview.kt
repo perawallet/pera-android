@@ -14,7 +14,7 @@
 package com.algorand.android.module.swap.ui.assetselection.model
 
 import com.algorand.android.assetutils.AssetAdditionPayload
-import com.algorand.android.designsystem.ScreenState
+import com.algorand.android.module.drawable.ScreenState
 import com.algorand.android.foundation.Event
 
 data class SwapAssetSelectionPreview(

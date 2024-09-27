@@ -15,7 +15,7 @@ package com.algorand.android.modules.swap.transactionsummary.ui.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.algorand.android.designsystem.BaseDiffUtil
+import com.algorand.android.module.drawable.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem
 import com.algorand.android.module.swap.ui.txnsummary.model.BaseSwapTransactionSummaryItem.ItemType

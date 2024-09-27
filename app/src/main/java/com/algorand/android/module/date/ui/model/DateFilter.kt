@@ -21,8 +21,8 @@ import com.algorand.android.module.date.getBeginningOfMonth
 import com.algorand.android.module.date.getBeginningOfWeek
 import com.algorand.android.module.date.getEndOfMonth
 import com.algorand.android.module.date.getEndOfWeek
-import com.algorand.android.designsystem.R
-import com.algorand.android.designsystem.RecyclerListItem
+import com.algorand.android.R
+import com.algorand.android.module.drawable.RecyclerListItem
 import kotlinx.parcelize.Parcelize
 
 sealed class DateFilter(

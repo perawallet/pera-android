@@ -15,8 +15,8 @@ package com.algorand.android.models
 import android.content.Context
 import androidx.annotation.StringRes
 import com.algorand.android.R
-import com.algorand.android.designsystem.AnnotatedString
-import com.algorand.android.designsystem.getXmlStyledString
+import com.algorand.android.module.drawable.AnnotatedString
+import com.algorand.android.module.drawable.getXmlStyledString
 import com.algorand.android.models.WalletConnectSignResult.Error.Defined
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 

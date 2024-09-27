@@ -2,7 +2,7 @@ package com.algorand.android.module.account.core.ui.model
 
 import androidx.annotation.*
 import com.algorand.android.module.asset.detail.component.asset.domain.model.VerificationTier
-import com.algorand.android.designsystem.R
+import com.algorand.android.R
 
 enum class VerificationTierConfiguration(
     @DrawableRes val drawableResId: Int?,

@@ -21,8 +21,8 @@ import androidx.core.view.isVisible
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentBaseIntroductionBinding
-import com.algorand.android.designsystem.AnnotatedString
-import com.algorand.android.designsystem.getXmlStyledString
+import com.algorand.android.module.drawable.AnnotatedString
+import com.algorand.android.module.drawable.getXmlStyledString
 import com.algorand.android.modules.baseintroduction.ui.model.FeatureTag
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.getCustomClickableSpan

@@ -22,7 +22,7 @@ import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseC
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem.ItemType.NO_MEDIA
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem.ItemType.UNSUPPORTED
 import com.algorand.android.module.asset.detail.ui.detail.nftprofile.model.BaseCollectibleMediaItem.ItemType.VIDEO
-import com.algorand.android.designsystem.BaseDiffUtil
+import com.algorand.android.module.drawable.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
 
 class CollectibleMediaAdapter(

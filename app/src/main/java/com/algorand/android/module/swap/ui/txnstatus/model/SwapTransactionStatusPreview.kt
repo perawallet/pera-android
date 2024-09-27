@@ -17,7 +17,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
-import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.foundation.Event
 
 data class SwapTransactionStatusPreview(

@@ -69,7 +69,7 @@ class ScreenStateView @JvmOverloads constructor(
         }
     }
 
-    fun setupUi(screenState: com.algorand.android.designsystem.ScreenState) {
+    fun setupUi(screenState: com.algorand.android.module.drawable.ScreenState) {
         with(binding) {
             with(screenState) {
                 infoIconImageView.setImageResAndVisibility(icon)

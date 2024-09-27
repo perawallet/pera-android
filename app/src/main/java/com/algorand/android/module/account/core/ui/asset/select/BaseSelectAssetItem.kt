@@ -16,7 +16,7 @@ package com.algorand.android.module.account.core.ui.asset.select
 import com.algorand.android.module.account.core.ui.assetsorting.AssetSortableItem
 import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.account.core.ui.model.BaseItemConfiguration
-import com.algorand.android.designsystem.RecyclerListItem
+import com.algorand.android.module.drawable.RecyclerListItem
 import com.algorand.android.module.drawable.asset.BaseAssetDrawableProvider
 import java.math.BigDecimal
 import java.math.BigInteger

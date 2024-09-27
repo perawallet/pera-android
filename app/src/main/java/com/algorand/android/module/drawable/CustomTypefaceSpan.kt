@@ -11,16 +11,23 @@
  *   -->
  */
 
-package com.algorand.android.designsystem
+package com.algorand.android.module.drawable
 
-import androidx.recyclerview.widget.DiffUtil
+import android.graphics.Typeface
+import android.text.TextPaint
+import android.text.style.MetricAffectingSpan
 
-class BaseDiffUtil<T : RecyclerListItem> : DiffUtil.ItemCallback<T>() {
-    override fun areItemsTheSame(oldItem: T, newItem: T): Boolean {
-        return oldItem areItemsTheSame newItem
-    }
+class CustomTypefaceSpan(private val font: Typeface?) : MetricAffectingSpan() {
 
-    override fun areContentsTheSame(oldItem: T, newItem: T): Boolean {
-        return oldItem areContentsTheSame newItem
+    override fun updateMeasureState(textPaint: TextPaint) = update(textPaint)
+    override fun updateDrawState(textPaint: TextPaint?) = update(textPaint)
+
+    private fun update(tp: TextPaint?) {
+        tp?.apply {
+            val old = this.typeface
+            val oldStyle = old?.style ?: 0
+            val font = Typeface.create(font, oldStyle)
+            typeface = font
+        }
     }
 }

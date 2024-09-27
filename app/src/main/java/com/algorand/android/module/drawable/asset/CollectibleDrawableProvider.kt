@@ -17,7 +17,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.core.view.doOnLayout
-import com.algorand.android.designsystem.loadImage
+import com.algorand.android.module.drawable.loadImage
 import com.algorand.android.foundation.url.createPrismUrl
 import kotlinx.parcelize.Parcelize
 

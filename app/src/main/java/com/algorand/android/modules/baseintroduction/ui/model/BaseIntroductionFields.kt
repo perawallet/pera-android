@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.baseintroduction.ui.model
 
-import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.module.drawable.AnnotatedString
 
 interface BaseIntroductionFields {
     val bannerDrawableResId: Int

@@ -14,7 +14,7 @@ package com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui
 
 import com.algorand.android.R
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.decider.RekeyToStandardAccountIntroductionPreviewDecider
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.mapper.RekeyToStandardAccountIntroductionPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.model.RekeyToStandardAccountIntroductionPreview

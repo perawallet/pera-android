@@ -17,7 +17,7 @@ import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_DE
 import com.algorand.android.module.asset.detail.component.asset.domain.model.detail.Asset
 import com.algorand.android.module.asset.detail.component.asset.domain.usecase.GetAsset
 import com.algorand.android.module.account.core.component.utils.toShortenedAddress
-import com.algorand.android.designsystem.R
+import com.algorand.android.R
 import com.algorand.android.module.transaction.history.ui.mapper.BaseTransactionItemMapper
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.module.transaction.history.ui.usecase.GetTransactionTargetUserDisplayName

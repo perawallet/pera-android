@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.model
 
-import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.modules.baseintroduction.ui.model.BaseIntroductionFields
 import com.algorand.android.modules.baseintroduction.ui.model.FeatureTag
 

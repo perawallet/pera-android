@@ -14,9 +14,9 @@
 package com.algorand.android.module.swap.ui.confirmswap.model
 
 import android.content.Context
-import com.algorand.android.designsystem.AnnotatedString
-import com.algorand.android.designsystem.R
-import com.algorand.android.designsystem.getXmlStyledString
+import com.algorand.android.module.drawable.AnnotatedString
+import com.algorand.android.R
+import com.algorand.android.module.drawable.getXmlStyledString
 import com.algorand.android.module.swap.component.domain.model.swapquotetxns.SwapQuoteTransaction
 
 sealed interface SignSwapTransactionResult {

@@ -14,8 +14,8 @@
 package com.algorand.android.module.transaction.ui.core.mapper
 
 import android.bluetooth.BluetoothDevice
-import com.algorand.android.designsystem.AnnotatedString
-import com.algorand.android.designsystem.R
+import com.algorand.android.module.drawable.AnnotatedString
+import com.algorand.android.R
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult.Error.AuthAccountNotFound
 import com.algorand.android.module.transaction.component.domain.sign.model.SignTransactionResult.Error.BluetoothNotEnabled

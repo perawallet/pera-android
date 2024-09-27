@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.designsystem
+package com.algorand.android.module.drawable
 
 import android.content.Context
 import android.graphics.Typeface
@@ -31,6 +31,7 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.inSpans
+import com.algorand.android.R
 
 fun Appendable.appendSpace() {
     append(" ")

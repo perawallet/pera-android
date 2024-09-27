@@ -14,9 +14,9 @@
 package com.algorand.android.modulenew.walletconnect
 
 import android.content.Context
-import com.algorand.android.designsystem.AnnotatedString
-import com.algorand.android.designsystem.R
-import com.algorand.android.designsystem.getXmlStyledString
+import com.algorand.android.module.drawable.AnnotatedString
+import com.algorand.android.R
+import com.algorand.android.module.drawable.getXmlStyledString
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 
 interface SignWalletConnectArbitraryDataResult {

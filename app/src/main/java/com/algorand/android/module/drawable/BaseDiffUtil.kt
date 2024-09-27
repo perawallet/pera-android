@@ -11,9 +11,16 @@
  *   -->
  */
 
-package com.algorand.android.designsystem
+package com.algorand.android.module.drawable
 
-interface RecyclerListItem {
-    infix fun areItemsTheSame(other: RecyclerListItem): Boolean
-    infix fun areContentsTheSame(other: RecyclerListItem): Boolean
+import androidx.recyclerview.widget.DiffUtil
+
+class BaseDiffUtil<T : RecyclerListItem> : DiffUtil.ItemCallback<T>() {
+    override fun areItemsTheSame(oldItem: T, newItem: T): Boolean {
+        return oldItem areItemsTheSame newItem
+    }
+
+    override fun areContentsTheSame(oldItem: T, newItem: T): Boolean {
+        return oldItem areContentsTheSame newItem
+    }
 }

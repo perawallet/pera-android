@@ -3,7 +3,7 @@ package com.algorand.android.module.account.core.ui.usecase.implementation
 import android.content.res.Resources
 import com.algorand.android.module.account.core.ui.model.AssetName
 import com.algorand.android.module.account.core.ui.usecase.GetAssetName
-import com.algorand.android.designsystem.R
+import com.algorand.android.R
 import java.util.Locale
 
 internal class GetAssetNameUseCase(

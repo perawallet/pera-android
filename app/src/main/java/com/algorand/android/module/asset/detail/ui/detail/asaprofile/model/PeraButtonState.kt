@@ -15,7 +15,7 @@ package com.algorand.android.module.asset.detail.ui.detail.asaprofile.model
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import com.algorand.android.designsystem.R
+import com.algorand.android.R
 
 enum class PeraButtonState(
     @ColorRes val backgroundColorResId: Int,

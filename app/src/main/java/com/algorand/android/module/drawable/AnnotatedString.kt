@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.designsystem
+package com.algorand.android.module.drawable
 
 import android.os.Parcelable
 import androidx.annotation.StringRes

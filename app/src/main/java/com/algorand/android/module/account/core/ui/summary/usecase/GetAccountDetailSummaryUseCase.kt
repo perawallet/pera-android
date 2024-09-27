@@ -24,7 +24,7 @@ import com.algorand.android.module.account.core.component.detail.domain.model.Ac
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.Rekeyed
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType.RekeyedAuth
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.designsystem.R
+import com.algorand.android.R
 import javax.inject.Inject
 
 internal class GetAccountDetailSummaryUseCase @Inject constructor(

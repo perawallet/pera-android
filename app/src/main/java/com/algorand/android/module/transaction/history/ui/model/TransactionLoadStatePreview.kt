@@ -13,7 +13,7 @@
 
 package com.algorand.android.module.transaction.history.ui.model
 
-import com.algorand.android.designsystem.ScreenState
+import com.algorand.android.module.drawable.ScreenState
 
 data class TransactionLoadStatePreview(
     val isScreenStateViewVisible: Boolean,

@@ -14,7 +14,7 @@ package com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.d
 
 import com.algorand.android.R
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
-import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.module.drawable.AnnotatedString
 import javax.inject.Inject
 
 class RekeyToLedgerAccountPreviewDecider @Inject constructor() {

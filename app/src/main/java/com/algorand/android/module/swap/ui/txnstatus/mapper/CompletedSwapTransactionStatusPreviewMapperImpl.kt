@@ -14,8 +14,8 @@
 package com.algorand.android.module.swap.ui.txnstatus.mapper
 
 import android.text.style.ForegroundColorSpan
-import com.algorand.android.designsystem.AnnotatedString
-import com.algorand.android.designsystem.R
+import com.algorand.android.module.drawable.AnnotatedString
+import com.algorand.android.R
 import com.algorand.android.module.drawable.core.ColorResourceProvider
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.foundation.common.encodeToURL

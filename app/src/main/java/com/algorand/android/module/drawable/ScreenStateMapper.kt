@@ -11,7 +11,7 @@
  *   -->
  */
 
-package com.algorand.android.designsystem
+package com.algorand.android.module.drawable
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

@@ -17,7 +17,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
-import com.algorand.android.designsystem.BaseDiffUtil
+import com.algorand.android.module.drawable.BaseDiffUtil
 import com.algorand.android.module.transaction.history.ui.model.BaseTransactionItem
 import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryTitleViewHolder
 import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryTransactionItemViewHolder

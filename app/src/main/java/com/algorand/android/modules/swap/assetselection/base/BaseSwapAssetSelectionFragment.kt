@@ -19,7 +19,7 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.databinding.FragmentSwapAssetSelectionBinding
-import com.algorand.android.designsystem.ScreenState
+import com.algorand.android.module.drawable.ScreenState
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.swap.assetselection.base.SwapAssetSelectionAdapter.SwapAssetSelectionAdapterListener

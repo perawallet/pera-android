@@ -22,7 +22,7 @@ import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetI
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_MIXED_ITEM
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_NOT_SUPPORTED_ITEM
 import com.algorand.android.module.account.core.ui.asset.select.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_VIDEO_ITEM
-import com.algorand.android.designsystem.BaseDiffUtil
+import com.algorand.android.module.drawable.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
 
 class SelectSendingAssetAdapter(onAssetClick: (Long) -> Unit) :

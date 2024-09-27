@@ -15,7 +15,7 @@ package com.algorand.android.module.swap.ui.txnsummary.model
 
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
-import com.algorand.android.designsystem.RecyclerListItem
+import com.algorand.android.module.drawable.RecyclerListItem
 
 sealed class BaseSwapTransactionSummaryItem : RecyclerListItem {
 

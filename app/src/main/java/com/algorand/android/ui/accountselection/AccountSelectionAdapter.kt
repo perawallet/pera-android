@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem
 import com.algorand.android.module.account.core.ui.accountselection.model.BaseAccountSelectionListItem.BaseAccountItem
-import com.algorand.android.designsystem.BaseDiffUtil
+import com.algorand.android.module.drawable.BaseDiffUtil
 import com.algorand.android.ui.accountselection.viewholder.AccountSelectionAccountErrorItemViewHolder
 import com.algorand.android.ui.accountselection.viewholder.AccountSelectionAccountItemViewHolder
 import com.algorand.android.ui.accountselection.viewholder.AccountSelectionContactItemViewHolder

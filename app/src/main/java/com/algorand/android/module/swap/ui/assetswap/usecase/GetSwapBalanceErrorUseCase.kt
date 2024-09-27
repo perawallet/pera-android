@@ -19,9 +19,9 @@ import com.algorand.android.module.asset.detail.component.AssetConstants.ALGO_DE
 import com.algorand.android.module.account.core.component.assetdata.usecase.GetAccountOwnedAssetData
 import com.algorand.android.module.account.core.component.domain.usecase.GetAccountMinBalance
 import com.algorand.android.module.currency.domain.model.Currency
-import com.algorand.android.designsystem.AnnotatedString
-import com.algorand.android.designsystem.R
-import com.algorand.android.designsystem.getXmlStyledString
+import com.algorand.android.module.drawable.AnnotatedString
+import com.algorand.android.R
+import com.algorand.android.module.drawable.getXmlStyledString
 import com.algorand.android.foundation.Event
 import com.algorand.android.foundation.common.isEqualTo
 import com.algorand.android.foundation.common.isLesserThan

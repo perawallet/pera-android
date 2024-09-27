@@ -15,7 +15,7 @@ package com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.u
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
 import com.algorand.android.module.account.info.domain.model.AccountInformation
-import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.foundation.Event
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
 import javax.inject.Inject

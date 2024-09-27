@@ -14,7 +14,7 @@ package com.algorand.android.modules.baseledgeraccountselection.accountselection
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.algorand.android.designsystem.BaseDiffUtil
+import com.algorand.android.module.drawable.BaseDiffUtil
 import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.adapter.viewholder.LedgerAccountSelectionViewHolder

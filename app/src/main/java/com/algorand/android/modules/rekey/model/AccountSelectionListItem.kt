@@ -17,7 +17,7 @@ import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import com.algorand.android.module.account.core.ui.model.AccountDisplayName
 import com.algorand.android.module.account.core.ui.model.AccountIconDrawablePreview
-import com.algorand.android.designsystem.RecyclerListItem
+import com.algorand.android.module.drawable.RecyclerListItem
 import kotlinx.parcelize.Parcelize
 
 sealed class AccountSelectionListItem : RecyclerListItem, Parcelable {

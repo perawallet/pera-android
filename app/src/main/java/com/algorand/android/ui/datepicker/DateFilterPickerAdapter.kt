@@ -16,7 +16,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.module.date.ui.model.DateFilter
-import com.algorand.android.designsystem.BaseDiffUtil
+import com.algorand.android.module.drawable.BaseDiffUtil
 
 class DateFilterPickerAdapter(
     private val listener: Listener

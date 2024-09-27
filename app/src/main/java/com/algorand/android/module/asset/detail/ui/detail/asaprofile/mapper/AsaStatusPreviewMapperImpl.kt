@@ -19,7 +19,7 @@ import com.algorand.android.module.account.core.ui.usecase.GetAccountIconDrawabl
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaStatusPreview
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.AsaStatusPreview.RemovalStatus.CollectibleRemovalStatus
 import com.algorand.android.module.asset.detail.ui.detail.asaprofile.model.PeraButtonState
-import com.algorand.android.designsystem.R
+import com.algorand.android.R
 import javax.inject.Inject
 
 internal class AsaStatusPreviewMapperImpl @Inject constructor(

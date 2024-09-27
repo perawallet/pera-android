@@ -18,7 +18,7 @@ import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
-import com.algorand.android.designsystem.R
+import com.algorand.android.R
 import com.algorand.android.module.drawable.RoundRectTextDrawable
 import com.algorand.android.foundation.ui.calculateTextSizeInBounds
 

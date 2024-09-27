@@ -11,7 +11,9 @@
  *   -->
  */
 
-package com.algorand.android.designsystem
+package com.algorand.android.module.drawable
+
+import com.algorand.android.R
 
 sealed class ScreenState(
     open val icon: Int,

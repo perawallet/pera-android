@@ -17,7 +17,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.appcompat.content.res.AppCompatResources
-import com.algorand.android.designsystem.R
+import com.algorand.android.R
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

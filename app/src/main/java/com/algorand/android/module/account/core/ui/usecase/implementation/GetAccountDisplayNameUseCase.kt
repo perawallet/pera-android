@@ -12,7 +12,7 @@ import com.algorand.android.module.account.core.component.detail.domain.model.Ac
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
 import com.algorand.android.module.account.core.component.utils.toShortenedAddress
 import com.algorand.android.module.custominfo.domain.usecase.GetCustomInfoOrNull
-import com.algorand.android.designsystem.R
+import com.algorand.android.R
 import com.algorand.android.module.nameservice.domain.model.NameService
 import com.algorand.android.module.nameservice.domain.usecase.GetAccountNameService
 import javax.inject.Inject

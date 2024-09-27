@@ -15,7 +15,7 @@ package com.algorand.android.modules.basesingleaccountselection.ui.adapter.viewh
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.databinding.ItemSingleAccountSelectionDescriptionBinding
-import com.algorand.android.designsystem.getXmlStyledString
+import com.algorand.android.module.drawable.getXmlStyledString
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.basesingleaccountselection.ui.model.SingleAccountSelectionListItem
 

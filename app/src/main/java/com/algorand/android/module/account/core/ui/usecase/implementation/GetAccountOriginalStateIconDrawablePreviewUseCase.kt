@@ -6,7 +6,7 @@ import com.algorand.android.module.account.core.ui.usecase.GetAccountOriginalSta
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountDetail
 import com.algorand.android.module.account.core.component.detail.domain.model.AccountType
 import com.algorand.android.module.account.core.component.detail.domain.usecase.GetAccountDetail
-import com.algorand.android.designsystem.R
+import com.algorand.android.R
 import javax.inject.Inject
 
 internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constructor(

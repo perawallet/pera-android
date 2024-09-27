@@ -14,7 +14,7 @@ package com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.
 
 import com.algorand.android.R
 import com.algorand.android.module.account.info.domain.model.AccountInformation
-import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.module.drawable.AnnotatedString
 import javax.inject.Inject
 
 class RekeyToLedgerAccountConfirmationPreviewDecider @Inject constructor() {

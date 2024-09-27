@@ -1,6 +1,6 @@
 package com.algorand.android.module.account.core.ui.accountsorting.domain.model
 
-import com.algorand.android.designsystem.R
+import com.algorand.android.R
 
 sealed interface AccountSortingType {
 

@@ -16,7 +16,7 @@ package com.algorand.android.module.account.core.ui.accountselection.model
 import android.net.Uri
 import androidx.annotation.StringRes
 import com.algorand.android.module.account.core.ui.accountsorting.domain.model.BaseAccountAndAssetListItem
-import com.algorand.android.designsystem.RecyclerListItem
+import com.algorand.android.module.drawable.RecyclerListItem
 
 sealed class BaseAccountSelectionListItem : RecyclerListItem {
 

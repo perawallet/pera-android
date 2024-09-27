@@ -16,8 +16,8 @@ package com.algorand.android.module.transaction.history.ui.mapper
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.LoadState.Loading
-import com.algorand.android.designsystem.R
-import com.algorand.android.designsystem.ScreenState
+import com.algorand.android.R
+import com.algorand.android.module.drawable.ScreenState
 import com.algorand.android.module.transaction.history.ui.model.TransactionLoadStatePreview
 import java.io.IOException
 import javax.inject.Inject

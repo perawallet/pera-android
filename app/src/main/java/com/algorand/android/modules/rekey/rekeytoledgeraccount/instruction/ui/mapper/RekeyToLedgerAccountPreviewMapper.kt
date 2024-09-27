@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.mapper
 
-import com.algorand.android.designsystem.AnnotatedString
+import com.algorand.android.module.drawable.AnnotatedString
 import com.algorand.android.modules.baseintroduction.ui.model.FeatureTag
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.model.RekeyToLedgerAccountPreview
 import javax.inject.Inject

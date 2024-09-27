@@ -13,8 +13,8 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.decider
 
 import com.algorand.android.module.account.info.domain.model.AccountInformation
-import com.algorand.android.designsystem.AnnotatedString
-import com.algorand.android.designsystem.R
+import com.algorand.android.module.drawable.AnnotatedString
+import com.algorand.android.R
 import javax.inject.Inject
 
 class RekeyToStandardAccountPreviewDecider @Inject constructor() {

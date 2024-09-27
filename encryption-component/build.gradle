@@ -37,7 +37,6 @@ android {
 
 dependencies {
 
-    implementation project(path: ':test-util')
     implementation deps.tink
 
     implementation deps.hilt.core

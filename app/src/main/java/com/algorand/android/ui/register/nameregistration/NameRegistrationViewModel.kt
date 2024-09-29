@@ -22,7 +22,6 @@ import com.algorand.android.models.ui.NameRegistrationPreview
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.usecase.NameRegistrationPreviewUseCase
 import com.algorand.android.utils.analytics.CreationType
-import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.toShortenedAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,12 +41,12 @@ class NameRegistrationViewModel @Inject constructor(
     val nameRegistrationPreviewFlow: Flow<NameRegistrationPreview>
         get() = _nameRegistrationPreviewFlow
 
-    private val accountCreation = savedStateHandle.getOrThrow<AccountCreation>(ACCOUNT_CREATION_KEY)
-    private val accountAddress = accountCreation.tempAccount.address
-    private val accountName = accountCreation.tempAccount.name
+    private val accountCreation = savedStateHandle.get<AccountCreation>(ACCOUNT_CREATION_KEY)
+    private val accountAddress = accountCreation?.tempAccount?.address
+    private val accountName = accountCreation?.tempAccount?.name
 
     val predefinedAccountName: String
-        get() = accountName.takeIf { it.isNotBlank() } ?: accountAddress.toShortenedAddress()
+        get() = accountName.takeUnless { it.isNullOrBlank() } ?: accountAddress.toShortenedAddress()
 
     fun updatePreviewWithAccountCreation(accountCreation: AccountCreation?, inputName: String) {
         viewModelScope.launch {

@@ -50,7 +50,7 @@ object WalletConnectV2UriValidator {
             return null
         }
 
-        if (pairUri.userInfo.isEmpty()) return null
+        if (pairUri.userInfo.isNullOrEmpty()) return null
         val mapOfQueryParameters: Map<String, String> =
             pairUri.query.split("&").associate { query -> query.substringBefore("=") to query.substringAfter("=") }
 

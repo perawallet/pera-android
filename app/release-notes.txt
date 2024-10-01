@@ -1,2 +1,1 @@
-PERA - 764: Generic banner - Dark mode color problem
-PERA - 772: QR Code for requesting ALGO is not working
+Test bitrise: 0001

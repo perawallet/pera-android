@@ -30,11 +30,7 @@ internal object CustomInfoDatabaseModule {
 
     @Provides
     @Singleton
-    fun provideCustomInfoMapper(
-        @Named(DETERMINISTIC_ENCRYPTION_MANAGER) encryptionManager: EncryptionManager
-    ): CustomInfoMapper {
-        return CustomInfoMapperImpl(encryptionManager)
-    }
+    fun provideCustomInfoMapper(impl: CustomInfoMapperImpl): CustomInfoMapper = impl
 
     @Provides
     @Singleton

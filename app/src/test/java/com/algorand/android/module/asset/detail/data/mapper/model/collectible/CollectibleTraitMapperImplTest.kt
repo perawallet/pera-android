@@ -1,0 +1,59 @@
+package com.algorand.android.module.asset.detail.data.mapper.model.collectible
+
+import com.algorand.android.module.asset.detail.component.asset.data.mapper.model.collectible.CollectibleTraitMapperImpl
+import com.algorand.android.module.asset.detail.component.asset.data.model.collectible.CollectibleTraitResponse
+import com.algorand.android.module.asset.detail.component.asset.domain.model.CollectibleTrait
+import com.algorand.android.module.shareddb.assetdetail.model.CollectibleTraitEntity
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Test
+
+internal class CollectibleTraitMapperImplTest {
+
+    private val sut = CollectibleTraitMapperImpl()
+
+    @Test
+    fun `EXPECT collectible trait WHEN response fields are valid`() {
+        val response = CollectibleTraitResponse(name = "traitName", value = "value")
+
+        val result = sut(response)
+
+        val expected = CollectibleTrait(name = "traitName", value = "value")
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `EXPECT null WHEN response fields are null`() {
+        val response = CollectibleTraitResponse(name = null, value = null)
+
+        val result = sut(response)
+
+        assertNull(result)
+    }
+
+    @Test
+    fun `EXPECT collectible trait list WHEN entity list is valid`() {
+        val entityList = listOf(
+            CollectibleTraitEntity(
+                displayName = "traitName1",
+                displayValue = "value1",
+                id = 1L,
+                collectibleAssetId = 2L
+            ),
+            CollectibleTraitEntity(
+                displayName = "traitName2",
+                displayValue = "value2",
+                id = 2L,
+                collectibleAssetId = 2L
+            )
+        )
+
+        val result = sut(entityList)
+
+        val expectedList = listOf(
+            CollectibleTrait(name = "traitName1", value = "value1"),
+            CollectibleTrait(name = "traitName2", value = "value2")
+        )
+        assertEquals(expectedList, result)
+    }
+}

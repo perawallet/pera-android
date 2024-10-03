@@ -11,7 +11,7 @@ plugins {
     id 'com.google.firebase.firebase-perf'
 }
 
-apply from: 'https://raw.githubusercontent.com/Hipo/macaron/master/config/quality/quality.gradle'
+//apply from: 'https://raw.githubusercontent.com/Hipo/macaron/master/config/quality/quality.gradle'
 
 def browsersGradlePath = 'browsers.gradle'
 def offrampGradlePath = 'offramp.gradle'
@@ -238,7 +238,10 @@ dependencies {
     }
 
     // Test
+    testImplementation project(":test-util")
     testImplementation deps.junit
+    testImplementation deps.mockito
+    testImplementation deps.kotlinx.coroutines_test
     androidTestImplementation deps.room_testing
     androidTestImplementation deps.runner
     androidTestImplementation deps.espresso

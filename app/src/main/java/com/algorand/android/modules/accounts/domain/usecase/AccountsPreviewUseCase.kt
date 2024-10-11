@@ -33,6 +33,7 @@ import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.HeaderItem
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.ui.AccountsFragmentDirections
+import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.AssetInboxAllAccountsUseCase
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.notification.domain.usecase.NotificationStatusUseCase
 import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
@@ -71,6 +72,7 @@ class AccountsPreviewUseCase @Inject constructor(
     private val accountPreviewMapper: AccountPreviewMapper,
     private val accountListItemMapper: AccountListItemMapper,
     private val bannersUseCase: BannersUseCase,
+    private val assetInboxAllAccountsUseCase: AssetInboxAllAccountsUseCase,
     private val baseBannerItemMapper: BaseBannerItemMapper,
     private val nodeSettingsUseCase: NodeSettingsUseCase,
     private val portfolioValueItemMapper: PortfolioValueItemMapper,
@@ -96,7 +98,7 @@ class AccountsPreviewUseCase @Inject constructor(
     }
 
     suspend fun getInitialAccountPreview(): AccountPreview {
-        val isTestnetBadgeVisible = nodeSettingsUseCase.isSelectedNodeTestnet()
+        val isTestnetBadgeVisible = false
         val isDeviceConnectedToInternet = peraConnectivityManager.isConnectedToInternet()
         return if (isDeviceConnectedToInternet) {
             accountPreviewMapper.getFullScreenLoadingState(isTestnetBadgeVisible)
@@ -116,12 +118,14 @@ class AccountsPreviewUseCase @Inject constructor(
             parityUseCase.getSelectedCurrencyDetailCacheFlow(),
             accountDetailUseCase.getAccountDetailCacheFlow(),
             bannersUseCase.getBanner(),
+            assetInboxAllAccountsUseCase.getAssetInboxCountCacheFlow(),
             tutorialUseCase.getTutorial(),
             getAskNotificationPermissionEventFlowUseCase.invoke(),
             nodeSettingsUseCase.getAllNodeAsFlow(),
             assetCacheManagerUseCase.getAssetCacheStatusFlow()
-        ) { selectedCurrencyParityCache, accountDetailCache, banner, tutorial, notificationPermissionEvent, _, _ ->
-            val isTestnetBadgeVisible = nodeSettingsUseCase.isSelectedNodeTestnet()
+        ) { selectedCurrencyParityCache, accountDetailCache, banner, assetInboxCount, tutorial,
+            notificationPermissionEvent, _, _ ->
+            val isTestnetBadgeVisible = false
             val localAccounts = accountManager.getAccounts()
             if (localAccounts.isEmpty()) {
                 return@combine accountPreviewMapper.getEmptyAccountListState(isTestnetBadgeVisible)
@@ -131,6 +135,7 @@ class AccountsPreviewUseCase @Inject constructor(
                     processAccountsAndAssets(
                         accountDetailCache = accountDetailCache,
                         banner = banner,
+                        assetInboxCount = assetInboxCount,
                         isTestnetBadgeVisible = isTestnetBadgeVisible,
                         tutorial = tutorial,
                         notificationPermissionEvent = notificationPermissionEvent?.data
@@ -202,6 +207,7 @@ class AccountsPreviewUseCase @Inject constructor(
     private suspend fun processAccountsAndAssets(
         accountDetailCache: HashMap<String, CacheResult<AccountDetail>>,
         banner: BaseBanner?,
+        assetInboxCount: Int,
         isTestnetBadgeVisible: Boolean,
         tutorial: Tutorial?,
         notificationPermissionEvent: Event<Unit>?
@@ -210,6 +216,7 @@ class AccountsPreviewUseCase @Inject constructor(
         return if (areAllAccountsAreCached) {
             processSuccessAccountCacheAndOthers(
                 accountDetailCache = accountDetailCache,
+                assetInboxCount = assetInboxCount,
                 banner = banner,
                 isTestnetBadgeVisible = isTestnetBadgeVisible,
                 tutorial = tutorial,
@@ -223,6 +230,7 @@ class AccountsPreviewUseCase @Inject constructor(
     private suspend fun processSuccessAccountCacheAndOthers(
         accountDetailCache: HashMap<String, CacheResult<AccountDetail>>,
         banner: BaseBanner?,
+        assetInboxCount: Int,
         isTestnetBadgeVisible: Boolean,
         tutorial: Tutorial?,
         notificationPermissionEvent: Event<Unit>?
@@ -238,6 +246,7 @@ class AccountsPreviewUseCase @Inject constructor(
         } else {
             prepareAccountPreview(
                 banner = banner,
+                assetInboxCount = assetInboxCount,
                 isTestnetBadgeVisible = isTestnetBadgeVisible,
                 tutorial = tutorial,
                 notificationPermissionEvent = notificationPermissionEvent
@@ -247,6 +256,7 @@ class AccountsPreviewUseCase @Inject constructor(
 
     private suspend fun prepareAccountPreview(
         banner: BaseBanner?,
+        assetInboxCount: Int,
         isTestnetBadgeVisible: Boolean,
         tutorial: Tutorial?,
         notificationPermissionEvent: Event<Unit>?
@@ -296,7 +306,8 @@ class AccountsPreviewUseCase @Inject constructor(
                 onSwapTutorialDisplayEvent = swapTutorialDisplayEvent,
                 onAccountAddressCopyTutorialDisplayEvent = accountAddressCopyDisplayEvent,
                 onGiftCardsTutorialDisplayEvent = giftCardsTutorialDisplayEvent,
-                notificationPermissionEvent = notificationPermissionEvent
+                notificationPermissionEvent = notificationPermissionEvent,
+                assetInboxCount = assetInboxCount
             )
         }
     }

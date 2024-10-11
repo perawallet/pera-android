@@ -24,7 +24,7 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.baseintroduction.ui.BaseIntroductionFragment
 import com.algorand.android.modules.baseintroduction.ui.BaseIntroductionViewModel
-import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
+import com.algorand.android.utils.browser.REKEY_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.getXmlStyledString
@@ -65,7 +65,7 @@ class RekeyToStandardAccountIntroductionFragment : BaseIntroductionFragment() {
     }
 
     override fun onLearnMoreButtonClick() {
-        context?.openUrl(LEDGER_SUPPORT_URL)
+        context?.openUrl(REKEY_SUPPORT_URL)
     }
 
     override fun initObservers() {

@@ -16,7 +16,7 @@ import android.os.Bundle
 import com.algorand.android.utils.recordException
 import com.google.firebase.analytics.FirebaseAnalytics
 
-internal class FirebaseEventTracker(
+class FirebaseEventTracker(
     private val firebaseAnalytics: FirebaseAnalytics
 ) : PeraEventTracker {
 

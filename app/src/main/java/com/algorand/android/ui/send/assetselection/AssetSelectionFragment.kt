@@ -22,8 +22,8 @@ import com.algorand.android.core.TransactionBaseFragment
 import com.algorand.android.databinding.FragmentAssetSelectionBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs
 import com.algorand.android.nft.ui.model.AssetSelectionPreview
-import com.algorand.android.nft.ui.model.RequestOptInConfirmationArgs
 import com.algorand.android.ui.send.assetselection.adapter.SelectSendingAssetAdapter
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -70,9 +70,7 @@ class AssetSelectionFragment : TransactionBaseFragment(R.layout.fragment_asset_s
                 isAssetListLoadingVisible || isReceiverAccountOptInCheckLoadingVisible
             assetList?.let { assetSelectionAdapter.submitList(it) }
             navigateToOptInEvent?.consume()?.run {
-                val receiverPublicKey = assetTransaction.receiverUser?.publicKey ?: return@run
-                val senderPublicKey = assetTransaction.senderAddress
-                navToRequestOptInBottomSheet(this, receiverPublicKey, senderPublicKey)
+                navToArc59SendSummaryFragment(this, assetSelectionPreview)
             }
             navigateToAssetTransferAmountFragmentEvent?.consume()?.run {
                 navToAssetTransferAmountFragment(this)
@@ -99,18 +97,19 @@ class AssetSelectionFragment : TransactionBaseFragment(R.layout.fragment_asset_s
         }
     }
 
-    private fun navToRequestOptInBottomSheet(
+    private fun navToArc59SendSummaryFragment(
         assetId: Long,
-        receiverPublicKey: String,
-        senderPublicKey: String
+        preview: AssetSelectionPreview
     ) {
+        val receiverPublicKey = preview.assetTransaction.receiverUser?.publicKey ?: return
+        val senderPublicKey = preview.assetTransaction.senderAddress
         nav(
-            AssetSelectionFragmentDirections.actionAssetSelectionFragmentToRequestOptInConfirmationNavigation(
-                RequestOptInConfirmationArgs(
+            AssetSelectionFragmentDirections.actionAssetSelectionFragmentToArc59RequestOptInNavigation(
+                Arc59SendSummaryNavArgs(
                     senderPublicKey = senderPublicKey,
                     receiverPublicKey = receiverPublicKey,
                     assetId = assetId,
-                    assetName = assetSelectionViewModel.getAssetOrCollectibleNameOrNull(assetId)
+                    assetAmount = preview.assetTransaction.amount
                 )
             )
         )

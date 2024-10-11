@@ -20,7 +20,8 @@ import com.algorand.android.databinding.ItemAccountDetailQuickActionsBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem
-import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem.BuySellButton
+import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem.AssetInbox
+import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem.AssetInboxActive
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem.CopyAddressButton
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem.MoreButton
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem.SendButton
@@ -63,7 +64,8 @@ class AccountDetailQuickActionsViewHolder(
     private fun setButtonClickListener(button: MaterialButton, quickActionItem: QuickActionItem) {
         button.setOnClickListener {
             when (quickActionItem) {
-                BuySellButton -> listener.onBuySellClick()
+                AssetInbox -> listener.onAssetInboxClick()
+                AssetInboxActive -> listener.onAssetInboxClick()
                 CopyAddressButton -> listener.onCopyAddressClick()
                 MoreButton -> listener.onMoreClick()
                 SendButton -> listener.onSendClick()
@@ -92,7 +94,7 @@ class AccountDetailQuickActionsViewHolder(
     }
 
     interface AccountDetailQuickActionsListener {
-        fun onBuySellClick()
+        fun onAssetInboxClick()
         fun onSendClick()
         fun onSwapClick()
         fun onMoreClick()

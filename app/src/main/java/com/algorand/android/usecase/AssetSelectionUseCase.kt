@@ -14,7 +14,6 @@ package com.algorand.android.usecase
 
 import com.algorand.android.customviews.accountandassetitem.mapper.AssetItemConfigurationMapper
 import com.algorand.android.mapper.AssetSelectionMapper
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleAudioData
@@ -23,6 +22,7 @@ import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseO
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedUnsupportedCollectibleData
 import com.algorand.android.models.BaseSelectAssetItem
+import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.sorting.assetsorting.ui.usecase.AssetItemSortUseCase
 import com.algorand.android.nft.mapper.AssetSelectionPreviewMapper
@@ -44,7 +44,8 @@ class AssetSelectionUseCase @Inject constructor(
     private val assetSelectionPreviewMapper: AssetSelectionPreviewMapper,
     private val accountInformationUseCase: AccountInformationUseCase,
     private val assetItemConfigurationMapper: AssetItemConfigurationMapper,
-    private val assetItemSortUseCase: AssetItemSortUseCase
+    private val assetItemSortUseCase: AssetItemSortUseCase,
+    private val accountStateHelperUseCase: AccountStateHelperUseCase
 ) {
     fun getAssetSelectionListFlow(publicKey: String): Flow<List<BaseSelectAssetItem>> {
         return combine(
@@ -120,17 +121,12 @@ class AssetSelectionUseCase @Inject constructor(
         receiverAddress?.let {
             accountInformationUseCase.getAccountInformation(it).collect {
                 it.useSuspended(
-                    onSuccess = { accountInformation ->
-                        val isReceiverOptedInToAsset = assetId == ALGO_ID || accountInformation.hasAsset(assetId)
-                        if (!isReceiverOptedInToAsset) {
-                            emit(loadingFinishedStatePreview.copy(navigateToOptInEvent = Event(assetId)))
-                        } else {
-                            emit(
-                                loadingFinishedStatePreview.copy(
-                                    navigateToAssetTransferAmountFragmentEvent = Event(assetId)
-                                )
+                    onSuccess = {
+                        emit(
+                            loadingFinishedStatePreview.copy(
+                                navigateToAssetTransferAmountFragmentEvent = Event(assetId)
                             )
-                        }
+                        )
                     },
                     onFailed = { errorDataResource ->
                         val exceptionMessage = errorDataResource.exception?.message

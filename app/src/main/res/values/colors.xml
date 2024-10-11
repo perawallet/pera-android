@@ -116,6 +116,7 @@
 
     <!-- Main -->
     <color name="background">@color/white</color>
+    <color name="background_secondary">@color/gray_50</color>
     <color name="system_elements">@color/black</color>
 
     <!-- Text -->
@@ -263,6 +264,8 @@
     <color name="algo_icon">@color/white</color>
 
     <color name="button_stroke_color">@color/gray_100</color>
+
+    <color name="divider_color_dark">@color/gray_800</color>
 
     <!-- endregion App Color Palette -->
 

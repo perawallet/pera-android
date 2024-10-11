@@ -30,6 +30,7 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.TargetUser
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.models.TransactionData
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.ui.send.shared.AddNoteBottomSheet
 import com.algorand.android.utils.Event
@@ -91,16 +92,20 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
     private val sendAlgoResponseCollector: suspend (Event<Resource<String>>?) -> Unit = {
         it?.consume()?.use(
             onSuccess = {
-                nav(
-                    AssetTransferPreviewFragmentDirections
-                        .actionAssetTransferPreviewFragmentToTransactionConfirmationFragment()
-                )
+                navToTransactionConfirmationNavigation()
             },
             onFailed = { showGlobalError(it.parse(requireContext())) },
             onLoading = ::showProgress,
             onLoadingFinished = ::hideProgress
         )
     }
+
+    private val signArc59TransactionCollector: suspend (TransactionData?) -> Unit = {
+        it?.let { transactionData ->
+            sendTransaction(transactionData)
+        }
+    }
+
     override val transactionFragmentListener = object : TransactionFragmentListener {
         override fun onSignTransactionLoading() {
             showProgress()
@@ -115,6 +120,11 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
                 is SignedTransactionDetail.Send -> {
                     assetTransferPreviewViewModel.sendSignedTransaction(signedTransactionDetail)
                 }
+
+                is SignedTransactionDetail.AssetOperation.AssetAddition -> {
+                    assetTransferPreviewViewModel.sendSignedTransaction(signedTransactionDetail)
+                }
+
                 else -> {
                     sendErrorLog("Unhandled else case in ReceiverAccountSelectionFragment.transactionFragmentListener")
                 }
@@ -154,10 +164,20 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
             assetTransferPreviewViewModel.sendAlgoResponseFlow,
             sendAlgoResponseCollector
         )
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            assetTransferPreviewViewModel.signArc59TransactionFlow,
+            signArc59TransactionCollector
+        )
     }
 
     private fun onConfirmTransferClick() {
-        sendTransaction(assetTransferPreviewViewModel.getTransactionData())
+        assetTransferPreviewViewModel.getTransactionData().let { transactionData ->
+            if (transactionData.isArc59Transaction) {
+                assetTransferPreviewViewModel.makeArc59Transactions(transactionData)
+            } else {
+                sendTransaction(transactionData)
+            }
+        }
     }
 
     private fun updateUi(assetTransferPreview: AssetTransferPreview) {
@@ -317,6 +337,13 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
 
     private fun hideProgress() {
         binding.progressBar.root.hide()
+    }
+
+    private fun navToTransactionConfirmationNavigation() {
+        nav(
+            AssetTransferPreviewFragmentDirections
+                .actionAssetTransferPreviewFragmentToTransactionConfirmationNavigation()
+        )
     }
 
     companion object {

@@ -55,12 +55,14 @@ class BidaliBrowserUseCase @Inject constructor(
         )
     }
 
+    @Suppress("ReturnCount")
     fun getTransactionDataFromPaymentRequest(
         paymentRequest: BidaliPaymentRequestDTO,
         accountAddress: String
     ): TransactionData.Send? {
         // TODO handle cases when we can't find address or assets
         val selectedAccountCacheData = getAccountInformation(accountAddress) ?: return null
+        val receiverAccountCacheData = getAccountInformation(paymentRequest.address) ?: return null
         val selectedAssetId = getAssetIdFromBidaliIdentifier(
             bidaliId = paymentRequest.protocol,
             isMainnet = isOnMainnetUseCase.invoke()
@@ -79,6 +81,7 @@ class BidaliBrowserUseCase @Inject constructor(
             senderAccountType = selectedAccountCacheData.account.type,
             senderAuthAddress = selectedAccountCacheData.authAddress,
             senderAccountName = selectedAccountCacheData.account.name,
+            senderAlgoAmount = selectedAccountCacheData.accountInformation.amount,
             isSenderRekeyedToAnotherAccount = selectedAccountCacheData.isRekeyedToAnotherAccount(),
             minimumBalance = selectedAccountCacheData.getMinBalance(),
             amount = amountAsBigInteger,
@@ -87,7 +90,8 @@ class BidaliBrowserUseCase @Inject constructor(
             targetUser = TargetUser(
                 publicKey = paymentRequest.address,
                 accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
-            )
+            ),
+            isArc59Transaction = !receiverAccountCacheData.accountInformation.hasAsset(selectedAsset.assetId)
         )
     }
 

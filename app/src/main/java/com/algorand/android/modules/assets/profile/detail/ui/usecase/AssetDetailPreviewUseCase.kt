@@ -157,7 +157,7 @@ class AssetDetailPreviewUseCase @Inject constructor(
                 publicKey = accountAddress
             ) ?: return@combine null
             val isSwapButtonSelected = getRedDotVisibility(baseOwnedAssetDetail.isAlgo)
-            val isUserOptedInToAsa = cachedAccountDetail.data?.accountInformation?.isAssetSupported(assetId) ?: false
+            val isUserOptedInToAsa = cachedAccountDetail.data?.accountInformation?.hasAsset(assetId) ?: false
             // TODO Check Error and Loading cases later
             val assetDetail = if (assetId != ALGO_ID) {
                 (assetDetailResult as? DataResource.Success)?.data

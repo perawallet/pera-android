@@ -21,7 +21,8 @@ import com.algorand.android.utils.getXmlStyledString
 sealed class ExternalTransactionSignResult {
 
     data class Success<T>(
-        val signedTransaction: List<T>
+        val signedTransaction: List<T>,
+        val signedTransactionsByteArray: List<ByteArray?>? = null
     ) : ExternalTransactionSignResult()
 
     sealed class Error(@StringRes val titleResId: Int) : ExternalTransactionSignResult() {

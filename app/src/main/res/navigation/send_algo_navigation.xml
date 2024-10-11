@@ -19,6 +19,10 @@
 
     <include app:graph="@navigation/request_opt_in_confirmation_navigation" />
 
+    <include app:graph="@navigation/arc_59_request_opt_in_navigation" />
+
+    <include app:graph="@navigation/transaction_confirmation_navigation" />
+
     <action
         android:id="@+id/action_sendAlgoNavigation_pop"
         app:popUpTo="@id/sendAlgoNavigation"
@@ -151,12 +155,14 @@
         <action
             android:id="@+id/action_assetSelectionFragment_to_receiverAccountSelectionFragment"
             app:destination="@id/receiverAccountSelectionFragment" />
+
         <action
-            android:id="@+id/action_assetSelectionFragment_to_requestOptInConfirmationNavigation"
-            app:destination="@id/requestOptInConfirmationNavigation">
+            android:id="@+id/action_assetSelectionFragment_to_arc59RequestOptInNavigation"
+            app:destination="@id/arc59RequestOptInNavigation">
+
             <argument
-                android:name="requestOptInConfirmationArgs"
-                app:argType="com.algorand.android.nft.ui.model.RequestOptInConfirmationArgs" />
+                android:name="arc59SendSummaryNavArgs"
+                app:argType="com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs" />
         </action>
     </fragment>
 
@@ -210,12 +216,14 @@
         <action
             android:id="@+id/action_receiverAccountSelectionFragment_to_transactionTipsBottomSheet"
             app:destination="@id/transactionTipsBottomSheet" />
+
         <action
-            android:id="@+id/action_receiverAccountSelectionFragment_to_requestOptInConfirmationNavigation"
-            app:destination="@id/requestOptInConfirmationNavigation">
+            android:id="@+id/action_receiverAccountSelectionFragment_to_arc59RequestOptInNavigation"
+            app:destination="@id/arc59RequestOptInNavigation">
+
             <argument
-                android:name="requestOptInConfirmationArgs"
-                app:argType="com.algorand.android.nft.ui.model.RequestOptInConfirmationArgs" />
+                android:name="arc59SendSummaryNavArgs"
+                app:argType="com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs" />
         </action>
     </fragment>
 
@@ -236,17 +244,9 @@
             android:id="@+id/action_assetTransferPreviewFragment_to_addNoteBottomSheet"
             app:destination="@id/addNoteBottomSheet" />
         <action
-            android:id="@+id/action_assetTransferPreviewFragment_to_transactionConfirmationFragment"
-            app:destination="@id/transactionConfirmationFragment"
-            app:popUpTo="@id/sendAlgoNavigation"
-            app:popUpToInclusive="true" />
+            android:id="@+id/action_assetTransferPreviewFragment_to_transactionConfirmationNavigation"
+            app:destination="@id/transactionConfirmationNavigation" />
     </fragment>
-
-    <fragment
-        android:id="@+id/transactionConfirmationFragment"
-        android:name="com.algorand.android.ui.send.confirmation.ui.TransactionConfirmationFragment"
-        android:label="TransactionConfirmationFragment"
-        tools:layout="@layout/fragment_transaction_confirmation" />
 
     <dialog
         android:id="@+id/rekeyedMaximumBalanceWarningBottomSheet"

@@ -46,6 +46,7 @@ import com.algorand.android.modules.accountdetail.collectibles.ui.AccountCollect
 import com.algorand.android.modules.accountdetail.haveyoubackedupconfirmation.ui.HaveYouBackedUpAccountConfirmationBottomSheet.Companion.HAVE_YOU_BACKED_UP_ACCOUNT_CONFIRMATION_KEY
 import com.algorand.android.modules.accountdetail.history.ui.AccountHistoryFragment
 import com.algorand.android.modules.accountdetail.removeaccount.ui.RemoveAccountConfirmationBottomSheet.Companion.ACCOUNT_REMOVE_CONFIRMATION_KEY
+import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.inapppin.pin.ui.InAppPinFragment
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
@@ -168,8 +169,8 @@ class AccountDetailFragment :
         accountDetailViewModel.onAssetLongClick(nftId)
     }
 
-    override fun onBuySellClick() {
-        accountDetailViewModel.onBuySellClick()
+    override fun onAssetInboxClick() {
+        navToAssetInboxOneAccountNavigation()
     }
 
     override fun onSendClick() {
@@ -395,6 +396,15 @@ class AccountDetailFragment :
 
     private fun navToManageAssetsFragment() {
         nav(AccountDetailFragmentDirections.actionAccountDetailFragmentToManageAssetsBottomSheet(args.publicKey))
+    }
+
+    private fun navToAssetInboxOneAccountNavigation() {
+        nav(
+            AccountDetailFragmentDirections
+                .actionAccountDetailFragmentToAssetInboxOneAccountNavigation(
+                    AssetInboxOneAccountNavArgs(args.publicKey)
+                )
+        )
     }
 
     private fun onSelectedPageChange(position: Int) {

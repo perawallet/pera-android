@@ -70,6 +70,25 @@
         app:layout_constraintTop_toBottomOf="@id/toolbarPrimaryPortfolioValue"
         tools:text="$105,413.95" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/assetInboxAllAccountsButton"
+        style="?attr/toolbarNavigationButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/spacing_large"
+        android:layout_marginTop="@dimen/spacing_xxxsmall"
+        android:background="@drawable/bg_asset_inbox_rectangle"
+        android:drawableStart="@drawable/ic_asset_request"
+        android:drawablePadding="6dp"
+        android:maxLines="1"
+        android:paddingHorizontal="@dimen/spacing_xsmall"
+        android:textAppearance="@style/TextAppearance.Footnote.Mono.Medium"
+        android:textColor="@color/link_primary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@tools:sample/lorem[1]" />
+
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/notificationImageButton"
         style="?attr/toolbarNavigationButtonStyle"

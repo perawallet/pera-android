@@ -213,6 +213,13 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
+    private val assetInboxCountCollector: suspend (Int?) -> Unit = { assetInboxCountNullable ->
+        val assetInboxCount = assetInboxCountNullable ?: 0
+        binding.assetInboxAllAccountsButton.apply {
+            text = resources.getQuantityString(R.plurals.asset_requests, assetInboxCount, assetInboxCount)
+        }
+    }
+
     private fun showAccountAddressCopyTutorialDialog(tutorialId: Int) {
         accountsViewModel.dismissTutorial(tutorialId)
         binding.root.context.showCopyAccountAddressTutorialDialog()
@@ -283,6 +290,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             setupUi(accountsEmptyState)
         }
         binding.notificationImageButton.setOnClickListener { navigateToNotifications() }
+        binding.assetInboxAllAccountsButton.setOnClickListener { navToAssetInboxAllAccountsNavigation() }
     }
 
     override fun onResume() {
@@ -351,6 +359,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 accountPreviewFlow.map { it?.notificationPermissionEvent }.distinctUntilChanged(),
                 askNotificationPermissionEventCollector
             )
+            viewLifecycleOwner.collectLatestOnLifecycle(
+                accountPreviewFlow.map { it?.assetInboxCount },
+                assetInboxCountCollector
+            )
         }
     }
 
@@ -364,6 +376,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private fun navigateToNotifications() {
         nav(AccountsFragmentDirections.actionAccountsFragmentToNotificationCenterFragment())
+    }
+
+    private fun navToAssetInboxAllAccountsNavigation() {
+        nav(AccountsFragmentDirections.actionAccountsFragmentToAssetInboxAllAccountsNavigation())
     }
 
     private fun onAddAccountClick() {

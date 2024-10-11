@@ -18,6 +18,7 @@ import com.algorand.android.models.AccountDetail
 import com.algorand.android.modules.accountblockpolling.domain.usecase.ClearLastKnownBlockForAccountsUseCase
 import com.algorand.android.modules.accountblockpolling.domain.usecase.GetResultWhetherAccountsUpdateIsRequiredUseCase
 import com.algorand.android.modules.accountblockpolling.domain.usecase.UpdateLastKnownBlockUseCase
+import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.AssetInboxAllAccountsUseCase
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.AccountDetailUpdateHelper
 import com.algorand.android.utils.CacheResult
@@ -34,7 +35,8 @@ class AccountDetailCacheManager(
     private val clearLastKnownBlockForAccountsUseCase: ClearLastKnownBlockForAccountsUseCase,
     private val accountDetailUseCase: AccountDetailUseCase,
     private val accountManager: AccountManager,
-    private val accountDetailUpdateHelper: AccountDetailUpdateHelper
+    private val accountDetailUpdateHelper: AccountDetailUpdateHelper,
+    private val assetInboxAllAccountsUseCase: AssetInboxAllAccountsUseCase
 ) : BaseCacheManager() {
 
     override suspend fun initialize(coroutineScope: CoroutineScope) {
@@ -53,6 +55,7 @@ class AccountDetailCacheManager(
         updateAccountDetailsAndLastKnownBlockForAccounts(coroutineScope)
         while (true) {
             checkIfNeedUpdatingAccountInformation(coroutineScope)
+            assetInboxAllAccountsUseCase.updateAssetInboxAllAccountsCache()
             delay(NEXT_BLOCK_DELAY_AFTER)
         }
     }

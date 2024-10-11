@@ -86,10 +86,6 @@ data class AccountInformation(
         ).toBigInteger()
     }
 
-    fun isAssetSupported(assetId: Long): Boolean {
-        return assetId == ALGO_ID || hasAsset(assetId)
-    }
-
     fun getBalance(assetId: Long): BigInteger {
         return if (assetId == ALGO_ID) {
             amount
@@ -106,7 +102,7 @@ data class AccountInformation(
     fun isThereAnOptedInApp() = appsLocalState?.isNotEmpty() == true || totalCreatedApps > 0
 
     fun hasAsset(assetId: Long): Boolean {
-        return assetHoldingMap.containsKey(assetId)
+        return assetHoldingMap.containsKey(assetId) || assetId == ALGO_ID
     }
 
     fun getAssetHoldingOrNull(assetId: Long): AssetHolding? {

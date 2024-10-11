@@ -56,7 +56,7 @@ class SendSignedTransactionUseCase @Inject constructor(
         } else {
             transactionsRepository.sendSignedTransaction(signedTransactionDetail.signedTransactionData).use(
                 onSuccess = { sendTransactionResponse ->
-                    val txnId = sendTransactionResponse.taxId
+                    val txnId = sendTransactionResponse.txnId
                     if (signedTransactionDetail.shouldWaitForConfirmation) {
                         if (txnId.isNullOrBlank()) {
                             send(DataResource.Error.Local(TransactionIdNullException()))

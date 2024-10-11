@@ -27,8 +27,8 @@ import com.algorand.android.models.User
 import com.algorand.android.modules.accountasset.GetAccountAssetUseCase
 import com.algorand.android.modules.accountasset.domain.model.AccountAssetDetail
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.nft.ui.model.RequestOptInConfirmationArgs
+import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
+import com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs
 import com.algorand.android.repository.AssetRepository
 import com.algorand.android.repository.ContactRepository
 import com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionFragmentDirections
@@ -39,11 +39,11 @@ import com.algorand.android.utils.exceptions.WarningException
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.isValidAddress
 import com.algorand.android.utils.validator.AccountTransactionValidator
+import java.math.BigInteger
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
-import java.math.BigInteger
-import javax.inject.Inject
 
 @Suppress("LongParameterList")
 class ReceiverAccountSelectionUseCase @Inject constructor(
@@ -53,8 +53,7 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
     private val assetRepository: AssetRepository,
     private val accountSelectionListUseCase: AccountSelectionListUseCase,
     private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase,
+    private val accountStateHelperUseCase: AccountStateHelperUseCase,
     private val assetDataProviderDecider: AssetDrawableProviderDecider, // TODO Remove decider after refactor AssetInfo
     private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
     accountInformationUseCase: AccountInformationUseCase,
@@ -165,19 +164,22 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
         nftDomainServiceLogoUrl: String?
     ): Result<TargetUser> {
         val isSelectedAssetValid = accountTransactionValidator.isSelectedAssetValid(fromAccountAddress, assetId)
+        val isReceiverAccountInMyWallet = accountStateHelperUseCase.hasAccountAuthority(
+            accountAssetDetail.address
+        )
         if (!isSelectedAssetValid) {
             // TODO: 18.03.2022 Find better exception message
             return Result.Error(Exception())
         }
 
-        if (accountAssetDetail.assetDetail == null && assetId != ALGO_ID) {
+        if (accountAssetDetail.assetDetail == null && assetId != ALGO_ID && !isReceiverAccountInMyWallet) {
             val nextDirection = ReceiverAccountSelectionFragmentDirections
-                .actionReceiverAccountSelectionFragmentToRequestOptInConfirmationNavigation(
-                    RequestOptInConfirmationArgs(
+                .actionReceiverAccountSelectionFragmentToArc59RequestOptInNavigation(
+                    Arc59SendSummaryNavArgs(
                         fromAccountAddress,
                         accountAssetDetail.address,
                         assetId,
-                        getAssetOrCollectibleNameOrNull(assetId)
+                        amount
                     )
                 )
             return Result.Error(NavigationException(nextDirection))
@@ -274,10 +276,5 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
             baseOwnedAssetData = ownedAssetData ?: return null,
             assetDrawableProvider = assetDataProviderDecider.getAssetDrawableProvider(assetId)
         )
-    }
-
-    fun getAssetOrCollectibleNameOrNull(assetId: Long): String? {
-        return simpleAssetDetailUseCase.getCachedAssetDetail(assetId)?.data?.fullName
-            ?: simpleCollectibleUseCase.getCachedCollectibleById(assetId)?.data?.fullName
     }
 }

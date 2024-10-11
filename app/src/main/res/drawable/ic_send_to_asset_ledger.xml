@@ -1,0 +1,63 @@
+<!--
+  ~  Copyright 2022 Pera Wallet, LDA
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="239dp"
+    android:height="82dp"
+    android:viewportWidth="239"
+    android:viewportHeight="82">
+    <path
+        android:fillColor="#EEEEEE"
+        android:pathData="M23.65,26.99L215.04,26.99A16,16 0,0 1,231.04 42.99L231.04,66A16,16 0,0 1,215.04 82L23.65,82A16,16 0,0 1,7.65 66L7.65,42.99A16,16 0,0 1,23.65 26.99z" />
+    <path
+        android:fillColor="#E4E4E7"
+        android:pathData="M67.68,45.32L106.96,45.32A1.53,1.53 0,0 1,108.49 46.85L108.49,46.85A1.53,1.53 0,0 1,106.96 48.38L67.68,48.38A1.53,1.53 0,0 1,66.15 46.85L66.15,46.85A1.53,1.53 0,0 1,67.68 45.32z" />
+    <path
+        android:fillColor="#E4E4E7"
+        android:pathData="M165.6,45.32L217.2,45.32A1.53,1.53 0,0 1,218.73 46.85L218.73,46.85A1.53,1.53 0,0 1,217.2 48.38L165.6,48.38A1.53,1.53 0,0 1,164.07 46.85L164.07,46.85A1.53,1.53 0,0 1,165.6 45.32z" />
+    <path
+        android:fillColor="#E4E4E7"
+        android:pathData="M190.23,57.55L217.2,57.55A1.53,1.53 0,0 1,218.72 59.08L218.72,59.08A1.53,1.53 0,0 1,217.2 60.61L190.23,60.61A1.53,1.53 0,0 1,188.71 59.08L188.71,59.08A1.53,1.53 0,0 1,190.23 57.55z" />
+    <path
+        android:fillColor="#E4E4E7"
+        android:pathData="M70.73,54.49L85.43,54.49A4.58,4.58 0,0 1,90.01 59.08L90.01,59.08A4.58,4.58 0,0 1,85.43 63.66L70.73,63.66A4.58,4.58 0,0 1,66.15 59.08L66.15,59.08A4.58,4.58 0,0 1,70.73 54.49z" />
+    <path
+        android:fillColor="#E4E4E7"
+        android:pathData="M100.75,54.49L115.45,54.49A4.58,4.58 0,0 1,120.03 59.08L120.03,59.08A4.58,4.58 0,0 1,115.45 63.66L100.75,63.66A4.58,4.58 0,0 1,96.17 59.08L96.17,59.08A4.58,4.58 0,0 1,100.75 54.49z" />
+    <path
+        android:fillColor="#E4E4E7"
+        android:pathData="M16.89,54.49a18.47,18.34 0,1 0,36.95 0a18.47,18.34 0,1 0,-36.95 0z" />
+    <path
+        android:fillColor="#ffffff"
+        android:pathData="M19.83,1.11L223.04,15.21A15.99,16.01 49.01,0 1,237.88 32.28L236.26,55.24A15.99,16.01 49.01,0 1,219.17 70.09L15.96,55.99A15.99,16.01 49.01,0 1,1.12 38.92L2.74,15.96A15.99,16.01 49.01,0 1,19.83 1.11z" />
+    <path
+        android:fillColor="#2CB7BC"
+        android:pathData="M233.87,21m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#E4E4E7"
+        android:pathData="M62.33,22.45L101.51,25.17A1.53,1.53 49.01,0 1,102.93 26.8L102.93,26.8A1.53,1.53 49.01,0 1,101.29 28.22L62.11,25.5A1.53,1.53 49.01,0 1,60.69 23.87L60.69,23.87A1.53,1.53 49.01,0 1,62.33 22.45z" />
+    <path
+        android:fillColor="#E4E4E7"
+        android:pathData="M172.26,29.19L223.73,32.76A1.53,1.53 49.01,0 1,225.14 34.39L225.14,34.39A1.53,1.53 49.01,0 1,223.51 35.81L172.04,32.24A1.53,1.53 49.01,0 1,170.62 30.61L170.62,30.61A1.53,1.53 49.01,0 1,172.26 29.19z" />
+    <path
+        android:fillColor="#E4E4E7"
+        android:pathData="M195.97,43.09L222.87,44.96A1.53,1.53 49.01,0 1,224.28 46.59L224.28,46.59A1.53,1.53 49.01,0 1,222.65 48.01L195.75,46.14A1.53,1.53 49.01,0 1,194.34 44.51L194.34,44.51A1.53,1.53 49.01,0 1,195.97 43.09z" />
+    <path
+        android:fillColor="#E4E4E7"
+        android:pathData="M64.73,31.81L79.39,32.83A4.58,4.59 49.05,0 1,83.64 37.72L83.64,37.72A4.58,4.59 49.05,0 1,78.74 41.97L64.09,40.96A4.58,4.59 49.05,0 1,59.83 36.06L59.83,36.06A4.58,4.59 49.05,0 1,64.73 31.81z" />
+    <path
+        android:fillColor="#E4E4E7"
+        android:pathData="M94.68,33.89L109.33,34.9A4.58,4.59 49.05,0 1,113.59 39.8L113.59,39.8A4.58,4.59 49.05,0 1,108.69 44.05L94.03,43.03A4.58,4.59 49.05,0 1,89.78 38.14L89.78,38.14A4.58,4.59 49.05,0 1,94.68 33.89z" />
+    <path
+        android:fillColor="#E4E4E7"
+        android:pathData="M11.01,28.08a18.34,18.47 90,1 0,36.86 2.56a18.34,18.47 90,1 0,-36.86 -2.56z" />
+</vector>

@@ -82,6 +82,7 @@ android {
     productFlavors {
         def apiKeyProps = new Properties()
         def apiUrlProps = new Properties()
+        def arc59Props = new Properties()
 
         staging {
             dimension "server"
@@ -92,6 +93,7 @@ android {
 
             apiKeyProps.load(new FileInputStream(file('../app/src/staging/api-key.properties')))
             apiUrlProps.load(new FileInputStream(file('../app/src/main/api-url.properties')))
+            arc59Props.load(new FileInputStream(file('../app/arc59.properties')))
 
             buildConfigField "String", "ALGORAND_BASE_URL", apiUrlProps["NODE_TESTNET_URL"]
             buildConfigField "String", "ALGORAND_API_KEY", apiKeyProps["ALGORAND_API_KEY"]
@@ -110,6 +112,10 @@ android {
             buildConfigField "String", "NODE_TESTNET_URL", apiUrlProps["NODE_TESTNET_URL"]
             buildConfigField "String", "INDEXER_MAINNET_URL", apiUrlProps["INDEXER_MAINNET_URL"]
             buildConfigField "String", "INDEXER_TESTNET_URL", apiUrlProps["INDEXER_TESTNET_URL"]
+            buildConfigField "String", "ARC59_APP_ADDR_TESTNET", arc59Props["ARC59_APP_ADDR_TESTNET"]
+            buildConfigField "long", "ARC59_APP_ID_TESTNET", arc59Props["ARC59_APP_ID_TESTNET"]
+            buildConfigField "String", "ARC59_APP_ADDR_MAINNET", arc59Props["ARC59_APP_ADDR_MAINNET"]
+            buildConfigField "long", "ARC59_APP_ID_MAINNET", arc59Props["ARC59_APP_ID_MAINNET"]
         }
 
         prod {
@@ -119,6 +125,7 @@ android {
 
             apiKeyProps.load(new FileInputStream(file('../app/src/prod/api-key.properties')))
             apiUrlProps.load(new FileInputStream(file('../app/src/main/api-url.properties')))
+            arc59Props.load(new FileInputStream(file('../app/arc59.properties')))
 
             buildConfigField "String", "ALGORAND_BASE_URL", apiUrlProps["NODE_MAINNET_URL"]
             buildConfigField "String", "ALGORAND_API_KEY", apiKeyProps["ALGORAND_API_KEY"]
@@ -137,6 +144,10 @@ android {
             buildConfigField "String", "NODE_TESTNET_URL", apiUrlProps["NODE_TESTNET_URL"]
             buildConfigField "String", "INDEXER_MAINNET_URL", apiUrlProps["INDEXER_MAINNET_URL"]
             buildConfigField "String", "INDEXER_TESTNET_URL", apiUrlProps["INDEXER_TESTNET_URL"]
+            buildConfigField "String", "ARC59_APP_ADDR_TESTNET", arc59Props["ARC59_APP_ADDR_TESTNET"]
+            buildConfigField "long", "ARC59_APP_ID_TESTNET", arc59Props["ARC59_APP_ID_TESTNET"]
+            buildConfigField "String", "ARC59_APP_ADDR_MAINNET", arc59Props["ARC59_APP_ADDR_MAINNET"]
+            buildConfigField "long", "ARC59_APP_ID_MAINNET", arc59Props["ARC59_APP_ID_MAINNET"]
         }
     }
 

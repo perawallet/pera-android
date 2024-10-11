@@ -15,6 +15,7 @@
 
     <!-- Main -->
     <color name="background">@color/gray_900</color>
+    <color name="background_secondary">@color/gray_800</color>
     <color name="system_elements">@color/white</color>
 
     <!-- Text -->
@@ -241,5 +242,7 @@
     <color name="backup_banner_description">@color/background</color>
     <color name="backup_banner_icon">@color/background</color>
     <color name="backup_banner_icon_bg">@color/salmon_850_alpha20</color>
+
+    <color name="divider_color_dark">@color/gray_800</color>
 
 </resources>

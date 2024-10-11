@@ -18,6 +18,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
+import com.algorand.android.core.TransactionManager
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetTransferPreview
 import com.algorand.android.models.SignedTransactionDetail
@@ -27,6 +28,7 @@ import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.Resource.Error.GlobalWarning
+import com.algorand.android.utils.flatten
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -38,6 +40,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class AssetTransferPreviewViewModel @Inject constructor(
     private val assetTransferPreviewUserCase: AssetTransferPreviewUseCase,
+    private val transactionManager: TransactionManager,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -51,6 +54,12 @@ class AssetTransferPreviewViewModel @Inject constructor(
     private val _assetTransferPreviewFlow = MutableStateFlow<AssetTransferPreview?>(null)
     val assetTransferPreviewFlow: StateFlow<AssetTransferPreview?> = _assetTransferPreviewFlow
 
+    private val _signArc59TransactionFlow = MutableStateFlow<TransactionData?>(null)
+    val signArc59TransactionFlow: StateFlow<TransactionData?> = _signArc59TransactionFlow
+
+    private var unsignedArc59Transactions = listOf<TransactionData>()
+    private val signedArc59Transactions = mutableListOf<SignedTransactionDetail>()
+
     init {
         getAssetTransferPreview()
     }
@@ -62,12 +71,25 @@ class AssetTransferPreviewViewModel @Inject constructor(
         }
     }
 
-    fun sendSignedTransaction(signedTransactionDetail: SignedTransactionDetail.Send) {
+    fun sendSignedTransaction(signedTransactionDetail: SignedTransactionDetail) {
+        var signedTransactionDetailCopy: SignedTransactionDetail = signedTransactionDetail
+        if (transactionData.isArc59Transaction) {
+            signedArc59Transactions.add(signedTransactionDetail)
+            if (signedArc59Transactions.size < unsignedArc59Transactions.size) {
+                viewModelScope.launch {
+                    _signArc59TransactionFlow.emit(unsignedArc59Transactions[signedArc59Transactions.size])
+                }
+                return
+            }
+            signedTransactionDetailCopy = (signedArc59Transactions.last() as SignedTransactionDetail.Send).copy(
+                signedTransactionData = signedArc59Transactions.map { it.signedTransactionData }.flatten()
+            )
+        }
         if (sendAlgoJob?.isActive == true) {
             return
         }
         sendAlgoJob = viewModelScope.launch {
-            assetTransferPreviewUserCase.sendSignedTransaction(signedTransactionDetail).collectLatest {
+            assetTransferPreviewUserCase.sendSignedTransaction(signedTransactionDetailCopy).collectLatest {
                 when (it) {
                     is DataResource.Loading -> _sendAlgoResponseFlow.emit(Event(Resource.Loading))
                     is DataResource.Error -> {
@@ -90,6 +112,42 @@ class AssetTransferPreviewViewModel @Inject constructor(
             if (_assetTransferPreviewFlow.value?.isNoteEditable == true) {
                 val newPreview = _assetTransferPreviewFlow.value?.copy(note = newNote)
                 _assetTransferPreviewFlow.emit(newPreview)
+            }
+        }
+    }
+
+    fun makeArc59Transactions(transactionData: TransactionData) {
+        viewModelScope.launch {
+            (transactionData as TransactionData.Send).let {
+                transactionManager.createArc59SendTransactionList(transactionData)
+                val transactions = transactionManager.createArc59SendTransactionList(transactionData)
+                val arc59Transactions = mutableListOf<TransactionData>()
+                transactions?.forEach { transaction ->
+                    if (transaction.accountAddress == transactionData.senderAccountAddress) {
+                        arc59Transactions.add(
+                            transactionData.copy(
+                                transactionByteArray = transaction.transactionByteArray
+                            )
+                        )
+                    } else {
+                        arc59Transactions.add(
+                            TransactionData.AddAsset(
+                                senderAccountAddress = transactionData.targetUser.publicKey,
+                                isSenderRekeyedToAnotherAccount =
+                                transactionData.targetUser.account?.isRekeyedToAnotherAccount() ?: false,
+                                senderAccountType = transactionData.targetUser.account?.account?.type,
+                                senderAccountDetail = transactionData.targetUser.account?.account?.detail,
+                                senderAuthAddress = transactionData.targetUser.account?.authAddress,
+                                assetInformation = transactionData.assetInformation,
+                                transactionByteArray = transaction.transactionByteArray,
+                                isArc59Transaction = transactionData.isArc59Transaction
+                            )
+                        )
+                    }
+                }
+                signedArc59Transactions.clear()
+                unsignedArc59Transactions = arc59Transactions
+                _signArc59TransactionFlow.emit(arc59Transactions.first())
             }
         }
     }

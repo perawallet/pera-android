@@ -195,12 +195,16 @@ class ReceiverAccountSelectionFragment : TransactionBaseFragment(R.layout.fragme
                         senderAccountType = selectedAccountCacheData.account.type,
                         senderAuthAddress = selectedAccountCacheData.authAddress,
                         senderAccountName = selectedAccountCacheData.account.name,
+                        senderAlgoAmount = selectedAccountCacheData.accountInformation.amount,
                         isSenderRekeyedToAnotherAccount = selectedAccountCacheData.isRekeyedToAnotherAccount(),
                         minimumBalance = selectedAccountCacheData.getMinBalance(),
                         amount = minBalanceCalculatedAmount,
                         assetInformation = selectedAsset,
                         note = note,
-                        targetUser = targetUser
+                        targetUser = targetUser,
+                        isArc59Transaction = targetUser.account?.accountInformation?.hasAsset(
+                            selectedAsset.assetId
+                        ) == false
                     )
                 )
         )

@@ -16,6 +16,7 @@ import com.algorand.android.core.AccountManager
 import com.algorand.android.modules.accountblockpolling.domain.usecase.ClearLastKnownBlockForAccountsUseCase
 import com.algorand.android.modules.accountblockpolling.domain.usecase.GetResultWhetherAccountsUpdateIsRequiredUseCase
 import com.algorand.android.modules.accountblockpolling.domain.usecase.UpdateLastKnownBlockUseCase
+import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.AssetInboxAllAccountsUseCase
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.usecase.AccountCacheStatusUseCase
@@ -53,7 +54,8 @@ object ManagerModule {
         clearLastKnownBlockForAccountsUseCase: ClearLastKnownBlockForAccountsUseCase,
         accountDetailUseCase: AccountDetailUseCase,
         accountManager: AccountManager,
-        accountDetailUpdateHelper: AccountDetailUpdateHelper
+        accountDetailUpdateHelper: AccountDetailUpdateHelper,
+        assetInboxAllAccountsUseCase: AssetInboxAllAccountsUseCase
     ): AccountDetailCacheManager {
         return AccountDetailCacheManager(
             getResultWhetherAccountsUpdateIsRequiredUseCase,
@@ -61,7 +63,8 @@ object ManagerModule {
             clearLastKnownBlockForAccountsUseCase,
             accountDetailUseCase,
             accountManager,
-            accountDetailUpdateHelper
+            accountDetailUpdateHelper,
+            assetInboxAllAccountsUseCase
         )
     }
 

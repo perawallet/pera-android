@@ -19,9 +19,14 @@ sealed class QuickActionItem {
     abstract val iconResId: Int
     abstract val labelResId: Int
 
-    object BuySellButton : QuickActionItem() {
-        override val iconResId: Int = R.drawable.ic_buy_sell_quick_actions
-        override val labelResId: Int = R.string.buy_sell
+    data object AssetInbox : QuickActionItem() {
+        override val iconResId: Int = R.drawable.ic_asset_inbox_helper_button
+        override val labelResId: Int = R.string.asset_inbox
+    }
+
+    data object AssetInboxActive : QuickActionItem() {
+        override val iconResId: Int = R.drawable.ic_asset_inbox_helper_button_red_dot
+        override val labelResId: Int = R.string.asset_inbox
     }
 
     data class SwapButton(val isSelected: Boolean) : QuickActionItem() {
@@ -29,22 +34,22 @@ sealed class QuickActionItem {
         override val labelResId: Int = R.string.swap
     }
 
-    object SendButton : QuickActionItem() {
+    data object SendButton : QuickActionItem() {
         override val iconResId: Int = R.drawable.ic_send_helper_button_bg_ghost
         override val labelResId: Int = R.string.send
     }
 
-    object MoreButton : QuickActionItem() {
+    data object MoreButton : QuickActionItem() {
         override val iconResId: Int = R.drawable.ic_more_helper_button
         override val labelResId: Int = R.string.more
     }
 
-    object CopyAddressButton : QuickActionItem() {
+    data object CopyAddressButton : QuickActionItem() {
         override val iconResId: Int = R.drawable.ic_copy_address_helper_button
         override val labelResId: Int = R.string.copy_address
     }
 
-    object ShowAddressButton : QuickActionItem() {
+    data object ShowAddressButton : QuickActionItem() {
         override val iconResId: Int = R.drawable.ic_qr_helper_button_bg_ghost
         override val labelResId: Int = R.string.show_address
     }

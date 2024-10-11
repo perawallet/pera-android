@@ -75,13 +75,13 @@ class SwapAccountSelectionPreviewUseCase @Inject constructor(
                 ?: return copy(errorEvent = Event(AnnotatedString(R.string.an_error_occured)))
 
             if (fromAssetId != null) {
-                val isUserOptedIntoFromAsset = accountDetail.isAssetSupported(fromAssetId)
+                val isUserOptedIntoFromAsset = accountDetail.hasAsset(fromAssetId)
                 if (!isUserOptedIntoFromAsset) {
                     return copy(errorEvent = Event(AnnotatedString(R.string.you_are_not_opted_in)))
                 }
 
                 if (toAssetId != null) {
-                    val isUserOptedIntoToAsset = accountDetail.isAssetSupported(toAssetId)
+                    val isUserOptedIntoToAsset = accountDetail.hasAsset(toAssetId)
                     if (!isUserOptedIntoToAsset) {
                         return getAssetAdditionPreview(previousState, toAssetId, accountAddress)
                     }
@@ -89,7 +89,7 @@ class SwapAccountSelectionPreviewUseCase @Inject constructor(
             }
 
             if (toAssetId != null) {
-                val isUserOptedIntoToAsset = accountDetail.isAssetSupported(toAssetId)
+                val isUserOptedIntoToAsset = accountDetail.hasAsset(toAssetId)
                 if (!isUserOptedIntoToAsset) {
                     return getAssetAdditionPreview(previousState, toAssetId, accountAddress)
                 }

@@ -19,6 +19,7 @@ import com.algorand.algosdk.sdk.BytesArray
 import com.algorand.algosdk.sdk.Encryption
 import com.algorand.algosdk.sdk.Sdk
 import com.algorand.algosdk.sdk.SuggestedParams
+import com.algorand.algosdk.sdk.TransactionSignerArray
 import com.algorand.algosdk.sdk.Uint64
 import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.BaseWalletConnectTransaction
@@ -142,6 +143,34 @@ fun TransactionParams.makeTx(
     } else {
         makeAssetTx(senderAddress, receiverAddress, amount, assetId, noteInByteArray)
     }
+}
+
+fun TransactionParams.makeArc59Txn(
+    senderAddress: String,
+    receiverAddress: String,
+    transactionAmount: BigInteger,
+    senderAlgoAmount: BigInteger,
+    senderMinBalanceAmount: BigInteger,
+    receiverAlgoAmount: BigInteger,
+    receiverMinBalanceAmount: BigInteger,
+    assetId: Long,
+    note: String? = null
+): TransactionSignerArray {
+    return Sdk.makeOptInAndAssetTransferTxns(
+        senderAddress,
+        receiverAddress,
+        transactionAmount.toUint64(),
+        senderAlgoAmount.toUint64(),
+        senderMinBalanceAmount.toUint64(),
+        receiverAlgoAmount.toUint64(),
+        receiverMinBalanceAmount.toUint64(),
+        null,
+        note,
+        assetId,
+        toSuggestedParams(
+            addGenesisId = false
+        )
+    )
 }
 
 fun TransactionParams.getTxFee(signedTxData: ByteArray? = null): Long {

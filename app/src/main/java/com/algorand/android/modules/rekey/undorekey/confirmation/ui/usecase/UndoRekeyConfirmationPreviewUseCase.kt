@@ -35,8 +35,8 @@ import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.recordException
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
     private val undoRekeyConfirmationPreviewMapper: UndoRekeyConfirmationPreviewMapper,
@@ -163,7 +163,10 @@ class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
             is SignedTransactionDetail.AssetOperation,
             is SignedTransactionDetail.ExternalTransaction,
             is SignedTransactionDetail.Group,
+            is SignedTransactionDetail.Arc59Send,
+            is SignedTransactionDetail.Arc59OptIn,
             is SignedTransactionDetail.Send -> null
+            is SignedTransactionDetail.Arc59ClaimOrReject -> null
 
             is SignedTransactionDetail.RekeyOperation -> createStandardAccount(signedTransactionDetail)
             is SignedTransactionDetail.RekeyToStandardAccountOperation -> createStandardAccount(signedTransactionDetail)

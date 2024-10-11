@@ -45,7 +45,7 @@ class AssetTransferPreviewUseCase @Inject constructor(
     }
 
     suspend fun sendSignedTransaction(
-        signedTransactionDetail: SignedTransactionDetail.Send
+        signedTransactionDetail: SignedTransactionDetail
     ): Flow<DataResource<String>> {
         return sendSignedTransactionUseCase.sendSignedTransaction(signedTransactionDetail)
     }

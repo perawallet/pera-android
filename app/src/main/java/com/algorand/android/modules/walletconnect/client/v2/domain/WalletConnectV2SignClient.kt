@@ -38,8 +38,12 @@ class WalletConnectV2SignClient @Inject constructor(
     }
 
     fun initialize(initParams: Sign.Params.Init) {
-        SignClient.initialize(initParams) { error ->
-            logError(error)
+        try {
+            SignClient.initialize(initParams) { error ->
+                logError(error)
+            }
+        } catch (e: Exception) {
+            logError(e.message.orEmpty())
         }
     }
 

@@ -15,5 +15,5 @@ package com.algorand.android.models
 import com.google.gson.annotations.SerializedName
 
 data class SendTransactionResponse(
-    @SerializedName("txId") val taxId: String?
+    @SerializedName("txId") val txnId: String?
 )

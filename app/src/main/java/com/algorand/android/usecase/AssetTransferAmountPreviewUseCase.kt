@@ -53,15 +53,19 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
         amount: BigInteger,
         assetTransaction: AssetTransaction
     ): TransactionData.Send? {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
+        val senderAccountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
+        val receiverAccountDetail = accountDetailUseCase.getCachedAccountDetail(
+            assetTransaction.receiverUser?.publicKey.orEmpty()
+        )?.data ?: return null
         return TransactionData.Send(
-            senderAccountAddress = accountDetail.account.address,
-            senderAccountDetail = accountDetail.account.detail,
-            senderAccountType = accountDetail.account.type,
-            senderAuthAddress = accountDetail.accountInformation.rekeyAdminAddress,
-            senderAccountName = accountDetail.account.name,
-            isSenderRekeyedToAnotherAccount = accountDetail.accountInformation.isRekeyed(),
-            minimumBalance = accountDetail.accountInformation.getMinAlgoBalance().toLong(),
+            senderAccountAddress = senderAccountDetail.account.address,
+            senderAccountDetail = senderAccountDetail.account.detail,
+            senderAccountType = senderAccountDetail.account.type,
+            senderAuthAddress = senderAccountDetail.accountInformation.rekeyAdminAddress,
+            senderAccountName = senderAccountDetail.account.name,
+            senderAlgoAmount = senderAccountDetail.accountInformation.amount,
+            isSenderRekeyedToAnotherAccount = senderAccountDetail.accountInformation.isRekeyed(),
+            minimumBalance = senderAccountDetail.accountInformation.getMinAlgoBalance().toLong(),
             amount = amount,
             assetInformation = selectedAsset ?: return null,
             note = note,
@@ -69,7 +73,8 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
                 contact = assetTransaction.receiverUser,
                 publicKey = assetTransaction.receiverUser?.publicKey.orEmpty(),
                 accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
-            )
+            ),
+            isArc59Transaction = !receiverAccountDetail.accountInformation.hasAsset(selectedAsset.assetId)
         )
     }
 

@@ -78,7 +78,8 @@ class AccountPreviewMapper @Inject constructor(
         onSwapTutorialDisplayEvent: Event<Int>? = null,
         onAccountAddressCopyTutorialDisplayEvent: Event<Int>? = null,
         onGiftCardsTutorialDisplayEvent: Event<Int>? = null,
-        notificationPermissionEvent: Event<Unit>?
+        notificationPermissionEvent: Event<Unit>?,
+        assetInboxCount: Int
     ): AccountPreview {
         return AccountPreview(
             isEmptyStateVisible = false,
@@ -94,7 +95,8 @@ class AccountPreviewMapper @Inject constructor(
             onSwapTutorialDisplayEvent = onSwapTutorialDisplayEvent,
             onAccountAddressCopyTutorialDisplayEvent = onAccountAddressCopyTutorialDisplayEvent,
             onGiftCardsTutorialDisplayEvent = onGiftCardsTutorialDisplayEvent,
-            notificationPermissionEvent = notificationPermissionEvent
+            notificationPermissionEvent = notificationPermissionEvent,
+            assetInboxCount = assetInboxCount
         )
     }
 }

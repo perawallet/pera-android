@@ -34,5 +34,6 @@ data class AccountPreview(
     val onSwapTutorialDisplayEvent: Event<Int>? = null,
     val swapNavigationDestinationEvent: Event<NavDirections>? = null,
     val giftCardsNavigationDestinationEvent: Event<NavDirections>? = null,
-    val notificationPermissionEvent: Event<Unit>? = null
+    val notificationPermissionEvent: Event<Unit>? = null,
+    val assetInboxCount: Int = 0
 )

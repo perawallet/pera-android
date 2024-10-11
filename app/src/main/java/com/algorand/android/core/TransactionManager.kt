@@ -24,6 +24,7 @@ import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.ledger.operations.TransactionOperation
 import com.algorand.android.models.Account
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.models.Arc59TransactionData
 import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.LedgerBleResult
 import com.algorand.android.models.Result
@@ -46,6 +47,7 @@ import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.getTxFee
 import com.algorand.android.utils.isLesserThan
 import com.algorand.android.utils.makeAddAssetTx
+import com.algorand.android.utils.makeArc59Txn
 import com.algorand.android.utils.makeRekeyTx
 import com.algorand.android.utils.makeRemoveAssetTx
 import com.algorand.android.utils.makeSendAndRemoveAssetTx
@@ -65,6 +67,7 @@ import kotlinx.coroutines.launch
 
 // TODO: 26.06.2022 Refactor and use AccountDetail instead of AccountCacheData in transaction flow
 // TODO: 26.06.2022 Replace AccountCacheManager with AccountDetailUsecase
+@Suppress("LargeClass")
 class TransactionManager @Inject constructor(
     private val accountCacheManager: AccountCacheManager,
     private val ledgerBleSearchManager: LedgerBleSearchManager,
@@ -167,6 +170,9 @@ class TransactionManager @Inject constructor(
             return
         }
         signHelper.currentItem?.run {
+            if (isArc59Transaction) {
+                return@run
+            }
             calculatedFee = transactionParams?.getTxFee(transactionByteArray)
             if (this is TransactionData.Send && projectedFee != calculatedFee) {
                 currentScope.launch { resignCurrentTransaction() }
@@ -218,6 +224,10 @@ class TransactionManager @Inject constructor(
                 }
             }
         }
+    }
+
+    suspend fun createArc59SendTransactionList(transactionData: TransactionData): List<Arc59TransactionData>? {
+        return transactionData.createArc59SendTransactions()
     }
 
     private fun TransactionData.signTxn(accountDetail: Account.Detail, checkIfRekeyed: Boolean = true) {
@@ -296,9 +306,59 @@ class TransactionManager @Inject constructor(
         }
     }
 
+    private suspend fun TransactionData.createArc59SendTransactions(): List<Arc59TransactionData>? {
+        val transactionParams = getTransactionParams(this) ?: return null
+        this@TransactionManager.transactionParams = transactionParams
+        val arc59TransactionData = mutableListOf<Arc59TransactionData>()
+
+        (this as? TransactionData.Send)?.let {
+            projectedFee = calculatedFee ?: transactionParams.getTxFee()
+            // calculate isMax before calculating real amount because while isMax true fee will be deducted.
+            isMax = isTransactionMax(amount, senderAccountAddress, assetInformation.assetId)
+            amount = calculateAmount(
+                projectedAmount = amount,
+                isMax = isMax,
+                isSenderRekeyedToAnotherAccount = isSenderRekeyedToAnotherAccount,
+                senderMinimumBalance = minimumBalance,
+                assetId = assetInformation.assetId,
+                fee = projectedFee
+            ) ?: return null
+
+            if (isSenderRekeyedToAnotherAccount) {
+                // if account is rekeyed to another account, min balance should be deducted from the amount.
+                // after it'll be deducted, isMax will be false to not write closeToAddress.
+                isMax = false
+            }
+
+            if (isCloseToSameAccount()) {
+                return null
+            }
+
+            val transactions = transactionParams.makeArc59Txn(
+                senderAddress = senderAccountAddress,
+                receiverAddress = targetUser.publicKey,
+                transactionAmount = amount,
+                senderAlgoAmount = senderAlgoAmount,
+                senderMinBalanceAmount = minimumBalance.toBigInteger(),
+                receiverAlgoAmount = targetUser.account?.accountInformation?.amount ?: BigInteger.ZERO,
+                receiverMinBalanceAmount = targetUser.account?.getMinBalance()?.toBigInteger() ?: BigInteger.ZERO,
+                assetId = assetInformation.assetId,
+                note = if (xnote.isNullOrBlank()) note else xnote
+            )
+
+            for (i in 0 until transactions.length()) {
+                val txn = transactions.getTxn(i)
+                val signer = transactions.getSigner(i)
+                arc59TransactionData.add(Arc59TransactionData(txn, signer))
+            }
+        }
+        return arc59TransactionData
+    }
+
     @SuppressWarnings("LongMethod")
     suspend fun TransactionData.createTransaction(): ByteArray? {
         val transactionParams = getTransactionParams(this) ?: return null
+        this@TransactionManager.transactionParams = transactionParams
 
         val createdTransactionByteArray = when (this) {
             is TransactionData.Send -> {
@@ -569,7 +629,10 @@ class TransactionManager @Inject constructor(
         transactionDataList: List<TransactionData>,
         isGroupTransaction: Boolean
     ): List<TransactionData>? {
-        transactionDataList.forEach { it.createTransaction() ?: return null }
+        for (transactionData in transactionDataList) {
+            transactionData.transactionByteArray ?: transactionData.createTransaction() ?: return null
+        }
+
         if (isGroupTransaction) {
             createGroupedBytesArray(transactionDataList)?.let {
                 for (index in 0L until it.length()) {

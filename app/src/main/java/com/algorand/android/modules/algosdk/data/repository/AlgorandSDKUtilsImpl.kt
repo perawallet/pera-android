@@ -29,7 +29,7 @@ import com.google.gson.Gson
 import javax.inject.Inject
 
 // Provided by hilt
-internal class AlgorandSDKUtilsImpl @Inject constructor(
+class AlgorandSDKUtilsImpl @Inject constructor(
     private val pendingTransactionResponseDTOMapper: PendingTransactionResponseDTOMapper,
     private val rawTransactionDTOMapper: RawTransactionDTOMapper,
     private val algorandAddressDTOMapper: AlgorandAddressDTOMapper,

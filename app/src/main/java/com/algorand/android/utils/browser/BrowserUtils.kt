@@ -45,20 +45,20 @@ private const val TRANSACTION_INFO_URL = "https://perawallet.app/support/transac
 private const val RECOVERY_PASSPHRASE_SUPPORT_URL = "https://perawallet.app/support/passphrase/"
 private const val WATCH_ACCOUNT_SUPPORT_URL = "https://perawallet.app/support/watch-accounts/"
 private const val WC_ADVANCED_PERMISSIONS_URL = "https://perawallet.app/support/walletconnect-advanced-options"
+private const val PERA_INTRODUCTION_URL = "https://perawallet.app/blog/launch-announcement/"
+private const val DISPENSER_URL = "https://dispenser.testnet.aws.algodev.network/"
+private const val VESTIGE_TERMS_OF_SERVICE_URL = "https://about.vestige.fi/disclaimer/terms-of-service"
+private const val TINYMAN_FAQ_PRICE_IMPACT_URL = "https://docs.tinyman.org/faq#what-is-a-price-impact"
+
 const val RECOVER_INFO_URL = "https://perawallet.app/support/recover-account/"
 const val LEDGER_HELP_WEB_URL = "https://perawallet.app/support/ledger/"
-private const val PERA_INTRODUCTION_URL = "https://perawallet.app/blog/launch-announcement/"
 const val PERA_SUPPORT_URL = "https://perawallet.app/support/"
-private const val DISPENSER_URL = "https://dispenser.testnet.aws.algodev.network/"
 const val ASA_VERIFICATION_URL = "https://explorer.perawallet.app/asa-verification/"
 const val BASE_TWITTER_URL = "https://twitter.com/"
-private const val VESTIGE_TERMS_OF_SERVICE_URL = "https://about.vestige.fi/disclaimer/terms-of-service"
 const val BLANK_URL = "about:blank"
-private const val TINYMAN_FAQ_PRICE_IMPACT_URL = "https://docs.tinyman.org/faq#what-is-a-price-impact"
 const val ASB_SUPPORT_URL = "https://perawallet.app/support/asb"
-
-// TODO: update here whenever page is ready
-const val LEDGER_SUPPORT_URL = "https://perawallet.app/support/rekey/"
+const val REKEY_SUPPORT_URL = "https://perawallet.app/support/rekey/"
+const val ASSET_INBOX_SUPPORT_URL = "https://perawallet.app/support/asset-inbox/"
 
 const val HTTPS_PROTOCOL = "https://"
 const val HTTP_PROTOCOL = "http://"

@@ -36,7 +36,7 @@ val minBalancePerAssetAsBigInteger: BigInteger = BigInteger.valueOf(100_000L)
 const val MIN_FEE = 1000L
 const val DATA_SIZE_FOR_MAX = 270
 const val ROUND_THRESHOLD = 1000L
-const val SHORTENED_ADDRESS_LETTER_COUNT = 6
+const val SHORTENED_ADDRESS_LETTER_COUNT = 4
 
 fun DialogFragment.showWithStateCheck(fragmentManager: FragmentManager?, tag: String = "") {
     if (fragmentManager != null && fragmentManager.isStateSaved.not()) {

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~   ~ Copyright 2022 Pera Wallet, LDA
+  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~   ~ you may not use this file except in compliance with the License.
+  ~   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+  ~   ~ Unless required by applicable law or agreed to in writing, software
+  ~   ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   ~ See the License for the specific language governing permissions and
+  ~   ~ limitations under the License
+  ~
+  -->
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:paddingBottom="@dimen/spacing_xxlarge">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:paddingHorizontal="@dimen/spacing_xlarge"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/collectibleImageView"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="@dimen/spacing_xxxlarge"
+            android:layout_marginBottom="@dimen/spacing_xlarge"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/primaryTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/primaryTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xlarge"
+            android:autoSizeMaxTextSize="@dimen/text_size_32"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Title.Sans.Medium"
+            app:layout_constraintBottom_toTopOf="@id/secondaryTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/collectibleImageView"
+            tools:text="250.00 USDC" />
+
+        <TextView
+            android:id="@+id/secondaryTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xsmall"
+            android:layout_marginBottom="@dimen/spacing_xlarge"
+            android:textAppearance="@style/TextAppearance.Body.Sans"
+            app:layout_constraintBottom_toTopOf="@id/assetIdTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/primaryTextView"
+            tools:text="$203.49" />
+
+        <TextView
+            android:id="@+id/assetIdTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_xlarge"
+            android:textAppearance="@style/TextAppearance.Footnote.Sans"
+            app:layout_constraintBottom_toTopOf="@id/dividerView"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="1234567" />
+
+        <TextView
+            android:id="@+id/copyIdTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_layer_gray_lighter_rect"
+            android:paddingHorizontal="@dimen/spacing_small"
+            android:paddingVertical="6dp"
+            android:text="@string/copy_id"
+            android:textAppearance="@style/TextAppearance.Footnote.Sans.Medium"
+            app:layout_constraintBottom_toBottomOf="@id/assetIdTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/assetIdTextView" />
+
+        <View
+            android:id="@+id/dividerView"
+            style="@style/Divider"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/divider_height"
+            android:layout_marginTop="@dimen/spacing_normal"
+            android:layout_marginBottom="@dimen/spacing_xlarge"
+            app:layout_constraintBottom_toTopOf="@id/accountLabelTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/accountLabelTextView"
+            style="@style/TextView.TransactionLabelStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:paddingEnd="@dimen/spacing_small"
+            android:text="@string/account"
+            app:layout_constraintBottom_toTopOf="@id/accountDividerView"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/accountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/spacing_small"
+            android:gravity="center_vertical|end"
+            app:layout_constraintBottom_toBottomOf="@id/accountLabelTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/accountLabelTextView"
+            tools:text="@tools:sample/lorem[3]" />
+
+        <View
+            android:id="@+id/accountDividerView"
+            style="@style/Divider"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/divider_height"
+            android:layout_marginTop="@dimen/spacing_normal"
+            android:layout_marginBottom="@dimen/spacing_large"
+            app:layout_constraintBottom_toTopOf="@id/sendersTitleTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/sendersTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:textAppearance="@style/TextAppearance.Footnote.Sans"
+            android:textColor="@color/text_gray_lighter"
+            app:layout_constraintBottom_toTopOf="@id/sendersContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Senders" />
+
+        <TextView
+            android:id="@+id/amountTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/amount"
+            android:textAppearance="@style/TextAppearance.Footnote.Sans"
+            android:textColor="@color/text_gray_lighter"
+            app:layout_constraintBottom_toBottomOf="@id/sendersTitleTextView"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/sendersContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_xlarge"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@id/warningDividerView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <View
+            android:id="@+id/warningDividerView"
+            style="@style/Divider"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/divider_height"
+            android:layout_marginTop="@dimen/spacing_xsmall"
+            android:layout_marginBottom="@dimen/spacing_xlarge"
+            app:layout_constraintBottom_toTopOf="@id/optInExpenseTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/optInExpenseTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_error"
+            android:drawablePadding="@dimen/spacing_small"
+            android:drawableTint="@color/text_gray_lighter"
+            android:textColor="@color/text_gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="@string/you_will_receive_algo" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -20,7 +20,7 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.utils.BaseDoubleButtonBottomSheet
-import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
+import com.algorand.android.utils.browser.REKEY_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.getCustomClickableSpan
 import com.algorand.android.utils.getXmlStyledString
@@ -46,7 +46,7 @@ class RekeyedAccountRekeyConfirmationBottomSheet : BaseDoubleButtonBottomSheet()
             val linkTextColor = ContextCompat.getColor(context, R.color.link_primary)
             val clickSpannable = getCustomClickableSpan(
                 clickableColor = linkTextColor,
-                onClick = { context?.openUrl(LEDGER_SUPPORT_URL) }
+                onClick = { context?.openUrl(REKEY_SUPPORT_URL) }
             )
             val annotatedString = AnnotatedString(
                 stringResId = R.string.account_address_will_no_longer_be_auth,

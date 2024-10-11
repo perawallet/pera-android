@@ -1353,5 +1353,44 @@
     <string name="you_can_not_purchase">You cannot purchase while on TestNet. Please switch back to MainNet from
         Settings to use Meld.</string>
     <string name="meld">MELD</string>
+    <string name="you_cant_send_this_asset">You can\'t send this asset directly because receiver not opted-in. But you can send it to its inbox address instead. <annotation custom="read_more_click">Read more</annotation></string>
+    <string name="the_fee_above_will_be">The fee above will be used to cover the minimum balance requirements of the receiver. If the receiver rejects the asset, you will not receive anything back.</string>
+    <string name="protocol_and_min_balance_fees">Protocol &amp; minimum balance fees:</string>
+    <string name="send_to_receiver">Send to Receiver</string>
+    <string name="send_to_asset_inbox">Send to Asset Inbox</string>
 
+    <plurals name="asset_requests">
+        <item quantity="one">%1$d Asset Request</item>
+        <item quantity="other">%1$d Asset Requests</item>
+    </plurals>
+
+    <plurals name="incoming_assets">
+        <item quantity="one">1 incoming asset</item>
+        <item quantity="other">%1$d incoming assets</item>
+    </plurals>
+
+    <string name="asset_transfer_requests">Asset Transfer Requests</string>
+    <string name="asset_transfer_request">Asset Transfer Request</string>
+    <string name="asset_inbox">Asset Inbox</string>
+    <string name="this_is_where_you_can">This is where you can view your incoming asset transfer requests. Tap to
+        learn more about this  feature.</string>
+    <string name="rejecting_requests">Rejecting Requests</string>
+    <string name="this_feature_as_an_inbox">This feature is an inbox for your account. Others can send you assets and NFTs, even if you have not explicitly opted in to receive them. From here, you can choose to accept or reject the asset transfer requests.</string>
+
+    <string name="reject">Reject</string>
+    <string name="claim">Claim</string>
+    <plurals name="sender_plural">
+        <item quantity="one">Sender</item>
+        <item quantity="other">Senders</item>
+    </plurals>
+    <string name="you_will_receive_algo">You will receive %1$s ALGO in order to compensate the opt-in expenses.</string>
+    <string name="if_you_reject_this_request">If you reject this request, the incoming asset will be permanently removed from circulation. It will not be returned to the sender. Instead, you will receive %1$s ALGOs upon completion of this irreversible process. Please note that once rejected, the asset cannot be recovered.</string>
+
+    <string name="x_number_of">x %1$d</string>
+    <string name="plus_number_more">+%1$d more</string>
+    <string name="senders">Senders</string>
+    <string name="this_is_where_you">This is where you can view your incoming asset transfer requests. Tap to learn more about this feature.</string>
+    <string name="you_dont_have_enough_algos">You don\'t have enough ALGOs to complete this operation. </string>
+
+    <string name="before_sending_an_asset">Before sending an asset or NFT through Asset Inbox, make sure the other party has the ability to access their inbox. In some instances, the other party will not have the ability to access their inbox and the asset or NFT will be unrecoverable. Some of these instances include sending to a exchange or sending to a wallet that can\'t be accessed by a user. Only send assets or NFTs to wallets that use Pera (or other compatible wallets). <annotation url="https://support.perawallet.app"><annotation type="bold"><annotation type="color">Read more</annotation></annotation></annotation></string>
 </resources>

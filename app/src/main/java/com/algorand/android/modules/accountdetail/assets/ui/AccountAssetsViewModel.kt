@@ -19,9 +19,11 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragment.Companion.ADDRESS_KEY
 import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountAssetsPreviewUseCase
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountAssetsPreview
+import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.AssetInboxAllAccountsUseCase
 import com.algorand.android.modules.tracking.accountdetail.accountassets.AccountAssetsFragmentEventTracker
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,11 +33,11 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class AccountAssetsViewModel @Inject constructor(
     private val accountAssetsPreviewUseCase: AccountAssetsPreviewUseCase,
+    private val assetInboxAllAccountsUseCase: AssetInboxAllAccountsUseCase,
     private val accountAssetsFragmentEventTracker: AccountAssetsFragmentEventTracker,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -59,7 +61,7 @@ class AccountAssetsViewModel @Inject constructor(
                 .debounce(QUERY_DEBOUNCE)
                 .distinctUntilChanged()
                 .flatMapLatest { query ->
-                    accountAssetsPreviewUseCase.fetchAccountDetail(accountAddress, query)
+                    accountAssetsPreviewUseCase.fetchAccountDetail(accountAddress, query, hasInboxItem())
                 }.collectLatest { list -> _accountAssetsFlow.emit(list) }
         }
     }
@@ -80,10 +82,14 @@ class AccountAssetsViewModel @Inject constructor(
         }
     }
 
-    fun logAccountAssetsBuyAlgoTapEventTracker() {
-        viewModelScope.launch(Dispatchers.IO) {
-            accountAssetsFragmentEventTracker.logAccountAssetsBuyAlgoTapEvent()
-        }
+    private suspend fun hasInboxItem(): Boolean {
+        return assetInboxAllAccountsUseCase
+            .getAssetInboxAllAccountsCacheFlow()
+            .value
+            .values
+            .any { inboxItem ->
+                inboxItem.data?.let { it.address == accountAddress && it.requestCount > 0 } == true
+            }
     }
 
     companion object {

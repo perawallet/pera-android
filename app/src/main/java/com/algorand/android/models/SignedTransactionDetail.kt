@@ -88,4 +88,21 @@ sealed class SignedTransactionDetail : Parcelable {
     data class ExternalTransaction(
         override val signedTransactionData: ByteArray
     ) : SignedTransactionDetail()
+
+    @Parcelize
+    data class Arc59Send(
+        override val signedTransactionData: ByteArray
+    ) : SignedTransactionDetail()
+
+    @Parcelize
+    data class Arc59OptIn(
+        override val signedTransactionData: ByteArray,
+    ) : SignedTransactionDetail() {
+        override var shouldWaitForConfirmation: Boolean = true
+    }
+
+    @Parcelize
+    data class Arc59ClaimOrReject(
+        override val signedTransactionData: ByteArray
+    ) : SignedTransactionDetail()
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/arc59RequestOptInNavigation"
+    app:startDestination="@id/arc59SendSummaryFragment">
+
+    <include app:graph="@navigation/transaction_confirmation_navigation" />
+
+    <fragment
+        android:id="@+id/arc59SendSummaryFragment"
+        android:name="com.algorand.android.modules.assetinbox.send.ui.Arc59SendSummaryFragment"
+        android:label="Arc59SendSummaryFragment">
+        <argument
+            android:name="arc59SendSummaryNavArgs"
+            app:argType="com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs" />
+        <action
+            android:id="@+id/action_arc59SendSummaryFragment_to_homeNavigation"
+            app:destination="@id/homeNavigation"
+            app:popUpTo="@id/arc59RequestOptInNavigation"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_arc59SendSummaryFragment_to_transactionConfirmationNavigation"
+            app:destination="@id/transactionConfirmationNavigation" />
+        <action
+            android:id="@+id/action_arc59SendSummaryFragment_to_arc59SendWarningBottomSheet"
+            app:destination="@id/arc59SendWarningBottomSheet" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/arc59SendWarningBottomSheet"
+        android:name="com.algorand.android.modules.assetinbox.send.ui.Arc59SendWarningBottomSheet"
+        android:label="Arc59SendWarningBottomSheet" />
+
+</navigation>

@@ -27,7 +27,7 @@ import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePrev
 import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.Event
-import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
+import com.algorand.android.utils.browser.REKEY_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.getCustomClickableSpan
@@ -103,7 +103,7 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
             val linkTextColor = ContextCompat.getColor(binding.root.context, R.color.link_primary)
             val clickSpannable = getCustomClickableSpan(
                 clickableColor = linkTextColor,
-                onClick = { context?.openUrl(LEDGER_SUPPORT_URL) }
+                onClick = { context?.openUrl(REKEY_SUPPORT_URL) }
             )
             val clickableAnnotatedString = annotatedString.copy(
                 customAnnotationList = listOf("learn_more" to clickSpannable)

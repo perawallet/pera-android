@@ -50,6 +50,21 @@
                 app:layout_constraintTop_toTopOf="@id/notificationImageButton" />
         </Constraint>
 
+        <Constraint
+            android:id="@id/assetInboxAllAccountsButton"
+            app:visibilityMode="ignore">
+            <Layout
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginStart="@dimen/spacing_large"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:background="@drawable/bg_asset_inbox_oval"
+                android:drawablePadding="6dp"
+                android:paddingHorizontal="@dimen/spacing_xsmall"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </Constraint>
+
         <ConstraintOverride
             android:id="@id/portfolioValueTitleTextView"
             app:visibilityMode="ignore">
@@ -176,6 +191,21 @@
                 app:layout_constraintEnd_toStartOf="@id/portfolioValueTitleTextView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/notificationImageButton" />
+        </Constraint>
+
+        <Constraint
+            android:id="@id/assetInboxAllAccountsButton"
+            app:visibilityMode="ignore">
+            <Layout
+                android:layout_width="32dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="@dimen/spacing_large"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:background="@drawable/bg_asset_inbox_rectangle"
+                android:drawablePadding="6dp"
+                android:paddingHorizontal="@dimen/spacing_xsmall"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"  />
         </Constraint>
 
         <ConstraintOverride

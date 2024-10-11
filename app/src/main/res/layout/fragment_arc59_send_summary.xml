@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~   ~ Copyright 2022 Pera Wallet, LDA
+  ~   ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~   ~ you may not use this file except in compliance with the License.
+  ~   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+  ~   ~ Unless required by applicable law or agreed to in writing, software
+  ~   ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   ~ See the License for the specific language governing permissions and
+  ~   ~ limitations under the License
+  ~
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/secondaryBackgroundView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/spacing_xxlarge"
+        android:background="@color/background_secondary"
+        app:layout_constraintBottom_toTopOf="@id/assetAmountTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/endGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/spacing_xlarge" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/startGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/spacing_xlarge" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ledgerImageView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:src="@drawable/ic_send_to_asset_ledger"
+        app:layout_constraintBottom_toTopOf="@id/mainDescriptionTextView"
+        app:layout_constraintEnd_toStartOf="@id/endGuideLine"
+        app:layout_constraintStart_toEndOf="@id/startGuideLine"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/mainDescriptionTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="28dp"
+        android:gravity="center"
+        android:text="@string/you_cant_send_this_asset"
+        android:textAppearance="@style/TextAppearance.Footnote"
+        app:layout_constraintBottom_toBottomOf="@id/secondaryBackgroundView"
+        app:layout_constraintEnd_toStartOf="@id/endGuideLine"
+        app:layout_constraintStart_toEndOf="@id/startGuideLine"
+        app:layout_constraintTop_toBottomOf="@id/ledgerImageView" />
+
+    <TextView
+        android:id="@+id/assetNameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_small"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textAppearance="@style/TextAppearance.Body"
+        android:textColor="@color/text_gray"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@id/assetAmountTextView"
+        app:layout_constraintEnd_toStartOf="@id/assetAmountTextView"
+        app:layout_constraintStart_toEndOf="@id/startGuideLine"
+        app:layout_constraintTop_toTopOf="@id/assetAmountTextView"
+        tools:text="@tools:sample/lorem[2]" />
+
+    <TextView
+        android:id="@+id/assetAmountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_normal"
+        android:textAppearance="@style/TextAppearance.Body.Large"
+        app:layout_constraintBottom_toTopOf="@id/dividerView"
+        app:layout_constraintEnd_toStartOf="@id/endGuideLine"
+        tools:text="200 USDC" />
+
+    <View
+        android:id="@+id/dividerView"
+        style="@style/Divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/spacing_large"
+        app:layout_constraintBottom_toTopOf="@id/feeLabelTextView"
+        app:layout_constraintEnd_toStartOf="@id/endGuideLine"
+        app:layout_constraintStart_toEndOf="@id/startGuideLine" />
+
+
+    <TextView
+        android:id="@+id/minBalanceFeeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Body.Sans"
+        app:layout_constraintBottom_toBottomOf="@id/feeLabelTextView"
+        app:layout_constraintEnd_toStartOf="@id/endGuideLine"
+        tools:text="A0.22" />
+
+    <TextView
+        android:id="@+id/feeLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_xlarge"
+        android:text="@string/protocol_and_min_balance_fees"
+        android:textAppearance="@style/TextAppearance.Body"
+        android:textColor="@color/text_gray"
+        app:layout_constraintBottom_toTopOf="@id/feeDescriptionTextView"
+        app:layout_constraintStart_toEndOf="@id/startGuideLine" />
+
+    <TextView
+        android:id="@+id/feeDescriptionTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_xxlarge"
+        android:text="@string/the_fee_above_will_be"
+        android:textAppearance="@style/TextAppearance.Footnote"
+        app:layout_constraintBottom_toTopOf="@id/sendButton"
+        app:layout_constraintEnd_toStartOf="@id/endGuideLine"
+        app:layout_constraintStart_toEndOf="@id/startGuideLine" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/sendButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/spacing_xlarge"
+        android:layout_marginBottom="@dimen/spacing_normal"
+        android:text="@string/send_to_receiver"
+        app:layout_constraintBottom_toTopOf="@id/cancelButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/cancelButton"
+        style="@style/Button.Secondary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/spacing_xlarge"
+        android:layout_marginBottom="@dimen/spacing_normal"
+        android:text="@string/close"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/progressbar"
+        layout="@layout/layout_full_screen_progress" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

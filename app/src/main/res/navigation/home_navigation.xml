@@ -98,7 +98,9 @@
 
     <include app:graph="@navigation/backup_passphrase_info_navigation" />
 
-    <include app:graph="@navigation/discover_url_viewer_navigation" />
+    <include app:graph="@navigation/asset_inbox_all_accounts_navigation" />
+
+    <include app:graph="@navigation/asset_inbox_one_account_navigation" />
 
     <action
         android:id="@+id/action_global_showQrNavigation"
@@ -125,6 +127,8 @@
     <action
         android:id="@+id/action_global_discoverHomeNavigation"
         app:destination="@id/discoverHomeNavigation">
+        android:id="@+id/action_global_discoverNavigation"
+        app:destination="@id/discoverNavigation">
         <argument
             android:name="url"
             android:defaultValue="@null"
@@ -485,6 +489,9 @@
                 android:name="publicKeysOfAccountsToBackup"
                 app:argType="string[]" />
         </action>
+        <action
+            android:id="@+id/action_accountsFragment_to_assetInboxAllAccountsNavigation"
+            app:destination="@id/assetInboxAllAccountsNavigation" />
     </fragment>
 
     <fragment
@@ -904,6 +911,13 @@
         <action
             android:id="@+id/action_accountDetailFragment_to_inAppPinNavigation"
             app:destination="@id/inAppPinNavigation" />
+        <action
+            android:id="@+id/action_accountDetailFragment_to_assetInboxOneAccountNavigation"
+            app:destination="@id/assetInboxOneAccountNavigation">
+            <argument
+                android:name="assetInboxOneAccountNavArgs"
+                app:argType="com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs" />
+        </action>
     </fragment>
 
     <fragment

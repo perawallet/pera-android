@@ -28,6 +28,7 @@ import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailA
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.AccountPortfolioItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem
 import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
+import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.AssetInboxAllAccountsUseCase
 import com.algorand.android.modules.assets.filter.domain.usecase.ShouldDisplayNFTInAssetsPreferenceUseCase
 import com.algorand.android.modules.assets.filter.domain.usecase.ShouldDisplayOptedInNFTInAssetsPreferenceUseCase
 import com.algorand.android.modules.assets.filter.domain.usecase.ShouldHideZeroBalanceAssetsPreferenceUseCase
@@ -63,9 +64,10 @@ class AccountAssetsPreviewUseCase @Inject constructor(
     private val accountCollectibleDataUseCase: AccountCollectibleDataUseCase,
     private val accountStateHelperUseCase: AccountStateHelperUseCase,
     private val accountAssetsPreviewMapper: AccountAssetsPreviewMapper,
+    private val assetInboxAllAccountsUseCase: AssetInboxAllAccountsUseCase
 ) {
 
-    fun fetchAccountDetail(accountAddress: String, query: String): Flow<AccountAssetsPreview> {
+    fun fetchAccountDetail(accountAddress: String, query: String, hasInboxItem: Boolean): Flow<AccountAssetsPreview> {
         return combine(
             accountAssetDataUseCase.getAccountAllAssetDataFlow(accountAddress, true),
             accountCollectibleDataUseCase.getAccountAllCollectibleDataFlow(accountAddress),
@@ -97,7 +99,7 @@ class AccountAssetsPreviewUseCase @Inject constructor(
                 add(accountPortfolioItem)
                 val requiredMinimumBalanceItem = createRequiredMinimumBalanceItem(accountAddress)
                 add(requiredMinimumBalanceItem)
-                add(createQuickActionItemList(isWatchAccount))
+                add(createQuickActionItemList(isWatchAccount, hasInboxItem))
                 val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
                 val isBackedUp = accountDetail?.account?.isBackedUp ?: true
                 if (!isBackedUp) {
@@ -118,7 +120,8 @@ class AccountAssetsPreviewUseCase @Inject constructor(
     }
 
     private suspend fun createQuickActionItemList(
-        isWatchAccount: Boolean
+        isWatchAccount: Boolean,
+        hasInboxItem: Boolean
     ): AccountDetailAssetsItem.QuickActionItemContainer {
         val quickActionItemList = mutableListOf<QuickActionItem>().apply {
             if (isWatchAccount) {
@@ -126,8 +129,9 @@ class AccountAssetsPreviewUseCase @Inject constructor(
                 add(QuickActionItem.ShowAddressButton)
             } else {
                 val isSwapSelected = getSwapFeatureRedDotVisibilityUseCase.getSwapFeatureRedDotVisibility()
+                val inboxItem = if (hasInboxItem) QuickActionItem.AssetInboxActive else QuickActionItem.AssetInbox
                 add(accountDetailAssetItemMapper.mapToSwapQuickActionItem(isSwapSelected))
-                add(QuickActionItem.BuySellButton)
+                add(inboxItem)
                 add(QuickActionItem.SendButton)
             }
             add(QuickActionItem.MoreButton)

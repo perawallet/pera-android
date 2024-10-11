@@ -59,7 +59,7 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
     private val signHelperListener = object : ListQueuingHelper.Listener<ExternalTransaction, ByteArray> {
         override fun onAllItemsDequeued(signedTransactions: List<ByteArray?>) {
             transaction?.run {
-                _signResultFlow.value = ExternalTransactionSignResult.Success(this)
+                _signResultFlow.value = ExternalTransactionSignResult.Success(this, signedTransactions)
             }
         }
 

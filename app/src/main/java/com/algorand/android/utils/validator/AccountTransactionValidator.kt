@@ -14,9 +14,7 @@
 package com.algorand.android.utils.validator
 
 import com.algorand.android.R
-import com.algorand.android.core.AccountManager
 import com.algorand.android.models.AccountCacheData
-import com.algorand.android.models.AccountInformation
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
@@ -35,7 +33,6 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class AccountTransactionValidator @Inject constructor(
-    private val accountManager: AccountManager,
     private val accountDetailUseCase: AccountDetailUseCase,
     private val getAccountMinimumBalanceUseCase: GetAccountMinimumBalanceUseCase
 ) {
@@ -51,14 +48,6 @@ class AccountTransactionValidator @Inject constructor(
         val accountDetail = accountDetailUseCase.getCachedAccountDetail(fromAccountPublicKey)?.data
         val isAlgo = assetId == ALGO_ID
         return isAlgo || accountDetail?.hasAsset(assetId) == true
-    }
-
-    fun isSelectedAssetSupported(accountInformation: AccountInformation, assetId: Long): Boolean {
-        return accountInformation.isAssetSupported(assetId)
-    }
-
-    fun isThereAnyAccountWithToPublicKey(toAccountAddress: String): Boolean {
-        return accountManager.isThereAnyAccountWithPublicKey(toAccountAddress)
     }
 
     fun isSendingAmountLesserThanMinimumBalance(

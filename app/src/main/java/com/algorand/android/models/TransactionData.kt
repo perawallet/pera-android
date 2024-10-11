@@ -29,6 +29,8 @@ sealed class TransactionData : Parcelable {
     open var calculatedFee: Long? = null
     open var transactionByteArray: ByteArray? = null
     open var amount: BigInteger = BigInteger.ZERO
+    open val targetUser: TargetUser? = null
+    open var isArc59Transaction: Boolean = false
 
     abstract fun getSignedTransactionDetail(signedTransactionData: ByteArray): SignedTransactionDetail
 
@@ -39,12 +41,15 @@ sealed class TransactionData : Parcelable {
         override val senderAccountType: Account.Type?,
         override val senderAccountDetail: Account.Detail?,
         override var amount: BigInteger,
+        override var targetUser: TargetUser,
+        override var transactionByteArray: ByteArray? = null,
+        override var isArc59Transaction: Boolean,
+        val senderAlgoAmount: BigInteger,
         val minimumBalance: Long,
         val senderAccountName: String,
         val assetInformation: AssetInformation,
         val note: String? = null,
         val xnote: String? = null,
-        val targetUser: TargetUser,
         var isMax: Boolean = false,
         var projectedFee: Long = MIN_FEE
     ) : TransactionData() {
@@ -71,6 +76,8 @@ sealed class TransactionData : Parcelable {
         override val senderAccountType: Account.Type?,
         override val senderAccountDetail: Account.Detail?,
         override val senderAuthAddress: String?,
+        override var transactionByteArray: ByteArray? = null,
+        override var isArc59Transaction: Boolean = false,
         val assetInformation: AssetInformation
     ) : TransactionData() {
         override fun getSignedTransactionDetail(signedTransactionData: ByteArray): SignedTransactionDetail {
@@ -110,7 +117,7 @@ sealed class TransactionData : Parcelable {
         val senderAccountName: String,
         val assetInformation: AssetInformation,
         val note: String? = null,
-        val targetUser: TargetUser,
+        override val targetUser: TargetUser,
     ) : TransactionData() {
         override fun getSignedTransactionDetail(signedTransactionData: ByteArray): SignedTransactionDetail {
             return SignedTransactionDetail.Send(

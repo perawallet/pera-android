@@ -1,6 +1,6 @@
 package com.algorand.android.modules.perawebview
 
-import com.algorand.android.modules.card.model.PeraWebMessage
+import com.algorand.android.modules.perawebview.model.PeraWebMessage
 import com.algorand.android.modules.peraserializer.PeraSerializer
 import javax.inject.Inject
 

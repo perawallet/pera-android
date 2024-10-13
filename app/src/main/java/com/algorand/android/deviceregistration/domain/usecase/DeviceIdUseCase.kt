@@ -26,7 +26,7 @@ class DeviceIdUseCase @Inject constructor(
     private val getActiveNodeUseCase: GetActiveNodeUseCase
 ) {
 
-    suspend fun getSelectedNodeDeviceId(): String? {
+    fun getSelectedNodeDeviceId(): String? {
         return when (getSelectedNetworkSlug()) {
             MAINNET_NETWORK_SLUG -> userDeviceIdRepository.getMainnetDeviceId()
             TESTNET_NETWORK_SLUG -> userDeviceIdRepository.getTestnetDeviceId()

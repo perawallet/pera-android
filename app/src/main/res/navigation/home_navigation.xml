@@ -285,6 +285,10 @@
             app:argType="boolean" />
     </action>
 
+    <action
+        android:id="@+id/action_global_cardsFragment"
+        app:destination="@id/cardsFragment" />
+
     <!-- Remove this action and use the one in the main navigation after Lock Screen navigation change. -->
     <action
         android:id="@+id/action_global_singleButtonBottomSheet"
@@ -509,6 +513,12 @@
             android:name="bannerUrl"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/cardsFragment"
+        android:name="com.algorand.android.modules.card.CardsFragment"
+        android:label="CardsFragment"
+        tools:layout="@layout/fragment_cards" />
 
     <fragment
         android:id="@+id/removeAssetsFragment"

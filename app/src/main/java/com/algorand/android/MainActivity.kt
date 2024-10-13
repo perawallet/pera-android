@@ -680,7 +680,7 @@ class MainActivity :
             }
 
             override fun onCardsClick() {
-                nav(MainNavigationDirections.actionGlobalCardsFragment())
+                nav(HomeNavigationDirections.actionGlobalCardsFragment())
             }
         })
     }

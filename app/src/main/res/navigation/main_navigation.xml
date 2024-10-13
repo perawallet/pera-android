@@ -145,11 +145,6 @@
             app:argType="boolean" />
     </action>
 
-    <action
-        android:id="@+id/action_global_cardsFragment"
-        app:destination="@id/cardsFragment"
-        tools:layout="@layout/fragment_cards" />
-
     <fragment
         android:id="@+id/lockFragment"
         android:name="com.algorand.android.modules.lock.ui.LockFragment"
@@ -167,11 +162,6 @@
             app:popUpTo="@id/lockFragment"
             app:popUpToInclusive="true" />
     </fragment>
-
-    <fragment
-        android:id="@+id/cardsFragment"
-        android:name="com.algorand.android.modules.card.CardsFragment"
-        android:label="CardsFragment" />
 
     <fragment
         android:id="@+id/howDoesLedgerWorkFragment"

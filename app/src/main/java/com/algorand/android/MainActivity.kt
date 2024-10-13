@@ -646,6 +646,10 @@ class MainActivity :
             override fun onBrowseDappsClick() {
                 handleBrowseDappsClick()
             }
+
+            override fun onCardsClick() {
+                nav(MainNavigationDirections.actionGlobalCardsFragment())
+            }
         })
     }
 

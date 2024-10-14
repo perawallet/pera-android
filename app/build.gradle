@@ -105,6 +105,7 @@ android {
             buildConfigField "String", "DISCOVER_VERSION", "\"${discoverVersions.staging}\""
             buildConfigField "String", "DISCOVER_URL", '"https://discover-mobile-staging.perawallet.app/"'
             buildConfigField "String", "DISCOVER_BROWSE_DAPP_URL", '"https://discover-mobile-staging.perawallet.app/main/browser"'
+            buildConfigField "String", "CARDS_URL", '"https://cards-mobile-staging.perawallet.app"'
             buildConfigField "String", "MELD_URL", '"https://mainnet.staging.api.perawallet.app/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="'
             buildConfigField "String", "NODE_MAINNET_URL", apiUrlProps["NODE_MAINNET_URL"]
             buildConfigField "String", "NODE_TESTNET_URL", apiUrlProps["NODE_TESTNET_URL"]
@@ -132,6 +133,7 @@ android {
             buildConfigField "String", "DISCOVER_VERSION", "\"${discoverVersions.prod}\""
             buildConfigField "String", "DISCOVER_URL", '"https://discover-mobile.perawallet.app/"'
             buildConfigField "String", "DISCOVER_BROWSE_DAPP_URL", '"https://discover-mobile.perawallet.app/main/browser"'
+            buildConfigField "String", "CARDS_URL", '"https://cards-mobile.perawallet.app"'
             buildConfigField "String", "MELD_URL", '"https://mainnet.api.perawallet.app/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="'
             buildConfigField "String", "NODE_MAINNET_URL", apiUrlProps["NODE_MAINNET_URL"]
             buildConfigField "String", "NODE_TESTNET_URL", apiUrlProps["NODE_TESTNET_URL"]

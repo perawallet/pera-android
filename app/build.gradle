@@ -258,6 +258,7 @@ dependencies {
 
     // Test
     testImplementation "junit:junit:${testLibVersions.junit}"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:${testLibVersions.mockito}"
     androidTestImplementation "androidx.room:room-testing:${libVersions.room}"
     androidTestImplementation "androidx.test:runner:${testLibVersions.runner}"
     androidTestImplementation "androidx.test.espresso:espresso-core:${testLibVersions.espresso}"

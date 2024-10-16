@@ -13,6 +13,7 @@
 package com.algorand.android.modules.card
 
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.modules.card.model.CardsPreview
 import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
 import com.algorand.android.modules.perawebview.GetDeviceIdWebMessage
@@ -52,6 +53,22 @@ class CardsViewModel @Inject constructor(
             val deviceIdMessage = getDeviceIdWebMessage() ?: return@launch
             _cardsPreviewFlow.update {
                 it.copy(sendMessageEvent = Event(deviceIdMessage))
+            }
+        }
+    }
+
+    override fun onError() {
+        viewModelScope.launch {
+            _cardsPreviewFlow.update {
+                it.copy(errorEvent = Event(WebViewError.NO_CONNECTION))
+            }
+        }
+    }
+
+    override fun onHttpError() {
+        viewModelScope.launch {
+            _cardsPreviewFlow.update {
+                it.copy(errorEvent = Event(WebViewError.HTTP_ERROR))
             }
         }
     }

@@ -12,8 +12,10 @@
 
 package com.algorand.android.modules.card.model
 
+import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.utils.Event
 
 data class CardsPreview(
-    val sendMessageEvent: Event<String>? = null
+    val sendMessageEvent: Event<String>? = null,
+    val errorEvent: Event<WebViewError>? = null
 )

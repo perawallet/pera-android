@@ -24,17 +24,23 @@ import com.algorand.android.R
 import com.algorand.android.databinding.FragmentCardsBinding
 import com.algorand.android.discover.common.ui.model.PeraWebChromeClient
 import com.algorand.android.discover.common.ui.model.PeraWebViewClient
+import com.algorand.android.discover.common.ui.model.WebViewError
+import com.algorand.android.discover.common.ui.model.WebViewError.HTTP_ERROR
+import com.algorand.android.discover.common.ui.model.WebViewError.NO_CONNECTION
 import com.algorand.android.discover.home.domain.PeraMobileWebInterface
 import com.algorand.android.discover.home.domain.PeraMobileWebInterface.Companion.WEB_INTERFACE_NAME
 import com.algorand.android.discover.utils.JAVASCRIPT_NAVIGATION
 import com.algorand.android.discover.utils.JAVASCRIPT_PERACONNECT
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.ScreenState
 import com.algorand.android.modules.perawebview.WebViewThemeHelper
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.browser.openExternalBrowserApp
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.extensions.hide
+import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -65,6 +71,12 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
         }
     }
 
+    private val errorEventCollector: suspend (Event<WebViewError>) -> Unit = {
+        it.consume()?.let { error ->
+            handleWebViewError(error)
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         initWebViewTheme()
@@ -73,9 +85,20 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initWebView()
+        initUi()
         initObservers()
         loadCardsUrl()
+    }
+
+    private fun initUi() {
+        initWebView()
+        with(binding) {
+            screenStateView.setOnNeutralButtonClickListener {
+                screenStateView.hide()
+                webView.show()
+                webView.loadUrl(CARDS_URL)
+            }
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -101,6 +124,10 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
             cardsViewModel.cardsPreviewFlow.mapNotNull { it?.sendMessageEvent }.distinctUntilChanged(),
             sendMessageEventCollector
         )
+        collectLatestOnLifecycle(
+            cardsViewModel.cardsPreviewFlow.mapNotNull { it?.errorEvent }.distinctUntilChanged(),
+            errorEventCollector
+        )
     }
 
     override fun getAuthorizedAddresses() {
@@ -120,6 +147,18 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
     override fun openSystemBrowser(jsonEncodedPayload: String) {
         cardsViewModel.getOpenSystemBrowserUrl(jsonEncodedPayload)?.let { url ->
             context?.openExternalBrowserApp(url)
+        }
+    }
+
+    private fun handleWebViewError(error: WebViewError) {
+        val errorState = when (error) {
+            NO_CONNECTION -> ScreenState.ConnectionError()
+            HTTP_ERROR -> ScreenState.DefaultError()
+        }
+        with(binding) {
+            screenStateView.setupUi(errorState)
+            screenStateView.show()
+            webView.hide()
         }
     }
 

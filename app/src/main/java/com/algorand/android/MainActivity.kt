@@ -226,7 +226,7 @@ class MainActivity :
 
     private val walletConnectUrlHandlerListener = object : WalletConnectUrlHandler.Listener {
         override fun onValidWalletConnectUrl(url: String) {
-            showProgress()
+            if (!isBasePeraWebViewFragmentActive()) showProgress()
             walletConnectViewModel.connectToSessionByUrl(url)
         }
 
@@ -645,6 +645,10 @@ class MainActivity :
 
             override fun onBrowseDappsClick() {
                 handleBrowseDappsClick()
+            }
+
+            override fun onCardsClick() {
+                nav(HomeNavigationDirections.actionGlobalCardsFragment())
             }
         })
     }

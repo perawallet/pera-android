@@ -53,9 +53,10 @@ ext {
     ]
 
     testLibVersions = [
-            junit   : '4.13.2',
-            runner  : '1.5.2',
-            espresso: '3.5.1'
+            junit           : '4.13.2',
+            runner          : '1.5.2',
+            espresso        : '3.5.1',
+            mockito         : '5.4.0'
     ]
 
     peraApplication = [

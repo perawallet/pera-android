@@ -25,6 +25,9 @@ import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.models.WalletConnectSignResult
+import com.algorand.android.modules.walletconnect.cards.domain.usecase.CacheWalletConnectRequestPreselectedAccountAddresses
+import com.algorand.android.modules.walletconnect.cards.domain.usecase.ClearWalletConnectPreselectedAddressCache
+import com.algorand.android.modules.walletconnect.cards.domain.usecase.GetWalletConnectRequestPreselectedAccountAddresses
 import com.algorand.android.modules.walletconnect.client.v1.session.WalletConnectSessionTimer
 import com.algorand.android.modules.walletconnect.domain.decider.WalletConnectMethodDecider
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
@@ -80,7 +83,10 @@ class WalletConnectManager @Inject constructor(
     private val walletConnectClientManager: WalletConnectClientManager,
     private val walletConnectPreviewMapper: WalletConnectPreviewMapper,
     private val walletConnectSessionIdentifierMapper: WalletConnectSessionIdentifierMapper,
-    private val walletConnectMethodDecider: WalletConnectMethodDecider
+    private val walletConnectMethodDecider: WalletConnectMethodDecider,
+    private val getPreselectedAccountAddresses: GetWalletConnectRequestPreselectedAccountAddresses,
+    private val clearWalletConnectPreselectedAddressCache: ClearWalletConnectPreselectedAddressCache,
+    private val cacheWalletConnectPreselectedAccountAddresses: CacheWalletConnectRequestPreselectedAccountAddresses
 ) : DefaultLifecycleObserver {
 
     val sessionResultFlow: SharedFlow<Event<Resource<WalletConnectSessionProposal>>>
@@ -121,11 +127,11 @@ class WalletConnectManager @Inject constructor(
     private var latestSessionIdentifierIsBeingHandled: SessionIdentifier? = null
     private var latestRequestIdentifierIsBeingHandled: RequestIdentifier? = null
     private var latestTransactionRequestIdentifier: RequestIdentifier? = null
-    private var sessionEvent: Event<WalletConnectSessionProposal>? = null
 
     private val walletConnectClientListener = object : WalletConnectClientManagerListener {
 
         override fun onInvalidSessionUrl(url: String) {
+            clearWalletConnectPreselectedAddressCache()
             coroutineScope?.launchIO {
                 _sessionResultFlow.emit(Event(Annotated(AnnotatedString(R.string.invalid_url))))
             }
@@ -134,8 +140,7 @@ class WalletConnectManager @Inject constructor(
         override fun onSessionProposal(proposal: WalletConnect.Session.Proposal) {
             stopSessionConnectionTimer()
             val sessionProposal = walletConnectPreviewMapper.mapToWalletConnectSessionProposal(proposal)
-            sessionEvent = Event(sessionProposal)
-            handleSessionProposal()
+            handleSessionProposal(sessionProposal)
         }
 
         override fun onSessionUpdate(update: WalletConnect.Session.Update) {
@@ -145,12 +150,14 @@ class WalletConnectManager @Inject constructor(
         }
 
         override fun onSessionDelete(delete: WalletConnect.Session.Delete) {
+            clearWalletConnectPreselectedAddressCache()
             coroutineScope?.launchIO {
                 updateLocalSessionsFlow()
             }
         }
 
         override fun onSessionSettle(settle: WalletConnect.Session.Settle) {
+            clearWalletConnectPreselectedAddressCache()
             if (settle is WalletConnect.Session.Settle.Result) {
                 coroutineScope?.launchIO {
                     val sessionIdentifier = walletConnectSessionIdentifierMapper.mapToSessionIdentifier(
@@ -165,10 +172,12 @@ class WalletConnectManager @Inject constructor(
         }
 
         override fun onSessionError(error: WalletConnect.Session.Error) {
+            clearWalletConnectPreselectedAddressCache()
             onSessionFailed(error.sessionIdentifier, error.throwable)
         }
 
         override fun onSessionRequest(sessionRequest: WalletConnect.Model.SessionRequest) {
+            clearWalletConnectPreselectedAddressCache()
             coroutineScope?.launchIO {
                 with(sessionRequest) {
                     if (request.params != null) {
@@ -179,6 +188,7 @@ class WalletConnectManager @Inject constructor(
         }
 
         override fun onConnectionChanged(connectionState: WalletConnect.Model.ConnectionState) {
+            clearWalletConnectPreselectedAddressCache()
             coroutineScope?.launchIO {
                 with(connectionState) {
                     if (isConnected) {
@@ -190,6 +200,7 @@ class WalletConnectManager @Inject constructor(
         }
 
         override fun onError(error: WalletConnect.Model.Error) {
+            clearWalletConnectPreselectedAddressCache()
             onSessionFailed(null, error.throwable)
         }
     }
@@ -199,6 +210,8 @@ class WalletConnectManager @Inject constructor(
     }
 
     fun connectToNewSession(url: String) {
+        clearWalletConnectPreselectedAddressCache()
+        cacheWalletConnectPreselectedAccountAddresses(url)
         startSessionConnectionTimer()
         walletConnectClientManager.connect(url)
     }
@@ -365,16 +378,22 @@ class WalletConnectManager @Inject constructor(
         return walletConnectClientManager.checkSessionStatus(sessionIdentifier)
     }
 
-    private fun handleSessionProposal() {
+    private fun handleSessionProposal(sessionProposal: WalletConnectSessionProposal) {
         coroutineScope?.launchIO {
             accountCacheStatusFlow.filter { it == AccountCacheStatus.DONE }.distinctUntilChanged().collectLatest {
-                sessionEvent?.consume()?.run {
-                    checkIfRequestedSessionIdMatchWithActiveNode(
-                        sessionProposal = this,
-                        onFailed = { errorResource -> _sessionResultFlow.emit(Event(errorResource)) },
-                        onMatched = { cachedSessionResource -> _sessionResultFlow.emit(Event(cachedSessionResource)) }
-                    )
-                }
+                checkIfRequestedSessionIdMatchWithActiveNode(
+                    sessionProposal = sessionProposal,
+                    onFailed = { errorResource -> _sessionResultFlow.emit(Event(errorResource)) },
+                    onMatched = { cachedSessionResource ->
+                        val preselectedAddresses = getPreselectedAccountAddresses()
+                        if (preselectedAddresses.isNullOrEmpty()) {
+                            _sessionResultFlow.emit(Event(cachedSessionResource))
+                        } else {
+                            clearWalletConnectPreselectedAddressCache()
+                            approveSession(sessionProposal, preselectedAddresses)
+                        }
+                    }
+                )
             }
         }
     }

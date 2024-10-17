@@ -71,7 +71,7 @@ class WalletConnectUrlSelectedAddressParserImplTest {
     private companion object {
         const val ADDRESS = "BGS5JPS56VNAU5WKWFR54RGB2IGKL66WULSYHNYY7QPGEXUMHKBY76OVWM"
         const val SELECTED_ACCOUNT_KEY = "selectedAccount"
-        const val SYM_KEY_QUERY = "symKey=SOME_KEY"
+        const val SYM_KEY_QUERY = "symKey=SOME_RANDOM_KEY"
         const val WC_REQUEST_URL = "wc:cbsbajsfqnwjsf7@2"
     }
 }

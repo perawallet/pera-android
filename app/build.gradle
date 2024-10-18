@@ -250,7 +250,7 @@ dependencies {
     // ExoPlayer
     implementation "com.google.android.exoplayer:exoplayer:${libVersions.exoPlayer}"
 
-    implementation("com.algorand:algosdk:${libVersions.algoSdk}") {
+    implementation(libs.algosdk) {
         exclude group: 'org.bouncycastle'
     }
 

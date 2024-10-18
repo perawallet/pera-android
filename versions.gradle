@@ -44,7 +44,8 @@ ext {
             moshi           : '1.15.1',
             exoPlayer       : '2.19.1',
             firebaseBom     : '33.1.1',
-            algoSdk         : '2.4.0'
+            kotlinfixture   : "1.2.0",
+            mockito         : "4.0.0"
     ]
 
     discoverVersions = [

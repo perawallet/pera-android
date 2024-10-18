@@ -51,10 +51,17 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
     override fun getGattCallback(): BleManagerGattCallback {
         return object : BleManagerGattCallback() {
             override fun isRequiredServiceSupported(gatt: BluetoothGatt): Boolean {
-                gatt.getService(SERVICE_UUID)?.run {
-                    characteristicWrite = getCharacteristic(WRITE_CHARACTERISTIC_UUID)
-                    characteristicNotify = getCharacteristic(NOTIFY_CHARACTERISTIC_UUID)
+                gatt.getService(NANOX_SERVICE_UUID)?.run {
+                    characteristicWrite = getCharacteristic(NANOX_WRITE_CHARACTERISTIC_UUID)
+                    characteristicNotify = getCharacteristic(NANOX_NOTIFY_CHARACTERISTIC_UUID)
+                }?: gatt.getService(FLEX_SERVICE_UUID)?.run {
+                    characteristicWrite = getCharacteristic(FLEX_WRITE_CHARACTERISTIC_UUID)
+                    characteristicNotify = getCharacteristic(FLEX_NOTIFY_CHARACTERISTIC_UUID)
+                } ?: gatt.getService(STAX_SERVICE_UUID)?.run {
+                    characteristicWrite = getCharacteristic(STAX_WRITE_CHARACTERISTIC_UUID)
+                    characteristicNotify = getCharacteristic(STAX_NOTIFY_CHARACTERISTIC_UUID)
                 }
+
                 return characteristicWrite != null && characteristicNotify != null
             }
 
@@ -332,21 +339,35 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
 
     fun isTryingToConnect(): Boolean {
         return (
-            connectionState == BluetoothProfile.STATE_DISCONNECTED ||
-                connectionState == BluetoothProfile.STATE_DISCONNECTING
-            ).not()
-    }
-
-    fun isDeviceConnected(deviceAddress: String): Boolean {
-        return bluetoothDevice?.address == deviceAddress && isTryingToConnect()
+                connectionState == BluetoothProfile.STATE_DISCONNECTED ||
+                        connectionState == BluetoothProfile.STATE_DISCONNECTING
+                ).not()
     }
 
     companion object {
-        private const val SERVICE_KEY = "13D63400-2C97-0004-0000-4C6564676572"
-        private const val WRITE_CHARACTERISTIC_KEY = "13D63400-2C97-0004-0002-4C6564676572"
-        private const val NOTIFIY_CHARACTERISCTIC_KEY = "13D63400-2C97-0004-0001-4C6564676572"
+        private const val NANOX_SERVICE_KEY = "13D63400-2C97-0004-0000-4C6564676572"
+        private const val NANOX_WRITE_CHARACTERISTIC_KEY = "13D63400-2C97-0004-0002-4C6564676572"
+        private const val NANOX_NOTIFY_CHARACTERISTIC_KEY = "13D63400-2C97-0004-0001-4C6564676572"
 
-        val SERVICE_UUID = UUID.fromString(SERVICE_KEY)
+        private const val STAX_SERVICE_KEY = "13d63400-2c97-6004-0000-4c6564676572"
+        private const val STAX_WRITE_CHARACTERISTIC_KEY = "13d63400-2c97-6004-0002-4c6564676572"
+        private const val STAX_NOTIFY_CHARACTERISTIC_KEY = "13d63400-2c97-6004-0001-4c6564676572"
+
+        private const val FLEX_SERVICE_KEY = "13d63400-2c97-3004-0000-4c6564676572"
+        private const val FLEX_WRITE_CHARACTERISTIC_KEY = "13d63400-2c97-3004-0002-4c6564676572"
+        private const val FLEX_NOTIFY_CHARACTERISTIC_KEY = "13d63400-2c97-3004-0001-4c6564676572"
+
+        val NANOX_SERVICE_UUID: UUID = UUID.fromString(NANOX_SERVICE_KEY)
+        private val NANOX_WRITE_CHARACTERISTIC_UUID = UUID.fromString(NANOX_WRITE_CHARACTERISTIC_KEY)
+        private val NANOX_NOTIFY_CHARACTERISTIC_UUID = UUID.fromString(NANOX_NOTIFY_CHARACTERISTIC_KEY)
+
+        val STAX_SERVICE_UUID: UUID = UUID.fromString(STAX_SERVICE_KEY)
+        private val STAX_WRITE_CHARACTERISTIC_UUID = UUID.fromString(STAX_WRITE_CHARACTERISTIC_KEY)
+        private val STAX_NOTIFY_CHARACTERISTIC_UUID = UUID.fromString(STAX_NOTIFY_CHARACTERISTIC_KEY)
+
+        val FLEX_SERVICE_UUID: UUID = UUID.fromString(FLEX_SERVICE_KEY)
+        private val FLEX_WRITE_CHARACTERISTIC_UUID = UUID.fromString(FLEX_WRITE_CHARACTERISTIC_KEY)
+        private val FLEX_NOTIFY_CHARACTERISTIC_UUID = UUID.fromString(FLEX_NOTIFY_CHARACTERISTIC_KEY)
 
         private const val GATT_MAX_MTU_SIZE = 517
         private const val CONNECTION_TIMEOUT = 18000L
@@ -395,10 +416,6 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
 
         private const val CONSTANT_BYTE_COUNT = 3
 
-        private val WRITE_CHARACTERISTIC_UUID = UUID.fromString(WRITE_CHARACTERISTIC_KEY)
-        private val NOTIFY_CHARACTERISTIC_UUID = UUID.fromString(NOTIFIY_CHARACTERISCTIC_KEY)
-
-        private const val PUBLIC_KEY_RESPONSE_DATA_SIZE = 34
         private const val ERROR_DATA_SIZE = 2
 
         /**

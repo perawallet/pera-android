@@ -13,6 +13,7 @@
 package com.algorand.android.modules.perawebview
 
 import com.algorand.android.modules.peraserializer.PeraSerializer
+import com.algorand.android.usecase.AccountAlgoAmountUseCase
 import com.algorand.android.usecase.GetLocalAccountsUseCase
 import com.google.crypto.tink.subtle.Base64
 import javax.inject.Inject
@@ -20,7 +21,8 @@ import javax.inject.Inject
 class GetAuthorizedAddressesWebMessagesUseCase @Inject constructor(
     private val localAccountsUseCase: GetLocalAccountsUseCase,
     private val peraSerializer: PeraSerializer,
-    private val peraWebMessageBuilder: PeraWebMessageBuilder
+    private val peraWebMessageBuilder: PeraWebMessageBuilder,
+    private val accountAlgoAmountUseCase: AccountAlgoAmountUseCase
 ) : GetAuthorizedAddressesWebMessage {
 
     override suspend fun invoke(): String {
@@ -31,8 +33,11 @@ class GetAuthorizedAddressesWebMessagesUseCase @Inject constructor(
 
     private fun getAddressNameMap(): List<Map<String, String>> {
         val localAccounts = localAccountsUseCase.getLocalAccountsThatCanSignTransaction()
-        return localAccounts.map {
-            mapOf(it.address to it.name)
+        val sortedAddressAlgoBalanceMap = localAccounts.map {
+            it to accountAlgoAmountUseCase.getAccountAlgoAmount(it.address).amount
+        }.sortedByDescending { (_, algoBalance) -> algoBalance }
+        return sortedAddressAlgoBalanceMap.map { (account, _) ->
+            mapOf(account.address to account.name)
         }
     }
 

@@ -34,7 +34,7 @@ ext {
             mpChart         : '3.1.0',
             browser         : '1.8.0',
             review          : '2.0.1',
-            ble             : '2.7.5',
+            ble             : '2.8.0',
             lottie          : '6.4.1',
             desugar         : '2.0.4',
             mpAndroidChart  : '3.1.0',

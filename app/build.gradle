@@ -200,7 +200,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:${libVersions.navigation}"
     implementation "androidx.navigation:navigation-ui-ktx:${libVersions.navigation}"
 
-    implementation "no.nordicsemi.android:ble:${libVersions.ble}"
+    implementation "no.nordicsemi.android:ble-ktx:${libVersions.ble}"
 
     implementation "androidx.fragment:fragment-ktx:${libVersions.fragment}"
 

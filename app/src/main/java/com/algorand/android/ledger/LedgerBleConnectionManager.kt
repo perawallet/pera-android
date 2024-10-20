@@ -54,7 +54,7 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
                 gatt.getService(NANOX_SERVICE_UUID)?.run {
                     characteristicWrite = getCharacteristic(NANOX_WRITE_CHARACTERISTIC_UUID)
                     characteristicNotify = getCharacteristic(NANOX_NOTIFY_CHARACTERISTIC_UUID)
-                }?: gatt.getService(FLEX_SERVICE_UUID)?.run {
+                } ?: gatt.getService(FLEX_SERVICE_UUID)?.run {
                     characteristicWrite = getCharacteristic(FLEX_WRITE_CHARACTERISTIC_UUID)
                     characteristicNotify = getCharacteristic(FLEX_NOTIFY_CHARACTERISTIC_UUID)
                 } ?: gatt.getService(STAX_SERVICE_UUID)?.run {

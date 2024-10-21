@@ -15,7 +15,6 @@ package com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.mapper
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AsaPreview
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailNavArgs
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailNavArgs.SenderDetail
-import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import javax.inject.Inject
 
 class Arc59ReceiveDetailNavArgsMapperImpl @Inject constructor() : Arc59ReceiveDetailNavArgsMapper {

@@ -21,7 +21,7 @@ import com.algorand.android.utils.Event
 import javax.inject.Inject
 
 class TransactionStatusPreviewMapper @Inject constructor() {
-
+    @Suppress("LongParameterList")
     fun mapToTransactionStatusPreview(
         @RawRes transactionStatusAnimationResId: Int?,
         @DrawableRes transactionStatusAnimationBackgroundResId: Int,

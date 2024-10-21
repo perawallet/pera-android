@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class AssetInboxAllAccountsViewModel @Inject constructor(
-    val assetInboxAllAccountsPreviewUseCase: AssetInboxAllAccountsPreviewUseCase
+    private val assetInboxAllAccountsPreviewUseCase: AssetInboxAllAccountsPreviewUseCase
 ) : ViewModel() {
 
     private val _viewStateFlow = MutableStateFlow(assetInboxAllAccountsPreviewUseCase.getInitialPreview())

@@ -33,8 +33,8 @@ import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class AssetInboxOneAccountViewModel @Inject constructor(
-    val assetInboxOneAccountPreviewUseCase: AssetInboxOneAccountPreviewUseCase,
-    val arc59ReceiveDetailNavArgsMapper: Arc59ReceiveDetailNavArgsMapper,
+    private val assetInboxOneAccountPreviewUseCase: AssetInboxOneAccountPreviewUseCase,
+    private val arc59ReceiveDetailNavArgsMapper: Arc59ReceiveDetailNavArgsMapper,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 

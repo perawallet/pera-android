@@ -15,7 +15,6 @@ package com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.TransactionBaseFragment
@@ -23,7 +22,6 @@ import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentAssetInboxAllAccountsBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccountsWithAccount
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.model.AssetInboxAllAccountsPreview
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.utils.BaseCustomDividerItemDecoration
@@ -98,16 +96,6 @@ class AssetInboxAllAccountsFragment :
             )
         }
     }
-
-    private val emptyStateVisibilityCollector: suspend (Boolean?) -> Unit = { isEmptyStateVisible ->
-        binding.emptyStateTextView.isVisible = isEmptyStateVisible == true
-    }
-
-    private val assetInboxAllAccountsWithAccountListCollector: suspend (List<AssetInboxAllAccountsWithAccount>?)
-    -> Unit =
-        { assetInboxAllAccountsWithAccountList ->
-            accountAdapter.submitList(assetInboxAllAccountsWithAccountList)
-        }
 
     private fun setupToolbar() {
         getAppToolbar()?.run {

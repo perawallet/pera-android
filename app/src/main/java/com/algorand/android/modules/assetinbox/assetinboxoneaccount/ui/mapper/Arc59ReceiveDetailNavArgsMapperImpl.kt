@@ -18,9 +18,7 @@ import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import javax.inject.Inject
 
-class Arc59ReceiveDetailNavArgsMapperImpl @Inject constructor(
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
-) : Arc59ReceiveDetailNavArgsMapper {
+class Arc59ReceiveDetailNavArgsMapperImpl @Inject constructor() : Arc59ReceiveDetailNavArgsMapper {
 
     override fun invoke(asaPreview: AsaPreview): Arc59ReceiveDetailNavArgs {
         return Arc59ReceiveDetailNavArgs(

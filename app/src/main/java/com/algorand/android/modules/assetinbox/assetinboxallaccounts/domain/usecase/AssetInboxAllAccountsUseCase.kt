@@ -14,12 +14,8 @@ package com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.use
 
 import android.util.Log
 import com.algorand.android.core.AccountManager
-import com.algorand.android.customviews.accountandassetitem.mapper.AccountItemConfigurationMapper
-import com.algorand.android.models.Account
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccounts
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccountsWithAccount
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.repository.AssetInboxAllAccountsRepository
-import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.mapper.AssetInboxAllAccountsPreviewMapper
 import com.algorand.android.utils.CacheResult
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -28,22 +24,18 @@ import kotlinx.coroutines.flow.StateFlow
 class AssetInboxAllAccountsUseCase @Inject constructor(
     private val assetInboxAllAccountsRepository: AssetInboxAllAccountsRepository,
     private val accountManager: AccountManager,
-    private val assetInboxAllAccountsPreviewMapper: AssetInboxAllAccountsPreviewMapper,
-    private val accountItemConfigurationMapper: AccountItemConfigurationMapper
 ) {
 
     suspend fun updateAssetInboxAllAccountsCache() {
-        with(assetInboxAllAccountsRepository) {
-            assetInboxAllAccountsRepository.getAssetInboxAllAccounts(getAllAccountAddresses()).use(
-                onSuccess = { assetInboxAllAccounts ->
-                    assetInboxAllAccountsRepository.cacheAssetInboxAllAccounts(
-                        assetInboxAllAccounts.map { CacheResult.Success.create(it) }
-                    )
-                },
-                onFailed = { exception, code ->
-                    Log.e("AssetInboxAllAccountsUseCase", "updateAssetInboxAllAccountsCache: $exception")
-                })
-        }
+        assetInboxAllAccountsRepository.getAssetInboxAllAccounts(getAllAccountAddresses()).use(
+            onSuccess = { assetInboxAllAccounts ->
+                assetInboxAllAccountsRepository.cacheAssetInboxAllAccounts(
+                    assetInboxAllAccounts.map { CacheResult.Success.create(it) }
+                )
+            },
+            onFailed = { exception, code ->
+                Log.e("AssetInboxAllAccountsUseCase", "updateAssetInboxAllAccountsCache: $exception")
+            })
     }
 
     suspend fun getAssetInboxAllAccountsCacheFlow():
@@ -55,21 +47,7 @@ class AssetInboxAllAccountsUseCase @Inject constructor(
         return assetInboxAllAccountsRepository.getAssetInboxCountCacheFlow()
     }
 
-    fun getAllAccountAddresses(): List<String> {
+    private fun getAllAccountAddresses(): List<String> {
         return accountManager.getAccounts().map { it.address }
-    }
-
-    fun getAllAccounts(): List<Account> {
-        return accountManager.getAccounts()
-    }
-
-    fun getAssetInboxAllAccountsWithAccountList(
-        assetInboxAllAccountsList: List<AssetInboxAllAccounts>,
-        accounts: List<Account>
-    ): List<AssetInboxAllAccountsWithAccount> {
-        return assetInboxAllAccountsPreviewMapper.mapToAssetInboxAllAccountsWithAccount(
-            assetInboxAllAccountsList,
-            accounts
-        )
     }
 }

@@ -18,6 +18,8 @@
 
     <include app:graph="@navigation/asset_inbox_info_navigation" />
 
+    <include app:graph="@navigation/transaction_confirmation_navigation" />
+
     <fragment
         android:id="@+id/assetInboxOneAccountFragment"
         android:name="com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.AssetInboxOneAccountFragment"
@@ -46,6 +48,9 @@
             android:id="@+id/action_arc59ReceiveDetailFragment_pop"
             app:popUpTo="@id/assetInboxOneAccountNavigation"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_arc59ReceiveDetailFragment_to_transactionConfirmationNavigation"
+            app:destination="@id/transactionConfirmationNavigation" />
     </fragment>
 
 </navigation>

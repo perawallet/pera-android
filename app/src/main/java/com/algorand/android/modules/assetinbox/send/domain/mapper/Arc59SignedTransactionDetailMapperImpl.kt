@@ -54,16 +54,14 @@ class Arc59SignedTransactionDetailMapperImpl @Inject constructor() : Arc59Signed
     private fun getSendTransactions(
         transactions: Arc59Transactions,
         signedTransactions: List<ByteArray?>
-    ): SignedTransactionDetail? {
+    ): SignedTransactionDetail {
         val startIndex = transactions.optInTransactions.size
-        val signedSendTransactions = signedTransactions
+        val signedSendTransactionsFiltered = signedTransactions
             .drop(startIndex)
             .filterNotNull()
             .flatten()
 
-        if (transactions.sendTransactions.size != signedSendTransactions.size) return null
-
-        return SignedTransactionDetail.Arc59Send(signedSendTransactions)
+        return SignedTransactionDetail.Arc59Send(signedSendTransactionsFiltered)
     }
 
     private fun areAllTxnsSigned(transactions: Arc59Transactions, signedTransactions: List<Any?>): Boolean {

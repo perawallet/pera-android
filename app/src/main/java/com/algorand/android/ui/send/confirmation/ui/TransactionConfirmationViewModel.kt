@@ -14,6 +14,7 @@ package com.algorand.android.ui.send.confirmation.ui
 
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.ui.send.confirmation.ui.model.TransactionStatusPreview
 import com.algorand.android.ui.send.confirmation.ui.usecase.TransactionConfirmationPreviewUseCase
 import com.algorand.android.utils.Event
@@ -26,6 +27,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class TransactionConfirmationViewModel @Inject constructor(
+    private val algodInterceptor: AlgodInterceptor,
     private val transactionConfirmationPreviewUseCase: TransactionConfirmationPreviewUseCase
 ) : BaseViewModel() {
 
@@ -47,6 +49,14 @@ class TransactionConfirmationViewModel @Inject constructor(
             val currentPreview = _transactionStatusPreviewFlow.value
             _transactionStatusPreviewFlow.emit(currentPreview.copy(onExitSendAlgoNavigationEvent = Event(Unit)))
         }
+    }
+
+    fun getNetworkSlug(): String? {
+        return algodInterceptor.currentActiveNode?.networkSlug
+    }
+
+    fun geTransactionGroupId(): String {
+        return ""
     }
 
     companion object {

@@ -33,5 +33,7 @@ data class TransactionStatusPreview(
     val transactionStatusTitleResId: Int,
     @StringRes
     val transactionStatusDescriptionResId: Int,
-    val onExitSendAlgoNavigationEvent: Event<Unit>?
+    val onExitSendAlgoNavigationEvent: Event<Unit>?,
+    val isDoneButtonVisible: Boolean,
+    val isExplorerButtonVisible: Boolean,
 )

@@ -110,7 +110,9 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
     private fun initUi() {
         initNavController()
         with(binding) {
-            confirmButton.setOnClickListener { viewModel.claimTransaction() }
+            confirmButton.setOnClickListener {
+                viewModel.claimTransaction()
+            }
             declineButton.setOnClickListener { onRejectClick() }
         }
     }
@@ -149,8 +151,7 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
         }
         if (preview.isLoading) showLoading() else hideLoading()
         preview.onTransactionSendSuccessfully?.consume()?.let {
-            // TODO Show success message
-            navBack()
+            navToTransactionConfirmationNavigation()
         }
     }
 
@@ -228,6 +229,10 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
         context?.getXmlStyledString(annotatedString)?.let {
             showGlobalError(it)
         }
+    }
+
+    private fun navToTransactionConfirmationNavigation() {
+        nav(Arc59ReceiveDetailFragmentDirections.actionArc59ReceiveDetailFragmentToTransactionConfirmationNavigation())
     }
 
     companion object {

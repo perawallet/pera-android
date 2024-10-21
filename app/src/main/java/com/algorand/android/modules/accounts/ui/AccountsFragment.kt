@@ -212,6 +212,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         val assetInboxCount = assetInboxCountNullable ?: 0
         binding.assetInboxAllAccountsButton.apply {
             text = resources.getQuantityString(R.plurals.asset_requests, assetInboxCount, assetInboxCount)
+            isVisible = assetInboxCount > 0
         }
     }
 

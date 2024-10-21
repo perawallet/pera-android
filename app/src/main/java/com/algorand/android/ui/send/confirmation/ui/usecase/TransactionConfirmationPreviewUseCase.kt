@@ -30,7 +30,9 @@ class TransactionConfirmationPreviewUseCase @Inject constructor(
             transactionStatusAnimationDrawableTintResId = null,
             transactionStatusTitleResId = R.string.transaction_submitted,
             transactionStatusDescriptionResId = R.string.your_transaction_sub,
-            onExitSendAlgoNavigationEvent = null
+            onExitSendAlgoNavigationEvent = null,
+            isExplorerButtonVisible = false,
+            isDoneButtonVisible = false
         )
     }
 
@@ -43,7 +45,9 @@ class TransactionConfirmationPreviewUseCase @Inject constructor(
             transactionStatusAnimationDrawableTintResId = R.color.background,
             transactionStatusTitleResId = R.string.transaction_received,
             transactionStatusDescriptionResId = R.string.your_transaction_was,
-            onExitSendAlgoNavigationEvent = null
+            onExitSendAlgoNavigationEvent = null,
+            isExplorerButtonVisible = true,
+            isDoneButtonVisible = true
         )
     }
 }

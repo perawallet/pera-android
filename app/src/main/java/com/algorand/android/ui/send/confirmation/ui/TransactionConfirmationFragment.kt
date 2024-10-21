@@ -19,6 +19,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.ColorRes
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.algorand.android.R
@@ -28,6 +29,7 @@ import com.algorand.android.databinding.FragmentTransactionConfirmationBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.send.confirmation.ui.model.TransactionStatusPreview
+import com.algorand.android.utils.browser.openTransactionInPeraExplorer
 import com.algorand.android.utils.setFragmentNavigationResult
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -88,9 +90,28 @@ class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transacti
                 }
                 transactionTitleTextView.setText(transactionStatusTitleResId)
                 transactionInfoTextView.setText(transactionStatusDescriptionResId)
+                openPeraExplorerButton.apply {
+                    isVisible = isExplorerButtonVisible
+                    setOnClickListener { onOpenPeraExplorerClick() }
+                }
+                doneButton.apply {
+                    isVisible = isDoneButtonVisible
+                    setOnClickListener { onDoneButtonClick() }
+                }
             }
-            onExitSendAlgoNavigationEvent?.consume()?.run { popSendAlgoNavigation() }
+//            onExitSendAlgoNavigationEvent?.consume()?.run { popSendAlgoNavigation() }
         }
+    }
+
+    private fun onDoneButtonClick() {
+        popBackToHome()
+    }
+
+    private fun onOpenPeraExplorerClick() {
+        context?.openTransactionInPeraExplorer(
+            transactionConfirmationViewModel.geTransactionGroupId(),
+            transactionConfirmationViewModel.getNetworkSlug()
+        )
     }
 
     // TODO: we can create an extension function
@@ -110,6 +131,10 @@ class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transacti
         // TODO: use new extension function to return fragment result
         setFragmentNavigationResult(TRANSACTION_CONFIRMATION_KEY, true)
         nav(SendAlgoNavigationDirections.actionSendAlgoNavigationPop())
+    }
+
+    private fun popBackToHome() {
+        nav(TransactionConfirmationFragmentDirections.actionTransactionConfirmationFragmentToHomeNavigation())
     }
 
     private fun onBackPressed() {

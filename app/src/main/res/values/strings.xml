@@ -1353,5 +1353,6 @@
     <string name="you_can_not_purchase">You cannot purchase while on TestNet. Please switch back to MainNet from
         Settings to use Meld.</string>
     <string name="meld">MELD</string>
-
+    <string name="cards">Cards</string>
+    <string name="get_the_worlds_first">Get the world\'s first web3 Mastercard.</string>
 </resources>

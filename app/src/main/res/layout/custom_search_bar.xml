@@ -24,12 +24,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:drawablePadding="@dimen/spacing_xsmall"
+        android:hint="@string/search"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/deleteTextButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:drawableStart="@drawable/ic_search"
-        tools:hint="Search" />
+        tools:hint="@string/search" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/deleteTextButton"

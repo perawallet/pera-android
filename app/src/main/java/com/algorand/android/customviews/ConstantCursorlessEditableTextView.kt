@@ -43,6 +43,7 @@ class ConstantCursorlessEditableTextView @JvmOverloads constructor(
     }
 
     override fun onSelectionChanged(selStart: Int, selEnd: Int) {
+        super.onSelectionChanged(selStart, selEnd)
         Selection.setSelection(text, text.length, text.length)
     }
 

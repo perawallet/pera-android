@@ -14,6 +14,7 @@ package com.algorand.android.modules.accounts.ui
 
 import android.Manifest
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -205,7 +206,11 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
     }
 
     private val askNotificationPermissionEventCollector: suspend (Event<Unit>?) -> Unit = {
-        it?.consume()?.let { requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS) }
+        it?.consume()?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
     }
 
     private fun showAccountAddressCopyTutorialDialog(tutorialId: Int) {

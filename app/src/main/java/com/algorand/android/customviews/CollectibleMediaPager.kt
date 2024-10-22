@@ -12,6 +12,7 @@
 
 package com.algorand.android.customviews
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
@@ -69,6 +70,7 @@ class CollectibleMediaPager(context: Context, attrs: AttributeSet? = null) : Con
         setPagerSwipeStatus(mediaList.size > 1)
     }
 
+    @SuppressLint("WrongConstant")
     private fun initRootLayout() {
         with(binding) {
             with(collectibleMediaViewPager) {

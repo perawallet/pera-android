@@ -140,6 +140,7 @@ class DeepLinkParser @Inject constructor(
             when (authority + path) {
                 NOTIFICATION_ACTION_ASSET_TRANSACTIONS -> NotificationGroupType.TRANSACTIONS
                 NOTIFICATION_ACTION_ASSET_OPTIN -> NotificationGroupType.OPT_IN
+                NOTIFICATION_ASSET_INBOX -> NotificationGroupType.ASSET_INBOX
                 else -> null
             }
         }
@@ -200,6 +201,7 @@ class DeepLinkParser @Inject constructor(
         private const val TRANSACTION_STATUS_KEY = "transactionStatus"
         private const val NOTIFICATION_ACTION_ASSET_TRANSACTIONS = "asset/transactions"
         private const val NOTIFICATION_ACTION_ASSET_OPTIN = "asset/opt-in"
+        private const val NOTIFICATION_ASSET_INBOX = "asset-inbox"
 
         private const val COINBASE_ACCOUNT_ADDRESS_WITH_ASSET_ID_REGEX = """address=([A-Z0-9]+)"""
         private const val COINBASE_ACCOUNT_ADDRESS_REGEX = """algo:([A-Z0-9]+)"""

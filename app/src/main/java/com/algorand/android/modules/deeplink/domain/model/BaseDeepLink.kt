@@ -39,7 +39,6 @@ sealed class BaseDeepLink {
         protected const val DEFAULT_WALLET_CONNECT_URL = ""
         protected const val DEFAULT_AMOUNT = 0L
         protected const val DEFAULT_MNEMONIC = ""
-        protected const val DEFAULT_TRANSACTION_STATUS = ""
         protected const val DEFAULT_WEBIMPORT_BACKUPID = ""
         protected const val DEFAULT_DISCOVER_BROWSER_URL = ""
         protected const val DEFAULT_WEBIMPORT_ENCRYPTIONKEY = ""
@@ -390,6 +389,41 @@ sealed class BaseDeepLink {
                             xnote == null &&
                             label == null &&
                             webImportQrCode == null
+                }
+            }
+        }
+    }
+
+    class AssetInboxDeepLink(
+        val address: String,
+        val notificationGroupType: NotificationGroupType
+    ) : BaseDeepLink() {
+
+        override fun equals(other: Any?): Boolean {
+            return other is NotificationDeepLink &&
+                    other.address == address &&
+                    other.notificationGroupType == notificationGroupType
+        }
+
+        override fun hashCode(): Int {
+            var result = address.hashCode()
+            result = 31 * result + notificationGroupType.hashCode()
+            return result
+        }
+
+        companion object : DeepLinkCreator {
+
+            override fun createDeepLink(rawDeeplink: RawDeepLink): BaseDeepLink {
+                return AssetInboxDeepLink(
+                    address = rawDeeplink.accountAddress.orEmpty(),
+                    notificationGroupType = rawDeeplink.notificationGroupType ?: DEFAULT_NOTIFICATION_GROUP_TYPE
+                )
+            }
+
+            override fun doesDeeplinkMeetTheRequirements(rawDeepLink: RawDeepLink): Boolean {
+                return with(rawDeepLink) {
+                    accountAddress != null &&
+                            notificationGroupType == NotificationGroupType.ASSET_INBOX
                 }
             }
         }

@@ -15,8 +15,10 @@ package com.algorand.android.modules.assetinbox.detail.receivedetail.domain.usec
 
 import com.algorand.android.models.Result
 import com.algorand.android.modules.assetinbox.detail.receivedetail.domain.model.Arc59RejectTransactionPayload
-import com.algorand.android.modules.assetinbox.detail.receivedetail.domain.model.BaseArc59ClaimRejectTransaction.Arc59RejectTransaction
+import com.algorand.android.modules.assetinbox.detail.receivedetail.domain.model.BaseArc59ClaimRejectTransaction
 
 interface CreateArc59RejectTransaction {
-    suspend operator fun invoke(payload: Arc59RejectTransactionPayload): Result<Arc59RejectTransaction>
+
+    suspend operator fun invoke(payload: Arc59RejectTransactionPayload):
+            Result<List<BaseArc59ClaimRejectTransaction.Arc59RejectTransaction>>
 }

@@ -31,25 +31,28 @@ class CreateArc59RejectTransactionUseCase @Inject constructor(
     private val isOnTestnetUseCase: IsOnTestnetUseCase
 ) : CreateArc59RejectTransaction {
 
-    override suspend fun invoke(payload: Arc59RejectTransactionPayload): Result<Arc59RejectTransaction> {
-        val accountAuthAddress = accountDetailUseCase.getAuthAddress(payload.receiverAddress)
+    override suspend fun invoke(payload: Arc59RejectTransactionPayload): Result<List<Arc59RejectTransaction>> {
+        val isAccountRekeyed = accountDetailUseCase.isAccountRekeyed(payload.receiverAddress)
+        val authAddress = accountDetailUseCase.getAuthAddress(payload.receiverAddress)
         return transactionsRepository.getTransactionParams().map { transactionParams ->
-            Arc59RejectTransaction(
-                createTransaction(payload, transactionParams),
-                payload.receiverAddress,
-                accountAuthAddress,
-                accountDetailUseCase.isAccountRekeyed(payload.receiverAddress)
-            )
+            createTransactions(payload, transactionParams).map { transactionByteArray ->
+                Arc59RejectTransaction(
+                    transactionByteArray,
+                    payload.receiverAddress,
+                    authAddress,
+                    isAccountRekeyed
+                )
+            }
         }
     }
 
-    private fun createTransaction(
+    private fun createTransactions(
         payload: Arc59RejectTransactionPayload,
         transactionParams: TransactionParams
-    ): ByteArray? {
+    ): List<ByteArray> {
         val isTestnet = isOnTestnetUseCase.invoke()
         val appID = if (isTestnet) BuildConfig.ARC59_APP_ID_TESTNET else BuildConfig.ARC59_APP_ID_MAINNET
-        return with(payload) {
+        val transactions = with(payload) {
             Sdk.makeARC59RejectTxn(
                 receiverAddress,
                 inboxAccountAddress,
@@ -58,7 +61,12 @@ class CreateArc59RejectTransactionUseCase @Inject constructor(
                 assetId,
                 transactionParams.toSuggestedParams(),
                 payload.isClaimingAlgo
-            ).flatten()
+            )
+        }
+        return mutableListOf<ByteArray>().apply {
+            repeat(transactions.length().toInt()) { index ->
+                add(transactions.get(index.toLong()))
+            }
         }
     }
 }

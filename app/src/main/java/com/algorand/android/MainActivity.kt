@@ -56,6 +56,7 @@ import com.algorand.android.models.TransactionManagerResult
 import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
+import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.deeplink.DeepLinkParser
 import com.algorand.android.modules.deeplink.domain.model.BaseDeepLink
@@ -92,6 +93,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
+@Suppress("LargeClass")
 @AndroidEntryPoint
 class MainActivity :
     CoreMainActivity(),
@@ -184,6 +186,7 @@ class MainActivity :
     ) {
         when (deeplink.notificationGroupType) {
             NotificationGroupType.OPT_IN -> handleAssetOptInRequestDeepLink(deeplink.address, deeplink.assetId)
+            NotificationGroupType.ASSET_INBOX -> handleAssetInboxDeepLink(deeplink.address)
             else -> showForegroundNotification(notificationMetadata = newNotificationData, tag = activityTag)
         }
     }
@@ -198,6 +201,19 @@ class MainActivity :
         nav(
             HomeNavigationDirections.actionGlobalAssetAdditionActionNavigation(
                 assetAction = assetAction
+            )
+        )
+    }
+
+    private fun handleAssetInboxDeepLink(accountAddress: String) {
+        if (!accountDetailUseCase.isThereAnyAccountWithPublicKey(accountAddress)) {
+            showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
+            return
+        }
+
+        nav(
+            HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
+                AssetInboxOneAccountNavArgs(accountAddress)
             )
         )
     }
@@ -291,6 +307,7 @@ class MainActivity :
             when (notificationGroupType) {
                 NotificationGroupType.TRANSACTIONS -> handleAssetTransactionDeepLink(accountAddress, assetId)
                 NotificationGroupType.OPT_IN -> handleAssetOptInRequestDeepLink(accountAddress, assetId)
+                NotificationGroupType.ASSET_INBOX -> handleAssetInboxDeepLink(accountAddress)
             }
             return true
         }
@@ -302,6 +319,21 @@ class MainActivity :
         override fun onDiscoverBrowserDeepLink(webUrl: String): Boolean {
             navToDiscoverUrlViewerNavigation(webUrl)
             return true
+        }
+
+        override fun onAssetInboxDeepLink(
+            accountAddress: String,
+            notificationGroupType: NotificationGroupType
+        ): Boolean {
+            return true.also {
+                navController.navigateSafe(
+                    HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
+                        AssetInboxOneAccountNavArgs(
+                            accountAddress
+                        )
+                    )
+                )
+            }
         }
 
         override fun onDeepLinkNotHandled(deepLink: BaseDeepLink) {

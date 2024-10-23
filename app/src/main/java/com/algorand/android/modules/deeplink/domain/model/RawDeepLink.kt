@@ -33,5 +33,6 @@ data class RawDeepLink(
 
 enum class NotificationGroupType {
     TRANSACTIONS,
-    OPT_IN
+    OPT_IN,
+    ASSET_INBOX
 }

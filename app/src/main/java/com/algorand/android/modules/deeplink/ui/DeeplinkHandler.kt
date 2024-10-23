@@ -49,10 +49,11 @@ class DeeplinkHandler @Inject constructor(
             is BaseDeepLink.AssetOptInDeepLink -> handleAssetOptInDeepLink(baseDeeplink.assetId)
             is BaseDeepLink.MnemonicDeepLink -> handleMnemonicDeepLink(baseDeeplink)
             is WalletConnectConnectionDeepLink -> handleWalletConnectConnectionDeepLink(baseDeeplink)
-            is BaseDeepLink.UndefinedDeepLink -> handleUndefinedDeepLink(baseDeeplink)
             is BaseDeepLink.DiscoverBrowserDeepLink -> handleDiscoverBrowserDeepLink(baseDeeplink)
             is BaseDeepLink.WebImportQrCodeDeepLink -> handleWebImportQrCodeDeepLink(baseDeeplink)
             is BaseDeepLink.NotificationDeepLink -> handleNotificationDeepLink(baseDeeplink)
+            is BaseDeepLink.AssetInboxDeepLink -> handleAssetInboxDeepLink(baseDeeplink)
+            is BaseDeepLink.UndefinedDeepLink -> handleUndefinedDeepLink(baseDeeplink)
         }
         if (!isDeeplinkHandled) listener?.onDeepLinkNotHandled(baseDeeplink)
     }
@@ -129,6 +130,15 @@ class DeeplinkHandler @Inject constructor(
         }
     }
 
+    private fun handleAssetInboxDeepLink(assetInboxDeepLink: BaseDeepLink.AssetInboxDeepLink): Boolean {
+        return triggerListener {
+            it.onAssetInboxDeepLink(
+                accountAddress = assetInboxDeepLink.address,
+                notificationGroupType = assetInboxDeepLink.notificationGroupType
+            )
+        }
+    }
+
     private fun triggerListener(action: (Listener) -> Boolean): Boolean {
         return listener?.run(action) ?: false
     }
@@ -146,7 +156,9 @@ class DeeplinkHandler @Inject constructor(
             assetId: Long,
             notificationGroupType: NotificationGroupType
         ): Boolean = false
+
         fun onDiscoverBrowserDeepLink(webUrl: String): Boolean = false
+        fun onAssetInboxDeepLink(accountAddress: String, notificationGroupType: NotificationGroupType): Boolean = false
         fun onUndefinedDeepLink(undefinedDeeplink: BaseDeepLink.UndefinedDeepLink)
         fun onDeepLinkNotHandled(deepLink: BaseDeepLink)
     }

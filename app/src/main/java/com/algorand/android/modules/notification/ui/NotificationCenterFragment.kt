@@ -10,12 +10,10 @@ import androidx.lifecycle.Observer
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentNotificationCenterBinding
-import com.algorand.android.models.AccountDetailTab
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ScreenState
@@ -197,58 +195,6 @@ class NotificationCenterFragment : DaggerBaseFragment(R.layout.fragment_notifica
             NotificationCenterFragmentDirections.actionNotificationCenterFragmentToNotificationFilterFragment(
                 showDoneButton = false
             )
-        )
-    }
-
-    private fun navToCollectibleDetail(publicKey: String, assetId: Long) {
-        nav(
-            NotificationCenterFragmentDirections.actionNotificationCenterFragmentToCollectibleDetailFragment(
-                publicKey = publicKey,
-                collectibleAssetId = assetId
-            )
-        )
-    }
-
-    private fun navToAssetDetail(publicKey: String, assetId: Long) {
-        nav(HomeNavigationDirections.actionGlobalAssetProfileNavigation(accountAddress = publicKey, assetId = assetId))
-    }
-
-    private fun navToAsaProfile(accountAddress: String, assetId: Long) {
-        nav(
-            NotificationCenterFragmentDirections.actionNotificationCenterFragmentToAsaProfileNavigation(
-                accountAddress = accountAddress,
-                assetId = assetId
-            )
-        )
-    }
-
-    private fun navToCollectibleProfile(accountAddress: String, collectibleId: Long) {
-        nav(
-            NotificationCenterFragmentDirections.actionNotificationCenterFragmentToCollectibleProfileNavigation(
-                accountAddress = accountAddress,
-                collectibleId = collectibleId
-            )
-        )
-    }
-
-    private fun onHistoryNotAvailable(publicKey: String) {
-        navToAccountHistory(publicKey)
-        showUnavailableTransactionHistoryError()
-    }
-
-    private fun navToAccountHistory(publicKey: String) {
-        nav(
-            NotificationCenterFragmentDirections.actionNotificationCenterFragmentToAccountDetailFragment(
-                publicKey = publicKey,
-                accountDetailTab = AccountDetailTab.HISTORY
-            )
-        )
-    }
-
-    private fun showUnavailableTransactionHistoryError() {
-        showGlobalError(
-            errorMessage = getString(R.string.the_history_for_this_spesific),
-            title = getString(R.string.asset_history_not_available)
         )
     }
 }

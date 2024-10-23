@@ -18,19 +18,41 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/emptyStateTextView"
+        android:id="@+id/emptyStateTitleTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/spacing_xxxxlarge"
         android:gravity="center"
-        android:text="@string/this_is_where_you"
+        android:text="@string/no_pending_asset_transfer"
         android:textAppearance="@style/TextAppearance.Body.Sans.Medium"
         android:textColor="@color/text_main"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/emptyStateTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/emptyStateTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/spacing_xxxxlarge"
+        android:layout_marginTop="@dimen/spacing_xlarge"
+        android:gravity="center"
+        android:text="@string/when_you_have_an_asset"
+        android:textAppearance="@style/TextAppearance.Footnote.Sans"
+        android:textColor="@color/text_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/emptyStateTitleTextView" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/emptyStateGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="emptyStateTextView, emptyStateTitleTextView"
         tools:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -42,7 +64,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
         tools:listitem="@layout/item_inbox_asset" />
 
     <include

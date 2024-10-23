@@ -91,7 +91,7 @@ class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transacti
                 transactionTitleTextView.setText(transactionStatusTitleResId)
                 transactionInfoTextView.setText(transactionStatusDescriptionResId)
                 openPeraExplorerButton.apply {
-                    isVisible = isExplorerButtonVisible
+                    isVisible = false
                     setOnClickListener { onOpenPeraExplorerClick() }
                 }
                 doneButton.apply {

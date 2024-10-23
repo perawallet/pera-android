@@ -135,10 +135,10 @@ class AssetInboxOneAccountFragment : TransactionBaseFragment(R.layout.fragment_a
     }
 
     private fun showEmptyState() {
-        binding.emptyStateTextView.show()
+        binding.emptyStateGroup.show()
     }
 
     private fun hideEmptyState() {
-        binding.emptyStateTextView.hide()
+        binding.emptyStateGroup.hide()
     }
 }

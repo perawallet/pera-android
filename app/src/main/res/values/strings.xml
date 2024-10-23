@@ -1372,8 +1372,6 @@
     <string name="asset_transfer_requests">Asset Transfer Requests</string>
     <string name="asset_transfer_request">Asset Transfer Request</string>
     <string name="asset_inbox">Asset Inbox</string>
-    <string name="this_is_where_you_can">This is where you can view your incoming asset transfer requests. Tap to
-        learn more about this  feature.</string>
     <string name="rejecting_requests">Rejecting Requests</string>
     <string name="this_feature_as_an_inbox">This feature is an inbox for your account. Others can send you assets and NFTs, even if you have not explicitly opted in to receive them. From here, you can choose to accept or reject the asset transfer requests.</string>
 
@@ -1389,7 +1387,8 @@
     <string name="x_number_of">x %1$d</string>
     <string name="plus_number_more">+%1$d more</string>
     <string name="senders">Senders</string>
-    <string name="this_is_where_you">This is where you can view your incoming asset transfer requests. Tap to learn more about this feature.</string>
+    <string name="no_pending_asset_transfer">No Pending Asset Transfer Requests</string>
+    <string name="when_you_have_an_asset">When you have an asset transfer request, you can view it here. Tap on the info icon to learn more about this feature.</string>
     <string name="you_dont_have_enough_algos">You don\'t have enough ALGOs to complete this operation. </string>
 
     <string name="before_sending_an_asset">Before sending an asset or NFT through Asset Inbox, make sure the other party has the ability to access their inbox. In some instances, the other party will not have the ability to access their inbox and the asset or NFT will be unrecoverable. Some of these instances include sending to a exchange or sending to a wallet that can\'t be accessed by a user. Only send assets or NFTs to wallets that use Pera (or other compatible wallets). <annotation url="https://support.perawallet.app"><annotation type="bold"><annotation type="color">Read more</annotation></annotation></annotation></string>

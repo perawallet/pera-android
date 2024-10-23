@@ -13,6 +13,7 @@
 
 package com.algorand.android.ui.common.walletconnect
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.DimenRes
@@ -96,6 +97,7 @@ class WalletConnectExtrasChipGroupView(
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private fun createChip(@StringRes textRes: Int): Chip {
         return Chip(context).apply {
             text = context?.getString(textRes).orEmpty()

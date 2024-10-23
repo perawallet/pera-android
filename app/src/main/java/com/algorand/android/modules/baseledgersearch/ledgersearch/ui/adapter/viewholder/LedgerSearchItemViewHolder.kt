@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.baseledgersearch.ledgersearch.ui.adapter.viewholder
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +23,7 @@ class LedgerSearchItemViewHolder(
     val binding: ItemScannedLedgerBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
+    @SuppressLint("MissingPermission")
     fun bind(ledgerItem: LedgerBaseItem.LedgerItem) {
         binding.ledgerNameTextView.text = ledgerItem.device.name
     }

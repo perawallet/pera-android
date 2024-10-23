@@ -1354,4 +1354,15 @@
         Settings to use Meld.</string>
     <string name="meld">MELD</string>
 
+    <string name="dialpad_1">1</string>
+    <string name="dialpad_2">2</string>
+    <string name="dialpad_3">3</string>
+    <string name="dialpad_4">4</string>
+    <string name="dialpad_5">5</string>
+    <string name="dialpad_6">6</string>
+    <string name="dialpad_7">7</string>
+    <string name="dialpad_8">8</string>
+    <string name="dialpad_9">9</string>
+    <string name="dialpad_period">.</string>
+    <string name="dialpad_0">0</string>
 </resources>

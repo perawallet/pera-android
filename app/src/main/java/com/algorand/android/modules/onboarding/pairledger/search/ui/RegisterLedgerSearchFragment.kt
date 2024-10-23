@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.onboarding.pairledger.search.ui
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import androidx.navigation.navGraphViewModels
 import com.algorand.android.R
@@ -29,6 +30,7 @@ class RegisterLedgerSearchFragment : BaseLedgerSearchFragment() {
         R.id.pairLedgerNavigation
     ) { defaultViewModelProviderFactory }
 
+    @SuppressLint("MissingPermission")
     override fun onLedgerConnected(accountList: List<AccountInformation>, ledgerDevice: BluetoothDevice) {
         setLoadingVisibility(isVisible = false)
         pairLedgerNavigationViewModel.pairedLedger = ledgerDevice

@@ -12,6 +12,7 @@
 
 package com.algorand.android.ledger
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.Lifecycle
@@ -62,6 +63,7 @@ class LedgerBleOperationManager @Inject constructor(
         postResult(LedgerBleResult.OnBondingFailed)
     }
 
+    @SuppressLint("MissingPermission")
     fun isBondingRequired(address: String, bluetoothAdapter: BluetoothAdapter): Boolean {
         return bluetoothAdapter.bondedDevices.all {
             it.address != address
@@ -102,6 +104,7 @@ class LedgerBleOperationManager @Inject constructor(
         }
     }
 
+    @SuppressLint("MissingPermission")
     private suspend fun sendTransactionRequest() {
         (currentOperation as? BaseTransactionOperation)?.run {
             val currentTransactionData = transactionByteArray

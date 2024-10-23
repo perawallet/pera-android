@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.search
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
@@ -26,6 +27,7 @@ class RekeyLedgerSearchFragment : BaseLedgerSearchFragment() {
 
     private val args: RekeyLedgerSearchFragmentArgs by navArgs()
 
+    @SuppressLint("MissingPermission")
     override fun onLedgerConnected(accountList: List<AccountInformation>, ledgerDevice: BluetoothDevice) {
         setLoadingVisibility(isVisible = false)
         nav(

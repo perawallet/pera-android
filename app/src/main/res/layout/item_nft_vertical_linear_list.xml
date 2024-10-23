@@ -50,7 +50,8 @@
         app:layout_constraintCircleRadius="20dp"
         tools:backgroundTint="@color/background"
         tools:srcCompat="@drawable/ic_crown_filled"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/nftNameTextView"

@@ -12,10 +12,10 @@
 
 package com.algorand.android.utils
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.annotation.IdRes
-import androidx.annotation.NonNull
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -67,31 +67,28 @@ fun <T> NavBackStackEntry.useSavedStateValue(key: String, handler: (T) -> Unit) 
 }
 
 // Used for transferring data from dialog.
+@SuppressLint("RepeatOnLifecycleWrongUsage")
 fun Fragment.startSavedStateListener(fragmentId: Int, savedStateListener: NavBackStackEntry.() -> Unit) {
-    val navBackStackEntry: NavBackStackEntry?
-    try {
-        navBackStackEntry = (activity as? CoreMainActivity)?.navController?.getBackStackEntry(fragmentId)
+    val navBackStackEntry = try {
+        (activity as? CoreMainActivity)?.navController?.getBackStackEntry(fragmentId)
     } catch (exception: Exception) {
         recordException(exception)
-        return
+        null
+    } ?: return
+
+    val job = lifecycleScope.launch {
+        navBackStackEntry.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            savedStateListener(navBackStackEntry)
+        }
     }
 
-    if (navBackStackEntry != null) {
-        // TODO need to have an extensive check on this one
-        val job = lifecycleScope.launch {
-            navBackStackEntry.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                savedStateListener(navBackStackEntry)
+    viewLifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
+        override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                job.cancel()
             }
         }
-
-        viewLifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
-            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                if (event == Lifecycle.Event.ON_DESTROY) {
-                    job.cancel()
-                }
-            }
-        })
-    }
+    })
 }
 
 fun <T> Fragment.setNavigationResult(key: String, value: T) {
@@ -113,7 +110,7 @@ fun FragmentActivity?.getNavigationBackStackCount(): Int {
     return this?.supportFragmentManager?.primaryNavigationFragment?.childFragmentManager?.backStackEntryCount ?: 0
 }
 
-fun NavController.navigateSafe(@NonNull directions: NavDirections, onError: (() -> Unit)? = null) {
+fun NavController.navigateSafe(directions: NavDirections, onError: (() -> Unit)? = null) {
     try {
         navigate(directions)
     } catch (exception: IllegalArgumentException) {

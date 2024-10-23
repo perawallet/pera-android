@@ -33,12 +33,13 @@ class CreateArc59ClaimTransactionUseCase @Inject constructor(
 
     override suspend fun invoke(payload: Arc59ClaimTransactionPayload): Result<List<Arc59ClaimTransaction>> {
         val isAccountRekeyed = accountDetailUseCase.isAccountRekeyed(payload.receiverAddress)
+        val authAddress = accountDetailUseCase.getAuthAddress(payload.receiverAddress)
         return transactionsRepository.getTransactionParams().map { transactionParams ->
             createTransactions(payload, transactionParams).map { transactionByteArray ->
                 Arc59ClaimTransaction(
                     transactionByteArray,
                     payload.receiverAddress,
-                    payload.inboxAccountAddress,
+                    authAddress,
                     isAccountRekeyed
                 )
             }
@@ -52,7 +53,7 @@ class CreateArc59ClaimTransactionUseCase @Inject constructor(
     private fun createTransactions(
         payload: Arc59ClaimTransactionPayload,
         transactionParams: TransactionParams
-    ): MutableList<ByteArray> {
+    ): List<ByteArray> {
         val isTestnet = isOnTestnetUseCase.invoke()
         val appID = if (isTestnet) BuildConfig.ARC59_APP_ID_TESTNET else BuildConfig.ARC59_APP_ID_MAINNET
         val transactions = with(payload) {

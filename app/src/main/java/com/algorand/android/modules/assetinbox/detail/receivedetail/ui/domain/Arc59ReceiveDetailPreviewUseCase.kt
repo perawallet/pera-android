@@ -52,7 +52,7 @@ class Arc59ReceiveDetailPreviewUseCase @Inject constructor(
         val payload = arc59RejectTransactionPayloadMapper(args)
         createArc59RejectTransaction(payload).use(
             onSuccess = {
-                emit(preview.copy(rejectTransaction = Event(listOf(it)), isLoading = false))
+                emit(preview.copy(rejectTransaction = Event(it), isLoading = false))
             },
             onFailed = { exception, _ ->
                 val errorEvent = Event(ErrorResource.Api(exception.message.orEmpty()))

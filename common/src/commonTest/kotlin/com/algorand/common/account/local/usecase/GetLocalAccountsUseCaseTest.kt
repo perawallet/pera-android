@@ -19,6 +19,8 @@ import com.algorand.common.account.local.repository.NoAuthAccountRepository
 import com.algorand.common.testing.peraFixture
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -28,20 +30,24 @@ class GetLocalAccountsUseCaseTest {
     private val algo25AccountRepository: Algo25AccountRepository = mockk()
     private val ledgerBleAccountRepository: LedgerBleAccountRepository = mockk()
     private val noAuthAccountRepository: NoAuthAccountRepository = mockk()
+    private val coroutineDispatcher = UnconfinedTestDispatcher()
 
     private val sut = GetLocalAccountsUseCase(
         algo25AccountRepository,
         ledgerBleAccountRepository,
-        noAuthAccountRepository
+        noAuthAccountRepository,
+        coroutineDispatcher
     )
 
-    @Test(timeout = 200L)
-    fun `EXPECT local accounts and all calls to be made async`() = runTest {
-        coEvery { algo25AccountRepository.getAll() } returns ALGO_25_ACCOUNTS
-        coEvery { ledgerBleAccountRepository.getAll() } returns LEDGER_BLE_ACCOUNTS
-        coEvery { noAuthAccountRepository.getAll() } returns NO_AUTH_ACCOUNTS
+    @Test(timeout = 5000L)
+    fun `EXPECT local accounts and all calls to be made async`() = runTest(coroutineDispatcher) {
+        coEvery { algo25AccountRepository.getAll() } coAnswers { delay(10000L); ALGO_25_ACCOUNTS }
+        coEvery { ledgerBleAccountRepository.getAll() } coAnswers { delay(10000L); LEDGER_BLE_ACCOUNTS }
+        coEvery { noAuthAccountRepository.getAll() } coAnswers { delay(10000L); NO_AUTH_ACCOUNTS }
 
         val result = sut()
+
+        coroutineDispatcher.scheduler.advanceTimeBy(10001L)
 
         val expected = ALGO_25_ACCOUNTS + LEDGER_BLE_ACCOUNTS + NO_AUTH_ACCOUNTS
         assertEquals(expected, result)

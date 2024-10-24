@@ -3,8 +3,9 @@ algosdk = "2.5.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 kotlinfixture = "1.2.0"
-mockito = "5.4.0"
+mockk = "1.13.13"
 coroutines = "1.9.0"
+kotlinTest = "1.5.31"
 
 [libraries]
 algosdk = { module = "com.algorand:algosdk", version.ref = "algosdk" }
@@ -13,7 +14,8 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlinfixture = { module = "com.appmattus.fixture:fixture", version.ref = "kotlinfixture" }
-mockito = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlinTest" }
 
 [bundles]
 

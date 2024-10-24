@@ -10,14 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.test
+package com.algorand.common.testing
 
 import com.appmattus.kotlinfixture.kotlinFixture
 
-class PeraFixture(private val fixtureConfiguration: PeraConfiguration) {
+class PeraFixture(private val listItemSize: Int) {
 
     val fixture = kotlinFixture {
-        repeatCount { fixtureConfiguration.listSize }
+        repeatCount { listItemSize }
     }
 
     inline operator fun <reified T : Any?> invoke(): T {
@@ -25,19 +25,4 @@ class PeraFixture(private val fixtureConfiguration: PeraConfiguration) {
     }
 }
 
-class PeraConfigurationBuilder(configuration: PeraConfiguration = PeraConfiguration()) {
-    var listSize: Int = configuration.listSize
-
-    fun build() = PeraConfiguration(
-        listSize = listSize
-    )
-}
-
-class PeraConfiguration(val listSize: Int = 1)
-
-inline fun peraFixture(configuration: PeraConfigurationBuilder.() -> Unit = {}) =
-    PeraFixture(PeraConfigurationBuilder().apply(configuration).build())
-
-inline fun <reified T : Any?> fixtureOf(
-    configuration: PeraConfigurationBuilder.() -> Unit = {}
-): T = peraFixture(configuration).invoke()
+actual inline fun <reified T : Any?> peraFixture(listItemSize: Int): T = PeraFixture(listItemSize).fixture()

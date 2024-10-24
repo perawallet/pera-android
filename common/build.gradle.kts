@@ -27,25 +27,31 @@ kotlin {
             }
         }
     }
-    
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "common"
-            isStatic = true
-        }
-    }
+
+//    listOf(
+//        iosX64(),
+//        iosArm64(),
+//        iosSimulatorArm64()
+//    ).forEach {
+//        it.binaries.framework {
+//            baseName = "common"
+//            isStatic = true
+//        }
+//    }
 
     sourceSets {
-        commonMain.dependencies {
-            //put your multiplatform dependencies here
+        androidMain.dependencies {
+            implementation(libs.kotlinfixture)
         }
-//        commonTest.dependencies {
-//            implementation(libs.kotlin.test)
-//        }
+        commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
+        }
+        commonTest.dependencies {
+            implementation(project(":test-utils"))
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.mockk)
+        }
     }
 }
 

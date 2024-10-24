@@ -1,4 +1,4 @@
 rootProject.name = "algorand-android"
 include(":app")
-include(":common")
+include(":wallet-sdk")
 include(":test-utils")

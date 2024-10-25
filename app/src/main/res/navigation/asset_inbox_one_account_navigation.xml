@@ -50,7 +50,11 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_arc59ReceiveDetailFragment_to_transactionConfirmationNavigation"
-            app:destination="@id/transactionConfirmationNavigation" />
+            app:destination="@id/transactionConfirmationNavigation">
+            <argument
+                android:name="transactionId"
+                app:argType="string" />
+        </action>
     </fragment>
 
 </navigation>

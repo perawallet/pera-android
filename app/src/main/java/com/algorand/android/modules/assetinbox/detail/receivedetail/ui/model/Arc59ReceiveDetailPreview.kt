@@ -29,7 +29,7 @@ data class Arc59ReceiveDetailPreview(
     val rejectTransaction: Event<List<BaseArc59ClaimRejectTransaction.Arc59RejectTransaction>>?,
     val showError: Event<ErrorResource>?,
     val isLoading: Boolean,
-    val onTransactionSendSuccessfully: Event<Unit>?
+    val onTransactionSendSuccessfully: Event<String>?
 ) {
 
     data class AssetPreviewDetail(

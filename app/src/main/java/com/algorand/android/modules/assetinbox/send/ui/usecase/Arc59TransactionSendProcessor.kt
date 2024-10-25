@@ -23,20 +23,22 @@ class Arc59TransactionSendProcessor @Inject constructor(
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
     private val transactionConfirmationUseCase: TransactionConfirmationUseCase
 ) {
+    var transactionId: String? = null
 
     suspend fun sendSignedTransactions(
         transactions: MutableList<SignedTransactionDetail>,
-        onSendTransactionsSuccess: suspend () -> Unit,
+        onSendTransactionsSuccess: suspend (String?) -> Unit,
         onSendTransactionsFailed: suspend (String?) -> Unit
     ) {
         val signedTransaction = transactions.removeFirstOrNull()
         if (signedTransaction == null) {
-            onSendTransactionsSuccess()
+            onSendTransactionsSuccess(transactionId)
             return
         }
         sendSignedTransactionUseCase.sendSignedTransaction(signedTransaction).collectLatest {
             it.useSuspended(
                 onSuccess = { txnId ->
+                    transactionId = txnId
                     if (signedTransaction.shouldWaitForConfirmation) {
                         waitForTransactionFormation(
                             txnId = txnId,
@@ -62,7 +64,7 @@ class Arc59TransactionSendProcessor @Inject constructor(
     private suspend fun waitForTransactionFormation(
         txnId: String,
         remainingTransactionsToSend: MutableList<SignedTransactionDetail>,
-        onSendTransactionsSuccess: suspend () -> Unit,
+        onSendTransactionsSuccess: suspend (String?) -> Unit,
         onSendTransactionsFailed: suspend (String?) -> Unit
     ) {
         transactionConfirmationUseCase.waitForConfirmation(txnId).collectLatest {

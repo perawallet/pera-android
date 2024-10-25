@@ -196,8 +196,8 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
         preview.arc59Transactions?.consume()?.let {
             arc59SendTransactionSignManager.signArc59SendTransaction(it)
         }
-        preview.onTxnSendSuccessfully?.consume()?.let {
-            navToTransactionConfirmationNavigation()
+        preview.onTxnSendSuccessfully?.consume()?.let { transactionId ->
+            navToTransactionConfirmationNavigation(transactionId)
         }
     }
 
@@ -223,9 +223,11 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
         ledgerLoadingDialog = null
     }
 
-    private fun navToTransactionConfirmationNavigation() {
+    private fun navToTransactionConfirmationNavigation(transactionId: String) {
         nav(
-            Arc59SendSummaryFragmentDirections.actionArc59SendSummaryFragmentToTransactionConfirmationNavigation()
+            Arc59SendSummaryFragmentDirections.actionArc59SendSummaryFragmentToTransactionConfirmationNavigation(
+                transactionId
+            )
         )
     }
 

@@ -130,8 +130,8 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
 
         arc59TransactionSendProcessor.sendSignedTransactions(
             safeSignedTransactions.toMutableList(),
-            onSendTransactionsSuccess = {
-                send(preview.copy(isLoading = false, onTxnSendSuccessfully = Event(Unit)))
+            onSendTransactionsSuccess = { transactionId ->
+                send(preview.copy(isLoading = false, onTxnSendSuccessfully = Event(transactionId)))
             },
             onSendTransactionsFailed = { errorMessage ->
                 errorMessage?.let {

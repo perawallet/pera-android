@@ -12,6 +12,7 @@
 
 package com.algorand.android.ui.send.confirmation.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.network.AlgodInterceptor
@@ -27,9 +28,12 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class TransactionConfirmationViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val algodInterceptor: AlgodInterceptor,
     private val transactionConfirmationPreviewUseCase: TransactionConfirmationPreviewUseCase
 ) : BaseViewModel() {
+
+    private val transactionId = savedStateHandle.get<String>(TRANSACTION_ID_KEY)
 
     private val _transactionStatusPreviewFlow = MutableStateFlow<TransactionStatusPreview>(
         transactionConfirmationPreviewUseCase.getTransactionLoadingPreview()
@@ -38,12 +42,14 @@ class TransactionConfirmationViewModel @Inject constructor(
 
     fun onTransactionIsLoaded() {
         viewModelScope.launch {
-            _transactionStatusPreviewFlow.emit(transactionConfirmationPreviewUseCase.getTransactionReceivedPreview())
+            _transactionStatusPreviewFlow.emit(
+                transactionConfirmationPreviewUseCase.getTransactionReceivedPreview(transactionId)
+            )
             onTransactionReceived()
         }
     }
 
-    fun onTransactionReceived() {
+    private fun onTransactionReceived() {
         viewModelScope.launch {
             delay(NAV_BACK_DURATION)
             val currentPreview = _transactionStatusPreviewFlow.value
@@ -55,11 +61,12 @@ class TransactionConfirmationViewModel @Inject constructor(
         return algodInterceptor.currentActiveNode?.networkSlug
     }
 
-    fun geTransactionGroupId(): String {
-        return ""
+    fun geTransactionId(): String? {
+        return transactionId
     }
 
     companion object {
         private const val NAV_BACK_DURATION = 2000L
+        const val TRANSACTION_ID_KEY = "transactionId"
     }
 }

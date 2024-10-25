@@ -23,7 +23,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.algorand.android.R
-import com.algorand.android.SendAlgoNavigationDirections
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentTransactionConfirmationBinding
 import com.algorand.android.models.FragmentConfiguration
@@ -91,7 +90,7 @@ class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transacti
                 transactionTitleTextView.setText(transactionStatusTitleResId)
                 transactionInfoTextView.setText(transactionStatusDescriptionResId)
                 openPeraExplorerButton.apply {
-                    isVisible = false
+                    isVisible = isExplorerButtonVisible
                     setOnClickListener { onOpenPeraExplorerClick() }
                 }
                 doneButton.apply {
@@ -99,7 +98,6 @@ class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transacti
                     setOnClickListener { onDoneButtonClick() }
                 }
             }
-//            onExitSendAlgoNavigationEvent?.consume()?.run { popSendAlgoNavigation() }
         }
     }
 
@@ -108,10 +106,12 @@ class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transacti
     }
 
     private fun onOpenPeraExplorerClick() {
-        context?.openTransactionInPeraExplorer(
-            transactionConfirmationViewModel.geTransactionGroupId(),
-            transactionConfirmationViewModel.getNetworkSlug()
-        )
+        val transactionId = transactionConfirmationViewModel.geTransactionId()
+        val networkSlug = transactionConfirmationViewModel.getNetworkSlug()
+
+        transactionId?.let {
+            context?.openTransactionInPeraExplorer(it, networkSlug)
+        }
     }
 
     // TODO: we can create an extension function
@@ -125,12 +125,6 @@ class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transacti
                 transactionStatusPreviewFlowCollector
             )
         }
-    }
-
-    private fun popSendAlgoNavigation() {
-        // TODO: use new extension function to return fragment result
-        setFragmentNavigationResult(TRANSACTION_CONFIRMATION_KEY, true)
-        nav(SendAlgoNavigationDirections.actionSendAlgoNavigationPop())
     }
 
     private fun popBackToHome() {

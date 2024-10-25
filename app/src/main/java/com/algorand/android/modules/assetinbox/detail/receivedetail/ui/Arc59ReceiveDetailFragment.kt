@@ -150,8 +150,8 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
             }
         }
         if (preview.isLoading) showLoading() else hideLoading()
-        preview.onTransactionSendSuccessfully?.consume()?.let {
-            navToTransactionConfirmationNavigation()
+        preview.onTransactionSendSuccessfully?.consume()?.let { transactionId ->
+            navToTransactionConfirmationNavigation(transactionId)
         }
     }
 
@@ -231,8 +231,12 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
         }
     }
 
-    private fun navToTransactionConfirmationNavigation() {
-        nav(Arc59ReceiveDetailFragmentDirections.actionArc59ReceiveDetailFragmentToTransactionConfirmationNavigation())
+    private fun navToTransactionConfirmationNavigation(transactionId: String) {
+        nav(
+            Arc59ReceiveDetailFragmentDirections.actionArc59ReceiveDetailFragmentToTransactionConfirmationNavigation(
+                transactionId
+            )
+        )
     }
 
     companion object {

@@ -91,8 +91,8 @@ class Arc59ReceiveDetailPreviewUseCase @Inject constructor(
 
         sendSignedTransactionUseCase.sendSignedTransaction(safeSignedTransactions.first()).collectLatest {
             it.useSuspended(
-                onSuccess = {
-                    send(preview.copy(onTransactionSendSuccessfully = Event(Unit), isLoading = false))
+                onSuccess = { transactionId ->
+                    send(preview.copy(onTransactionSendSuccessfully = Event(transactionId), isLoading = false))
                 },
                 onFailed = {
                     val errorEvent = Event(ErrorResource.Api(it.exception?.message.orEmpty()))

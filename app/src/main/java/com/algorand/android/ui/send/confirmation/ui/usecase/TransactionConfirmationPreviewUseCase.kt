@@ -28,25 +28,25 @@ class TransactionConfirmationPreviewUseCase @Inject constructor(
             transactionStatusAnimationBackgroundTintResId = R.color.button_helper_bg,
             transactionStatusAnimationDrawableResId = null,
             transactionStatusAnimationDrawableTintResId = null,
-            transactionStatusTitleResId = R.string.transaction_submitted,
-            transactionStatusDescriptionResId = R.string.your_transaction_sub,
+            transactionStatusTitleResId = R.string.sending_the_transaction,
+            transactionStatusDescriptionResId = R.string.your_transaction_is_being_processed,
             onExitSendAlgoNavigationEvent = null,
             isExplorerButtonVisible = false,
             isDoneButtonVisible = false
         )
     }
 
-    fun getTransactionReceivedPreview(): TransactionStatusPreview {
+    fun getTransactionReceivedPreview(transactionId: String?): TransactionStatusPreview {
         return transactionStatusPreviewMapper.mapToTransactionStatusPreview(
             transactionStatusAnimationResId = null,
             transactionStatusAnimationBackgroundResId = R.drawable.bg_layer_oval,
             transactionStatusAnimationBackgroundTintResId = R.color.positive,
             transactionStatusAnimationDrawableResId = R.drawable.ic_check,
             transactionStatusAnimationDrawableTintResId = R.color.background,
-            transactionStatusTitleResId = R.string.transaction_received,
+            transactionStatusTitleResId = R.string.operation_completed,
             transactionStatusDescriptionResId = R.string.your_transaction_was,
             onExitSendAlgoNavigationEvent = null,
-            isExplorerButtonVisible = true,
+            isExplorerButtonVisible = transactionId.isNullOrEmpty().not(),
             isDoneButtonVisible = true
         )
     }

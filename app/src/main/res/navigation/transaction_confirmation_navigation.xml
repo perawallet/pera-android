@@ -22,12 +22,14 @@
         android:name="com.algorand.android.ui.send.confirmation.ui.TransactionConfirmationFragment"
         android:label="TransactionConfirmationFragment"
         tools:layout="@layout/fragment_transaction_confirmation">
+        <argument
+            android:name="transactionId"
+            app:argType="string" />
         <action
             android:id="@+id/action_transactionConfirmationFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"
             app:popUpTo="@id/transactionConfirmationNavigation"
             app:popUpToInclusive="true" />
     </fragment>
-
 
 </navigation>

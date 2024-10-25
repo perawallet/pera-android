@@ -71,28 +71,28 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
     }
 
     private var transactionNote: Pair<String?, Boolean>
-        by Delegates.observable(Pair(null, false)) { _, _, (note, isNoteEnabled) ->
-            with(binding) {
-                if (isNoteEnabled) {
-                    addEditNoteButton.show()
-                    addEditNoteButton.setOnClickListener {
-                        onAddEditNoteClicked()
-                    }
-                    if (note.isNullOrBlank()) {
-                        setLayoutForAddNote()
+            by Delegates.observable(Pair(null, false)) { _, _, (note, isNoteEnabled) ->
+                with(binding) {
+                    if (isNoteEnabled) {
+                        addEditNoteButton.show()
+                        addEditNoteButton.setOnClickListener {
+                            onAddEditNoteClicked()
+                        }
+                        if (note.isNullOrBlank()) {
+                            setLayoutForAddNote()
+                        } else {
+                            setLayoutForEditNote(note)
+                        }
                     } else {
-                        setLayoutForEditNote(note)
+                        setLayoutForBlockedNote(note)
                     }
-                } else {
-                    setLayoutForBlockedNote(note)
                 }
             }
-        }
 
     private val sendAlgoResponseCollector: suspend (Event<Resource<String>>?) -> Unit = {
         it?.consume()?.use(
-            onSuccess = {
-                navToTransactionConfirmationNavigation()
+            onSuccess = { transactionId ->
+                navToTransactionConfirmationNavigation(transactionId)
             },
             onFailed = { showGlobalError(it.parse(requireContext())) },
             onLoading = ::showProgress,
@@ -244,6 +244,7 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
                 targetUser.nftDomainAddress != null -> {
                     toUserView.setNftDomainAddress(targetUser.nftDomainAddress, targetUser.nftDomainServiceLogoUrl)
                 }
+
                 targetUser.contact != null -> toUserView.setContact(targetUser.contact)
                 targetUser.account != null -> {
                     toUserView.setAccount(
@@ -251,6 +252,7 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
                         targetUser.accountIconDrawablePreview
                     )
                 }
+
                 else -> toUserView.setAddress(targetUser.publicKey, targetUser.publicKey)
             }
         }
@@ -339,10 +341,10 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
         binding.progressBar.root.hide()
     }
 
-    private fun navToTransactionConfirmationNavigation() {
+    private fun navToTransactionConfirmationNavigation(transactionId: String) {
         nav(
             AssetTransferPreviewFragmentDirections
-                .actionAssetTransferPreviewFragmentToTransactionConfirmationNavigation()
+                .actionAssetTransferPreviewFragmentToTransactionConfirmationNavigation(transactionId)
         )
     }
 

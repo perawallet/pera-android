@@ -577,10 +577,8 @@
     <string name="recover_an_account">Recover an account</string>
     <string name="i_want_to_recover">I want to recover an Algorand account using my 25-word passphrase</string>
     <string name="pair_Ledger_device">Pair Ledger device</string>
-    <string name="transaction_received">Transaction Received</string>
-    <string name="transaction_submitted">Transaction Submitted</string>
+    <string name="operation_completed">Operation completed</string>
     <string name="your_transaction_was">Your transaction was successfully received by the Algorand network.</string>
-    <string name="your_transaction_sub">Your transaction was successfully submitted to the Algorand network.</string>
     <string name="confirm_transaction">Confirm Transaction</string>
 
     <!--Meld-->

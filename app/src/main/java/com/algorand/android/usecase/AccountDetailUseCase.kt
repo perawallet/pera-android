@@ -108,11 +108,9 @@ class AccountDetailUseCase @Inject constructor(
     }
 
     fun isAssetBalanceZero(publicKey: String, assetId: Long): Boolean? {
-        getCachedAccountDetail(publicKey)?.let { account ->
-            account.data?.getAssetHoldingOrNull(assetId)?.let {
-                return it.amount == BigInteger.ZERO
-            }
-        } ?: return null
+        val account = getCachedAccountDetail(publicKey) ?: return null
+        val assetHolding = account.data?.getAssetHoldingOrNull(assetId) ?: return null
+        return assetHolding.amount == BigInteger.ZERO
     }
 
     fun isAssetOwnedByAnyAccount(assetId: Long): Boolean {

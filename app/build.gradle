@@ -1,5 +1,5 @@
 plugins {
-    id "io.gitlab.arturbosch.detekt" version "$detekt_version"
+    id "io.gitlab.arturbosch.detekt" version(libs.versions.detekt)
     id "com.android.application"
     id "com.google.gms.google-services"
     id "com.google.firebase.crashlytics"
@@ -171,94 +171,89 @@ dependencies {
 
     implementation project(':wallet-sdk')
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${libVersions.coroutines}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${libVersions.coroutines}"
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
 
-    implementation "com.google.android.material:material:${libVersions.material}"
-    implementation "com.google.android.flexbox:flexbox:${libVersions.flexbox}"
-    implementation "androidx.appcompat:appcompat:${libVersions.appCompat}"
-    implementation "androidx.legacy:legacy-support-v4:${libVersions.legacySupport}"
-    implementation "androidx.lifecycle:lifecycle-extensions:${libVersions.lifecycleExt}"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${libVersions.lifecycle}"
-    implementation "androidx.lifecycle:lifecycle-common-java8:${libVersions.lifecycle}"
-    implementation "androidx.constraintlayout:constraintlayout:${libVersions.constraintLayout}"
-    implementation "androidx.core:core-ktx:${libVersions.coreKtx}"
+    implementation libs.material
+    implementation libs.flexbox
+    implementation libs.appcompat
+    implementation libs.legacy.support.v4
+    implementation libs.lifecycle.extensions
+    implementation libs.lifecycle.viewmodel.ktx
+    implementation libs.lifecycle.common.java8
+    implementation libs.constraintlayout
+    implementation libs.core.ktx
 
-    implementation platform("com.google.firebase:firebase-bom:${libVersions.firebaseBom}")
+    implementation platform(libs.firebase.bom)
+    implementation libs.bundles.firebase
 
-    implementation "com.google.firebase:firebase-analytics"
-    implementation "com.google.firebase:firebase-messaging"
-    implementation "com.google.firebase:firebase-crashlytics"
-    implementation "com.google.firebase:firebase-perf"
+    implementation libs.biometric
 
-    implementation "androidx.biometric:biometric:${libVersions.biometric}"
+    implementation libs.zxing.android.embedded
 
-    implementation "com.journeyapps:zxing-android-embedded:${libVersions.zxing}"
+    implementation libs.room.runtime
+    implementation libs.room.ktx
+    kapt libs.room.compiler
 
-    implementation "androidx.room:room-runtime:${libVersions.room}"
-    implementation "androidx.room:room-ktx:${libVersions.room}"
-    kapt "androidx.room:room-compiler:${libVersions.room}"
+    implementation libs.navigation.fragment.ktx
+    implementation libs.navigation.ui.ktx
 
-    implementation "androidx.navigation:navigation-fragment-ktx:${libVersions.navigation}"
-    implementation "androidx.navigation:navigation-ui-ktx:${libVersions.navigation}"
+    implementation libs.ble
 
-    implementation "no.nordicsemi.android:ble-ktx:${libVersions.ble}"
+    implementation libs.fragment.ktx
 
-    implementation "androidx.fragment:fragment-ktx:${libVersions.fragment}"
+    implementation libs.multidex
 
-    implementation "androidx.multidex:multidex:${libVersions.multidex}"
+    implementation libs.browser
 
-    implementation "androidx.browser:browser:${libVersions.browser}"
+    implementation libs.paging.runtime.ktx
 
-    implementation "androidx.paging:paging-runtime-ktx:${libVersions.paging}"
+    implementation libs.tink.android
 
-    implementation "com.google.crypto.tink:tink-android:${libVersions.tink}"
+    implementation libs.review.ktx
 
-    implementation "com.google.android.play:review-ktx:${libVersions.review}"
+    implementation libs.hilt.android.dagger
+    kapt libs.hilt.android.compiler
+    kapt libs.hilt.androidx
 
-    implementation "com.google.dagger:hilt-android:$dagger_gradle_version"
-    kapt "com.google.dagger:hilt-android-compiler:$dagger_gradle_version"
+    implementation libs.glide.image
+    kapt libs.glide.compiler
 
-    kapt "androidx.hilt:hilt-compiler:${libVersions.hiltCompiler}"
+    implementation libs.lottie
 
-    implementation "com.github.bumptech.glide:glide:${libVersions.glide}"
-    kapt "com.github.bumptech.glide:compiler:${libVersions.glide}"
-
-    implementation "com.airbnb.android:lottie:${libVersions.lottie}"
-
-    implementation "com.squareup.retrofit2:retrofit:${libVersions.retrofit}"
-    implementation "com.squareup.retrofit2:converter-gson:${libVersions.retrofit}"
-    implementation "com.squareup.okhttp3:logging-interceptor:${libVersions.okhttp}"
+    implementation libs.retrofit
+    implementation libs.converter.gson
+    implementation libs.logging.interceptor
 
     // Chart
-    implementation "com.github.PhilJay:MPAndroidChart:${libVersions.mpAndroidChart}"
+    implementation libs.mpandroidchart
 
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:${libVersions.desugar}"
+    coreLibraryDesugaring libs.desugar.jdk
 
     // Wallet Connect v1
-    implementation "org.java-websocket:Java-WebSocket:${libVersions.javaWebSocket}"
-    implementation "com.github.komputing:khex:${libVersions.khex}"
-    implementation "com.squareup.moshi:moshi:${libVersions.moshi}"
-    implementation "com.squareup.moshi:moshi-kotlin:${libVersions.moshi}"
+    implementation libs.java.websocket
+    implementation libs.khex
+    implementation libs.moshi.core
+    implementation libs.moshi.kotlin
 
     // Wallet Connect v2
-    implementation(platform("com.walletconnect:android-bom:${libVersions.walletConnectBom}"))
-    implementation("com.walletconnect:android-core") {
+    implementation(platform(libs.walletconnect))
+    implementation(libs.android.core) {
         exclude group: 'com.jakewharton.timber', module: 'timber'
     }
-    implementation "com.walletconnect:sign"
-    implementation "com.walletconnect:web3wallet"
+    implementation libs.sign
+    implementation libs.web3wallet
 
     // ExoPlayer
-    implementation "com.google.android.exoplayer:exoplayer:${libVersions.exoPlayer}"
+    implementation libs.exoplayer
 
     implementation(libs.algosdk) {
         exclude group: 'org.bouncycastle'
     }
 
     // Test
-    testImplementation "junit:junit:${testLibVersions.junit}"
-    androidTestImplementation "androidx.room:room-testing:${libVersions.room}"
-    androidTestImplementation "androidx.test:runner:${testLibVersions.runner}"
-    androidTestImplementation "androidx.test.espresso:espresso-core:${testLibVersions.espresso}"
+    testImplementation libs.junit
+    androidTestImplementation libs.room.testing
+    androidTestImplementation libs.runner
+    androidTestImplementation libs.espresso.core
 }

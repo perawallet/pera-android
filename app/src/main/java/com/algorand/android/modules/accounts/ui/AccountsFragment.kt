@@ -221,6 +221,14 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
+    private val assetInboxCountCollector: suspend (Int?) -> Unit = { assetInboxCountNullable ->
+        val assetInboxCount = assetInboxCountNullable ?: 0
+        binding.assetInboxAllAccountsButton.apply {
+            text = resources.getQuantityString(R.plurals.asset_requests, assetInboxCount, assetInboxCount)
+            isVisible = assetInboxCount > 0
+        }
+    }
+
     private fun showAccountAddressCopyTutorialDialog(tutorialId: Int) {
         accountsViewModel.dismissTutorial(tutorialId)
         binding.root.context.showCopyAccountAddressTutorialDialog()

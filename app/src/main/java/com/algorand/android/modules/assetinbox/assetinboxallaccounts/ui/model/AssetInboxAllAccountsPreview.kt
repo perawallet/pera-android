@@ -20,5 +20,5 @@ data class AssetInboxAllAccountsPreview(
     val isLoading: Boolean,
     val isEmptyStateVisible: Boolean,
     val showError: Event<ErrorResource>?,
-    val assetInboxAllAccountsWithAccountList: List<AssetInboxAllAccountsWithAccount>,
+    val assetInboxAllAccountsWithAccountList: List<AssetInboxAllAccountsWithAccount>
 )

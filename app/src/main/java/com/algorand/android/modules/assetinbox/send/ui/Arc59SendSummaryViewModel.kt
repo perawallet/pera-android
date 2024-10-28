@@ -34,7 +34,7 @@ class Arc59SendSummaryViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _viewStateFlow = MutableStateFlow(arc59SendSummaryPreviewUseCase.getInitialPreview())
-    val viewStateFlow: StateFlow<Arc59SendSummaryPreview?> = _viewStateFlow.asStateFlow()
+    val viewStateFlow: StateFlow<Arc59SendSummaryPreview> = _viewStateFlow.asStateFlow()
 
     private val args = savedStateHandle.getOrThrow<Arc59SendSummaryNavArgs>(ARC_59_SEND_SUMMARY_NAV_ARGS_KEY)
 

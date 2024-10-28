@@ -19,6 +19,7 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.domain.Arc59ReceiveDetailPreviewUseCase
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailNavArgs
 import com.algorand.android.utils.formatAsAlgoString
+import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -32,24 +33,28 @@ class Arc59ReceiveDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val args = savedStateHandle.get<Arc59ReceiveDetailNavArgs>(ARC_59_RECEIVE_DETAIL_NAV_ARGS)!!
+    private val args =
+        savedStateHandle.getOrThrow<Arc59ReceiveDetailNavArgs>(ARC_59_RECEIVE_DETAIL_NAV_ARGS)
 
-    private val _previewFlow = MutableStateFlow(arc59ReceiveDetailPreviewUseCase.getInitialPreview(args))
+    private val _previewFlow =
+        MutableStateFlow(arc59ReceiveDetailPreviewUseCase.getInitialPreview(args))
     val previewFlow = _previewFlow.asStateFlow()
 
     fun rejectTransaction() {
         viewModelScope.launchIO {
-            arc59ReceiveDetailPreviewUseCase.createRejectTransaction(args, _previewFlow.value).collectLatest {
-                _previewFlow.value = it
-            }
+            arc59ReceiveDetailPreviewUseCase.createRejectTransaction(args, _previewFlow.value)
+                .collectLatest {
+                    _previewFlow.value = it
+                }
         }
     }
 
     fun claimTransaction() {
         viewModelScope.launchIO {
-            arc59ReceiveDetailPreviewUseCase.createClaimTransaction(args, _previewFlow.value).collectLatest {
-                _previewFlow.value = it
-            }
+            arc59ReceiveDetailPreviewUseCase.createClaimTransaction(args, _previewFlow.value)
+                .collectLatest {
+                    _previewFlow.value = it
+                }
         }
     }
 

@@ -39,7 +39,7 @@ class AssetInboxOneAccountViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _viewStateFlow = MutableStateFlow(assetInboxOneAccountPreviewUseCase.getInitialPreview())
-    val viewStateFlow: StateFlow<AssetInboxOneAccountPreview?> = _viewStateFlow.asStateFlow()
+    val viewStateFlow: StateFlow<AssetInboxOneAccountPreview> = _viewStateFlow.asStateFlow()
 
     private val args =
         savedStateHandle.getOrThrow<AssetInboxOneAccountNavArgs>(ASSET_INBOX_ONE_ACCOUNT_NAV_ARGS_KEY)

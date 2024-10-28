@@ -32,7 +32,7 @@ class AssetInboxAllAccountsViewModel @Inject constructor(
 
     private val _viewStateFlow = MutableStateFlow(assetInboxAllAccountsPreviewUseCase.getInitialPreview())
 
-    val viewStateFlow: StateFlow<AssetInboxAllAccountsPreview?> = _viewStateFlow.asStateFlow()
+    val viewStateFlow: StateFlow<AssetInboxAllAccountsPreview> = _viewStateFlow.asStateFlow()
 
     fun initializePreview() {
         viewModelScope.launchIO {

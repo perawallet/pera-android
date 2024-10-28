@@ -12,16 +12,20 @@
 
 package com.algorand.android.modules.assetinbox.send.domain.usecase
 
+import android.content.Context
+import com.algorand.android.R
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.assetinbox.send.domain.model.Arc59Transaction.Arc59OptInTransaction
 import com.algorand.android.modules.assetinbox.send.domain.model.Arc59TransactionPayload
 import com.algorand.android.modules.assetinbox.send.domain.model.Arc59Transactions
 import com.algorand.android.repository.TransactionsRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class CreateArc59TransactionsUseCase @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val createArc59OptInTransaction: CreateArc59OptInTransaction,
     private val createArc59SendTransaction: CreateArc59SendTransaction,
     private val transactionsRepository: TransactionsRepository
@@ -47,7 +51,7 @@ class CreateArc59TransactionsUseCase @Inject constructor(
         val sendTransactions = createArc59SendTransaction(this, payload)
 
         if (optInTransactions == null || sendTransactions == null) {
-            return Result.failure(Exception("Failed to create transactions"))
+            return Result.failure(Exception(context.getString(R.string.failed_to_create_transactions)))
         }
         return Result.success(Arc59Transactions(optInTransactions, sendTransactions))
     }

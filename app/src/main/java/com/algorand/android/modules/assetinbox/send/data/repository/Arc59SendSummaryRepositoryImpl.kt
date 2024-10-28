@@ -12,6 +12,8 @@
 
 package com.algorand.android.modules.assetinbox.send.data.repository
 
+import android.content.Context
+import com.algorand.android.R
 import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.Result
 import com.algorand.android.modules.assetinbox.send.data.mapper.Arc59SendSummaryMapper
@@ -19,15 +21,20 @@ import com.algorand.android.modules.assetinbox.send.data.service.Arc59SendSummar
 import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendSummary
 import com.algorand.android.modules.assetinbox.send.domain.repository.Arc59SendSummaryRepository
 import com.algorand.android.network.requestWithHipoErrorHandler
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class Arc59SendSummaryRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val arc59SendSummaryApi: Arc59SendSummaryApiService,
     private val retrofitErrorHandler: RetrofitErrorHandler,
     private val arc59SendSummaryMapper: Arc59SendSummaryMapper
 ) : Arc59SendSummaryRepository {
 
-    override suspend fun getArc59SendSummary(address: String, assetId: Long): Result<Arc59SendSummary> {
+    override suspend fun getArc59SendSummary(
+        address: String,
+        assetId: Long
+    ): Result<Arc59SendSummary> {
         val result = requestWithHipoErrorHandler(retrofitErrorHandler) {
             arc59SendSummaryApi.getArc59SendSummary(address, assetId)
         }
@@ -35,7 +42,7 @@ class Arc59SendSummaryRepositoryImpl @Inject constructor(
         val sendSummaryResponse = (result as Result.Success).data
         val sendSummary = arc59SendSummaryMapper(sendSummaryResponse)
         return if (sendSummary == null) {
-            Result.Error(Exception("Failed to map send summary"))
+            Result.Error(Exception(context.getString(R.string.failed_to_map_the_response)))
         } else {
             Result.Success(sendSummary)
         }

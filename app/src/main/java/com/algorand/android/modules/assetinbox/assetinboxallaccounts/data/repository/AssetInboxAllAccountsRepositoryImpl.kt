@@ -12,6 +12,8 @@
 
 package com.algorand.android.modules.assetinbox.assetinboxallaccounts.data.repository
 
+import android.content.Context
+import com.algorand.android.R
 import com.algorand.android.banner.data.cache.AssetInboxLocalCache
 import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.Result
@@ -22,12 +24,14 @@ import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.repo
 import com.algorand.android.network.requestWithHipoErrorHandler
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.toCsvString
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 
 class AssetInboxAllAccountsRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val assetInboxAllAccountsApiService: AssetInboxAllAccountsApiService,
     private val retrofitErrorHandler: RetrofitErrorHandler,
     private val assetInboxAllAccountsMapper: AssetInboxAllAccountsMapper,
@@ -44,7 +48,7 @@ class AssetInboxAllAccountsRepositoryImpl @Inject constructor(
             assetInboxAllAccountsResponse.assetInboxAllAccountsResponseList
         )
         return if (assetInboxAllAccountsList == null) {
-            Result.Error(Exception("Failed to map the response"))
+            Result.Error(Exception(context.getString(R.string.failed_to_map_the_response)))
         } else {
             Result.Success(assetInboxAllAccountsList)
         }
@@ -56,7 +60,11 @@ class AssetInboxAllAccountsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAssetInboxCountCacheFlow(): Flow<Int> {
-        return assetInboxLocalCache.cacheMapFlow.map { it.values.sumOf { it.data?.requestCount ?: 0 } }
+        return assetInboxLocalCache.cacheMapFlow.map {
+            it.values.sumOf {
+                it.data?.requestCount ?: 0
+            }
+        }
     }
 
     override suspend fun clearAssetInboxAllAccountsCache() {

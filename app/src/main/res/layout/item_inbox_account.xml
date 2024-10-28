@@ -41,14 +41,14 @@
         android:layout_marginStart="16dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="@tools:sample/lorem[11]"
         android:textAppearance="@style/TextAppearance.Body.Sans.Medium"
         android:textColor="@color/text_main"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toEndOf="@id/accountIconImageView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@tools:sample/lorem[11]" />
 
     <TextView
         android:id="@+id/accountNameTextView"
@@ -58,13 +58,13 @@
         android:ellipsize="end"
         android:gravity="end"
         android:maxLines="1"
-        android:text="@tools:sample/lorem[0]"
         android:textAppearance="@style/TextAppearance.Footnote"
         android:textColor="@color/text_gray"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/guideline"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@tools:sample/lorem[0]" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

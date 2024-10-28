@@ -26,5 +26,5 @@ data class Arc59SendSummaryPreview(
     val showError: Event<ErrorResource>?,
     val onNavBack: Event<Unit>?,
     val onTxnSendSuccessfully: Event<String?>?,
-    val arc59Transactions: Event<Arc59Transactions>?
+    val arc59Transactions: Event<Arc59Transactions?>?
 )

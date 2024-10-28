@@ -35,5 +35,5 @@ data class TransactionStatusPreview(
     val transactionStatusDescriptionResId: Int,
     val onExitSendAlgoNavigationEvent: Event<Unit>?,
     val isDoneButtonVisible: Boolean,
-    val isExplorerButtonVisible: Boolean,
+    val isExplorerButtonVisible: Boolean
 )

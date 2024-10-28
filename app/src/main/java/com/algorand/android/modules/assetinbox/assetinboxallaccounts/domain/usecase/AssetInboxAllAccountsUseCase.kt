@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase
 
-import android.util.Log
 import com.algorand.android.core.AccountManager
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccounts
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.repository.AssetInboxAllAccountsRepository
@@ -33,8 +32,8 @@ class AssetInboxAllAccountsUseCase @Inject constructor(
                     assetInboxAllAccounts.map { CacheResult.Success.create(it) }
                 )
             },
-            onFailed = { exception, code ->
-                Log.e("AssetInboxAllAccountsUseCase", "updateAssetInboxAllAccountsCache: $exception")
+            onFailed = { _, _ ->
+                assetInboxAllAccountsRepository.clearAssetInboxAllAccountsCache()
             })
     }
 

@@ -63,8 +63,8 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
 
     private val binding by viewBinding(FragmentArc59SendSummaryBinding::bind)
 
-    private val viewStateCollector: suspend (Arc59SendSummaryPreview?) -> Unit = {
-        if (it != null) initPreview(it)
+    private val viewStateCollector: suspend (Arc59SendSummaryPreview) -> Unit = { preview ->
+        initPreview(preview)
     }
 
     private var ledgerLoadingDialog: LedgerLoadingDialog? = null
@@ -122,7 +122,10 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
                 totalTransactionCount = ledgerPayload.totalTransactionCount,
                 isTransactionIndicatorVisible = ledgerPayload.isTransactionIndicatorVisible
             )
-            ledgerLoadingDialog?.showWithStateCheck(childFragmentManager, ledgerPayload.ledgerName.orEmpty())
+            ledgerLoadingDialog?.showWithStateCheck(
+                childFragmentManager,
+                ledgerPayload.ledgerName.orEmpty()
+            )
         } else {
             ledgerLoadingDialog?.updateTransactionIndicator(ledgerPayload.currentTransactionIndex)
         }

@@ -19,15 +19,15 @@ import javax.inject.Inject
 class AssetInboxAllAccountsMapperImpl @Inject constructor() : AssetInboxAllAccountsMapper {
 
     override fun invoke(response: List<AssetInboxAllAccountsResponse>?): List<AssetInboxAllAccounts>? {
-        if (response == null) return null
+        return response?.mapNotNull { item ->
+            val address = item.address
+            val requestCount = item.requestCount
 
-        return response.filter {
-            it.address != null && it.requestCount != null
-        }.map {
-            AssetInboxAllAccounts(
-                it.address!!,
-                it.requestCount!!
-            )
-        }.orEmpty()
+            if (address != null && requestCount != null) {
+                AssetInboxAllAccounts(address, requestCount)
+            } else {
+                null
+            }
+        }
     }
 }

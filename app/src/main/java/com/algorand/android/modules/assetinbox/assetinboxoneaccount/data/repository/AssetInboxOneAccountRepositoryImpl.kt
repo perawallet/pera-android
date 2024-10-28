@@ -12,6 +12,8 @@
 
 package com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.repository
 
+import android.content.Context
+import com.algorand.android.R
 import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.Result
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.mapper.AssetInboxOneAccountMapper
@@ -19,9 +21,11 @@ import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.service
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.domain.model.AssetInboxOneAccountPaginated
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.domain.repository.AssetInboxOneAccountRepository
 import com.algorand.android.network.requestWithHipoErrorHandler
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class AssetInboxOneAccountRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val assetInboxOneAccountApiService: AssetInboxOneAccountApiService,
     private val retrofitErrorHandler: RetrofitErrorHandler,
     private val assetInboxOneAccountMapper: AssetInboxOneAccountMapper
@@ -33,9 +37,10 @@ class AssetInboxOneAccountRepositoryImpl @Inject constructor(
         }
         if (result is Result.Error) return result
         val assetInboxOneAccountPaginatedResponse = (result as Result.Success).data
-        val assetInboxOneAccountPaginated = assetInboxOneAccountMapper(assetInboxOneAccountPaginatedResponse)
+        val assetInboxOneAccountPaginated =
+            assetInboxOneAccountMapper(assetInboxOneAccountPaginatedResponse)
         return if (assetInboxOneAccountPaginated == null) {
-            Result.Error(Exception("Failed to map the response"))
+            Result.Error(Exception(context.getString(R.string.failed_to_map_the_response)))
         } else {
             Result.Success(assetInboxOneAccountPaginated)
         }
@@ -47,9 +52,10 @@ class AssetInboxOneAccountRepositoryImpl @Inject constructor(
         }
         if (result is Result.Error) return result
         val assetInboxOneAccountPaginatedResponse = (result as Result.Success).data
-        val assetInboxOneAccountPaginated = assetInboxOneAccountMapper(assetInboxOneAccountPaginatedResponse)
+        val assetInboxOneAccountPaginated =
+            assetInboxOneAccountMapper(assetInboxOneAccountPaginatedResponse)
         return if (assetInboxOneAccountPaginated == null) {
-            Result.Error(Exception("Failed to map the response"))
+            Result.Error(Exception(context.getString(R.string.failed_to_map_the_response)))
         } else {
             Result.Success(assetInboxOneAccountPaginated)
         }

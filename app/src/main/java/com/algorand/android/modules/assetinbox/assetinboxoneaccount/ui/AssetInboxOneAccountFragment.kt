@@ -34,7 +34,8 @@ import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AssetInboxOneAccountFragment : TransactionBaseFragment(R.layout.fragment_asset_inbox_one_account) {
+class AssetInboxOneAccountFragment :
+    TransactionBaseFragment(R.layout.fragment_asset_inbox_one_account) {
 
     private val infoButton by lazy { IconButton(R.drawable.ic_info, onClick = ::onInfoButtonClick) }
 
@@ -44,7 +45,8 @@ class AssetInboxOneAccountFragment : TransactionBaseFragment(R.layout.fragment_a
         startIconResId = R.drawable.ic_left_arrow,
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val binding by viewBinding(FragmentAssetInboxOneAccountBinding::bind)
 
@@ -56,10 +58,10 @@ class AssetInboxOneAccountFragment : TransactionBaseFragment(R.layout.fragment_a
         }
     }
 
-    protected val assetAdapter = InboxAsaSelectionAdapter(inboxAssetSelectionListener)
+    private val assetAdapter = InboxAsaSelectionAdapter(inboxAssetSelectionListener)
 
-    private val viewStateCollector: suspend (AssetInboxOneAccountPreview?) -> Unit = {
-        if (it != null) initPreview(it)
+    private val viewStateCollector: suspend (AssetInboxOneAccountPreview) -> Unit = { preview ->
+        initPreview(preview)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -105,7 +107,11 @@ class AssetInboxOneAccountFragment : TransactionBaseFragment(R.layout.fragment_a
     }
 
     private fun onAssetClicked(asaPreview: AsaPreview) {
-        navToArc59ReceiveDetailFragment(assetInboxOneAccountViewModel.getArc59ReceiveDetailNavArgs(asaPreview))
+        navToArc59ReceiveDetailFragment(
+            assetInboxOneAccountViewModel.getArc59ReceiveDetailNavArgs(
+                asaPreview
+            )
+        )
     }
 
     private fun onInfoButtonClick() {
@@ -122,7 +128,9 @@ class AssetInboxOneAccountFragment : TransactionBaseFragment(R.layout.fragment_a
     private fun navToArc59ReceiveDetailFragment(arc59ReceiveDetailNavArgs: Arc59ReceiveDetailNavArgs) {
         nav(
             AssetInboxOneAccountFragmentDirections
-                .actionAssetInboxOneAccountFragmentToArc59ReceiveDetailFragment(arc59ReceiveDetailNavArgs)
+                .actionAssetInboxOneAccountFragmentToArc59ReceiveDetailFragment(
+                    arc59ReceiveDetailNavArgs
+                )
         )
     }
 

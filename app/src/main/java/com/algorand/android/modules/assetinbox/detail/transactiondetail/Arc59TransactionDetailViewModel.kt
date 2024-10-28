@@ -17,6 +17,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.algorand.android.modules.assetinbox.detail.transactiondetail.mapper.Arc59TransactionDetailPreviewMapper
 import com.algorand.android.modules.assetinbox.detail.transactiondetail.model.Arc59TransactionDetailArgs
+import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,8 @@ class Arc59TransactionDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val args = savedStateHandle.get<Arc59TransactionDetailArgs>(ARC59_TRANSACTION_DETAIL_NAV_ARGS)!!
+    private val args =
+        savedStateHandle.getOrThrow<Arc59TransactionDetailArgs>(ARC59_TRANSACTION_DETAIL_NAV_ARGS)
 
     private val _previewFlow = MutableStateFlow(previewMapper(args))
     val previewFlow = _previewFlow.asStateFlow()

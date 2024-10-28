@@ -53,7 +53,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
         return arc59SendSummaryPreviewMapper.getInitialPreview()
     }
 
-    suspend fun getArc59SendSummaryPreview(
+    fun getArc59SendSummaryPreview(
         preview: Arc59SendSummaryPreview,
         receiverAccountAddress: String,
         assetId: Long,
@@ -79,7 +79,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
         )
     }
 
-    suspend fun createArc59SendTransactionData(
+    fun createArc59SendTransactionData(
         args: Arc59SendSummaryNavArgs,
         preview: Arc59SendSummaryPreview
     ): Flow<Arc59SendSummaryPreview> = flow {
@@ -110,7 +110,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
         transactions: Result<Arc59Transactions>
     ): Arc59SendSummaryPreview {
         return if (transactions.isSuccess && transactions.getOrNull() != null) {
-            copy(arc59Transactions = Event(transactions.getOrNull()!!), isLoading = false, showError = null)
+            copy(arc59Transactions = Event(transactions.getOrNull()), isLoading = false, showError = null)
         } else {
             val errorEvent = Event(ErrorResource.Api(transactions.exceptionOrNull()?.message.orEmpty()))
             copy(isLoading = false, showError = errorEvent)

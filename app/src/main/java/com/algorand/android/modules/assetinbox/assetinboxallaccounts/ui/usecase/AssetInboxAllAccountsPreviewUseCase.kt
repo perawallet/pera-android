@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.flow
 class AssetInboxAllAccountsPreviewUseCase @Inject constructor(
     private val getAssetInboxAllAccounts: GetAssetInboxAllAccounts,
     private val assetInboxAllAccountsPreviewMapper: AssetInboxAllAccountsPreviewMapper,
-    private val accountManager: AccountManager,
+    private val accountManager: AccountManager
 ) {
 
     fun getInitialPreview(): AssetInboxAllAccountsPreview {

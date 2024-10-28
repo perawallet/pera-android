@@ -44,7 +44,8 @@ class AssetInboxAllAccountsFragment :
         startIconResId = R.drawable.ic_left_arrow,
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val binding by viewBinding(FragmentAssetInboxAllAccountsBinding::bind)
 
@@ -73,8 +74,8 @@ class AssetInboxAllAccountsFragment :
         )
     }
 
-    private val viewStateCollector: suspend (AssetInboxAllAccountsPreview?) -> Unit = {
-        if (it != null) initPreview(it)
+    private val viewStateCollector: suspend (AssetInboxAllAccountsPreview) -> Unit = { preview ->
+        initPreview(preview)
     }
 
     private fun initPreview(preview: AssetInboxAllAccountsPreview) {
@@ -121,7 +122,9 @@ class AssetInboxAllAccountsFragment :
     private fun navToAssetInboxOneAccountNavigation(assetInboxOneAccountNavArgs: AssetInboxOneAccountNavArgs) {
         nav(
             AssetInboxAllAccountsFragmentDirections
-                .actionAssetInboxAllAccountsFragmentToAssetInboxOneAccountNavigation(assetInboxOneAccountNavArgs)
+                .actionAssetInboxAllAccountsFragmentToAssetInboxOneAccountNavigation(
+                    assetInboxOneAccountNavArgs
+                )
         )
     }
 

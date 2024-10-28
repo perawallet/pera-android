@@ -22,7 +22,7 @@ import javax.inject.Singleton
 class AssetInboxLocalCache @Inject constructor() : LocalCache<String, AssetInboxAllAccounts>() {
 
     override suspend fun put(value: CacheResult.Success<AssetInboxAllAccounts>) {
-        val key = value.data.address.orEmpty()
+        val key = value.data.address
         cacheValue(key, value)
     }
 
@@ -32,7 +32,7 @@ class AssetInboxLocalCache @Inject constructor() : LocalCache<String, AssetInbox
 
     override suspend fun put(valueList: List<CacheResult.Success<AssetInboxAllAccounts>>) {
         val cacheResultPairList = valueList.map {
-            val key = it.data.address.orEmpty()
+            val key = it.data.address
             Pair(key, it)
         }
         cacheAll(cacheResultPairList)

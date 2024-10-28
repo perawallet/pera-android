@@ -1,4 +1,5 @@
 [versions]
+agp = "8.2.2"
 algosdk = "2.5.0"
 appCompat = "1.7.0"
 biometric = "1.1.0"
@@ -20,7 +21,6 @@ flexbox = "3.0.0"
 fragmentKtx = "1.8.4"
 glide = "4.16.0"
 googleServicesVersion = "4.4.2"
-gradleVersion = "8.7.1"
 hiltCompiler = "1.2.0"
 javaWebSocket = "1.5.6"
 junit = "4.13.2"
@@ -50,6 +50,7 @@ walletConnectBom = "1.34.1"
 zxing = "4.3.0"
 
 [libraries]
+agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 algosdk = { module = "com.algorand:algosdk", version.ref = "algosdk" }
 android-core = { module = "com.walletconnect:android-core" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }
@@ -73,7 +74,6 @@ fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragm
 glide-image = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 google-services = { module = "com.google.gms:google-services", version.ref = "googleServicesVersion" }
-gradle = { module = "com.android.tools.build:gradle", version.ref = "gradleVersion" }
 hilt-android-dagger = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
 hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "dagger" }

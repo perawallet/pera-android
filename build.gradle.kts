@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath(libs.gradle)
+        classpath(libs.agp)
         classpath(libs.kotlin.gradle.plugin)
         classpath(libs.navigation.safe.args.gradle.plugin)
         classpath(libs.google.services)

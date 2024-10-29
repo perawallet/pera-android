@@ -13,6 +13,7 @@
 package com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase
 
 import com.algorand.android.core.AccountManager
+import com.algorand.android.models.Account
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccounts
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.repository.AssetInboxAllAccountsRepository
 import com.algorand.android.utils.CacheResult
@@ -47,6 +48,8 @@ class AssetInboxAllAccountsUseCase @Inject constructor(
     }
 
     private fun getAllAccountAddresses(): List<String> {
-        return accountManager.getAccounts().map { it.address }
+        return accountManager.getAccounts()
+            .filter { it.type != Account.Type.WATCH }
+            .map { it.address }
     }
 }

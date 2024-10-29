@@ -94,10 +94,19 @@
             android:id="@+id/browseDAppsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_xxxxlarge"
+            android:layout_marginBottom="@dimen/spacing_large"
             app:description="@string/use_browser_to_interract_with"
             app:icon="@drawable/ic_browse_dapps_helper_button"
             app:title="@string/browse_dapps" />
+
+        <com.algorand.android.customviews.ListMenuItemView
+            android:id="@+id/cardsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_xxxxlarge"
+            app:description="@string/get_the_worlds_first"
+            app:icon="@drawable/ic_cards_helper_button"
+            app:title="@string/cards" />
 
     </LinearLayout>
 

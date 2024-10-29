@@ -40,6 +40,7 @@ class CoreActionsTabBarView @JvmOverloads constructor(
             scanQrButton.setOnClickListener { listener?.onScanQRClick() }
             swapButton.setOnClickListener { listener?.onSwapClick() }
             browseDAppsButton.setOnClickListener { listener?.onBrowseDappsClick() }
+            cardsButton.setOnClickListener { listener?.onCardsClick() }
             backgroundColorView.setOnClickListener { startHidingAnimation() }
         }
     }
@@ -108,5 +109,6 @@ class CoreActionsTabBarView @JvmOverloads constructor(
         fun onCoreActionsClick(isCoreActionsOpen: Boolean)
         fun onSwapClick()
         fun onBrowseDappsClick()
+        fun onCardsClick()
     }
 }

@@ -297,6 +297,7 @@ dependencies {
     testImplementation libs.kotlinx.coroutines.test
     testImplementation libs.kotlin.test
     testImplementation libs.junit
+    testImplementation libs.mockito
     androidTestImplementation libs.room.testing
     androidTestImplementation libs.runner
     androidTestImplementation libs.espresso.core

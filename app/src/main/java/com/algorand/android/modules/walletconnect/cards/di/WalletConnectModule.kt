@@ -15,6 +15,8 @@ package com.algorand.android.modules.walletconnect.cards.di
 import com.algorand.android.modules.walletconnect.cards.data.cache.WalletConnectCardsRequestAccountCache
 import com.algorand.android.modules.walletconnect.cards.data.cache.WalletConnectCardsRequestAccountCacheImpl
 import com.algorand.android.modules.walletconnect.cards.data.repository.WalletConnectCardsRepositoryImpl
+import com.algorand.android.modules.walletconnect.cards.domain.helper.WalletConnectUrlSelectedAddressParser
+import com.algorand.android.modules.walletconnect.cards.domain.helper.WalletConnectUrlSelectedAddressParserImpl
 import com.algorand.android.modules.walletconnect.cards.domain.repository.WalletConnectCardsRepository
 import com.algorand.android.modules.walletconnect.cards.domain.usecase.CacheWalletConnectRequestPreselectedAccountAddresses
 import com.algorand.android.modules.walletconnect.cards.domain.usecase.CacheWalletConnectRequestPreselectedAccountAddressesUseCase
@@ -59,4 +61,9 @@ internal object WalletConnectModule {
     fun provideCacheWalletConnectRequestPreselectedAccountAddresses(
         useCase: CacheWalletConnectRequestPreselectedAccountAddressesUseCase
     ): CacheWalletConnectRequestPreselectedAccountAddresses = useCase
+
+    @Provides
+    fun provideWalletConnectUrlSelectedAddressParser(
+        impl: WalletConnectUrlSelectedAddressParserImpl
+    ): WalletConnectUrlSelectedAddressParser = impl
 }

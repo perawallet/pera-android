@@ -1,7 +1,6 @@
 package com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.usecase
 
 import com.algorand.android.core.AccountManager
-import com.algorand.android.models.Account
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccounts
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.GetAssetInboxAllAccounts
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.model.AssetInboxAllAccountsPreview
@@ -22,16 +21,15 @@ class AssetInboxAllAccountsPreviewUseCase @Inject constructor(
         return assetInboxAllAccountsPreviewMapper.getInitialPreview()
     }
 
-    suspend fun getAssetInboxAllAccountsPreview(
+    fun getAssetInboxAllAccountsPreview(
         preview: AssetInboxAllAccountsPreview
     ): Flow<AssetInboxAllAccountsPreview> = flow {
-        val allAccountAddresses = getAllAccountAddresses()
+        val allAccountAddresses = accountManager.getAllAccountsAddressesExceptWatch()
         if (allAccountAddresses.isEmpty()) {
             emit(createAssetInboxAllAccountsPreview(emptyList()))
             return@flow
         }
-        val assetInboxAllAccounts = getAssetInboxAllAccounts(allAccountAddresses)
-        assetInboxAllAccounts.use(
+        getAssetInboxAllAccounts(allAccountAddresses).use(
             onSuccess = {
                 emit(createAssetInboxAllAccountsPreview(it))
             },
@@ -48,19 +46,11 @@ class AssetInboxAllAccountsPreviewUseCase @Inject constructor(
     ): AssetInboxAllAccountsPreview {
         return assetInboxAllAccountsPreviewMapper.invoke(
             assetInboxAllAccountsList,
-            getAllAccounts(),
-            isEmptyStateVisible = assetInboxAllAccountsList.filter { it.requestCount > 0 }.isEmpty(),
+            accountManager.getAllAccountsExceptWatch(),
+            isEmptyStateVisible = assetInboxAllAccountsList.none { it.requestCount > 0 },
             isLoading = false,
             showError = null,
             onNavBack = null
         )
-    }
-
-    private fun getAllAccountAddresses(): List<String> {
-        return accountManager.getAccounts().map { it.address }
-    }
-
-    private fun getAllAccounts(): List<Account> {
-        return accountManager.getAccounts()
     }
 }

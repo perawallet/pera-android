@@ -13,7 +13,6 @@
 package com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase
 
 import com.algorand.android.core.AccountManager
-import com.algorand.android.models.Account
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccounts
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.repository.AssetInboxAllAccountsRepository
 import com.algorand.android.utils.CacheResult
@@ -27,7 +26,9 @@ class AssetInboxAllAccountsUseCase @Inject constructor(
 ) {
 
     suspend fun updateAssetInboxAllAccountsCache() {
-        assetInboxAllAccountsRepository.getAssetInboxAllAccounts(getAllAccountAddresses()).use(
+        assetInboxAllAccountsRepository.getAssetInboxAllAccounts(
+            accountManager.getAllAccountsAddressesExceptWatch()
+        ).use(
             onSuccess = { assetInboxAllAccounts ->
                 assetInboxAllAccountsRepository.cacheAssetInboxAllAccounts(
                     assetInboxAllAccounts.map { CacheResult.Success.create(it) }
@@ -45,11 +46,5 @@ class AssetInboxAllAccountsUseCase @Inject constructor(
 
     suspend fun getAssetInboxCountCacheFlow(): Flow<Int> {
         return assetInboxAllAccountsRepository.getAssetInboxCountCacheFlow()
-    }
-
-    private fun getAllAccountAddresses(): List<String> {
-        return accountManager.getAccounts()
-            .filter { it.type != Account.Type.WATCH }
-            .map { it.address }
     }
 }

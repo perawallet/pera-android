@@ -139,4 +139,15 @@ class AccountManager(
     fun getAccounts(): List<Account> {
         return accounts.value
     }
+
+    fun getAllAccountsExceptWatch(): List<Account> {
+        return getAccounts()
+            .filter { it.type != Account.Type.WATCH }
+    }
+
+    fun getAllAccountsAddressesExceptWatch(): List<String> {
+        return getAccounts()
+            .filter { it.type != Account.Type.WATCH }
+            .map { account -> account.address }
+    }
 }

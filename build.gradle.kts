@@ -19,6 +19,10 @@ buildscript {
     }
 }
 
+plugins {
+    alias(libs.plugins.multiplatform).apply(false)
+}
+
 apply(from = "versions.gradle")
 
 allprojects {

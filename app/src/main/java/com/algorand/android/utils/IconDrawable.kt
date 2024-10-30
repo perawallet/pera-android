@@ -65,6 +65,7 @@ abstract class IconDrawable(
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun getOpacity(): Int {
         return PixelFormat.TRANSLUCENT
     }

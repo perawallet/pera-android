@@ -193,6 +193,13 @@ android {
         viewBinding true
         buildConfig = true
     }
+
+    packagingOptions {
+        exclude("lib/libnarcissus-macos-64.dylib")
+        exclude("lib/libnarcissus-win-32.dll")
+        exclude("lib/libnarcissus-win-64.dll")
+    }
+
     namespace application.applicationId
 }
 

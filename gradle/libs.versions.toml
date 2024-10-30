@@ -25,9 +25,10 @@ hiltCompiler = "1.2.0"
 javaWebSocket = "1.5.6"
 junit = "4.13.2"
 khex = "1.1.2"
-kotlin = "1.9.24"
+kotlin = "2.0.21"
 kotlinfixture = "1.2.0"
 kotlinTest = "1.5.31"
+ktor = "3.0.0"
 legacySupport = "1.0.0"
 lifecycle = "2.8.6"
 lifecycleExt = "2.2.0"
@@ -87,6 +88,12 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinfixture = { module = "com.appmattus.fixture:fixture", version.ref = "kotlinfixture" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlinTest" }
+ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-content-negotiation = {module = "io.ktor:ktor-client-content-negotiation", version.ref= "ktor"}
+ktor-kotlinx-serialization = {module = "io.ktor:ktor-serialization-kotlinx-json", version.ref="ktor"}
 legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "legacySupport" }
 lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
 lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExt" }
@@ -121,3 +128,4 @@ zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", ve
 firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-messaging", "firebase-perf"]
 
 [plugins]
+multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

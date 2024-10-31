@@ -26,7 +26,7 @@ data class AssetInboxOneAccountPaginated(
 )
 
 data class AssetInboxOneAccountResult(
-    val totalAmount: Int,
+    val totalAmount: BigInteger,
     val asset: Asset,
     val algoGainOnClaim: BigInteger,
     val algoGainOnReject: BigInteger,

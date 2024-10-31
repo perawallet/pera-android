@@ -33,7 +33,7 @@ data class AssetInboxOneAccountPaginatedResponse(
 
     data class AssetInboxOneAccountResultResponse(
         @SerializedName("total_amount")
-        val totalAmount: Int?,
+        val totalAmount: BigInteger?,
         @SerializedName("asset")
         val asset: AssetResponse?,
         @SerializedName("algo_gain_on_claim")

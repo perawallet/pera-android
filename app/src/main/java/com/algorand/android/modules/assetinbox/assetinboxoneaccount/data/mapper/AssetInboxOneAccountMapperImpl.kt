@@ -10,11 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.assetinbox.assetinboxallaccounts.data.mapper
+package com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.mapper
 
 import com.algorand.android.assetsearch.data.mapper.VerificationTierDTODecider
 import com.algorand.android.assetsearch.domain.mapper.VerificationTierDecider
-import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.mapper.AssetInboxOneAccountMapper
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.model.AssetInboxOneAccountPaginatedResponse
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.model.AssetInboxOneAccountPaginatedResponse.AssetInboxOneAccountResultResponse
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.model.AssetInboxOneAccountPaginatedResponse.AssetResponse
@@ -63,7 +62,7 @@ class AssetInboxOneAccountMapperImpl @Inject constructor(
     private fun mapToAssetInboxOneAccountResult(response: AssetInboxOneAccountResultResponse?):
             AssetInboxOneAccountResult {
         return AssetInboxOneAccountResult(
-            totalAmount = response?.totalAmount ?: 0,
+            totalAmount = response?.totalAmount ?: BigInteger.ZERO,
             asset = mapToAsset(response?.asset),
             algoGainOnClaim = response?.algoGainOnClaim ?: BigInteger.ZERO,
             algoGainOnReject = response?.algoGainOnReject ?: BigInteger.ZERO,

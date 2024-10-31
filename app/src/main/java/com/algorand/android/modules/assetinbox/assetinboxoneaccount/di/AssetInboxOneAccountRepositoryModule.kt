@@ -10,9 +10,9 @@
  *  limitations under the License
  */
 
-package com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.di
+package com.algorand.android.modules.assetinbox.assetinboxoneaccount.di
 
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.data.mapper.AssetInboxOneAccountMapperImpl
+import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.mapper.AssetInboxOneAccountMapperImpl
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.mapper.AssetInboxOneAccountMapper
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.repository.AssetInboxOneAccountRepositoryImpl
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.data.service.AssetInboxOneAccountApiService

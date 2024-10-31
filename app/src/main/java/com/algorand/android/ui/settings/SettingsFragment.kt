@@ -88,8 +88,22 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings),
             developerListItem.setOnClickListener { onDeveloperSettingsClick() }
             logoutButton.setOnClickListener { onLogoutClick() }
             algorandSecureBackupListItem.setOnClickListener { onAlgorandSecureBackupClick() }
-            versionCodeTextView.text = getString(R.string.version_format, BuildConfig.VERSION_NAME)
+            versionCodeTextView.text = getVersionText()
         }
+    }
+
+    private fun getVersionText(): String {
+        var versionName = getString(R.string.version_format, BuildConfig.VERSION_NAME)
+
+        val versionText = if (BuildConfig.DEBUG) {
+            versionName + " (${BuildConfig.FLAVOR.uppercase()} - DEBUG)"
+        } else if (BuildConfig.FLAVOR.uppercase() != "PROD") {
+            versionName + " (${BuildConfig.FLAVOR.uppercase()})"
+        } else {
+            versionName
+        }
+
+        return versionText + "\n (${BuildConfig.VERSION_CODE} - ${BuildConfig.GitHash})"
     }
 
     private fun initObservers() {

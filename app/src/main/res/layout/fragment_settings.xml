@@ -170,6 +170,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:gravity="center"
             android:layout_marginTop="@dimen/spacing_large"
             android:layout_marginBottom="52dp"
             tools:text="@string/version_format" />

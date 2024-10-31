@@ -26,10 +26,23 @@ if (project.file(offrampGradlePath).exists()) {
     apply from: offrampGradlePath
 }
 
+def getVersionCode = {
+    System.getenv("PERA_APP_VERSION_CODE")?.toInteger() ?: peraApplication.versionCode
+}
+
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
 android {
     compileSdkVersion targets.compileSdkVersion
     defaultConfig {
-        versionCode peraApplication.versionCode
+        versionCode getVersionCode()
         versionName peraApplication.versionName
         applicationId application.applicationId
         minSdkVersion targets.minSdkVersion
@@ -42,6 +55,12 @@ android {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+
+        buildConfigField "String", "GitHash", "\"${getGitHash()}\""
+        buildConfigField "String", "APPLICATION_NAME", '"pera"'
+        buildConfigField "String", "DEEPLINK_PREFIX", '"algorand://"'
+        buildConfigField "String", "VERSION_NAME", "\"$versionName\""
+        buildConfigField "Integer", "VERSION_CODE", "$versionCode"
     }
 
     signingConfigs {
@@ -69,8 +88,8 @@ android {
         }
 
         debug {
+            debuggable true
             applicationIdSuffix ".debug"
-            versionNameSuffix " (DEBUG)"
             multiDexEnabled true
             minifyEnabled false
             manifestPlaceholders = [enableCrashReporting: "false", enableFirebasePerformanceLogcat: "true"]
@@ -86,10 +105,7 @@ android {
 
         staging {
             dimension "server"
-            versionNameSuffix " (STAGING)"
             applicationIdSuffix ".staging"
-            buildConfigField "String", "APPLICATION_NAME", '"pera"'
-            buildConfigField "String", "DEEPLINK_PREFIX", '"algorand://"'
 
             apiKeyProps.load(new FileInputStream(file('../app/src/staging/api-key.properties')))
             apiUrlProps.load(new FileInputStream(file('../app/src/main/api-url.properties')))
@@ -120,8 +136,6 @@ android {
 
         prod {
             dimension "server"
-            buildConfigField "String", "APPLICATION_NAME", '"pera"'
-            buildConfigField "String", "DEEPLINK_PREFIX", '"algorand://"'
 
             apiKeyProps.load(new FileInputStream(file('../app/src/prod/api-key.properties')))
             apiUrlProps.load(new FileInputStream(file('../app/src/main/api-url.properties')))

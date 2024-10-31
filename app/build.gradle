@@ -26,6 +26,10 @@ if (project.file(offrampGradlePath).exists()) {
     apply from: offrampGradlePath
 }
 
+def getVersionName = {
+    System.getenv("PERA_APP_VERSION_NAME")?.toString() ?: peraApplication.versionName
+}
+
 def getVersionCode = {
     System.getenv("PERA_APP_VERSION_CODE")?.toInteger() ?: peraApplication.versionCode
 }
@@ -43,7 +47,7 @@ android {
     compileSdkVersion targets.compileSdkVersion
     defaultConfig {
         versionCode getVersionCode()
-        versionName peraApplication.versionName
+        versionName getVersionName()
         applicationId application.applicationId
         minSdkVersion targets.minSdkVersion
         targetSdkVersion targets.targetSdkVersion

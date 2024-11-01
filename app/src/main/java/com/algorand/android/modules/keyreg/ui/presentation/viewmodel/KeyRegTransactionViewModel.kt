@@ -26,10 +26,10 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class KeyRegTransactionViewModel @Inject constructor(
@@ -39,7 +39,7 @@ class KeyRegTransactionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private var keyRegTransactionDetail = savedStateHandle.getOrThrow<KeyRegTransactionDetail>(KEY_REG_DETAIL)
+    var keyRegTransactionDetail = savedStateHandle.getOrThrow<KeyRegTransactionDetail>(KEY_REG_DETAIL)
 
     private val _previewState = MutableStateFlow<KeyRegTransactionFragmentPreview?>(null)
     val previewState
@@ -82,6 +82,6 @@ class KeyRegTransactionViewModel @Inject constructor(
     }
 
     private companion object {
-        const val KEY_REG_DETAIL = "key_reg_transaction_detail"
+        const val KEY_REG_DETAIL = "keyRegTransactionDetail"
     }
 }

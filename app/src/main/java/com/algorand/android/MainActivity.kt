@@ -63,6 +63,7 @@ import com.algorand.android.modules.deeplink.domain.model.NotificationGroupType
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
+import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionDetail
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
 import com.algorand.android.modules.qrscanning.QrScannerViewModel
@@ -322,6 +323,25 @@ class MainActivity :
         ): Boolean {
             return true.also {
                 navToAssetInboxOneAccountNavigation(accountAddress)
+            }
+        }
+
+        override fun onKeyRegDeeplink(deepLink: BaseDeepLink.KeyRegDeepLink): Boolean {
+            return true.also {
+                val txnDetail = KeyRegTransactionDetail(
+                    address = deepLink.senderAccountAddress,
+                    type = deepLink.type,
+                    voteKey = deepLink.voteKey,
+                    selectionPublicKey = deepLink.selkey,
+                    sprfkey = deepLink.sprfkey,
+                    voteFirstRound = deepLink.votefst,
+                    voteLastRound = deepLink.votelst,
+                    voteKeyDilution = deepLink.votekd,
+                    fee = deepLink.fee,
+                    note = deepLink.note,
+                    xnote = deepLink.xnote)
+
+                nav(HomeNavigationDirections.actionGlobalConfirmKeyRegTransactionFragment(txnDetail))
             }
         }
 

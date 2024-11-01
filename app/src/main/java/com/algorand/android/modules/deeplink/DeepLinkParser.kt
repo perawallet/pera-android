@@ -46,6 +46,14 @@ class DeepLinkParser @Inject constructor(
             url = getUrl(parsedUri),
             mnemonic = getMnemonic(parsedUri),
             label = getLabel(parsedUri),
+            type = getType(parsedUri),
+            votekey = getVoteKey(parsedUri),
+            selkey = getSelectionKey(parsedUri),
+            sprfkey = getStateProofKey(parsedUri),
+            votefst = getFirstRoundValidParameter(parsedUri),
+            votelst = getLastRoundValidParameter(parsedUri),
+            votekd = getKeyDilutionKeyParameter(parsedUri),
+            fee = getFee(parsedUri),
             transactionId = getTransactionId(parsedUri),
             transactionStatus = getTransactionStatus(parsedUri),
             webImportQrCode = getWebImportData(parsedUri),
@@ -80,6 +88,39 @@ class DeepLinkParser @Inject constructor(
 
     private fun getLabel(parsedUri: Uri): String? {
         return parseQueryIfExist(LABEL_QUERY_KEY, parsedUri)
+    }
+
+    private fun getType(parsedUri: Uri): String? {
+        return parseQueryIfExist(TYPE_QUERY_KEY, parsedUri)
+    }
+
+    private fun getVoteKey(parsedUri: Uri): String? {
+        return parseQueryIfExist(VOTEKEY_QUERY_KEY, parsedUri)
+    }
+
+    private fun getSelectionKey(parsedUri: Uri): String? {
+        return parseQueryIfExist(SELKEY_QUERY_KEY, parsedUri)
+    }
+
+    private fun getStateProofKey(parsedUri: Uri): String? {
+        return parseQueryIfExist(SPRFKEY_QUERY_KEY, parsedUri)
+    }
+
+    private fun getFirstRoundValidParameter(parsedUri: Uri): String? {
+        return parseQueryIfExist(VOTEFST_QUERY_KEY, parsedUri)
+    }
+
+    private fun getLastRoundValidParameter(parsedUri: Uri): String? {
+        return parseQueryIfExist(VOTELST_QUERY_KEY, parsedUri)
+    }
+
+    private fun getKeyDilutionKeyParameter(parsedUri: Uri): String? {
+        return parseQueryIfExist(VOTEKD_QUERY_KEY, parsedUri)
+    }
+
+    private fun getFee(parsedUri: Uri): BigInteger? {
+        val amountAsString = parseQueryIfExist(FEE_QUERY_KEY, parsedUri)
+        return amountAsString?.toBigIntegerOrNull()
     }
 
     private fun getTransactionId(parsedUri: Uri): String? {
@@ -190,6 +231,7 @@ class DeepLinkParser @Inject constructor(
         private const val PERAWALLET_WC_AUTH_KEY = "perawallet-wc"
         private const val WALLET_CONNECT_AUTH_KEY = "wc"
 
+        // ARC-26
         private const val AMOUNT_QUERY_KEY = "amount"
         private const val ASSET_ID_QUERY_KEY = "asset"
         private const val ACCOUNT_ID_QUERY_KEY = "account"
@@ -197,6 +239,17 @@ class DeepLinkParser @Inject constructor(
         private const val XNOTE_QUERY_KEY = "xnote"
         private const val URL_QUERY_KEY = "url"
         private const val LABEL_QUERY_KEY = "label"
+
+        // ARC-78
+        private const val TYPE_QUERY_KEY = "type"
+        private const val SELKEY_QUERY_KEY = "selkey"
+        private const val SPRFKEY_QUERY_KEY = "sprfkey"
+        private const val VOTEFST_QUERY_KEY = "votefst"
+        private const val VOTELST_QUERY_KEY = "votelst"
+        private const val VOTEKD_QUERY_KEY = "votekd"
+        private const val VOTEKEY_QUERY_KEY = "votekey"
+        private const val FEE_QUERY_KEY = "fee"
+
         private const val TRANSACTION_ID_KEY = "transactionId"
         private const val TRANSACTION_STATUS_KEY = "transactionStatus"
         private const val NOTIFICATION_ACTION_ASSET_TRANSACTIONS = "asset/transactions"

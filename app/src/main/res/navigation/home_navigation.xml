@@ -318,6 +318,14 @@
     </action>
 
     <action
+        android:id="@+id/action_global_confirmKeyRegTransactionFragment"
+        app:destination="@id/KeyRegTransactionFragment">
+        <argument
+            android:name="keyRegTransactionDetail"
+            app:argType="com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionDetail" />
+    </action>
+
+    <action
         android:id="@+id/action_global_assetInboxOneAccountNavigation"
         app:destination="@id/assetInboxOneAccountNavigation">
         <argument
@@ -328,6 +336,16 @@
     <action
         android:id="@+id/action_global_accountDetailFragment"
         app:destination="@id/accountDetailFragment" />
+
+    <fragment
+        android:id="@+id/KeyRegTransactionFragment"
+        android:name="com.algorand.android.modules.keyreg.ui.presentation.view.KeyRegTransactionFragment"
+        android:label="fragment_key_reg_transaction"
+        tools:layout="@layout/fragment_key_reg_transaction">
+        <argument
+            android:name="keyRegTransactionDetail"
+            app:argType="com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionDetail" />
+    </fragment>
 
     <fragment
         android:id="@+id/collectiblesFragment"

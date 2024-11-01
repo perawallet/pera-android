@@ -26,7 +26,7 @@ class KeyRegTransactionPreviewMapper @Inject constructor() {
             type = detail.type,
             selectionKey = detail.selectionPublicKey.orEmpty(),
             votingKey = detail.voteKey.orEmpty(),
-            stateProofKey = detail.sprfkey,
+            stateProofKey = detail.sprfkey.orEmpty(),
             keyDilution = detail.voteKeyDilution.orEmpty(),
             firstValid = detail.voteFirstRound.orEmpty(),
             lastValid = detail.voteLastRound.orEmpty(),

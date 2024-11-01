@@ -17,7 +17,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.core.BaseFragment
+import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.databinding.FragmentKeyRegTransactionBinding
 import com.algorand.android.models.AnnotatedString
@@ -43,7 +43,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class KeyRegTransactionFragment : BaseFragment(R.layout.fragment_key_reg_transaction) {
+class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_transaction) {
 
     override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
 

@@ -92,7 +92,8 @@ sealed class BaseDeepLink {
                             xnote == null &&
                             url == null &&
                             webImportQrCode == null &&
-                            notificationGroupType == null
+                            notificationGroupType == null &&
+                            type != "keyreg"
                 }
             }
         }
@@ -204,6 +205,92 @@ sealed class BaseDeepLink {
                             notificationGroupType == null
 
                     hasValidAssetQueries && hasValidTransferQueries
+                }
+            }
+        }
+    }
+
+    /**
+     * ALGO transfer (public key, empty asset id, amount, note, xnote)
+     * Examples
+     * algorand://7IBEAXHK62XEJATU6Q4QYQCDFY475CEKNXGLYQO6QSGCLVMMK4SLVTYLMY?
+     * type=keyreg
+     * &selkey=-lfw-Y04lTnllJfncgMjXuAePe8i8YyVeoR9c1Xi78c
+     * &sprfkey=3NoXc2sEWlvQZ7XIrwVJjgjM30ndhvwGgcqwKugk1u5W_iy_JITXrykuy0hUvAxbVv0njOgBPtGFsFif3yLJpg
+     * &votefst=1300
+     * &votekd=100
+     * &votekey=UU8zLMrFVfZPnzbnL6ThAArXFsznV3TvFVAun2ONcEI
+     * &votelst=11300
+     * &fee=2000000
+     * &note=Consensus%2Bparticipation%2Bftw
+     */
+    class KeyRegDeepLink private constructor(
+        val senderAccountAddress: String,
+        val type: String,
+        val voteKey: String?,
+        val selkey: String?,
+        val sprfkey: String?,
+        val votefst: String?,
+        val votelst: String?,
+        val votekd: String?,
+        val fee: BigInteger?,
+        val note: String?,
+        val xnote: String?
+    ) : BaseDeepLink() {
+
+        override fun equals(other: Any?): Boolean {
+            return other is KeyRegDeepLink &&
+                    other.type == type &&
+                    other.senderAccountAddress == senderAccountAddress &&
+                    other.note == note &&
+                    other.xnote == xnote &&
+                    other.voteKey == voteKey &&
+                    other.selkey == selkey &&
+                    other.sprfkey == sprfkey &&
+                    other.votefst == votefst &&
+                    other.votelst == votelst &&
+                    other.votekd == votekd
+        }
+
+        override fun hashCode(): Int {
+            var result = type.hashCode()
+            result = 31 * result + senderAccountAddress.hashCode()
+            result = 31 * result + (fee?.hashCode() ?: 0)
+            result = 31 * result + (note?.hashCode() ?: 0)
+            result = 31 * result + (xnote?.hashCode() ?: 0)
+            result = 31 * result + (voteKey.hashCode())
+            result = 31 * result + (selkey.hashCode())
+            result = 31 * result + (sprfkey.hashCode())
+            result = 31 * result + (votefst.hashCode())
+            result = 31 * result + (votelst.hashCode())
+            result = 31 * result + (votekd.hashCode())
+            return result
+        }
+
+        companion object : DeepLinkCreator {
+
+            override fun createDeepLink(rawDeeplink: RawDeepLink): BaseDeepLink {
+                return KeyRegDeepLink(
+                    senderAccountAddress = rawDeeplink.accountAddress.orEmpty(),
+                    fee = rawDeeplink.fee ?: BigInteger.ONE,
+                    note = rawDeeplink.note ?: "",
+                    xnote = rawDeeplink.xnote ?: "",
+                    voteKey = rawDeeplink.votekey ?: "",
+                    selkey = rawDeeplink.selkey ?: "",
+                    sprfkey = rawDeeplink.sprfkey ?: "",
+                    votefst = rawDeeplink.votefst ?: "",
+                    votelst = rawDeeplink.votelst ?: "",
+                    votekd = rawDeeplink.votekd ?: "",
+                    type = rawDeeplink.type ?: ""
+                )
+            }
+
+            // If the assetId is null it's an algo transfer.
+            // The amount can be null
+            override fun doesDeeplinkMeetTheRequirements(rawDeepLink: RawDeepLink): Boolean {
+                return with(rawDeepLink) {
+                    val hasValidType = type == "keyreg"
+                    hasValidType
                 }
             }
         }

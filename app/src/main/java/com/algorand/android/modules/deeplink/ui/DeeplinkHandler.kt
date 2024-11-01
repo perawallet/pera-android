@@ -44,6 +44,7 @@ class DeeplinkHandler @Inject constructor(
 
     private fun handleDeeplink(baseDeeplink: BaseDeepLink) {
         val isDeeplinkHandled: Boolean = when (baseDeeplink) {
+            is BaseDeepLink.KeyRegDeepLink -> handleKeyRegDeepLink(baseDeeplink)
             is BaseDeepLink.AccountAddressDeepLink -> handleAccountAddressDeepLink(baseDeeplink)
             is BaseDeepLink.AssetTransferDeepLink -> handleAssetTransferDeepLink(baseDeeplink)
             is BaseDeepLink.AssetOptInDeepLink -> handleAssetOptInDeepLink(baseDeeplink.assetId)
@@ -79,6 +80,10 @@ class DeeplinkHandler @Inject constructor(
 
     private fun handleUndefinedDeepLink(undefinedDeeplink: BaseDeepLink.UndefinedDeepLink): Boolean {
         return triggerListener { it.onUndefinedDeepLink(undefinedDeeplink); true }
+    }
+
+    private fun handleKeyRegDeepLink(keyregDeeplink: BaseDeepLink.KeyRegDeepLink): Boolean {
+        return triggerListener { it.onKeyRegDeeplink(keyregDeeplink); true }
     }
 
     private fun handleDiscoverBrowserDeepLink(discoverBrowserDeepLink: BaseDeepLink.DiscoverBrowserDeepLink): Boolean {
@@ -159,6 +164,7 @@ class DeeplinkHandler @Inject constructor(
 
         fun onDiscoverBrowserDeepLink(webUrl: String): Boolean = false
         fun onAssetInboxDeepLink(accountAddress: String, notificationGroupType: NotificationGroupType): Boolean = false
+        fun onKeyRegDeeplink(deepLink: BaseDeepLink.KeyRegDeepLink): Boolean = false
         fun onUndefinedDeepLink(undefinedDeeplink: BaseDeepLink.UndefinedDeepLink)
         fun onDeepLinkNotHandled(deepLink: BaseDeepLink)
     }

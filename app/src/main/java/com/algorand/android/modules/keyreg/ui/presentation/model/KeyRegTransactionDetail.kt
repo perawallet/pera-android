@@ -22,7 +22,7 @@ data class KeyRegTransactionDetail(
     val type: String,
     val voteKey: String?,
     val selectionPublicKey: String?,
-    val sprfkey: String,
+    val sprfkey: String?,
     val voteFirstRound: String?,
     val voteLastRound: String?,
     val voteKeyDilution: String?,

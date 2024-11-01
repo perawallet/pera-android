@@ -58,6 +58,7 @@ abstract class TextDrawable(
         textPaint.colorFilter = cf
     }
 
+    @Deprecated("Deprecated in Java")
     override fun getOpacity(): Int {
         return PixelFormat.TRANSLUCENT
     }

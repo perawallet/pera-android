@@ -1,13 +1,14 @@
 [versions]
-agp = "8.2.2"
+agp = "8.7.2"
 algosdk = "2.5.0"
 appCompat = "1.7.0"
 biometric = "1.1.0"
 ble = "2.8.0"
 browser = "1.8.0"
-constraintLayout = "2.1.4"
+kspGradlePlugin = "1.8.10-1.0.9"
+constraintLayout = "2.2.0"
 converterGson = "2.11.0"
-coreKtx = "1.13.1"
+coreKtx = "1.15.0"
 coroutines = "1.9.0"
 dagger = "2.50"
 desugar = "2.1.2"
@@ -18,18 +19,21 @@ firebaseBom = "33.5.1"
 firebaseCrashlyticsGradle = "3.0.2"
 firebasePerformance = "1.4.2"
 flexbox = "3.0.0"
-fragmentKtx = "1.8.4"
+fragmentKtx = "1.8.5"
 glide = "4.16.0"
 googleServicesVersion = "4.4.2"
 hiltCompiler = "1.2.0"
 javaWebSocket = "1.5.6"
 junit = "4.13.2"
 khex = "1.1.2"
-kotlin = "1.9.24"
+kotlin = "2.0.21"
 kotlinfixture = "1.2.0"
+kotlinxSerialization = "1.7.3"
 kotlinTest = "1.5.31"
+ktor = "3.0.0"
+ktorContentNegotiation = "3.0.0"
 legacySupport = "1.0.0"
-lifecycle = "2.8.6"
+lifecycle = "2.8.7"
 lifecycleExt = "2.2.0"
 lottie = "6.4.1"
 material = "1.12.0"
@@ -43,6 +47,7 @@ paging = "3.3.2"
 retrofit = "2.11.0"
 review = "2.0.2"
 room = "2.6.1"
+roomGradlePlugin = "2.6.1"
 runner = "1.6.2"
 safeargs = "2.8.3"
 tink = "1.14.0"
@@ -57,6 +62,7 @@ appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat"
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 ble = { module = "no.nordicsemi.android:ble", version.ref = "ble" }
 browser = { module = "androidx.browser:browser", version.ref = "browser" }
+ksp-gradle-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "kspGradlePlugin" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -85,8 +91,16 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 kotlinfixture = { module = "com.appmattus.fixture:fixture", version.ref = "kotlinfixture" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlinTest" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-content-negotiation = {module = "io.ktor:ktor-client-content-negotiation", version.ref= "ktorContentNegotiation"}
+ktor-client-content-negotiation-jvm = { module = "io.ktor:ktor-client-content-negotiation-jvm", version.ref = "ktorContentNegotiation" }
+ktor-kotlinx-serialization = {module = "io.ktor:ktor-serialization-kotlinx-json", version.ref="ktor"}
 legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "legacySupport" }
 lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
 lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExt" }
@@ -106,6 +120,7 @@ paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.re
 perf-plugin = { module = "com.google.firebase:perf-plugin", version.ref = "firebasePerformance" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "review" }
+room-gradle-plugin = { module = "androidx.room:room-gradle-plugin", version.ref = "roomGradlePlugin" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
@@ -121,3 +136,4 @@ zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", ve
 firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-messaging", "firebase-perf"]
 
 [plugins]
+multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

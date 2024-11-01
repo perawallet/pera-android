@@ -1,8 +1,8 @@
 ext {
     targets = [
-            compileSdkVersion: 34,
+            compileSdkVersion: 35,
             minSdkVersion    : 26,
-            targetSdkVersion : 34
+            targetSdkVersion : 35
     ]
 
     application = [

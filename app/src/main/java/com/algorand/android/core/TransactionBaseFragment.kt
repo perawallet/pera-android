@@ -117,6 +117,7 @@ abstract class TransactionBaseFragment(
         transactionManager.transactionManagerResultLiveData.observe(viewLifecycleOwner, transactionManagerObserver)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {

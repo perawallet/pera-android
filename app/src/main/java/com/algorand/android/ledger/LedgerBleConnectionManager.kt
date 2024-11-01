@@ -48,8 +48,10 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
         ledgerBleObserver = observer
     }
 
+    @Deprecated("Deprecated in Java")
     override fun getGattCallback(): BleManagerGattCallback {
         return object : BleManagerGattCallback() {
+            @Deprecated("Deprecated in Java")
             override fun isRequiredServiceSupported(gatt: BluetoothGatt): Boolean {
                 gatt.getService(NANOX_SERVICE_UUID)?.run {
                     characteristicWrite = getCharacteristic(NANOX_WRITE_CHARACTERISTIC_UUID)
@@ -65,11 +67,13 @@ class LedgerBleConnectionManager(appContext: Context) : BleManager(appContext) {
                 return characteristicWrite != null && characteristicNotify != null
             }
 
+            @Deprecated("Deprecated in Java")
             override fun onServicesInvalidated() {
                 characteristicWrite = null
                 characteristicNotify = null
             }
 
+            @Deprecated("Deprecated in Java")
             override fun initialize() {
                 beginAtomicRequestQueue()
                     .add(

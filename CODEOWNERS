@@ -1,0 +1,4 @@
+# CODEOWNERS file assigns ownership of specific files/paths to users or teams.
+# Designated owners are auto-requested for review on PRs modifying these areas.
+
+@yasin-ce @mitsinsar @michaeltchuang

@@ -14,7 +14,6 @@ buildscript {
         classpath(libs.firebase.crashlytics.gradle)
         classpath(libs.hilt.android.gradle.plugin)
         classpath(libs.perf.plugin)
-        classpath(libs.room.gradle.plugin)
         classpath(libs.ksp.gradle.plugin)
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -23,6 +22,8 @@ buildscript {
 }
 
 plugins {
+    alias(libs.plugins.kotlinx.serialization).apply(false)
+    alias(libs.plugins.ksp).apply(false)
     alias(libs.plugins.multiplatform).apply(false)
 }
 

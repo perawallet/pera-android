@@ -5,7 +5,7 @@ appCompat = "1.7.0"
 biometric = "1.1.0"
 ble = "2.8.0"
 browser = "1.8.0"
-kspGradlePlugin = "1.8.10-1.0.9"
+kspGradlePlugin = "2.0.0-1.0.22"
 constraintLayout = "2.2.0"
 converterGson = "2.11.0"
 coreKtx = "1.15.0"
@@ -30,6 +30,7 @@ kotlin = "2.0.21"
 kotlinfixture = "1.2.0"
 kotlinxSerialization = "1.7.3"
 kotlinTest = "1.5.31"
+ksp = "2.0.21-1.0.25"
 ktor = "3.0.0"
 ktorContentNegotiation = "3.0.0"
 legacySupport = "1.0.0"
@@ -46,8 +47,7 @@ okhttp = "4.12.0"
 paging = "3.3.2"
 retrofit = "2.11.0"
 review = "2.0.2"
-room = "2.6.1"
-roomGradlePlugin = "2.6.1"
+room = "2.7.0-alpha11"
 runner = "1.6.2"
 safeargs = "2.8.3"
 tink = "1.14.0"
@@ -120,7 +120,7 @@ paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.re
 perf-plugin = { module = "com.google.firebase:perf-plugin", version.ref = "firebasePerformance" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "review" }
-room-gradle-plugin = { module = "androidx.room:room-gradle-plugin", version.ref = "roomGradlePlugin" }
+room-gradle-plugin = { module = "androidx.room:room-gradle-plugin", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
@@ -136,4 +136,7 @@ zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", ve
 firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-messaging", "firebase-perf"]
 
 [plugins]
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+room = { id = "androidx.room", version.ref = "room" }

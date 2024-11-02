@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
-    alias(libs.plugins.multiplatform)
     id("com.android.library")
-    id("androidx.room")
-    kotlin("plugin.serialization") version "2.0.20"
+
+    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.multiplatform)
+    alias(libs.plugins.room)
 }
 
 apply(from = "../versions.gradle")
@@ -94,4 +96,12 @@ android {
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+dependencies {
+    add("kspAndroid", libs.room.compiler)
+    // add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    // add("kspIosX64", libs.androidx.room.compiler)
+    // add("kspIosArm64", libs.androidx.room.compiler)
+    // add("kspCommonMainMetadata", libs.androidx.room.compiler)
 }

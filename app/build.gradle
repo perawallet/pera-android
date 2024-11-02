@@ -5,7 +5,7 @@ plugins {
     id "com.google.firebase.crashlytics"
     id "kotlin-android"
     id "kotlin-parcelize"
-    id "kotlin-kapt"
+    id 'com.google.devtools.ksp'
     id "androidx.navigation.safeargs.kotlin"
     id "dagger.hilt.android.plugin"
     id 'com.google.firebase.firebase-perf'
@@ -169,10 +169,6 @@ android {
         }
     }
 
-    kapt {
-        correctErrorTypes = true
-    }
-
     compileOptions {
         coreLibraryDesugaringEnabled true
 
@@ -229,7 +225,7 @@ dependencies {
 
     implementation libs.room.runtime
     implementation libs.room.ktx
-    kapt libs.room.compiler
+    ksp libs.room.compiler
 
     implementation libs.navigation.fragment.ktx
     implementation libs.navigation.ui.ktx
@@ -249,11 +245,11 @@ dependencies {
     implementation libs.review.ktx
 
     implementation libs.hilt.android.dagger
-    kapt libs.hilt.android.compiler
-    kapt libs.hilt.androidx
+    ksp libs.hilt.android.compiler
+    ksp libs.hilt.androidx
 
     implementation libs.glide.image
-    kapt libs.glide.compiler
+    ksp libs.glide.compiler
 
     implementation libs.lottie
 

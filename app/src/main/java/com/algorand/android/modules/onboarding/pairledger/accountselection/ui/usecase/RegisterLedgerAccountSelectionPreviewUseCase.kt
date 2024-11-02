@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.onboarding.pairledger.accountselection.ui.usecase
 
+import android.os.Build
 import com.algorand.android.R
 import com.algorand.android.mapper.AccountDisplayNameMapper
 import com.algorand.android.mapper.AccountInformationMapper
@@ -128,7 +129,11 @@ class RegisterLedgerAccountSelectionPreviewUseCase @Inject constructor(
                 accountSize = size,
                 searchType = SearchType.REGISTER
             )
-            addFirst(instructionItem)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                addFirst(instructionItem)
+            } else {
+                add(0, instructionItem)
+            }
         }
 
         val preview = registerLedgerAccountSelectionPreviewMapper.mapToRegisterLedgerAccountSelectionPreview(

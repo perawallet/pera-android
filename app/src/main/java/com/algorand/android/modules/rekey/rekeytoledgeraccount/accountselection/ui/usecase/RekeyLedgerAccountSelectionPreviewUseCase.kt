@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.usecase
 
+import android.os.Build
 import com.algorand.android.R
 import com.algorand.android.mapper.AccountDisplayNameMapper
 import com.algorand.android.mapper.LedgerAccountSelectionAccountItemMapper
@@ -111,7 +112,11 @@ class RekeyLedgerAccountSelectionPreviewUseCase @Inject constructor(
                 accountSize = size,
                 searchType = SearchType.REKEY
             )
-            addFirst(instructionItem)
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                addFirst(instructionItem)
+            } else {
+                add(0, instructionItem)
+            }
         }
         val preview = rekeyLedgerAccountSelectionPreviewMapper.mapToRekeyLedgerAccountSelectionPreview(
             isLoading = false,

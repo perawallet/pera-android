@@ -24,7 +24,7 @@ jobs:
             java-version: "17"
             cache: "gradle"
         - name: "Run Unit Tests"
-          run: ./gradlew test
+          run: ./gradlew testDebugUnitTest
         - name: "Archive App Unit Tests Report"
           uses: actions/upload-artifact@v4
           if: ${{ always() }}

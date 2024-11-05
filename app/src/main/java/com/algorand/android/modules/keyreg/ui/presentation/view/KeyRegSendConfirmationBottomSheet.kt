@@ -12,9 +12,11 @@
 
 package com.algorand.android.modules.keyreg.ui.presentation.view
 
-import android.widget.*
+import android.widget.ImageView
+import android.widget.TextView
 import com.algorand.android.R
-import com.algorand.android.utils.*
+import com.algorand.android.utils.BaseDoubleButtonBottomSheet
+import com.algorand.android.utils.setFragmentNavigationResult
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 

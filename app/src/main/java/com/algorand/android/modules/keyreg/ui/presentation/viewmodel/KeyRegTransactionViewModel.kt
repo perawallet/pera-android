@@ -13,16 +13,23 @@
 package com.algorand.android.modules.keyreg.ui.presentation.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.modules.keyreg.domain.usecase.CreateKeyRegTransaction
 import com.algorand.android.modules.keyreg.ui.presentation.mapper.KeyRegTransactionPreviewMapper
-import com.algorand.android.modules.keyreg.ui.presentation.model.*
+import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionDetail
+import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionFragmentPreview
 import com.algorand.android.usecase.SendSignedTransactionUseCase
-import com.algorand.android.utils.*
+import com.algorand.android.utils.Event
+import com.algorand.android.utils.getOrThrow
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class KeyRegTransactionViewModel @Inject constructor(

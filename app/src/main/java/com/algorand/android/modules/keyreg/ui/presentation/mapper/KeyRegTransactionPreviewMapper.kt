@@ -12,7 +12,8 @@
 
 package com.algorand.android.modules.keyreg.ui.presentation.mapper
 
-import com.algorand.android.modules.keyreg.ui.presentation.model.*
+import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionDetail
+import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionFragmentPreview
 import javax.inject.Inject
 
 class KeyRegTransactionPreviewMapper @Inject constructor() {

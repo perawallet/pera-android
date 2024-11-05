@@ -13,14 +13,18 @@
 package com.algorand.android.modules.keyreg.domain
 
 import com.algorand.android.R
-import com.algorand.android.ledger.*
+import com.algorand.android.ledger.LedgerBleOperationManager
+import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.keyreg.domain.model.KeyRegTransaction
-import com.algorand.android.modules.transaction.signmanager.*
-import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.*
+import com.algorand.android.modules.transaction.signmanager.ExternalTransactionQueuingHelper
+import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignManager
+import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
+import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.Error
+import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.Success
 import com.algorand.android.usecase.AccountDetailUseCase
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlinx.coroutines.flow.map
 
 class KeyRegTransactionSignManager @Inject constructor(
     ledgerBleSearchManager: LedgerBleSearchManager,

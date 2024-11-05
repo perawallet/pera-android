@@ -13,17 +13,24 @@
 package com.algorand.android.modules.keyreg.domain.usecase
 
 import com.algorand.algosdk.sdk.Sdk
-import com.algorand.android.models.*
-import com.algorand.android.models.Result.*
+import com.algorand.android.models.Result
+import com.algorand.android.models.Result.Error
+import com.algorand.android.models.Result.Success
+import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.keyreg.domain.model.KeyRegTransaction
 import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionDetail
 import com.algorand.android.repository.TransactionsRepository
 import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.utils.*
+import com.algorand.android.utils.toSuggestedParams
+import com.algorand.android.utils.toUint64
 import java.math.BigInteger
 import javax.inject.Inject
 
-class CreateKeyRegTransactionUseCase @Inject constructor(
+fun interface CreateKeyRegTransaction {
+    suspend operator fun invoke(txnDetail: KeyRegTransactionDetail): Result<KeyRegTransaction>
+}
+
+internal class CreateKeyRegTransactionUseCase @Inject constructor(
     private val accountDetailUseCase: AccountDetailUseCase,
     private val transactionsRepository: TransactionsRepository
 ) : CreateKeyRegTransaction {
@@ -58,6 +65,7 @@ class CreateKeyRegTransactionUseCase @Inject constructor(
         )
     }
 
+    @Suppress("MagicNumber")
     private fun createAlgoTxn(address: String, transactionParams: TransactionParams): ByteArray? {
         return try {
             Sdk.makePaymentTxn(

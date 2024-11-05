@@ -12,8 +12,10 @@
 
 package com.algorand.android.modules.keyreg.di
 
-import com.algorand.android.modules.keyreg.domain.usecase.*
-import dagger.*
+import com.algorand.android.modules.keyreg.domain.usecase.CreateKeyRegTransaction
+import com.algorand.android.modules.keyreg.domain.usecase.CreateKeyRegTransactionUseCase
+import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton

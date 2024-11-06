@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.usecase
 
-import android.os.Build
 import com.algorand.android.R
 import com.algorand.android.mapper.AccountDisplayNameMapper
 import com.algorand.android.mapper.LedgerAccountSelectionAccountItemMapper
@@ -28,7 +27,6 @@ import com.algorand.android.usecase.AssetFetchAndCacheUseCase
 import com.algorand.android.usecase.LedgerAccountSelectionUseCase
 import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AccountCacheManager
-import com.algorand.android.utils.extensions.addFirst
 import com.algorand.android.utils.toShortenedAddress
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
@@ -112,11 +110,14 @@ class RekeyLedgerAccountSelectionPreviewUseCase @Inject constructor(
                 accountSize = size,
                 searchType = SearchType.REKEY
             )
+            add(0, instructionItem)
+            /*
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                 addFirst(instructionItem)
             } else {
                 add(0, instructionItem)
             }
+             */
         }
         val preview = rekeyLedgerAccountSelectionPreviewMapper.mapToRekeyLedgerAccountSelectionPreview(
             isLoading = false,

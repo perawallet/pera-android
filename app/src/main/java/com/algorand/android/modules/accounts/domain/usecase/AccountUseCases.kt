@@ -10,23 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.keyreg.ui.presentation.model
+package com.algorand.android.modules.accounts.domain.usecase
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-import java.math.BigInteger
+fun interface GetAuthAddressOfAnAccount {
+    operator fun invoke(address: String): String?
+}
 
-@Parcelize
-data class KeyRegTransactionDetail(
-    val address: String,
-    val type: String,
-    val voteKey: String?,
-    val selectionPublicKey: String?,
-    val sprfkey: String,
-    val voteFirstRound: String?,
-    val voteLastRound: String?,
-    val voteKeyDilution: String?,
-    val fee: BigInteger?,
-    val note: String?,
-    val xnote: String?
-) : Parcelable
+fun interface IsSenderRekeyedToAnotherAccount {
+    operator fun invoke(address: String): Boolean
+}

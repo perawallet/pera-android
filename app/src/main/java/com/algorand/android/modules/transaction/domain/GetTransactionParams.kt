@@ -10,23 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.keyreg.ui.presentation.model
+package com.algorand.android.modules.transaction.domain
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-import java.math.BigInteger
+import com.algorand.android.models.Result
+import com.algorand.android.models.TransactionParams
 
-@Parcelize
-data class KeyRegTransactionDetail(
-    val address: String,
-    val type: String,
-    val voteKey: String?,
-    val selectionPublicKey: String?,
-    val sprfkey: String,
-    val voteFirstRound: String?,
-    val voteLastRound: String?,
-    val voteKeyDilution: String?,
-    val fee: BigInteger?,
-    val note: String?,
-    val xnote: String?
-) : Parcelable
+fun interface GetTransactionParams {
+    suspend operator fun invoke(): Result<TransactionParams>
+}

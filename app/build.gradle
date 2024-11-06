@@ -284,6 +284,9 @@ dependencies {
     }
 
     // Test
+    testImplementation libs.mockk
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.kotlin.test
     testImplementation libs.junit
     androidTestImplementation libs.room.testing
     androidTestImplementation libs.runner

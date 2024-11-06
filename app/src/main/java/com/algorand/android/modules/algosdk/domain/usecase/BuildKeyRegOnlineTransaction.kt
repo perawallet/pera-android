@@ -10,23 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.keyreg.ui.presentation.model
+package com.algorand.android.modules.algosdk.domain.usecase
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-import java.math.BigInteger
+import com.algorand.android.modules.algosdk.domain.model.OnlineKeyRegTransactionPayload
 
-@Parcelize
-data class KeyRegTransactionDetail(
-    val address: String,
-    val type: String,
-    val voteKey: String?,
-    val selectionPublicKey: String?,
-    val sprfkey: String,
-    val voteFirstRound: String?,
-    val voteLastRound: String?,
-    val voteKeyDilution: String?,
-    val fee: BigInteger?,
-    val note: String?,
-    val xnote: String?
-) : Parcelable
+interface BuildKeyRegOnlineTransaction {
+    operator fun invoke(params: OnlineKeyRegTransactionPayload): ByteArray?
+}

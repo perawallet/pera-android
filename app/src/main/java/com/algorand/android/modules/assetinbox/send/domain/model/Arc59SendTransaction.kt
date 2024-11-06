@@ -15,19 +15,9 @@ package com.algorand.android.modules.assetinbox.send.domain.model
 
 import com.algorand.android.ledger.operations.ExternalTransaction
 
-sealed interface Arc59Transaction : ExternalTransaction {
-
-    data class Arc59OptInTransaction(
-        override val transactionByteArray: ByteArray?,
-        override val accountAddress: String,
-        override val accountAuthAddress: String?,
-        override val isRekeyedToAnotherAccount: Boolean
-    ) : Arc59Transaction
-
-    data class Arc59SendTransaction(
-        override val transactionByteArray: ByteArray?,
-        override val accountAddress: String,
-        override val accountAuthAddress: String?,
-        override val isRekeyedToAnotherAccount: Boolean
-    ) : Arc59Transaction
-}
+data class Arc59SendTransaction(
+    override val transactionByteArray: ByteArray?,
+    override val accountAddress: String,
+    override val accountAuthAddress: String?,
+    override val isRekeyedToAnotherAccount: Boolean
+) : ExternalTransaction

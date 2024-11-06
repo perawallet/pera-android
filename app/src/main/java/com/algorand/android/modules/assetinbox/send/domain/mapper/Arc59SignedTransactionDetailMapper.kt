@@ -13,11 +13,11 @@
 package com.algorand.android.modules.assetinbox.send.domain.mapper
 
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.modules.assetinbox.send.domain.model.Arc59Transactions
+import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendTransaction
 
 interface Arc59SignedTransactionDetailMapper {
     operator fun invoke(
-        transactions: Arc59Transactions,
+        transactions: List<Arc59SendTransaction>?,
         signedTransactions: List<ByteArray?>?
-    ): MutableList<SignedTransactionDetail>?
+    ): List<SignedTransactionDetail>?
 }

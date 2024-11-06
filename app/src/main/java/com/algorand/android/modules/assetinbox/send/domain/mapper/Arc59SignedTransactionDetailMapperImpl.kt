@@ -13,58 +13,38 @@
 package com.algorand.android.modules.assetinbox.send.domain.mapper
 
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.modules.assetinbox.send.domain.model.Arc59Transactions
+import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendTransaction
 import com.algorand.android.utils.flatten
 import javax.inject.Inject
 
-class Arc59SignedTransactionDetailMapperImpl @Inject constructor() : Arc59SignedTransactionDetailMapper {
+class Arc59SignedTransactionDetailMapperImpl @Inject constructor() :
+    Arc59SignedTransactionDetailMapper {
 
     override fun invoke(
-        transactions: Arc59Transactions,
+        transactions: List<Arc59SendTransaction>?,
         signedTransactions: List<ByteArray?>?
-    ): MutableList<SignedTransactionDetail>? {
-        if (signedTransactions == null || !areAllTxnsSigned(transactions, signedTransactions)) return null
-
-        val optInTransactions = getOptInTransactions(transactions, signedTransactions)
-        val sendTransactions = getSendTransactions(transactions, signedTransactions) ?: return null
-
-        if (transactions.optInTransactions.isNotEmpty() && optInTransactions == null) return null
-
-        return mutableListOf<SignedTransactionDetail>().apply {
-            optInTransactions?.let { add(it) }
-            add(sendTransactions)
+    ): List<SignedTransactionDetail>? {
+        if (signedTransactions == null || !areAllTxnsSigned(transactions, signedTransactions)) {
+            return null
         }
-    }
 
-    private fun getOptInTransactions(
-        transactions: Arc59Transactions,
-        signedTransactions: List<ByteArray?>
-    ): SignedTransactionDetail? {
-        val optInSize = transactions.optInTransactions.size
-        if (optInSize == 0) return null
-
-        val signedOptInTransactions = signedTransactions
-            .take(optInSize)
-            .filterNotNull()
-            .flatten()
-
-        return SignedTransactionDetail.Arc59OptIn(signedOptInTransactions)
+        return listOf(getSendTransactions(signedTransactions))
     }
 
     private fun getSendTransactions(
-        transactions: Arc59Transactions,
         signedTransactions: List<ByteArray?>
     ): SignedTransactionDetail {
-        val startIndex = transactions.optInTransactions.size
         val signedSendTransactionsFiltered = signedTransactions
-            .drop(startIndex)
             .filterNotNull()
             .flatten()
 
         return SignedTransactionDetail.Arc59Send(signedSendTransactionsFiltered)
     }
 
-    private fun areAllTxnsSigned(transactions: Arc59Transactions, signedTransactions: List<Any?>): Boolean {
-        return signedTransactions.size == (transactions.optInTransactions.size + transactions.sendTransactions.size)
+    private fun areAllTxnsSigned(
+        transactions: List<Arc59SendTransaction>?,
+        signedTransactions: List<Any?>
+    ): Boolean {
+        return signedTransactions.size == transactions?.size
     }
 }

@@ -15,7 +15,7 @@ package com.algorand.android.modules.assetinbox.send.ui.mapper
 import android.content.res.Resources
 import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendSummary
-import com.algorand.android.modules.assetinbox.send.domain.model.Arc59Transactions
+import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendTransaction
 import com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryPreview
 import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.utils.AssetName
@@ -38,7 +38,7 @@ class Arc59SendSummaryPreviewMapperImpl @Inject constructor(
         isLoading: Boolean,
         showError: Event<ErrorResource>?,
         onNavBack: Event<Unit>?,
-        arc59Transactions: Event<Arc59Transactions>?
+        arc59Transactions: Event<List<Arc59SendTransaction>>?
     ): Arc59SendSummaryPreview {
         return Arc59SendSummaryPreview(
             assetName = assetDetail.fullName.orEmpty(),

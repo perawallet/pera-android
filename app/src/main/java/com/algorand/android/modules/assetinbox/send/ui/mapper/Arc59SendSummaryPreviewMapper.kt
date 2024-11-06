@@ -14,7 +14,7 @@ package com.algorand.android.modules.assetinbox.send.ui.mapper
 
 import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendSummary
-import com.algorand.android.modules.assetinbox.send.domain.model.Arc59Transactions
+import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendTransaction
 import com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryPreview
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
@@ -28,7 +28,7 @@ interface Arc59SendSummaryPreviewMapper {
         isLoading: Boolean,
         showError: Event<ErrorResource>?,
         onNavBack: Event<Unit>?,
-        arc59Transactions: Event<Arc59Transactions>?
+        arc59Transactions: Event<List<Arc59SendTransaction>>?
     ): Arc59SendSummaryPreview
 
     fun getInitialPreview(): Arc59SendSummaryPreview

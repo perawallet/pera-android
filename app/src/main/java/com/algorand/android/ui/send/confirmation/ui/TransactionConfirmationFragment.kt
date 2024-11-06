@@ -26,7 +26,6 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentTransactionConfirmationBinding
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.send.confirmation.ui.model.TransactionStatusPreview
 import com.algorand.android.utils.browser.openTransactionInPeraExplorer
 import com.algorand.android.utils.setFragmentNavigationResult
@@ -37,20 +36,16 @@ import kotlinx.coroutines.flow.collectLatest
 @AndroidEntryPoint
 class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transaction_confirmation) {
 
-    private val toolbarConfiguration: ToolbarConfiguration = ToolbarConfiguration(
-        startIconResId = R.drawable.ic_left_arrow,
-        startIconClick = ::onBackPressed
-    )
-
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration = FragmentConfiguration()
 
     private val binding by viewBinding(FragmentTransactionConfirmationBinding::bind)
 
     private val transactionConfirmationViewModel by viewModels<TransactionConfirmationViewModel>()
 
-    private val transactionStatusPreviewFlowCollector: suspend (TransactionStatusPreview) -> Unit = { preview ->
-        updatePreview(preview)
-    }
+    private val transactionStatusPreviewFlowCollector: suspend (TransactionStatusPreview) -> Unit =
+        { preview ->
+            updatePreview(preview)
+        }
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -85,7 +80,8 @@ class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transacti
                         imageTintList = getColorStateList(this)
                     }
                     setBackgroundResource(transactionStatusAnimationBackgroundResId)
-                    backgroundTintList = getColorStateList(transactionStatusAnimationBackgroundTintResId)
+                    backgroundTintList =
+                        getColorStateList(transactionStatusAnimationBackgroundTintResId)
                 }
                 transactionTitleTextView.setText(transactionStatusTitleResId)
                 transactionInfoTextView.setText(transactionStatusDescriptionResId)

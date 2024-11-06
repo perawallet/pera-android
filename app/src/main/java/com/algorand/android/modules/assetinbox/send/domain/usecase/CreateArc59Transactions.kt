@@ -12,10 +12,10 @@
 
 package com.algorand.android.modules.assetinbox.send.domain.usecase
 
+import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendTransaction
 import com.algorand.android.modules.assetinbox.send.domain.model.Arc59TransactionPayload
-import com.algorand.android.modules.assetinbox.send.domain.model.Arc59Transactions
 import kotlinx.coroutines.flow.Flow
 
 interface CreateArc59Transactions {
-    suspend operator fun invoke(payload: Arc59TransactionPayload): Flow<Result<Arc59Transactions>>
+    suspend operator fun invoke(payload: Arc59TransactionPayload): Flow<Result<List<Arc59SendTransaction>>>
 }

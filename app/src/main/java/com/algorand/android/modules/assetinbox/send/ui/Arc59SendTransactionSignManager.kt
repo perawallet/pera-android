@@ -17,8 +17,7 @@ import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.assetinbox.send.domain.mapper.Arc59SignedTransactionDetailMapper
-import com.algorand.android.modules.assetinbox.send.domain.model.Arc59Transaction
-import com.algorand.android.modules.assetinbox.send.domain.model.Arc59Transactions
+import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendTransaction
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionQueuingHelper
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignManager
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
@@ -34,34 +33,37 @@ class Arc59SendTransactionSignManager @Inject constructor(
     ledgerBleOperationManager: LedgerBleOperationManager,
     externalTransactionQueuingHelper: ExternalTransactionQueuingHelper,
     accountDetailUseCase: AccountDetailUseCase
-) : ExternalTransactionSignManager<Arc59Transaction>(
+) : ExternalTransactionSignManager<Arc59SendTransaction>(
     ledgerBleSearchManager,
     ledgerBleOperationManager,
     externalTransactionQueuingHelper,
     accountDetailUseCase
 ) {
 
-    private var unsignedTransactions: Arc59Transactions? = null
+    private var unsignedTransactions: List<Arc59SendTransaction>? = null
 
     val arc59SendTransactionSignResultFlow = signResultFlow.map {
         when (it) {
-            is Success<*> -> mapSignedTransactions(unsignedTransactions, it.signedTransactionsByteArray)
+            is Success<*> -> mapSignedTransactions(
+                unsignedTransactions,
+                it.signedTransactionsByteArray
+            )
+
             else -> it
         }
     }
 
-    fun signArc59SendTransaction(arc59Transactions: Arc59Transactions) {
-        unsignedTransactions = arc59Transactions
-        val transactions = arc59Transactions.optInTransactions + arc59Transactions.sendTransactions
+    fun signArc59SendTransaction(transactions: List<Arc59SendTransaction>) {
+        unsignedTransactions = transactions
         signTransaction(transactions)
     }
 
     private fun mapSignedTransactions(
-        transactions: Arc59Transactions?,
+        transactions: List<Arc59SendTransaction>?,
         signedTransactions: List<ByteArray?>?
     ): ExternalTransactionSignResult {
-        if (transactions == null) return Error.Defined(AnnotatedString(R.string.an_error_occured))
-        val signedTransactionDetails = arc59SignedTransactionDetailMapper(transactions, signedTransactions)
+        val signedTransactionDetails =
+            arc59SignedTransactionDetailMapper(transactions, signedTransactions)
         return if (signedTransactionDetails.isNullOrEmpty()) {
             Error.Defined(AnnotatedString(R.string.an_error_occured))
         } else {

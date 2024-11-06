@@ -15,7 +15,7 @@ package com.algorand.android.modules.assetinbox.send.domain.usecase
 import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.BuildConfig
 import com.algorand.android.models.TransactionParams
-import com.algorand.android.modules.assetinbox.send.domain.model.Arc59Transaction.Arc59SendTransaction
+import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendTransaction
 import com.algorand.android.modules.assetinbox.send.domain.model.Arc59TransactionPayload
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.IsOnTestnetUseCase
@@ -58,6 +58,7 @@ class CreateArc59SendTransactionUseCase @Inject constructor(
                 appId,
                 assetId,
                 toSuggestedParams(),
+                isArc59OptedIn,
                 payload.algoFundAmount.toUint64()
             )
         }

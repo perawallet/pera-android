@@ -22,8 +22,6 @@ import com.algorand.android.modules.assetinbox.send.domain.mapper.Arc59SignedTra
 import com.algorand.android.modules.assetinbox.send.domain.mapper.Arc59TransactionPayloadMapper
 import com.algorand.android.modules.assetinbox.send.domain.mapper.Arc59TransactionPayloadMapperImpl
 import com.algorand.android.modules.assetinbox.send.domain.repository.Arc59SendSummaryRepository
-import com.algorand.android.modules.assetinbox.send.domain.usecase.CreateArc59OptInTransaction
-import com.algorand.android.modules.assetinbox.send.domain.usecase.CreateArc59OptInTransactionUseCase
 import com.algorand.android.modules.assetinbox.send.domain.usecase.CreateArc59SendTransaction
 import com.algorand.android.modules.assetinbox.send.domain.usecase.CreateArc59SendTransactionUseCase
 import com.algorand.android.modules.assetinbox.send.domain.usecase.CreateArc59Transactions
@@ -83,12 +81,6 @@ object Arc59SendSummaryModule {
     fun provideCreateArc59SendTransaction(
         useCase: CreateArc59SendTransactionUseCase
     ): CreateArc59SendTransaction = useCase
-
-    @Provides
-    @Singleton
-    fun provideCreateArc59OptInTransaction(
-        useCase: CreateArc59OptInTransactionUseCase
-    ): CreateArc59OptInTransaction = useCase
 
     @Provides
     @Singleton

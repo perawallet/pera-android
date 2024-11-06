@@ -83,7 +83,7 @@ class AssetInboxOneAccountPreviewMapperImpl @Inject constructor(
             assetName = result.asset.name,
             shortName = result.asset.unitName,
             usdValue = result.asset.usdValue,
-            amount = result.senders.results.sumOf { it.amount },
+            amount = result.totalAmount,
             logo = result.asset.logo,
             senderAccounts = result.senders.results.map {
                 SenderPreview(
@@ -107,7 +107,7 @@ class AssetInboxOneAccountPreviewMapperImpl @Inject constructor(
             firstSender = result.senders.results.firstOrNull()?.let {
                 it.sender.name ?: it.sender.address.toShortenedAddress()
             }.orEmpty(),
-            otherSendersCount = result.senders.results.size - 1,
+            otherSendersCount = result.senders.count - 1,
             shouldUseFundsBeforeClaiming = result.shouldUseFundsBeforeClaiming,
             shouldUseFundsBeforeRejecting = result.shouldUseFundsBeforeRejecting,
             insufficientAlgoForClaiming = result.insufficientAlgoForClaiming,
@@ -151,7 +151,7 @@ class AssetInboxOneAccountPreviewMapperImpl @Inject constructor(
             firstSender = result.senders.results.firstOrNull()?.let {
                 it.sender.name ?: it.sender.address.toShortenedAddress()
             }.orEmpty(),
-            otherSendersCount = result.senders.results.size - 1,
+            otherSendersCount = result.senders.count - 1,
             formattedAssetAmount = getFormattedAssetAmount(result),
             shouldUseFundsBeforeClaiming = result.shouldUseFundsBeforeClaiming,
             shouldUseFundsBeforeRejecting = result.shouldUseFundsBeforeRejecting,

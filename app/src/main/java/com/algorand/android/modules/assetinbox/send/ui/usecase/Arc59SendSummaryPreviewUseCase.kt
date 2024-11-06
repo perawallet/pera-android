@@ -18,7 +18,7 @@ import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.modules.assetinbox.send.domain.mapper.Arc59TransactionPayloadMapper
 import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendSummary
-import com.algorand.android.modules.assetinbox.send.domain.model.Arc59Transactions
+import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendTransaction
 import com.algorand.android.modules.assetinbox.send.domain.usecase.CreateArc59Transactions
 import com.algorand.android.modules.assetinbox.send.domain.usecase.GetArc59SendSummary
 import com.algorand.android.modules.assetinbox.send.ui.mapper.Arc59SendSummaryPreviewMapper
@@ -107,7 +107,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
     }
 
     private fun Arc59SendSummaryPreview.getArc59SendTransactionDataPreview(
-        transactions: Result<Arc59Transactions>
+        transactions: Result<List<Arc59SendTransaction>>
     ): Arc59SendSummaryPreview {
         return if (transactions.isSuccess && transactions.getOrNull() != null) {
             copy(arc59Transactions = Event(transactions.getOrNull()), isLoading = false, showError = null)

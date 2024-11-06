@@ -13,7 +13,7 @@
 package com.algorand.android.modules.assetinbox.send.ui.model
 
 import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendSummary
-import com.algorand.android.modules.assetinbox.send.domain.model.Arc59Transactions
+import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendTransaction
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
 
@@ -26,5 +26,5 @@ data class Arc59SendSummaryPreview(
     val showError: Event<ErrorResource>?,
     val onNavBack: Event<Unit>?,
     val onTxnSendSuccessfully: Event<String?>?,
-    val arc59Transactions: Event<Arc59Transactions?>?
+    val arc59Transactions: Event<List<Arc59SendTransaction>?>?
 )

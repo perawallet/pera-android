@@ -43,9 +43,7 @@ class Arc59SendSummaryPreviewMapperImpl @Inject constructor(
         return Arc59SendSummaryPreview(
             assetName = assetDetail.fullName.orEmpty(),
             formattedAssetAmount = getFormattedAssetAmount(amount, assetDetail),
-            formattedMinBalanceFee = getFormattedProtocolAndMbrFee(
-                summary.totalProtocolAndMbrFee + summary.algoFundAmount
-            ),
+            formattedMinBalanceFee = getFormattedProtocolAndMbrFee(summary.totalProtocolAndMbrFee),
             summary = summary,
             isLoading = isLoading,
             showError = showError,

@@ -643,6 +643,7 @@ class MainActivity :
     }
 
     private fun setupCoreActionsTabBarView() {
+        binding.coreActionsTabBarView.handleNavigationButtonsForFeatureFlags()
         binding.coreActionsTabBarView.setListener(object : CoreActionsTabBarView.Listener {
             override fun onSendClick() {
                 firebaseAnalytics.logTapSend()

@@ -6,25 +6,6 @@
     <string name="account_passphrase">Mnemomic / Passphrase</string>
     <string name="account_button_lock">Lock Wallet</string>
 
-    <!-- Coin Flipper -->
-    <string name="play_button_opt_in">App Opt In</string>
-    <string name="play_button_close_out">Close Out App</string>
-    <string name="play_button_wait_message">It will take a few seconds for the new state to be recognized on the blockchain</string>
-    <string name="play_button_submit_bet">Bet submitted.  It will take a few seconds for the new state to be recognized on the blockchain</string>
-    <string name="play_button_settle_wait">It will take a few seconds for the bet to be settled on the blockchain</string>
-    <string name="play_button_flip_heads">Flip Coin Heads</string>
-    <string name="play_button_flip_tails">Flip Coin Tails</string>
-    <string name="play_button_pending">Pending&#8230;</string>
-    <string name="play_button_settle">Settle Bet</string>
-    <string name="play_title">Bet on the flip of a coin</string>
-    <string name="play_balance">Current Balance: </string>
-    <string name="play_current_round">Current Round: </string>
-    <string name="play_waiting_round">Waiting Round: </string>
-    <string name="play_balance_low">Balance too low to play CoinFlip, add some money from Testnet Dispenser</string>
-    <string name="play_game_header">Wager: Bet </string>
-    <string name="play_game_header2"> mAlgos on </string>
-    <string name="play_game_instructions">Click on a coin to pick a side and flip! \n(heads on left, tails on right)</string>
-
     <!-- Error Handling -->
     <string name="error_account">Could not create/recover wallet from passphrase</string>
     <string name="error_account_flipcoin">Could not submit on chain.  Please check logs</string>

@@ -79,10 +79,10 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.runtime)
             implementation(libs.coil.compose)
-            implementation(libs.room.runtime)
-            implementation(libs.ktor.client.core)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.ktor.client.core)
+            implementation(libs.room.runtime)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

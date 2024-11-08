@@ -38,6 +38,6 @@ class CoreActionsTabBarViewModel @Inject constructor(
     }
 
     private companion object {
-        const val CARDS_BUTTON_TOGGLE = "enable_immersive"
+        const val CARDS_BUTTON_TOGGLE = "enable_immersve"
     }
 }

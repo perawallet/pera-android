@@ -256,6 +256,9 @@ dependencies {
     implementation libs.hilt.android.dagger
     ksp libs.hilt.android.compiler
     ksp libs.hilt.androidx
+    implementation(platform(libs.koin.bom))
+    implementation libs.koin.core
+    implementation libs.koin.android
 
     implementation libs.glide.image
     ksp libs.glide.compiler

@@ -581,9 +581,9 @@ class MainActivity :
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val pendingIntent = intent?.getSafeParcelableExtra<Intent?>(DEEPLINK_AND_NAVIGATION_INTENT)
+        val pendingIntent = intent.getSafeParcelableExtra<Intent?>(DEEPLINK_AND_NAVIGATION_INTENT)
         pendingIntentKeeper.setPendingIntent(pendingIntent)
         handlePendingIntent()
     }

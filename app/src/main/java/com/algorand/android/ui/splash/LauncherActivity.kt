@@ -16,11 +16,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.algorand.android.MainActivity
 import com.algorand.android.MainActivity.Companion.DEEPLINK_KEY
 import com.algorand.android.core.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LauncherActivity : BaseActivity() {
@@ -30,12 +32,15 @@ class LauncherActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initObservers()
+        launcherViewModel.initApp()
     }
 
     private fun initObservers() {
-        launcherViewModel.isNodeOperationFinished.observe(this, Observer {
-            handleNavigation()
-        })
+        lifecycleScope.launch {
+            launcherViewModel.appInitializationStatusFlow.collectLatest { isInitialized ->
+                if (isInitialized) handleNavigation()
+            }
+        }
     }
 
     private fun handleNavigation() {

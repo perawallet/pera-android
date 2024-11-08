@@ -13,8 +13,6 @@
 package com.algorand.android.ui.splash
 
 import android.content.SharedPreferences
-import javax.inject.Inject
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.database.NodeDao
@@ -22,8 +20,11 @@ import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.utils.findAllNodes
+import com.algorand.common.remoteconfig.domain.usecase.InitializeOperationalToggles
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -32,22 +33,35 @@ class LauncherViewModel @Inject constructor(
     private val mobileHeaderInterceptor: MobileHeaderInterceptor,
     private val algodInterceptor: AlgodInterceptor,
     private val indexerInterceptor: IndexerInterceptor,
-    private val nodeDao: NodeDao
+    private val nodeDao: NodeDao,
+    private val initializeOperationalToggles: InitializeOperationalToggles
 ) : BaseViewModel() {
 
-    val isNodeOperationFinished = MutableLiveData<Boolean>()
+    private val opsToggleInitializationFlow = MutableStateFlow(false)
+    private val nodeInitializationFlow = MutableStateFlow(false)
+    val appInitializationStatusFlow = combine(opsToggleInitializationFlow, nodeInitializationFlow) { opsToggle, node ->
+        opsToggle && node
+    }
 
-    init {
+    fun initApp() {
+        initOpsToggle()
         initializeNodeInterceptor()
     }
 
+    private fun initOpsToggle() {
+        viewModelScope.launch {
+            initializeOperationalToggles()
+            opsToggleInitializationFlow.value = true
+        }
+    }
+
     private fun initializeNodeInterceptor() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             if (indexerInterceptor.currentActiveNode == null) {
                 val lastActivatedNode = findAllNodes(sharedPreferences, nodeDao).find { it.isActive }
                 lastActivatedNode?.activate(indexerInterceptor, mobileHeaderInterceptor, algodInterceptor)
             }
-            isNodeOperationFinished.postValue(true)
+            nodeInitializationFlow.value = true
         }
     }
 }

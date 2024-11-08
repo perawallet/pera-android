@@ -7,7 +7,6 @@ appCompat = "1.7.0"
 biometric = "1.1.0"
 ble = "2.8.0"
 browser = "1.8.0"
-kspGradlePlugin = "2.0.21-1.0.25"
 constraintLayout = "2.2.0"
 coil = "3.0.1"
 compose = "1.6.10"
@@ -37,6 +36,7 @@ kotlin = "2.0.21"
 kotlinfixture = "1.2.0"
 kotlinxSerialization = "1.7.3"
 kotlinTest = "1.8.22"
+kspGradlePlugin = "2.0.21-1.0.25"
 ksp = "2.0.21-1.0.25"
 ktor = "3.0.0"
 ktorContentNegotiation = "3.0.0"
@@ -104,12 +104,18 @@ java-websocket = { module = "org.java-websocket:Java-WebSocket", version.ref = "
 junit = { module = "junit:junit", version.ref = "junit" }
 khex = { module = "com.github.komputing:khex", version.ref = "khex" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-core-viewmodel = { module = "io.insert-koin:koin-core-viewmodel" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-iosArm64 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-iosArm64", version.ref = "coroutines" }
+kotlinx-coroutines-iosX64 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines--core-iosX64", version.ref = "coroutines" }
+kotlinx-coroutines-iosSimulatorArm64 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-iosSimulatorArm64", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 kotlinfixture = { module = "com.appmattus.fixture:fixture", version.ref = "kotlinfixture" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlinTest" }

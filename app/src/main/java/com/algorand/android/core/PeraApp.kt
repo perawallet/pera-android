@@ -16,11 +16,10 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDex
-import com.algorand.android.BuildConfig
+import com.algorand.android.koin.KoinInitializer
 import com.algorand.android.migration.MigrationManager
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.firebase.token.FirebaseTokenManager
@@ -28,13 +27,6 @@ import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.utils.coremanager.ApplicationStatusObserver
 import com.algorand.android.utils.preference.getSavedThemePreference
 import com.google.firebase.FirebaseApp
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ConfigUpdate
-import com.google.firebase.remoteconfig.ConfigUpdateListener
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigException
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.google.firebase.remoteconfig.ktx.remoteConfig
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -72,44 +64,19 @@ open class PeraApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        KoinInitializer.initKoin(this)
+        initializeFirebase()
         migrationManager.makeMigrations()
 
         AppCompatDelegate.setDefaultNightMode(sharedPref.getSavedThemePreference().convertToSystemAbbr())
         accountManager.initAccounts()
         initializeWalletConnect()
-        initializeRemoteConfig()
         bindApplicationLifecycleAwareComponents()
         bindActivityLifecycleAwareComponents()
     }
 
-    private fun initializeRemoteConfig() {
-        // Initialize Firebase
+    private fun initializeFirebase() {
         FirebaseApp.initializeApp(this)
-
-        // Initialize Firebase Remote Config
-        val remoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig
-        remoteConfig.addOnConfigUpdateListener(object : ConfigUpdateListener {
-            override fun onUpdate(configUpdate: ConfigUpdate) {
-                Log.d(TAG, "Updated keys: " + configUpdate.updatedKeys)
-            }
-
-            override fun onError(error: FirebaseRemoteConfigException) {
-                Log.w(TAG, "Config update error with code: " + error.code, error)
-            }
-        })
-        val configSettings = FirebaseRemoteConfigSettings.Builder()
-            .setMinimumFetchIntervalInSeconds(if (BuildConfig.DEBUG) 0L else FETCH_INTERVAL_IN_SECS)
-            .build()
-        remoteConfig.setConfigSettingsAsync(configSettings)
-        remoteConfig.fetchAndActivate()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val updated = task.result
-                    Log.d(TAG, "Config params updated: $updated. Fetch and activate succeeded") // updated = false
-                } else {
-                    Log.d(TAG, "Fetch failed")
-                }
-            }
     }
 
     private fun initializeWalletConnect() {
@@ -136,10 +103,5 @@ open class PeraApp : Application() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         applicationContext.resources.configuration.uiMode = newConfig.uiMode
         super.onConfigurationChanged(newConfig)
-    }
-
-    companion object {
-        private const val TAG: String = "PeraApp"
-        private const val FETCH_INTERVAL_IN_SECS: Long = 3600L // 1 hour
     }
 }

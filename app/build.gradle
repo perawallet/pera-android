@@ -270,7 +270,7 @@ dependencies {
 
     // Wallet Connect v2
     implementation(platform(libs.walletconnect))
-    implementation(libs.android.core) {
+    implementation(libs.walletconnect.android.core) {
         exclude group: 'com.jakewharton.timber', module: 'timber'
     }
     implementation libs.sign

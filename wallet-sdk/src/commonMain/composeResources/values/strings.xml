@@ -1,0 +1,50 @@
+<resources>
+
+    <!-- Account Details -->
+    <string name="account_header">Account Information</string>
+    <string name="account_address">Public Key Address</string>
+    <string name="account_passphrase">Mnemomic / Passphrase</string>
+    <string name="account_button_lock">Lock Wallet</string>
+
+    <!-- Coin Flipper -->
+    <string name="play_button_opt_in">App Opt In</string>
+    <string name="play_button_close_out">Close Out App</string>
+    <string name="play_button_wait_message">It will take a few seconds for the new state to be recognized on the blockchain</string>
+    <string name="play_button_submit_bet">Bet submitted.  It will take a few seconds for the new state to be recognized on the blockchain</string>
+    <string name="play_button_settle_wait">It will take a few seconds for the bet to be settled on the blockchain</string>
+    <string name="play_button_flip_heads">Flip Coin Heads</string>
+    <string name="play_button_flip_tails">Flip Coin Tails</string>
+    <string name="play_button_pending">Pending&#8230;</string>
+    <string name="play_button_settle">Settle Bet</string>
+    <string name="play_title">Bet on the flip of a coin</string>
+    <string name="play_balance">Current Balance: </string>
+    <string name="play_current_round">Current Round: </string>
+    <string name="play_waiting_round">Waiting Round: </string>
+    <string name="play_balance_low">Balance too low to play CoinFlip, add some money from Testnet Dispenser</string>
+    <string name="play_game_header">Wager: Bet </string>
+    <string name="play_game_header2"> mAlgos on </string>
+    <string name="play_game_instructions">Click on a coin to pick a side and flip! \n(heads on left, tails on right)</string>
+
+    <!-- Error Handling -->
+    <string name="error_account">Could not create/recover wallet from passphrase</string>
+    <string name="error_account_flipcoin">Could not submit on chain.  Please check logs</string>
+    <string name="error_account_settle">Could not settle bet on chain.  Please check logs for issue</string>
+
+    <!-- Validator -->
+    <string name="validator_icon_content_description">Validator Icon</string>
+    <string name="validator_label">Validator</string>
+    <string name="validator_label_desc">By staking your ALGO on a validator, you contribute to the performance and safety of the Algorand network, all while earning ALGO in return</string>
+    <string name="validator_est_apy">Est. APY</string>
+    <string name="validator_est_apy_long">Estimated APY</string>
+    <string name="validator_est_apy_desc">This is the rate of return you earn for staking your ALGO on the validator</string>
+    <string name="validator_no_results">No Results</string>
+
+    <!-- Validator Detail -->
+    <string name="validator_detail_label_account">Account</string>
+    <string name="validator_detail_label_validator">Validator</string>
+    <string name="validator_detail_label_apy">APY</string>
+    <string name="validator_detail_label_fee">Commission Fee</string>
+    <string name="validator_detail_confirm_stake">Confirm</string>
+    <string name="validator_detail_button_wait_message">It will take a few seconds for the new state to be recognized on the blockchain</string>
+
+</resources>

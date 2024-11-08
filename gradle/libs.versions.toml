@@ -1,17 +1,23 @@
 [versions]
 agp = "8.7.2"
 algosdk = "2.5.0"
+androidx-activityCompose = "1.9.3"
+androidx-uiTest = "1.7.5"
 appCompat = "1.7.0"
 biometric = "1.1.0"
 ble = "2.8.0"
 browser = "1.8.0"
 kspGradlePlugin = "2.0.21-1.0.25"
 constraintLayout = "2.2.0"
+coil = "3.0.1"
+compose = "1.6.10"
+composeFoundation = "1.7.5"
 converterGson = "2.11.0"
 coreKtx = "1.13.1"
 coroutines = "1.9.0"
 dagger = "2.50"
-desugar = "2.1.2"
+desugar = "2.1.3"
+datastore = "1.1.1"
 detekt = "1.23.7"
 espresso = "3.6.1"
 exoPlayer = "2.19.1"
@@ -29,12 +35,12 @@ khex = "1.1.2"
 kotlin = "2.0.21"
 kotlinfixture = "1.2.0"
 kotlinxSerialization = "1.7.3"
-kotlinTest = "1.5.31"
+kotlinTest = "1.8.22"
 ksp = "2.0.21-1.0.25"
 ktor = "3.0.0"
 ktorContentNegotiation = "3.0.0"
 legacySupport = "1.0.0"
-lifecycle = "2.8.7"
+lifecycle = "2.8.6"
 lifecycleExt = "2.2.0"
 lottie = "6.4.1"
 material = "1.12.0"
@@ -57,7 +63,15 @@ zxing = "4.3.0"
 [libraries]
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 algosdk = { module = "com.algorand:algosdk", version.ref = "algosdk" }
-android-core = { module = "com.walletconnect:android-core" }
+androidx-activityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
+androidx-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-uiTest" }
+androidx-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-uiTest" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 ble = { module = "no.nordicsemi.android:ble", version.ref = "ble" }
@@ -129,6 +143,7 @@ runner = { module = "androidx.test:runner", version.ref = "runner" }
 sign = { module = "com.walletconnect:sign" }
 tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "tink" }
 walletconnect = { module = "com.walletconnect:android-bom", version.ref = "walletConnectBom" }
+walletconnect-android-core = { module = "com.walletconnect:android-core" }
 web3wallet = { module = "com.walletconnect:web3wallet" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxing" }
 
@@ -136,6 +151,8 @@ zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", ve
 firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-messaging", "firebase-perf"]
 
 [plugins]
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

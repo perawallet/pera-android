@@ -1,6 +1,9 @@
 # Gradle files
 .gradle/
 
+# KMP files
+.kotlin/
+
 # Build directory
 build/
 

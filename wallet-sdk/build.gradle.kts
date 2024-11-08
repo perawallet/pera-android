@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 plugins {
     id("com.android.library")
 
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.multiplatform)
@@ -45,35 +47,47 @@ kotlin {
         languageVersion.set(KotlinVersion.KOTLIN_2_0)
     }
 
-//    listOf(
-//        iosX64(),
-//        iosArm64(),
-//        iosSimulatorArm64()
-//    ).forEach {
-//        it.binaries.framework {
-//            baseName = "common"
-//            isStatic = true
-//        }
-//    }
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "common"
+            isStatic = true
+        }
+    }
 
     sourceSets {
         androidMain.dependencies {
+            implementation(compose.uiTooling)
+            implementation(libs.algosdk)
+            implementation(libs.androidx.compose.foundation)
+            implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+            implementation(libs.kotlinx.coroutines.android)
             implementation(libs.kotlinfixture)
+            implementation(libs.ktor.client.android)
             implementation(libs.ktor.client.okhttp)
-//            implementation(libs.ktor.client.android)
-//            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
+            implementation(compose.animation)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.runtime)
+            implementation(libs.coil.compose)
             implementation(libs.room.runtime)
             implementation(libs.ktor.client.core)
-
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
         }
-//        iosMain.dependencies {
-//            implementation(libs.ktor.client.darwin)
-//        }
-        commonTest.dependencies {
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+        androidUnitTest.dependencies {
             implementation(project(":test-utils"))
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
@@ -92,6 +106,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    buildFeatures {
+        // enables a Compose tooling support in the AndroidStudio
+        compose = true
+    }
 }
 
 room {
@@ -100,8 +118,8 @@ room {
 
 dependencies {
     add("kspAndroid", libs.room.compiler)
-    // add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-    // add("kspIosX64", libs.androidx.room.compiler)
-    // add("kspIosArm64", libs.androidx.room.compiler)
-    // add("kspCommonMainMetadata", libs.androidx.room.compiler)
+//     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+//     add("kspIosX64", libs.androidx.room.compiler)
+//     add("kspIosArm64", libs.androidx.room.compiler)
+//     add("kspCommonMainMetadata", libs.androidx.room.compiler)
 }

@@ -61,6 +61,7 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(compose.uiTooling)
+            implementation(libs.androidx.activityCompose)
             implementation(libs.algosdk)
             implementation(libs.androidx.compose.foundation)
             implementation(libs.androidx.lifecycle.runtime.compose)
@@ -70,6 +71,10 @@ kotlin {
             implementation(libs.kotlinfixture)
             implementation(libs.ktor.client.android)
             implementation(libs.ktor.client.okhttp)
+
+            implementation(project.dependencies.platform(libs.firebase.bom))
+            implementation(libs.firebase.analytics)
+            implementation(libs.firebase.config)
         }
         commonMain.dependencies {
             implementation(compose.animation)
@@ -79,6 +84,9 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.runtime)
             implementation(libs.coil.compose)
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.client.core)

@@ -91,7 +91,6 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.client.core)
             implementation(libs.room.runtime)
-
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

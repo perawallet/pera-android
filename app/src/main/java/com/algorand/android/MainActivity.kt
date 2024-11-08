@@ -102,6 +102,7 @@ class MainActivity :
     AlertDialogDelegation by AlertDialogDelegationImpl() {
 
     val mainViewModel: MainViewModel by viewModels()
+    private val coreActionsTabBarViewModel: CoreActionsTabBarViewModel by viewModels()
     private val walletConnectViewModel: WalletConnectViewModel by viewModels()
     private val qrScannerViewModel: QrScannerViewModel by viewModels()
 
@@ -508,6 +509,11 @@ class MainActivity :
             flow = firebaseTokenManager.firebaseTokenResultFlow,
             collection = firebaseTokenResultCollector
         )
+
+        collectLatestOnLifecycle(
+            flow = coreActionsTabBarViewModel.viewState,
+            collection = { binding.coreActionsTabBarView.initViewState(it) }
+        )
     }
 
     private fun navigateToConnectionIssueBottomSheet() {
@@ -643,7 +649,7 @@ class MainActivity :
     }
 
     private fun setupCoreActionsTabBarView() {
-        binding.coreActionsTabBarView.handleNavigationButtonsForFeatureFlags()
+        coreActionsTabBarViewModel.initViewState()
         binding.coreActionsTabBarView.setListener(object : CoreActionsTabBarView.Listener {
             override fun onSendClick() {
                 firebaseAnalytics.logTapSend()

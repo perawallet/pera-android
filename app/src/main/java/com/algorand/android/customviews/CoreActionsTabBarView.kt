@@ -15,10 +15,13 @@ package com.algorand.android.customviews
 import android.content.Context
 import android.util.AttributeSet
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.view.isVisible
+import com.algorand.android.CoreActionsTabBarViewModel
+import com.algorand.android.CoreActionsTabBarViewModel.ViewState.Content
+import com.algorand.android.CoreActionsTabBarViewModel.ViewState.Idle
 import com.algorand.android.R
 import com.algorand.android.databinding.CustomCoreActionsTabBarBinding
 import com.algorand.android.utils.viewbinding.viewBinding
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 
 class CoreActionsTabBarView @JvmOverloads constructor(
     context: Context,
@@ -70,12 +73,10 @@ class CoreActionsTabBarView @JvmOverloads constructor(
         binding.browseDAppsButton.isEnabled = isEnabled
     }
 
-    fun handleNavigationButtonsForFeatureFlags() {
-        val enableImmersve = FirebaseRemoteConfig.getInstance().getBoolean("enable_immersve")
-        if (enableImmersve) {
-            binding.cardsButton.visibility = VISIBLE
-        } else {
-            binding.cardsButton.visibility = GONE
+    fun initViewState(viewState: CoreActionsTabBarViewModel.ViewState) {
+        when (viewState) {
+            is Content -> binding.cardsButton.isVisible = viewState.isCardsVisible
+            Idle -> binding.cardsButton.visibility = GONE
         }
     }
 

@@ -12,10 +12,16 @@
 
 package com.algorand.common.remoteconfig.data.service
 
-internal interface FirebaseRemoteConfigService {
-    suspend fun fetchRemoteConfig()
-
-    fun getBoolean(key: String): Boolean
+internal actual fun getFirebaseRemoteConfigService(): FirebaseRemoteConfigService {
+    return FirebaseRemoteConfigServiceImpl()
 }
 
-internal expect fun getFirebaseRemoteConfigService(): FirebaseRemoteConfigService
+internal class FirebaseRemoteConfigServiceImpl : FirebaseRemoteConfigService {
+    override suspend fun fetchRemoteConfig() {
+        // TODO
+    }
+
+    override fun getBoolean(key: String): Boolean {
+        return false
+    }
+}

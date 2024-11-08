@@ -21,6 +21,10 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+internal actual fun getFirebaseRemoteConfigService(): FirebaseRemoteConfigService {
+    return FirebaseRemoteConfigServiceImpl()
+}
+
 internal class FirebaseRemoteConfigServiceImpl : FirebaseRemoteConfigService {
 
     private val remoteConfig: FirebaseRemoteConfig by lazy {
@@ -32,10 +36,10 @@ internal class FirebaseRemoteConfigServiceImpl : FirebaseRemoteConfigService {
     override suspend fun fetchRemoteConfig() = suspendCoroutine { continuation ->
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Log.d("test", "Fetch succeeded")
+                Log.d(TAG, "Fetch succeeded")
                 continuation.resume(Unit)
             } else {
-                Log.d("test", "Fetch failed")
+                Log.d(TAG, "Fetch failed")
                 continuation.resume(Unit)
             }
         }
@@ -53,5 +57,6 @@ internal class FirebaseRemoteConfigServiceImpl : FirebaseRemoteConfigService {
 
     private companion object {
         const val FETCH_INTERVAL_IN_SECS: Long = 3600L // 1 hour
+        const val TAG = "FirebaseREmoteConfigServiceImpl"
     }
 }

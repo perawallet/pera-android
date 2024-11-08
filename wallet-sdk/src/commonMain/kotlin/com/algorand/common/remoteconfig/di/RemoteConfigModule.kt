@@ -14,14 +14,14 @@ package com.algorand.common.remoteconfig.di
 
 import com.algorand.common.remoteconfig.data.repository.FeatureToggleRepositoryImpl
 import com.algorand.common.remoteconfig.data.service.FirebaseRemoteConfigService
-import com.algorand.common.remoteconfig.data.service.FirebaseRemoteConfigServiceImpl
+import com.algorand.common.remoteconfig.data.service.getFirebaseRemoteConfigService
 import com.algorand.common.remoteconfig.domain.repository.FeatureToggleRepository
 import com.algorand.common.remoteconfig.domain.usecase.InitializeOperationalToggles
 import com.algorand.common.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import org.koin.dsl.module
 
 val remoteConfigModule = module {
-    single<FirebaseRemoteConfigService> { FirebaseRemoteConfigServiceImpl() }
+    single<FirebaseRemoteConfigService> { getFirebaseRemoteConfigService() }
     single<FeatureToggleRepository> { FeatureToggleRepositoryImpl(get()) }
     single<InitializeOperationalToggles> {
         InitializeOperationalToggles {

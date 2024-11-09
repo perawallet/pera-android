@@ -261,6 +261,27 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun onStakingButtonClick() {
+        viewModelScope.launch {
+            mainActivityEventTracker.logQuickActionSwapButtonClickEvent()
+            var swapNavDirection: NavDirections? = null
+            swapNavigationDestinationHelper.getSwapNavigationDestination(
+                onNavToIntroduction = {
+                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapIntroductionNavigation()
+                },
+                onNavToAccountSelection = {
+                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapAccountSelectionNavigation()
+                },
+                onNavToSwap = { accountAddress ->
+                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapNavigation(accountAddress)
+                }
+            )
+            swapNavDirection?.let { direction ->
+                _swapNavigationResultFlow.emit(Event(direction))
+            }
+        }
+    }
+
     private fun initializeTutorial() {
         viewModelScope.launch {
             tutorialUseCase.initializeTutorial()

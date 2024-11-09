@@ -134,6 +134,11 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         override fun onAddAccountClick() {
             this@AccountsFragment.onAddAccountClick()
         }
+
+        override fun onStakingClick() {
+            // TODO refactor with a better name for logging
+            nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
+        }
     }
 
     private val accountAdapter: AccountAdapter = AccountAdapter(accountAdapterListener = accountAdapterListener)

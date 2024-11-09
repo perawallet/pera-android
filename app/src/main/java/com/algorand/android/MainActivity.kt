@@ -689,6 +689,10 @@ class MainActivity :
             override fun onCardsClick() {
                 nav(HomeNavigationDirections.actionGlobalCardsFragment())
             }
+
+            override fun onStakingClick() {
+                nav(HomeNavigationDirections.actionGlobalStakingFragment())
+            }
         })
     }
 

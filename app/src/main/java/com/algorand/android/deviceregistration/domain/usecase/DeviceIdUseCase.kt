@@ -42,7 +42,7 @@ class DeviceIdUseCase @Inject constructor(
         }
     }
 
-    suspend fun setSelectedNodeDeviceId(deviceId: String?) {
+    fun setSelectedNodeDeviceId(deviceId: String?) {
         when (getSelectedNetworkSlug()) {
             MAINNET_NETWORK_SLUG -> userDeviceIdRepository.setMainnetDeviceId(deviceId)
             TESTNET_NETWORK_SLUG -> userDeviceIdRepository.setTestnetDeviceId(deviceId)

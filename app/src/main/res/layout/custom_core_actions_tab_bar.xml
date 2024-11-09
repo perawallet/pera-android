@@ -46,12 +46,21 @@
         tools:layout_height="wrap_content">
 
         <com.algorand.android.customviews.ListMenuItemView
+            android:id="@+id/stakingButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_large"
+            app:description="@string/staking_menu_desc"
+            app:icon="@drawable/icn_stake"
+            app:title="@string/staking" />
+
+        <com.algorand.android.customviews.ListMenuItemView
             android:id="@+id/swapButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_large"
             app:description="@string/convert_between_popular_asa_pairs"
-            app:icon="@drawable/ic_swap_quick_actions"
+            app:icon="@drawable/ic_swap_helper_button_bg_gray"
             app:title="@string/swap" />
 
 

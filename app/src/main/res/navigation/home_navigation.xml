@@ -289,6 +289,10 @@
         android:id="@+id/action_global_cardsFragment"
         app:destination="@id/cardsFragment" />
 
+    <action
+        android:id="@+id/action_global_stakingFragment"
+        app:destination="@id/stakingFragment" />
+
     <!-- Remove this action and use the one in the main navigation after Lock Screen navigation change. -->
     <action
         android:id="@+id/action_global_singleButtonBottomSheet"
@@ -329,7 +333,6 @@
         <action
             android:id="@+id/action_collectiblesFragment_to_collectibleDetailFragment"
             app:destination="@id/collectibleDetailFragment" />
-
         <action
             android:id="@+id/action_collectiblesFragment_to_receiveCollectibleFragment"
             app:destination="@id/receiveCollectibleFragment" />
@@ -502,6 +505,9 @@
         <action
             android:id="@+id/action_accountsFragment_to_assetInboxAllAccountsNavigation"
             app:destination="@id/assetInboxAllAccountsNavigation" />
+        <action
+            android:id="@+id/action_accountsFragment_to_StakingFragment"
+            app:destination="@id/stakingFragment" />
     </fragment>
 
     <fragment
@@ -519,6 +525,12 @@
         android:name="com.algorand.android.modules.card.CardsFragment"
         android:label="CardsFragment"
         tools:layout="@layout/fragment_cards" />
+
+    <fragment
+        android:id="@+id/stakingFragment"
+        android:name="com.algorand.android.modules.staking.StakingFragment"
+        android:label="StakingFragment"
+        tools:layout="@layout/fragment_staking" />
 
     <fragment
         android:id="@+id/removeAssetsFragment"

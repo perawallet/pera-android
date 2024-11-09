@@ -109,6 +109,10 @@ class AccountAdapter(
         override fun onScanQrClick() {
             accountAdapterListener.onScanQrClick()
         }
+
+        override fun onStakingClick() {
+            accountAdapterListener.onStakingClick()
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -141,6 +145,7 @@ class AccountAdapter(
         fun onBackupBannerActionButtonClick()
         fun onBuySellClick()
         fun onSendClick()
+        fun onStakingClick()
         fun onSwapClick()
         fun onScanQrClick()
         fun onSortClick()

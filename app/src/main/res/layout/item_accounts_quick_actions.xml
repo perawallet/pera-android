@@ -22,7 +22,7 @@
     <androidx.constraintlayout.helper.widget.Flow
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="swapButton, buySellButton, sendButton,scanQrButton"
+        app:constraint_referenced_ids="swapButton, stakingButton, buySellButton, sendButton,scanQrButton"
         app:flow_maxElementsWrap="4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,6 +35,14 @@
         android:layout_height="wrap_content"
         android:text="@string/swap"
         app:icon="@drawable/ic_swap_quick_actions" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/stakingButton"
+        style="@style/IconButton.Transparent.QuickAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/staking"
+        app:icon="@drawable/icn_stake" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buySellButton"

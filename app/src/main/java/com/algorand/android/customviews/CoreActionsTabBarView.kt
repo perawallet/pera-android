@@ -78,15 +78,9 @@ class CoreActionsTabBarView @JvmOverloads constructor(
         when (viewState) {
             is Content -> {
                 binding.cardsButton.isVisible = viewState.isImmersveEnabled
-                if (viewState.isStakingEnabled) {
-                    binding.stakingButton.visibility = VISIBLE
-                    binding.sendButton.visibility = GONE
-                    binding.scanQrButton.visibility = GONE
-                } else {
-                    binding.stakingButton.visibility = GONE
-                    binding.sendButton.visibility = VISIBLE
-                    binding.scanQrButton.visibility = VISIBLE
-                }
+                binding.stakingButton.isVisible = viewState.isStakingEnabled
+                binding.sendButton.isVisible = !viewState.isStakingEnabled
+                binding.scanQrButton.isVisible = !viewState.isStakingEnabled
             }
             Idle -> {
                 binding.cardsButton.visibility = GONE

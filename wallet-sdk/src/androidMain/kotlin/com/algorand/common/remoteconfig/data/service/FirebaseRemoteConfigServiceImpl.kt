@@ -57,6 +57,6 @@ internal class FirebaseRemoteConfigServiceImpl : FirebaseRemoteConfigService {
 
     private companion object {
         const val FETCH_INTERVAL_IN_SECS: Long = 3600L // 1 hour
-        const val TAG = "FirebaseREmoteConfigServiceImpl"
+        const val TAG = "FirebaseRemoteConfigServiceImpl"
     }
 }

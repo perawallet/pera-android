@@ -104,9 +104,4 @@ open class PeraApp : Application() {
         applicationContext.resources.configuration.uiMode = newConfig.uiMode
         super.onConfigurationChanged(newConfig)
     }
-
-    companion object {
-        private const val TAG: String = "PeraApp"
-        private const val FETCH_INTERVAL_IN_SECS: Long = 3600L // 1 hour
-    }
 }

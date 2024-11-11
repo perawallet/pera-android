@@ -136,7 +136,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onStakingClick() {
-            // TODO refactor with a better name for logging
             nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
         }
     }

@@ -31,7 +31,9 @@ sealed class BaseAccountListItem : RecyclerListItem {
     }
 
     data class QuickActionsItem(
-        val isSwapButtonSelected: Boolean
+        val isSwapButtonSelected: Boolean,
+        val isImmersveEnabled: Boolean,
+        val isStakingEnabled: Boolean
     ) : BaseAccountListItem() {
 
         override val itemType: ItemType

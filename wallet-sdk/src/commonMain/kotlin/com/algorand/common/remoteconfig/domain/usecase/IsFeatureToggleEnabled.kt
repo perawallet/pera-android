@@ -12,6 +12,9 @@
 
 package com.algorand.common.remoteconfig.domain.usecase
 
+const val IMMERSVE_BUTTON_TOGGLE = "enable_immersve"
+const val STAKING_BUTTON_TOGGLE = "enable_staking"
+
 fun interface IsFeatureToggleEnabled {
     operator fun invoke(featureToggleKey: String): Boolean
 }

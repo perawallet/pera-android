@@ -14,12 +14,10 @@ package com.algorand.android.modules.accounts.ui.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.constraintlayout.motion.widget.MotionLayout.GONE
-import androidx.constraintlayout.motion.widget.MotionLayout.VISIBLE
+import androidx.core.view.isVisible
 import com.algorand.android.databinding.ItemAccountsQuickActionsBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 
 class AccountsQuickActionsViewHolder(
     private val binding: ItemAccountsQuickActionsBinding,
@@ -29,8 +27,14 @@ class AccountsQuickActionsViewHolder(
     override fun bind(item: BaseAccountListItem) {
         if (item !is BaseAccountListItem.QuickActionsItem) return
         with(binding) {
-            stakingButton.setOnClickListener { listener.onStakingClick() }
-            buySellButton.setOnClickListener { listener.onBuySellClick() }
+            stakingButton.apply {
+                isVisible = item.isStakingEnabled
+                setOnClickListener { listener.onStakingClick() }
+            }
+            buySellButton.apply {
+                isVisible = !item.isStakingEnabled
+                setOnClickListener { listener.onBuySellClick() }
+            }
             sendButton.setOnClickListener { listener.onSendClick() }
             swapButton.apply {
                 isSelected = item.isSwapButtonSelected
@@ -51,19 +55,7 @@ class AccountsQuickActionsViewHolder(
     companion object {
         fun create(parent: ViewGroup, listener: AccountsQuickActionsListener): AccountsQuickActionsViewHolder {
             val binding = ItemAccountsQuickActionsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            handleNavigationButtonsForFeatureFlags(binding)
             return AccountsQuickActionsViewHolder(binding, listener)
-        }
-
-        fun handleNavigationButtonsForFeatureFlags(binding: ItemAccountsQuickActionsBinding) {
-            val enableStaking = FirebaseRemoteConfig.getInstance().getBoolean("enable_staking")
-            if (enableStaking) {
-                binding.stakingButton.visibility = VISIBLE
-                binding.buySellButton.visibility = GONE
-            } else {
-                binding.stakingButton.visibility = GONE
-                binding.buySellButton.visibility = VISIBLE
-            }
         }
     }
 }

@@ -34,7 +34,15 @@ class AccountListItemMapper @Inject constructor() {
         return AccountItem(accountListItem, canCopyable)
     }
 
-    fun mapToQuickActionsItem(isSwapButtonSelected: Boolean): BaseAccountListItem.QuickActionsItem {
-        return BaseAccountListItem.QuickActionsItem(isSwapButtonSelected = isSwapButtonSelected)
+    fun mapToQuickActionsItem(
+        isSwapButtonSelected: Boolean,
+        isImmersveEnabled: Boolean,
+        isStakingEnabled: Boolean
+    ): BaseAccountListItem.QuickActionsItem {
+        return BaseAccountListItem.QuickActionsItem(
+            isSwapButtonSelected = isSwapButtonSelected,
+            isImmersveEnabled = isImmersveEnabled,
+            isStakingEnabled = isStakingEnabled
+        )
     }
 }

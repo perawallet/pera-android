@@ -57,11 +57,14 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.combine
 import com.algorand.android.utils.extensions.getAssetHoldingList
 import com.algorand.android.utils.formatAsCurrency
-import java.math.BigDecimal
-import javax.inject.Inject
+import com.algorand.common.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
+import com.algorand.common.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.common.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import java.math.BigDecimal
+import javax.inject.Inject
 
 // TODO Refactor this class for performance and code quality
 @Suppress("LongParameterList")
@@ -90,7 +93,8 @@ class AccountsPreviewUseCase @Inject constructor(
     private val assetCacheManagerUseCase: AssetCacheManagerUseCase,
     private val getAskNotificationPermissionEventFlowUseCase: GetAskNotificationPermissionEventFlowUseCase,
     private val peraConnectivityManager: PeraConnectivityManager,
-    private val accountBackupStatusUseCase: AccountBackupStatusUseCase
+    private val accountBackupStatusUseCase: AccountBackupStatusUseCase,
+    private val isFeatureToggleEnabledUseCase: IsFeatureToggleEnabled
 ) {
 
     suspend fun dismissTutorial(tutorialId: Int) {
@@ -316,7 +320,9 @@ class AccountsPreviewUseCase @Inject constructor(
         accountsList.add(
             index = QUICK_ACTIONS_ITEM_INDEX,
             element = accountListItemMapper.mapToQuickActionsItem(
-                isSwapButtonSelected = getSwapFeatureRedDotVisibilityUseCase.getSwapFeatureRedDotVisibility()
+                isSwapButtonSelected = getSwapFeatureRedDotVisibilityUseCase.getSwapFeatureRedDotVisibility(),
+                isImmersveEnabled = isFeatureToggleEnabledUseCase.invoke(IMMERSVE_BUTTON_TOGGLE),
+                isStakingEnabled = isFeatureToggleEnabledUseCase.invoke(STAKING_BUTTON_TOGGLE)
             )
         )
     }

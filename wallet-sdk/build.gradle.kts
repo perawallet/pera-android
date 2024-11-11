@@ -62,7 +62,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.uiTooling)
             implementation(libs.androidx.activityCompose)
-            implementation(libs.algosdk)
+            // implementation(libs.algosdk)
             implementation(libs.androidx.compose.foundation)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -118,6 +118,13 @@ android {
         // enables a Compose tooling support in the AndroidStudio
         compose = true
     }
+
+//    configurations.all {
+//        exclude(module = "bcprov-jdk15to18")
+//        exclude(module = "bcutil-jdk18on")
+//        exclude(module = "bcprov-jdk15on")
+//        exclude(module = "bcutil-jdk15on")
+//    }
 }
 
 room {

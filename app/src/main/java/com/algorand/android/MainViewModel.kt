@@ -51,13 +51,13 @@ import com.algorand.android.utils.exceptions.TransactionIdNullException
 import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.sendErrorLog
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @Suppress("LongParameterList")
 @HiltViewModel
@@ -241,27 +241,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun onSwapActionButtonClick() {
-        viewModelScope.launch {
-            mainActivityEventTracker.logQuickActionSwapButtonClickEvent()
-            var swapNavDirection: NavDirections? = null
-            swapNavigationDestinationHelper.getSwapNavigationDestination(
-                onNavToIntroduction = {
-                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapIntroductionNavigation()
-                },
-                onNavToAccountSelection = {
-                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapAccountSelectionNavigation()
-                },
-                onNavToSwap = { accountAddress ->
-                    swapNavDirection = HomeNavigationDirections.actionGlobalSwapNavigation(accountAddress)
-                }
-            )
-            swapNavDirection?.let { direction ->
-                _swapNavigationResultFlow.emit(Event(direction))
-            }
-        }
-    }
-
-    fun onStakingButtonClick() {
         viewModelScope.launch {
             mainActivityEventTracker.logQuickActionSwapButtonClickEvent()
             var swapNavDirection: NavDirections? = null

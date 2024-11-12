@@ -10,23 +10,24 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.keyreg.ui.presentation.model
+package com.algorand.android.modules.keyreg.ui.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-import java.math.BigInteger
+import com.algorand.android.modules.keyreg.domain.model.KeyRegTransaction
+import com.algorand.android.utils.Event
 
-@Parcelize
-data class KeyRegTransactionDetail(
+data class KeyRegTransactionFragmentPreview(
+    val isLoadingVisible: Boolean,
     val address: String,
+    val fee: String,
     val type: String,
-    val voteKey: String?,
-    val selectionPublicKey: String?,
-    val sprfkey: String?,
-    val voteFirstRound: String?,
-    val voteLastRound: String?,
-    val voteKeyDilution: String?,
-    val fee: BigInteger?,
-    val note: String?,
-    val xnote: String?
-) : Parcelable
+    val selectionKey: String,
+    val votingKey: String,
+    val stateProofKey: String,
+    val keyDilution: String,
+    val firstValid: String,
+    val lastValid: String,
+    val xNote: String,
+    val note: String,
+    val signTransactionEvent: Event<KeyRegTransaction>?,
+    val showErrorEvent: Event<Unit>?
+)

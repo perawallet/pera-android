@@ -10,10 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.keyreg.ui.presentation.view
+package com.algorand.android.modules.keyreg.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.compose.material3.MaterialTheme
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
@@ -23,8 +24,8 @@ import com.algorand.android.databinding.FragmentKeyRegTransactionBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.keyreg.domain.KeyRegTransactionSignManager
-import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionFragmentPreview
-import com.algorand.android.modules.keyreg.ui.presentation.viewmodel.KeyRegTransactionViewModel
+import com.algorand.android.modules.keyreg.ui.components.keyRegTable
+import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionFragmentPreview
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.Error
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.LedgerScanFailed
@@ -95,10 +96,16 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
 
     private fun initUi() {
         with(binding) {
-            button.setOnClickListener {
-                // TODO navToConfirmationBottomSheet()
-                keyRegTransactionViewModel.confirmTransaction()
+            composeKeyRegTransactionFragment.setContent {
+                MaterialTheme {
+                    keyRegTable(null)
+                }
             }
+
+//            button.setOnClickListener {
+//                // TODO navToConfirmationBottomSheet()
+//                keyRegTransactionViewModel.confirmTransaction()
+//            }
         }
     }
 
@@ -122,10 +129,23 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
     }
 
     private fun initPreview(preview: KeyRegTransactionFragmentPreview) {
-        // TODO
-        binding.text2.text = preview.address
-        preview.signTransactionEvent?.consume()?.let { keyRegTxn ->
-            keyRegTransactionSignManager.signKeyRegTransaction(keyRegTxn)
+
+        with(binding) {
+            composeKeyRegTransactionFragment.setContent {
+                MaterialTheme {
+                    keyRegTable(
+                        preview,
+                        onBackClick = {
+                            activity?.getSupportFragmentManager()?.popBackStack()
+                        },
+                        onConfirmClick = {
+                        preview.signTransactionEvent?.consume()?.let { keyRegTxn ->
+                            keyRegTransactionSignManager.signKeyRegTransaction(keyRegTxn)
+                        }
+                        keyRegTransactionViewModel.confirmTransaction()
+                    })
+                }
+            }
         }
     }
 

@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.keyreg.ui.presentation.view
+package com.algorand.android.modules.keyreg.ui
 
 import android.widget.ImageView
 import android.widget.TextView

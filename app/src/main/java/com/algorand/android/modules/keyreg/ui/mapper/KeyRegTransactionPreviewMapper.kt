@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.keyreg.ui.presentation.mapper
+package com.algorand.android.modules.keyreg.ui.mapper
 
-import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionDetail
-import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionFragmentPreview
+import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
+import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionFragmentPreview
 import javax.inject.Inject
 
 class KeyRegTransactionPreviewMapper @Inject constructor() {

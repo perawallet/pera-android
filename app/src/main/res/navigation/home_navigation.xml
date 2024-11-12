@@ -322,7 +322,7 @@
         app:destination="@id/KeyRegTransactionFragment">
         <argument
             android:name="keyRegTransactionDetail"
-            app:argType="com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionDetail" />
+            app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
     </action>
 
     <action
@@ -339,12 +339,12 @@
 
     <fragment
         android:id="@+id/KeyRegTransactionFragment"
-        android:name="com.algorand.android.modules.keyreg.ui.presentation.view.KeyRegTransactionFragment"
+        android:name="com.algorand.android.modules.keyreg.ui.KeyRegTransactionFragment"
         android:label="fragment_key_reg_transaction"
         tools:layout="@layout/fragment_key_reg_transaction">
         <argument
             android:name="keyRegTransactionDetail"
-            app:argType="com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionDetail" />
+            app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
     </fragment>
 
     <fragment

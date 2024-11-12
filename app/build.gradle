@@ -9,6 +9,9 @@ plugins {
     id "androidx.navigation.safeargs.kotlin"
     id "dagger.hilt.android.plugin"
     id 'com.google.firebase.firebase-perf'
+
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose)
 }
 
 apply from: 'https://raw.githubusercontent.com/Hipo/macaron/master/config/quality/quality.gradle'
@@ -192,6 +195,7 @@ android {
     buildFeatures {
         viewBinding true
         buildConfig = true
+        compose = true
     }
 
     packagingOptions {
@@ -218,6 +222,8 @@ dependencies {
     implementation libs.kotlinx.coroutines.android
 
     implementation libs.material
+    implementation libs.androidx.compose.material3
+
     implementation libs.flexbox
     implementation libs.appcompat
     implementation libs.legacy.support.v4
@@ -244,6 +250,9 @@ dependencies {
     implementation libs.ble
 
     implementation libs.fragment.ktx
+
+    implementation libs.androidx.compose.fragment
+    implementation libs.androidx.compose.ui.tooling.preview
 
     implementation libs.multidex
 

@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.keyreg.ui.presentation.viewmodel
+package com.algorand.android.modules.keyreg.ui
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -18,9 +18,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.modules.keyreg.domain.usecase.CreateKeyRegTransaction
-import com.algorand.android.modules.keyreg.ui.presentation.mapper.KeyRegTransactionPreviewMapper
-import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionDetail
-import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionFragmentPreview
+import com.algorand.android.modules.keyreg.ui.mapper.KeyRegTransactionPreviewMapper
+import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
+import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionFragmentPreview
 import com.algorand.android.usecase.SendSignedTransactionUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrThrow
@@ -39,7 +39,9 @@ class KeyRegTransactionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    var keyRegTransactionDetail = savedStateHandle.getOrThrow<KeyRegTransactionDetail>(KEY_REG_DETAIL)
+    var keyRegTransactionDetail = savedStateHandle.getOrThrow<KeyRegTransactionDetail>(
+        KEY_REG_DETAIL
+    )
 
     private val _previewState = MutableStateFlow<KeyRegTransactionFragmentPreview?>(null)
     val previewState

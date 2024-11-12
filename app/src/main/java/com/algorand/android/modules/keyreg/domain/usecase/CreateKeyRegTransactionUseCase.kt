@@ -22,7 +22,7 @@ import com.algorand.android.modules.algosdk.domain.model.OnlineKeyRegTransaction
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOfflineTransaction
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOnlineTransaction
 import com.algorand.android.modules.keyreg.domain.model.KeyRegTransaction
-import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionDetail
+import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.transaction.domain.GetTransactionParams
 import javax.inject.Inject
 

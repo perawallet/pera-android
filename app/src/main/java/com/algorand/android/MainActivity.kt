@@ -63,7 +63,7 @@ import com.algorand.android.modules.deeplink.domain.model.NotificationGroupType
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
-import com.algorand.android.modules.keyreg.ui.presentation.model.KeyRegTransactionDetail
+import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
 import com.algorand.android.modules.qrscanning.QrScannerViewModel

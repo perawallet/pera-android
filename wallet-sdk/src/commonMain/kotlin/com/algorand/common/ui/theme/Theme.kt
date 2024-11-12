@@ -12,7 +12,6 @@
 
 package com.algorand.common.ui.theme
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -25,7 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 
-private val LightColorScheme =
+val LightColorScheme =
     lightColorScheme(
         primary = md_theme_light_primary,
         onPrimary = md_theme_light_onPrimary,
@@ -58,7 +57,7 @@ private val LightColorScheme =
         scrim = md_theme_light_scrim,
     )
 
-private val DarkColorScheme =
+val DarkColorScheme =
     darkColorScheme(
         primary = md_theme_dark_primary,
         onPrimary = md_theme_dark_onPrimary,
@@ -93,9 +92,8 @@ private val DarkColorScheme =
 
 internal val LocalThemeIsDark = compositionLocalOf { mutableStateOf(true) }
 
-@SuppressLint("ComposableNaming")
 @Composable
-internal fun AppTheme(
+fun appTheme(
     content:
         @Composable()
         () -> Unit,

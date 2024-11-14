@@ -16,6 +16,8 @@ import com.algorand.android.deeplink.RAW_MNEMONIC_JSON
 import com.algorand.android.modules.deeplink.DeepLinkParser
 import com.algorand.android.modules.deeplink.domain.model.BaseDeepLink
 import com.algorand.android.modules.deeplink.domain.model.RawDeepLink
+import com.algorand.android.modules.webimport.common.data.mapper.WebImportQrCodeMapper
+import com.squareup.moshi.Moshi
 import java.math.BigInteger
 
 abstract class BaseDeepLinkTest {
@@ -37,7 +39,7 @@ abstract class BaseDeepLinkTest {
     private val algoTransferDeeplink = "$baseUrl$publicKey?amount=$amount&note=$note"
     private val walletConnectDeeplink = "$walletConnectBaseUrl$walletConnectUrl"
 
-    private val deepLinkParser = DeepLinkParser()
+    private val deepLinkParser = DeepLinkParser(Moshi.Builder().build(), WebImportQrCodeMapper())
 
     abstract fun isCreatingAddContactDeeplinkWorksTestFunction()
     abstract fun isCreatingAddWatchAccountDeeplinkWorksTestFunction()

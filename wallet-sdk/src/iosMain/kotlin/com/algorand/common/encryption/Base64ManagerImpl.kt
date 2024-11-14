@@ -12,11 +12,17 @@
 
 package com.algorand.common.encryption
 
-interface Base64Manager {
-
-    fun encode(byteArray: ByteArray): String
-
-    fun decode(value: String): ByteArray
+internal actual fun getBase64Manager(): Base64Manager {
+    return Base64ManagerImpl()
 }
 
-internal expect fun getBase64Manager(): Base64Manager
+internal class Base64ManagerImpl : Base64Manager {
+
+    override fun encode(byteArray: ByteArray): String {
+        return ""
+    }
+
+    override fun decode(value: String): ByteArray {
+        return ByteArray(0)
+    }
+}

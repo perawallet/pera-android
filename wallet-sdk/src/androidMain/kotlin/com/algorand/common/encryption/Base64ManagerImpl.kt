@@ -12,11 +12,19 @@
 
 package com.algorand.common.encryption
 
-interface Base64Manager {
+import android.util.Base64
 
-    fun encode(byteArray: ByteArray): String
-
-    fun decode(value: String): ByteArray
+internal actual fun getBase64Manager(): Base64Manager {
+    return Base64ManagerImpl()
 }
 
-internal expect fun getBase64Manager(): Base64Manager
+internal class Base64ManagerImpl : Base64Manager {
+
+    override fun encode(byteArray: ByteArray): String {
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
+    }
+
+    override fun decode(value: String): ByteArray {
+        return Base64.decode(value, Base64.DEFAULT)
+    }
+}

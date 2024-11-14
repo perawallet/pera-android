@@ -10,17 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.testing
 
-import android.util.Base64
+class PeraFixture {
 
-internal class Base64ManagerImpl : Base64Manager {
-
-    override fun encode(byteArray: ByteArray): String {
-        return Base64.encodeToString(byteArray, Base64.DEFAULT)
-    }
-
-    override fun decode(value: String): ByteArray {
-        return Base64.decode(value, Base64.DEFAULT)
+    inline operator fun <reified T : Any?> invoke(): T {
+        return 0 as T
     }
 }
+
+actual inline fun <reified T : Any?> peraFixture(listItemSize: Int): T  = PeraFixture().invoke()

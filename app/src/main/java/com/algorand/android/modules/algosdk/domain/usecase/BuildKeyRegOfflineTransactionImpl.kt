@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.algosdk.domain.usecase
 
+import android.util.Log
 import com.algorand.algosdk.builder.transaction.KeyRegistrationTransactionBuilder
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.algosdk.domain.mapper.TransactionParametersResponseMapper
@@ -25,6 +26,7 @@ internal class BuildKeyRegOfflineTransactionImpl @Inject constructor(
         return try {
             createTransaction(address, txnParams)
         } catch (e: Exception) {
+            Log.e("BuildKeyRegOnlineTransactionImpl", e.toString())
             null
         }
     }

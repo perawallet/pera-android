@@ -14,6 +14,8 @@
 package com.algorand.android.deeplink.parser
 
 import com.algorand.android.modules.deeplink.DeepLinkParser
+import com.algorand.android.modules.webimport.common.data.mapper.WebImportQrCodeMapper
+import com.squareup.moshi.Moshi
 import java.math.BigInteger
 
 abstract class BaseDeepLinkParserTest {
@@ -28,7 +30,7 @@ abstract class BaseDeepLinkParserTest {
     private val note = "Editable_1_USDC_Transfer_Note"
     private val walletConnectUrl = "wc:b562a118-0cbd-4f4f-92af-e58bf0a9dfb8@1?bridge=https://wallet-connect-d.perawallet.app&key=672a4fbd212bfdbf6e0c8a858d9ab1577df169e7eac74c7175b9a3fd0faea889"
 
-    private val parser: DeepLinkParser = DeepLinkParser()
+    private val parser: DeepLinkParser = DeepLinkParser(Moshi.Builder().build(), WebImportQrCodeMapper())
 
     private val accountOnlyDeeplink = "$baseUrl$publicKey"
     private val assetOptInDeeplink = "$baseUrl?amount=0&asset=$assetId"

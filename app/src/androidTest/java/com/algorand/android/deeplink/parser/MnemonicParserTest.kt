@@ -16,11 +16,13 @@ import com.algorand.android.deeplink.RANDOM_MNEMONIC
 import com.algorand.android.deeplink.RAW_MNEMONIC_JSON
 import com.algorand.android.modules.deeplink.DeepLinkParser
 import com.algorand.android.modules.deeplink.domain.model.RawDeepLink
+import com.algorand.android.modules.webimport.common.data.mapper.WebImportQrCodeMapper
+import com.squareup.moshi.Moshi
 import org.junit.Test
 
 class MnemonicParserTest {
 
-    private val parser = DeepLinkParser()
+    private val parser = DeepLinkParser(Moshi.Builder().build(), WebImportQrCodeMapper())
 
     @Test
     fun isParsingMnemonicWorks() {

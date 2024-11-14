@@ -61,6 +61,7 @@ class KeyRegTransactionViewModel @Inject constructor(
                     _previewState.value = _previewState.value?.copy(signTransactionEvent = Event(transaction))
                 },
                 onFailed = { exception, _ ->
+                    Log.e(TAG, exception.message.toString())
                     _previewState.value = _previewState.value?.copy(showErrorEvent = Event(Unit))
                 }
             )
@@ -74,11 +75,11 @@ class KeyRegTransactionViewModel @Inject constructor(
             sendSignedTransactionUseCase.sendSignedTransaction(signedTransactionDetail).collectLatest {
                 it.useSuspended(
                     onSuccess = {
-                        Log.e("TAG", "Success")
+                        Log.e(TAG, "Success")
                         // Handle success
                     },
                     onFailed = {
-                        Log.e("TAG", "Error = ${it.exception}")
+                        Log.e(TAG, "Error = ${it.exception}")
                         // Handle error
                     }
                 )
@@ -89,5 +90,6 @@ class KeyRegTransactionViewModel @Inject constructor(
     private companion object {
         const val SIGNING_ACCOUNT_ADDRSS = "signingAccountAddress"
         const val KEY_REG_DETAIL = "keyRegTransactionDetail"
+        const val TAG = "KeyRegTransactionViewModel"
     }
 }

@@ -129,7 +129,6 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
     }
 
     private fun initPreview(preview: KeyRegTransactionFragmentPreview) {
-
         with(binding) {
             composeKeyRegTransactionFragment.setContent {
                 MaterialTheme {
@@ -139,11 +138,9 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
                             activity?.getSupportFragmentManager()?.popBackStack()
                         },
                         onConfirmClick = {
-                        preview.signTransactionEvent?.consume()?.let { keyRegTxn ->
-                            keyRegTransactionSignManager.signKeyRegTransaction(keyRegTxn)
+                            keyRegTransactionViewModel.confirmTransaction()
                         }
-                        keyRegTransactionViewModel.confirmTransaction()
-                    })
+                    )
                 }
             }
         }

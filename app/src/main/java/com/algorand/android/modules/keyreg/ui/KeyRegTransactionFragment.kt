@@ -101,11 +101,6 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
                     keyRegTable(null)
                 }
             }
-
-//            button.setOnClickListener {
-//                // TODO navToConfirmationBottomSheet()
-//                keyRegTransactionViewModel.confirmTransaction()
-//            }
         }
     }
 
@@ -139,8 +134,11 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
                         },
                         onConfirmClick = {
                             keyRegTransactionViewModel.confirmTransaction()
-                        }
+                        },
                     )
+                    preview.signTransactionEvent?.consume()?.let { keyRegTxn ->
+                        keyRegTransactionSignManager.signKeyRegTransaction(keyRegTxn)
+                    }
                 }
             }
         }

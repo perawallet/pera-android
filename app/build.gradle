@@ -199,17 +199,16 @@ android {
     }
 
     packagingOptions {
-        exclude("lib/libnarcissus-macos-64.dylib")
-        exclude("lib/libnarcissus-win-32.dll")
-        exclude("lib/libnarcissus-win-64.dll")
+        exclude 'META-INF/DEPENDENCIES.md'
+        exclude 'META-INF/NOTICE.md'
+        exclude 'META-INF/LICENSE.md'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/ASL2.0.md'
+        exclude 'lib/libnarcissus-macos-64.dylib'
+        exclude 'lib/libnarcissus-win-32.dll'
+        exclude 'lib/libnarcissus-win-64.dll'
     }
-
-//    configurations {
-//        all*.exclude module: 'bcprov-jdk15to18'
-//        all*.exclude module: 'bcutil-jdk18on'
-//        all*.exclude module: 'bcprov-jdk15on'
-//        all*.exclude module: 'bcutil-jdk15on'
-//    }
 
     namespace application.applicationId
 }
@@ -264,9 +263,9 @@ dependencies {
 
     implementation libs.review.ktx
 
-    implementation libs.hilt.android.dagger
-    ksp libs.hilt.android.compiler
-    ksp libs.hilt.androidx
+    implementation libs.dagger.hilt.android
+    ksp libs.dagger.hilt.compiler
+    ksp libs.androidx.hilt.compiler
     implementation(platform(libs.koin.bom))
     implementation libs.koin.core
     implementation libs.koin.android
@@ -302,9 +301,7 @@ dependencies {
     // ExoPlayer
     implementation libs.exoplayer
 
-    implementation(libs.algosdk) {
-        exclude group: 'org.bouncycastle'
-    }
+    implementation(libs.algosdk)
 
     // Test
     testImplementation libs.mockk

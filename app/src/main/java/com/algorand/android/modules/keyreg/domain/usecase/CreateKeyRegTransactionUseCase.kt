@@ -24,6 +24,8 @@ import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOnlineTran
 import com.algorand.android.modules.keyreg.domain.model.KeyRegTransaction
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.transaction.domain.GetTransactionParams
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import java.security.Security
 import javax.inject.Inject
 
 fun interface CreateKeyRegTransaction {
@@ -55,6 +57,8 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
     }
 
     private fun createTransactionByteArray(txnDetail: KeyRegTransactionDetail, params: TransactionParams): ByteArray? {
+        Security.removeProvider("BC")
+        Security.insertProviderAt(BouncyCastleProvider(), 0)
         return if (txnDetail.isOnlineKeyRegTxn()) {
             buildKeyRegOnlineTransaction(txnDetail.toOnlineTxnPayload(params))
         } else {

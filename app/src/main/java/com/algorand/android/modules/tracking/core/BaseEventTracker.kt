@@ -19,17 +19,17 @@ open class BaseEventTracker protected constructor(private val peraEventTracker: 
     // TODO handle event tracking permission level in this class
 
     @Inject
-    protected lateinit var nodeSettingsUseCase: NodeSettingsUseCase
+    lateinit var nodeSettingsUseCase: NodeSettingsUseCase
 
-    protected suspend fun logEvent(eventName: String) {
+    suspend fun logEvent(eventName: String) {
         peraEventTracker.logEvent(getFormattedEventName(eventName))
     }
 
-    protected suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>) {
+    suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>) {
         peraEventTracker.logEvent(eventName, payloadMap)
     }
 
-    private suspend fun getFormattedEventName(eventName: String): String {
+    suspend fun getFormattedEventName(eventName: String): String {
         return if (nodeSettingsUseCase.isSelectedNodeTestnet()) "$TESTNET_EVENT_NAME_PREFIX$eventName" else eventName
     }
 

@@ -62,7 +62,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.uiTooling)
             implementation(libs.androidx.activityCompose)
-            // implementation(libs.algosdk)
+            api(libs.algosdk)
             implementation(libs.androidx.compose.foundation)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -119,12 +119,13 @@ android {
         compose = true
     }
 
-//    configurations.all {
-//        exclude(module = "bcprov-jdk15to18")
-//        exclude(module = "bcutil-jdk18on")
-//        exclude(module = "bcprov-jdk15on")
-//        exclude(module = "bcutil-jdk15on")
-//    }
+    configurations.all {
+        // exclude duplicate bouncycastle till walletconnect is no longer used
+        exclude(group = "org.bouncycastle", module = "bcprov-jdk15to18")
+        exclude(group = "org.bouncycastle", module = "bcutil-jdk18on")
+        exclude(group = "org.bouncycastle", module = "bcprov-jdk15on")
+        exclude(group = "org.bouncycastle", module = "bcutil-jdk15on")
+    }
 }
 
 room {

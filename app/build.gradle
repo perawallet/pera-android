@@ -301,8 +301,6 @@ dependencies {
     // ExoPlayer
     implementation libs.exoplayer
 
-    implementation(libs.algosdk)
-
     // Test
     testImplementation libs.mockk
     testImplementation libs.kotlinx.coroutines.test

@@ -46,7 +46,7 @@ class KeyRegTransactionViewModel @Inject constructor(
         KEY_REG_DETAIL
     )
 
-    private val _confirmedTransactionIdState = MutableStateFlow<Long>(0L)
+    private val _confirmedTransactionIdState = MutableStateFlow<String?>(null)
     val confirmedTransactionIdState
         get() = _confirmedTransactionIdState.asStateFlow()
 
@@ -79,19 +79,21 @@ class KeyRegTransactionViewModel @Inject constructor(
             sendSignedTransactionUseCase.sendSignedTransaction(signedTransactionDetail).collectLatest {
                 it.useSuspended(
                     onSuccess = {
-                        _confirmedTransactionIdState.value = it.toLong()
+                        _confirmedTransactionIdState.value = it
                     },
                     onFailed = {
-                        _confirmedTransactionIdState.value = -1L
+                        Log.d(TAG, it.exception.toString())
+                        _confirmedTransactionIdState.value = TRANSACTION_ERROR
                     }
                 )
             }
         }
     }
 
-    private companion object {
+    companion object {
         const val SIGNING_ACCOUNT_ADDRSS = "signingAccountAddress"
         const val KEY_REG_DETAIL = "keyRegTransactionDetail"
         const val TAG = "KeyRegTransactionViewModel"
+        const val TRANSACTION_ERROR = "transaction_error"
     }
 }

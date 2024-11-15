@@ -64,16 +64,16 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
         }
     }
 
-    private val isTransactionConfirmedCollector: suspend (Long) -> Unit = {
+    private val isTransactionConfirmedCollector: suspend (String?) -> Unit = {
         transactionId ->
-            if (transactionId > 0L) {
-                    navToConfirmationFragment(transactionId.toString())
-            } else if (transactionId < 0L) {
-                activity?.showAlertDialog(
-                    getString(R.string.error),
-                    "Could not confirm transaction on blockchain"
-                )
-            }
+        if (transactionId == KeyRegTransactionViewModel.TRANSACTION_ERROR) {
+            activity?.showAlertDialog(
+                getString(R.string.error),
+                "Could not confirm transaction on blockchain"
+            )
+        } else if (transactionId != null) {
+            navToConfirmationFragment(transactionId)
+        }
     }
 
     private val externalTransactionSignManagerCollector: suspend (ExternalTransactionSignResult) -> Unit = {
@@ -203,7 +203,7 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
     }
 
     private fun navToConfirmationFragment(transactionId: String) {
-        nav(HomeNavigationDirections
+        nav(KeyRegTransactionFragmentDirections
             .actionKeyRegTransactionFragmentToTransactionConfirmationFragment(
                 transactionId
             )

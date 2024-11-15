@@ -31,7 +31,7 @@
         <action
             android:id="@+id/action_transactionConfirmationFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"
-            app:popUpTo="@id/transactionConfirmationNavigation"
+            app:popUpTo="@id/homeNavigation"
             app:popUpToInclusive="true" />
     </fragment>
 

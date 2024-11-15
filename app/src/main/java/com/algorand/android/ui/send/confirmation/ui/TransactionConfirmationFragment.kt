@@ -124,7 +124,8 @@ class TransactionConfirmationFragment : BaseFragment(R.layout.fragment_transacti
     }
 
     private fun popBackToHome() {
-        nav(TransactionConfirmationFragmentDirections.actionTransactionConfirmationFragmentToHomeNavigation())
+        nav(TransactionConfirmationFragmentDirections
+            .actionTransactionConfirmationFragmentToHomeNavigation())
     }
 
     private fun onBackPressed() {

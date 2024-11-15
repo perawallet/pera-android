@@ -1,7 +1,6 @@
 package com.algorand.android.modules.keyreg.ui
 
 import androidx.fragment.app.viewModels
-import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
@@ -24,7 +23,7 @@ class KeyRegAccountSelectionFragment : BaseSingleAccountSelectionFragment() {
 
     override fun onAccountSelected(accountAddress: String) {
         nav(
-            HomeNavigationDirections
+            KeyRegAccountSelectionFragmentDirections
                 .actionKeyRegAccountSelectionFragmentToKeyRegTransactionFragment(
                     keyRegTransactionDetail = keyRegAccountSelectionViewModel.keyRegTransactionDetail,
                     signingAccountAddress = accountAddress

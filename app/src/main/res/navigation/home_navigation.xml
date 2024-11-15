@@ -327,25 +327,6 @@
     </action>
 
     <action
-        android:id="@+id/action_keyRegAccountSelectionFragment_to_keyRegTransactionFragment"
-        app:destination="@id/keyRegTransactionFragment">
-        <argument
-            android:name="keyRegTransactionDetail"
-            app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
-        <argument
-            android:name="signingAccountAddress"
-            app:argType="string" />
-    </action>
-
-    <action
-        android:id="@+id/action_keyRegTransactionFragment_to_TransactionConfirmationFragment"
-        app:destination="@id/transactionConfirmationNavigation">
-       <argument
-            android:name="transactionId"
-            app:argType="string" />
-    </action>
-
-    <action
         android:id="@+id/action_global_assetInboxOneAccountNavigation"
         app:destination="@id/assetInboxOneAccountNavigation">
         <argument
@@ -365,6 +346,16 @@
         <argument
             android:name="keyRegTransactionDetail"
             app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
+        <action
+            android:id="@+id/action_keyRegAccountSelectionFragment_to_keyRegTransactionFragment"
+            app:destination="@id/keyRegTransactionFragment">
+            <argument
+                android:name="keyRegTransactionDetail"
+                app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
+            <argument
+                android:name="signingAccountAddress"
+                app:argType="string" />
+        </action>
     </fragment>
 
     <fragment
@@ -375,6 +366,16 @@
         <argument
             android:name="keyRegTransactionDetail"
             app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
+        <argument
+            android:name="signingAccountAddress"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_keyRegTransactionFragment_to_TransactionConfirmationFragment"
+            app:destination="@id/transactionConfirmationNavigation">
+            <argument
+                android:name="transactionId"
+                app:argType="string" />
+        </action>
     </fragment>
 
 <!--    <fragment-->

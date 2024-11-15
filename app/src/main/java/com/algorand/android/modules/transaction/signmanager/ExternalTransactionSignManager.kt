@@ -37,11 +37,11 @@ import com.algorand.android.utils.LifecycleScopedCoroutineOwner
 import com.algorand.android.utils.ListQueuingHelper
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.signTx
-import javax.inject.Inject
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager,

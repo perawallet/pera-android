@@ -17,6 +17,7 @@ import com.algorand.android.models.TransactionParams
 data class OnlineKeyRegTransactionPayload(
     val senderAddress: String,
     val selectionPublicKey: String,
+    val stateProofKey: String,
     val voteKey: String,
     val voteFirstRound: String,
     val voteLastRound: String,

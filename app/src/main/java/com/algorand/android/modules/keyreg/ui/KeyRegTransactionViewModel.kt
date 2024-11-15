@@ -46,6 +46,10 @@ class KeyRegTransactionViewModel @Inject constructor(
         KEY_REG_DETAIL
     )
 
+    private val _confirmedTransactionIdState = MutableStateFlow<Long>(0L)
+    val confirmedTransactionIdState
+        get() = _confirmedTransactionIdState.asStateFlow()
+
     private val _previewState = MutableStateFlow<KeyRegTransactionFragmentPreview?>(null)
     val previewState
         get() = _previewState.asStateFlow()
@@ -75,12 +79,10 @@ class KeyRegTransactionViewModel @Inject constructor(
             sendSignedTransactionUseCase.sendSignedTransaction(signedTransactionDetail).collectLatest {
                 it.useSuspended(
                     onSuccess = {
-                        Log.e(TAG, "Success")
-                        // Handle success
+                        _confirmedTransactionIdState.value = it.toLong()
                     },
                     onFailed = {
-                        Log.e(TAG, "Error = ${it.exception}")
-                        // Handle error
+                        _confirmedTransactionIdState.value = -1L
                     }
                 )
             }

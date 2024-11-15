@@ -36,12 +36,13 @@ internal class BuildKeyRegOnlineTransactionImpl @Inject constructor(
                 .suggestedParams(txnParamsResponse)
                 .sender(senderAddress)
                 .selectionPublicKeyBase64(selectionPublicKey)
+                .stateProofKeyBase64(stateProofKey)
                 .participationPublicKeyBase64(voteKey)
                 .voteFirst(params.voteFirstRound.toLong())
                 .voteLast(params.voteLastRound.toLong())
                 .voteKeyDilution(params.voteKeyDilution.toLong())
                 .build()
-                .bytesToSign()
+                .bytes()
         }
     }
 }

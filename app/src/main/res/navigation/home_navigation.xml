@@ -102,6 +102,8 @@
 
     <include app:graph="@navigation/asset_inbox_one_account_navigation" />
 
+    <include app:graph="@navigation/transaction_confirmation_navigation" />
+
     <action
         android:id="@+id/action_global_showQrNavigation"
         app:destination="@id/showQrNavigation">
@@ -254,7 +256,6 @@
             app:argType="com.algorand.android.modules.webimport.common.data.model.WebImportQrCode" />
     </action>
 
-
     <action
         android:id="@+id/action_global_walletConnectSessionsBottomSheet"
         app:destination="@id/walletConnectSessionsBottomSheet" />
@@ -319,7 +320,7 @@
 
     <action
         android:id="@+id/action_global_confirmKeyRegAccountSelectionFragment"
-        app:destination="@id/KeyRegAccountSelectionFragment">
+        app:destination="@id/keyRegAccountSelectionFragment">
         <argument
             android:name="keyRegTransactionDetail"
             app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
@@ -327,12 +328,20 @@
 
     <action
         android:id="@+id/action_keyRegAccountSelectionFragment_to_keyRegTransactionFragment"
-        app:destination="@id/KeyRegTransactionFragment">
+        app:destination="@id/keyRegTransactionFragment">
         <argument
             android:name="keyRegTransactionDetail"
             app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
         <argument
             android:name="signingAccountAddress"
+            app:argType="string" />
+    </action>
+
+    <action
+        android:id="@+id/action_keyRegTransactionFragment_to_TransactionConfirmationFragment"
+        app:destination="@id/transactionConfirmationNavigation">
+       <argument
+            android:name="transactionId"
             app:argType="string" />
     </action>
 
@@ -349,7 +358,7 @@
         app:destination="@id/accountDetailFragment" />
 
     <fragment
-        android:id="@+id/KeyRegAccountSelectionFragment"
+        android:id="@+id/keyRegAccountSelectionFragment"
         android:name="com.algorand.android.modules.keyreg.ui.KeyRegAccountSelectionFragment"
         android:label="fragment_key_reg_account_selection"
         tools:layout="@layout/fragment_base_account_selection">
@@ -359,7 +368,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/KeyRegTransactionFragment"
+        android:id="@+id/keyRegTransactionFragment"
         android:name="com.algorand.android.modules.keyreg.ui.KeyRegTransactionFragment"
         android:label="fragment_key_reg_transaction"
         tools:layout="@layout/fragment_key_reg_transaction">
@@ -367,6 +376,16 @@
             android:name="keyRegTransactionDetail"
             app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
     </fragment>
+
+<!--    <fragment-->
+<!--        android:id="@+id/keyRegTransactionConfirmationFragment"-->
+<!--        android:name="com.algorand.android.ui.send.confirmation.ui.TransactionConfirmationFragment"-->
+<!--        android:label="fragment_key_reg_transaction_confirmation"-->
+<!--        tools:layout="@layout/fragment_transaction_confirmation">-->
+<!--        <argument-->
+<!--            android:name="transactionId"-->
+<!--            app:argType="string" />-->
+<!--    </fragment>-->
 
     <fragment
         android:id="@+id/collectiblesFragment"

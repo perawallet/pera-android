@@ -35,6 +35,6 @@ internal class BuildKeyRegOfflineTransactionImpl @Inject constructor(
             .suggestedParams(params)
             .sender(address)
             .build()
-            .bytesToSign()
+            .bytes()
     }
 }

@@ -38,6 +38,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.getXmlStyledString
+import com.algorand.android.utils.showAlertDialog
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,6 +62,18 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
         it?.let {
             initPreview(it)
         }
+    }
+
+    private val isTransactionConfirmedCollector: suspend (Long) -> Unit = {
+        transactionId ->
+            if (transactionId > 0L) {
+                    navToConfirmationFragment(transactionId.toString())
+            } else if (transactionId < 0L) {
+                activity?.showAlertDialog(
+                    getString(R.string.error),
+                    "Could not confirm transaction on blockchain"
+                )
+            }
     }
 
     private val externalTransactionSignManagerCollector: suspend (ExternalTransactionSignResult) -> Unit = {
@@ -89,11 +102,6 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
         keyRegTransactionViewModel.initUi()
     }
 
-    override fun onResume() {
-        super.onResume()
-        initSavedStateListener()
-    }
-
     private fun initUi() {
         with(binding) {
             composeKeyRegTransactionFragment.setContent {
@@ -113,14 +121,10 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
             flow = keyRegTransactionSignManager.keyRegTransactionSignResultFlow,
             collection = externalTransactionSignManagerCollector
         )
-    }
-
-    private fun initSavedStateListener() {
-//        useFragmentResultListenerValue<Boolean>(KEY_REG_CONFIRMATION_RESULT_KEY) { isConfirmed ->
-//            if (isConfirmed) {
-//                keyRegTransactionViewModel.confirmTransaction()
-//            }
-//        }
+        collectLatestOnLifecycle(
+            flow = keyRegTransactionViewModel.confirmedTransactionIdState,
+            collection = isTransactionConfirmedCollector
+        )
     }
 
     private fun initPreview(preview: KeyRegTransactionFragmentPreview) {
@@ -198,8 +202,12 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
         keyRegTransactionViewModel.sendSignedTransaction(signedTransaction)
     }
 
-    private fun navToConfirmationBottomSheet() {
-        // TODO navigate to confirmation bottom sheet
+    private fun navToConfirmationFragment(transactionId: String) {
+        nav(HomeNavigationDirections
+            .actionKeyRegTransactionFragmentToTransactionConfirmationFragment(
+                transactionId
+            )
+        )
     }
 
     private fun dismissLedgerDialog() {

@@ -82,6 +82,7 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
         return OnlineKeyRegTransactionPayload(
             senderAddress = address,
             selectionPublicKey = selectionPublicKey.orEmpty(),
+            stateProofKey = sprfkey.orEmpty(),
             voteKey = voteKey.orEmpty(),
             voteFirstRound = voteFirstRound.orEmpty(),
             voteLastRound = voteLastRound.orEmpty(),

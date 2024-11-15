@@ -31,6 +31,7 @@ import com.algorand.android.discover.home.domain.PeraMobileWebInterface
 import com.algorand.android.discover.home.domain.PeraMobileWebInterface.Companion.WEB_INTERFACE_NAME
 import com.algorand.android.discover.utils.JAVASCRIPT_NAVIGATION
 import com.algorand.android.discover.utils.JAVASCRIPT_PERACONNECT
+import com.algorand.android.discover.utils.getCardsUrl
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ScreenState
 import com.algorand.android.modules.perawebview.WebViewThemeHelper
@@ -42,6 +43,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
@@ -115,7 +117,12 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
 
     private fun loadCardsUrl() {
         with(binding.webView) {
-            if (url == null) loadUrl(CARDS_URL)
+            if (url == null) {
+                val webViewTheme = webViewThemeHelper.getWebViewThemeFromThemePreference(context)
+                val locale = Locale.getDefault().language
+                val cardsUrl = getCardsUrl(webViewTheme, cardsViewModel.getPrimaryCurrencyId(), locale)
+                loadUrl(cardsUrl)
+            }
         }
     }
 

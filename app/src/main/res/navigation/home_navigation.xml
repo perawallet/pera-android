@@ -378,16 +378,6 @@
         </action>
     </fragment>
 
-<!--    <fragment-->
-<!--        android:id="@+id/keyRegTransactionConfirmationFragment"-->
-<!--        android:name="com.algorand.android.ui.send.confirmation.ui.TransactionConfirmationFragment"-->
-<!--        android:label="fragment_key_reg_transaction_confirmation"-->
-<!--        tools:layout="@layout/fragment_transaction_confirmation">-->
-<!--        <argument-->
-<!--            android:name="transactionId"-->
-<!--            app:argType="string" />-->
-<!--    </fragment>-->
-
     <fragment
         android:id="@+id/collectiblesFragment"
         android:name="com.algorand.android.nft.ui.nftlisting.collectibles.CollectiblesFragment"

@@ -37,23 +37,6 @@ allprojects {
         mavenCentral()
         maven(url = "https://jitpack.io")
     }
-    configurations.all {
-        resolutionStrategy.dependencySubstitution {
-            substitute(module("org.bouncycastle:bcprov-jdk15to18"))
-                .using(module("org.bouncycastle:bcprov-jdk18on:1.77"))
-            substitute(module("org.bouncycastle:bcprov-jdk15on"))
-                .using(module("org.bouncycastle:bcprov-jdk18on:1.77"))
-            substitute(module("org.bouncycastle:bcprov-jdk18on"))
-                .using(module("org.bouncycastle:bcprov-jdk18on:1.77"))
-
-            substitute(module("org.bouncycastle:bcutil-jdk15to18"))
-                .using(module("org.bouncycastle:bcutil-jdk18on:1.77"))
-            substitute(module("org.bouncycastle:bcutil-jdk15on"))
-                .using(module("org.bouncycastle:bcutil-jdk18on:1.77"))
-            substitute(module("org.bouncycastle:bcutil-jdk18on"))
-                .using(module("org.bouncycastle:bcutil-jdk18on:1.77"))
-        }
-    }
 }
 
 tasks.register<Delete>("clean") {

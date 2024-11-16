@@ -14,18 +14,21 @@ package com.algorand.android.modules.keyreg.ui
 
 import android.os.Bundle
 import android.view.View
-import androidx.compose.material3.MaterialTheme
+import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.core.TransactionBaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.databinding.FragmentKeyRegTransactionBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.keyreg.domain.KeyRegTransactionSignManager
-import com.algorand.android.modules.keyreg.ui.components.keyRegTable
-import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionFragmentPreview
+import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionPreview
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.Error
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.LedgerScanFailed
@@ -34,6 +37,7 @@ import com.algorand.android.modules.transaction.signmanager.ExternalTransactionS
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.NotInitialized
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.Success
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.TransactionCancelled
+import com.algorand.android.ui.send.transferpreview.AssetTransferPreviewFragmentDirections
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
@@ -43,11 +47,18 @@ import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 @AndroidEntryPoint
-class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_transaction) {
+class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_reg_transaction) {
 
-    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
+    private val toolbarConfiguration = ToolbarConfiguration(
+        startIconResId = R.drawable.ic_left_arrow,
+        titleResId = R.string.key_reg_transaction_title,
+        startIconClick = ::navBack
+    )
+
+    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val keyRegTransactionViewModel by viewModels<KeyRegTransactionViewModel>()
 
@@ -58,13 +69,32 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
     @Inject
     lateinit var keyRegTransactionSignManager: KeyRegTransactionSignManager
 
-    private val previewStateCollector: suspend (KeyRegTransactionFragmentPreview?) -> Unit = {
+    private val previewStateCollector: suspend (KeyRegTransactionPreview?) -> Unit = {
         it?.let {
-            initPreview(it)
+            updateUi(it)
         }
     }
 
-    private val isTransactionConfirmedCollector: suspend (String?) -> Unit = {
+    private var transactionNote: Pair<String?, Boolean>
+            by Delegates.observable(Pair(null, false)) { _, _, (note, isNoteEnabled) ->
+                with(binding) {
+                    if (isNoteEnabled) {
+                        addEditNoteButton.show()
+                        addEditNoteButton.setOnClickListener {
+                            onAddEditNoteClicked()
+                        }
+                        if (note.isNullOrBlank()) {
+                            setLayoutForAddNote()
+                        } else {
+                            setLayoutForEditNote(note)
+                        }
+                    } else {
+                        setLayoutForBlockedNote(note)
+                    }
+                }
+            }
+
+   private val isTransactionConfirmedCollector: suspend (String?) -> Unit = {
         transactionId ->
         if (transactionId == KeyRegTransactionViewModel.TRANSACTION_ERROR) {
             activity?.showAlertDialog(
@@ -77,13 +107,13 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
     }
 
     private val externalTransactionSignManagerCollector: suspend (ExternalTransactionSignResult) -> Unit = {
-        if (it !is Loading) hideLoading()
+        if (it !is Loading) hideLoader()
         when (it) {
             is Success<*> -> sendSignedTransactions(it.signedTransaction)
             is Error -> showTransactionSignResultError(it)
             LedgerScanFailed -> showLedgerNotFoundDialog()
             is LedgerWaitingForApproval -> showLedgerWaitingForApprovalBottomSheet(it)
-            Loading -> showLoading()
+            Loading -> showLoader()
             NotInitialized -> Unit
             is TransactionCancelled -> showTransactionCancelledError(it)
         }
@@ -103,13 +133,7 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
     }
 
     private fun initUi() {
-        with(binding) {
-            composeKeyRegTransactionFragment.setContent {
-                MaterialTheme {
-                    keyRegTable(null)
-                }
-            }
-        }
+        updateUi(null)
     }
 
     private fun initObservers() {
@@ -127,23 +151,15 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
         )
     }
 
-    private fun initPreview(preview: KeyRegTransactionFragmentPreview) {
-        with(binding) {
-            composeKeyRegTransactionFragment.setContent {
-                MaterialTheme {
-                    keyRegTable(
-                        preview,
-                        onBackClick = {
-                            activity?.getSupportFragmentManager()?.popBackStack()
-                        },
-                        onConfirmClick = {
-                            keyRegTransactionViewModel.confirmTransaction()
-                        },
-                    )
-                    preview.signTransactionEvent?.consume()?.let { keyRegTxn ->
-                        keyRegTransactionSignManager.signKeyRegTransaction(keyRegTxn)
-                    }
-                }
+    private fun updateUi(preview: KeyRegTransactionPreview?) {
+        preview?.let {
+            setConfirmTransactionButton()
+            setTransactionDetails(preview)
+            setKeyRegDetails(preview)
+            setTransactionNote(preview.xNote, preview.note, true)
+
+            preview?.signTransactionEvent?.consume()?.let { keyRegTxn ->
+                keyRegTransactionSignManager.signKeyRegTransaction(keyRegTxn)
             }
         }
     }
@@ -189,14 +205,6 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
         }
     }
 
-    private fun showLoading() {
-        binding.progressbar.root.show()
-    }
-
-    private fun hideLoading() {
-        binding.progressbar.root.hide()
-    }
-
     private fun sendSignedTransactions(signedTransaction: List<Any?>) {
         dismissLedgerDialog()
         keyRegTransactionViewModel.sendSignedTransaction(signedTransaction)
@@ -213,5 +221,114 @@ class KeyRegTransactionFragment : DaggerBaseFragment(R.layout.fragment_key_reg_t
     private fun dismissLedgerDialog() {
         ledgerLoadingDialog?.dismissAllowingStateLoss()
         ledgerLoadingDialog = null
+    }
+
+    private fun setConfirmTransactionButton() {
+        binding.confirmTransferButton.setOnClickListener {
+            keyRegTransactionViewModel.confirmTransaction()
+        }
+    }
+
+    private fun setLayoutForAddNote() {
+        with(binding) {
+            noteTextView.hide()
+            with(addEditNoteButton) {
+                icon = ContextCompat.getDrawable(context, R.drawable.ic_plus)
+                text = getString(R.string.add_note)
+                updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    topToBottom = ConstraintLayout.LayoutParams.UNSET
+                    bottomToTop = ConstraintLayout.LayoutParams.UNSET
+                    topToTop = binding.noteLabelTextView.id
+                    bottomToBottom = binding.noteLabelTextView.id
+                    verticalBias = ADD_EDIT_NOTE_BUTTON_VERTICAL_BIAS
+                }
+            }
+
+            with((addEditNoteButton.layoutParams as ViewGroup.MarginLayoutParams)) {
+                setMargins(0, 0, 0, 0)
+            }
+            addEditNoteButton.requestLayout()
+        }
+    }
+
+    private fun setLayoutForEditNote(note: String?) {
+        with(binding) {
+            noteTextView.text = note
+            noteTextView.show()
+            with(addEditNoteButton) {
+                icon = ContextCompat.getDrawable(context, R.drawable.ic_pen)
+                text = getString(R.string.edit_note)
+                updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    topToTop = ConstraintLayout.LayoutParams.UNSET
+                    bottomToBottom = ConstraintLayout.LayoutParams.UNSET
+                    topToBottom = binding.noteTextView.id
+                    bottomToTop = binding.confirmTransferButton.id
+                    verticalBias = 0f
+                }
+            }
+            val marginTop = resources.getDimensionPixelSize(R.dimen.spacing_small)
+            with((addEditNoteButton.layoutParams as ViewGroup.MarginLayoutParams)) {
+                setMargins(0, marginTop, 0, 0)
+            }
+            addEditNoteButton.requestLayout()
+        }
+    }
+
+    private fun setLayoutForBlockedNote(note: String?) {
+        with(binding) {
+            addEditNoteButton.hide()
+            if (note.isNullOrBlank()) {
+                noteGroup.hide()
+            } else {
+                noteTextView.text = note
+                noteTextView.show()
+            }
+        }
+    }
+
+    private fun setTransactionDetails(preview: KeyRegTransactionPreview) {
+        with(binding) {
+            typeTextView.setText(preview.type)
+            addressTextView.setText(preview.address)
+            feeAmountView.setAmountAsFee(preview.fee.toLong())
+        }
+    }
+
+    private fun setKeyRegDetails(preview: KeyRegTransactionPreview) {
+        with(binding) {
+            selectionKeyTextView.setText(preview.selectionKey)
+            voteKeyTextView.setText(preview.votingKey)
+            stateProofKeyTextView.setText(preview.stateProofKey)
+            validFirstRoundTextView.setText(preview.firstValid)
+            validLastRoundTextView.setText(preview.lastValid)
+            voteKeyDilutionTextView.setText(preview.keyDilution)
+        }
+    }
+
+    private fun setTransactionNote(xNote: String?, note: String?, isEditable: Boolean) {
+        binding.xNoteTextView.text = xNote
+        transactionNote = Pair(note, isEditable)
+    }
+
+    private fun onAddEditNoteClicked() {
+        nav(
+            AssetTransferPreviewFragmentDirections
+                .actionAssetTransferPreviewFragmentToAddNoteBottomSheet(
+                    note = transactionNote.first,
+                    isInputFieldEnabled = transactionNote.second
+                )
+        )
+    }
+
+    private fun showLoader() {
+        binding.progressBar.root.show()
+    }
+
+    private fun hideLoader() {
+        binding.progressBar.root.hide()
+    }
+
+    companion object {
+        const val ADD_EDIT_NOTE_BUTTON_VERTICAL_BIAS = 0.5f
     }
 }

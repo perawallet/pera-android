@@ -20,7 +20,7 @@ import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.modules.keyreg.domain.usecase.CreateKeyRegTransaction
 import com.algorand.android.modules.keyreg.ui.mapper.KeyRegTransactionPreviewMapper
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
-import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionFragmentPreview
+import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionPreview
 import com.algorand.android.usecase.SendSignedTransactionUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrThrow
@@ -50,7 +50,7 @@ class KeyRegTransactionViewModel @Inject constructor(
     val confirmedTransactionIdState
         get() = _confirmedTransactionIdState.asStateFlow()
 
-    private val _previewState = MutableStateFlow<KeyRegTransactionFragmentPreview?>(null)
+    private val _previewState = MutableStateFlow<KeyRegTransactionPreview?>(null)
     val previewState
         get() = _previewState.asStateFlow()
 

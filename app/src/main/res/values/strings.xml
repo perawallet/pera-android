@@ -1417,5 +1417,8 @@
     <string name="insufficient_algo_balance_claim">Insufficient ALGO balance. Please add more ALGO to claim.</string>
     <string name="insufficient_algo_balance_reject">Insufficient ALGO balance. Please add more ALGO to reject.</string>
 
+    <string name="key_reg_transaction_title">Transaction Signature Request</string>
     <string name="choose_account_for_txn_signature_request">The account you select here will be responsible for the next transaction signature request.</string>
+    <string name="type">Type</string>
+    <string name="xnote">xNote</string>
 </resources>

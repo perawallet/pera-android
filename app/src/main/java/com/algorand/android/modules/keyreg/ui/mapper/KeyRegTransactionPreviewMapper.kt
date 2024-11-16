@@ -13,7 +13,7 @@
 package com.algorand.android.modules.keyreg.ui.mapper
 
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
-import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionFragmentPreview
+import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionPreview
 import javax.inject.Inject
 
 class KeyRegTransactionPreviewMapper @Inject constructor() {
@@ -21,8 +21,8 @@ class KeyRegTransactionPreviewMapper @Inject constructor() {
     fun createInitialPreview(
         detail: KeyRegTransactionDetail,
         signingAddress: String
-    ): KeyRegTransactionFragmentPreview {
-        return KeyRegTransactionFragmentPreview(
+    ): KeyRegTransactionPreview {
+        return KeyRegTransactionPreview(
             isLoadingVisible = false,
             address = detail.address,
             fee = detail.fee?.toString() ?: "",

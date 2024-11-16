@@ -15,7 +15,7 @@ package com.algorand.android.modules.keyreg.ui.model
 import com.algorand.android.modules.keyreg.domain.model.KeyRegTransaction
 import com.algorand.android.utils.Event
 
-data class KeyRegTransactionFragmentPreview(
+data class KeyRegTransactionPreview(
     val isLoadingVisible: Boolean,
     val address: String,
     val fee: String,

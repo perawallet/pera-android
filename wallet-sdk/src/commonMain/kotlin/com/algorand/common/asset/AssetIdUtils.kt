@@ -10,24 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.asset
 
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
+import com.algorand.common.asset.AssetConstants.ALGO_ID
 
-internal actual fun getBase64Manager(): Base64Manager {
-    return Base64ManagerImpl()
+// Backend accepts ALGO with asset id 0. Remove this line if they accepts to change ALGO ID as -7
+fun getSafeAssetIdForRequest(assetId: Long): Long {
+    return if (assetId == ALGO_ID) 0 else assetId
 }
 
-internal class Base64ManagerImpl : Base64Manager {
-
-    @OptIn(ExperimentalEncodingApi::class)
-    override fun encode(byteArray: ByteArray): String {
-        return Base64.encode(byteArray)
-    }
-
-    @OptIn(ExperimentalEncodingApi::class)
-    override fun decode(value: String): ByteArray {
-        return Base64.decode(value)
-    }
+// Backend returns ALGO with asset id 0. Remove this line if they accepts to change ALGO ID as -7
+fun getSafeAssetIdForResponse(assetId: Long?): Long? {
+    return if (assetId == 0L) ALGO_ID else assetId
 }

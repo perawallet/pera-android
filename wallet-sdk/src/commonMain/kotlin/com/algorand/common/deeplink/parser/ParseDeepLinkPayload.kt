@@ -10,24 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.deeplink.parser
 
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
+import com.algorand.common.deeplink.model.DeepLinkPayload
 
-internal actual fun getBase64Manager(): Base64Manager {
-    return Base64ManagerImpl()
-}
+internal interface ParseDeepLinkPayload {
 
-internal class Base64ManagerImpl : Base64Manager {
-
-    @OptIn(ExperimentalEncodingApi::class)
-    override fun encode(byteArray: ByteArray): String {
-        return Base64.encode(byteArray)
-    }
-
-    @OptIn(ExperimentalEncodingApi::class)
-    override fun decode(value: String): ByteArray {
-        return Base64.decode(value)
-    }
+    operator fun invoke(url: String): DeepLinkPayload
 }

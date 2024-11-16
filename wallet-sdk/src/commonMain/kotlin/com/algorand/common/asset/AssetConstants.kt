@@ -10,24 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.asset
 
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
-
-internal actual fun getBase64Manager(): Base64Manager {
-    return Base64ManagerImpl()
-}
-
-internal class Base64ManagerImpl : Base64Manager {
-
-    @OptIn(ExperimentalEncodingApi::class)
-    override fun encode(byteArray: ByteArray): String {
-        return Base64.encode(byteArray)
-    }
-
-    @OptIn(ExperimentalEncodingApi::class)
-    override fun decode(value: String): ByteArray {
-        return Base64.decode(value)
-    }
+object AssetConstants {
+    const val ALGO_ID = -7L
 }

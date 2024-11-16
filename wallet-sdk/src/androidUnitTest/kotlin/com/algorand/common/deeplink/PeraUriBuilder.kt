@@ -10,24 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.deeplink
 
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
+import com.algorand.common.deeplink.model.PeraUri
 
-internal actual fun getBase64Manager(): Base64Manager {
-    return Base64ManagerImpl()
-}
+internal object PeraUriBuilder {
 
-internal class Base64ManagerImpl : Base64Manager {
-
-    @OptIn(ExperimentalEncodingApi::class)
-    override fun encode(byteArray: ByteArray): String {
-        return Base64.encode(byteArray)
-    }
-
-    @OptIn(ExperimentalEncodingApi::class)
-    override fun decode(value: String): ByteArray {
-        return Base64.decode(value)
+    fun create(
+        scheme: String? = null,
+        host: String? = null,
+        path: String? = null,
+        queryParams: Map<String, String?> = emptyMap(),
+        fragment: String? = null,
+        rawUri: String = ""
+    ): PeraUri {
+        return PeraUri(scheme, host, path, queryParams, fragment, rawUri)
     }
 }

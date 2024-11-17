@@ -54,6 +54,9 @@
             <argument
                 android:name="transactionId"
                 app:argType="string" />
+            <argument
+                android:name="titleResId"
+                app:argType="integer" />
         </action>
     </fragment>
 

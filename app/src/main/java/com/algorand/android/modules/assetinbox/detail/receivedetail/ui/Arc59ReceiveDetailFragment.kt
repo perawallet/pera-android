@@ -234,7 +234,8 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
     private fun navToTransactionConfirmationNavigation(transactionId: String) {
         nav(
             Arc59ReceiveDetailFragmentDirections.actionArc59ReceiveDetailFragmentToTransactionConfirmationNavigation(
-                transactionId
+                titleResId = R.string.operation_completed,
+                transactionId = transactionId
             )
         )
     }

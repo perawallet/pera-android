@@ -229,7 +229,8 @@ class Arc59SendSummaryFragment : BaseFragment(R.layout.fragment_arc59_send_summa
     private fun navToTransactionConfirmationNavigation(transactionId: String) {
         nav(
             Arc59SendSummaryFragmentDirections.actionArc59SendSummaryFragmentToTransactionConfirmationNavigation(
-                transactionId
+                transactionId = transactionId,
+                titleResId = R.string.operation_completed
             )
         )
     }

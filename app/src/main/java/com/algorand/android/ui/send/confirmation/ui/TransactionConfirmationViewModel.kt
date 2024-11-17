@@ -34,6 +34,7 @@ class TransactionConfirmationViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val transactionId = savedStateHandle.get<String>(TRANSACTION_ID_KEY)
+    private val titleResId = savedStateHandle.get<Int>(TITLE_RES_ID_KEY)
 
     private val _transactionStatusPreviewFlow = MutableStateFlow<TransactionStatusPreview>(
         transactionConfirmationPreviewUseCase.getTransactionLoadingPreview()
@@ -43,7 +44,10 @@ class TransactionConfirmationViewModel @Inject constructor(
     fun onTransactionIsLoaded() {
         viewModelScope.launch {
             _transactionStatusPreviewFlow.emit(
-                transactionConfirmationPreviewUseCase.getTransactionReceivedPreview(transactionId)
+                transactionConfirmationPreviewUseCase.getTransactionReceivedPreview(
+                    transactionId,
+                    titleResId
+                )
             )
             onTransactionReceived()
         }
@@ -65,8 +69,13 @@ class TransactionConfirmationViewModel @Inject constructor(
         return transactionId
     }
 
+    fun getTitleResId(): Int? {
+        return titleResId
+    }
+
     companion object {
         private const val NAV_BACK_DURATION = 2000L
         const val TRANSACTION_ID_KEY = "transactionId"
+        const val TITLE_RES_ID_KEY = "titleResId"
     }
 }

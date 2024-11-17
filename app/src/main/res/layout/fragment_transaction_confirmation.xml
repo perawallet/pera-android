@@ -52,7 +52,7 @@
         android:layout_marginHorizontal="@dimen/spacing_xxlarge"
         android:layout_marginTop="@dimen/spacing_small"
         android:gravity="center"
-        android:text="@string/your_transaction_is_being_processed"
+        android:text="@string/your_transaction_is_processed_algorand"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

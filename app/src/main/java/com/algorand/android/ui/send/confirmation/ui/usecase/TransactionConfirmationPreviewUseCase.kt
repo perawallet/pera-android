@@ -29,21 +29,24 @@ class TransactionConfirmationPreviewUseCase @Inject constructor(
             transactionStatusAnimationDrawableResId = null,
             transactionStatusAnimationDrawableTintResId = null,
             transactionStatusTitleResId = R.string.sending_the_transaction,
-            transactionStatusDescriptionResId = R.string.your_transaction_is_being_processed,
+            transactionStatusDescriptionResId = R.string.your_transaction_is_processed_algorand,
             onExitSendAlgoNavigationEvent = null,
             isExplorerButtonVisible = false,
             isDoneButtonVisible = false
         )
     }
 
-    fun getTransactionReceivedPreview(transactionId: String?): TransactionStatusPreview {
+    fun getTransactionReceivedPreview(
+        transactionId: String?,
+        titleResId: Int?
+    ): TransactionStatusPreview {
         return transactionStatusPreviewMapper.mapToTransactionStatusPreview(
             transactionStatusAnimationResId = null,
             transactionStatusAnimationBackgroundResId = R.drawable.bg_layer_oval,
             transactionStatusAnimationBackgroundTintResId = R.color.positive,
             transactionStatusAnimationDrawableResId = R.drawable.ic_check,
             transactionStatusAnimationDrawableTintResId = R.color.background,
-            transactionStatusTitleResId = R.string.operation_completed,
+            transactionStatusTitleResId = titleResId ?: R.string.asset_transfer_completed,
             transactionStatusDescriptionResId = R.string.your_transaction_was,
             onExitSendAlgoNavigationEvent = null,
             isExplorerButtonVisible = transactionId.isNullOrEmpty().not(),

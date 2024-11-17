@@ -440,6 +440,7 @@
     <string name="malicious_website_blocked">Malicious Website Blocked</string>
     <string name="you_attempted_to_connect_malicious_website">You attempted to connect to a malicious website. Pera blocked this connection for your security.</string>
     <string name="your_transaction_is_being_processed">Your transaction is being processed</string>
+    <string name="your_transaction_is_processed_algorand">Your transaction is being processed by the Algorand network</string>
     <string name="the_transaction_has_been_signed">The transaction has been signed and sent to  <annotation replacement="peer_name">peer_name_placeholder</annotation>. Please visit  <annotation replacement="peer_name">peer_name_placeholder</annotation> for the remaining process.</string>
     <string name="select_the_asset_to_send">Select the Asset to Send</string>
     <string name="paste_from_clipboard">Paste From Clipboard</string>
@@ -578,6 +579,7 @@
     <string name="i_want_to_recover">I want to recover an Algorand account using my 25-word passphrase</string>
     <string name="pair_Ledger_device">Pair Ledger device</string>
     <string name="operation_completed">Operation completed</string>
+    <string name="asset_transfer_completed">Asset transfer completed</string>
     <string name="your_transaction_was">Your transaction was successfully received by the Algorand network.</string>
     <string name="confirm_transaction">Confirm Transaction</string>
 

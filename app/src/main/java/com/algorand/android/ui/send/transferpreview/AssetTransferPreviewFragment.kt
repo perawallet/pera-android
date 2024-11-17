@@ -344,7 +344,10 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
     private fun navToTransactionConfirmationNavigation(transactionId: String) {
         nav(
             AssetTransferPreviewFragmentDirections
-                .actionAssetTransferPreviewFragmentToTransactionConfirmationNavigation(transactionId)
+                .actionAssetTransferPreviewFragmentToTransactionConfirmationNavigation(
+                    transactionId = transactionId,
+                    titleResId = R.string.asset_transfer_completed
+                )
         )
     }
 

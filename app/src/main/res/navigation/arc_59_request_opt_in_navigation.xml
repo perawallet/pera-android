@@ -24,6 +24,9 @@
             <argument
                 android:name="transactionId"
                 app:argType="string" />
+            <argument
+                android:name="titleResId"
+                app:argType="integer" />
         </action>
         <action
             android:id="@+id/action_arc59SendSummaryFragment_to_arc59SendWarningBottomSheet"

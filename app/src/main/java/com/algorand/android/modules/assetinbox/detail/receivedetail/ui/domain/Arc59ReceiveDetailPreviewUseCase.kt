@@ -48,32 +48,71 @@ class Arc59ReceiveDetailPreviewUseCase @Inject constructor(
         args: Arc59ReceiveDetailNavArgs,
         preview: Arc59ReceiveDetailPreview
     ): Flow<Arc59ReceiveDetailPreview> = flow {
-        emit(preview.copy(isLoading = true))
-        val payload = arc59RejectTransactionPayloadMapper(args)
-        createArc59RejectTransaction(payload).use(
-            onSuccess = {
-                emit(preview.copy(rejectTransaction = Event(it), isLoading = false))
-            },
-            onFailed = { exception, _ ->
-                val errorEvent = Event(ErrorResource.Api(exception.message.orEmpty()))
-                emit(preview.copy(showError = errorEvent, isLoading = false))
-            }
-        )
+        if (args.insufficientAlgoForRejecting) {
+            emit(createInsufficientAlgoBalanceRejectPreview(preview))
+        } else {
+            emit(preview.copy(isLoading = true))
+            val payload = arc59RejectTransactionPayloadMapper(args)
+            createArc59RejectTransaction(payload).use(
+                onSuccess = {
+                    emit(preview.copy(rejectTransaction = Event(it), isLoading = false))
+                },
+                onFailed = { exception, _ ->
+                    val errorEvent = Event(ErrorResource.Api(exception.message.orEmpty()))
+                    emit(preview.copy(showError = errorEvent, isLoading = false))
+                }
+            )
+        }
     }
 
     fun createClaimTransaction(
         args: Arc59ReceiveDetailNavArgs,
         preview: Arc59ReceiveDetailPreview
     ): Flow<Arc59ReceiveDetailPreview> = flow {
-        emit(preview.copy(isLoading = true))
-        val payload = arc59ClaimTransactionPayloadMapper(args)
-        createArc59ClaimTransaction(payload).use(
-            onSuccess = {
-                emit(preview.copy(claimTransaction = Event(it), isLoading = false))
-            },
-            onFailed = { exception, _ ->
-                emit(preview.copy(showError = Event(ErrorResource.Api(exception.message.orEmpty())), isLoading = false))
-            }
+        if (args.insufficientAlgoForClaiming) {
+            emit(createInsufficientAlgoBalanceClaimPreview(preview))
+        } else {
+            emit(preview.copy(isLoading = true))
+            val payload = arc59ClaimTransactionPayloadMapper(args)
+            createArc59ClaimTransaction(payload).use(
+                onSuccess = {
+                    emit(preview.copy(claimTransaction = Event(it), isLoading = false))
+                },
+                onFailed = { exception, _ ->
+                    emit(
+                        preview.copy(
+                            showError = Event(ErrorResource.Api(exception.message.orEmpty())),
+                            isLoading = false
+                        )
+                    )
+                }
+            )
+        }
+    }
+
+    private fun createInsufficientAlgoBalanceClaimPreview(
+        preview: Arc59ReceiveDetailPreview
+    ): Arc59ReceiveDetailPreview {
+        return preview.copy(
+            showError = Event(
+                ErrorResource.LocalErrorResource.Local(
+                    R.string.insufficient_algo_balance_claim
+                )
+            ),
+            isLoading = false
+        )
+    }
+
+    private fun createInsufficientAlgoBalanceRejectPreview(
+        preview: Arc59ReceiveDetailPreview
+    ): Arc59ReceiveDetailPreview {
+        return preview.copy(
+            showError = Event(
+                ErrorResource.LocalErrorResource.Local(
+                    R.string.insufficient_algo_balance_reject
+                )
+            ),
+            isLoading = false
         )
     }
 
@@ -84,21 +123,28 @@ class Arc59ReceiveDetailPreviewUseCase @Inject constructor(
         send(preview.copy(isLoading = true))
         val safeSignedTransactions = signedTransactions.filterIsInstance<SignedTransactionDetail>()
         if (safeSignedTransactions.isEmpty()) {
-            val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occured))
+            val errorEvent =
+                Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occured))
             send(preview.copy(isLoading = false, showError = errorEvent))
             return@channelFlow
         }
 
-        sendSignedTransactionUseCase.sendSignedTransaction(safeSignedTransactions.first()).collectLatest {
-            it.useSuspended(
-                onSuccess = { transactionId ->
-                    send(preview.copy(onTransactionSendSuccessfully = Event(transactionId), isLoading = false))
-                },
-                onFailed = {
-                    val errorEvent = Event(ErrorResource.Api(it.exception?.message.orEmpty()))
-                    send(preview.copy(showError = errorEvent, isLoading = false))
-                }
-            )
-        }
+        sendSignedTransactionUseCase.sendSignedTransaction(safeSignedTransactions.first())
+            .collectLatest {
+                it.useSuspended(
+                    onSuccess = { transactionId ->
+                        send(
+                            preview.copy(
+                                onTransactionSendSuccessfully = Event(transactionId),
+                                isLoading = false
+                            )
+                        )
+                    },
+                    onFailed = {
+                        val errorEvent = Event(ErrorResource.Api(it.exception?.message.orEmpty()))
+                        send(preview.copy(showError = errorEvent, isLoading = false))
+                    }
+                )
+            }
     }
 }

@@ -24,14 +24,17 @@ sealed class ErrorResource {
 
     sealed class LocalErrorResource : ErrorResource() {
 
-        data class Local(@StringRes val errorResId: Int, @StringRes val title: Int? = null) : LocalErrorResource() {
+        data class Local(
+            @StringRes val errorResId: Int,
+            @StringRes val titleResId: Int? = null
+        ) : LocalErrorResource() {
 
             override fun parseError(context: Context): String {
                 return context.getString(errorResId)
             }
 
             override fun parseTitle(context: Context): String? {
-                return context.getString(title ?: return null)
+                return context.getString(titleResId ?: return null)
             }
         }
 

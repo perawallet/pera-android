@@ -92,7 +92,7 @@
     <string name="key_not_valid">Key not valid, please make sure you have the right key.</string>
     <string name="scanned_qr_is_not_valid">Scanned QR is not valid.</string>
     <string name="connect">Connect</string>
-    <string name="error_default_title">Error!</string>
+    <string name="error_default_title">Error</string>
     <string name="make_sure_your_ledger">Make sure that your ledger device is on and has Bluetooth enabled.</string>
     <string name="open_the_algorand_app">Open the Algorand app on your Ledger. </string>
     <string name="make_sure_bluetooth">Make sure Bluetooth is enabled on your smartphone.</string>
@@ -1415,4 +1415,6 @@
     <string name="cards">Cards</string>
     <string name="get_the_worlds_first">Get the world\'s first web3 Mastercard.</string>
 
+    <string name="insufficient_algo_balance_claim">Insufficient ALGO balance. Please add more ALGO to claim.</string>
+    <string name="insufficient_algo_balance_reject">Insufficient ALGO balance. Please add more ALGO to reject.</string>
 </resources>

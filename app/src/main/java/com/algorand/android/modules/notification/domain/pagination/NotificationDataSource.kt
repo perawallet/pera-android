@@ -55,12 +55,12 @@ class NotificationDataSource(
         }
     }
 
-    private suspend fun getNotificationUserId(): String? {
+    private fun getNotificationUserId(): String? {
         return notificationUserId ?: (
-            deviceIdUseCase.getSelectedNodeDeviceId()?.also { newNotificationUserId ->
-                notificationUserId = newNotificationUserId
-            }
-            )
+                deviceIdUseCase.getSelectedNodeDeviceId()?.also { newNotificationUserId ->
+                    notificationUserId = newNotificationUserId
+                }
+                )
     }
 
     private fun List<NotificationResponse>.toListItems(): List<NotificationListItem> {

@@ -64,7 +64,8 @@ fun keyRegTable(
             "First Valid Round" to keyRegTransactionDetail.firstValid,
             "Last Valid Round" to keyRegTransactionDetail.lastValid,
             "XNote" to keyRegTransactionDetail.xNote,
-            "Note" to keyRegTransactionDetail.note
+            "Note" to keyRegTransactionDetail.note,
+            "Signing Address" to keyRegTransactionDetail.signingAddress,
         )
 
         val fabHeight by remember {
@@ -85,7 +86,7 @@ fun keyRegTable(
             contentPadding ->
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(top = 75.dp, bottom = heightInDp + 150.dp),
+                contentPadding = PaddingValues(top = 75.dp, bottom = heightInDp + 100.dp),
                 modifier = Modifier
                     .background(Color.White)
                     .fillMaxWidth()
@@ -165,7 +166,7 @@ fun keyRegTableRowItem(key: String = "", value: String? = "") {
     }
 
     when (key) {
-        "Type", "Key Dilution", "Last Valid Round" -> {
+        "Type", "Key Dilution", "Last Valid Round", "Note" -> {
             Spacer(Modifier.height(5.dp))
             algorandDivider()
             Spacer(Modifier.height(5.dp))

@@ -1298,7 +1298,7 @@
 
     <string name="the_account_name_was_successfully_rekeyed_formatted">The account %1$s was successfully rekeyed.</string>
     <string name="start_process">Start process</string>
-    <string name="choose_the_account">Choose the account you would like to rekey to. The account you select here will be responsible for signing all transactions for the source account.</string>
+    <string name="choose_the_account_rekey">Choose the account you would like to rekey to. The account you select here will be responsible for signing all transactions for the source account.</string>
     <plurals name="you_can_t_remove_this_account">
         <item quantity="one">You can\'t remove this account before removing its %1$d rekeyed account</item>
         <item quantity="other">You can\'t remove this account before removing its %1$d rekeyed accounts</item>
@@ -1414,7 +1414,8 @@
 
     <string name="cards">Cards</string>
     <string name="get_the_worlds_first">Get the world\'s first web3 Mastercard.</string>
-
     <string name="insufficient_algo_balance_claim">Insufficient ALGO balance. Please add more ALGO to claim.</string>
     <string name="insufficient_algo_balance_reject">Insufficient ALGO balance. Please add more ALGO to reject.</string>
+
+    <string name="choose_account_for_txn_signature_request">The account you select here will be responsible for the next transaction signature request.</string>
 </resources>

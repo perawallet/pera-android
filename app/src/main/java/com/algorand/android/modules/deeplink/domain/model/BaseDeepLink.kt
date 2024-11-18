@@ -224,6 +224,7 @@ sealed class BaseDeepLink {
      * &fee=2000000
      * &note=Consensus%2Bparticipation%2Bftw
      */
+    @Suppress("LongParameterList")
     class KeyRegDeepLink private constructor(
         val senderAccountAddress: String,
         val type: String,

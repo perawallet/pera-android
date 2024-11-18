@@ -37,7 +37,7 @@ class LedgerSelectionInstructionViewHolder(
             if (searchType == SearchType.REGISTER) {
                 R.string.this_ledger_device
             } else {
-                R.string.choose_the_account
+                R.string.choose_the_account_rekey
             }
         )
     }

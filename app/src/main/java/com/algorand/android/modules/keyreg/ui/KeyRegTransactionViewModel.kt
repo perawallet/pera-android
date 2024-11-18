@@ -39,6 +39,9 @@ class KeyRegTransactionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    var signingAccountAddress = savedStateHandle.getOrThrow<String>(
+        SIGNING_ACCOUNT_ADDRSS
+    )
     var keyRegTransactionDetail = savedStateHandle.getOrThrow<KeyRegTransactionDetail>(
         KEY_REG_DETAIL
     )
@@ -48,7 +51,7 @@ class KeyRegTransactionViewModel @Inject constructor(
         get() = _previewState.asStateFlow()
 
     fun initUi() {
-        _previewState.value = previewMapper.createInitialPreview(keyRegTransactionDetail)
+        _previewState.value = previewMapper.createInitialPreview(keyRegTransactionDetail, signingAccountAddress)
     }
 
     fun confirmTransaction() {
@@ -84,6 +87,7 @@ class KeyRegTransactionViewModel @Inject constructor(
     }
 
     private companion object {
+        const val SIGNING_ACCOUNT_ADDRSS = "signingAccountAddress"
         const val KEY_REG_DETAIL = "keyRegTransactionDetail"
     }
 }

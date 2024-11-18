@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_small"
-        android:text="@string/choose_the_account"
+        android:text="@string/choose_the_account_rekey"
         android:textAppearance="@style/TextAppearance.Body.Sans"
         android:textColor="@color/text_gray" />
 

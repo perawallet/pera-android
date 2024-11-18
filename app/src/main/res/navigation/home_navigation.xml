@@ -318,11 +318,22 @@
     </action>
 
     <action
-        android:id="@+id/action_global_confirmKeyRegTransactionFragment"
+        android:id="@+id/action_global_confirmKeyRegAccountSelectionFragment"
+        app:destination="@id/KeyRegAccountSelectionFragment">
+        <argument
+            android:name="keyRegTransactionDetail"
+            app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
+    </action>
+
+    <action
+        android:id="@+id/action_keyRegAccountSelectionFragment_to_keyRegTransactionFragment"
         app:destination="@id/KeyRegTransactionFragment">
         <argument
             android:name="keyRegTransactionDetail"
             app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
+        <argument
+            android:name="signingAccountAddress"
+            app:argType="string" />
     </action>
 
     <action
@@ -336,6 +347,16 @@
     <action
         android:id="@+id/action_global_accountDetailFragment"
         app:destination="@id/accountDetailFragment" />
+
+    <fragment
+        android:id="@+id/KeyRegAccountSelectionFragment"
+        android:name="com.algorand.android.modules.keyreg.ui.KeyRegAccountSelectionFragment"
+        android:label="fragment_key_reg_account_selection"
+        tools:layout="@layout/fragment_base_account_selection">
+        <argument
+            android:name="keyRegTransactionDetail"
+            app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
+    </fragment>
 
     <fragment
         android:id="@+id/KeyRegTransactionFragment"

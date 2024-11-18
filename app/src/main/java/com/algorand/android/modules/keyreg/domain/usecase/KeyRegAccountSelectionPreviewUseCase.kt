@@ -1,21 +1,7 @@
-/*
- * Copyright 2022 Pera Wallet, LDA
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License
- */
-
-package com.algorand.android.modules.rekey.rekeytostandardaccount.accountselection.ui.usecase
+package com.algorand.android.modules.keyreg.domain.usecase
 
 import com.algorand.android.R
 import com.algorand.android.core.AccountManager
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountDetail
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ScreenState
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
@@ -38,7 +24,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
-class RekeyToStandardAccountSelectionPreviewUseCase @Inject constructor(
+class KeyRegAccountSelectionPreviewUseCase @Inject constructor(
     private val rekeyToStandardAccountSelectionPreviewMapper: RekeyToStandardAccountSelectionPreviewMapper,
     private val accountStateHelperUseCase: AccountStateHelperUseCase,
     accountDetailUseCase: AccountDetailUseCase,
@@ -64,7 +50,7 @@ class RekeyToStandardAccountSelectionPreviewUseCase @Inject constructor(
     createAccountIconDrawableUseCase = createAccountIconDrawableUseCase
 ) {
 
-    fun getInitialRekeyToAccountSingleAccountSelectionPreview(): RekeyToStandardAccountSelectionPreview {
+    fun getInitialKeyRegSingleAccountSelectionPreview(): RekeyToStandardAccountSelectionPreview {
         return rekeyToStandardAccountSelectionPreviewMapper.mapToRekeyToStandardAccountSelectionPreview(
             screenState = null,
             singleAccountSelectionListItems = emptyList(),
@@ -72,11 +58,9 @@ class RekeyToStandardAccountSelectionPreviewUseCase @Inject constructor(
         )
     }
 
-    fun getRekeyToAccountSingleAccountSelectionPreviewFlow(accountAddress: String) = channelFlow {
+    fun getKeyRegSingleAccountSelectionPreviewFlow() = channelFlow {
         getSortedCachedAccountDetailFlow().map { accountsDetails ->
-            accountsDetails.mapNotNull { accountDetail ->
-                val isAccountEligibleToRekey = isAccountEligibleToRekey(accountDetail, accountAddress)
-                if (!isAccountEligibleToRekey) return@mapNotNull null
+            accountsDetails.map { accountDetail ->
                 createAccountItemListFromAccountDetail(accountDetail)
             }
         }.collectLatest { singleAccountItems ->
@@ -87,7 +71,9 @@ class RekeyToStandardAccountSelectionPreviewUseCase @Inject constructor(
             }
             val titleItem = createTitleItem(textResId = R.string.select_account)
             val descriptionItem = createDescriptionItem(
-                descriptionAnnotatedString = AnnotatedString(stringResId = R.string.choose_the_account_rekey)
+                descriptionAnnotatedString = AnnotatedString(
+                    stringResId = R.string.choose_account_for_txn_signature_request
+                )
             )
             val singleAccountSelectionListItems = mutableListOf<SingleAccountSelectionListItem>().apply {
                 add(titleItem)
@@ -100,14 +86,6 @@ class RekeyToStandardAccountSelectionPreviewUseCase @Inject constructor(
                 isLoading = false
             )
             send(preview)
-        }
-    }
-
-    private fun isAccountEligibleToRekey(accountDetail: AccountDetail, accountAddress: String): Boolean {
-        return with(accountDetail.account) {
-            type == Account.Type.STANDARD &&
-                address != accountAddress &&
-                accountStateHelperUseCase.hasAccountValidSecretKey(this)
         }
     }
 }

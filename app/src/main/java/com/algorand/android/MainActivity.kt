@@ -341,7 +341,7 @@ class MainActivity :
                     note = deepLink.note,
                     xnote = deepLink.xnote)
 
-                nav(HomeNavigationDirections.actionGlobalConfirmKeyRegTransactionFragment(txnDetail))
+                nav(HomeNavigationDirections.actionGlobalConfirmKeyRegAccountSelectionFragment(txnDetail))
             }
         }
 

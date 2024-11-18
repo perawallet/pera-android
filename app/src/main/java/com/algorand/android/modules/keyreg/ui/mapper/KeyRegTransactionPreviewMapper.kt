@@ -18,7 +18,10 @@ import javax.inject.Inject
 
 class KeyRegTransactionPreviewMapper @Inject constructor() {
 
-    fun createInitialPreview(detail: KeyRegTransactionDetail): KeyRegTransactionFragmentPreview {
+    fun createInitialPreview(
+        detail: KeyRegTransactionDetail,
+        signingAddress: String
+    ): KeyRegTransactionFragmentPreview {
         return KeyRegTransactionFragmentPreview(
             isLoadingVisible = false,
             address = detail.address,
@@ -32,6 +35,7 @@ class KeyRegTransactionPreviewMapper @Inject constructor() {
             lastValid = detail.voteLastRound.orEmpty(),
             xNote = detail.xnote ?: "",
             note = detail.note ?: "",
+            signingAddress = signingAddress,
             signTransactionEvent = null,
             showErrorEvent = null
         )

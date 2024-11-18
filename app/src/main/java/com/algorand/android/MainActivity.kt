@@ -31,7 +31,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.annotation.StringRes
 import androidx.core.view.forEach
 import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
@@ -211,12 +210,7 @@ class MainActivity :
             showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
             return
         }
-
-        nav(
-            HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
-                AssetInboxOneAccountNavArgs(accountAddress)
-            )
-        )
+        navToAssetInboxOneAccountNavigation(accountAddress)
     }
 
     private fun handleAssetTransactionDeepLink(accountAddress: String, assetId: Long) {
@@ -327,19 +321,35 @@ class MainActivity :
             notificationGroupType: NotificationGroupType
         ): Boolean {
             return true.also {
-                navController.navigateSafe(
-                    HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
-                        AssetInboxOneAccountNavArgs(
-                            accountAddress
-                        )
-                    )
-                )
+                navToAssetInboxOneAccountNavigation(accountAddress)
             }
         }
 
         override fun onDeepLinkNotHandled(deepLink: BaseDeepLink) {
             // TODO show error after discussing with the team
         }
+    }
+
+    private fun navToAssetInboxOneAccountNavigation(accountAddress: String) {
+        if (accountDetailUseCase.canAccountSignTransaction(accountAddress)) {
+            navController.navigateSafe(
+                HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
+                    AssetInboxOneAccountNavArgs(
+                        accountAddress
+                    )
+                )
+            )
+        } else {
+            navToAccountDetailFragment(accountAddress)
+        }
+    }
+
+    private fun navToAccountDetailFragment(accountAddress: String) {
+        navController.navigateSafe(
+            HomeNavigationDirections.actionGlobalAccountDetailFragment(
+                accountAddress
+            )
+        )
     }
 
     private val transactionManagerResultObserver = Observer<Event<TransactionManagerResult>?> {
@@ -573,13 +583,6 @@ class MainActivity :
         pendingIntentKeeper.setPendingIntent(pendingIntent)
     }
 
-    private fun saveWcArbitraryDataToPendingIntent(arbitraryDataRequestId: Long) {
-        val pendingIntent = Intent().apply {
-            putExtra(WC_ARBITRARY_DATA_ID_INTENT_KEY, arbitraryDataRequestId)
-        }
-        pendingIntentKeeper.setPendingIntent(pendingIntent)
-    }
-
     private fun handleDeeplinkAndNotificationNavigation() {
         intent.getSafeParcelableExtra<Intent?>(DEEPLINK_AND_NAVIGATION_INTENT)?.apply {
             pendingIntentKeeper.setPendingIntent(this)
@@ -642,10 +645,6 @@ class MainActivity :
     fun isBasePeraWebViewFragmentActive(): Boolean {
         return (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
             .childFragmentManager.fragments.first() is BasePeraWebViewFragment
-    }
-
-    private fun onIntentHandlingFailed(@StringRes errorMessageResId: Int) {
-        showGlobalError(errorMessage = getString(errorMessageResId), tag = activityTag)
     }
 
     private fun setupCoreActionsTabBarView() {

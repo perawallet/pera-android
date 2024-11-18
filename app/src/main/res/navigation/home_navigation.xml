@@ -325,6 +325,10 @@
             app:argType="com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs" />
     </action>
 
+    <action
+        android:id="@+id/action_global_accountDetailFragment"
+        app:destination="@id/accountDetailFragment" />
+
     <fragment
         android:id="@+id/collectiblesFragment"
         android:name="com.algorand.android.nft.ui.nftlisting.collectibles.CollectiblesFragment"

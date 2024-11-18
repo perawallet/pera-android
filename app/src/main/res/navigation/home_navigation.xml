@@ -370,7 +370,19 @@
             android:name="signingAccountAddress"
             app:argType="string" />
         <action
-            android:id="@+id/action_keyRegTransactionFragment_to_TransactionConfirmationFragment"
+            android:id="@+id/action_KeyRegTransactionFragment_to_addNoteBottomSheet"
+            app:destination="@id/addNoteBottomSheet">
+            <argument
+                android:name="note"
+                app:argType="string"
+                app:nullable="true" />
+            <argument
+                android:name="isInputFieldEnabled"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
+        <action
+            android:id="@+id/action_KeyRegTransactionFragment_to_TransactionConfirmationFragment"
             app:destination="@id/transactionConfirmationNavigation">
             <argument
                 android:name="transactionId"

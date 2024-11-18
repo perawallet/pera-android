@@ -37,7 +37,6 @@ import com.algorand.android.modules.transaction.signmanager.ExternalTransactionS
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.NotInitialized
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.Success
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.TransactionCancelled
-import com.algorand.android.ui.send.transferpreview.AssetTransferPreviewFragmentDirections
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
@@ -158,7 +157,7 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
             setKeyRegDetails(preview)
             setTransactionNote(preview.xNote, preview.note, preview.xNote.isBlank())
 
-            preview?.signTransactionEvent?.consume()?.let { keyRegTxn ->
+            preview.signTransactionEvent?.consume()?.let { keyRegTxn ->
                 keyRegTransactionSignManager.signKeyRegTransaction(keyRegTxn)
             }
         }
@@ -312,8 +311,8 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
 
     private fun onAddEditNoteClicked() {
         nav(
-            AssetTransferPreviewFragmentDirections
-                .actionAssetTransferPreviewFragmentToAddNoteBottomSheet(
+            KeyRegTransactionFragmentDirections
+                .actionKeyRegTransactionFragmentToAddNoteBottomSheet(
                     note = transactionNote.first,
                     isInputFieldEnabled = transactionNote.second
                 )

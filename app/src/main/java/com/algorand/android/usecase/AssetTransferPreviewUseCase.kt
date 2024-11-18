@@ -20,6 +20,7 @@ import com.algorand.android.models.TransactionData
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.utils.DataResource
+import com.algorand.android.utils.MIN_FEE
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
@@ -31,16 +32,25 @@ class AssetTransferPreviewUseCase @Inject constructor(
 ) {
 
     fun getAssetTransferPreview(
-        transactionData: TransactionData.Send
+        transactionDataList: List<TransactionData>
     ): AssetTransferPreview {
+        val fee = transactionDataList.sumOf {
+            it.calculatedFee ?: (it as? TransactionData.Send)?.projectedFee ?: MIN_FEE
+        }
+        val sendTransactionData = transactionDataList.find {
+            it is TransactionData.Send
+        } as TransactionData.Send
         val exchangePrice = parityUseCase.getAlgoToPrimaryCurrencyConversionRate()
         return assetTransferPreviewMapper.mapToAssetTransferPreview(
-            transactionData = transactionData,
+            transactionData = sendTransactionData,
             exchangePrice = exchangePrice,
             currencySymbol = parityUseCase.getPrimaryCurrencySymbolOrName(),
-            note = transactionData.xnote ?: transactionData.note,
-            isNoteEditable = transactionData.xnote == null,
-            accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(transactionData.senderAccountAddress)
+            note = sendTransactionData.xnote ?: sendTransactionData.note,
+            isNoteEditable = sendTransactionData.xnote == null,
+            accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(
+                sendTransactionData.senderAccountAddress
+            ),
+            fee = fee
         )
     }
 

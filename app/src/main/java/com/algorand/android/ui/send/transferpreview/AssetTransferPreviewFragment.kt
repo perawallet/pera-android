@@ -173,7 +173,7 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
     private fun onConfirmTransferClick() {
         assetTransferPreviewViewModel.getTransactionData().let { transactionData ->
             if (transactionData.isArc59Transaction) {
-                assetTransferPreviewViewModel.makeArc59Transactions(transactionData)
+                assetTransferPreviewViewModel.sendArc59Transactions()
             } else {
                 sendTransaction(transactionData)
             }

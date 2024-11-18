@@ -27,7 +27,8 @@ class AssetTransferPreviewMapper @Inject constructor() {
         currencySymbol: String,
         note: String?,
         isNoteEditable: Boolean,
-        accountIconDrawablePreview: AccountIconDrawablePreview
+        accountIconDrawablePreview: AccountIconDrawablePreview,
+        fee: Long
     ): AssetTransferPreview {
         with(transactionData) {
             return AssetTransferPreview(
@@ -36,7 +37,7 @@ class AssetTransferPreviewMapper @Inject constructor() {
                 targetUser = targetUser,
                 exchangePrice = exchangePrice,
                 currencySymbol = currencySymbol,
-                fee = calculatedFee ?: projectedFee,
+                fee = fee,
                 note = note,
                 isNoteEditable = isNoteEditable,
                 accountIconDrawablePreview = accountIconDrawablePreview,

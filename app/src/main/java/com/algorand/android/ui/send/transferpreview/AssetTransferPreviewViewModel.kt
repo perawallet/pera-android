@@ -61,12 +61,17 @@ class AssetTransferPreviewViewModel @Inject constructor(
     private val signedArc59Transactions = mutableListOf<SignedTransactionDetail>()
 
     init {
-        getAssetTransferPreview()
+        getAssetTransferPreview(listOf(transactionData))
+        if (transactionData.isArc59Transaction) {
+            makeArc59Transactions(transactionData)
+        }
     }
 
-    private fun getAssetTransferPreview() {
+    private fun getAssetTransferPreview(transactionList: List<TransactionData>) {
         viewModelScope.launch {
-            val signedTransactionPreview = assetTransferPreviewUserCase.getAssetTransferPreview(transactionData)
+            val signedTransactionPreview = assetTransferPreviewUserCase.getAssetTransferPreview(
+                transactionList
+            )
             _assetTransferPreviewFlow.emit(signedTransactionPreview)
         }
     }
@@ -81,29 +86,44 @@ class AssetTransferPreviewViewModel @Inject constructor(
                 }
                 return
             }
-            signedTransactionDetailCopy = (signedArc59Transactions.last() as SignedTransactionDetail.Send).copy(
-                signedTransactionData = signedArc59Transactions.map { it.signedTransactionData }.flatten()
-            )
+            signedTransactionDetailCopy =
+                (signedArc59Transactions.last() as SignedTransactionDetail.Send).copy(
+                    signedTransactionData = signedArc59Transactions.map { it.signedTransactionData }
+                        .flatten()
+                )
         }
         if (sendAlgoJob?.isActive == true) {
             return
         }
         sendAlgoJob = viewModelScope.launch {
-            assetTransferPreviewUserCase.sendSignedTransaction(signedTransactionDetailCopy).collectLatest {
-                when (it) {
-                    is DataResource.Loading -> _sendAlgoResponseFlow.emit(Event(Resource.Loading))
-                    is DataResource.Error -> {
-                        if (it.exception != null) {
-                            _sendAlgoResponseFlow.emit(Event(Resource.Error.Api(it.exception!!)))
-                        } else {
-                            _sendAlgoResponseFlow.emit(
-                                Event(GlobalWarning(R.string.error, AnnotatedString(R.string.an_error_occured)))
-                            )
+            assetTransferPreviewUserCase.sendSignedTransaction(signedTransactionDetailCopy)
+                .collectLatest {
+                    when (it) {
+                        is DataResource.Loading -> _sendAlgoResponseFlow.emit(Event(Resource.Loading))
+                        is DataResource.Error -> {
+                            if (it.exception != null) {
+                                _sendAlgoResponseFlow.emit(Event(Resource.Error.Api(it.exception!!)))
+                            } else {
+                                _sendAlgoResponseFlow.emit(
+                                    Event(
+                                        GlobalWarning(
+                                            R.string.error,
+                                            AnnotatedString(R.string.an_error_occured)
+                                        )
+                                    )
+                                )
+                            }
                         }
+
+                        is DataResource.Success -> _sendAlgoResponseFlow.emit(
+                            Event(
+                                Resource.Success(
+                                    it.data
+                                )
+                            )
+                        )
                     }
-                    is DataResource.Success -> _sendAlgoResponseFlow.emit(Event(Resource.Success(it.data)))
                 }
-            }
         }
     }
 
@@ -116,11 +136,12 @@ class AssetTransferPreviewViewModel @Inject constructor(
         }
     }
 
-    fun makeArc59Transactions(transactionData: TransactionData) {
+    private fun makeArc59Transactions(transactionData: TransactionData) {
         viewModelScope.launch {
             (transactionData as TransactionData.Send).let {
                 transactionManager.createArc59SendTransactionList(transactionData)
-                val transactions = transactionManager.createArc59SendTransactionList(transactionData)
+                val transactions =
+                    transactionManager.createArc59SendTransactionList(transactionData)
                 val arc59Transactions = mutableListOf<TransactionData>()
                 transactions?.forEach { transaction ->
                     if (transaction.accountAddress == transactionData.senderAccountAddress) {
@@ -134,7 +155,8 @@ class AssetTransferPreviewViewModel @Inject constructor(
                             TransactionData.AddAsset(
                                 senderAccountAddress = transactionData.targetUser.publicKey,
                                 isSenderRekeyedToAnotherAccount =
-                                transactionData.targetUser.account?.isRekeyedToAnotherAccount() ?: false,
+                                transactionData.targetUser.account?.isRekeyedToAnotherAccount()
+                                    ?: false,
                                 senderAccountType = transactionData.targetUser.account?.account?.type,
                                 senderAccountDetail = transactionData.targetUser.account?.account?.detail,
                                 senderAuthAddress = transactionData.targetUser.account?.authAddress,
@@ -147,8 +169,14 @@ class AssetTransferPreviewViewModel @Inject constructor(
                 }
                 signedArc59Transactions.clear()
                 unsignedArc59Transactions = arc59Transactions
-                _signArc59TransactionFlow.emit(arc59Transactions.first())
+                getAssetTransferPreview(unsignedArc59Transactions)
             }
+        }
+    }
+
+    fun sendArc59Transactions() {
+        viewModelScope.launch {
+            _signArc59TransactionFlow.emit(unsignedArc59Transactions.first())
         }
     }
 

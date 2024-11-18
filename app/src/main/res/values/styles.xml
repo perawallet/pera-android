@@ -806,4 +806,8 @@
         <item name="android:textAppearance">@style/TextAppearance.Footnote.Sans</item>
         <item name="android:textColor">@color/text_gray_lighter</item>
     </style>
+
+    <style name="SquareFAB" parent="">
+        <item name="cornerSize">0dp</item>
+    </style>
 </resources>

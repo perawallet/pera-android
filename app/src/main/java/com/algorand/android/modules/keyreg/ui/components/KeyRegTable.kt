@@ -61,7 +61,7 @@ fun keyRegTable(
             "State Proof Key" to keyRegTransactionDetail.stateProofKey,
             "First Valid Round" to keyRegTransactionDetail.firstValid,
             "Last Valid Round" to keyRegTransactionDetail.lastValid,
-            "XNote" to keyRegTransactionDetail.xNote,
+            "xNote" to keyRegTransactionDetail.xNote,
             "Note" to keyRegTransactionDetail.note,
             "Signing Address" to keyRegTransactionDetail.signingAddress,
         )

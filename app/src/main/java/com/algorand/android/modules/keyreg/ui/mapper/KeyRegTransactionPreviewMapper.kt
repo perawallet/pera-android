@@ -33,8 +33,8 @@ class KeyRegTransactionPreviewMapper @Inject constructor() {
             keyDilution = detail.voteKeyDilution.orEmpty(),
             firstValid = detail.voteFirstRound.orEmpty(),
             lastValid = detail.voteLastRound.orEmpty(),
-            xNote = detail.xnote ?: "",
-            note = detail.note ?: "",
+            xNote = detail.xnote,
+            note = detail.note,
             signingAddress = signingAddress,
             signTransactionEvent = null,
             showErrorEvent = null

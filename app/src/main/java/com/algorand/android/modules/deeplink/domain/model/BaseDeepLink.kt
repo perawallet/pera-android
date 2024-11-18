@@ -274,15 +274,15 @@ sealed class BaseDeepLink {
                 return KeyRegDeepLink(
                     senderAccountAddress = rawDeeplink.accountAddress.orEmpty(),
                     fee = rawDeeplink.fee ?: BigInteger.ONE,
-                    note = rawDeeplink.note ?: "",
-                    xnote = rawDeeplink.xnote ?: "",
-                    voteKey = rawDeeplink.votekey ?: "",
-                    selkey = rawDeeplink.selkey ?: "",
-                    sprfkey = rawDeeplink.sprfkey ?: "",
-                    votefst = rawDeeplink.votefst ?: "",
-                    votelst = rawDeeplink.votelst ?: "",
-                    votekd = rawDeeplink.votekd ?: "",
-                    type = rawDeeplink.type ?: ""
+                    note = rawDeeplink.note,
+                    xnote = rawDeeplink.xnote,
+                    voteKey = rawDeeplink.votekey,
+                    selkey = rawDeeplink.selkey,
+                    sprfkey = rawDeeplink.sprfkey,
+                    votefst = rawDeeplink.votefst,
+                    votelst = rawDeeplink.votelst,
+                    votekd = rawDeeplink.votekd,
+                    type = rawDeeplink.type.orEmpty()
                 )
             }
 

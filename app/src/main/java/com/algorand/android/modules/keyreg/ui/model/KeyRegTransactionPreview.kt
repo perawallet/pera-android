@@ -26,8 +26,8 @@ data class KeyRegTransactionPreview(
     val keyDilution: String,
     val firstValid: String,
     val lastValid: String,
-    val xNote: String,
-    val note: String,
+    val xNote: String?,
+    val note: String?,
     val signingAddress: String,
     val signTransactionEvent: Event<KeyRegTransaction>?,
     val showErrorEvent: Event<Unit>?

@@ -212,7 +212,8 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
     private fun navToConfirmationFragment(transactionId: String) {
         nav(KeyRegTransactionFragmentDirections
             .actionKeyRegTransactionFragmentToTransactionConfirmationFragment(
-                transactionId
+                transactionId = transactionId,
+                titleResId = R.string.operation_completed,
             )
         )
     }

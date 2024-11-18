@@ -156,7 +156,7 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
             setConfirmTransactionButton()
             setTransactionDetails(preview)
             setKeyRegDetails(preview)
-            setTransactionNote(preview.xNote, preview.note, true)
+            setTransactionNote(preview.xNote, preview.note, preview.xNote.isBlank())
 
             preview?.signTransactionEvent?.consume()?.let { keyRegTxn ->
                 keyRegTransactionSignManager.signKeyRegTransaction(keyRegTxn)

@@ -1,5 +1,14 @@
 [versions]
 agp = "8.7.2"
+android-application = "8.2.2"
+android-compileSdk = "34"
+android-discover-staging = "4"
+android-discover-prod = "4"
+android-minSdk = "26"
+android-namespace = "com.algorand.android"
+android-targetSdk = "34"
+android-versionCode = "124"
+android-versionName = "5.13.0"
 algosdk = "2.5.0"
 androidx-compose-activity = "1.9.3"
 androidx-compose-fragment = "1.8.5"
@@ -10,6 +19,7 @@ appCompat = "1.7.0"
 biometric = "1.1.0"
 ble = "2.8.0"
 browser = "1.8.0"
+buildConfig = "4.1.1"
 constraintLayout = "2.2.0"
 coil = "3.0.1"
 compose = "1.6.10"
@@ -23,7 +33,7 @@ datastore = "1.1.1"
 detekt = "1.23.7"
 espresso = "3.6.1"
 exoPlayer = "2.19.1"
-firebaseBom = "33.5.1"
+firebaseBom = "33.6.0"
 firebaseCrashlyticsGradle = "3.0.2"
 firebasePerformance = "1.4.2"
 flexbox = "3.0.0"
@@ -38,7 +48,7 @@ koin = "4.0.0"
 kotlin = "2.0.21"
 kotlinfixture = "1.2.0"
 kotlinxSerialization = "1.7.3"
-kotlinTest = "1.8.22"
+kotlinTest = "2.0.0"
 kspGradlePlugin = "2.0.21-1.0.25"
 ksp = "2.0.21-1.0.25"
 ktor = "3.0.0"
@@ -53,15 +63,18 @@ mockk = "1.13.13"
 moshi = "1.15.1"
 mpAndroidChart = "3.1.0"
 multidex = "2.0.1"
-navigation = "2.8.3"
+napier = "2.7.1"
+navigation = "2.8.4"
+navigation-compose = "2.8.0-alpha10"
 okhttp = "4.12.0"
-paging = "3.3.2"
+paging = "3.3.4"
 retrofit = "2.11.0"
 review = "2.0.2"
 room = "2.7.0-alpha11"
 runner = "1.6.2"
-safeargs = "2.8.3"
+safeargs = "2.8.4"
 tink = "1.14.0"
+voyager = "1.1.0-beta02"
 walletConnectBom = "1.34.1"
 zxing = "4.3.0"
 
@@ -112,8 +125,12 @@ khex = { module = "com.github.komputing:khex", version.ref = "khex" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
+koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-core-viewmodel = { module = "io.insert-koin:koin-core-viewmodel" }
+
+
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
@@ -146,6 +163,8 @@ moshi-core = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpAndroidChart" }
 multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose" }
 navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
 navigation-safe-args-gradle-plugin = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "safeargs" }
 navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
@@ -161,17 +180,37 @@ room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 runner = { module = "androidx.test:runner", version.ref = "runner" }
 sign = { module = "com.walletconnect:sign" }
 tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "tink" }
+voyager-bottom-sheet-navigator = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
+voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+voyager-tab-navigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 walletconnect = { module = "com.walletconnect:android-bom", version.ref = "walletConnectBom" }
 walletconnect-android-core = { module = "com.walletconnect:android-core" }
 web3wallet = { module = "com.walletconnect:web3wallet" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxing" }
 
+
 [bundles]
-firebase = ["firebase-analytics", "firebase-config", "firebase-crashlytics",
-    "firebase-messaging", "firebase-perf"]
-koin = ["koin-core", "koin-core-viewmodel"]
+firebase = ["firebase-analytics",
+    "firebase-config",
+    "firebase-crashlytics",
+    "firebase-messaging",
+    "firebase-perf"
+]
+voyager = [
+    "voyager-bottom-sheet-navigator",
+    "voyager-koin",
+    "voyager-navigator",
+    "voyager-screenmodel",
+    "voyager-tab-navigator",
+    "voyager-transitions"
+]
 
 [plugins]
+android-application = { id = "com.android.application", version.ref = "android-application" }
+buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

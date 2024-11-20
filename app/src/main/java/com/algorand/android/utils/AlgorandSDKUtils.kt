@@ -173,6 +173,16 @@ fun TransactionParams.makeArc59Txn(
     )
 }
 
+fun getReceiverMinBalanceFee(
+    receiverAlgoAmount: BigInteger,
+    receiverMinBalanceAmount: BigInteger,
+): Long {
+    return Sdk.getReceiverMinBalanceFee(
+        receiverAlgoAmount.toUint64(),
+        receiverMinBalanceAmount.toUint64()
+    )
+}
+
 fun TransactionParams.getTxFee(signedTxData: ByteArray? = null): Long {
     return ((signedTxData?.size ?: DATA_SIZE_FOR_MAX) * fee).coerceAtLeast(minFee ?: MIN_FEE)
 }

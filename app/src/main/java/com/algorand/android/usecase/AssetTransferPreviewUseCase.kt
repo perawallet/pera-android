@@ -32,11 +32,13 @@ class AssetTransferPreviewUseCase @Inject constructor(
 ) {
 
     fun getAssetTransferPreview(
-        transactionDataList: List<TransactionData>
+        transactionDataList: List<TransactionData>,
+        receiverMinBalanceFee: Long? = null
     ): AssetTransferPreview {
         val fee = transactionDataList.sumOf {
-            it.calculatedFee ?: (it as? TransactionData.Send)?.projectedFee ?: MIN_FEE
-        }
+            it.calculatedFee ?: (it as? TransactionData.Send)?.projectedFee
+            ?: MIN_FEE
+        } + (receiverMinBalanceFee ?: 0)
         val sendTransactionData = transactionDataList.find {
             it is TransactionData.Send
         } as TransactionData.Send

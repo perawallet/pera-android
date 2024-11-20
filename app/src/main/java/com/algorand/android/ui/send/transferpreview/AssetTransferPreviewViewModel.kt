@@ -67,10 +67,14 @@ class AssetTransferPreviewViewModel @Inject constructor(
         }
     }
 
-    private fun getAssetTransferPreview(transactionList: List<TransactionData>) {
+    private fun getAssetTransferPreview(
+        transactionList: List<TransactionData>,
+        receiverMinBalanceFee: Long? = null
+    ) {
         viewModelScope.launch {
             val signedTransactionPreview = assetTransferPreviewUserCase.getAssetTransferPreview(
-                transactionList
+                transactionList,
+                receiverMinBalanceFee
             )
             _assetTransferPreviewFlow.emit(signedTransactionPreview)
         }
@@ -139,7 +143,6 @@ class AssetTransferPreviewViewModel @Inject constructor(
     private fun makeArc59Transactions(transactionData: TransactionData) {
         viewModelScope.launch {
             (transactionData as TransactionData.Send).let {
-                transactionManager.createArc59SendTransactionList(transactionData)
                 val transactions =
                     transactionManager.createArc59SendTransactionList(transactionData)
                 val arc59Transactions = mutableListOf<TransactionData>()
@@ -169,7 +172,9 @@ class AssetTransferPreviewViewModel @Inject constructor(
                 }
                 signedArc59Transactions.clear()
                 unsignedArc59Transactions = arc59Transactions
-                getAssetTransferPreview(unsignedArc59Transactions)
+                val receiverMinBalanceFee =
+                    transactionManager.getReceiverMinBalanceFee(transactionData)
+                getAssetTransferPreview(unsignedArc59Transactions, receiverMinBalanceFee)
             }
         }
     }

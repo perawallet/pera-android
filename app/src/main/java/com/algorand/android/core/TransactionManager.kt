@@ -42,6 +42,7 @@ import com.algorand.android.utils.LifecycleScopedCoroutineOwner
 import com.algorand.android.utils.ListQueuingHelper
 import com.algorand.android.utils.TransactionSigningHelper
 import com.algorand.android.utils.assignGroupId
+import com.algorand.android.utils.getReceiverMinBalanceFee
 import com.algorand.android.utils.flatten
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.getTxFee
@@ -67,7 +68,7 @@ import kotlinx.coroutines.launch
 
 // TODO: 26.06.2022 Refactor and use AccountDetail instead of AccountCacheData in transaction flow
 // TODO: 26.06.2022 Replace AccountCacheManager with AccountDetailUsecase
-@Suppress("LargeClass")
+@Suppress("LargeClass", "TooManyFunctions")
 class TransactionManager @Inject constructor(
     private val accountCacheManager: AccountCacheManager,
     private val ledgerBleSearchManager: LedgerBleSearchManager,
@@ -228,6 +229,22 @@ class TransactionManager @Inject constructor(
 
     suspend fun createArc59SendTransactionList(transactionData: TransactionData): List<Arc59TransactionData>? {
         return transactionData.createArc59SendTransactions()
+    }
+
+    suspend fun getReceiverMinBalanceFee(transactionData: TransactionData): Long? {
+        val transactionParams = getTransactionParams(transactionData) ?: return null
+        this@TransactionManager.transactionParams = transactionParams
+
+        val sendTransaction = transactionData as? TransactionData.Send ?: return null
+        val targetAccount = sendTransaction.targetUser.account ?: return null
+
+        val receiverAlgoAmount = targetAccount.accountInformation.amount
+        val receiverMinBalanceAmount = targetAccount.getMinBalance().toBigInteger()
+
+        return getReceiverMinBalanceFee(
+            receiverAlgoAmount = receiverAlgoAmount,
+            receiverMinBalanceAmount = receiverMinBalanceAmount
+        )
     }
 
     private fun TransactionData.signTxn(accountDetail: Account.Detail, checkIfRekeyed: Boolean = true) {

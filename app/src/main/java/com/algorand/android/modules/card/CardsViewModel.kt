@@ -38,8 +38,13 @@ class CardsViewModel @Inject constructor(
 ) : BasePeraWebViewViewModel() {
 
     private val _cardsPreviewFlow = MutableStateFlow<CardsPreview>(CardsPreview())
-    val cardsPreviewFlow: StateFlow<CardsPreview?>
+    val cardsPreviewFlow: StateFlow<CardsPreview>
         get() = _cardsPreviewFlow.asStateFlow()
+
+    override fun onPageFinished(title: String?, url: String?) {
+        super.onPageFinished(title, url)
+        _cardsPreviewFlow.value = cardsPreviewFlow.value.copy(onPageFinished = Event(Unit))
+    }
 
     fun getAuthorizedAddresses() {
         viewModelScope.launch {

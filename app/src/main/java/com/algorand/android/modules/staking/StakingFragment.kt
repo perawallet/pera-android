@@ -29,8 +29,8 @@ import com.algorand.android.discover.common.ui.model.WebViewError.HTTP_ERROR
 import com.algorand.android.discover.common.ui.model.WebViewError.NO_CONNECTION
 import com.algorand.android.discover.home.domain.PeraMobileWebInterface
 import com.algorand.android.discover.home.domain.PeraMobileWebInterface.Companion.WEB_INTERFACE_NAME
-import com.algorand.android.discover.utils.JAVASCRIPT_NAVIGATION
 import com.algorand.android.discover.utils.JAVASCRIPT_PERACONNECT
+import com.algorand.android.discover.utils.getCustomUrl
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ScreenState
 import com.algorand.android.modules.perawebview.WebViewThemeHelper
@@ -42,9 +42,10 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
@@ -75,6 +76,12 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
     private val errorEventCollector: suspend (Event<WebViewError>) -> Unit = {
         it.consume()?.let { error ->
             handleWebViewError(error)
+        }
+    }
+
+    private val pageFinishedCollector: suspend (Event<Unit>) -> Unit = {
+        it.consume()?.let {
+            binding.webView.evaluateJavascript(JAVASCRIPT_PERACONNECT, null)
         }
     }
 
@@ -109,14 +116,18 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
             webView.addJavascriptInterface(peraWebInterface, WEB_INTERFACE_NAME)
             webView.webViewClient = PeraWebViewClient(peraWebViewClientListener)
             webView.webChromeClient = PeraWebChromeClient(peraWebViewClientListener)
-            webView.evaluateJavascript(JAVASCRIPT_NAVIGATION, null)
             webView.evaluateJavascript(JAVASCRIPT_PERACONNECT, null)
         }
     }
 
     private fun loadStakingUrl() {
         with(binding.webView) {
-            if (url == null) loadUrl(STAKING_URL)
+            if (url == null) {
+                val webViewTheme = webViewThemeHelper.getWebViewThemeFromThemePreference(context)
+                val locale = Locale.getDefault().language
+                val cardsUrl = getCustomUrl(STAKING_URL, webViewTheme, stakingViewModel.getPrimaryCurrencyId(), locale)
+                loadUrl(cardsUrl)
+            }
         }
     }
 
@@ -128,6 +139,10 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
         collectLatestOnLifecycle(
             stakingViewModel.stakingPreviewFlow.mapNotNull { it?.errorEvent }.distinctUntilChanged(),
             errorEventCollector
+        )
+        collectLatestOnLifecycle(
+            stakingViewModel.stakingPreviewFlow.mapNotNull { it?.onPageFinished }.distinctUntilChanged(),
+            pageFinishedCollector
         )
     }
 

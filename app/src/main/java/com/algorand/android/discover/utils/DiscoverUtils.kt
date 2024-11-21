@@ -14,7 +14,6 @@ package com.algorand.android.discover.utils
 
 import android.util.Base64
 import com.algorand.android.BuildConfig
-import com.algorand.android.BuildConfig.CARDS_URL
 import com.algorand.android.discover.common.ui.model.WebViewTheme
 
 private const val WEBVIEW_AUTH_USERNAME = BuildConfig.DISCOVER_WEBVIEW_USERNAME
@@ -71,8 +70,8 @@ fun getDiscoverCustomUrl(
         .build()
 }
 
-fun getCardsUrl(themePreference: WebViewTheme, currency: String, locale: String): String {
-    return DiscoverUrlBuilder.create(CARDS_URL)
+fun getCustomUrl(url: String, themePreference: WebViewTheme, currency: String, locale: String): String {
+    return DiscoverUrlBuilder.create(url)
         .addTheme(themePreference)
         .addPlatform()
         .addCurrency(currency)

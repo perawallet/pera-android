@@ -17,5 +17,6 @@ import com.algorand.android.utils.Event
 
 data class StakingPreview(
     val sendMessageEvent: Event<String>? = null,
-    val errorEvent: Event<WebViewError>? = null
+    val errorEvent: Event<WebViewError>? = null,
+    val onPageFinished: Event<Unit>? = null
 )

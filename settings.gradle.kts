@@ -1,8 +1,3 @@
-rootProject.name = "algorand-android"
-include(":app")
-include(":wallet-sdk")
-include(":test-utils")
-
 pluginManagement {
     repositories {
         google()
@@ -22,3 +17,9 @@ dependencyResolutionManagement {
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
     }
 }
+
+rootProject.name = "algorand-android"
+include(":app")
+include(":composeTestApp")
+include(":wallet-sdk")
+include(":test-utils")

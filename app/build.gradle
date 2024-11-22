@@ -1,6 +1,6 @@
 plugins {
-    id "io.gitlab.arturbosch.detekt" version(libs.versions.detekt)
     id "com.android.application"
+    id "io.gitlab.arturbosch.detekt" version(libs.versions.detekt)
     id "com.google.gms.google-services"
     id "com.google.firebase.crashlytics"
     id "kotlin-android"
@@ -30,11 +30,11 @@ if (project.file(offrampGradlePath).exists()) {
 }
 
 def getVersionName = {
-    System.getenv("PERA_APP_VERSION_NAME")?.toString() ?: peraApplication.versionName
+    System.getenv("PERA_APP_VERSION_NAME")?.toString() ?: libs.versions.android.versionName.get().toString()
 }
 
 def getVersionCode = {
-    System.getenv("PERA_APP_VERSION_CODE")?.toInteger() ?: peraApplication.versionCode
+    System.getenv("PERA_APP_VERSION_CODE")?.toInteger() ?: libs.versions.android.versionCode.get().toInteger()
 }
 
 def getGitHash = { ->
@@ -47,13 +47,13 @@ def getGitHash = { ->
 }
 
 android {
-    compileSdkVersion targets.compileSdkVersion
+    compileSdk libs.versions.android.compileSdk.get().toInteger()
     defaultConfig {
         versionCode getVersionCode()
         versionName getVersionName()
-        applicationId application.applicationId
-        minSdkVersion targets.minSdkVersion
-        targetSdkVersion targets.targetSdkVersion
+        applicationId libs.versions.android.namespace.get().toString()
+        minSdkVersion libs.versions.android.minSdk.get().toInteger()
+        targetSdkVersion libs.versions.android.targetSdk.get().toInteger()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
 
@@ -127,7 +127,7 @@ android {
             buildConfigField "String", "PERA_3D_EXPLORER_BASE_URL", '"https://static-hosting.perawallet.app/3dviewer/index.html"'
             buildConfigField "String", "DISCOVER_WEBVIEW_USERNAME", apiKeyProps["DISCOVER_WEBVIEW_USERNAME"]
             buildConfigField "String", "DISCOVER_WEBVIEW_PASSWORD", apiKeyProps["DISCOVER_WEBVIEW_PASSWORD"]
-            buildConfigField "String", "DISCOVER_VERSION", "\"${discoverVersions.staging}\""
+            buildConfigField "String", "DISCOVER_VERSION", "\"${libs.versions.android.discover.staging.get().toInteger()}\""
             buildConfigField "String", "DISCOVER_URL", '"https://discover-mobile-staging.perawallet.app/"'
             buildConfigField "String", "DISCOVER_BROWSE_DAPP_URL", '"https://discover-mobile-staging.perawallet.app/main/browser"'
             buildConfigField "String", "CARDS_URL", '"https://cards-mobile-staging.perawallet.app"'
@@ -159,7 +159,7 @@ android {
             buildConfigField "String", "PERA_3D_EXPLORER_BASE_URL", '"https://static-hosting.perawallet.app/3dviewer/index.html"'
             buildConfigField "String", "DISCOVER_WEBVIEW_USERNAME", apiKeyProps["DISCOVER_WEBVIEW_USERNAME"]
             buildConfigField "String", "DISCOVER_WEBVIEW_PASSWORD", apiKeyProps["DISCOVER_WEBVIEW_PASSWORD"]
-            buildConfigField "String", "DISCOVER_VERSION", "\"${discoverVersions.prod}\""
+            buildConfigField "String", "DISCOVER_VERSION", "\"${libs.versions.android.discover.prod.get().toInteger()}\""
             buildConfigField "String", "DISCOVER_URL", '"https://discover-mobile.perawallet.app/"'
             buildConfigField "String", "DISCOVER_BROWSE_DAPP_URL", '"https://discover-mobile.perawallet.app/main/browser"'
             buildConfigField "String", "CARDS_URL", '"https://cards-mobile.perawallet.app"'
@@ -210,7 +210,7 @@ android {
         exclude 'lib/libnarcissus-win-64.dll'
     }
 
-    namespace application.applicationId
+    namespace libs.versions.android.namespace.get().toString()
 }
 
 dependencies {

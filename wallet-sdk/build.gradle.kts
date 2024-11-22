@@ -26,10 +26,6 @@ plugins {
     alias(libs.plugins.room)
 }
 
-apply(from = "../versions.gradle")
-
-val targets = extra["targets"] as Map<*, *>
-
 kotlin {
     androidTarget {
         compilations.all {
@@ -60,9 +56,11 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
+            api(libs.algosdk)
+            api(libs.napier)
+
             implementation(compose.uiTooling)
             implementation(libs.androidx.activityCompose)
-            api(libs.algosdk)
             implementation(libs.androidx.compose.foundation)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -106,9 +104,9 @@ kotlin {
 
 android {
     namespace = "com.algorand.common"
-    compileSdk = targets["compileSdkVersion"] as Int
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
-        minSdk = targets["minSdkVersion"] as Int
+        minSdk = libs.versions.android.minSdk.get().toInt()
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

@@ -22,14 +22,14 @@ buildscript {
 }
 
 plugins {
+    alias(libs.plugins.android.application).apply(false)
+    alias(libs.plugins.buildConfig).apply(false)
     alias(libs.plugins.compose.compiler).apply(false)
     alias(libs.plugins.compose).apply(false)
     alias(libs.plugins.kotlinx.serialization).apply(false)
     alias(libs.plugins.ksp).apply(false)
     alias(libs.plugins.multiplatform).apply(false)
 }
-
-apply(from = "versions.gradle")
 
 allprojects {
     repositories {
@@ -40,5 +40,5 @@ allprojects {
 }
 
 tasks.register<Delete>("clean") {
-    delete(rootProject.buildDir)
+    delete(rootProject.layout.buildDirectory)
 }

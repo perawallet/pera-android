@@ -2,10 +2,10 @@ package co.algorand.app.ui.screens
 
 import algorand_android.composetestapp.generated.resources.Res
 import algorand_android.composetestapp.generated.resources.nav_home
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import co.algorand.app.ui.viewmodels.AlgorandBaseViewModel
 import co.algorand.app.ui.widgets.SuppressLint
+import com.algorand.common.ui.theme.PeraTheme
 import org.jetbrains.compose.resources.stringResource
 
 @SuppressLint("ComposableNaming")
@@ -26,11 +27,8 @@ fun HomeScreen(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
-        modifier =
-        Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
+        modifier = Modifier.fillMaxSize().background(PeraTheme.colors.background)
     ) {
-        Text(text = stringResource(Res.string.nav_home))
+        Text(text = stringResource(Res.string.nav_home), color = PeraTheme.colors.textMain)
     }
 }

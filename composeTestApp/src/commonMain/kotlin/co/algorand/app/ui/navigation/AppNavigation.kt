@@ -137,6 +137,9 @@ fun AppNavigation() {
                 )
                 SnackBarLayout(sharedViewModel, snackbarHostState)
             }
+            composable<PeraTypographyPreviewScreenNavigation> {
+                PeraTypographyPreviewScreen()
+            }
         }
     }
 }

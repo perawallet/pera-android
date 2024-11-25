@@ -119,6 +119,9 @@ android {
         compose = true
     }
 
+    sourceSets["main"].res.srcDirs("src/commonMain/composeResources", "src/androidMain/res")
+    sourceSets["main"].resources.srcDirs("src/commonMain/composeResources")
+
     configurations.all {
         // exclude duplicate bouncycastle till walletconnect is no longer used
         exclude(group = "org.bouncycastle", module = "bcprov-jdk15to18")

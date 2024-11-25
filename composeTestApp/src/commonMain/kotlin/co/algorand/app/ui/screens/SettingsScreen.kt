@@ -68,6 +68,14 @@ fun SettingsScreen(
             }
         )
 
+        ElevatedButton(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp).widthIn(min = 200.dp),
+            onClick = { navController.navigate(PeraTypographyPreviewScreenNavigation) },
+            content = {
+                Text("Typograpgy")
+            }
+        )
+
         TextButton(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp).widthIn(min = 200.dp),
             onClick = { openUrl("https://github.com/perawallet/pera-android") },

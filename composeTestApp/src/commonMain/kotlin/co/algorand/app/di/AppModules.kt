@@ -1,7 +1,15 @@
 package co.algorand.app.di
 
-import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
+import org.koin.dsl.includes
+import org.koin.dsl.koinConfiguration
+
+expect fun nativeConfig() : KoinAppDeclaration
+
+val initKoinConfig = koinConfiguration {
+    includes(nativeConfig())
+    modules(appModules())
+}
 
 fun appModules() =
     listOf(
@@ -13,9 +21,3 @@ fun appModules() =
 //            single { AppSettings(get()) }
 //        },
     )
-
-fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
-    startKoin {
-        appDeclaration()
-        modules(appModules())
-    }

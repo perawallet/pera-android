@@ -7,14 +7,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import co.algorand.app.di.initKoin
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.component.KoinComponent
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 
-class AndroidApp :
-    Application(),
-    KoinComponent {
+class AndroidApp : Application() {
     companion object {
         lateinit var instance: AndroidApp
     }
@@ -22,11 +18,6 @@ class AndroidApp :
     override fun onCreate() {
         super.onCreate()
         instance = this
-
-        initKoin {
-            androidLogger()
-            androidContext(this@AndroidApp)
-        }
     }
 }
 
@@ -36,6 +27,12 @@ class AppActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent { App() }
     }
+}
+
+@Preview
+@Composable
+fun AppAndroidPreview() {
+    App()
 }
 
 internal actual fun openUrl(url: String?) {

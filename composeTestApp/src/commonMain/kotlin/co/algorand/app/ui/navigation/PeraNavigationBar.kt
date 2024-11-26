@@ -21,11 +21,14 @@ import algorand_android.composetestapp.generated.resources.ic_settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.algorand.common.ui.theme.PeraTheme
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -36,10 +39,12 @@ fun PeraNavigationBar(
     displayCoreActionsBottomSheet: () -> Unit
 ) {
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
-    NavigationBar {
+    NavigationBar(
+        containerColor = PeraTheme.colors.tabBarBackground
+    ) {
         topLevelRoutes.forEachIndexed { _, navigationItem ->
             NavigationBarItem(
-                selected = navigationItem == currentDestination,
+                selected = navigationItem::class.qualifiedName == currentDestination?.route,
                 label = {
                     (navigationItem.type as? TopLevelRoute.Type.NavButton)?.let {
                         Text(it.label)
@@ -65,6 +70,13 @@ fun PeraNavigationBar(
                         }
                     }
                 },
+                colors = NavigationBarItemDefaults.colors().copy(
+                    selectedTextColor = PeraTheme.colors.tabBarIconActive,
+                    unselectedTextColor = PeraTheme.colors.tabBarIconNonActive,
+                    selectedIconColor = PeraTheme.colors.tabBarIconActive,
+                    unselectedIconColor = PeraTheme.colors.tabBarIconNonActive,
+                    selectedIndicatorColor = Color.Transparent
+                )
             )
         }
     }

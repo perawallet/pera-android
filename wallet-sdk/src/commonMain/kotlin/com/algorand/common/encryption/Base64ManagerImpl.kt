@@ -10,13 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption.di
+package com.algorand.common.encryption
 
-import com.algorand.common.encryption.Base64Manager
-import com.algorand.common.encryption.Base64ManagerImpl
-import org.koin.dsl.module
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
-val encryptionModule = module {
-    single<Base64Manager> { Base64ManagerImpl() }
+internal class Base64ManagerImpl : Base64Manager {
+
+    @OptIn(ExperimentalEncodingApi::class)
+    override fun encode(byteArray: ByteArray): String {
+        return Base64.encode(byteArray)
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    override fun decode(value: String): ByteArray {
+        return Base64.decode(value)
+    }
 }
-

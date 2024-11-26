@@ -18,5 +18,3 @@ interface Base64Manager {
 
     fun decode(value: String): ByteArray
 }
-
-internal expect fun getBase64Manager(): Base64Manager

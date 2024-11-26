@@ -15,23 +15,37 @@ package com.algorand.common.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 
-private val LocalCustomColors = staticCompositionLocalOf {
+val LocalCustomColors = staticCompositionLocalOf {
     ThemedColors.defaultColor
 }
 
+val LocalThemeIsDark = compositionLocalOf { mutableStateOf(true) }
+
 @Composable
 fun PeraTheme(
-    isDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val customColors = ThemedColors.getColorsByMode(isDarkTheme)
+    val systemIsDark = isSystemInDarkTheme()
+    val isDarkState = remember { mutableStateOf(systemIsDark) }
+    val customColors = ThemedColors.getColorsByMode(isDarkState.value)
     CompositionLocalProvider(
-        LocalCustomColors provides customColors,
-        content = content
-    )
+        LocalThemeIsDark provides isDarkState,
+        LocalCustomColors provides customColors
+    ) {
+        val isDark by isDarkState
+        SystemAppearance(!isDark)
+        content()
+    }
 }
+
+@Composable
+internal expect fun SystemAppearance(isDark: Boolean)
 
 object PeraTheme {
     val colors: PeraColor

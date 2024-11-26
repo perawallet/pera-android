@@ -70,6 +70,15 @@ fun getDiscoverCustomUrl(
         .build()
 }
 
+fun getCustomUrl(url: String, themePreference: WebViewTheme, currency: String, locale: String): String {
+    return DiscoverUrlBuilder.create(url)
+        .addTheme(themePreference)
+        .addPlatform()
+        .addCurrency(currency)
+        .addLocale(locale)
+        .build()
+}
+
 fun getDiscoverAuthHeader(): HashMap<String, String> {
     val headers: HashMap<String, String> = HashMap()
     val basicAuthHeader = Base64.encodeToString(

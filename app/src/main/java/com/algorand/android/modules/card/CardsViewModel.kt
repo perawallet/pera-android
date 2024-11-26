@@ -15,6 +15,7 @@ package com.algorand.android.modules.card
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.modules.card.model.CardsPreview
+import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
 import com.algorand.android.modules.perawebview.GetDeviceIdWebMessage
 import com.algorand.android.modules.perawebview.ParseOpenSystemBrowserUrl
@@ -32,12 +33,18 @@ import kotlinx.coroutines.launch
 class CardsViewModel @Inject constructor(
     private val getAuthorizedAddressesWebMessage: GetAuthorizedAddressesWebMessage,
     private val getDeviceIdWebMessage: GetDeviceIdWebMessage,
-    private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl
+    private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl,
+    private val currencyUseCase: CurrencyUseCase
 ) : BasePeraWebViewViewModel() {
 
     private val _cardsPreviewFlow = MutableStateFlow<CardsPreview>(CardsPreview())
-    val cardsPreviewFlow: StateFlow<CardsPreview?>
+    val cardsPreviewFlow: StateFlow<CardsPreview>
         get() = _cardsPreviewFlow.asStateFlow()
+
+    override fun onPageFinished(title: String?, url: String?) {
+        super.onPageFinished(title, url)
+        _cardsPreviewFlow.value = cardsPreviewFlow.value.copy(onPageFinished = Event(Unit))
+    }
 
     fun getAuthorizedAddresses() {
         viewModelScope.launch {
@@ -75,5 +82,9 @@ class CardsViewModel @Inject constructor(
 
     fun getOpenSystemBrowserUrl(jsonPayload: String): String? {
         return parseOpenSystemBrowserUrl(jsonPayload)
+    }
+
+    fun getPrimaryCurrencyId(): String {
+        return currencyUseCase.getPrimaryCurrencyId()
     }
 }

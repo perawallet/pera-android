@@ -29,8 +29,8 @@ import com.algorand.android.discover.common.ui.model.WebViewError.HTTP_ERROR
 import com.algorand.android.discover.common.ui.model.WebViewError.NO_CONNECTION
 import com.algorand.android.discover.home.domain.PeraMobileWebInterface
 import com.algorand.android.discover.home.domain.PeraMobileWebInterface.Companion.WEB_INTERFACE_NAME
-import com.algorand.android.discover.utils.JAVASCRIPT_NAVIGATION
 import com.algorand.android.discover.utils.JAVASCRIPT_PERACONNECT
+import com.algorand.android.discover.utils.getCustomUrl
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ScreenState
 import com.algorand.android.modules.perawebview.WebViewThemeHelper
@@ -42,6 +42,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
@@ -77,6 +78,12 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
         }
     }
 
+    private val pageFinishedCollector: suspend (Event<Unit>) -> Unit = {
+        it.consume()?.let {
+            binding.webView.evaluateJavascript(JAVASCRIPT_PERACONNECT, null)
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         initWebViewTheme()
@@ -108,25 +115,33 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
             webView.addJavascriptInterface(peraWebInterface, WEB_INTERFACE_NAME)
             webView.webViewClient = PeraWebViewClient(peraWebViewClientListener)
             webView.webChromeClient = PeraWebChromeClient(peraWebViewClientListener)
-            webView.evaluateJavascript(JAVASCRIPT_NAVIGATION, null)
             webView.evaluateJavascript(JAVASCRIPT_PERACONNECT, null)
         }
     }
 
     private fun loadCardsUrl() {
         with(binding.webView) {
-            if (url == null) loadUrl(CARDS_URL)
+            if (url == null) {
+                val webViewTheme = webViewThemeHelper.getWebViewThemeFromThemePreference(context)
+                val locale = Locale.getDefault().language
+                val cardsUrl = getCustomUrl(CARDS_URL, webViewTheme, cardsViewModel.getPrimaryCurrencyId(), locale)
+                loadUrl(cardsUrl)
+            }
         }
     }
 
     private fun initObservers() {
         collectLatestOnLifecycle(
-            cardsViewModel.cardsPreviewFlow.mapNotNull { it?.sendMessageEvent }.distinctUntilChanged(),
+            cardsViewModel.cardsPreviewFlow.mapNotNull { it.sendMessageEvent }.distinctUntilChanged(),
             sendMessageEventCollector
         )
         collectLatestOnLifecycle(
-            cardsViewModel.cardsPreviewFlow.mapNotNull { it?.errorEvent }.distinctUntilChanged(),
+            cardsViewModel.cardsPreviewFlow.mapNotNull { it.errorEvent }.distinctUntilChanged(),
             errorEventCollector
+        )
+        collectLatestOnLifecycle(
+            cardsViewModel.cardsPreviewFlow.mapNotNull { it.onPageFinished }.distinctUntilChanged(),
+            pageFinishedCollector
         )
     }
 

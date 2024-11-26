@@ -14,6 +14,7 @@ package com.algorand.android.modules.staking
 
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.discover.common.ui.model.WebViewError
+import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
 import com.algorand.android.modules.perawebview.GetDeviceIdWebMessage
 import com.algorand.android.modules.perawebview.ParseOpenSystemBrowserUrl
@@ -21,18 +22,19 @@ import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
 import com.algorand.android.modules.staking.model.StakingPreview
 import com.algorand.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class StakingViewModel @Inject constructor(
     private val getAuthorizedAddressesWebMessage: GetAuthorizedAddressesWebMessage,
     private val getDeviceIdWebMessage: GetDeviceIdWebMessage,
-    private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl
+    private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl,
+    private val currencyUseCase: CurrencyUseCase
 ) : BasePeraWebViewViewModel() {
 
     private val _stakingPreviewFlow = MutableStateFlow<StakingPreview>(StakingPreview())
@@ -57,6 +59,11 @@ class StakingViewModel @Inject constructor(
         }
     }
 
+    override fun onPageFinished(title: String?, url: String?) {
+        super.onPageFinished(title, url)
+        _stakingPreviewFlow.value = _stakingPreviewFlow.value.copy(onPageFinished = Event(Unit))
+    }
+
     override fun onError() {
         viewModelScope.launch {
             _stakingPreviewFlow.update {
@@ -75,5 +82,9 @@ class StakingViewModel @Inject constructor(
 
     fun getOpenSystemBrowserUrl(jsonPayload: String): String? {
         return parseOpenSystemBrowserUrl(jsonPayload)
+    }
+
+    fun getPrimaryCurrencyId(): String {
+        return currencyUseCase.getPrimaryCurrencyId()
     }
 }

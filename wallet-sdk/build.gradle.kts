@@ -57,7 +57,6 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             api(libs.algosdk)
-            api(libs.napier)
 
             implementation(compose.uiTooling)
             implementation(libs.androidx.activityCompose)
@@ -75,10 +74,13 @@ kotlin {
             implementation(libs.firebase.config)
         }
         commonMain.dependencies {
+            api(libs.napier)
+
             implementation(compose.animation)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(compose.foundation)
+            implementation(compose.material)
             implementation(compose.material3)
             implementation(compose.runtime)
             implementation(libs.coil.compose)

@@ -44,11 +44,11 @@ hiltCompiler = "1.2.0"
 javaWebSocket = "1.5.6"
 junit = "4.13.2"
 khex = "1.1.2"
-koin = "4.0.0"
+koin = "4.0.1-Beta1"
 kotlin = "2.0.21"
 kotlinfixture = "1.2.0"
 kotlinxSerialization = "1.7.3"
-kotlinTest = "2.0.0"
+kotlinTest = "2.0.21"
 kspGradlePlugin = "2.0.21-1.0.25"
 ksp = "2.0.21-1.0.25"
 ktor = "3.0.0"
@@ -74,7 +74,6 @@ room = "2.7.0-alpha11"
 runner = "1.6.2"
 safeargs = "2.8.4"
 tink = "1.14.0"
-voyager = "1.1.0-beta02"
 walletConnectBom = "1.34.1"
 zxing = "4.3.0"
 
@@ -180,12 +179,6 @@ room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 runner = { module = "androidx.test:runner", version.ref = "runner" }
 sign = { module = "com.walletconnect:sign" }
 tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "tink" }
-voyager-bottom-sheet-navigator = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
-voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
-voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
-voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
-voyager-tab-navigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
-voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 walletconnect = { module = "com.walletconnect:android-bom", version.ref = "walletConnectBom" }
 walletconnect-android-core = { module = "com.walletconnect:android-core" }
 web3wallet = { module = "com.walletconnect:web3wallet" }
@@ -198,14 +191,6 @@ firebase = ["firebase-analytics",
     "firebase-crashlytics",
     "firebase-messaging",
     "firebase-perf"
-]
-voyager = [
-    "voyager-bottom-sheet-navigator",
-    "voyager-koin",
-    "voyager-navigator",
-    "voyager-screenmodel",
-    "voyager-tab-navigator",
-    "voyager-transitions"
 ]
 
 [plugins]

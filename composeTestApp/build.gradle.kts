@@ -41,7 +41,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "ComposeTestApp"
+            baseName = "composeTestApp"
             isStatic = true
         }
     }
@@ -52,6 +52,7 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(compose.foundation)
+            implementation(compose.material)
             implementation(compose.material3)
             implementation(compose.runtime)
             implementation(project.dependencies.platform(libs.koin.bom))
@@ -65,7 +66,6 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.navigation.compose)
 
-            implementation(libs.bundles.voyager)
             implementation(project(":wallet-sdk"))
         }
 

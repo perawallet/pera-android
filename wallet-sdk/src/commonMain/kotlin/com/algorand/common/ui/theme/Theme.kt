@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
+import com.algorand.common.ui.typography.PeraTypography
 
 val LocalCustomColors = staticCompositionLocalOf {
     ThemedColors.defaultColor
@@ -51,4 +52,8 @@ object PeraTheme {
     val colors: PeraColor
         @Composable
         get() = LocalCustomColors.current
+
+    val typography
+        @Composable
+        get() = PeraTypography()
 }

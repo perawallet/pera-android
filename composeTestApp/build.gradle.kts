@@ -127,6 +127,21 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        resources {
+            excludes += listOf(
+                "META-INF/DEPENDENCIES.md",
+                "META-INF/NOTICE.md",
+                "META-INF/LICENSE.md",
+                "META-INF/LICENSE.txt",
+                "META-INF/NOTICE.txt",
+                "META-INF/ASL2.0.md",
+                "lib/libnarcissus-macos-64.dylib",
+                "lib/libnarcissus-win-32.dll",
+                "lib/libnarcissus-win-64.dll"
+            )
+        }
+    }
 }
 
 buildConfig {

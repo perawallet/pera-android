@@ -11,16 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import co.algorand.app.ui.viewmodels.AlgorandBaseViewModel
-import co.algorand.app.ui.widgets.SuppressLint
+import co.algorand.app.ui.widgets.snackbar.SnackbarViewModel
 import com.algorand.common.ui.theme.PeraTheme
 import org.jetbrains.compose.resources.stringResource
 
-@SuppressLint("ComposableNaming")
 @Composable
 fun HomeScreen(
     navController: NavController,
-    algorandBaseViewModel: AlgorandBaseViewModel,
+    snackbarViewModel: SnackbarViewModel,
     tag: String,
 ) {
 

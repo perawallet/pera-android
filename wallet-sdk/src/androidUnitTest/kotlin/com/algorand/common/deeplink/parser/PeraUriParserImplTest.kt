@@ -12,6 +12,7 @@
 
 package com.algorand.common.deeplink.parser
 
+import com.algorand.common.deeplink.model.PeraUri
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -21,10 +22,18 @@ class PeraUriParserImplTest {
     private val sut = PeraUriParserImpl()
 
     @Test
-    fun `EXPECT parseUri to return null when uri is empty`() {
+    fun `EXPECT PeraUri with empty raw uri when uri is empty string`() {
         val result = sut.parseUri("")
 
-        assertNull(result)
+        val expected = PeraUri(
+            scheme = null,
+            host = null,
+            path = null,
+            queryParams = emptyMap(),
+            fragment = null,
+            rawUri = ""
+        )
+        assertEquals(expected, result)
     }
 
     @Test
@@ -41,12 +50,20 @@ class PeraUriParserImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN uri has no host path queryParams and fragment`() {
+    fun `EXPECT PeraUri with raw uri only WHEN uri has no host path queryParams and fragment`() {
         val uri = "pera:"
 
         val result = sut.parseUri(uri)
 
-        assertNull(result)
+        val expected = PeraUri(
+            scheme = null,
+            host = null,
+            path = null,
+            queryParams = emptyMap(),
+            fragment = null,
+            rawUri = uri
+        )
+        assertEquals(expected, result)
     }
 
     @Test
@@ -102,20 +119,36 @@ class PeraUriParserImplTest {
     }
 
     @Test
-    fun `EXPECT null WHEN uri has no scheme`() {
+    fun `EXPECT PeraUri with raw uri only WHEN uri has no scheme`() {
         val uri = "host/path?query1=value1&query2=value2#fragment"
 
         val result = sut.parseUri(uri)
 
-        assertNull(result)
+        val expected = PeraUri(
+            scheme = null,
+            host = null,
+            path = null,
+            queryParams = emptyMap(),
+            fragment = null,
+            rawUri = uri
+        )
+        assertEquals(expected, result)
     }
 
     @Test
-    fun `EXPECT null WHEN uri has no host`() {
+    fun `EXPECT PeraUri with raw uri only WHEN uri has no host`() {
         val uri = "pera:/path?query1=value1&query2=value2#fragment"
 
         val result = sut.parseUri(uri)
 
-        assertNull(result)
+        val expected = PeraUri(
+            scheme = null,
+            host = null,
+            path = null,
+            queryParams = emptyMap(),
+            fragment = null,
+            rawUri = uri
+        )
+        assertEquals(expected, result)
     }
 }

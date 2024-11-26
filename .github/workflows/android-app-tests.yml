@@ -69,3 +69,47 @@ jobs:
             cache: "gradle"
         - name: "Run App Bundle Publish Test"
           run: ./gradlew packageProdReleaseBundle
+
+    android-compose:
+      name: "Compose Android App Checks"
+      runs-on: ubuntu-latest
+      steps:
+        - name: "Checkout"
+          uses: actions/checkout@v4
+        - name: "Install JDK 17"
+          uses: actions/setup-java@v4
+          with:
+            distribution: "zulu"
+            java-version: "17"
+            cache: "gradle"
+        - name: "Run Compose Android App Checks"
+          run: ./gradlew composeTestApp:packageReleaseBundle
+        - name: "Archive Compose Android App Check Results"
+          uses: actions/upload-artifact@v4
+          if: ${{ always() }}
+          with:
+            name: "compose-android-app-results"
+            path: ./**/build/reports/**
+            overwrite: true
+
+    ios-compose:
+      name: "Compose iOS App Checks"
+      runs-on: macos-latest
+      steps:
+        - name: "Checkout"
+          uses: actions/checkout@v4
+        - name: "Install JDK 17"
+          uses: actions/setup-java@v4
+          with:
+            distribution: "zulu"
+            java-version: "17"
+            cache: "gradle"
+        - name: "Run Compose iOS App Checks"
+          run: ./gradlew composeTestApp:compileKotlinIosSimulatorArm64
+        - name: "Archive Compose iOS App Check Results"
+          uses: actions/upload-artifact@v4
+          if: ${{ always() }}
+          with:
+            name: "compose-ios-app-results"
+            path: ./**/build/reports/**
+            overwrite: true

@@ -6,6 +6,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.algorand.android.LoginNavigationDirections
+import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
@@ -44,6 +45,7 @@ class RegisterIntroFragment : DaggerBaseFragment(R.layout.fragment_register_type
     private val registerIntroPreviewCollector: suspend (RegisterIntroPreview) -> Unit = {
         binding.titleTextView.setText(it.titleRes)
         configureToolbar(it.isCloseButtonVisible, it.isSkipButtonVisible)
+        (activity as MainActivity).hideProgress()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

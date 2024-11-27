@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package co.algorand.app.ui.typography
+package co.algorand.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

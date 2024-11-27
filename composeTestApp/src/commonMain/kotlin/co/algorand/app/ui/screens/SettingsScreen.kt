@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import co.algorand.app.openUrl
-import co.algorand.app.ui.typography.PeraTypographyPreviewScreenNavigation
 import co.algorand.app.ui.widgets.snackbar.SnackbarViewModel
 import com.algorand.common.ui.theme.LocalThemeIsDark
 import com.algorand.common.ui.theme.PeraTheme
@@ -47,7 +46,7 @@ fun SettingsScreen(
         verticalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxSize().background(PeraTheme.colors.background)
     ) {
-        Text(text = stringResource(Res.string.nav_settings))
+        Text(text = stringResource(Res.string.nav_settings), color = PeraTheme.colors.textMain)
 
         var isDark by LocalThemeIsDark.current
         val icon = remember(isDark) {

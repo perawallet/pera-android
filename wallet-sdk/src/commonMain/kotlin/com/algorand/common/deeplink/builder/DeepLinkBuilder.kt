@@ -10,11 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.deeplink.builder
 
-interface Base64Manager {
+import com.algorand.common.deeplink.model.DeepLink
+import com.algorand.common.deeplink.model.DeepLinkPayload
 
-    fun encode(byteArray: ByteArray): String
+internal interface DeepLinkBuilder {
+    fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean
 
-    fun decode(value: String): ByteArray
+    fun createDeepLink(payload: DeepLinkPayload): DeepLink
 }

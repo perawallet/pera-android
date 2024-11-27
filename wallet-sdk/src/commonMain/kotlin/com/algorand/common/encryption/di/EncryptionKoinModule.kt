@@ -10,21 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.encryption.di
 
-import android.util.Base64
+import com.algorand.common.encryption.Base64Manager
+import com.algorand.common.encryption.Base64ManagerImpl
+import org.koin.dsl.module
 
-internal actual fun getBase64Manager(): Base64Manager {
-    return Base64ManagerImpl()
+val encryptionModule = module {
+    single<Base64Manager> { Base64ManagerImpl() }
 }
 
-internal class Base64ManagerImpl : Base64Manager {
-
-    override fun encode(byteArray: ByteArray): String {
-        return Base64.encodeToString(byteArray, Base64.DEFAULT)
-    }
-
-    override fun decode(value: String): ByteArray {
-        return Base64.decode(value, Base64.DEFAULT)
-    }
-}

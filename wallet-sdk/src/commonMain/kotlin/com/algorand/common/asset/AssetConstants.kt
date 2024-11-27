@@ -10,11 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.asset
 
-interface Base64Manager {
-
-    fun encode(byteArray: ByteArray): String
-
-    fun decode(value: String): ByteArray
+object AssetConstants {
+    const val ALGO_ID = -7L
 }

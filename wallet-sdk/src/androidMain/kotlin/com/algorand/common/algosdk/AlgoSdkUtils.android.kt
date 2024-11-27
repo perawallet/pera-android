@@ -10,19 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.algosdk
 
-internal actual fun getBase64Manager(): Base64Manager {
-    return Base64ManagerImpl()
-}
-
-internal class Base64ManagerImpl : Base64Manager {
-
-    override fun encode(byteArray: ByteArray): String {
-        return ""
-    }
-
-    override fun decode(value: String): ByteArray {
-        return ByteArray(0)
-    }
+actual fun isValidAccountAddress(address: String): Boolean {
+    // TODO Use algo sdk
+    return Regex("^([A-Z2-7]{58})$").matches(address)
 }

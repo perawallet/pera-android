@@ -12,9 +12,18 @@
 
 package com.algorand.common.encryption
 
-interface Base64Manager {
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
-    fun encode(byteArray: ByteArray): String
+internal class Base64ManagerImpl : Base64Manager {
 
-    fun decode(value: String): ByteArray
+    @OptIn(ExperimentalEncodingApi::class)
+    override fun encode(byteArray: ByteArray): String {
+        return Base64.encode(byteArray)
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    override fun decode(value: String): ByteArray {
+        return Base64.decode(value)
+    }
 }

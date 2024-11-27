@@ -10,11 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.deeplink.utils
 
-interface Base64Manager {
+import com.algorand.common.deeplink.model.PeraUri
 
-    fun encode(byteArray: ByteArray): String
+private const val COINBASE_DEEPLINK_ROOT = "algo"
 
-    fun decode(value: String): ByteArray
+internal fun isCoinbaseDeepLink(uri: PeraUri): Boolean {
+    return uri.scheme.equals(COINBASE_DEEPLINK_ROOT, ignoreCase = true)
 }

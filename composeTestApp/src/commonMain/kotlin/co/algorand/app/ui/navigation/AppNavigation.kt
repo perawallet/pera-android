@@ -14,8 +14,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import co.algorand.app.ui.screens.CoreActionsBottomSheet
-import co.algorand.app.ui.typography.PeraTypographyPreviewScreen
-import co.algorand.app.ui.typography.PeraTypographyPreviewScreenNavigation
+import co.algorand.app.ui.screens.PeraTypographyPreviewScreen
+import co.algorand.app.ui.screens.PeraTypographyPreviewScreenNavigation
 import com.algorand.common.ui.theme.PeraTheme
 
 @Composable

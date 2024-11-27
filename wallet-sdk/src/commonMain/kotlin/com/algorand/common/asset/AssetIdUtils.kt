@@ -10,11 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.asset
 
-interface Base64Manager {
+import com.algorand.common.asset.AssetConstants.ALGO_ID
 
-    fun encode(byteArray: ByteArray): String
+// Backend accepts ALGO with asset id 0. Remove this line if they accepts to change ALGO ID as -7
+fun getSafeAssetIdForRequest(assetId: Long): Long {
+    return if (assetId == ALGO_ID) 0 else assetId
+}
 
-    fun decode(value: String): ByteArray
+// Backend returns ALGO with asset id 0. Remove this line if they accepts to change ALGO ID as -7
+fun getSafeAssetIdForResponse(assetId: Long?): Long? {
+    return if (assetId == 0L) ALGO_ID else assetId
 }

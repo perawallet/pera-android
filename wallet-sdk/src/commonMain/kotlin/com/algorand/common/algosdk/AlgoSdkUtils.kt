@@ -10,11 +10,6 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.algosdk
 
-interface Base64Manager {
-
-    fun encode(byteArray: ByteArray): String
-
-    fun decode(value: String): ByteArray
-}
+expect fun isValidAccountAddress(address: String): Boolean

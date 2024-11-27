@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.deeplink.parser
 
-interface Base64Manager {
+import com.algorand.common.deeplink.model.DeepLinkPayload
 
-    fun encode(byteArray: ByteArray): String
+internal interface ParseDeepLinkPayload {
 
-    fun decode(value: String): ByteArray
+    operator fun invoke(url: String): DeepLinkPayload
 }

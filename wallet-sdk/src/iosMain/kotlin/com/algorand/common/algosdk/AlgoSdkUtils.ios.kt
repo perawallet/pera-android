@@ -10,11 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.algosdk
 
-interface Base64Manager {
-
-    fun encode(byteArray: ByteArray): String
-
-    fun decode(value: String): ByteArray
+actual fun isValidAccountAddress(address: String): Boolean {
+    // TODO Use algo sdk
+    return Regex("^([A-Z2-7]{58})$").matches(address)
 }

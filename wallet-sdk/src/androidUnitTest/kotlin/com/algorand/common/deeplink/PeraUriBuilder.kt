@@ -10,11 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.deeplink
 
-interface Base64Manager {
+import com.algorand.common.deeplink.model.PeraUri
 
-    fun encode(byteArray: ByteArray): String
+internal object PeraUriBuilder {
 
-    fun decode(value: String): ByteArray
+    fun create(
+        scheme: String? = null,
+        host: String? = null,
+        path: String? = null,
+        queryParams: Map<String, String?> = emptyMap(),
+        fragment: String? = null,
+        rawUri: String = ""
+    ): PeraUri {
+        return PeraUri(scheme, host, path, queryParams, fragment, rawUri)
+    }
 }

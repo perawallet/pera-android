@@ -10,11 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.common.encryption
+package com.algorand.common.deeplink.parser
 
-interface Base64Manager {
+import com.algorand.common.deeplink.model.PeraUri
 
-    fun encode(byteArray: ByteArray): String
-
-    fun decode(value: String): ByteArray
+internal interface PeraUriParser {
+    fun parseUri(uri: String): PeraUri
 }

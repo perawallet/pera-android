@@ -6,7 +6,6 @@ import co.algorand.app.ui.navigation.AppNavigation
 import com.algorand.common.ui.theme.PeraTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
-import com.algorand.common.ui.theme.PeraTheme
 
 @Composable
 @Preview

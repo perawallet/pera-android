@@ -24,6 +24,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDirections
 import com.algorand.android.HomeNavigationDirections
+import com.algorand.android.MainActivity
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
@@ -145,6 +146,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
     private val accountListCollector: suspend (List<BaseAccountListItem>?) -> Unit = { accountList ->
         accountList?.let { safeList ->
             loadAccountsAndBalancePreview(safeList)
+            (activity as MainActivity).hideProgress()
         }
     }
 

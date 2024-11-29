@@ -50,19 +50,23 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
                     Success(createKeyRegTransactionResult(txnDetail, txnByteArray))
                 }
             }
+
             is Error -> {
                 Error(params.exception, params.code)
             }
         }
     }
 
-    private fun createTransactionByteArray(txnDetail: KeyRegTransactionDetail, params: TransactionParams): ByteArray? {
+    private fun createTransactionByteArray(
+        txnDetail: KeyRegTransactionDetail,
+        params: TransactionParams
+    ): ByteArray? {
         Security.removeProvider("BC")
         Security.insertProviderAt(BouncyCastleProvider(), 0)
         return if (txnDetail.isOnlineKeyRegTxn()) {
             buildKeyRegOnlineTransaction(txnDetail.toOnlineTxnPayload(params))
         } else {
-            buildKeyRegOfflineTransaction(txnDetail.address, params)
+            buildKeyRegOfflineTransaction(txnDetail.address, txnDetail.note, params)
         }
     }
 
@@ -87,12 +91,13 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
             voteFirstRound = voteFirstRound.orEmpty(),
             voteLastRound = voteLastRound.orEmpty(),
             voteKeyDilution = voteKeyDilution.orEmpty(),
-            txnParams = params
+            txnParams = params,
+            note = xnote ?: note
         )
     }
 
     private fun KeyRegTransactionDetail.isOnlineKeyRegTxn(): Boolean {
         return !voteKey.isNullOrBlank() && !selectionPublicKey.isNullOrBlank() && !voteFirstRound.isNullOrBlank() &&
-            !voteLastRound.isNullOrBlank() && !voteKeyDilution.isNullOrBlank()
+                !voteLastRound.isNullOrBlank() && !voteKeyDilution.isNullOrBlank()
     }
 }

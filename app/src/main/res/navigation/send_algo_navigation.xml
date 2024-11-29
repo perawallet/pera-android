@@ -23,6 +23,8 @@
 
     <include app:graph="@navigation/transaction_confirmation_navigation" />
 
+    <include app:graph="@navigation/add_note_navigation" />
+
     <action
         android:id="@+id/action_sendAlgoNavigation_pop"
         app:popUpTo="@id/sendAlgoNavigation"
@@ -190,8 +192,17 @@
             android:id="@+id/action_assetTransferAmountFragment_to_assetTransferPreviewFragment"
             app:destination="@id/assetTransferPreviewFragment" />
         <action
-            android:id="@+id/action_assetTransferAmountFragment_to_addNoteBottomSheet"
-            app:destination="@id/addNoteBottomSheet" />
+            android:id="@+id/action_assetTransferAmountFragment_to_addNoteNavigation"
+            app:destination="@id/addNoteNavigation">
+            <argument
+                android:name="note"
+                app:argType="string"
+                app:nullable="true" />
+            <argument
+                android:name="isInputFieldEnabled"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
         <action
             android:id="@+id/action_assetTransferAmountFragment_to_transactionTipsBottomSheet"
             app:destination="@id/transactionTipsBottomSheet" />
@@ -241,8 +252,17 @@
             android:name="transactionData"
             app:argType="com.algorand.android.models.TransactionData$Send" />
         <action
-            android:id="@+id/action_assetTransferPreviewFragment_to_addNoteBottomSheet"
-            app:destination="@id/addNoteBottomSheet" />
+            android:id="@+id/action_assetTransferPreviewFragment_to_addNoteNavigation"
+            app:destination="@id/addNoteNavigation">
+            <argument
+                android:name="note"
+                app:argType="string"
+                app:nullable="true" />
+            <argument
+                android:name="isInputFieldEnabled"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
         <action
             android:id="@+id/action_assetTransferPreviewFragment_to_transactionConfirmationNavigation"
             app:destination="@id/transactionConfirmationNavigation">
@@ -251,7 +271,7 @@
                 app:argType="string" />
             <argument
                 android:name="titleResId"
-                app:argType="integer"/>
+                app:argType="integer" />
         </action>
     </fragment>
 
@@ -273,21 +293,6 @@
         <argument
             android:name="publicKey"
             app:argType="string" />
-    </dialog>
-
-    <dialog
-        android:id="@+id/addNoteBottomSheet"
-        android:name="com.algorand.android.ui.send.shared.AddNoteBottomSheet"
-        android:label="bottom_sheet_add_note"
-        tools:layout="@layout/bottom_sheet_add_note">
-        <argument
-            android:name="note"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="isInputFieldEnabled"
-            android:defaultValue="true"
-            app:argType="boolean" />
     </dialog>
 
     <dialog

@@ -9,37 +9,38 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License
   -->
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fillViewport="true"
         android:paddingBottom="@dimen/safe_padding_for_floating_action_button_keyreg"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:fillViewport="true">
+        app:layout_constraintTop_toTopOf="parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/keyRegTransctionPreviewLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/spacing_xlarge"
-            android:paddingTop="@dimen/spacing_xxxxlarge">
+            android:paddingTop="@dimen/spacing_xxlarge">
+
             <TextView
                 android:id="@+id/addressLabelTextView"
                 style="@style/TextAppearance.Description"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/address"
                 android:layout_marginEnd="@dimen/spacing_normal"
+                android:text="@string/address"
                 app:layout_constraintEnd_toEndOf="@id/labelGuideline"
-                app:layout_constraintBottom_toBottomOf="@id/addressTextView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/addressTextView" />
 
@@ -48,46 +49,20 @@
                 style="@style/TextAppearance.Body.Mono"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/address"
                 android:layout_marginTop="@dimen/spacing_xsmall"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/labelGuideline"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/typeLabelTextView"
-                style="@style/TextAppearance.Description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/type"
-                android:layout_marginEnd="@dimen/spacing_normal"
-                app:layout_constraintEnd_toEndOf="@id/labelGuideline"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/typeTextView"
-                app:layout_constraintTop_toTopOf="@id/typeTextView" />
-
-            <TextView
-                android:id="@+id/typeTextView"
-                style="@style/TextAppearance.Body.Mono"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_xsmall"
-                android:maxLines="1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/labelGuideline"
-                app:layout_constraintTop_toBottomOf="@id/addressTextView"
-                tools:text="@tools:sample/lorem[10]"
-                tools:visibility="visible" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@tools:sample/lorem[10]" />
 
             <TextView
                 android:id="@+id/feeLabelTextView"
                 style="@style/TextAppearance.Description"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/fee"
                 android:layout_marginEnd="@dimen/spacing_normal"
+                android:text="@string/fee"
                 app:layout_constraintEnd_toEndOf="@id/labelGuideline"
-                app:layout_constraintBottom_toBottomOf="@id/feeAmountView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/feeAmountView" />
 
@@ -96,22 +71,47 @@
                 style="@style/TextAppearance.Body.Mono"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_normal"
+                android:layout_marginTop="@dimen/spacing_large"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="@id/labelGuideline"
-                app:layout_constraintTop_toBottomOf="@id/typeLabelTextView"
-                tools:text="0.00001 ALGO" />
+                app:layout_constraintTop_toBottomOf="@id/addressTextView"
+                tools:text="@tools:sample/lorem[10]" />
+
+            <TextView
+                android:id="@+id/typeLabelTextView"
+                style="@style/TextAppearance.Description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_normal"
+                android:text="@string/type"
+                app:layout_constraintBottom_toBottomOf="@id/typeTextView"
+                app:layout_constraintEnd_toEndOf="@id/labelGuideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/typeTextView" />
+
+            <TextView
+                android:id="@+id/typeTextView"
+                style="@style/TextAppearance.Body.Mono"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:maxLines="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/labelGuideline"
+                app:layout_constraintTop_toBottomOf="@id/feeAmountView"
+                tools:text="@tools:sample/lorem[10]"
+                tools:visibility="visible" />
 
             <View
-                android:id="@+id/feeDivider"
+                android:id="@+id/typeDivider"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
+                android:layout_marginTop="@dimen/spacing_xlarge"
                 android:background="@color/layer_gray_lighter"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/voteKeyLabelTextView"
-                app:layout_constraintTop_toBottomOf="@id/feeAmountView" />
+                app:layout_constraintTop_toBottomOf="@id/typeTextView" />
 
             <TextView
                 android:id="@+id/voteKeyLabelTextView"
@@ -133,7 +133,7 @@
                 android:layout_marginTop="28dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/labelGuideline"
-                app:layout_constraintTop_toBottomOf="@id/feeDivider"
+                app:layout_constraintTop_toBottomOf="@id/typeDivider"
                 tools:text="@tools:sample/lorem[5]" />
 
             <androidx.constraintlayout.widget.Barrier
@@ -180,7 +180,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_normal"
                 android:text="@string/state_proof_key"
-                app:layout_constraintBottom_toBottomOf="@id/stateProofKeyTextView"
                 app:layout_constraintEnd_toEndOf="@id/labelGuideline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/stateProofKeyTextView" />
@@ -210,7 +209,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_normal"
                 android:text="@string/valid_first_round"
-                app:layout_constraintBottom_toBottomOf="@id/validFirstRoundTextView"
                 app:layout_constraintEnd_toEndOf="@id/labelGuideline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/validFirstRoundTextView" />
@@ -240,7 +238,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_normal"
                 android:text="@string/valid_last_round"
-                app:layout_constraintBottom_toBottomOf="@id/validLastRoundTextView"
                 app:layout_constraintEnd_toEndOf="@id/labelGuideline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/validLastRoundTextView" />
@@ -270,7 +267,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_normal"
                 android:text="@string/vote_key_dilution"
-                app:layout_constraintBottom_toBottomOf="@id/voteKeyDilutionTextView"
                 app:layout_constraintEnd_toEndOf="@id/labelGuideline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/voteKeyDilutionTextView" />
@@ -304,71 +300,41 @@
                 app:layout_constraintTop_toBottomOf="@id/voteKeyDilutionTextView" />
 
             <TextView
-                android:id="@+id/xNoteLabelTextView"
-                style="@style/TextAppearance.Description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/xnote"
-                android:layout_marginEnd="@dimen/spacing_normal"
-                app:layout_constraintEnd_toEndOf="@id/labelGuideline"
-                app:layout_constraintBottom_toBottomOf="@id/xNoteTextView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/xNoteTextView" />
-
-            <TextView
-                android:id="@+id/xNoteTextView"
-                style="@style/TextAppearance.Body.Mono"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/xnote"
-                android:layout_marginTop="28dp"
-                app:layout_constraintTop_toBottomOf="@id/keyDivider"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/labelGuideline" />
-
-            <TextView
                 android:id="@+id/noteLabelTextView"
                 style="@style/TextAppearance.Description"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_large"
                 android:layout_marginEnd="@dimen/spacing_normal"
                 android:text="@string/note"
                 app:layout_constraintEnd_toEndOf="@id/labelGuideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/xNoteTextView" />
+                app:layout_constraintTop_toTopOf="@id/keyDivider" />
 
             <TextView
                 android:id="@+id/noteTextView"
                 style="@style/TextAppearance.Body.Sans"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_xlarge"
                 android:layout_marginTop="@dimen/spacing_large"
                 android:layout_marginBottom="@dimen/spacing_normal"
-                app:layout_constraintTop_toBottomOf="@id/xNoteTextView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/labelGuideline"
+                app:layout_constraintTop_toBottomOf="@id/keyDivider"
                 app:layout_constraintVertical_bias="0"
-                tools:visibility="gone"/>
+                tools:text="@tools:sample/lorem[13]" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/addEditNoteButton"
                 style="@style/Button.Text"
-                app:icon="@drawable/ic_plus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_normal"
-                android:layout_marginTop="@dimen/spacing_large"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
                 android:text="@string/add_note"
                 android:textColor="@color/positive"
+                app:icon="@drawable/ic_plus"
                 app:layout_constraintBottom_toBottomOf="@id/noteLabelTextView"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/labelGuideline"
-                app:layout_constraintTop_toTopOf="@id/noteLabelTextView"
-                app:layout_constraintHorizontal_bias="0"/>
+                app:layout_constraintTop_toTopOf="@id/noteLabelTextView" />
 
             <include
                 android:id="@+id/progressBar"
@@ -379,22 +345,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="visible"
-                app:constraint_referenced_ids="xNoteLabelTextView, xNoteTextView, noteLabelTextView,noteTextView,addEditNoteButton" />
+                app:constraint_referenced_ids="noteLabelTextView,noteTextView,addEditNoteButton" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.core.widget.NestedScrollView>
+
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/confirmTransferButton"
         style="@style/Button.Primary"
         android:layout_width="325dp"
         android:layout_height="52dp"
         android:layout_gravity="bottom|center_horizontal"
-        android:contentDescription="@string/confirm_transaction"
-        android:text="@string/confirm_transaction"
         android:layout_marginTop="28dp"
         android:layout_marginBottom="28dp"
-        app:shapeAppearanceOverlay="@style/SquareFAB"
+        android:contentDescription="@string/confirm_transaction"
+        android:text="@string/confirm_transaction"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="1" />
+        app:layout_constraintVertical_bias="1"
+        app:shapeAppearanceOverlay="@style/SquareFAB" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

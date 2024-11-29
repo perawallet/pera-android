@@ -15,5 +15,5 @@ package com.algorand.android.modules.algosdk.domain.usecase
 import com.algorand.android.models.TransactionParams
 
 interface BuildKeyRegOfflineTransaction {
-    operator fun invoke(address: String, txnParams: TransactionParams): ByteArray?
+    operator fun invoke(address: String, note: String?, txnParams: TransactionParams): ByteArray?
 }

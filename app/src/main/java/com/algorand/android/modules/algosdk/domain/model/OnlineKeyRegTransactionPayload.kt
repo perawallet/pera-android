@@ -22,5 +22,6 @@ data class OnlineKeyRegTransactionPayload(
     val voteFirstRound: String,
     val voteLastRound: String,
     val voteKeyDilution: String,
-    val txnParams: TransactionParams
+    val txnParams: TransactionParams,
+    val note: String?
 )

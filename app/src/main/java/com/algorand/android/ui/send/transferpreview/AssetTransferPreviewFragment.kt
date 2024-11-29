@@ -326,7 +326,7 @@ class AssetTransferPreviewFragment : TransactionBaseFragment(R.layout.fragment_t
     private fun onAddEditNoteClicked() {
         nav(
             AssetTransferPreviewFragmentDirections
-                .actionAssetTransferPreviewFragmentToAddNoteBottomSheet(
+                .actionAssetTransferPreviewFragmentToAddNoteNavigation(
                     note = transactionNote.first,
                     isInputFieldEnabled = transactionNote.second
                 )

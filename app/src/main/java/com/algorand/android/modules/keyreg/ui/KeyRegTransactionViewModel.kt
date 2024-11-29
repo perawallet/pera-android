@@ -39,10 +39,10 @@ class KeyRegTransactionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    var signingAccountAddress = savedStateHandle.getOrThrow<String>(
+    private var signingAccountAddress = savedStateHandle.getOrThrow<String>(
         SIGNING_ACCOUNT_ADDRSS
     )
-    var keyRegTransactionDetail = savedStateHandle.getOrThrow<KeyRegTransactionDetail>(
+    private var keyRegTransactionDetail = savedStateHandle.getOrThrow<KeyRegTransactionDetail>(
         KEY_REG_DETAIL
     )
 
@@ -88,6 +88,12 @@ class KeyRegTransactionViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun updateTransactionNotes(transactionNote: String?) {
+        keyRegTransactionDetail = keyRegTransactionDetail.copy(
+            note = transactionNote
+        )
     }
 
     companion object {

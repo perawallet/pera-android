@@ -281,7 +281,7 @@ class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_as
         val note = lockedNote ?: transactionNote
         nav(
             AssetTransferAmountFragmentDirections
-                .actionAssetTransferAmountFragmentToAddNoteBottomSheet(note, lockedNote == null)
+                .actionAssetTransferAmountFragmentToAddNoteNavigation(note, lockedNote == null)
         )
     }
 

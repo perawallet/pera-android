@@ -41,6 +41,7 @@ internal class BuildKeyRegOnlineTransactionImpl @Inject constructor(
                 .voteFirst(params.voteFirstRound.toLong())
                 .voteLast(params.voteLastRound.toLong())
                 .voteKeyDilution(params.voteKeyDilution.toLong())
+                .noteUTF8(params.note)
                 .build()
                 .bytes()
         }

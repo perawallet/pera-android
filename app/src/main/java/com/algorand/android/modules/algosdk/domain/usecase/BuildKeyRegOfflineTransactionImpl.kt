@@ -21,19 +21,24 @@ internal class BuildKeyRegOfflineTransactionImpl @Inject constructor(
     private val transactionParametersResponseMapper: TransactionParametersResponseMapper
 ) : BuildKeyRegOfflineTransaction {
 
-    override fun invoke(address: String, txnParams: TransactionParams): ByteArray? {
+    override fun invoke(address: String, note: String?, txnParams: TransactionParams): ByteArray? {
         return try {
-            createTransaction(address, txnParams)
+            createTransaction(address, note, txnParams)
         } catch (e: Exception) {
             null
         }
     }
 
-    private fun createTransaction(address: String, txnParams: TransactionParams): ByteArray {
+    private fun createTransaction(
+        address: String,
+        note: String?,
+        txnParams: TransactionParams
+    ): ByteArray {
         val params = transactionParametersResponseMapper(txnParams)
         return KeyRegistrationTransactionBuilder.Builder()
             .suggestedParams(params)
             .sender(address)
+            .noteUTF8(note)
             .build()
             .bytes()
     }

@@ -104,6 +104,8 @@
 
     <include app:graph="@navigation/transaction_confirmation_navigation" />
 
+    <include app:graph="@navigation/add_note_navigation" />
+
     <action
         android:id="@+id/action_global_showQrNavigation"
         app:destination="@id/showQrNavigation">
@@ -370,8 +372,8 @@
             android:name="signingAccountAddress"
             app:argType="string" />
         <action
-            android:id="@+id/action_KeyRegTransactionFragment_to_addNoteBottomSheet"
-            app:destination="@id/addNoteBottomSheet">
+            android:id="@+id/action_KeyRegTransactionFragment_to_addNoteNavigation"
+            app:destination="@id/addNoteNavigation">
             <argument
                 android:name="note"
                 app:argType="string"

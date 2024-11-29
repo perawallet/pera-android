@@ -37,12 +37,15 @@ import com.algorand.android.modules.transaction.signmanager.ExternalTransactionS
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.NotInitialized
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.Success
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.TransactionCancelled
+import com.algorand.android.ui.send.shared.AddNoteBottomSheet
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.showAlertDialog
 import com.algorand.android.utils.showWithStateCheck
+import com.algorand.android.utils.startSavedStateListener
+import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -57,7 +60,8 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val keyRegTransactionViewModel by viewModels<KeyRegTransactionViewModel>()
 
@@ -93,8 +97,7 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
                 }
             }
 
-   private val isTransactionConfirmedCollector: suspend (String?) -> Unit = {
-        transactionId ->
+    private val isTransactionConfirmedCollector: suspend (String?) -> Unit = { transactionId ->
         if (transactionId == KeyRegTransactionViewModel.TRANSACTION_ERROR) {
             activity?.showAlertDialog(
                 getString(R.string.error),
@@ -105,18 +108,19 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
         }
     }
 
-    private val externalTransactionSignManagerCollector: suspend (ExternalTransactionSignResult) -> Unit = {
-        if (it !is Loading) hideLoader()
-        when (it) {
-            is Success<*> -> sendSignedTransactions(it.signedTransaction)
-            is Error -> showTransactionSignResultError(it)
-            LedgerScanFailed -> showLedgerNotFoundDialog()
-            is LedgerWaitingForApproval -> showLedgerWaitingForApprovalBottomSheet(it)
-            Loading -> showLoader()
-            NotInitialized -> Unit
-            is TransactionCancelled -> showTransactionCancelledError(it)
+    private val externalTransactionSignManagerCollector: suspend (ExternalTransactionSignResult) -> Unit =
+        {
+            if (it !is Loading) hideLoader()
+            when (it) {
+                is Success<*> -> sendSignedTransactions(it.signedTransaction)
+                is Error -> showTransactionSignResultError(it)
+                LedgerScanFailed -> showLedgerNotFoundDialog()
+                is LedgerWaitingForApproval -> showLedgerWaitingForApprovalBottomSheet(it)
+                Loading -> showLoader()
+                NotInitialized -> Unit
+                is TransactionCancelled -> showTransactionCancelledError(it)
+            }
         }
-    }
 
     private val ledgerLoadingDialogListener = LedgerLoadingDialog.Listener {
         ledgerLoadingDialog = null
@@ -127,6 +131,7 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObservers()
+        initSavedStateListener()
         keyRegTransactionSignManager.setup(viewLifecycleOwner.lifecycle)
         keyRegTransactionViewModel.initUi()
     }
@@ -159,6 +164,17 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
 
             preview.signTransactionEvent?.consume()?.let { keyRegTxn ->
                 keyRegTransactionSignManager.signKeyRegTransaction(keyRegTxn)
+            }
+        }
+    }
+
+    private fun initSavedStateListener() {
+        startSavedStateListener(R.id.keyRegTransactionFragment) {
+            useSavedStateValue<String>(AddNoteBottomSheet.ADD_NOTE_RESULT_KEY) {
+                if (transactionNote.second) {
+                    transactionNote = Pair(it, transactionNote.second)
+                }
+                keyRegTransactionViewModel.updateTransactionNotes(transactionNote.first)
             }
         }
     }
@@ -210,11 +226,12 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
     }
 
     private fun navToConfirmationFragment(transactionId: String) {
-        nav(KeyRegTransactionFragmentDirections
-            .actionKeyRegTransactionFragmentToTransactionConfirmationFragment(
-                transactionId = transactionId,
-                titleResId = R.string.operation_completed,
-            )
+        nav(
+            KeyRegTransactionFragmentDirections
+                .actionKeyRegTransactionFragmentToTransactionConfirmationFragment(
+                    transactionId = transactionId,
+                    titleResId = R.string.operation_completed,
+                )
         )
     }
 
@@ -288,32 +305,31 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
 
     private fun setTransactionDetails(preview: KeyRegTransactionPreview) {
         with(binding) {
-            typeTextView.setText(preview.type)
-            addressTextView.setText(preview.address)
+            typeTextView.text = preview.type
+            addressTextView.text = preview.address
             feeAmountView.setAmountAsFee(preview.fee.toLong())
         }
     }
 
     private fun setKeyRegDetails(preview: KeyRegTransactionPreview) {
         with(binding) {
-            selectionKeyTextView.setText(preview.selectionKey)
-            voteKeyTextView.setText(preview.votingKey)
-            stateProofKeyTextView.setText(preview.stateProofKey)
-            validFirstRoundTextView.setText(preview.firstValid)
-            validLastRoundTextView.setText(preview.lastValid)
-            voteKeyDilutionTextView.setText(preview.keyDilution)
+            selectionKeyTextView.text = preview.selectionKey
+            voteKeyTextView.text = preview.votingKey
+            stateProofKeyTextView.text = preview.stateProofKey
+            validFirstRoundTextView.text = preview.firstValid
+            validLastRoundTextView.text = preview.lastValid
+            voteKeyDilutionTextView.text = preview.keyDilution
         }
     }
 
     private fun setTransactionNote(xNote: String?, note: String?, isEditable: Boolean) {
-        binding.xNoteTextView.text = xNote
-        transactionNote = Pair(note, isEditable)
+        transactionNote = Pair(xNote ?: note, isEditable)
     }
 
     private fun onAddEditNoteClicked() {
         nav(
             KeyRegTransactionFragmentDirections
-                .actionKeyRegTransactionFragmentToAddNoteBottomSheet(
+                .actionKeyRegTransactionFragmentToAddNoteNavigation(
                     note = transactionNote.first,
                     isInputFieldEnabled = transactionNote.second
                 )

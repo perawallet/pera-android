@@ -73,6 +73,14 @@ class ParseDeepLinkPayloadImplTest {
             url = "url",
             webImportQrCode = WebImportQrCode("webImportQrCode", "webImportQrCode"),
             notificationGroupType = NotificationGroupType.TRANSACTIONS,
+            fee = "1",
+            votekey = "votekey",
+            selkey = "selkey",
+            sprfkey = "sprfkey",
+            votefst = "votefst",
+            votelst = "votelst",
+            votekd = "votekd",
+            type = "type",
             rawDeepLinkUri = URI
         )
         assertEquals(expected, result)
@@ -90,7 +98,15 @@ class ParseDeepLinkPayloadImplTest {
                 "xnote" to "xnote",
                 "label" to "label",
                 "transactionId" to "transactionId",
-                "transactionStatus" to "transactionStatus"
+                "transactionStatus" to "transactionStatus",
+                "type" to "type",
+                "selkey" to "selkey",
+                "sprfkey" to "sprfkey",
+                "votefst" to "votefst",
+                "votelst" to "votelst",
+                "votekd" to "votekd",
+                "votekey" to "votekey",
+                "fee" to "1"
             ),
             fragment = "",
             rawUri = ""

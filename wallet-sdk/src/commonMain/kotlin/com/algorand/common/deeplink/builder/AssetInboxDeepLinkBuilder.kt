@@ -14,27 +14,20 @@ package com.algorand.common.deeplink.builder
 
 import com.algorand.common.deeplink.model.DeepLink
 import com.algorand.common.deeplink.model.DeepLinkPayload
+import com.algorand.common.deeplink.model.NotificationGroupType
 
-internal class AssetOptInDeepLinkBuilder : DeepLinkBuilder {
+internal class AssetInboxDeepLinkBuilder : DeepLinkBuilder {
 
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
         return with(payload) {
-            val doesDeeplinkHaveAssetOptInQueries = assetId != null && amount == "0"
-            doesDeeplinkHaveAssetOptInQueries &&
-                accountAddress == null &&
-                walletConnectUrl == null &&
-                note == null &&
-                xnote == null &&
-                url == null &&
-                label == null &&
-                webImportQrCode == null &&
-                notificationGroupType == null
+            accountAddress != null && notificationGroupType == NotificationGroupType.ASSET_INBOX
         }
     }
 
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink {
-        return payload.assetId?.let { safeAssetId ->
-            DeepLink.AssetOptIn(safeAssetId)
-        } ?: DeepLink.Undefined(payload.rawDeepLinkUri)
+        return DeepLink.AssetInbox(
+            address = payload.accountAddress.orEmpty(),
+            notificationGroupType = payload.notificationGroupType ?: NotificationGroupType.DEFAULT
+        )
     }
 }

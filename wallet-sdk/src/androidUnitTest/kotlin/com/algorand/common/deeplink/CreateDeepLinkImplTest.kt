@@ -18,6 +18,7 @@ import com.algorand.common.deeplink.model.DeepLinkPayload
 import com.algorand.common.deeplink.model.NotificationGroupType
 import com.algorand.common.deeplink.parser.CreateDeepLinkImpl
 import com.algorand.common.deeplink.parser.ParseDeepLinkPayload
+import com.algorand.common.testing.peraFixture
 import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.Test
@@ -51,6 +52,12 @@ class CreateDeepLinkImplTest {
     private val discoverBrowserDeepLinkBuilder: DeepLinkBuilder = mockk {
         every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
     }
+    private val assetInboxDeepLinkBuilder: DeepLinkBuilder = mockk {
+        every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
+    }
+    private val keyRegTransactionDeepLinkBuilder: DeepLinkBuilder = mockk {
+        every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
+    }
 
     private val sut = CreateDeepLinkImpl(
         parseDeepLinkPayload,
@@ -61,7 +68,9 @@ class CreateDeepLinkImplTest {
         walletConnectConnectionDeepLinkBuilder,
         webImportQrCodeDeepLinkBuilder,
         notificationGroupDeepLinkBuilder,
-        discoverBrowserDeepLinkBuilder
+        discoverBrowserDeepLinkBuilder,
+        assetInboxDeepLinkBuilder,
+        keyRegTransactionDeepLinkBuilder
     )
 
     @Test
@@ -168,12 +177,36 @@ class CreateDeepLinkImplTest {
     }
 
     @Test
+    fun `EXPECT asset inbox deep link`() {
+        val deepLink = DeepLink.AssetInbox("address", NotificationGroupType.ASSET_INBOX)
+        every { parseDeepLinkPayload("assetInboxDeepLink") } returns DEEP_LINK_PAYLOAD
+        every { assetInboxDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
+        every { assetInboxDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink
+
+        val result = sut("assetInboxDeepLink")
+
+        assertEquals(deepLink, result)
+    }
+
+    @Test
+    fun `EXPECT key reg transaction deep link`() {
+        val deepLink = peraFixture<DeepLink.KeyReg>()
+        every { parseDeepLinkPayload("keyRegTransactionDeepLink") } returns DEEP_LINK_PAYLOAD
+        every { keyRegTransactionDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
+        every { keyRegTransactionDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink
+
+        val result = sut("keyRegTransactionDeepLink")
+
+        assertEquals(deepLink, result)
+    }
+
+    @Test
     fun `EXPECT undefined deep link WHEN deep link is not recognized`() {
         every { parseDeepLinkPayload("undefinedDeepLink") } returns DEEP_LINK_PAYLOAD
 
         val result = sut("undefinedDeepLink")
 
-        val expected = DeepLink.UndefinedDeepLink("undefinedDeepLink")
+        val expected = DeepLink.Undefined("undefinedDeepLink")
         assertEquals(expected, result)
     }
 

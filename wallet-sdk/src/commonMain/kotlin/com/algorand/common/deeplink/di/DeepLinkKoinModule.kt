@@ -13,9 +13,11 @@
 package com.algorand.common.deeplink.di
 
 import com.algorand.common.deeplink.builder.AccountAddressDeepLinkBuilder
+import com.algorand.common.deeplink.builder.AssetInboxDeepLinkBuilder
 import com.algorand.common.deeplink.builder.AssetOptInDeepLinkBuilder
 import com.algorand.common.deeplink.builder.AssetTransferDeepLinkBuilder
 import com.algorand.common.deeplink.builder.DiscoverBrowserDeepLinkBuilder
+import com.algorand.common.deeplink.builder.KeyRegTransactionDeepLinkBuilder
 import com.algorand.common.deeplink.builder.MnemonicDeepLinkBuilder
 import com.algorand.common.deeplink.builder.NotificationDeepLinkBuilder
 import com.algorand.common.deeplink.builder.WalletConnectConnectionDeepLinkBuilder
@@ -62,7 +64,9 @@ val deepLinkModule = module {
             walletConnectConnectionDeepLinkBuilder = WalletConnectConnectionDeepLinkBuilder(),
             webImportQrCodeDeepLinkBuilder = WebImportQrCodeDeepLinkBuilder(),
             notificationGroupDeepLinkBuilder = NotificationDeepLinkBuilder(),
-            discoverBrowserDeepLinkBuilder = DiscoverBrowserDeepLinkBuilder()
+            discoverBrowserDeepLinkBuilder = DiscoverBrowserDeepLinkBuilder(),
+            assetInboxDeepLinkBuilder = AssetInboxDeepLinkBuilder(),
+            keyRegTransactionDeepLinkBuilder = KeyRegTransactionDeepLinkBuilder()
         )
     }
 }

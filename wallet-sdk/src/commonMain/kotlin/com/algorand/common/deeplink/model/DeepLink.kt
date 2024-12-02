@@ -12,6 +12,11 @@
 
 package com.algorand.common.deeplink.model
 
+/**
+ * Model classes for supported DeepLinks & AppLinks
+ * Can be tested by executing the command below;
+ * adb shell am start -a android.intent.action.VIEW -d "DEEPLINK" com.algorand.android
+ */
 sealed interface DeepLink {
 
     /**
@@ -66,5 +71,38 @@ sealed interface DeepLink {
         val notificationGroupType: NotificationGroupType
     ) : DeepLink
 
-    data class UndefinedDeepLink(val url: String) : DeepLink
+    data class AssetInbox(
+        val address: String,
+        val notificationGroupType: NotificationGroupType
+    ) : DeepLink
+
+    /**
+     * ALGO transfer (public key, empty asset id, amount, note, xnote)
+     * Examples
+     * algorand://7IBEAXHK62XEJATU6Q4QYQCDFY475CEKNXGLYQO6QSGCLVMMK4SLVTYLMY?
+     * type=keyreg
+     * &selkey=-lfw-Y04lTnllJfncgMjXuAePe8i8YyVeoR9c1Xi78c
+     * &sprfkey=3NoXc2sEWlvQZ7XIrwVJjgjM30ndhvwGgcqwKugk1u5W_iy_JITXrykuy0hUvAxbVv0njOgBPtGFsFif3yLJpg
+     * &votefst=1300
+     * &votekd=100
+     * &votekey=UU8zLMrFVfZPnzbnL6ThAArXFsznV3TvFVAun2ONcEI
+     * &votelst=11300
+     * &fee=2000000
+     * &note=Consensus%2Bparticipation%2Bftw
+     */
+    data class KeyReg(
+        val senderAddress: String,
+        val type: String,
+        val voteKey: String?,
+        val selkey: String?,
+        val sprfkey: String?,
+        val votefst: String?,
+        val votelst: String?,
+        val votekd: String?,
+        val fee: String?,
+        val note: String?,
+        val xnote: String?
+    ) : DeepLink
+
+    data class Undefined(val url: String) : DeepLink
 }

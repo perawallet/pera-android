@@ -27,7 +27,8 @@ internal class AccountAddressDeepLinkBuilder : DeepLinkBuilder {
                 xnote == null &&
                 url == null &&
                 webImportQrCode == null &&
-                notificationGroupType == null
+                notificationGroupType == null &&
+                type != "keyreg"
         }
     }
 

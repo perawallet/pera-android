@@ -24,7 +24,9 @@ internal class CreateDeepLinkImpl(
     private val walletConnectConnectionDeepLinkBuilder: DeepLinkBuilder,
     private val webImportQrCodeDeepLinkBuilder: DeepLinkBuilder,
     private val notificationGroupDeepLinkBuilder: DeepLinkBuilder,
-    private val discoverBrowserDeepLinkBuilder: DeepLinkBuilder
+    private val discoverBrowserDeepLinkBuilder: DeepLinkBuilder,
+    private val assetInboxDeepLinkBuilder: DeepLinkBuilder,
+    private val keyRegTransactionDeepLinkBuilder: DeepLinkBuilder
 ) : CreateDeepLink {
 
     override fun invoke(url: String): DeepLink {
@@ -39,22 +41,28 @@ internal class CreateDeepLinkImpl(
             assetTransferDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 assetTransferDeepLinkBuilder.createDeepLink(payload)
             }
-            mnemonicDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
-                mnemonicDeepLinkBuilder.createDeepLink(payload)
+            keyRegTransactionDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
+                keyRegTransactionDeepLinkBuilder.createDeepLink(payload)
             }
             walletConnectConnectionDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 walletConnectConnectionDeepLinkBuilder.createDeepLink(payload)
             }
+            mnemonicDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
+                mnemonicDeepLinkBuilder.createDeepLink(payload)
+            }
             webImportQrCodeDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 webImportQrCodeDeepLinkBuilder.createDeepLink(payload)
-            }
-            notificationGroupDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
-                notificationGroupDeepLinkBuilder.createDeepLink(payload)
             }
             discoverBrowserDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 discoverBrowserDeepLinkBuilder.createDeepLink(payload)
             }
-            else -> DeepLink.UndefinedDeepLink(url)
+            notificationGroupDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
+                notificationGroupDeepLinkBuilder.createDeepLink(payload)
+            }
+            assetInboxDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
+                assetInboxDeepLinkBuilder.createDeepLink(payload)
+            }
+            else -> DeepLink.Undefined(url)
         }
     }
 }

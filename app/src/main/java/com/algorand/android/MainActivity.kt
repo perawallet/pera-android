@@ -57,9 +57,6 @@ import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDa
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
-import com.algorand.android.modules.deeplink.DeepLinkParser
-import com.algorand.android.modules.deeplink.domain.model.BaseDeepLink
-import com.algorand.android.modules.deeplink.domain.model.NotificationGroupType
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
@@ -88,6 +85,12 @@ import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.walletconnect.WalletConnectUrlHandler
 import com.algorand.android.utils.walletconnect.WalletConnectViewModel
+import com.algorand.common.deeplink.model.DeepLink
+import com.algorand.common.deeplink.model.NotificationGroupType
+import com.algorand.common.deeplink.model.NotificationGroupType.ASSET_INBOX
+import com.algorand.common.deeplink.model.NotificationGroupType.OPT_IN
+import com.algorand.common.deeplink.model.NotificationGroupType.TRANSACTIONS
+import com.algorand.common.deeplink.parser.CreateDeepLink
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -127,10 +130,10 @@ class MainActivity :
     lateinit var autoLockManager: AutoLockManager
 
     @Inject
-    lateinit var deepLinkParser: DeepLinkParser
+    lateinit var pendingIntentKeeper: PendingIntentKeeper
 
     @Inject
-    lateinit var pendingIntentKeeper: PendingIntentKeeper
+    lateinit var createDeepLink: CreateDeepLink
 
     private val isAppUnlocked: Boolean
         get() = autoLockManager.isAppUnlocked
@@ -174,20 +177,19 @@ class MainActivity :
     }
 
     private fun handleNewNotification(newNotificationData: NotificationMetadata) {
-        val rawDeepLink = deepLinkParser.parseDeepLink(newNotificationData.url.orEmpty())
-        when (val baseDeepLink = BaseDeepLink.create(rawDeepLink)) {
-            is BaseDeepLink.NotificationDeepLink -> handleNotificationWithDeepLink(newNotificationData, baseDeepLink)
+        when (val baseDeepLink = createDeepLink(newNotificationData.url.orEmpty())) {
+            is DeepLink.Notification -> handleNotificationWithDeepLink(newNotificationData, baseDeepLink)
             else -> showForegroundNotification(notificationMetadata = newNotificationData, tag = activityTag)
         }
     }
 
     private fun handleNotificationWithDeepLink(
         newNotificationData: NotificationMetadata,
-        deeplink: BaseDeepLink.NotificationDeepLink
+        deeplink: DeepLink.Notification
     ) {
         when (deeplink.notificationGroupType) {
-            NotificationGroupType.OPT_IN -> handleAssetOptInRequestDeepLink(deeplink.address, deeplink.assetId)
-            NotificationGroupType.ASSET_INBOX -> handleAssetInboxDeepLink(deeplink.address)
+            OPT_IN -> handleAssetOptInRequestDeepLink(deeplink.address, deeplink.assetId)
+            ASSET_INBOX -> handleAssetInboxDeepLink(deeplink.address)
             else -> showForegroundNotification(notificationMetadata = newNotificationData, tag = activityTag)
         }
     }
@@ -301,14 +303,18 @@ class MainActivity :
             notificationGroupType: NotificationGroupType
         ): Boolean {
             when (notificationGroupType) {
-                NotificationGroupType.TRANSACTIONS -> handleAssetTransactionDeepLink(accountAddress, assetId)
-                NotificationGroupType.OPT_IN -> handleAssetOptInRequestDeepLink(accountAddress, assetId)
-                NotificationGroupType.ASSET_INBOX -> handleAssetInboxDeepLink(accountAddress)
+                TRANSACTIONS -> handleAssetTransactionDeepLink(accountAddress, assetId)
+                OPT_IN -> handleAssetOptInRequestDeepLink(accountAddress, assetId)
+                ASSET_INBOX -> handleAssetInboxDeepLink(accountAddress)
             }
             return true
         }
 
-        override fun onUndefinedDeepLink(undefinedDeeplink: BaseDeepLink.UndefinedDeepLink) {
+        override fun onUndefinedDeepLink(deepLink: DeepLink.Undefined) {
+            // TODO show error after discussing with the team
+        }
+
+        override fun onDeepLinkNotHandled(deepLink: DeepLink) {
             // TODO show error after discussing with the team
         }
 
@@ -326,10 +332,10 @@ class MainActivity :
             }
         }
 
-        override fun onKeyRegDeeplink(deepLink: BaseDeepLink.KeyRegDeepLink): Boolean {
+        override fun onKeyRegDeeplink(deepLink: DeepLink.KeyReg): Boolean {
             return true.also {
                 val txnDetail = KeyRegTransactionDetail(
-                    address = deepLink.senderAccountAddress,
+                    address = deepLink.senderAddress,
                     type = deepLink.type,
                     voteKey = deepLink.voteKey,
                     selectionPublicKey = deepLink.selkey,
@@ -337,16 +343,13 @@ class MainActivity :
                     voteFirstRound = deepLink.votefst,
                     voteLastRound = deepLink.votelst,
                     voteKeyDilution = deepLink.votekd,
-                    fee = deepLink.fee,
+                    fee = deepLink.fee?.toBigIntegerOrNull(),
                     note = deepLink.note,
-                    xnote = deepLink.xnote)
+                    xnote = deepLink.xnote
+                )
 
                 nav(HomeNavigationDirections.actionGlobalConfirmKeyRegAccountSelectionFragment(txnDetail))
             }
-        }
-
-        override fun onDeepLinkNotHandled(deepLink: BaseDeepLink) {
-            // TODO show error after discussing with the team
         }
     }
 

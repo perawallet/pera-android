@@ -22,12 +22,8 @@ import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentQrCodeScannerBinding
-import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.StatusBarConfiguration
-import com.algorand.android.modules.deeplink.domain.model.BaseDeepLink
-import com.algorand.android.modules.deeplink.domain.model.NotificationGroupType
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
@@ -42,6 +38,7 @@ import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.algorand.android.utils.walletconnect.WalletConnectViewModel
+import com.algorand.common.deeplink.model.DeepLink
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.ResultPoint
 import com.journeyapps.barcodescanner.BarcodeCallback
@@ -217,45 +214,17 @@ abstract class BaseQrScannerFragment(
         }
     }
 
-    override fun onUndefinedDeepLink(undefinedDeeplink: BaseDeepLink.UndefinedDeepLink) {
+    override fun onUndefinedDeepLink(deepLink: DeepLink.Undefined) {
         showGlobalError(getString(R.string.scanned_qr_is_not_valid))
     }
 
-    override fun onDeepLinkNotHandled(deepLink: BaseDeepLink) {
+    override fun onDeepLinkNotHandled(deepLink: DeepLink) {
         showGlobalError(getString(R.string.scanned_qr_is_not_valid))
     }
 
-    override fun onAssetTransferDeepLink(assetTransaction: AssetTransaction): Boolean {
-        return false
-    }
-
-    override fun onAssetOptInDeepLink(assetAction: AssetAction): Boolean {
-        return false
-    }
-
-    override fun onImportAccountDeepLink(mnemonic: String): Boolean {
-        return false
-    }
-
-    override fun onAccountAddressDeeplink(accountAddress: String, label: String?): Boolean {
-        return false
-    }
-
-    override fun onWalletConnectConnectionDeeplink(wcUrl: String): Boolean {
-        return false
-    }
-
-    override fun onAssetInboxDeepLink(accountAddress: String, notificationGroupType: NotificationGroupType): Boolean {
-        return false
-    }
-
-    override fun onAssetTransferWithNotOptInDeepLink(assetId: Long): Boolean {
-        return false
-    }
-
-    override fun onKeyRegDeeplink(deepLink: BaseDeepLink.KeyRegDeepLink): Boolean {
+    override fun onKeyRegDeeplink(deepLink: DeepLink.KeyReg): Boolean {
         val txnDetail = KeyRegTransactionDetail(
-            address = deepLink.senderAccountAddress,
+            address = deepLink.senderAddress,
             type = deepLink.type,
             voteKey = deepLink.voteKey,
             selectionPublicKey = deepLink.selkey,
@@ -263,9 +232,10 @@ abstract class BaseQrScannerFragment(
             voteFirstRound = deepLink.votefst,
             voteLastRound = deepLink.votelst,
             voteKeyDilution = deepLink.votekd,
-            fee = deepLink.fee,
+            fee = deepLink.fee?.toBigIntegerOrNull(),
             note = deepLink.note,
-            xnote = deepLink.xnote)
+            xnote = deepLink.xnote
+        )
 
         nav(HomeNavigationDirections.actionGlobalConfirmKeyRegAccountSelectionFragment(txnDetail))
 

@@ -13,17 +13,17 @@
 package com.algorand.android.ui.contacts.addcontact
 
 import com.algorand.android.R
-import com.algorand.android.modules.deeplink.domain.model.BaseDeepLink
 import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
 import com.algorand.android.utils.setNavigationResult
+import com.algorand.common.deeplink.model.DeepLink
 
 class AddContactQrScannerFragment : BaseQrScannerFragment(R.id.addContactQrScannerFragment) {
 
-    override fun onUndefinedDeepLink(undefinedDeeplink: BaseDeepLink.UndefinedDeepLink) {
+    override fun onDeepLinkNotHandled(deepLink: DeepLink) {
         showGlobalError(getString(R.string.the_scanned_qr_is_not))
     }
 
-    override fun onDeepLinkNotHandled(deepLink: BaseDeepLink) {
+    override fun onUndefinedDeepLink(deepLink: DeepLink.Undefined) {
         showGlobalError(getString(R.string.the_scanned_qr_is_not))
     }
 

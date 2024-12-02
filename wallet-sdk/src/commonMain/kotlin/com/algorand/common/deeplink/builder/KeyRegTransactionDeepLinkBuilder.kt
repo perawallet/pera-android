@@ -15,26 +15,27 @@ package com.algorand.common.deeplink.builder
 import com.algorand.common.deeplink.model.DeepLink
 import com.algorand.common.deeplink.model.DeepLinkPayload
 
-internal class AssetOptInDeepLinkBuilder : DeepLinkBuilder {
+internal class KeyRegTransactionDeepLinkBuilder : DeepLinkBuilder {
 
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
-        return with(payload) {
-            val doesDeeplinkHaveAssetOptInQueries = assetId != null && amount == "0"
-            doesDeeplinkHaveAssetOptInQueries &&
-                accountAddress == null &&
-                walletConnectUrl == null &&
-                note == null &&
-                xnote == null &&
-                url == null &&
-                label == null &&
-                webImportQrCode == null &&
-                notificationGroupType == null
-        }
+        return payload.type == "keyreg"
     }
 
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink {
-        return payload.assetId?.let { safeAssetId ->
-            DeepLink.AssetOptIn(safeAssetId)
-        } ?: DeepLink.Undefined(payload.rawDeepLinkUri)
+        return with(payload) {
+            DeepLink.KeyReg(
+                senderAddress = accountAddress.orEmpty(),
+                fee = fee,
+                note = note,
+                xnote = xnote,
+                voteKey = votekey,
+                selkey = selkey,
+                sprfkey = sprfkey,
+                votefst = votefst,
+                votelst = votelst,
+                votekd = votekd,
+                type = type.orEmpty()
+            )
+        }
     }
 }

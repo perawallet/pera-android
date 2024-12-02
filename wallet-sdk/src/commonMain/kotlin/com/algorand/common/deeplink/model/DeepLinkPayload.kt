@@ -26,13 +26,25 @@ internal data class DeepLinkPayload(
     val url: String? = null,
     val webImportQrCode: WebImportQrCode? = null,
     val notificationGroupType: NotificationGroupType? = null,
-    val rawDeepLinkUri: String
+    val fee: String? = null,
+    val votekey: String? = null,
+    val selkey: String? = null,
+    val sprfkey: String? = null,
+    val votefst: String? = null,
+    val votelst: String? = null,
+    val votekd: String? = null,
+    val type: String? = null,
+    val rawDeepLinkUri: String,
 )
 
 enum class NotificationGroupType {
     TRANSACTIONS,
     OPT_IN,
-    ASSET_INBOX
+    ASSET_INBOX;
+
+    companion object {
+        val DEFAULT = TRANSACTIONS
+    }
 }
 
 internal data class WebImportQrCode(

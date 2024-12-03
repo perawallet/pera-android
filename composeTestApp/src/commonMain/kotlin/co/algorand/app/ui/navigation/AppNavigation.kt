@@ -16,6 +16,8 @@ import androidx.navigation.compose.rememberNavController
 import co.algorand.app.ui.screens.CoreActionsBottomSheet
 import co.algorand.app.ui.screens.PeraTypographyPreviewScreen
 import co.algorand.app.ui.screens.PeraTypographyPreviewScreenNavigation
+import co.algorand.app.ui.screens.QrScannerScreen
+import co.algorand.app.ui.screens.QrScannerScreenNavigation
 import com.algorand.common.ui.theme.PeraTheme
 
 @Composable
@@ -48,6 +50,9 @@ fun AppNavigation() {
             getBottomNavigationGraph(navController, snackbarHostState)
             composable<PeraTypographyPreviewScreenNavigation> {
                 PeraTypographyPreviewScreen()
+            }
+            composable<QrScannerScreenNavigation> {
+                QrScannerScreen()
             }
         }
         CoreActionsBottomSheet(paddingValues, isBottomSheetVisible)

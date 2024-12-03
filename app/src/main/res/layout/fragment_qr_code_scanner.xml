@@ -16,16 +16,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.journeyapps.barcodescanner.BarcodeView
-        android:id="@+id/cameraPreview"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.algorand.android.customviews.QRScannerShadowView
+    <com.algorand.android.modules.qrscanning.QrScannerView
+        android:id="@+id/qrScannerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -60,42 +52,6 @@
         app:layout_constraintTop_toBottomOf="@id/leftArrowButton"
         tools:text="@string/find_a_code_to_scan" />
 
-    <FrameLayout
-        android:id="@+id/overlayLayout"
-        android:layout_width="@dimen/qr_code_overlay_size"
-        android:layout_height="@dimen/qr_code_overlay_size"
-        app:layout_constraintBottom_toBottomOf="@+id/cameraPreview"
-        app:layout_constraintEnd_toEndOf="@+id/cameraPreview"
-        app:layout_constraintStart_toStartOf="@id/cameraPreview"
-        app:layout_constraintTop_toTopOf="@+id/cameraPreview">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:rotation="90"
-            app:srcCompat="@drawable/ic_scan_qr_corner" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            app:srcCompat="@drawable/ic_scan_qr_corner" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:rotation="180"
-            app:srcCompat="@drawable/ic_scan_qr_corner" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:rotation="270"
-            app:srcCompat="@drawable/ic_scan_qr_corner" />
-
-    </FrameLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/appConnectedButton"
@@ -109,8 +65,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/overlayLayout"
-        app:layout_constraintVertical_bias="0.67"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.9"
         tools:text="1 app connected"
         tools:visibility="visible" />
 

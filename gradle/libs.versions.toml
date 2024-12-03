@@ -58,7 +58,7 @@ lifecycle = "2.8.7"
 lifecycleExt = "2.2.0"
 lottie = "6.4.1"
 material = "1.12.0"
-mockito  = "5.4.0"
+mockito = "5.4.0"
 mockk = "1.13.13"
 moshi = "1.15.1"
 mpAndroidChart = "3.1.0"
@@ -82,7 +82,7 @@ agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 algosdk = { module = "com.algorand:algosdk", version.ref = "algosdk" }
 androidx-activityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidx-compose-activity" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
-androidx-compose-fragment = { module = "androidx.fragment:fragment-compose", version.ref  = "androidx-compose-fragment" }
+androidx-compose-fragment = { module = "androidx.fragment:fragment-compose", version.ref = "androidx-compose-fragment" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidx-compose-material3" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "androidx-compose-ui" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
@@ -144,9 +144,9 @@ ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
-ktor-client-content-negotiation = {module = "io.ktor:ktor-client-content-negotiation", version.ref= "ktorContentNegotiation"}
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorContentNegotiation" }
 ktor-client-content-negotiation-jvm = { module = "io.ktor:ktor-client-content-negotiation-jvm", version.ref = "ktorContentNegotiation" }
-ktor-kotlinx-serialization = {module = "io.ktor:ktor-serialization-kotlinx-json", version.ref="ktor"}
+ktor-kotlinx-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "legacySupport" }
 lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
 lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExt" }

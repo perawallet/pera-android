@@ -39,11 +39,6 @@ import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.algorand.android.utils.walletconnect.WalletConnectViewModel
 import com.algorand.common.deeplink.model.DeepLink
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.ResultPoint
-import com.journeyapps.barcodescanner.BarcodeCallback
-import com.journeyapps.barcodescanner.BarcodeResult
-import com.journeyapps.barcodescanner.DefaultDecoderFactory
 
 /**
  * Base class for qr scanning
@@ -89,7 +84,7 @@ abstract class BaseQrScannerFragment(
         initObserver()
         qrScannerViewModel.setDeeplinkHandlerListener(this)
         if (isCameraPermissionGranted) {
-            setupBarcodeView()
+            binding.qrScannerView.resume()
         } else {
             requestPermissionFromUser(CAMERA_PERMISSION, CAMERA_PERMISSION_REQUEST_CODE, shouldShowAlways = true)
         }
@@ -102,6 +97,7 @@ abstract class BaseQrScannerFragment(
 
     private fun initUi() {
         with(binding) {
+            qrScannerView.init(qrScannerViewModel::handleDeeplink)
             titleTextView.text = getString(titleTextResId)
             leftArrowButton.setOnClickListener { onLeftArrowButtonClicked() }
             appConnectedButton.setOnClickListener { onAppConnectedButtonClicked() }
@@ -129,33 +125,9 @@ abstract class BaseQrScannerFragment(
         nav(HomeNavigationDirections.actionGlobalWalletConnectSessionsBottomSheet())
     }
 
-    private fun setupBarcodeView() {
-        with(binding.cameraPreview) {
-            view?.let {
-                decoderFactory = DefaultDecoderFactory(mutableListOf(BarcodeFormat.QR_CODE))
-                decodeContinuous(barcodeCallback)
-            }
-        }
-    }
-
-    private val barcodeCallback: BarcodeCallback = object : BarcodeCallback {
-        override fun barcodeResult(barcodeResult: BarcodeResult?) {
-            view?.let {
-                binding.cameraPreview.pause()
-                if (barcodeResult != null) qrScannerViewModel.handleDeeplink(barcodeResult.text)
-                resumeCameraIfPossibleOrPause()
-            }
-        }
-
-        override fun possibleResultPoints(resultPoints: MutableList<ResultPoint>?) {
-            // nothing to do
-        }
-    }
-
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            setupBarcodeView()
             resumeCameraIfPossibleOrPause()
         }
     }
@@ -175,7 +147,7 @@ abstract class BaseQrScannerFragment(
 
     override fun onPause() {
         super.onPause()
-        binding.cameraPreview.pause()
+        binding.qrScannerView.pause()
         view?.viewTreeObserver?.removeOnWindowFocusChangeListener(onWindowFocusChangeListener)
     }
 
@@ -193,24 +165,19 @@ abstract class BaseQrScannerFragment(
 
     private fun onQrCodeProgressChanged(isQrCodeInProgress: Boolean) {
         if (isQrCodeInProgress) {
-            binding.cameraPreview.pause()
+            binding.qrScannerView.pause()
         } else {
             resumeCameraIfPossibleOrPause()
         }
     }
 
     private fun resumeCameraIfPossibleOrPause() {
-        with(binding.cameraPreview) {
-            view?.let {
-                if (isCameraPermissionGranted && it.hasWindowFocus()) {
-                    // TODO: 1/25/22 find a better solution to non-functional scanner bug which occurs when pause() is
-                    //  called just after resume(). Calling pause() before each resume() solves the problem for now.
-                    pause()
-                    resume()
-                    return
-                }
+        binding.qrScannerView.post {
+            if (isCameraPermissionGranted && binding.qrScannerView.hasWindowFocus()) {
+                binding.qrScannerView.resume()
+            } else {
+                binding.qrScannerView.pause()
             }
-            pause()
         }
     }
 

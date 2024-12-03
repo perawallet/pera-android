@@ -10,11 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.usecase
+package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.account.local.domain.usecase.*
-import com.algorand.common.account.local.domain.usecase.IsThereAnyLocalAccountUseCase
 import com.algorand.common.testing.peraFixture
 import io.mockk.coEvery
 import io.mockk.mockk

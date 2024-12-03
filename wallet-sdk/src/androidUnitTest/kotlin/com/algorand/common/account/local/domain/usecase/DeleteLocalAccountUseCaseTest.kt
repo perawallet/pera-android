@@ -10,12 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.usecase
+package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
 import com.algorand.common.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.common.account.local.domain.repository.NoAuthAccountRepository
-import com.algorand.common.account.local.domain.usecase.DeleteLocalAccountUseCase
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest

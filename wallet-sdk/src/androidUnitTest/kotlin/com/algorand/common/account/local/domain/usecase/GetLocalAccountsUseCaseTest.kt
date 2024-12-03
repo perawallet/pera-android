@@ -10,21 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.usecase
-
-import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
-import com.algorand.common.account.local.domain.usecase.GetLocalAccountsUseCase
-import com.algorand.common.account.local.domain.repository.LedgerBleAccountRepository
-import com.algorand.common.account.local.domain.repository.NoAuthAccountRepository
-import com.algorand.common.testing.peraFixture
-import io.mockk.coEvery
-import io.mockk.mockk
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
-import org.junit.Test
+package com.algorand.common.account.local.domain.usecase
 
 // This test is causing us an issue because of timeout. Github Actions is not able to run this test properly
 //class GetLocalAccountsUseCaseTest {

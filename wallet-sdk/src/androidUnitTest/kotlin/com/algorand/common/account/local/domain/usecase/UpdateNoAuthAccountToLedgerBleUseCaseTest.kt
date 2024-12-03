@@ -10,31 +10,31 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.usecase
+package com.algorand.common.account.local.domain.usecase
 
-import com.algorand.common.account.local.domain.usecase.*
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
-class UpdateNoAuthAccountToAlgo25UseCaseTest {
+class UpdateNoAuthAccountToLedgerBleUseCaseTest {
 
     private val deleteLocalAccount: DeleteLocalAccount = mockk(relaxed = true)
-    private val createAlgo25Account: CreateAlgo25Account = mockk(relaxed = true)
+    private val createLedgerBleAccount: CreateLedgerBleAccount = mockk(relaxed = true)
 
-    private val sut = UpdateNoAuthAccountToAlgo25UseCase(deleteLocalAccount, createAlgo25Account)
+    private val sut = UpdateNoAuthAccountToLedgerBleUseCase(deleteLocalAccount, createLedgerBleAccount)
 
     @Test
-    fun `EXPECT noAuthAccount to be deleted and new Algo25Account to be created`() = runTest {
-        sut(ADDRESS, SECRET_KEY)
+    fun `EXPECT noAuthAccount to be deleted and new LedgerBleAccount to be created`() = runTest {
+        sut(ADDRESS, DEVICE_MAC_ADDRESS, INDEX_IN_LEDGER)
 
         coVerify { deleteLocalAccount(ADDRESS) }
-        coVerify { createAlgo25Account(ADDRESS, SECRET_KEY) }
+        coVerify { createLedgerBleAccount(ADDRESS, DEVICE_MAC_ADDRESS, INDEX_IN_LEDGER) }
     }
 
     companion object {
         private const val ADDRESS = "ADDRESS"
-        private val SECRET_KEY = byteArrayOf()
+        private const val DEVICE_MAC_ADDRESS = "DEVICE_MAC_ADDRESS"
+        private const val INDEX_IN_LEDGER = 0
     }
 }

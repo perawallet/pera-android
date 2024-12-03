@@ -10,9 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.usecase
+package com.algorand.common.account.local.domain.usecase
 
-import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
 import com.algorand.common.account.local.domain.model.LocalAccount.Algo25
 import com.algorand.common.account.local.domain.model.LocalAccount.LedgerBle
 import com.algorand.common.account.local.domain.model.LocalAccount.NoAuth

@@ -42,10 +42,10 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
-import javax.inject.Inject
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
+import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobileWebInterface.WebInterfaceListener {
@@ -124,8 +124,8 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
             if (url == null) {
                 val webViewTheme = webViewThemeHelper.getWebViewThemeFromThemePreference(context)
                 val locale = Locale.getDefault().language
-                val cardsUrl = getCustomUrl(CARDS_URL, webViewTheme, cardsViewModel.getPrimaryCurrencyId(), locale)
-                loadUrl(cardsUrl)
+                val webviewUrl = getCustomUrl(CARDS_URL, webViewTheme, cardsViewModel.getPrimaryCurrencyId(), locale)
+                loadUrl(webviewUrl)
             }
         }
     }
@@ -154,6 +154,12 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
     }
 
     override fun closePeraCards() {
+        binding.root.post {
+            findNavController().navigateUp()
+        }
+    }
+
+    override fun closeWebView() {
         binding.root.post {
             findNavController().navigateUp()
         }

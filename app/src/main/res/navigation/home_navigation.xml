@@ -74,6 +74,8 @@
 
     <include app:graph="@navigation/discover_home_navigation" />
 
+    <include app:graph="@navigation/discover_dapp_navigation" />
+
     <include app:graph="@navigation/discover_detail_navigation" />
 
     <include app:graph="@navigation/asset_filter_navigation" />
@@ -600,7 +602,22 @@
         android:id="@+id/stakingFragment"
         android:name="com.algorand.android.modules.staking.StakingFragment"
         android:label="StakingFragment"
-        tools:layout="@layout/fragment_staking" />
+        tools:layout="@layout/fragment_staking">
+        <action
+            android:id="@+id/action_stakingFragment_to_discoverDappNavigation"
+            app:destination="@id/discoverDappNavigation">
+            <argument
+                android:name="dappUrl"
+                app:argType="string" />
+            <argument
+                android:name="dappTitle"
+                app:argType="string" />
+            <argument
+                android:name="favorites"
+                app:argType="com.algorand.android.discover.common.ui.model.DappFavoriteElement[]"
+                app:nullable="true" />
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/removeAssetsFragment"

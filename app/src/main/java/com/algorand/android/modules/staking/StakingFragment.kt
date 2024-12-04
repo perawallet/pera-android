@@ -42,10 +42,10 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
-import javax.inject.Inject
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
+import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
@@ -125,8 +125,13 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
             if (url == null) {
                 val webViewTheme = webViewThemeHelper.getWebViewThemeFromThemePreference(context)
                 val locale = Locale.getDefault().language
-                val cardsUrl = getCustomUrl(STAKING_URL, webViewTheme, stakingViewModel.getPrimaryCurrencyId(), locale)
-                loadUrl(cardsUrl)
+                val webviewUrl = getCustomUrl(
+                    STAKING_URL,
+                    webViewTheme,
+                    stakingViewModel.getPrimaryCurrencyId(),
+                    locale
+                )
+                loadUrl(webviewUrl)
             }
         }
     }
@@ -154,9 +159,21 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
         stakingViewModel.getDeviceId()
     }
 
-    override fun closePeraCards() {
+    override fun closeWebView() {
         binding.root.post {
             findNavController().navigateUp()
+        }
+    }
+
+    override fun openDappWebview(jsonEncodedPayload: String) {
+        stakingViewModel.getOpenDappWebview(jsonEncodedPayload)?.let { dappInfo ->
+            nav(
+                StakingFragmentDirections.actionStakingFragmentToDiscoverDappNavigation(
+                    dappUrl = dappInfo.url ?: STAKING_URL,
+                    dappTitle = dappInfo.name ?: "",
+                    favorites = arrayOf() // always empty for now
+                )
+            )
         }
     }
 

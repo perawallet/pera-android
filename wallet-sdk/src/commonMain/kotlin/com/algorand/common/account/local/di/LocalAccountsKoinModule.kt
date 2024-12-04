@@ -37,6 +37,8 @@ import com.algorand.common.account.local.domain.repository.NoAuthAccountReposito
 import com.algorand.common.account.local.domain.usecase.AddAlgo25Account
 import com.algorand.common.account.local.domain.usecase.AddLedgerBleAccount
 import com.algorand.common.account.local.domain.usecase.AddNoAuthAccount
+import com.algorand.common.account.local.domain.usecase.DeleteLocalAccount
+import com.algorand.common.account.local.domain.usecase.DeleteLocalAccountUseCase
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
 import org.koin.dsl.module
@@ -89,4 +91,6 @@ val localAccountsKoinModule = module {
     }
 
     factory<GetAllLocalAccountAddressesAsFlow> { GetAllLocalAccountAddressesAsFlowUseCase(get(), get(), get()) }
+
+    factory<DeleteLocalAccount> { DeleteLocalAccountUseCase(get(), get(), get()) }
 }

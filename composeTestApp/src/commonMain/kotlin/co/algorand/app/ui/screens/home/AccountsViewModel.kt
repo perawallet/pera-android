@@ -17,6 +17,7 @@ import androidx.lifecycle.viewModelScope
 import co.algorand.app.ui.screens.home.AccountsViewModel.ViewState
 import com.algorand.common.account.local.domain.model.LocalAccount
 import com.algorand.common.account.local.domain.usecase.AddAlgo25Account
+import com.algorand.common.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.common.algosdk.AlgoAccountSdk
 import com.algorand.common.viewmodel.StateDelegate
@@ -29,6 +30,7 @@ class AccountsViewModel(
     private val getAllLocalAccountAddressesAsFlow: GetAllLocalAccountAddressesAsFlow,
     private val addAlgo25Account: AddAlgo25Account,
     private val algoAccountSdk: AlgoAccountSdk,
+    private val deleteLocalAccount: DeleteLocalAccount,
     private val stateDelegate: StateDelegate<ViewState>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
@@ -55,6 +57,12 @@ class AccountsViewModel(
                 secretKey = account.secretKey
             )
             addAlgo25Account(algo25Account)
+        }
+    }
+
+    fun deleteAccount(address: String) {
+        viewModelScope.launch {
+            deleteLocalAccount(address)
         }
     }
 

@@ -166,8 +166,14 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
     }
 
     override fun openDappWebview(jsonEncodedPayload: String) {
-        stakingViewModel.getOpenSystemBrowserUrl(jsonEncodedPayload)?.let { url ->
-            context?.openExternalBrowserApp(url)
+        stakingViewModel.getOpenDappWebview(jsonEncodedPayload)?.let { dappInfo ->
+            nav(
+                StakingFragmentDirections.actionStakingFragmentToDiscoverDappNavigation(
+                    dappUrl = dappInfo.url ?: STAKING_URL,
+                    dappTitle = dappInfo.name ?: "",
+                    favorites = arrayOf() // always empty for now
+                )
+            )
         }
     }
 

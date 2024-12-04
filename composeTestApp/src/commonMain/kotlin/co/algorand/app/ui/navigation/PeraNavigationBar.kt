@@ -84,7 +84,7 @@ fun PeraNavigationBar(
 
 data class TopLevelRouteDetails<T : Any>(val name: String, val route: T, val icon: DrawableResource)
 
-private val topLevelRoutes: List<TopLevelRoute> = listOf(Home, Discover, CoreActions, Collectibles, Settings)
+private val topLevelRoutes: List<TopLevelRoute> = listOf(Accounts, Discover, CoreActions, Collectibles, Settings)
 
 sealed interface TopLevelRoute {
     val type: Type
@@ -97,10 +97,10 @@ sealed interface TopLevelRoute {
 }
 
 @Serializable
-data object Home : TopLevelRoute {
-    override val type: TopLevelRoute.Type = TopLevelRoute.Type.NavButton("Home")
+data object Accounts : TopLevelRoute {
+    override val type: TopLevelRoute.Type = TopLevelRoute.Type.NavButton("Accounts")
     override val details = TopLevelRouteDetails(
-        name = "Home",
+        name = "Accounts",
         route = this,
         icon = Res.drawable.ic_home
     )

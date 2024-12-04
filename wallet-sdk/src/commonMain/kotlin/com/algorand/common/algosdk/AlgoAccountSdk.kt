@@ -10,16 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.algosdk
 
-import com.algorand.common.account.local.data.database.AccountDatabase
-import com.algorand.common.account.local.data.database.getAccountDatabase
-import com.algorand.common.algosdk.AlgoAccountSdk
-import com.algorand.common.algosdk.AlgoAccountSdkImpl
-import org.koin.core.module.Module
-import org.koin.dsl.module
+import com.algorand.common.algosdk.model.Algo25Account
 
-actual fun platformKoinModule(): Module = module {
-    single<AccountDatabase> { getAccountDatabase(get()) }
-    single<AlgoAccountSdk> { AlgoAccountSdkImpl() }
+expect interface AlgoAccountSdk {
+
+    fun createAccount(): Algo25Account
+
+    fun recoverAccount(mnemonic: String): Algo25Account
 }

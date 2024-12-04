@@ -44,7 +44,7 @@ fun AppNavigation() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Home,
+            startDestination = Accounts,
             modifier = Modifier.padding(paddingValues = paddingValues),
         ) {
             getBottomNavigationGraph(navController, snackbarHostState)

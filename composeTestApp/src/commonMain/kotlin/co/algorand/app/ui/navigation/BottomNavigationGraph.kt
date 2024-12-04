@@ -19,7 +19,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import co.algorand.app.ui.screens.DiscoverScreen
-import co.algorand.app.ui.screens.HomeScreen
+import co.algorand.app.ui.screens.home.AccountsScreen
 import co.algorand.app.ui.screens.NftsScreen
 import co.algorand.app.ui.screens.SettingsScreen
 import co.algorand.app.ui.widgets.snackbar.SnackBarLayout
@@ -32,11 +32,11 @@ fun NavGraphBuilder.getBottomNavigationGraph(
     navController: NavController,
     snackbarHostState: SnackbarHostState
 ) {
-    composable<Home> {
-        val backStackEntry = remember(it) { navController.getBackStackEntry<Home>() }
+    composable<Accounts> {
+        val backStackEntry = remember(it) { navController.getBackStackEntry<Accounts>() }
         val sharedViewModel: SnackbarViewModel = koinNavViewModel(viewModelStoreOwner = backStackEntry)
-        HomeScreen(
-            tag = backStackEntry.toRoute<Home>().details.name,
+        AccountsScreen(
+            tag = backStackEntry.toRoute<Accounts>().details.name,
             navController = navController,
             snackbarViewModel = sharedViewModel,
         )

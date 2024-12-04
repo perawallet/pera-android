@@ -14,9 +14,12 @@ package com.algorand.common.di
 
 import com.algorand.common.account.local.data.database.AccountDatabase
 import com.algorand.common.account.local.data.database.getAccountDatabase
+import com.algorand.common.algosdk.AlgoAccountSdk
+import com.algorand.common.algosdk.AlgoAccountSdkImpl
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 actual fun platformKoinModule(): Module = module {
     single<AccountDatabase> { getAccountDatabase() }
+    single<AlgoAccountSdk> { AlgoAccountSdkImpl() }
 }

@@ -828,7 +828,7 @@
     <string name="sorry_there_was">Sorry, there was an error fetching some of your accounts. The portfolio value is calculated based only on successfully fetched ones.</string>
     <string name="we_couldn_t_find_any_assets">We couldn\'t find any assets for remove.</string>
 
-    <string name="staking">Staking</string>
+    <string name="staking">Stake</string>
     <string name="staking_menu_desc">Explore the ecosystem for staking rewards</string>
 
     <string name="the_algo_is_the_official_cryptocurrency">The Algo is the official cryptocurrency of the Algorand blockchain. The Algorand blockchain has been built to help create an open, borderless economy where everybody can participate. This new type of digital economy can only run on a truly digital currency that works instantly, for everybody. This is the Algo.</string>

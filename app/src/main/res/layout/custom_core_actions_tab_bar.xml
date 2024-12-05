@@ -45,7 +45,7 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_height="wrap_content">
 
-        <com.algorand.android.customviews.ListMenuItemView
+        <com.algorand.android.customviews.ListNewMenuItemView
             android:id="@+id/stakingButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

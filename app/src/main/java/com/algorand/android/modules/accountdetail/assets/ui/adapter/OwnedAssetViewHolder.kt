@@ -35,7 +35,7 @@ class OwnedAssetViewHolder(
                     )
                 }
                 setTitleText(name.getName(resources))
-                val name = shortName.getName(resources).uppercase()
+                val name = shortName.getName(resources)
                 val descriptionText = if (isAlgo) name else "$name  -  ${item.id}"
                 setDescriptionText(descriptionText)
                 setPrimaryValueText(formattedAmount)

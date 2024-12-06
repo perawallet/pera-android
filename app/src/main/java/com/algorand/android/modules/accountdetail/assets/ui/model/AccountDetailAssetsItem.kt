@@ -14,6 +14,7 @@ package com.algorand.android.modules.accountdetail.assets.ui.model
 
 import androidx.annotation.StringRes
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.RecyclerListItem
 import com.algorand.android.modules.sorting.assetsorting.ui.model.AssetSortableItem
 import com.algorand.android.modules.sorting.core.SortableItemPriority
@@ -148,6 +149,9 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
 
                 override val assetSortingNameField: String?
                     get() = name.getName()
+
+                val isAlgo: Boolean
+                    get() = id == ALGO_ID
 
                 override val assetSortingBalanceField: BigDecimal
                     get() = amountInSelectedCurrency ?: BigDecimal.ZERO

@@ -27,7 +27,8 @@ class DiscoverDappPreviewUseCase @Inject constructor(
     fun getInitialStatePreview(
         dappUrl: String,
         dappTitle: String,
-        favorites: List<DappFavoriteElement>
+        favorites: List<DappFavoriteElement>,
+        showFavorites: Boolean
     ) = DiscoverDappPreview(
         themePreference = sharedPreferences.getSavedThemePreference(),
         isLoading = true,
@@ -35,6 +36,7 @@ class DiscoverDappPreviewUseCase @Inject constructor(
         dappUrl = dappUrl,
         dappTitle = dappTitle,
         favorites = favorites,
+        showFavorites = showFavorites,
         isFavorite = favorites.any { it.isSameUrl(dappUrl) }
     )
 

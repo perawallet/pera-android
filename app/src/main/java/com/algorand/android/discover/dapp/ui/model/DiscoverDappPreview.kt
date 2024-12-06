@@ -28,6 +28,7 @@ data class DiscoverDappPreview(
     val dappUrl: String,
     val dappTitle: String,
     val favorites: List<DappFavoriteElement> = listOf(),
+    val showFavorites: Boolean,
     val favoritingEvent: Event<DappFavoriteElement>? = null,
     val isFavorite: Boolean
 )

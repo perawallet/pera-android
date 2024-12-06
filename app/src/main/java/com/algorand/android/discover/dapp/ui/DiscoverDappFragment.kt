@@ -15,6 +15,8 @@ package com.algorand.android.discover.dapp.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
@@ -167,10 +169,15 @@ class DiscoverDappFragment :
         getAppToolbar()?.changeSubtitle(preview.dappUrl)
         with(binding) {
             loadingProgressBar.isVisible = preview.isLoading
-            if (preview.isFavorite) {
-                bottomDappNavigation.favoritesNavButton.setImageResource(R.drawable.ic_star_full)
+            if (preview.showFavorites) {
+                bottomDappNavigation.favoritesNavButton.visibility = VISIBLE
+                if (preview.isFavorite) {
+                    bottomDappNavigation.favoritesNavButton.setImageResource(R.drawable.ic_star_full)
+                } else {
+                    bottomDappNavigation.favoritesNavButton.setImageResource(R.drawable.ic_star_empty)
+                }
             } else {
-                bottomDappNavigation.favoritesNavButton.setImageResource(R.drawable.ic_star_empty)
+                bottomDappNavigation.favoritesNavButton.visibility = GONE
             }
         }
         discoverViewModel.getLastError()?.let {

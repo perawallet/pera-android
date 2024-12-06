@@ -31,6 +31,10 @@
             android:name="favorites"
             app:argType="com.algorand.android.discover.common.ui.model.DappFavoriteElement[]"
             app:nullable="true" />
+        <argument
+            android:name="showFavorites"
+            android:defaultValue="true"
+            app:argType="boolean" />
         <action
             android:id="@+id/action_discoverDappFragment_to_singleButtonBottomSheetNavigation"
             app:destination="@id/singleButtonBottomSheetNavigation"

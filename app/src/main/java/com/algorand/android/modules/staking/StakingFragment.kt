@@ -171,7 +171,8 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
                 StakingFragmentDirections.actionStakingFragmentToDiscoverDappNavigation(
                     dappUrl = dappInfo.url ?: STAKING_URL,
                     dappTitle = dappInfo.name ?: "",
-                    favorites = arrayOf() // always empty for now
+                    favorites = null, // always empty for now
+                    showFavorites = false
                 )
             )
         }

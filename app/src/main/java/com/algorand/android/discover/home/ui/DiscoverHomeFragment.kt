@@ -345,7 +345,8 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
             DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToDiscoverDappNavigation(
                 dappUrl = url,
                 dappTitle = title ?: "",
-                favorites = favorites
+                favorites = favorites,
+                showFavorites = true
             )
         )
     }

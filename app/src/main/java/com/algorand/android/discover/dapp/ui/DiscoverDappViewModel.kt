@@ -20,11 +20,11 @@ import com.algorand.android.discover.dapp.ui.usecase.DiscoverDappPreviewUseCase
 import com.algorand.android.modules.tracking.discover.dapp.DiscoverDappEventTracker
 import com.algorand.android.utils.preference.ThemePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverDappViewModel @Inject constructor(
@@ -39,7 +39,8 @@ class DiscoverDappViewModel @Inject constructor(
         discoverDappPreviewUseCase.getInitialStatePreview(
             dappUrl = args.dappUrl,
             dappTitle = args.dappTitle,
-            favorites = args.favorites?.toList() ?: emptyList()
+            favorites = args.favorites?.toList() ?: emptyList(),
+            showFavorites = args.showFavorites
         )
     )
     val discoverDappPreviewFlow: StateFlow<DiscoverDappPreview>
@@ -66,7 +67,8 @@ class DiscoverDappViewModel @Inject constructor(
                     discoverDappPreviewUseCase.getInitialStatePreview(
                         _discoverDappPreviewFlow.value.dappUrl,
                         _discoverDappPreviewFlow.value.dappTitle,
-                        _discoverDappPreviewFlow.value.favorites
+                        _discoverDappPreviewFlow.value.favorites,
+                        _discoverDappPreviewFlow.value.showFavorites
                     )
                 )
         }

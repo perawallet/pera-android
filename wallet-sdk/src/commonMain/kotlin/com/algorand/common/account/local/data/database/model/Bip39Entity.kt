@@ -16,8 +16,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "algo_25")
-internal data class Algo25Entity(
+@Entity(tableName = "bip_39")
+internal data class Bip39Entity(
     @PrimaryKey
     @ColumnInfo("encrypted_address")
     val encryptedAddress: String,

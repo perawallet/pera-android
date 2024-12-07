@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.data.mapper.model.noauth
+package com.algorand.common.account.local.data.mapper.model
 
-import com.algorand.common.account.local.data.database.model.NoAuthEntity
+import com.algorand.common.account.local.data.database.model.Bip39Entity
 import com.algorand.common.account.local.domain.model.LocalAccount
 
-internal interface NoAuthMapper {
-    operator fun invoke(entity: NoAuthEntity): LocalAccount.NoAuth
+internal interface Bip39Mapper {
+    operator fun invoke(entity: Bip39Entity): LocalAccount.Bip39
 }

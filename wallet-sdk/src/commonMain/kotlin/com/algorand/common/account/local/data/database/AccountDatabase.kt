@@ -18,9 +18,11 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import com.algorand.common.account.local.data.database.AccountDatabase.Companion.DATABASE_VERSION
 import com.algorand.common.account.local.data.database.dao.Algo25Dao
+import com.algorand.common.account.local.data.database.dao.Bip39Dao
 import com.algorand.common.account.local.data.database.dao.LedgerBleDao
 import com.algorand.common.account.local.data.database.dao.NoAuthDao
 import com.algorand.common.account.local.data.database.model.Algo25Entity
+import com.algorand.common.account.local.data.database.model.Bip39Entity
 import com.algorand.common.account.local.data.database.model.LedgerBleEntity
 import com.algorand.common.account.local.data.database.model.NoAuthEntity
 
@@ -28,6 +30,7 @@ import com.algorand.common.account.local.data.database.model.NoAuthEntity
     entities = [
         LedgerBleEntity::class,
         NoAuthEntity::class,
+        Bip39Entity::class,
         Algo25Entity::class
     ],
     version = DATABASE_VERSION
@@ -37,10 +40,11 @@ internal abstract class AccountDatabase : RoomDatabase() {
 
     abstract fun ledgerBleDao(): LedgerBleDao
     abstract fun noAuthDao(): NoAuthDao
+    abstract fun bip39Dao(): Bip39Dao
     abstract fun algo25Dao(): Algo25Dao
 
     companion object {
-        const val DATABASE_VERSION = 1
+        const val DATABASE_VERSION = 2
         const val DATABASE_NAME = "account_database"
     }
 }

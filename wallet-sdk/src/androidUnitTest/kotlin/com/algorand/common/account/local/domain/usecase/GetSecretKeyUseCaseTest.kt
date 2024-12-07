@@ -14,6 +14,7 @@ package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.model.LocalAccount
 import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
+import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
 import com.algorand.common.testing.peraFixture
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -24,21 +25,36 @@ import org.junit.Test
 
 class GetSecretKeyUseCaseTest {
 
+    private val bip39AccountRepository: Bip39AccountRepository = mockk()
     private val algo25AccountRepository: Algo25AccountRepository = mockk()
 
-    private val sut = GetSecretKeyUseCase(algo25AccountRepository)
+    private val sut = GetSecretKeyUseCase(bip39AccountRepository, algo25AccountRepository)
 
     @Test
-    fun `EXPECT secret key WHEN account is found`() = runTest {
+    fun `EXPECT secret key WHEN bip39 account is found`() = runTest {
+        coEvery { bip39AccountRepository.getAccount(BIP_39_ADDRESS) } returns BIP_39_ACCOUNT
+        val result = sut(BIP_39_ADDRESS)
+        assertTrue(result.contentEquals(BIP_39_ACCOUNT.secretKey))
+    }
+
+    @Test
+    fun `EXPECT secret key WHEN algo25 account is found`() = runTest {
         coEvery { algo25AccountRepository.getAccount(ALGO_25_ADDRESS) } returns ALGO_25_ACCOUNT
-
         val result = sut(ALGO_25_ADDRESS)
-
         assertTrue(result.contentEquals(ALGO_25_ACCOUNT.secretKey))
     }
 
     @Test
-    fun `EXPECT null WHEN account is not found`() = runTest {
+    fun `EXPECT null WHEN Bip39 account is not found`() = runTest {
+        coEvery { bip39AccountRepository.getAccount(BIP_39_ADDRESS) } returns null
+
+        val result = sut(BIP_39_ADDRESS)
+
+        assertNull(result)
+    }
+
+    @Test
+    fun `EXPECT null WHEN Algo25 account is not found`() = runTest {
         coEvery { algo25AccountRepository.getAccount(ALGO_25_ADDRESS) } returns null
 
         val result = sut(ALGO_25_ADDRESS)
@@ -47,8 +63,9 @@ class GetSecretKeyUseCaseTest {
     }
 
     companion object {
-        private const val ALGO_25_ADDRESS = "ADDRESS_1"
-
+        private const val BIP_39_ADDRESS = "ADDRESS_1"
+        private const val ALGO_25_ADDRESS = "ADDRESS_2"
+        private val BIP_39_ACCOUNT = peraFixture<LocalAccount.Bip39>().copy(address = BIP_39_ADDRESS)
         private val ALGO_25_ACCOUNT = peraFixture<LocalAccount.Algo25>().copy(address = ALGO_25_ADDRESS)
     }
 }

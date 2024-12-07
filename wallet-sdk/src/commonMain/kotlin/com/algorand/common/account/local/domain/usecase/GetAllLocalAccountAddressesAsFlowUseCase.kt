@@ -13,12 +13,14 @@
 package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
+import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
 import com.algorand.common.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.common.account.local.domain.repository.NoAuthAccountRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
 internal class GetAllLocalAccountAddressesAsFlowUseCase(
+    private val bip39AccountRepository: Bip39AccountRepository,
     private val algo25AccountRepository: Algo25AccountRepository,
     private val ledgerBleAccountRepository: LedgerBleAccountRepository,
     private val noAuthAccountRepository: NoAuthAccountRepository
@@ -26,11 +28,13 @@ internal class GetAllLocalAccountAddressesAsFlowUseCase(
 
     override fun invoke(): Flow<List<String>> {
         return combine(
+            bip39AccountRepository.getAllAsFlow(),
             algo25AccountRepository.getAllAsFlow(),
             ledgerBleAccountRepository.getAllAsFlow(),
             noAuthAccountRepository.getAllAsFlow()
-        ) { algo25Accounts, ledgerBleAccounts, noAuthAccounts ->
+        ) { bip39Accounts, algo25Accounts, ledgerBleAccounts, noAuthAccounts ->
             buildList {
+                addAll(bip39Accounts.map { it.address })
                 addAll(algo25Accounts.map { it.address })
                 addAll(ledgerBleAccounts.map { it.address })
                 addAll(noAuthAccounts.map { it.address })

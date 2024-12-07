@@ -10,21 +10,22 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.data.mapper.model.algo25
+package com.algorand.common.account.local.data.mapper.model
 
-import com.algorand.common.account.local.data.database.model.Algo25Entity
+import com.algorand.common.account.local.data.database.model.Bip39Entity
 import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.encryption.*
+import com.algorand.common.encryption.AddressEncryptionManager
+import com.algorand.common.encryption.SecretKeyEncryptionManager
 
-internal class Algo25MapperImpl(
+internal class Bip39MapperImpl(
     private val addressEncryptionManager: AddressEncryptionManager,
     private val secretKeyEncryptionManager: SecretKeyEncryptionManager
-) : Algo25Mapper {
+) : Bip39Mapper {
 
-    override fun invoke(entity: Algo25Entity): LocalAccount.Algo25 {
+    override fun invoke(entity: Bip39Entity): LocalAccount.Bip39 {
         val decryptedAddress = addressEncryptionManager.decrypt(entity.encryptedAddress)
         val decryptedSecretKey = secretKeyEncryptionManager.decrypt(entity.encryptedSecretKey)
-        return LocalAccount.Algo25(
+        return LocalAccount.Bip39(
             address = decryptedAddress,
             secretKey = decryptedSecretKey
         )

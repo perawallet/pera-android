@@ -15,6 +15,10 @@ package com.algorand.common.account.local.domain.usecase
 import com.algorand.common.account.local.domain.model.LocalAccount
 import kotlinx.coroutines.flow.Flow
 
+fun interface AddBip39Account {
+    suspend operator fun invoke(account: LocalAccount.Bip39)
+}
+
 fun interface AddAlgo25Account {
     suspend operator fun invoke(account: LocalAccount.Algo25)
 }
@@ -25,6 +29,10 @@ fun interface AddLedgerBleAccount {
 
 fun interface AddNoAuthAccount {
     suspend operator fun invoke(account: LocalAccount.NoAuth)
+}
+
+fun interface CreateBip39Account {
+    suspend operator fun invoke(address: String, secretKey: ByteArray)
 }
 
 fun interface CreateAlgo25Account {
@@ -72,6 +80,10 @@ fun interface IsThereAnyLocalAccount {
 }
 
 fun interface UpdateNoAuthAccountToAlgo25 {
+    suspend operator fun invoke(address: String, secretKey: ByteArray)
+}
+
+fun interface UpdateNoAuthAccountToBip39 {
     suspend operator fun invoke(address: String, secretKey: ByteArray)
 }
 

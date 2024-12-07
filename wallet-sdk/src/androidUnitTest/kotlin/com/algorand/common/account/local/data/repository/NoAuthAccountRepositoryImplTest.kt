@@ -15,7 +15,7 @@ package com.algorand.common.account.local.data.repository
 import com.algorand.common.account.local.data.database.dao.NoAuthDao
 import com.algorand.common.account.local.data.database.model.NoAuthEntity
 import com.algorand.common.account.local.data.mapper.entity.NoAuthEntityMapper
-import com.algorand.common.account.local.data.mapper.model.noauth.NoAuthMapper
+import com.algorand.common.account.local.data.mapper.model.NoAuthMapper
 import com.algorand.common.account.local.domain.model.LocalAccount
 import com.algorand.common.encryption.AddressEncryptionManager
 import io.mockk.coEvery

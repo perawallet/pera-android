@@ -13,9 +13,11 @@
 package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.model.LocalAccount.Algo25
+import com.algorand.common.account.local.domain.model.LocalAccount.Bip39
 import com.algorand.common.account.local.domain.model.LocalAccount.LedgerBle
 import com.algorand.common.account.local.domain.model.LocalAccount.NoAuth
 import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
+import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
 import com.algorand.common.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.common.account.local.domain.repository.NoAuthAccountRepository
 import com.algorand.common.testing.peraFixture
@@ -26,12 +28,13 @@ import kotlinx.coroutines.flow.flowOf
 import org.junit.Test
 
 class GetAllLocalAccountAddressesAsFlowUseCaseTest {
-
+    private val bip39AccountRepository: Bip39AccountRepository = mockk()
     private val algo25AccountRepository: Algo25AccountRepository = mockk()
     private val ledgerBleAccountRepository: LedgerBleAccountRepository = mockk()
     private val noAuthAccountRepository: NoAuthAccountRepository = mockk()
 
     private val sut = GetAllLocalAccountAddressesAsFlowUseCase(
+        bip39AccountRepository,
         algo25AccountRepository,
         ledgerBleAccountRepository,
         noAuthAccountRepository
@@ -39,6 +42,7 @@ class GetAllLocalAccountAddressesAsFlowUseCaseTest {
 
     @Test
     fun `EXPECT empty list when all repositories return empty list`() {
+        every { bip39AccountRepository.getAllAsFlow() } returns flowOf(emptyList())
         every { algo25AccountRepository.getAllAsFlow() } returns flowOf(emptyList())
         every { ledgerBleAccountRepository.getAllAsFlow() } returns flowOf(emptyList())
         every { noAuthAccountRepository.getAllAsFlow() } returns flowOf(emptyList())
@@ -51,6 +55,7 @@ class GetAllLocalAccountAddressesAsFlowUseCaseTest {
 
     @Test
     fun `EXPECT account addresses WHEN there are local accounts`() {
+        every { bip39AccountRepository.getAllAsFlow() } returns flowOf(listOf(BIP_39_ACCOUNT))
         every { algo25AccountRepository.getAllAsFlow() } returns flowOf(listOf(ALGO_25_ACCOUNT))
         every { ledgerBleAccountRepository.getAllAsFlow() } returns flowOf(listOf(LEDGER_BLE_ACCOUNT))
         every { noAuthAccountRepository.getAllAsFlow() } returns flowOf(listOf(NO_AUTH_ACCOUNT))
@@ -58,13 +63,15 @@ class GetAllLocalAccountAddressesAsFlowUseCaseTest {
         val testObserver = sut().test()
 
         testObserver.stopObserving()
-        testObserver.assertValue(listOf(ALGO_25_ADDRESS, LEDGER_BLE_ADDRESS, NO_AUTH_ADDRESS))
+        testObserver.assertValue(listOf(BIP_39_ADDRESS, ALGO_25_ADDRESS, LEDGER_BLE_ADDRESS, NO_AUTH_ADDRESS))
     }
 
     companion object {
-        private const val ALGO_25_ADDRESS = "address1"
+        private const val BIP_39_ADDRESS = "address1"
+        private val BIP_39_ACCOUNT = peraFixture<Bip39>().copy(address = BIP_39_ADDRESS)
+        private const val ALGO_25_ADDRESS = "address2"
         private val ALGO_25_ACCOUNT = peraFixture<Algo25>().copy(address = ALGO_25_ADDRESS)
-        private const val LEDGER_BLE_ADDRESS = "address2"
+        private const val LEDGER_BLE_ADDRESS = "address3"
         private val LEDGER_BLE_ACCOUNT = peraFixture<LedgerBle>().copy(address = LEDGER_BLE_ADDRESS)
         private const val NO_AUTH_ADDRESS = "address4"
         private val NO_AUTH_ACCOUNT = peraFixture<NoAuth>().copy(address = NO_AUTH_ADDRESS)

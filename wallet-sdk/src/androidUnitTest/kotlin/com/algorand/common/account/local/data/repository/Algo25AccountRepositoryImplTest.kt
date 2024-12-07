@@ -15,7 +15,7 @@ package com.algorand.common.account.local.data.repository
 import com.algorand.common.account.local.data.database.dao.Algo25Dao
 import com.algorand.common.account.local.data.database.model.Algo25Entity
 import com.algorand.common.account.local.data.mapper.entity.Algo25EntityMapper
-import com.algorand.common.account.local.data.mapper.model.algo25.Algo25Mapper
+import com.algorand.common.account.local.data.mapper.model.Algo25Mapper
 import com.algorand.common.account.local.domain.model.LocalAccount
 import com.algorand.common.encryption.AddressEncryptionManager
 import io.mockk.coEvery

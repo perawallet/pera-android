@@ -10,18 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.data.database.model
+package com.algorand.common.account.local.data.mapper.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.algorand.common.account.local.data.database.model.Algo25Entity
+import com.algorand.common.account.local.domain.model.LocalAccount
 
-@Entity(tableName = "algo_25")
-internal data class Algo25Entity(
-    @PrimaryKey
-    @ColumnInfo("encrypted_address")
-    val encryptedAddress: String,
-
-    @ColumnInfo("encrypted_secret_key")
-    val encryptedSecretKey: String
-)
+internal interface Algo25Mapper {
+    operator fun invoke(entity: Algo25Entity): LocalAccount.Algo25
+}

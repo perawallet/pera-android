@@ -15,6 +15,7 @@
 package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
+import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
 import com.algorand.common.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.common.account.local.domain.repository.NoAuthAccountRepository
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 internal class GetLocalAccountCountFlowUseCase(
+    private val bip39AccountRepository: Bip39AccountRepository,
     private val algo25AccountRepository: Algo25AccountRepository,
     private val ledgerBleAccountRepository: LedgerBleAccountRepository,
     private val noAuthAccountRepository: NoAuthAccountRepository
@@ -29,10 +31,11 @@ internal class GetLocalAccountCountFlowUseCase(
 
     override fun invoke(): Flow<Int> {
         return combine(
+            bip39AccountRepository.getAccountCountAsFlow(),
             algo25AccountRepository.getAccountCountAsFlow(),
             ledgerBleAccountRepository.getAccountCountAsFlow(),
             noAuthAccountRepository.getAccountCountAsFlow()
-        ) { algo25Count, ledgerBleCount, noAuthCount ->
+        ) { bip39Count, algo25Count, ledgerBleCount, noAuthCount ->
             algo25Count + ledgerBleCount + noAuthCount
         }.distinctUntilChanged()
     }

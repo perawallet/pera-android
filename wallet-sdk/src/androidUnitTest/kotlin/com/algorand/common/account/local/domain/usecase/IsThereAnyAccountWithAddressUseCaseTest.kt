@@ -13,6 +13,7 @@
 package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.model.LocalAccount.Algo25
+import com.algorand.common.account.local.domain.model.LocalAccount.Bip39
 import com.algorand.common.account.local.domain.model.LocalAccount.LedgerBle
 import com.algorand.common.account.local.domain.model.LocalAccount.NoAuth
 import com.algorand.common.testing.peraFixture
@@ -32,6 +33,7 @@ class IsThereAnyAccountWithAddressUseCaseTest {
     @Test
     fun `EXPECT true WHEN account is found`() = runTest {
         val localAccounts = listOf(
+            BIP_39_ACCOUNT,
             ALGO_25_ACCOUNT,
             NO_AUTH_ACCOUNT,
             LEDGER_BLE_ACCOUNT
@@ -66,10 +68,12 @@ class IsThereAnyAccountWithAddressUseCaseTest {
     }
 
     companion object {
-        private const val ALGO_25_ADDRESS = "ADDRESS_1"
-        private const val NO_AUTH_ADDRESS = "ADDRESS_2"
-        private const val LEDGER_BLE_ADDRESS = "ADDRESS_3"
+        private const val BIP_39_ADDRESS = "ADDRESS_1"
+        private const val ALGO_25_ADDRESS = "ADDRESS_2"
+        private const val NO_AUTH_ADDRESS = "ADDRESS_3"
+        private const val LEDGER_BLE_ADDRESS = "ADDRESS_4"
 
+        private val BIP_39_ACCOUNT = peraFixture<Bip39>().copy(address = BIP_39_ADDRESS)
         private val ALGO_25_ACCOUNT = peraFixture<Algo25>().copy(address = ALGO_25_ADDRESS)
         private val NO_AUTH_ACCOUNT = peraFixture<NoAuth>().copy(address = NO_AUTH_ADDRESS)
         private val LEDGER_BLE_ACCOUNT = peraFixture<LedgerBle>().copy(address = LEDGER_BLE_ADDRESS)

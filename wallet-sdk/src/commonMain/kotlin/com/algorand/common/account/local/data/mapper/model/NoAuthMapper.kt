@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.data.mapper.model.algo25
+package com.algorand.common.account.local.data.mapper.model
 
-import com.algorand.common.account.local.data.database.model.Algo25Entity
+import com.algorand.common.account.local.data.database.model.NoAuthEntity
 import com.algorand.common.account.local.domain.model.LocalAccount
 
-internal interface Algo25Mapper {
-    operator fun invoke(entity: Algo25Entity): LocalAccount.Algo25
+internal interface NoAuthMapper {
+    operator fun invoke(entity: NoAuthEntity): LocalAccount.NoAuth
 }

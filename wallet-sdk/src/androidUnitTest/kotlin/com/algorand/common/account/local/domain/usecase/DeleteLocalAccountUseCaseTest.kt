@@ -13,6 +13,7 @@
 package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
+import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
 import com.algorand.common.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.common.account.local.domain.repository.NoAuthAccountRepository
 import io.mockk.coVerify
@@ -21,12 +22,13 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 internal class DeleteLocalAccountUseCaseTest {
-
+    private val bip39AccountRepository: Bip39AccountRepository = mockk(relaxed = true)
     private val algo25AccountRepository: Algo25AccountRepository = mockk(relaxed = true)
     private val noAuthAccountRepository: NoAuthAccountRepository = mockk(relaxed = true)
     private val ledgerBleAccountRepository: LedgerBleAccountRepository = mockk(relaxed = true)
 
     private val deleteLocalAccount = DeleteLocalAccountUseCase(
+        bip39AccountRepository = bip39AccountRepository,
         algo25AccountRepository = algo25AccountRepository,
         noAuthAccountRepository = noAuthAccountRepository,
         ledgerBleAccountRepository = ledgerBleAccountRepository
@@ -36,6 +38,7 @@ internal class DeleteLocalAccountUseCaseTest {
     fun `EXPECT all account repositories to delete account`() = runTest {
         deleteLocalAccount("address")
 
+        coVerify { bip39AccountRepository.deleteAccount("address") }
         coVerify { algo25AccountRepository.deleteAccount("address") }
         coVerify { ledgerBleAccountRepository.deleteAccount("address") }
         coVerify { noAuthAccountRepository.deleteAccount("address") }

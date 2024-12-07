@@ -13,16 +13,19 @@
 package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
+import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
 import com.algorand.common.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.common.account.local.domain.repository.NoAuthAccountRepository
 
 internal class DeleteLocalAccountUseCase(
+    private val bip39AccountRepository: Bip39AccountRepository,
     private val algo25AccountRepository: Algo25AccountRepository,
     private val noAuthAccountRepository: NoAuthAccountRepository,
     private val ledgerBleAccountRepository: LedgerBleAccountRepository
 ) : DeleteLocalAccount {
 
     override suspend fun invoke(address: String) {
+        bip39AccountRepository.deleteAccount(address)
         algo25AccountRepository.deleteAccount(address)
         noAuthAccountRepository.deleteAccount(address)
         ledgerBleAccountRepository.deleteAccount(address)

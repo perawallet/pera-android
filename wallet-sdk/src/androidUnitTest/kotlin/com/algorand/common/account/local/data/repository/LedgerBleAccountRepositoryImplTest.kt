@@ -15,7 +15,7 @@ package com.algorand.common.account.local.data.repository
 import com.algorand.common.account.local.data.database.dao.LedgerBleDao
 import com.algorand.common.account.local.data.database.model.LedgerBleEntity
 import com.algorand.common.account.local.data.mapper.entity.LedgerBleEntityMapper
-import com.algorand.common.account.local.data.mapper.model.ledgerble.LedgerBleMapper
+import com.algorand.common.account.local.data.mapper.model.LedgerBleMapper
 import com.algorand.common.account.local.domain.model.LocalAccount
 import com.algorand.common.encryption.AddressEncryptionManager
 import com.algorand.common.testing.peraFixture

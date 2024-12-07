@@ -10,19 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.data.mapper.model.noauth
+package com.algorand.common.account.local.data.mapper.model
 
-import com.algorand.common.account.local.data.database.model.NoAuthEntity
+import com.algorand.common.account.local.data.database.model.LedgerBleEntity
 import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.encryption.AddressEncryptionManager
 
-internal class NoAuthMapperImpl(
-    private val addressEncryptionManager: AddressEncryptionManager
-) : NoAuthMapper {
-
-    override fun invoke(entity: NoAuthEntity): LocalAccount.NoAuth {
-        return LocalAccount.NoAuth(
-            address = addressEncryptionManager.decrypt(entity.encryptedAddress)
-        )
-    }
+internal interface LedgerBleMapper {
+    operator fun invoke(entity: LedgerBleEntity): LocalAccount.LedgerBle
 }

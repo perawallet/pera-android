@@ -13,10 +13,13 @@
 package com.algorand.common.account.local.data.repository
 
 import com.algorand.common.account.local.data.database.dao.Algo25Dao
+import com.algorand.common.account.local.data.database.dao.Bip39Dao
 import com.algorand.common.account.local.data.mapper.entity.Algo25EntityMapper
+import com.algorand.common.account.local.data.mapper.entity.Bip39EntityMapper
 import com.algorand.common.account.local.data.mapper.model.Algo25Mapper
-import com.algorand.common.account.local.domain.model.LocalAccount.Algo25
-import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
+import com.algorand.common.account.local.data.mapper.model.Bip39Mapper
+import com.algorand.common.account.local.domain.model.LocalAccount.Bip39
+import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
 import com.algorand.common.encryption.AddressEncryptionManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -25,54 +28,54 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-internal class Algo25AccountRepositoryImpl(
-    private val algo25Dao: Algo25Dao,
-    private val algo25EntityMapper: Algo25EntityMapper,
-    private val algo25Mapper: Algo25Mapper,
+internal class Bip39AccountRepositoryImpl(
+    private val bip39Dao: Bip39Dao,
+    private val bip39EntityMapper: Bip39EntityMapper,
+    private val bip39Mapper: Bip39Mapper,
     private val addressEncryptionManager: AddressEncryptionManager,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : Algo25AccountRepository {
+) : Bip39AccountRepository {
 
-    override fun getAllAsFlow(): Flow<List<Algo25>> {
-        return algo25Dao.getAllAsFlow().map { entityList ->
-            entityList.map { entity -> algo25Mapper(entity) }
+    override fun getAllAsFlow(): Flow<List<Bip39>> {
+        return bip39Dao.getAllAsFlow().map { entityList ->
+            entityList.map { entity -> bip39Mapper(entity) }
         }
     }
 
     override fun getAccountCountAsFlow(): Flow<Int> {
-        return algo25Dao.getTableSizeAsFlow()
+        return bip39Dao.getTableSizeAsFlow()
     }
 
-    override suspend fun getAll(): List<Algo25> {
+    override suspend fun getAll(): List<Bip39> {
         return withContext(coroutineDispatcher) {
-            val algo25Entities = algo25Dao.getAll()
-            algo25Entities.map { algo25Mapper(it) }
+            val bip39Entities = bip39Dao.getAll()
+            bip39Entities.map { bip39Mapper(it) }
         }
     }
 
-    override suspend fun getAccount(address: String): Algo25? {
+    override suspend fun getAccount(address: String): Bip39? {
         return withContext(coroutineDispatcher) {
-            algo25Dao.get(addressEncryptionManager.encrypt(address))?.let { algo25Mapper(it) }
+            bip39Dao.get(addressEncryptionManager.encrypt(address))?.let { bip39Mapper(it) }
         }
     }
 
-    override suspend fun addAccount(account: Algo25) {
+    override suspend fun addAccount(account: Bip39) {
         withContext(coroutineDispatcher) {
-            val algo25Entity = algo25EntityMapper(account)
-            algo25Dao.insert(algo25Entity)
+            val bip39Entity = bip39EntityMapper(account)
+            bip39Dao.insert(bip39Entity)
         }
     }
 
     override suspend fun deleteAccount(address: String) {
         withContext(coroutineDispatcher) {
             val encryptedAddress = addressEncryptionManager.encrypt(address)
-            algo25Dao.delete(encryptedAddress)
+            bip39Dao.delete(encryptedAddress)
         }
     }
 
     override suspend fun deleteAllAccounts() {
         withContext(coroutineDispatcher) {
-            algo25Dao.clearAll()
+            bip39Dao.clearAll()
         }
     }
 }

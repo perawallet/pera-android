@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.data.mapper.model.ledgerble
+package com.algorand.common.account.local.data.mapper.model
 
 import com.algorand.common.account.local.data.database.model.LedgerBleEntity
 import com.algorand.common.account.local.domain.model.LocalAccount

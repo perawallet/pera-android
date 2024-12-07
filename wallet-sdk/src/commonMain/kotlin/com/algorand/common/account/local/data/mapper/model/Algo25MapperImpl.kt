@@ -16,30 +16,18 @@ import com.algorand.common.account.local.data.database.model.Algo25Entity
 import com.algorand.common.account.local.domain.model.LocalAccount
 import com.algorand.common.encryption.AddressEncryptionManager
 import com.algorand.common.encryption.SecretKeyEncryptionManager
-import io.mockk.coEvery
-import io.mockk.mockk
-import org.junit.Assert.assertEquals
-import org.junit.Test
 
-internal class Algo25MapperImplTest {
+internal class Algo25MapperImpl(
+    private val addressEncryptionManager: AddressEncryptionManager,
+    private val secretKeyEncryptionManager: SecretKeyEncryptionManager
+) : Algo25Mapper {
 
-    private val addressEncryptionManager: AddressEncryptionManager = mockk()
-    private val secretKeyEncryptionManager: SecretKeyEncryptionManager = mockk()
-
-    private val sut = Algo25MapperImpl(
-        addressEncryptionManager,
-        secretKeyEncryptionManager
-    )
-
-    @Test
-    fun `EXPECT mapped model`() {
-        coEvery { addressEncryptionManager.decrypt("encrypted_address") } returns "decrypted_address"
-        coEvery { secretKeyEncryptionManager.decrypt("encrypted_secret_key") } returns byteArrayOf(1, 2, 3)
-
-        val entity = Algo25Entity("encrypted_address", "encrypted_secret_key")
-        val result = sut(entity)
-
-        val expected = LocalAccount.Algo25("decrypted_address", byteArrayOf(1, 2, 3))
-        assertEquals(expected, result)
+    override fun invoke(entity: Algo25Entity): LocalAccount.Algo25 {
+        val decryptedAddress = addressEncryptionManager.decrypt(entity.encryptedAddress)
+        val decryptedSecretKey = secretKeyEncryptionManager.decrypt(entity.encryptedSecretKey)
+        return LocalAccount.Algo25(
+            address = decryptedAddress,
+            secretKey = decryptedSecretKey
+        )
     }
 }

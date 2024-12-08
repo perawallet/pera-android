@@ -15,15 +15,12 @@
 package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
-import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
 
-internal class GetSecretKeyUseCase(
-    private val bip39AccountRepository: Bip39AccountRepository,
+internal class GetSecretKeyAlgo25UseCase(
     private val algo25AccountRepository: Algo25AccountRepository
 ) : GetSecretKey {
 
     override suspend fun invoke(address: String): ByteArray? {
         return algo25AccountRepository.getAccount(address)?.secretKey
-            ?:  bip39AccountRepository.getAccount(address)?.secretKey
     }
 }

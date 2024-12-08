@@ -36,7 +36,7 @@ internal class GetLocalAccountCountFlowUseCase(
             ledgerBleAccountRepository.getAccountCountAsFlow(),
             noAuthAccountRepository.getAccountCountAsFlow()
         ) { bip39Count, algo25Count, ledgerBleCount, noAuthCount ->
-            algo25Count + ledgerBleCount + noAuthCount
+            bip39Count + algo25Count + ledgerBleCount + noAuthCount
         }.distinctUntilChanged()
     }
 }

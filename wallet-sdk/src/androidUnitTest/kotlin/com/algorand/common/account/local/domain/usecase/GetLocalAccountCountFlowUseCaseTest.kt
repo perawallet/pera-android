@@ -58,7 +58,7 @@ class GetLocalAccountCountFlowUseCaseTest {
         val testObserver = sut().test()
 
         testObserver.stopObserving()
-        testObserver.assertValue(6)
+        testObserver.assertValue(10)
     }
 
     @Test
@@ -71,6 +71,6 @@ class GetLocalAccountCountFlowUseCaseTest {
         val testObserver = sut().test()
 
         testObserver.stopObserving()
-        testObserver.assertValueHistory(6)
+        testObserver.assertValueHistory(10)
     }
 }

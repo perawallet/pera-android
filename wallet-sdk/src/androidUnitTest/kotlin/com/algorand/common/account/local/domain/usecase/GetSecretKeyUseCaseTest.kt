@@ -28,19 +28,20 @@ class GetSecretKeyUseCaseTest {
     private val bip39AccountRepository: Bip39AccountRepository = mockk()
     private val algo25AccountRepository: Algo25AccountRepository = mockk()
 
-    private val sut = GetSecretKeyUseCase(bip39AccountRepository, algo25AccountRepository)
+    private val sutAlgo25 = GetSecretKeyAlgo25UseCase(algo25AccountRepository)
+    private val sutBip39 = GetSecretKeyBip39UseCase(bip39AccountRepository)
 
     @Test
     fun `EXPECT secret key WHEN bip39 account is found`() = runTest {
         coEvery { bip39AccountRepository.getAccount(BIP_39_ADDRESS) } returns BIP_39_ACCOUNT
-        val result = sut(BIP_39_ADDRESS)
+        val result = sutBip39(BIP_39_ADDRESS)
         assertTrue(result.contentEquals(BIP_39_ACCOUNT.secretKey))
     }
 
     @Test
     fun `EXPECT secret key WHEN algo25 account is found`() = runTest {
         coEvery { algo25AccountRepository.getAccount(ALGO_25_ADDRESS) } returns ALGO_25_ACCOUNT
-        val result = sut(ALGO_25_ADDRESS)
+        val result = sutAlgo25(ALGO_25_ADDRESS)
         assertTrue(result.contentEquals(ALGO_25_ACCOUNT.secretKey))
     }
 
@@ -48,7 +49,7 @@ class GetSecretKeyUseCaseTest {
     fun `EXPECT null WHEN Bip39 account is not found`() = runTest {
         coEvery { bip39AccountRepository.getAccount(BIP_39_ADDRESS) } returns null
 
-        val result = sut(BIP_39_ADDRESS)
+        val result = sutBip39(BIP_39_ADDRESS)
 
         assertNull(result)
     }
@@ -57,7 +58,7 @@ class GetSecretKeyUseCaseTest {
     fun `EXPECT null WHEN Algo25 account is not found`() = runTest {
         coEvery { algo25AccountRepository.getAccount(ALGO_25_ADDRESS) } returns null
 
-        val result = sut(ALGO_25_ADDRESS)
+        val result = sutAlgo25(ALGO_25_ADDRESS)
 
         assertNull(result)
     }

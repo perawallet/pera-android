@@ -85,7 +85,7 @@ class CreateKeyRegTransactionUseCaseTest {
     fun `EXPECT offline txn array WHEN payload is for offline txn`() = runTest {
         val offlineTxnByteArray = "txnByteArray".toByteArray()
         coEvery { getTransactionParams() } returns Result.Success(TRANSACTION_PARAMS)
-        coEvery { buildKeyRegOfflineTransaction(ACCOUNT_ADDRESS, TRANSACTION_PARAMS) } returns offlineTxnByteArray
+        coEvery { buildKeyRegOfflineTransaction(ACCOUNT_ADDRESS, NOTE, TRANSACTION_PARAMS) } returns offlineTxnByteArray
 
         val result = sut(OFFLINE_KEY_REG_TXN_DETAIL)
 
@@ -95,6 +95,7 @@ class CreateKeyRegTransactionUseCaseTest {
 
     private companion object {
         const val ACCOUNT_ADDRESS = "address"
+        const val NOTE = "note"
         val OFFLINE_KEY_REG_TXN_DETAIL = KeyRegTransactionDetail(
             address = ACCOUNT_ADDRESS,
             type = "type",
@@ -105,7 +106,7 @@ class CreateKeyRegTransactionUseCaseTest {
             voteLastRound = null,
             voteKeyDilution = null,
             fee = null,
-            note = "note",
+            note = NOTE,
             xnote = "xnote"
         )
         val ONLINE_KEY_REG_TXN_DETAIL = KeyRegTransactionDetail(
@@ -118,7 +119,7 @@ class CreateKeyRegTransactionUseCaseTest {
             voteLastRound = "2",
             voteKeyDilution = "3",
             fee = null,
-            note = "note",
+            note = NOTE,
             xnote = "xnote"
         )
         val TRANSACTION_PARAMS = peraFixture<TransactionParams>()
@@ -130,7 +131,8 @@ class CreateKeyRegTransactionUseCaseTest {
             voteFirstRound = ONLINE_KEY_REG_TXN_DETAIL.voteFirstRound.orEmpty(),
             voteLastRound = ONLINE_KEY_REG_TXN_DETAIL.voteLastRound.orEmpty(),
             voteKeyDilution = ONLINE_KEY_REG_TXN_DETAIL.voteKeyDilution.orEmpty(),
-            txnParams = TRANSACTION_PARAMS
+            txnParams = TRANSACTION_PARAMS,
+            note = ONLINE_KEY_REG_TXN_DETAIL.note.orEmpty()
         )
     }
 }

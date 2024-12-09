@@ -13,10 +13,15 @@
 package com.algorand.common.algosdk
 
 import com.algorand.common.algosdk.model.Algo25Account
+import com.algorand.common.algosdk.model.Bip39Account
 
 expect interface AlgoAccountSdk {
 
-    fun createAccount(): Algo25Account
+    fun createBip39Account(): Bip39Account
 
-    fun recoverAccount(mnemonic: String): Algo25Account
+    fun recoverBip39Account(mnemonic: String): Bip39Account
+
+    fun createAlgo25Account(): Algo25Account
+
+    fun recoverAlgo25Account(mnemonic: String): Algo25Account
 }

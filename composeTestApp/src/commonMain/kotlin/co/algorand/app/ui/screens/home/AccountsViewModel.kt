@@ -17,6 +17,7 @@ import androidx.lifecycle.viewModelScope
 import co.algorand.app.ui.screens.home.AccountsViewModel.ViewState
 import com.algorand.common.account.local.domain.model.LocalAccount
 import com.algorand.common.account.local.domain.usecase.AddAlgo25Account
+import com.algorand.common.account.local.domain.usecase.AddBip39Account
 import com.algorand.common.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.common.algosdk.AlgoAccountSdk
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 
 class AccountsViewModel(
     private val getAllLocalAccountAddressesAsFlow: GetAllLocalAccountAddressesAsFlow,
+    private val addBip39Account: AddBip39Account,
     private val addAlgo25Account: AddAlgo25Account,
     private val algoAccountSdk: AlgoAccountSdk,
     private val deleteLocalAccount: DeleteLocalAccount,
@@ -49,14 +51,25 @@ class AccountsViewModel(
         }
     }
 
-    fun addAccount() {
+    fun addAlgo25Account() {
         viewModelScope.launch {
-            val account = algoAccountSdk.createAccount()
+            val account = algoAccountSdk.createAlgo25Account()
             val algo25Account = LocalAccount.Algo25(
                 address = account.address,
                 secretKey = account.secretKey
             )
             addAlgo25Account(algo25Account)
+        }
+    }
+
+    fun addBip39Account() {
+        viewModelScope.launch {
+            val account = algoAccountSdk.createBip39Account()
+            val bip39Account = LocalAccount.Bip39(
+                address = account.address,
+                secretKey = account.secretKey
+            )
+            addBip39Account(bip39Account)
         }
     }
 

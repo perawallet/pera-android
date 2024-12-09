@@ -28,7 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SheetValue
@@ -137,17 +137,20 @@ fun AccountsScreen(
                     }
                 }
             }
-            FloatingActionButton(
+
+            ExtendedFloatingActionButton(
+                onClick = { accountsViewModel.addAlgo25Account() },
                 modifier = Modifier.padding(end = 16.dp, bottom = 24.dp),
-                onClick = {
-                    accountsViewModel.addAccount()
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Add account"
-                )
-            }
+                icon = { Icon(Icons.Filled.Add, "Add Algo25 account") },
+                text = { Text(text = "Add Algo25 account") },
+            )
+
+            ExtendedFloatingActionButton(
+                onClick = { accountsViewModel.addBip39Account() },
+                modifier = Modifier.padding(end = 16.dp, bottom = 100.dp),
+                icon = { Icon(Icons.Filled.Add, "Add Bip39 account") },
+                text = { Text(text = "Add Bip39 account") },
+            )
         }
     }
 }

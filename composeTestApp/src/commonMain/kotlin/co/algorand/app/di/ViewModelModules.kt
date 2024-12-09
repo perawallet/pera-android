@@ -9,5 +9,5 @@ import org.koin.dsl.module
 
 val provideViewModelModules = module {
     single { SnackbarViewModel(EventDelegate()) }
-    viewModel<AccountsViewModel> { AccountsViewModel(get(), get(), get(), get(), StateDelegate()) }
+    viewModel<AccountsViewModel> { AccountsViewModel(get(), get(), get(), get(), get(), StateDelegate()) }
 }

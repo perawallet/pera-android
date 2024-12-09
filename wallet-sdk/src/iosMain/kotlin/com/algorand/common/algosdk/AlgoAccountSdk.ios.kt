@@ -13,22 +13,35 @@
 package com.algorand.common.algosdk
 
 import com.algorand.common.algosdk.model.Algo25Account
+import com.algorand.common.algosdk.model.Bip39Account
 import kotlin.random.Random
 
 actual interface AlgoAccountSdk {
-    actual fun createAccount(): Algo25Account
-    actual fun recoverAccount(mnemonic: String): Algo25Account
+    actual fun createBip39Account(): Bip39Account
+    actual fun recoverBip39Account(mnemonic: String): Bip39Account
+    actual fun createAlgo25Account(): Algo25Account
+    actual fun recoverAlgo25Account(mnemonic: String): Algo25Account
 }
 
 internal class AlgoAccountSdkImpl : AlgoAccountSdk {
 
-    override fun createAccount(): Algo25Account {
+    override fun createBip39Account(): Bip39Account {
         val accountAddress = generateRandomAddress()
-        val mnemonic = generateMnemonic()
+        val mnemonic = generate24WordMnemonic()
+        return Bip39Account(accountAddress, mnemonic, byteArrayOf())
+    }
+
+    override fun recoverBip39Account(mnemonic: String): Bip39Account {
+        return Bip39Account(mnemonic, mnemonic, byteArrayOf())
+    }
+
+    override fun createAlgo25Account(): Algo25Account {
+        val accountAddress = generateRandomAddress()
+        val mnemonic = generate25WordMnemonic()
         return Algo25Account(accountAddress, mnemonic, byteArrayOf())
     }
 
-    override fun recoverAccount(mnemonic: String): Algo25Account {
+    override fun recoverAlgo25Account(mnemonic: String): Algo25Account {
         return Algo25Account(mnemonic, mnemonic, byteArrayOf())
     }
 
@@ -41,7 +54,15 @@ internal class AlgoAccountSdkImpl : AlgoAccountSdk {
             .joinToString("")
     }
 
-    private fun generateMnemonic(): String {
+    private fun generate24WordMnemonic(): String {
+        return """
+            Lorem ipsum dolor sit amet consectetur adipiscing elit 
+            Mauris ornare orci et facilisis condimentum 
+            Nunc imperdiet ultricies mi nec mattis erat In volutpat tempus
+        """.trimIndent().lowercase()
+    }
+
+    private fun generate25WordMnemonic(): String {
         return """
             Lorem ipsum dolor sit amet consectetur adipiscing elit 
             Mauris ornare orci et facilisis condimentum 

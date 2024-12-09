@@ -12,11 +12,8 @@
 
 package com.algorand.common.account.local.data.repository
 
-import com.algorand.common.account.local.data.database.dao.Algo25Dao
 import com.algorand.common.account.local.data.database.dao.Bip39Dao
-import com.algorand.common.account.local.data.mapper.entity.Algo25EntityMapper
 import com.algorand.common.account.local.data.mapper.entity.Bip39EntityMapper
-import com.algorand.common.account.local.data.mapper.model.Algo25Mapper
 import com.algorand.common.account.local.data.mapper.model.Bip39Mapper
 import com.algorand.common.account.local.domain.model.LocalAccount.Bip39
 import com.algorand.common.account.local.domain.repository.Bip39AccountRepository

@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import com.algorand.android.databinding.ItemAccountAssetViewBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
+import kotlin.text.Typography.middleDot
 
 class OwnedAssetViewHolder(
     private val binding: ItemAccountAssetViewBinding,
@@ -36,7 +37,7 @@ class OwnedAssetViewHolder(
                 }
                 setTitleText(name.getName(resources))
                 val name = shortName.getName(resources)
-                val descriptionText = if (isAlgo) name else "$name  -  ${item.id}"
+                val descriptionText = if (isAlgo) name else "$name  $middleDot  ${item.id}"
                 setDescriptionText(descriptionText)
                 setPrimaryValueText(formattedAmount)
                 setSecondaryValueText(if (isAmountInDisplayedCurrencyVisible) formattedDisplayedCurrencyValue else null)

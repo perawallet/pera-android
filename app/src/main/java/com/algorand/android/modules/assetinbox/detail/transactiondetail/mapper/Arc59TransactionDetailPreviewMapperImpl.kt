@@ -76,5 +76,4 @@ class Arc59TransactionDetailPreviewMapperImpl @Inject constructor(
             is CollectibleDetail -> amount
         }
     }
-
 }

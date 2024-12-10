@@ -25,7 +25,7 @@ class KeyRegTransactionPreviewMapper @Inject constructor() {
         return KeyRegTransactionPreview(
             isLoadingVisible = false,
             address = detail.address,
-            fee = detail.fee?.toString() ?: "",
+            fee = detail.fee ?: MINIMUM_TXN_FEE.toBigInteger(),
             type = detail.type,
             selectionKey = detail.selectionPublicKey.orEmpty(),
             votingKey = detail.voteKey.orEmpty(),
@@ -39,5 +39,9 @@ class KeyRegTransactionPreviewMapper @Inject constructor() {
             signTransactionEvent = null,
             showErrorEvent = null
         )
+    }
+
+    companion object {
+        const val MINIMUM_TXN_FEE = 1000
     }
 }

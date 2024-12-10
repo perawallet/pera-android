@@ -14,11 +14,12 @@ package com.algorand.android.modules.keyreg.ui.model
 
 import com.algorand.android.modules.keyreg.domain.model.KeyRegTransaction
 import com.algorand.android.utils.Event
+import java.math.BigInteger
 
 data class KeyRegTransactionPreview(
     val isLoadingVisible: Boolean,
     val address: String,
-    val fee: String,
+    val fee: BigInteger,
     val type: String,
     val selectionKey: String,
     val votingKey: String,

@@ -91,7 +91,7 @@ fun keyRegTable(
                     .fillMaxHeight(),
                 ) {
                 items(itemsList) { item ->
-                    keyRegTableRowItem(item.first, item.second)
+                    keyRegTableRowItem(item.first, item.second.toString())
                 }
             }
         }

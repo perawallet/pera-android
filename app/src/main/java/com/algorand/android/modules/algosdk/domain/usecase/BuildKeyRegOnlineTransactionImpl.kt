@@ -32,7 +32,7 @@ internal class BuildKeyRegOnlineTransactionImpl @Inject constructor(
     private fun createTransaction(params: OnlineKeyRegTransactionPayload): ByteArray {
         return with(params) {
             val txnParamsResponse = transactionParametersResponseMapper(params.txnParams)
-            KeyRegistrationTransactionBuilder.Builder()
+            val builder = KeyRegistrationTransactionBuilder.Builder()
                 .suggestedParams(txnParamsResponse)
                 .sender(senderAddress)
                 .selectionPublicKeyBase64(selectionPublicKey)
@@ -41,9 +41,12 @@ internal class BuildKeyRegOnlineTransactionImpl @Inject constructor(
                 .voteFirst(params.voteFirstRound.toLong())
                 .voteLast(params.voteLastRound.toLong())
                 .voteKeyDilution(params.voteKeyDilution.toLong())
-                .noteUTF8(params.note)
-                .build()
-                .bytes()
+
+            if (note != null) {
+                builder.noteUTF8(params.note)
+            }
+
+            builder.build().bytes()
         }
     }
 }

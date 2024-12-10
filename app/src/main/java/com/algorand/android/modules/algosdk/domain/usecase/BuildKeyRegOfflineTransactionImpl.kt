@@ -35,11 +35,14 @@ internal class BuildKeyRegOfflineTransactionImpl @Inject constructor(
         txnParams: TransactionParams
     ): ByteArray {
         val params = transactionParametersResponseMapper(txnParams)
-        return KeyRegistrationTransactionBuilder.Builder()
+        val builder = KeyRegistrationTransactionBuilder.Builder()
             .suggestedParams(params)
             .sender(address)
-            .noteUTF8(note)
-            .build()
-            .bytes()
+
+        if (note != null) {
+            builder.noteUTF8(note)
+        }
+
+        return builder.build().bytes()
     }
 }

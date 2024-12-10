@@ -43,7 +43,6 @@ glide = "4.16.0"
 googleServicesVersion = "4.4.2"
 hiltCompiler = "1.2.0"
 javaWebSocket = "1.5.6"
-jna = "5.14.0"
 junit = "4.13.2"
 khex = "1.1.2"
 koin = "4.0.1-Beta1"
@@ -185,7 +184,7 @@ napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 # Wallet SDK - Security / Blockchain / Crypto
 algosdk = { module = "com.algorand:algosdk", version.ref = "algosdk" }
-jna = { module = "net.java.dev.jna:jna", version.ref = "jna" }
+# jna = "net.java.dev.jna:jna:5.14.0@aar"
 xhdwalletapi = { module = "foundation.algorand.xhdwalletapi:xhdwalletapi-android", version.ref = "xhdwalletapi" }
 kotlin-bip39 = { module = "cash.z.ecc.android:kotlin-bip39", version.ref = "bip39" }
 

@@ -59,7 +59,8 @@ kotlin {
             // will turn this to implementation when app module references are moved to common
             api(libs.algosdk)
 
-            implementation(libs.jna)
+            // toml files don't support aar files yet
+            implementation("net.java.dev.jna:jna:5.14.0@aar")
             implementation(libs.xhdwalletapi)
             implementation(libs.kotlin.bip39)
 

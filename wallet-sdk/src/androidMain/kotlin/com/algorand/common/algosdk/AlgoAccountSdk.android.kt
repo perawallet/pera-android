@@ -12,6 +12,9 @@
 
 package com.algorand.common.algosdk
 
+import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.bip39.Mnemonics.MnemonicCode
+import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.account.Account
 import com.algorand.common.algosdk.model.Algo25Account
 import com.algorand.common.algosdk.model.Bip39Account
@@ -33,13 +36,16 @@ internal class AlgoAccountSdkImpl : AlgoAccountSdk {
     }
 
     override fun createBip39Account(): Bip39Account {
+        val generatedMnemonic = MnemonicCode(Mnemonics.WordCount.COUNT_24)
+        val wordsAsString = generatedMnemonic.joinToString(" ")
         val accountAddress = generateRandomAddress()
-        val mnemonic = generate24WordMnemonic()
-        return Bip39Account(accountAddress, mnemonic, byteArrayOf())
+        return Bip39Account(accountAddress, wordsAsString, generatedMnemonic.toSeed())
     }
 
     override fun recoverBip39Account(mnemonic: String): Bip39Account {
-        return Bip39Account(mnemonic, mnemonic, byteArrayOf())
+        val m = MnemonicCode(mnemonic)
+        val accountAddress = generateRandomAddress()
+        return Bip39Account(accountAddress, mnemonic, m.toSeed())
     }
 
     override fun createAlgo25Account(): Algo25Account {
@@ -63,13 +69,5 @@ internal class AlgoAccountSdkImpl : AlgoAccountSdk {
         return (1..addressLength)
             .map { alphabet[Random.nextInt(alphabet.length)] }
             .joinToString("")
-    }
-
-    private fun generate24WordMnemonic(): String {
-        return """
-            Lorem ipsum dolor sit amet consectetur adipiscing elit 
-            Mauris ornare orci et facilisis condimentum 
-            Nunc imperdiet ultricies mi nec mattis erat In volutpat tempus
-        """.trimIndent().lowercase()
     }
 }

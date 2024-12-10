@@ -56,7 +56,12 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
+            // will turn this to implementation when app module references are moved to common
             api(libs.algosdk)
+
+            implementation(libs.jna)
+            implementation(libs.xhdwalletapi)
+            implementation(libs.kotlin.bip39)
 
             implementation(compose.uiTooling)
             implementation(libs.androidx.activityCompose)

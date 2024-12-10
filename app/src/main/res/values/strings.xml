@@ -1358,7 +1358,7 @@
     <string name="meld">MELD</string>
 
     <string name="you_cant_send_this_asset">You can\'t send this asset directly because receiver not opted-in. But you can send it to its inbox address instead. <annotation custom="read_more_click">Read more</annotation></string>
-    <string name="the_fee_above_will_be">The fee above will be used to cover the minimum balance requirements of the receiver. If the receiver rejects the asset, you will not receive anything back.</string>
+    <string name="the_fee_above_will_be">The fee above will be used to cover transaction fees and the receiver\'s minimum balance requirements. If the receiver rejects the asset, you will not receive anything back.</string>
     <string name="protocol_and_min_balance_fees">Protocol &amp; minimum balance fees:</string>
     <string name="send_to_receiver">Send to Receiver</string>
     <string name="send_to_asset_inbox">Send to Asset Inbox</string>

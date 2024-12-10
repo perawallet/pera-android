@@ -16,7 +16,6 @@ package com.algorand.android.ui.send.senderaccount
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.AccountCacheData
 import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.AssetTransaction
@@ -98,10 +97,6 @@ class SenderAccountSelectionViewModel @Inject constructor(
         )
     }
 
-    fun getAccountCachedData(senderAddress: String): AccountCacheData? {
-        return senderAccountSelectionUseCase.getAccountInformation(senderAddress)
-    }
-
     fun createSendTransactionData(assetTransaction: AssetTransaction): TransactionData.Send? {
         return senderAccountSelectionPreviewUseCase.createSendTransactionData(
             accountAddress = assetTransaction.senderAddress,
@@ -110,6 +105,10 @@ class SenderAccountSelectionViewModel @Inject constructor(
             amount = assetTransaction.amount,
             assetTransaction = assetTransaction
         )
+    }
+
+    fun isExpressSendWarningEnabled(isArc59Transaction: Boolean): Boolean {
+        return senderAccountSelectionUseCase.isExpressSendWarningEnabled(isArc59Transaction)
     }
 
     companion object {

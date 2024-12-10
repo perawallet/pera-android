@@ -17,10 +17,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.AssetTransaction
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.nft.ui.model.AssetSelectionPreview
 import com.algorand.android.usecase.AssetSelectionUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -33,8 +31,6 @@ import javax.inject.Inject
 @HiltViewModel
 class AssetSelectionViewModel @Inject constructor(
     private val assetSelectionUseCase: AssetSelectionUseCase,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -48,14 +44,15 @@ class AssetSelectionViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            assetSelectionUseCase.getAssetSelectionListFlow(assetTransaction.senderAddress).collectLatest { list ->
-                _assetSelectionPreview.emit(
-                    _assetSelectionPreview.value.copy(
-                        assetList = list,
-                        isAssetListLoadingVisible = false
+            assetSelectionUseCase.getAssetSelectionListFlow(assetTransaction.senderAddress)
+                .collectLatest { list ->
+                    _assetSelectionPreview.emit(
+                        _assetSelectionPreview.value.copy(
+                            assetList = list,
+                            isAssetListLoadingVisible = false
+                        )
                     )
-                )
-            }
+                }
         }
     }
 
@@ -72,11 +69,6 @@ class AssetSelectionViewModel @Inject constructor(
                 _assetSelectionPreview.emit(assetSelectionPreview)
             }
         }
-    }
-
-    fun getAssetOrCollectibleNameOrNull(assetId: Long): String? {
-        return simpleAssetDetailUseCase.getCachedAssetDetail(assetId)?.data?.fullName
-            ?: simpleCollectibleUseCase.getCachedCollectibleById(assetId)?.data?.fullName
     }
 
     companion object {

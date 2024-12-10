@@ -31,6 +31,7 @@ private const val FILTER_TUTORIAL_SHOWN_KEY = "filter_tutorial_shown_key"
 private const val APP_REVIEW_START_COUNT_KEY = "app_review_start_count_key"
 private const val REGISTER_SKIP_KEY = "register_skip_key"
 private const val FIRST_REQUEST_WALLET_CONNECT_REQUEST_KEY = "first_request_wallet_connect_request"
+private const val ARC59_EXPRESS_SEND_WARNING_ENABLED_KEY = "arc59_express_send_warning_enabled"
 const val SETTINGS = "algorand_settings"
 
 // </editor-fold>
@@ -139,6 +140,18 @@ fun SharedPreferences.setFirstWalletConnectRequestBottomSheetShown() {
 
 fun SharedPreferences.getFirstWalletConnectRequestBottomSheetShown(): Boolean {
     return getBoolean(FIRST_REQUEST_WALLET_CONNECT_REQUEST_KEY, false)
+}
+
+// </editor-fold>
+
+// <editor-fold defaultstate="collapsed" desc="Arc-59">
+
+fun SharedPreferences.disableIsArc59ExpressSendWarning() {
+    edit().putBoolean(ARC59_EXPRESS_SEND_WARNING_ENABLED_KEY, false).apply()
+}
+
+fun SharedPreferences.getIsArc59ExpressSendWarningEnabled(): Boolean {
+    return getBoolean(ARC59_EXPRESS_SEND_WARNING_ENABLED_KEY, true)
 }
 
 // </editor-fold>

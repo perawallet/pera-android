@@ -1420,5 +1420,12 @@
     <string name="key_reg_transaction_title">Transaction Signature Request</string>
     <string name="choose_account_for_txn_signature_request">The account you select here will be responsible for the next transaction signature request.</string>
     <string name="type">Type</string>
-    <string name="xnote">xNote</string>
+
+    <string name="express_send">Express Send</string>
+    <string name="your_receiving_wallet">Your Receiving Wallet is  not opted in. It needs to opt-in to receive the asset.\n\nPera simplifies this process by combining multiple transactions for a seamless experience.</string>
+    <string name="how_this_asset_transfer">How this asset transfer works?</string>
+    <string name="your_sending_account_will_send">Your Sending Account will send over the fees needed to opt into the asset</string>
+    <string name="your_receiving_account_will_be">Your Receiving Account will be opted into the asset</string>
+    <string name="your_sending_account_over">Your Sending Account will send over the asset</string>
+    <string name="do_not_show_this_again">Don\'t show this again</string>
 </resources>

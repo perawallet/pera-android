@@ -22,7 +22,9 @@ import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.models.Result
 import com.algorand.android.models.TargetUser
+import com.algorand.android.models.TransactionData
 import com.algorand.android.modules.accountasset.domain.model.AccountAssetDetail
+import com.algorand.android.modules.assetinbox.expresssend.domain.usecase.Arc59ExpressSendUseCase
 import com.algorand.android.usecase.ReceiverAccountSelectionUseCase
 import com.algorand.android.utils.AccountCacheManager
 import com.algorand.android.utils.Event
@@ -41,6 +43,7 @@ import javax.inject.Inject
 class ReceiverAccountSelectionViewModel @Inject constructor(
     private val receiverAccountSelectionUseCase: ReceiverAccountSelectionUseCase,
     private val accountCacheManager: AccountCacheManager,
+    private val arc59ExpressSendUseCase: Arc59ExpressSendUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -154,6 +157,42 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
         viewModelScope.launch {
             latestCopiedMessageFlow.emit(copiedMessage)
         }
+    }
+
+    fun getSendTransactionData(targetUser: TargetUser): TransactionData.Send? {
+        val assetTransaction = assetTransaction
+        val note = assetTransaction.xnote ?: assetTransaction.note
+        val selectedAccountCacheData = getFromAccountCachedData() ?: return null
+        val selectedAsset = getSelectedAssetInformation() ?: return null
+        val minBalanceCalculatedAmount = assetTransaction.amount
+        val isArc59Transaction = isArc59Transaction(targetUser, selectedAsset)
+
+        return TransactionData.Send(
+            senderAccountAddress = selectedAccountCacheData.account.address,
+            senderAccountDetail = selectedAccountCacheData.account.detail,
+            senderAccountType = selectedAccountCacheData.account.type,
+            senderAuthAddress = selectedAccountCacheData.authAddress,
+            senderAccountName = selectedAccountCacheData.account.name,
+            senderAlgoAmount = selectedAccountCacheData.accountInformation.amount,
+            isSenderRekeyedToAnotherAccount = selectedAccountCacheData.isRekeyedToAnotherAccount(),
+            minimumBalance = selectedAccountCacheData.getMinBalance(),
+            amount = minBalanceCalculatedAmount,
+            assetInformation = selectedAsset,
+            note = note,
+            targetUser = targetUser,
+            isArc59Transaction = isArc59Transaction
+        )
+    }
+
+    private fun isArc59Transaction(
+        targetUser: TargetUser,
+        selectedAsset: AssetInformation
+    ): Boolean {
+        return targetUser.account?.accountInformation?.hasAsset(selectedAsset.assetId) == false
+    }
+
+    fun isExpressSendWarningEnabled(isArc59Transaction: Boolean): Boolean {
+        return arc59ExpressSendUseCase.isExpressSendWarningEnabled(isArc59Transaction)
     }
 
     companion object {

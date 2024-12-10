@@ -22,7 +22,6 @@ import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseO
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedUnsupportedCollectibleData
 import com.algorand.android.models.BaseSelectAssetItem
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.sorting.assetsorting.ui.usecase.AssetItemSortUseCase
 import com.algorand.android.nft.mapper.AssetSelectionPreviewMapper
@@ -45,7 +44,6 @@ class AssetSelectionUseCase @Inject constructor(
     private val accountInformationUseCase: AccountInformationUseCase,
     private val assetItemConfigurationMapper: AssetItemConfigurationMapper,
     private val assetItemSortUseCase: AssetItemSortUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase
 ) {
     fun getAssetSelectionListFlow(publicKey: String): Flow<List<BaseSelectAssetItem>> {
         return combine(

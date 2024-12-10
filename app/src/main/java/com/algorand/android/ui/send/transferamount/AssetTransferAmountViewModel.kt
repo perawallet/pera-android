@@ -16,7 +16,6 @@ package com.algorand.android.ui.send.transferamount
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.AccountCacheData
 import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.AssetTransferAmountPreview
@@ -89,12 +88,8 @@ class AssetTransferAmountViewModel @Inject constructor(
         return with(assetTransaction) { assetTransferAmountUseCase.getMaximumAmountOfAsset(assetId, senderAddress) }
     }
 
-    fun getAssetInformation(): AssetInformation? {
+    private fun getAssetInformation(): AssetInformation? {
         return with(assetTransaction) { assetTransferAmountUseCase.getAssetInformation(senderAddress, assetId) }
-    }
-
-    fun getAccountCachedData(): AccountCacheData? {
-        return assetTransferAmountUseCase.getAccountInformation(assetTransaction.senderAddress)
     }
 
     fun shouldShowTransactionTips(): Boolean {
@@ -125,6 +120,10 @@ class AssetTransferAmountViewModel @Inject constructor(
             amount = amount,
             assetTransaction = assetTransaction
         )
+    }
+
+    fun isExpressSendWarningEnabled(isArc59Transaction: Boolean): Boolean {
+        return assetTransferAmountUseCase.isExpressSendWarningEnabled(isArc59Transaction)
     }
 
     companion object {

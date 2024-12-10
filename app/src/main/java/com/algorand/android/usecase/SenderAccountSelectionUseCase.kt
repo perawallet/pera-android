@@ -13,15 +13,16 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.models.AccountCacheData
 import com.algorand.android.models.AssetInformation
 import com.algorand.android.modules.accountasset.GetAccountAssetUseCase
+import com.algorand.android.modules.assetinbox.expresssend.domain.usecase.Arc59ExpressSendUseCase
 import com.algorand.android.utils.AccountCacheManager
 import javax.inject.Inject
 
 class SenderAccountSelectionUseCase @Inject constructor(
     private val accountCacheManager: AccountCacheManager,
     private val transactionTipsUseCase: TransactionTipsUseCase,
+    private val arc59ExpressSendUseCase: Arc59ExpressSendUseCase,
     accountInformationUseCase: AccountInformationUseCase,
     getAccountAssetUseCase: GetAccountAssetUseCase
 ) : BaseSendAccountSelectionUseCase(accountInformationUseCase, getAccountAssetUseCase) {
@@ -34,7 +35,7 @@ class SenderAccountSelectionUseCase @Inject constructor(
         return accountCacheManager.getAssetInformation(publicKey, assetId)
     }
 
-    fun getAccountInformation(publicKey: String): AccountCacheData? {
-        return accountCacheManager.getCacheData(publicKey)
+    fun isExpressSendWarningEnabled(isArc59Transaction: Boolean): Boolean {
+        return arc59ExpressSendUseCase.isExpressSendWarningEnabled(isArc59Transaction)
     }
 }

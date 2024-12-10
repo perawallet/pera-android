@@ -1,0 +1,88 @@
+<!--
+  ~ Copyright 2022 Pera Wallet, LDA
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="154dp"
+    android:height="41dp"
+    android:viewportWidth="154"
+    android:viewportHeight="41">
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M4.21,7.37V31.37C4.21,34.69 6.9,37.37 10.21,37.37H31.54C34.86,37.37 37.54,34.69 37.54,31.37V16.71C37.54,13.39 34.86,10.71 31.54,10.71H22.73"
+        android:strokeWidth="3"
+        android:strokeColor="@color/text_main"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M24.21,4.04H7.54C5.7,4.04 4.21,5.53 4.21,7.37V7.37C4.21,9.22 5.7,10.71 7.54,10.71H25.88"
+        android:strokeWidth="3"
+        android:strokeColor="@color/text_main"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M24.21,24.04H27.54"
+        android:strokeWidth="3"
+        android:strokeColor="@color/text_main"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M117.21,7.37V31.37C117.21,34.69 119.9,37.37 123.21,37.37H144.54C147.86,37.37 150.54,34.69 150.54,31.37V16.71C150.54,13.39 147.86,10.71 144.54,10.71H135.73"
+        android:strokeWidth="3"
+        android:strokeColor="@color/text_main"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M137.21,4.04H120.54C118.7,4.04 117.21,5.53 117.21,7.37V7.37C117.21,9.22 118.7,10.71 120.54,10.71H138.88"
+        android:strokeWidth="3"
+        android:strokeColor="@color/text_main"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M137.21,24.04H140.54"
+        android:strokeWidth="3"
+        android:strokeColor="@color/text_main"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillAlpha="0.25"
+        android:fillColor="@color/text_main"
+        android:pathData="M56.38,19.71L56.38,19.71A1,1 0,0 1,57.38 20.71L57.38,20.71A1,1 0,0 1,56.38 21.71L56.38,21.71A1,1 0,0 1,55.38 20.71L55.38,20.71A1,1 0,0 1,56.38 19.71z"
+        android:strokeAlpha="0.25" />
+    <path
+        android:fillAlpha="0.5"
+        android:fillColor="@color/text_main"
+        android:pathData="M64.38,19.71L64.38,19.71A1,1 0,0 1,65.38 20.71L65.38,20.71A1,1 0,0 1,64.38 21.71L64.38,21.71A1,1 0,0 1,63.38 20.71L63.38,20.71A1,1 0,0 1,64.38 19.71z"
+        android:strokeAlpha="0.5" />
+    <group>
+        <clip-path android:pathData="M69.88,10.71h20v20h-20z" />
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M80.81,11.71L72.88,22.71H79.88L78.94,29.71L86.88,18.71H79.88L80.81,11.71Z"
+            android:strokeWidth="2"
+            android:strokeColor="@color/text_main"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+    </group>
+    <path
+        android:fillAlpha="0.75"
+        android:fillColor="@color/text_main"
+        android:pathData="M94.38,19.71L94.38,19.71A1,1 0,0 1,95.38 20.71L95.38,20.71A1,1 0,0 1,94.38 21.71L94.38,21.71A1,1 0,0 1,93.38 20.71L93.38,20.71A1,1 0,0 1,94.38 19.71z"
+        android:strokeAlpha="0.75" />
+    <path
+        android:fillColor="@color/text_main"
+        android:pathData="M102.38,19.71L102.38,19.71A1,1 0,0 1,103.38 20.71L103.38,20.71A1,1 0,0 1,102.38 21.71L102.38,21.71A1,1 0,0 1,101.38 20.71L101.38,20.71A1,1 0,0 1,102.38 19.71z" />
+</vector>

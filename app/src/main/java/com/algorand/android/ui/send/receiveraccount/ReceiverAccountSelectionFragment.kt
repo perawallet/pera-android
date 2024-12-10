@@ -181,31 +181,35 @@ class ReceiverAccountSelectionFragment : TransactionBaseFragment(R.layout.fragme
     }
 
     private fun handleNextNavigation(targetUser: TargetUser) {
-        val assetTransaction = receiverAccountSelectionViewModel.assetTransaction
-        val note = assetTransaction.xnote ?: assetTransaction.note
-        val selectedAccountCacheData = receiverAccountSelectionViewModel.getFromAccountCachedData() ?: return
-        val selectedAsset = receiverAccountSelectionViewModel.getSelectedAssetInformation() ?: return
-        val minBalanceCalculatedAmount = assetTransaction.amount
+        val assetTransaction =
+            receiverAccountSelectionViewModel.getSendTransactionData(targetUser) ?: return
+
+        val isExpressSendWarningEnabled =
+            receiverAccountSelectionViewModel.isExpressSendWarningEnabled(
+                assetTransaction.isArc59Transaction
+            )
+
+        if (isExpressSendWarningEnabled) {
+            navToArc59ExpressSendFragment(assetTransaction)
+        } else {
+            navToAssetTransferPreviewFragment(assetTransaction)
+        }
+    }
+
+    private fun navToAssetTransferPreviewFragment(sendTransactionData: TransactionData.Send) {
         nav(
             ReceiverAccountSelectionFragmentDirections
                 .actionReceiverAccountSelectionFragmentToAssetTransferPreviewFragment(
-                    TransactionData.Send(
-                        senderAccountAddress = selectedAccountCacheData.account.address,
-                        senderAccountDetail = selectedAccountCacheData.account.detail,
-                        senderAccountType = selectedAccountCacheData.account.type,
-                        senderAuthAddress = selectedAccountCacheData.authAddress,
-                        senderAccountName = selectedAccountCacheData.account.name,
-                        senderAlgoAmount = selectedAccountCacheData.accountInformation.amount,
-                        isSenderRekeyedToAnotherAccount = selectedAccountCacheData.isRekeyedToAnotherAccount(),
-                        minimumBalance = selectedAccountCacheData.getMinBalance(),
-                        amount = minBalanceCalculatedAmount,
-                        assetInformation = selectedAsset,
-                        note = note,
-                        targetUser = targetUser,
-                        isArc59Transaction = targetUser.account?.accountInformation?.hasAsset(
-                            selectedAsset.assetId
-                        ) == false
-                    )
+                    sendTransactionData
+                )
+        )
+    }
+
+    private fun navToArc59ExpressSendFragment(sendTransactionData: TransactionData.Send) {
+        nav(
+            ReceiverAccountSelectionFragmentDirections
+                .actionReceiverAccountSelectionFragmentToArc59ExpressSendFragment(
+                    sendTransactionData
                 )
         )
     }

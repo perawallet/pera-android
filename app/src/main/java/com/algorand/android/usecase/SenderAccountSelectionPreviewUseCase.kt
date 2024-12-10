@@ -93,7 +93,7 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
         )
     }
 
-    suspend fun getUpdatedPreviewFlowWithAccountInformation(
+    fun getUpdatedPreviewFlowWithAccountInformation(
         senderAccountAddress: String,
         viewModelScope: CoroutineScope,
         preview: SenderAccountSelectionPreview

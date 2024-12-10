@@ -83,20 +83,32 @@ class SenderAccountSelectionFragment : TransactionBaseFragment(R.layout.fragment
                 SenderAccountSelectionFragmentDirections
                     .actionSenderAccountSelectionFragmentToAssetSelectionFragment(assetTransaction)
             }
+
             assetTransaction.amount == BigInteger.ZERO -> {
                 SenderAccountSelectionFragmentDirections
                     .actionSenderAccountSelectionFragmentToAssetTransferAmountFragment(assetTransaction)
             }
+
             assetTransaction.receiverUser == null -> {
                 SenderAccountSelectionFragmentDirections
                     .actionSenderAccountSelectionFragmentToReceiverAccountSelectionFragment(assetTransaction)
             }
+
             else -> {
-                val transactionData = senderAccountSelectionViewModel.createSendTransactionData(
-                    assetTransaction
-                ) ?: return
-                SenderAccountSelectionFragmentDirections
-                    .actionSenderAccountSelectionFragmentToAssetTransferPreviewFragment(transactionData)
+                val transactionData =
+                    senderAccountSelectionViewModel.createSendTransactionData(assetTransaction) ?: return
+
+                if (senderAccountSelectionViewModel.isExpressSendWarningEnabled(transactionData.isArc59Transaction)) {
+                    SenderAccountSelectionFragmentDirections
+                        .actionSenderAccountSelectionFragmentToArc59ExpressSendFragment(
+                            transactionData
+                        )
+                } else {
+                    SenderAccountSelectionFragmentDirections
+                        .actionSenderAccountSelectionFragmentToAssetTransferPreviewFragment(
+                            transactionData
+                        )
+                }
             }
         }.apply { nav(this) }
     }

@@ -109,6 +109,10 @@
     <string name="three">3</string>
     <string name="four">4</string>
 
+    <string name="first">1.</string>
+    <string name="second">2.</string>
+    <string name="third">3.</string>
+
     <string name="account_state_transition">%1$s (%2$s to %3$s)</string>
 
     <string name="interpunct_and_text">• %1$s</string>

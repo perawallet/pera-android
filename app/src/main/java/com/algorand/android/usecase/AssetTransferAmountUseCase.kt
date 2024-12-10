@@ -16,6 +16,7 @@ package com.algorand.android.usecase
 import com.algorand.android.models.AccountCacheData
 import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.BaseAccountAssetData
+import com.algorand.android.modules.assetinbox.expresssend.domain.usecase.Arc59ExpressSendUseCase
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.AccountCacheManager
 import com.algorand.android.utils.formatAmount
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class AssetTransferAmountUseCase @Inject constructor(
     private val accountCacheManager: AccountCacheManager,
     private val transactionTipsUseCase: TransactionTipsUseCase,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase
+    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
+    private val arc59ExpressSendUseCase: Arc59ExpressSendUseCase
 ) {
 
     fun getAssetInformation(publicKey: String, assetId: Long): AssetInformation? {
@@ -50,5 +52,9 @@ class AssetTransferAmountUseCase @Inject constructor(
 
     private fun getAccountAssetData(assetId: Long, publicKey: String): BaseAccountAssetData.BaseOwnedAssetData? {
         return getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, publicKey)
+    }
+
+    fun isExpressSendWarningEnabled(isArc59Transaction: Boolean): Boolean {
+        return arc59ExpressSendUseCase.isExpressSendWarningEnabled(isArc59Transaction)
     }
 }

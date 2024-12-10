@@ -134,8 +134,8 @@
             android:id="@+id/action_senderAccountSelectionFragment_to_receiverAccountSelectionFragment"
             app:destination="@id/receiverAccountSelectionFragment" />
         <action
-            android:id="@+id/action_senderAccountSelectionFragment_to_assetTransferPreviewFragment2"
-            app:destination="@id/assetTransferPreviewFragment" />
+            android:id="@+id/action_senderAccountSelectionFragment_to_arc59ExpressSendFragment"
+            app:destination="@id/arc59ExpressSendFragment" />
     </fragment>
 
     <fragment
@@ -149,19 +149,14 @@
             android:id="@+id/action_assetSelectionFragment_to_assetTransferAmountFragment"
             app:destination="@id/assetTransferAmountFragment" />
         <action
-            android:id="@+id/action_assetSelectionFragment_to_assetTransferPreviewFragment"
-            app:destination="@id/assetTransferPreviewFragment" />
-        <action
             android:id="@+id/action_assetSelectionFragment_to_transactionTipsBottomSheet"
             app:destination="@id/transactionTipsBottomSheet" />
         <action
             android:id="@+id/action_assetSelectionFragment_to_receiverAccountSelectionFragment"
             app:destination="@id/receiverAccountSelectionFragment" />
-
         <action
             android:id="@+id/action_assetSelectionFragment_to_arc59RequestOptInNavigation"
             app:destination="@id/arc59RequestOptInNavigation">
-
             <argument
                 android:name="arc59SendSummaryNavArgs"
                 app:argType="com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs" />
@@ -191,6 +186,9 @@
         <action
             android:id="@+id/action_assetTransferAmountFragment_to_assetTransferPreviewFragment"
             app:destination="@id/assetTransferPreviewFragment" />
+        <action
+            android:id="@+id/action_assetTransferAmountFragment_to_arc59ExpressSendFragment"
+            app:destination="@id/arc59ExpressSendFragment" />
         <action
             android:id="@+id/action_assetTransferAmountFragment_to_addNoteNavigation"
             app:destination="@id/addNoteNavigation">
@@ -227,11 +225,12 @@
         <action
             android:id="@+id/action_receiverAccountSelectionFragment_to_transactionTipsBottomSheet"
             app:destination="@id/transactionTipsBottomSheet" />
-
+        <action
+            android:id="@+id/action_receiverAccountSelectionFragment_to_arc59ExpressSendFragment"
+            app:destination="@id/arc59ExpressSendFragment" />
         <action
             android:id="@+id/action_receiverAccountSelectionFragment_to_arc59RequestOptInNavigation"
             app:destination="@id/arc59RequestOptInNavigation">
-
             <argument
                 android:name="arc59SendSummaryNavArgs"
                 app:argType="com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs" />
@@ -243,6 +242,23 @@
         android:name="com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionQrScannerFragment"
         android:label="AssetTransferPreviewFragment"
         tools:layout="@layout/fragment_qr_code_scanner" />
+
+    <fragment
+        android:id="@+id/arc59ExpressSendFragment"
+        android:name="com.algorand.android.modules.assetinbox.expresssend.ui.Arc59ExpressSendFragment"
+        android:label="Arc59ExpressSendFragment"
+        tools:layout="@layout/fragment_arc59_express_send">
+        <argument
+            android:name="transactionData"
+            app:argType="com.algorand.android.models.TransactionData$Send" />
+        <action
+            android:id="@+id/action_Arc59ExpressSendFragment_to_assetTransferPreviewFragment"
+            app:destination="@id/assetTransferPreviewFragment">
+            <argument
+                android:name="transactionData"
+                app:argType="com.algorand.android.models.TransactionData$Send" />
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/assetTransferPreviewFragment"

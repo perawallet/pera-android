@@ -28,7 +28,9 @@ import com.algorand.android.models.AmountInput
 import com.algorand.android.models.AssetTransferAmountPreview
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
+import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.models.TransactionData
 import com.algorand.android.ui.common.warningconfirmation.BaseMaximumBalanceWarningBottomSheet
 import com.algorand.android.ui.send.shared.AddNoteBottomSheet
 import com.algorand.android.utils.ALGO_SHORT_NAME
@@ -323,22 +325,46 @@ class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_as
         val assetTransaction = assetTransferAmountViewModel.assetTransaction
         if (assetTransaction.receiverUser != null) {
             val transactionData = assetTransferAmountViewModel.createSendTransactionData(amount) ?: return
-            nav(
-                AssetTransferAmountFragmentDirections
-                    .actionAssetTransferAmountFragmentToAssetTransferPreviewFragment(transactionData)
-            )
+            if (assetTransferAmountViewModel.isExpressSendWarningEnabled(transactionData.isArc59Transaction)) {
+                navToArc59ExpressSendFragment(transactionData)
+            } else {
+                navToAssetTransferPreviewFragment(transactionData)
+            }
         } else {
-            nav(
-                AssetTransferAmountFragmentDirections
-                    .actionAssetTransferAmountFragmentToReceiverAccountSelectionFragment(
-                        assetTransaction = assetTransaction.copy(
-                            amount = amount,
-                            note = transactionNote,
-                            xnote = lockedNote
-                        )
-                    )
-            )
+            navToReceiverAccountSelectionFragment(assetTransaction, amount)
         }
+    }
+
+    private fun navToArc59ExpressSendFragment(transactionData: TransactionData.Send) {
+        nav(
+            AssetTransferAmountFragmentDirections
+                .actionAssetTransferAmountFragmentToArc59ExpressSendFragment(transactionData)
+        )
+    }
+
+    private fun navToAssetTransferPreviewFragment(transactionData: TransactionData.Send) {
+        nav(
+            AssetTransferAmountFragmentDirections
+                .actionAssetTransferAmountFragmentToAssetTransferPreviewFragment(
+                    transactionData
+                )
+        )
+    }
+
+    private fun navToReceiverAccountSelectionFragment(
+        assetTransaction: AssetTransaction,
+        amount: BigInteger
+    ) {
+        nav(
+            AssetTransferAmountFragmentDirections
+                .actionAssetTransferAmountFragmentToReceiverAccountSelectionFragment(
+                    assetTransaction = assetTransaction.copy(
+                        amount = amount,
+                        note = transactionNote,
+                        xnote = lockedNote
+                    )
+                )
+        )
     }
 
     private fun handleTransactionNote() {

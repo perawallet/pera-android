@@ -15,6 +15,9 @@ package com.algorand.android.modules.assetinbox.detail.transactiondetail.mapper
 
 import android.content.Context
 import com.algorand.android.modules.assetinbox.detail.transactiondetail.model.Arc59TransactionDetailArgs
+import com.algorand.android.modules.assetinbox.detail.transactiondetail.model.Arc59TransactionDetailArgs.BaseAssetDetail
+import com.algorand.android.modules.assetinbox.detail.transactiondetail.model.Arc59TransactionDetailArgs.BaseAssetDetail.AssetDetail
+import com.algorand.android.modules.assetinbox.detail.transactiondetail.model.Arc59TransactionDetailArgs.BaseAssetDetail.CollectibleDetail
 import com.algorand.android.modules.assetinbox.detail.transactiondetail.model.Arc59TransactionDetailPreview
 import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.utils.formatAmount
@@ -34,16 +37,18 @@ class Arc59TransactionDetailPreviewMapperImpl @Inject constructor(
             primaryText = getPrimaryText(args),
             secondaryText = getSecondaryText(args),
             assetId = args.assetDetail.id,
-            nftUrl = (args.assetDetail as? Arc59TransactionDetailArgs.BaseAssetDetail.CollectibleDetail)?.imageUrl,
-            sendersAmountMap = args.senders.associate { it.address to it.amount },
+            nftUrl = (args.assetDetail as? CollectibleDetail)?.imageUrl,
+            sendersAmountMap = args.senders.associate {
+                it.address to getFormattedAssetAmount(it.amount, args.assetDetail)
+            },
             optInExpense = args.optInExpense.formatAsAlgoString()
         )
     }
 
     private fun getPrimaryText(args: Arc59TransactionDetailArgs): String {
         return when (args.assetDetail) {
-            is Arc59TransactionDetailArgs.BaseAssetDetail.AssetDetail -> getFormattedAssetAmount(args.assetDetail)
-            is Arc59TransactionDetailArgs.BaseAssetDetail.CollectibleDetail -> {
+            is AssetDetail -> getFormattedAssetAmount(args.assetDetail)
+            is CollectibleDetail -> {
                 args.assetDetail.name.getName(context.resources)
             }
         }
@@ -51,20 +56,30 @@ class Arc59TransactionDetailPreviewMapperImpl @Inject constructor(
 
     private fun getSecondaryText(args: Arc59TransactionDetailArgs): String {
         return when (val assetDetail = args.assetDetail) {
-            is Arc59TransactionDetailArgs.BaseAssetDetail.AssetDetail -> getFormattedUsdValue(assetDetail)
-            is Arc59TransactionDetailArgs.BaseAssetDetail.CollectibleDetail -> {
+            is AssetDetail -> getFormattedUsdValue(assetDetail)
+            is CollectibleDetail -> {
                 assetDetail.shortName.getName(context.resources)
             }
         }
     }
 
-    private fun getFormattedAssetAmount(assetDetail: Arc59TransactionDetailArgs.BaseAssetDetail.AssetDetail): String {
+    private fun getFormattedAssetAmount(assetDetail: AssetDetail): String {
         return with(assetDetail) {
             amount.formatAmount(decimal).formatAsAssetAmount(shortName.getName(context.resources))
         }
     }
 
-    private fun getFormattedUsdValue(assetDetail: Arc59TransactionDetailArgs.BaseAssetDetail.AssetDetail): String {
+    private fun getFormattedAssetAmount(
+        amount: String,
+        assetDetail: BaseAssetDetail
+    ): String {
+        return when (assetDetail) {
+            is AssetDetail -> amount.formatAsAssetAmount(assetDetail.shortName.getName(context.resources))
+            is CollectibleDetail -> amount
+        }
+    }
+
+    private fun getFormattedUsdValue(assetDetail: AssetDetail): String {
         return assetDetail.usdValue
             .toBigDecimalOrNull()
             ?.formatAsCurrency(Currency.USD.symbol, isCompact = true)

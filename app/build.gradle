@@ -210,6 +210,15 @@ android {
         exclude 'lib/libnarcissus-win-64.dll'
     }
 
+    configurations.configureEach {
+        // exclude duplicate bouncycastle till walletconnect is no longer used, use
+        // common wallet-sdk module versions instead
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk15to18'
+        exclude group: 'org.bouncycastle', module: 'bcutil-jdk18on'
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
+        exclude group: 'org.bouncycastle', module: 'bcutil-jdk15on'
+    }
+
     namespace libs.versions.android.namespace.get().toString()
 }
 

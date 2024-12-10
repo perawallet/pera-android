@@ -40,6 +40,7 @@ kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
         languageVersion.set(KotlinVersion.KOTLIN_2_0)
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
     listOf(
@@ -127,14 +128,6 @@ android {
 
     sourceSets["main"].res.srcDirs("src/commonMain/composeResources", "src/androidMain/res")
     sourceSets["main"].resources.srcDirs("src/commonMain/composeResources")
-
-    configurations.all {
-        // exclude duplicate bouncycastle till walletconnect is no longer used
-        exclude(group = "org.bouncycastle", module = "bcprov-jdk15to18")
-        exclude(group = "org.bouncycastle", module = "bcutil-jdk18on")
-        exclude(group = "org.bouncycastle", module = "bcprov-jdk15on")
-        exclude(group = "org.bouncycastle", module = "bcutil-jdk15on")
-    }
 }
 
 room {

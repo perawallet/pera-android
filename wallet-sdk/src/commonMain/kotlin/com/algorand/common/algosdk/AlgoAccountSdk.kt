@@ -19,9 +19,9 @@ expect interface AlgoAccountSdk {
 
     fun createBip39Account(): Bip39Account
 
-    fun recoverBip39Account(mnemonic: String): Bip39Account
+    fun recoverBip39Account(mnemonic: String): Bip39Account?
 
     fun createAlgo25Account(): Algo25Account
 
-    fun recoverAlgo25Account(mnemonic: String): Algo25Account
+    fun recoverAlgo25Account(mnemonic: String): Algo25Account?
 }

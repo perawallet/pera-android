@@ -18,9 +18,9 @@ import kotlin.random.Random
 
 actual interface AlgoAccountSdk {
     actual fun createBip39Account(): Bip39Account
-    actual fun recoverBip39Account(mnemonic: String): Bip39Account
+    actual fun recoverBip39Account(mnemonic: String): Bip39Account?
     actual fun createAlgo25Account(): Algo25Account
-    actual fun recoverAlgo25Account(mnemonic: String): Algo25Account
+    actual fun recoverAlgo25Account(mnemonic: String): Algo25Account?
 }
 
 internal class AlgoAccountSdkImpl : AlgoAccountSdk {

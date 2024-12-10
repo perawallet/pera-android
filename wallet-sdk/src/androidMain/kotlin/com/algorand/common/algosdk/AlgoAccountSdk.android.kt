@@ -12,18 +12,25 @@
 
 package com.algorand.common.algosdk
 
+import com.algorand.algosdk.account.Account
 import com.algorand.common.algosdk.model.Algo25Account
 import com.algorand.common.algosdk.model.Bip39Account
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import java.security.Security
 import kotlin.random.Random
 
 actual interface AlgoAccountSdk {
     actual fun createBip39Account(): Bip39Account
-    actual fun recoverBip39Account(mnemonic: String): Bip39Account
+    actual fun recoverBip39Account(mnemonic: String): Bip39Account?
     actual fun createAlgo25Account(): Algo25Account
-    actual fun recoverAlgo25Account(mnemonic: String): Algo25Account
+    actual fun recoverAlgo25Account(mnemonic: String): Algo25Account?
 }
 
 internal class AlgoAccountSdkImpl : AlgoAccountSdk {
+    init {
+        Security.removeProvider("BC")
+        Security.insertProviderAt(BouncyCastleProvider(), 0)
+    }
 
     override fun createBip39Account(): Bip39Account {
         val accountAddress = generateRandomAddress()
@@ -36,13 +43,17 @@ internal class AlgoAccountSdkImpl : AlgoAccountSdk {
     }
 
     override fun createAlgo25Account(): Algo25Account {
-        val accountAddress = generateRandomAddress()
-        val mnemonic = generate25WordMnemonic()
-        return Algo25Account(accountAddress, mnemonic, byteArrayOf())
+        val account = Account()
+        return Algo25Account(account.address.toString(), account.toMnemonic(), account.toSeed())
     }
 
-    override fun recoverAlgo25Account(mnemonic: String): Algo25Account {
-        return Algo25Account(mnemonic, mnemonic, byteArrayOf())
+    override fun recoverAlgo25Account(mnemonic: String): Algo25Account? {
+        try {
+            val account = Account(mnemonic)
+            return Algo25Account(account.address.toString(), account.toMnemonic(), account.toSeed())
+        } catch (e: Exception) {
+            return null
+        }
     }
 
     private fun generateRandomAddress(): String {
@@ -59,14 +70,6 @@ internal class AlgoAccountSdkImpl : AlgoAccountSdk {
             Lorem ipsum dolor sit amet consectetur adipiscing elit 
             Mauris ornare orci et facilisis condimentum 
             Nunc imperdiet ultricies mi nec mattis erat In volutpat tempus
-        """.trimIndent().lowercase()
-    }
-
-    private fun generate25WordMnemonic(): String {
-        return """
-            Lorem ipsum dolor sit amet consectetur adipiscing elit 
-            Mauris ornare orci et facilisis condimentum 
-            Nunc imperdiet ultricies mi nec mattis erat In volutpat tempus tortor
         """.trimIndent().lowercase()
     }
 }

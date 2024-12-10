@@ -19,11 +19,9 @@ import com.algorand.android.modules.assetinbox.detail.transactiondetail.model.Ar
 import com.algorand.android.modules.assetinbox.detail.transactiondetail.model.Arc59TransactionDetailArgs.BaseAssetDetail.AssetDetail
 import com.algorand.android.modules.assetinbox.detail.transactiondetail.model.Arc59TransactionDetailArgs.BaseAssetDetail.CollectibleDetail
 import com.algorand.android.modules.assetinbox.detail.transactiondetail.model.Arc59TransactionDetailPreview
-import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.formatAsAssetAmount
-import com.algorand.android.utils.formatAsCurrency
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -56,7 +54,7 @@ class Arc59TransactionDetailPreviewMapperImpl @Inject constructor(
 
     private fun getSecondaryText(args: Arc59TransactionDetailArgs): String {
         return when (val assetDetail = args.assetDetail) {
-            is AssetDetail -> getFormattedUsdValue(assetDetail)
+            is AssetDetail -> assetDetail.usdValue
             is CollectibleDetail -> {
                 assetDetail.shortName.getName(context.resources)
             }
@@ -79,10 +77,4 @@ class Arc59TransactionDetailPreviewMapperImpl @Inject constructor(
         }
     }
 
-    private fun getFormattedUsdValue(assetDetail: AssetDetail): String {
-        return assetDetail.usdValue
-            .toBigDecimalOrNull()
-            ?.formatAsCurrency(Currency.USD.symbol, isCompact = true)
-            ?: ""
-    }
 }

@@ -25,6 +25,10 @@
 -keep class com.algorand.android.** { *; }
 -keep class androidx.** { *; }
 -keep class com.algorand.android.**.model.** { *; }
+-keep class com.algorand.android.modules.algosdk.data.model.** { *; }
+-keep class com.algorand.android.modules.algosdk.domain.model.** { *; }
+-keep class com.algorand.android.modules.keyreg.domain.model.** { *; }
+-keep class com.algorand.android.modules.keyreg.ui.model.** { *; }
 
 -keep class com.algorand.android.ui.wctransactionrequest.WalletConnectTransactionListItem
 # ---------------- END PERA ---------------------

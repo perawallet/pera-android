@@ -71,6 +71,7 @@ paging = "3.3.4"
 retrofit = "2.11.0"
 review = "2.0.2"
 room = "2.7.0-alpha11"
+sqlite = "1.0.0"
 runner = "1.6.2"
 safeargs = "2.8.4"
 tink = "1.14.0"
@@ -169,6 +170,7 @@ paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.re
 perf-plugin = { module = "com.google.firebase:perf-plugin", version.ref = "firebasePerformance" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "review" }
+sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 room-gradle-plugin = { module = "androidx.room:room-gradle-plugin", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }

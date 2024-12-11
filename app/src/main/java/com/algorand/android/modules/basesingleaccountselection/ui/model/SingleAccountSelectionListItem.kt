@@ -27,6 +27,7 @@ sealed class SingleAccountSelectionListItem : RecyclerListItem {
     }
 
     abstract val itemType: ItemType
+    abstract val address: String?
 
     data class TitleItem(
         @StringRes val textResId: Int
@@ -34,6 +35,9 @@ sealed class SingleAccountSelectionListItem : RecyclerListItem {
 
         override val itemType: ItemType
             get() = ItemType.TITLE_ITEM
+
+        override val address: String?
+            get() = null
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is TitleItem && textResId == other.textResId
@@ -50,6 +54,9 @@ sealed class SingleAccountSelectionListItem : RecyclerListItem {
 
         override val itemType: ItemType
             get() = ItemType.DESCRIPTION_ITEM
+
+        override val address: String?
+            get() = null
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is DescriptionItem && descriptionAnnotatedString == other.descriptionAnnotatedString
@@ -69,6 +76,9 @@ sealed class SingleAccountSelectionListItem : RecyclerListItem {
 
         override val itemType: ItemType
             get() = ItemType.ACCOUNT_ITEM
+
+        override val address: String
+            get() = accountDisplayName.getRawAccountAddress()
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountItem &&

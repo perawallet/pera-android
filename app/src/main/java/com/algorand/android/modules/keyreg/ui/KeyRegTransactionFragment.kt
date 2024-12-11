@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.TransactionBaseFragment
@@ -53,12 +54,17 @@ import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_reg_transaction) {
-
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
         titleResId = R.string.key_reg_transaction_title,
-        startIconClick = ::navBack
+        startIconClick = ::customNavBack
     )
+
+    fun customNavBack() {
+        findNavController().previousBackStackEntry?.savedStateHandle
+            ?.set(NAV_BACK_FRAGMENT_KEY, "KeyRegTransactionFragment")
+        navBack()
+    }
 
     override val fragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
@@ -346,5 +352,6 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
 
     companion object {
         const val ADD_EDIT_NOTE_BUTTON_VERTICAL_BIAS = 0.5f
+        const val NAV_BACK_FRAGMENT_KEY = "navBackFragmentKey"
     }
 }

@@ -51,7 +51,7 @@ abstract class BaseSingleAccountSelectionFragment : BaseFragment(R.layout.fragme
         listener = baseSingleAccountSelectionAdapterListener
     )
 
-    private val singleAccountSelectionListItemsCollector: suspend (
+    val singleAccountSelectionListItemsCollector: suspend (
         List<SingleAccountSelectionListItem>?
     ) -> Unit = { accountSelectionItemList ->
         baseSingleAccountSelectionAdapter.submitList(accountSelectionItemList)

@@ -14,13 +14,16 @@ package com.algorand.common.account.local.data.database
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
 internal fun getAccountDatabase(): AccountDatabase {
-    return createAccountDatabase().build()
+    return createAccountDatabase()
+        .setDriver(BundledSQLiteDriver())
+        .build()
 }
 
 internal fun createAccountDatabase(): RoomDatabase.Builder<AccountDatabase> {

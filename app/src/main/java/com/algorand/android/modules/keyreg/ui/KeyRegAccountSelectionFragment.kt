@@ -77,8 +77,8 @@ class KeyRegAccountSelectionFragment : BaseSingleAccountSelectionFragment() {
         if (!accountSelectionItemList.isNullOrEmpty() && !addressFound) {
             activity?.showAlertDialog(
                 getString(R.string.error),
-                "Please add wallet address (" +
-                        "${keyRegAccountSelectionViewModel.keyRegTransactionDetail.address}) on app before scanning"
+                "You don't have any authorized account matching with " +
+                        keyRegAccountSelectionViewModel.keyRegTransactionDetail.address
             )
             navBack()
         }

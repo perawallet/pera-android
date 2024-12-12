@@ -151,7 +151,6 @@
 -keep public class * extends java.lang.Exception
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
-
 # ---------------- END CRASHLYTICS -------------------
 
 
@@ -166,6 +165,14 @@
 # ---------------- END AlgoSDK -------------------
 
 
+# ---------------- BEGIN BouncyCastle -------------------
+-keep class org.bouncycastle.jcajce.provider.** { *; }
+-keep class org.bouncycastle.jce.provider.** { *; }
+
+-dontwarn javax.naming.**
+# ---------------- END BouncyCastle -------------------
+
+
 # ---------------- BEGIN WALLET CONNECT -------------------
 -keep class org.walletconnect.** { *; }
 -keep interface org.walletconnect.** { *; }
@@ -176,8 +183,6 @@
 
 
 # ---------------- BEGIN OTHERS -------------------
--keep class com.google.gson.examples.android.model.** { <fields>; }
-
 # Prevent R8 from leaving Data object members always null
 -keepclassmembers,allowobfuscation class * {
   @com.google.gson.annotations.SerializedName <fields>;

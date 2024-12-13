@@ -33,7 +33,7 @@ sealed class BaseAccountListItem : RecyclerListItem {
 
     data class QuickActionsItem(
         val isSwapButtonSelected: Boolean,
-        val isImmersiveEnabled: Boolean,
+        val isImmersveEnabled: Boolean,
         val isStakingEnabled: Boolean
     ) : BaseAccountListItem() {
 

@@ -12,11 +12,14 @@
 
 package com.algorand.common.di
 
-import com.algorand.common.foundation.network.IndexerInterceptorPlugin
-import org.koin.dsl.module
+import com.algorand.common.account.info.di.accountInformationKoinModule
+import com.algorand.common.account.local.di.localAccountsKoinModule
+import com.algorand.common.encryption.di.encryptionModule
 
-internal val networkKoinModule = module {
-    single<IndexerInterceptorPlugin> {
-        IndexerInterceptorPlugin(get())
-    }
-}
+val commonModuleKoinModules = listOf(
+    localAccountsKoinModule,
+    encryptionModule,
+    platformKoinModule(),
+    accountInformationKoinModule,
+    networkKoinModule
+)

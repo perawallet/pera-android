@@ -10,13 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package co.algorand.app.di
 
-import com.algorand.common.foundation.network.IndexerInterceptorPlugin
+import com.algorand.common.foundation.network.GetIndexerInterceptorConfig
+import com.algorand.common.foundation.network.IndexerInterceptorPluginConfig
 import org.koin.dsl.module
 
-internal val networkKoinModule = module {
-    single<IndexerInterceptorPlugin> {
-        IndexerInterceptorPlugin(get())
+val accountInformationModule = module {
+    factory<GetIndexerInterceptorConfig> {
+        GetIndexerInterceptorConfig {
+            IndexerInterceptorPluginConfig(
+                baseUrl = "-",
+                apiKey = "-"
+            )
+        }
     }
 }

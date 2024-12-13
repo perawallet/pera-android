@@ -14,4 +14,4 @@ package com.algorand.common.di
 
 import org.koin.core.module.Module
 
-expect fun platformKoinModule(): Module
+internal expect fun platformKoinModule(): Module

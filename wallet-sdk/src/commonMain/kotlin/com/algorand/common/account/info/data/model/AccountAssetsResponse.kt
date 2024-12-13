@@ -10,8 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.data.model
 
-import org.koin.core.module.Module
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-internal expect fun platformKoinModule(): Module
+@Serializable
+internal data class AccountAssetsResponse(
+    @SerialName("assets")
+    val assets: List<AssetHoldingResponse>? = null,
+    @SerialName("current-round")
+    val currentRound: Long? = null,
+    @SerialName("next-token")
+    val nextToken: String? = null
+)

@@ -21,7 +21,7 @@ import com.algorand.foundation.database.getPeraDatabase
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-actual fun platformKoinModule(): Module = module {
+internal actual fun platformKoinModule(): Module = module {
     single<AccountDatabase> { getAccountDatabase(get()) }
     single<AlgoAccountSdk> { AlgoAccountSdkImpl() }
     single<PeraDatabase> { getPeraDatabase(get()) }

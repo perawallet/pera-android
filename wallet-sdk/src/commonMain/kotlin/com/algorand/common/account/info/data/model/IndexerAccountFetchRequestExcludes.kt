@@ -10,8 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.data.model
 
-import org.koin.core.module.Module
-
-internal expect fun platformKoinModule(): Module
+internal enum class IndexerAccountFetchRequestExcludes(val query: String) {
+    ALL("all"),
+    ASSETS("assets"),
+    CREATED_ASSETS("created-assets"),
+    APPS_LOCAL_STATE("apps-local-state"),
+    CREATED_APPS("created-apps"),
+    NONE("none")
+}

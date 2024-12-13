@@ -10,8 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.data.model
 
-import org.koin.core.module.Module
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-internal expect fun platformKoinModule(): Module
+@Serializable
+internal data class AppStateSchemaResponse(
+    @SerialName("num-byte-slice")
+    val numByteSlice: Long? = null,
+    @SerialName("num-uint")
+    val numUint: Long? = null
+)

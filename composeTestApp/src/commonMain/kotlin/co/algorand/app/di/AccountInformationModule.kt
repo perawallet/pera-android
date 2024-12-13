@@ -10,8 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package co.algorand.app.di
 
-import org.koin.core.module.Module
+import com.algorand.common.foundation.network.GetIndexerInterceptorConfig
+import com.algorand.common.foundation.network.IndexerInterceptorPluginConfig
+import org.koin.dsl.module
 
-internal expect fun platformKoinModule(): Module
+val accountInformationModule = module {
+    factory<GetIndexerInterceptorConfig> {
+        GetIndexerInterceptorConfig {
+            IndexerInterceptorPluginConfig(
+                baseUrl = "-",
+                apiKey = "-"
+            )
+        }
+    }
+}

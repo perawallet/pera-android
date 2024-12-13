@@ -10,8 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.foundation.network
 
-import org.koin.core.module.Module
+import kotlinx.serialization.builtins.LongAsStringSerializer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 
-internal expect fun platformKoinModule(): Module
+internal val PeraJsonNegotiation = Json {
+    ignoreUnknownKeys = true
+    isLenient = true
+    this.serializersModule = SerializersModule {
+        contextual(LongAsStringSerializer)
+    }
+}

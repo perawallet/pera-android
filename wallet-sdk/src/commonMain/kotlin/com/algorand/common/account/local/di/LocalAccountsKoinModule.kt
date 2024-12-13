@@ -51,7 +51,7 @@ import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddres
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
 import org.koin.dsl.module
 
-val localAccountsKoinModule = module {
+internal val localAccountsKoinModule = module {
     single<Bip39AccountRepository> {
         Bip39AccountRepositoryImpl(get(), get(), get(), get())
     }

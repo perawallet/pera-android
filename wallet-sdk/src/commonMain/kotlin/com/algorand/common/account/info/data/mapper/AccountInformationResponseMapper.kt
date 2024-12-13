@@ -10,8 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.data.mapper
 
-import org.koin.core.module.Module
+import com.algorand.common.account.info.data.model.AccountInformationResponse
 
-internal expect fun platformKoinModule(): Module
+internal interface AccountInformationResponseMapper {
+    fun createEmptyAccount(address: String): AccountInformationResponse
+}

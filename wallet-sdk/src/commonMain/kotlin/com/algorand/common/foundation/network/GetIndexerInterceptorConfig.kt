@@ -10,8 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.foundation.network
 
-import org.koin.core.module.Module
-
-internal expect fun platformKoinModule(): Module
+fun interface GetIndexerInterceptorConfig {
+    suspend operator fun invoke(): IndexerInterceptorPluginConfig
+}

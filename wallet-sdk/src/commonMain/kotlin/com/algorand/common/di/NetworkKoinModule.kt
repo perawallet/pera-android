@@ -12,17 +12,11 @@
 
 package com.algorand.common.di
 
-import com.algorand.common.account.local.data.database.AccountDatabase
-import com.algorand.common.account.local.data.database.getAccountDatabase
-import com.algorand.common.algosdk.AlgoAccountSdk
-import com.algorand.common.algosdk.AlgoAccountSdkImpl
-import com.algorand.common.foundation.database.PeraDatabase
-import com.algorand.common.foundation.database.getPeraDatabase
-import org.koin.core.module.Module
+import com.algorand.common.foundation.network.IndexerInterceptorPlugin
 import org.koin.dsl.module
 
-internal actual fun platformKoinModule(): Module = module {
-    single<AccountDatabase> { getAccountDatabase() }
-    single<AlgoAccountSdk> { AlgoAccountSdkImpl() }
-    single<PeraDatabase> { getPeraDatabase() }
+internal val networkKoinModule = module {
+    single<IndexerInterceptorPlugin> {
+        IndexerInterceptorPlugin(get())
+    }
 }

@@ -20,7 +20,7 @@ import com.algorand.common.encryption.SecretKeyEncryptionManager
 import com.algorand.common.encryption.SecretKeyEncryptionManagerImpl
 import org.koin.dsl.module
 
-val encryptionModule = module {
+internal val encryptionModule = module {
     single<Base64Manager> { Base64ManagerImpl() }
     single<SecretKeyEncryptionManager> { SecretKeyEncryptionManagerImpl() }
     single<AddressEncryptionManager> { AddressEncryptionManagerImpl() }

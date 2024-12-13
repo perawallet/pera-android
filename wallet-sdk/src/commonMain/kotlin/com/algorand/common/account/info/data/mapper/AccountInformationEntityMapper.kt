@@ -10,8 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.data.mapper
 
-import org.koin.core.module.Module
+import com.algorand.common.account.info.data.database.model.AccountInformationEntity
+import com.algorand.common.account.info.data.model.AccountInformationResponse
 
-internal expect fun platformKoinModule(): Module
+internal interface AccountInformationEntityMapper {
+    operator fun invoke(response: AccountInformationResponse): AccountInformationEntity?
+}

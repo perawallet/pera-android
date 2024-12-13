@@ -10,8 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.data.mapper
 
-import org.koin.core.module.Module
+import com.algorand.common.account.info.data.model.AppStateSchemaResponse
+import com.algorand.common.account.info.domain.model.AppStateScheme
 
-internal expect fun platformKoinModule(): Module
+internal interface AppStateSchemeMapper {
+    operator fun invoke(response: AppStateSchemaResponse?): AppStateScheme
+    operator fun invoke(numByteSlice: Long?, numUint: Long?): AppStateScheme
+}

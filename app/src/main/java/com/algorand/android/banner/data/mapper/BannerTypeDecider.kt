@@ -21,6 +21,7 @@ class BannerTypeDecider @Inject constructor() {
     fun getBannerType(bannerTypeResponse: BannerTypeResponse?): BannerType {
         return when (bannerTypeResponse) {
             BannerTypeResponse.GOVERNANCE -> BannerType.GOVERNANCE
+            BannerTypeResponse.STAKING -> BannerType.STAKING
             BannerTypeResponse.GENERIC -> BannerType.GENERIC
             BannerTypeResponse.OTHER -> BannerType.GENERIC
             else -> BannerType.GENERIC

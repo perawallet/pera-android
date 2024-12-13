@@ -13,6 +13,7 @@
 package com.algorand.android.modules.accounts.ui
 
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.accounts.domain.model.AccountPreview
 import com.algorand.android.modules.accounts.domain.usecase.AccountsPreviewUseCase
@@ -83,10 +84,12 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    fun onBannerActionButtonClick(isGovernance: Boolean) {
-        if (isGovernance) {
-            viewModelScope.launch {
-                accountsEventTracker.logVisitGovernanceEvent()
+    fun onBannerActionButtonClick(bannerType: BannerType) {
+        viewModelScope.launch {
+            when (bannerType) {
+                BannerType.GOVERNANCE -> accountsEventTracker.logVisitGovernanceEvent()
+                BannerType.STAKING -> accountsEventTracker.logVisitStakingEvent()
+                BannerType.GENERIC -> {}
             }
         }
     }

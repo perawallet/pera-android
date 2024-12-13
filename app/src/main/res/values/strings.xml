@@ -1428,4 +1428,10 @@
     <string name="your_receiving_account_will_be">Your Receiving Account will be opted into the asset</string>
     <string name="your_sending_account_over">Your Sending Account will send over the asset</string>
     <string name="do_not_show_this_again">Don\'t show this again</string>
+
+    <string name="xnote">xNote</string>
+    <string name="try_stake">Try Stake</string>
+    <string name="pera_wallet_now_provides">Pera Wallet now provides an easy and fast way to stake with various dApps.</string>
+    <string name="stake_in_pera">Stake in Pera</string>
+
 </resources>

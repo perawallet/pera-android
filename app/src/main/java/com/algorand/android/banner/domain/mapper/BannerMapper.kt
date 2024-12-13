@@ -28,6 +28,16 @@ class BannerMapper @Inject constructor() {
         )
     }
 
+    fun mapToStakingBanner(bannerDetailDTO: BannerDetailDTO): BaseBanner.StakingBanner {
+        return BaseBanner.StakingBanner(
+            bannerId = bannerDetailDTO.bannerId,
+            title = bannerDetailDTO.title,
+            description = bannerDetailDTO.description,
+            buttonTitle = bannerDetailDTO.buttonText,
+            buttonUrl = bannerDetailDTO.buttonUrl
+        )
+    }
+
     fun mapToGenericBanner(bannerDetailDTO: BannerDetailDTO): BaseBanner.GenericBanner {
         return BaseBanner.GenericBanner(
             bannerId = bannerDetailDTO.bannerId,

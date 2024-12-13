@@ -10,10 +10,21 @@
  * limitations under the License
  */
 
-package com.algorand.android.banner.domain.model
+package com.algorand.android.modules.tracking.accounts
 
-enum class BannerType {
-    GENERIC,
-    GOVERNANCE,
-    STAKING
+import com.algorand.android.modules.tracking.core.BaseEventTracker
+import com.algorand.android.modules.tracking.core.PeraEventTracker
+import javax.inject.Inject
+
+class VisitStakingEventTracker @Inject constructor(
+    peraEventTracker: PeraEventTracker
+) : BaseEventTracker(peraEventTracker) {
+
+    suspend fun logVisitStakingEvent() {
+        logEvent(VISIT_STAKING_EVENT_KEY)
+    }
+
+    companion object {
+        private const val VISIT_STAKING_EVENT_KEY = "homescr_visitstaking"
+    }
 }

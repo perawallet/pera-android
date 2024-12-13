@@ -68,6 +68,7 @@ class BannersUseCase @Inject constructor(
     private fun getMappedAndFilteredBanner(bannerDto: BannerDetailDTO): BaseBanner {
         return when (bannerDto.type) {
             BannerType.GOVERNANCE -> bannerMapper.mapToGovernanceBanner(bannerDto)
+            BannerType.STAKING -> bannerMapper.mapToStakingBanner(bannerDto)
             BannerType.GENERIC -> bannerMapper.mapToGenericBanner(bannerDto)
             else -> bannerMapper.mapToGenericBanner(bannerDto)
         }

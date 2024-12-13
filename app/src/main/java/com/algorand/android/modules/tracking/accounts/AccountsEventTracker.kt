@@ -23,6 +23,7 @@ class AccountsEventTracker @Inject constructor(
     private val accountsQrScanEventTracker: AccountsQrScanEventTracker,
     private val accountsQrConnectEventTracker: AccountsQrConnectEventTracker,
     private val visitGovernanceEventTracker: VisitGovernanceEventTracker,
+    private val visitStakingEventTracker: VisitStakingEventTracker,
     private val trySwapClickEventTracker: SwapTutorialTrySwapClickEventTracker,
     private val laterClickEventTracker: SwapTutorialLaterClickEventTracker,
     private val accountsFragmentAlgoBuyTapEventTracker: AccountsFragmentAlgoBuyTapEventTracker,
@@ -43,6 +44,10 @@ class AccountsEventTracker @Inject constructor(
 
     suspend fun logVisitGovernanceEvent() {
         visitGovernanceEventTracker.logVisitGovernanceEvent()
+    }
+
+    suspend fun logVisitStakingEvent() {
+        visitStakingEventTracker.logVisitStakingEvent()
     }
 
     suspend fun logSwapTutorialTrySwapClickEvent() {

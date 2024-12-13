@@ -16,12 +16,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import com.algorand.android.banner.domain.model.BannerType
-import com.algorand.android.databinding.ItemGovernanceBannerBinding
+import com.algorand.android.databinding.ItemStakingBannerBinding
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import com.google.android.material.button.MaterialButton
 
-class GovernanceBannerViewHolder(
-    private val binding: ItemGovernanceBannerBinding,
+class StakingBannerViewHolder(
+    private val binding: ItemStakingBannerBinding,
     listener: BannerListener
 ) : BaseBannerViewHolder(listener, binding.root) {
 
@@ -35,12 +35,13 @@ class GovernanceBannerViewHolder(
         get() = binding.bannerDescriptionTextView
 
     override fun initActionButton(item: BaseAccountListItem.BaseBannerItem) {
-        initActionButton(item, BannerType.GOVERNANCE)
+        initActionButton(item, BannerType.STAKING)
     }
+
     companion object : BannerViewHolderCreator {
         override fun create(listener: BannerListener, parent: ViewGroup): BaseBannerViewHolder {
-            val binding = ItemGovernanceBannerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return GovernanceBannerViewHolder(binding, listener)
+            val binding = ItemStakingBannerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return StakingBannerViewHolder(binding, listener)
         }
     }
 }

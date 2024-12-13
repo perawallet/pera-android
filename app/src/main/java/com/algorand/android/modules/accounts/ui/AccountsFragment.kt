@@ -27,6 +27,7 @@ import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
+import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentAccountsBinding
 import com.algorand.android.models.AnnotatedString
@@ -104,9 +105,13 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             navToBackupPassphraseInfoNavigation()
         }
 
-        override fun onBannerActionButtonClick(url: String, isGovernance: Boolean) {
-            accountsViewModel.onBannerActionButtonClick(isGovernance)
-            nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
+        override fun onBannerActionButtonClick(url: String, bannerType: BannerType) {
+            accountsViewModel.onBannerActionButtonClick(bannerType)
+            if (bannerType == BannerType.STAKING) {
+                nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
+            } else {
+                nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
+            }
         }
 
         override fun onBuySellClick() {

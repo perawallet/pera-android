@@ -14,10 +14,12 @@ package com.algorand.android.modules.accounts.ui.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
+import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.banner.ui.viewholder.BackupBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.BaseBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.GenericBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.GovernanceBannerViewHolder
+import com.algorand.android.banner.ui.viewholder.StakingBannerViewHolder
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
@@ -28,6 +30,7 @@ import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.It
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.GOVERNANCE_BANNER
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.HEADER
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.QUICK_ACTIONS
+import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.STAKING_BANNER
 import com.algorand.android.modules.accounts.ui.viewholder.AccountErrorItemViewHolder
 import com.algorand.android.modules.accounts.ui.viewholder.AccountItemViewHolder
 import com.algorand.android.modules.accounts.ui.viewholder.AccountsQuickActionsViewHolder
@@ -68,8 +71,8 @@ class AccountAdapter(
     }
 
     private val baseBannerListener = object : BaseBannerViewHolder.BannerListener {
-        override fun onActionButtonClick(url: String) {
-            accountAdapterListener.onBannerActionButtonClick(url = url, isGovernance = false)
+        override fun onActionButtonClick(url: String, bannerType: BannerType) {
+            accountAdapterListener.onBannerActionButtonClick(url = url, bannerType)
         }
 
         override fun onCloseBannerClick(bannerId: Long) {
@@ -78,8 +81,18 @@ class AccountAdapter(
     }
 
     private val governanceBaseBannerListener = object : BaseBannerViewHolder.BannerListener {
-        override fun onActionButtonClick(url: String) {
-            accountAdapterListener.onBannerActionButtonClick(url = url, isGovernance = true)
+        override fun onActionButtonClick(url: String, bannerType: BannerType) {
+            accountAdapterListener.onBannerActionButtonClick(url = url, bannerType)
+        }
+
+        override fun onCloseBannerClick(bannerId: Long) {
+            accountAdapterListener.onBannerCloseButtonClick(bannerId)
+        }
+    }
+
+    private val stakingBaseBannerListener = object : BaseBannerViewHolder.BannerListener {
+        override fun onActionButtonClick(url: String, bannerType: BannerType) {
+            accountAdapterListener.onBannerActionButtonClick(url = url, bannerType = bannerType)
         }
 
         override fun onCloseBannerClick(bannerId: Long) {
@@ -125,6 +138,7 @@ class AccountAdapter(
             ACCOUNT_SUCCESS.ordinal -> AccountItemViewHolder.create(parent, accountClickListener)
             ACCOUNT_ERROR.ordinal -> AccountErrorItemViewHolder.create(parent, accountErrorClickListener)
             GOVERNANCE_BANNER.ordinal -> GovernanceBannerViewHolder.create(governanceBaseBannerListener, parent)
+            STAKING_BANNER.ordinal -> StakingBannerViewHolder.create(stakingBaseBannerListener, parent)
             GENERIC_BANNER.ordinal -> GenericBannerViewHolder.create(baseBannerListener, parent)
             BACKUP_BANNER.ordinal -> BackupBannerViewHolder.create(parent, backupBannerListener)
             QUICK_ACTIONS.ordinal -> AccountsQuickActionsViewHolder.create(parent, accountsQuickActionsListener)
@@ -141,7 +155,7 @@ class AccountAdapter(
         fun onFailedAccountClick(publicKey: String)
         fun onAccountItemLongPressed(publicKey: String)
         fun onBannerCloseButtonClick(bannerId: Long)
-        fun onBannerActionButtonClick(url: String, isGovernance: Boolean)
+        fun onBannerActionButtonClick(url: String, bannerType: BannerType)
         fun onBackupBannerActionButtonClick()
         fun onBuySellClick()
         fun onSendClick()

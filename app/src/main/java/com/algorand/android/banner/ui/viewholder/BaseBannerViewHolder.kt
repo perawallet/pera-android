@@ -16,12 +16,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
+import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import com.google.android.material.button.MaterialButton
 
 abstract class BaseBannerViewHolder(
-    private val listener: BannerListener,
+    protected val listener: BannerListener,
     itemView: View
 ) : BaseViewHolder<BaseAccountListItem>(itemView) {
 
@@ -38,9 +39,11 @@ abstract class BaseBannerViewHolder(
         initDescriptionTextView(item)
     }
 
-    private fun initActionButton(item: BaseAccountListItem.BaseBannerItem) {
+    abstract fun initActionButton(item: BaseAccountListItem.BaseBannerItem)
+
+    protected fun initActionButton(item: BaseAccountListItem.BaseBannerItem, bannerType: BannerType) {
         actionButton?.apply {
-            setOnClickListener { listener.onActionButtonClick(item.buttonUrl.orEmpty()) }
+            setOnClickListener { listener.onActionButtonClick(item.buttonUrl.orEmpty(), bannerType) }
             text = item.buttonText
             isVisible = item.isButtonVisible
         }
@@ -66,7 +69,7 @@ abstract class BaseBannerViewHolder(
 
     interface BannerListener {
         fun onCloseBannerClick(bannerId: Long) {}
-        fun onActionButtonClick(url: String) {}
+        fun onActionButtonClick(url: String, bannerType: BannerType) {}
     }
 
     protected interface BannerViewHolderCreator {

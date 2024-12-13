@@ -21,5 +21,8 @@ enum class BannerTypeResponse {
     @SerializedName("governance")
     GOVERNANCE,
 
+    @SerializedName("staking")
+    STAKING,
+
     OTHER
 }

@@ -37,6 +37,24 @@ class BaseBannerItemMapper @Inject constructor() {
         )
     }
 
+    fun mapToStakingBannerItem(
+        stakingBanner: BaseBanner.StakingBanner,
+        isButtonVisible: Boolean,
+        isTitleVisible: Boolean,
+        isDescriptionVisible: Boolean
+    ): BaseAccountListItem.BaseBannerItem.StakingBannerItem {
+        return BaseAccountListItem.BaseBannerItem.StakingBannerItem(
+            bannerId = stakingBanner.bannerId,
+            title = stakingBanner.title,
+            description = stakingBanner.description,
+            buttonText = stakingBanner.buttonTitle,
+            buttonUrl = stakingBanner.buttonUrl,
+            isButtonVisible = isButtonVisible,
+            isTitleVisible = isTitleVisible,
+            isDescriptionVisible = isDescriptionVisible
+        )
+    }
+
     fun mapToGenericBannerItem(
         genericBanner: BaseBanner.GenericBanner,
         isButtonVisible: Boolean,

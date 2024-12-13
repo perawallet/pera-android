@@ -17,6 +17,7 @@ import com.algorand.android.R
 import com.algorand.android.banner.domain.model.BaseBanner
 import com.algorand.android.banner.domain.model.BaseBanner.GenericBanner
 import com.algorand.android.banner.domain.model.BaseBanner.GovernanceBanner
+import com.algorand.android.banner.domain.model.BaseBanner.StakingBanner
 import com.algorand.android.banner.domain.usecase.BannersUseCase
 import com.algorand.android.banner.ui.mapper.BaseBannerItemMapper
 import com.algorand.android.core.AccountManager
@@ -345,6 +346,10 @@ class AccountsPreviewUseCase @Inject constructor(
                 when (banner) {
                     is GovernanceBanner -> {
                         mapToGovernanceBannerItem(banner, isButtonVisible, isTitleVisible, isDescriptionVisible)
+                    }
+
+                    is StakingBanner -> {
+                        mapToStakingBannerItem(banner, isButtonVisible, isTitleVisible, isDescriptionVisible)
                     }
 
                     is GenericBanner -> {

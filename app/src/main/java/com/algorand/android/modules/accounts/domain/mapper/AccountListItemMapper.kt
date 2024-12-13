@@ -41,7 +41,7 @@ class AccountListItemMapper @Inject constructor() {
     ): BaseAccountListItem.QuickActionsItem {
         return BaseAccountListItem.QuickActionsItem(
             isSwapButtonSelected = isSwapButtonSelected,
-            isImmersveEnabled = isImmersveEnabled,
+            isImmersiveEnabled = isImmersveEnabled,
             isStakingEnabled = isStakingEnabled
         )
     }

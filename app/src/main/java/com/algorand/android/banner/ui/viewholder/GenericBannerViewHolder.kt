@@ -15,7 +15,9 @@ package com.algorand.android.banner.ui.viewholder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.databinding.ItemGenericBannerBinding
+import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import com.google.android.material.button.MaterialButton
 
 class GenericBannerViewHolder(
@@ -31,6 +33,10 @@ class GenericBannerViewHolder(
         get() = binding.bannerTitleTextView
     override val descriptionTextView: TextView
         get() = binding.bannerDescriptionTextView
+
+    override fun initActionButton(item: BaseAccountListItem.BaseBannerItem) {
+        initActionButton(item, BannerType.GENERIC)
+    }
 
     companion object : BannerViewHolderCreator {
         override fun create(listener: BannerListener, parent: ViewGroup): BaseBannerViewHolder {

@@ -10,8 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.data.service
 
-import org.koin.core.module.Module
+import com.algorand.common.foundation.network.IndexerInterceptorPlugin
+import io.ktor.client.HttpClient
 
-internal expect fun platformKoinModule(): Module
+internal expect fun getIndexerApiHttpClient(indexerInterceptorPlugin: IndexerInterceptorPlugin): HttpClient

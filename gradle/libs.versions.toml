@@ -148,6 +148,8 @@ ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "kto
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorContentNegotiation" }
 ktor-client-content-negotiation-jvm = { module = "io.ktor:ktor-client-content-negotiation-jvm", version.ref = "ktorContentNegotiation" }
 ktor-kotlinx-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+
 legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "legacySupport" }
 lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
 lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExt" }

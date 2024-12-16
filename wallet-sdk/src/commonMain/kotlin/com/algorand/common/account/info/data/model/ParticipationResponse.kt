@@ -10,8 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.data.model
 
-import org.koin.core.module.Module
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-internal expect fun platformKoinModule(): Module
+@Serializable
+internal data class ParticipationResponse(
+    @SerialName("vote-participation-key")
+    val voteParticipationKey: String? = DEFAULT_PARTICIPATION_KEY
+) {
+    companion object {
+        const val DEFAULT_PARTICIPATION_KEY = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+    }
+}

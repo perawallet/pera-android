@@ -10,8 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.data.mapper
 
-import org.koin.core.module.Module
+import com.algorand.common.account.info.data.database.model.AssetHoldingEntity
+import com.algorand.common.account.info.data.model.AssetHoldingResponse
 
-internal expect fun platformKoinModule(): Module
+internal interface AssetHoldingEntityMapper {
+    operator fun invoke(address: String, response: AssetHoldingResponse): AssetHoldingEntity?
+    operator fun invoke(responses: List<Pair<String, AssetHoldingResponse>>): List<AssetHoldingEntity>
+}

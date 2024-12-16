@@ -16,10 +16,13 @@ import com.algorand.common.account.local.data.database.AccountDatabase
 import com.algorand.common.account.local.data.database.getAccountDatabase
 import com.algorand.common.algosdk.AlgoAccountSdk
 import com.algorand.common.algosdk.AlgoAccountSdkImpl
+import com.algorand.common.foundation.database.PeraDatabase
+import com.algorand.foundation.database.getPeraDatabase
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-actual fun platformKoinModule(): Module = module {
+internal actual fun platformKoinModule(): Module = module {
     single<AccountDatabase> { getAccountDatabase(get()) }
     single<AlgoAccountSdk> { AlgoAccountSdkImpl() }
+    single<PeraDatabase> { getPeraDatabase(get()) }
 }

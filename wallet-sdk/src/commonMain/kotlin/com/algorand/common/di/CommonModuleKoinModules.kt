@@ -12,6 +12,14 @@
 
 package com.algorand.common.di
 
-import org.koin.core.module.Module
+import com.algorand.common.account.info.di.accountInformationKoinModule
+import com.algorand.common.account.local.di.localAccountsKoinModule
+import com.algorand.common.encryption.di.encryptionModule
 
-internal expect fun platformKoinModule(): Module
+val commonModuleKoinModules = listOf(
+    localAccountsKoinModule,
+    encryptionModule,
+    platformKoinModule(),
+    accountInformationKoinModule,
+    networkKoinModule
+)

@@ -10,8 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.domain.model
 
-import org.koin.core.module.Module
-
-internal expect fun platformKoinModule(): Module
+internal data class AccountAssets(
+    val address: String,
+    val assetHoldings: List<AssetHolding>
+)

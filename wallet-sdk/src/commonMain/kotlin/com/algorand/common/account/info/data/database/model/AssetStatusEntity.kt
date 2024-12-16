@@ -10,8 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.data.database.model
 
-import org.koin.core.module.Module
-
-internal expect fun platformKoinModule(): Module
+internal enum class AssetStatusEntity {
+    PENDING_FOR_REMOVAL,
+    PENDING_FOR_ADDITION,
+    PENDING_FOR_SENDING,
+    OWNED_BY_ACCOUNT
+}

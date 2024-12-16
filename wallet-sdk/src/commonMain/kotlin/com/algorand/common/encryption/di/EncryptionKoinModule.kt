@@ -25,4 +25,3 @@ val encryptionModule = module {
     single<SecretKeyEncryptionManager> { SecretKeyEncryptionManagerImpl() }
     single<AddressEncryptionManager> { AddressEncryptionManagerImpl() }
 }
-

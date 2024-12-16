@@ -10,8 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.domain.model
 
-import org.koin.core.module.Module
+enum class AssetStatus {
+    PENDING_FOR_REMOVAL,
+    PENDING_FOR_ADDITION,
+    PENDING_FOR_SENDING,
+    OWNED_BY_ACCOUNT;
 
-internal expect fun platformKoinModule(): Module
+    companion object {
+        fun isPending(status: AssetStatus): Boolean {
+            return status != OWNED_BY_ACCOUNT
+        }
+    }
+}

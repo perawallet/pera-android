@@ -10,8 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.account.info.domain.model
 
-import org.koin.core.module.Module
-
-internal expect fun platformKoinModule(): Module
+data class AssetHolding(
+    val amount: String,
+    val assetId: Long,
+    val isDeleted: Boolean,
+    val isFrozen: Boolean,
+    val optedInAtRound: Long?,
+    val optedOutAtRound: Long?,
+    val status: AssetStatus
+)

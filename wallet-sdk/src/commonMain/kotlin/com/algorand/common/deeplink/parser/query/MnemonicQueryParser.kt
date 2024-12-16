@@ -29,7 +29,7 @@ internal class MnemonicQueryParser : DeepLinkQueryParser<String?> {
 
     @Serializable
     private data class MnemonicPayload(
-        @SerialName("version") val version: Double?,
+        @SerialName("version") val version: Double? = null,
         @SerialName("mnemonic") val mnemonic: String
     )
 }

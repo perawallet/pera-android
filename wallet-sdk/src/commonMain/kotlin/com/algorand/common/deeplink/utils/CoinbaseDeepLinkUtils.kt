@@ -14,8 +14,8 @@ package com.algorand.common.deeplink.utils
 
 import com.algorand.common.deeplink.model.PeraUri
 
-private const val COINBASE_DEEPLINK_ROOT = "algo"
+private const val COINBASE_DEEPLINK_ROOT = "algo:"
 
 internal fun isCoinbaseDeepLink(uri: PeraUri): Boolean {
-    return uri.scheme.equals(COINBASE_DEEPLINK_ROOT, ignoreCase = true)
+    return uri.rawUri.startsWith(COINBASE_DEEPLINK_ROOT, ignoreCase = true)
 }

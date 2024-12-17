@@ -21,6 +21,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           path-to-signatures: '.github/workflows/cla-signatures/v1/cla.json'
-          path-to-document: 'https://github.com/perawallet/pera-android/blob/PERA-1301-cla-github-action/CLA.md' # e.g. a CLA or a DCO document
+          path-to-document: 'https://github.com/perawallet/pera-android/blob/dev/CLA.md' # e.g. a CLA or a DCO document
           branch: 'cla' # non-protected branch that we'll merge into dev periodically
           allowlist: dependabot

@@ -74,6 +74,12 @@ class WalletConnectCustomTransactionAssetDetailHandler @Inject constructor(
             scope.async {
                 getAssetDetailFromIndexerUseCase(assetIdChunk).use(
                     onSuccess = { baseAssetDetails ->
+                        val missingAssets = assetIdList - baseAssetDetails.map { it.assetId }.toSet()
+
+                        if (missingAssets.isNotEmpty()) {
+                            fetchAssetsFromNodeAndUpdateCache(missingAssets.toList(), scope)
+                        }
+
                         baseAssetDetails.map { assetDetail ->
                             assetCacheMap[assetDetail.assetId] = mapAssetDetailToWcAssetDetail(assetDetail)
                         }

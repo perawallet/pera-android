@@ -15,6 +15,7 @@ Please ensure your pull request adheres to the following guidelines:
 - **Ensure all tests pass** before submitting.
 - Update documentation where necessary.
 - **Follow the existing code style**
+- Sign CLA if you have not done so already
 
 - Refer to our [Pull Request Template](.github/pull_request_template.md) for more information.
 

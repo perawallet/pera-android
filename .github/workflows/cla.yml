@@ -26,4 +26,4 @@ jobs:
           path-to-signatures: 'cla-signatures/v1/cla.json'
           path-to-document: 'https://github.com/perawallet/.github/blob/main/CLA.md' # e.g. a CLA or a DCO document
           branch: 'cla' # non-protected branch that we'll merge into dev periodically
-          allowlist: dependabot
+          allowlist: dependabot,yasin-ce,michaeltchuang,mitsinsar

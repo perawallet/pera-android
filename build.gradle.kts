@@ -36,6 +36,7 @@ allprojects {
         google()
         mavenCentral()
         maven(url = "https://jitpack.io")
+        maven(url = "https://repository.liferay.com/nexus/content/repositories/public")
     }
 }
 

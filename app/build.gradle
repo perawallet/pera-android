@@ -286,7 +286,7 @@ dependencies {
 
     // Wallet Connect v1
     implementation libs.java.websocket
-    implementation libs.bundles.khex
+    implementation libs.khex
     implementation libs.moshi.core
     implementation libs.moshi.kotlin
 

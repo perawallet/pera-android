@@ -22,7 +22,7 @@ import com.algorand.common.asset.data.service.AssetDetailApiServiceImpl
 import com.algorand.common.asset.data.service.AssetDetailNodeApiService
 import com.algorand.common.asset.data.service.AssetDetailNodeApiServiceImpl
 import com.algorand.common.asset.domain.repository.AssetRepository
-import com.algorand.common.foundation.network.getAlgodHttpClient
+import com.algorand.common.foundation.network.algod.getAlgodHttpClient
 import org.koin.dsl.module
 
 private val assetDetailKoinModule = module {

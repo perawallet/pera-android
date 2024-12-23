@@ -10,21 +10,22 @@
  * limitations under the License
  */
 
-package com.algorand.common.foundation.network
+package com.algorand.common.foundation.network.algod
 
+import com.algorand.common.foundation.network.PeraJsonNegotiation
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.darwin.Darwin
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.ANDROID
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
 
 internal actual fun getAlgodHttpClient(algodInterceptorPlugin: AlgodInterceptorPlugin): HttpClient {
-    return HttpClient(Darwin) {
+    return HttpClient(OkHttp) {
         install(Logging) {
-            logger = Logger.SIMPLE
+            logger = Logger.ANDROID
             level = LogLevel.BODY
         }
         install(ContentNegotiation) {

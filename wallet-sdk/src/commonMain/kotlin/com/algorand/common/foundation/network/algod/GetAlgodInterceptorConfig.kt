@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.common.foundation.network
+package com.algorand.common.foundation.network.algod
 
 fun interface GetAlgodInterceptorConfig {
     suspend operator fun invoke(): AlgodInterceptorPluginConfig

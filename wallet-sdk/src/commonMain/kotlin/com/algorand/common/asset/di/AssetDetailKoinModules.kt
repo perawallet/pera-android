@@ -12,7 +12,7 @@
 
 package com.algorand.common.asset.di
 
-import com.algorand.common.account.info.data.service.getIndexerApiHttpClient
+import com.algorand.common.foundation.network.indexer.getIndexerApiHttpClient
 import com.algorand.common.asset.data.database.di.assetDetailDatabaseModule
 import com.algorand.common.asset.data.repository.AssetDetailCacheHelper
 import com.algorand.common.asset.data.repository.AssetDetailCacheHelperImpl

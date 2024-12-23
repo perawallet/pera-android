@@ -12,8 +12,8 @@
 
 package co.algorand.app.di
 
-import com.algorand.common.foundation.network.GetIndexerInterceptorConfig
-import com.algorand.common.foundation.network.IndexerInterceptorPluginConfig
+import com.algorand.common.foundation.network.indexer.GetIndexerInterceptorConfig
+import com.algorand.common.foundation.network.indexer.IndexerInterceptorPluginConfig
 import org.koin.dsl.module
 
 val accountInformationModule = module {

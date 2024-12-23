@@ -17,7 +17,7 @@ import com.algorand.common.account.info.data.model.AccountInformationResponse
 import com.algorand.common.account.info.data.model.RekeyedAccountsResponse
 import com.algorand.common.foundation.PeraResult
 
-internal interface IndexerApiService {
+internal interface AccountInformationApiService {
 
     suspend fun getAccountInformation(
         publicKey: String,

@@ -28,15 +28,15 @@ import com.algorand.common.account.info.data.mapper.AssetHoldingEntityMapper
 import com.algorand.common.account.info.data.mapper.AssetHoldingEntityMapperImpl
 import com.algorand.common.account.info.data.mapper.AssetHoldingMapper
 import com.algorand.common.account.info.data.mapper.AssetHoldingMapperImpl
-import com.algorand.common.account.info.data.service.IndexerApiService
-import com.algorand.common.account.info.data.service.IndexerApiServiceImpl
-import com.algorand.common.account.info.data.service.getIndexerApiHttpClient
+import com.algorand.common.account.info.data.service.AccountInformationApiService
+import com.algorand.common.account.info.data.service.AccountInformationApiServiceImpl
+import com.algorand.common.foundation.network.indexer.getIndexerApiHttpClient
 import com.algorand.common.foundation.database.PeraDatabase
 import org.koin.dsl.module
 
 internal val accountInformationKoinModule = module {
-    single<IndexerApiService> {
-        IndexerApiServiceImpl(getIndexerApiHttpClient(get()))
+    single<AccountInformationApiService> {
+        AccountInformationApiServiceImpl(getIndexerApiHttpClient(get()))
     }
 
     factory<AccountInformationMapper> { AccountInformationMapperImpl(get(), get(), get()) }

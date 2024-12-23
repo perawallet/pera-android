@@ -10,9 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.info.data.service
+package com.algorand.common.foundation.network.indexer
 
-import com.algorand.common.foundation.network.IndexerInterceptorPlugin
-import io.ktor.client.HttpClient
-
-internal expect fun getIndexerApiHttpClient(indexerInterceptorPlugin: IndexerInterceptorPlugin): HttpClient
+fun interface GetIndexerInterceptorConfig {
+    suspend operator fun invoke(): IndexerInterceptorPluginConfig
+}

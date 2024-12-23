@@ -10,9 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.info.data.service
+package com.algorand.common.foundation.network.indexer
 
-import com.algorand.common.foundation.network.IndexerInterceptorPlugin
 import com.algorand.common.foundation.network.PeraJsonNegotiation
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.darwin.Darwin

@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.common.foundation.network
+package com.algorand.common.foundation.network.indexer
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpClientPlugin

@@ -21,9 +21,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
-internal class IndexerApiServiceImpl(
+internal class AccountInformationApiServiceImpl(
     private val client: HttpClient
-) : IndexerApiService {
+) : AccountInformationApiService {
 
     override suspend fun getAccountInformation(
         publicKey: String,

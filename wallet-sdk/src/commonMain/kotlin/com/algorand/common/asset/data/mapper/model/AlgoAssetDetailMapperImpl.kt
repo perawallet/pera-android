@@ -12,15 +12,15 @@
 
 package com.algorand.common.asset.data.mapper.model
 
-import com.algorand.common.asset.AssetConstants
-import com.algorand.common.asset.AssetConstants.ALGORAND_DISCORD_URL
-import com.algorand.common.asset.AssetConstants.ALGORAND_TELEGRAM_URL
-import com.algorand.common.asset.AssetConstants.ALGORAND_TWITTER_USERNAME
-import com.algorand.common.asset.AssetConstants.ALGORAND_WEBSITE_URL
-import com.algorand.common.asset.AssetConstants.ALGO_DECIMALS
-import com.algorand.common.asset.AssetConstants.ALGO_FULL_NAME
-import com.algorand.common.asset.AssetConstants.ALGO_SHORT_NAME
-import com.algorand.common.asset.AssetConstants.ALGO_TOTAL_SUPPLY
+import com.algorand.common.asset.domain.util.AssetConstants
+import com.algorand.common.asset.domain.util.AssetConstants.ALGORAND_DISCORD_URL
+import com.algorand.common.asset.domain.util.AssetConstants.ALGORAND_TELEGRAM_URL
+import com.algorand.common.asset.domain.util.AssetConstants.ALGORAND_TWITTER_USERNAME
+import com.algorand.common.asset.domain.util.AssetConstants.ALGORAND_WEBSITE_URL
+import com.algorand.common.asset.domain.util.AssetConstants.ALGO_DECIMALS
+import com.algorand.common.asset.domain.util.AssetConstants.ALGO_FULL_NAME
+import com.algorand.common.asset.domain.util.AssetConstants.ALGO_SHORT_NAME
+import com.algorand.common.asset.domain.util.AssetConstants.ALGO_TOTAL_SUPPLY
 import com.algorand.common.asset.domain.model.Asset
 import com.algorand.common.asset.domain.model.AssetDetail
 import com.algorand.common.asset.domain.model.VerificationTier

@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.common.asset
+package com.algorand.common.asset.domain.util
 
 object AssetConstants {
     const val ALGO_ID = -7L

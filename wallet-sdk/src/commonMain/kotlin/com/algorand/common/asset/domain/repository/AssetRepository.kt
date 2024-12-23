@@ -36,4 +36,6 @@ internal interface AssetRepository {
     suspend fun clearCache()
 
     suspend fun getCollectiblesDetail(collectibleIds: List<Long>): List<CollectibleDetail>
+
+    suspend fun fetchCollectibleDetail(collectibleAssetId: Long): PeraResult<CollectibleDetail>
 }

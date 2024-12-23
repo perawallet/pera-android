@@ -12,8 +12,8 @@
 
 package com.algorand.common.deeplink.builder
 
-import com.algorand.common.asset.AssetConstants.ALGO_ID
-import com.algorand.common.asset.getSafeAssetIdForResponse
+import com.algorand.common.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.common.asset.domain.util.getSafeAssetIdForResponse
 import com.algorand.common.deeplink.model.DeepLink
 import com.algorand.common.deeplink.model.DeepLinkPayload
 import com.algorand.common.deeplink.model.NotificationGroupType

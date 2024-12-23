@@ -12,13 +12,14 @@
 
 package com.algorand.common.asset.data.repository
 
-import com.algorand.common.asset.AssetConstants
+import com.algorand.common.asset.domain.util.AssetConstants
 import com.algorand.common.asset.data.database.dao.AssetDetailDao
 import com.algorand.common.asset.data.database.dao.CollectibleDao
 import com.algorand.common.asset.data.database.dao.CollectibleMediaDao
 import com.algorand.common.asset.data.database.dao.CollectibleTraitDao
 import com.algorand.common.asset.data.mapper.model.AlgoAssetDetailMapper
 import com.algorand.common.asset.data.mapper.model.AssetMapper
+import com.algorand.common.asset.data.mapper.model.collectible.CollectibleDetailMapper
 import com.algorand.common.asset.data.model.AssetResponse
 import com.algorand.common.asset.data.service.AssetDetailApiService
 import com.algorand.common.asset.data.service.AssetDetailNodeApiService
@@ -45,6 +46,7 @@ internal class AssetRepositoryImpl(
     private val algoAssetDetailMapper: AlgoAssetDetailMapper,
     private val collectibleMediaDao: CollectibleMediaDao,
     private val collectibleTraitDao: CollectibleTraitDao,
+    private val collectibleDetailMapper: CollectibleDetailMapper,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AssetRepository {
 
@@ -116,6 +118,22 @@ internal class AssetRepositoryImpl(
         return withContext(coroutineDispatcher) {
             assetDetailCacheHelper.getCollectibleDetails(collectibleIds)
         }
+    }
+
+    override suspend fun fetchCollectibleDetail(collectibleAssetId: Long): PeraResult<CollectibleDetail> {
+        return assetDetailApi.getAssetDetail(collectibleAssetId).use(
+            onSuccess = {
+                val collectibleDetail = collectibleDetailMapper(it)
+                if (collectibleDetail == null) {
+                    PeraResult.Error(Exception("CollectibleDetail is null"))
+                } else {
+                    PeraResult.Success(collectibleDetail)
+                }
+            },
+            onFailed = { exception, code ->
+                PeraResult.Error(exception, code)
+            }
+        )
     }
 
     override suspend fun getAssetDetail(assetId: Long): AssetDetail? {

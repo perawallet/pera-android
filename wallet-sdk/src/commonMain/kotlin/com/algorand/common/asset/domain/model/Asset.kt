@@ -12,7 +12,7 @@
 
 package com.algorand.common.asset.domain.model
 
-import com.algorand.common.asset.AssetConstants.ALGO_ID
+import com.algorand.common.asset.domain.util.AssetConstants.ALGO_ID
 
 sealed interface Asset {
 

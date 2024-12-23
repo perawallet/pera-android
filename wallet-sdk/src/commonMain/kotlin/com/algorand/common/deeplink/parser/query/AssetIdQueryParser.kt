@@ -12,7 +12,7 @@
 
 package com.algorand.common.deeplink.parser.query
 
-import com.algorand.common.asset.AssetConstants.ALGO_ID
+import com.algorand.common.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.common.deeplink.model.PeraUri
 import com.algorand.common.deeplink.utils.isCoinbaseDeepLink
 

@@ -10,18 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.asset.data.model
 
-import com.algorand.common.account.info.di.accountInformationKoinModule
-import com.algorand.common.account.local.di.localAccountsKoinModule
-import com.algorand.common.asset.di.assetDetailKoinModules
-import com.algorand.common.encryption.di.encryptionModule
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-val commonModuleKoinModules = listOf(
-    localAccountsKoinModule,
-    encryptionModule,
-    platformKoinModule(),
-    accountInformationKoinModule,
-    networkKoinModule,
-    assetDetailKoinModules
+@Serializable
+internal data class AssetCreatorResponse(
+    @SerialName("id") val id: Long?,
+    @SerialName("address") val publicKey: String?,
+    @SerialName("is_verified_asset_creator") val isVerifiedAssetCreator: Boolean?
 )

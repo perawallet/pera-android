@@ -10,18 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.asset.data.service
 
-import com.algorand.common.account.info.di.accountInformationKoinModule
-import com.algorand.common.account.local.di.localAccountsKoinModule
-import com.algorand.common.asset.di.assetDetailKoinModules
-import com.algorand.common.encryption.di.encryptionModule
+import com.algorand.common.asset.data.model.AssetResponse
+import com.algorand.common.foundation.PeraResult
+import com.algorand.common.foundation.network.model.PaginationResponse
 
-val commonModuleKoinModules = listOf(
-    localAccountsKoinModule,
-    encryptionModule,
-    platformKoinModule(),
-    accountInformationKoinModule,
-    networkKoinModule,
-    assetDetailKoinModules
-)
+internal interface AssetDetailApiService {
+
+    suspend fun getAssetsByIds(
+        assetIdsList: String,
+        includeDeleted: Boolean? = null
+    ): PeraResult<PaginationResponse<AssetResponse>>
+
+    suspend fun getAssetDetail(
+        nftAssetId: Long
+    ): PeraResult<AssetResponse>
+}

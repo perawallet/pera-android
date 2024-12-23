@@ -10,18 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.asset.data.model.collectible
 
-import com.algorand.common.account.info.di.accountInformationKoinModule
-import com.algorand.common.account.local.di.localAccountsKoinModule
-import com.algorand.common.asset.di.assetDetailKoinModules
-import com.algorand.common.encryption.di.encryptionModule
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-val commonModuleKoinModules = listOf(
-    localAccountsKoinModule,
-    encryptionModule,
-    platformKoinModule(),
-    accountInformationKoinModule,
-    networkKoinModule,
-    assetDetailKoinModules
-)
+@Serializable
+internal enum class CollectibleStandardTypeResponse {
+    @SerialName("arc3")
+    ARC_3,
+
+    @SerialName("arc69")
+    ARC_69,
+
+    UNKNOWN
+}

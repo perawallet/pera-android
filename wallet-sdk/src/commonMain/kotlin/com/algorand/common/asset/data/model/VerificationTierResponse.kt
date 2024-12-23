@@ -10,18 +10,24 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.asset.data.model
 
-import com.algorand.common.account.info.di.accountInformationKoinModule
-import com.algorand.common.account.local.di.localAccountsKoinModule
-import com.algorand.common.asset.di.assetDetailKoinModules
-import com.algorand.common.encryption.di.encryptionModule
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-val commonModuleKoinModules = listOf(
-    localAccountsKoinModule,
-    encryptionModule,
-    platformKoinModule(),
-    accountInformationKoinModule,
-    networkKoinModule,
-    assetDetailKoinModules
-)
+@Serializable
+enum class VerificationTierResponse {
+    @SerialName("verified")
+    VERIFIED,
+
+    @SerialName("unverified")
+    UNVERIFIED,
+
+    @SerialName("trusted")
+    TRUSTED,
+
+    @SerialName("suspicious")
+    SUSPICIOUS,
+
+    UNKNOWN
+}

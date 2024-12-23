@@ -10,21 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.utils.date
 
-import com.algorand.common.foundation.network.algod.AlgodInterceptorPlugin
-import com.algorand.common.foundation.network.indexer.IndexerInterceptorPlugin
-import com.algorand.common.foundation.network.pera.PeraMobileInterceptorPlugin
-import org.koin.dsl.module
+import kotlinx.datetime.Clock
 
-internal val networkKoinModule = module {
-    single<IndexerInterceptorPlugin> {
-        IndexerInterceptorPlugin(get())
-    }
-    single<AlgodInterceptorPlugin> {
-        AlgodInterceptorPlugin(get())
-    }
-    single<PeraMobileInterceptorPlugin> {
-        PeraMobileInterceptorPlugin(get())
+internal class TimeProviderImpl : TimeProvider {
+
+    override fun getCurrentTimeMillis(): Long {
+        return Clock.System.now().toEpochMilliseconds()
     }
 }

@@ -10,17 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.asset.data.service
 
-import com.algorand.common.foundation.network.AlgodInterceptorPlugin
-import com.algorand.common.foundation.network.IndexerInterceptorPlugin
-import org.koin.dsl.module
+import com.algorand.common.asset.data.model.NodeAssetDetailResponse
+import com.algorand.common.foundation.PeraResult
 
-internal val networkKoinModule = module {
-    single<IndexerInterceptorPlugin> {
-        IndexerInterceptorPlugin(get())
-    }
-    single<AlgodInterceptorPlugin> {
-        AlgodInterceptorPlugin(get())
-    }
+internal interface AssetDetailNodeApiService {
+
+    suspend fun getAssetDetail(assetId: Long): PeraResult<NodeAssetDetailResponse>
 }

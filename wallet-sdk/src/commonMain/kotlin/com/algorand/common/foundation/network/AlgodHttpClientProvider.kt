@@ -10,17 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.foundation.network
 
-import com.algorand.common.foundation.network.AlgodInterceptorPlugin
-import com.algorand.common.foundation.network.IndexerInterceptorPlugin
-import org.koin.dsl.module
+import io.ktor.client.HttpClient
 
-internal val networkKoinModule = module {
-    single<IndexerInterceptorPlugin> {
-        IndexerInterceptorPlugin(get())
-    }
-    single<AlgodInterceptorPlugin> {
-        AlgodInterceptorPlugin(get())
-    }
-}
+internal expect fun getAlgodHttpClient(algodInterceptorPlugin: AlgodInterceptorPlugin): HttpClient

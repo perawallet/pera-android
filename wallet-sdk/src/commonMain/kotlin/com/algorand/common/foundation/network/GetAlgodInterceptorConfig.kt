@@ -10,17 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.foundation.network
 
-import com.algorand.common.foundation.network.AlgodInterceptorPlugin
-import com.algorand.common.foundation.network.IndexerInterceptorPlugin
-import org.koin.dsl.module
-
-internal val networkKoinModule = module {
-    single<IndexerInterceptorPlugin> {
-        IndexerInterceptorPlugin(get())
-    }
-    single<AlgodInterceptorPlugin> {
-        AlgodInterceptorPlugin(get())
-    }
+fun interface GetAlgodInterceptorConfig {
+    suspend operator fun invoke(): AlgodInterceptorPluginConfig
 }

@@ -10,17 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.asset.data.utils
 
-import com.algorand.common.foundation.network.AlgodInterceptorPlugin
-import com.algorand.common.foundation.network.IndexerInterceptorPlugin
-import org.koin.dsl.module
-
-internal val networkKoinModule = module {
-    single<IndexerInterceptorPlugin> {
-        IndexerInterceptorPlugin(get())
-    }
-    single<AlgodInterceptorPlugin> {
-        AlgodInterceptorPlugin(get())
-    }
+/**
+ * Takes number list and returns Retrofit Query compatible string for array queries
+ * @param [1, 12, 123]
+ * @return 1,12,123
+ */
+internal fun Collection<Number>.toQueryString(): String {
+    return toString().replace(Regex("([^0-9,])"), "")
 }

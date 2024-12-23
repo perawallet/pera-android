@@ -10,18 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.common.di
+package com.algorand.common.asset.data.database.model
 
-import com.algorand.common.account.info.di.accountInformationKoinModule
-import com.algorand.common.account.local.di.localAccountsKoinModule
-import com.algorand.common.asset.data.database.di.assetDetailDatabaseModule
-import com.algorand.common.encryption.di.encryptionModule
-
-val commonModuleKoinModules = listOf(
-    localAccountsKoinModule,
-    encryptionModule,
-    platformKoinModule(),
-    accountInformationKoinModule,
-    networkKoinModule,
-    assetDetailDatabaseModule
-)
+internal enum class VerificationTierEntity {
+    VERIFIED,
+    UNVERIFIED,
+    TRUSTED,
+    SUSPICIOUS,
+    UNKNOWN
+}

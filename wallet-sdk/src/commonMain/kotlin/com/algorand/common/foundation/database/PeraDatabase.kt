@@ -20,11 +20,23 @@ import com.algorand.common.account.info.data.database.dao.AccountInformationDao
 import com.algorand.common.account.info.data.database.dao.AssetHoldingDao
 import com.algorand.common.account.info.data.database.model.AccountInformationEntity
 import com.algorand.common.account.info.data.database.model.AssetHoldingEntity
+import com.algorand.common.asset.data.database.dao.AssetDetailDao
+import com.algorand.common.asset.data.database.dao.CollectibleDao
+import com.algorand.common.asset.data.database.dao.CollectibleMediaDao
+import com.algorand.common.asset.data.database.dao.CollectibleTraitDao
+import com.algorand.common.asset.data.database.model.AssetDetailEntity
+import com.algorand.common.asset.data.database.model.CollectibleEntity
+import com.algorand.common.asset.data.database.model.CollectibleMediaEntity
+import com.algorand.common.asset.data.database.model.CollectibleTraitEntity
 
 @Database(
     entities = [
         AccountInformationEntity::class,
-        AssetHoldingEntity::class
+        AssetHoldingEntity::class,
+        AssetDetailEntity::class,
+        CollectibleEntity::class,
+        CollectibleMediaEntity::class,
+        CollectibleTraitEntity::class
     ],
     version = PeraDatabase.DATABASE_VERSION
 )
@@ -33,6 +45,10 @@ internal abstract class PeraDatabase : RoomDatabase() {
 
     abstract fun accountInformationDao(): AccountInformationDao
     abstract fun assetHoldingDao(): AssetHoldingDao
+    abstract fun assetDetailDao(): AssetDetailDao
+    abstract fun collectibleDao(): CollectibleDao
+    abstract fun collectibleMediaDao(): CollectibleMediaDao
+    abstract fun collectibleTraitDao(): CollectibleTraitDao
 
     companion object {
         const val DATABASE_VERSION = 1

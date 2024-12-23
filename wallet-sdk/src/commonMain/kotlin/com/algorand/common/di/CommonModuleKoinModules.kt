@@ -22,6 +22,5 @@ val commonModuleKoinModules = listOf(
     encryptionModule,
     platformKoinModule(),
     accountInformationKoinModule,
-    networkKoinModule,
-    assetDetailKoinModules
-)
+    networkKoinModule
+) + assetDetailKoinModules

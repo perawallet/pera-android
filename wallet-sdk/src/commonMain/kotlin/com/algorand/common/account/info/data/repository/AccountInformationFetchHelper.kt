@@ -10,9 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.info.domain.model
+package com.algorand.common.account.info.data.repository
 
-internal data class AccountAssets(
-    val address: String,
-    val assetHoldings: List<AssetHolding>
-)
+import com.algorand.common.account.info.data.model.AccountInformationResponse
+import com.algorand.common.foundation.PeraResult
+
+internal interface AccountInformationFetchHelper {
+    suspend fun fetchAccount(address: String): PeraResult<AccountInformationResponse>
+}

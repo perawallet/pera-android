@@ -12,14 +12,44 @@
 
 package co.algorand.app.di
 
+import com.algorand.common.foundation.network.algod.AlgodInterceptorPluginConfig
+import com.algorand.common.foundation.network.algod.GetAlgodInterceptorConfig
 import com.algorand.common.foundation.network.indexer.GetIndexerInterceptorConfig
 import com.algorand.common.foundation.network.indexer.IndexerInterceptorPluginConfig
+import com.algorand.common.foundation.network.pera.GetPeraMobileInterceptorConfig
+import com.algorand.common.foundation.network.pera.PeraMobileInterceptorPluginConfig
+import com.algorand.common.foundation.network.pera.PeraMobileUserAgent
 import org.koin.dsl.module
 
 val accountInformationModule = module {
     factory<GetIndexerInterceptorConfig> {
         GetIndexerInterceptorConfig {
             IndexerInterceptorPluginConfig(
+                baseUrl = "-",
+                apiKey = "-"
+            )
+        }
+    }
+    factory<GetPeraMobileInterceptorConfig> {
+        GetPeraMobileInterceptorConfig {
+            PeraMobileInterceptorPluginConfig(
+                baseUrl = "-",
+                apiKey = "-",
+                userAgent = PeraMobileUserAgent(
+                    packageName = "-",
+                    appVersion = "-",
+                    appName = "-",
+                    osVersion = "-",
+                    deviceModel = "-",
+                    languageTag = "-",
+                    clientType = "-"
+                )
+            )
+        }
+    }
+    factory<GetAlgodInterceptorConfig> {
+        GetAlgodInterceptorConfig {
+            AlgodInterceptorPluginConfig(
                 baseUrl = "-",
                 apiKey = "-"
             )

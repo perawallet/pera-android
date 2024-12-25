@@ -13,6 +13,8 @@
 package com.algorand.android.modules.card
 
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.BuildConfig.CARDS_MAINNET_URL
+import com.algorand.android.BuildConfig.CARDS_TESTNET_URL
 import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.modules.card.model.CardsPreview
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
@@ -20,7 +22,7 @@ import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
 import com.algorand.android.modules.perawebview.GetDeviceIdWebMessage
 import com.algorand.android.modules.perawebview.ParseOpenSystemBrowserUrl
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
-import com.algorand.android.ui.settings.developersettings.DeveloperSettingsPreviewUseCase
+import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +34,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CardsViewModel @Inject constructor(
-    private val developerSettingsPreviewUseCase: DeveloperSettingsPreviewUseCase,
+    private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
     private val getAuthorizedAddressesWebMessage: GetAuthorizedAddressesWebMessage,
     private val getDeviceIdWebMessage: GetDeviceIdWebMessage,
     private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl,
@@ -46,6 +48,13 @@ class CardsViewModel @Inject constructor(
     override fun onPageFinished(title: String?, url: String?) {
         super.onPageFinished(title, url)
         _cardsPreviewFlow.value = cardsPreviewFlow.value.copy(onPageFinished = Event(Unit))
+    }
+
+    fun getCardsUrl(): String {
+        return if (isConnectedToTestnet())
+            CARDS_TESTNET_URL
+        else
+            CARDS_MAINNET_URL
     }
 
     fun getAuthorizedAddresses() {
@@ -91,6 +100,6 @@ class CardsViewModel @Inject constructor(
     }
 
     fun isConnectedToTestnet(): Boolean {
-        return developerSettingsPreviewUseCase.isConnectedToTestnet()
+        return getIsActiveNodeTestnetUseCase.invoke()
     }
 }

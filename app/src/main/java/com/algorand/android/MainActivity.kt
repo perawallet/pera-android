@@ -35,8 +35,6 @@ import androidx.core.view.forEach
 import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
-import com.algorand.android.BuildConfig.DISCOVER_BROWSE_DAPP_MAINNET_URL
-import com.algorand.android.BuildConfig.DISCOVER_BROWSE_DAPP_TESTNET_URL
 import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
 import com.algorand.android.core.TransactionManager
 import com.algorand.android.customviews.CoreActionsTabBarView
@@ -139,12 +137,6 @@ class MainActivity :
 
     private val isAppUnlocked: Boolean
         get() = autoLockManager.isAppUnlocked
-
-    val discoverBrowseDappUrl: String
-        get() = if (coreActionsTabBarViewModel.isConnectedToTestnet())
-            DISCOVER_BROWSE_DAPP_TESTNET_URL
-        else
-            DISCOVER_BROWSE_DAPP_MAINNET_URL
 
     private val autoLockManagerListener = object : AutoLockManager.AutoLockManagerListener {
         override fun onLock() {
@@ -705,7 +697,6 @@ class MainActivity :
                 binding.bottomNavigationView.menu.forEach { menuItem ->
                     menuItem.isEnabled = isCoreActionsOpen.not()
                 }
-                handleNavigationButtonsForChosenNetwork()
             }
 
             override fun onSwapClick() {
@@ -870,7 +861,9 @@ class MainActivity :
         binding.apply {
             coreActionsTabBarView.hideWithAnimation()
             bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true
-            navController.navigateSafe(actionGlobalDiscoverHomeNavigation(discoverBrowseDappUrl))
+            navController.navigateSafe(actionGlobalDiscoverHomeNavigation(
+                coreActionsTabBarViewModel.getDiscoverBrowseDappUrl())
+            )
         }
     }
 

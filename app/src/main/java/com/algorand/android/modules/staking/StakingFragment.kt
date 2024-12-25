@@ -19,8 +19,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.algorand.android.BuildConfig.STAKING_MAINNET_URL
-import com.algorand.android.BuildConfig.STAKING_TESTNET_URL
 import com.algorand.android.R
 import com.algorand.android.databinding.FragmentStakingBinding
 import com.algorand.android.discover.common.ui.model.PeraWebChromeClient
@@ -68,12 +66,6 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
     override val basePeraWebViewViewModel: BasePeraWebViewViewModel
         get() = stakingViewModel
 
-    val stakingUrl: String
-        get() = if (stakingViewModel.isConnectedToTestnet())
-            STAKING_TESTNET_URL
-        else
-            STAKING_MAINNET_URL
-
     private val sendMessageEventCollector: suspend (Event<String>) -> Unit = {
         it.consume()?.let { message ->
             sendWebMessage(message)
@@ -111,7 +103,7 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
             screenStateView.setOnNeutralButtonClickListener {
                 screenStateView.hide()
                 webView.show()
-                webView.loadUrl(stakingUrl)
+                webView.loadUrl(stakingViewModel.getStakingUrl())
             }
         }
     }
@@ -133,7 +125,7 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
                 val webViewTheme = webViewThemeHelper.getWebViewThemeFromThemePreference(context)
                 val locale = Locale.getDefault().language
                 val webviewUrl = getCustomUrl(
-                    stakingUrl,
+                    stakingViewModel.getStakingUrl(),
                     webViewTheme,
                     stakingViewModel.getPrimaryCurrencyId(),
                     locale
@@ -176,7 +168,7 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
         stakingViewModel.getOpenDappWebview(jsonEncodedPayload)?.let { dappInfo ->
             nav(
                 StakingFragmentDirections.actionStakingFragmentToDiscoverDappNavigation(
-                    dappUrl = dappInfo.url ?: stakingUrl,
+                    dappUrl = dappInfo.url ?: stakingViewModel.getStakingUrl(),
                     dappTitle = dappInfo.name ?: "",
                     favorites = null, // always empty for now
                     showFavorites = false

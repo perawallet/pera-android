@@ -18,15 +18,15 @@ import com.algorand.android.BuildConfig.MELD_TESTNET_URL
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.tracking.meld.MeldAlgoBuyTapEventTracker
 import com.algorand.android.network.AlgodInterceptor
-import com.algorand.android.ui.settings.developersettings.DeveloperSettingsPreviewUseCase
+import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.utils.MAINNET_NETWORK_SLUG
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class MeldIntroViewModel @Inject constructor(
-    private val developerSettingsPreviewUseCase: DeveloperSettingsPreviewUseCase,
+    private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
     private val algodInterceptor: AlgodInterceptor,
     private val meldAlgoBuyTapEventTracker: MeldAlgoBuyTapEventTracker
 ) : BaseViewModel() {
@@ -50,6 +50,6 @@ class MeldIntroViewModel @Inject constructor(
     }
 
     fun isConnectedToTestnet(): Boolean {
-        return developerSettingsPreviewUseCase.isConnectedToTestnet()
+        return getIsActiveNodeTestnetUseCase.invoke()
     }
 }

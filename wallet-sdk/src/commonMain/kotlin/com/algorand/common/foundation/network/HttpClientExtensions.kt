@@ -23,7 +23,7 @@ suspend inline fun <reified T : Any> safeRequest(
     return try {
         request().toPeraResult<T>()
     } catch (exception: Exception) {
-        PeraResult.Error(IOException("API request is failed on the client"), 99)
+        PeraResult.Error(IOException("API request is failed on the client - $exception"), 99)
     }
 }
 

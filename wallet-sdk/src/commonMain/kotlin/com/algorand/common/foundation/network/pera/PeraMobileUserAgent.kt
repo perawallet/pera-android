@@ -12,7 +12,7 @@
 
 package com.algorand.common.foundation.network.pera
 
-internal data class PeraMobileUserAgent(
+data class PeraMobileUserAgent(
     val packageName: String,
     val appVersion: String,
     val appName: String,

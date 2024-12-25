@@ -38,7 +38,7 @@ internal class PeraMobileInterceptorPlugin(
             val config = plugin.getPeraMobileInterceptorConfig()
             context.url.setNodeAwareUrl(config)
             context.setNodeAwareHeaders(config)
-            context.setUserAgentHeaders()
+            context.setUserAgentHeaders(config.userAgent)
             proceed()
         }
     }
@@ -58,8 +58,7 @@ internal class PeraMobileInterceptorPlugin(
         }
     }
 
-    private fun HttpMessageBuilder.setUserAgentHeaders() {
-        val userAgent = getPeraMobileUserAgent()
+    private fun HttpMessageBuilder.setUserAgentHeaders(userAgent: PeraMobileUserAgent) {
         headers {
             append("App-Name", userAgent.appName)
             append("Client-Type", userAgent.clientType)
@@ -74,5 +73,6 @@ internal class PeraMobileInterceptorPlugin(
 
 data class PeraMobileInterceptorPluginConfig(
     val baseUrl: String,
-    val apiKey: String
+    val apiKey: String,
+    val userAgent: PeraMobileUserAgent
 )

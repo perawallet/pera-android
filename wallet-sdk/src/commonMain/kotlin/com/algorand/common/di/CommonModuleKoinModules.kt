@@ -15,12 +15,18 @@ package com.algorand.common.di
 import com.algorand.common.account.info.di.accountInformationKoinModule
 import com.algorand.common.account.local.di.localAccountsKoinModule
 import com.algorand.common.asset.di.assetDetailKoinModules
+import com.algorand.common.block.di.blockPollingKoinModule
+import com.algorand.common.cache.di.cacheKoinModule
 import com.algorand.common.encryption.di.encryptionModule
+import com.algorand.common.utils.date.dateKoinModule
 
 val commonModuleKoinModules = listOf(
     localAccountsKoinModule,
     encryptionModule,
     platformKoinModule(),
     accountInformationKoinModule,
-    networkKoinModule
+    networkKoinModule,
+    dateKoinModule,
+    blockPollingKoinModule,
+    cacheKoinModule
 ) + assetDetailKoinModules

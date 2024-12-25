@@ -15,11 +15,14 @@ package com.algorand.common.foundation.network.pera
 import com.algorand.common.foundation.network.PeraJsonNegotiation
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.darwin.Darwin
+import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 
 internal actual fun getPeraMobileHttpClient(peraMobileInterceptorPlugin: PeraMobileInterceptorPlugin): HttpClient {
@@ -27,6 +30,9 @@ internal actual fun getPeraMobileHttpClient(peraMobileInterceptorPlugin: PeraMob
         install(Logging) {
             logger = Logger.DEFAULT
             level = LogLevel.BODY
+        }
+        install(DefaultRequest) {
+            contentType(ContentType.Application.Json)
         }
         install(ContentNegotiation) {
             json(PeraJsonNegotiation)

@@ -17,12 +17,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class CollectibleResponse(
-    @SerialName("standard") val standard: CollectibleStandardTypeResponse?,
-    @SerialName("media_type") val mediaType: CollectibleMediaTypeResponse?,
-    @SerialName("primary_image") val primaryImageUrl: String?,
-    @SerialName("title") val title: String?,
-    @SerialName("collection") val collection: CollectionResponse?,
-    @SerialName("media") val collectibleMedias: List<CollectibleMediaResponse>?,
-    @SerialName("description") val description: String?,
-    @SerialName("traits") val traits: List<CollectibleTraitResponse>?
+    @SerialName("standard") val standard: CollectibleStandardTypeResponse? = null,
+    @SerialName("media_type") val mediaType: CollectibleMediaTypeResponse? = null,
+    @SerialName("primary_image") val primaryImageUrl: String? = null,
+    @SerialName("title") val title: String? = null,
+    @SerialName("collection") val collection: CollectionResponse? = null,
+    @SerialName("media") val collectibleMedias: List<CollectibleMediaResponse>? = null,
+    @SerialName("description") val description: String? = null,
+    @SerialName("traits") val traits: List<CollectibleTraitResponse>? = null
 )

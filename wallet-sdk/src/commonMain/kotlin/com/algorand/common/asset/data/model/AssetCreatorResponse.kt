@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class AssetCreatorResponse(
-    @SerialName("id") val id: Long?,
-    @SerialName("address") val publicKey: String?,
-    @SerialName("is_verified_asset_creator") val isVerifiedAssetCreator: Boolean?
+    @SerialName("id") val id: Long? = null,
+    @SerialName("address") val publicKey: String? = null,
+    @SerialName("is_verified_asset_creator") val isVerifiedAssetCreator: Boolean? = null
 )

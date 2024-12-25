@@ -17,8 +17,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class NodeAssetDetailParamsResponse(
-    @SerialName("decimal") val fractionalDecimal: Int?,
-    @SerialName("name") val fullName: String?,
-    @SerialName("unit-name") val shortName: String?,
-    @SerialName("total") val totalSupply: String?
+    @SerialName("decimal") val fractionalDecimal: Int? = null,
+    @SerialName("name") val fullName: String? = null,
+    @SerialName("unit-name") val shortName: String? = null,
+    @SerialName("total") val totalSupply: String? = null
 )

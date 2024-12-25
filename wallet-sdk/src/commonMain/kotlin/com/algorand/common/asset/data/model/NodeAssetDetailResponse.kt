@@ -17,6 +17,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class NodeAssetDetailResponse(
-    @SerialName("index") val id: Long?,
-    @SerialName("params") val nodeAssetDetailParamsResponse: NodeAssetDetailParamsResponse?
+    @SerialName("index") val id: Long? = null,
+    @SerialName("params") val nodeAssetDetailParamsResponse: NodeAssetDetailParamsResponse? = null
 )

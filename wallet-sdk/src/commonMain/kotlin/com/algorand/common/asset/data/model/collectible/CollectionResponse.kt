@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class CollectionResponse(
-    @SerialName("id") val collectionId: Long?,
-    @SerialName("name") val collectionName: String?,
-    @SerialName("description") val collectionDescription: String?
+    @SerialName("id") val collectionId: Long? = null,
+    @SerialName("name") val collectionName: String? = null,
+    @SerialName("description") val collectionDescription: String? = null
 )

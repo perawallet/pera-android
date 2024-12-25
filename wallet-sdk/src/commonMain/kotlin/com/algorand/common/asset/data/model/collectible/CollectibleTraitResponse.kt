@@ -17,6 +17,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class CollectibleTraitResponse(
-    @SerialName("display_name") val name: String?,
-    @SerialName("display_value") val value: String?
+    @SerialName("display_name") val name: String? = null,
+    @SerialName("display_value") val value: String? = null
 )

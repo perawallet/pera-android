@@ -17,8 +17,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class CollectibleMediaResponse(
-    @SerialName("type") val mediaType: CollectibleMediaTypeResponse?,
-    @SerialName("download_url") val downloadUrl: String?,
-    @SerialName("preview_url") val previewUrl: String?,
-    @SerialName("extension") val mediaTypeExtension: CollectibleMediaTypeExtensionResponse?
+    @SerialName("type") val mediaType: CollectibleMediaTypeResponse? = null,
+    @SerialName("download_url") val downloadUrl: String? = null,
+    @SerialName("preview_url") val previewUrl: String? = null,
+    @SerialName("extension") val mediaTypeExtension: CollectibleMediaTypeExtensionResponse? = null
 )

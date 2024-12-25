@@ -17,6 +17,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class CollectibleSearchResponse(
-    @SerialName("primary_image") val primaryImageUrl: String?,
-    @SerialName("title") val title: String?
+    @SerialName("primary_image") val primaryImageUrl: String? = null,
+    @SerialName("title") val title: String? = null
 )

@@ -20,17 +20,19 @@ import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
 import com.algorand.android.modules.perawebview.GetDeviceIdWebMessage
 import com.algorand.android.modules.perawebview.ParseOpenSystemBrowserUrl
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
+import com.algorand.android.ui.settings.developersettings.DeveloperSettingsPreviewUseCase
 import com.algorand.android.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class CardsViewModel @Inject constructor(
+    private val developerSettingsPreviewUseCase: DeveloperSettingsPreviewUseCase,
     private val getAuthorizedAddressesWebMessage: GetAuthorizedAddressesWebMessage,
     private val getDeviceIdWebMessage: GetDeviceIdWebMessage,
     private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl,
@@ -86,5 +88,9 @@ class CardsViewModel @Inject constructor(
 
     fun getPrimaryCurrencyId(): String {
         return currencyUseCase.getPrimaryCurrencyId()
+    }
+
+    fun isConnectedToTestnet(): Boolean {
+        return developerSettingsPreviewUseCase.isConnectedToTestnet()
     }
 }

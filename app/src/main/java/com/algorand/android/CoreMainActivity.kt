@@ -228,14 +228,14 @@ abstract class CoreMainActivity : BaseActivity() {
 
     private fun handleBottomBarNavigationForChosenNetwork() {
         binding.bottomNavigationView.menu.forEach { menuItem ->
-            if (menuItem.itemId == R.id.discoverHomeNavigation) {
-                menuItem.isEnabled = isConnectedToTestNet.not()
-            }
+//            if (menuItem.itemId == R.id.discoverHomeNavigation) {
+//                menuItem.isEnabled = isConnectedToTestNet.not()
+//            }
         }
     }
 
     private fun handleCoreActionsTabBarForChosenNetwork() {
-        binding.coreActionsTabBarView.setBrowseDappsEnabled(isConnectedToTestNet.not())
+        // binding.coreActionsTabBarView.setBrowseDappsEnabled(isConnectedToTestNet.not())
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {

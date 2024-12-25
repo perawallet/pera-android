@@ -68,6 +68,17 @@ android {
         buildConfigField "String", "DEEPLINK_PREFIX", '"algorand://"'
         buildConfigField "String", "VERSION_NAME", "\"$versionName\""
         buildConfigField "Integer", "VERSION_CODE", "$versionCode"
+
+        buildConfigField "String", "DISCOVER_TESTNET_URL", '"https://discover-mobile-staging.perawallet.app/"'
+        buildConfigField "String", "DISCOVER_MAINNET_URL", '"https://discover-mobile.perawallet.app/"'
+        buildConfigField "String", "DISCOVER_BROWSE_DAPP_TESTNET_URL", '"https://discover-mobile-staging.perawallet.app/main/browser"'
+        buildConfigField "String", "DISCOVER_BROWSE_DAPP_MAINNET_URL", '"https://discover-mobile.perawallet.app/main/browser"'
+        buildConfigField "String", "CARDS_TESTNET_URL", '"https://cards-mobile-staging.perawallet.app"'
+        buildConfigField "String", "CARDS_MAINNET_URL", '"https://cards-mobile.perawallet.app"'
+        buildConfigField "String", "MELD_TESTNET_URL", '"https://mainnet.staging.api.perawallet.app/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="'
+        buildConfigField "String", "MELD_MAINNET_URL", '"https://mainnet.api.perawallet.app/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="'
+        buildConfigField "String", "STAKING_TESTNET_URL", '"https://staking-mobile-staging.perawallet.app"'
+        buildConfigField "String", "STAKING_MAINNET_URL", '"https://staking-mobile.perawallet.app"'
     }
 
     signingConfigs {
@@ -128,11 +139,6 @@ android {
             buildConfigField "String", "DISCOVER_WEBVIEW_USERNAME", apiKeyProps["DISCOVER_WEBVIEW_USERNAME"]
             buildConfigField "String", "DISCOVER_WEBVIEW_PASSWORD", apiKeyProps["DISCOVER_WEBVIEW_PASSWORD"]
             buildConfigField "String", "DISCOVER_VERSION", "\"${libs.versions.android.discover.staging.get().toInteger()}\""
-            buildConfigField "String", "DISCOVER_URL", '"https://discover-mobile-staging.perawallet.app/"'
-            buildConfigField "String", "DISCOVER_BROWSE_DAPP_URL", '"https://discover-mobile-staging.perawallet.app/main/browser"'
-            buildConfigField "String", "CARDS_URL", '"https://cards-mobile-staging.perawallet.app"'
-            buildConfigField "String", "MELD_URL", '"https://mainnet.staging.api.perawallet.app/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="'
-            buildConfigField "String", "STAKING_URL", '"https://staking-mobile-staging.perawallet.app"'
             buildConfigField "String", "NODE_MAINNET_URL", apiUrlProps["NODE_MAINNET_URL"]
             buildConfigField "String", "NODE_TESTNET_URL", apiUrlProps["NODE_TESTNET_URL"]
             buildConfigField "String", "INDEXER_MAINNET_URL", apiUrlProps["INDEXER_MAINNET_URL"]
@@ -160,11 +166,6 @@ android {
             buildConfigField "String", "DISCOVER_WEBVIEW_USERNAME", apiKeyProps["DISCOVER_WEBVIEW_USERNAME"]
             buildConfigField "String", "DISCOVER_WEBVIEW_PASSWORD", apiKeyProps["DISCOVER_WEBVIEW_PASSWORD"]
             buildConfigField "String", "DISCOVER_VERSION", "\"${libs.versions.android.discover.prod.get().toInteger()}\""
-            buildConfigField "String", "DISCOVER_URL", '"https://discover-mobile.perawallet.app/"'
-            buildConfigField "String", "DISCOVER_BROWSE_DAPP_URL", '"https://discover-mobile.perawallet.app/main/browser"'
-            buildConfigField "String", "CARDS_URL", '"https://cards-mobile.perawallet.app"'
-            buildConfigField "String", "MELD_URL", '"https://mainnet.api.perawallet.app/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="'
-            buildConfigField "String", "STAKING_URL", '"https://staking-mobile.perawallet.app"'
             buildConfigField "String", "NODE_MAINNET_URL", apiUrlProps["NODE_MAINNET_URL"]
             buildConfigField "String", "NODE_TESTNET_URL", apiUrlProps["NODE_TESTNET_URL"]
             buildConfigField "String", "INDEXER_MAINNET_URL", apiUrlProps["INDEXER_MAINNET_URL"]

@@ -18,7 +18,7 @@ import com.algorand.android.utils.BaseUrlBuilder
 
 class DiscoverUrlBuilder private constructor(
     customBaseUrl: String? = null
-) : BaseUrlBuilder(customBaseUrl?.trim() ?: BuildConfig.DISCOVER_URL) {
+) : BaseUrlBuilder(customBaseUrl?.trim() ?: BuildConfig.DISCOVER_MAINNET_URL) {
 
     enum class DiscoverQuery(override val key: String) : UrlQueryParam {
         THEME("theme"),

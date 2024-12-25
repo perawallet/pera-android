@@ -70,10 +70,6 @@ class CoreActionsTabBarView @JvmOverloads constructor(
         binding.coreActionsButton.isEnabled = isEnabled
     }
 
-    fun setBrowseDappsEnabled(isEnabled: Boolean) {
-        binding.browseDAppsButton.isEnabled = isEnabled
-    }
-
     fun initViewState(viewState: CoreActionsTabBarViewModel.ViewState) {
         when (viewState) {
             is Content -> {

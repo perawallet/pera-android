@@ -13,6 +13,7 @@
 package com.algorand.android
 
 import androidx.lifecycle.ViewModel
+import com.algorand.android.ui.settings.developersettings.DeveloperSettingsPreviewUseCase
 import com.algorand.common.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
 import com.algorand.common.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.common.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
@@ -23,6 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CoreActionsTabBarViewModel @Inject constructor(
+    private val developerSettingsPreviewUseCase: DeveloperSettingsPreviewUseCase,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : ViewModel() {
 
@@ -30,9 +32,13 @@ class CoreActionsTabBarViewModel @Inject constructor(
     val viewState get() = _viewState.asStateFlow()
 
     fun initViewState() {
-        val isImmersveToggleEnabled = isFeatureToggleEnabled(IMMERSVE_BUTTON_TOGGLE)
+        val isImmersveToggleEnabled = isFeatureToggleEnabled(IMMERSVE_BUTTON_TOGGLE) && !isConnectedToTestnet()
         val isStakingToggleEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE)
         _viewState.value = ViewState.Content(isImmersveToggleEnabled, isStakingToggleEnabled)
+    }
+
+    fun isConnectedToTestnet(): Boolean {
+        return developerSettingsPreviewUseCase.isConnectedToTestnet()
     }
 
     sealed interface ViewState {

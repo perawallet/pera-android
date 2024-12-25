@@ -19,7 +19,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.algorand.android.BuildConfig.CARDS_URL
+import com.algorand.android.BuildConfig.CARDS_MAINNET_URL
+import com.algorand.android.BuildConfig.CARDS_TESTNET_URL
 import com.algorand.android.R
 import com.algorand.android.databinding.FragmentCardsBinding
 import com.algorand.android.discover.common.ui.model.PeraWebChromeClient
@@ -66,6 +67,12 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
     override val basePeraWebViewViewModel: BasePeraWebViewViewModel
         get() = cardsViewModel
 
+    val cardsUrl: String
+        get() = if (cardsViewModel.isConnectedToTestnet())
+            CARDS_TESTNET_URL
+        else
+            CARDS_MAINNET_URL
+
     private val sendMessageEventCollector: suspend (Event<String>) -> Unit = {
         it.consume()?.let { message ->
             sendWebMessage(message)
@@ -103,7 +110,7 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
             screenStateView.setOnNeutralButtonClickListener {
                 screenStateView.hide()
                 webView.show()
-                webView.loadUrl(CARDS_URL)
+                webView.loadUrl(cardsUrl)
             }
         }
     }
@@ -124,7 +131,7 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
             if (url == null) {
                 val webViewTheme = webViewThemeHelper.getWebViewThemeFromThemePreference(context)
                 val locale = Locale.getDefault().language
-                val webviewUrl = getCustomUrl(CARDS_URL, webViewTheme, cardsViewModel.getPrimaryCurrencyId(), locale)
+                val webviewUrl = getCustomUrl(cardsUrl, webViewTheme, cardsViewModel.getPrimaryCurrencyId(), locale)
                 loadUrl(webviewUrl)
             }
         }

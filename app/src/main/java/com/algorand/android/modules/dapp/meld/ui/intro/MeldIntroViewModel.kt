@@ -13,10 +13,12 @@
 package com.algorand.android.modules.dapp.meld.ui.intro
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.BuildConfig
+import com.algorand.android.BuildConfig.MELD_MAINNET_URL
+import com.algorand.android.BuildConfig.MELD_TESTNET_URL
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.tracking.meld.MeldAlgoBuyTapEventTracker
 import com.algorand.android.network.AlgodInterceptor
+import com.algorand.android.ui.settings.developersettings.DeveloperSettingsPreviewUseCase
 import com.algorand.android.utils.MAINNET_NETWORK_SLUG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -24,12 +26,17 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MeldIntroViewModel @Inject constructor(
+    private val developerSettingsPreviewUseCase: DeveloperSettingsPreviewUseCase,
     private val algodInterceptor: AlgodInterceptor,
     private val meldAlgoBuyTapEventTracker: MeldAlgoBuyTapEventTracker
 ) : BaseViewModel() {
 
     fun getMeldUrl(walletAddress: String): String {
-        return BuildConfig.MELD_URL + walletAddress
+        val meldUrl = if (isConnectedToTestnet())
+            MELD_TESTNET_URL
+        else
+            MELD_MAINNET_URL
+        return meldUrl + walletAddress
     }
 
     fun isMainNet(): Boolean {
@@ -40,5 +47,9 @@ class MeldIntroViewModel @Inject constructor(
         viewModelScope.launch {
             meldAlgoBuyTapEventTracker.logMeldAlgoBuyTapEvent()
         }
+    }
+
+    fun isConnectedToTestnet(): Boolean {
+        return developerSettingsPreviewUseCase.isConnectedToTestnet()
     }
 }

@@ -12,7 +12,6 @@
 
 package com.algorand.common.asset.di
 
-import com.algorand.common.foundation.network.indexer.getIndexerApiHttpClient
 import com.algorand.common.asset.data.database.di.assetDetailDatabaseModule
 import com.algorand.common.asset.data.repository.AssetDetailCacheHelper
 import com.algorand.common.asset.data.repository.AssetDetailCacheHelperImpl
@@ -21,13 +20,17 @@ import com.algorand.common.asset.data.service.AssetDetailApiService
 import com.algorand.common.asset.data.service.AssetDetailApiServiceImpl
 import com.algorand.common.asset.data.service.AssetDetailNodeApiService
 import com.algorand.common.asset.data.service.AssetDetailNodeApiServiceImpl
+import com.algorand.common.asset.domain.manager.AssetDetailCacheManager
+import com.algorand.common.asset.domain.manager.AssetDetailCacheManagerImpl
 import com.algorand.common.asset.domain.repository.AssetRepository
+import com.algorand.common.asset.domain.usecase.GetAssetDetailCacheStatusFlow
 import com.algorand.common.foundation.network.algod.getAlgodHttpClient
+import com.algorand.common.foundation.network.pera.getPeraMobileHttpClient
 import org.koin.dsl.module
 
 private val assetDetailKoinModule = module {
     single<AssetDetailApiService> {
-        AssetDetailApiServiceImpl(getIndexerApiHttpClient(get()))
+        AssetDetailApiServiceImpl(getPeraMobileHttpClient(get()))
     }
 
     single<AssetDetailNodeApiService> {
@@ -40,6 +43,13 @@ private val assetDetailKoinModule = module {
 
     single<AssetRepository> {
         AssetRepositoryImpl(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
+    }
+
+    single<AssetDetailCacheManager> { AssetDetailCacheManagerImpl(get(), get(), get(), get(), get(), get()) }
+    factory<GetAssetDetailCacheStatusFlow> {
+        GetAssetDetailCacheStatusFlow {
+            get<AssetDetailCacheManager>().cacheStatusFlow
+        }
     }
 }
 

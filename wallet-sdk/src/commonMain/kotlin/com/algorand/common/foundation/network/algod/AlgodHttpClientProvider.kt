@@ -12,6 +12,13 @@
 
 package com.algorand.common.foundation.network.algod
 
+import com.algorand.common.foundation.network.createHttpClient
+import com.algorand.common.foundation.network.installDefaultConfigs
 import io.ktor.client.HttpClient
 
-internal expect fun getAlgodHttpClient(algodInterceptorPlugin: AlgodInterceptorPlugin): HttpClient
+internal fun getAlgodHttpClient(algodInterceptorPlugin: AlgodInterceptorPlugin): HttpClient {
+    return createHttpClient().config {
+        installDefaultConfigs()
+        install(algodInterceptorPlugin)
+    }
+}

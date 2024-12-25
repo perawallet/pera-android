@@ -12,6 +12,13 @@
 
 package com.algorand.common.foundation.network.pera
 
+import com.algorand.common.foundation.network.createHttpClient
+import com.algorand.common.foundation.network.installDefaultConfigs
 import io.ktor.client.HttpClient
 
-internal expect fun getPeraMobileHttpClient(peraMobileInterceptorPlugin: PeraMobileInterceptorPlugin): HttpClient
+internal fun getPeraMobileHttpClient(peraMobileInterceptorPlugin: PeraMobileInterceptorPlugin): HttpClient {
+    return createHttpClient().config {
+        installDefaultConfigs()
+        install(peraMobileInterceptorPlugin)
+    }
+}

@@ -13,8 +13,14 @@
 package com.algorand.common.foundation.network
 
 import com.algorand.common.foundation.PeraResult
+import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
+import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.io.IOException
 
 suspend inline fun <reified T : Any> safeRequest(
@@ -32,5 +38,14 @@ suspend inline fun <reified T : Any> HttpResponse.toPeraResult(): PeraResult<T> 
         PeraResult.Success(this.body())
     } else {
         PeraResult.Error(Exception("Error"), this.status.value)
+    }
+}
+
+internal fun HttpClientConfig<*>.installDefaultConfigs() {
+    install(DefaultRequest) {
+        contentType(ContentType.Application.Json)
+    }
+    install(ContentNegotiation) {
+        json(PeraJsonNegotiation)
     }
 }

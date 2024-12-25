@@ -10,15 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.common.foundation.network.indexer
+package com.algorand.common.foundation.network
 
-import com.algorand.common.foundation.network.createHttpClient
-import com.algorand.common.foundation.network.installDefaultConfigs
 import io.ktor.client.HttpClient
 
-internal fun getIndexerApiHttpClient(indexerInterceptorPlugin: IndexerInterceptorPlugin): HttpClient {
-    return createHttpClient().config {
-        installDefaultConfigs()
-        install(indexerInterceptorPlugin)
-    }
-}
+internal expect fun createHttpClient(): HttpClient

@@ -20,6 +20,8 @@ import kotlinx.serialization.modules.contextual
 internal val PeraJsonNegotiation = Json {
     ignoreUnknownKeys = true
     isLenient = true
+    encodeDefaults = true
+    prettyPrint = true
     this.serializersModule = SerializersModule {
         contextual(LongAsStringSerializer)
     }

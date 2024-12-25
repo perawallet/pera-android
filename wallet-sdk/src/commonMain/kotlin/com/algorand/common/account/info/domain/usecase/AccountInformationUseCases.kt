@@ -43,3 +43,7 @@ fun interface GetEarliestLastFetchedRound {
 fun interface GetAccountDetailCacheStatusFlow {
     operator fun invoke(): Flow<AccountCacheStatus>
 }
+
+fun interface GetAllAccountInformationFlow {
+    operator fun invoke(): Flow<Map<String, AccountInformation?>>
+}

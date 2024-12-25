@@ -70,7 +70,7 @@ internal interface AssetHoldingDao {
     }
 
     @Query("SELECT * FROM asset_holding_table")
-    fun getAllAsFlow(): Flow<AssetHoldingEntity>
+    fun getAllAsFlow(): Flow<List<AssetHoldingEntity>>
 
     @Query("SELECT * FROM asset_holding_table WHERE encrypted_address = :encryptedAddress")
     fun getAssetsByAddressAsFlow(encryptedAddress: String): Flow<List<AssetHoldingEntity>>

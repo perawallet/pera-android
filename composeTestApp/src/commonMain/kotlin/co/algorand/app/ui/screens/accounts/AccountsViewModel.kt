@@ -10,11 +10,13 @@
  * limitations under the License
  */
 
-package co.algorand.app.ui.screens.home
+package co.algorand.app.ui.screens.accounts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.algorand.app.ui.screens.home.AccountsViewModel.ViewState
+import co.algorand.app.ui.screens.accounts.AccountsViewModel.ViewState
+import com.algorand.common.account.info.domain.model.AccountInformation
+import com.algorand.common.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.common.account.local.domain.model.LocalAccount
 import com.algorand.common.account.local.domain.usecase.AddAlgo25Account
 import com.algorand.common.account.local.domain.usecase.AddBip39Account
@@ -24,7 +26,9 @@ import com.algorand.common.algosdk.AlgoAccountSdk
 import com.algorand.common.viewmodel.StateDelegate
 import com.algorand.common.viewmodel.StateViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 
 class AccountsViewModel(
@@ -33,7 +37,8 @@ class AccountsViewModel(
     private val addAlgo25Account: AddAlgo25Account,
     private val algoAccountSdk: AlgoAccountSdk,
     private val deleteLocalAccount: DeleteLocalAccount,
-    private val stateDelegate: StateDelegate<ViewState>
+    private val stateDelegate: StateDelegate<ViewState>,
+    private val getAllAccountInformationFlow: GetAllAccountInformationFlow
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
     private var accountObserveJob: Job? = null
@@ -42,12 +47,32 @@ class AccountsViewModel(
         stateDelegate.setDefaultState(ViewState.Idle)
     }
 
+    fun recoverAccount(mnemonic: String) {
+        val account = algoAccountSdk.recoverAlgo25Account(mnemonic)
+        if (account != null) {
+            val localAccount = LocalAccount.Algo25(
+                address = account.address,
+                secretKey = account.secretKey
+            )
+            viewModelScope.launch {
+                addAlgo25Account(localAccount)
+            }
+        }
+    }
+
     fun initAccounts() {
         if (accountObserveJob != null) return
         accountObserveJob = viewModelScope.launch {
-            getAllLocalAccountAddressesAsFlow().collectLatest { addresses ->
-                stateDelegate.updateState { ViewState.Accounts(addresses) }
-            }
+            combine(
+                getAllLocalAccountAddressesAsFlow().distinctUntilChanged(),
+                getAllAccountInformationFlow().distinctUntilChanged()
+            ) { localAccounts, cachedAccounts ->
+                val accounts = mutableMapOf<String, AccountInformation?>()
+                localAccounts.forEach { address ->
+                    accounts[address] = cachedAccounts[address]
+                }
+                stateDelegate.updateState { ViewState.Accounts(accounts) }
+            }.launchIn(this)
         }
     }
 
@@ -81,6 +106,6 @@ class AccountsViewModel(
 
     sealed interface ViewState {
         data object Idle : ViewState
-        data class Accounts(val accounts: List<String>) : ViewState
+        data class Accounts(val accounts: Map<String, AccountInformation?>) : ViewState
     }
 }

@@ -49,6 +49,12 @@ import com.algorand.common.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.common.account.local.domain.usecase.DeleteLocalAccountUseCase
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
+import com.algorand.common.account.local.domain.usecase.GetLocalAccountCountFlow
+import com.algorand.common.account.local.domain.usecase.GetLocalAccountCountFlowUseCase
+import com.algorand.common.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.common.account.local.domain.usecase.GetLocalAccountsUseCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import org.koin.dsl.module
 
 internal val localAccountsKoinModule = module {
@@ -115,4 +121,11 @@ internal val localAccountsKoinModule = module {
     factory<GetAllLocalAccountAddressesAsFlow> { GetAllLocalAccountAddressesAsFlowUseCase(get(), get(), get(), get()) }
 
     factory<DeleteLocalAccount> { DeleteLocalAccountUseCase(get(), get(), get(), get()) }
+
+    factory<GetLocalAccounts> {
+        GetLocalAccountsUseCase(get(), get(), get(), get(), Dispatchers.IO)
+    }
+    factory<GetLocalAccountCountFlow> {
+        GetLocalAccountCountFlowUseCase(get(), get(), get(), get())
+    }
 }

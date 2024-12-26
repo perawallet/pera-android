@@ -19,10 +19,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 internal interface Algo25Dao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: Algo25Entity)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(entities: List<Algo25Entity>)
 
     @Query("SELECT * FROM algo_25")

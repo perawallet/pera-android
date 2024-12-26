@@ -19,10 +19,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 internal interface LedgerBleDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: LedgerBleEntity)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(entities: List<LedgerBleEntity>)
 
     @Query("SELECT * FROM ledger_ble")

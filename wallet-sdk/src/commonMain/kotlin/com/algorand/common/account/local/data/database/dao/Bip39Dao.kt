@@ -14,6 +14,7 @@ package com.algorand.common.account.local.data.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.algorand.common.account.local.data.database.model.Bip39Entity
 import kotlinx.coroutines.flow.Flow
@@ -21,10 +22,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 internal interface Bip39Dao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: Bip39Entity)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(entities: List<Bip39Entity>)
 
     @Query("SELECT * FROM bip_39")

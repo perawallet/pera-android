@@ -46,6 +46,7 @@ import com.algorand.common.account.info.domain.usecase.ClearAccountInformationCa
 import com.algorand.common.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.common.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.common.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
+import com.algorand.common.account.info.domain.usecase.GetAccountInformation
 import com.algorand.common.account.info.domain.usecase.GetAllAccountInformation
 import com.algorand.common.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.common.account.info.domain.usecase.GetAllAssetHoldingIds
@@ -118,6 +119,11 @@ internal val accountInformationKoinModule = module {
     factory<GetAllAccountInformationFlow> {
         GetAllAccountInformationFlow {
             get<AccountInformationRepository>().getAllAccountInformationFlow()
+        }
+    }
+    factory<GetAccountInformation> {
+        GetAccountInformation { address ->
+            get<AccountInformationRepository>().getAccountInformation(address)
         }
     }
 }

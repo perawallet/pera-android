@@ -30,7 +30,7 @@ internal class AccountCacheManagerImpl(
     private val updateLastKnownBlockNumber: UpdateLastKnownBlockNumber,
     private val shouldUpdateAccountCache: ShouldUpdateAccountCache,
     private val getLocalAccountCountFlow: GetLocalAccountCountFlow
-) : AccountCacheManager, LifecycleAwareCacheManager.CacheManagerListener {
+) : AccountCacheManager {
 
     private val cacheManagerListener = object : LifecycleAwareCacheManager.CacheManagerListener {
         override suspend fun onInitializeManager(coroutineScope: CoroutineScope) {

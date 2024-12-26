@@ -47,3 +47,7 @@ fun interface GetAccountDetailCacheStatusFlow {
 fun interface GetAllAccountInformationFlow {
     operator fun invoke(): Flow<Map<String, AccountInformation?>>
 }
+
+fun interface GetAccountInformation {
+    suspend operator fun invoke(address: String): AccountInformation?
+}

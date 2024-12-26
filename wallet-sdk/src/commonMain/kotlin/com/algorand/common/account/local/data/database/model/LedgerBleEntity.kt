@@ -24,5 +24,8 @@ internal data class LedgerBleEntity(
     val deviceMacAddress: String,
 
     @ColumnInfo("account_index_in_ledger")
-    val accountIndexInLedger: Int
+    val accountIndexInLedger: Int,
+
+    @ColumnInfo("bluetooth_name")
+    val bluetoothName: String?
 )

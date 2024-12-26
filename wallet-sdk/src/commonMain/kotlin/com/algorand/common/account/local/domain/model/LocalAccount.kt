@@ -67,6 +67,7 @@ sealed interface LocalAccount {
     data class LedgerBle(
         override val address: String,
         val deviceMacAddress: String,
+        val bluetoothName: String?,
         val indexInLedger: Int
     ) : LocalAccount
 

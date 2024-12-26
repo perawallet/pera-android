@@ -24,7 +24,8 @@ internal class LedgerBleEntityMapperImpl(
         return LedgerBleEntity(
             encryptedAddress = addressEncryptionManager.encrypt(localAccount.address),
             deviceMacAddress = localAccount.deviceMacAddress,
-            accountIndexInLedger = localAccount.indexInLedger
+            accountIndexInLedger = localAccount.indexInLedger,
+            bluetoothName = localAccount.bluetoothName
         )
     }
 }

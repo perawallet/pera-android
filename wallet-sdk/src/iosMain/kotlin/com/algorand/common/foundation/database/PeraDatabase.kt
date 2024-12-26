@@ -14,6 +14,7 @@ package com.algorand.common.foundation.database
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
@@ -27,7 +28,7 @@ internal fun getPeraDatabaseBuilder(): RoomDatabase.Builder<PeraDatabase> {
     val dbFilePath = documentDirectory() + "/${PeraDatabase.DATABASE_NAME}.db"
     return Room.databaseBuilder<PeraDatabase>(
         name = dbFilePath,
-    )
+    ).setDriver(BundledSQLiteDriver())
 }
 
 @OptIn(ExperimentalForeignApi::class)

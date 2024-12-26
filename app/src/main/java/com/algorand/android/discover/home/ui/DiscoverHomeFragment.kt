@@ -284,7 +284,8 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
         val homeUrl = getDiscoverHomeUrl(
             themePreference = getWebViewThemeFromThemePreference(themePreference),
             currency = discoverViewModel.getPrimaryCurrencyId(),
-            locale = Locale.getDefault().language
+            locale = Locale.getDefault().language,
+            isConnectedToTestnet = discoverViewModel.isConnectedToTestnet()
         )
         loadWebViewUrl(homeUrl)
     }

@@ -12,13 +12,12 @@
 
 package com.algorand.android.discover.utils
 
-import com.algorand.android.BuildConfig
 import com.algorand.android.discover.common.ui.model.WebViewTheme
 import com.algorand.android.utils.BaseUrlBuilder
 
 class DiscoverUrlBuilder private constructor(
-    customBaseUrl: String? = null
-) : BaseUrlBuilder(customBaseUrl?.trim() ?: BuildConfig.DISCOVER_URL) {
+    customBaseUrl: String
+) : BaseUrlBuilder(customBaseUrl.trim()) {
 
     enum class DiscoverQuery(override val key: String) : UrlQueryParam {
         THEME("theme"),
@@ -67,7 +66,7 @@ class DiscoverUrlBuilder private constructor(
 
     companion object {
         const val PLATFORM_NAME = "android"
-        fun create(customBaseUrl: String? = null): DiscoverUrlBuilder {
+        fun create(customBaseUrl: String): DiscoverUrlBuilder {
             return DiscoverUrlBuilder(customBaseUrl)
         }
     }

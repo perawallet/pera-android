@@ -122,7 +122,8 @@ class DiscoverDetailFragment :
                             tokenId = tokenId,
                             poolId = preview.tokenDetail.poolId,
                             currency = discoverViewModel.getPrimaryCurrencyId(),
-                            locale = Locale.getDefault().language
+                            locale = Locale.getDefault().language,
+                            isConnectedToTestnet = discoverViewModel.isConnectedToTestnet()
                         ),
                         getDiscoverAuthHeader()
                     )

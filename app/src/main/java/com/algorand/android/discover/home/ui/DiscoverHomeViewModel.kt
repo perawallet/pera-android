@@ -22,6 +22,7 @@ import com.algorand.android.discover.home.ui.model.DiscoverHomePreview
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomePreviewUseCase
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomeUseCase
 import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
+import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.utils.preference.ThemePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +37,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverHomeViewModel @Inject constructor(
+    private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
     private val discoverHomePreviewUseCase: DiscoverHomePreviewUseCase,
     private val discoverHomeEventTracker: DiscoverHomeEventTracker,
     private val discoverHomeUseCase: DiscoverHomeUseCase,
@@ -221,6 +223,10 @@ class DiscoverHomeViewModel @Inject constructor(
 
     override fun getDiscoverThemePreference(): ThemePreference {
         return discoverHomePreviewFlow.value.themePreference
+    }
+
+    fun isConnectedToTestnet(): Boolean {
+        return getIsActiveNodeTestnetUseCase.invoke()
     }
 
     companion object {

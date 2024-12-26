@@ -36,7 +36,8 @@ internal class LedgerBleMapperImplTest {
         val expected = LocalAccount.LedgerBle(
             address = "decrypted_address",
             deviceMacAddress = LEDGER_BLE_ENTITY.deviceMacAddress,
-            indexInLedger = LEDGER_BLE_ENTITY.accountIndexInLedger
+            indexInLedger = LEDGER_BLE_ENTITY.accountIndexInLedger,
+            bluetoothName = LEDGER_BLE_ENTITY.bluetoothName
         )
         assertEquals(expected, result)
     }

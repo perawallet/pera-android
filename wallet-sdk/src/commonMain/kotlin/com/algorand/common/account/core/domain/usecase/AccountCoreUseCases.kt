@@ -16,6 +16,10 @@ fun interface AddAlgo25Account {
     suspend operator fun invoke(address: String, secretKey: ByteArray, isBackedUp: Boolean, customName: String?)
 }
 
+fun interface AddBip39Account {
+    suspend operator fun invoke(address: String, secretKey: ByteArray, isBackedUp: Boolean, customName: String?)
+}
+
 fun interface AddLedgerBleAccount {
     suspend operator fun invoke(
         address: String,

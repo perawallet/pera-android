@@ -15,11 +15,10 @@ package co.algorand.app.ui.screens.accounts
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.algorand.app.ui.screens.accounts.AccountsViewModel.ViewState
+import com.algorand.common.account.core.domain.usecase.AddAlgo25Account
+import com.algorand.common.account.core.domain.usecase.AddBip39Account
 import com.algorand.common.account.info.domain.model.AccountInformation
 import com.algorand.common.account.info.domain.usecase.GetAllAccountInformationFlow
-import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.account.local.domain.usecase.AddAlgo25Account
-import com.algorand.common.account.local.domain.usecase.AddBip39Account
 import com.algorand.common.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.common.algosdk.AlgoAccountSdk
@@ -50,12 +49,8 @@ class AccountsViewModel(
     fun recoverAccount(mnemonic: String) {
         val account = algoAccountSdk.recoverAlgo25Account(mnemonic)
         if (account != null) {
-            val localAccount = LocalAccount.Algo25(
-                address = account.address,
-                secretKey = account.secretKey
-            )
             viewModelScope.launch {
-                addAlgo25Account(localAccount)
+                addAlgo25Account(account.address, account.secretKey, false, null)
             }
         }
     }
@@ -79,22 +74,14 @@ class AccountsViewModel(
     fun addAlgo25Account() {
         viewModelScope.launch {
             val account = algoAccountSdk.createAlgo25Account()
-            val algo25Account = LocalAccount.Algo25(
-                address = account.address,
-                secretKey = account.secretKey
-            )
-            addAlgo25Account(algo25Account)
+            addAlgo25Account(account.address, account.secretKey, false, null)
         }
     }
 
     fun addBip39Account() {
         viewModelScope.launch {
             val account = algoAccountSdk.createBip39Account()
-            val bip39Account = LocalAccount.Bip39(
-                address = account.address,
-                secretKey = account.secretKey
-            )
-            addBip39Account(bip39Account)
+            addBip39Account(account.address, account.secretKey, false, null)
         }
     }
 

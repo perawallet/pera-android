@@ -52,6 +52,10 @@ import com.algorand.common.account.info.domain.usecase.GetAllAccountInformationF
 import com.algorand.common.account.info.domain.usecase.GetAllAssetHoldingIds
 import com.algorand.common.account.info.domain.usecase.GetCachedAccountInformationCountFlow
 import com.algorand.common.account.info.domain.usecase.GetEarliestLastFetchedRound
+import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedErrorAccount
+import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedErrorAccountUseCase
+import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
+import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedSuccessAccountUseCase
 import com.algorand.common.foundation.database.PeraDatabase
 import com.algorand.common.foundation.network.indexer.getIndexerApiHttpClient
 import org.koin.dsl.module
@@ -86,6 +90,8 @@ internal val accountInformationKoinModule = module {
     factory<AccountInformationErrorEntityMapper> { AccountInformationErrorEntityMapperImpl(get()) }
     factory<AssetHoldingEntityMapper> { AssetHoldingEntityMapperImpl(get()) }
     factory<GetAccountDetailCacheStatusFlow> { GetAccountDetailCacheStatusFlowUseCase(get(), get()) }
+    factory<IsThereAnyCachedErrorAccount> { IsThereAnyCachedErrorAccountUseCase(get()) }
+    factory<IsThereAnyCachedSuccessAccount> { IsThereAnyCachedSuccessAccountUseCase(get()) }
     factory<FetchAndCacheAccountInformation> {
         FetchAndCacheAccountInformation { addresses ->
             get<AccountInformationRepository>().fetchAndCacheAccountInformation(addresses)

@@ -12,13 +12,15 @@
 
 package com.algorand.common.account.local.domain.usecase
 
+import com.algorand.common.account.local.domain.model.LocalAccount
+
 internal class UpdateNoAuthAccountToAlgo25UseCase(
     private val deleteLocalAccount: DeleteLocalAccount,
-    private val createAlgo25Account: CreateAlgo25Account
+    private val saveAlgo25Account: SaveAlgo25Account
 ) : UpdateNoAuthAccountToAlgo25 {
 
     override suspend fun invoke(address: String, secretKey: ByteArray) {
         deleteLocalAccount(address)
-        createAlgo25Account(address, secretKey)
+        saveAlgo25Account(LocalAccount.Algo25(address, secretKey))
     }
 }

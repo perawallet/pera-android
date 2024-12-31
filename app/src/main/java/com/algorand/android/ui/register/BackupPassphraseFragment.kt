@@ -21,7 +21,7 @@ import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentBackupPassphraseBinding
-import com.algorand.android.models.Account
+import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.register.BackupPassphraseFragmentDirections.Companion.actionBackupPassphraseFragmentToBackupPassphraseAccountNameNavigation
@@ -75,7 +75,7 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
     }
 
     private fun setupPassphrase() {
-        val secretKey = (args.accountCreation?.tempAccount?.detail as? Account.Detail.Standard)?.secretKey
+        val secretKey = (args.accountCreation?.type as? AccountCreation.Type.Algo25)?.secretKey
             ?: backupPassphraseViewModel.getAccountSecretKey(args.publicKeyOfAccountToBackup)
         secretKey?.let {
             try {

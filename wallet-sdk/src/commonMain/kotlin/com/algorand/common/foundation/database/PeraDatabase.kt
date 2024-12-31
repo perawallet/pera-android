@@ -16,6 +16,8 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
+import com.algorand.common.account.custom.data.database.dao.CustomInfoDao
+import com.algorand.common.account.custom.data.database.model.CustomInfoEntity
 import com.algorand.common.account.info.data.database.dao.AccountInformationDao
 import com.algorand.common.account.info.data.database.dao.AssetHoldingDao
 import com.algorand.common.account.info.data.database.model.AccountInformationEntity
@@ -36,7 +38,8 @@ import com.algorand.common.asset.data.database.model.CollectibleTraitEntity
         AssetDetailEntity::class,
         CollectibleEntity::class,
         CollectibleMediaEntity::class,
-        CollectibleTraitEntity::class
+        CollectibleTraitEntity::class,
+        CustomInfoEntity::class
     ],
     version = PeraDatabase.DATABASE_VERSION
 )
@@ -49,6 +52,7 @@ internal abstract class PeraDatabase : RoomDatabase() {
     abstract fun collectibleDao(): CollectibleDao
     abstract fun collectibleMediaDao(): CollectibleMediaDao
     abstract fun collectibleTraitDao(): CollectibleTraitDao
+    abstract fun customInfoDao(): CustomInfoDao
 
     companion object {
         const val DATABASE_VERSION = 1

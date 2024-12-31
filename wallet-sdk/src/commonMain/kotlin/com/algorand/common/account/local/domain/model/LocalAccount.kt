@@ -25,7 +25,7 @@ sealed interface LocalAccount {
             if (this === other) return true
             if (other == null || this::class != other::class) return false
 
-            other as Algo25
+            other as Bip39
 
             if (address != other.address) return false
             if (!secretKey.contentEquals(other.secretKey)) return false

@@ -12,6 +12,7 @@
 
 package com.algorand.common.account.local.domain.usecase
 
+import com.algorand.common.account.local.domain.model.LocalAccount
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -20,20 +21,20 @@ import org.junit.Test
 class UpdateNoAuthAccountToBip39UseCaseTest {
 
     private val deleteLocalAccount: DeleteLocalAccount = mockk(relaxed = true)
-    private val createBip39Account: CreateBip39Account = mockk(relaxed = true)
+    private val saveBip39Account: SaveBip39Account = mockk(relaxed = true)
 
-    private val sut = UpdateNoAuthAccountToBip39UseCase(deleteLocalAccount, createBip39Account)
+    private val sut = UpdateNoAuthAccountToBip39UseCase(deleteLocalAccount, saveBip39Account)
 
     @Test
-    fun `EXPECT noAuthAccount to be deleted and new Algo25Account to be created`() = runTest {
+    fun `EXPECT noAuthAccount to be deleted and new Bip39Account to be created`() = runTest {
         sut(ADDRESS, SECRET_KEY)
 
         coVerify { deleteLocalAccount(ADDRESS) }
-        coVerify { createBip39Account(ADDRESS, SECRET_KEY) }
+        coVerify { saveBip39Account(LocalAccount.Bip39(ADDRESS, SECRET_KEY)) }
     }
 
     companion object {
-        private const val ADDRESS = "ADDRESS"
-        private val SECRET_KEY = byteArrayOf()
+        private const val ADDRESS: String = "ADDRESS"
+        private val SECRET_KEY: ByteArray = byteArrayOf()
     }
 }

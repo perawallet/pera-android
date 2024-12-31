@@ -10,17 +10,25 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.domain.usecase
+package com.algorand.common.account.core.domain.usecase
 
-import com.algorand.common.account.local.domain.model.LocalAccount
+fun interface AddAlgo25Account {
+    suspend operator fun invoke(address: String, secretKey: ByteArray, isBackedUp: Boolean, customName: String?)
+}
 
-internal class UpdateNoAuthAccountToAlgo25UseCase(
-    private val deleteLocalAccount: DeleteLocalAccount,
-    private val saveAlgo25Account: SaveAlgo25Account
-) : UpdateNoAuthAccountToAlgo25 {
+fun interface AddLedgerBleAccount {
+    suspend operator fun invoke(
+        address: String,
+        deviceMacAddress: String,
+        indexInLedger: Int,
+        customName: String?,
+        bluetoothName: String?
+    )
+}
 
-    override suspend fun invoke(address: String, secretKey: ByteArray) {
-        deleteLocalAccount(address)
-        saveAlgo25Account(LocalAccount.Algo25(address, secretKey))
-    }
+fun interface AddNoAuthAccount {
+    suspend operator fun invoke(
+        address: String,
+        customName: String?
+    )
 }

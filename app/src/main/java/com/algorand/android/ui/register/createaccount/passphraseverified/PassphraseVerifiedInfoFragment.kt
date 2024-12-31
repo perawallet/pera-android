@@ -61,9 +61,7 @@ class PassphraseVerifiedInfoFragment : BaseInfoFragment() {
             nav(
                 PassphraseVerifiedInfoFragmentDirections
                     .actionPassphraseVerifiedInfoFragmentToBackupPassphraseAccountNameNavigation(
-                        accountCreation.copy(
-                            tempAccount = accountCreation.tempAccount.copy(isBackedUp = true)
-                        )
+                        accountCreation.copy(isBackedUp = true)
                     )
             )
         } ?: navToHomeNavigation()

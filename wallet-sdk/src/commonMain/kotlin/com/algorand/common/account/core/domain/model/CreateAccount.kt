@@ -10,17 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.domain.usecase
+package com.algorand.common.account.core.domain.model
 
-import com.algorand.common.account.local.domain.model.LocalAccount
+data class CreateAccount(
+    val address: String,
+    var customName: String?,
+    val isBackedUp: Boolean,
+    val type: Type
+) {
 
-internal class UpdateNoAuthAccountToAlgo25UseCase(
-    private val deleteLocalAccount: DeleteLocalAccount,
-    private val saveAlgo25Account: SaveAlgo25Account
-) : UpdateNoAuthAccountToAlgo25 {
-
-    override suspend fun invoke(address: String, secretKey: ByteArray) {
-        deleteLocalAccount(address)
-        saveAlgo25Account(LocalAccount.Algo25(address, secretKey))
+    sealed interface Type {
+        data class Algo25(val secretKey: ByteArray) : Type
+        data class LedgerBle(val deviceMacAddress: String, val indexInLedger: Int, val bluetoothName: String?) : Type
+        data object NoAuth : Type
     }
 }

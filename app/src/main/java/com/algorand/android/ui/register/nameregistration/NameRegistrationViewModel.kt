@@ -16,12 +16,10 @@ package com.algorand.android.ui.register.nameregistration
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.ui.NameRegistrationPreview
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.usecase.NameRegistrationPreviewUseCase
-import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.toShortenedAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,8 +40,8 @@ class NameRegistrationViewModel @Inject constructor(
         get() = _nameRegistrationPreviewFlow
 
     private val accountCreation = savedStateHandle.get<AccountCreation>(ACCOUNT_CREATION_KEY)
-    private val accountAddress = accountCreation?.tempAccount?.address
-    private val accountName = accountCreation?.tempAccount?.name
+    private val accountAddress = accountCreation?.address
+    private val accountName = accountCreation?.customName
 
     val predefinedAccountName: String
         get() = accountName.takeUnless { it.isNullOrBlank() } ?: accountAddress.toShortenedAddress()
@@ -67,9 +65,9 @@ class NameRegistrationViewModel @Inject constructor(
         }
     }
 
-    fun addNewAccount(account: Account, creationType: CreationType?) {
+    fun addNewAccount(account: AccountCreation) {
         viewModelScope.launchIO {
-            nameRegistrationPreviewUseCase.addNewAccount(account, creationType)
+            nameRegistrationPreviewUseCase.addNewAccount(account)
         }
     }
 

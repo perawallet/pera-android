@@ -111,7 +111,7 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
                 context?.showAlertDialog(getString(R.string.error), getString(R.string.this_account_already_exists))
             }
             getCreateAccountEvent()?.consume()
-                ?.let { nameRegistrationViewModel.addNewAccount(it.tempAccount, it.creationType) }
+                ?.let { nameRegistrationViewModel.addNewAccount(it) }
             getUpdateWatchAccountEvent()?.consume()
                 ?.let { nameRegistrationViewModel.updateWatchAccount(it) }
             handleNextNavigationEvent?.consume()?.let { navToNextFragment() }

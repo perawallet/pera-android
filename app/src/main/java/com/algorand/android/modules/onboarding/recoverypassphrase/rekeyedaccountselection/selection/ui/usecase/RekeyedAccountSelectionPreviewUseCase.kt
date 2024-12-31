@@ -114,7 +114,7 @@ class RekeyedAccountSelectionPreviewUseCase @Inject constructor(
         )
     }
 
-    fun updatePreviewWithChosenAccount(
+    suspend fun updatePreviewWithChosenAccount(
         preview: RekeyedAccountSelectionPreview,
         accountCreation: AccountCreation
     ): RekeyedAccountSelectionPreview {
@@ -124,12 +124,14 @@ class RekeyedAccountSelectionPreviewUseCase @Inject constructor(
                 if (isAccountLimitExceed) {
                     return preview.copy(showAccountCountExceedErrorEvent = Event(Unit))
                 }
-                val rekeyedAccount = Account.create(
-                    publicKey = item.accountDisplayName.getRawAccountAddress(),
-                    detail = Account.Detail.Rekeyed(null),
-                    accountName = item.accountDisplayName.getAccountPrimaryDisplayName()
+                val rekeyedAccount = AccountCreation(
+                    address = item.accountDisplayName.getRawAccountAddress(),
+                    customName = item.accountDisplayName.getAccountPrimaryDisplayName(),
+                    isBackedUp = true,
+                    type = AccountCreation.Type.NoAuth,
+                    creationType = CreationType.REKEYED
                 )
-                accountAdditionUseCase.addNewAccount(rekeyedAccount, CreationType.REKEYED)
+                accountAdditionUseCase.addNewAccount(rekeyedAccount)
             }
         }
         return preview.copy(navToNameRegistrationEvent = Event(accountCreation))

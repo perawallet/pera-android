@@ -51,3 +51,11 @@ fun interface GetAllAccountInformationFlow {
 fun interface GetAccountInformation {
     suspend operator fun invoke(address: String): AccountInformation?
 }
+
+fun interface IsThereAnyCachedErrorAccount {
+    suspend operator fun invoke(excludeNoAuthAccounts: Boolean): Boolean
+}
+
+fun interface IsThereAnyCachedSuccessAccount {
+    suspend operator fun invoke(excludeNoAuthAccounts: Boolean): Boolean
+}

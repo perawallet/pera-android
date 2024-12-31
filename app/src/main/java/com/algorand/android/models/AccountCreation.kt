@@ -15,10 +15,43 @@ package com.algorand.android.models
 
 import android.os.Parcelable
 import com.algorand.android.utils.analytics.CreationType
+import com.algorand.common.account.core.domain.model.CreateAccount
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AccountCreation(
-    val tempAccount: Account,
+    val address: String,
+    var customName: String?,
+    val isBackedUp: Boolean,
+    val type: Type,
     val creationType: CreationType
-) : Parcelable
+) : Parcelable {
+
+    sealed interface Type : Parcelable {
+        @Parcelize
+        data class Algo25(val secretKey: ByteArray) : Type
+
+        @Parcelize
+        data class LedgerBle(val deviceMacAddress: String, val indexInLedger: Int, val bluetoothName: String?) : Type
+
+        @Parcelize
+        data object NoAuth : Type
+    }
+
+    fun toCreateAccount(): CreateAccount {
+        return CreateAccount(
+            address = address,
+            customName = customName,
+            isBackedUp = isBackedUp,
+            type = when (type) {
+                is Type.Algo25 -> CreateAccount.Type.Algo25(type.secretKey)
+                Type.NoAuth -> CreateAccount.Type.NoAuth
+                is Type.LedgerBle -> CreateAccount.Type.LedgerBle(
+                    type.deviceMacAddress,
+                    type.indexInLedger,
+                    type.bluetoothName
+                )
+            }
+        )
+    }
+}

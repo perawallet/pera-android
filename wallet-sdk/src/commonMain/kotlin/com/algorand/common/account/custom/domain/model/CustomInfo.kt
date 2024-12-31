@@ -16,5 +16,6 @@ package com.algorand.common.account.custom.domain.model
 data class CustomInfo(
     val address: String,
     val customName: String?,
-    val orderIndex: Int
+    val orderIndex: Int,
+    val isBackedUp: Boolean
 )

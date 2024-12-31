@@ -12,13 +12,15 @@
 
 package com.algorand.common.account.local.domain.usecase
 
+import com.algorand.common.account.local.domain.model.LocalAccount
+
 internal class UpdateNoAuthAccountToLedgerBleUseCase(
     private val deleteLocalAccount: DeleteLocalAccount,
-    private val createLedgerBleAccount: CreateLedgerBleAccount
+    private val saveLedgerBleAccount: SaveLedgerBleAccount
 ) : UpdateNoAuthAccountToLedgerBle {
 
-    override suspend fun invoke(address: String, deviceMacAddress: String, indexInLedger: Int) {
+    override suspend fun invoke(address: String, deviceMacAddress: String, bluetoothName: String, indexInLedger: Int) {
         deleteLocalAccount(address)
-        createLedgerBleAccount(address, deviceMacAddress, indexInLedger)
+        saveLedgerBleAccount(LocalAccount.LedgerBle(address, deviceMacAddress, bluetoothName, indexInLedger))
     }
 }

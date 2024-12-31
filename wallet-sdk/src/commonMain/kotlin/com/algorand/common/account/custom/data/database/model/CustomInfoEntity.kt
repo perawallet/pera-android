@@ -27,5 +27,8 @@ internal data class CustomInfoEntity(
     val customName: String?,
 
     @ColumnInfo(name = "order_index")
-    val orderIndex: Int
+    val orderIndex: Int,
+
+    @ColumnInfo(name = "is_backed_up")
+    val isBackedUp: Boolean
 )

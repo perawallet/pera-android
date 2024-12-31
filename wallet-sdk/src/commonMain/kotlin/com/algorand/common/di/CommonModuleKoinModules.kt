@@ -12,6 +12,7 @@
 
 package com.algorand.common.di
 
+import com.algorand.common.account.core.di.accountCoreKoinModule
 import com.algorand.common.account.custom.di.customInfoKoinModule
 import com.algorand.common.account.detail.di.accountDetailKoinModule
 import com.algorand.common.account.info.di.accountInformationKoinModule
@@ -32,5 +33,6 @@ val commonModuleKoinModules = listOf(
     blockPollingKoinModule,
     cacheKoinModule,
     accountDetailKoinModule,
-    customInfoKoinModule
+    customInfoKoinModule,
+    accountCoreKoinModule
 ) + assetDetailKoinModules

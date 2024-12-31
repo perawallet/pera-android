@@ -41,10 +41,6 @@ import com.algorand.common.account.local.domain.repository.Algo25AccountReposito
 import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
 import com.algorand.common.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.common.account.local.domain.repository.NoAuthAccountRepository
-import com.algorand.common.account.local.domain.usecase.AddAlgo25Account
-import com.algorand.common.account.local.domain.usecase.AddBip39Account
-import com.algorand.common.account.local.domain.usecase.AddLedgerBleAccount
-import com.algorand.common.account.local.domain.usecase.AddNoAuthAccount
 import com.algorand.common.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.common.account.local.domain.usecase.DeleteLocalAccountUseCase
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
@@ -53,6 +49,20 @@ import com.algorand.common.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.common.account.local.domain.usecase.GetLocalAccountCountFlowUseCase
 import com.algorand.common.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.common.account.local.domain.usecase.GetLocalAccountsUseCase
+import com.algorand.common.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.common.account.local.domain.usecase.IsThereAnyAccountWithAddressUseCase
+import com.algorand.common.account.local.domain.usecase.IsThereAnyNoAuthAccountWithAddress
+import com.algorand.common.account.local.domain.usecase.IsThereAnyNoAuthAccountWithAddressUseCase
+import com.algorand.common.account.local.domain.usecase.SaveAlgo25Account
+import com.algorand.common.account.local.domain.usecase.SaveBip39Account
+import com.algorand.common.account.local.domain.usecase.SaveLedgerBleAccount
+import com.algorand.common.account.local.domain.usecase.SaveNoAuthAccount
+import com.algorand.common.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
+import com.algorand.common.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25UseCase
+import com.algorand.common.account.local.domain.usecase.UpdateNoAuthAccountToBip39
+import com.algorand.common.account.local.domain.usecase.UpdateNoAuthAccountToBip39UseCase
+import com.algorand.common.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
+import com.algorand.common.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBleUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.dsl.module
@@ -94,38 +104,37 @@ internal val localAccountsKoinModule = module {
     factory<LedgerBleMapper> { LedgerBleMapperImpl(get()) }
     factory<NoAuthMapper> { NoAuthMapperImpl(get()) }
 
-    factory<AddBip39Account> {
-        AddBip39Account { account ->
+    factory<SaveBip39Account> {
+        SaveBip39Account { account ->
             get<Bip39AccountRepository>().addAccount(account)
         }
     }
 
-    factory<AddAlgo25Account> {
-        AddAlgo25Account { account ->
+    factory<SaveAlgo25Account> {
+        SaveAlgo25Account { account ->
             get<Algo25AccountRepository>().addAccount(account)
         }
     }
 
-    factory<AddLedgerBleAccount> {
-        AddLedgerBleAccount { account ->
+    factory<SaveLedgerBleAccount> {
+        SaveLedgerBleAccount { account ->
             get<LedgerBleAccountRepository>().addAccount(account)
         }
     }
 
-    factory<AddNoAuthAccount> {
-        AddNoAuthAccount { account ->
+    factory<SaveNoAuthAccount> {
+        SaveNoAuthAccount { account ->
             get<NoAuthAccountRepository>().addAccount(account)
         }
     }
 
     factory<GetAllLocalAccountAddressesAsFlow> { GetAllLocalAccountAddressesAsFlowUseCase(get(), get(), get(), get()) }
-
     factory<DeleteLocalAccount> { DeleteLocalAccountUseCase(get(), get(), get(), get()) }
-
-    factory<GetLocalAccounts> {
-        GetLocalAccountsUseCase(get(), get(), get(), get(), Dispatchers.IO)
-    }
-    factory<GetLocalAccountCountFlow> {
-        GetLocalAccountCountFlowUseCase(get(), get(), get(), get())
-    }
+    factory<GetLocalAccounts> { GetLocalAccountsUseCase(get(), get(), get(), get(), Dispatchers.IO) }
+    factory<GetLocalAccountCountFlow> { GetLocalAccountCountFlowUseCase(get(), get(), get(), get()) }
+    factory<IsThereAnyAccountWithAddress> { IsThereAnyAccountWithAddressUseCase(get()) }
+    factory<IsThereAnyNoAuthAccountWithAddress> { IsThereAnyNoAuthAccountWithAddressUseCase(get()) }
+    factory<UpdateNoAuthAccountToAlgo25> { UpdateNoAuthAccountToAlgo25UseCase(get(), get()) }
+    factory<UpdateNoAuthAccountToLedgerBle> { UpdateNoAuthAccountToLedgerBleUseCase(get(), get()) }
+    factory<UpdateNoAuthAccountToBip39> { UpdateNoAuthAccountToBip39UseCase(get(), get()) }
 }

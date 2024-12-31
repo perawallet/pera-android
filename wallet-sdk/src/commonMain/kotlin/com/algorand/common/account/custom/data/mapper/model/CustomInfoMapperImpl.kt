@@ -21,7 +21,8 @@ internal class CustomInfoMapperImpl : CustomInfoMapper {
         return CustomInfo(
             address = address,
             customName = customInfoEntity?.customName,
-            orderIndex = customInfoEntity?.orderIndex ?: 0
+            orderIndex = customInfoEntity?.orderIndex ?: 0,
+            isBackedUp = customInfoEntity?.isBackedUp ?: false
         )
     }
 }

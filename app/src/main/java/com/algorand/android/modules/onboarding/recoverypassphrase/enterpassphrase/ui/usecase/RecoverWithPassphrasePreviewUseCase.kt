@@ -159,7 +159,8 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                         preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
                     } else {
                         val rekeyedAccountAddresses = it.map { it.address }
-                        preview.copy(navToImportRekeyedAccountEvent = Event(recoveredAccount to rekeyedAccountAddresses))
+                        val event = Event(recoveredAccount to rekeyedAccountAddresses)
+                        preview.copy(navToImportRekeyedAccountEvent = event)
                     }
                     emit(updatedPreview)
                 },

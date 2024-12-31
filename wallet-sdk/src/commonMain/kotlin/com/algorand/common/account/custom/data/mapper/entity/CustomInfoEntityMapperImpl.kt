@@ -25,7 +25,8 @@ internal class CustomInfoEntityMapperImpl(
         return CustomInfoEntity(
             encryptedAddress = addressEncryptionManager.encrypt(customInfo.address),
             customName = customInfo.customName,
-            orderIndex = customInfo.orderIndex
+            orderIndex = customInfo.orderIndex,
+            isBackedUp = customInfo.isBackedUp
         )
     }
 }

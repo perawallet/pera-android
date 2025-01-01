@@ -34,6 +34,8 @@ internal data class DeepLinkPayload(
     val votelst: String? = null,
     val votekd: String? = null,
     val type: String? = null,
+    val host: String? = null,
+    val path: String? = null,
     val rawDeepLinkUri: String,
 )
 

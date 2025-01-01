@@ -52,10 +52,19 @@ class CreateDeepLinkImplTest {
     private val discoverBrowserDeepLinkBuilder: DeepLinkBuilder = mockk {
         every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
     }
+    private val discoverDeepLinkBuilder: DeepLinkBuilder = mockk {
+        every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
+    }
     private val assetInboxDeepLinkBuilder: DeepLinkBuilder = mockk {
         every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
     }
     private val keyRegTransactionDeepLinkBuilder: DeepLinkBuilder = mockk {
+        every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
+    }
+    private val cardsDeepLinkBuilder: DeepLinkBuilder = mockk {
+        every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
+    }
+    private val stakingDeepLinkBuilder: DeepLinkBuilder = mockk {
         every { doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns false
     }
 
@@ -69,8 +78,11 @@ class CreateDeepLinkImplTest {
         webImportQrCodeDeepLinkBuilder,
         notificationGroupDeepLinkBuilder,
         discoverBrowserDeepLinkBuilder,
+        discoverDeepLinkBuilder,
         assetInboxDeepLinkBuilder,
-        keyRegTransactionDeepLinkBuilder
+        keyRegTransactionDeepLinkBuilder,
+        cardsDeepLinkBuilder,
+        stakingDeepLinkBuilder
     )
 
     @Test
@@ -124,6 +136,18 @@ class CreateDeepLinkImplTest {
         every { parseDeepLinkPayload("discoverBrowserDeepLink") } returns DEEP_LINK_PAYLOAD
 
         val result = sut("discoverBrowserDeepLink")
+
+        assertEquals(deepLink, result)
+    }
+
+    @Test
+    fun `EXPECT discover deep link`() {
+        val deepLink = DeepLink.Discover("path")
+        every { discoverDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
+        every { discoverDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink
+        every { parseDeepLinkPayload("discoverDeepLink") } returns DEEP_LINK_PAYLOAD
+
+        val result = sut("discoverDeepLink")
 
         assertEquals(deepLink, result)
     }
@@ -196,6 +220,30 @@ class CreateDeepLinkImplTest {
         every { keyRegTransactionDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink
 
         val result = sut("keyRegTransactionDeepLink")
+
+        assertEquals(deepLink, result)
+    }
+
+    @Test
+    fun `EXPECT cards deep link`() {
+        val deepLink = DeepLink.Cards("path")
+        every { parseDeepLinkPayload("cardsDeepLink") } returns DEEP_LINK_PAYLOAD
+        every { cardsDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
+        every { cardsDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink
+
+        val result = sut("cardsDeepLink")
+
+        assertEquals(deepLink, result)
+    }
+
+    @Test
+    fun `EXPECT staking deep link`() {
+        val deepLink = DeepLink.Staking("path")
+        every { parseDeepLinkPayload("stakingDeepLink") } returns DEEP_LINK_PAYLOAD
+        every { stakingDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
+        every { stakingDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink
+
+        val result = sut("stakingDeepLink")
 
         assertEquals(deepLink, result)
     }

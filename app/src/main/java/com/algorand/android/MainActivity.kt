@@ -323,6 +323,21 @@ class MainActivity :
             return true
         }
 
+        override fun onDiscoverDeepLink(path: String): Boolean {
+            navToDiscoverWithPath(path)
+            return true
+        }
+
+        override fun onCardsDeepLink(path: String): Boolean {
+            navToCardsFragment(path)
+            return true
+        }
+
+        override fun onStakingDeepLink(path: String): Boolean {
+            navToStakingFragment(path)
+            return true
+        }
+
         override fun onAssetInboxDeepLink(
             accountAddress: String,
             notificationGroupType: NotificationGroupType
@@ -708,11 +723,11 @@ class MainActivity :
             }
 
             override fun onCardsClick() {
-                nav(HomeNavigationDirections.actionGlobalCardsFragment())
+                navToCardsFragment()
             }
 
             override fun onStakingClick() {
-                nav(HomeNavigationDirections.actionGlobalStakingFragment())
+                navToStakingFragment()
             }
         })
     }
@@ -843,6 +858,14 @@ class MainActivity :
         nav(HomeNavigationDirections.actionGlobalDiscoverUrlViewerNavigation(webUrl))
     }
 
+    private fun navToCardsFragment(path: String? = null) {
+        nav(HomeNavigationDirections.actionGlobalCardsFragment(path))
+    }
+
+    private fun navToStakingFragment(path: String? = null) {
+        nav(HomeNavigationDirections.actionGlobalStakingFragment(path))
+    }
+
     fun showMaxAccountLimitExceededError() {
         showGlobalError(
             title = getString(R.string.too_many_accounts),
@@ -861,8 +884,22 @@ class MainActivity :
         binding.apply {
             coreActionsTabBarView.hideWithAnimation()
             bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true
-            navController.navigateSafe(actionGlobalDiscoverHomeNavigation(
-                coreActionsTabBarViewModel.getDiscoverBrowseDappUrl())
+            navController.navigateSafe(
+                actionGlobalDiscoverHomeNavigation(
+                    coreActionsTabBarViewModel.getDiscoverBrowseDappUrl()
+                )
+            )
+        }
+    }
+
+    private fun navToDiscoverWithPath(path: String) {
+        binding.apply {
+            coreActionsTabBarView.hideWithAnimation()
+            bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true
+            navController.navigateSafe(
+                actionGlobalDiscoverHomeNavigation(
+                    coreActionsTabBarViewModel.getDiscoverUrlWithPath(path)
+                )
             )
         }
     }

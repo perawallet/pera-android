@@ -16,10 +16,13 @@ import com.algorand.common.deeplink.builder.AccountAddressDeepLinkBuilder
 import com.algorand.common.deeplink.builder.AssetInboxDeepLinkBuilder
 import com.algorand.common.deeplink.builder.AssetOptInDeepLinkBuilder
 import com.algorand.common.deeplink.builder.AssetTransferDeepLinkBuilder
+import com.algorand.common.deeplink.builder.CardsDeepLinkBuilder
 import com.algorand.common.deeplink.builder.DiscoverBrowserDeepLinkBuilder
+import com.algorand.common.deeplink.builder.DiscoverDeepLinkBuilder
 import com.algorand.common.deeplink.builder.KeyRegTransactionDeepLinkBuilder
 import com.algorand.common.deeplink.builder.MnemonicDeepLinkBuilder
 import com.algorand.common.deeplink.builder.NotificationDeepLinkBuilder
+import com.algorand.common.deeplink.builder.StakingDeepLinkBuilder
 import com.algorand.common.deeplink.builder.WalletConnectConnectionDeepLinkBuilder
 import com.algorand.common.deeplink.builder.WebImportQrCodeDeepLinkBuilder
 import com.algorand.common.deeplink.parser.CreateDeepLink
@@ -65,8 +68,11 @@ val deepLinkModule = module {
             webImportQrCodeDeepLinkBuilder = WebImportQrCodeDeepLinkBuilder(),
             notificationGroupDeepLinkBuilder = NotificationDeepLinkBuilder(),
             discoverBrowserDeepLinkBuilder = DiscoverBrowserDeepLinkBuilder(),
+            discoverDeepLinkBuilder = DiscoverDeepLinkBuilder(),
             assetInboxDeepLinkBuilder = AssetInboxDeepLinkBuilder(),
-            keyRegTransactionDeepLinkBuilder = KeyRegTransactionDeepLinkBuilder()
+            keyRegTransactionDeepLinkBuilder = KeyRegTransactionDeepLinkBuilder(),
+            cardsDeepLinkBuilder = CardsDeepLinkBuilder(),
+            stakingDeepLinkBuilder = StakingDeepLinkBuilder()
         )
     }
 }

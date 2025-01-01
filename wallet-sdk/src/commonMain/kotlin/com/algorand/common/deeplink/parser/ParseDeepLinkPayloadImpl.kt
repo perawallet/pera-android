@@ -52,6 +52,8 @@ internal class ParseDeepLinkPayloadImpl(
             votelst = peraUri.getQueryParam(VOTELST_QUERY_KEY),
             votekd = peraUri.getQueryParam(VOTEKD_QUERY_KEY),
             type = peraUri.getQueryParam(TYPE_QUERY_KEY),
+            path = peraUri.getQueryParam(PATH_KEY),
+            host = peraUri.host,
             rawDeepLinkUri = url
         )
     }
@@ -71,5 +73,6 @@ internal class ParseDeepLinkPayloadImpl(
         const val VOTEKD_QUERY_KEY = "votekd"
         const val VOTEKEY_QUERY_KEY = "votekey"
         const val FEE_QUERY_KEY = "fee"
+        const val PATH_KEY = "path"
     }
 }

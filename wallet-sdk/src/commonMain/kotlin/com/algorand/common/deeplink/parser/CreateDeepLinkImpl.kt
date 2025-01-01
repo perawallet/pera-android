@@ -25,12 +25,16 @@ internal class CreateDeepLinkImpl(
     private val webImportQrCodeDeepLinkBuilder: DeepLinkBuilder,
     private val notificationGroupDeepLinkBuilder: DeepLinkBuilder,
     private val discoverBrowserDeepLinkBuilder: DeepLinkBuilder,
+    private val discoverDeepLinkBuilder: DeepLinkBuilder,
     private val assetInboxDeepLinkBuilder: DeepLinkBuilder,
-    private val keyRegTransactionDeepLinkBuilder: DeepLinkBuilder
+    private val keyRegTransactionDeepLinkBuilder: DeepLinkBuilder,
+    private val cardsDeepLinkBuilder: DeepLinkBuilder,
+    private val stakingDeepLinkBuilder: DeepLinkBuilder
 ) : CreateDeepLink {
 
     override fun invoke(url: String): DeepLink {
         val payload = parseDeepLinkPayload(url)
+
         return when {
             accountAddressDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 accountAddressDeepLinkBuilder.createDeepLink(payload)
@@ -56,11 +60,20 @@ internal class CreateDeepLinkImpl(
             discoverBrowserDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 discoverBrowserDeepLinkBuilder.createDeepLink(payload)
             }
+            discoverDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
+                discoverDeepLinkBuilder.createDeepLink(payload)
+            }
             notificationGroupDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 notificationGroupDeepLinkBuilder.createDeepLink(payload)
             }
             assetInboxDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
                 assetInboxDeepLinkBuilder.createDeepLink(payload)
+            }
+            cardsDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
+                cardsDeepLinkBuilder.createDeepLink(payload)
+            }
+            stakingDeepLinkBuilder.doesDeeplinkMeetTheRequirements(payload) -> {
+                stakingDeepLinkBuilder.createDeepLink(payload)
             }
             else -> DeepLink.Undefined(url)
         }

@@ -47,6 +47,7 @@ class DeeplinkHandler @Inject constructor(
             is DeepLink.AssetOptIn -> handleAssetOptInDeepLink(deepLink.assetId)
             is DeepLink.AssetTransfer -> handleAssetTransferDeepLink(deepLink)
             is DeepLink.DiscoverBrowser -> handleDiscoverBrowserDeepLink(deepLink)
+            is DeepLink.Discover -> handleDiscoverDeepLink(deepLink)
             is DeepLink.Mnemonic -> handleMnemonicDeepLink(deepLink)
             is DeepLink.Notification -> handleNotificationDeepLink(deepLink)
             is DeepLink.Undefined -> handleUndefinedDeepLink(deepLink)
@@ -54,6 +55,8 @@ class DeeplinkHandler @Inject constructor(
             is DeepLink.WebImportQrCode -> handleWebImportQrCodeDeepLink(deepLink)
             is DeepLink.KeyReg -> handleKeyRegDeepLink(deepLink)
             is DeepLink.AssetInbox -> handleAssetInboxDeepLink(deepLink)
+            is DeepLink.Cards -> handleCardsDeepLink(deepLink)
+            is DeepLink.Staking -> handleStakingDeepLink(deepLink)
         }
         if (!isDeeplinkHandled) listener?.onDeepLinkNotHandled(deepLink)
     }
@@ -87,6 +90,18 @@ class DeeplinkHandler @Inject constructor(
 
     private fun handleDiscoverBrowserDeepLink(deepLink: DeepLink.DiscoverBrowser): Boolean {
         return triggerListener { it.onDiscoverBrowserDeepLink(deepLink.webUrl); true }
+    }
+
+    private fun handleDiscoverDeepLink(deepLink: DeepLink.Discover): Boolean {
+        return triggerListener { it.onDiscoverDeepLink(deepLink.path); true }
+    }
+
+    private fun handleCardsDeepLink(deepLink: DeepLink.Cards): Boolean {
+        return triggerListener { it.onCardsDeepLink(deepLink.path); true }
+    }
+
+    private fun handleStakingDeepLink(deepLink: DeepLink.Staking): Boolean {
+        return triggerListener { it.onStakingDeepLink(deepLink.path); true }
     }
 
     private fun handleWebImportQrCodeDeepLink(deepLink: DeepLink.WebImportQrCode): Boolean {
@@ -160,8 +175,11 @@ class DeeplinkHandler @Inject constructor(
         ): Boolean = false
 
         fun onDiscoverBrowserDeepLink(webUrl: String): Boolean = false
+        fun onDiscoverDeepLink(path: String): Boolean = false
         fun onAssetInboxDeepLink(accountAddress: String, notificationGroupType: NotificationGroupType): Boolean = false
         fun onKeyRegDeeplink(deepLink: DeepLink.KeyReg): Boolean = false
+        fun onCardsDeepLink(path: String): Boolean = false
+        fun onStakingDeepLink(path: String): Boolean = false
         fun onUndefinedDeepLink(deepLink: DeepLink.Undefined)
         fun onDeepLinkNotHandled(deepLink: DeepLink)
     }

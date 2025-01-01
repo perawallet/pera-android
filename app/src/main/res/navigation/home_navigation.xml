@@ -596,13 +596,24 @@
         android:id="@+id/cardsFragment"
         android:name="com.algorand.android.modules.card.CardsFragment"
         android:label="CardsFragment"
-        tools:layout="@layout/fragment_cards" />
+        tools:layout="@layout/fragment_cards">
+        <argument
+            android:name="path"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/stakingFragment"
         android:name="com.algorand.android.modules.staking.StakingFragment"
         android:label="StakingFragment"
         tools:layout="@layout/fragment_staking">
+        <argument
+            android:name="path"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/action_stakingFragment_to_discoverDappNavigation"
             app:destination="@id/discoverDappNavigation">

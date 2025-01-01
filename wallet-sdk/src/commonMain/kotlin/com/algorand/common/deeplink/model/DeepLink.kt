@@ -65,6 +65,12 @@ sealed interface DeepLink {
 
     data class DiscoverBrowser(val webUrl: String) : DeepLink
 
+    data class Discover(val path: String) : DeepLink
+
+    data class Cards(val path: String) : DeepLink
+
+    data class Staking(val path: String) : DeepLink
+
     data class Notification(
         val address: String,
         val assetId: Long,

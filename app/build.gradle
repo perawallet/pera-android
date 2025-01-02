@@ -69,8 +69,8 @@ android {
         buildConfigField "String", "VERSION_NAME", "\"$versionName\""
         buildConfigField "Integer", "VERSION_CODE", "$versionCode"
 
-        buildConfigField "String", "DISCOVER_TESTNET_URL", '"https://discover-mobile-staging.perawallet.app/"'
-        buildConfigField "String", "DISCOVER_MAINNET_URL", '"https://discover-mobile.perawallet.app/"'
+        buildConfigField "String", "DISCOVER_TESTNET_URL", '"https://discover-mobile-staging.perawallet.app"'
+        buildConfigField "String", "DISCOVER_MAINNET_URL", '"https://discover-mobile.perawallet.app"'
         buildConfigField "String", "DISCOVER_BROWSE_DAPP_TESTNET_URL", '"https://discover-mobile-staging.perawallet.app/main/browser"'
         buildConfigField "String", "DISCOVER_BROWSE_DAPP_MAINNET_URL", '"https://discover-mobile.perawallet.app/main/browser"'
         buildConfigField "String", "CARDS_TESTNET_URL", '"https://cards-mobile-staging.perawallet.app"'

@@ -54,7 +54,7 @@ class CoreActionsTabBarViewModel @Inject constructor(
         } else {
             DISCOVER_MAINNET_URL
         }
-        return "$baseDiscoverUrl$path"
+        return "$baseDiscoverUrl/$path"
     }
 
     fun isConnectedToTestnet(): Boolean {

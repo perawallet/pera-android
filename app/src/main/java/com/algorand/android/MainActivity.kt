@@ -858,11 +858,11 @@ class MainActivity :
         nav(HomeNavigationDirections.actionGlobalDiscoverUrlViewerNavigation(webUrl))
     }
 
-    private fun navToCardsFragment(path: String? = null) {
+    fun navToCardsFragment(path: String? = null) {
         nav(HomeNavigationDirections.actionGlobalCardsFragment(path))
     }
 
-    private fun navToStakingFragment(path: String? = null) {
+    fun navToStakingFragment(path: String? = null) {
         nav(HomeNavigationDirections.actionGlobalStakingFragment(path))
     }
 
@@ -892,7 +892,7 @@ class MainActivity :
         }
     }
 
-    private fun navToDiscoverWithPath(path: String) {
+    fun navToDiscoverWithPath(path: String) {
         binding.apply {
             coreActionsTabBarView.hideWithAnimation()
             bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true

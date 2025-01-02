@@ -19,6 +19,7 @@ import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.algorand.android.HomeNavigationDirections
+import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentQrCodeScannerBinding
@@ -206,6 +207,21 @@ abstract class BaseQrScannerFragment(
 
         nav(HomeNavigationDirections.actionGlobalConfirmKeyRegAccountSelectionFragment(txnDetail))
 
+        return true
+    }
+
+    override fun onDiscoverDeepLink(path: String): Boolean {
+        (activity as? MainActivity)?.navToDiscoverWithPath(path)
+        return true
+    }
+
+    override fun onCardsDeepLink(path: String): Boolean {
+        (activity as? MainActivity)?.navToCardsFragment(path)
+        return true
+    }
+
+    override fun onStakingDeepLink(path: String): Boolean {
+        (activity as? MainActivity)?.navToStakingFragment(path)
         return true
     }
 }

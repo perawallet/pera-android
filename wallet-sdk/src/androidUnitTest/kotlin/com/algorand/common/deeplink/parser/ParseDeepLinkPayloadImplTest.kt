@@ -81,6 +81,8 @@ class ParseDeepLinkPayloadImplTest {
             votelst = "votelst",
             votekd = "votekd",
             type = "type",
+            host = "perawallet.app",
+            path = "path",
             rawDeepLinkUri = URI
         )
         assertEquals(expected, result)
@@ -106,6 +108,7 @@ class ParseDeepLinkPayloadImplTest {
                 "votelst" to "votelst",
                 "votekd" to "votekd",
                 "votekey" to "votekey",
+                "path" to "path",
                 "fee" to "1"
             ),
             fragment = "",

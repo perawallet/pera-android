@@ -44,7 +44,7 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
         assetTransaction: AssetTransaction
     ): TransactionData.Send? {
         val senderAccountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
-        val receiverAccountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
+        val receiverAccountInfo = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data?.accountInformation
         return TransactionData.Send(
             senderAccountAddress = senderAccountDetail.account.address,
             senderAccountDetail = senderAccountDetail.account.detail,
@@ -62,7 +62,7 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
                 publicKey = assetTransaction.receiverUser?.publicKey.orEmpty(),
                 accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
             ),
-            isArc59Transaction = !receiverAccountDetail.accountInformation.hasAsset(selectedAsset.assetId)
+            isArc59Transaction = receiverAccountInfo?.hasAsset(selectedAsset.assetId)?.not() ?: false
         )
     }
 

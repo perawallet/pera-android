@@ -17,7 +17,6 @@ import androidx.annotation.StringRes
 import com.algorand.android.customviews.TriStatesCheckBox
 import com.algorand.android.customviews.accountandassetitem.mapper.AccountItemConfigurationMapper
 import com.algorand.android.models.Account
-import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
 import com.algorand.android.models.ui.AccountAssetItemButtonState.UNCHECKED
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
@@ -27,13 +26,13 @@ import com.algorand.android.modules.basemultipleaccountselection.ui.model.Multip
 import com.algorand.android.modules.sorting.accountsorting.domain.usecase.AccountSortPreferenceUseCase
 import com.algorand.android.modules.sorting.accountsorting.domain.usecase.GetSortedAccountsByPreferenceUseCase
 
-open class BaseMultipleAccountSelectionPreviewUseCase constructor(
+open class BaseMultipleAccountSelectionPreviewUseCase(
     private val multipleAccountSelectionListItemMapper: MultipleAccountSelectionListItemMapper,
     private val getSortedAccountsByPreferenceUseCase: GetSortedAccountsByPreferenceUseCase,
     private val accountSortPreferenceUseCase: AccountSortPreferenceUseCase,
     private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
     private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    protected val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
 ) {
 
     protected fun getSelectedAccountAddressList(
@@ -68,9 +67,11 @@ open class BaseMultipleAccountSelectionPreviewUseCase constructor(
                 is MultipleAccountSelectionListItem.AccountItem -> {
                     item.copy(accountViewButtonState = accountItemCheckBoxState)
                 }
+
                 is MultipleAccountSelectionListItem.AccountHeaderItem -> {
                     item.copy(checkboxState = headerCheckBoxState)
                 }
+
                 else -> item
             }
         }
@@ -90,6 +91,7 @@ open class BaseMultipleAccountSelectionPreviewUseCase constructor(
                         item
                     }
                 }
+
                 else -> item
             }
         }
@@ -114,14 +116,6 @@ open class BaseMultipleAccountSelectionPreviewUseCase constructor(
         @StringRes textResId: Int
     ): MultipleAccountSelectionListItem.TitleItem {
         return multipleAccountSelectionListItemMapper.mapToTitleItem(textResId = textResId)
-    }
-
-    protected fun createDescriptionItem(
-        annotatedString: AnnotatedString
-    ): MultipleAccountSelectionListItem.DescriptionItem {
-        return multipleAccountSelectionListItemMapper.mapToDescriptionItem(
-            annotatedString = annotatedString
-        )
     }
 
     protected fun createAccountHeaderItem(

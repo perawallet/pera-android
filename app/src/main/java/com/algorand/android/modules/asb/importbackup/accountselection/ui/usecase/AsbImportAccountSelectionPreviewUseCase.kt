@@ -202,7 +202,12 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
             )
             // Since these account are not in our local, we have to create them manually BUT
             // do not forget that now are supporting only standard accounts in ASB
-            val accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
+            val accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(
+                accountType = safeAccountType,
+                hasPrivateKey = payload.privateKey.isNullOrBlank().not()
+            )
+
+            accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
                 iconResId = R.drawable.ic_wallet,
                 iconTintResId = R.color.wallet_4_icon,
                 backgroundColorResId = R.color.wallet_4
@@ -215,7 +220,7 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
         }
     }
 
-    private suspend fun addImportedAccount(importedAccount: BackupProtocolElement?) {
+    private fun addImportedAccount(importedAccount: BackupProtocolElement?) {
         if (importedAccount == null) return
         val safeAccountAddress = importedAccount.address ?: return
         val safeAccountPrivateKey = importedAccount.privateKey?.decodeBase64ToByteArray() ?: return

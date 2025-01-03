@@ -29,10 +29,23 @@ class CreateAccountIconDrawableUseCase @Inject constructor(
 ) {
 
     operator fun invoke(accountAddress: String): AccountIconDrawablePreview {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
-        val accountIconResId = getAccountIconResId(accountDetail?.account)
-        val accountIconTintResId = getAccountIconTintResId(accountDetail?.account)
-        val accountIconBackgroundColorResId = getAccountIconBackgroundColorResId(accountDetail?.account)
+        val account = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data?.account
+        val accountType = account?.type
+        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(account)
+        return createAccountIconDrawablePreview(accountType, hasAccountAuthority)
+    }
+
+    operator fun invoke(accountType: Account.Type?, hasPrivateKey: Boolean): AccountIconDrawablePreview {
+        return createAccountIconDrawablePreview(accountType, hasPrivateKey)
+    }
+
+    private fun createAccountIconDrawablePreview(
+        accountType: Account.Type?,
+        hasAccountAuthority: Boolean
+    ): AccountIconDrawablePreview {
+        val accountIconResId = getAccountIconResId(accountType, hasAccountAuthority)
+        val accountIconTintResId = getAccountIconTintResId(accountType, hasAccountAuthority)
+        val accountIconBackgroundColorResId = getAccountIconBackgroundColorResId(accountType, hasAccountAuthority)
         return accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
             backgroundColorResId = accountIconBackgroundColorResId,
             iconResId = accountIconResId,
@@ -40,21 +53,18 @@ class CreateAccountIconDrawableUseCase @Inject constructor(
         )
     }
 
-    private fun getAccountIconBackgroundColorResId(account: Account?): Int {
-        return when (account?.type) {
+    private fun getAccountIconBackgroundColorResId(accountType: Account.Type?, hasAccountAuthority: Boolean): Int {
+        return when (accountType) {
             Account.Type.STANDARD -> {
-                val hasAccountValidSecretKey = accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                if (hasAccountValidSecretKey) STANDARD.backgroundColorResId else R.color.negative_lighter
+                if (hasAccountAuthority) STANDARD.backgroundColorResId else R.color.negative_lighter
             }
 
             Account.Type.LEDGER -> AccountIconResource.LEDGER.backgroundColorResId
             Account.Type.REKEYED -> {
-                val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(account)
                 if (hasAccountAuthority) STANDARD.backgroundColorResId else R.color.negative_lighter
             }
 
             Account.Type.REKEYED_AUTH -> {
-                val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(account)
                 if (hasAccountAuthority) AccountIconResource.REKEYED.backgroundColorResId else R.color.negative_lighter
             }
 
@@ -63,21 +73,18 @@ class CreateAccountIconDrawableUseCase @Inject constructor(
         }
     }
 
-    private fun getAccountIconTintResId(account: Account?): Int {
-        return when (account?.type) {
+    private fun getAccountIconTintResId(accountType: Account.Type?, hasAccountAuthority: Boolean): Int {
+        return when (accountType) {
             Account.Type.STANDARD -> {
-                val hasAccountValidSecretKey = accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                if (hasAccountValidSecretKey) STANDARD.iconTintResId else R.color.negative
+                if (hasAccountAuthority) STANDARD.iconTintResId else R.color.negative
             }
 
             Account.Type.REKEYED -> {
-                val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(account)
                 if (hasAccountAuthority) STANDARD.iconTintResId else R.color.negative
             }
 
             Account.Type.LEDGER -> AccountIconResource.LEDGER.iconTintResId
             Account.Type.REKEYED_AUTH -> {
-                val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(account)
                 if (hasAccountAuthority) AccountIconResource.LEDGER.iconTintResId else R.color.negative
             }
 
@@ -86,10 +93,9 @@ class CreateAccountIconDrawableUseCase @Inject constructor(
         }
     }
 
-    private fun getAccountIconResId(account: Account?): Int {
-        return when (account?.type) {
+    private fun getAccountIconResId(accountType: Account.Type?, hasValidSecretKey: Boolean): Int {
+        return when (accountType) {
             Account.Type.STANDARD -> {
-                val hasValidSecretKey = accountStateHelperUseCase.hasAccountValidSecretKey(account)
                 if (hasValidSecretKey) STANDARD.iconResId else R.drawable.ic_rekey_shield
             }
 

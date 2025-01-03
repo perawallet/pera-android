@@ -16,7 +16,8 @@ import com.algorand.android.R
 import com.algorand.android.core.AccountManager
 import com.algorand.android.mapper.AccountDisplayNameMapper
 import com.algorand.android.models.PluralAnnotatedString
-import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
+import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.mapper.AsbAccountRestoreResultPreviewMapper
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbAccountRestoreResultPreview
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult
@@ -30,7 +31,8 @@ class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
     private val asbAccountRestoreResultPreviewMapper: AsbAccountRestoreResultPreviewMapper,
     private val accountManager: AccountManager,
     private val accountDisplayNameMapper: AccountDisplayNameMapper,
-    private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
+    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val accountStateHelperUseCase: AccountStateHelperUseCase,
     resultListItemMapper: ResultListItemMapper
 ) : BaseResultPreviewUseCase(resultListItemMapper) {
 
@@ -65,13 +67,12 @@ class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
                 nfDomainName = null,
                 type = account?.type
             )
-            // Since these account are not in our local, we have to create them manually BUT
-            // do not forget that now are supporting only standard accounts in ASB
-            val accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
-                iconResId = R.drawable.ic_wallet,
-                iconTintResId = R.color.wallet_4_icon,
-                backgroundColorResId = R.color.wallet_4
+
+            val accountIconDrawablePreview = createAccountIconDrawableUseCase(
+                account?.type,
+                accountStateHelperUseCase.hasAccountAuthority(account)
             )
+
             createAccountItem(
                 accountDisplayName = accountDisplayName,
                 accountIconDrawablePreview = accountIconDrawablePreview
@@ -100,18 +101,21 @@ class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
                     quantity = existingAccountCount + unsupportedAccountCount
                 )
             }
+
             existingAccountCount > 0 -> {
                 PluralAnnotatedString(
                     pluralStringResId = R.plurals.account_was_not_restored_because_exist,
                     quantity = existingAccountCount
                 )
             }
+
             unsupportedAccountCount > 0 -> {
                 PluralAnnotatedString(
                     pluralStringResId = R.plurals.account_was_not_restored_because_unsupported,
                     quantity = unsupportedAccountCount
                 )
             }
+
             else -> return null
         }
         return createPluralInfoBoxItem(

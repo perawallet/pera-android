@@ -48,20 +48,23 @@ erDiagram
     no_auth {
         String encrypted_address PK
     }
-    hd_entropy {
-        Int entropy_id PK
-        String encrypted_entropy UK
+    hd_seeds {
+        Int seed_id PK
+        ByteArray encrypted_mnemonic_entropy UK
         String entropy_custom_name
+        ByteArray encrypted_seed UK
     }
-    hd_addresses {
+    hd_keys {
         String encrypted_address PK
-        Int entropy_id FK
+        ByteArray encrypted_public_key UK
+        ByteArray encrypted_private_key
+        Int seed_id FK
         Int account
         Int change
         Int key_index
         Enum derivation_type
     }
-    hd_addresses ||--o{ hd_entropy : has
+    hd_keys ||--o{ hd_seeds : links
 ```
 
 # Pera Database

@@ -35,7 +35,7 @@ flowchart TD
 
 # Cache Initialization
 
-<img src="mermaid/flowcharts/cache_initialization.png" width="500">
+<img src="mermaid/flowcharts/flowchart_cache_initialization.png" width="500">
 
 ```sh
 flowchart TD

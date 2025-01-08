@@ -19,10 +19,11 @@ import com.algorand.common.account.info.domain.model.AccountInformation
 import com.algorand.common.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.common.account.local.domain.model.LocalAccount
 import com.algorand.common.account.local.domain.usecase.AddAlgo25Account
-import com.algorand.common.account.local.domain.usecase.AddBip39Account
+import com.algorand.common.account.local.domain.usecase.AddHdKeyAccount
 import com.algorand.common.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.common.algosdk.AlgoAccountSdk
+import com.algorand.common.algosdk.Bip32DerivationType
 import com.algorand.common.viewmodel.StateDelegate
 import com.algorand.common.viewmodel.StateViewModel
 import kotlinx.coroutines.Job
@@ -33,7 +34,7 @@ import kotlinx.coroutines.launch
 
 class AccountsViewModel(
     private val getAllLocalAccountAddressesAsFlow: GetAllLocalAccountAddressesAsFlow,
-    private val addBip39Account: AddBip39Account,
+    private val addHdKeyAccount: AddHdKeyAccount,
     private val addAlgo25Account: AddAlgo25Account,
     private val algoAccountSdk: AlgoAccountSdk,
     private val deleteLocalAccount: DeleteLocalAccount,
@@ -47,15 +48,34 @@ class AccountsViewModel(
         stateDelegate.setDefaultState(ViewState.Idle)
     }
 
-    fun recoverAccount(mnemonic: String) {
-        val account = algoAccountSdk.recoverAlgo25Account(mnemonic)
-        if (account != null) {
+    fun recoverAlgo25Account(mnemonic: String) {
+        val acct = algoAccountSdk.recoverAlgo25Account(mnemonic)
+        if (acct != null) {
             val localAccount = LocalAccount.Algo25(
-                address = account.address,
-                secretKey = account.secretKey
+                address = acct.address,
+                secretKey = acct.secretKey
             )
             viewModelScope.launch {
                 addAlgo25Account(localAccount)
+            }
+        }
+    }
+
+    fun recoverHdAccount(mnemonic: String) {
+        val acct = algoAccountSdk.recoverHdAccount(mnemonic)
+        if (acct != null) {
+            val localAccount = LocalAccount.HdKey(
+                address = acct.address,
+                publicKey = acct.publicKey,
+                privateKey = acct.privateKey,
+                seedId = acct.seedId,
+                account = acct.account,
+                change = acct.change,
+                keyIndex = acct.keyIndex,
+                derivationType = acct.derivationType,
+            )
+            viewModelScope.launch {
+                addHdKeyAccount(localAccount)
             }
         }
     }
@@ -87,14 +107,21 @@ class AccountsViewModel(
         }
     }
 
-    fun addBip39Account() {
+    fun addHdKeyAccount() {
+        // TODO Add support here
         viewModelScope.launch {
-            val account = algoAccountSdk.createBip39Account()
-            val bip39Account = LocalAccount.Bip39(
-                address = account.address,
-                secretKey = account.secretKey
+            val acct = algoAccountSdk.createHdAccount()
+            val hdKeyAccount = LocalAccount.HdKey(
+                address = acct.address,
+                publicKey = acct.publicKey,
+                privateKey = acct.privateKey,
+                seedId = acct.seedId,
+                account = acct.account,
+                change = acct.change,
+                keyIndex = acct.keyIndex,
+                derivationType = Bip32DerivationType.Peikert,
             )
-            addBip39Account(bip39Account)
+            addHdKeyAccount(hdKeyAccount)
         }
     }
 

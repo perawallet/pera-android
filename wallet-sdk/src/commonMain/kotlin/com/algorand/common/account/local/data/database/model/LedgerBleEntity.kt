@@ -12,13 +12,15 @@
 
 package com.algorand.common.account.local.data.database.model
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Entity(tableName = "ledger_ble")
 internal data class LedgerBleEntity(
     @PrimaryKey
-    @ColumnInfo("encrypted_address")
-    val encryptedAddress: String,
+    @ColumnInfo("algo_address")
+    val algoAddress: String,
 
     @ColumnInfo("device_mac_address")
     val deviceMacAddress: String,

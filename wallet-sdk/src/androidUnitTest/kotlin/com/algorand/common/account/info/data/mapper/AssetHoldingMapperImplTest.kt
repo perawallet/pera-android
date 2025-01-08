@@ -111,7 +111,7 @@ class AssetHoldingMapperImplTest {
     }
 
     private companion object {
-        const val ENCRYPTED_ADDRESS = "encrypted_address"
+        const val ADDRESS = "address"
 
         val VALID_RESPONSE = AssetHoldingResponse(
             assetId = 1,
@@ -133,7 +133,7 @@ class AssetHoldingMapperImplTest {
         )
 
         val ASSET_HOLDING_ENTITY = AssetHoldingEntity(
-            encryptedAddress = ENCRYPTED_ADDRESS,
+            algoAddress = ADDRESS,
             assetId = 1,
             amount = "10",
             isFrozen = false,

@@ -16,6 +16,5 @@ import com.algorand.common.account.local.data.database.model.Algo25Entity
 import com.algorand.common.account.local.domain.model.LocalAccount
 
 internal interface Algo25EntityMapper {
-
     operator fun invoke(localAccount: LocalAccount.Algo25): Algo25Entity
 }

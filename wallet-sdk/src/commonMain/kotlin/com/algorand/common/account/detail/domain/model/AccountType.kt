@@ -24,7 +24,7 @@ sealed interface AccountType {
 
     data object NoAuth : AccountType
 
-    data object Bip39 : AccountType
+    data object HdKey : AccountType
 
     companion object {
         fun AccountType.canSignTransaction(): Boolean {

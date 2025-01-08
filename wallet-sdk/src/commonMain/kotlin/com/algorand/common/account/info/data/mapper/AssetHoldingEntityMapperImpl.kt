@@ -15,15 +15,12 @@ package com.algorand.common.account.info.data.mapper
 import com.algorand.common.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.common.account.info.data.database.model.AssetStatusEntity
 import com.algorand.common.account.info.data.model.AssetHoldingResponse
-import com.algorand.common.encryption.AddressEncryptionManager
 
-internal class AssetHoldingEntityMapperImpl(
-    private val addressEncryptionManager: AddressEncryptionManager
-) : AssetHoldingEntityMapper {
+internal class AssetHoldingEntityMapperImpl : AssetHoldingEntityMapper {
 
     override fun invoke(address: String, response: AssetHoldingResponse): AssetHoldingEntity? {
         return AssetHoldingEntity(
-            encryptedAddress = addressEncryptionManager.encrypt(address),
+            algoAddress = address,
             assetId = response.assetId ?: return null,
             amount = response.amount ?: return null,
             isDeleted = response.isDeleted ?: false,

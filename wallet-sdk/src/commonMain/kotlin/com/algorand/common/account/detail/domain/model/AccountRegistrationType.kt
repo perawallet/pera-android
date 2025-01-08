@@ -20,5 +20,5 @@ sealed interface AccountRegistrationType {
 
     data object NoAuth : AccountRegistrationType
 
-    data object Bip39 : AccountRegistrationType
+    data object HdKey : AccountRegistrationType
 }

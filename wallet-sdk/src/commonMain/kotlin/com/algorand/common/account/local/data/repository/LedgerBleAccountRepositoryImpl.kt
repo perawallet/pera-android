@@ -17,15 +17,17 @@ import com.algorand.common.account.local.data.mapper.entity.LedgerBleEntityMappe
 import com.algorand.common.account.local.data.mapper.model.LedgerBleMapper
 import com.algorand.common.account.local.domain.model.LocalAccount.LedgerBle
 import com.algorand.common.account.local.domain.repository.LedgerBleAccountRepository
-import com.algorand.common.encryption.AddressEncryptionManager
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 internal class LedgerBleAccountRepositoryImpl(
     private val ledgerBleDao: LedgerBleDao,
     private val ledgerBleEntityMapper: LedgerBleEntityMapper,
     private val ledgerBleMapper: LedgerBleMapper,
-    private val addressEncryptionManager: AddressEncryptionManager,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : LedgerBleAccountRepository {
 
@@ -48,7 +50,7 @@ internal class LedgerBleAccountRepositoryImpl(
 
     override suspend fun getAccount(address: String): LedgerBle? {
         return withContext(coroutineDispatcher) {
-            val ledgerBleEntity = ledgerBleDao.get(addressEncryptionManager.encrypt(address))
+            val ledgerBleEntity = ledgerBleDao.get(address)
             ledgerBleEntity?.let { ledgerBleMapper(it) }
         }
     }
@@ -62,7 +64,7 @@ internal class LedgerBleAccountRepositoryImpl(
 
     override suspend fun deleteAccount(address: String) {
         withContext(coroutineDispatcher) {
-            val encryptedAddress = addressEncryptionManager.encrypt(address)
+            val encryptedAddress = address
             ledgerBleDao.delete(encryptedAddress)
         }
     }

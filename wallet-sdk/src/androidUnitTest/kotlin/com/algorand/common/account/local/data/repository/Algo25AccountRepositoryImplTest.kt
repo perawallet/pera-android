@@ -36,8 +36,7 @@ class Algo25AccountRepositoryImplTest {
     private val sut = Algo25AccountRepositoryImpl(
         algo25Dao,
         algo25EntityMapper,
-        algo25Mapper,
-        encryptionManager
+        algo25Mapper
     )
 
     @Test
@@ -62,22 +61,22 @@ class Algo25AccountRepositoryImplTest {
 
     @Test
     fun `EXPECT account WHEN account was registered before`() = runTest {
-        coEvery { algo25Mapper(Algo25Entity("encryptedAddress", "encryptedSecretKey")) }
+        coEvery { algo25Mapper(Algo25Entity("address", "encryptedSecretKey")) }
             .returns(LocalAccount.Algo25("address", byteArrayOf(1, 2, 3)))
-        coEvery { algo25Dao.get("encryptedAddress") } returns Algo25Entity("encryptedAddress", "encryptedSecretKey")
-        coEvery { encryptionManager.encrypt("address") } returns "encryptedAddress"
+        coEvery { algo25Dao.get("address") } returns Algo25Entity("address", "encryptedSecretKey")
+        coEvery { encryptionManager.encrypt("address") } returns "address"
 
         val localAccount = sut.getAccount("address")
 
         val expectedAccount = LocalAccount.Algo25("address", byteArrayOf(1, 2, 3))
-        coVerify(exactly = 1) { algo25Dao.get("encryptedAddress") }
+        coVerify(exactly = 1) { algo25Dao.get("address") }
         assertEquals(expectedAccount, localAccount)
     }
 
     @Test
     fun `EXPECT account to be added to database WHEN addAccount is invoked`() = runTest {
         val account = LocalAccount.Algo25("address", byteArrayOf(1, 2, 3))
-        val algo25Entity = Algo25Entity("encryptedAddress", "encryptedSecretKey")
+        val algo25Entity = Algo25Entity("address", "encryptedSecretKey")
         coEvery { algo25EntityMapper(account) } returns algo25Entity
         coEvery { algo25Dao.insert(algo25Entity) } returns Unit
 
@@ -89,13 +88,11 @@ class Algo25AccountRepositoryImplTest {
     @Test
     fun `EXPECT account to be deleted from database  WHEN deleteAccount is invoked`() = runTest {
         val address = "address"
-        val encryptedAddress = "encryptedAddress"
-        coEvery { encryptionManager.encrypt(address) } returns encryptedAddress
-        coEvery { algo25Dao.delete(encryptedAddress) } returns Unit
+        coEvery { algo25Dao.delete(address) } returns Unit
 
         sut.deleteAccount(address)
 
-        coVerify { algo25Dao.delete(encryptedAddress) }
+        coVerify { algo25Dao.delete(address) }
     }
 
     @Test

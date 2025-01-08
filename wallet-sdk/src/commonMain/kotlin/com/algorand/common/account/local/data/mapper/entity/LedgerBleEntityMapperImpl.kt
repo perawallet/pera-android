@@ -14,15 +14,12 @@ package com.algorand.common.account.local.data.mapper.entity
 
 import com.algorand.common.account.local.data.database.model.LedgerBleEntity
 import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.encryption.AddressEncryptionManager
 
-internal class LedgerBleEntityMapperImpl(
-    private val addressEncryptionManager: AddressEncryptionManager
-) : LedgerBleEntityMapper {
+internal class LedgerBleEntityMapperImpl : LedgerBleEntityMapper {
 
     override fun invoke(localAccount: LocalAccount.LedgerBle): LedgerBleEntity {
         return LedgerBleEntity(
-            encryptedAddress = addressEncryptionManager.encrypt(localAccount.address),
+            algoAddress = localAccount.address,
             deviceMacAddress = localAccount.deviceMacAddress,
             accountIndexInLedger = localAccount.indexInLedger,
             bluetoothName = localAccount.bluetoothName

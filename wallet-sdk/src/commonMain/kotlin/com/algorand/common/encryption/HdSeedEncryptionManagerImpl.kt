@@ -10,11 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.data.mapper.model
+package com.algorand.common.encryption
 
-import com.algorand.common.account.local.data.database.model.Bip39Entity
-import com.algorand.common.account.local.domain.model.LocalAccount
+internal class HdSeedEncryptionManagerImpl : HdSeedEncryptionManager {
+    override fun encrypt(secretKey: ByteArray): ByteArray {
+        // TODO Will be implemented at the end of the account refactor
+        return secretKey
+    }
 
-internal interface Bip39Mapper {
-    operator fun invoke(entity: Bip39Entity): LocalAccount.Bip39
+    override fun decrypt(encryptedSecretKey: ByteArray): ByteArray {
+        // TODO Will be implemented at the end of the account refactor
+        return encryptedSecretKey
+    }
 }

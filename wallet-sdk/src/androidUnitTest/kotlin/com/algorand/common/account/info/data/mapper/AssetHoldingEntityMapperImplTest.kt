@@ -15,20 +15,13 @@ package com.algorand.common.account.info.data.mapper
 import com.algorand.common.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.common.account.info.data.database.model.AssetStatusEntity
 import com.algorand.common.account.info.data.model.AssetHoldingResponse
-import com.algorand.common.encryption.AddressEncryptionManager
-import io.mockk.every
-import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class AssetHoldingEntityMapperImplTest {
 
-    private val addressEncryptionManager: AddressEncryptionManager = mockk {
-        every { encrypt(ADDRESS) } returns ENCRYPTED_ADDRESS
-    }
-
-    private val sut = AssetHoldingEntityMapperImpl(addressEncryptionManager)
+    private val sut = AssetHoldingEntityMapperImpl()
 
     @Test
     fun `EXPECT null WHEN asset id is null`() {
@@ -69,7 +62,6 @@ class AssetHoldingEntityMapperImplTest {
 
     private companion object {
         const val ADDRESS = "address"
-        const val ENCRYPTED_ADDRESS = "encrypted_address"
         val RESPONSE = AssetHoldingResponse(
             assetId = 1,
             amount = "10",
@@ -79,7 +71,7 @@ class AssetHoldingEntityMapperImplTest {
             optedOutAtRound = null
         )
         val EXPECTED_ENTITY = AssetHoldingEntity(
-            encryptedAddress = ENCRYPTED_ADDRESS,
+            algoAddress = ADDRESS,
             assetId = 1,
             amount = "10",
             isFrozen = false,

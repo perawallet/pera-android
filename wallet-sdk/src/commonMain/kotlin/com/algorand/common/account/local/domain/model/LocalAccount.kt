@@ -12,13 +12,21 @@
 
 package com.algorand.common.account.local.domain.model
 
+import com.algorand.common.algosdk.Bip32DerivationType
+
 sealed interface LocalAccount {
 
     val address: String
 
-    data class Bip39(
+    data class HdKey(
         override val address: String,
-        val secretKey: ByteArray
+        val publicKey: ByteArray,
+        val privateKey: ByteArray,
+        val seedId: Int,
+        val account: Int,
+        val change: Int,
+        val keyIndex: Int,
+        val derivationType: Bip32DerivationType
     ) : LocalAccount {
 
         override fun equals(other: Any?): Boolean {
@@ -28,14 +36,12 @@ sealed interface LocalAccount {
             other as Algo25
 
             if (address != other.address) return false
-            if (!secretKey.contentEquals(other.secretKey)) return false
 
             return true
         }
 
         override fun hashCode(): Int {
             var result = address.hashCode()
-            result = 31 * result + secretKey.contentHashCode()
             return result
         }
     }

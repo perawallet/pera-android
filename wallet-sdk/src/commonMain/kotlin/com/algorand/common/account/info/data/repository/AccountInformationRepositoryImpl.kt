@@ -87,10 +87,9 @@ internal class AccountInformationRepositoryImpl(
     override suspend fun getAllAccountInformation(): Map<String, AccountInformation?> {
         val accountInformationMap = mutableMapOf<String, AccountInformation?>()
         accountInformationDao.getAll().forEach {
-            val assetEntities = assetHoldingDao.getAssetsByAddress(it.encryptedAddress)
+            val assetEntities = assetHoldingDao.getAssetsByAddress(it.algoAddress)
             val assetHoldings = assetHoldingMapper(assetEntities)
-            val decryptedAddress = addressEncryptionManager.decrypt(it.encryptedAddress)
-            accountInformationMap[decryptedAddress] = accountInformationMapper(it, assetHoldings)
+            accountInformationMap[it.algoAddress] = accountInformationMapper(it, assetHoldings)
         }
         return accountInformationMap
     }
@@ -101,10 +100,9 @@ internal class AccountInformationRepositoryImpl(
             assetHoldingDao.getAllAsFlow()
         ) { accountInformationEntities, _ ->
             accountInformationEntities.associate {
-                val assetEntities = assetHoldingDao.getAssetsByAddress(it.encryptedAddress)
+                val assetEntities = assetHoldingDao.getAssetsByAddress(it.algoAddress)
                 val assetHoldings = assetHoldingMapper(assetEntities)
-                val decryptedAddress = addressEncryptionManager.decrypt(it.encryptedAddress)
-                decryptedAddress to accountInformationMapper(it, assetHoldings)
+                it.algoAddress to accountInformationMapper(it, assetHoldings)
             }
         }.distinctUntilChanged()
     }
@@ -119,20 +117,18 @@ internal class AccountInformationRepositoryImpl(
     }
 
     override suspend fun getAccountInformation(address: String): AccountInformation? {
-        val encryptedAddress = addressEncryptionManager.encrypt(address)
-        val accountInformationEntity = accountInformationDao.get(encryptedAddress) ?: return null
+        val accountInformationEntity = accountInformationDao.get(address) ?: return null
 
-        val assetEntities = assetHoldingDao.getAssetsByAddress(encryptedAddress)
+        val assetEntities = assetHoldingDao.getAssetsByAddress(address)
         val assetHoldings = assetHoldingMapper(assetEntities)
 
         return accountInformationMapper(accountInformationEntity, assetHoldings)
     }
 
     override fun getAccountInformationFlow(address: String): Flow<AccountInformation?> {
-        val encryptedAddress = addressEncryptionManager.encrypt(address)
         return combine(
-            accountInformationDao.getAsFlow(encryptedAddress),
-            assetHoldingDao.getAssetsByAddressAsFlow(encryptedAddress)
+            accountInformationDao.getAsFlow(address),
+            assetHoldingDao.getAssetsByAddressAsFlow(address)
         ) { accountInformation, assetHoldingEntities ->
             if (accountInformation == null) return@combine null
             val assetHoldings = assetHoldingMapper(assetHoldingEntities)
@@ -141,9 +137,8 @@ internal class AccountInformationRepositoryImpl(
     }
 
     override suspend fun deleteAccountInformation(address: String) {
-        val encryptedAddress = addressEncryptionManager.encrypt(address)
-        accountInformationDao.delete(encryptedAddress)
-        assetHoldingDao.deleteByAddress(encryptedAddress)
+        accountInformationDao.delete(address)
+        assetHoldingDao.deleteByAddress(address)
     }
 
     companion object {

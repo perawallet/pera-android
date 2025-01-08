@@ -17,7 +17,6 @@ import com.algorand.common.account.local.data.mapper.entity.Algo25EntityMapper
 import com.algorand.common.account.local.data.mapper.model.Algo25Mapper
 import com.algorand.common.account.local.domain.model.LocalAccount.Algo25
 import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
-import com.algorand.common.encryption.AddressEncryptionManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -29,7 +28,6 @@ internal class Algo25AccountRepositoryImpl(
     private val algo25Dao: Algo25Dao,
     private val algo25EntityMapper: Algo25EntityMapper,
     private val algo25Mapper: Algo25Mapper,
-    private val addressEncryptionManager: AddressEncryptionManager,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : Algo25AccountRepository {
 
@@ -52,7 +50,7 @@ internal class Algo25AccountRepositoryImpl(
 
     override suspend fun getAccount(address: String): Algo25? {
         return withContext(coroutineDispatcher) {
-            algo25Dao.get(addressEncryptionManager.encrypt(address))?.let { algo25Mapper(it) }
+            algo25Dao.get(address)?.let { algo25Mapper(it) }
         }
     }
 
@@ -65,8 +63,7 @@ internal class Algo25AccountRepositoryImpl(
 
     override suspend fun deleteAccount(address: String) {
         withContext(coroutineDispatcher) {
-            val encryptedAddress = addressEncryptionManager.encrypt(address)
-            algo25Dao.delete(encryptedAddress)
+            algo25Dao.delete(address)
         }
     }
 

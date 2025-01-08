@@ -12,7 +12,10 @@
 
 package com.algorand.common.account.local.data.database.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.algorand.common.account.local.data.database.model.LedgerBleEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -34,11 +37,11 @@ internal interface LedgerBleDao {
     @Query("SELECT COUNT(*) FROM ledger_ble")
     fun getTableSizeAsFlow(): Flow<Int>
 
-    @Query("SELECT * FROM ledger_ble WHERE :encryptedAddress = encrypted_address")
-    suspend fun get(encryptedAddress: String): LedgerBleEntity?
+    @Query("SELECT * FROM ledger_ble WHERE :algoAddress = algo_address")
+    suspend fun get(algoAddress: String): LedgerBleEntity?
 
-    @Query("DELETE FROM ledger_ble WHERE :encryptedAddress = encrypted_address")
-    suspend fun delete(encryptedAddress: String)
+    @Query("DELETE FROM ledger_ble WHERE :algoAddress = algo_address")
+    suspend fun delete(algoAddress: String)
 
     @Query("DELETE FROM ledger_ble")
     suspend fun clearAll()

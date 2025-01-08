@@ -12,7 +12,10 @@
 
 package com.algorand.common.account.local.data.database.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.algorand.common.account.local.data.database.model.Algo25Entity
 import kotlinx.coroutines.flow.Flow
 
@@ -34,11 +37,11 @@ internal interface Algo25Dao {
     @Query("SELECT COUNT(*) FROM algo_25")
     fun getTableSizeAsFlow(): Flow<Int>
 
-    @Query("SELECT * FROM algo_25 WHERE :encryptedAddress = encrypted_address")
-    suspend fun get(encryptedAddress: String): Algo25Entity?
+    @Query("SELECT * FROM algo_25 WHERE :algoAddress = algo_address")
+    suspend fun get(algoAddress: String): Algo25Entity?
 
-    @Query("DELETE FROM algo_25 WHERE :encryptedAddress = encrypted_address")
-    suspend fun delete(encryptedAddress: String)
+    @Query("DELETE FROM algo_25 WHERE :algoAddress = algo_address")
+    suspend fun delete(algoAddress: String)
 
     @Query("DELETE FROM algo_25")
     suspend fun clearAll()

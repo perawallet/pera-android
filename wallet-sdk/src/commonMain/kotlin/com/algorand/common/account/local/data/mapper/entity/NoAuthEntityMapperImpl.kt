@@ -14,15 +14,12 @@ package com.algorand.common.account.local.data.mapper.entity
 
 import com.algorand.common.account.local.data.database.model.NoAuthEntity
 import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.encryption.AddressEncryptionManager
 
-internal class NoAuthEntityMapperImpl(
-    private val addressEncryptionManager: AddressEncryptionManager
-) : NoAuthEntityMapper {
+internal class NoAuthEntityMapperImpl : NoAuthEntityMapper {
 
     override fun invoke(localAccount: LocalAccount.NoAuth): NoAuthEntity {
         return NoAuthEntity(
-            encryptedAddress = addressEncryptionManager.encrypt(localAccount.address)
+            algoAddress = localAccount.address
         )
     }
 }

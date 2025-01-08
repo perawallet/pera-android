@@ -14,13 +14,23 @@
 
 package com.algorand.common.account.local.domain.usecase
 
-import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
+import com.algorand.common.account.local.domain.repository.HdKeyAccountRepository
 
-internal class GetSecretKeyBip39UseCase(
-    private val bip39AccountRepository: Bip39AccountRepository
+internal class GetHdAddressPrivateKeyUseCase(
+    private val hdKeyAccountRepository: HdKeyAccountRepository
 ) : GetSecretKey {
 
     override suspend fun invoke(address: String): ByteArray? {
-        return bip39AccountRepository.getAccount(address)?.secretKey
+        val account = hdKeyAccountRepository.getAccount(address)
+//        account?.let {
+//            return keyGen(
+//                KeyContext.Address,
+//                account.account,
+//                account.change,
+//                account.keyIndex,
+//                account.derivationType
+//            )
+//        }
+        return null
     }
 }

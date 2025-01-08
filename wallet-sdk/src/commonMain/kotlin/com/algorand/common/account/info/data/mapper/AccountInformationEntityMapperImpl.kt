@@ -14,19 +14,16 @@ package com.algorand.common.account.info.data.mapper
 
 import com.algorand.common.account.info.data.database.model.AccountInformationEntity
 import com.algorand.common.account.info.data.model.AccountInformationResponse
-import com.algorand.common.encryption.AddressEncryptionManager
 
-internal class AccountInformationEntityMapperImpl(
-    private val addressEncryptionManager: AddressEncryptionManager
-) : AccountInformationEntityMapper {
+internal class AccountInformationEntityMapperImpl : AccountInformationEntityMapper {
 
     override fun invoke(response: AccountInformationResponse): AccountInformationEntity? {
         if (response.accountInformation?.address.isNullOrBlank()) return null
         return AccountInformationEntity(
-            encryptedAddress = addressEncryptionManager.encrypt(response.accountInformation?.address.orEmpty()),
+            algoAddress = response.accountInformation?.address.orEmpty(),
             algoAmount = response.accountInformation?.amount ?: return null,
             lastFetchedRound = response.currentRound ?: return null,
-            authAddress = response.accountInformation.rekeyAdminAddress,
+            authAlgoAddress = response.accountInformation.rekeyAdminAddress,
             optedInAppsCount = response.accountInformation.totalAppsOptedIn ?: 0,
             totalCreatedAppsCount = response.accountInformation.totalCreatedApps ?: 0,
             totalCreatedAssetsCount = response.accountInformation.totalCreatedAssets ?: 0,

@@ -12,28 +12,52 @@
 
 package com.algorand.common.account.local.domain.usecase
 
+import com.algorand.common.algosdk.Bip32DerivationType
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
-class UpdateNoAuthAccountToBip39UseCaseTest {
+class UpdateNoAuthAccountToHdKeyUseCaseTest {
 
     private val deleteLocalAccount: DeleteLocalAccount = mockk(relaxed = true)
-    private val createBip39Account: CreateBip39Account = mockk(relaxed = true)
+    private val createHdKeyAccount: CreateHdKeyAccount = mockk(relaxed = true)
 
-    private val sut = UpdateNoAuthAccountToBip39UseCase(deleteLocalAccount, createBip39Account)
+    private val sut = UpdateNoAuthAccountToHdKeyUseCase(deleteLocalAccount, createHdKeyAccount)
 
     @Test
     fun `EXPECT noAuthAccount to be deleted and new Algo25Account to be created`() = runTest {
-        sut(ADDRESS, SECRET_KEY)
+        sut(
+            ADDRESS,
+            PUBLIC_KEY,
+            PRIVATE_KEY,
+            SEED_ID,
+            ACCOUNT,
+            CHANGE,
+            KEY_INDEX,
+            Bip32DerivationType.Peikert
+        )
 
         coVerify { deleteLocalAccount(ADDRESS) }
-        coVerify { createBip39Account(ADDRESS, SECRET_KEY) }
+        coVerify { createHdKeyAccount(
+            ADDRESS,
+            PUBLIC_KEY,
+            PRIVATE_KEY,
+            SEED_ID,
+            ACCOUNT,
+            CHANGE,
+            KEY_INDEX,
+            Bip32DerivationType.Peikert
+        ) }
     }
 
     companion object {
         private const val ADDRESS = "ADDRESS"
-        private val SECRET_KEY = byteArrayOf()
+        private val PUBLIC_KEY = byteArrayOf()
+        private val PRIVATE_KEY = byteArrayOf()
+        private val SEED_ID = 0
+        private val ACCOUNT = 0
+        private val CHANGE = 0
+        private val KEY_INDEX = 0
     }
 }

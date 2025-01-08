@@ -14,7 +14,7 @@ package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.model.LocalAccount
 import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
-import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
+import com.algorand.common.account.local.domain.repository.HdKeyAccountRepository
 import com.algorand.common.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.common.account.local.domain.repository.NoAuthAccountRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,7 +23,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 
 internal class GetLocalAccountsUseCase(
-    private val bip39AccountRepository: Bip39AccountRepository,
+    private val hdKeyAccountRepository: HdKeyAccountRepository,
     private val algo25AccountRepository: Algo25AccountRepository,
     private val ledgerBleAccountRepository: LedgerBleAccountRepository,
     private val noAuthAccountRepository: NoAuthAccountRepository,
@@ -32,12 +32,12 @@ internal class GetLocalAccountsUseCase(
 
     override suspend fun invoke(): List<LocalAccount> {
         return withContext(dispatcher) {
-            val deferredBip39Accounts = async { bip39AccountRepository.getAll() }
+            val deferredHdKeyAccounts = async { hdKeyAccountRepository.getAll() }
             val deferredAlgo25Accounts = async { algo25AccountRepository.getAll() }
             val deferredLedgerBleAccounts = async { ledgerBleAccountRepository.getAll() }
             val deferredNoAuthAccounts = async { noAuthAccountRepository.getAll() }
             awaitAll(
-                deferredBip39Accounts,
+                deferredHdKeyAccounts,
                 deferredAlgo25Accounts,
                 deferredLedgerBleAccounts,
                 deferredNoAuthAccounts

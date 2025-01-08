@@ -17,7 +17,6 @@ import com.algorand.common.account.local.data.database.model.NoAuthEntity
 import com.algorand.common.account.local.data.mapper.entity.NoAuthEntityMapper
 import com.algorand.common.account.local.data.mapper.model.NoAuthMapper
 import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.encryption.AddressEncryptionManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -32,12 +31,10 @@ class NoAuthAccountRepositoryImplTest {
     private val noAuthDao: NoAuthDao = mockk()
     private val noAuthEntityMapper: NoAuthEntityMapper = mockk()
     private val noAuthMapper: NoAuthMapper = mockk()
-    private val encryptionManager: AddressEncryptionManager = mockk()
     private val sut = NoAuthAccountRepositoryImpl(
         noAuthDao,
         noAuthEntityMapper,
-        noAuthMapper,
-        encryptionManager
+        noAuthMapper
     )
 
     @Test
@@ -56,21 +53,20 @@ class NoAuthAccountRepositoryImplTest {
 
     @Test
     fun `EXPECT account WHEN account was registered before`() = runTest {
-        coEvery { noAuthMapper(NoAuthEntity("encrypted_address")) } returns LocalAccount.NoAuth("address")
-        coEvery { noAuthDao.get("encrypted_address") } returns NoAuthEntity("encrypted_address")
-        coEvery { encryptionManager.encrypt("address") } returns "encrypted_address"
+        coEvery { noAuthMapper(NoAuthEntity("unencrypted_address")) } returns LocalAccount.NoAuth("unencrypted_address")
+        coEvery { noAuthDao.get("unencrypted_address") } returns NoAuthEntity("unencrypted_address")
 
-        val localAccount = sut.getAccount("address")
+        val localAccount = sut.getAccount("unencrypted_address")
 
-        val expectedAccount = LocalAccount.NoAuth("address")
-        coVerify { noAuthDao.get("encrypted_address") }
+        val expectedAccount = LocalAccount.NoAuth("unencrypted_address")
+        coVerify { noAuthDao.get("unencrypted_address") }
         assertEquals(expectedAccount, localAccount)
     }
 
     @Test
     fun `EXPECT account to be added to database WHEN addAccount is invoked`() = runTest {
         val account = LocalAccount.NoAuth("address")
-        val ledgerUsbEntity = NoAuthEntity("encryptedAddress")
+        val ledgerUsbEntity = NoAuthEntity("unencrypted_address")
         coEvery { noAuthEntityMapper(account) } returns ledgerUsbEntity
         coEvery { noAuthDao.insert(ledgerUsbEntity) } returns Unit
 
@@ -81,12 +77,11 @@ class NoAuthAccountRepositoryImplTest {
 
     @Test
     fun `EXPECT account to be deleted WHEN deleteAccount is invoked`() = runTest {
-        coEvery { noAuthDao.delete("encryptedAddress") } returns Unit
-        coEvery { encryptionManager.encrypt("address") } returns "encryptedAddress"
+        coEvery { noAuthDao.delete("unencrypted_address") } returns Unit
 
-        sut.deleteAccount("address")
+        sut.deleteAccount("unencrypted_address")
 
-        coVerify { noAuthDao.delete("encryptedAddress") }
+        coVerify { noAuthDao.delete("unencrypted_address") }
     }
 
     @Test

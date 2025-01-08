@@ -12,10 +12,18 @@
 
 package com.algorand.common.algosdk.model
 
-data class Bip39Account(
+import com.algorand.common.algosdk.Bip32DerivationType
+
+data class HdAccount(
     val address: String,
+    val publicKey: ByteArray,
+    val privateKey: ByteArray,
     val mnemonic: String,
-    val secretKey: ByteArray
+    val seedId: Int,
+    val account: Int,
+    val change: Int,
+    val keyIndex: Int,
+    val derivationType: Bip32DerivationType
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -25,7 +33,6 @@ data class Bip39Account(
 
         if (address != other.address) return false
         if (mnemonic != other.mnemonic) return false
-        if (!secretKey.contentEquals(other.secretKey)) return false
 
         return true
     }
@@ -33,7 +40,6 @@ data class Bip39Account(
     override fun hashCode(): Int {
         var result = address.hashCode()
         result = 31 * result + mnemonic.hashCode()
-        result = 31 * result + secretKey.contentHashCode()
         return result
     }
 }

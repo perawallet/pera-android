@@ -30,50 +30,50 @@ internal interface AssetHoldingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(entities: List<AssetHoldingEntity>)
 
-    @Query("SELECT * FROM asset_holding_table WHERE encrypted_address = :encryptedAddress AND asset_id = :assetId")
-    suspend fun get(encryptedAddress: String, assetId: Long): AssetHoldingEntity
+    @Query("SELECT * FROM asset_holding_table WHERE :algoAddress = algo_address AND :assetId = asset_id")
+    suspend fun get(algoAddress: String, assetId: Long): AssetHoldingEntity
 
-    @Query("SELECT * FROM asset_holding_table WHERE encrypted_address = :encryptedAddress")
-    suspend fun getAssetsByAddress(encryptedAddress: String): List<AssetHoldingEntity>
+    @Query("SELECT * FROM asset_holding_table WHERE :algoAddress = algo_address")
+    suspend fun getAssetsByAddress(algoAddress: String): List<AssetHoldingEntity>
 
-    @Query("DELETE FROM asset_holding_table WHERE encrypted_address = :encryptedAddress AND asset_id = :assetId")
-    suspend fun delete(encryptedAddress: String, assetId: Long)
+    @Query("DELETE FROM asset_holding_table WHERE :algoAddress = algo_address AND :assetId = asset_id")
+    suspend fun delete(algoAddress: String, assetId: Long)
 
-    @Query("DELETE FROM asset_holding_table WHERE encrypted_address = :encryptedAddress")
-    suspend fun deleteByAddress(encryptedAddress: String)
+    @Query("DELETE FROM asset_holding_table WHERE :algoAddress = algo_address")
+    suspend fun deleteByAddress(algoAddress: String)
 
-    @Query("SELECT asset_id FROM asset_holding_table WHERE encrypted_address IN (:encryptedAddressList)")
-    suspend fun getAssetIdsByAddresses(encryptedAddressList: List<String>): List<Long>
+    @Query("SELECT asset_id FROM asset_holding_table WHERE algo_address IN (:algoAddressList)")
+    suspend fun getAssetIdsByAddresses(algoAddressList: List<String>): List<Long>
 
     @Query(
         """
         UPDATE asset_holding_table 
         SET asset_status = :status 
-        WHERE encrypted_address = :encryptedAddress AND asset_id = :assetId
+        WHERE algo_address = :algoAddress AND asset_id = :assetId
     """
     )
-    suspend fun updateStatus(encryptedAddress: String, assetId: Long, status: AssetStatusEntity)
+    suspend fun updateStatus(algoAddress: String, assetId: Long, status: AssetStatusEntity)
 
     @Query(
         """
         DELETE FROM asset_holding_table 
-        WHERE encrypted_address = :encryptedAddress AND asset_id NOT IN (:assetIds)
+        WHERE algo_address = :algoAddress AND asset_id NOT IN (:assetIds)
     """
     )
-    suspend fun deleteAssetsNotInList(encryptedAddress: String, assetIds: List<Long>)
+    suspend fun deleteAssetsNotInList(algoAddress: String, assetIds: List<Long>)
 
     @Transaction
-    suspend fun updateAssetHoldings(encryptedAddress: String, assetHoldingEntities: List<AssetHoldingEntity>) {
+    suspend fun updateAssetHoldings(algoAddress: String, assetHoldingEntities: List<AssetHoldingEntity>) {
         val assetIds = assetHoldingEntities.map { it.assetId }
-        deleteAssetsNotInList(encryptedAddress, assetIds)
+        deleteAssetsNotInList(algoAddress, assetIds)
         insertAll(assetHoldingEntities)
     }
 
     @Query("SELECT * FROM asset_holding_table")
     fun getAllAsFlow(): Flow<List<AssetHoldingEntity>>
 
-    @Query("SELECT * FROM asset_holding_table WHERE encrypted_address = :encryptedAddress")
-    fun getAssetsByAddressAsFlow(encryptedAddress: String): Flow<List<AssetHoldingEntity>>
+    @Query("SELECT * FROM asset_holding_table WHERE algo_address = :algoAddress")
+    fun getAssetsByAddressAsFlow(algoAddress: String): Flow<List<AssetHoldingEntity>>
 
     @Query("DELETE FROM asset_holding_table")
     suspend fun clearAll()

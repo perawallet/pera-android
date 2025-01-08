@@ -17,15 +17,17 @@ import com.algorand.common.account.local.data.mapper.entity.NoAuthEntityMapper
 import com.algorand.common.account.local.data.mapper.model.NoAuthMapper
 import com.algorand.common.account.local.domain.model.LocalAccount.NoAuth
 import com.algorand.common.account.local.domain.repository.NoAuthAccountRepository
-import com.algorand.common.encryption.AddressEncryptionManager
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 internal class NoAuthAccountRepositoryImpl(
     private val noAuthDao: NoAuthDao,
     private val noAuthEntityMapper: NoAuthEntityMapper,
     private val noAuthMapper: NoAuthMapper,
-    private val addressEncryptionManager: AddressEncryptionManager,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : NoAuthAccountRepository {
 
@@ -48,7 +50,7 @@ internal class NoAuthAccountRepositoryImpl(
 
     override suspend fun getAccount(address: String): NoAuth? {
         return withContext(coroutineDispatcher) {
-            val noAuthEntity = noAuthDao.get(addressEncryptionManager.encrypt(address))
+            val noAuthEntity = noAuthDao.get(address)
             noAuthEntity?.let { noAuthMapper(it) }
         }
     }
@@ -62,8 +64,7 @@ internal class NoAuthAccountRepositoryImpl(
 
     override suspend fun deleteAccount(address: String) {
         withContext(coroutineDispatcher) {
-            val encryptedAddress = addressEncryptionManager.encrypt(address)
-            noAuthDao.delete(encryptedAddress)
+            noAuthDao.delete(address)
         }
     }
 

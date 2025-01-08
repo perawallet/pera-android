@@ -10,11 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.data.mapper.entity
+package com.algorand.common.account.local.domain.model
 
-import com.algorand.common.account.local.data.database.model.Bip39Entity
-import com.algorand.common.account.local.domain.model.LocalAccount
-
-internal interface Bip39EntityMapper {
-    operator fun invoke(localAccount: LocalAccount.Bip39): Bip39Entity
-}
+data class HdSeed(
+    val seedId: Int,
+    val seed: ByteArray,
+    val seedCustomName: String,
+)

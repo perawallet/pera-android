@@ -16,33 +16,32 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.algorand.common.account.local.data.database.model.Bip39Entity
+import com.algorand.common.account.local.data.database.model.HdSeedEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-internal interface Bip39Dao {
+internal interface HdSeedDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(entity: HdSeedEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entity: Bip39Entity)
+    suspend fun insertAll(entities: List<HdSeedEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(entities: List<Bip39Entity>)
+    @Query("SELECT * FROM hd_seeds")
+    suspend fun getAll(): List<HdSeedEntity>
 
-    @Query("SELECT * FROM bip_39")
-    suspend fun getAll(): List<Bip39Entity>
+    @Query("SELECT * FROM hd_seeds")
+    fun getAllAsFlow(): Flow<List<HdSeedEntity>>
 
-    @Query("SELECT * FROM bip_39")
-    fun getAllAsFlow(): Flow<List<Bip39Entity>>
-
-    @Query("SELECT COUNT(*) FROM bip_39")
+    @Query("SELECT COUNT(*) FROM hd_seeds")
     fun getTableSizeAsFlow(): Flow<Int>
 
-    @Query("SELECT * FROM bip_39 WHERE :encryptedAddress = encrypted_address")
-    suspend fun get(encryptedAddress: String): Bip39Entity?
+    @Query("SELECT * FROM hd_seeds WHERE :seedId = seed_id")
+    suspend fun get(seedId: Int): HdSeedEntity?
 
-    @Query("DELETE FROM bip_39 WHERE :encryptedAddress = encrypted_address")
-    suspend fun delete(encryptedAddress: String)
+    @Query("DELETE FROM hd_seeds WHERE :seedId = seed_id")
+    suspend fun delete(seedId: Int)
 
-    @Query("DELETE FROM bip_39")
+    @Query("DELETE FROM hd_seeds")
     suspend fun clearAll()
 }

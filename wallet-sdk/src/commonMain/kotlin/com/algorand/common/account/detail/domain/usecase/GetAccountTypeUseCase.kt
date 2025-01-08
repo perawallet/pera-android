@@ -52,7 +52,7 @@ internal class GetAccountTypeUseCase(
             is LocalAccount.Algo25 -> AccountType.Algo25
             is LocalAccount.LedgerBle -> AccountType.LedgerBle
             is LocalAccount.NoAuth -> AccountType.NoAuth
-            is LocalAccount.Bip39 -> AccountType.Bip39
+            is LocalAccount.HdKey -> AccountType.HdKey
         }
     }
 }

@@ -82,9 +82,9 @@ internal val accountInformationKoinModule = module {
         get<PeraDatabase>().assetHoldingDao()
     }
     factory<AccountInformationResponseMapper> { AccountInformationResponseMapperImpl() }
-    factory<AccountInformationEntityMapper> { AccountInformationEntityMapperImpl(get()) }
-    factory<AccountInformationErrorEntityMapper> { AccountInformationErrorEntityMapperImpl(get()) }
-    factory<AssetHoldingEntityMapper> { AssetHoldingEntityMapperImpl(get()) }
+    factory<AccountInformationEntityMapper> { AccountInformationEntityMapperImpl() }
+    factory<AccountInformationErrorEntityMapper> { AccountInformationErrorEntityMapperImpl() }
+    factory<AssetHoldingEntityMapper> { AssetHoldingEntityMapperImpl() }
     factory<GetAccountDetailCacheStatusFlow> { GetAccountDetailCacheStatusFlowUseCase(get(), get()) }
     factory<FetchAndCacheAccountInformation> {
         FetchAndCacheAccountInformation { addresses ->

@@ -19,8 +19,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "account_information")
 internal data class AccountInformationEntity(
     @PrimaryKey
-    @ColumnInfo(name = "encrypted_address")
-    val encryptedAddress: String,
+    @ColumnInfo(name = "algo_address")
+    val algoAddress: String,
 
     @ColumnInfo(name = "algo_amount")
     val algoAmount: String,
@@ -31,8 +31,8 @@ internal data class AccountInformationEntity(
     @ColumnInfo(name = "apps_total_extra_pages")
     val appsTotalExtraPages: Int,
 
-    @ColumnInfo(name = "auth_address")
-    val authAddress: String?,
+    @ColumnInfo(name = "auth_algo_address")
+    val authAlgoAddress: String?,
 
     @ColumnInfo(name = "created_at_round")
     val createdAtRound: Long?,

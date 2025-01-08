@@ -16,20 +16,14 @@ import com.algorand.common.account.info.data.database.model.AccountInformationEn
 import com.algorand.common.account.info.data.model.AccountInformationResponse
 import com.algorand.common.account.info.data.model.AccountInformationResponsePayloadResponse
 import com.algorand.common.account.info.data.model.AppStateSchemaResponse
-import com.algorand.common.encryption.AddressEncryptionManager
 import com.algorand.common.testing.peraFixture
-import io.mockk.every
-import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class AccountInformationEntityMapperImplTest {
 
-    private val addressEncryptionManager: AddressEncryptionManager = mockk {
-        every { encrypt(ADDRESS) } returns ENCRYPTED_ADDRESS
-    }
-    private val sut = AccountInformationEntityMapperImpl(addressEncryptionManager)
+    private val sut = AccountInformationEntityMapperImpl()
 
     @Test
     fun `EXPECT account information to be mapped successfully`() {
@@ -105,7 +99,6 @@ class AccountInformationEntityMapperImplTest {
 
     companion object {
         private const val ADDRESS = "address"
-        private const val ENCRYPTED_ADDRESS = "encrypted_address"
 
         private val ACCOUNT_INFORMATION_PAYLOAD = peraFixture<AccountInformationResponsePayloadResponse>().copy(
             address = ADDRESS,
@@ -130,10 +123,10 @@ class AccountInformationEntityMapperImplTest {
         )
 
         private val ACCOUNT_INFORMATION_ENTITY = AccountInformationEntity(
-            encryptedAddress = ENCRYPTED_ADDRESS,
+            algoAddress = ADDRESS,
             algoAmount = "10",
             lastFetchedRound = 9,
-            authAddress = "rekeyAddress",
+            authAlgoAddress = "rekeyAddress",
             optedInAppsCount = 9,
             appsTotalExtraPages = 2,
             createdAtRound = 9,

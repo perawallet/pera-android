@@ -20,13 +20,13 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
-internal fun getAccountDatabase(): AccountDatabase {
-    return createAccountDatabase().build()
+internal fun getAddressDatabase(): AddressDatabase {
+    return createAddressDatabase().build()
 }
 
-internal fun createAccountDatabase(): RoomDatabase.Builder<AccountDatabase> {
-    val dbFilePath = documentDirectory() + "/${AccountDatabase.DATABASE_NAME}.db"
-    return Room.databaseBuilder<AccountDatabase>(
+internal fun createAddressDatabase(): RoomDatabase.Builder<AddressDatabase> {
+    val dbFilePath = documentDirectory() + "/${AddressDatabase.DATABASE_NAME}.db"
+    return Room.databaseBuilder<AddressDatabase>(
         name = dbFilePath,
     ).setDriver(BundledSQLiteDriver())
 }

@@ -63,10 +63,10 @@ internal class AccountInformationMapperImpl(
 
     override fun invoke(entity: AccountInformationEntity, assetHoldingList: List<AssetHolding>): AccountInformation {
         return AccountInformation(
-            address = addressEncryptionManager.decrypt(entity.encryptedAddress),
+            address = entity.algoAddress,
             amount = entity.algoAmount,
             lastFetchedRound = entity.lastFetchedRound,
-            rekeyAdminAddress = entity.authAddress,
+            rekeyAdminAddress = entity.authAlgoAddress,
             totalAppsOptedIn = entity.optedInAppsCount,
             totalAssetsOptedIn = assetHoldingList.size,
             totalCreatedApps = entity.totalCreatedAppsCount,

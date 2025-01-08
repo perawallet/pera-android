@@ -16,13 +16,15 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
-import com.algorand.common.account.local.data.database.AccountDatabase.Companion.DATABASE_VERSION
+import com.algorand.common.account.local.data.database.AddressDatabase.Companion.DATABASE_VERSION
 import com.algorand.common.account.local.data.database.dao.Algo25Dao
-import com.algorand.common.account.local.data.database.dao.Bip39Dao
+import com.algorand.common.account.local.data.database.dao.HdKeyDao
+import com.algorand.common.account.local.data.database.dao.HdSeedDao
 import com.algorand.common.account.local.data.database.dao.LedgerBleDao
 import com.algorand.common.account.local.data.database.dao.NoAuthDao
 import com.algorand.common.account.local.data.database.model.Algo25Entity
-import com.algorand.common.account.local.data.database.model.Bip39Entity
+import com.algorand.common.account.local.data.database.model.HdKeyEntity
+import com.algorand.common.account.local.data.database.model.HdSeedEntity
 import com.algorand.common.account.local.data.database.model.LedgerBleEntity
 import com.algorand.common.account.local.data.database.model.NoAuthEntity
 
@@ -30,26 +32,28 @@ import com.algorand.common.account.local.data.database.model.NoAuthEntity
     entities = [
         LedgerBleEntity::class,
         NoAuthEntity::class,
-        Bip39Entity::class,
+        HdKeyEntity::class,
+        HdSeedEntity::class,
         Algo25Entity::class
     ],
     version = DATABASE_VERSION
 )
 @ConstructedBy(AppDatabaseConstructor::class)
-internal abstract class AccountDatabase : RoomDatabase() {
+internal abstract class AddressDatabase : RoomDatabase() {
 
     abstract fun ledgerBleDao(): LedgerBleDao
     abstract fun noAuthDao(): NoAuthDao
-    abstract fun bip39Dao(): Bip39Dao
+    abstract fun hdKeyDao(): HdKeyDao
+    abstract fun hdSeedDao(): HdSeedDao
     abstract fun algo25Dao(): Algo25Dao
 
     companion object {
         const val DATABASE_VERSION = 1
-        const val DATABASE_NAME = "account_database"
+        const val DATABASE_NAME = "address_database"
     }
 }
 
 @Suppress("NO_ACTUAL_FOR_EXPECT")
-internal expect object AppDatabaseConstructor : RoomDatabaseConstructor<AccountDatabase> {
-    override fun initialize(): AccountDatabase
+internal expect object AppDatabaseConstructor : RoomDatabaseConstructor<AddressDatabase> {
+    override fun initialize(): AddressDatabase
 }

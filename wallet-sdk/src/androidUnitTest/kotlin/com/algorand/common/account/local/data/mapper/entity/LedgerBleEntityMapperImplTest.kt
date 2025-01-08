@@ -14,21 +14,15 @@ package com.algorand.common.account.local.data.mapper.entity
 
 import com.algorand.common.account.local.data.database.model.LedgerBleEntity
 import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.encryption.AddressEncryptionManager
-import io.mockk.coEvery
-import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 internal class LedgerBleEntityMapperImplTest {
 
-    private val addressEncryptionManager: AddressEncryptionManager = mockk()
-
-    private val sut = LedgerBleEntityMapperImpl(addressEncryptionManager)
+    private val sut = LedgerBleEntityMapperImpl()
 
     @Test
     fun `EXPECT mapper entity`() {
-        coEvery { addressEncryptionManager.encrypt("unencrypted_address") } returns "encrypted_address"
         val result = sut(
             LocalAccount.LedgerBle(
                 address = "unencrypted_address",
@@ -39,7 +33,7 @@ internal class LedgerBleEntityMapperImplTest {
         )
 
         val expected = LedgerBleEntity(
-            encryptedAddress = "encrypted_address",
+            algoAddress = "unencrypted_address",
             deviceMacAddress = "mac_address",
             accountIndexInLedger = 1,
             bluetoothName = "bluetooth_name"

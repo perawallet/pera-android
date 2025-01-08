@@ -28,11 +28,11 @@ internal interface AccountInformationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(accountInformationEntities: List<AccountInformationEntity>)
 
-    @Query("SELECT * FROM account_information WHERE encrypted_address = :encryptedAddress")
-    suspend fun get(encryptedAddress: String): AccountInformationEntity?
+    @Query("SELECT * FROM account_information WHERE :algoAddress = algo_address")
+    suspend fun get(algoAddress: String): AccountInformationEntity?
 
-    @Query("SELECT * FROM account_information WHERE encrypted_address = :encryptedAddress")
-    fun getAsFlow(encryptedAddress: String): Flow<AccountInformationEntity?>
+    @Query("SELECT * FROM account_information WHERE :algoAddress = algo_address")
+    fun getAsFlow(algoAddress: String): Flow<AccountInformationEntity?>
 
     @Query("SELECT COUNT(*) FROM account_information")
     fun getTableSizeAsFlow(): Flow<Int>
@@ -43,8 +43,8 @@ internal interface AccountInformationDao {
     @Query("SELECT * FROM account_information")
     fun getAllAsFlow(): Flow<List<AccountInformationEntity>>
 
-    @Query("DELETE FROM account_information WHERE encrypted_address = :encryptedAddress")
-    suspend fun delete(encryptedAddress: String)
+    @Query("DELETE FROM account_information WHERE :algoAddress = algo_address")
+    suspend fun delete(algoAddress: String)
 
     @Query("SELECT MIN(last_fetched_round) FROM account_information WHERE created_at_round IS NOT NULL")
     suspend fun getEarliestLastFetchedRound(): Long?

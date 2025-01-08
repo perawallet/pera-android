@@ -15,17 +15,17 @@ package com.algorand.common.account.local.domain.repository
 import com.algorand.common.account.local.domain.model.LocalAccount
 import kotlinx.coroutines.flow.Flow
 
-internal interface Bip39AccountRepository {
+internal interface HdKeyAccountRepository {
 
-    fun getAllAsFlow(): Flow<List<LocalAccount.Bip39>>
+    fun getAllAsFlow(): Flow<List<LocalAccount.HdKey>>
 
     fun getAccountCountAsFlow(): Flow<Int>
 
-    suspend fun getAll(): List<LocalAccount.Bip39>
+    suspend fun getAll(): List<LocalAccount.HdKey>
 
-    suspend fun getAccount(address: String): LocalAccount.Bip39?
+    suspend fun getAccount(address: String): LocalAccount.HdKey?
 
-    suspend fun addAccount(account: LocalAccount.Bip39)
+    suspend fun addAccount(account: LocalAccount.HdKey)
 
     suspend fun deleteAccount(address: String)
 

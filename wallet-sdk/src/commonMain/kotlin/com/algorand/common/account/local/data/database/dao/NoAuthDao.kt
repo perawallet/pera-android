@@ -12,7 +12,10 @@
 
 package com.algorand.common.account.local.data.database.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.algorand.common.account.local.data.database.model.NoAuthEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -34,11 +37,11 @@ internal interface NoAuthDao {
     @Query("SELECT COUNT(*) FROM no_auth")
     fun getTableSizeAsFlow(): Flow<Int>
 
-    @Query("SELECT * FROM no_auth WHERE :encryptedAddress = encrypted_address")
-    suspend fun get(encryptedAddress: String): NoAuthEntity?
+    @Query("SELECT * FROM no_auth WHERE :algoAddress = algo_address")
+    suspend fun get(algoAddress: String): NoAuthEntity?
 
-    @Query("DELETE FROM no_auth WHERE :encryptedAddress = encrypted_address")
-    suspend fun delete(encryptedAddress: String)
+    @Query("DELETE FROM no_auth WHERE :algoAddress = algo_address")
+    suspend fun delete(algoAddress: String)
 
     @Query("DELETE FROM no_auth")
     suspend fun clearAll()

@@ -10,18 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.local.data.database.model
+package com.algorand.common.encryption
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "bip_39")
-internal data class Bip39Entity(
-    @PrimaryKey
-    @ColumnInfo("encrypted_address")
-    val encryptedAddress: String,
-
-    @ColumnInfo("encrypted_secret_key")
-    val encryptedSecretKey: String
-)
+interface HdSeedEncryptionManager {
+    fun encrypt(secretKey: ByteArray): ByteArray
+    fun decrypt(encryptedSecretKey: ByteArray): ByteArray
+}

@@ -14,7 +14,6 @@ package com.algorand.common.account.local.data.mapper.entity
 
 import com.algorand.common.account.local.data.database.model.Algo25Entity
 import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.encryption.AddressEncryptionManager
 import com.algorand.common.encryption.SecretKeyEncryptionManager
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -23,22 +22,19 @@ import org.junit.Test
 
 internal class Algo25EntityMapperImplTest {
 
-    private val addressEncryptionManager: AddressEncryptionManager = mockk()
     private val secretKeyEncryptionManager: SecretKeyEncryptionManager = mockk()
 
     private val sut = Algo25EntityMapperImpl(
-        addressEncryptionManager,
         secretKeyEncryptionManager
     )
 
     @Test
     fun `EXPECT mapped entity`() {
-        coEvery { addressEncryptionManager.encrypt("unencrypted_address") } returns "encrypted_address"
         coEvery { secretKeyEncryptionManager.encrypt(byteArrayOf(1, 2, 3)) } returns "encrypted_secret_key"
 
         val result = sut(LocalAccount.Algo25(address = "unencrypted_address", secretKey = byteArrayOf(1, 2, 3)))
 
-        val expected = Algo25Entity(encryptedAddress = "encrypted_address", "encrypted_secret_key")
+        val expected = Algo25Entity(algoAddress = "unencrypted_address", "encrypted_secret_key")
         assertEquals(expected, result)
     }
 }

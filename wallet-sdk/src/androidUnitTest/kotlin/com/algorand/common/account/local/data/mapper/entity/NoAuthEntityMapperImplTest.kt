@@ -14,25 +14,17 @@ package com.algorand.common.account.local.data.mapper.entity
 
 import com.algorand.common.account.local.data.database.model.NoAuthEntity
 import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.encryption.AddressEncryptionManager
-import io.mockk.coEvery
-import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 internal class NoAuthEntityMapperImplTest {
-
-    private val encryptionManager: AddressEncryptionManager = mockk()
-
-    private val sut = NoAuthEntityMapperImpl(encryptionManager)
+    private val sut = NoAuthEntityMapperImpl()
 
     @Test
     fun `EXPECT mapped entity`() {
-        coEvery { encryptionManager.encrypt("unencrypted_address") } returns "encrypted_address"
-
         val result = sut(LocalAccount.NoAuth(address = "unencrypted_address"))
 
-        val expected = NoAuthEntity(encryptedAddress = "encrypted_address")
+        val expected = NoAuthEntity(algoAddress = "unencrypted_address")
         assertEquals(expected, result)
     }
 }

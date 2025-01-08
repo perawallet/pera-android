@@ -18,14 +18,14 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.coroutines.Dispatchers
 
-internal fun getAccountDatabase(ctx: Context): AccountDatabase {
+internal fun getAddressDatabase(ctx: Context): AddressDatabase {
     return getDatabaseBuilder(ctx).build()
 }
 
-internal fun getDatabaseBuilder(ctx: Context): RoomDatabase.Builder<AccountDatabase> {
+internal fun getDatabaseBuilder(ctx: Context): RoomDatabase.Builder<AddressDatabase> {
     val appContext = ctx.applicationContext
-    val dbFile = appContext.getDatabasePath(AccountDatabase.DATABASE_NAME)
-    return Room.databaseBuilder<AccountDatabase>(
+    val dbFile = appContext.getDatabasePath(AddressDatabase.DATABASE_NAME)
+    return Room.databaseBuilder<AddressDatabase>(
         context = appContext,
         name = dbFile.absolutePath
     ).setQueryCoroutineContext(Dispatchers.IO)

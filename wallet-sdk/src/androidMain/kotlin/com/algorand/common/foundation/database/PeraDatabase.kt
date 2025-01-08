@@ -10,12 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.foundation.database
+package com.algorand.common.foundation.database
 
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.algorand.common.foundation.database.PeraDatabase
 import kotlinx.coroutines.Dispatchers
 
 internal fun getPeraDatabase(context: Context): PeraDatabase {

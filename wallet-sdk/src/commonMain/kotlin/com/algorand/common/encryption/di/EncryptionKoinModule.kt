@@ -16,6 +16,10 @@ import com.algorand.common.encryption.AddressEncryptionManager
 import com.algorand.common.encryption.AddressEncryptionManagerImpl
 import com.algorand.common.encryption.Base64Manager
 import com.algorand.common.encryption.Base64ManagerImpl
+import com.algorand.common.encryption.HdPrivateKeyEncryptionManager
+import com.algorand.common.encryption.HdPrivateKeyEncryptionManagerImpl
+import com.algorand.common.encryption.HdSeedEncryptionManager
+import com.algorand.common.encryption.HdSeedEncryptionManagerImpl
 import com.algorand.common.encryption.SecretKeyEncryptionManager
 import com.algorand.common.encryption.SecretKeyEncryptionManagerImpl
 import org.koin.dsl.module
@@ -24,4 +28,6 @@ val encryptionModule = module {
     single<Base64Manager> { Base64ManagerImpl() }
     single<SecretKeyEncryptionManager> { SecretKeyEncryptionManagerImpl() }
     single<AddressEncryptionManager> { AddressEncryptionManagerImpl() }
+    single<HdPrivateKeyEncryptionManager> { HdPrivateKeyEncryptionManagerImpl() }
+    single<HdSeedEncryptionManager> { HdSeedEncryptionManagerImpl() }
 }

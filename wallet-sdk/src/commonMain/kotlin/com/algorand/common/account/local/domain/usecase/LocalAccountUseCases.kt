@@ -13,10 +13,11 @@
 package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.model.LocalAccount
+import com.algorand.common.algosdk.Bip32DerivationType
 import kotlinx.coroutines.flow.Flow
 
-fun interface AddBip39Account {
-    suspend operator fun invoke(account: LocalAccount.Bip39)
+fun interface AddHdKeyAccount {
+    suspend operator fun invoke(account: LocalAccount.HdKey)
 }
 
 fun interface AddAlgo25Account {
@@ -31,8 +32,21 @@ fun interface AddNoAuthAccount {
     suspend operator fun invoke(account: LocalAccount.NoAuth)
 }
 
-fun interface CreateBip39Account {
-    suspend operator fun invoke(address: String, secretKey: ByteArray)
+fun interface GetAlgoAddressFromHdPublicKey {
+    suspend operator fun invoke(publicKey: ByteArray): String
+}
+
+fun interface CreateHdKeyAccount {
+    suspend operator fun invoke(
+        algoAddress: String,
+        publicKey: ByteArray,
+        privateKey: ByteArray,
+        seedId: Int,
+        account: Int,
+        change: Int,
+        keyIndex: Int,
+        derivationType: Bip32DerivationType
+    )
 }
 
 fun interface CreateAlgo25Account {
@@ -59,6 +73,10 @@ fun interface GetLedgerBleAccount {
     suspend operator fun invoke(address: String): LocalAccount.LedgerBle?
 }
 
+fun interface GetHdPublicKeyFromAlgoAddress {
+    suspend operator fun invoke(address: String): ByteArray
+}
+
 fun interface GetLocalAccountCountFlow {
     operator fun invoke(): Flow<Int>
 }
@@ -83,8 +101,17 @@ fun interface UpdateNoAuthAccountToAlgo25 {
     suspend operator fun invoke(address: String, secretKey: ByteArray)
 }
 
-fun interface UpdateNoAuthAccountToBip39 {
-    suspend operator fun invoke(address: String, secretKey: ByteArray)
+fun interface UpdateNoAuthAccountToHdKey {
+    suspend operator fun invoke(
+        address: String,
+        publicKey: ByteArray,
+        privateKey: ByteArray,
+        seedId: Int,
+        account: Int,
+        change: Int,
+        keyIndex: Int,
+        derivationType: Bip32DerivationType
+    )
 }
 
 fun interface UpdateNoAuthAccountToLedgerBle {

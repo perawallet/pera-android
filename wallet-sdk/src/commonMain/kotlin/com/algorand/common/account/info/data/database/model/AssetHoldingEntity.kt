@@ -19,14 +19,14 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "asset_holding_table",
-    indices = [Index(value = ["encrypted_address", "asset_id"], unique = true)]
+    indices = [Index(value = ["algo_address", "asset_id"], unique = true)]
 )
 internal data class AssetHoldingEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
-    @ColumnInfo(name = "encrypted_address")
-    val encryptedAddress: String,
+    @ColumnInfo(name = "algo_address")
+    val algoAddress: String,
 
     @ColumnInfo(name = "asset_id")
     val assetId: Long,

@@ -13,18 +13,15 @@
 package com.algorand.common.account.info.data.mapper
 
 import com.algorand.common.account.info.data.database.model.AccountInformationEntity
-import com.algorand.common.encryption.AddressEncryptionManager
 
-internal class AccountInformationErrorEntityMapperImpl(
-    private val addressEncryptionManager: AddressEncryptionManager
-) : AccountInformationErrorEntityMapper {
+internal class AccountInformationErrorEntityMapperImpl : AccountInformationErrorEntityMapper {
     override fun invoke(address: String): AccountInformationEntity {
         return AccountInformationEntity(
-            encryptedAddress = addressEncryptionManager.encrypt(address),
+            algoAddress = address,
             algoAmount = "0",
             optedInAppsCount = 0,
             appsTotalExtraPages = 0,
-            authAddress = null,
+            authAlgoAddress = null,
             createdAtRound = null,
             lastFetchedRound = 0,
             totalCreatedAppsCount = 0,

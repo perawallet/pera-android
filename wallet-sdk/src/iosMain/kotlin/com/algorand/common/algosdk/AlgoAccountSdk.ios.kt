@@ -13,26 +13,47 @@
 package com.algorand.common.algosdk
 
 import com.algorand.common.algosdk.model.Algo25Account
-import com.algorand.common.algosdk.model.Bip39Account
+import com.algorand.common.algosdk.model.HdAccount
+import io.ktor.utils.io.core.toByteArray
 import kotlin.random.Random
 
 actual interface AlgoAccountSdk {
-    actual fun createBip39Account(): Bip39Account
-    actual fun recoverBip39Account(mnemonic: String): Bip39Account?
+    actual fun createHdAccount(): HdAccount
+    actual fun recoverHdAccount(mnemonic: String): HdAccount?
     actual fun createAlgo25Account(): Algo25Account
     actual fun recoverAlgo25Account(mnemonic: String): Algo25Account?
 }
 
 internal class AlgoAccountSdkImpl : AlgoAccountSdk {
 
-    override fun createBip39Account(): Bip39Account {
+    override fun createHdAccount(): HdAccount {
         val accountAddress = generateRandomAddress()
         val mnemonic = generate24WordMnemonic()
-        return Bip39Account(accountAddress, mnemonic, byteArrayOf())
+        return HdAccount(
+            address = accountAddress,
+            mnemonic = mnemonic,
+            publicKey = "TBD".toByteArray(),
+            privateKey = "TBD".toByteArray(),
+            seedId = 1,
+            account = 0,
+            change = 0,
+            keyIndex = 0,
+            derivationType = Bip32DerivationType.Peikert
+        )
     }
 
-    override fun recoverBip39Account(mnemonic: String): Bip39Account {
-        return Bip39Account(mnemonic, mnemonic, byteArrayOf())
+    override fun recoverHdAccount(mnemonic: String): HdAccount {
+        return HdAccount(
+            address = "TBD",
+            mnemonic = mnemonic,
+            publicKey = "TBD".toByteArray(),
+            privateKey = "TBD".toByteArray(),
+            seedId = 1,
+            account = 0,
+            change = 0,
+            keyIndex = 0,
+            derivationType = Bip32DerivationType.Peikert
+        )
     }
 
     override fun createAlgo25Account(): Algo25Account {

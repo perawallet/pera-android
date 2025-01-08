@@ -18,17 +18,18 @@ import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.account.Account
 import com.algorand.algosdk.crypto.Address
 import com.algorand.common.algosdk.model.Algo25Account
-import com.algorand.common.algosdk.model.Bip39Account
+import com.algorand.common.algosdk.model.HdAccount
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
+import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
+import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
-import kotlin.random.Random
 
 
 actual interface AlgoAccountSdk {
-    actual fun createBip39Account(): Bip39Account
-    actual fun recoverBip39Account(mnemonic: String): Bip39Account?
+    actual fun createHdAccount(): HdAccount
+    actual fun recoverHdAccount(mnemonic: String): HdAccount?
     actual fun createAlgo25Account(): Algo25Account
     actual fun recoverAlgo25Account(mnemonic: String): Algo25Account?
 }
@@ -39,17 +40,14 @@ internal class AlgoAccountSdkImpl : AlgoAccountSdk {
         Security.insertProviderAt(BouncyCastleProvider(), 0)
     }
 
-    override fun createBip39Account(): Bip39Account {
+    override fun createHdAccount(): HdAccount {
         val generatedMnemonic = MnemonicCode(Mnemonics.WordCount.COUNT_24)
-        val wordsAsString = generatedMnemonic.joinToString(" ")
-        val accountAddress = generateBip39Address(generatedMnemonic)
-        return Bip39Account(accountAddress, wordsAsString, generatedMnemonic.toSeed())
+        return getHdAccount(generatedMnemonic)
     }
 
-    override fun recoverBip39Account(mnemonic: String): Bip39Account {
+    override fun recoverHdAccount(mnemonic: String): HdAccount {
         val m = MnemonicCode(mnemonic)
-        val accountAddress = generateBip39Address(m)
-        return Bip39Account(accountAddress, mnemonic, m.toSeed())
+        return getHdAccount(m)
     }
 
     override fun createAlgo25Account(): Algo25Account {
@@ -66,18 +64,42 @@ internal class AlgoAccountSdkImpl : AlgoAccountSdk {
         }
     }
 
-    private fun generateBip39Address(mnemonic: MnemonicCode): String {
-        val xHDWalletAPI = XHDWalletAPIAndroid(mnemonic.toSeed())
+    private fun getHdAccount(mnemonic: MnemonicCode): HdAccount {
+        val seed = mnemonic.toSeed()
+        val xHDWalletAPI = XHDWalletAPIAndroid(seed)
+        val keyContext = KeyContext.Address
+        val account = 0.toUInt()
+        val change = 0.toUInt()
+        val keyIndex = 0.toUInt()
+
+        val publicKey = xHDWalletAPI.keyGen(
+            keyContext,
+            account,
+            change,
+            keyIndex
+        )
+
         // Produce the PK and turn it into an Algorand formatted address
         val algoAddress =
             Address(
-                xHDWalletAPI.keyGen(
-                    KeyContext.Address,
-                    Random.nextInt().toUInt(),
-                    Random.nextInt().toUInt(),
-                    Random.nextInt().toUInt()
-                )
+                publicKey
             )
-        return algoAddress.toString()
+        val privateKey: ByteArray =
+            xHDWalletAPI.deriveKey(
+                fromSeed(seed),
+                getBIP44PathFromContext(keyContext, account, change, keyIndex),
+                true
+            )
+        return HdAccount(
+            address = algoAddress.toString(),
+            mnemonic = mnemonic.toString(),
+            publicKey = publicKey,
+            privateKey = privateKey,
+            seedId = 1,
+            account = account.toInt(),
+            change = change.toInt(),
+            keyIndex = keyIndex.toInt(),
+            derivationType = Bip32DerivationType.Peikert
+        )
     }
 }

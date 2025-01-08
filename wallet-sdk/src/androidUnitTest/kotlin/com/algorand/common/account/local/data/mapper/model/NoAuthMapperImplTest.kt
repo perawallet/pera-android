@@ -25,19 +25,19 @@ internal class NoAuthMapperImplTest {
 
     private val encryptionManager: AddressEncryptionManager = mockk()
 
-    private val sut = NoAuthMapperImpl(encryptionManager)
+    private val sut = NoAuthMapperImpl()
 
     @Test
     fun `EXPECT mapped model`() {
-        coEvery { encryptionManager.decrypt("encrypted_address") } returns "decrypted_address"
+        coEvery { encryptionManager.decrypt("unencrypted_address") } returns "unencrypted_address"
 
         val result = sut(NO_AUTH_ENTITY)
 
-        val expected = LocalAccount.NoAuth("decrypted_address")
+        val expected = LocalAccount.NoAuth("unencrypted_address")
         assertEquals(expected, result)
     }
 
     companion object {
-        private val NO_AUTH_ENTITY = peraFixture<NoAuthEntity>().copy(encryptedAddress = "encrypted_address")
+        private val NO_AUTH_ENTITY = peraFixture<NoAuthEntity>().copy(algoAddress = "unencrypted_address")
     }
 }

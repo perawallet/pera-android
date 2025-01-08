@@ -14,20 +14,16 @@ package com.algorand.common.account.local.data.mapper.model
 
 import com.algorand.common.account.local.data.database.model.Algo25Entity
 import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.encryption.AddressEncryptionManager
 import com.algorand.common.encryption.SecretKeyEncryptionManager
 
 internal class Algo25MapperImpl(
-    private val addressEncryptionManager: AddressEncryptionManager,
     private val secretKeyEncryptionManager: SecretKeyEncryptionManager
 ) : Algo25Mapper {
 
     override fun invoke(entity: Algo25Entity): LocalAccount.Algo25 {
-        val decryptedAddress = addressEncryptionManager.decrypt(entity.encryptedAddress)
-        val decryptedSecretKey = secretKeyEncryptionManager.decrypt(entity.encryptedSecretKey)
         return LocalAccount.Algo25(
-            address = decryptedAddress,
-            secretKey = decryptedSecretKey
+            address = entity.algoAddress,
+            secretKey = secretKeyEncryptionManager.decrypt(entity.encryptedSecretKey)
         )
     }
 }

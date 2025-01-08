@@ -13,7 +13,7 @@
 package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
-import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
+import com.algorand.common.account.local.domain.repository.HdKeyAccountRepository
 import com.algorand.common.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.common.account.local.domain.repository.NoAuthAccountRepository
 import com.algorand.test.test
@@ -23,13 +23,13 @@ import kotlinx.coroutines.flow.flowOf
 import org.junit.Test
 
 class GetLocalAccountCountFlowUseCaseTest {
-    private val bip39AccountRepository: Bip39AccountRepository = mockk()
+    private val hdKeyAccountRepository: HdKeyAccountRepository = mockk()
     private val algo25AccountRepository: Algo25AccountRepository = mockk()
     private val ledgerBleAccountRepository: LedgerBleAccountRepository = mockk()
     private val noAuthAccountRepository: NoAuthAccountRepository = mockk()
 
     private val sut = GetLocalAccountCountFlowUseCase(
-        bip39AccountRepository,
+        hdKeyAccountRepository,
         algo25AccountRepository,
         ledgerBleAccountRepository,
         noAuthAccountRepository
@@ -37,7 +37,7 @@ class GetLocalAccountCountFlowUseCaseTest {
 
     @Test
     fun `EXPECT zero WHEN all repositories return zero`() {
-        every { bip39AccountRepository.getAccountCountAsFlow() } returns flowOf(0)
+        every { hdKeyAccountRepository.getAccountCountAsFlow() } returns flowOf(0)
         every { algo25AccountRepository.getAccountCountAsFlow() } returns flowOf(0)
         every { ledgerBleAccountRepository.getAccountCountAsFlow() } returns flowOf(0)
         every { noAuthAccountRepository.getAccountCountAsFlow() } returns flowOf(0)
@@ -50,7 +50,7 @@ class GetLocalAccountCountFlowUseCaseTest {
 
     @Test
     fun `EXPECT account count WHEN there are local accounts`() {
-        every { bip39AccountRepository.getAccountCountAsFlow() } returns flowOf(1)
+        every { hdKeyAccountRepository.getAccountCountAsFlow() } returns flowOf(1)
         every { algo25AccountRepository.getAccountCountAsFlow() } returns flowOf(2)
         every { ledgerBleAccountRepository.getAccountCountAsFlow() } returns flowOf(3)
         every { noAuthAccountRepository.getAccountCountAsFlow() } returns flowOf(4)
@@ -63,7 +63,7 @@ class GetLocalAccountCountFlowUseCaseTest {
 
     @Test
     fun `EXPECT count to be updated WHEN latest count is different than the current one`() {
-        every { bip39AccountRepository.getAccountCountAsFlow() } returns flowOf(1, 1)
+        every { hdKeyAccountRepository.getAccountCountAsFlow() } returns flowOf(1, 1)
         every { algo25AccountRepository.getAccountCountAsFlow() } returns flowOf(2, 2)
         every { ledgerBleAccountRepository.getAccountCountAsFlow() } returns flowOf(3, 3)
         every { noAuthAccountRepository.getAccountCountAsFlow() } returns flowOf(4, 4)

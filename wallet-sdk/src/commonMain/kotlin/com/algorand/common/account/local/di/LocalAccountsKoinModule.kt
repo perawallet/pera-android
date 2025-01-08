@@ -12,43 +12,46 @@
 
 package com.algorand.common.account.local.di
 
-import com.algorand.common.account.local.data.database.AccountDatabase
+import com.algorand.common.account.local.data.database.AddressDatabase
 import com.algorand.common.account.local.data.database.dao.Algo25Dao
-import com.algorand.common.account.local.data.database.dao.Bip39Dao
+import com.algorand.common.account.local.data.database.dao.HdKeyDao
+import com.algorand.common.account.local.data.database.dao.HdSeedDao
 import com.algorand.common.account.local.data.database.dao.LedgerBleDao
 import com.algorand.common.account.local.data.database.dao.NoAuthDao
 import com.algorand.common.account.local.data.mapper.entity.Algo25EntityMapper
 import com.algorand.common.account.local.data.mapper.entity.Algo25EntityMapperImpl
-import com.algorand.common.account.local.data.mapper.entity.Bip39EntityMapper
-import com.algorand.common.account.local.data.mapper.entity.Bip39EntityMapperImpl
+import com.algorand.common.account.local.data.mapper.entity.HdKeyEntityMapper
+import com.algorand.common.account.local.data.mapper.entity.HdKeyEntityMapperImpl
 import com.algorand.common.account.local.data.mapper.entity.LedgerBleEntityMapper
 import com.algorand.common.account.local.data.mapper.entity.LedgerBleEntityMapperImpl
 import com.algorand.common.account.local.data.mapper.entity.NoAuthEntityMapper
 import com.algorand.common.account.local.data.mapper.entity.NoAuthEntityMapperImpl
 import com.algorand.common.account.local.data.mapper.model.Algo25Mapper
 import com.algorand.common.account.local.data.mapper.model.Algo25MapperImpl
-import com.algorand.common.account.local.data.mapper.model.Bip39Mapper
-import com.algorand.common.account.local.data.mapper.model.Bip39MapperImpl
+import com.algorand.common.account.local.data.mapper.model.HdKeyMapper
+import com.algorand.common.account.local.data.mapper.model.HdKeyMapperImpl
 import com.algorand.common.account.local.data.mapper.model.LedgerBleMapper
 import com.algorand.common.account.local.data.mapper.model.LedgerBleMapperImpl
 import com.algorand.common.account.local.data.mapper.model.NoAuthMapper
 import com.algorand.common.account.local.data.mapper.model.NoAuthMapperImpl
 import com.algorand.common.account.local.data.repository.Algo25AccountRepositoryImpl
-import com.algorand.common.account.local.data.repository.Bip39AccountRepositoryImpl
+import com.algorand.common.account.local.data.repository.HdKeyAccountRepositoryImpl
 import com.algorand.common.account.local.data.repository.LedgerBleAccountRepositoryImpl
 import com.algorand.common.account.local.data.repository.NoAuthAccountRepositoryImpl
 import com.algorand.common.account.local.domain.repository.Algo25AccountRepository
-import com.algorand.common.account.local.domain.repository.Bip39AccountRepository
+import com.algorand.common.account.local.domain.repository.HdKeyAccountRepository
 import com.algorand.common.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.common.account.local.domain.repository.NoAuthAccountRepository
 import com.algorand.common.account.local.domain.usecase.AddAlgo25Account
-import com.algorand.common.account.local.domain.usecase.AddBip39Account
+import com.algorand.common.account.local.domain.usecase.AddHdKeyAccount
 import com.algorand.common.account.local.domain.usecase.AddLedgerBleAccount
 import com.algorand.common.account.local.domain.usecase.AddNoAuthAccount
 import com.algorand.common.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.common.account.local.domain.usecase.DeleteLocalAccountUseCase
+import com.algorand.common.account.local.domain.usecase.GetAlgoAddressFromHdPublicKeyUseCase
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
+import com.algorand.common.account.local.domain.usecase.GetHdPublicKeyFromAlgoAddressUseCase
 import com.algorand.common.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.common.account.local.domain.usecase.GetLocalAccountCountFlowUseCase
 import com.algorand.common.account.local.domain.usecase.GetLocalAccounts
@@ -58,45 +61,48 @@ import kotlinx.coroutines.IO
 import org.koin.dsl.module
 
 internal val localAccountsKoinModule = module {
-    single<Bip39AccountRepository> {
-        Bip39AccountRepositoryImpl(get(), get(), get(), get())
+    single<HdKeyAccountRepository> {
+        HdKeyAccountRepositoryImpl(get(), get(), get(), Dispatchers.IO)
     }
     single<Algo25AccountRepository> {
-        Algo25AccountRepositoryImpl(get(), get(), get(), get())
+        Algo25AccountRepositoryImpl(get(), get(), get(), Dispatchers.IO)
     }
     single<LedgerBleAccountRepository> {
-        LedgerBleAccountRepositoryImpl(get(), get(), get(), get())
+        LedgerBleAccountRepositoryImpl(get(), get(), get(), Dispatchers.IO)
     }
     single<NoAuthAccountRepository> {
-        NoAuthAccountRepositoryImpl(get(), get(), get(), get())
+        NoAuthAccountRepositoryImpl(get(), get(), get(), Dispatchers.IO)
     }
 
-    single<Bip39Dao> {
-        get<AccountDatabase>().bip39Dao()
+    single<HdSeedDao> {
+        get<AddressDatabase>().hdSeedDao()
+    }
+    single<HdKeyDao> {
+        get<AddressDatabase>().hdKeyDao()
     }
     single<Algo25Dao> {
-        get<AccountDatabase>().algo25Dao()
+        get<AddressDatabase>().algo25Dao()
     }
     single<LedgerBleDao> {
-        get<AccountDatabase>().ledgerBleDao()
+        get<AddressDatabase>().ledgerBleDao()
     }
     single<NoAuthDao> {
-        get<AccountDatabase>().noAuthDao()
+        get<AddressDatabase>().noAuthDao()
     }
 
-    factory<Bip39EntityMapper> { Bip39EntityMapperImpl(get(), get()) }
-    factory<Algo25EntityMapper> { Algo25EntityMapperImpl(get(), get()) }
-    factory<LedgerBleEntityMapper> { LedgerBleEntityMapperImpl(get()) }
-    factory<NoAuthEntityMapper> { NoAuthEntityMapperImpl(get()) }
+    factory<HdKeyEntityMapper> { HdKeyEntityMapperImpl(get()) }
+    factory<Algo25EntityMapper> { Algo25EntityMapperImpl(get()) }
+    factory<LedgerBleEntityMapper> { LedgerBleEntityMapperImpl() }
+    factory<NoAuthEntityMapper> { NoAuthEntityMapperImpl() }
 
-    factory<Bip39Mapper> { Bip39MapperImpl(get(), get()) }
-    factory<Algo25Mapper> { Algo25MapperImpl(get(), get()) }
-    factory<LedgerBleMapper> { LedgerBleMapperImpl(get()) }
-    factory<NoAuthMapper> { NoAuthMapperImpl(get()) }
+    factory<HdKeyMapper> { HdKeyMapperImpl(get()) }
+    factory<Algo25Mapper> { Algo25MapperImpl(get()) }
+    factory<LedgerBleMapper> { LedgerBleMapperImpl() }
+    factory<NoAuthMapper> { NoAuthMapperImpl() }
 
-    factory<AddBip39Account> {
-        AddBip39Account { account ->
-            get<Bip39AccountRepository>().addAccount(account)
+    factory<AddHdKeyAccount> {
+        AddHdKeyAccount { account ->
+            get<HdKeyAccountRepository>().addAccount(account)
         }
     }
 
@@ -127,5 +133,11 @@ internal val localAccountsKoinModule = module {
     }
     factory<GetLocalAccountCountFlow> {
         GetLocalAccountCountFlowUseCase(get(), get(), get(), get())
+    }
+    factory<GetAlgoAddressFromHdPublicKeyUseCase> {
+        GetAlgoAddressFromHdPublicKeyUseCase()
+    }
+    factory<GetHdPublicKeyFromAlgoAddressUseCase> {
+        GetHdPublicKeyFromAlgoAddressUseCase()
     }
 }

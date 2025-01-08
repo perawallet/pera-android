@@ -1,7 +1,55 @@
+# Cache Initialization
+
+<img src="mermaid/flowcharts/cache_initialization.png" width="500">
+
+```sh
+flowchart TD
+  subgraph ABC["**Cache Initialization**"]
+    %% Nodes
+    A[Initialize Cache]
+    B[Clear previous cache session]
+    C[Get local accounts]
+    D[Is there any account?]
+    E[End process]
+    F[Fetch account details]
+    G[Is there any error?]
+    H[Is error caused by indexer 5k ASA limit?]
+    I[Cache Account Details]
+    J[Fetch ASA holdings separately]
+    K[Cache Account Detail as Error]
+    L[Get every ASA ids which are opted in by local accounts]
+    M[Fetch 100 ASA details per request]
+    N[Cache ASA details]
+    O[Complete Initialization]
+
+    %% Edge connections between nodes
+    A --> B
+    B --> C
+    C --> D
+    D -- No --> E
+    D -- Yes --> F
+    F --> G
+    G -- Yes --> H
+    G -- No --> I 
+    H -- Yes --> J
+    H -- No --> K
+    J --> I
+    K --> L
+    I --> L
+    L --> M
+    M --> N
+    N --> O
+
+    %% Node Shapes
+    D@{shape: diam}
+    G@{shape: diam}
+    H@{shape: diam}
+  end
+```
+
 # Polling
 
-<img src="mermaid/polling.png" width="300">
-
+<img src="mermaid/flowcharts/polling.png" width="500">
 
 ```sh
 flowchart TD
@@ -27,7 +75,7 @@ end
 
 # Algorand Address Database
 
-<img src="mermaid/database_address.png" width="500">
+<img src="mermaid/er-diagrams/database_address.png" width="500">
 
 
 ```sh
@@ -69,7 +117,7 @@ erDiagram
 
 # Pera Database
 
-<img src="mermaid/database_pera.png" width="500">
+<img src="mermaid/er-diagrams/database_pera.png" width="500">
 
 
 ```sh

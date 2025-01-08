@@ -16,13 +16,24 @@ package com.algorand.android.koin
 import com.algorand.common.account.core.domain.usecase.AddAlgo25Account
 import com.algorand.common.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.common.account.core.domain.usecase.AddNoAuthAccount
+import com.algorand.common.account.custom.domain.usecase.GetAccountAsbBackUpStatus
+import com.algorand.common.account.custom.domain.usecase.GetAccountCustomInfoOrNull
+import com.algorand.common.account.custom.domain.usecase.GetAllAccountOrderIndexes
+import com.algorand.common.account.custom.domain.usecase.GetBackedUpAccounts
+import com.algorand.common.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.common.account.custom.domain.usecase.SetAccountCustomName
+import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.common.account.detail.domain.usecase.GetAccountsDetails
+import com.algorand.common.account.info.domain.usecase.GetAccountInformation
 import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedErrorAccount
 import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
+import com.algorand.common.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.common.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.common.account.local.domain.usecase.IsThereAnyNoAuthAccountWithAddress
 import com.algorand.common.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
 import com.algorand.common.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
+import com.algorand.common.asset.domain.usecase.GetAsset
+import com.algorand.common.cache.domain.usecase.GetAppCacheStatusFlow
 import com.algorand.common.cache.domain.usecase.InitializeAppCache
 import com.algorand.common.deeplink.parser.CreateDeepLink
 import com.algorand.common.remoteconfig.domain.usecase.InitializeOperationalToggles
@@ -78,4 +89,37 @@ object KoinHiltModule {
 
     @Provides
     fun provideIsThereAnyCachedSuccessAccount(): IsThereAnyCachedSuccessAccount = getKoin().get()
+
+    @Provides
+    fun provideGetAccountAsbBackUpStatus(): GetAccountAsbBackUpStatus = getKoin().get()
+
+    @Provides
+    fun provideGetNotBackedUpAccounts(): GetNotBackedUpAccounts = getKoin().get()
+
+    @Provides
+    fun provideGetBackedUpAccounts(): GetBackedUpAccounts = getKoin().get()
+
+    @Provides
+    fun provideGetAccountDetail(): GetAccountDetail = getKoin().get()
+
+    @Provides
+    fun provideGetAccountsDetails(): GetAccountsDetails = getKoin().get()
+
+    @Provides
+    fun provideGetAccountInformation(): GetAccountInformation = getKoin().get()
+
+    @Provides
+    fun provideGetAccountCustomInfoOrNull(): GetAccountCustomInfoOrNull = getKoin().get()
+
+    @Provides
+    fun provideGetAllAccountOrderIndexes(): GetAllAccountOrderIndexes = getKoin().get()
+
+    @Provides
+    fun provideGetAppCacheStatusFlow(): GetAppCacheStatusFlow = getKoin().get()
+
+    @Provides
+    fun provideGetAsset(): GetAsset = getKoin().get()
+
+    @Provides
+    fun provideGetLocalAccounts(): GetLocalAccounts = getKoin().get()
 }

@@ -10,28 +10,26 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.domain.mapper
+package com.algorand.android.modules.accountcore.ui.mapper
 
-import com.algorand.android.models.BaseAccountAndAssetListItem
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
-import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.BaseAccountItem.AccountErrorItem
-import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.BaseAccountItem.AccountItem
+import com.algorand.android.modules.accountsorting.ui.domain.model.AccountAndAssetListItem
 import javax.inject.Inject
 
 class AccountListItemMapper @Inject constructor() {
 
     fun mapToErrorAccountItem(
-        accountListItem: BaseAccountAndAssetListItem.AccountListItem,
+        accountListItem: AccountAndAssetListItem.AccountListItem,
         canCopyable: Boolean
-    ): AccountErrorItem {
-        return AccountErrorItem(accountListItem, canCopyable)
+    ): BaseAccountListItem.BaseAccountItem.AccountErrorItem {
+        return BaseAccountListItem.BaseAccountItem.AccountErrorItem(accountListItem, canCopyable)
     }
 
     fun mapToAccountItem(
-        accountListItem: BaseAccountAndAssetListItem.AccountListItem,
+        accountListItem: AccountAndAssetListItem.AccountListItem,
         canCopyable: Boolean
-    ): AccountItem {
-        return AccountItem(accountListItem, canCopyable)
+    ): BaseAccountListItem.BaseAccountItem.AccountItem {
+        return BaseAccountListItem.BaseAccountItem.AccountItem(accountListItem, canCopyable)
     }
 
     fun mapToQuickActionsItem(
@@ -40,9 +38,9 @@ class AccountListItemMapper @Inject constructor() {
         isStakingEnabled: Boolean
     ): BaseAccountListItem.QuickActionsItem {
         return BaseAccountListItem.QuickActionsItem(
-            isSwapButtonSelected = isSwapButtonSelected,
-            isImmersveEnabled = isImmersveEnabled,
-            isStakingEnabled = isStakingEnabled
+            isSwapButtonSelected,
+            isImmersveEnabled,
+            isStakingEnabled
         )
     }
 }

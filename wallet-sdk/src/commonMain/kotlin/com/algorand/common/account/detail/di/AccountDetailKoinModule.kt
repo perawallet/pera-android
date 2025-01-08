@@ -12,16 +12,22 @@
 
 package com.algorand.common.account.detail.di
 
+import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.common.account.detail.domain.usecase.GetAccountDetailUseCase
 import com.algorand.common.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.common.account.detail.domain.usecase.GetAccountRegistrationTypeUseCase
 import com.algorand.common.account.detail.domain.usecase.GetAccountState
 import com.algorand.common.account.detail.domain.usecase.GetAccountStateUseCase
 import com.algorand.common.account.detail.domain.usecase.GetAccountType
 import com.algorand.common.account.detail.domain.usecase.GetAccountTypeUseCase
+import com.algorand.common.account.detail.domain.usecase.GetAccountsDetails
+import com.algorand.common.account.detail.domain.usecase.GetAccountsDetailsUseCase
 import org.koin.dsl.module
 
 internal val accountDetailKoinModule = module {
     factory<GetAccountType> { GetAccountTypeUseCase(get(), get()) }
     factory<GetAccountRegistrationType> { GetAccountRegistrationTypeUseCase(get()) }
     factory<GetAccountState> { GetAccountStateUseCase(get(), get()) }
+    factory<GetAccountDetail> { GetAccountDetailUseCase(get(), get()) }
+    factory<GetAccountsDetails> { GetAccountsDetailsUseCase(get(), get()) }
 }

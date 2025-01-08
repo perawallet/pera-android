@@ -13,6 +13,7 @@
 
 package com.algorand.common.account.custom.domain.repository
 
+import com.algorand.common.account.custom.domain.model.AccountOrderIndex
 import com.algorand.common.account.custom.domain.model.CustomInfo
 
 internal interface CustomInfoRepository {
@@ -28,4 +29,12 @@ internal interface CustomInfoRepository {
     suspend fun setOrderIndex(address: String, orderIndex: Int)
 
     suspend fun deleteCustomInfo(address: String)
+
+    suspend fun getNotBackedUpAccounts(): Set<String>
+
+    suspend fun getBackedUpAccounts(): Set<String>
+
+    suspend fun isAccountBackedUp(accountAddress: String): Boolean
+
+    suspend fun getAllAccountOrderIndexes(): List<AccountOrderIndex>
 }

@@ -20,8 +20,12 @@ import com.algorand.common.account.custom.data.mapper.model.CustomInfoMapperImpl
 import com.algorand.common.account.custom.data.repository.CustomInfoRepositoryImpl
 import com.algorand.common.account.custom.domain.repository.CustomInfoRepository
 import com.algorand.common.account.custom.domain.usecase.DeleteAccountCustomInfo
+import com.algorand.common.account.custom.domain.usecase.GetAccountAsbBackUpStatus
 import com.algorand.common.account.custom.domain.usecase.GetAccountCustomInfo
 import com.algorand.common.account.custom.domain.usecase.GetAccountCustomInfoOrNull
+import com.algorand.common.account.custom.domain.usecase.GetAllAccountOrderIndexes
+import com.algorand.common.account.custom.domain.usecase.GetBackedUpAccounts
+import com.algorand.common.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.common.account.custom.domain.usecase.SetAccountCustomInfo
 import com.algorand.common.account.custom.domain.usecase.SetAccountCustomName
 import com.algorand.common.account.custom.domain.usecase.SetAccountOrderIndex
@@ -71,6 +75,26 @@ internal val customInfoKoinModule = module {
     factory<SetAccountOrderIndex> {
         SetAccountOrderIndex { address, orderIndex ->
             get<CustomInfoRepository>().setOrderIndex(address, orderIndex)
+        }
+    }
+    factory<GetBackedUpAccounts> {
+        GetBackedUpAccounts {
+            get<CustomInfoRepository>().getBackedUpAccounts()
+        }
+    }
+    factory<GetNotBackedUpAccounts> {
+        GetNotBackedUpAccounts {
+            get<CustomInfoRepository>().getNotBackedUpAccounts()
+        }
+    }
+    factory<GetAccountAsbBackUpStatus> {
+        GetAccountAsbBackUpStatus { accountAddress ->
+            get<CustomInfoRepository>().isAccountBackedUp(accountAddress)
+        }
+    }
+    factory<GetAllAccountOrderIndexes> {
+        GetAllAccountOrderIndexes {
+            get<CustomInfoRepository>().getAllAccountOrderIndexes()
         }
     }
 }

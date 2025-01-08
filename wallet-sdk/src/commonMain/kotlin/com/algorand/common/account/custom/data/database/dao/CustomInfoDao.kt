@@ -47,4 +47,13 @@ internal interface CustomInfoDao {
 
     @Query("DELETE FROM custom_info")
     suspend fun clearAll()
+
+    @Query("SELECT encrypted_address FROM custom_info WHERE is_backed_up = 0")
+    suspend fun getNotBackedUpAddresses(): List<String>
+
+    @Query("SELECT encrypted_address FROM custom_info WHERE is_backed_up = 1")
+    suspend fun getBackedUpAddresses(): List<String>
+
+    @Query("SELECT is_backed_up FROM custom_info WHERE :encryptedAddress = encrypted_address")
+    suspend fun isAccountBackedUp(encryptedAddress: String): Boolean
 }

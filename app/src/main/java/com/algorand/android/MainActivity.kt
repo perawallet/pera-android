@@ -105,7 +105,7 @@ class MainActivity :
     AlertDialogDelegation by AlertDialogDelegationImpl() {
 
     val mainViewModel: MainViewModel by viewModels()
-    val coreActionsTabBarViewModel: CoreActionsTabBarViewModel by viewModels()
+    private val coreActionsTabBarViewModel: CoreActionsTabBarViewModel by viewModels()
     private val walletConnectViewModel: WalletConnectViewModel by viewModels()
     private val qrScannerViewModel: QrScannerViewModel by viewModels()
 
@@ -753,6 +753,7 @@ class MainActivity :
     private fun onNewNodeActivated() {
         hideProgress()
         mainViewModel.onNewNodeActivated()
+        coreActionsTabBarViewModel.changeViewStateForFeatureFlag()
     }
 
     private fun onNewNodeLoading() {

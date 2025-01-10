@@ -16,7 +16,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentNodeSettingsBinding
@@ -76,6 +75,5 @@ class NodeSettingsFragment : DaggerBaseFragment(R.layout.fragment_node_settings)
 
     private fun onDifferentNodeSelected(activatedNode: Node) {
         nodeSettingsViewModel.onNodeChanged(activatedNode = activatedNode)
-        (activity as? MainActivity)?.coreActionsTabBarViewModel?.changeViewStateForFeatureFlag()
     }
 }

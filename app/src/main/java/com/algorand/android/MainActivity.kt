@@ -105,7 +105,7 @@ class MainActivity :
     AlertDialogDelegation by AlertDialogDelegationImpl() {
 
     val mainViewModel: MainViewModel by viewModels()
-    private val coreActionsTabBarViewModel: CoreActionsTabBarViewModel by viewModels()
+    val coreActionsTabBarViewModel: CoreActionsTabBarViewModel by viewModels()
     private val walletConnectViewModel: WalletConnectViewModel by viewModels()
     private val qrScannerViewModel: QrScannerViewModel by viewModels()
 
@@ -690,7 +690,7 @@ class MainActivity :
     }
 
     private fun setupCoreActionsTabBarView() {
-        coreActionsTabBarViewModel.initViewState()
+        coreActionsTabBarViewModel.changeViewStateForFeatureFlag()
         binding.coreActionsTabBarView.setListener(object : CoreActionsTabBarView.Listener {
             override fun onSendClick() {
                 firebaseAnalytics.logTapSend()

@@ -363,7 +363,11 @@ class MainActivity :
                     xnote = deepLink.xnote
                 )
 
-                nav(HomeNavigationDirections.actionGlobalConfirmKeyRegAccountSelectionFragment(txnDetail))
+                if (qrScannerViewModel.hasAccountAuthority(deepLink.senderAddress)) {
+                    nav(HomeNavigationDirections.actionGlobalKeyRegTransactionFragment(txnDetail))
+                } else {
+                    showGlobalError(getString(R.string.you_dont_have_any, deepLink.senderAddress), tag = activityTag)
+                }
             }
         }
     }

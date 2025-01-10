@@ -323,12 +323,8 @@
     </action>
 
     <action
-        android:id="@+id/action_global_confirmKeyRegAccountSelectionFragment"
-        app:destination="@id/keyRegAccountSelectionFragment">
-        <argument
-            android:name="keyRegTransactionDetail"
-            app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
-    </action>
+        android:id="@+id/action_global_keyRegTransactionFragment"
+        app:destination="@id/keyRegTransactionFragment" />
 
     <action
         android:id="@+id/action_global_assetInboxOneAccountNavigation"
@@ -343,26 +339,6 @@
         app:destination="@id/accountDetailFragment" />
 
     <fragment
-        android:id="@+id/keyRegAccountSelectionFragment"
-        android:name="com.algorand.android.modules.keyreg.ui.KeyRegAccountSelectionFragment"
-        android:label="fragment_key_reg_account_selection"
-        tools:layout="@layout/fragment_base_account_selection">
-        <argument
-            android:name="keyRegTransactionDetail"
-            app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
-        <action
-            android:id="@+id/action_keyRegAccountSelectionFragment_to_keyRegTransactionFragment"
-            app:destination="@id/keyRegTransactionFragment">
-            <argument
-                android:name="keyRegTransactionDetail"
-                app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
-            <argument
-                android:name="signingAccountAddress"
-                app:argType="string" />
-        </action>
-    </fragment>
-
-    <fragment
         android:id="@+id/keyRegTransactionFragment"
         android:name="com.algorand.android.modules.keyreg.ui.KeyRegTransactionFragment"
         android:label="fragment_key_reg_transaction"
@@ -370,9 +346,6 @@
         <argument
             android:name="keyRegTransactionDetail"
             app:argType="com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail" />
-        <argument
-            android:name="signingAccountAddress"
-            app:argType="string" />
         <action
             android:id="@+id/action_KeyRegTransactionFragment_to_addNoteNavigation"
             app:destination="@id/addNoteNavigation">

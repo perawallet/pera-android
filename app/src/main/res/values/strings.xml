@@ -1434,4 +1434,6 @@
     <string name="pera_wallet_now_provides">Pera Wallet now provides an easy and fast way to stake with various dApps.</string>
     <string name="stake_in_pera">Stake in Pera</string>
 
+    <string name="you_dont_have_any">You don\'t have any authorized account matching with %1$s</string>
+
 </resources>

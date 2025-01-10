@@ -14,6 +14,7 @@ package com.algorand.android.modules.qrscanning
 
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -23,7 +24,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class QrScannerViewModel @Inject constructor(
-    private val deeplinkHandler: DeeplinkHandler
+    private val deeplinkHandler: DeeplinkHandler,
+    private val accountStateHelperUseCase: AccountStateHelperUseCase,
 ) : BaseViewModel() {
 
     private val _isQrCodeInProgressFlow = MutableSharedFlow<Boolean>()
@@ -45,5 +47,9 @@ class QrScannerViewModel @Inject constructor(
 
     fun removeDeeplinkHandlerListener() {
         deeplinkHandler.setListener(null)
+    }
+
+    fun hasAccountAuthority(accountAddress: String): Boolean {
+        return accountStateHelperUseCase.hasAccountAuthority(accountAddress)
     }
 }

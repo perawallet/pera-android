@@ -63,7 +63,6 @@ fun keyRegTable(
             "Last Valid Round" to keyRegTransactionDetail.lastValid,
             "xNote" to keyRegTransactionDetail.xNote,
             "Note" to keyRegTransactionDetail.note,
-            "Signing Address" to keyRegTransactionDetail.signingAddress,
         )
 
         val fabHeight by remember {

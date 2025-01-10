@@ -20,7 +20,6 @@ class KeyRegTransactionPreviewMapper @Inject constructor() {
 
     fun createInitialPreview(
         detail: KeyRegTransactionDetail,
-        signingAddress: String
     ): KeyRegTransactionPreview {
         return KeyRegTransactionPreview(
             isLoadingVisible = false,
@@ -35,7 +34,6 @@ class KeyRegTransactionPreviewMapper @Inject constructor() {
             lastValid = detail.voteLastRound.orEmpty(),
             xNote = detail.xnote,
             note = detail.note,
-            signingAddress = signingAddress,
             signTransactionEvent = null,
             showErrorEvent = null
         )

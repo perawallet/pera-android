@@ -19,6 +19,6 @@ import javax.inject.Inject
 class GetIsProductionReleaseUseCase @Inject constructor() {
     operator fun invoke(): Boolean {
         // return true if prodRelease variant
-        return !BuildConfig.DEBUG && BuildConfig.FLAVOR == "prod"
+        return BuildConfig.BUILD_TYPE == "release" && BuildConfig.FLAVOR == "prod"
     }
 }

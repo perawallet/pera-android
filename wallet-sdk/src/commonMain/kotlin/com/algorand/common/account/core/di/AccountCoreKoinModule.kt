@@ -22,6 +22,8 @@ import com.algorand.common.account.core.domain.usecase.AddNoAuthAccount
 import com.algorand.common.account.core.domain.usecase.AddNoAuthAccountUseCase
 import com.algorand.common.account.core.domain.usecase.DeleteAccount
 import com.algorand.common.account.core.domain.usecase.DeleteAccountUseCase
+import com.algorand.common.account.core.domain.usecase.GetAccountDetailFlow
+import com.algorand.common.account.core.domain.usecase.GetAccountDetailFlowUseCase
 import org.koin.dsl.module
 
 internal val accountCoreKoinModule = module {
@@ -30,4 +32,5 @@ internal val accountCoreKoinModule = module {
     factory<AddNoAuthAccount> { AddNoAuthAccountUseCase(get(), get()) }
     factory<AddBip39Account> { AddBip39AccountUseCase(get(), get()) }
     factory<DeleteAccount> { DeleteAccountUseCase(get(), get(), get()) }
+    factory<GetAccountDetailFlow> { GetAccountDetailFlowUseCase(get(), get(), get(), get()) }
 }

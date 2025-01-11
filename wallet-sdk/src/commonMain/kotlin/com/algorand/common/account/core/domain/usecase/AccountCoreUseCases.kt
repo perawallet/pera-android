@@ -12,6 +12,9 @@
 
 package com.algorand.common.account.core.domain.usecase
 
+import com.algorand.common.account.detail.domain.model.AccountDetail
+import kotlinx.coroutines.flow.Flow
+
 fun interface AddAlgo25Account {
     suspend operator fun invoke(address: String, secretKey: ByteArray, isBackedUp: Boolean, customName: String?)
 }
@@ -39,4 +42,8 @@ fun interface AddNoAuthAccount {
 
 fun interface DeleteAccount {
     suspend operator fun invoke(address: String)
+}
+
+fun interface GetAccountDetailFlow {
+    operator fun invoke(address: String): Flow<AccountDetail?>
 }

@@ -23,6 +23,7 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawabl
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewUseCase
 import com.algorand.common.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.common.nameservice.domain.usecase.GetAccountNameService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,12 +43,14 @@ internal object AccountCoreUiModule {
     fun provideGetAccountDisplayName(
         getAccountCustomInfoOrNull: GetAccountCustomInfoOrNull,
         getAccountDetail: GetAccountDetail,
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        getAccountNameService: GetAccountNameService
     ): GetAccountDisplayName {
         return GetAccountDisplayNameUseCase(
             getCustomInfoOrNull = getAccountCustomInfoOrNull,
             getAccountDetail = getAccountDetail,
-            resources = context.resources
+            resources = context.resources,
+            getAccountNameService = getAccountNameService
         )
     }
 

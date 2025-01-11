@@ -21,6 +21,7 @@ import com.algorand.common.asset.di.assetDetailKoinModules
 import com.algorand.common.block.di.blockPollingKoinModule
 import com.algorand.common.cache.di.cacheKoinModule
 import com.algorand.common.encryption.di.encryptionModule
+import com.algorand.common.nameservice.di.nameServiceKoinModule
 import com.algorand.common.utils.date.dateKoinModule
 
 val commonModuleKoinModules = listOf(
@@ -34,5 +35,6 @@ val commonModuleKoinModules = listOf(
     cacheKoinModule,
     accountDetailKoinModule,
     customInfoKoinModule,
-    accountCoreKoinModule
+    accountCoreKoinModule,
+    nameServiceKoinModule
 ) + assetDetailKoinModules

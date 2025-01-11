@@ -15,12 +15,13 @@ package com.algorand.android.modules.accountcore.ui.usecase
 import android.content.res.Resources
 import com.algorand.android.R
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
-import com.algorand.android.modules.fetchnameservices.domain.model.NameService
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.common.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.common.account.detail.domain.model.AccountDetail
 import com.algorand.common.account.detail.domain.model.AccountType
 import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.common.nameservice.domain.model.NameService
+import com.algorand.common.nameservice.domain.usecase.GetAccountNameService
 import javax.inject.Inject
 
 /**
@@ -50,13 +51,13 @@ internal class GetAccountDisplayNameUseCase @Inject constructor(
     private val getCustomInfoOrNull: GetAccountCustomInfoOrNull,
     private val getAccountDetail: GetAccountDetail,
     private val resources: Resources,
-//    private val getAccountNameService: GetAccountNameService
+    private val getAccountNameService: GetAccountNameService
 ) : GetAccountDisplayName {
 
     override suspend fun invoke(address: String): AccountDisplayName {
         val customAccountName = getCustomInfoOrNull(address)?.customName
             ?: return getAccountDisplayNameWithAccountAddressOnly(address)
-        val nameService = null // TODO getAccountNameService(address)
+        val nameService = getAccountNameService(address)
         return AccountDisplayName(
             accountAddress = address,
             primaryDisplayName = getPrimaryName(address, customAccountName, nameService),
@@ -74,7 +75,7 @@ internal class GetAccountDisplayNameUseCase @Inject constructor(
     }
 
     override suspend fun invoke(accountDetail: AccountDetail): AccountDisplayName {
-        val nameService = null // TODO getAccountNameService(address)
+        val nameService = getAccountNameService(accountDetail.address)
         return with(accountDetail) {
             AccountDisplayName(
                 accountAddress = address,

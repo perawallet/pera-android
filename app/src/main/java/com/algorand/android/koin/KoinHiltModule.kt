@@ -36,6 +36,7 @@ import com.algorand.common.asset.domain.usecase.GetAsset
 import com.algorand.common.cache.domain.usecase.GetAppCacheStatusFlow
 import com.algorand.common.cache.domain.usecase.InitializeAppCache
 import com.algorand.common.deeplink.parser.CreateDeepLink
+import com.algorand.common.nameservice.domain.usecase.GetAccountNameService
 import com.algorand.common.remoteconfig.domain.usecase.InitializeOperationalToggles
 import com.algorand.common.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.Module
@@ -122,4 +123,7 @@ object KoinHiltModule {
 
     @Provides
     fun provideGetLocalAccounts(): GetLocalAccounts = getKoin().get()
+
+    @Provides
+    fun provideGetAccountNameService(): GetAccountNameService = getKoin().get()
 }

@@ -13,6 +13,7 @@
 package com.algorand.android
 
 import android.content.SharedPreferences
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -50,6 +51,7 @@ import com.algorand.android.utils.exceptions.TransactionConfirmationAwaitExcepti
 import com.algorand.android.utils.exceptions.TransactionIdNullException
 import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.sendErrorLog
+import com.algorand.common.cache.domain.usecase.InitializeAppCache
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -79,7 +81,8 @@ class MainViewModel @Inject constructor(
     private val accountDetailCacheManager: AccountDetailCacheManager,
     private val nodeRepository: NodeRepository,
     accountCacheStatusUseCase: AccountCacheStatusUseCase,
-    private val autoLockManagerUseCase: AutoLockManagerUseCase
+    private val autoLockManagerUseCase: AutoLockManagerUseCase,
+    private val initializeAppCache: InitializeAppCache
 ) : BaseViewModel() {
 
     // TODO: Replace this with Flow whenever have time
@@ -104,6 +107,12 @@ class MainViewModel @Inject constructor(
         initializeAccountCacheManager()
         initializeNodeInterceptor()
         initializeTutorial()
+    }
+
+    fun initAppCache(lifecycle: Lifecycle) {
+        viewModelScope.launch {
+            initializeAppCache(lifecycle)
+        }
     }
 
     fun shouldAppLocked(): Boolean {

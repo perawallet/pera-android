@@ -32,5 +32,4 @@ internal object AccountSortingModule {
     fun provideGetAccountSortingTypeIdentifier(repository: AccountSortingRepository): GetAccountSortingTypeIdentifier {
         return GetAccountSortingTypeIdentifier(repository::getAccountSortPreference)
     }
-
 }

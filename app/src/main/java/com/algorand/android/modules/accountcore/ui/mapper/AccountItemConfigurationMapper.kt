@@ -21,6 +21,7 @@ import java.math.BigDecimal
 
 interface AccountItemConfigurationMapper {
 
+    @Suppress("LongParameterList")
     operator fun invoke(
         accountAddress: String,
         accountDisplayName: AccountDisplayName,

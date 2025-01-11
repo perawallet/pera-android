@@ -472,6 +472,7 @@ class MainActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
+        mainViewModel.initAppCache(lifecycle)
         mainViewModel.setDeepLinkHandlerListener(deepLinkHandlerListener)
         autoLockManager.setListener(autoLockManagerListener)
         setupCoreActionsTabBarView()

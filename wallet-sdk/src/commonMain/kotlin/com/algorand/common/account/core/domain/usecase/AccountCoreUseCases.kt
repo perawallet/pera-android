@@ -36,3 +36,7 @@ fun interface AddNoAuthAccount {
         customName: String?
     )
 }
+
+fun interface DeleteAccount {
+    suspend operator fun invoke(address: String)
+}

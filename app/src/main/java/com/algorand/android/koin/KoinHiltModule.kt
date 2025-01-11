@@ -16,6 +16,7 @@ package com.algorand.android.koin
 import com.algorand.common.account.core.domain.usecase.AddAlgo25Account
 import com.algorand.common.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.common.account.core.domain.usecase.AddNoAuthAccount
+import com.algorand.common.account.core.domain.usecase.DeleteAccount
 import com.algorand.common.account.custom.domain.usecase.GetAccountAsbBackUpStatus
 import com.algorand.common.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.common.account.custom.domain.usecase.GetAllAccountOrderIndexes
@@ -126,4 +127,7 @@ object KoinHiltModule {
 
     @Provides
     fun provideGetAccountNameService(): GetAccountNameService = getKoin().get()
+
+    @Provides
+    fun provideDeleteAccount(): DeleteAccount = getKoin().get()
 }

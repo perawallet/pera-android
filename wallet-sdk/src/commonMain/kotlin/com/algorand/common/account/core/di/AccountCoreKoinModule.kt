@@ -20,6 +20,8 @@ import com.algorand.common.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.common.account.core.domain.usecase.AddLedgerBleAccountUseCase
 import com.algorand.common.account.core.domain.usecase.AddNoAuthAccount
 import com.algorand.common.account.core.domain.usecase.AddNoAuthAccountUseCase
+import com.algorand.common.account.core.domain.usecase.DeleteAccount
+import com.algorand.common.account.core.domain.usecase.DeleteAccountUseCase
 import org.koin.dsl.module
 
 internal val accountCoreKoinModule = module {
@@ -27,4 +29,5 @@ internal val accountCoreKoinModule = module {
     factory<AddLedgerBleAccount> { AddLedgerBleAccountUseCase(get(), get()) }
     factory<AddNoAuthAccount> { AddNoAuthAccountUseCase(get(), get()) }
     factory<AddBip39Account> { AddBip39AccountUseCase(get(), get()) }
+    factory<DeleteAccount> { DeleteAccountUseCase(get(), get(), get()) }
 }

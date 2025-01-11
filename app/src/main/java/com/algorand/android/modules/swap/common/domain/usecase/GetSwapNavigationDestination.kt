@@ -10,14 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accountdetail.ui.model
+package com.algorand.android.modules.swap.common.domain.usecase
 
-import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
 import com.algorand.android.modules.swap.model.SwapNavigationDestination
-import com.algorand.android.utils.Event
 
-data class AccountDetailPreview(
-    val accountDetailSummary: AccountDetailSummary,
-    val swapNavigationDestinationEvent: Event<SwapNavigationDestination>?,
-    val navBackEvent: Event<Unit>? = null
-)
+fun interface GetSwapNavigationDestination {
+    suspend operator fun invoke(address: String?): SwapNavigationDestination
+}

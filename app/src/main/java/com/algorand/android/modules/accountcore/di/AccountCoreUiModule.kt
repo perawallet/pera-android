@@ -17,6 +17,8 @@ import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalVa
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValueUseCase
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapperImpl
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDetailSummary
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDetailSummaryUseCase
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayNameUseCase
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
@@ -61,4 +63,9 @@ internal object AccountCoreUiModule {
     fun provideAccountItemConfigurationMapper(
         mapper: AccountItemConfigurationMapperImpl
     ): AccountItemConfigurationMapper = mapper
+
+    @Provides
+    fun provideGetAccountDetailSummary(
+        useCase: GetAccountDetailSummaryUseCase
+    ): GetAccountDetailSummary = useCase
 }

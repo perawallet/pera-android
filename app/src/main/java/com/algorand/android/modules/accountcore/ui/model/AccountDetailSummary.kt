@@ -10,14 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accountdetail.ui.model
+package com.algorand.android.modules.accountcore.ui.model
 
-import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
-import com.algorand.android.modules.swap.model.SwapNavigationDestination
-import com.algorand.android.utils.Event
+import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.common.account.detail.domain.model.AccountDetail
 
-data class AccountDetailPreview(
-    val accountDetailSummary: AccountDetailSummary,
-    val swapNavigationDestinationEvent: Event<SwapNavigationDestination>?,
-    val navBackEvent: Event<Unit>? = null
+data class AccountDetailSummary(
+    val address: String,
+    val accountIconDrawable: AccountIconDrawablePreview,
+    val accountDisplayName: AccountDisplayName,
+    val accountTypeResId: Int,
+    val shouldDisplayAccountType: Boolean,
+    val accountDetail: AccountDetail
 )

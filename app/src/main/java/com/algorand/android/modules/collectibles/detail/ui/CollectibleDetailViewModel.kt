@@ -15,8 +15,10 @@ package com.algorand.android.modules.collectibles.detail.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailViewModel
+import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
 import com.algorand.android.modules.collectibles.detail.ui.model.NFTDetailPreview
 import com.algorand.android.modules.collectibles.detail.ui.usecase.CollectibleDetailPreviewUseCase
+import com.algorand.android.modules.collectibles.download.DownloadFileUseCase
 import com.algorand.android.usecase.NetworkSlugUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.getOrThrow
@@ -31,6 +33,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class CollectibleDetailViewModel @Inject constructor(
     private val collectibleDetailPreviewUseCase: CollectibleDetailPreviewUseCase,
+    private val downloadFileUseCase: DownloadFileUseCase,
     networkSlugUseCase: NetworkSlugUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseCollectibleDetailViewModel(networkSlugUseCase) {
@@ -49,6 +52,10 @@ class CollectibleDetailViewModel @Inject constructor(
         return nftDetailPreviewFlow.value?.nftName
     }
 
+    fun getMediaByIndex(index: Int): BaseCollectibleMediaItem? {
+        return nftDetailPreviewFlow.value?.mediaListOfNFT?.get(index)
+    }
+
     fun getExplorerUrl(): String? {
         return nftDetailPreviewFlow.value?.peraExplorerUrl
     }
@@ -56,6 +63,17 @@ class CollectibleDetailViewModel @Inject constructor(
     fun onSendNFTClick() {
         with(_nftDetailPreviewFlow) {
             update { collectibleDetailPreviewUseCase.getSendEventPreviewAccordingToNFTType(value) }
+        }
+    }
+
+    fun onSaveNFTClick(mediaIndex: Int) {
+        getMediaByIndex(mediaIndex)?.let { mediaItem ->
+            mediaItem.downloadUrl?.let { downloadUrl ->
+                val collectibleId = mediaItem.collectibleId.toString()
+                val mediaExtension = mediaItem.mediaExtension
+                val fileName = "$collectibleId$mediaExtension"
+                downloadFileUseCase.execute(downloadUrl, fileName)
+            }
         }
     }
 

@@ -70,6 +70,10 @@ class CollectibleMediaPager(context: Context, attrs: AttributeSet? = null) : Con
         setPagerSwipeStatus(mediaList.size > 1)
     }
 
+    fun getSelectedMediaIndex(): Int {
+        return binding.collectibleMediaTabLayout.selectedTabPosition
+    }
+
     @SuppressLint("WrongConstant")
     private fun initRootLayout() {
         with(binding) {

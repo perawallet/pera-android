@@ -43,7 +43,8 @@ class CollectibleMediaMapper @Inject constructor() {
     ): BaseCollectibleMedia.ImageCollectibleMedia {
         return BaseCollectibleMedia.ImageCollectibleMedia(
             downloadUrl = mediaResponse.downloadUrl,
-            previewUrl = mediaResponse.previewUrl
+            previewUrl = mediaResponse.previewUrl,
+            mediaExtension = mediaResponse.mediaTypeExtension?.extension
         )
     }
 
@@ -52,7 +53,8 @@ class CollectibleMediaMapper @Inject constructor() {
     ): BaseCollectibleMedia.GifCollectibleMedia {
         return BaseCollectibleMedia.GifCollectibleMedia(
             downloadUrl = mediaResponse.downloadUrl,
-            previewUrl = mediaResponse.previewUrl
+            previewUrl = mediaResponse.previewUrl,
+            mediaExtension = mediaResponse.mediaTypeExtension?.extension
         )
     }
 
@@ -61,7 +63,8 @@ class CollectibleMediaMapper @Inject constructor() {
     ): BaseCollectibleMedia.VideoCollectibleMedia {
         return BaseCollectibleMedia.VideoCollectibleMedia(
             downloadUrl = mediaResponse.downloadUrl,
-            previewUrl = mediaResponse.previewUrl
+            previewUrl = mediaResponse.previewUrl,
+            mediaExtension = mediaResponse.mediaTypeExtension?.extension
         )
     }
 
@@ -70,7 +73,8 @@ class CollectibleMediaMapper @Inject constructor() {
     ): BaseCollectibleMedia.AudioCollectibleMedia {
         return BaseCollectibleMedia.AudioCollectibleMedia(
             downloadUrl = mediaResponse.downloadUrl,
-            previewUrl = mediaResponse.previewUrl
+            previewUrl = mediaResponse.previewUrl,
+            mediaExtension = mediaResponse.mediaTypeExtension?.extension
         )
     }
 
@@ -79,7 +83,8 @@ class CollectibleMediaMapper @Inject constructor() {
     ): BaseCollectibleMedia.UnsupportedCollectibleMedia {
         return BaseCollectibleMedia.UnsupportedCollectibleMedia(
             downloadUrl = mediaResponse.downloadUrl,
-            previewUrl = mediaResponse.previewUrl
+            previewUrl = mediaResponse.previewUrl,
+            mediaExtension = mediaResponse.mediaTypeExtension?.extension
         )
     }
 }

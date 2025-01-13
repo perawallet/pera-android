@@ -27,7 +27,7 @@ import com.algorand.android.R
 
 fun Context.copyToClipboard(textToCopy: CharSequence, label: String = "", showToast: Boolean = true) {
     val clipboard =
-        ContextCompat.getSystemService<ClipboardManager>(this, ClipboardManager::class.java)
+        ContextCompat.getSystemService(this, ClipboardManager::class.java)
     val clip = ClipData.newPlainText(label, textToCopy)
     clipboard?.setPrimaryClip(clip)
     if (showToast) Toast.makeText(this, getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
@@ -66,13 +66,6 @@ fun TextView.enableClickToCopy() {
 fun View.enableClickToCopy(text: String) {
     setOnClickListener {
         context.copyToClipboard(text)
-    }
-}
-
-fun TextView.enableLongPressToCopyText() {
-    setOnLongClickListener {
-        enableLongPressToCopyText(text.toString())
-        true
     }
 }
 

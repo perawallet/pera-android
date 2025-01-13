@@ -27,6 +27,7 @@ import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailFragment
 import com.algorand.android.modules.collectibles.detail.ui.model.NFTDetailPreview
+import com.algorand.android.utils.copyImageToClipboard
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.openTextShareBottomMenuChooser
 import com.google.android.material.transition.platform.MaterialContainerTransform
@@ -36,10 +37,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
 
     override val baseCollectibleDetailViewModel: CollectibleDetailViewModel by viewModels()
-
-    private val collectibleDetailPreviewCollector: suspend (value: NFTDetailPreview?) -> Unit = { preview ->
-        if (preview != null) initCollectibleDetailPreview(preview)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         sharedElementReturnTransition = MaterialContainerTransform().apply {
@@ -61,6 +58,10 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
         )
     }
 
+    private val collectibleDetailPreviewCollector: suspend (value: NFTDetailPreview?) -> Unit = { preview ->
+        if (preview != null) initCollectibleDetailPreview(preview)
+    }
+
     private fun initCollectibleDetailPreview(nftDetailPreview: NFTDetailPreview) {
         with(nftDetailPreview) {
             setProgressBarVisibility(isLoadingVisible)
@@ -69,7 +70,10 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
             setSecondaryWarningText(secondaryWarningResId)
             setCollectionName(collectionNameOfNFT)
             setNFTName(nftName)
-            setSendButton(isSendButtonVisible)
+            setOwnerActionsGroupVisibility(isOwnerActionsGroupVisible)
+            setSendButton()
+            setCopyButton(isCopyEnabled)
+            setSaveButton()
             setOptOutButton(isOptOutButtonVisible)
             setNFTDescription(nftDescription)
             setNFTOwnerAccount(optedInAccountTypeDrawableResId, optedInAccountDisplayName, formattedNFTAmount)
@@ -80,7 +84,7 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
             setShowOnPeraExplorer(peraExplorerUrl)
             setNFTTotalSupply(formattedTotalSupply)
             globalErrorEvent?.consume()?.run { if (this.isNotBlank()) showGlobalError(this) }
-            collectibleSendEvent?.consume()?.run {
+            nftSendEvent?.consume()?.run {
                 navToSendAlgoNavigation(optedInAccountDisplayName.getRawAccountAddress(), nftId, isPureNFT)
             }
             optOutNFTEvent?.consume()?.run { navToOptOutNavigation(this) }
@@ -100,10 +104,33 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
         )
     }
 
-    private fun setSendButton(isSendButtonVisible: Boolean) {
-        with(binding.nftSendButton) {
-            setOnClickListener { baseCollectibleDetailViewModel.onSendNFTClick() }
-            isVisible = isSendButtonVisible
+    private fun setOwnerActionsGroupVisibility(isOwnerActionsGroupVisible: Boolean) {
+        binding.nftOwnerActionsGroup.isVisible = isOwnerActionsGroupVisible
+    }
+
+    private fun setSendButton() {
+        binding.nftSendButton.setOnClickListener { baseCollectibleDetailViewModel.onSendNFTClick() }
+    }
+
+    private fun setCopyButton(isCopyEnabled: Boolean) {
+        binding.nftCopyButton.apply {
+            isVisible = isCopyEnabled
+            if (isCopyEnabled) {
+                setOnClickListener {
+                    baseCollectibleDetailViewModel.getMediaByIndex(
+                        binding.nftMediaPager.getSelectedMediaIndex()
+                    )?.downloadUrl?.let { downloadUrl ->
+                        context.copyImageToClipboard(downloadUrl)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setSaveButton() {
+        binding.nftSaveButton.setOnClickListener {
+            val mediaIndex = binding.nftMediaPager.getSelectedMediaIndex()
+            baseCollectibleDetailViewModel.onSaveNFTClick(mediaIndex)
         }
     }
 

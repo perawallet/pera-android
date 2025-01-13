@@ -15,7 +15,7 @@ package com.algorand.android.modules.collectibles.detail.base.ui
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.usecase.NetworkSlugUseCase
 
-abstract class BaseCollectibleDetailViewModel constructor(
+abstract class BaseCollectibleDetailViewModel(
     private val networkSlugUseCase: NetworkSlugUseCase
 ) : BaseViewModel() {
 

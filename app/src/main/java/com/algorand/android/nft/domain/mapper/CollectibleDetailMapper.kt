@@ -58,7 +58,7 @@ class CollectibleDetailMapper @Inject constructor() {
 
     fun mapToNotSupportedCollectibleDetail(collectibleDetailDTO: CollectibleDetailDTO): NotSupportedCollectibleDetail {
         val collectibleMedias = collectibleDetailDTO.medias.ifEmpty {
-            listOf(BaseCollectibleMedia.NoMediaCollectibleMedia(null, null))
+            listOf(BaseCollectibleMedia.NoMediaCollectibleMedia(null, null, null))
         }
         return NotSupportedCollectibleDetail(
             assetId = collectibleDetailDTO.collectibleAssetId,

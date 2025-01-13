@@ -58,10 +58,10 @@ open class CollectibleDetailPreviewUseCase @Inject constructor(
     }
 
     fun getSendEventPreviewAccordingToNFTType(preview: NFTDetailPreview?): NFTDetailPreview? {
-        return preview?.copy(collectibleSendEvent = Event(Unit))
+        return preview?.copy(nftSendEvent = Event(Unit))
     }
 
-    fun getAssetInformationOfGivenNFT(nftId: Long, accountAddress: String): AssetInformation? {
+    private fun getAssetInformationOfGivenNFT(nftId: Long, accountAddress: String): AssetInformation? {
         val ownedNFTData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(nftId, accountAddress) ?: return null
         return AssetInformation.createAssetInformation(
             baseOwnedAssetData = ownedNFTData,
@@ -82,6 +82,10 @@ open class CollectibleDetailPreviewUseCase @Inject constructor(
                 val isOwnedByTheUser = collectibleDetail?.isOwnedByTheUser ?: false
                 val isCreatedByOwnerAccount = baseNFTDetail.assetCreator?.publicKey == accountDetail?.account?.address
                 val isOwnedByWatchAccount = accountDetail?.account?.type == Account.Type.WATCH
+                val mediaList = createNFTMediaList(
+                    baseCollectibleDetail = baseNFTDetail,
+                    shouldDecreaseOpacity = false
+                )
                 nftDetailPreview = nftDetailPreviewMapper.mapToNFTDetailPreview(
                     isLoadingVisible = false,
                     nftName = AssetName.create(baseNFTDetail.title ?: baseNFTDetail.fullName),
@@ -98,10 +102,7 @@ open class CollectibleDetailPreviewUseCase @Inject constructor(
                         formattedAmount = collectibleDetail?.formattedAmount,
                         formattedCompactAmount = collectibleDetail?.formattedCompactAmount
                     ),
-                    mediaListOfNFT = createNFTMediaList(
-                        baseCollectibleDetail = baseNFTDetail,
-                        shouldDecreaseOpacity = false
-                    ),
+                    mediaListOfNFT = mediaList,
                     traitListOfNFT = createNFTTraitList(
                         baseCollectibleDetail = baseNFTDetail
                     ),
@@ -123,12 +124,17 @@ open class CollectibleDetailPreviewUseCase @Inject constructor(
                         isOwnedByTheUser = isOwnedByTheUser,
                         accountType = accountDetail?.account?.type
                     ),
-                    isSendButtonVisible = isOwnedByTheUser && !isOwnedByWatchAccount,
+                    isCopyEnabled = isMediaCopiable(mediaList.firstOrNull()?.itemType),
+                    isOwnerActionsGroupVisible = isOwnedByTheUser && !isOwnedByWatchAccount,
                     isOptOutButtonVisible = !isOwnedByTheUser && !isCreatedByOwnerAccount && !isOwnedByWatchAccount
                 )
             }
         )
         return nftDetailPreview
+    }
+
+    private fun isMediaCopiable(mediaType: BaseCollectibleMediaItem.ItemType?): Boolean {
+        return mediaType == BaseCollectibleMediaItem.ItemType.IMAGE
     }
 
     private fun createNFTMediaList(

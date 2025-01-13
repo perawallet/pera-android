@@ -22,6 +22,7 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
     abstract val collectibleId: Long
     abstract val downloadUrl: String?
     abstract val previewUrl: String?
+    abstract val mediaExtension: String?
     abstract val baseAssetDrawableProvider: BaseAssetDrawableProvider
     abstract val shouldDecreaseOpacity: Boolean
     abstract val itemType: ItemType
@@ -44,6 +45,7 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
         override val collectibleId: Long,
         override val downloadUrl: String?,
         override val previewUrl: String?,
+        override val mediaExtension: String?,
         override val shouldDecreaseOpacity: Boolean,
         override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
         override val has3dSupport: Boolean,
@@ -70,6 +72,7 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
         override val collectibleId: Long,
         override val downloadUrl: String?,
         override val previewUrl: String?,
+        override val mediaExtension: String?,
         override val shouldDecreaseOpacity: Boolean,
         override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
         override val has3dSupport: Boolean,
@@ -96,6 +99,7 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
         override val collectibleId: Long,
         override val downloadUrl: String?,
         override val previewUrl: String?,
+        override val mediaExtension: String?,
         override val shouldDecreaseOpacity: Boolean,
         override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
         override val has3dSupport: Boolean,
@@ -122,6 +126,7 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
         override val collectibleId: Long,
         override val downloadUrl: String?,
         override val previewUrl: String?,
+        override val mediaExtension: String?,
         override val shouldDecreaseOpacity: Boolean,
         override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
         override val has3dSupport: Boolean,
@@ -148,6 +153,7 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
         override val collectibleId: Long,
         override val downloadUrl: String?,
         override val previewUrl: String?,
+        override val mediaExtension: String?,
         override val shouldDecreaseOpacity: Boolean,
         override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
         override val has3dSupport: Boolean,
@@ -174,6 +180,7 @@ sealed class BaseCollectibleMediaItem : Parcelable, RecyclerListItem {
         override val collectibleId: Long,
         override val downloadUrl: String?,
         override val previewUrl: String?,
+        override val mediaExtension: String?,
         override val shouldDecreaseOpacity: Boolean,
         override val baseAssetDrawableProvider: BaseAssetDrawableProvider,
         override val has3dSupport: Boolean,

@@ -36,64 +36,69 @@ class CollectibleMediaItemMapper @Inject constructor(
                     shouldDecreaseOpacity = shouldDecreaseOpacity,
                     collectibleMedia = baseCollectibleMedia,
                     baseCollectibleDetail = baseCollectibleDetail,
-                    has3dSupport = true && showMediaButtons,
-                    hasFullScreenSupport = true && showMediaButtons,
-                    showPlayButton = false && showMediaButtons
+                    has3dSupport = showMediaButtons,
+                    hasFullScreenSupport = showMediaButtons,
+                    showPlayButton = false
                 )
             }
+
             is BaseCollectibleMedia.AudioCollectibleMedia -> {
                 mapToAudioCollectibleMediaItem(
                     collectibleId = baseCollectibleDetail.assetId,
                     isOwnedByTheUser = shouldDecreaseOpacity,
                     collectibleMedia = baseCollectibleMedia,
                     baseCollectibleDetail = baseCollectibleDetail,
-                    has3dSupport = false && showMediaButtons,
-                    hasFullScreenSupport = true && showMediaButtons,
-                    showPlayButton = true && showMediaButtons
+                    has3dSupport = false,
+                    hasFullScreenSupport = showMediaButtons,
+                    showPlayButton = showMediaButtons
                 )
             }
+
             is BaseCollectibleMedia.ImageCollectibleMedia -> {
                 mapToImageCollectibleMediaItem(
                     collectibleId = baseCollectibleDetail.assetId,
                     shouldDecreaseOpacity = shouldDecreaseOpacity,
                     collectibleMedia = baseCollectibleMedia,
                     baseCollectibleDetail = baseCollectibleDetail,
-                    has3dSupport = true && showMediaButtons,
-                    hasFullScreenSupport = true && showMediaButtons,
-                    showPlayButton = false && showMediaButtons
+                    has3dSupport = showMediaButtons,
+                    hasFullScreenSupport = showMediaButtons,
+                    showPlayButton = false
                 )
             }
+
             is BaseCollectibleMedia.NoMediaCollectibleMedia -> {
                 mapToNoMediaCollectibleMediaItem(
                     collectibleId = baseCollectibleDetail.assetId,
                     isOwnedByTheUser = shouldDecreaseOpacity,
                     collectibleMedia = baseCollectibleMedia,
                     baseCollectibleDetail = baseCollectibleDetail,
-                    has3dSupport = false && showMediaButtons,
-                    hasFullScreenSupport = false && showMediaButtons,
-                    showPlayButton = false && showMediaButtons
+                    has3dSupport = false,
+                    hasFullScreenSupport = false,
+                    showPlayButton = false
                 )
             }
+
             is BaseCollectibleMedia.UnsupportedCollectibleMedia -> {
                 mapToUnsupportedCollectibleMediaItem(
                     collectibleId = baseCollectibleDetail.assetId,
                     isOwnedByTheUser = shouldDecreaseOpacity,
                     collectibleMedia = baseCollectibleMedia,
                     baseCollectibleDetail = baseCollectibleDetail,
-                    has3dSupport = false && showMediaButtons,
-                    hasFullScreenSupport = false && showMediaButtons,
-                    showPlayButton = false && showMediaButtons
+                    has3dSupport = false,
+                    hasFullScreenSupport = false,
+                    showPlayButton = false
                 )
             }
+
             is BaseCollectibleMedia.VideoCollectibleMedia -> {
                 mapToVideoCollectibleMediaItem(
                     collectibleId = baseCollectibleDetail.assetId,
                     isOwnedByTheUser = shouldDecreaseOpacity,
                     collectibleMedia = baseCollectibleMedia,
                     baseCollectibleDetail = baseCollectibleDetail,
-                    has3dSupport = false && showMediaButtons,
-                    hasFullScreenSupport = true && showMediaButtons,
-                    showPlayButton = true && showMediaButtons
+                    has3dSupport = false,
+                    hasFullScreenSupport = showMediaButtons,
+                    showPlayButton = showMediaButtons
                 )
             }
         }
@@ -111,6 +116,7 @@ class CollectibleMediaItemMapper @Inject constructor(
         return BaseCollectibleMediaItem.ImageCollectibleMediaItem(
             downloadUrl = collectibleMedia.downloadUrl,
             previewUrl = collectibleMedia.previewUrl,
+            mediaExtension = collectibleMedia.mediaExtension,
             collectibleId = collectibleId,
             shouldDecreaseOpacity = shouldDecreaseOpacity,
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(baseCollectibleDetail),
@@ -132,6 +138,7 @@ class CollectibleMediaItemMapper @Inject constructor(
         return BaseCollectibleMediaItem.GifCollectibleMediaItem(
             downloadUrl = collectibleMedia.downloadUrl,
             previewUrl = collectibleMedia.previewUrl,
+            mediaExtension = collectibleMedia.mediaExtension,
             collectibleId = collectibleId,
             shouldDecreaseOpacity = shouldDecreaseOpacity,
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(baseCollectibleDetail),
@@ -153,6 +160,7 @@ class CollectibleMediaItemMapper @Inject constructor(
         return BaseCollectibleMediaItem.VideoCollectibleMediaItem(
             downloadUrl = collectibleMedia.downloadUrl,
             previewUrl = collectibleMedia.previewUrl,
+            mediaExtension = collectibleMedia.mediaExtension,
             collectibleId = collectibleId,
             shouldDecreaseOpacity = isOwnedByTheUser,
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(baseCollectibleDetail),
@@ -174,6 +182,7 @@ class CollectibleMediaItemMapper @Inject constructor(
         return BaseCollectibleMediaItem.AudioCollectibleMediaItem(
             downloadUrl = collectibleMedia.downloadUrl,
             previewUrl = collectibleMedia.previewUrl,
+            mediaExtension = collectibleMedia.mediaExtension,
             collectibleId = collectibleId,
             shouldDecreaseOpacity = isOwnedByTheUser,
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(baseCollectibleDetail),
@@ -195,6 +204,7 @@ class CollectibleMediaItemMapper @Inject constructor(
         return BaseCollectibleMediaItem.UnsupportedCollectibleMediaItem(
             downloadUrl = collectibleMedia.downloadUrl,
             previewUrl = collectibleMedia.previewUrl,
+            mediaExtension = collectibleMedia.mediaExtension,
             collectibleId = collectibleId,
             shouldDecreaseOpacity = isOwnedByTheUser,
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(baseCollectibleDetail),
@@ -216,6 +226,7 @@ class CollectibleMediaItemMapper @Inject constructor(
         return BaseCollectibleMediaItem.NoMediaCollectibleMediaItem(
             downloadUrl = collectibleMedia.downloadUrl,
             previewUrl = collectibleMedia.previewUrl,
+            mediaExtension = collectibleMedia.mediaExtension,
             collectibleId = collectibleId,
             shouldDecreaseOpacity = isOwnedByTheUser,
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(baseCollectibleDetail),

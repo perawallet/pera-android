@@ -1,24 +1,22 @@
 /*
- *   ~ Copyright 2022 Pera Wallet, LDA
- *   ~ Licensed under the Apache License, Version 2.0 (the "License");
- *   ~ you may not use this file except in compliance with the License.
- *   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- *   ~ Unless required by applicable law or agreed to in writing, software
- *   ~ distributed under the License is distributed on an "AS IS" BASIS,
- *   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   ~ See the License for the specific language governing permissions and
- *   ~ limitations under the License
- *   -->
+ * Copyright 2022 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
  */
 
-package com.algorand.android.nameservice.data.mapper
+package com.algorand.common.nameservice.data.mapper
 
 import com.algorand.common.nameservice.data.model.NameServiceSearchResultResponse
 import com.algorand.common.nameservice.domain.model.NameServiceProvider
 import com.algorand.common.nameservice.domain.model.NameServiceSearchResult
-import javax.inject.Inject
 
-internal class NameServiceSearchResultMapperImpl @Inject constructor() : NameServiceSearchResultMapper {
+internal class NameServiceSearchResultMapperImpl : NameServiceSearchResultMapper {
 
     override fun invoke(response: NameServiceSearchResultResponse): NameServiceSearchResult? {
         return NameServiceSearchResult(

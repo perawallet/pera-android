@@ -12,8 +12,8 @@
 
 package com.algorand.common.nameservice.data.repository
 
-import com.algorand.android.nameservice.data.mapper.NameServiceMapper
-import com.algorand.android.nameservice.data.mapper.NameServiceSearchResultMapper
+import com.algorand.common.nameservice.data.mapper.NameServiceMapper
+import com.algorand.common.nameservice.data.mapper.NameServiceSearchResultMapper
 import com.algorand.common.foundation.PeraResult
 import com.algorand.common.foundation.cache.InMemoryLocalCache
 import com.algorand.common.nameservice.data.model.SearchNameServiceRequestBody

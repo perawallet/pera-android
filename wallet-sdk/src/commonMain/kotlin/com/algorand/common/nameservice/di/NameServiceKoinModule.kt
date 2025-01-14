@@ -12,12 +12,12 @@
 
 package com.algorand.common.nameservice.di
 
-import com.algorand.android.nameservice.data.mapper.NameServiceMapper
-import com.algorand.android.nameservice.data.mapper.NameServiceMapperImpl
-import com.algorand.android.nameservice.data.mapper.NameServiceSearchResultMapper
-import com.algorand.android.nameservice.data.mapper.NameServiceSearchResultMapperImpl
-import com.algorand.android.nameservice.data.mapper.NameServiceSourceMapper
-import com.algorand.android.nameservice.data.mapper.NameServiceSourceMapperImpl
+import com.algorand.common.nameservice.data.mapper.NameServiceMapper
+import com.algorand.common.nameservice.data.mapper.NameServiceMapperImpl
+import com.algorand.common.nameservice.data.mapper.NameServiceSearchResultMapper
+import com.algorand.common.nameservice.data.mapper.NameServiceSearchResultMapperImpl
+import com.algorand.common.nameservice.data.mapper.NameServiceSourceMapper
+import com.algorand.common.nameservice.data.mapper.NameServiceSourceMapperImpl
 import com.algorand.common.foundation.cache.InMemoryLocalCache
 import com.algorand.common.foundation.network.pera.getPeraMobileHttpClient
 import com.algorand.common.nameservice.data.repository.NameServiceRepositoryImpl

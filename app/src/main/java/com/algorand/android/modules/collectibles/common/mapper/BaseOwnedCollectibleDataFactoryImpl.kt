@@ -38,6 +38,7 @@ internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
     private val formatAmountByCollectibleFractionalDigit: FormatAmountByCollectibleFractionalDigit
 ) : BaseOwnedCollectibleDataFactory {
 
+    @Suppress("LongMethod")
     override fun invoke(
         assetHolding: AssetHolding,
         collectibleDetail: CollectibleDetail

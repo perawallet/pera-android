@@ -69,7 +69,7 @@ class NFTDetailPreviewMapper @Inject constructor() {
             nftSendEvent = nftSendEvent,
             isOptOutButtonVisible = isOptOutButtonVisible,
             isOwnerActionsGroupVisible = isOwnerActionsGroupVisible,
-            isCopyEnabled = isCopyEnabled,
+            isCopyEnabled = isCopyEnabled && isOwnerActionsGroupVisible,
             optOutNFTEvent = optOutNFTEvent
         )
     }

@@ -18,6 +18,7 @@ import com.algorand.common.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.common.account.core.domain.usecase.AddNoAuthAccount
 import com.algorand.common.account.core.domain.usecase.DeleteAccount
 import com.algorand.common.account.core.domain.usecase.GetAccountDetailFlow
+import com.algorand.common.account.core.domain.usecase.GetAccountsDetailsFlow
 import com.algorand.common.account.custom.domain.usecase.GetAccountAsbBackUpStatus
 import com.algorand.common.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.common.account.custom.domain.usecase.GetAllAccountOrderIndexes
@@ -28,6 +29,8 @@ import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
 import com.algorand.common.account.detail.domain.usecase.GetAccountsDetails
 import com.algorand.common.account.info.domain.usecase.GetAccountInformation
 import com.algorand.common.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.common.account.info.domain.usecase.GetAllAccountInformationFlow
+import com.algorand.common.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedErrorAccount
 import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
 import com.algorand.common.account.local.domain.usecase.GetLocalAccounts
@@ -40,6 +43,7 @@ import com.algorand.common.asset.domain.usecase.GetAssetDetail
 import com.algorand.common.asset.domain.usecase.GetCollectibleDetail
 import com.algorand.common.cache.domain.usecase.GetAppCacheStatusFlow
 import com.algorand.common.cache.domain.usecase.InitializeAppCache
+import com.algorand.common.cache.domain.usecase.IsAssetCacheStatusAtLeastEmpty
 import com.algorand.common.deeplink.parser.CreateDeepLink
 import com.algorand.common.nameservice.domain.usecase.GetAccountNameService
 import com.algorand.common.remoteconfig.domain.usecase.InitializeOperationalToggles
@@ -146,4 +150,16 @@ object KoinHiltModule {
 
     @Provides
     fun provideGetCollectibleDetail(): GetCollectibleDetail = getKoin().get()
+
+    @Provides
+    fun provideIsAssetCacheStatusAtLeastEmpty(): IsAssetCacheStatusAtLeastEmpty = getKoin().get()
+
+    @Provides
+    fun provideGetAllAccountInformationFlow(): GetAllAccountInformationFlow = getKoin().get()
+
+    @Provides
+    fun provideIsAssetOwnedByAccount(): IsAssetOwnedByAccount = getKoin().get()
+
+    @Provides
+    fun provideGetAccountsDetailsFlow(): GetAccountsDetailsFlow = getKoin().get()
 }

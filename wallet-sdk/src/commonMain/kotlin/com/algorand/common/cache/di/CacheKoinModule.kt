@@ -20,6 +20,8 @@ import com.algorand.common.cache.domain.usecase.GetAppCacheStatusFlow
 import com.algorand.common.cache.domain.usecase.GetAppCacheStatusFlowUseCase
 import com.algorand.common.cache.domain.usecase.InitializeAppCache
 import com.algorand.common.cache.domain.usecase.InitializeAppCacheImpl
+import com.algorand.common.cache.domain.usecase.IsAssetCacheStatusAtLeastEmpty
+import com.algorand.common.cache.domain.usecase.IsAssetCacheStatusAtLeastEmptyUseCase
 import com.algorand.common.cache.domain.usecase.UpdateAccountCache
 import com.algorand.common.cache.domain.usecase.UpdateAccountCacheUseCase
 import org.koin.dsl.module
@@ -30,4 +32,5 @@ internal val cacheKoinModule = module {
     single<InitializeAppCache> { InitializeAppCacheImpl(get(), get(), get()) }
     single<GetAppCacheStatusFlow> { GetAppCacheStatusFlowUseCase(get(), get()) }
     factory<UpdateAccountCache> { UpdateAccountCacheUseCase(get(), get(), get()) }
+    factory<IsAssetCacheStatusAtLeastEmpty> { IsAssetCacheStatusAtLeastEmptyUseCase(get()) }
 }

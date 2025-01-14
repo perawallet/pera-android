@@ -24,6 +24,8 @@ import com.algorand.common.account.core.domain.usecase.DeleteAccount
 import com.algorand.common.account.core.domain.usecase.DeleteAccountUseCase
 import com.algorand.common.account.core.domain.usecase.GetAccountDetailFlow
 import com.algorand.common.account.core.domain.usecase.GetAccountDetailFlowUseCase
+import com.algorand.common.account.core.domain.usecase.GetAccountsDetailsFlow
+import com.algorand.common.account.core.domain.usecase.GetAccountsDetailsFlowUseCase
 import org.koin.dsl.module
 
 internal val accountCoreKoinModule = module {
@@ -33,4 +35,5 @@ internal val accountCoreKoinModule = module {
     factory<AddBip39Account> { AddBip39AccountUseCase(get(), get()) }
     factory<DeleteAccount> { DeleteAccountUseCase(get(), get(), get()) }
     factory<GetAccountDetailFlow> { GetAccountDetailFlowUseCase(get(), get(), get(), get()) }
+    factory<GetAccountsDetailsFlow> { GetAccountsDetailsFlowUseCase(get(), get(), get(), get()) }
 }

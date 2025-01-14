@@ -10,28 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.common.cache.domain.usecase
+package com.algorand.android.nft.domain.usecase
 
-import androidx.lifecycle.Lifecycle
-import com.algorand.common.cache.domain.model.AppCacheStatus
+import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.common.account.detail.domain.model.AccountDetail
 import kotlinx.coroutines.flow.Flow
 
-fun interface InitializeAppCache {
-    suspend operator fun invoke(lifecycle: Lifecycle)
-}
-
-internal fun interface ClearPreviousSessionCache {
-    suspend operator fun invoke()
-}
-
-fun interface GetAppCacheStatusFlow {
-    operator fun invoke(): Flow<AppCacheStatus>
-}
-
-fun interface UpdateAccountCache {
-    suspend operator fun invoke()
-}
-
-fun interface IsAssetCacheStatusAtLeastEmpty {
-    operator fun invoke(): Boolean
+fun interface GetAllAccountsAllCollectibleDataFlow {
+    operator fun invoke(): Flow<List<Pair<AccountDetail, List<BaseOwnedCollectibleData>>>>
 }

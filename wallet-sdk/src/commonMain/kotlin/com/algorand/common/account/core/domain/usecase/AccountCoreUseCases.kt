@@ -47,3 +47,7 @@ fun interface DeleteAccount {
 fun interface GetAccountDetailFlow {
     operator fun invoke(address: String): Flow<AccountDetail?>
 }
+
+fun interface GetAccountsDetailsFlow {
+    operator fun invoke(): Flow<List<AccountDetail>>
+}

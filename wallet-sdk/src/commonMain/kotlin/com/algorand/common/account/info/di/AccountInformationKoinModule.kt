@@ -54,6 +54,8 @@ import com.algorand.common.account.info.domain.usecase.GetAllAccountInformationF
 import com.algorand.common.account.info.domain.usecase.GetAllAssetHoldingIds
 import com.algorand.common.account.info.domain.usecase.GetCachedAccountInformationCountFlow
 import com.algorand.common.account.info.domain.usecase.GetEarliestLastFetchedRound
+import com.algorand.common.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.common.account.info.domain.usecase.IsAssetOwnedByAccountUseCase
 import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedErrorAccount
 import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedErrorAccountUseCase
 import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
@@ -144,4 +146,5 @@ internal val accountInformationKoinModule = module {
             get<AccountInformationRepository>().getAccountInformationFlow(address)
         }
     }
+    factory<IsAssetOwnedByAccount> { IsAssetOwnedByAccountUseCase(get()) }
 }

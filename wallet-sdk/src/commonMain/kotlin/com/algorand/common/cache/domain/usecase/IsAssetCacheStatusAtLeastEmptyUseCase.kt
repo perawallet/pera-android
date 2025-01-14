@@ -12,26 +12,14 @@
 
 package com.algorand.common.cache.domain.usecase
 
-import androidx.lifecycle.Lifecycle
-import com.algorand.common.cache.domain.model.AppCacheStatus
-import kotlinx.coroutines.flow.Flow
+import com.algorand.common.asset.domain.manager.AssetDetailCacheManager
+import com.algorand.common.asset.domain.model.AssetCacheStatus
 
-fun interface InitializeAppCache {
-    suspend operator fun invoke(lifecycle: Lifecycle)
-}
+internal class IsAssetCacheStatusAtLeastEmptyUseCase(
+    private val assetDetailCacheManager: AssetDetailCacheManager
+) : IsAssetCacheStatusAtLeastEmpty {
 
-internal fun interface ClearPreviousSessionCache {
-    suspend operator fun invoke()
-}
-
-fun interface GetAppCacheStatusFlow {
-    operator fun invoke(): Flow<AppCacheStatus>
-}
-
-fun interface UpdateAccountCache {
-    suspend operator fun invoke()
-}
-
-fun interface IsAssetCacheStatusAtLeastEmpty {
-    operator fun invoke(): Boolean
+    override fun invoke(): Boolean {
+        return assetDetailCacheManager.cacheStatusFlow.value isAtLeast AssetCacheStatus.EMPTY
+    }
 }

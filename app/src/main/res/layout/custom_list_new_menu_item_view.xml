@@ -31,7 +31,7 @@
     <TextView
         android:id="@+id/titleTextView"
         style="@style/TextAppearance.Body.Sans"
-        android:layout_width="45dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_small"
         android:ellipsize="end"
@@ -47,14 +47,15 @@
         android:id="@+id/newImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/new_text"
+        android:layout_marginStart="@dimen/spacing_xsmall"
         android:layout_marginTop="@dimen/spacing_large"
+        android:layout_marginBottom="@dimen/spacing_large"
+        android:contentDescription="@string/new_text"
+        android:src="@drawable/ic_new_badge"
         app:layout_constraintBottom_toTopOf="@id/descriptionTextView"
         app:layout_constraintEnd_toStartOf="@id/titleTextViewEnd"
         app:layout_constraintStart_toEndOf="@id/titleTextView"
-        app:layout_constraintTop_toTopOf="@id/iconImageView"
-        android:layout_marginBottom="@dimen/spacing_large"
-        android:src="@drawable/ic_new_badge" />
+        app:layout_constraintTop_toTopOf="@id/iconImageView" />
 
     <TextView
         android:id="@+id/titleTextViewEnd"
@@ -80,8 +81,8 @@
         android:layout_marginStart="@dimen/spacing_small"
         android:layout_marginEnd="@dimen/spacing_large"
         android:layout_marginBottom="@dimen/spacing_xsmall"
-        android:paddingTop="@dimen/spacing_xxxsmall"
         android:maxLines="3"
+        android:paddingTop="@dimen/spacing_xxxsmall"
         android:textColor="@color/tertiary_text_color"
         app:layout_constraintBottom_toBottomOf="@id/iconImageView"
         app:layout_constraintEnd_toEndOf="parent"

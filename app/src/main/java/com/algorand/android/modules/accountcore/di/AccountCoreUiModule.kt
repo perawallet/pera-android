@@ -23,6 +23,8 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayNameUseCase
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreview
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreviewUseCase
 import com.algorand.common.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
 import com.algorand.common.nameservice.domain.usecase.GetAccountNameService
@@ -68,4 +70,9 @@ internal object AccountCoreUiModule {
     fun provideGetAccountDetailSummary(
         useCase: GetAccountDetailSummaryUseCase
     ): GetAccountDetailSummary = useCase
+
+    @Provides
+    fun provideGetAccountOriginalStateIconDrawablePreview(
+        useCase: GetAccountOriginalStateIconDrawablePreviewUseCase
+    ): GetAccountOriginalStateIconDrawablePreview = useCase
 }

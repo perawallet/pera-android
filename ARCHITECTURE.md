@@ -1,3 +1,38 @@
+#### Common Wallet-SDK / Wallet-As-A-Service / Wallet Stack Proposed Architecture (WIP)
+
+These diagrams are meant to be helpful and a WIP currently.  Eventually when we are ready, we will move them over to github wiki.
+
+# App Layers
+
+<img src="mermaid/flowcharts/flowchart_app_layers.png" width="500">
+
+
+```sh
+flowchart TD
+    subgraph Pera App
+    A("Pera App (UI)
+    Navigation")
+    A <--> D
+        subgraph Wallet As A Sevice
+        D("Common View Models / Repositories
+        (Kotlin Multi-Platform Library)")
+        E("Address Database")
+        F("Pera Database")
+        G("Algo SDK")
+        D <--> E
+        D <--> F
+        D <--> G
+        end
+    end
+
+    subgraph 3rd Party Web Dapps
+    C("Website (UI)")
+    C <-- deeplinks into --> D
+    end
+
+    A <-- embeds (Discover section) --> C
+```
+
 # Cache Initialization
 
 <img src="mermaid/flowcharts/cache_initialization.png" width="500">
@@ -84,27 +119,27 @@ title: AddressDatabase
 ---
 erDiagram
     algo_25 {
-        String encrypted_address PK
+        String algo_address PK
         String encrypted_secret_key
     }
     ledger_ble {
-        String encrypted_address PK
+        String algo_address PK
         String device_mac_address
         Int account_index_in_ledger
         String bluetooth_name
     }
     no_auth {
-        String encrypted_address PK
+        String algo_address PK
     }
     hd_seeds {
         Int seed_id PK
-        ByteArray encrypted_mnemonic_entropy UK
+        String encrypted_mnemonic_entropy UK
         String entropy_custom_name
         ByteArray encrypted_seed UK
     }
     hd_keys {
-        String encrypted_address PK
-        ByteArray encrypted_public_key UK
+        String algo_address PK
+        ByteArray public_key UK
         ByteArray encrypted_private_key
         Int seed_id FK
         Int account
@@ -126,11 +161,11 @@ title: Pera Database (cache tables)
 ---
 erDiagram
     account_information {
-        String encrypted_address PK
+        String algo_address PK
         String algo_amount
         Int opted_in_apps_count
         Int apps_total_extra_pages
-        String auth_address
+        String auth_algo_address
         Long created_at_round
         Long last_fetched_round
         Int total_created_apps_count
@@ -140,7 +175,7 @@ erDiagram
     }
     asset_holding_table {
         Int id PK
-        String encrypted_address
+        String algo_address
         Long asset_id
         String amount
         Boolean is_deleted

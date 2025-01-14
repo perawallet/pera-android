@@ -27,6 +27,7 @@ import com.algorand.common.account.custom.domain.usecase.SetAccountCustomName
 import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
 import com.algorand.common.account.detail.domain.usecase.GetAccountsDetails
 import com.algorand.common.account.info.domain.usecase.GetAccountInformation
+import com.algorand.common.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedErrorAccount
 import com.algorand.common.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
 import com.algorand.common.account.local.domain.usecase.GetLocalAccounts
@@ -35,6 +36,8 @@ import com.algorand.common.account.local.domain.usecase.IsThereAnyNoAuthAccountW
 import com.algorand.common.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
 import com.algorand.common.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
 import com.algorand.common.asset.domain.usecase.GetAsset
+import com.algorand.common.asset.domain.usecase.GetAssetDetail
+import com.algorand.common.asset.domain.usecase.GetCollectibleDetail
 import com.algorand.common.cache.domain.usecase.GetAppCacheStatusFlow
 import com.algorand.common.cache.domain.usecase.InitializeAppCache
 import com.algorand.common.deeplink.parser.CreateDeepLink
@@ -134,4 +137,13 @@ object KoinHiltModule {
 
     @Provides
     fun provideGetAccountDetailFlow(): GetAccountDetailFlow = getKoin().get()
+
+    @Provides
+    fun provideGetAssetDetail(): GetAssetDetail = getKoin().get()
+
+    @Provides
+    fun provideGetAccountInformationFlow(): GetAccountInformationFlow = getKoin().get()
+
+    @Provides
+    fun provideGetCollectibleDetail(): GetCollectibleDetail = getKoin().get()
 }

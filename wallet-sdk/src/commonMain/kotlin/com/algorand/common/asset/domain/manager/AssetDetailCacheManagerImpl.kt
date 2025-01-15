@@ -71,7 +71,7 @@ internal class AssetDetailCacheManagerImpl(
 
     private suspend fun runManagerJob() {
         updateCacheStatus(AssetCacheStatus.LOADING)
-        val localAccountAddresses = getLocalAccounts().map { it.address }
+        val localAccountAddresses = getLocalAccounts().map { it.algoAddress }
         val assetIds = getAllAssetHoldingIds(localAccountAddresses)
         if (assetIds.isEmpty()) {
             updateCacheStatus(EMPTY)

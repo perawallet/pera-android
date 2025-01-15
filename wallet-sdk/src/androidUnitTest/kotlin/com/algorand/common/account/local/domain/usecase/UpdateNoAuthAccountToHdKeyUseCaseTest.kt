@@ -13,6 +13,7 @@
 package com.algorand.common.account.local.domain.usecase
 
 import com.algorand.common.algosdk.Bip32DerivationType
+import com.algorand.common.encryption.SecretKeyEncryptionManager
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -22,8 +23,13 @@ class UpdateNoAuthAccountToHdKeyUseCaseTest {
 
     private val deleteLocalAccount: DeleteLocalAccount = mockk(relaxed = true)
     private val createHdKeyAccount: CreateHdKeyAccount = mockk(relaxed = true)
+    private val secretKeyEncryptionManager: SecretKeyEncryptionManager = mockk(relaxed = true)
 
-    private val sut = UpdateNoAuthAccountToHdKeyUseCase(deleteLocalAccount, createHdKeyAccount)
+    private val sut = UpdateNoAuthAccountToHdKeyUseCase(
+        deleteLocalAccount,
+        createHdKeyAccount,
+        secretKeyEncryptionManager
+    )
 
     @Test
     fun `EXPECT noAuthAccount to be deleted and new Algo25Account to be created`() = runTest {

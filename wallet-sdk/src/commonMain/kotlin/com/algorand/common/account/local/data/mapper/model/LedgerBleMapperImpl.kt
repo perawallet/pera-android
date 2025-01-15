@@ -16,10 +16,9 @@ import com.algorand.common.account.local.data.database.model.LedgerBleEntity
 import com.algorand.common.account.local.domain.model.LocalAccount
 
 internal class LedgerBleMapperImpl : LedgerBleMapper {
-
     override fun invoke(entity: LedgerBleEntity): LocalAccount.LedgerBle {
         return LocalAccount.LedgerBle(
-            address = entity.algoAddress,
+            algoAddress = entity.algoAddress,
             deviceMacAddress = entity.deviceMacAddress,
             indexInLedger = entity.accountIndexInLedger,
             bluetoothName = entity.bluetoothName

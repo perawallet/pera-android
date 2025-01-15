@@ -52,8 +52,8 @@ class AccountsViewModel(
         val acct = algoAccountSdk.recoverAlgo25Account(mnemonic)
         if (acct != null) {
             val localAccount = LocalAccount.Algo25(
-                address = acct.address,
-                secretKey = acct.secretKey
+                algoAddress = acct.address,
+                encryptedSecretKey = acct.encryptedSecretKey
             )
             viewModelScope.launch {
                 addAlgo25Account(localAccount)
@@ -65,9 +65,9 @@ class AccountsViewModel(
         val acct = algoAccountSdk.recoverHdAccount(mnemonic)
         if (acct != null) {
             val localAccount = LocalAccount.HdKey(
-                address = acct.address,
+                algoAddress = acct.address,
                 publicKey = acct.publicKey,
-                privateKey = acct.privateKey,
+                encryptedPrivateKey = acct.encryptedPrivateKey,
                 seedId = 1, // TODO fix this when foreign key is implemented
                 account = acct.account,
                 change = acct.change,
@@ -100,8 +100,8 @@ class AccountsViewModel(
         viewModelScope.launch {
             val account = algoAccountSdk.createAlgo25Account()
             val algo25Account = LocalAccount.Algo25(
-                address = account.address,
-                secretKey = account.secretKey
+                algoAddress = account.address,
+                encryptedSecretKey = account.encryptedSecretKey
             )
             addAlgo25Account(algo25Account)
         }
@@ -112,9 +112,9 @@ class AccountsViewModel(
         viewModelScope.launch {
             val acct = algoAccountSdk.createHdAccount()
             val hdKeyAccount = LocalAccount.HdKey(
-                address = acct.address,
+                algoAddress = acct.address,
                 publicKey = acct.publicKey,
-                privateKey = acct.privateKey,
+                encryptedPrivateKey = acct.encryptedPrivateKey,
                 seedId = 1, // TODO fix this when foreign key is implemented
                 account = acct.account,
                 change = acct.change,

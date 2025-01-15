@@ -19,7 +19,7 @@ internal class NoAuthEntityMapperImpl : NoAuthEntityMapper {
 
     override fun invoke(localAccount: LocalAccount.NoAuth): NoAuthEntity {
         return NoAuthEntity(
-            algoAddress = localAccount.address
+            algoAddress = localAccount.algoAddress
         )
     }
 }

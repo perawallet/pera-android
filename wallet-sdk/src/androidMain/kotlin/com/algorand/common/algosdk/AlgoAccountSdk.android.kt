@@ -19,6 +19,8 @@ import com.algorand.algosdk.account.Account
 import com.algorand.algosdk.crypto.Address
 import com.algorand.common.algosdk.model.Algo25Account
 import com.algorand.common.algosdk.model.HdAccount
+import com.algorand.common.encryption.EntropyEncryptionManager
+import com.algorand.common.encryption.SecretKeyEncryptionManager
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
@@ -34,7 +36,10 @@ actual interface AlgoAccountSdk {
     actual fun recoverAlgo25Account(mnemonic: String): Algo25Account?
 }
 
-internal class AlgoAccountSdkImpl : AlgoAccountSdk {
+internal class AlgoAccountSdkImpl(
+    private val entropyEncryptionManager: EntropyEncryptionManager,
+    private val secretKeyEncryptionManager: SecretKeyEncryptionManager
+) : AlgoAccountSdk {
     init {
         Security.removeProvider("BC")
         Security.insertProviderAt(BouncyCastleProvider(), 0)
@@ -92,9 +97,9 @@ internal class AlgoAccountSdkImpl : AlgoAccountSdk {
             )
         return HdAccount(
             address = algoAddress.toString(),
-            mnemonic = mnemonic.toString(),
+            encryptedMnemonicEntropy = entropyEncryptionManager.encrypt(mnemonic.toString()),
             publicKey = publicKey,
-            privateKey = privateKey,
+            encryptedPrivateKey = secretKeyEncryptionManager.encrypt(privateKey),
             account = account.toInt(),
             change = change.toInt(),
             keyIndex = keyIndex.toInt(),

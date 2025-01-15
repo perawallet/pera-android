@@ -19,7 +19,7 @@ internal class LedgerBleEntityMapperImpl : LedgerBleEntityMapper {
 
     override fun invoke(localAccount: LocalAccount.LedgerBle): LedgerBleEntity {
         return LedgerBleEntity(
-            algoAddress = localAccount.address,
+            algoAddress = localAccount.algoAddress,
             deviceMacAddress = localAccount.deviceMacAddress,
             accountIndexInLedger = localAccount.indexInLedger,
             bluetoothName = localAccount.bluetoothName

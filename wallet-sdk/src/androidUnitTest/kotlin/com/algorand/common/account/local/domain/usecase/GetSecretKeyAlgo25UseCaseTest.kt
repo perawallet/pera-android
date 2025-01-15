@@ -32,7 +32,7 @@ class GetSecretKeyAlgo25UseCaseTest {
     fun `EXPECT secret key WHEN algo25 account is found`() = runTest {
         coEvery { algo25AccountRepository.getAccount(ALGO_25_ADDRESS) } returns ALGO_25_ACCOUNT
         val result = sut(ALGO_25_ADDRESS)
-        assertTrue(result.contentEquals(ALGO_25_ACCOUNT.secretKey))
+        assertTrue(result.contentEquals(ALGO_25_ACCOUNT.encryptedSecretKey))
     }
 
     @Test
@@ -46,6 +46,6 @@ class GetSecretKeyAlgo25UseCaseTest {
 
     companion object {
         private const val ALGO_25_ADDRESS = "ADDRESS_2"
-        private val ALGO_25_ACCOUNT = peraFixture<LocalAccount.Algo25>().copy(address = ALGO_25_ADDRESS)
+        private val ALGO_25_ACCOUNT = peraFixture<LocalAccount.Algo25>().copy(algoAddress = ALGO_25_ADDRESS)
     }
 }

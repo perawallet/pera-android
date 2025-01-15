@@ -24,7 +24,7 @@ internal class ShouldUpdateAccountCacheUseCase(
 ) : ShouldUpdateAccountCache {
 
     override suspend fun invoke(): PeraResult<Boolean> {
-        val localAccountAddresses = getLocalAccounts().map { it.address }
+        val localAccountAddresses = getLocalAccounts().map { it.algoAddress }
         val cachedAccounts = getAllAccountInformation()
         if (localAccountAddresses.size > cachedAccounts.size) {
             return PeraResult.Success(true)

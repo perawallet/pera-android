@@ -21,6 +21,6 @@ internal class GetSecretKeyAlgo25UseCase(
 ) : GetSecretKey {
 
     override suspend fun invoke(address: String): ByteArray? {
-        return algo25AccountRepository.getAccount(address)?.secretKey
+        return algo25AccountRepository.getAccount(address)?.encryptedSecretKey
     }
 }

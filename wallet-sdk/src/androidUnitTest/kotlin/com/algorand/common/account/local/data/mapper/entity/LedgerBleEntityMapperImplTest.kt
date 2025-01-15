@@ -25,7 +25,7 @@ internal class LedgerBleEntityMapperImplTest {
     fun `EXPECT mapper entity`() {
         val result = sut(
             LocalAccount.LedgerBle(
-                address = "unencrypted_address",
+                algoAddress = "unencrypted_address",
                 deviceMacAddress = "mac_address",
                 indexInLedger = 1,
                 bluetoothName = "bluetooth_name"

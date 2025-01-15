@@ -13,6 +13,6 @@
 package com.algorand.common.encryption
 
 interface EntropyEncryptionManager {
-    fun encrypt(address: String): String
-    fun decrypt(encryptedAddress: String): String
+    fun encrypt(data: String): String
+    fun decrypt(encryptedData: String): String
 }

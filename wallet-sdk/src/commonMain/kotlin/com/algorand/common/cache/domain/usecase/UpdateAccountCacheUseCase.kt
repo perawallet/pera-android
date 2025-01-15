@@ -23,7 +23,7 @@ internal class UpdateAccountCacheUseCase(
 ) : UpdateAccountCache {
 
     override suspend fun invoke() {
-        val localAccountAddresses = getLocalAccounts().map { it.address }
+        val localAccountAddresses = getLocalAccounts().map { it.algoAddress }
         val assetIds = fetchAndCacheAccountInformation(localAccountAddresses).mapNotNull {
             if (it.value == null) return@mapNotNull null
             it.value?.assetHoldings?.map { assetHolding ->

@@ -17,6 +17,6 @@ internal class IsThereAnyAccountWithAddressUseCase(
 ) : IsThereAnyAccountWithAddress {
 
     override suspend fun invoke(address: String): Boolean {
-        return getLocalAccounts().any { it.address == address }
+        return getLocalAccounts().any { it.algoAddress == address }
     }
 }

@@ -31,9 +31,9 @@ internal class AlgoAccountSdkImpl : AlgoAccountSdk {
         val mnemonic = generate24WordMnemonic()
         return HdAccount(
             address = accountAddress,
-            mnemonic = mnemonic,
+            encryptedMnemonicEntropy = mnemonic,
             publicKey = "TBD".toByteArray(),
-            privateKey = "TBD".toByteArray(),
+            encryptedPrivateKey = "TBD".toByteArray(),
             account = 0,
             change = 0,
             keyIndex = 0,
@@ -44,9 +44,9 @@ internal class AlgoAccountSdkImpl : AlgoAccountSdk {
     override fun recoverHdAccount(mnemonic: String): HdAccount {
         return HdAccount(
             address = "TBD",
-            mnemonic = mnemonic,
+            encryptedMnemonicEntropy = mnemonic,
             publicKey = "TBD".toByteArray(),
-            privateKey = "TBD".toByteArray(),
+            encryptedPrivateKey = "TBD".toByteArray(),
             account = 0,
             change = 0,
             keyIndex = 0,

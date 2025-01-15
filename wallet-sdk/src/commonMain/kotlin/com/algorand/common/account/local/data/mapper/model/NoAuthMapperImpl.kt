@@ -16,10 +16,9 @@ import com.algorand.common.account.local.data.database.model.NoAuthEntity
 import com.algorand.common.account.local.domain.model.LocalAccount
 
 internal class NoAuthMapperImpl : NoAuthMapper {
-
     override fun invoke(entity: NoAuthEntity): LocalAccount.NoAuth {
         return LocalAccount.NoAuth(
-            address = entity.algoAddress
+            algoAddress = entity.algoAddress
         )
     }
 }

@@ -26,6 +26,6 @@ import org.koin.dsl.module
 internal actual fun platformKoinModule(): Module = module {
     single<AESPlatformManager> { AESPlatformManagerImpl() }
     single<AddressDatabase> { getAddressDatabase(get()) }
-    single<AlgoAccountSdk> { AlgoAccountSdkImpl() }
+    single<AlgoAccountSdk> { AlgoAccountSdkImpl(get(), get()) }
     single<PeraDatabase> { getPeraDatabase(get()) }
 }

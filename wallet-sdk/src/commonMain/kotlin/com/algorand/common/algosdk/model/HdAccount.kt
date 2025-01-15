@@ -17,8 +17,8 @@ import com.algorand.common.algosdk.Bip32DerivationType
 data class HdAccount(
     val address: String,
     val publicKey: ByteArray,
-    val privateKey: ByteArray,
-    val mnemonic: String,
+    val encryptedPrivateKey: ByteArray,
+    val encryptedMnemonicEntropy: String,
     val account: Int,
     val change: Int,
     val keyIndex: Int,
@@ -31,16 +31,16 @@ data class HdAccount(
         other as HdAccount
 
         if (address != other.address) return false
-        if (mnemonic != other.mnemonic) return false
-        if (!privateKey.contentEquals(other.privateKey)) return false
+        if (encryptedMnemonicEntropy != other.encryptedMnemonicEntropy) return false
+        if (!encryptedPrivateKey.contentEquals(other.encryptedPrivateKey)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = address.hashCode()
-        result = 31 * result + mnemonic.hashCode()
-        result = 31 * result + privateKey.hashCode()
+        result = 31 * result + encryptedMnemonicEntropy.hashCode()
+        result = 31 * result + encryptedPrivateKey.hashCode()
         return result
     }
 }

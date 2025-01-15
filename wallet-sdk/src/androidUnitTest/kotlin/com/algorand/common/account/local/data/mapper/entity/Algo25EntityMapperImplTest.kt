@@ -19,15 +19,13 @@ internal class Algo25EntityMapperImplTest {
 
     private val secretKeyEncryptionManager: SecretKeyEncryptionManager = mockk()
 
-    private val sut = Algo25EntityMapperImpl(
-        secretKeyEncryptionManager
-    )
+    private val sut = Algo25EntityMapperImpl()
 
 //    @Test
 //    fun `EXPECT mapped entity`() {
 //        coEvery { secretKeyEncryptionManager.encrypt(byteArrayOf(1, 2, 3)) } returns "encrypted_secret_key".toByteArray()
 //
-//        val result = sut(LocalAccount.Algo25(address = "unencrypted_address", secretKey = byteArrayOf(1, 2, 3)))
+//        val result = sut(LocalAccount.Algo25(algoAddress = "unencrypted_address", encryptedSecretKey = byteArrayOf(1, 2, 3)))
 //
 //        val expected = Algo25Entity(algoAddress = "unencrypted_address", "encrypted_secret_key".toByteArray())
 //        assertEquals(expected, result)

@@ -14,8 +14,8 @@ package com.algorand.common.algosdk.model
 
 data class Algo25Account(
     val address: String,
-    val mnemonic: String,
-    val secretKey: ByteArray
+    val encryptedMnemonic: String,
+    val encryptedSecretKey: ByteArray
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -24,16 +24,16 @@ data class Algo25Account(
         other as Algo25Account
 
         if (address != other.address) return false
-        if (mnemonic != other.mnemonic) return false
-        if (!secretKey.contentEquals(other.secretKey)) return false
+        if (encryptedMnemonic != other.encryptedMnemonic) return false
+        if (!encryptedSecretKey.contentEquals(other.encryptedSecretKey)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = address.hashCode()
-        result = 31 * result + mnemonic.hashCode()
-        result = 31 * result + secretKey.contentHashCode()
+        result = 31 * result + encryptedMnemonic.hashCode()
+        result = 31 * result + encryptedSecretKey.contentHashCode()
         return result
     }
 }

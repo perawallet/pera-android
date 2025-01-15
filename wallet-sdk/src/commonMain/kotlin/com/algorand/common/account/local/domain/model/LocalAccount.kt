@@ -14,12 +14,12 @@ package com.algorand.common.account.local.domain.model
 
 sealed interface LocalAccount {
 
-    val address: String
+    val algoAddress: String
 
     data class HdKey(
-        override val address: String,
+        override val algoAddress: String,
         val publicKey: ByteArray,
-        val privateKey: ByteArray,
+        val encryptedPrivateKey: ByteArray,
         val seedId: Int,
         val account: Int,
         val change: Int,
@@ -33,20 +33,20 @@ sealed interface LocalAccount {
 
             other as Algo25
 
-            if (address != other.address) return false
+            if (algoAddress != other.algoAddress) return false
 
             return true
         }
 
         override fun hashCode(): Int {
-            var result = address.hashCode()
+            var result = algoAddress.hashCode()
             return result
         }
     }
 
     data class Algo25(
-        override val address: String,
-        val secretKey: ByteArray
+        override val algoAddress: String,
+        val encryptedSecretKey: ByteArray
     ) : LocalAccount {
 
         override fun equals(other: Any?): Boolean {
@@ -55,27 +55,27 @@ sealed interface LocalAccount {
 
             other as Algo25
 
-            if (address != other.address) return false
-            if (!secretKey.contentEquals(other.secretKey)) return false
+            if (algoAddress != other.algoAddress) return false
+            if (!encryptedSecretKey.contentEquals(other.encryptedSecretKey)) return false
 
             return true
         }
 
         override fun hashCode(): Int {
-            var result = address.hashCode()
-            result = 31 * result + secretKey.contentHashCode()
+            var result = algoAddress.hashCode()
+            result = 31 * result + encryptedSecretKey.contentHashCode()
             return result
         }
     }
 
     data class LedgerBle(
-        override val address: String,
+        override val algoAddress: String,
         val deviceMacAddress: String,
         val bluetoothName: String?,
         val indexInLedger: Int
     ) : LocalAccount
 
     data class NoAuth(
-        override val address: String
+        override val algoAddress: String
     ) : LocalAccount
 }

@@ -34,10 +34,10 @@ internal class GetAllLocalAccountAddressesAsFlowUseCase(
             noAuthAccountRepository.getAllAsFlow()
         ) { hdKeyAccounts, algo25Accounts, ledgerBleAccounts, noAuthAccounts ->
             buildList {
-                addAll(hdKeyAccounts.map { it.address })
-                addAll(algo25Accounts.map { it.address })
-                addAll(ledgerBleAccounts.map { it.address })
-                addAll(noAuthAccounts.map { it.address })
+                addAll(hdKeyAccounts.map { it.algoAddress })
+                addAll(algo25Accounts.map { it.algoAddress })
+                addAll(ledgerBleAccounts.map { it.algoAddress })
+                addAll(noAuthAccounts.map { it.algoAddress })
             }
         }
     }

@@ -22,7 +22,7 @@ internal class NoAuthEntityMapperImplTest {
 
     @Test
     fun `EXPECT mapped entity`() {
-        val result = sut(LocalAccount.NoAuth(address = "unencrypted_address"))
+        val result = sut(LocalAccount.NoAuth(algoAddress = "unencrypted_address"))
 
         val expected = NoAuthEntity(algoAddress = "unencrypted_address")
         assertEquals(expected, result)

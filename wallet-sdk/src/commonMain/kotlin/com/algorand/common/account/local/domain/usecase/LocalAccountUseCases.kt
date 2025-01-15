@@ -115,5 +115,9 @@ fun interface UpdateNoAuthAccountToHdKey {
 }
 
 fun interface UpdateNoAuthAccountToLedgerBle {
-    suspend operator fun invoke(address: String, deviceMacAddress: String, indexInLedger: Int)
+    suspend operator fun invoke(
+        address: String,
+        deviceMacAddress: String,
+        indexInLedger: Int
+    )
 }

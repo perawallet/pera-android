@@ -8,7 +8,6 @@ import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
-import javax.crypto.spec.IvParameterSpec
 
 
 internal actual class AESPlatformManagerImpl : AESPlatformManager {
@@ -68,25 +67,39 @@ internal actual class AESPlatformManagerImpl : AESPlatformManager {
     }
 
     // Encrypt a string
+    @Throws(Exception::class)
     actual override fun encryptString(data: String): String {
         val cipher = Cipher.getInstance(AES_MODE)
-        val iv = ByteArray(16) // Initialization Vector (IV)
-        val ivSpec = IvParameterSpec(iv)
-        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(), ivSpec)
-
+        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
+        val iv = cipher.iv // GCM IV
         val encryptedBytes = cipher.doFinal(data.toByteArray())
-        return Base64.getEncoder().encodeToString(encryptedBytes)
+
+        // Combine IV and ciphertext
+        val combined = ByteArray(iv.size + encryptedBytes.size)
+        System.arraycopy(iv, 0, combined, 0, iv.size)
+        System.arraycopy(encryptedBytes, 0, combined, iv.size, encryptedBytes.size)
+
+        // Return as Base64 string
+        return Base64.getEncoder().encodeToString(combined)
     }
 
     // Decrypt a string
+    @Throws(Exception::class)
     actual override fun decryptString(encryptedData: String): String {
-        val cipher = Cipher.getInstance(AES_MODE)
-        val iv = ByteArray(16) // Initialization Vector (IV) must match the encryption IV
-        val ivSpec = IvParameterSpec(iv)
-        cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), ivSpec)
+        val combined = Base64.getDecoder().decode(encryptedData)
 
-        val decodedBytes: ByteArray = Base64.getDecoder().decode(encryptedData)
-        val decryptedBytes = cipher.doFinal(decodedBytes)
-        return String(decryptedBytes)
+        // Extract IV and ciphertext
+        val iv = ByteArray(12) // GCM standard IV length
+        System.arraycopy(combined, 0, iv, 0, iv.size)
+        val ciphertext = ByteArray(combined.size - iv.size)
+        System.arraycopy(combined, iv.size, ciphertext, 0, ciphertext.size)
+
+        // Decrypt
+        val cipher = Cipher.getInstance(AES_MODE)
+        val spec = GCMParameterSpec(128, iv) // 128-bit authentication tag
+        cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), spec)
+        val plaintextBytes = cipher.doFinal(ciphertext)
+
+        return String(plaintextBytes)
     }
 }

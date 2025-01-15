@@ -21,7 +21,7 @@ internal class GetAccountRegistrationTypeUseCase(
 ) : GetAccountRegistrationType {
 
     override suspend fun invoke(address: String): AccountRegistrationType? {
-        return when (getLocalAccounts().firstOrNull { it.address == address }) {
+        return when (getLocalAccounts().firstOrNull { it.algoAddress == address }) {
             is LocalAccount.Algo25 -> AccountRegistrationType.Algo25
             is LocalAccount.LedgerBle -> AccountRegistrationType.LedgerBle
             is LocalAccount.NoAuth -> AccountRegistrationType.NoAuth

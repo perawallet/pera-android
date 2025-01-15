@@ -68,12 +68,12 @@ class GetAllLocalAccountAddressesAsFlowUseCaseTest {
 
     companion object {
         private const val HD_ADDRESS = "address1"
-        private val HD_ACCOUNT = peraFixture<HdKey>().copy(address = HD_ADDRESS)
+        private val HD_ACCOUNT = peraFixture<HdKey>().copy(algoAddress = HD_ADDRESS)
         private const val ALGO_25_ADDRESS = "address2"
-        private val ALGO_25_ACCOUNT = peraFixture<Algo25>().copy(address = ALGO_25_ADDRESS)
+        private val ALGO_25_ACCOUNT = peraFixture<Algo25>().copy(algoAddress = ALGO_25_ADDRESS)
         private const val LEDGER_BLE_ADDRESS = "address3"
-        private val LEDGER_BLE_ACCOUNT = peraFixture<LedgerBle>().copy(address = LEDGER_BLE_ADDRESS)
+        private val LEDGER_BLE_ACCOUNT = peraFixture<LedgerBle>().copy(algoAddress = LEDGER_BLE_ADDRESS)
         private const val NO_AUTH_ADDRESS = "address4"
-        private val NO_AUTH_ACCOUNT = peraFixture<NoAuth>().copy(address = NO_AUTH_ADDRESS)
+        private val NO_AUTH_ACCOUNT = peraFixture<NoAuth>().copy(algoAddress = NO_AUTH_ADDRESS)
     }
 }

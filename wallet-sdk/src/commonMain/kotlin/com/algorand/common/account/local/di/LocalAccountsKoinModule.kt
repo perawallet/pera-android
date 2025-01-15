@@ -88,13 +88,13 @@ internal val localAccountsKoinModule = module {
         get<AddressDatabase>().noAuthDao()
     }
 
-    factory<HdKeyEntityMapper> { HdKeyEntityMapperImpl(get()) }
-    factory<Algo25EntityMapper> { Algo25EntityMapperImpl(get()) }
+    factory<HdKeyEntityMapper> { HdKeyEntityMapperImpl() }
+    factory<Algo25EntityMapper> { Algo25EntityMapperImpl() }
     factory<LedgerBleEntityMapper> { LedgerBleEntityMapperImpl() }
     factory<NoAuthEntityMapper> { NoAuthEntityMapperImpl() }
 
-    factory<HdKeyMapper> { HdKeyMapperImpl(get()) }
-    factory<Algo25Mapper> { Algo25MapperImpl(get()) }
+    factory<HdKeyMapper> { HdKeyMapperImpl() }
+    factory<Algo25Mapper> { Algo25MapperImpl() }
     factory<LedgerBleMapper> { LedgerBleMapperImpl() }
     factory<NoAuthMapper> { NoAuthMapperImpl() }
 

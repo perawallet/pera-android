@@ -15,6 +15,6 @@ package com.algorand.common.account.local.domain.model
 data class HdSeed(
     val seedId: Int,
     val seed: ByteArray,
-    val encryptedMnemonicEntropy: String,
+    val mnemonicEntropy: String,
     val seedCustomName: String,
 )

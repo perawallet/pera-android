@@ -1,6 +1,6 @@
 package com.algorand.common.encryption
 
-actual class AESPlatformManagerImpl : AESPlatformManager {
+internal actual class AESPlatformManagerImpl : AESPlatformManager {
 
     private val keyAlias = "MyAESKey"
     private val keySize = 256
@@ -101,6 +101,4 @@ actual class AESPlatformManagerImpl : AESPlatformManager {
     actual override fun decryptString(encryptedData: String): String {
         return encryptedData
     }
-
-    actual companion object {}
 }

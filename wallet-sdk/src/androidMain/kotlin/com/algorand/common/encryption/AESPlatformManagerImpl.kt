@@ -11,9 +11,9 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.IvParameterSpec
 
 
-actual class AESPlatformManagerImpl : AESPlatformManager {
+internal actual class AESPlatformManagerImpl : AESPlatformManager {
 
-    actual companion object {
+    companion object {
         // TODO change values before account-refactor launch
         private const val KEY_ALIAS = "MyAESKey"
         private const val ANDROID_KEYSTORE = "AndroidKeyStore"

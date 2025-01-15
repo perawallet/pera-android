@@ -13,7 +13,7 @@
 package com.algorand.common.encryption
 
 internal class EntropyEncryptionManagerImpl(
-    val AESPlatformManager: AESPlatformManager
+    private val AESPlatformManager: AESPlatformManager
 ) : EntropyEncryptionManager {
     override fun encrypt(data: String): String {
         // TODO Will be implemented at the end of the account refactor

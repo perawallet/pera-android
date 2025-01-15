@@ -19,7 +19,6 @@ data class HdAccount(
     val publicKey: ByteArray,
     val privateKey: ByteArray,
     val mnemonic: String,
-    val seedId: Int,
     val account: Int,
     val change: Int,
     val keyIndex: Int,
@@ -29,10 +28,11 @@ data class HdAccount(
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as Algo25Account
+        other as HdAccount
 
         if (address != other.address) return false
         if (mnemonic != other.mnemonic) return false
+        if (!privateKey.contentEquals(other.privateKey)) return false
 
         return true
     }
@@ -40,6 +40,7 @@ data class HdAccount(
     override fun hashCode(): Int {
         var result = address.hashCode()
         result = 31 * result + mnemonic.hashCode()
+        result = 31 * result + privateKey.hashCode()
         return result
     }
 }

@@ -47,5 +47,5 @@ internal data class HdKeyEntity(
     val keyIndex: Int,
 
     @ColumnInfo("derivation_type")
-    val derivationType: Bip32DerivationType = Bip32DerivationType.Peikert
+    val derivationType: Int
 )

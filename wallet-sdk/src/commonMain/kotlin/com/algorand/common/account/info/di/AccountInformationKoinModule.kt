@@ -64,7 +64,7 @@ internal val accountInformationKoinModule = module {
     }
 
     single<AccountInformationRepository> {
-        AccountInformationRepositoryImpl(get(), get(), get(), get(), get(), get(), get())
+        AccountInformationRepositoryImpl(get(), get(), get(), get(), get(), get())
     }
 
     single<AccountInformationCacheHelper> { AccountInformationCacheHelperImpl(get(), get(), get(), get(), get()) }
@@ -72,7 +72,7 @@ internal val accountInformationKoinModule = module {
     single<AccountInformationFetchHelper> { AccountInformationFetchHelperImpl(get(), get(), get()) }
     single<AccountAssetHoldingsFetchHelper> { AccountAssetHoldingsFetchHelperImpl(get()) }
 
-    factory<AccountInformationMapper> { AccountInformationMapperImpl(get(), get(), get()) }
+    factory<AccountInformationMapper> { AccountInformationMapperImpl(get(), get()) }
     factory<AppStateSchemeMapper> { AppStateSchemeMapperImpl() }
     factory<AssetHoldingMapper> { AssetHoldingMapperImpl() }
     factory<AccountInformationDao> {

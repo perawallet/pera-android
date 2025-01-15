@@ -20,7 +20,6 @@ import com.algorand.common.account.info.domain.model.AccountInformation
 import com.algorand.common.account.info.domain.model.AppStateScheme
 import com.algorand.common.account.info.domain.model.AssetHolding
 import com.algorand.common.account.info.domain.model.AssetStatus
-import com.algorand.common.encryption.AddressEncryptionManager
 import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.Test
@@ -35,12 +34,10 @@ class AccountInformationMapperImplTest {
     private val assetHoldingMapper: AssetHoldingMapper = mockk {
         every { invoke(response = ASSET_HOLDING_RESPONSE) } returns ASSET_HOLDING
     }
-    private val addressEncryptionManager: AddressEncryptionManager = mockk()
 
     private val sut = AccountInformationMapperImpl(
         appStateSchemeMapper = appStateSchemeMapper,
-        assetHoldingMapper = assetHoldingMapper,
-        addressEncryptionManager = addressEncryptionManager
+        assetHoldingMapper = assetHoldingMapper
     )
 
     @Test

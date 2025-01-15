@@ -14,11 +14,6 @@ package com.algorand.common.algosdk
 
 expect fun isValidAccountAddress(address: String): Boolean
 
-enum class KeyContext(val value: Int) {
-    Address(0),
-    Identity(1),
-}
-
 enum class Bip32DerivationType(val value: Int) {
     Peikert(9),
     Khovratovich(32)

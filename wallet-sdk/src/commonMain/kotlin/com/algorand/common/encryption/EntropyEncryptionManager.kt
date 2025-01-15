@@ -12,7 +12,7 @@
 
 package com.algorand.common.encryption
 
-interface HdSeedEncryptionManager {
-    fun encrypt(secretKey: ByteArray): ByteArray
-    fun decrypt(encryptedSecretKey: ByteArray): ByteArray
+interface EntropyEncryptionManager {
+    fun encrypt(address: String): String
+    fun decrypt(encryptedAddress: String): String
 }

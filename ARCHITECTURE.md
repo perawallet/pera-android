@@ -120,7 +120,7 @@ title: AddressDatabase
 erDiagram
     algo_25 {
         String algo_address PK
-        String encrypted_secret_key
+        ByteArray encrypted_secret_key
     }
     ledger_ble {
         String algo_address PK
@@ -145,7 +145,7 @@ erDiagram
         Int account
         Int change
         Int key_index
-        Enum derivation_type
+        Int derivation_type
     }
     hd_keys ||--o{ hd_seeds : links
 ```

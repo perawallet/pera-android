@@ -18,7 +18,6 @@ import com.algorand.common.account.info.data.mapper.AccountInformationMapper
 import com.algorand.common.account.info.data.mapper.AssetHoldingMapper
 import com.algorand.common.account.info.domain.model.AccountInformation
 import com.algorand.common.account.info.domain.repository.AccountInformationRepository
-import com.algorand.common.encryption.AddressEncryptionManager
 import com.algorand.common.foundation.PeraResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -34,7 +33,6 @@ internal class AccountInformationRepositoryImpl(
     private val accountInformationDao: AccountInformationDao,
     private val assetHoldingDao: AssetHoldingDao,
     private val assetHoldingMapper: AssetHoldingMapper,
-    private val addressEncryptionManager: AddressEncryptionManager,
     private val accountInformationCacheHelper: AccountInformationCacheHelper,
     private val accountInformationFetchHelper: AccountInformationFetchHelper
 ) : AccountInformationRepository {

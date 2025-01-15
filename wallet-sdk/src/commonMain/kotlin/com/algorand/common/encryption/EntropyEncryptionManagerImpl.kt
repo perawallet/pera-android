@@ -12,14 +12,16 @@
 
 package com.algorand.common.encryption
 
-internal class HdSeedEncryptionManagerImpl : HdSeedEncryptionManager {
-    override fun encrypt(secretKey: ByteArray): ByteArray {
+internal class EntropyEncryptionManagerImpl(
+    val AESPlatformManager: AESPlatformManager
+) : EntropyEncryptionManager {
+    override fun encrypt(data: String): String {
         // TODO Will be implemented at the end of the account refactor
-        return secretKey
+        return AESPlatformManager.encryptString(data)
     }
 
-    override fun decrypt(encryptedSecretKey: ByteArray): ByteArray {
+    override fun decrypt(encryptedData: String): String {
         // TODO Will be implemented at the end of the account refactor
-        return encryptedSecretKey
+        return AESPlatformManager.decryptString(encryptedData)
     }
 }

@@ -14,16 +14,16 @@ package com.algorand.common.account.local.data.mapper.model
 
 import com.algorand.common.account.local.data.database.model.HdKeyEntity
 import com.algorand.common.account.local.domain.model.LocalAccount
-import com.algorand.common.encryption.HdPrivateKeyEncryptionManager
+import com.algorand.common.encryption.SecretKeyEncryptionManager
 
 internal class HdKeyMapperImpl(
-    private val privateKeyEncryptionManager: HdPrivateKeyEncryptionManager
+    private val secretKeyEncryptionManager: SecretKeyEncryptionManager
 ) : HdKeyMapper {
-    override suspend fun invoke(entity: HdKeyEntity): LocalAccount.HdKey {
+    override fun invoke(entity: HdKeyEntity): LocalAccount.HdKey {
         return LocalAccount.HdKey(
             address = entity.algoAddress,
             publicKey = entity.publicKey,
-            privateKey = privateKeyEncryptionManager.decrypt(entity.encryptedPrivateKey),
+            privateKey = secretKeyEncryptionManager.decrypt(entity.encryptedPrivateKey),
             seedId = entity.seedId,
             account = entity.account,
             change = entity.change,

@@ -12,8 +12,6 @@
 
 package com.algorand.common.account.local.domain.model
 
-import com.algorand.common.algosdk.Bip32DerivationType
-
 sealed interface LocalAccount {
 
     val address: String
@@ -26,7 +24,7 @@ sealed interface LocalAccount {
         val account: Int,
         val change: Int,
         val keyIndex: Int,
-        val derivationType: Bip32DerivationType
+        val derivationType: Int
     ) : LocalAccount {
 
         override fun equals(other: Any?): Boolean {

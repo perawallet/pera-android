@@ -18,12 +18,10 @@ import com.algorand.common.account.info.data.model.AccountInformationResponsePay
 import com.algorand.common.account.info.data.model.RekeyedAccountsResponse
 import com.algorand.common.account.info.domain.model.AccountInformation
 import com.algorand.common.account.info.domain.model.AssetHolding
-import com.algorand.common.encryption.AddressEncryptionManager
 
 internal class AccountInformationMapperImpl(
     private val appStateSchemeMapper: AppStateSchemeMapper,
     private val assetHoldingMapper: AssetHoldingMapper,
-    private val addressEncryptionManager: AddressEncryptionManager
 ) : AccountInformationMapper {
 
     override fun invoke(response: AccountInformationResponse): AccountInformation? {

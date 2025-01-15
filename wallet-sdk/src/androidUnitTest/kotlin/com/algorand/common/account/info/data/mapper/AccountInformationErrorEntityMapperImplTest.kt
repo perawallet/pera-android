@@ -13,7 +13,6 @@
 package com.algorand.common.account.info.data.mapper
 
 import com.algorand.common.account.info.data.database.model.AccountInformationEntity
-import com.algorand.common.encryption.AddressEncryptionManager
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test

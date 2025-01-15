@@ -48,10 +48,8 @@ import com.algorand.common.account.local.domain.usecase.AddLedgerBleAccount
 import com.algorand.common.account.local.domain.usecase.AddNoAuthAccount
 import com.algorand.common.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.common.account.local.domain.usecase.DeleteLocalAccountUseCase
-import com.algorand.common.account.local.domain.usecase.GetAlgoAddressFromHdPublicKeyUseCase
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
-import com.algorand.common.account.local.domain.usecase.GetHdPublicKeyFromAlgoAddressUseCase
 import com.algorand.common.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.common.account.local.domain.usecase.GetLocalAccountCountFlowUseCase
 import com.algorand.common.account.local.domain.usecase.GetLocalAccounts
@@ -133,11 +131,5 @@ internal val localAccountsKoinModule = module {
     }
     factory<GetLocalAccountCountFlow> {
         GetLocalAccountCountFlowUseCase(get(), get(), get(), get())
-    }
-    factory<GetAlgoAddressFromHdPublicKeyUseCase> {
-        GetAlgoAddressFromHdPublicKeyUseCase()
-    }
-    factory<GetHdPublicKeyFromAlgoAddressUseCase> {
-        GetHdPublicKeyFromAlgoAddressUseCase()
     }
 }

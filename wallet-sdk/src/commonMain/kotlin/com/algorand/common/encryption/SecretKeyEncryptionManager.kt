@@ -13,6 +13,6 @@
 package com.algorand.common.encryption
 
 interface SecretKeyEncryptionManager {
-    fun encrypt(secretKey: ByteArray): String
-    fun decrypt(encryptedSecretKey: String): ByteArray
+    fun encrypt(secretKey: ByteArray): ByteArray
+    fun decrypt(encryptedSecretKey: ByteArray): ByteArray
 }

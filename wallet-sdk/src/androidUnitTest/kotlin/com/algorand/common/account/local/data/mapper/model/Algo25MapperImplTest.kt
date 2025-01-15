@@ -30,9 +30,9 @@ internal class Algo25MapperImplTest {
 
     @Test
     fun `EXPECT mapped model`() {
-        coEvery { secretKeyEncryptionManager.decrypt("encrypted_secret_key") } returns byteArrayOf(1, 2, 3)
+        coEvery { secretKeyEncryptionManager.decrypt("encrypted_secret_key".toByteArray()) } returns byteArrayOf(1, 2, 3)
 
-        val entity = Algo25Entity("unencrypted_address", "encrypted_secret_key")
+        val entity = Algo25Entity("unencrypted_address", "encrypted_secret_key".toByteArray())
         val result = sut(entity)
 
         val expected = LocalAccount.Algo25("unencrypted_address", byteArrayOf(1, 2, 3))

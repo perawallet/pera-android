@@ -95,7 +95,6 @@ internal class AlgoAccountSdkImpl : AlgoAccountSdk {
             mnemonic = mnemonic.toString(),
             publicKey = publicKey,
             privateKey = privateKey,
-            seedId = 1,
             account = account.toInt(),
             change = change.toInt(),
             keyIndex = keyIndex.toInt(),

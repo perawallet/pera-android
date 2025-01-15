@@ -16,5 +16,5 @@ import com.algorand.common.account.local.data.database.model.HdKeyEntity
 import com.algorand.common.account.local.domain.model.LocalAccount
 
 internal interface HdKeyMapper {
-    suspend operator fun invoke(entity: HdKeyEntity): LocalAccount.HdKey
+    operator fun invoke(entity: HdKeyEntity): LocalAccount.HdKey
 }

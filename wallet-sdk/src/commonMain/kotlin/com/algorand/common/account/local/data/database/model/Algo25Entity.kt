@@ -23,5 +23,5 @@ internal data class Algo25Entity(
     val algoAddress: String,
 
     @ColumnInfo("encrypted_secret_key")
-    val encryptedSecretKey: String
+    val encryptedSecretKey: ByteArray
 )

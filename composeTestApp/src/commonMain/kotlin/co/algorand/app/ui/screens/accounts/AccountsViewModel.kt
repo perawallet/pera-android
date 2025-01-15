@@ -68,11 +68,11 @@ class AccountsViewModel(
                 address = acct.address,
                 publicKey = acct.publicKey,
                 privateKey = acct.privateKey,
-                seedId = acct.seedId,
+                seedId = 1, // TODO fix this when foreign key is implemented
                 account = acct.account,
                 change = acct.change,
                 keyIndex = acct.keyIndex,
-                derivationType = acct.derivationType,
+                derivationType = acct.derivationType.value,
             )
             viewModelScope.launch {
                 addHdKeyAccount(localAccount)
@@ -115,11 +115,11 @@ class AccountsViewModel(
                 address = acct.address,
                 publicKey = acct.publicKey,
                 privateKey = acct.privateKey,
-                seedId = acct.seedId,
+                seedId = 1, // TODO fix this when foreign key is implemented
                 account = acct.account,
                 change = acct.change,
                 keyIndex = acct.keyIndex,
-                derivationType = Bip32DerivationType.Peikert,
+                derivationType = Bip32DerivationType.Peikert.value,
             )
             addHdKeyAccount(hdKeyAccount)
         }

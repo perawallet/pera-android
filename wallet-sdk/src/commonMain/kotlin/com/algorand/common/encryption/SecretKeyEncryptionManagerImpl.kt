@@ -12,17 +12,17 @@
 
 package com.algorand.common.encryption
 
-import io.ktor.utils.io.core.toByteArray
+internal class SecretKeyEncryptionManagerImpl(
+    val AESPlatformManager: AESPlatformManager
+) : SecretKeyEncryptionManager {
 
-internal class SecretKeyEncryptionManagerImpl : SecretKeyEncryptionManager {
-
-    override fun encrypt(secretKey: ByteArray): String {
+    override fun encrypt(secretKey: ByteArray): ByteArray {
         // TODO Will be implemented at the end of the account refactor
-        return secretKey.toString()
+        return AESPlatformManager.encryptByteArray(secretKey)
     }
 
-    override fun decrypt(encryptedSecretKey: String): ByteArray {
+    override fun decrypt(encryptedSecretKey: ByteArray): ByteArray {
         // TODO Will be implemented at the end of the account refactor
-        return encryptedSecretKey.toByteArray()
+        return AESPlatformManager.decryptByteArray(encryptedSecretKey)
     }
 }

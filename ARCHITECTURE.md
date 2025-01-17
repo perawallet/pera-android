@@ -9,28 +9,65 @@ These diagrams are meant to be helpful and a WIP currently.  Eventually when we 
 
 ```sh
 flowchart TD
-    subgraph Pera App
-    A("Pera App (UI)
-    Navigation")
-    A <--> D
-        subgraph Wallet As A Sevice
-        D("Common View Models / Repositories
-        (Kotlin Multi-Platform Library)")
-        E("Address Database")
-        F("Pera Database")
-        G("Algo SDK")
-        D <--> E
-        D <--> F
-        D <--> G
+    subgraph Pera Android App
+        subgraph Native UI
+            A1("App Navigation")
+            A2("Notifications")
+            A3("Other App Features")
+        end
+
+    A1 <--> D0
+         subgraph Wallet As A Sevice
+         D0("Common Modules")
+            subgraph commonAndroid
+                D1("View Models & Repositories
+            (Android Library)")
+                E1("Cache")
+                E2("Account")
+                E3("Database")
+                E4("Node")
+                E5("Encryption")
+                E6("Asset/Collectibles")
+                F1("Address Database")
+                F2("Pera Database")
+                F4("Java/Go Algo SDK")
+                F5("Android Keystore")
+                D1 <--> E1
+                D1 <--> E2
+                D1 <--> E3
+                D1 <--> E4
+                D1 <--> E5
+                D1 <--> E6
+                E3 <--> F1
+                E3 <--> F2
+                E4 <--> F4
+                E5 <--> F5
+            end
+
+            subgraph commonKmp
+                G1("View Models & Repositories
+                (Kotlin Multi-Platform Library)")
+                H1("Webview")
+                H2("Business Logic Utils")
+                H3("Deeplink")
+                H4("Camera")
+
+                G1 <--> H1
+                G1 <--> H2
+                G1 <--> H3
+                G1 <--> H4
+            end
+         D0 <--> D1
+         D0 <--> G1
         end
     end
 
     subgraph 3rd Party Web Dapps
-    C("Website (UI)")
-    C <-- deeplinks into --> D
+    C("Website")
+    C <-- deeplinks into --> D0
     end
 
-    A <-- embeds (Discover section) --> C
+    A1 <-- embeds (Discover section) --> C
 ```
 
 # Cache Initialization

@@ -44,7 +44,7 @@ internal class WebImportQrCodeQueryParser @Inject constructor(
         return intVersion <= CURRENT_QR_CODE_VERSION
     }
 
-    private data class WebQrCode(
+    internal data class WebQrCode(
         @SerializedName("version") val version: String,
         @SerializedName("action") val action: String,
         @SerializedName("platform") val platform: String?,

@@ -24,4 +24,22 @@ internal data class Algo25Entity(
 
     @ColumnInfo("encrypted_secret_key", typeAffinity = ColumnInfo.BLOB)
     val encryptedSecretKey: ByteArray
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Algo25Entity
+
+        if (algoAddress != other.algoAddress) return false
+        if (!encryptedSecretKey.contentEquals(other.encryptedSecretKey)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = algoAddress.hashCode()
+        result = 31 * result + encryptedSecretKey.contentHashCode()
+        return result
+    }
+}

@@ -29,7 +29,7 @@ internal class MnemonicQueryParser @Inject constructor(
         }
     }
 
-    private data class MnemonicPayload(
+    internal data class MnemonicPayload(
         @SerializedName("version") val version: Double? = null,
         @SerializedName("mnemonic") val mnemonic: String
     )

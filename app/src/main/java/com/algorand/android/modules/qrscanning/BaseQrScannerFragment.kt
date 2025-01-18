@@ -39,7 +39,7 @@ import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.algorand.android.utils.walletconnect.WalletConnectViewModel
-import com.algorand.common.deeplink.model.DeepLink
+import com.algorand.wallet.deeplink.model.DeepLink
 
 /**
  * Base class for qr scanning

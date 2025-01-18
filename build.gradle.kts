@@ -29,6 +29,8 @@ plugins {
     alias(libs.plugins.kotlinx.serialization).apply(false)
     alias(libs.plugins.ksp).apply(false)
     alias(libs.plugins.multiplatform).apply(false)
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.android) apply false
 }
 
 allprojects {

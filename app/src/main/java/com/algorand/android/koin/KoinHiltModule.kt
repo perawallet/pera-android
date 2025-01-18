@@ -12,7 +12,6 @@
 
 package com.algorand.android.koin
 
-import com.algorand.common.deeplink.parser.CreateDeepLink
 import com.algorand.common.remoteconfig.domain.usecase.InitializeOperationalToggles
 import com.algorand.common.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.Module
@@ -32,11 +31,6 @@ object KoinHiltModule {
 
     @Provides
     fun provideIsFeatureToggleEnabled(): IsFeatureToggleEnabled {
-        return getKoin().get()
-    }
-
-    @Provides
-    fun provideCreateDeepLink(): CreateDeepLink {
         return getKoin().get()
     }
 }

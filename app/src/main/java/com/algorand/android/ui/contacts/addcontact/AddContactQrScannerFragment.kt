@@ -15,7 +15,7 @@ package com.algorand.android.ui.contacts.addcontact
 import com.algorand.android.R
 import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
 import com.algorand.android.utils.setNavigationResult
-import com.algorand.common.deeplink.model.DeepLink
+import com.algorand.wallet.deeplink.model.DeepLink
 
 class AddContactQrScannerFragment : BaseQrScannerFragment(R.id.addContactQrScannerFragment) {
 

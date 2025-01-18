@@ -20,9 +20,9 @@ import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.toBigIntegerOrZero
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.common.deeplink.model.DeepLink
-import com.algorand.common.deeplink.model.NotificationGroupType
-import com.algorand.common.deeplink.parser.CreateDeepLink
+import com.algorand.wallet.deeplink.model.DeepLink
+import com.algorand.wallet.deeplink.model.NotificationGroupType
+import com.algorand.wallet.deeplink.parser.CreateDeepLink
 import javax.inject.Inject
 
 class DeeplinkHandler @Inject constructor(

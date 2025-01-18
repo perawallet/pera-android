@@ -64,8 +64,7 @@ internal class LedgerBleAccountRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAccount(address: String) {
         withContext(coroutineDispatcher) {
-            val encryptedAddress = address
-            ledgerBleDao.delete(encryptedAddress)
+            ledgerBleDao.delete(address)
         }
     }
 

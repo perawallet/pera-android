@@ -19,6 +19,7 @@ import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.algorand.android.HomeNavigationDirections
+import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentQrCodeScannerBinding
@@ -38,7 +39,7 @@ import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.algorand.android.utils.walletconnect.WalletConnectViewModel
-import com.algorand.common.deeplink.model.DeepLink
+import com.algorand.wallet.deeplink.model.DeepLink
 
 /**
  * Base class for qr scanning
@@ -204,8 +205,26 @@ abstract class BaseQrScannerFragment(
             xnote = deepLink.xnote
         )
 
-        nav(HomeNavigationDirections.actionGlobalConfirmKeyRegAccountSelectionFragment(txnDetail))
+        if (qrScannerViewModel.hasAccountAuthority(deepLink.senderAddress)) {
+            nav(HomeNavigationDirections.actionGlobalKeyRegTransactionFragment(txnDetail))
+        } else {
+            showGlobalError(getString(R.string.you_dont_have_any, deepLink.senderAddress))
+        }
+        return true
+    }
 
+    override fun onDiscoverDeepLink(path: String): Boolean {
+        (activity as? MainActivity)?.navToDiscoverWithPath(path)
+        return true
+    }
+
+    override fun onCardsDeepLink(path: String): Boolean {
+        (activity as? MainActivity)?.navToCardsFragment(path)
+        return true
+    }
+
+    override fun onStakingDeepLink(path: String): Boolean {
+        (activity as? MainActivity)?.navToStakingFragment(path)
         return true
     }
 }

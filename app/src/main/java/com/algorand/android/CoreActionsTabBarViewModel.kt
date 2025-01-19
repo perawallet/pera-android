@@ -15,7 +15,10 @@ package com.algorand.android
 import androidx.lifecycle.ViewModel
 import com.algorand.android.BuildConfig.DISCOVER_BROWSE_DAPP_MAINNET_URL
 import com.algorand.android.BuildConfig.DISCOVER_BROWSE_DAPP_TESTNET_URL
+import com.algorand.android.BuildConfig.DISCOVER_MAINNET_URL
+import com.algorand.android.BuildConfig.DISCOVER_TESTNET_URL
 import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
+import com.algorand.android.usecase.GetIsProductionReleaseUseCase
 import com.algorand.common.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
 import com.algorand.common.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.common.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
@@ -26,6 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CoreActionsTabBarViewModel @Inject constructor(
+    private val getIsProductionReleaseUseCase: GetIsProductionReleaseUseCase,
     private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : ViewModel() {
@@ -33,8 +37,9 @@ class CoreActionsTabBarViewModel @Inject constructor(
     private val _viewState = MutableStateFlow<ViewState>(ViewState.Idle)
     val viewState get() = _viewState.asStateFlow()
 
-    fun initViewState() {
-        val isImmersveToggleEnabled = isFeatureToggleEnabled(IMMERSVE_BUTTON_TOGGLE) && !isConnectedToTestnet()
+    fun changeViewStateForFeatureFlag() {
+        val isImmersveToggleEnabled = isFeatureToggleEnabled(IMMERSVE_BUTTON_TOGGLE) &&
+                !(isConnectedToTestnet() && isProdReleaseVariant())
         val isStakingToggleEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE)
         _viewState.value = ViewState.Content(isImmersveToggleEnabled, isStakingToggleEnabled)
     }
@@ -46,8 +51,21 @@ class CoreActionsTabBarViewModel @Inject constructor(
             DISCOVER_BROWSE_DAPP_MAINNET_URL
     }
 
+    fun getDiscoverUrlWithPath(path: String): String {
+        val baseDiscoverUrl = if (isConnectedToTestnet()) {
+            DISCOVER_TESTNET_URL
+        } else {
+            DISCOVER_MAINNET_URL
+        }
+        return "$baseDiscoverUrl/$path"
+    }
+
     fun isConnectedToTestnet(): Boolean {
         return getIsActiveNodeTestnetUseCase.invoke()
+    }
+
+    fun isProdReleaseVariant(): Boolean {
+        return getIsProductionReleaseUseCase.invoke()
     }
 
     sealed interface ViewState {

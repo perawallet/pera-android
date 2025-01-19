@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class GetLocalAccountsUseCase @Inject constructor(
     private val accountManager: AccountManager,
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val accountStateHelperUseCase: AccountStateHelperUseCase
 ) {
     fun getLocalAccountsFromAccountManagerCache(): List<Account> {

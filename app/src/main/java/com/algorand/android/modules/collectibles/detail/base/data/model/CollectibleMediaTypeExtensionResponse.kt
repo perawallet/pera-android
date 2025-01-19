@@ -14,13 +14,85 @@ package com.algorand.android.modules.collectibles.detail.base.data.model
 
 import com.google.gson.annotations.SerializedName
 
-enum class CollectibleMediaTypeExtensionResponse {
+enum class CollectibleMediaTypeExtensionResponse(val extension: String) {
+
+    @SerializedName(".aac")
+    AAC(".aac"),
+
+    @SerializedName(".adts")
+    ADTS(".adts"),
+
+    @SerializedName(".aif")
+    AIF(".aif"),
+
+    @SerializedName(".aifc")
+    AIFC(".aifc"),
+
+    @SerializedName(".aiff")
+    AIFF(".aiff"),
+
+    @SerializedName(".ass")
+    ASS(".ass"),
+
+    @SerializedName(".au")
+    AU(".au"),
 
     @SerializedName(".gif")
-    GIF,
+    GIF(".gif"),
+
+    @SerializedName(".jpg")
+    JPG(".jpg"),
+
+    @SerializedName(".jpeg")
+    JPEG(".jpeg"),
+
+    @SerializedName(".loas")
+    LOAS(".loas"),
+
+    @SerializedName(".mid")
+    MID(".mid"),
+
+    @SerializedName(".midi")
+    MIDI(".midi"),
+
+    @SerializedName(".mp2")
+    MP2(".mp2"),
+
+    @SerializedName(".mp3")
+    MP3(".mp3"),
+
+    @SerializedName(".mp4")
+    MP4(".mp4"),
+
+    @SerializedName(".opus")
+    OPUS(".opus"),
+
+    @SerializedName(".png")
+    PNG(".png"),
+
+    @SerializedName(".ra")
+    RA(".ra"),
+
+    @SerializedName(".snd")
+    SND(".snd"),
+
+    @SerializedName(".3gp")
+    THREE_GP(".3gp"),
+
+    @SerializedName(".3gpp")
+    THREE_GPP(".3gpp"),
+
+    @SerializedName(".3g2")
+    THREE_G2(".3g2"),
+
+    @SerializedName(".3gpp2")
+    THREE_GPP2(".3gpp2"),
+
+    @SerializedName(".wav")
+    WAV(".wav"),
 
     @SerializedName(".webp")
-    WEBP,
+    WEBP(".webp"),
 
-    UNKNOWN
+    UNKNOWN(".unknown")
 }

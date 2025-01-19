@@ -85,12 +85,12 @@ import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.walletconnect.WalletConnectUrlHandler
 import com.algorand.android.utils.walletconnect.WalletConnectViewModel
-import com.algorand.common.deeplink.model.DeepLink
-import com.algorand.common.deeplink.model.NotificationGroupType
-import com.algorand.common.deeplink.model.NotificationGroupType.ASSET_INBOX
-import com.algorand.common.deeplink.model.NotificationGroupType.OPT_IN
-import com.algorand.common.deeplink.model.NotificationGroupType.TRANSACTIONS
-import com.algorand.common.deeplink.parser.CreateDeepLink
+import com.algorand.wallet.deeplink.model.DeepLink
+import com.algorand.wallet.deeplink.model.NotificationGroupType
+import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
+import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
+import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
+import com.algorand.wallet.deeplink.parser.CreateDeepLink
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -323,6 +323,21 @@ class MainActivity :
             return true
         }
 
+        override fun onDiscoverDeepLink(path: String): Boolean {
+            navToDiscoverWithPath(path)
+            return true
+        }
+
+        override fun onCardsDeepLink(path: String): Boolean {
+            navToCardsFragment(path)
+            return true
+        }
+
+        override fun onStakingDeepLink(path: String): Boolean {
+            navToStakingFragment(path)
+            return true
+        }
+
         override fun onAssetInboxDeepLink(
             accountAddress: String,
             notificationGroupType: NotificationGroupType
@@ -348,7 +363,11 @@ class MainActivity :
                     xnote = deepLink.xnote
                 )
 
-                nav(HomeNavigationDirections.actionGlobalConfirmKeyRegAccountSelectionFragment(txnDetail))
+                if (qrScannerViewModel.hasAccountAuthority(deepLink.senderAddress)) {
+                    nav(HomeNavigationDirections.actionGlobalKeyRegTransactionFragment(txnDetail))
+                } else {
+                    showGlobalError(getString(R.string.you_dont_have_any, deepLink.senderAddress), tag = activityTag)
+                }
             }
         }
     }
@@ -671,7 +690,7 @@ class MainActivity :
     }
 
     private fun setupCoreActionsTabBarView() {
-        coreActionsTabBarViewModel.initViewState()
+        coreActionsTabBarViewModel.changeViewStateForFeatureFlag()
         binding.coreActionsTabBarView.setListener(object : CoreActionsTabBarView.Listener {
             override fun onSendClick() {
                 firebaseAnalytics.logTapSend()
@@ -708,11 +727,11 @@ class MainActivity :
             }
 
             override fun onCardsClick() {
-                nav(HomeNavigationDirections.actionGlobalCardsFragment())
+                navToCardsFragment()
             }
 
             override fun onStakingClick() {
-                nav(HomeNavigationDirections.actionGlobalStakingFragment())
+                navToStakingFragment()
             }
         })
     }
@@ -734,6 +753,7 @@ class MainActivity :
     private fun onNewNodeActivated() {
         hideProgress()
         mainViewModel.onNewNodeActivated()
+        coreActionsTabBarViewModel.changeViewStateForFeatureFlag()
     }
 
     private fun onNewNodeLoading() {
@@ -843,6 +863,14 @@ class MainActivity :
         nav(HomeNavigationDirections.actionGlobalDiscoverUrlViewerNavigation(webUrl))
     }
 
+    fun navToCardsFragment(path: String? = null) {
+        nav(HomeNavigationDirections.actionGlobalCardsFragment(path))
+    }
+
+    fun navToStakingFragment(path: String? = null) {
+        nav(HomeNavigationDirections.actionGlobalStakingFragment(path))
+    }
+
     fun showMaxAccountLimitExceededError() {
         showGlobalError(
             title = getString(R.string.too_many_accounts),
@@ -861,8 +889,22 @@ class MainActivity :
         binding.apply {
             coreActionsTabBarView.hideWithAnimation()
             bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true
-            navController.navigateSafe(actionGlobalDiscoverHomeNavigation(
-                coreActionsTabBarViewModel.getDiscoverBrowseDappUrl())
+            navController.navigateSafe(
+                actionGlobalDiscoverHomeNavigation(
+                    coreActionsTabBarViewModel.getDiscoverBrowseDappUrl()
+                )
+            )
+        }
+    }
+
+    fun navToDiscoverWithPath(path: String) {
+        binding.apply {
+            coreActionsTabBarView.hideWithAnimation()
+            bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true
+            navController.navigateSafe(
+                actionGlobalDiscoverHomeNavigation(
+                    coreActionsTabBarViewModel.getDiscoverUrlWithPath(path)
+                )
             )
         }
     }

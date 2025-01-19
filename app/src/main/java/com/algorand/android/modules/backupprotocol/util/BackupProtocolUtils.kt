@@ -19,20 +19,22 @@ import com.algorand.android.models.Account
 object BackupProtocolUtils {
 
     private const val SINGLE_ACCOUNT_TYPE_NAME = "single"
+    private const val WATCH_ACCOUNT_TYPE_NAME = "watch"
 
     fun convertAccountTypeToBackupProtocolAccountType(accountType: Account.Type): String? {
         return when (accountType) {
-            Account.Type.STANDARD -> SINGLE_ACCOUNT_TYPE_NAME
-            Account.Type.LEDGER,
+            Account.Type.STANDARD,
             Account.Type.REKEYED,
-            Account.Type.REKEYED_AUTH,
-            Account.Type.WATCH -> null
+            Account.Type.REKEYED_AUTH -> SINGLE_ACCOUNT_TYPE_NAME
+            Account.Type.WATCH -> WATCH_ACCOUNT_TYPE_NAME
+            Account.Type.LEDGER -> null
         }
     }
 
     fun convertBackupProtocolAccountTypeToAccountType(accountType: String?): Account.Type? {
         return when (accountType) {
             SINGLE_ACCOUNT_TYPE_NAME -> Account.Type.STANDARD
+            WATCH_ACCOUNT_TYPE_NAME -> Account.Type.WATCH
             else -> null
         }
     }

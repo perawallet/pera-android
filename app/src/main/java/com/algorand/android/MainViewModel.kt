@@ -25,6 +25,7 @@ import com.algorand.android.models.AssetOperationResult
 import com.algorand.android.models.Node
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.TransactionData
+import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeningCountUseCase
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
@@ -36,7 +37,6 @@ import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.repository.NodeRepository
 import com.algorand.android.usecase.AccountCacheStatusUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.SendSignedTransactionUseCase
 import com.algorand.android.utils.AccountCacheManager
 import com.algorand.android.utils.AssetName
@@ -75,11 +75,11 @@ class MainViewModel @Inject constructor(
     private val tutorialUseCase: TutorialUseCase,
     private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val accountDetailCacheManager: AccountDetailCacheManager,
     private val nodeRepository: NodeRepository,
     accountCacheStatusUseCase: AccountCacheStatusUseCase,
-    private val autoLockManagerUseCase: AutoLockManagerUseCase
+    private val autoLockManagerUseCase: AutoLockManagerUseCase,
+    private val accountStateHelperUseCase: AccountStateHelperUseCase
 ) : BaseViewModel() {
 
     // TODO: Replace this with Flow whenever have time
@@ -294,5 +294,9 @@ class MainViewModel @Inject constructor(
                 _activeNodeFlow.value = it
             }
         }
+    }
+
+    fun hasAccountAuthority(accountAddress: String): Boolean {
+        return accountStateHelperUseCase.hasAccountAuthority(accountAddress)
     }
 }

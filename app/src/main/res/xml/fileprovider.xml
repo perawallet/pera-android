@@ -15,4 +15,7 @@
     <cache-path
         name="image"
         path="/" />
+    <external-files-path
+        name="downloads"
+        path="Download/" />
 </paths>

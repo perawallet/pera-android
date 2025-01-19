@@ -15,6 +15,7 @@ package com.algorand.android.modules.backupprotocol.domain.usecase
 import com.algorand.android.core.AccountManager
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.models.Account
+import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
 import com.algorand.android.modules.backupprotocol.mapper.BackupProtocolElementMapper
 import com.algorand.android.modules.backupprotocol.mapper.BackupProtocolPayloadMapper
 import com.algorand.android.modules.backupprotocol.model.BackupProtocolPayload
@@ -33,13 +34,16 @@ class CreateBackupProtocolPayloadUseCase @Inject constructor(
         val deviceId = deviceIdUseCase.getSelectedNodeDeviceId() ?: return null
         val accountBackupProtocolElementList = accountList.mapNotNull { accountAddress ->
             val account = accountManager.getAccount(accountAddress) ?: return@mapNotNull null
-            if (account.type != Account.Type.STANDARD) return@mapNotNull null
+
+            if (account.type == null || isAccountTypeEligible(account.type.name).not()) return@mapNotNull null
+
             val accountType = convertAccountTypeToBackupProtocolAccountType(account.type) ?: return@mapNotNull null
+
             backupProtocolElementMapper.mapToBackupProtocolElement(
                 address = account.address,
                 name = account.name,
                 accountType = accountType,
-                privateKey = account.getSecretKey()?.encodeBase64() ?: return@mapNotNull null,
+                privateKey = account.getSecretKey()?.encodeBase64().orEmpty(),
                 metadata = null
             )
         }
@@ -48,6 +52,11 @@ class CreateBackupProtocolPayloadUseCase @Inject constructor(
             providerName = DEFAULT_PROVIDER_NAME,
             accounts = accountBackupProtocolElementList
         )
+    }
+
+    private fun isAccountTypeEligible(accountTypeName: String?): Boolean {
+        val accountType = Account.Type.valueOf(accountTypeName ?: return false)
+        return AlgorandSecureBackupUtils.eligibleAccountTypes.contains(accountType)
     }
 
     companion object {

@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.card
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.BuildConfig.CARDS_MAINNET_URL
 import com.algorand.android.BuildConfig.CARDS_TESTNET_URL
@@ -38,8 +39,11 @@ class CardsViewModel @Inject constructor(
     private val getAuthorizedAddressesWebMessage: GetAuthorizedAddressesWebMessage,
     private val getDeviceIdWebMessage: GetDeviceIdWebMessage,
     private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl,
-    private val currencyUseCase: CurrencyUseCase
+    private val currencyUseCase: CurrencyUseCase,
+    savedStateHandle: SavedStateHandle
 ) : BasePeraWebViewViewModel() {
+
+    private val args = CardsFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     private val _cardsPreviewFlow = MutableStateFlow<CardsPreview>(CardsPreview())
     val cardsPreviewFlow: StateFlow<CardsPreview>
@@ -48,13 +52,6 @@ class CardsViewModel @Inject constructor(
     override fun onPageFinished(title: String?, url: String?) {
         super.onPageFinished(title, url)
         _cardsPreviewFlow.value = cardsPreviewFlow.value.copy(onPageFinished = Event(Unit))
-    }
-
-    fun getCardsUrl(): String {
-        return if (isConnectedToTestnet())
-            CARDS_TESTNET_URL
-        else
-            CARDS_MAINNET_URL
     }
 
     fun getAuthorizedAddresses() {
@@ -101,5 +98,14 @@ class CardsViewModel @Inject constructor(
 
     fun isConnectedToTestnet(): Boolean {
         return getIsActiveNodeTestnetUseCase.invoke()
+    }
+
+    fun getCardsUrl(): String {
+        val cardsBaseUrl = if (isConnectedToTestnet())
+            CARDS_TESTNET_URL
+        else
+            CARDS_MAINNET_URL
+
+        return "$cardsBaseUrl/${args.path.orEmpty()}"
     }
 }

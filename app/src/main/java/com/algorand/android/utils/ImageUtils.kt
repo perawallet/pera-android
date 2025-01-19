@@ -12,43 +12,23 @@
 
 package com.algorand.android.utils
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.provider.MediaStore
 import android.widget.ImageView
-import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
-import com.algorand.android.R
 import com.algorand.android.utils.walletconnect.getRandomPeerMetaIconResId
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.CustomViewTarget
+import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
-
-fun ImageView.loadContactProfileImage(uri: Uri?, shouldUsePlaceHolder: Boolean = true) {
-    if (uri == null) {
-        if (shouldUsePlaceHolder.not()) return
-        setBackgroundResource(R.drawable.bg_layer_gray_lighter_oval)
-        Glide.with(this)
-            .load(R.drawable.ic_user_placeholder)
-            .into(this)
-    } else {
-        Glide.with(this)
-            .load(uri)
-            .circleCrop()
-            .into(this)
-    }
-}
-
-fun ImageView.loadImage(@DrawableRes drawableResId: Int) {
-    Glide.with(this)
-        .load(drawableResId)
-        .into(this)
-}
 
 fun ImageView.loadPeerMetaIcon(url: String?) {
     Glide.with(this)
@@ -158,25 +138,6 @@ fun Context.loadImageWithCachedFirst(
         .preload()
 }
 
-fun ImageView.loadGif(uri: String, onResourceReady: (GifDrawable) -> Unit, onLoadFailed: ((Drawable?) -> Unit)?) {
-    Glide.with(this)
-        .asGif()
-        .load(uri)
-        .into(object : CustomViewTarget<ImageView, GifDrawable>(this) {
-            override fun onLoadFailed(errorDrawable: Drawable?) {
-                onLoadFailed?.invoke(errorDrawable)
-            }
-
-            override fun onResourceReady(resource: GifDrawable, transition: Transition<in GifDrawable>?) {
-                onResourceReady(resource)
-            }
-
-            override fun onResourceCleared(placeholder: Drawable?) {
-                setImageDrawable(null)
-            }
-        })
-}
-
 fun ImageView.loadImage(
     uri: String,
     placeHolder: Drawable?,
@@ -212,4 +173,30 @@ fun ImageView.loadImage(
             }
         )
         .into(this)
+}
+
+fun Context.copyImageToClipboard(imageUrl: String) {
+    Glide.with(this)
+        .asBitmap()
+        .load(imageUrl)
+        .into(object : CustomTarget<Bitmap>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                copyBitmapToClipboard(this@copyImageToClipboard, resource)
+            }
+
+            override fun onLoadCleared(placeholder: Drawable?) {
+                // Handle if needed when the load is cleared
+            }
+        })
+}
+
+fun copyBitmapToClipboard(context: Context, bitmap: Bitmap) {
+    try {
+        val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val uri = MediaStore.Images.Media.insertImage(context.contentResolver, bitmap, "Copied Image", null)
+        val clip = ClipData.newUri(context.contentResolver, "Image", Uri.parse(uri))
+        clipboardManager.setPrimaryClip(clip)
+    } catch (e: Exception) {
+        // Handle exception
+    }
 }

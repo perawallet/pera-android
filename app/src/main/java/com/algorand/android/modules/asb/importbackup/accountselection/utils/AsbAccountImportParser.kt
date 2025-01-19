@@ -54,16 +54,17 @@ class AsbAccountImportParser @Inject constructor(
 
     suspend fun isAccountSupported(backupProtocolElement: BackupProtocolElement): Boolean {
         val accountPrivateKey = backupProtocolElement.privateKey?.decodeBase64ToByteArray()
-        if (accountPrivateKey == null || accountPrivateKey.isEmpty()) {
-            return false
-        }
 
-        val isSecretKeyValid = isAccountAddressMatchWithSecretKeyUseCase.invoke(
-            accountAddress = backupProtocolElement.address.orEmpty(),
-            secretKey = accountPrivateKey
-        )
-        if (!isSecretKeyValid) {
-            return false
+        val isAccountTypeEligible = isAccountTypeEligible(backupProtocolElement.accountType)
+
+        if (isStandardAccount(backupProtocolElement.accountType)) {
+            val isSecretKeyValid = isAccountAddressMatchWithSecretKeyUseCase.invoke(
+                accountAddress = backupProtocolElement.address.orEmpty(),
+                secretKey = accountPrivateKey ?: return false
+            )
+            if (!isSecretKeyValid) {
+                return false
+            }
         }
 
         val isAccountAddressValid = backupProtocolElement.address.isValidAddress()
@@ -71,16 +72,15 @@ class AsbAccountImportParser @Inject constructor(
             return false
         }
 
-        val isAccountTypeEligible = isAccountTypeEligible(backupProtocolElement.accountType)
-        if (!isAccountTypeEligible) {
-            return false
-        }
-
-        return true
+        return isAccountTypeEligible
     }
 
     private fun isAccountTypeEligible(accountTypeName: String?): Boolean {
         val accountType = Account.Type.valueOf(accountTypeName ?: return false)
         return AlgorandSecureBackupUtils.eligibleAccountTypes.contains(accountType)
+    }
+
+    private fun isStandardAccount(accountTypeName: String?): Boolean {
+        return Account.Type.valueOf(accountTypeName ?: return false) == Account.Type.STANDARD
     }
 }

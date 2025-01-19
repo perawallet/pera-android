@@ -36,9 +36,10 @@ data class NFTDetailPreview(
     val isPureNFT: Boolean,
     val primaryWarningResId: Int?,
     val secondaryWarningResId: Int?,
-    val isSendButtonVisible: Boolean,
+    val isOwnerActionsGroupVisible: Boolean,
     val isOptOutButtonVisible: Boolean,
+    val isCopyEnabled: Boolean,
     val globalErrorEvent: Event<String>?,
-    val collectibleSendEvent: Event<Unit>?,
+    val nftSendEvent: Event<Unit>?,
     val optOutNFTEvent: Event<AssetInformation>?
 )

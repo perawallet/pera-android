@@ -25,8 +25,8 @@ object AlgorandSecureBackupUtils {
 
     const val BACKUP_PASSPHRASES_WORD_COUNT = 12
 
-    val eligibleAccountTypes = listOf(Type.STANDARD)
-    val excludedAccountTypes = listOf(Type.LEDGER, Type.WATCH, Type.REKEYED, Type.REKEYED_AUTH)
+    val eligibleAccountTypes = listOf(Type.STANDARD, Type.WATCH, Type.REKEYED, Type.REKEYED_AUTH)
+    val excludedAccountTypes = listOf(Type.LEDGER)
 
     fun createBackupFileName(): String {
         val backupFileNameFormatter = DateTimeFormatter.ofPattern(ISO_EXTENDED_DATE_FORMAT)

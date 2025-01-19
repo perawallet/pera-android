@@ -8,7 +8,7 @@ android-minSdk = "26"
 android-namespace = "com.algorand.android"
 android-targetSdk = "34"
 android-versionCode = "124"
-android-versionName = "5.15.0"
+android-versionName = "5.202501.0"
 algosdk = "2.5.0"
 androidx-compose-activity = "1.9.3"
 androidx-compose-fragment = "1.8.5"
@@ -218,3 +218,6 @@ kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", vers
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "room" }
+android-library = { id = "com.android.library", version.ref = "android-application" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+hilt = { id = "dagger.hilt.android.plugin", version.ref = "dagger" }

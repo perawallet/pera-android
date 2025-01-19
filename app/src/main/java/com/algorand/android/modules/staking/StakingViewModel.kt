@@ -12,11 +12,13 @@
 
 package com.algorand.android.modules.staking
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.BuildConfig.STAKING_MAINNET_URL
 import com.algorand.android.BuildConfig.STAKING_TESTNET_URL
 import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.discover.home.domain.model.DappInfo
+import com.algorand.android.modules.card.CardsFragmentArgs
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
 import com.algorand.android.modules.perawebview.GetDeviceIdWebMessage
@@ -41,18 +43,23 @@ class StakingViewModel @Inject constructor(
     private val getDeviceIdWebMessage: GetDeviceIdWebMessage,
     private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl,
     private val currencyUseCase: CurrencyUseCase,
-    private val gson: Gson
+    private val gson: Gson,
+    savedStateHandle: SavedStateHandle
 ) : BasePeraWebViewViewModel() {
+
+    private val args = CardsFragmentArgs.fromSavedStateHandle(savedStateHandle)
 
     private val _stakingPreviewFlow = MutableStateFlow<StakingPreview>(StakingPreview())
     val stakingPreviewFlow: StateFlow<StakingPreview?>
         get() = _stakingPreviewFlow.asStateFlow()
 
     fun getStakingUrl(): String {
-        return if (isConnectedToTestnet())
+        val stakingBaseUrl = if (isConnectedToTestnet())
             STAKING_TESTNET_URL
         else
             STAKING_MAINNET_URL
+
+        return "$stakingBaseUrl/${args.path.orEmpty()}"
     }
 
     fun getAuthorizedAddresses() {

@@ -85,6 +85,7 @@ fun AccountsScreen(
     var selectedAccountAddress by remember { mutableStateOf("") }
 
     var isRecoverAlgo25AccountModalVisible by remember { mutableStateOf(false) }
+    var isRecoverHdAccountModalVisible by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
 
@@ -151,9 +152,12 @@ fun AccountsScreen(
 
             AccountActionsFab(
                 onAddAlgo25Click = accountsViewModel::addAlgo25Account,
-                onAddBip39Click = accountsViewModel::addBip39Account,
-                onRecoverClick = {
+                onAddHdClick = accountsViewModel::addHdKeyAccount,
+                onRecoverAlgo25Click = {
                     isRecoverAlgo25AccountModalVisible = true
+                },
+                onRecoverHdClick = {
+                    isRecoverHdAccountModalVisible = true
                 }
             )
         }
@@ -163,8 +167,19 @@ fun AccountsScreen(
                 onDismiss = {
                     isRecoverAlgo25AccountModalVisible = false
                 },
-                onRecoverAccount = {
-                    accountsViewModel.recoverAccount(it)
+                onRecoverAlgo25Account = {
+                    accountsViewModel.recoverAlgo25Account(it)
+                }
+            )
+        }
+
+        if (isRecoverHdAccountModalVisible) {
+            RecoverHdAccountModal(
+                onDismiss = {
+                    isRecoverHdAccountModalVisible = false
+                },
+                onRecoverHdAccount = {
+                    accountsViewModel.recoverHdAccount(it)
                 }
             )
         }
@@ -174,8 +189,9 @@ fun AccountsScreen(
 @Composable
 private fun AccountActionsFab(
     onAddAlgo25Click: () -> Unit,
-    onAddBip39Click: () -> Unit,
-    onRecoverClick: () -> Unit
+    onAddHdClick: () -> Unit,
+    onRecoverAlgo25Click: () -> Unit,
+    onRecoverHdClick: () -> Unit
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     val rotationDegree = animateFloatAsState(if (isMenuExpanded) 45f else 0f)
@@ -190,22 +206,33 @@ private fun AccountActionsFab(
 
                 ExtendedFloatingActionButton(
                     onClick = {
-                        onRecoverClick()
+                        onRecoverHdClick()
                         isMenuExpanded = false
                     },
                     icon = { },
-                    text = { Text(text = "Recover Algo25") },
+                    text = { Text(text = "Recover HD account") },
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 ExtendedFloatingActionButton(
                     onClick = {
-                        onAddBip39Click()
+                        onRecoverAlgo25Click()
                         isMenuExpanded = false
                     },
                     icon = { },
-                    text = { Text(text = "Add Bip39 account") },
+                    text = { Text(text = "Recover Algo25 account") },
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                ExtendedFloatingActionButton(
+                    onClick = {
+                        onAddHdClick()
+                        isMenuExpanded = false
+                    },
+                    icon = { },
+                    text = { Text(text = "Add HD account") },
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -278,7 +305,7 @@ private fun AccountItem(address: String, info: AccountInformation?, onClick: (St
 @Composable
 private fun RecoverAlgo25AccountModal(
     onDismiss: () -> Unit = {},
-    onRecoverAccount: (String) -> Unit = {}
+    onRecoverAlgo25Account: (String) -> Unit = {}
 ) {
     val textValue = remember { mutableStateOf("") }
     ModalBottomSheet(
@@ -301,11 +328,49 @@ private fun RecoverAlgo25AccountModal(
                 Spacer(modifier = Modifier.height(24.dp))
                 OutlinedButton(
                     onClick = {
-                        onRecoverAccount(textValue.value)
+                        onRecoverAlgo25Account(textValue.value)
                         onDismiss()
                     },
                 ) {
-                    Text(text = "Recover")
+                    Text(text = "Recover Algo25 Account")
+                }
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RecoverHdAccountModal(
+    onDismiss: () -> Unit = {},
+    onRecoverHdAccount: (String) -> Unit = {}
+) {
+    val textValue = remember { mutableStateOf("") }
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = textValue.value,
+                    onValueChange = {
+                        textValue.value = it
+                    },
+                    label = { Text("") }
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                OutlinedButton(
+                    onClick = {
+                        onRecoverHdAccount(textValue.value)
+                        onDismiss()
+                    },
+                ) {
+                    Text(text = "Recover HD Account")
                 }
             }
         }

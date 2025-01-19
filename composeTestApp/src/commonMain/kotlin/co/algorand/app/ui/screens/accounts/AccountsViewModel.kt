@@ -15,13 +15,15 @@ package co.algorand.app.ui.screens.accounts
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.algorand.app.ui.screens.accounts.AccountsViewModel.ViewState
-import com.algorand.common.account.core.domain.usecase.AddAlgo25Account
-import com.algorand.common.account.core.domain.usecase.AddBip39Account
 import com.algorand.common.account.info.domain.model.AccountInformation
 import com.algorand.common.account.info.domain.usecase.GetAllAccountInformationFlow
+import com.algorand.common.account.local.domain.model.LocalAccount
+import com.algorand.common.account.local.domain.usecase.AddAlgo25Account
+import com.algorand.common.account.local.domain.usecase.AddHdKeyAccount
 import com.algorand.common.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.common.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.common.algosdk.AlgoAccountSdk
+import com.algorand.common.algosdk.Bip32DerivationType
 import com.algorand.common.viewmodel.StateDelegate
 import com.algorand.common.viewmodel.StateViewModel
 import kotlinx.coroutines.Job
@@ -32,7 +34,7 @@ import kotlinx.coroutines.launch
 
 class AccountsViewModel(
     private val getAllLocalAccountAddressesAsFlow: GetAllLocalAccountAddressesAsFlow,
-    private val addBip39Account: AddBip39Account,
+    private val addHdKeyAccount: AddHdKeyAccount,
     private val addAlgo25Account: AddAlgo25Account,
     private val algoAccountSdk: AlgoAccountSdk,
     private val deleteLocalAccount: DeleteLocalAccount,
@@ -46,11 +48,34 @@ class AccountsViewModel(
         stateDelegate.setDefaultState(ViewState.Idle)
     }
 
-    fun recoverAccount(mnemonic: String) {
-        val account = algoAccountSdk.recoverAlgo25Account(mnemonic)
-        if (account != null) {
+    fun recoverAlgo25Account(mnemonic: String) {
+        val acct = algoAccountSdk.recoverAlgo25Account(mnemonic)
+        if (acct != null) {
+            val localAccount = LocalAccount.Algo25(
+                algoAddress = acct.address,
+                encryptedSecretKey = acct.encryptedSecretKey
+            )
             viewModelScope.launch {
-                addAlgo25Account(account.address, account.secretKey, false, null)
+                addAlgo25Account(localAccount)
+            }
+        }
+    }
+
+    fun recoverHdAccount(mnemonic: String) {
+        val acct = algoAccountSdk.recoverHdAccount(mnemonic)
+        if (acct != null) {
+            val localAccount = LocalAccount.HdKey(
+                algoAddress = acct.address,
+                publicKey = acct.publicKey,
+                encryptedPrivateKey = acct.encryptedPrivateKey,
+                seedId = 1, // TODO fix this when foreign key is implemented
+                account = acct.account,
+                change = acct.change,
+                keyIndex = acct.keyIndex,
+                derivationType = acct.derivationType.value,
+            )
+            viewModelScope.launch {
+                addHdKeyAccount(localAccount)
             }
         }
     }
@@ -74,14 +99,29 @@ class AccountsViewModel(
     fun addAlgo25Account() {
         viewModelScope.launch {
             val account = algoAccountSdk.createAlgo25Account()
-            addAlgo25Account(account.address, account.secretKey, false, null)
+            val algo25Account = LocalAccount.Algo25(
+                algoAddress = account.address,
+                encryptedSecretKey = account.encryptedSecretKey
+            )
+            addAlgo25Account(algo25Account)
         }
     }
 
-    fun addBip39Account() {
+    fun addHdKeyAccount() {
+        // TODO Add support here
         viewModelScope.launch {
-            val account = algoAccountSdk.createBip39Account()
-            addBip39Account(account.address, account.secretKey, false, null)
+            val acct = algoAccountSdk.createHdAccount()
+            val hdKeyAccount = LocalAccount.HdKey(
+                algoAddress = acct.address,
+                publicKey = acct.publicKey,
+                encryptedPrivateKey = acct.encryptedPrivateKey,
+                seedId = 1, // TODO fix this when foreign key is implemented
+                account = acct.account,
+                change = acct.change,
+                keyIndex = acct.keyIndex,
+                derivationType = Bip32DerivationType.Peikert.value,
+            )
+            addHdKeyAccount(hdKeyAccount)
         }
     }
 

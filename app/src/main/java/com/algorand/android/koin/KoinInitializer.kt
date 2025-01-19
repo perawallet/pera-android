@@ -14,10 +14,6 @@ package com.algorand.android.koin
 
 import com.algorand.android.BuildConfig
 import com.algorand.android.core.PeraApp
-import com.algorand.android.modules.accounts.di.accountInformationModule
-import com.algorand.common.deeplink.di.deepLinkModule
-import com.algorand.common.di.commonModuleKoinModules
-import com.algorand.common.encryption.di.encryptionModule
 import com.algorand.common.remoteconfig.di.remoteConfigModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -31,13 +27,7 @@ object KoinInitializer {
                 androidLogger()
             }
             androidContext(app)
-            modules(
-                remoteConfigModule,
-                deepLinkModule,
-                encryptionModule,
-                accountInformationModule
-            )
-            modules(commonModuleKoinModules)
+            modules(remoteConfigModule)
         }
     }
 }

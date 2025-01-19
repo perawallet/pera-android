@@ -102,7 +102,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onBackupBannerActionButtonClick() {
-            navToBackupPassphraseInfoNavigation()
+            accountsViewModel.navigateToBackUpPassphraseInfo()
         }
 
         override fun onBannerActionButtonClick(url: String, bannerType: BannerType) {
@@ -375,6 +375,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 accountPreviewFlow.map { it?.assetInboxCount },
                 assetInboxCountCollector
             )
+            viewLifecycleOwner.collectLatestOnLifecycle(
+                accountPreviewFlow.map { it?.onNavToBackUpPassphraseInfo }.distinctUntilChanged(),
+                { navToBackupPassphraseInfoNavigation(it) }
+            )
         }
     }
 
@@ -426,12 +430,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         nav(AccountsFragmentDirections.actionGlobalSendAlgoNavigation(null))
     }
 
-    private fun navToBackupPassphraseInfoNavigation() {
-        nav(
-            AccountsFragmentDirections.actionAccountsFragmentToBackupPassphraseInfoNavigation(
-                publicKeysOfAccountsToBackup = accountsViewModel.getNotBackedUpAccounts().toTypedArray()
-            )
-        )
+    private fun navToBackupPassphraseInfoNavigation(event: Event<Set<String>>?) {
+        event?.consume()?.let { addresses ->
+            AccountsFragmentDirections.actionAccountsFragmentToBackupPassphraseInfoNavigation(addresses.toTypedArray())
+        }
     }
 
     companion object {

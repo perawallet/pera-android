@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.custom.domain.usecase
 
+import com.algorand.common.account.custom.domain.model.AccountOrderIndex
 import com.algorand.wallet.account.custom.domain.model.CustomInfo
 
 fun interface SetAccountCustomName {
@@ -36,4 +37,20 @@ fun interface GetAccountCustomInfo {
 
 fun interface SetAccountOrderIndex {
     suspend operator fun invoke(address: String, orderIndex: Int)
+}
+
+fun interface GetBackedUpAccounts {
+    suspend operator fun invoke(): Set<String>
+}
+
+fun interface GetNotBackedUpAccounts {
+    suspend operator fun invoke(): Set<String>
+}
+
+fun interface GetAccountAsbBackUpStatus {
+    suspend operator fun invoke(accountAddress: String): Boolean
+}
+
+fun interface GetAllAccountOrderIndexes {
+    suspend operator fun invoke(): List<AccountOrderIndex>
 }

@@ -12,9 +12,10 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
-import com.algorand.common.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+import javax.inject.Inject
 
-internal class UpdateNoAuthAccountToLedgerBleUseCase(
+internal class UpdateNoAuthAccountToLedgerBleUseCase @Inject constructor(
     private val deleteLocalAccount: DeleteLocalAccount,
     private val saveLedgerBleAccount: SaveLedgerBleAccount
 ) : UpdateNoAuthAccountToLedgerBle {

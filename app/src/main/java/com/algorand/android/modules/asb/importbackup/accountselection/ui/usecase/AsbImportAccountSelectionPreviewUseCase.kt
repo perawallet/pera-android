@@ -221,7 +221,7 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun addImportedAccount(importedAccount: BackupProtocolElement?) {
+    private suspend fun addImportedAccount(importedAccount: BackupProtocolElement?) {
         if (importedAccount == null) return
         val safeAccountAddress = importedAccount.address ?: return
         val safeAccountPrivateKey = importedAccount.privateKey?.decodeBase64ToByteArray() ?: return

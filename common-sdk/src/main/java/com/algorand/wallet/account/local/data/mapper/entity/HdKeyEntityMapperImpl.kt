@@ -14,15 +14,18 @@ package com.algorand.wallet.account.local.data.mapper.entity
 
 import com.algorand.wallet.account.local.data.database.model.HdKeyEntity
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.encryption.AESPlatformManager
 import javax.inject.Inject
 
-internal class HdKeyEntityMapperImpl @Inject constructor() : HdKeyEntityMapper {
+internal class HdKeyEntityMapperImpl @Inject constructor(
+    private val aesPlatformManager: AESPlatformManager
+) : HdKeyEntityMapper {
 
-    override fun invoke(localAccount: LocalAccount.HdKey): HdKeyEntity {
+    override fun invoke(localAccount: LocalAccount.HdKey, privateKey: ByteArray): HdKeyEntity {
         return HdKeyEntity(
             algoAddress = localAccount.algoAddress,
             publicKey = localAccount.publicKey,
-            encryptedPrivateKey = byteArrayOf(), // TODO Fix here when HdWallet is implemented
+            encryptedPrivateKey = aesPlatformManager.encryptByteArray(privateKey),
             seedId = localAccount.seedId,
             account = localAccount.account,
             change = localAccount.change,

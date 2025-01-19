@@ -73,4 +73,10 @@ internal class NoAuthAccountRepositoryImpl @Inject constructor(
             noAuthDao.clearAll()
         }
     }
+
+    override suspend fun isAddressExists(address: String): Boolean {
+        return withContext(coroutineDispatcher) {
+            noAuthDao.isAddressExists(address)
+        }
+    }
 }

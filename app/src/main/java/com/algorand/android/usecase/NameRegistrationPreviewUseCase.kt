@@ -19,9 +19,9 @@ import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.ui.NameRegistrationPreview
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.common.account.custom.domain.usecase.SetAccountCustomName
-import com.algorand.common.account.local.domain.usecase.IsThereAnyAccountWithAddress
-import com.algorand.common.account.local.domain.usecase.IsThereAnyNoAuthAccountWithAddress
+import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomName
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyNoAuthAccountWithAddress
 import javax.inject.Inject
 
 class NameRegistrationPreviewUseCase @Inject constructor(

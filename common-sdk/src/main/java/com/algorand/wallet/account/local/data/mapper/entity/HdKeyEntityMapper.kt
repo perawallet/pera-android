@@ -16,5 +16,5 @@ import com.algorand.wallet.account.local.data.database.model.HdKeyEntity
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 
 internal interface HdKeyEntityMapper {
-    operator fun invoke(localAccount: LocalAccount.HdKey): HdKeyEntity
+    operator fun invoke(localAccount: LocalAccount.HdKey, privateKey: ByteArray): HdKeyEntity
 }

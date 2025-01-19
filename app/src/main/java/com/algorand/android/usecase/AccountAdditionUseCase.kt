@@ -16,13 +16,13 @@ package com.algorand.android.usecase
 import com.algorand.android.core.BaseUseCase
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.utils.analytics.logRegisterEvent
-import com.algorand.common.account.core.domain.model.CreateAccount
-import com.algorand.common.account.core.domain.model.CreateAccount.Type
-import com.algorand.common.account.core.domain.usecase.AddAlgo25Account
-import com.algorand.common.account.core.domain.usecase.AddLedgerBleAccount
-import com.algorand.common.account.core.domain.usecase.AddNoAuthAccount
-import com.algorand.common.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
-import com.algorand.common.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
+import com.algorand.wallet.account.core.domain.model.CreateAccount
+import com.algorand.wallet.account.core.domain.model.CreateAccount.Type
+import com.algorand.wallet.account.core.domain.usecase.AddAlgo25Account
+import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccount
+import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccount
+import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
+import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
 

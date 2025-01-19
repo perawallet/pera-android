@@ -15,7 +15,7 @@ package com.algorand.android.models
 
 import android.os.Parcelable
 import com.algorand.android.utils.analytics.CreationType
-import com.algorand.common.account.core.domain.model.CreateAccount
+import com.algorand.wallet.account.core.domain.model.CreateAccount
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

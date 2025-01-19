@@ -17,11 +17,11 @@ import com.algorand.wallet.account.local.domain.model.LocalAccount
 import kotlinx.coroutines.flow.Flow
 
 internal fun interface SaveHdKeyAccount {
-    suspend operator fun invoke(account: LocalAccount.HdKey)
+    suspend operator fun invoke(account: LocalAccount.HdKey, privateKey: ByteArray)
 }
 
 internal fun interface SaveAlgo25Account {
-    suspend operator fun invoke(account: LocalAccount.Algo25)
+    suspend operator fun invoke(account: LocalAccount.Algo25, privateKey: ByteArray)
 }
 
 internal fun interface SaveLedgerBleAccount {

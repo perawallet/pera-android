@@ -49,6 +49,10 @@ import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationF
 import com.algorand.wallet.account.info.domain.usecase.GetAllAssetHoldingIds
 import com.algorand.wallet.account.info.domain.usecase.GetCachedAccountInformationCountFlow
 import com.algorand.wallet.account.info.domain.usecase.GetEarliestLastFetchedRound
+import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccount
+import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccountUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
+import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedSuccessAccountUseCase
 import com.algorand.wallet.foundation.database.PeraDatabase
 import dagger.Module
 import dagger.Provides
@@ -191,4 +195,14 @@ internal object AccountInformationModule {
     fun provideAccountInformationErrorEntityMapper(
         impl: AccountInformationErrorEntityMapperImpl
     ): AccountInformationErrorEntityMapper = impl
+
+    @Provides
+    fun provideIsThereAnyCachedErrorAccount(
+        useCase: IsThereAnyCachedErrorAccountUseCase
+    ): IsThereAnyCachedErrorAccount = useCase
+
+    @Provides
+    fun provideIsThereAnyCachedSuccessAccount(
+        useCase: IsThereAnyCachedSuccessAccountUseCase
+    ): IsThereAnyCachedSuccessAccount = useCase
 }

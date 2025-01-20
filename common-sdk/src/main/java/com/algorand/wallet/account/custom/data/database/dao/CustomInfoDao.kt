@@ -56,4 +56,7 @@ internal interface CustomInfoDao {
 
     @Query("SELECT is_backed_up FROM custom_info WHERE :encryptedAddress = algo_address")
     suspend fun isAccountBackedUp(encryptedAddress: String): Boolean
+
+    @Query("SELECT custom_name FROM custom_info WHERE :address = algo_address")
+    suspend fun getCustomName(address: String): String?
 }

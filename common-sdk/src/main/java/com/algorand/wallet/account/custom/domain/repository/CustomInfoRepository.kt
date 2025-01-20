@@ -25,6 +25,8 @@ internal interface CustomInfoRepository {
 
     suspend fun setCustomName(address: String, name: String)
 
+    suspend fun getCustomName(address: String): String?
+
     suspend fun setOrderIndex(address: String, orderIndex: Int)
 
     suspend fun deleteCustomInfo(address: String)

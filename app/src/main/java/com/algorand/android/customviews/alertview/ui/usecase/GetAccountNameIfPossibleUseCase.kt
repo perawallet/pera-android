@@ -12,18 +12,18 @@
 
 package com.algorand.android.customviews.alertview.ui.usecase
 
-import com.algorand.android.core.AccountManager
 import com.algorand.android.modules.contact.base.domain.usecase.GetContactNameByAccountAddressUseCase
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import javax.inject.Inject
 
 class GetAccountNameIfPossibleUseCase @Inject constructor(
-    private val accountManager: AccountManager,
+    private val getAccountCustomName: GetAccountCustomName,
     private val getContactNameByAccountAddressUseCase: GetContactNameByAccountAddressUseCase
 ) {
 
     suspend operator fun invoke(accountAddress: String?): String? {
         if (accountAddress.isNullOrBlank()) return null
-        val nameFromAccountList = accountManager.getAccount(accountAddress)?.name
+        val nameFromAccountList = getAccountCustomName(accountAddress)
         val nameFromContactList = getContactNameByAccountAddressUseCase.invoke(accountAddress)
         return nameFromAccountList ?: nameFromContactList ?: accountAddress
     }

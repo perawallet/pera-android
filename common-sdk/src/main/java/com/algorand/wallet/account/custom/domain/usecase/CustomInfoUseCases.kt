@@ -19,6 +19,10 @@ fun interface SetAccountCustomName {
     suspend operator fun invoke(address: String, name: String)
 }
 
+fun interface GetAccountCustomName {
+    suspend operator fun invoke(address: String): String?
+}
+
 fun interface SetAccountCustomInfo {
     suspend operator fun invoke(customInfo: CustomInfo)
 }

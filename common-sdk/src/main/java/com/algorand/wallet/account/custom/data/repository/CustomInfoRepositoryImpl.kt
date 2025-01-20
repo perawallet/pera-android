@@ -57,6 +57,12 @@ internal class CustomInfoRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getCustomName(address: String): String? {
+        return withContext(coroutineDispatcher) {
+            customInfoDao.getCustomName(address)
+        }
+    }
+
     override suspend fun deleteCustomInfo(address: String) {
         withContext(coroutineDispatcher) {
             customInfoDao.delete(address)

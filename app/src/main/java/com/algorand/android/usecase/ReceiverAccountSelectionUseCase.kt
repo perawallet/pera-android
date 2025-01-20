@@ -28,7 +28,7 @@ import com.algorand.android.modules.accountasset.GetAccountAssetUseCase
 import com.algorand.android.modules.accountasset.domain.model.AccountAssetDetail
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
 import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
-import com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs
+import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryNavArgs
 import com.algorand.android.repository.AssetRepository
 import com.algorand.android.repository.ContactRepository
 import com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionFragmentDirections

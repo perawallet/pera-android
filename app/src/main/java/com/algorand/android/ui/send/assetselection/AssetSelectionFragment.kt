@@ -22,7 +22,7 @@ import com.algorand.android.core.TransactionBaseFragment
 import com.algorand.android.databinding.FragmentAssetSelectionBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs
+import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryNavArgs
 import com.algorand.android.nft.ui.model.AssetSelectionPreview
 import com.algorand.android.ui.send.assetselection.adapter.SelectSendingAssetAdapter
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle

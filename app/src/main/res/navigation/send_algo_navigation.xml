@@ -159,7 +159,7 @@
             app:destination="@id/arc59RequestOptInNavigation">
             <argument
                 android:name="arc59SendSummaryNavArgs"
-                app:argType="com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs" />
+                app:argType="com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryNavArgs" />
         </action>
     </fragment>
 
@@ -233,7 +233,7 @@
             app:destination="@id/arc59RequestOptInNavigation">
             <argument
                 android:name="arc59SendSummaryNavArgs"
-                app:argType="com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs" />
+                app:argType="com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryNavArgs" />
         </action>
     </fragment>
 

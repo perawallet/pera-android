@@ -14,8 +14,8 @@ package co.algorand.app.ui.widgets.snackbar
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.wallet.viewmodel.EventDelegate
-import com.algorand.wallet.viewmodel.EventViewModel
+import com.algorand.wallet.foundation.EventDelegate
+import com.algorand.wallet.foundation.EventViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString

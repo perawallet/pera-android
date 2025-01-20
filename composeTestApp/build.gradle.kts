@@ -81,6 +81,8 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.okhttp)
+
+            implementation(project(":wallet-android"))
         }
 
         iosMain.dependencies {

@@ -10,20 +10,16 @@
  * limitations under the License
  */
 
-package co.algorand.app.ui
+package co.algorand.app.ui.screens.wallet
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
+import co.algorand.app.ui.widgets.snackbar.SnackbarViewModel
 
-class AppViewModel(
-    // private val initializeAppCache: InitializeAppCache
-) : ViewModel() {
-
-    fun initCache(lifecycle: Lifecycle) {
-        viewModelScope.launch {
-            // initializeAppCache(lifecycle)
-        }
-    }
-}
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+@Composable
+expect fun AccountsScreen(
+    navController: NavController,
+    snackbarViewModel: SnackbarViewModel,
+    tag: String
+)

@@ -1,0 +1,33 @@
+package co.algorand.app.ui.screens.wallet
+
+import algorand_android.composetestapp.generated.resources.Res
+import algorand_android.composetestapp.generated.resources.nav_home
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import co.algorand.app.ui.widgets.snackbar.SnackbarViewModel
+import com.algorand.wallet.ui.theme.PeraTheme
+import org.jetbrains.compose.resources.stringResource
+
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+@Composable
+actual fun AccountsScreen(
+    navController: NavController,
+    snackbarViewModel: SnackbarViewModel,
+    tag: String
+) {
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.fillMaxSize().background(PeraTheme.colors.background)
+    ) {
+        Text(text = stringResource(Res.string.nav_home), color = PeraTheme.colors.textMain)
+    }
+}

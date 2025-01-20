@@ -12,47 +12,47 @@
 
 package co.algorand.app.di
 
-import com.algorand.wallet.foundation.network.algod.AlgodInterceptorPluginConfig
-import com.algorand.wallet.foundation.network.algod.GetAlgodInterceptorConfig
-import com.algorand.wallet.foundation.network.indexer.GetIndexerInterceptorConfig
-import com.algorand.wallet.foundation.network.indexer.IndexerInterceptorPluginConfig
-import com.algorand.wallet.foundation.network.pera.GetPeraMobileInterceptorConfig
-import com.algorand.wallet.foundation.network.pera.PeraMobileInterceptorPluginConfig
-import com.algorand.wallet.foundation.network.pera.PeraMobileUserAgent
-import org.koin.dsl.module
-
-val accountInformationModule = module {
-    factory<GetIndexerInterceptorConfig> {
-        GetIndexerInterceptorConfig {
-            IndexerInterceptorPluginConfig(
-                baseUrl = "-",
-                apiKey = "-"
-            )
-        }
-    }
-    factory<GetPeraMobileInterceptorConfig> {
-        GetPeraMobileInterceptorConfig {
-            PeraMobileInterceptorPluginConfig(
-                baseUrl = "-",
-                apiKey = "-",
-                userAgent = PeraMobileUserAgent(
-                    packageName = "-",
-                    appVersion = "-",
-                    appName = "-",
-                    osVersion = "-",
-                    deviceModel = "-",
-                    languageTag = "-",
-                    clientType = "-"
-                )
-            )
-        }
-    }
-    factory<GetAlgodInterceptorConfig> {
-        GetAlgodInterceptorConfig {
-            AlgodInterceptorPluginConfig(
-                baseUrl = "-",
-                apiKey = "-"
-            )
-        }
-    }
-}
+//import com.algorand.wallet.foundation.network.algod.AlgodInterceptorPluginConfig
+//import com.algorand.wallet.foundation.network.algod.GetAlgodInterceptorConfig
+//import com.algorand.wallet.foundation.network.indexer.GetIndexerInterceptorConfig
+//import com.algorand.wallet.foundation.network.indexer.IndexerInterceptorPluginConfig
+//import com.algorand.wallet.foundation.network.pera.GetPeraMobileInterceptorConfig
+//import com.algorand.wallet.foundation.network.pera.PeraMobileInterceptorPluginConfig
+//import com.algorand.wallet.foundation.network.pera.PeraMobileUserAgent
+//import org.koin.dsl.module
+//
+//val accountInformationModule = module {
+//    factory<GetIndexerInterceptorConfig> {
+//        GetIndexerInterceptorConfig {
+//            IndexerInterceptorPluginConfig(
+//                baseUrl = "-",
+//                apiKey = "-"
+//            )
+//        }
+//    }
+//    factory<GetPeraMobileInterceptorConfig> {
+//        GetPeraMobileInterceptorConfig {
+//            PeraMobileInterceptorPluginConfig(
+//                baseUrl = "-",
+//                apiKey = "-",
+//                userAgent = PeraMobileUserAgent(
+//                    packageName = "-",
+//                    appVersion = "-",
+//                    appName = "-",
+//                    osVersion = "-",
+//                    deviceModel = "-",
+//                    languageTag = "-",
+//                    clientType = "-"
+//                )
+//            )
+//        }
+//    }
+//    factory<GetAlgodInterceptorConfig> {
+//        GetAlgodInterceptorConfig {
+//            AlgodInterceptorPluginConfig(
+//                baseUrl = "-",
+//                apiKey = "-"
+//            )
+//        }
+//    }
+//}

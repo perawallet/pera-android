@@ -10,11 +10,10 @@
  * limitations under the License
  */
 
-package co.algorand.app.ui.screens.accounts
+package co.algorand.app.ui.screens.wallet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.algorand.app.ui.screens.accounts.AccountsViewModel.ViewState
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.account.local.domain.model.LocalAccount
@@ -23,7 +22,7 @@ import com.algorand.wallet.account.local.domain.usecase.AddHdKeyAccount
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.wallet.algosdk.AlgoAccountSdk
-import com.algorand.wallet.algosdk.Bip32DerivationType
+import com.algorand.wallet.algosdk.model.Bip32DerivationType
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import kotlinx.coroutines.Job
@@ -40,7 +39,7 @@ class AccountsViewModel(
     private val deleteLocalAccount: DeleteLocalAccount,
     private val stateDelegate: StateDelegate<ViewState>,
     private val getAllAccountInformationFlow: GetAllAccountInformationFlow
-) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
+) : ViewModel(), StateViewModel<AccountsViewModel.ViewState> by stateDelegate {
 
     private var accountObserveJob: Job? = null
 
@@ -52,8 +51,7 @@ class AccountsViewModel(
         val acct = algoAccountSdk.recoverAlgo25Account(mnemonic)
         if (acct != null) {
             val localAccount = LocalAccount.Algo25(
-                algoAddress = acct.address,
-                encryptedSecretKey = acct.encryptedSecretKey
+                algoAddress = acct.address
             )
             viewModelScope.launch {
                 addAlgo25Account(localAccount)
@@ -67,7 +65,6 @@ class AccountsViewModel(
             val localAccount = LocalAccount.HdKey(
                 algoAddress = acct.address,
                 publicKey = acct.publicKey,
-                encryptedPrivateKey = acct.encryptedPrivateKey,
                 seedId = 1, // TODO fix this when foreign key is implemented
                 account = acct.account,
                 change = acct.change,
@@ -101,7 +98,6 @@ class AccountsViewModel(
             val account = algoAccountSdk.createAlgo25Account()
             val algo25Account = LocalAccount.Algo25(
                 algoAddress = account.address,
-                encryptedSecretKey = account.encryptedSecretKey
             )
             addAlgo25Account(algo25Account)
         }
@@ -114,7 +110,6 @@ class AccountsViewModel(
             val hdKeyAccount = LocalAccount.HdKey(
                 algoAddress = acct.address,
                 publicKey = acct.publicKey,
-                encryptedPrivateKey = acct.encryptedPrivateKey,
                 seedId = 1, // TODO fix this when foreign key is implemented
                 account = acct.account,
                 change = acct.change,

@@ -15,7 +15,7 @@ package com.algorand.wallet.account.custom.data.repository
 import com.algorand.wallet.account.custom.data.database.dao.CustomInfoDao
 import com.algorand.wallet.account.custom.data.mapper.entity.CustomInfoEntityMapper
 import com.algorand.wallet.account.custom.data.mapper.model.CustomInfoMapper
-import com.algorand.common.account.custom.domain.model.AccountOrderIndex
+import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
 import com.algorand.wallet.account.custom.domain.model.CustomInfo
 import com.algorand.wallet.account.custom.domain.repository.CustomInfoRepository
 import javax.inject.Inject
@@ -65,30 +65,26 @@ internal class CustomInfoRepositoryImpl @Inject constructor(
 
     override suspend fun getNotBackedUpAccounts(): Set<String> {
         return withContext(coroutineDispatcher) {
-            val notBackedUpAddresses = customInfoDao.getNotBackedUpAddresses()
-            notBackedUpAddresses.map { addressEncryptionManager.decrypt(it) }.toSet()
+            customInfoDao.getNotBackedUpAddresses().toSet()
         }
     }
 
     override suspend fun getBackedUpAccounts(): Set<String> {
         return withContext(coroutineDispatcher) {
-            val backedUpAddresses = customInfoDao.getBackedUpAddresses()
-            backedUpAddresses.map { addressEncryptionManager.decrypt(it) }.toSet()
+            customInfoDao.getBackedUpAddresses().toSet()
         }
     }
 
     override suspend fun isAccountBackedUp(accountAddress: String): Boolean {
         return withContext(coroutineDispatcher) {
-            val encryptedAddress = addressEncryptionManager.encrypt(accountAddress)
-            customInfoDao.isAccountBackedUp(encryptedAddress)
+            customInfoDao.isAccountBackedUp(accountAddress)
         }
     }
 
     override suspend fun getAllAccountOrderIndexes(): List<AccountOrderIndex> {
         return withContext(coroutineDispatcher) {
             customInfoDao.getAll().map {
-                val address = addressEncryptionManager.decrypt(it.encryptedAddress)
-                AccountOrderIndex(address, it.orderIndex)
+                AccountOrderIndex(it.algoAddress, it.orderIndex)
             }
         }
     }

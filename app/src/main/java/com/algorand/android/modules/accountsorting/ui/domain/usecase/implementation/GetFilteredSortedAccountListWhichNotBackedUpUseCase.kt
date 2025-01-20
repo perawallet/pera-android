@@ -12,16 +12,16 @@
 
 package com.algorand.android.modules.accountsorting.ui.domain.usecase.implementation
 
+import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
+import com.algorand.android.modules.accountsorting.domain.usecase.GetSortedLocalAccounts
 import com.algorand.android.modules.accountsorting.ui.domain.mapper.BaseAccountAndAssetListItemMapper
 import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem
-import com.algorand.android.modules.accountsorting.domain.usecase.GetSortedLocalAccounts
-import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetFilteredSortedAccountListWhichNotBackedUp
 import com.algorand.android.modules.accountsorting.ui.domain.util.ItemConfigurationHelper.configureListItem
-import com.algorand.common.account.custom.domain.usecase.GetBackedUpAccounts
-import com.algorand.common.account.detail.domain.model.AccountDetail
-import com.algorand.common.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.common.account.detail.domain.usecase.GetAccountsDetails
+import com.algorand.wallet.account.custom.domain.usecase.GetBackedUpAccounts
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import javax.inject.Inject
 
 internal class GetFilteredSortedAccountListWhichNotBackedUpUseCase @Inject constructor(

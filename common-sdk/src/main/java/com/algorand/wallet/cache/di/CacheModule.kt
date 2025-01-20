@@ -30,7 +30,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface CacheModule {
+internal object CacheModule {
 
     @Provides
     fun provideLifecycleAwareCacheManager(impl: LifecycleAwareCacheManagerImpl): LifecycleAwareCacheManager = impl

@@ -15,9 +15,8 @@ package com.algorand.wallet.deeplink.builder
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
 import com.algorand.wallet.deeplink.model.NotificationGroupType
-import javax.inject.Inject
 
-internal class AssetInboxDeepLinkBuilder @Inject constructor() : DeepLinkBuilder {
+internal class AssetInboxDeepLinkBuilder : DeepLinkBuilder {
 
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
         return with(payload) {

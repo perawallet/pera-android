@@ -14,7 +14,7 @@ package com.algorand.android.modules.parity.domain.usecase
 
 import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrencySymbol
 import com.algorand.android.modules.parity.domain.model.ParityValue
-import com.algorand.common.asset.domain.util.AssetConstants.ALGO_DECIMALS
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
 import java.math.BigInteger
 import javax.inject.Inject
 

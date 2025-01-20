@@ -13,7 +13,7 @@
 package com.algorand.android.modules.accountsorting.ui.domain.util
 
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
-import com.algorand.common.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
 
 internal object ItemConfigurationHelper {
 

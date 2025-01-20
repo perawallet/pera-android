@@ -15,9 +15,9 @@ package com.algorand.android.modules.accountcore.ui.usecase
 import com.algorand.android.R
 import com.algorand.android.models.AccountIconResource
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.common.account.detail.domain.model.AccountDetail
-import com.algorand.common.account.detail.domain.model.AccountType
-import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import javax.inject.Inject
 
 internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
@@ -51,7 +51,7 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
             AccountType.Rekeyed -> R.color.negative_lighter
             AccountType.RekeyedAuth -> AccountIconResource.REKEYED.backgroundColorResId
             AccountType.NoAuth -> AccountIconResource.WATCH.backgroundColorResId
-            AccountType.Bip39 -> R.color.layer_gray_lighter // TODO
+            AccountType.HdKey -> R.color.layer_gray_lighter // TODO
             null -> R.color.layer_gray_lighter
         }
     }
@@ -63,7 +63,7 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
             AccountType.LedgerBle -> AccountIconResource.LEDGER.iconTintResId
             AccountType.RekeyedAuth -> AccountIconResource.LEDGER.iconTintResId
             AccountType.NoAuth -> AccountIconResource.WATCH.iconTintResId
-            AccountType.Bip39 -> R.color.text_gray // TODO
+            AccountType.HdKey -> R.color.text_gray // TODO
             null -> R.color.text_gray
         }
     }
@@ -74,7 +74,7 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
             AccountType.LedgerBle -> AccountIconResource.LEDGER.iconResId
             AccountType.NoAuth -> AccountIconResource.WATCH.iconResId
             AccountType.Rekeyed, AccountType.RekeyedAuth -> R.drawable.ic_rekey_shield
-            AccountType.Bip39 -> R.drawable.ic_wallet // TODO
+            AccountType.HdKey -> R.drawable.ic_wallet // TODO
             null -> AccountIconResource.STANDARD.iconResId
         }
     }

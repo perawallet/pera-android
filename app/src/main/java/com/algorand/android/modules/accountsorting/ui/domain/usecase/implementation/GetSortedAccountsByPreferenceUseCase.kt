@@ -12,17 +12,17 @@
 
 package com.algorand.android.modules.accountsorting.ui.domain.usecase.implementation
 
-import com.algorand.android.modules.accountsorting.ui.domain.mapper.AccountAndAssetAccountListItemMapper
-import com.algorand.android.modules.accountsorting.ui.domain.model.AccountAndAssetListItem
+import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
 import com.algorand.android.modules.accountsorting.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.modules.accountsorting.domain.usecase.GetSortedLocalAccounts
-import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
+import com.algorand.android.modules.accountsorting.ui.domain.mapper.AccountAndAssetAccountListItemMapper
+import com.algorand.android.modules.accountsorting.ui.domain.model.AccountAndAssetListItem
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetSortedAccountsByPreference
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.SortAccountsBySortingPreference
 import com.algorand.android.modules.accountsorting.ui.domain.util.ItemConfigurationHelper
-import com.algorand.common.account.detail.domain.model.AccountDetail
-import com.algorand.common.account.detail.domain.model.AccountType
-import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import javax.inject.Inject
 
 internal class GetSortedAccountsByPreferenceUseCase @Inject constructor(

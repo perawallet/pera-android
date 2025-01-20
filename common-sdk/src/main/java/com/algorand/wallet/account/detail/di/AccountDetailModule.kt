@@ -12,12 +12,16 @@
 
 package com.algorand.wallet.account.detail.di
 
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetailUseCase
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationTypeUseCase
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountState
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountStateUseCase
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountTypeUseCase
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetailsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,4 +41,10 @@ internal object AccountDetailModule {
     fun provideGetAccountRegistrationType(
         useCase: GetAccountRegistrationTypeUseCase
     ): GetAccountRegistrationType = useCase
+
+    @Provides
+    fun provideGetAccountsDetails(useCase: GetAccountsDetailsUseCase): GetAccountsDetails = useCase
+
+    @Provides
+    fun provideGetAccountDetail(useCase: GetAccountDetailUseCase): GetAccountDetail = useCase
 }

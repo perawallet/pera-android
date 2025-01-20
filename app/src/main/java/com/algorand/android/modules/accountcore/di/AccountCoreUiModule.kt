@@ -21,9 +21,9 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayNameUseCase
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewUseCase
-import com.algorand.common.account.custom.domain.usecase.GetAccountCustomInfoOrNull
-import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
-import com.algorand.common.nameservice.domain.usecase.GetAccountNameService
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.nameservice.domain.usecase.GetAccountNameService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

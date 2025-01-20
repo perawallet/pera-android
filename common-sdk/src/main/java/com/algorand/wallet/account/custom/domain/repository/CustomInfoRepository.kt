@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.account.custom.domain.repository
 
-import com.algorand.common.account.custom.domain.model.AccountOrderIndex
+import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
 import com.algorand.wallet.account.custom.domain.model.CustomInfo
 
 internal interface CustomInfoRepository {

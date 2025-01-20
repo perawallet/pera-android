@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.account.custom.domain.usecase
 
-import com.algorand.common.account.custom.domain.model.AccountOrderIndex
+import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
 import com.algorand.wallet.account.custom.domain.model.CustomInfo
 
 fun interface SetAccountCustomName {

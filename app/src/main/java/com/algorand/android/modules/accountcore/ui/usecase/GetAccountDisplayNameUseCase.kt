@@ -16,12 +16,12 @@ import android.content.res.Resources
 import com.algorand.android.R
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.common.account.custom.domain.usecase.GetAccountCustomInfoOrNull
-import com.algorand.common.account.detail.domain.model.AccountDetail
-import com.algorand.common.account.detail.domain.model.AccountType
-import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
-import com.algorand.common.nameservice.domain.model.NameService
-import com.algorand.common.nameservice.domain.usecase.GetAccountNameService
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.nameservice.domain.model.NameService
+import com.algorand.wallet.nameservice.domain.usecase.GetAccountNameService
 import javax.inject.Inject
 
 /**
@@ -121,7 +121,7 @@ internal class GetAccountDisplayNameUseCase @Inject constructor(
             AccountType.LedgerBle -> R.string.ledger_account
             AccountType.Rekeyed, AccountType.RekeyedAuth -> R.string.rekeyed_account
             AccountType.NoAuth -> R.string.watch_account
-            AccountType.Bip39 -> R.string.bip_39
+            AccountType.HdKey -> R.string.hd_account
             else -> null
         }?.run { resources.getString(this) }
     }

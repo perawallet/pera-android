@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
-import com.algorand.common.account.local.domain.model.LocalAccount.LedgerBle
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -30,7 +30,16 @@ class UpdateNoAuthAccountToLedgerBleUseCaseTest {
         sut(ADDRESS, DEVICE_MAC_ADDRESS, BLE_ADDRESS, INDEX_IN_LEDGER)
 
         coVerify { deleteLocalAccount(ADDRESS) }
-        coVerify { saveLedgerBleAccount(LedgerBle(ADDRESS, DEVICE_MAC_ADDRESS, BLE_ADDRESS, INDEX_IN_LEDGER)) }
+        coVerify {
+            saveLedgerBleAccount(
+                LocalAccount.LedgerBle(
+                    ADDRESS,
+                    DEVICE_MAC_ADDRESS,
+                    BLE_ADDRESS,
+                    INDEX_IN_LEDGER
+                )
+            )
+        }
     }
 
     private companion object {

@@ -18,9 +18,8 @@ import com.algorand.android.modules.parity.domain.usecase.GetAlgoAmountValue
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
 import com.algorand.android.utils.toBigDecimalOrZero
-import com.algorand.android.utils.toBigIntegerOrZero
-import com.algorand.common.account.info.domain.usecase.GetAccountInformation
-import com.algorand.common.asset.domain.usecase.GetAsset
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.asset.domain.usecase.GetAsset
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
@@ -45,7 +44,7 @@ internal class GetAccountTotalValueUseCase @Inject constructor(
             if (assetInformation != null) {
                 val (primaryParityValue, secondaryParityValue) = getAssetParityValue(
                     fractionDecimals = assetInformation.getDecimalsOrZero(),
-                    assetAmount = assetHolding.amount.toBigIntegerOrZero(),
+                    assetAmount = assetHolding.amount,
                     assetUsdValue = assetInformation.usdValue.toBigDecimalOrZero()
                 )
                 primaryAccountValue += primaryParityValue.amountAsCurrency
@@ -55,7 +54,7 @@ internal class GetAccountTotalValueUseCase @Inject constructor(
         }
 
         if (includeAlgo) {
-            val algoAmountValue = getAlgoAmountValue(accountInformation.amount.toBigIntegerOrZero())
+            val algoAmountValue = getAlgoAmountValue(accountInformation.amount)
             primaryAccountValue += algoAmountValue.parityValueInSelectedCurrency.amountAsCurrency
             secondaryAccountValue += algoAmountValue.parityValueInSecondaryCurrency.amountAsCurrency
             assetCount++

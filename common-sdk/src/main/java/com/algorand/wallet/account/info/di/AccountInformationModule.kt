@@ -30,6 +30,8 @@ import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapperImpl
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelper
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelperImpl
+import com.algorand.wallet.account.info.data.repository.AccountInformationCacheHelper
+import com.algorand.wallet.account.info.data.repository.AccountInformationCacheHelperImpl
 import com.algorand.wallet.account.info.data.repository.AccountInformationFetchHelper
 import com.algorand.wallet.account.info.data.repository.AccountInformationFetchHelperImpl
 import com.algorand.wallet.account.info.data.repository.AccountInformationRepositoryImpl
@@ -73,7 +75,7 @@ internal object AccountInformationModule {
     @Provides
     @Singleton
     fun provideAccountInformationApiService(
-        @Named("mobileAlgorandHttpClient") retrofit: Retrofit
+        @Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit
     ): AccountInformationApiService {
         return retrofit.create(AccountInformationApiService::class.java)
     }
@@ -90,9 +92,15 @@ internal object AccountInformationModule {
 
     @Provides
     @Singleton
-    fun provideAccountInformationCacheHelper(
+    fun provideAccountInformationFetchHelper(
         impl: AccountInformationFetchHelperImpl
     ): AccountInformationFetchHelper = impl
+
+    @Provides
+    @Singleton
+    fun provideAccountInformationCacheHelper(
+        impl: AccountInformationCacheHelperImpl
+    ): AccountInformationCacheHelper = impl
 
     @Provides
     @Singleton

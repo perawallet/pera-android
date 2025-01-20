@@ -13,8 +13,8 @@
 package com.algorand.android.modules.accountsorting.domain.usecase.implementation
 
 import com.algorand.android.modules.accountsorting.domain.usecase.GetSortedLocalAccounts
-import com.algorand.common.account.custom.domain.model.AccountOrderIndex
-import com.algorand.common.account.custom.domain.usecase.GetAllAccountOrderIndexes
+import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
+import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
 import javax.inject.Inject
 
 internal class GetSortedLocalAccountsUseCase @Inject constructor(

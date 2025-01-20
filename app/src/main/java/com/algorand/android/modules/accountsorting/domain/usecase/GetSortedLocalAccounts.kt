@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.accountsorting.domain.usecase
 
-import com.algorand.common.account.custom.domain.model.AccountOrderIndex
+import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
 
 fun interface GetSortedLocalAccounts {
     suspend operator fun invoke(): List<AccountOrderIndex>

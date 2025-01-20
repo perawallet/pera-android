@@ -30,9 +30,9 @@ import com.algorand.android.usecase.NodeSettingsUseCase
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.combine
-import com.algorand.common.account.local.domain.usecase.GetLocalAccounts
-import com.algorand.common.cache.domain.model.AppCacheStatus
-import com.algorand.common.cache.domain.usecase.GetAppCacheStatusFlow
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.wallet.cache.domain.model.AppCacheStatus
+import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 

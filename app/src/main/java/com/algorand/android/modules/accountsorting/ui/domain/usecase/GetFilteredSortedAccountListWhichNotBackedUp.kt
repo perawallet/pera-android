@@ -14,7 +14,7 @@ package com.algorand.android.modules.accountsorting.ui.domain.usecase
 
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
 import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem
-import com.algorand.common.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
 
 interface GetFilteredSortedAccountListWhichNotBackedUp {
 

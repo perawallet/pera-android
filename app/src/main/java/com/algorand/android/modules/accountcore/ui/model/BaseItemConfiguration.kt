@@ -18,7 +18,7 @@ import com.algorand.android.models.GovernorIconResource
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
-import com.algorand.common.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import java.math.BigDecimal
 
 sealed class BaseItemConfiguration {

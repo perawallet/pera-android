@@ -12,18 +12,18 @@
 
 package com.algorand.android.modules.accountsorting.ui.domain.usecase.implementation
 
-import com.algorand.android.modules.accountsorting.ui.domain.mapper.BaseAccountAndAssetListItemMapper
-import com.algorand.android.modules.accountsorting.domain.usecase.GetSortedLocalAccounts
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
+import com.algorand.android.modules.accountsorting.domain.usecase.GetSortedLocalAccounts
+import com.algorand.android.modules.accountsorting.ui.domain.mapper.BaseAccountAndAssetListItemMapper
 import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
 import com.algorand.android.modules.accountsorting.ui.domain.util.ItemConfigurationHelper
-import com.algorand.common.account.detail.domain.model.AccountDetail
-import com.algorand.common.account.detail.domain.model.AccountType
-import com.algorand.common.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.common.account.detail.domain.usecase.GetAccountsDetails
-import com.algorand.common.account.info.domain.usecase.IsAssetOwnedByAccount
-import com.algorand.common.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 
 internal class GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransactionUseCase @Inject constructor(

@@ -21,7 +21,7 @@ import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
-import com.algorand.common.account.custom.domain.usecase.GetNotBackedUpAccounts
+import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

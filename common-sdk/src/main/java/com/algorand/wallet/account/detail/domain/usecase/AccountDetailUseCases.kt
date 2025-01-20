@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.account.detail.domain.usecase
 
-import com.algorand.common.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountState
 import com.algorand.wallet.account.detail.domain.model.AccountType

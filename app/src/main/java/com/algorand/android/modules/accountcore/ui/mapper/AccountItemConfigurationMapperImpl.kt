@@ -16,7 +16,7 @@ import com.algorand.android.models.ButtonConfiguration
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.common.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import java.math.BigDecimal
 import javax.inject.Inject
 

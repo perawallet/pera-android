@@ -20,8 +20,11 @@ import com.algorand.wallet.account.custom.data.mapper.model.CustomInfoMapperImpl
 import com.algorand.wallet.account.custom.data.repository.CustomInfoRepositoryImpl
 import com.algorand.wallet.account.custom.domain.repository.CustomInfoRepository
 import com.algorand.wallet.account.custom.domain.usecase.DeleteAccountCustomInfo
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountAsbBackUpStatus
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
+import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
+import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomName
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountOrderIndex
@@ -78,5 +81,20 @@ internal object CustomInfoModule {
     @Provides
     fun provideDeleteAccountCustomInfo(repository: CustomInfoRepository): DeleteAccountCustomInfo {
         return DeleteAccountCustomInfo(repository::deleteCustomInfo)
+    }
+
+    @Provides
+    fun provideGetAllAccountOrderIndexes(repository: CustomInfoRepository): GetAllAccountOrderIndexes {
+        return GetAllAccountOrderIndexes(repository::getAllAccountOrderIndexes)
+    }
+
+    @Provides
+    fun provideGetNotBackedUpAccounts(repository: CustomInfoRepository): GetNotBackedUpAccounts {
+        return GetNotBackedUpAccounts(repository::getNotBackedUpAccounts)
+    }
+
+    @Provides
+    fun provideGetAccountAsbBackUpStatus(repository: CustomInfoRepository): GetAccountAsbBackUpStatus {
+        return GetAccountAsbBackUpStatus(repository::isAccountBackedUp)
     }
 }

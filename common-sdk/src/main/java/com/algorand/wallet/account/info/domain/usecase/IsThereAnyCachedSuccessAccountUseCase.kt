@@ -13,8 +13,9 @@
 package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
+import javax.inject.Inject
 
-internal class IsThereAnyCachedSuccessAccountUseCase(
+internal class IsThereAnyCachedSuccessAccountUseCase @Inject constructor(
     private val accountInformationRepository: AccountInformationRepository
 ) : IsThereAnyCachedSuccessAccount {
 

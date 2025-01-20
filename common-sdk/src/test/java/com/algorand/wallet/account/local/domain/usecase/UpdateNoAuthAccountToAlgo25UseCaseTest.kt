@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
-import com.algorand.common.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -33,7 +33,7 @@ class UpdateNoAuthAccountToAlgo25UseCaseTest {
         sut(ADDRESS, SECRET_KEY)
 
         coVerify { deleteLocalAccount(ADDRESS) }
-        coVerify { saveAlgo25Account(LocalAccount.Algo25(ADDRESS, SECRET_KEY)) }
+        coVerify { saveAlgo25Account(LocalAccount.Algo25(ADDRESS), SECRET_KEY) }
     }
 
     companion object {

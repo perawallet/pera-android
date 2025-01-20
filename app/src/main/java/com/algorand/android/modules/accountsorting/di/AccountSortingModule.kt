@@ -6,6 +6,7 @@ import com.algorand.android.modules.accountsorting.data.storage.AccountSortPrefe
 import com.algorand.android.modules.accountsorting.domain.repository.AccountSortingRepository
 import com.algorand.android.modules.accountsorting.domain.usecase.GetAccountSortingTypeIdentifier
 import com.algorand.android.modules.accountsorting.domain.usecase.GetSortedLocalAccounts
+import com.algorand.android.modules.accountsorting.domain.usecase.SaveAccountSortPreference
 import com.algorand.android.modules.accountsorting.domain.usecase.implementation.GetSortedLocalAccountsUseCase
 import dagger.Module
 import dagger.Provides
@@ -31,5 +32,11 @@ internal object AccountSortingModule {
     @Singleton
     fun provideGetAccountSortingTypeIdentifier(repository: AccountSortingRepository): GetAccountSortingTypeIdentifier {
         return GetAccountSortingTypeIdentifier(repository::getAccountSortPreference)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSaveAccountSortPreference(repository: AccountSortingRepository): SaveAccountSortPreference {
+        return SaveAccountSortPreference(repository::saveAccountSortPreference)
     }
 }

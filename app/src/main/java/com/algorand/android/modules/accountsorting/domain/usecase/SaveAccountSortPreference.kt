@@ -10,20 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.sorting.utils
+package com.algorand.android.modules.accountsorting.domain.usecase
 
 import com.algorand.android.modules.accountsorting.domain.model.AccountSortingTypeIdentifier
-import javax.inject.Inject
 
-class SortingTypeCreator @Inject constructor() {
-
-    fun createForAccountSorting(): List<AccountSortingTypeIdentifier> {
-        return mutableListOf<AccountSortingTypeIdentifier>().apply {
-            add(AccountSortingTypeIdentifier.ALPHABETICALLY_ASCENDING)
-            add(AccountSortingTypeIdentifier.ALPHABETICALLY_DESCENDING)
-            add(AccountSortingTypeIdentifier.NUMERIC_ASCENDING)
-            add(AccountSortingTypeIdentifier.NUMERIC_DESCENDING)
-            add(AccountSortingTypeIdentifier.MANUAL)
-        }
-    }
+fun interface SaveAccountSortPreference {
+    suspend operator fun invoke(typeIdentifier: AccountSortingTypeIdentifier)
 }

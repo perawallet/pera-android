@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.account.core.domain.usecase
 
-import com.algorand.common.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import kotlinx.coroutines.flow.Flow
 
 fun interface AddAlgo25Account {

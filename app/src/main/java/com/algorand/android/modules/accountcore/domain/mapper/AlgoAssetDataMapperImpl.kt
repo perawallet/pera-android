@@ -16,10 +16,10 @@ import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.utils.formatAmount
-import com.algorand.common.asset.domain.util.AssetConstants.ALGO_DECIMALS
-import com.algorand.common.asset.domain.util.AssetConstants.ALGO_FULL_NAME
-import com.algorand.common.asset.domain.util.AssetConstants.ALGO_ID
-import com.algorand.common.asset.domain.util.AssetConstants.ALGO_SHORT_NAME
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_DECIMALS
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_FULL_NAME
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_SHORT_NAME
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject

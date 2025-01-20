@@ -14,10 +14,10 @@ package com.algorand.android.ui.accountoptions
 
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.ui.accountoptions.model.AccountOptionsPreview
-import com.algorand.common.account.detail.domain.model.AccountRegistrationType
-import com.algorand.common.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
-import com.algorand.common.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import javax.inject.Inject
 
 class AccountOptionsPreviewUseCase @Inject constructor(

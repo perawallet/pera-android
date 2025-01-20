@@ -12,11 +12,11 @@
 
 package com.algorand.android.modules.swap.common.domain.usecase
 
+import com.algorand.android.modules.swap.common.ui.helper.SwapNavDestinationHelper
 import com.algorand.android.modules.swap.model.SwapNavigationDestination
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.AccountSelection
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.Swap
-import com.algorand.android.modules.swap.common.ui.helper.SwapNavDestinationHelper
-import com.algorand.common.account.detail.domain.usecase.GetAccountsDetails
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import javax.inject.Inject
 
 internal class GetSwapNavigationDestinationUseCase @Inject constructor(

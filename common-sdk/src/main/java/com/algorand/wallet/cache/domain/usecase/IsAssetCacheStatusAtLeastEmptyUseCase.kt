@@ -10,17 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.info.domain.usecase
+package com.algorand.wallet.cache.domain.usecase
 
-internal class IsAssetOwnedByAccountUseCase(
-    private val getAccountInformation: GetAccountInformation
-) : IsAssetOwnedByAccount {
+import com.algorand.wallet.asset.domain.manager.AssetDetailCacheManager
+import com.algorand.wallet.asset.domain.model.AssetCacheStatus
+import javax.inject.Inject
 
-    override suspend operator fun invoke(address: String, assetId: Long): Boolean {
-        val assetHolding = getAccountInformation(address)
-            ?.assetHoldings
-            ?.firstOrNull { it.assetId == assetId }
-            ?: return false
-        return assetHolding.amount != "0" // TODO Fix here after fixing BigInteger issue on wallet-sdk
+internal class IsAssetCacheStatusAtLeastEmptyUseCase @Inject constructor(
+    private val assetDetailCacheManager: AssetDetailCacheManager
+) : IsAssetCacheStatusAtLeastEmpty {
+
+    override fun invoke(): Boolean {
+        return assetDetailCacheManager.cacheStatusFlow.value isAtLeast AssetCacheStatus.EMPTY
     }
 }

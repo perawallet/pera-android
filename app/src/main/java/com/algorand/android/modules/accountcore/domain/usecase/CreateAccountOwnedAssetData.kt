@@ -13,8 +13,8 @@
 package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
-import com.algorand.common.account.info.domain.model.AssetHolding
-import com.algorand.common.asset.domain.model.AssetDetail
+import com.algorand.wallet.account.info.domain.model.AssetHolding
+import com.algorand.wallet.asset.domain.model.AssetDetail
 
 internal interface CreateAccountOwnedAssetData {
     suspend operator fun invoke(assetDetail: AssetDetail, assetHolding: AssetHolding): OwnedAssetData

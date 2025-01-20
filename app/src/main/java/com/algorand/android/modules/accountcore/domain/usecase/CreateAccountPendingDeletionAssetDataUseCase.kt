@@ -14,7 +14,7 @@ package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.accountcore.domain.mapper.PendingDeletionAssetDataMapper
-import com.algorand.common.asset.domain.model.AssetDetail
+import com.algorand.wallet.asset.domain.model.AssetDetail
 import javax.inject.Inject
 
 internal class CreateAccountPendingDeletionAssetDataUseCase @Inject constructor(

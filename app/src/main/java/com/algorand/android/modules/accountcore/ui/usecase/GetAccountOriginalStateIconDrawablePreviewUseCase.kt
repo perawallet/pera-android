@@ -18,9 +18,9 @@ import com.algorand.android.models.AccountIconResource.STANDARD
 import com.algorand.android.models.AccountIconResource.UNDEFINED
 import com.algorand.android.models.AccountIconResource.WATCH
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.common.account.detail.domain.model.AccountDetail
-import com.algorand.common.account.detail.domain.model.AccountType
-import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import javax.inject.Inject
 
 internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constructor(
@@ -50,7 +50,7 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
                     R.color.layer_gray_lighter
                 }
             }
-            AccountType.Bip39 -> UNDEFINED.backgroundColorResId // TODO Bip39
+            AccountType.HdKey -> UNDEFINED.backgroundColorResId // TODO Bip39
         }
     }
 
@@ -62,7 +62,7 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountDetail?.canSignTransaction() == true) STANDARD.iconTintResId else R.color.text_gray_lighter
             }
-            AccountType.Bip39 -> UNDEFINED.iconTintResId // TODO Bip39
+            AccountType.HdKey -> UNDEFINED.iconTintResId // TODO Bip39
         }
     }
 
@@ -74,7 +74,7 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountDetail?.canSignTransaction() == true) STANDARD.iconResId else R.drawable.ic_question
             }
-            AccountType.Bip39 -> UNDEFINED.iconResId // TODO Bip39
+            AccountType.HdKey -> UNDEFINED.iconResId // TODO Bip39
         }
     }
 }

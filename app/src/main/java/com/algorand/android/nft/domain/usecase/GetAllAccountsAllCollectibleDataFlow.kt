@@ -13,7 +13,7 @@
 package com.algorand.android.nft.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
-import com.algorand.common.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import kotlinx.coroutines.flow.Flow
 
 fun interface GetAllAccountsAllCollectibleDataFlow {

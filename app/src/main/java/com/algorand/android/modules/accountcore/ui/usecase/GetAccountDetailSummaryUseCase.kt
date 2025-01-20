@@ -14,9 +14,9 @@ package com.algorand.android.modules.accountcore.ui.usecase
 
 import com.algorand.android.R
 import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
-import com.algorand.common.account.detail.domain.model.AccountDetail
-import com.algorand.common.account.detail.domain.model.AccountType
-import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import javax.inject.Inject
 
 internal class GetAccountDetailSummaryUseCase @Inject constructor(
@@ -52,7 +52,7 @@ internal class GetAccountDetailSummaryUseCase @Inject constructor(
 
     private fun shouldDisplayAccountType(type: AccountType?): Boolean {
         return when (type) {
-            AccountType.LedgerBle, AccountType.NoAuth, AccountType.Algo25, AccountType.Bip39 -> false
+            AccountType.LedgerBle, AccountType.NoAuth, AccountType.Algo25, AccountType.HdKey -> false
             AccountType.Rekeyed, AccountType.RekeyedAuth, null -> true
         }
     }
@@ -64,7 +64,7 @@ internal class GetAccountDetailSummaryUseCase @Inject constructor(
             AccountType.Algo25 -> R.string.standard
             AccountType.Rekeyed, null -> R.string.no_auth
             AccountType.RekeyedAuth -> R.string.rekeyed
-            AccountType.Bip39 -> R.string.bip_39
+            AccountType.HdKey -> R.string.hd_account
         }
     }
 }

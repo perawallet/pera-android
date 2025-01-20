@@ -42,15 +42,19 @@ import com.algorand.wallet.account.info.domain.manager.AccountCacheManager
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManagerImpl
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.account.info.domain.usecase.ClearAccountInformationCache
+import com.algorand.wallet.account.info.domain.usecase.DeleteAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAllAssetHoldingIds
 import com.algorand.wallet.account.info.domain.usecase.GetCachedAccountInformationCountFlow
 import com.algorand.wallet.account.info.domain.usecase.GetEarliestLastFetchedRound
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccountUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccount
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccountUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
@@ -75,7 +79,7 @@ internal object AccountInformationModule {
     @Provides
     @Singleton
     fun provideAccountInformationApiService(
-        @Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit
+        @Named("indexerRetrofitInterface") retrofit: Retrofit
     ): AccountInformationApiService {
         return retrofit.create(AccountInformationApiService::class.java)
     }
@@ -213,4 +217,19 @@ internal object AccountInformationModule {
     fun provideIsThereAnyCachedSuccessAccount(
         useCase: IsThereAnyCachedSuccessAccountUseCase
     ): IsThereAnyCachedSuccessAccount = useCase
+
+    @Provides
+    fun provideIsAssetOwnedByAccount(useCase: IsAssetOwnedByAccountUseCase): IsAssetOwnedByAccount = useCase
+
+    @Provides
+    fun provideDeleteAccountInformation(
+        repository: AccountInformationRepository
+    ): DeleteAccountInformation {
+        return DeleteAccountInformation(repository::deleteAccountInformation)
+    }
+
+    @Provides
+    fun provideGetAccountInformationFlow(repository: AccountInformationRepository): GetAccountInformationFlow {
+        return GetAccountInformationFlow(repository::getAccountInformationFlow)
+    }
 }

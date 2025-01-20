@@ -16,7 +16,7 @@ package com.algorand.android.usecase
 import com.algorand.android.core.BaseUseCase
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.repository.NotificationRepository
-import com.algorand.common.account.core.domain.usecase.DeleteAccount
+import com.algorand.wallet.account.core.domain.usecase.DeleteAccount
 import javax.inject.Inject
 
 class AccountDeletionUseCase @Inject constructor(

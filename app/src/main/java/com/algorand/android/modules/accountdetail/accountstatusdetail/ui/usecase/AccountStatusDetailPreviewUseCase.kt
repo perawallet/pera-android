@@ -21,9 +21,9 @@ import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.mapper.
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.model.AccountStatusDetailPreview
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.extensions.mapNotBlank
-import com.algorand.common.account.core.domain.usecase.GetAccountDetailFlow
-import com.algorand.common.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.common.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlow
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import javax.inject.Inject
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest

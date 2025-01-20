@@ -27,10 +27,10 @@ import com.algorand.android.nft.ui.model.BaseCollectibleListData
 import com.algorand.android.nft.ui.model.BaseCollectibleListItem
 import com.algorand.android.nft.ui.model.CollectiblesListingPreview
 import com.algorand.android.repository.FailedAssetRepository
-import com.algorand.common.account.core.domain.usecase.GetAccountDetailFlow
-import com.algorand.common.account.detail.domain.model.AccountDetail
-import com.algorand.common.account.detail.domain.model.AccountType
-import com.algorand.common.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlow
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

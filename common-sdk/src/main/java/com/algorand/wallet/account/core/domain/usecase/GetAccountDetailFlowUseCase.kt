@@ -10,17 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.core.domain.usecase
+package com.algorand.wallet.account.core.domain.usecase
 
-import com.algorand.common.account.custom.domain.usecase.GetAccountCustomInfoOrNull
-import com.algorand.common.account.detail.domain.model.AccountDetail
-import com.algorand.common.account.detail.domain.usecase.GetAccountRegistrationType
-import com.algorand.common.account.detail.domain.usecase.GetAccountType
-import com.algorand.common.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-internal class GetAccountDetailFlowUseCase(
+internal class GetAccountDetailFlowUseCase @Inject constructor(
     private val getAccountInformationFlow: GetAccountInformationFlow,
     private val getAccountCustomInfoOrNull: GetAccountCustomInfoOrNull,
     private val getAccountType: GetAccountType,

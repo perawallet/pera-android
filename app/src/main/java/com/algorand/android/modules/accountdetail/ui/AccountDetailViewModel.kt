@@ -25,7 +25,7 @@ import com.algorand.android.usecase.AccountDeletionUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
-import com.algorand.common.account.core.domain.usecase.GetAccountDetailFlow
+import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers

@@ -17,14 +17,13 @@ import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAsse
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
 import com.algorand.android.utils.formatting.FormatAmountByCollectibleFractionalDigit
 import com.algorand.android.utils.toBigDecimalOrZero
-import com.algorand.android.utils.toBigIntegerOrZero
-import com.algorand.common.account.info.domain.model.AssetHolding
-import com.algorand.common.asset.domain.model.AudioCollectibleDetail
-import com.algorand.common.asset.domain.model.CollectibleDetail
-import com.algorand.common.asset.domain.model.ImageCollectibleDetail
-import com.algorand.common.asset.domain.model.MixedCollectibleDetail
-import com.algorand.common.asset.domain.model.UnsupportedCollectibleDetail
-import com.algorand.common.asset.domain.model.VideoCollectibleDetail
+import com.algorand.wallet.account.info.domain.model.AssetHolding
+import com.algorand.wallet.asset.domain.model.AudioCollectibleDetail
+import com.algorand.wallet.asset.domain.model.CollectibleDetail
+import com.algorand.wallet.asset.domain.model.ImageCollectibleDetail
+import com.algorand.wallet.asset.domain.model.MixedCollectibleDetail
+import com.algorand.wallet.asset.domain.model.UnsupportedCollectibleDetail
+import com.algorand.wallet.asset.domain.model.VideoCollectibleDetail
 import javax.inject.Inject
 
 internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
@@ -44,14 +43,14 @@ internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
         collectibleDetail: CollectibleDetail
     ): BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData {
         val safeDecimal = collectibleDetail.getDecimalsOrZero()
-        val amount = assetHolding.amount.toBigIntegerOrZero()
+        val amount = assetHolding.amount
         val parityValueInSelectedCurrency = getPrimaryCurrencyAssetParityValue(
-            assetHolding.amount.toBigIntegerOrZero(),
+            amount,
             collectibleDetail.usdValue.toBigDecimalOrZero(),
             safeDecimal
         )
         val parityValueInSecondaryCurrency = getSecondaryCurrencyAssetParityValue(
-            assetHolding.amount.toBigIntegerOrZero(),
+            amount,
             collectibleDetail.usdValue.toBigDecimalOrZero(),
             safeDecimal
         )

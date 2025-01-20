@@ -14,10 +14,9 @@ package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.accountcore.domain.model.AccountAssetData
-import com.algorand.android.utils.toBigIntegerOrZero
-import com.algorand.common.account.info.domain.model.AccountInformation
-import com.algorand.common.account.info.domain.model.AssetStatus
-import com.algorand.common.asset.domain.usecase.GetAssetDetail
+import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.AssetStatus
+import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import javax.inject.Inject
 
 internal class CreateAccountAssetDataUseCase @Inject constructor(
@@ -34,7 +33,7 @@ internal class CreateAccountAssetDataUseCase @Inject constructor(
         val pendingDeletionAssetDataList = mutableListOf<BaseAccountAssetData.PendingAssetData.DeletionAssetData>()
 
         if (includeAlgo) {
-            ownedAssetDataList.add(createAlgoOwnedAssetData(accountInformation.amount.toBigIntegerOrZero()))
+            ownedAssetDataList.add(createAlgoOwnedAssetData(accountInformation.amount))
         }
 
         accountInformation.assetHoldings.forEach { assetHolding ->

@@ -14,9 +14,9 @@ package com.algorand.android.nft.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.modules.collectibles.common.mapper.BaseOwnedCollectibleDataFactory
-import com.algorand.common.account.info.domain.model.AccountInformation
-import com.algorand.common.account.info.domain.usecase.GetAccountInformation
-import com.algorand.common.asset.domain.usecase.GetCollectibleDetail
+import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
 import javax.inject.Inject
 
 internal class GetAccountCollectiblesDataUseCase @Inject constructor(

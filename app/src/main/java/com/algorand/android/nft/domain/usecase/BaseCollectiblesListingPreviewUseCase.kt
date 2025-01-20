@@ -30,7 +30,7 @@ import com.algorand.android.nft.ui.model.BaseCollectibleListData
 import com.algorand.android.nft.ui.model.BaseCollectibleListItem
 import com.algorand.android.sharedpref.SharedPrefLocalSource
 import com.algorand.android.utils.Event
-import com.algorand.common.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import java.math.BigInteger
 
 open class BaseCollectiblesListingPreviewUseCase(

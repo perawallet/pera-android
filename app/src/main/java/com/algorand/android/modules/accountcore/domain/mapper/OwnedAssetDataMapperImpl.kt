@@ -16,7 +16,7 @@ import com.algorand.android.assetsearch.domain.mapper.LegacyVerificationTierMapp
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.utils.toBigDecimalOrZero
-import com.algorand.common.asset.domain.model.AssetDetail
+import com.algorand.wallet.asset.domain.model.AssetDetail
 import java.math.BigInteger
 import javax.inject.Inject
 

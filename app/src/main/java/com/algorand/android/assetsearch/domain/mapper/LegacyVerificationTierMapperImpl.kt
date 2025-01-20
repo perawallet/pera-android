@@ -17,13 +17,13 @@ import javax.inject.Inject
 
 internal class LegacyVerificationTierMapperImpl @Inject constructor() : LegacyVerificationTierMapper {
 
-    override fun invoke(verificationTier: com.algorand.common.asset.domain.model.VerificationTier): VerificationTier {
+    override fun invoke(verificationTier: com.algorand.wallet.asset.domain.model.VerificationTier): VerificationTier {
         return when (verificationTier) {
-            com.algorand.common.asset.domain.model.VerificationTier.VERIFIED -> VerificationTier.VERIFIED
-            com.algorand.common.asset.domain.model.VerificationTier.UNVERIFIED -> VerificationTier.UNVERIFIED
-            com.algorand.common.asset.domain.model.VerificationTier.TRUSTED -> VerificationTier.TRUSTED
-            com.algorand.common.asset.domain.model.VerificationTier.SUSPICIOUS -> VerificationTier.SUSPICIOUS
-            com.algorand.common.asset.domain.model.VerificationTier.UNKNOWN -> VerificationTier.UNVERIFIED
+            com.algorand.wallet.asset.domain.model.VerificationTier.VERIFIED -> VerificationTier.VERIFIED
+            com.algorand.wallet.asset.domain.model.VerificationTier.UNVERIFIED -> VerificationTier.UNVERIFIED
+            com.algorand.wallet.asset.domain.model.VerificationTier.TRUSTED -> VerificationTier.TRUSTED
+            com.algorand.wallet.asset.domain.model.VerificationTier.SUSPICIOUS -> VerificationTier.SUSPICIOUS
+            com.algorand.wallet.asset.domain.model.VerificationTier.UNKNOWN -> VerificationTier.UNVERIFIED
         }
     }
 }

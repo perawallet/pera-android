@@ -43,9 +43,9 @@ import com.algorand.android.usecase.GetFormattedAccountMinimumBalanceUseCase
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.isGreaterThan
-import com.algorand.common.account.detail.domain.model.AccountType
-import com.algorand.common.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject

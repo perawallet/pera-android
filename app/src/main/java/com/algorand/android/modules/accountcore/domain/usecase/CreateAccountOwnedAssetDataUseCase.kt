@@ -19,9 +19,8 @@ import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAsse
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.toBigDecimalOrZero
-import com.algorand.android.utils.toBigIntegerOrZero
-import com.algorand.common.account.info.domain.model.AssetHolding
-import com.algorand.common.asset.domain.model.AssetDetail
+import com.algorand.wallet.account.info.domain.model.AssetHolding
+import com.algorand.wallet.asset.domain.model.AssetDetail
 import javax.inject.Inject
 
 internal class CreateAccountOwnedAssetDataUseCase @Inject constructor(
@@ -31,7 +30,7 @@ internal class CreateAccountOwnedAssetDataUseCase @Inject constructor(
 ) : CreateAccountOwnedAssetData {
 
     override suspend fun invoke(assetDetail: AssetDetail, assetHolding: AssetHolding): OwnedAssetData {
-        val amount = assetHolding.amount.toBigIntegerOrZero()
+        val amount = assetHolding.amount
         return ownedAssetDataMapper(
             assetDetail,
             amount = amount,
@@ -48,7 +47,7 @@ internal class CreateAccountOwnedAssetDataUseCase @Inject constructor(
 
     private fun getParityValueInSelectedCurrency(assetDetail: AssetDetail, assetHolding: AssetHolding): ParityValue {
         return getPrimaryCurrencyAssetParityValue(
-            assetHolding.amount.toBigIntegerOrZero(),
+            assetHolding.amount,
             assetDetail.usdValue.toBigDecimalOrZero(),
             assetDetail.getDecimalsOrZero()
         )
@@ -56,7 +55,7 @@ internal class CreateAccountOwnedAssetDataUseCase @Inject constructor(
 
     private fun getParityValueInSecondaryCurrency(assetDetail: AssetDetail, assetHolding: AssetHolding): ParityValue {
         return getSecondaryCurrencyAssetParityValue(
-            assetHolding.amount.toBigIntegerOrZero(),
+            assetHolding.amount,
             assetDetail.usdValue.toBigDecimalOrZero(),
             assetDetail.getDecimalsOrZero()
         )

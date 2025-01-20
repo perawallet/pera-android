@@ -10,13 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.common.account.core.domain.usecase
+package com.algorand.wallet.account.core.domain.usecase
 
-import com.algorand.common.account.custom.domain.usecase.DeleteAccountCustomInfo
-import com.algorand.common.account.info.domain.usecase.DeleteAccountInformation
-import com.algorand.common.account.local.domain.usecase.DeleteLocalAccount
+import com.algorand.wallet.account.custom.domain.usecase.DeleteAccountCustomInfo
+import com.algorand.wallet.account.info.domain.usecase.DeleteAccountInformation
+import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccount
+import javax.inject.Inject
 
-internal class DeleteAccountUseCase(
+internal class DeleteAccountUseCase @Inject constructor(
     private val deleteLocalAccount: DeleteLocalAccount,
     private val deleteAccountInformation: DeleteAccountInformation,
     private val deleteAccountCustomInfo: DeleteAccountCustomInfo

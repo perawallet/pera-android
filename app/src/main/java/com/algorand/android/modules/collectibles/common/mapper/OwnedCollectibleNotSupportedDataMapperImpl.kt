@@ -15,7 +15,7 @@ package com.algorand.android.modules.collectibles.common.mapper
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedUnsupportedCollectibleData
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.utils.toBigDecimalOrZero
-import com.algorand.common.asset.domain.model.UnsupportedCollectibleDetail
+import com.algorand.wallet.asset.domain.model.UnsupportedCollectibleDetail
 import java.math.BigInteger
 import javax.inject.Inject
 

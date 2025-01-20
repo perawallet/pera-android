@@ -62,7 +62,7 @@ import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
-import com.algorand.common.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.map

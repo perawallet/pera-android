@@ -13,7 +13,7 @@
 package com.algorand.android.nft.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
-import com.algorand.common.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.AccountInformation
 
 interface GetAccountCollectiblesData {
     suspend operator fun invoke(address: String): List<BaseOwnedCollectibleData>

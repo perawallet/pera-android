@@ -14,8 +14,8 @@ package com.algorand.android.modules.accountcore.domain.mapper
 
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.parity.domain.model.ParityValue
-import com.algorand.common.asset.domain.model.Asset
-import com.algorand.common.asset.domain.model.AssetDetail
+import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.model.AssetDetail
 import java.math.BigDecimal
 import java.math.BigInteger
 

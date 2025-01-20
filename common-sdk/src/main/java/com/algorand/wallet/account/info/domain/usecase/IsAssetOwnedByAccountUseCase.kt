@@ -10,16 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.common.cache.domain.usecase
+package com.algorand.wallet.account.info.domain.usecase
 
-import com.algorand.common.asset.domain.manager.AssetDetailCacheManager
-import com.algorand.common.asset.domain.model.AssetCacheStatus
+import java.math.BigInteger
+import javax.inject.Inject
 
-internal class IsAssetCacheStatusAtLeastEmptyUseCase(
-    private val assetDetailCacheManager: AssetDetailCacheManager
-) : IsAssetCacheStatusAtLeastEmpty {
+internal class IsAssetOwnedByAccountUseCase @Inject constructor(
+    private val getAccountInformation: GetAccountInformation
+) : IsAssetOwnedByAccount {
 
-    override fun invoke(): Boolean {
-        return assetDetailCacheManager.cacheStatusFlow.value isAtLeast AssetCacheStatus.EMPTY
+    override suspend operator fun invoke(address: String, assetId: Long): Boolean {
+        val assetHolding = getAccountInformation(address)
+            ?.assetHoldings
+            ?.firstOrNull { it.assetId == assetId }
+            ?: return false
+        return assetHolding.amount > BigInteger.ZERO
     }
 }

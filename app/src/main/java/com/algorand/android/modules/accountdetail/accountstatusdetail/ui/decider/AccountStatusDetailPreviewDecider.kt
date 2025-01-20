@@ -18,9 +18,9 @@ import com.algorand.android.models.Account
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
-import com.algorand.common.account.detail.domain.model.AccountDetail
-import com.algorand.common.account.detail.domain.model.AccountRegistrationType
-import com.algorand.common.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -36,7 +36,7 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             AccountType.Algo25 -> R.string.standard
             AccountType.RekeyedAuth -> R.string.rekeyed
             AccountType.Rekeyed, null -> R.string.no_auth
-            AccountType.Bip39 -> R.string.bip_39 // TODO Bip39
+            AccountType.HdKey -> R.string.bip_39 // TODO Bip39
         }
         val accountTypeString = context.getString(typeResId)
         return context.getString(R.string.account_type_account, accountTypeString)
@@ -61,7 +61,7 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                     authAccountState
                 )
             }
-            AccountType.Bip39 -> context.getString(R.string.bip_39) // TODO Bip39
+            AccountType.HdKey -> context.getString(R.string.bip_39) // TODO Bip39
             null -> context.getString(R.string.no_auth)
         }
         return accountTypeString
@@ -120,7 +120,7 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                 }
             }
             null -> R.string.your_account_is_rekeyed_to_an
-            AccountType.Bip39 -> R.string.your_account_is_a_standard // TODO Bip39
+            AccountType.HdKey -> R.string.your_account_is_a_standard // TODO Bip39
         }
         return AnnotatedString(descriptionStringResId)
     }
@@ -131,7 +131,7 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             AccountType.Algo25 -> null
             AccountType.RekeyedAuth -> AccountAssetItemButtonState.UNDO_REKEY
             AccountType.Rekeyed, null -> AccountAssetItemButtonState.WARNING
-            AccountType.Bip39 -> null
+            AccountType.HdKey -> null
         }
     }
 }

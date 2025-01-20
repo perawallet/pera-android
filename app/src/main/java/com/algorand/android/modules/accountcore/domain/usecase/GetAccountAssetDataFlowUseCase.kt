@@ -13,7 +13,7 @@
 package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.modules.accountcore.domain.model.AccountAssetData
-import com.algorand.common.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

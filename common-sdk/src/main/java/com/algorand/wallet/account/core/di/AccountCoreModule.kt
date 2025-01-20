@@ -20,6 +20,12 @@ import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccountUseCase
 import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccount
 import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccountUseCase
+import com.algorand.wallet.account.core.domain.usecase.DeleteAccount
+import com.algorand.wallet.account.core.domain.usecase.DeleteAccountUseCase
+import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlow
+import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlowUseCase
+import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlow
+import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlowUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,4 +46,13 @@ internal object AccountCoreModule {
 
     @Provides
     fun provideAddHdKeyAccount(useCase: AddHdKeyAccountUseCase): AddHdKeyAccount = useCase
+
+    @Provides
+    fun provideDeleteAccount(useCase: DeleteAccountUseCase): DeleteAccount = useCase
+
+    @Provides
+    fun provideGetAccountDetailFlow(useCase: GetAccountDetailFlowUseCase): GetAccountDetailFlow = useCase
+
+    @Provides
+    fun provideGetAccountsDetailsFlow(useCase: GetAccountsDetailsFlowUseCase): GetAccountsDetailsFlow = useCase
 }

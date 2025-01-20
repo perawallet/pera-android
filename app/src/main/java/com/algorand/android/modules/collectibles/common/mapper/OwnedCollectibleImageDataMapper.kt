@@ -14,7 +14,7 @@ package com.algorand.android.modules.collectibles.common.mapper
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
 import com.algorand.android.modules.parity.domain.model.ParityValue
-import com.algorand.common.asset.domain.model.ImageCollectibleDetail
+import com.algorand.wallet.asset.domain.model.ImageCollectibleDetail
 import java.math.BigInteger
 
 internal interface OwnedCollectibleImageDataMapper {

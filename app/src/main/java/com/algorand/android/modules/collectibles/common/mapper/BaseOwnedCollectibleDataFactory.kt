@@ -13,8 +13,8 @@
 package com.algorand.android.modules.collectibles.common.mapper
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
-import com.algorand.common.account.info.domain.model.AssetHolding
-import com.algorand.common.asset.domain.model.CollectibleDetail
+import com.algorand.wallet.account.info.domain.model.AssetHolding
+import com.algorand.wallet.asset.domain.model.CollectibleDetail
 
 interface BaseOwnedCollectibleDataFactory {
     operator fun invoke(assetHolding: AssetHolding, collectibleDetail: CollectibleDetail): BaseOwnedCollectibleData

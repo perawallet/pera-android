@@ -13,9 +13,9 @@
 package com.algorand.android.nft.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
-import com.algorand.common.account.detail.domain.model.AccountDetail
-import com.algorand.common.account.detail.domain.usecase.GetAccountDetail
-import com.algorand.common.account.info.domain.usecase.GetAllAccountInformationFlow
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull

@@ -15,8 +15,8 @@ package com.algorand.android.modules.accountcore.domain.usecase
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.modules.accountcore.domain.model.AccountAssetData
-import com.algorand.common.account.info.domain.model.AccountInformation
-import com.algorand.common.asset.domain.model.AssetDetail
+import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.asset.domain.model.AssetDetail
 import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
 

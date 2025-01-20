@@ -25,9 +25,10 @@ flowchart TD
                 E1("Cache")
                 E2("Account")
                 E3("Database")
-                E4("Node")
+                E4("Transaction Signing")
                 E5("Encryption")
                 E6("Asset/Collectibles")
+                E7("Node")
                 F1("Address Database")
                 F2("Pera Database")
                 F4("Java/Go Algo SDK")
@@ -38,9 +39,11 @@ flowchart TD
                 D1 <--> E4
                 D1 <--> E5
                 D1 <--> E6
+                D1 <--> E7
                 E3 <--> F1
                 E3 <--> F2
                 E4 <--> F4
+                E2 <--> F4
                 E5 <--> F5
             end
 
@@ -51,11 +54,18 @@ flowchart TD
                 H2("Business Logic Utils")
                 H3("Deeplink")
                 H4("Camera")
+                H5("Feature Flags")
+                H6("Analytics")
+                J1("Firebase")
 
                 G1 <--> H1
                 G1 <--> H2
                 G1 <--> H3
                 G1 <--> H4
+                G1 <--> H5
+                G1 <--> H6
+                H5 <--> J1
+                H6 <--> J1
             end
          D0 <--> D1
          D0 <--> G1

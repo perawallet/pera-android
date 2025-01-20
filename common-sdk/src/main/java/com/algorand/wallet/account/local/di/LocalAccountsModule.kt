@@ -43,8 +43,10 @@ import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccountUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlowUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsUseCase
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
@@ -171,6 +173,9 @@ internal object LocalAccountsModule {
     fun provideGetLocalAccounts(
         useCase: GetLocalAccountsUseCase
     ): GetLocalAccounts = useCase
+
+    @Provides
+    fun provideGetLocalAccount(useCase: GetLocalAccountUseCase): GetLocalAccount = useCase
 
     @Provides
     fun provideGetLocalAccountCountFlow(

@@ -25,6 +25,7 @@ import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
+import com.algorand.wallet.account.custom.domain.usecase.GetBackedUpAccounts
 import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomName
@@ -102,5 +103,10 @@ internal object CustomInfoModule {
     @Provides
     fun provideGetAccountAsbBackUpStatus(repository: CustomInfoRepository): GetAccountAsbBackUpStatus {
         return GetAccountAsbBackUpStatus(repository::isAccountBackedUp)
+    }
+
+    @Provides
+    fun provideGetBackedUpAccounts(repository: CustomInfoRepository): GetBackedUpAccounts {
+        return GetBackedUpAccounts(repository::getBackedUpAccounts)
     }
 }

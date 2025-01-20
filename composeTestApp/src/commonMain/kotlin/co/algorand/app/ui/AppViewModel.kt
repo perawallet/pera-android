@@ -15,7 +15,7 @@ package co.algorand.app.ui
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.common.cache.domain.usecase.InitializeAppCache
+import com.algorand.wallet.cache.domain.usecase.InitializeAppCache
 import kotlinx.coroutines.launch
 
 class AppViewModel(

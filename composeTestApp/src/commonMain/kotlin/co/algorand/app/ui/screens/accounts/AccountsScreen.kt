@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -58,8 +57,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation.NavController
 import co.algorand.app.ui.widgets.snackbar.SnackbarViewModel
-import com.algorand.common.account.info.domain.model.AccountInformation
-import com.algorand.common.ui.theme.PeraTheme
+import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.ui.theme.PeraTheme
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 

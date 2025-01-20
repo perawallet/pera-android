@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.algorand.common.ui.theme.PeraTheme
+import com.algorand.wallet.ui.theme.PeraTheme
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource

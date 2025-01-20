@@ -21,7 +21,7 @@ import co.algorand.app.ui.screens.PeraTypographyPreviewScreen
 import co.algorand.app.ui.screens.PeraTypographyPreviewScreenNavigation
 import co.algorand.app.ui.screens.QrScannerScreen
 import co.algorand.app.ui.screens.QrScannerScreenNavigation
-import com.algorand.common.ui.theme.PeraTheme
+import com.algorand.wallet.ui.theme.PeraTheme
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

@@ -21,6 +21,6 @@ dependencyResolutionManagement {
 rootProject.name = "algorand-android"
 include(":app")
 include(":composeTestApp")
-include(":wallet-sdk")
+include(":wallet-kmp")
 include(":test-utils")
-include(":common-sdk")
+include(":wallet-android")

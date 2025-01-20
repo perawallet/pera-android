@@ -65,7 +65,7 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.navigation.compose)
 
-            implementation(project(":wallet-sdk"))
+            implementation(project(":wallet-kmp"))
         }
 
         commonTest.dependencies {

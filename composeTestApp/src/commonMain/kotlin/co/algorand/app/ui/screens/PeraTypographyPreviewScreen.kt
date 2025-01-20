@@ -26,7 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.algorand.common.ui.typography.PeraTypography
+import com.algorand.wallet.ui.typography.PeraTypography
 import kotlinx.serialization.Serializable
 
 @Serializable

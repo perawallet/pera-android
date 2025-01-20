@@ -22,7 +22,7 @@ import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOnlineTran
 import com.algorand.android.modules.keyreg.domain.model.KeyRegTransaction
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.transaction.domain.GetTransactionParams
-import com.algorand.common.testing.peraFixture
+import com.algorand.wallet.testing.peraFixture
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest

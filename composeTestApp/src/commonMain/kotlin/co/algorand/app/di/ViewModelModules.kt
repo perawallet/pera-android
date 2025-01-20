@@ -3,8 +3,8 @@ package co.algorand.app.di
 import co.algorand.app.ui.AppViewModel
 import co.algorand.app.ui.screens.accounts.AccountsViewModel
 import co.algorand.app.ui.widgets.snackbar.SnackbarViewModel
-import com.algorand.common.viewmodel.EventDelegate
-import com.algorand.common.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.StateDelegate
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 

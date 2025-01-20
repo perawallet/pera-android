@@ -34,7 +34,7 @@ class AccountStatusDetailViewModel @Inject constructor(
     private val navArgs = AccountStatusDetailBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
     val accountAddress = navArgs.accountAddress
     val authAccountAddress: String
-        get() = _accountStatusDetailPreviewFlow.value?.authAccountDisplayName?.getRawAccountAddress().orEmpty()
+        get() = _accountStatusDetailPreviewFlow.value?.authAccountDisplayName?.accountAddress.orEmpty()
 
     private val _accountStatusDetailPreviewFlow = MutableStateFlow<AccountStatusDetailPreview?>(null)
     val accountStatusDetailPreviewFlow: StateFlow<AccountStatusDetailPreview?> get() = _accountStatusDetailPreviewFlow

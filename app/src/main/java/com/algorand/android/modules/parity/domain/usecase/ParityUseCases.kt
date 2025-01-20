@@ -14,8 +14,11 @@ package com.algorand.android.modules.parity.domain.usecase
 
 import com.algorand.android.modules.parity.domain.model.AlgoAmountValue
 import com.algorand.android.modules.parity.domain.model.ParityValue
+import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
+import com.algorand.android.utils.CacheResult
 import java.math.BigDecimal
 import java.math.BigInteger
+import kotlinx.coroutines.flow.Flow
 
 fun interface GetAlgoToUsdConversionRate {
     operator fun invoke(): BigDecimal
@@ -61,4 +64,8 @@ internal fun interface CalculateParityValue {
         conversionRate: BigDecimal,
         currencySymbol: String
     ): ParityValue
+}
+
+fun interface GetSelectedCurrencyDetailFlow {
+    operator fun invoke(): Flow<CacheResult<SelectedCurrencyDetail>?>
 }

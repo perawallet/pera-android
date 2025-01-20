@@ -17,10 +17,14 @@ import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalVa
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValueUseCase
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapperImpl
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDetailSummary
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDetailSummaryUseCase
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayNameUseCase
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreview
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreviewUseCase
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import com.algorand.wallet.nameservice.domain.usecase.GetAccountNameService
@@ -61,4 +65,14 @@ internal object AccountCoreUiModule {
     fun provideAccountItemConfigurationMapper(
         mapper: AccountItemConfigurationMapperImpl
     ): AccountItemConfigurationMapper = mapper
+
+    @Provides
+    fun provideGetAccountDetailSummary(
+        useCase: GetAccountDetailSummaryUseCase
+    ): GetAccountDetailSummary = useCase
+
+    @Provides
+    fun provideGetAccountOriginalStateIconDrawablePreview(
+        useCase: GetAccountOriginalStateIconDrawablePreviewUseCase
+    ): GetAccountOriginalStateIconDrawablePreview = useCase
 }

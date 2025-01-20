@@ -52,6 +52,10 @@ fun interface GetAccountInformation {
     suspend operator fun invoke(address: String): AccountInformation?
 }
 
+fun interface GetAccountInformationFlow {
+    operator fun invoke(address: String): Flow<AccountInformation?>
+}
+
 fun interface IsThereAnyCachedErrorAccount {
     suspend operator fun invoke(excludeNoAuthAccounts: Boolean): Boolean
 }
@@ -62,4 +66,8 @@ fun interface IsThereAnyCachedSuccessAccount {
 
 fun interface IsAssetOwnedByAccount {
     suspend operator fun invoke(address: String, assetId: Long): Boolean
+}
+
+fun interface DeleteAccountInformation {
+    suspend operator fun invoke(address: String)
 }

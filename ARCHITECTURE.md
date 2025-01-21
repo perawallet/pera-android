@@ -15,11 +15,10 @@ flowchart TD
             A2("Notifications")
             A3("Other App Features")
         end
-
     A1 <--> D0
          subgraph Wallet As A Sevice
          D0("Common Modules")
-            subgraph commonAndroid
+            subgraph common-sdk
                 D1("View Models & Repositories
             (Android Library)")
                 E1("Cache")
@@ -31,8 +30,16 @@ flowchart TD
                 E7("Node")
                 F1("Address Database")
                 F2("Pera Database")
-                F4("Java/Go Algo SDK")
-                F5("Android Keystore")
+                F3("Java/Go Algo SDK")
+                F4("Android Keystore")
+
+                H1("Webview")
+                H2("Deeplink")
+                H3("QR Code Scanner")
+                H4("Feature Flags")
+                H5("Analytics")
+                J1("Firebase")
+
                 D1 <--> E1
                 D1 <--> E2
                 D1 <--> E3
@@ -40,35 +47,21 @@ flowchart TD
                 D1 <--> E5
                 D1 <--> E6
                 D1 <--> E7
+                D1 <--> H1
+                D1 <--> H2
+                D1 <--> H3
+                D1 <--> H4
+                D1 <--> H5
+                H4 <--> J1
+                H5 <--> J1
+
                 E3 <--> F1
                 E3 <--> F2
-                E4 <--> F4
-                E2 <--> F4
-                E5 <--> F5
-            end
-
-            subgraph commonKmp
-                G1("View Models & Repositories
-                (Kotlin Multi-Platform Library)")
-                H1("Webview")
-                H2("Business Logic Utils")
-                H3("Deeplink")
-                H4("Camera")
-                H5("Feature Flags")
-                H6("Analytics")
-                J1("Firebase")
-
-                G1 <--> H1
-                G1 <--> H2
-                G1 <--> H3
-                G1 <--> H4
-                G1 <--> H5
-                G1 <--> H6
-                H5 <--> J1
-                H6 <--> J1
+                E4 <--> F3
+                E2 <--> F3
+                E5 <--> F4
             end
          D0 <--> D1
-         D0 <--> G1
         end
     end
 
@@ -78,6 +71,34 @@ flowchart TD
     end
 
     A1 <-- embeds (Discover section) --> C
+
+    subgraph 3rd Party Android Dapps
+    G("composeTestApp")
+    G <--> D0
+    end
+
+    %% colors
+    %% style D1 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+
+    %% style E1 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style E2 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style E3 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style E4 fill:#F2D2BD,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style E5 fill:#F0E68C,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style E6 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style E7 fill:#F2D2BD,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+
+    %% style H1 fill:#F2D2BD,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style H2 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style H3 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style H4 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style H5 fill:#F2D2BD,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+
+    %% style F1 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style F2 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style F3 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style F4 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
+    %% style J1 fill:#90EE90,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5
 ```
 
 # Cache Initialization

@@ -10,22 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.common.remoteconfig.data.service
+package com.algorand.wallet.remoteconfig.data.service
 
 import android.util.Log
-import com.google.firebase.ktx.BuildConfig
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.BuildConfig
+import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfig
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-internal actual fun getFirebaseRemoteConfigService(): FirebaseRemoteConfigService {
-    return FirebaseRemoteConfigServiceImpl()
-}
-
-internal class FirebaseRemoteConfigServiceImpl : FirebaseRemoteConfigService {
+internal class FirebaseRemoteConfigServiceImpl @Inject constructor() : FirebaseRemoteConfigService {
 
     private val remoteConfig: FirebaseRemoteConfig by lazy {
         Firebase.remoteConfig.apply {

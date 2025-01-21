@@ -10,13 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.testing
+package com.algorand.wallet.remoteconfig.domain.usecase
 
-class PeraFixture {
+const val IMMERSVE_BUTTON_TOGGLE = "enable_immersve"
+const val STAKING_BUTTON_TOGGLE = "enable_staking"
 
-    inline operator fun <reified T : Any?> invoke(): T {
-        return 0 as T
-    }
+fun interface IsFeatureToggleEnabled {
+    operator fun invoke(featureToggleKey: String): Boolean
 }
-
-actual inline fun <reified T : Any?> peraFixture(listItemSize: Int): T  = PeraFixture().invoke()

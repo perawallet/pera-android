@@ -10,11 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.common.remoteconfig.domain.usecase
+package com.algorand.wallet.remoteconfig.data.service
 
-const val IMMERSVE_BUTTON_TOGGLE = "enable_immersve"
-const val STAKING_BUTTON_TOGGLE = "enable_staking"
+internal interface FirebaseRemoteConfigService {
+    suspend fun fetchRemoteConfig()
 
-fun interface IsFeatureToggleEnabled {
-    operator fun invoke(featureToggleKey: String): Boolean
+    fun getBoolean(key: String): Boolean
 }

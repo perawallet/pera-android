@@ -10,19 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.common.testing
+package com.algorand.wallet.remoteconfig.domain.usecase
 
-import com.appmattus.kotlinfixture.kotlinFixture
-
-class PeraFixture(private val listItemSize: Int) {
-
-    val fixture = kotlinFixture {
-        repeatCount { listItemSize }
-    }
-
-    inline operator fun <reified T : Any?> invoke(): T {
-        return fixture()
-    }
+fun interface InitializeOperationalToggles {
+    suspend operator fun invoke()
 }
-
-actual inline fun <reified T : Any?> peraFixture(listItemSize: Int): T = PeraFixture(listItemSize).fixture()

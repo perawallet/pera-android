@@ -12,30 +12,16 @@
 
 package co.algorand.app.ui.widgets.snackbar
 
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import co.algorand.app.ui.widgets.snackbar.SnackbarViewModel.ViewEvent.Idle
 
 @Composable
 fun SnackBarLayout(
     viewModel: SnackbarViewModel,
     hostState: SnackbarHostState,
 ) {
-    LaunchedEffect(viewModel.viewEvent) {
-        viewModel.viewEvent.collect { event ->
-            when (event) {
-                is SnackbarViewModel.ViewEvent.DisplaySnackBar -> {
-                    hostState.showSnackbar(
-                        duration = SnackbarDuration.Short,
-                        message = event.message,
-                    )
-                }
-                Idle -> {
-                    // Do nothing
-                }
-            }
-        }
+    LaunchedEffect(Unit) {
+
     }
 }

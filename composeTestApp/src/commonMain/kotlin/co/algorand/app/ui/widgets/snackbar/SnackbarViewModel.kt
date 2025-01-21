@@ -13,31 +13,5 @@
 package co.algorand.app.ui.widgets.snackbar
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.algorand.common.viewmodel.EventDelegate
-import com.algorand.common.viewmodel.EventViewModel
-import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.getString
 
-class SnackbarViewModel(
-    private val eventDelegate: EventDelegate<ViewEvent>
-) : ViewModel(), EventViewModel<SnackbarViewModel.ViewEvent> by eventDelegate {
-
-    fun setSnackBarMessage(resource: StringResource) {
-        viewModelScope.launch {
-            eventDelegate.sendEvent(ViewEvent.DisplaySnackBar(getString(resource = resource)))
-        }
-    }
-
-    fun setSnackBarMessage(str: String) {
-        viewModelScope.launch {
-            eventDelegate.sendEvent(ViewEvent.DisplaySnackBar(str))
-        }
-    }
-
-    sealed interface ViewEvent {
-        data object Idle : ViewEvent
-        data class DisplaySnackBar(val message: String) : ViewEvent
-    }
-}
+class SnackbarViewModel : ViewModel()

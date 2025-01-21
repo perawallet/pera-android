@@ -16,7 +16,7 @@ import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.AssetCacheStatus
 import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
 
 fun interface ClearAssetCache {

@@ -15,7 +15,7 @@ package com.algorand.wallet.asset.domain.repository
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 
 internal interface AssetRepository {
 

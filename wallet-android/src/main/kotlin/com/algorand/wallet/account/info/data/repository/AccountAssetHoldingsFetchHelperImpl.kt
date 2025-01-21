@@ -14,7 +14,7 @@ package com.algorand.wallet.account.info.data.repository
 
 import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
 import javax.inject.Inject
 

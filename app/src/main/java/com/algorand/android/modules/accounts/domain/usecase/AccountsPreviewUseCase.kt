@@ -58,9 +58,9 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.combine
 import com.algorand.android.utils.extensions.getAssetHoldingList
 import com.algorand.android.utils.formatAsCurrency
-import com.algorand.wallet.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
+import com.algorand.wallet.kmp.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
+import com.algorand.wallet.kmp.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.kmp.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext

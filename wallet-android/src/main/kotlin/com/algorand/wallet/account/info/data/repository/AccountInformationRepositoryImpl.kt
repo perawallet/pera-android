@@ -18,7 +18,7 @@ import com.algorand.wallet.account.info.data.mapper.AccountInformationMapper
 import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

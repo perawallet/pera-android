@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.block.domain.usecase
 
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 
 fun interface ClearLastKnownBlockNumber {
     suspend operator fun invoke()

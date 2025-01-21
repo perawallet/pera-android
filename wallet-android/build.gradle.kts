@@ -36,6 +36,7 @@ android {
 dependencies {
 
     api(libs.algosdk)
+    api(project(":wallet-kmp"))
 
     implementation(libs.xhdwalletapi)
     implementation(libs.kotlin.bip39)

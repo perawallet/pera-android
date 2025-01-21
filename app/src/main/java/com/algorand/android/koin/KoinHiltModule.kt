@@ -12,8 +12,8 @@
 
 package com.algorand.android.koin
 
-import com.algorand.wallet.remoteconfig.domain.usecase.InitializeOperationalToggles
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.kmp.remoteconfig.domain.usecase.InitializeOperationalToggles
+import com.algorand.wallet.kmp.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

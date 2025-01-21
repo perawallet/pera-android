@@ -23,8 +23,6 @@ import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.wallet.algosdk.AlgoAccountSdk
 import com.algorand.wallet.algosdk.model.Bip32DerivationType
-import com.algorand.wallet.viewmodel.StateDelegate
-import com.algorand.wallet.viewmodel.StateViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -37,14 +35,13 @@ class AccountsViewModel(
     private val addAlgo25Account: AddAlgo25Account,
     private val algoAccountSdk: AlgoAccountSdk,
     private val deleteLocalAccount: DeleteLocalAccount,
-    private val stateDelegate: StateDelegate<ViewState>,
     private val getAllAccountInformationFlow: GetAllAccountInformationFlow
-) : ViewModel(), StateViewModel<AccountsViewModel.ViewState> by stateDelegate {
+) : ViewModel() {
 
     private var accountObserveJob: Job? = null
 
     init {
-        stateDelegate.setDefaultState(ViewState.Idle)
+        // stateDelegate.setDefaultState(ViewState.Idle)
     }
 
     fun recoverAlgo25Account(mnemonic: String) {
@@ -88,7 +85,7 @@ class AccountsViewModel(
                 localAccounts.forEach { address ->
                     accounts[address] = cachedAccounts[address]
                 }
-                stateDelegate.updateState { ViewState.Accounts(accounts) }
+                // stateDelegate.updateState { ViewState.Accounts(accounts) }
             }.launchIn(this)
         }
     }

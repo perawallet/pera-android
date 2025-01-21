@@ -30,9 +30,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.algorand.wallet.qr.presentation.view.QrScanner
-import com.algorand.wallet.qr.presentation.view.QrScannerViewEvent
-import com.algorand.wallet.ui.theme.PeraTheme
+import com.algorand.wallet.kmp.qr.presentation.view.QrScanner
+import com.algorand.wallet.kmp.qr.presentation.view.QrScannerViewEvent
+import com.algorand.wallet.kmp.ui.theme.PeraTheme
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 

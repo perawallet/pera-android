@@ -15,7 +15,7 @@ package com.algorand.wallet.block.data.repository
 import com.algorand.wallet.block.data.model.ShouldRefreshRequestBody
 import com.algorand.wallet.block.data.service.BlockPollingApiService
 import com.algorand.wallet.block.domain.repository.BlockPollingRepository
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.CacheResult
 import com.algorand.wallet.foundation.cache.SingleInMemoryLocalCache
 import com.algorand.wallet.foundation.network.exceptions.RetrofitErrorHandler

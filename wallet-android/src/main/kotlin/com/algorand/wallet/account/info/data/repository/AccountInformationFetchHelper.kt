@@ -13,7 +13,7 @@
 package com.algorand.wallet.account.info.data.repository
 
 import com.algorand.wallet.account.info.data.model.AccountInformationResponse
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 
 internal interface AccountInformationFetchHelper {
     suspend fun fetchAccount(address: String): PeraResult<AccountInformationResponse>

@@ -13,7 +13,7 @@
 package com.algorand.wallet.account.info.domain.repository
 
 import com.algorand.wallet.account.info.domain.model.AccountInformation
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
 
 internal interface AccountInformationRepository {

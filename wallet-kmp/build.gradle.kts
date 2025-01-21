@@ -119,7 +119,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.algorand.wallet"
+    namespace = "com.algorand.wallet.kmp"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()

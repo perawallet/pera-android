@@ -18,7 +18,7 @@ import com.algorand.wallet.account.info.data.model.IndexerAccountFetchRequestExc
 import com.algorand.wallet.account.info.data.model.IndexerAccountFetchRequestExcludes.CREATED_APPS
 import com.algorand.wallet.account.info.data.model.IndexerAccountFetchRequestExcludes.CREATED_ASSETS
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
 import java.io.IOException
 import javax.inject.Inject

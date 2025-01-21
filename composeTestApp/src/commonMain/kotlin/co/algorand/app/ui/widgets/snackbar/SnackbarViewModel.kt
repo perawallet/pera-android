@@ -14,25 +14,22 @@ package co.algorand.app.ui.widgets.snackbar
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.wallet.foundation.EventDelegate
-import com.algorand.wallet.foundation.EventViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.getString
 
 class SnackbarViewModel(
-    private val eventDelegate: EventDelegate<ViewEvent>
-) : ViewModel(), EventViewModel<SnackbarViewModel.ViewEvent> by eventDelegate {
+    // private val eventDelegate: EventDelegate<ViewEvent>
+) : ViewModel() {
 
     fun setSnackBarMessage(resource: StringResource) {
         viewModelScope.launch {
-            eventDelegate.sendEvent(ViewEvent.DisplaySnackBar(getString(resource = resource)))
+            // eventDelegate.sendEvent(ViewEvent.DisplaySnackBar(getString(resource = resource)))
         }
     }
 
     fun setSnackBarMessage(str: String) {
         viewModelScope.launch {
-            eventDelegate.sendEvent(ViewEvent.DisplaySnackBar(str))
+            // eventDelegate.sendEvent(ViewEvent.DisplaySnackBar(str))
         }
     }
 

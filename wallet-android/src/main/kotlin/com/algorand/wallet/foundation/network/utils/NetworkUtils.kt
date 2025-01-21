@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.foundation.network.utils
 
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 import com.algorand.wallet.foundation.network.exceptions.RetrofitErrorHandler
 import java.io.IOException
 import retrofit2.Response

@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import co.algorand.app.openUrl
 import co.algorand.app.ui.widgets.snackbar.SnackbarViewModel
-import com.algorand.wallet.ui.theme.LocalThemeIsDark
-import com.algorand.wallet.ui.theme.PeraTheme
+import com.algorand.wallet.kmp.ui.theme.LocalThemeIsDark
+import com.algorand.wallet.kmp.ui.theme.PeraTheme
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 

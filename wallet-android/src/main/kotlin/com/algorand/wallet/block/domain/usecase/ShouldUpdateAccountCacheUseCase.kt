@@ -15,7 +15,7 @@ package com.algorand.wallet.block.domain.usecase
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformation
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.block.domain.repository.BlockPollingRepository
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 import javax.inject.Inject
 
 internal class ShouldUpdateAccountCacheUseCase @Inject constructor(

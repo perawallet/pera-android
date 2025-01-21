@@ -322,3 +322,7 @@ dependencies {
     androidTestImplementation libs.runner
     androidTestImplementation libs.espresso.core
 }
+
+ksp {
+    arg('room.schemaLocation', "$projectDir/schemas")
+}

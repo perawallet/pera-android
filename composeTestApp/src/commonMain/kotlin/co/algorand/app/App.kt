@@ -3,7 +3,7 @@ package co.algorand.app
 import androidx.compose.runtime.Composable
 import co.algorand.app.di.initKoinConfig
 import co.algorand.app.ui.navigation.AppNavigation
-import com.algorand.wallet.ui.theme.PeraTheme
+import com.algorand.wallet.kmp.ui.theme.PeraTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 

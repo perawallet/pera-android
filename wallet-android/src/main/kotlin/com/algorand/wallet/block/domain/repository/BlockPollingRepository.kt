@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.block.domain.repository
 
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 
 internal interface BlockPollingRepository {
 

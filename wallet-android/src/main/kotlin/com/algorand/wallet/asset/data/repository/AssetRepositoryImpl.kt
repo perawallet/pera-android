@@ -28,7 +28,7 @@ import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleDetail
 import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.asset.data.service.AssetDetailApiService
 import com.algorand.wallet.asset.data.service.AssetDetailNodeApiService
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.kmp.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher

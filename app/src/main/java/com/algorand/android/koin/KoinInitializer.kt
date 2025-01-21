@@ -14,7 +14,7 @@ package com.algorand.android.koin
 
 import com.algorand.android.BuildConfig
 import com.algorand.android.core.PeraApp
-import com.algorand.wallet.remoteconfig.di.remoteConfigModule
+import com.algorand.wallet.kmp.remoteconfig.di.remoteConfigModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

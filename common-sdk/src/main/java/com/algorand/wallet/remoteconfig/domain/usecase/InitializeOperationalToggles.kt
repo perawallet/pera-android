@@ -10,11 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.common.remoteconfig.domain.usecase
+package com.algorand.wallet.remoteconfig.domain.usecase
 
-const val IMMERSVE_BUTTON_TOGGLE = "enable_immersve"
-const val STAKING_BUTTON_TOGGLE = "enable_staking"
-
-fun interface IsFeatureToggleEnabled {
-    operator fun invoke(featureToggleKey: String): Boolean
+fun interface InitializeOperationalToggles {
+    suspend operator fun invoke()
 }

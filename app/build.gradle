@@ -225,7 +225,6 @@ android {
 
 dependencies {
 
-    implementation project(':wallet-sdk')
     implementation project(':common-sdk')
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation libs.kotlinx.coroutines.core
@@ -318,6 +317,7 @@ dependencies {
     testImplementation libs.kotlin.test
     testImplementation libs.junit
     testImplementation libs.mockito
+    testImplementation(project(":test-utils"))
     androidTestImplementation libs.room.testing
     androidTestImplementation libs.runner
     androidTestImplementation libs.espresso.core

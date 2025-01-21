@@ -10,21 +10,11 @@
  * limitations under the License
  */
 
-package co.algorand.app.ui
+package com.algorand.wallet.remoteconfig.domain.usecase
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.algorand.common.cache.domain.usecase.InitializeAppCache
-import kotlinx.coroutines.launch
+const val IMMERSVE_BUTTON_TOGGLE = "enable_immersve"
+const val STAKING_BUTTON_TOGGLE = "enable_staking"
 
-class AppViewModel(
-    private val initializeAppCache: InitializeAppCache
-) : ViewModel() {
-
-    fun initCache(lifecycle: Lifecycle) {
-        viewModelScope.launch {
-            initializeAppCache(lifecycle)
-        }
-    }
+fun interface IsFeatureToggleEnabled {
+    operator fun invoke(featureToggleKey: String): Boolean
 }

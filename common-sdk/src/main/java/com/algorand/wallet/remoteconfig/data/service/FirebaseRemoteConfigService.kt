@@ -10,13 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.common.testing
+package com.algorand.wallet.remoteconfig.data.service
 
-class PeraFixture {
+internal interface FirebaseRemoteConfigService {
+    suspend fun fetchRemoteConfig()
 
-    inline operator fun <reified T : Any?> invoke(): T {
-        return 0 as T
-    }
+    fun getBoolean(key: String): Boolean
 }
-
-actual inline fun <reified T : Any?> peraFixture(listItemSize: Int): T  = PeraFixture().invoke()

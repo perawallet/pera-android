@@ -20,7 +20,7 @@ import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.utils.findAllNodes
-import com.algorand.common.remoteconfig.domain.usecase.InitializeOperationalToggles
+import com.algorand.wallet.remoteconfig.domain.usecase.InitializeOperationalToggles
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

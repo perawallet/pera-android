@@ -10,19 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.testing
+package com.algorand.wallet.remoteconfig.domain.repository
 
-import com.appmattus.kotlinfixture.kotlinFixture
+internal interface FeatureToggleRepository {
 
-class PeraFixture(private val listItemSize: Int) {
+    suspend fun initializeOperationalToggles()
 
-    val fixture = kotlinFixture {
-        repeatCount { listItemSize }
-    }
-
-    inline operator fun <reified T : Any?> invoke(): T {
-        return fixture()
-    }
+    fun isFeatureEnabled(featureName: String): Boolean
 }
-
-actual inline fun <reified T : Any?> peraFixture(listItemSize: Int): T = PeraFixture(listItemSize).fixture()

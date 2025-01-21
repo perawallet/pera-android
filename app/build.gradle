@@ -317,6 +317,7 @@ dependencies {
     testImplementation libs.kotlin.test
     testImplementation libs.junit
     testImplementation libs.mockito
+    testImplementation(project(":test-utils"))
     androidTestImplementation libs.room.testing
     androidTestImplementation libs.runner
     androidTestImplementation libs.espresso.core

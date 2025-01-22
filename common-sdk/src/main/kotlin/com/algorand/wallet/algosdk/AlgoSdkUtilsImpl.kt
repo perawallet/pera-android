@@ -13,9 +13,15 @@
 package com.algorand.wallet.algosdk
 
 import com.algorand.algosdk.crypto.Address
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import java.security.Security
 import javax.inject.Inject
 
 internal class AlgoSdkUtilsImpl @Inject constructor() : AlgoSdkUtils {
+    init {
+        Security.removeProvider("BC")
+        Security.insertProviderAt(BouncyCastleProvider(), 0)
+    }
 
     override fun isValidAddress(address: String?): Boolean {
         if (address.isNullOrBlank()) {

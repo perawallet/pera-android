@@ -15,22 +15,25 @@ package com.algorand.android.modules.algosdk.domain.usecase
 import com.algorand.algosdk.builder.transaction.KeyRegistrationTransactionBuilder
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.algosdk.domain.mapper.TransactionParametersResponseMapper
+import java.math.BigInteger
 import javax.inject.Inject
 
 internal class BuildKeyRegOfflineTransactionImpl @Inject constructor(
     private val transactionParametersResponseMapper: TransactionParametersResponseMapper
 ) : BuildKeyRegOfflineTransaction {
 
-    override fun invoke(address: String, note: String?, txnParams: TransactionParams): ByteArray? {
+    override fun invoke(address: String, fee: BigInteger?, note: String?, txnParams: TransactionParams): ByteArray? {
         return try {
-            createTransaction(address, note, txnParams)
+            createTransaction(address, fee, note, txnParams)
         } catch (e: Exception) {
             null
         }
     }
 
+    @Suppress("MagicNumber")
     private fun createTransaction(
         address: String,
+        flatFee: BigInteger?,
         note: String?,
         txnParams: TransactionParams
     ): ByteArray {
@@ -38,6 +41,10 @@ internal class BuildKeyRegOfflineTransactionImpl @Inject constructor(
         val builder = KeyRegistrationTransactionBuilder.Builder()
             .suggestedParams(params)
             .sender(address)
+
+        if (flatFee != null) {
+            builder.flatFee(flatFee)
+        }
 
         if (note != null) {
             builder.noteUTF8(note)

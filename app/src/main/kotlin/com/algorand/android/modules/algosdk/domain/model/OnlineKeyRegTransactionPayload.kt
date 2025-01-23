@@ -13,6 +13,7 @@
 package com.algorand.android.modules.algosdk.domain.model
 
 import com.algorand.android.models.TransactionParams
+import java.math.BigInteger
 
 data class OnlineKeyRegTransactionPayload(
     val senderAddress: String,
@@ -23,5 +24,6 @@ data class OnlineKeyRegTransactionPayload(
     val voteLastRound: String,
     val voteKeyDilution: String,
     val txnParams: TransactionParams,
-    val note: String?
+    val note: String?,
+    val flatFee: BigInteger?
 )

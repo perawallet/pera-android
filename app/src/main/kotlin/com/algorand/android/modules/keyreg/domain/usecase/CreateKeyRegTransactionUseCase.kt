@@ -63,11 +63,17 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
     ): ByteArray? {
         Security.removeProvider("BC")
         Security.insertProviderAt(BouncyCastleProvider(), 0)
-        txnDetail.fee?.let { params.fee = it.toLong() }
         return if (txnDetail.isOnlineKeyRegTxn()) {
-            buildKeyRegOnlineTransaction(txnDetail.toOnlineTxnPayload(params))
+            buildKeyRegOnlineTransaction(
+                params = txnDetail.toOnlineTxnPayload(txnDetail, params)
+            )
         } else {
-            buildKeyRegOfflineTransaction(txnDetail.address, txnDetail.note, params)
+            buildKeyRegOfflineTransaction(
+                txnDetail.address,
+                txnDetail.fee,
+                txnDetail.note,
+                params
+            )
         }
     }
 
@@ -83,7 +89,10 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
         )
     }
 
-    private fun KeyRegTransactionDetail.toOnlineTxnPayload(params: TransactionParams): OnlineKeyRegTransactionPayload {
+    private fun KeyRegTransactionDetail.toOnlineTxnPayload(
+        txnDetail: KeyRegTransactionDetail,
+        params: TransactionParams
+    ): OnlineKeyRegTransactionPayload {
         return OnlineKeyRegTransactionPayload(
             senderAddress = address,
             selectionPublicKey = selectionPublicKey.orEmpty(),
@@ -93,7 +102,8 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
             voteLastRound = voteLastRound.orEmpty(),
             voteKeyDilution = voteKeyDilution.orEmpty(),
             txnParams = params,
-            note = xnote ?: note
+            note = xnote ?: note,
+            flatFee = txnDetail.fee
         )
     }
 

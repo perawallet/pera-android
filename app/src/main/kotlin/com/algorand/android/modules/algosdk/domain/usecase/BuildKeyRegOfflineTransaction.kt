@@ -13,7 +13,8 @@
 package com.algorand.android.modules.algosdk.domain.usecase
 
 import com.algorand.android.models.TransactionParams
+import java.math.BigInteger
 
 interface BuildKeyRegOfflineTransaction {
-    operator fun invoke(address: String, note: String?, txnParams: TransactionParams): ByteArray?
+    operator fun invoke(address: String, fee: BigInteger?, note: String?, txnParams: TransactionParams): ByteArray?
 }

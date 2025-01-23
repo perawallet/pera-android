@@ -21,7 +21,9 @@ internal class BuildKeyRegOnlineTransactionImpl @Inject constructor(
     private val transactionParametersResponseMapper: TransactionParametersResponseMapper
 ) : BuildKeyRegOnlineTransaction {
 
-    override fun invoke(params: OnlineKeyRegTransactionPayload): ByteArray? {
+    override fun invoke(
+        params: OnlineKeyRegTransactionPayload
+    ): ByteArray? {
         return try {
             createTransaction(params)
         } catch (e: Exception) {
@@ -41,6 +43,10 @@ internal class BuildKeyRegOnlineTransactionImpl @Inject constructor(
                 .voteFirst(params.voteFirstRound.toLong())
                 .voteLast(params.voteLastRound.toLong())
                 .voteKeyDilution(params.voteKeyDilution.toLong())
+
+            if (flatFee != null) {
+                builder.flatFee(flatFee)
+            }
 
             if (note != null) {
                 builder.noteUTF8(params.note)

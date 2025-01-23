@@ -16,6 +16,7 @@ import com.algorand.wallet.algosdk.AlgoAccountSdk
 import com.algorand.wallet.algosdk.AlgoAccountSdkImpl
 import com.algorand.wallet.algosdk.AlgoSdkUtils
 import com.algorand.wallet.algosdk.AlgoSdkUtilsImpl
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

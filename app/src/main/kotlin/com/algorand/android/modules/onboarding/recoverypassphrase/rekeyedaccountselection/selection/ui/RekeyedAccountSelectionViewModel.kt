@@ -13,6 +13,7 @@
 package com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.selection.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.basefoundaccount.selection.ui.BaseFoundAccountSelectionViewModel
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.selection.ui.model.RekeyedAccountSelectionPreview
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.selection.ui.usecase.RekeyedAccountSelectionPreviewUseCase
@@ -21,6 +22,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RekeyedAccountSelectionViewModel @Inject constructor(
@@ -43,8 +45,10 @@ class RekeyedAccountSelectionViewModel @Inject constructor(
     }
 
     fun onChosenAccountAddClick() {
-        rekeyedAccountSelectionPreviewwFlow.update { preview ->
-            rekeyedAccountSelectionPreviewUseCase.updatePreviewWithChosenAccount(preview, accountCreation)
+        viewModelScope.launch {
+            rekeyedAccountSelectionPreviewwFlow.update { preview ->
+                rekeyedAccountSelectionPreviewUseCase.updatePreviewWithChosenAccount(preview, accountCreation)
+            }
         }
     }
 

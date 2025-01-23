@@ -15,6 +15,7 @@ package com.algorand.android.modules.asb.util
 import com.algorand.android.models.Account.Type
 import com.algorand.android.utils.ISO_EXTENDED_DATE_FORMAT
 import com.algorand.android.utils.getCurrentTimeAsZonedDateTime
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import java.time.format.DateTimeFormatter
 
 object AlgorandSecureBackupUtils {
@@ -27,6 +28,15 @@ object AlgorandSecureBackupUtils {
 
     val eligibleAccountTypes = listOf(Type.STANDARD, Type.WATCH, Type.REKEYED, Type.REKEYED_AUTH)
     val excludedAccountTypes = listOf(Type.LEDGER)
+
+    fun isAccountEligible(account: LocalAccount): Boolean {
+        return when (account) {
+            is LocalAccount.Algo25 -> true
+            is LocalAccount.HdKey -> false // TODO
+            is LocalAccount.LedgerBle -> false
+            is LocalAccount.NoAuth -> true
+        }
+    }
 
     fun createBackupFileName(): String {
         val backupFileNameFormatter = DateTimeFormatter.ofPattern(ISO_EXTENDED_DATE_FORMAT)

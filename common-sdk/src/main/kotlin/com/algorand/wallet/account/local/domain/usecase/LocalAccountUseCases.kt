@@ -16,19 +16,19 @@ import com.algorand.wallet.account.local.domain.model.Bip32DerivationType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import kotlinx.coroutines.flow.Flow
 
-fun interface AddHdKeyAccount {
-    suspend operator fun invoke(account: LocalAccount.HdKey)
+internal fun interface SaveHdKeyAccount {
+    suspend operator fun invoke(account: LocalAccount.HdKey, privateKey: ByteArray)
 }
 
-fun interface AddAlgo25Account {
-    suspend operator fun invoke(account: LocalAccount.Algo25)
+internal fun interface SaveAlgo25Account {
+    suspend operator fun invoke(account: LocalAccount.Algo25, privateKey: ByteArray)
 }
 
-fun interface AddLedgerBleAccount {
+internal fun interface SaveLedgerBleAccount {
     suspend operator fun invoke(account: LocalAccount.LedgerBle)
 }
 
-fun interface AddNoAuthAccount {
+internal fun interface SaveNoAuthAccount {
     suspend operator fun invoke(account: LocalAccount.NoAuth)
 }
 
@@ -85,11 +85,19 @@ fun interface GetLocalAccounts {
     suspend operator fun invoke(): List<LocalAccount>
 }
 
+fun interface GetLocalAccount {
+    suspend operator fun invoke(address: String): LocalAccount?
+}
+
 fun interface GetSecretKey {
     suspend operator fun invoke(address: String): ByteArray?
 }
 
 fun interface IsThereAnyAccountWithAddress {
+    suspend operator fun invoke(address: String): Boolean
+}
+
+fun interface IsThereAnyNoAuthAccountWithAddress {
     suspend operator fun invoke(address: String): Boolean
 }
 
@@ -115,9 +123,6 @@ fun interface UpdateNoAuthAccountToHdKey {
 }
 
 fun interface UpdateNoAuthAccountToLedgerBle {
-    suspend operator fun invoke(
-        address: String,
-        deviceMacAddress: String,
-        indexInLedger: Int
+    suspend operator fun invoke(address: String, deviceMacAddress: String, bluetoothName: String, indexInLedger: Int
     )
 }

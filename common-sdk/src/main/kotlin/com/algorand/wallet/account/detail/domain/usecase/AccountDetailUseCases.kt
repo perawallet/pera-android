@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.detail.domain.usecase
 
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountState
 import com.algorand.wallet.account.detail.domain.model.AccountType
@@ -26,4 +27,12 @@ fun interface GetAccountType {
 
 fun interface GetAccountRegistrationType {
     suspend operator fun invoke(address: String): AccountRegistrationType?
+}
+
+fun interface GetAccountDetail {
+    suspend operator fun invoke(address: String): AccountDetail
+}
+
+fun interface GetAccountsDetails {
+    suspend operator fun invoke(): List<AccountDetail>
 }

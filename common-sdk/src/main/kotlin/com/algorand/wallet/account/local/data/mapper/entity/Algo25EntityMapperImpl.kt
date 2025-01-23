@@ -14,14 +14,17 @@ package com.algorand.wallet.account.local.data.mapper.entity
 
 import com.algorand.wallet.account.local.data.database.model.Algo25Entity
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.encryption.AESPlatformManager
 import javax.inject.Inject
 
-internal class Algo25EntityMapperImpl @Inject constructor() : Algo25EntityMapper {
+internal class Algo25EntityMapperImpl @Inject constructor(
+    private val aesPlatformManager: AESPlatformManager
+) : Algo25EntityMapper {
 
-    override fun invoke(localAccount: LocalAccount.Algo25): Algo25Entity {
+    override fun invoke(localAccount: LocalAccount.Algo25, privateKey: ByteArray): Algo25Entity {
         return Algo25Entity(
             algoAddress = localAccount.algoAddress,
-            encryptedSecretKey = byteArrayOf() // TODO Fix here after updating function args
+            encryptedSecretKey = aesPlatformManager.encryptByteArray(privateKey),
         )
     }
 }

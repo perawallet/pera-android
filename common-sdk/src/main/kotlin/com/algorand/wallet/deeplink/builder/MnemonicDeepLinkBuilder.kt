@@ -16,6 +16,7 @@ import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
 import javax.inject.Inject
 
+
 internal class MnemonicDeepLinkBuilder @Inject constructor() : DeepLinkBuilder {
 
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {

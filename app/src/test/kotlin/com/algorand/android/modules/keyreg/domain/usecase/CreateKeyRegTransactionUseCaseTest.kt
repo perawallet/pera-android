@@ -22,13 +22,13 @@ import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOnlineTran
 import com.algorand.android.modules.keyreg.domain.model.KeyRegTransaction
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.transaction.domain.GetTransactionParams
-import com.algorand.test.peraFixture
+import com.algorand.common.testing.peraFixture
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class CreateKeyRegTransactionUseCaseTest {
 
@@ -107,7 +107,7 @@ class CreateKeyRegTransactionUseCaseTest {
             voteKeyDilution = null,
             fee = null,
             note = NOTE,
-            xnote = null
+            xnote = "xnote"
         )
         val ONLINE_KEY_REG_TXN_DETAIL = KeyRegTransactionDetail(
             address = "address",
@@ -120,7 +120,7 @@ class CreateKeyRegTransactionUseCaseTest {
             voteKeyDilution = "3",
             fee = null,
             note = NOTE,
-            xnote = null
+            xnote = "xnote"
         )
         val TRANSACTION_PARAMS = peraFixture<TransactionParams>()
         val ONLINE_TXN_PAYLOAD = OnlineKeyRegTransactionPayload(

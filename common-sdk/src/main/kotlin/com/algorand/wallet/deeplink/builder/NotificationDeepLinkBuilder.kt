@@ -19,6 +19,7 @@ import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.domain.util.getSafeAssetIdForResponse
 import javax.inject.Inject
 
+
 internal class NotificationDeepLinkBuilder @Inject constructor() : DeepLinkBuilder {
 
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {

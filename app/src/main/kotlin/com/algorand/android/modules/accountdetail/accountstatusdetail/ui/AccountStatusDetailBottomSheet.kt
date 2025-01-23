@@ -23,8 +23,8 @@ import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.databinding.BottomSheetAccountStatusDetailBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.browser.REKEY_SUPPORT_URL
@@ -114,17 +114,17 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
 
     private val authAccountDisplayNameCollector: suspend (AccountDisplayName?) -> Unit = { displayName ->
         binding.authAccountItemView.apply {
-            setTitleText(displayName?.getAccountPrimaryDisplayName())
-            setDescriptionText(displayName?.getAccountSecondaryDisplayName(resources))
-            setOnLongClickListener { onAccountAddressCopied(displayName?.getRawAccountAddress().orEmpty()); true }
+            setTitleText(displayName?.primaryDisplayName)
+            setDescriptionText(displayName?.secondaryDisplayName)
+            setOnLongClickListener { onAccountAddressCopied(displayName?.accountAddress.orEmpty()); true }
         }
     }
 
     private val accountDisplayNameCollector: suspend (AccountDisplayName?) -> Unit = { displayName ->
         binding.accountItemView.apply {
-            setTitleText(displayName?.getAccountPrimaryDisplayName())
-            setDescriptionText(displayName?.getAccountSecondaryDisplayName(resources))
-            setOnLongClickListener { onAccountAddressCopied(displayName?.getRawAccountAddress().orEmpty()); true }
+            setTitleText(displayName?.primaryDisplayName)
+            setDescriptionText(displayName?.secondaryDisplayName)
+            setOnLongClickListener { onAccountAddressCopied(displayName?.accountAddress.orEmpty()); true }
         }
     }
 

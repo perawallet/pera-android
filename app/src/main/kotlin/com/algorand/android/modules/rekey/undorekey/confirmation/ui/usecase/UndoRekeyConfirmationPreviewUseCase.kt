@@ -25,16 +25,13 @@ import com.algorand.android.modules.rekey.domain.usecase.SendSignedTransactionUs
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.mapper.UndoRekeyConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.model.UndoRekeyConfirmationPreview
 import com.algorand.android.repository.TransactionsRepository
-import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.MIN_FEE
-import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.calculateRekeyFee
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
-import com.algorand.android.utils.recordException
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
@@ -42,7 +39,6 @@ class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
     private val undoRekeyConfirmationPreviewMapper: UndoRekeyConfirmationPreviewMapper,
     private val accountDetailUseCase: AccountDetailUseCase,
     private val transactionsRepository: TransactionsRepository,
-    private val accountAdditionUseCase: AccountAdditionUseCase,
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
     private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
     private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
@@ -94,15 +90,6 @@ class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
         emit(preview.copy(isLoading = true))
         sendSignedTransactionUseCase.invoke(transactionDetail).useSuspended(
             onSuccess = {
-                val tempAccount = createRekeyedAccount(transactionDetail)
-                if (tempAccount == null) {
-                    emit(preview.copy(isLoading = false))
-                    return@useSuspended
-                }
-                accountAdditionUseCase.addNewAccount(
-                    tempAccount = tempAccount,
-                    creationType = CreationType.REKEYED
-                )
                 emit(
                     preview.copy(
                         isLoading = false,
@@ -156,54 +143,6 @@ class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
 
     fun getAccountAuthAddress(accountAddress: String): String {
         return accountDetailUseCase.getAuthAddress(accountAddress).orEmpty()
-    }
-
-    private fun createRekeyedAccount(signedTransactionDetail: SignedTransactionDetail): Account? {
-        return when (signedTransactionDetail) {
-            is SignedTransactionDetail.AssetOperation,
-            is SignedTransactionDetail.ExternalTransaction,
-            is SignedTransactionDetail.Group,
-            is SignedTransactionDetail.Arc59Send,
-            is SignedTransactionDetail.Arc59OptIn,
-            is SignedTransactionDetail.Send -> null
-            is SignedTransactionDetail.Arc59ClaimOrReject -> null
-
-            is SignedTransactionDetail.RekeyOperation -> createStandardAccount(signedTransactionDetail)
-            is SignedTransactionDetail.RekeyToStandardAccountOperation -> createStandardAccount(signedTransactionDetail)
-        }
-    }
-
-    private fun createStandardAccount(signedTransactionDetail: SignedTransactionDetail.RekeyOperation): Account {
-        val accountAddress = signedTransactionDetail.accountAddress
-        val accountName = signedTransactionDetail.accountName
-        val accountSecretKey = accountDetailUseCase.getCachedAccountDetail(accountAddress)
-            ?.data
-            ?.account
-            ?.getSecretKey()
-        if (accountSecretKey == null) {
-            recordException(IllegalArgumentException("IMPORTANT! Account secret key is null in $className"))
-        }
-        return Account.create(
-            publicKey = accountAddress,
-            detail = Account.Detail.Standard(accountSecretKey ?: byteArrayOf()),
-            accountName = accountName
-        )
-    }
-
-    private fun createStandardAccount(
-        signedTransactionDetail: SignedTransactionDetail.RekeyToStandardAccountOperation
-    ): Account {
-        val accountAddress = signedTransactionDetail.accountAddress
-        val accountName = signedTransactionDetail.accountName
-        val accountSecretKey = accountDetailUseCase.getCachedAccountDetail(accountAddress)
-            ?.data
-            ?.account
-            ?.getSecretKey()
-        return Account.create(
-            publicKey = accountAddress,
-            detail = Account.Detail.Standard(accountSecretKey ?: byteArrayOf()),
-            accountName = accountName
-        )
     }
 
     private fun createRekeyTransaction(accountAddress: String): TransactionData.Rekey? {

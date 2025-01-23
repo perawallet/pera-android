@@ -18,7 +18,6 @@ import com.algorand.android.core.AccountManager
 import com.algorand.android.customviews.passphraseinput.usecase.PassphraseInputGroupUseCase
 import com.algorand.android.customviews.passphraseinput.util.PassphraseInputConfigurationUtil
 import com.algorand.android.models.Account
-import com.algorand.android.models.Account.Detail
 import com.algorand.android.models.Account.Type
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AnnotatedString
@@ -32,9 +31,9 @@ import com.algorand.android.utils.PassphraseKeywordUtils.ACCOUNT_PASSPHRASES_WOR
 import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
-import kotlinx.coroutines.flow.flow
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val recoverWithPassphrasePreviewMapper: RecoverWithPassphrasePreviewMapper,
@@ -147,25 +146,27 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                     return@flow
                 }
             }
-            val recoveredAccount = Account.create(
-                publicKey = accountAddress,
-                detail = Detail.Standard(privateKey),
-                accountName = accountAddress.toShortenedAddress()
+            val recoveredAccount = AccountCreation(
+                address = accountAddress,
+                customName = accountAddress.toShortenedAddress(),
+                isBackedUp = true,
+                type = AccountCreation.Type.Algo25(privateKey),
+                creationType = RECOVER
             )
-            val accountCreation = AccountCreation(recoveredAccount, RECOVER)
             getRekeyedAccountUseCase.invoke(accountAddress).useSuspended(
                 onSuccess = {
                     val updatedPreview = if (it.isEmpty()) {
-                        preview.copy(navToNameRegistrationEvent = Event(accountCreation))
+                        preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
                     } else {
                         val rekeyedAccountAddresses = it.map { it.address }
-                        preview.copy(navToImportRekeyedAccountEvent = Event(accountCreation to rekeyedAccountAddresses))
+                        val event = Event(recoveredAccount to rekeyedAccountAddresses)
+                        preview.copy(navToImportRekeyedAccountEvent = event)
                     }
                     emit(updatedPreview)
                 },
                 onFailed = {
                     val updatedPreview = preview.copy(
-                        navToNameRegistrationEvent = Event(accountCreation),
+                        navToNameRegistrationEvent = Event(recoveredAccount),
                         showErrorEvent = Event(AnnotatedString(R.string.failed_to_fetch_rekeyed))
                     )
                     emit(updatedPreview)

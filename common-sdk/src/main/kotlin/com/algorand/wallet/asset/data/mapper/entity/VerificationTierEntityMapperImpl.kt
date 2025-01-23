@@ -14,8 +14,9 @@ package com.algorand.wallet.asset.data.mapper.entity
 
 import com.algorand.wallet.asset.data.model.VerificationTierResponse
 import com.algorand.wallet.asset.data.database.model.VerificationTierEntity
+import javax.inject.Inject
 
-internal class VerificationTierEntityMapperImpl : VerificationTierEntityMapper {
+internal class VerificationTierEntityMapperImpl @Inject constructor() : VerificationTierEntityMapper {
 
     override fun invoke(response: VerificationTierResponse?): VerificationTierEntity {
         return when (response) {

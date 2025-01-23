@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -20,21 +21,31 @@ import org.junit.Test
 class UpdateNoAuthAccountToLedgerBleUseCaseTest {
 
     private val deleteLocalAccount: DeleteLocalAccount = mockk(relaxed = true)
-    private val createLedgerBleAccount: CreateLedgerBleAccount = mockk(relaxed = true)
+    private val saveLedgerBleAccount: SaveLedgerBleAccount = mockk(relaxed = true)
 
-    private val sut = UpdateNoAuthAccountToLedgerBleUseCase(deleteLocalAccount, createLedgerBleAccount)
+    private val sut = UpdateNoAuthAccountToLedgerBleUseCase(deleteLocalAccount, saveLedgerBleAccount)
 
     @Test
     fun `EXPECT noAuthAccount to be deleted and new LedgerBleAccount to be created`() = runTest {
-        sut(ADDRESS, DEVICE_MAC_ADDRESS, INDEX_IN_LEDGER)
+        sut(ADDRESS, DEVICE_MAC_ADDRESS, BLE_ADDRESS, INDEX_IN_LEDGER)
 
         coVerify { deleteLocalAccount(ADDRESS) }
-        coVerify { createLedgerBleAccount(ADDRESS, DEVICE_MAC_ADDRESS, INDEX_IN_LEDGER) }
+        coVerify {
+            saveLedgerBleAccount(
+                LocalAccount.LedgerBle(
+                    ADDRESS,
+                    DEVICE_MAC_ADDRESS,
+                    BLE_ADDRESS,
+                    INDEX_IN_LEDGER
+                )
+            )
+        }
     }
 
-    companion object {
-        private const val ADDRESS = "ADDRESS"
-        private const val DEVICE_MAC_ADDRESS = "DEVICE_MAC_ADDRESS"
-        private const val INDEX_IN_LEDGER = 0
+    private companion object {
+        const val ADDRESS = "ADDRESS"
+        const val DEVICE_MAC_ADDRESS = "DEVICE_MAC_ADDRESS"
+        const val BLE_ADDRESS = "BLE_ADDRESS"
+        const val INDEX_IN_LEDGER = 0
     }
 }

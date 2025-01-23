@@ -13,7 +13,6 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.Account
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.TransactionData
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
@@ -23,23 +22,20 @@ import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.mapper.RekeyToStandardAccountConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
 import com.algorand.android.repository.TransactionsRepository
-import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.MIN_FEE
-import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.calculateRekeyFee
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
     private val rekeyToStandardAccountConfirmationPreviewMapper: RekeyToStandardAccountConfirmationPreviewMapper,
     private val accountDetailUseCase: AccountDetailUseCase,
     private val transactionsRepository: TransactionsRepository,
-    private val accountAdditionUseCase: AccountAdditionUseCase,
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
     private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
     private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
@@ -53,11 +49,6 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
         emit(preview.copy(isLoading = true))
         sendSignedTransactionUseCase.invoke(transactionDetail).useSuspended(
             onSuccess = {
-                val rekeyedAccount = createAccountRegardingByRekeyType(
-                    accountAddress = transactionDetail.accountAddress,
-                    accountName = transactionDetail.accountName
-                )
-                accountAdditionUseCase.addNewAccount(tempAccount = rekeyedAccount, creationType = CreationType.REKEYED)
                 emit(
                     preview.copy(
                         isLoading = false,
@@ -163,18 +154,5 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
         } else {
             preview.copy(onSendTransactionEvent = Event(Unit))
         }
-    }
-
-    private fun createAccountRegardingByRekeyType(accountAddress: String, accountName: String): Account {
-        val accountSecretKey = accountDetailUseCase.getCachedAccountDetail(accountAddress)
-            ?.data
-            ?.account
-            ?.getSecretKey()
-        val detail = Account.Detail.Rekeyed(accountSecretKey)
-        return Account.create(
-            publicKey = accountAddress,
-            detail = detail,
-            accountName = accountName
-        )
     }
 }

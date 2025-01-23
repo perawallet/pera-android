@@ -16,16 +16,18 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.accounts.domain.model.AccountPreview
-import com.algorand.android.modules.accounts.domain.usecase.AccountsPreviewUseCase
 import com.algorand.android.modules.tracking.accounts.AccountsEventTracker
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -33,7 +35,8 @@ class AccountsViewModel @Inject constructor(
     private val accountsPreviewUseCase: AccountsPreviewUseCase,
     private val accountsEventTracker: AccountsEventTracker,
     private val parityManager: ParityManager,
-    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase
+    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
+    private val getNotBackedUpAccounts: GetNotBackedUpAccounts
 ) : BaseViewModel() {
 
     private val _accountPreviewFlow = MutableStateFlow<AccountPreview?>(null)
@@ -135,8 +138,15 @@ class AccountsViewModel @Inject constructor(
         // TODO add logging?
     }
 
-    fun getNotBackedUpAccounts(): List<String> {
-        return accountsPreviewUseCase.getNotBackedUpAccounts()
+    fun navigateToBackUpPassphraseInfo() {
+        viewModelScope.launch {
+            val notBackedUpAccounts = getNotBackedUpAccounts()
+            _accountPreviewFlow.update {
+                it?.copy(
+                    onNavToBackUpPassphraseInfo = Event(notBackedUpAccounts)
+                )
+            }
+        }
     }
 
     private suspend fun updatePreviewForSwapNavigation() {

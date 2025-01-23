@@ -17,6 +17,7 @@ import com.algorand.android.customviews.TriStatesCheckBox
 import com.algorand.android.customviews.accountandassetitem.mapper.AccountItemConfigurationMapper
 import com.algorand.android.mapper.AccountDisplayNameMapper
 import com.algorand.android.models.Account
+import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
 import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
@@ -220,16 +221,18 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun addImportedAccount(importedAccount: BackupProtocolElement?) {
+    private suspend fun addImportedAccount(importedAccount: BackupProtocolElement?) {
         if (importedAccount == null) return
         val safeAccountAddress = importedAccount.address ?: return
         val safeAccountPrivateKey = importedAccount.privateKey?.decodeBase64ToByteArray() ?: return
         val safeAccountName = importedAccount.name.orEmpty().ifBlank { safeAccountAddress.toShortenedAddress() }
-        val recoveredAccount = Account.create(
-            publicKey = safeAccountAddress,
-            detail = Account.Detail.Standard(safeAccountPrivateKey),
-            accountName = safeAccountName
+        val recoveredAccount = AccountCreation(
+            address = safeAccountAddress,
+            customName = safeAccountName,
+            isBackedUp = true,
+            type = AccountCreation.Type.Algo25(safeAccountPrivateKey),
+            creationType = CreationType.RECOVER
         )
-        accountAdditionUseCase.addNewAccount(recoveredAccount, CreationType.RECOVER)
+        accountAdditionUseCase.addNewAccount(recoveredAccount)
     }
 }

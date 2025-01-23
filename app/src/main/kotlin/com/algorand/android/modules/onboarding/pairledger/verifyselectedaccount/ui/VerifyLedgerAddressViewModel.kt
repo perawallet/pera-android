@@ -133,7 +133,7 @@ class VerifyLedgerAddressViewModel @Inject constructor(
 
     fun addNewAccount(account: Account, creationType: CreationType?) {
         viewModelScope.launchIO {
-            accountAdditionUseCase.addNewAccount(account, creationType)
+//            accountAdditionUseCase.addNewAccount(account, creationType) // TODO will be implemented after ledger
         }
     }
 }

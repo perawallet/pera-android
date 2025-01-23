@@ -12,13 +12,16 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
-internal class UpdateNoAuthAccountToAlgo25UseCase(
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+import javax.inject.Inject
+
+internal class UpdateNoAuthAccountToAlgo25UseCase @Inject constructor(
     private val deleteLocalAccount: DeleteLocalAccount,
-    private val createAlgo25Account: CreateAlgo25Account
+    private val saveAlgo25Account: SaveAlgo25Account
 ) : UpdateNoAuthAccountToAlgo25 {
 
     override suspend fun invoke(address: String, secretKey: ByteArray) {
         deleteLocalAccount(address)
-        createAlgo25Account(address, secretKey)
+        saveAlgo25Account(LocalAccount.Algo25(address), secretKey)
     }
 }

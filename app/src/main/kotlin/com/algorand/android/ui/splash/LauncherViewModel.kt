@@ -22,10 +22,10 @@ import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.utils.findAllNodes
 import com.algorand.wallet.remoteconfig.domain.usecase.InitializeOperationalToggles
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class LauncherViewModel @Inject constructor(

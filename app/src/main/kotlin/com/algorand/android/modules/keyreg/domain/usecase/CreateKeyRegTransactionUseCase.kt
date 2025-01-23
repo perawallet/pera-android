@@ -63,6 +63,7 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
     ): ByteArray? {
         Security.removeProvider("BC")
         Security.insertProviderAt(BouncyCastleProvider(), 0)
+        txnDetail.fee?.let { params.fee = it.toLong() }
         return if (txnDetail.isOnlineKeyRegTxn()) {
             buildKeyRegOnlineTransaction(txnDetail.toOnlineTxnPayload(params))
         } else {

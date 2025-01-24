@@ -30,6 +30,7 @@ import com.algorand.android.modules.sorting.utils.SortingTypeCreator
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountOrderIndex
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 open class AccountSortingPreviewUseCase @Inject constructor(
     private val baseSortingListItemMapper: BaseSortingListItemMapper,
     private val sortingTypeCreator: SortingTypeCreator,

@@ -23,6 +23,7 @@
 # ---------------- BEGIN PERA -------------------
 -keep public enum com.algorand.android.**{ *; }
 -keep class com.algorand.android.** { *; }
+-keep class com.algorand.wallet.** { *; }
 -keep class androidx.** { *; }
 -keep class com.algorand.android.**.model.** { *; }
 
@@ -141,8 +142,8 @@
 -keepnames class com.fasterxml.jackson.** { *; }
  -dontwarn com.fasterxml.jackson.databind.**
  -keep class org.codehaus.** { *; }
- -keepclassmembers public final enum org.codehaus.jackson.annotate.JsonAutoDetect$Visibility {
- public static final org.codehaus.jackson.annotate.JsonAutoDetect$Visibility *; }
+# -keepclassmembers public final enum org.codehaus.jackson.annotate.JsonAutoDetect$Visibility {
+# public static final org.codehaus.jackson.annotate.JsonAutoDetect$Visibility *; }
 # ---------------- END FIREBASE -------------------
 
 
@@ -193,3 +194,5 @@
 -keep class com.google.gson.reflect.TypeToken { *; }
 -keep class * extends com.google.gson.reflect.TypeToken
 # ---------------- END OTHERS -------------------
+
+-dontwarn com.sun.jna.Native

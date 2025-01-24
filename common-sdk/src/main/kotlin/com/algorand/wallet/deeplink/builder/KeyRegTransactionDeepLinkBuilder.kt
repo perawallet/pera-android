@@ -25,7 +25,7 @@ internal class KeyRegTransactionDeepLinkBuilder @Inject constructor() : DeepLink
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink {
         return with(payload) {
             DeepLink.KeyReg(
-                senderAddress = accountAddress.orEmpty(),
+                senderAddress = accountAddress ?: host.orEmpty(),
                 fee = fee,
                 note = note,
                 xnote = xnote,

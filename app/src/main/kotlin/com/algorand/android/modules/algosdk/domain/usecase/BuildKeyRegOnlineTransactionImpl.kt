@@ -12,9 +12,12 @@
 
 package com.algorand.android.modules.algosdk.domain.usecase
 
-import com.algorand.algosdk.builder.transaction.KeyRegistrationTransactionBuilder
+import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.modules.algosdk.domain.mapper.TransactionParametersResponseMapper
 import com.algorand.android.modules.algosdk.domain.model.OnlineKeyRegTransactionPayload
+import com.algorand.android.utils.extensions.encodeBase64
+import com.algorand.android.utils.toSuggestedParams
+import com.algorand.android.utils.toUint64
 import javax.inject.Inject
 
 internal class BuildKeyRegOnlineTransactionImpl @Inject constructor(
@@ -33,26 +36,21 @@ internal class BuildKeyRegOnlineTransactionImpl @Inject constructor(
 
     private fun createTransaction(params: OnlineKeyRegTransactionPayload): ByteArray {
         return with(params) {
-            val txnParamsResponse = transactionParametersResponseMapper(params.txnParams)
-            val builder = KeyRegistrationTransactionBuilder.Builder()
-                .suggestedParams(txnParamsResponse)
-                .sender(senderAddress)
-                .selectionPublicKeyBase64(selectionPublicKey)
-                .stateProofKeyBase64(stateProofKey)
-                .participationPublicKeyBase64(voteKey)
-                .voteFirst(params.voteFirstRound.toLong())
-                .voteLast(params.voteLastRound.toLong())
-                .voteKeyDilution(params.voteKeyDilution.toLong())
-
+            val suggestedParams = params.txnParams.toSuggestedParams()
             if (flatFee != null) {
-                builder.flatFee(flatFee)
+                suggestedParams.fee = flatFee.toLong()
             }
 
-            if (note != null) {
-                builder.noteUTF8(params.note)
-            }
-
-            builder.build().bytes()
+            Sdk.makeKeyRegTxn(
+                senderAddress,
+                note?.toByteArray(),
+                voteKey.encodeBase64(),
+                selectionPublicKey.encodeBase64(),
+                voteFirstRound.toBigInteger().toUint64(),
+                voteLastRound.toBigInteger().toUint64(),
+                voteKeyDilution.toBigInteger().toUint64(),
+                suggestedParams
+            )
         }
     }
 }

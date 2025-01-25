@@ -10,12 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.common.remoteconfig.data.repository
+package com.algorand.wallet.remoteconfig.data.repository
 
-import com.algorand.common.remoteconfig.data.service.FirebaseRemoteConfigService
-import com.algorand.common.remoteconfig.domain.repository.FeatureToggleRepository
+import com.algorand.wallet.remoteconfig.data.service.FirebaseRemoteConfigService
+import com.algorand.wallet.remoteconfig.domain.repository.FeatureToggleRepository
+import javax.inject.Inject
 
-internal class FeatureToggleRepositoryImpl(
+internal class FeatureToggleRepositoryImpl @Inject constructor(
     private val firebaseRemoteConfigService: FirebaseRemoteConfigService
 ) : FeatureToggleRepository {
 

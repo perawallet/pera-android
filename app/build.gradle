@@ -224,8 +224,6 @@ android {
 }
 
 dependencies {
-
-    implementation project(':wallet-sdk')
     implementation project(':common-sdk')
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation libs.kotlinx.coroutines.core

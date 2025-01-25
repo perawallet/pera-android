@@ -10,11 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.common.remoteconfig.domain.repository
+package com.algorand.wallet.remoteconfig.domain.usecase
 
-internal interface FeatureToggleRepository {
-
-    suspend fun initializeOperationalToggles()
-
-    fun isFeatureEnabled(featureName: String): Boolean
+fun interface InitializeOperationalToggles {
+    suspend operator fun invoke()
 }

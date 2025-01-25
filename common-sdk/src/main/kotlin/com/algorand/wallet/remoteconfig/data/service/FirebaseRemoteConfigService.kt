@@ -10,8 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.common.remoteconfig.domain.usecase
+package com.algorand.wallet.remoteconfig.data.service
 
-fun interface InitializeOperationalToggles {
-    suspend operator fun invoke()
+internal interface FirebaseRemoteConfigService {
+    suspend fun fetchRemoteConfig()
+
+    fun getBoolean(key: String): Boolean
 }

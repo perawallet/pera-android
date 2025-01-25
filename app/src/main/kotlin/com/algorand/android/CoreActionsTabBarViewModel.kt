@@ -19,9 +19,9 @@ import com.algorand.android.BuildConfig.DISCOVER_MAINNET_URL
 import com.algorand.android.BuildConfig.DISCOVER_TESTNET_URL
 import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.usecase.GetIsProductionReleaseUseCase
-import com.algorand.common.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
-import com.algorand.common.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.common.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

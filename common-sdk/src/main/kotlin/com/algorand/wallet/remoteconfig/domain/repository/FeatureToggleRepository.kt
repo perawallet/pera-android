@@ -10,12 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.common.remoteconfig.data.service
+package com.algorand.wallet.remoteconfig.domain.repository
 
-internal interface FirebaseRemoteConfigService {
-    suspend fun fetchRemoteConfig()
+internal interface FeatureToggleRepository {
 
-    fun getBoolean(key: String): Boolean
+    suspend fun initializeOperationalToggles()
+
+    fun isFeatureEnabled(featureName: String): Boolean
 }
-
-internal expect fun getFirebaseRemoteConfigService(): FirebaseRemoteConfigService

@@ -36,9 +36,9 @@ import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRed
 import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.formatAsCurrency
-import com.algorand.common.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
-import com.algorand.common.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.common.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountAsbBackUpStatus
 import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.account.detail.domain.model.AccountType

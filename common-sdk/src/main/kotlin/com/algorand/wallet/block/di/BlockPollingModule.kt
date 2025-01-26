@@ -22,7 +22,7 @@ import com.algorand.wallet.block.domain.usecase.ShouldUpdateAccountCacheUseCase
 import com.algorand.wallet.block.domain.usecase.UpdateLastKnownBlockNumber
 import com.algorand.wallet.block.domain.usecase.UpdateLastKnownBlockNumberUseCase
 import com.algorand.wallet.foundation.cache.SingleInMemoryLocalCache
-import com.algorand.wallet.foundation.network.exceptions.RetrofitErrorHandler
+import com.algorand.wallet.foundation.network.exceptions.PeraRetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,7 +47,7 @@ internal object BlockPollingModule {
     @Singleton
     fun provideBlockPollingRepository(
         blockPollingApiService: BlockPollingApiService,
-        retrofitErrorHandler: RetrofitErrorHandler
+        retrofitErrorHandler: PeraRetrofitErrorHandler
     ): BlockPollingRepository {
         return BlockPollingRepositoryImpl(
             blockPollingApiService,
@@ -57,7 +57,7 @@ internal object BlockPollingModule {
     }
 
     @Provides
-    fun provideClearLastKnownBlockNumber(repository: BlockPollingRepositoryImpl): ClearLastKnownBlockNumber {
+    fun provideClearLastKnownBlockNumber(repository: BlockPollingRepository): ClearLastKnownBlockNumber {
         return ClearLastKnownBlockNumber(repository::clearLastKnownBlockNumber)
     }
 

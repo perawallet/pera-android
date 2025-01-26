@@ -15,9 +15,8 @@ package com.algorand.wallet.deeplink.parser.query
 import com.algorand.wallet.deeplink.model.PeraUri
 import com.algorand.wallet.foundation.json.JsonSerializer
 import com.google.gson.annotations.SerializedName
-import javax.inject.Inject
 
-internal class MnemonicQueryParser @Inject constructor(
+internal class MnemonicQueryParser(
     private val jsonSerializer: JsonSerializer
 ) : DeepLinkQueryParser<String?> {
 

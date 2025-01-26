@@ -18,13 +18,13 @@ import com.algorand.wallet.block.domain.repository.BlockPollingRepository
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.cache.CacheResult
 import com.algorand.wallet.foundation.cache.SingleInMemoryLocalCache
-import com.algorand.wallet.foundation.network.exceptions.RetrofitErrorHandler
+import com.algorand.wallet.foundation.network.exceptions.PeraRetrofitErrorHandler
 import com.algorand.wallet.foundation.network.utils.requestWithHipoErrorHandler
 
 internal class BlockPollingRepositoryImpl(
     private val blockPollingApiService: BlockPollingApiService,
     private val blockPollingLocalCache: SingleInMemoryLocalCache<Long>,
-    private val hipoErrorHandler: RetrofitErrorHandler
+    private val peraErrorHandler: PeraRetrofitErrorHandler
 ) : BlockPollingRepository {
 
     override suspend fun clearLastKnownBlockNumber() {
@@ -41,7 +41,7 @@ internal class BlockPollingRepositoryImpl(
 
     override suspend fun shouldUpdateAccountCache(localAccountAddresses: List<String>): PeraResult<Boolean> {
         val body = ShouldRefreshRequestBody(localAccountAddresses, getLastKnownAccountBlockNumber())
-        return requestWithHipoErrorHandler(hipoErrorHandler) { blockPollingApiService.shouldRefresh(body) }.map {
+        return requestWithHipoErrorHandler(peraErrorHandler) { blockPollingApiService.shouldRefresh(body) }.map {
             it.shouldRefresh ?: false
         }
     }

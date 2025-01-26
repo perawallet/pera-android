@@ -15,9 +15,8 @@ package com.algorand.wallet.deeplink.parser.query
 import com.algorand.wallet.algosdk.AlgoSdkUtils
 import com.algorand.wallet.deeplink.model.PeraUri
 import com.algorand.wallet.deeplink.utils.isCoinbaseDeepLink
-import javax.inject.Inject
 
-internal class AccountAddressQueryParser @Inject constructor(
+internal class AccountAddressQueryParser(
     private val algoSdkUtils: AlgoSdkUtils
 ) : DeepLinkQueryParser<String?> {
 

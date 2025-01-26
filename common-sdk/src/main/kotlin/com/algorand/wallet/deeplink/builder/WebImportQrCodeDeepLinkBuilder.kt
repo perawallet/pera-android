@@ -14,9 +14,8 @@ package com.algorand.wallet.deeplink.builder
 
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
-import javax.inject.Inject
 
-internal class WebImportQrCodeDeepLinkBuilder @Inject constructor() : DeepLinkBuilder {
+internal class WebImportQrCodeDeepLinkBuilder : DeepLinkBuilder {
 
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
         return with(payload) {

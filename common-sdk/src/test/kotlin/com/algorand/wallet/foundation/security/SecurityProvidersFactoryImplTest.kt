@@ -10,22 +10,22 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk
+package com.algorand.wallet.foundation.security
 
-import com.algorand.algosdk.crypto.Address
-import javax.inject.Inject
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-internal class AlgoSdkUtilsImpl @Inject constructor() : AlgoSdkUtils {
+class SecurityProvidersFactoryImplTest {
 
-    override fun isValidAddress(address: String?): Boolean {
-        if (address.isNullOrBlank()) {
-            return false
-        }
-        return try {
-            Address(address)
-            true
-        } catch (exception: Exception) {
-            false
-        }
+    private val sut = SecurityProvidersFactoryImpl()
+
+    @Test
+    fun `EXPECT BouncyCastleProvider with highest priority`() {
+        val result = sut.getProviders()
+
+        assertTrue(result.size == 1)
+        assertTrue(result.first().provider is BouncyCastleProvider)
+        assertTrue(result.first().priority == 0)
     }
 }

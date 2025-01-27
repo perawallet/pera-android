@@ -10,22 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk
+package com.algorand.wallet.foundation.security
 
-import com.algorand.algosdk.crypto.Address
 import javax.inject.Inject
 
-internal class AlgoSdkUtilsImpl @Inject constructor() : AlgoSdkUtils {
+internal class PeraSecurityManagerImpl @Inject constructor(
+    private val securityManager: SecurityManager,
+    private val securityProvidersFactory: SecurityProvidersFactory
+) : PeraSecurityManager {
 
-    override fun isValidAddress(address: String?): Boolean {
-        if (address.isNullOrBlank()) {
-            return false
-        }
-        return try {
-            Address(address)
-            true
-        } catch (exception: Exception) {
-            false
+    override fun initializeSecurityManager() {
+        val securityProviders = securityProvidersFactory.getProviders()
+        securityProviders.forEach { provider ->
+            securityManager.registerProvider(provider)
         }
     }
 }

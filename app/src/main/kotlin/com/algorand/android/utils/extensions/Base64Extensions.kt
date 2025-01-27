@@ -64,3 +64,17 @@ fun ByteArray.decodeBase64ToString(): String? {
         null
     }
 }
+
+fun String.standardizeBase64(): String {
+    var standardBase64 = this
+        .replace("-", "+")
+        .replace("_", "/")
+
+    val remainder = standardBase64.length % Base64.CRLF
+    if (remainder != 0) {
+        val paddingCount = Base64.CRLF - remainder
+        standardBase64 += "=".repeat(paddingCount)
+    }
+
+    return standardBase64
+}

@@ -13,16 +13,13 @@
 package com.algorand.android.modules.algosdk.domain.usecase
 
 import com.algorand.algosdk.sdk.Sdk
-import com.algorand.android.modules.algosdk.domain.mapper.TransactionParametersResponseMapper
 import com.algorand.android.modules.algosdk.domain.model.OnlineKeyRegTransactionPayload
-import com.algorand.android.utils.extensions.encodeBase64
+import com.algorand.android.utils.extensions.standardizeBase64
 import com.algorand.android.utils.toSuggestedParams
 import com.algorand.android.utils.toUint64
 import javax.inject.Inject
 
-internal class BuildKeyRegOnlineTransactionImpl @Inject constructor(
-    private val transactionParametersResponseMapper: TransactionParametersResponseMapper
-) : BuildKeyRegOnlineTransaction {
+internal class BuildKeyRegOnlineTransactionImpl @Inject constructor() : BuildKeyRegOnlineTransaction {
 
     override fun invoke(
         params: OnlineKeyRegTransactionPayload
@@ -39,17 +36,20 @@ internal class BuildKeyRegOnlineTransactionImpl @Inject constructor(
             val suggestedParams = params.txnParams.toSuggestedParams()
             if (flatFee != null) {
                 suggestedParams.fee = flatFee.toLong()
+                suggestedParams.flatFee = true
             }
 
-            Sdk.makeKeyRegTxn(
+            Sdk.makeKeyRegTxnWithStateProofKey(
                 senderAddress,
                 note?.toByteArray(),
-                voteKey.encodeBase64(),
-                selectionPublicKey.encodeBase64(),
+                suggestedParams,
+                voteKey.standardizeBase64(),
+                selectionPublicKey.standardizeBase64(),
+                stateProofKey.standardizeBase64(),
                 voteFirstRound.toBigInteger().toUint64(),
                 voteLastRound.toBigInteger().toUint64(),
                 voteKeyDilution.toBigInteger().toUint64(),
-                suggestedParams
+                false
             )
         }
     }

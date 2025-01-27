@@ -29,6 +29,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import java.math.BigInteger
 
 class CreateKeyRegTransactionUseCaseTest {
 
@@ -85,7 +86,14 @@ class CreateKeyRegTransactionUseCaseTest {
     fun `EXPECT offline txn array WHEN payload is for offline txn`() = runTest {
         val offlineTxnByteArray = "txnByteArray".toByteArray()
         coEvery { getTransactionParams() } returns Result.Success(TRANSACTION_PARAMS)
-        coEvery { buildKeyRegOfflineTransaction(ACCOUNT_ADDRESS, NOTE, TRANSACTION_PARAMS) } returns offlineTxnByteArray
+        coEvery {
+            buildKeyRegOfflineTransaction(
+                ACCOUNT_ADDRESS,
+                FEE,
+                NOTE,
+                TRANSACTION_PARAMS
+            )
+        } returns offlineTxnByteArray
 
         val result = sut(OFFLINE_KEY_REG_TXN_DETAIL)
 
@@ -96,6 +104,7 @@ class CreateKeyRegTransactionUseCaseTest {
     private companion object {
         const val ACCOUNT_ADDRESS = "address"
         const val NOTE = "note"
+        val FEE: BigInteger = BigInteger.valueOf(2000000)
         val OFFLINE_KEY_REG_TXN_DETAIL = KeyRegTransactionDetail(
             address = ACCOUNT_ADDRESS,
             type = "type",
@@ -132,7 +141,8 @@ class CreateKeyRegTransactionUseCaseTest {
             voteLastRound = ONLINE_KEY_REG_TXN_DETAIL.voteLastRound.orEmpty(),
             voteKeyDilution = ONLINE_KEY_REG_TXN_DETAIL.voteKeyDilution.orEmpty(),
             txnParams = TRANSACTION_PARAMS,
-            note = ONLINE_KEY_REG_TXN_DETAIL.note.orEmpty()
+            note = ONLINE_KEY_REG_TXN_DETAIL.note.orEmpty(),
+            FEE
         )
     }
 }

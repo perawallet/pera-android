@@ -12,15 +12,14 @@
 
 package com.algorand.android.modules.algosdk.domain.usecase
 
-import com.algorand.algosdk.builder.transaction.KeyRegistrationTransactionBuilder
+import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.models.TransactionParams
-import com.algorand.android.modules.algosdk.domain.mapper.TransactionParametersResponseMapper
+import com.algorand.android.utils.toSuggestedParams
+import com.algorand.android.utils.toUint64
 import java.math.BigInteger
 import javax.inject.Inject
 
-internal class BuildKeyRegOfflineTransactionImpl @Inject constructor(
-    private val transactionParametersResponseMapper: TransactionParametersResponseMapper
-) : BuildKeyRegOfflineTransaction {
+internal class BuildKeyRegOfflineTransactionImpl @Inject constructor() : BuildKeyRegOfflineTransaction {
 
     override fun invoke(address: String, fee: BigInteger?, note: String?, txnParams: TransactionParams): ByteArray? {
         return try {
@@ -30,26 +29,31 @@ internal class BuildKeyRegOfflineTransactionImpl @Inject constructor(
         }
     }
 
-    @Suppress("MagicNumber")
     private fun createTransaction(
         address: String,
         flatFee: BigInteger?,
         note: String?,
         txnParams: TransactionParams
     ): ByteArray {
-        val params = transactionParametersResponseMapper(txnParams)
-        val builder = KeyRegistrationTransactionBuilder.Builder()
-            .suggestedParams(params)
-            .sender(address)
-
+        val suggestedParams = txnParams.toSuggestedParams()
         if (flatFee != null) {
-            builder.flatFee(flatFee)
+            suggestedParams.fee = flatFee.toLong()
+            suggestedParams.flatFee = true
         }
 
-        if (note != null) {
-            builder.noteUTF8(note)
-        }
+        val defaultVoteValue = BigInteger.valueOf(0).toUint64()
 
-        return builder.build().bytes()
+        return Sdk.makeKeyRegTxnWithStateProofKey(
+            address,
+            note?.toByteArray(),
+            suggestedParams,
+            null,
+            null,
+            null,
+            defaultVoteValue,
+            defaultVoteValue,
+            defaultVoteValue,
+            false
+        )
     }
 }

@@ -10,22 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk
+package com.algorand.wallet.foundation.security
 
-import com.algorand.algosdk.crypto.Address
-import javax.inject.Inject
+import java.security.Provider
 
-internal class AlgoSdkUtilsImpl @Inject constructor() : AlgoSdkUtils {
-
-    override fun isValidAddress(address: String?): Boolean {
-        if (address.isNullOrBlank()) {
-            return false
-        }
-        return try {
-            Address(address)
-            true
-        } catch (exception: Exception) {
-            false
-        }
-    }
-}
+data class SecurityProvider(
+    val provider: Provider,
+    val priority: Int
+)

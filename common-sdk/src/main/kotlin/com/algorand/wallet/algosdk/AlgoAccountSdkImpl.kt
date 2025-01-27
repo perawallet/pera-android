@@ -25,17 +25,11 @@ import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
-import java.security.Security
-import org.bouncycastle.jce.provider.BouncyCastleProvider
 
 internal class AlgoAccountSdkImpl(
     private val entropyEncryptionManager: EntropyEncryptionManager,
     private val secretKeyEncryptionManager: SecretKeyEncryptionManager
 ) : AlgoAccountSdk {
-    init {
-        Security.removeProvider("BC")
-        Security.insertProviderAt(BouncyCastleProvider(), 0)
-    }
 
     override fun createHdAccount(): HdAccount {
         val generatedMnemonic = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_24)

@@ -1,0 +1,35 @@
+name: "Pera Android Saucelabs Tests"
+
+on:
+  push:
+  pull_request:
+
+env:
+  SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+  SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+  GITHUB_TOKEN: ${{ github.token }}
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Code"
+        uses: actions/checkout@v4
+
+      - name: "Install JDK 17"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+          cache: "gradle"
+
+      - name: "Create Prod Debug APK"
+        run: |
+          ./gradlew app:assembleProdDebug
+          ./gradlew app:assembleProdDebugAndroidTest
+
+      - name: "Run saucectl"
+        uses: saucelabs/saucectl-run-action@v4
+        with:
+          testing-environment: ""
+          concurrency: 1

@@ -200,6 +200,7 @@ android {
     }
 
     packagingOptions {
+        exclude 'META-INF/versions/9/OSGI-INF/MANIFEST.MF'
         exclude 'META-INF/DEPENDENCIES.md'
         exclude 'META-INF/NOTICE.md'
         exclude 'META-INF/LICENSE.md'

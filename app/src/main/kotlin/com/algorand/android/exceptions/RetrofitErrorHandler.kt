@@ -31,15 +31,15 @@ class RetrofitErrorHandler(
         val requestMethod = networkResponseRequest?.method
         val requestUrl = networkResponseRequest?.url
 
-        logStringBuilder.appendln("HipoExceptionsAndroid")
-        logStringBuilder.appendln("--->")
-        logStringBuilder.appendln("$responseCode $requestMethod $requestUrl ")
-        logStringBuilder.appendln("HEADERS { ")
+        logStringBuilder.appendLine("HipoExceptionsAndroid")
+        logStringBuilder.appendLine("--->")
+        logStringBuilder.appendLine("$responseCode $requestMethod $requestUrl ")
+        logStringBuilder.appendLine("HEADERS { ")
         val headers = networkResponseRequest?.headers
         headers?.names()?.forEach { headerName ->
-            logStringBuilder.appendln("\t$headerName: ${headers[headerName]}")
+            logStringBuilder.appendLine("\t$headerName: ${headers[headerName]}")
         }
-        logStringBuilder.appendln("}\n<--")
+        logStringBuilder.appendLine("}\n<--")
 
         return logStringBuilder.toString()
     }

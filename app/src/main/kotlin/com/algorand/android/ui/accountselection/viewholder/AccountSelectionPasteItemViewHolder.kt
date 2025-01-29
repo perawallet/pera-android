@@ -23,7 +23,7 @@ class AccountSelectionPasteItemViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: BaseAccountSelectionListItem.PasteItem) {
-        binding.copiedAddressTextView.text = item.publicKey
+        binding.copiedAddressTextView.text = item.address
     }
 
     companion object {

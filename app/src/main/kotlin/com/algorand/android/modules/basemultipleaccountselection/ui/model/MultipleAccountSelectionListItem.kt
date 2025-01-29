@@ -18,8 +18,8 @@ import com.algorand.android.customviews.TriStatesCheckBox
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.RecyclerListItem
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
 
 abstract class MultipleAccountSelectionListItem : RecyclerListItem {
 
@@ -92,8 +92,7 @@ abstract class MultipleAccountSelectionListItem : RecyclerListItem {
             get() = ItemType.ACCOUNT_ITEM
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is AccountItem &&
-                accountDisplayName.getRawAccountAddress() == other.accountDisplayName.getRawAccountAddress()
+            return other is AccountItem && accountDisplayName.accountAddress == other.accountDisplayName.accountAddress
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

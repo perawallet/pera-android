@@ -43,6 +43,7 @@ import com.algorand.wallet.account.info.domain.manager.AccountCacheManagerImpl
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.account.info.domain.usecase.ClearAccountInformationCache
 import com.algorand.wallet.account.info.domain.usecase.DeleteAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
@@ -231,5 +232,10 @@ internal object AccountInformationModule {
     @Provides
     fun provideGetAccountInformationFlow(repository: AccountInformationRepository): GetAccountInformationFlow {
         return GetAccountInformationFlow(repository::getAccountInformationFlow)
+    }
+
+    @Provides
+    fun provideFetchAccountInformation(repository: AccountInformationRepository): FetchAccountInformation {
+        return FetchAccountInformation(repository::fetchAccountInformation)
     }
 }

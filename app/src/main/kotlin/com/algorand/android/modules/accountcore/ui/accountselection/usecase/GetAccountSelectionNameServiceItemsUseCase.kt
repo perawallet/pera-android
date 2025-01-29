@@ -10,23 +10,21 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.nftdomain.ui.usecase
+package com.algorand.android.modules.accountcore.ui.accountselection.usecase
 
-import com.algorand.android.mapper.AccountSelectionListItemMapper
-import com.algorand.android.models.BaseAccountSelectionListItem
-import com.algorand.android.modules.nftdomain.domain.usecase.GetNftDomainSearchResultUseCase
+import com.algorand.android.models.BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem
+import com.algorand.android.modules.accountcore.ui.accountselection.mapper.AccountSelectionListItemMapper
+import com.algorand.wallet.nameservice.domain.usecase.GetNameServiceSearchResults
 import javax.inject.Inject
 
-class GetAccountSelectionNftDomainItemsUseCase @Inject constructor(
-    private val getNftDomainSearchResultUseCase: GetNftDomainSearchResultUseCase,
+internal class GetAccountSelectionNameServiceItemsUseCase @Inject constructor(
+    private val getNameServiceSearchResults: GetNameServiceSearchResults,
     private val accountSelectionListItemMapper: AccountSelectionListItemMapper
-) {
+) : GetAccountSelectionNameServiceItems {
 
-    suspend fun getAccountSelectionNftDomainAccounts(
-        query: String
-    ): List<BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem> {
+    override suspend fun invoke(query: String): List<NftDomainAccountItem> {
         return if (query.isNotBlank()) {
-            getNftDomainSearchResultUseCase.getNftDomainSearchResults(query).map {
+            getNameServiceSearchResults(query).map {
                 accountSelectionListItemMapper.mapToNftDomainAccountItem(it)
             }
         } else emptyList()

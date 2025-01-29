@@ -20,8 +20,12 @@ import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccountUseCase
 import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccount
 import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccountUseCase
+import com.algorand.wallet.account.core.domain.usecase.CacheAccountDetail
+import com.algorand.wallet.account.core.domain.usecase.CacheAccountDetailUseCase
 import com.algorand.wallet.account.core.domain.usecase.DeleteAccount
 import com.algorand.wallet.account.core.domain.usecase.DeleteAccountUseCase
+import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssets
+import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssetsUseCase
 import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlow
 import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlowUseCase
 import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlow
@@ -55,4 +59,12 @@ internal object AccountCoreModule {
 
     @Provides
     fun provideGetAccountsDetailsFlow(useCase: GetAccountsDetailsFlowUseCase): GetAccountsDetailsFlow = useCase
+
+    @Provides
+    fun provideCacheAccountDetail(useCase: CacheAccountDetailUseCase): CacheAccountDetail = useCase
+
+    @Provides
+    fun provideFetchAccountInformationAndCacheAssets(
+        useCase: FetchAccountInformationAndCacheAssetsUseCase
+    ): FetchAccountInformationAndCacheAssets = useCase
 }

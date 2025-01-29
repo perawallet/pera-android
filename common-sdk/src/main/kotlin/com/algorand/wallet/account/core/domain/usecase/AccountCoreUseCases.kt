@@ -13,6 +13,8 @@
 package com.algorand.wallet.account.core.domain.usecase
 
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
 
 fun interface AddAlgo25Account {
@@ -61,4 +63,12 @@ fun interface GetAccountDetailFlow {
 
 fun interface GetAccountsDetailsFlow {
     operator fun invoke(): Flow<List<AccountDetail>>
+}
+
+fun interface CacheAccountDetail {
+    suspend operator fun invoke(address: String): PeraResult<AccountInformation>
+}
+
+fun interface FetchAccountInformationAndCacheAssets {
+    suspend operator fun invoke(address: String): PeraResult<AccountInformation>
 }

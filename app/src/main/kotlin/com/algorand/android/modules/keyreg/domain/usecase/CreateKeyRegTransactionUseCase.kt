@@ -18,6 +18,7 @@ import com.algorand.android.models.Result.Success
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.accounts.domain.usecase.GetAuthAddressOfAnAccount
 import com.algorand.android.modules.accounts.domain.usecase.IsSenderRekeyedToAnotherAccount
+import com.algorand.android.modules.algosdk.domain.model.OfflineKeyRegTransactionPayload
 import com.algorand.android.modules.algosdk.domain.model.OnlineKeyRegTransactionPayload
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOfflineTransaction
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOnlineTransaction
@@ -69,10 +70,12 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
             )
         } else {
             buildKeyRegOfflineTransaction(
-                txnDetail.address,
-                txnDetail.fee,
-                txnDetail.note,
-                params
+                OfflineKeyRegTransactionPayload(
+                    txnDetail.address,
+                    txnDetail.fee,
+                    txnDetail.note,
+                    params
+                )
             )
         }
     }

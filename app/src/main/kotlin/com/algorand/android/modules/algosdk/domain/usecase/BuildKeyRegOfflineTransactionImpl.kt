@@ -13,7 +13,7 @@
 package com.algorand.android.modules.algosdk.domain.usecase
 
 import com.algorand.algosdk.sdk.Sdk
-import com.algorand.android.models.TransactionParams
+import com.algorand.android.modules.algosdk.domain.model.OfflineKeyRegTransactionPayload
 import com.algorand.android.utils.toSuggestedParams
 import com.algorand.android.utils.toUint64
 import java.math.BigInteger
@@ -21,39 +21,36 @@ import javax.inject.Inject
 
 internal class BuildKeyRegOfflineTransactionImpl @Inject constructor() : BuildKeyRegOfflineTransaction {
 
-    override fun invoke(address: String, fee: BigInteger?, note: String?, txnParams: TransactionParams): ByteArray? {
+    override fun invoke(payload: OfflineKeyRegTransactionPayload): ByteArray {
         return try {
-            createTransaction(address, fee, note, txnParams)
+            createTransaction(payload)
         } catch (e: Exception) {
-            null
+            ByteArray(0)
         }
     }
 
-    private fun createTransaction(
-        address: String,
-        flatFee: BigInteger?,
-        note: String?,
-        txnParams: TransactionParams
-    ): ByteArray {
-        val suggestedParams = txnParams.toSuggestedParams()
-        if (flatFee != null) {
-            suggestedParams.fee = flatFee.toLong()
-            suggestedParams.flatFee = true
+    private fun createTransaction(payload: OfflineKeyRegTransactionPayload): ByteArray {
+        return with(payload) {
+            val suggestedParams = txnParams.toSuggestedParams()
+            if (flatFee != null) {
+                suggestedParams.fee = flatFee.toLong()
+                suggestedParams.flatFee = true
+            }
+
+            val defaultVoteValue = BigInteger.ZERO.toUint64()
+
+            Sdk.makeKeyRegTxnWithStateProofKey(
+                senderAddress,
+                note?.toByteArray(),
+                suggestedParams,
+                null,
+                null,
+                null,
+                defaultVoteValue,
+                defaultVoteValue,
+                defaultVoteValue,
+                false
+            )
         }
-
-        val defaultVoteValue = BigInteger.valueOf(0).toUint64()
-
-        return Sdk.makeKeyRegTxnWithStateProofKey(
-            address,
-            note?.toByteArray(),
-            suggestedParams,
-            null,
-            null,
-            null,
-            defaultVoteValue,
-            defaultVoteValue,
-            defaultVoteValue,
-            false
-        )
     }
 }

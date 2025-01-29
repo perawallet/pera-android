@@ -10,12 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.algosdk.domain.usecase
+package com.algorand.android.modules.algosdk.domain.model
 
-import com.algorand.android.modules.algosdk.domain.model.OfflineKeyRegTransactionPayload
+import com.algorand.android.models.TransactionParams
+import java.math.BigInteger
 
-interface BuildKeyRegOfflineTransaction {
-    operator fun invoke(
-        payload: OfflineKeyRegTransactionPayload
-    ): ByteArray?
-}
+data class OfflineKeyRegTransactionPayload(
+    val senderAddress: String,
+    val flatFee: BigInteger?,
+    val note: String?,
+    val txnParams: TransactionParams
+)

@@ -14,7 +14,6 @@
 package com.algorand.android.utils.validator
 
 import com.algorand.android.R
-import com.algorand.android.models.AccountCacheData
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
@@ -29,6 +28,7 @@ import com.algorand.android.utils.isEqualTo
 import com.algorand.android.utils.isLesserThan
 import com.algorand.android.utils.isValidAddress
 import com.algorand.android.utils.minBalancePerAssetAsBigInteger
+import com.algorand.wallet.account.info.domain.model.AccountInformation
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -59,16 +59,16 @@ class AccountTransactionValidator @Inject constructor(
     }
 
     fun isCloseTransactionToSameAccount(
-        fromAccount: AccountCacheData?,
+        fromAccount: AccountInformation?,
         toAccount: String,
         selectedAsset: AssetInformation?,
         amount: BigInteger
     ): Boolean {
         val isMax = amount == selectedAsset?.amount
-        val hasOnlyAlgo = fromAccount?.accountInformation?.run {
-            !isThereAnOptedInApp() || !isThereAnyDifferentAsset()
+        val hasOnlyAlgo = fromAccount?.run {
+            !isThereAnOptedInApp() || !isThereAnOptedInAsset()
         } ?: false
-        return fromAccount?.account?.address == toAccount && selectedAsset?.isAlgo() == true && isMax && hasOnlyAlgo
+        return fromAccount?.address == toAccount && selectedAsset?.isAlgo() == true && isMax && hasOnlyAlgo
     }
 
     fun isSendingMaxAmountToTheSameAccount(

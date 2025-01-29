@@ -209,13 +209,14 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
         }
     }
 
+    // TODO Will be fixed with PERA-1540
     private fun getAccountType(type: String?): AccountType? {
         return when (type?.lowercase()) {
-            "standard" -> return AccountType.Algo25
-            "ledger" -> return AccountType.LedgerBle
-            "rekeyed" -> return AccountType.Rekeyed
-            "rekeyed_auth" -> return AccountType.RekeyedAuth
-            "watch" -> return AccountType.NoAuth
+            "standard" -> AccountType.Algo25
+            "ledger" -> AccountType.LedgerBle
+            "rekeyed" -> AccountType.Rekeyed
+            "rekeyed_auth" -> AccountType.RekeyedAuth
+            "watch" -> AccountType.NoAuth
             else -> null
         }
     }

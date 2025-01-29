@@ -10,19 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.android.usecase
+package com.algorand.android.modules.swap.accountselection.ui.model
 
-import com.algorand.android.models.BaseAccountSelectionListItem
-import javax.inject.Inject
+interface SwapAccountSelectionNavDirection {
 
-class ReceiveAccountSelectionPreviewUseCase @Inject constructor(
-    private val accountSelectionListUseCase: AccountSelectionListUseCase
-) {
+    data class SwapNavigation(
+        val accountAddress: String,
+        val fromAssetId: Long,
+        val toAssetId: Long
+    ) : SwapAccountSelectionNavDirection
 
-    suspend fun getReceiveAccountSelectionPreview(): List<BaseAccountSelectionListItem> {
-        return accountSelectionListUseCase.createAccountSelectionListAccountItems(
-            showHoldings = true,
-            showFailedAccounts = true
-        )
-    }
 }

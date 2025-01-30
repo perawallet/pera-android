@@ -11,15 +11,21 @@
  */
 package com.algorand.android.ui.lockpreference
 
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
+import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraTitleText
 import com.algorand.android.ui.lockpreference.BiometricAuthenticationEnabledFragmentDirections.Companion.actionBiometricAuthenticationEnabledFragmentToHomeNavigation
-import com.google.android.material.button.MaterialButton
 
 class BiometricAuthenticationEnabledFragment : BaseInfoFragment() {
 
@@ -28,29 +34,39 @@ class BiometricAuthenticationEnabledFragment : BaseInfoFragment() {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
-    override fun setImageView(imageView: ImageView) {
-        val icon = R.drawable.ic_check
-        imageView.setImageResource(icon)
-        imageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.info_image_color))
-    }
+    @Composable
+    override fun Icon(modifier: Modifier) =
+        Image(
+            painter = painterResource(id = R.drawable.ic_check),
+            colorFilter = ColorFilter.tint(color = colorResource(R.color.info_image_color)),
+            contentDescription = "check",
+            modifier = modifier
+        )
 
-    override fun setTitleText(textView: TextView) {
-        val title = R.string.biometric_authentication_enabled
-        textView.setText(title)
-    }
+    @Composable
+    override fun Title(modifier: Modifier) =
+        PeraTitleText(
+            modifier = modifier,
+            text = stringResource(id = R.string.biometric_authentication_enabled)
+        )
 
-    override fun setDescriptionText(textView: TextView) {
-        val description = R.string.your_passcode_has_been_verified
-        textView.setText(description)
-    }
+    @Composable
+    override fun Description(modifier: Modifier) =
+        PeraDescriptionText(
+            text = stringResource(id = R.string.your_passcode_has_been_verified),
+            modifier = modifier
+        )
 
-    override fun setFirstButton(materialButton: MaterialButton) {
-        val buttonText = R.string.go_to_accounts
-        materialButton.setText(buttonText)
-        materialButton.setOnClickListener { navigateToHomeNavigation() }
-    }
+    @Composable
+    override fun PrimaryButton(modifier: Modifier) =
+        PeraPrimaryButton(
+            onClick = { navigateToHomeNavigation() },
+            modifier = modifier,
+            text = stringResource(id = R.string.go_to_accounts)
+        )
 
     private fun navigateToHomeNavigation() {
         nav(actionBiometricAuthenticationEnabledFragmentToHomeNavigation())

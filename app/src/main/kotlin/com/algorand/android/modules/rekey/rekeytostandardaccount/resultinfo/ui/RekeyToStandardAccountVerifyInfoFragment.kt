@@ -14,16 +14,22 @@ package com.algorand.android.modules.rekey.rekeytostandardaccount.resultinfo.ui
 
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.RekeyToStandardAccountNavigationDirections
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.google.android.material.button.MaterialButton
+import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,30 +50,39 @@ class RekeyToStandardAccountVerifyInfoFragment : BaseInfoFragment() {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, onBackPressedCallback)
     }
 
-    override fun setImageView(imageView: ImageView) {
-        with(imageView) {
-            setImageResource(R.drawable.ic_check)
-            setColorFilter(ContextCompat.getColor(requireContext(), R.color.info_image_color))
-        }
-    }
-
-    override fun setTitleText(textView: TextView) {
-        textView.setText(R.string.account_successfully_rekeyed)
-    }
-
-    override fun setDescriptionText(textView: TextView) {
-        textView.text = getString(
-            R.string.the_account_name_was_successfully_rekeyed_formatted,
-            rekeyToStandardAccountVerifyInfoViewModel.accountDisplayName.getAccountPrimaryDisplayName()
+    @Composable
+    override fun Icon(modifier: Modifier) =
+        Image(
+            painter = painterResource(id = R.drawable.ic_check),
+            colorFilter = ColorFilter.tint(color = colorResource(R.color.info_image_color)),
+            contentDescription = "check",
+            modifier = modifier
         )
-    }
 
-    override fun setFirstButton(materialButton: MaterialButton) {
-        with(materialButton) {
-            text = getString(R.string.done)
-            setOnClickListener { popRekeyToStandardAccountNavigationUp() }
-        }
-    }
+    @Composable
+    override fun Title(modifier: Modifier) =
+        PeraTitleText(
+            modifier = modifier,
+            text = stringResource(id = R.string.account_successfully_rekeyed)
+        )
+
+    @Composable
+    override fun Description(modifier: Modifier) =
+        PeraDescriptionText(
+            text = stringResource(
+                id = R.string.the_account_name_was_successfully_rekeyed_formatted,
+                rekeyToStandardAccountVerifyInfoViewModel.accountDisplayName.getAccountPrimaryDisplayName()
+            ),
+            modifier = modifier
+        )
+
+    @Composable
+    override fun PrimaryButton(modifier: Modifier) =
+        PeraPrimaryButton(
+            onClick = { popRekeyToStandardAccountNavigationUp() },
+            modifier = modifier,
+            text = stringResource(id = R.string.done)
+        )
 
     private fun popRekeyToStandardAccountNavigationUp() {
         nav(RekeyToStandardAccountNavigationDirections.actionRekeyToStandardAccountNavigationPop())

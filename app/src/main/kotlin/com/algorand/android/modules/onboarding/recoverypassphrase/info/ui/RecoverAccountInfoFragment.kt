@@ -12,14 +12,20 @@
 
 package com.algorand.android.modules.onboarding.recoverypassphrase.info.ui
 
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.google.android.material.button.MaterialButton
+import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraTitleText
 
 class RecoverAccountInfoFragment : BaseInfoFragment() {
 
@@ -28,29 +34,39 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
-    override fun setImageView(imageView: ImageView) {
-        val icon = R.drawable.ic_key
-        imageView.setImageResource(icon)
-        imageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.info_image_color))
-    }
+    @Composable
+    override fun Icon(modifier: Modifier) =
+        Image(
+            painter = painterResource(id = R.drawable.ic_key),
+            colorFilter = ColorFilter.tint(color = colorResource(R.color.info_image_color)),
+            contentDescription = "key",
+            modifier = modifier
+        )
 
-    override fun setTitleText(textView: TextView) {
-        val title = R.string.recover_an_algorand
-        textView.setText(title)
-    }
+    @Composable
+    override fun Title(modifier: Modifier) =
+        PeraTitleText(
+            modifier = modifier,
+            text = stringResource(id = R.string.recover_an_algorand)
+        )
 
-    override fun setDescriptionText(textView: TextView) {
-        val description = R.string.in_the_following
-        textView.setText(description)
-    }
+    @Composable
+    override fun Description(modifier: Modifier) =
+        PeraDescriptionText(
+            modifier = modifier,
+            text = stringResource(id = R.string.in_the_following)
+        )
 
-    override fun setFirstButton(materialButton: MaterialButton) {
-        val buttonText = R.string.recover_an_algorand
-        materialButton.setText(buttonText)
-        materialButton.setOnClickListener { navigateToRecoverWithPassphraseFragment() }
-    }
+    @Composable
+    override fun PrimaryButton(modifier: Modifier) =
+        PeraPrimaryButton(
+            modifier = modifier,
+            onClick = { navigateToRecoverWithPassphraseFragment() },
+            text = stringResource(id = R.string.recover_an_algorand)
+        )
 
     private fun navigateToRecoverWithPassphraseFragment() {
         nav(RecoverAccountInfoFragmentDirections.actionRecoverAccountInfoFragmentToRecoverWithPassphraseNavigation())

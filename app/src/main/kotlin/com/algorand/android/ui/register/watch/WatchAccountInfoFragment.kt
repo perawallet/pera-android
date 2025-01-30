@@ -14,18 +14,25 @@ package com.algorand.android.ui.register.watch
 
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.Image
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.customviews.WarningTextView
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
+import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraTitleText
 import com.algorand.android.utils.browser.openWatchAccountSupportUrl
-import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -38,39 +45,53 @@ class WatchAccountInfoFragment : BaseInfoFragment() {
 
     private val watchAccountInfoViewModel: WatchAccountInfoViewModel by viewModels()
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         configureToolbar()
     }
 
-    override fun setImageView(imageView: ImageView) {
-        val icon = R.drawable.ic_eye
-        imageView.setImageResource(icon)
-        imageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.info_image_color))
-    }
+    @Composable
+    override fun Icon(modifier: Modifier) =
+        Image(
+            painter = painterResource(id = R.drawable.ic_eye),
+            colorFilter = ColorFilter.tint(color = colorResource(R.color.info_image_color)),
+            contentDescription = "eye",
+            modifier = modifier
+        )
 
-    override fun setTitleText(textView: TextView) {
-        val title = R.string.watch_account
-        textView.setText(title)
-    }
+    @Composable
+    override fun Title(modifier: Modifier) =
+        PeraTitleText(
+            modifier = modifier,
+            text = stringResource(id = R.string.watch_account)
+        )
 
-    override fun setDescriptionText(textView: TextView) {
-        val description = R.string.monitor_activity_of
-        textView.setText(description)
-    }
+    @Composable
+    override fun Description(modifier: Modifier) =
+        PeraDescriptionText(
+            text = stringResource(id = R.string.monitor_activity_of),
+            modifier = modifier
+        )
 
-    override fun setWarningFrame(warningTextView: WarningTextView) {
-        warningTextView.visibility = View.VISIBLE
-        warningTextView.setText(R.string.if_you_do_not)
-    }
+    @Composable
+    override fun Warning(modifier: Modifier) =
+        Text(
+            text = stringResource(id = R.string.if_you_do_not),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.error,
+            modifier = modifier
+        )
 
-    override fun setFirstButton(materialButton: MaterialButton) {
-        val buttonText = R.string.create_a_watch
-        materialButton.setText(buttonText)
-        materialButton.setOnClickListener { navigateToRegisterWatchAccountFragment() }
-    }
+    @Composable
+    override fun PrimaryButton(modifier: Modifier) =
+        PeraPrimaryButton(
+            onClick = { navigateToRegisterWatchAccountFragment() },
+            modifier = modifier,
+            text = stringResource(id = R.string.create_a_watch)
+        )
 
     private fun navigateToRegisterWatchAccountFragment() {
         watchAccountInfoViewModel.logOnboardingCreateWatchAccountClickEvent()
@@ -78,7 +99,12 @@ class WatchAccountInfoFragment : BaseInfoFragment() {
     }
 
     private fun configureToolbar() {
-        getAppToolbar()?.setEndButton(button = IconButton(R.drawable.ic_info, onClick = ::onInfoClick))
+        getAppToolbar()?.setEndButton(
+            button = IconButton(
+                R.drawable.ic_info,
+                onClick = ::onInfoClick
+            )
+        )
     }
 
     private fun onInfoClick() {

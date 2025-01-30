@@ -35,7 +35,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
             app:layout_constraintVertical_chainStyle="packed"
-            app:srcCompat="@drawable/ic_shield" />
+            app:srcCompat="@drawable/ic_key" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/topStartButton"
@@ -81,6 +81,7 @@
             android:layout_marginBottom="@dimen/spacing_large"
             app:layout_constraintBottom_toTopOf="@id/warningFrameView"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/titleTextView"
             app:layout_constraintVertical_bias="0"

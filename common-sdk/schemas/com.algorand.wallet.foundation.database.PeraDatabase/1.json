@@ -1,0 +1,439 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "399d8764201a09858d0ce02f22e9073a",
+    "entities": [
+      {
+        "tableName": "account_information",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`algo_address` TEXT NOT NULL, `algo_amount` TEXT NOT NULL, `opted_in_apps_count` INTEGER NOT NULL, `apps_total_extra_pages` INTEGER NOT NULL, `auth_algo_address` TEXT, `created_at_round` INTEGER, `last_fetched_round` INTEGER NOT NULL, `total_created_apps_count` INTEGER NOT NULL, `total_created_assets_count` INTEGER NOT NULL, `app_state_schema_num_byte_slice` INTEGER, `app_state_schema_num_uint` INTEGER, PRIMARY KEY(`algo_address`))",
+        "fields": [
+          {
+            "fieldPath": "algoAddress",
+            "columnName": "algo_address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "algoAmount",
+            "columnName": "algo_amount",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "optedInAppsCount",
+            "columnName": "opted_in_apps_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "appsTotalExtraPages",
+            "columnName": "apps_total_extra_pages",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authAlgoAddress",
+            "columnName": "auth_algo_address",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAtRound",
+            "columnName": "created_at_round",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastFetchedRound",
+            "columnName": "last_fetched_round",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalCreatedAppsCount",
+            "columnName": "total_created_apps_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalCreatedAssetsCount",
+            "columnName": "total_created_assets_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "appStateNumByteSlice",
+            "columnName": "app_state_schema_num_byte_slice",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "appStateSchemaUint",
+            "columnName": "app_state_schema_num_uint",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "algo_address"
+          ]
+        }
+      },
+      {
+        "tableName": "asset_holding_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `algo_address` TEXT NOT NULL, `asset_id` INTEGER NOT NULL, `amount` TEXT NOT NULL, `is_deleted` INTEGER NOT NULL, `is_frozen` INTEGER NOT NULL, `opted_in_at_round` INTEGER, `opted_out_at_round` INTEGER, `asset_status` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "algoAddress",
+            "columnName": "algo_address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "assetId",
+            "columnName": "asset_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "amount",
+            "columnName": "amount",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDeleted",
+            "columnName": "is_deleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFrozen",
+            "columnName": "is_frozen",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "optedInAtRound",
+            "columnName": "opted_in_at_round",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "optedOutAtRound",
+            "columnName": "opted_out_at_round",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "assetStatusEntity",
+            "columnName": "asset_status",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_asset_holding_table_algo_address_asset_id",
+            "unique": true,
+            "columnNames": [
+              "algo_address",
+              "asset_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_asset_holding_table_algo_address_asset_id` ON `${TABLE_NAME}` (`algo_address`, `asset_id`)"
+          }
+        ]
+      },
+      {
+        "tableName": "asset_detail",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`asset_id` INTEGER NOT NULL, `name` TEXT, `unit_name` TEXT, `decimals` INTEGER NOT NULL, `usd_value` TEXT, `max_supply` TEXT NOT NULL, `explorer_url` TEXT, `project_url` TEXT, `project_name` TEXT, `logo_svg_url` TEXT, `logo_url` TEXT, `discord_url` TEXT, `telegram_url` TEXT, `twitter_username` TEXT, `description` TEXT, `url` TEXT, `total_supply` TEXT, `last_24_hours_algo_price_change_percentage` TEXT, `available_on_discover_mobile` INTEGER NOT NULL, `asset_creator_id` INTEGER, `asset_creator_address` TEXT, `is_verified_asset_creator` INTEGER, `verification_tier` TEXT NOT NULL, PRIMARY KEY(`asset_id`))",
+        "fields": [
+          {
+            "fieldPath": "assetId",
+            "columnName": "asset_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "unitName",
+            "columnName": "unit_name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "decimals",
+            "columnName": "decimals",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "usdValue",
+            "columnName": "usd_value",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "maxSupply",
+            "columnName": "max_supply",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "explorerUrl",
+            "columnName": "explorer_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "projectUrl",
+            "columnName": "project_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "projectName",
+            "columnName": "project_name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "logoSvgUrl",
+            "columnName": "logo_svg_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "logoUrl",
+            "columnName": "logo_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "discordUrl",
+            "columnName": "discord_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "telegramUrl",
+            "columnName": "telegram_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "twitterUsername",
+            "columnName": "twitter_username",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "totalSupply",
+            "columnName": "total_supply",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "last24HoursAlgoPriceChangePercentage",
+            "columnName": "last_24_hours_algo_price_change_percentage",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "availableOnDiscoverMobile",
+            "columnName": "available_on_discover_mobile",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "assetCreatorId",
+            "columnName": "asset_creator_id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "assetCreatorAddress",
+            "columnName": "asset_creator_address",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isVerifiedAssetCreator",
+            "columnName": "is_verified_asset_creator",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "verificationTier",
+            "columnName": "verification_tier",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "asset_id"
+          ]
+        }
+      },
+      {
+        "tableName": "collectible",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `collectible_asset_id` INTEGER NOT NULL, `standard_type` TEXT, `media_type` TEXT, `primary_image_url` TEXT, `title` TEXT, `description` TEXT, `collection_id` INTEGER, `collection_name` TEXT, `collection_description` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "collectibleAssetId",
+            "columnName": "collectible_asset_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "standardType",
+            "columnName": "standard_type",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "mediaType",
+            "columnName": "media_type",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "primaryImageUrl",
+            "columnName": "primary_image_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "collectionId",
+            "columnName": "collection_id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "collectionName",
+            "columnName": "collection_name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "collectionDescription",
+            "columnName": "collection_description",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "collectible_media",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `collectible_asset_id` INTEGER NOT NULL, `media_type` TEXT NOT NULL, `download_url` TEXT, `preview_url` TEXT, `media_type_extension` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "collectibleAssetId",
+            "columnName": "collectible_asset_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaType",
+            "columnName": "media_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "downloadUrl",
+            "columnName": "download_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "previewUrl",
+            "columnName": "preview_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "mediaTypeExtension",
+            "columnName": "media_type_extension",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "collectible_trait",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `collectible_asset_id` INTEGER NOT NULL, `display_name` TEXT, `display_value` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "collectibleAssetId",
+            "columnName": "collectible_asset_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "display_name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "displayValue",
+            "columnName": "display_value",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '399d8764201a09858d0ce02f22e9073a')"
+    ]
+  }
+}

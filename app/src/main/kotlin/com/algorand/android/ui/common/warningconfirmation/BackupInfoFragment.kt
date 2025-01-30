@@ -14,9 +14,13 @@ package com.algorand.android.ui.common.warningconfirmation
 
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.algosdk.sdk.Sdk
@@ -29,10 +33,12 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToBackupPassphraseAccountNameNavigation
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToWriteDownInfoFragment
+import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraSecondaryButton
+import com.algorand.android.ui.compose.widget.PeraTitleText
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.browser.openRecoveryPassphraseSupportUrl
-import com.algorand.android.utils.extensions.show
-import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -43,7 +49,8 @@ class BackupInfoFragment : BaseInfoFragment() {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val backupInfoViewModel: BackupInfoViewModel by viewModels()
 
@@ -54,34 +61,47 @@ class BackupInfoFragment : BaseInfoFragment() {
         configureToolbar()
     }
 
-    override fun setImageView(imageView: ImageView) {
-        val icon = R.drawable.ic_shield
-        imageView.setImageResource(icon)
-        imageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.info_image_color))
-    }
+    @Composable
+    override fun Icon(modifier: Modifier) =
+        Image(
+            painter = painterResource(id = R.drawable.ic_shield),
+            colorFilter = ColorFilter.tint(color = colorResource(R.color.info_image_color)),
+            contentDescription = "shield",
+            modifier = modifier
+        )
 
-    override fun setTitleText(textView: TextView) {
-        val title = R.string.create_a_passphrase_backup
-        textView.setText(title)
-    }
+    @Composable
+    override fun Title(modifier: Modifier) =
+        PeraTitleText(
+            modifier = modifier,
+            text = stringResource(id = R.string.create_a_passphrase_backup)
+        )
 
-    override fun setDescriptionText(textView: TextView) {
-        val description = R.string.creating_a_passphrase_backup
-        textView.setText(description)
-    }
+    @Composable
+    override fun Description(modifier: Modifier) =
+        PeraDescriptionText(
+            text = stringResource(
+                id = R.string.creating_a_passphrase_backup
+            ),
+            modifier = modifier
+        )
 
-    override fun setFirstButton(materialButton: MaterialButton) {
-        val buttonText = R.string.i_understand
-        materialButton.setText(buttonText)
-        materialButton.setOnClickListener { navToWriteDownFragment() }
-    }
+    @Composable
+    override fun PrimaryButton(modifier: Modifier) =
+        PeraPrimaryButton(
+            onClick = { navToWriteDownFragment() },
+            modifier = modifier,
+            text = stringResource(id = R.string.i_understand)
+        )
 
-    override fun setSecondButton(materialButton: MaterialButton) {
+    @Composable
+    override fun SecondaryButton(modifier: Modifier) {
         if (args.publicKeysOfAccountsToBackup.isEmpty()) {
-            val buttonText = R.string.skip_for_now
-            materialButton.setText(buttonText)
-            materialButton.setOnClickListener { navToBackupPassphraseAccountNameNavigation() }
-            materialButton.show()
+            PeraSecondaryButton(
+                onClick = { navToBackupPassphraseAccountNameNavigation() },
+                modifier = modifier,
+                text = stringResource(id = R.string.skip_for_now)
+            )
         }
     }
 
@@ -109,7 +129,12 @@ class BackupInfoFragment : BaseInfoFragment() {
     }
 
     private fun configureToolbar() {
-        getAppToolbar()?.setEndButton(button = IconButton(R.drawable.ic_info, onClick = ::onInfoClick))
+        getAppToolbar()?.setEndButton(
+            button = IconButton(
+                R.drawable.ic_info,
+                onClick = ::onInfoClick
+            )
+        )
     }
 
     private fun onInfoClick() {

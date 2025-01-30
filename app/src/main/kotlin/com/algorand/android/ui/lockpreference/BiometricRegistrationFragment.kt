@@ -11,18 +11,24 @@
  */
 package com.algorand.android.ui.lockpreference
 
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
+import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraSecondaryButton
+import com.algorand.android.ui.compose.widget.PeraTitleText
 import com.algorand.android.utils.alertDialog
-import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.showBiometricAuthentication
-import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,40 +39,49 @@ class BiometricRegistrationFragment : BaseInfoFragment() {
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val biometricRegistrationViewModel: BiometricRegistrationViewModel by viewModels()
 
-    override fun setImageView(imageView: ImageView) {
-        val icon = R.drawable.ic_faceid
-        imageView.setImageResource(icon)
-        imageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.info_image_color))
-    }
+    @Composable
+    override fun Icon(modifier: Modifier) =
+        Image(
+            painter = painterResource(id = R.drawable.ic_faceid),
+            colorFilter = ColorFilter.tint(color = colorResource(R.color.info_image_color)),
+            contentDescription = "face id",
+            modifier = modifier
+        )
 
-    override fun setTitleText(textView: TextView) {
-        val title = R.string.enable_biometric_authentication
-        textView.setText(title)
-    }
+    @Composable
+    override fun Title(modifier: Modifier) =
+        PeraTitleText(
+            modifier = modifier,
+            text = stringResource(id = R.string.enable_biometric_authentication)
+        )
 
-    override fun setDescriptionText(textView: TextView) {
-        val description = R.string.your_faceid_or_fingerprintid
-        textView.setText(description)
-    }
+    @Composable
+    override fun Description(modifier: Modifier) =
+        PeraDescriptionText(
+            modifier = modifier,
+            text = stringResource(id = R.string.your_faceid_or_fingerprintid)
+        )
 
-    override fun setFirstButton(materialButton: MaterialButton) {
-        val buttonText = R.string.enable_biometric_authentication
-        materialButton.setText(buttonText)
-        materialButton.setOnClickListener { checkBiometricAuthentication() }
-    }
+    @Composable
+    override fun PrimaryButton(modifier: Modifier) =
+        PeraPrimaryButton(
+            onClick = { checkBiometricAuthentication() },
+            modifier = modifier,
+            text = stringResource(id = R.string.enable_biometric_authentication)
+        )
 
-    override fun setSecondButton(materialButton: MaterialButton) {
-        val buttonText = R.string.do_not_use
-        materialButton.apply {
-            setText(buttonText)
-            show()
-            setOnClickListener { navigateToHomeNavigation() }
-        }
-    }
+    @Composable
+    override fun SecondaryButton(modifier: Modifier) =
+        PeraSecondaryButton(
+            onClick = { navigateToHomeNavigation() },
+            modifier = modifier,
+            text = stringResource(id = R.string.do_not_use)
+        )
 
     private fun checkBiometricAuthentication() {
         activity?.showBiometricAuthentication(

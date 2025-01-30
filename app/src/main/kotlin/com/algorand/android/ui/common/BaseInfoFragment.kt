@@ -13,40 +13,95 @@
 package com.algorand.android.ui.common
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.algorand.android.R
+import android.view.ViewGroup
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import com.algorand.android.core.DaggerBaseFragment
-import com.algorand.android.customviews.WarningTextView
-import com.algorand.android.databinding.FragmentBaseInfoBinding
-import com.algorand.android.utils.viewbinding.viewBinding
-import com.google.android.material.button.MaterialButton
 
-abstract class BaseInfoFragment : DaggerBaseFragment(R.layout.fragment_base_info) {
+abstract class BaseInfoFragment : DaggerBaseFragment(0) {
 
-    private val binding by viewBinding(FragmentBaseInfoBinding::bind)
+    @Composable
+    abstract fun Icon(modifier: Modifier)
 
-    protected val rootConstraintLayout: ConstraintLayout
-        get() = binding.rootConstraintLayout
+    @Composable
+    abstract fun Title(modifier: Modifier)
 
-    abstract fun setImageView(imageView: ImageView)
-    abstract fun setTitleText(textView: TextView)
-    abstract fun setDescriptionText(textView: TextView)
-    abstract fun setFirstButton(materialButton: MaterialButton)
-    open fun setWarningFrame(warningTextView: WarningTextView) {}
-    open fun setSecondButton(materialButton: MaterialButton) {}
-    open fun setTopStartButton(materialButton: MaterialButton) {}
+    @Composable
+    abstract fun Description(modifier: Modifier)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setImageView(binding.infoImageView)
-        setTitleText(binding.titleTextView)
-        setDescriptionText(binding.descriptionTextView)
-        setFirstButton(binding.firstButton)
-        setSecondButton(binding.secondButton)
-        setWarningFrame(binding.warningFrameView)
-        setTopStartButton(binding.topStartButton)
+    @Composable
+    abstract fun PrimaryButton(modifier: Modifier)
+
+    @Composable
+    open fun Warning(modifier: Modifier) = Unit
+
+    @Composable
+    open fun SecondaryButton(modifier: Modifier) = Unit
+
+    @Composable
+    open fun TopStartButton(modifier: Modifier) = Unit
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        return ComposeView(requireContext()).apply {
+            setContent {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()) // equivalent to ScrollView
+                ) {
+                    TopStartButton(modifier = Modifier.align(alignment = Alignment.Start))
+                    Icon(
+                        modifier = Modifier
+                            .padding(start = 32.dp, top = 28.dp)
+                            .align(alignment = Alignment.Start)
+                            .fillMaxWidth(fraction = HALF_SIZE)
+                            .aspectRatio(ratio = 1F),
+                    )
+                    Title(
+                        modifier = Modifier
+                            .padding(start = 32.dp, end = 32.dp, top = 40.dp)
+                    )
+                    Description(
+                        modifier = Modifier
+                            .padding(horizontal = 32.dp, vertical = 16.dp)
+                    )
+                    Warning(
+                        modifier = Modifier
+                            .padding(start = 32.dp, end = 32.dp, bottom = 16.dp)
+                    )
+                    PrimaryButton(
+                        modifier = Modifier
+                            .padding(start = 32.dp, end = 32.dp, bottom = 16.dp)
+                            .fillMaxWidth()
+                    )
+                    SecondaryButton(
+                        modifier = Modifier
+                            .padding(start = 32.dp, end = 32.dp, bottom = 16.dp)
+                            .fillMaxWidth()
+                    )
+                }
+            }
+        }
+    }
+
+    companion object {
+        const val HALF_SIZE = 0.5F
     }
 }

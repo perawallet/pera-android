@@ -30,9 +30,7 @@ import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.hideKeyboard
 import com.algorand.android.utils.toShortenedAddress
 
-abstract class BaseFragment(
-    @LayoutRes private val layoutResId: Int,
-) : Fragment(layoutResId) {
+abstract class BaseFragment(@LayoutRes private val layoutResId: Int) : Fragment(layoutResId) {
 
     abstract val fragmentConfiguration: FragmentConfiguration
 

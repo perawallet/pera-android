@@ -15,10 +15,14 @@ package com.algorand.android.ui.lockpreference
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
@@ -26,8 +30,11 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
+import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraSecondaryButton
+import com.algorand.android.ui.compose.widget.PeraTitleText
 import com.algorand.android.utils.preference.setLockDontAskAgain
-import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -37,9 +44,11 @@ class ChoosePasswordInfoFragment : BaseInfoFragment() {
     @Inject
     lateinit var sharedPref: SharedPreferences
 
-    private val toolbarConfiguration = ToolbarConfiguration(backgroundColor = R.color.tertiary_background)
+    private val toolbarConfiguration =
+        ToolbarConfiguration(backgroundColor = R.color.tertiary_background)
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val args by navArgs<ChoosePasswordInfoFragmentArgs>()
 
@@ -52,43 +61,52 @@ class ChoosePasswordInfoFragment : BaseInfoFragment() {
     }
 
     private fun setupToolbar() {
-        getAppToolbar()?.setEndButton(button = TextButton(R.string.do_not_ask_again, onClick = ::onDontAskAgainClick))
+        getAppToolbar()?.setEndButton(
+            button = TextButton(
+                R.string.do_not_ask_again,
+                onClick = ::onDontAskAgainClick
+            )
+        )
     }
 
-    override fun setImageView(imageView: ImageView) {
-        val icon = R.drawable.ic_locked
-        imageView.apply {
-            setImageResource(icon)
-            setColorFilter(ContextCompat.getColor(requireContext(), R.color.info_image_color))
-        }
-    }
+    @Composable
+    override fun Icon(modifier: Modifier) =
+        Image(
+            painter = painterResource(id = R.drawable.ic_locked),
+            colorFilter = ColorFilter.tint(color = colorResource(R.color.info_image_color)),
+            contentDescription = "check large",
+            modifier = modifier
+        )
 
-    override fun setTitleText(textView: TextView) {
-        val title = R.string.increase_your_security
-        textView.setText(title)
-    }
+    @Composable
+    override fun Title(modifier: Modifier) =
+        PeraTitleText(
+            modifier = modifier,
+            text = stringResource(id = R.string.increase_your_security)
+        )
 
-    override fun setDescriptionText(textView: TextView) {
-        val description = R.string.this_6_digit_pin
-        textView.setText(description)
-    }
+    @Composable
+    override fun Description(modifier: Modifier) =
+        PeraDescriptionText(
+            text = stringResource(id = R.string.this_6_digit_pin),
+            modifier = modifier
+        )
 
-    override fun setFirstButton(materialButton: MaterialButton) {
-        val buttonText = R.string.set_pin_code
-        materialButton.apply {
-            setText(buttonText)
-            setOnClickListener { navigateToChoosePasswordFragment() }
-        }
-    }
+    @Composable
+    override fun PrimaryButton(modifier: Modifier) =
+        PeraPrimaryButton(
+            onClick = { navigateToChoosePasswordFragment() },
+            modifier = modifier,
+            text = stringResource(id = R.string.set_pin_code)
+        )
 
-    override fun setSecondButton(materialButton: MaterialButton) {
-        val buttonText = R.string.not_now
-        materialButton.apply {
-            setText(buttonText)
-            visibility = MaterialButton.VISIBLE
-            setOnClickListener { onCancelClick() }
-        }
-    }
+    @Composable
+    override fun SecondaryButton(modifier: Modifier) =
+        PeraSecondaryButton(
+            onClick = { onCancelClick() },
+            modifier = modifier,
+            text = stringResource(id = R.string.not_now)
+        )
 
     private fun onDontAskAgainClick() {
         sharedPref.setLockDontAskAgain()

@@ -12,21 +12,28 @@
 
 package com.algorand.android.ui.common.warningconfirmation
 
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.Image
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
-import com.algorand.android.customviews.WarningTextView
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentDirections.Companion.actionWriteDownInfoFragmentToBackupAccountSelectionFragment
 import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentDirections.Companion.actionWriteDownInfoFragmentToBackupPassphraseAccountNameNavigation
 import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentDirections.Companion.actionWriteDownInfoFragmentToBackupPassphrasesNavigation
-import com.algorand.android.utils.extensions.show
-import com.google.android.material.button.MaterialButton
+import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraSecondaryButton
+import com.algorand.android.ui.compose.widget.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,43 +52,56 @@ class WriteDownInfoFragment : BaseInfoFragment() {
 
     private val args: WriteDownInfoFragmentArgs by navArgs()
 
-    override fun setImageView(imageView: ImageView) {
-        val icon = R.drawable.ic_pen
-        imageView.setImageResource(icon)
-        imageView.setColorFilter(ContextCompat.getColor(requireContext(), R.color.info_image_color))
-    }
+    @Composable
+    override fun Icon(modifier: Modifier) =
+        Image(
+            painter = painterResource(id = R.drawable.ic_pen),
+            colorFilter = ColorFilter.tint(color = colorResource(R.color.info_image_color)),
+            contentDescription = "pen",
+            modifier = modifier
+        )
 
-    override fun setTitleText(textView: TextView) {
-        val title = R.string.prepare_to_write
-        textView.setText(title)
-    }
+    @Composable
+    override fun Title(modifier: Modifier) =
+        PeraTitleText(
+            modifier = modifier,
+            text = stringResource(id = R.string.prepare_to_write)
+        )
 
-    override fun setDescriptionText(textView: TextView) {
-        val description = R.string.the_only_way_to
-        textView.setText(description)
-    }
+    @Composable
+    override fun Description(modifier: Modifier) =
+        PeraDescriptionText(
+            text = stringResource(
+                id = R.string.the_only_way_to
+            ),
+            modifier = modifier
+        )
 
-    override fun setWarningFrame(warningTextView: WarningTextView) {
-        warningTextView.show()
-        warningTextView.setText(R.string.do_not_share)
-    }
+    @Composable
+    override fun Warning(modifier: Modifier) =
+        Text(
+            text = stringResource(id = R.string.do_not_share),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.error,
+            modifier = modifier
+        )
 
-    override fun setFirstButton(materialButton: MaterialButton) {
-        val buttonText = R.string.im_ready_to_begin
-        materialButton.apply {
-            setText(buttonText)
-            setOnClickListener { onFirstButtonClicked() }
-        }
-    }
+    @Composable
+    override fun PrimaryButton(modifier: Modifier) =
+        PeraPrimaryButton(
+            onClick = { onFirstButtonClicked() },
+            modifier = modifier,
+            text = stringResource(id = R.string.im_ready_to_begin)
+        )
 
-    override fun setSecondButton(materialButton: MaterialButton) {
+    @Composable
+    override fun SecondaryButton(modifier: Modifier) {
         if (args.publicKeysOfAccountsToBackup.isEmpty()) {
-            val buttonText = R.string.skip_for_now
-            materialButton.apply {
-                setText(buttonText)
-                setOnClickListener { onSecondButtonClicked() }
-                show()
-            }
+            PeraSecondaryButton(
+                onClick = { onSecondButtonClicked() },
+                modifier = modifier,
+                text = stringResource(id = R.string.skip_for_now)
+            )
         }
     }
 

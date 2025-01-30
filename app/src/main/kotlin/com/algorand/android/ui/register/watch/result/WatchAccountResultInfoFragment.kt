@@ -12,14 +12,20 @@
 
 package com.algorand.android.ui.register.watch.result
 
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.google.android.material.button.MaterialButton
+import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,27 +34,35 @@ class WatchAccountResultInfoFragment : BaseInfoFragment() {
 
     private val watchAccountResultInfoViewModel: WatchAccountResultInfoViewModel by viewModels()
 
-    override fun setImageView(imageView: ImageView) {
-        with(imageView) {
-            setImageResource(R.drawable.ic_check)
-            setColorFilter(ContextCompat.getColor(requireContext(), R.color.info_image_color))
-        }
-    }
+    @Composable
+    override fun Icon(modifier: Modifier) =
+        Image(
+            painter = painterResource(id = R.drawable.ic_check),
+            colorFilter = ColorFilter.tint(color = colorResource(R.color.info_image_color)),
+            contentDescription = "check",
+            modifier = modifier
+        )
 
-    override fun setTitleText(textView: TextView) {
-        textView.setText(watchAccountResultInfoViewModel.getPreviewTitle())
-    }
+    @Composable
+    override fun Title(modifier: Modifier) =
+        PeraTitleText(
+            modifier = modifier,
+            text = stringResource(id = watchAccountResultInfoViewModel.getPreviewTitle())
+        )
 
-    override fun setDescriptionText(textView: TextView) {
-        textView.setText(watchAccountResultInfoViewModel.getPreviewDescription())
-    }
+    @Composable
+    override fun Description(modifier: Modifier) = PeraDescriptionText(
+        text = stringResource(id = watchAccountResultInfoViewModel.getPreviewDescription()),
+        modifier = modifier
+    )
 
-    override fun setFirstButton(materialButton: MaterialButton) {
-        with(materialButton) {
-            setText(watchAccountResultInfoViewModel.getPreviewFirstButtonText())
-            setOnClickListener { onContinueClick() }
-        }
-    }
+    @Composable
+    override fun PrimaryButton(modifier: Modifier) =
+        PeraPrimaryButton(
+            onClick = { onContinueClick() },
+            modifier = modifier,
+            text = stringResource(id = watchAccountResultInfoViewModel.getPreviewFirstButtonText())
+        )
 
     private fun onContinueClick() {
         if (watchAccountResultInfoViewModel.shouldForceLockNavigation()) {

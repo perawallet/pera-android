@@ -53,6 +53,7 @@ kotlinxSerialization = "1.7.3"
 kotlinTest = "2.0.21"
 kspGradlePlugin = "2.0.21-1.0.25"
 ksp = "2.0.21-1.0.25"
+ktlint = "0.39.0"
 ktor = "3.0.0"
 ktorContentNegotiation = "3.0.0"
 legacySupport = "1.0.0"
@@ -107,6 +108,7 @@ dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref
 dagger-hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "dagger" }
 datastore-preferences = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore" }
 desugar-jdk = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoPlayer" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
@@ -142,6 +144,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinfixture = { module = "com.appmattus.fixture:fixture", version.ref = "kotlinfixture" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlinTest" }
 ksp-gradle-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "kspGradlePlugin" }
+ktlint = { module = "com.pinterest:ktlint", version.ref = "ktlint" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }

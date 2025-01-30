@@ -12,23 +12,41 @@
 
 package com.algorand.android.ui.common.warningconfirmation
 
-import android.widget.TextView
+import android.os.Bundle
+import android.view.View
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.getXmlStyledString
 import dagger.hilt.android.AndroidEntryPoint
+import java.math.BigInteger
 
 @AndroidEntryPoint
 class RekeyedMaximumBalanceWarningBottomSheet : BaseMaximumBalanceWarningBottomSheet() {
 
-     private val args: RekeyedMaximumBalanceWarningBottomSheetArgs by navArgs()
+    private val args: RekeyedMaximumBalanceWarningBottomSheetArgs by navArgs()
 
-    override fun setDescriptionText(descriptionTextView: TextView) {
-        descriptionTextView.text = requireContext().getXmlStyledString(
+    private val minBalanceCollector: suspend (BigInteger?) -> Unit = { minBalance ->
+        if (minBalance != null) {
+            setDescriptionText(getDescriptionText(minBalance))
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            maximumBalanceWarningViewModel.minRequiredBalanceFlow,
+            minBalanceCollector
+        )
+        maximumBalanceWarningViewModel.getMinimumBalance(args.publicKey)
+    }
+
+    private fun getDescriptionText(minRequiredBalance: BigInteger): CharSequence {
+        return requireContext().getXmlStyledString(
             R.string.rekeyed_maximum_error_message,
             replacementList = listOf(
-                "min_balance" to maximumBalanceWarningViewModel.getMinimumBalance(args.publicKey).formatAsAlgoString()
+                "min_balance" to minRequiredBalance.formatAsAlgoString()
             )
         )
     }

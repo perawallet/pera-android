@@ -10,12 +10,23 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model
+package com.algorand.android.modules.onboarding.pairledger.accountselection.ui.model
 
-import com.algorand.android.modules.rekey.model.AccountSelectionListItem
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-data class RekeyLedgerAccountSelectionPreview(
-    val isLoading: Boolean,
-    val accountSelectionListItems: List<AccountSelectionListItem>,
-    val isActionButtonEnabled: Boolean
-)
+@Parcelize
+data class RegisterLedgerAccountSelectionNavArgs(
+    val bluetoothAddress: String,
+    val bluetoothName: String?,
+    val ledgerAccounts: List<LedgerAccountsNavArgs>
+) : Parcelable {
+
+    @Parcelize
+    data class LedgerAccountsNavArgs(
+        val isRekeyed: Boolean,
+        val address: String,
+        val assetHoldingIds: List<Long>,
+        val authAddress: String?
+    ) : Parcelable
+}

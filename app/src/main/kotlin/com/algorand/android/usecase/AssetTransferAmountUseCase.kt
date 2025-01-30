@@ -13,7 +13,6 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.models.AccountCacheData
 import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.assetinbox.expresssend.domain.usecase.Arc59ExpressSendUseCase
@@ -31,10 +30,6 @@ class AssetTransferAmountUseCase @Inject constructor(
 
     fun getAssetInformation(publicKey: String, assetId: Long): AssetInformation? {
         return accountCacheManager.getAssetInformation(publicKey, assetId)
-    }
-
-    fun getAccountInformation(publicKey: String): AccountCacheData? {
-        return accountCacheManager.getCacheData(publicKey)
     }
 
     fun shouldShowTransactionTips(): Boolean {

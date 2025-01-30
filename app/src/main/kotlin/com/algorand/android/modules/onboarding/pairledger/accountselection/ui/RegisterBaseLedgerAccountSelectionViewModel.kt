@@ -14,10 +14,10 @@ package com.algorand.android.modules.onboarding.pairledger.accountselection.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.AccountSelectionListItem
+import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.BaseLedgerAccountSelectionViewModel
 import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.model.RegisterLedgerAccountSelectionPreview
 import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.usecase.RegisterLedgerAccountSelectionPreviewUseCase
-import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.BaseLedgerAccountSelectionViewModel
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -31,11 +31,14 @@ import kotlinx.coroutines.launch
 class RegisterBaseLedgerAccountSelectionViewModel @Inject constructor(
     private val registerLedgerAccountSelectionPreviewUseCase: RegisterLedgerAccountSelectionPreviewUseCase,
     savedStateHandle: SavedStateHandle
-) : BaseLedgerAccountSelectionViewModel(registerLedgerAccountSelectionPreviewUseCase) {
+) : BaseLedgerAccountSelectionViewModel() {
 
-    private val args = RegisterLedgerAccountSelectionFragmentArgs.fromSavedStateHandle(savedStateHandle)
-    val ledgerBluetoothName: String?
-        get() = args.bluetoothName
+    private val args = RegisterLedgerAccountSelectionFragmentArgs
+        .fromSavedStateHandle(savedStateHandle)
+        .registerLedgerAccountSelectionNavArgs
+
+    val ledgerBluetoothName: String
+        get() = args.bluetoothName.orEmpty()
 
     private val _registerLedgerAccountSelectionPreviewFlow = MutableStateFlow<RegisterLedgerAccountSelectionPreview?>(
         null
@@ -53,7 +56,7 @@ class RegisterBaseLedgerAccountSelectionViewModel @Inject constructor(
     private fun getAccountSelectionListItems() {
         viewModelScope.launch(Dispatchers.IO) {
             registerLedgerAccountSelectionPreviewUseCase.getRegisterLedgerAccountSelectionPreview(
-                ledgerAccountsInformation = args.ledgerAccountsInformation,
+                ledgerAccountsInformation = args.ledgerAccounts,
                 bluetoothAddress = args.bluetoothAddress,
                 bluetoothName = args.bluetoothName
             ).collectLatest { preview ->

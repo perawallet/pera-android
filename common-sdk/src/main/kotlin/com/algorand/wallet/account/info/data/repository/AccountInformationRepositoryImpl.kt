@@ -16,9 +16,11 @@ import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
 import com.algorand.wallet.account.info.data.mapper.AccountInformationMapper
 import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
+import com.algorand.wallet.account.info.data.service.AccountInformationApiService
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.foundation.network.utils.request
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -29,6 +31,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.withContext
 
 internal class AccountInformationRepositoryImpl @Inject constructor(
+    private val indexerApi: AccountInformationApiService,
     private val accountInformationMapper: AccountInformationMapper,
     private val accountInformationDao: AccountInformationDao,
     private val assetHoldingDao: AssetHoldingDao,
@@ -132,6 +135,12 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
             val assetHoldings = assetHoldingMapper(assetHoldingEntities)
             accountInformationMapper(accountInformation, assetHoldings)
         }.distinctUntilChanged()
+    }
+
+    override suspend fun fetchRekeyedAccounts(address: String): PeraResult<List<AccountInformation>> {
+        return request { indexerApi.getRekeyedAccounts(address) }.map {
+            accountInformationMapper(it)
+        }
     }
 
     override suspend fun deleteAccountInformation(address: String) {

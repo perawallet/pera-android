@@ -76,3 +76,7 @@ fun interface DeleteAccountInformation {
 fun interface FetchAccountInformation {
     suspend operator fun invoke(address: String): PeraResult<AccountInformation>
 }
+
+fun interface FetchRekeyedAccounts {
+    suspend operator fun invoke(address: String): PeraResult<List<AccountInformation>>
+}

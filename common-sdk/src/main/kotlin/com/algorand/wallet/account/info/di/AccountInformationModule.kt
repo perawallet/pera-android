@@ -45,6 +45,7 @@ import com.algorand.wallet.account.info.domain.usecase.ClearAccountInformationCa
 import com.algorand.wallet.account.info.domain.usecase.DeleteAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAndCacheAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
@@ -237,5 +238,10 @@ internal object AccountInformationModule {
     @Provides
     fun provideFetchAccountInformation(repository: AccountInformationRepository): FetchAccountInformation {
         return FetchAccountInformation(repository::fetchAccountInformation)
+    }
+
+    @Provides
+    fun provideFetchRekeyedAccounts(repository: AccountInformationRepository): FetchRekeyedAccounts {
+        return FetchRekeyedAccounts(repository::fetchRekeyedAccounts)
     }
 }

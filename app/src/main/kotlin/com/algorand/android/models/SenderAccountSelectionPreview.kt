@@ -14,6 +14,7 @@
 package com.algorand.android.models
 
 import com.algorand.android.utils.Event
+import com.algorand.wallet.account.info.domain.model.AccountInformation
 
 data class SenderAccountSelectionPreview(
     val accountList: List<BaseAccountSelectionListItem>,

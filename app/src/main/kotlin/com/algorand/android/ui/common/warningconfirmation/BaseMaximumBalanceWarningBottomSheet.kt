@@ -14,7 +14,6 @@ package com.algorand.android.ui.common.warningconfirmation
 
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseBottomSheet
@@ -28,8 +27,6 @@ abstract class BaseMaximumBalanceWarningBottomSheet : DaggerBaseBottomSheet(
     firebaseEventScreenId = null
 ) {
 
-    abstract fun setDescriptionText(descriptionTextView: TextView)
-
     protected val maximumBalanceWarningViewModel: MaximumBalanceWarningViewModel by viewModels()
 
     private val binding by viewBinding(BottomSheetMaximumBalanceWarningBinding::bind)
@@ -41,9 +38,12 @@ abstract class BaseMaximumBalanceWarningBottomSheet : DaggerBaseBottomSheet(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setDescriptionText(binding.descriptionTextView)
         binding.cancelButton.setOnClickListener { navBack() }
         binding.continueButton.setOnClickListener { onContinueClick() }
+    }
+
+    protected fun setDescriptionText(text: CharSequence) {
+        binding.descriptionTextView.text = text
     }
 
     private fun onContinueClick() {

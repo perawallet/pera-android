@@ -36,11 +36,11 @@ class MultipleAccountSelectionAccountViewHolder(
             setStartIconDrawable(accountIconDrawable)
             setButtonState(item.accountViewButtonState)
             with(item.accountDisplayName) {
-                setTitleText(getAccountPrimaryDisplayName())
-                setDescriptionText(getAccountSecondaryDisplayName(resources))
-                setOnLongClickListener { listener.onAccountLongPressed(getRawAccountAddress()); true }
-                setActionButtonClickListener { listener.onAccountCheckBoxClicked(getRawAccountAddress()) }
-                setOnClickListener { listener.onAccountCheckBoxClicked(getRawAccountAddress()) }
+                setTitleText(primaryDisplayName)
+                setDescriptionText(secondaryDisplayName)
+                setOnLongClickListener { listener.onAccountLongPressed(accountAddress); true }
+                setActionButtonClickListener { listener.onAccountCheckBoxClicked(accountAddress) }
+                setOnClickListener { listener.onAccountCheckBoxClicked(accountAddress) }
             }
         }
     }

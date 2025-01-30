@@ -23,9 +23,8 @@ class SenderAccountSelectionUseCase @Inject constructor(
     private val accountCacheManager: AccountCacheManager,
     private val transactionTipsUseCase: TransactionTipsUseCase,
     private val arc59ExpressSendUseCase: Arc59ExpressSendUseCase,
-    accountInformationUseCase: AccountInformationUseCase,
     getAccountAssetUseCase: GetAccountAssetUseCase
-) : BaseSendAccountSelectionUseCase(accountInformationUseCase, getAccountAssetUseCase) {
+) : BaseSendAccountSelectionUseCase(getAccountAssetUseCase) {
 
     fun shouldShowTransactionTips(): Boolean {
         return transactionTipsUseCase.shouldShowTransactionTips()

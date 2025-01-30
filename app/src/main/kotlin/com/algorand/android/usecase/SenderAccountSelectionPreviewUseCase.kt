@@ -20,20 +20,21 @@ import com.algorand.android.models.Result
 import com.algorand.android.models.SenderAccountSelectionPreview
 import com.algorand.android.models.TargetUser
 import com.algorand.android.models.TransactionData
+import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
 import com.algorand.android.utils.Event
+import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssets
 import java.math.BigInteger
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class SenderAccountSelectionPreviewUseCase @Inject constructor(
-    private val accountSelectionListUseCase: AccountSelectionListUseCase,
     private val senderAccountSelectionPreviewMapper: SenderAccountSelectionPreviewMapper,
-    private val senderAccountSelectionUseCase: SenderAccountSelectionUseCase,
     private val accountDetailUseCase: AccountDetailUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountSelectionAccountsWhichCanSignTransaction: GetAccountSelectionAccountsWhichCanSignTransaction,
+    private val fetchAccountInformationAndCacheAssets: FetchAccountInformationAndCacheAssets
 ) {
 
     fun createSendTransactionData(
@@ -95,23 +96,23 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
 
     fun getUpdatedPreviewFlowWithAccountInformation(
         senderAccountAddress: String,
-        viewModelScope: CoroutineScope,
         preview: SenderAccountSelectionPreview
     ): Flow<SenderAccountSelectionPreview> = flow {
         emit(preview.copy(isLoading = true))
         val loadingFinishedPreview = preview.copy(isLoading = false)
-        when (
-            val result =
-                senderAccountSelectionUseCase.fetchAccountInformation(senderAccountAddress, viewModelScope)
-        ) {
-            is Result.Error -> emit(loadingFinishedPreview.copy(senderAccountInformationErrorEvent = Event(result)))
-            is Result.Success ->
-                emit(loadingFinishedPreview.copy(senderAccountInformationSuccessEvent = Event(result.data)))
-        }
+        fetchAccountInformationAndCacheAssets(senderAccountAddress).use(
+            onSuccess = {
+                emit(loadingFinishedPreview.copy(senderAccountInformationSuccessEvent = Event(it)))
+            },
+            onFailed = { exception, code ->
+                val errorEvent = Event(Result.Error(exception, code))
+                emit(loadingFinishedPreview.copy(senderAccountInformationErrorEvent = errorEvent))
+            }
+        )
     }
 
     private suspend fun getBaseNormalAccountListItems(): List<BaseAccountSelectionListItem> {
-        return accountSelectionListUseCase.createAccountSelectionListAccountItemsWhichCanSignTransaction(
+        return getAccountSelectionAccountsWhichCanSignTransaction(
             showHoldings = true,
             showFailedAccounts = true
         )
@@ -120,11 +121,10 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
     private suspend fun getBaseNormalAccountListItemsFilteredByAssetId(
         assetId: Long
     ): List<BaseAccountSelectionListItem> {
-        return accountSelectionListUseCase
-            .createAccountSelectionListAccountItemsFilteredByAssetIdWhichCanSignTransaction(
-                assetId = assetId,
-                showHoldings = true,
-                showFailedAccounts = true
-            )
+        return getAccountSelectionAccountsWhichCanSignTransaction(
+            assetId = assetId,
+            showHoldings = true,
+            showFailedAccounts = true
+        )
     }
 }

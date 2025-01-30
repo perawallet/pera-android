@@ -16,25 +16,27 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.swap.accountselection.ui.model.SwapAccountSelectionPreview
-import com.algorand.android.modules.swap.accountselection.ui.usecase.SwapAccountSelectionPreviewUseCase
+import com.algorand.android.modules.swap.accountselection.ui.usecase.GetSwapAccountSelectedUpdatedPreview
+import com.algorand.android.modules.swap.accountselection.ui.usecase.GetSwapAccountSelectionAssetAddedPreview
+import com.algorand.android.modules.swap.accountselection.ui.usecase.GetSwapAccountSelectionPreview
 import com.algorand.android.utils.getOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SwapAccountSelectionViewModel @Inject constructor(
-    private val swapAccountSelectionPreviewUseCase: SwapAccountSelectionPreviewUseCase,
+    private val getSwapAccountSelectionPreview: GetSwapAccountSelectionPreview,
+    private val getSwapAccountSelectedUpdatedPreview: GetSwapAccountSelectedUpdatedPreview,
+    private val getSwapAccountSelectionAssetAddedPreview: GetSwapAccountSelectionAssetAddedPreview,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    private val _swapAccountSelectionPreviewFlow = MutableStateFlow<SwapAccountSelectionPreview>(
-        swapAccountSelectionPreviewUseCase.getSwapAccountSelectionInitialPreview()
-    )
+    private val _swapAccountSelectionPreviewFlow = MutableStateFlow(getInitialPreview())
     val swapAccountSelectionPreviewFlow: StateFlow<SwapAccountSelectionPreview> get() = _swapAccountSelectionPreviewFlow
 
     private val fromAssetId = savedStateHandle.getOrElse(FROM_ASSET_ID_KEY, DEFAULT_ASSET_ID_ARG).takeIf {
@@ -51,7 +53,7 @@ class SwapAccountSelectionViewModel @Inject constructor(
 
     fun onAccountSelected(accountAddress: String) {
         viewModelScope.launch {
-            val newState = swapAccountSelectionPreviewUseCase.getAccountSelectedUpdatedPreview(
+            val newState = getSwapAccountSelectedUpdatedPreview(
                 accountAddress = accountAddress,
                 previousState = _swapAccountSelectionPreviewFlow.value,
                 fromAssetId = fromAssetId,
@@ -65,23 +67,34 @@ class SwapAccountSelectionViewModel @Inject constructor(
 
     fun onAssetAdded(accountAddress: String, toAssetId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            swapAccountSelectionPreviewUseCase.getAssetAddedPreview(
-                accountAddress = accountAddress,
-                fromAssetId = fromAssetId ?: DEFAULT_ASSET_ID_ARG,
-                toAssetId = toAssetId,
-                previousState = _swapAccountSelectionPreviewFlow.value,
-                scope = this
-            ).collectLatest { newState ->
-                _swapAccountSelectionPreviewFlow.value = newState
+            _swapAccountSelectionPreviewFlow.update {
+                getSwapAccountSelectionAssetAddedPreview(
+                    accountAddress = accountAddress,
+                    fromAssetId = fromAssetId ?: DEFAULT_ASSET_ID_ARG,
+                    toAssetId = toAssetId,
+                    previousState = _swapAccountSelectionPreviewFlow.value,
+                    scope = this
+                )
             }
         }
     }
 
     private fun initSwapAccountSelectionPreviewFlow() {
         viewModelScope.launch {
-            val swapAccountSelectionPreview = swapAccountSelectionPreviewUseCase.getSwapAccountSelectionPreview()
+            val swapAccountSelectionPreview = getSwapAccountSelectionPreview()
             _swapAccountSelectionPreviewFlow.emit(swapAccountSelectionPreview)
         }
+    }
+
+    private fun getInitialPreview(): SwapAccountSelectionPreview {
+        return SwapAccountSelectionPreview(
+            accountListItems = emptyList(),
+            isLoading = true,
+            navToSwapNavigationEvent = null,
+            errorEvent = null,
+            isEmptyStateVisible = false,
+            optInToAssetEvent = null
+        )
     }
 
     companion object {

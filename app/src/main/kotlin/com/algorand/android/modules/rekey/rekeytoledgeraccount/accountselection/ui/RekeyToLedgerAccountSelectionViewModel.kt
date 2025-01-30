@@ -14,8 +14,8 @@ package com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.AccountSelectionListItem
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.BaseLedgerAccountSelectionViewModel
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionPreview
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.usecase.RekeyLedgerAccountSelectionPreviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,9 +31,11 @@ import kotlinx.coroutines.launch
 class RekeyToLedgerAccountSelectionViewModel @Inject constructor(
     private val rekeyLedgerAccountSelectionPreviewUseCase: RekeyLedgerAccountSelectionPreviewUseCase,
     savedStateHandle: SavedStateHandle,
-) : BaseLedgerAccountSelectionViewModel(rekeyLedgerAccountSelectionPreviewUseCase) {
+) : BaseLedgerAccountSelectionViewModel() {
 
-    private val args = RekeyToLedgerAccountSelectionFragmentArgs.fromSavedStateHandle(savedStateHandle)
+    private val args = RekeyToLedgerAccountSelectionFragmentArgs
+        .fromSavedStateHandle(savedStateHandle)
+        .rekeyLedgerAccountSelectionNavArgs
 
     val ledgerBluetoothName: String? = args.bluetoothName
     val accountAddress: String = args.accountAddress
@@ -52,7 +54,7 @@ class RekeyToLedgerAccountSelectionViewModel @Inject constructor(
     private fun getAccountSelectionListItems() {
         viewModelScope.launch(Dispatchers.IO) {
             rekeyLedgerAccountSelectionPreviewUseCase.getRekeyLedgerAccountSelectionPreview(
-                ledgerAccountsInformation = args.ledgerAccountsInformation,
+                ledgerAccountsNavArgs = args.ledgerAccounts,
                 bluetoothAddress = args.bluetoothAddress,
                 bluetoothName = args.bluetoothName,
                 accountAddress = args.accountAddress

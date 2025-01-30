@@ -73,7 +73,7 @@ open class PeraApp : Application() {
         migrationManager.makeMigrations()
         peraSecurityManager.initializeSecurityManager()
         AppCompatDelegate.setDefaultNightMode(sharedPref.getSavedThemePreference().convertToSystemAbbr())
-        accountManager.initAccounts()
+
         initializeWalletConnect()
         bindApplicationLifecycleAwareComponents()
         bindActivityLifecycleAwareComponents()

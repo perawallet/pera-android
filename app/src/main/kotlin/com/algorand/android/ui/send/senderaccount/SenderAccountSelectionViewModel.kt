@@ -78,7 +78,6 @@ class SenderAccountSelectionViewModel @Inject constructor(
         viewModelScope.launch {
             senderAccountSelectionPreviewUseCase.getUpdatedPreviewFlowWithAccountInformation(
                 senderAccountAddress = senderAccountAddress,
-                viewModelScope = viewModelScope,
                 preview = _senderAccountSelectionPreviewFlow.value
             ).collectLatest {
                 _senderAccountSelectionPreviewFlow.emit(it)

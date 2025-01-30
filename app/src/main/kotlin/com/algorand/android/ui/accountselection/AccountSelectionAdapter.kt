@@ -59,7 +59,7 @@ class AccountSelectionAdapter(
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                     (getItem(bindingAdapterPosition) as BaseAccountSelectionListItem.PasteItem).run {
-                        listener.onPasteItemClick(publicKey)
+                        listener.onPasteItemClick(address)
                     }
                 }
             }
@@ -75,7 +75,7 @@ class AccountSelectionAdapter(
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                     (getItem(bindingAdapterPosition) as BaseAccountSelectionListItem.BaseAccountItem.ContactItem).run {
-                        listener.onContactItemClick(publicKey)
+                        listener.onContactItemClick(address)
                     }
                 }
             }
@@ -87,7 +87,7 @@ class AccountSelectionAdapter(
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                     (getItem(bindingAdapterPosition) as BaseAccountSelectionListItem.BaseAccountItem.AccountItem).run {
-                        listener.onAccountItemClick(publicKey)
+                        listener.onAccountItemClick(address)
                     }
                 }
             }
@@ -106,7 +106,7 @@ class AccountSelectionAdapter(
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                     (getItem(bindingAdapterPosition) as NftDomainAccountItem).run {
                         listener.onNftDomainItemClick(
-                            accountAddress = publicKey,
+                            accountAddress = address,
                             nftDomain = displayName,
                             logoUrl = serviceLogoUrl
                         )

@@ -12,31 +12,7 @@
 
 package com.algorand.android.utils
 
-import com.algorand.android.models.Account
-import com.algorand.android.models.User
 import com.algorand.android.modules.transaction.common.domain.model.TransactionDTO
-
-fun getUserIfSavedLocally(
-    contactList: List<User>,
-    accountList: List<Account>,
-    nonOwnerPublicKey: String?
-): User? {
-    if (nonOwnerPublicKey == null) {
-        return null
-    }
-
-    val foundContact = contactList.firstOrNull { it.publicKey == nonOwnerPublicKey }
-    if (foundContact != null) {
-        return foundContact
-    }
-
-    val foundAccount = accountList.firstOrNull { it.address == nonOwnerPublicKey }
-    if (foundAccount != null) {
-        return User(foundAccount.name, foundAccount.address, null, -1)
-    }
-
-    return null
-}
 
 fun getAllNestedTransactions(transactionDTO: TransactionDTO): Sequence<TransactionDTO> {
     return sequence {

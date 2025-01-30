@@ -23,7 +23,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class RekeyToStandardAccountSelectionViewModel @Inject constructor(
@@ -43,10 +43,8 @@ class RekeyToStandardAccountSelectionViewModel @Inject constructor(
 
     private fun initPreviewFlow() {
         viewModelScope.launchIO {
-            rekeyToStandardAccountSelectionPreviewUseCase.getRekeyToAccountSingleAccountSelectionPreviewFlow(
-                accountAddress = accountAddress
-            ).collectLatest { preview ->
-                rekeyToAccountSingleAccountSelectionPreview.emit(preview)
+            rekeyToAccountSingleAccountSelectionPreview.update {
+                rekeyToStandardAccountSelectionPreviewUseCase.getRekeyToAccountSelectionPreviewFlow(accountAddress)
             }
         }
     }

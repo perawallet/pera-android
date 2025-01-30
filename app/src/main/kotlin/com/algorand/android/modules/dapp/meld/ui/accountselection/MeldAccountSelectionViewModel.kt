@@ -15,7 +15,7 @@ package com.algorand.android.modules.dapp.meld.ui.accountselection
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.BaseAccountSelectionListItem
-import com.algorand.android.modules.dapp.meld.domain.usecase.MeldAccountSelectionPreviewUseCase
+import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MeldAccountSelectionViewModel @Inject constructor(
-    private val meldAccountSelectionPreviewUseCase: MeldAccountSelectionPreviewUseCase
+    private val getAccountSelectionAccountsWhichCanSignTransaction: GetAccountSelectionAccountsWhichCanSignTransaction
 ) : ViewModel() {
 
     val accountItemsFlow: Flow<List<BaseAccountSelectionListItem>>
@@ -37,7 +37,11 @@ class MeldAccountSelectionViewModel @Inject constructor(
 
     private fun initAccountItems() {
         viewModelScope.launch {
-            _accountItemsFlow.emit(meldAccountSelectionPreviewUseCase.getMeldAccountSelectionPreview())
+            val accountSelectionItems = getAccountSelectionAccountsWhichCanSignTransaction(
+                showHoldings = true,
+                showFailedAccounts = false
+            )
+            _accountItemsFlow.emit(accountSelectionItems)
         }
     }
 }

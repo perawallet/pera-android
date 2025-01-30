@@ -20,13 +20,13 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.TransactionBaseFragment
 import com.algorand.android.databinding.FragmentSenderAccountSelectionBinding
-import com.algorand.android.models.AccountInformation
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.SenderAccountSelectionPreview
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.accountselection.AccountSelectionAdapter
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.account.info.domain.model.AccountInformation
 import dagger.hilt.android.AndroidEntryPoint
 import java.math.BigInteger
 

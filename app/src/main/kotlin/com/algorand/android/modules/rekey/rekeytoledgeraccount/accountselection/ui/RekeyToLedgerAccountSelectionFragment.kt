@@ -16,11 +16,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountSelectionListItem
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.BaseLedgerAccountSelectionFragment
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.BaseLedgerAccountSelectionViewModel
 import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.adapter.LedgerAccountSelectionAdapter
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccounts
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,18 +69,19 @@ class RekeyToLedgerAccountSelectionFragment : BaseLedgerAccountSelectionFragment
         nav(MainNavigationDirections.actionGlobalLedgerTroubleshootFragment())
     }
 
-    override fun onConfirmationClick(selectedAccounts: List<Account>, allAuthAccounts: List<Account>) {
-        val selectedAccount = selectedAccounts.firstOrNull()
-        if (selectedAccount != null && selectedAccount.detail is Account.Detail.Ledger) {
-            nav(
-                RekeyToLedgerAccountSelectionFragmentDirections
-                    .rekeyLedgerAccountSelectionFragmentToRekeyToLedgerAccountConfirmationFragment(
-                        accountAddress = rekeyLedgerAccountSelectionViewModel.accountAddress,
-                        authAccountAddress = selectedAccount.address,
-                        ledgerDetail = selectedAccount.detail
-                    )
-            )
-        }
+    override fun onConfirmationClick(selectedLedgerAccounts: SelectedLedgerAccounts) {
+        // TODO Will be implemented after ledger flow
+//        val selectedLedgerAccount = selectedLedgerAccounts.ledgerAccounts.firstOrNull()
+//        if (selectedLedgerAccount != null) {
+//            nav(
+//                RekeyToLedgerAccountSelectionFragmentDirections
+//                    .rekeyLedgerAccountSelectionFragmentToRekeyToLedgerAccountConfirmationFragment(
+//                        accountAddress = rekeyLedgerAccountSelectionViewModel.accountAddress,
+//                        authAccountAddress = selectedAccount.address,
+//                        ledgerDetail = selectedAccount.detail
+//                    )
+//            )
+//        }
     }
 
     override fun changeToolbarTitle() {

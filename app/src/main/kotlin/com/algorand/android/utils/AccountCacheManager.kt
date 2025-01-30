@@ -13,7 +13,6 @@
 package com.algorand.android.utils
 
 import com.algorand.android.core.AccountManager
-import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCacheData
 import com.algorand.android.models.AccountDetail
 import com.algorand.android.models.AssetDetail
@@ -22,11 +21,8 @@ import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import java.math.BigInteger
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class AccountCacheManager(
@@ -71,18 +67,6 @@ class AccountCacheManager(
         }
     }
 
-    fun getBalanceFlow(address: String, assetId: Long): Flow<BigInteger?> {
-        return accountCacheMap
-            .map { map -> map[address]?.assetsInformation?.firstOrNull { it.assetId == assetId }?.amount }
-            .distinctUntilChanged()
-    }
-
-    fun getAssetInformationFlow(address: String, assetId: Long): Flow<AssetInformation?> {
-        return accountCacheMap
-            .map { map -> map[address]?.assetsInformation?.firstOrNull { it.assetId == assetId } }
-            .distinctUntilChanged()
-    }
-
     fun getAssetDescription(assetId: Long): AssetDetail? {
         return assetDetailUseCase.getCachedAssetDetail(assetId)?.data
     }
@@ -103,26 +87,6 @@ class AccountCacheManager(
         return accountCacheMap.value[accountPublicKey]?.assetsInformation?.firstOrNull { assetId == it.assetId }
     }
 
-    fun getAccountCacheWithSpecificAsset(
-        assetId: Long,
-        excludedAccountTypes: List<Account.Type> = emptyList()
-    ): List<Pair<AccountCacheData, AssetInformation>> {
-        val result = mutableListOf<Pair<AccountCacheData, AssetInformation>>()
-        accountCacheMap.value
-            .filterNot { it.value.account.type in excludedAccountTypes }
-            .forEach { (_, accountCacheData) ->
-                val foundAsset = accountCacheData.assetsInformation.firstOrNull { it.assetId == assetId }
-                if (foundAsset != null) {
-                    result.add(Pair(accountCacheData, foundAsset))
-                }
-            }
-        return result
-    }
-
-    fun isAccountOwnerOfAsset(publicKey: String, assetId: Long): Boolean {
-        return accountCacheMap.value[publicKey]?.assetsInformation?.any { it.assetId == assetId } == true
-    }
-
     fun getMinBalanceOfAccount(publicKey: String): BigInteger {
         return accountCacheMap.value[publicKey]?.getMinBalance()?.toBigInteger() ?: minBalancePerAssetAsBigInteger
     }
@@ -131,31 +95,11 @@ class AccountCacheManager(
 
     fun getAccountAssetCount(publicKey: String) = accountCacheMap.value[publicKey]?.assetsInformation?.size
 
-    fun getAuthAccount(account: Account?): Account? {
-        if (account == null) {
-            return null
-        }
-        val authAddress = accountCacheMap.value[account.address]?.authAddress
-        return if (authAddress.isNullOrEmpty()) {
-            account
-        } else {
-            accountManager.getAccount(authAddress)
-        }
-    }
-
     fun getCacheData(publicKey: String?): AccountCacheData? {
         return accountCacheMap.value[publicKey]
     }
 
     fun removeCachedData() {
         accountCacheMap.value = mutableMapOf()
-    }
-
-    fun getCachedAccounts(excludedAccountTypes: List<Account.Type> = emptyList()): List<AccountCacheData> {
-        return accountCacheMap.value
-            .filterNot { it.value.account.type in excludedAccountTypes }
-            .map { (_, accountCacheData) ->
-                accountCacheData
-            }
     }
 }

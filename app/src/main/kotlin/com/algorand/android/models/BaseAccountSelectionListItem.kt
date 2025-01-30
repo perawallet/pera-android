@@ -14,6 +14,7 @@ package com.algorand.android.models
 
 import android.net.Uri
 import androidx.annotation.StringRes
+import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem.AccountListItem
 
 sealed class BaseAccountSelectionListItem : RecyclerListItem {
 
@@ -31,9 +32,9 @@ sealed class BaseAccountSelectionListItem : RecyclerListItem {
         }
     }
 
-    data class PasteItem(val publicKey: String) : BaseAccountSelectionListItem() {
+    data class PasteItem(val address: String) : BaseAccountSelectionListItem() {
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is PasteItem && publicKey == other.publicKey
+            return other is PasteItem && address == other.address
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -43,15 +44,15 @@ sealed class BaseAccountSelectionListItem : RecyclerListItem {
 
     sealed class BaseAccountItem : BaseAccountSelectionListItem() {
         abstract val displayName: String
-        abstract val publicKey: String
+        abstract val address: String
 
         data class ContactItem(
             override val displayName: String,
-            override val publicKey: String,
+            override val address: String,
             val imageUri: Uri?
         ) : BaseAccountItem() {
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-                return other is ContactItem && publicKey == other.publicKey
+                return other is ContactItem && address == other.address
             }
 
             override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -59,16 +60,14 @@ sealed class BaseAccountSelectionListItem : RecyclerListItem {
             }
         }
 
-        data class AccountItem(
-            val accountListItem: BaseAccountAndAssetListItem.AccountListItem
-        ) : BaseAccountItem() {
+        data class AccountItem(val accountListItem: AccountListItem) : BaseAccountItem() {
 
             override val displayName: String = accountListItem.itemConfiguration
                 .accountDisplayName
-                ?.getAccountPrimaryDisplayName()
+                ?.primaryDisplayName
                 .orEmpty()
 
-            override val publicKey: String = accountListItem.itemConfiguration.accountAddress
+            override val address: String = accountListItem.itemConfiguration.accountAddress
 
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
                 return other is AccountItem &&
@@ -81,16 +80,14 @@ sealed class BaseAccountSelectionListItem : RecyclerListItem {
             }
         }
 
-        data class AccountErrorItem(
-            val accountListItem: BaseAccountAndAssetListItem.AccountListItem
-        ) : BaseAccountItem() {
+        data class AccountErrorItem(val accountListItem: AccountListItem) : BaseAccountItem() {
 
             override val displayName: String = accountListItem.itemConfiguration
                 .accountDisplayName
-                ?.getAccountPrimaryDisplayName()
+                ?.primaryDisplayName
                 .orEmpty()
 
-            override val publicKey: String = accountListItem.itemConfiguration.accountAddress
+            override val address: String = accountListItem.itemConfiguration.accountAddress
 
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
                 return other is AccountErrorItem &&
@@ -105,12 +102,12 @@ sealed class BaseAccountSelectionListItem : RecyclerListItem {
 
         data class NftDomainAccountItem(
             override val displayName: String,
-            override val publicKey: String,
+            override val address: String,
             val serviceLogoUrl: String?
         ) : BaseAccountItem() {
 
             override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-                return other is NftDomainAccountItem && other.publicKey == publicKey
+                return other is NftDomainAccountItem && other.address == address
             }
 
             override fun areContentsTheSame(other: RecyclerListItem): Boolean {

@@ -44,4 +44,8 @@ data class AccountInformation(
     fun getAssetHoldingIds() = assetHoldings.map { it.assetId }
 
     fun isCreated() = createdAtRound != null
+
+    fun isThereAnOptedInApp() = totalAppsOptedIn > 0 || totalCreatedApps > 0
+
+    fun isThereAnOptedInAsset() = totalAssetsOptedIn > 0 || totalCreatedAssets > 0
 }

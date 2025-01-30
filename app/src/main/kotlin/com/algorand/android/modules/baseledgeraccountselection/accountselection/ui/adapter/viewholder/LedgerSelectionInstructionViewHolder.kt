@@ -16,9 +16,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemLedgerSelectionInstructionBinding
-import com.algorand.android.models.AccountSelectionListItem
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.baseledgeraccountselection.accountselection.ui.model.SearchType
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem.SearchType
 
 class LedgerSelectionInstructionViewHolder(
     private val binding: ItemLedgerSelectionInstructionBinding

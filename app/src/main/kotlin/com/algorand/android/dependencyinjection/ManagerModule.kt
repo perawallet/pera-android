@@ -23,7 +23,6 @@ import com.algorand.android.usecase.AccountCacheStatusUseCase
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.AssetFetchAndCacheUseCase
 import com.algorand.android.usecase.SimpleAssetDetailUseCase
-import com.algorand.android.utils.AccountDetailUpdateHelper
 import com.algorand.android.utils.coremanager.AccountDetailCacheManager
 import com.algorand.android.utils.coremanager.AssetCacheManager
 import com.algorand.android.utils.coremanager.ParityManager
@@ -54,7 +53,6 @@ object ManagerModule {
         clearLastKnownBlockForAccountsUseCase: ClearLastKnownBlockForAccountsUseCase,
         accountDetailUseCase: AccountDetailUseCase,
         accountManager: AccountManager,
-        accountDetailUpdateHelper: AccountDetailUpdateHelper,
         assetInboxAllAccountsUseCase: AssetInboxAllAccountsUseCase
     ): AccountDetailCacheManager {
         return AccountDetailCacheManager(
@@ -63,7 +61,6 @@ object ManagerModule {
             clearLastKnownBlockForAccountsUseCase,
             accountDetailUseCase,
             accountManager,
-            accountDetailUpdateHelper,
             assetInboxAllAccountsUseCase
         )
     }

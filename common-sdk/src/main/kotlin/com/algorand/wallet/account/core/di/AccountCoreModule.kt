@@ -28,6 +28,8 @@ import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAn
 import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssetsUseCase
 import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlow
 import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlowUseCase
+import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
+import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalanceUseCase
 import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlow
 import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlowUseCase
 import dagger.Module
@@ -67,4 +69,7 @@ internal object AccountCoreModule {
     fun provideFetchAccountInformationAndCacheAssets(
         useCase: FetchAccountInformationAndCacheAssetsUseCase
     ): FetchAccountInformationAndCacheAssets = useCase
+
+    @Provides
+    fun provideGetAccountMinBalance(useCase: GetAccountMinBalanceUseCase): GetAccountMinBalance = useCase
 }

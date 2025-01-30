@@ -47,5 +47,5 @@ data class AccountInformation(
 
     fun isThereAnOptedInApp() = totalAppsOptedIn > 0 || totalCreatedApps > 0
 
-    fun isThereAnOptedInAsset() = assetHoldings.isNotEmpty()
+    fun isThereAnOptedInAsset() = totalAssetsOptedIn > 0 || totalCreatedAssets > 0
 }

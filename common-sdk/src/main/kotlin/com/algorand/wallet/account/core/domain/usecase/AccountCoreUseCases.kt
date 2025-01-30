@@ -15,6 +15,7 @@ package com.algorand.wallet.account.core.domain.usecase
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.foundation.PeraResult
+import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
 
 fun interface AddAlgo25Account {
@@ -71,4 +72,9 @@ fun interface CacheAccountDetail {
 
 fun interface FetchAccountInformationAndCacheAssets {
     suspend operator fun invoke(address: String): PeraResult<AccountInformation>
+}
+
+interface GetAccountMinBalance {
+    suspend operator fun invoke(accountAddress: String): BigInteger
+    suspend operator fun invoke(accountInformation: AccountInformation): BigInteger
 }

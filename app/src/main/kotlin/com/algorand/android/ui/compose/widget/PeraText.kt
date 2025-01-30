@@ -13,7 +13,7 @@ fun PeraTitleText(modifier: Modifier, text: String) {
         text = text,
         style = MaterialTheme.typography.titleLarge,
         fontFamily = peraSans,
-        fontWeight = FontWeight.Medium
+        fontWeight = FontWeight.Medium,
     )
 }
 

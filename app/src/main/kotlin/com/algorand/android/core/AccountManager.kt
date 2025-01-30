@@ -14,7 +14,6 @@ package com.algorand.android.core
 
 import android.content.SharedPreferences
 import com.algorand.android.models.Account
-import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
 import com.algorand.android.utils.preference.removeAll
 import com.algorand.android.utils.preference.saveAlgorandAccounts
 import com.google.crypto.tink.Aead
@@ -25,18 +24,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class AccountManager(
     private val aead: Aead,
     private val gson: Gson,
-    private val sharedPref: SharedPreferences,
-    private val getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase
+    private val sharedPref: SharedPreferences
 ) {
 
     val accounts = MutableStateFlow<List<Account>>(listOf())
-
-    fun initAccounts() {
-        val localAccounts = getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref()
-        if (localAccounts != null) {
-            accounts.value = localAccounts
-        }
-    }
 
     fun getAccount(publicKey: String): Account? {
         getAccounts().forEach { iteratedAccount ->

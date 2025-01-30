@@ -15,8 +15,8 @@ package com.algorand.android.nft.utils
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountDetail
 import com.algorand.android.utils.CacheResult
-import com.algorand.android.utils.extensions.hasAsset
 import com.algorand.android.utils.extensions.getAssetHoldingOrNull
+import com.algorand.android.utils.extensions.hasAsset
 import com.algorand.android.utils.isGreaterThan
 import java.math.BigInteger
 import javax.inject.Inject
@@ -68,15 +68,5 @@ class CollectibleUtils @Inject constructor() {
     ): Boolean {
         val watchAccounts = accountDetailList.filter { it?.data?.account?.type == Account.Type.WATCH }
         return watchAccounts.any { isCollectibleOwnedByTheWatchAccount(it, collectibleAssetId) }
-    }
-
-    fun getCollectibleOwnerAccountOrNull(
-        accountDetailList: Collection<CacheResult<AccountDetail>>,
-        collectibleAssetId: Long,
-        publicKey: String
-    ): Account? {
-        val selectedAccount = accountDetailList.firstOrNull { it.data?.account?.address == publicKey }
-        val isCollectibleOwnedBySelectedAccount = selectedAccount?.data?.hasAsset(collectibleAssetId) ?: false
-        return selectedAccount?.data?.account.takeIf { isCollectibleOwnedBySelectedAccount }
     }
 }

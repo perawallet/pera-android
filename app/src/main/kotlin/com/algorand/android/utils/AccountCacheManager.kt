@@ -13,7 +13,6 @@
 package com.algorand.android.utils
 
 import com.algorand.android.core.AccountManager
-import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCacheData
 import com.algorand.android.models.AccountDetail
 import com.algorand.android.models.AssetDetail
@@ -86,22 +85,6 @@ class AccountCacheManager(
 
     fun getAssetInformation(accountPublicKey: String, assetId: Long): AssetInformation? {
         return accountCacheMap.value[accountPublicKey]?.assetsInformation?.firstOrNull { assetId == it.assetId }
-    }
-
-    fun getAccountCacheWithSpecificAsset(
-        assetId: Long,
-        excludedAccountTypes: List<Account.Type> = emptyList()
-    ): List<Pair<AccountCacheData, AssetInformation>> {
-        val result = mutableListOf<Pair<AccountCacheData, AssetInformation>>()
-        accountCacheMap.value
-            .filterNot { it.value.account.type in excludedAccountTypes }
-            .forEach { (_, accountCacheData) ->
-                val foundAsset = accountCacheData.assetsInformation.firstOrNull { it.assetId == assetId }
-                if (foundAsset != null) {
-                    result.add(Pair(accountCacheData, foundAsset))
-                }
-            }
-        return result
     }
 
     fun getMinBalanceOfAccount(publicKey: String): BigInteger {

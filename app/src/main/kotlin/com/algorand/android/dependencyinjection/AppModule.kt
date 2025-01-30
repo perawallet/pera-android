@@ -38,7 +38,6 @@ import com.algorand.android.ledger.LedgerBleConnectionManager
 import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.notification.PeraNotificationManager
 import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
 import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.ALGORAND_KEYSTORE_URI
 import com.algorand.android.utils.AccountCacheManager
@@ -154,10 +153,9 @@ object AppModule {
     fun provideAccountManager(
         aead: Aead,
         gson: Gson,
-        sharedPref: SharedPreferences,
-        getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase
+        sharedPref: SharedPreferences
     ): AccountManager {
-        return AccountManager(aead, gson, sharedPref, getLocalAccountsFromSharedPrefUseCase)
+        return AccountManager(aead, gson, sharedPref)
     }
 
     @Singleton

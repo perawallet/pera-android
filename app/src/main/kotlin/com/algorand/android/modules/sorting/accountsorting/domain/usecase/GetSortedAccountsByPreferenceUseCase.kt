@@ -30,31 +30,6 @@ class GetSortedAccountsByPreferenceUseCase @Inject constructor(
     private val accountStateHelperUseCase: AccountStateHelperUseCase
 ) {
 
-    fun getSortedAccountListItems(
-        sortingPreferences: AccountSortingType,
-        excludedAccountTypes: List<Account.Type>? = null,
-        onLoadedAccountConfiguration: AccountDetail.() -> BaseItemConfiguration.AccountItemConfiguration,
-        onFailedAccountConfiguration: Account?.() -> BaseItemConfiguration.AccountItemConfiguration?
-    ): List<BaseAccountAndAssetListItem.AccountListItem> {
-        val localAccounts = getSortedLocalAccountsUseCase.getSortedLocalAccounts()
-        val accountListItems = localAccounts.mapIndexedNotNull { index, account ->
-            val isAccountTypeValid = isAccountTypeValid(excludedAccountTypes, account.type)
-            if (isAccountTypeValid) {
-                val accountDetail = accountDetailUseCase.getCachedAccountDetail(account.address)?.data
-                val accountItemConfiguration = configureListItem(
-                    accountDetail = accountDetail,
-                    account = localAccounts.getOrNull(index),
-                    onLoadedAccountConfiguration = onLoadedAccountConfiguration,
-                    onFailedAccountConfiguration = onFailedAccountConfiguration
-                ) ?: return@mapIndexedNotNull null
-                baseAccountAndAssetListItemMapper.mapToAccountListItem(accountItemConfiguration)
-            } else {
-                null
-            }
-        }
-        return sortingPreferences.sort(accountListItems)
-    }
-
     // TODO: Filter account which is eligible to signing transaction by their account types
     fun getFilteredSortedAccountListItemsWhichCanSignTransaction(
         sortingPreferences: AccountSortingType,

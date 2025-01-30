@@ -20,7 +20,6 @@ import com.algorand.android.modules.accountblockpolling.domain.usecase.GetResult
 import com.algorand.android.modules.accountblockpolling.domain.usecase.UpdateLastKnownBlockUseCase
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.AssetInboxAllAccountsUseCase
 import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.utils.AccountDetailUpdateHelper
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.DataResource
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +34,6 @@ class AccountDetailCacheManager(
     private val clearLastKnownBlockForAccountsUseCase: ClearLastKnownBlockForAccountsUseCase,
     private val accountDetailUseCase: AccountDetailUseCase,
     private val accountManager: AccountManager,
-    private val accountDetailUpdateHelper: AccountDetailUpdateHelper,
     private val assetInboxAllAccountsUseCase: AssetInboxAllAccountsUseCase
 ) : BaseCacheManager() {
 
@@ -107,8 +105,7 @@ class AccountDetailCacheManager(
     private suspend fun onFetchAccountDetailSuccess(
         accountDetail: AccountDetail
     ): Pair<String, CacheResult.Success<AccountDetail>> {
-        val updatedAccountDetail = accountDetailUpdateHelper.getUpdatedAccountDetail(accountDetail)
-        val cacheResult = CacheResult.Success.create(updatedAccountDetail)
+        val cacheResult = CacheResult.Success.create(accountDetail)
         return accountDetail.account.address to cacheResult
     }
 

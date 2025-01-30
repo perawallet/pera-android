@@ -34,10 +34,6 @@ data class Account(
     var isBackedUp: Boolean
 ) : Parcelable {
 
-    fun isRegistrationCompleted(): Boolean {
-        return !(address.isBlank() || name.isBlank())
-    }
-
     fun getSecretKey(): ByteArray? {
         return when (detail) {
             is Detail.Standard -> detail.secretKey

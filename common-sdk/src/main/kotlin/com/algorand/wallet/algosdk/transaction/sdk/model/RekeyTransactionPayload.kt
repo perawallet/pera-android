@@ -10,10 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption
+package com.algorand.wallet.algosdk.transaction.sdk.model
 
-interface Base64Manager {
-    fun encode(byteArray: ByteArray): String
-    fun decode(value: String): ByteArray
-    fun decode(value: String, flags: Int): ByteArray
-}
+data class RekeyTransactionPayload(
+    val address: String,
+    val rekeyAdminAddress: String
+)

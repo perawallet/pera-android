@@ -10,10 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption
+package com.algorand.wallet.algosdk.transaction.sdk.model
 
-interface Base64Manager {
-    fun encode(byteArray: ByteArray): String
-    fun decode(value: String): ByteArray
-    fun decode(value: String, flags: Int): ByteArray
+data class SuggestedTransactionParams(
+    val genesisHash: String,
+    val genesisId: String,
+    val lastRound: Long,
+    val minFee: Long?,
+    val fee: TransactionFee
+) {
+    data class TransactionFee(val fee: Long, val type: FeeType) {
+
+        sealed interface FeeType {
+            data object Suggested : FeeType
+            data object Flat : FeeType
+        }
+    }
 }

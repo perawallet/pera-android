@@ -10,10 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption
+package com.algorand.wallet.algosdk.transaction.sdk.mapper
 
-interface Base64Manager {
-    fun encode(byteArray: ByteArray): String
-    fun decode(value: String): ByteArray
-    fun decode(value: String, flags: Int): ByteArray
+import com.algorand.algosdk.sdk.SuggestedParams
+import com.algorand.wallet.algosdk.transaction.sdk.model.SuggestedTransactionParams
+
+internal interface SuggestedParamsMapper {
+    operator fun invoke(params: SuggestedTransactionParams, addGenesis: Boolean): SuggestedParams
 }

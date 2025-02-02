@@ -10,10 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption
+package com.algorand.wallet.algosdk.transaction.sdk.model
 
-interface Base64Manager {
-    fun encode(byteArray: ByteArray): String
-    fun decode(value: String): ByteArray
-    fun decode(value: String, flags: Int): ByteArray
-}
+import java.math.BigInteger
+
+data class SendAndRemoveAssetTransactionPayload(
+    val senderAddress: String,
+    val receiverAddress: String,
+    val assetId: Long,
+    val amount: BigInteger,
+    val noteInByteArray: ByteArray?
+)

@@ -65,4 +65,6 @@ interface AlgoSdk {
         noteInByteArray: ByteArray?,
         suggestedTransactionParams: SuggestedTransactionParams
     ): ByteArray
+
+    fun transactionMsgpackToJson(txnByteArray: ByteArray): String
 }

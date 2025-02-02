@@ -137,4 +137,8 @@ internal class AlgoSdkImpl @Inject constructor(
             assetId
         )
     }
+
+    override fun transactionMsgpackToJson(txnByteArray: ByteArray): String {
+        return Sdk.transactionMsgpackToJson(txnByteArray)
+    }
 }

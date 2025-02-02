@@ -13,9 +13,12 @@
 package com.algorand.wallet.algosdk.transaction.sdk
 
 import com.algorand.wallet.algosdk.transaction.sdk.model.SuggestedTransactionParams
+import com.algorand.wallet.foundation.PeraResult
 import java.math.BigInteger
 
 interface AlgoSdk {
+
+    suspend fun waitForConfirmation(txnId: String, maxRoundToWait: Int): PeraResult<String>
 
     fun createAssetTransferTxn(
         senderAddress: String,

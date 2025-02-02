@@ -13,15 +13,32 @@
 package com.algorand.wallet.algosdk.transaction.sdk
 
 import com.algorand.algosdk.sdk.Sdk
+import com.algorand.algosdk.v2.client.Utils
+import com.algorand.algosdk.v2.client.common.AlgodClient
 import com.algorand.wallet.algosdk.AlgoSdkNumberExtensions.toUint64
 import com.algorand.wallet.algosdk.transaction.sdk.mapper.SuggestedParamsMapper
 import com.algorand.wallet.algosdk.transaction.sdk.model.SuggestedTransactionParams
+import com.algorand.wallet.foundation.PeraResult
 import java.math.BigInteger
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 internal class AlgoSdkImpl @Inject constructor(
-    private val suggestedParamsMapper: SuggestedParamsMapper
+    private val suggestedParamsMapper: SuggestedParamsMapper,
+    private val algodClient: AlgodClient
 ) : AlgoSdk {
+
+    override suspend fun waitForConfirmation(txnId: String, maxRoundToWait: Int): PeraResult<String> {
+        return try {
+            withContext(Dispatchers.IO) {
+                val transactionResponse = Utils.waitForConfirmation(algodClient, txnId, maxRoundToWait)
+                PeraResult.Success(transactionResponse.txn.transactionID)
+            }
+        } catch (exception: Exception) {
+            PeraResult.Error(exception)
+        }
+    }
 
     override fun createAssetTransferTxn(
         senderAddress: String,

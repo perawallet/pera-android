@@ -54,9 +54,9 @@ internal class HdKeyAccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addAccount(account: HdKey) {
+    override suspend fun addAccount(account: HdKey, privateKey: ByteArray) {
         withContext(coroutineDispatcher) {
-            val hdKeyEntity = hdKeyEntityMapper(account)
+            val hdKeyEntity = hdKeyEntityMapper(account, privateKey)
             hdKeyDao.insert(hdKeyEntity)
         }
     }

@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.data.di
+package com.algorand.wallet.account.local.di
 
 import android.content.Context
 import androidx.room.Room
@@ -39,18 +39,27 @@ import com.algorand.wallet.account.local.domain.repository.Algo25AccountReposito
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
-import com.algorand.wallet.account.local.domain.usecase.AddAlgo25Account
-import com.algorand.wallet.account.local.domain.usecase.AddHdKeyAccount
-import com.algorand.wallet.account.local.domain.usecase.AddLedgerBleAccount
-import com.algorand.wallet.account.local.domain.usecase.AddNoAuthAccount
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccountUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlowUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsUseCase
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddressUseCase
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyNoAuthAccountWithAddress
+import com.algorand.wallet.account.local.domain.usecase.SaveAlgo25Account
+import com.algorand.wallet.account.local.domain.usecase.SaveHdKeyAccount
+import com.algorand.wallet.account.local.domain.usecase.SaveLedgerBleAccount
+import com.algorand.wallet.account.local.domain.usecase.SaveNoAuthAccount
+import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
+import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25UseCase
+import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
+import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBleUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -131,23 +140,23 @@ internal object LocalAccountsModule {
     fun provideNoAuthMapper(impl: NoAuthMapperImpl): NoAuthMapper = impl
 
     @Provides
-    fun provideAddHdKeyAccount(repository: HdKeyAccountRepository): AddHdKeyAccount {
-        return AddHdKeyAccount(repository::addAccount)
+    fun provideSaveHdKeyAccount(repository: HdKeyAccountRepository): SaveHdKeyAccount {
+        return SaveHdKeyAccount(repository::addAccount)
     }
 
     @Provides
-    fun provideAddAlgo25Account(repository: Algo25AccountRepository): AddAlgo25Account {
-        return AddAlgo25Account(repository::addAccount)
+    fun provideSaveAlgo25Account(repository: Algo25AccountRepository): SaveAlgo25Account {
+        return SaveAlgo25Account(repository::addAccount)
     }
 
     @Provides
-    fun provideAddLedgerBleAccount(repository: LedgerBleAccountRepository): AddLedgerBleAccount {
-        return AddLedgerBleAccount(repository::addAccount)
+    fun provideSaveLedgerBleAccount(repository: LedgerBleAccountRepository): SaveLedgerBleAccount {
+        return SaveLedgerBleAccount(repository::addAccount)
     }
 
     @Provides
-    fun provideAddNoAuthAccount(repository: NoAuthAccountRepository): AddNoAuthAccount {
-        return AddNoAuthAccount(repository::addAccount)
+    fun provideSaveNoAuthAccount(repository: NoAuthAccountRepository): SaveNoAuthAccount {
+        return SaveNoAuthAccount(repository::addAccount)
     }
 
     @Provides
@@ -166,7 +175,32 @@ internal object LocalAccountsModule {
     ): GetLocalAccounts = useCase
 
     @Provides
+    fun provideGetLocalAccount(useCase: GetLocalAccountUseCase): GetLocalAccount = useCase
+
+    @Provides
     fun provideGetLocalAccountCountFlow(
         useCase: GetLocalAccountCountFlowUseCase
     ): GetLocalAccountCountFlow = useCase
+
+    @Provides
+    fun provideUpdateNoAuthAccountToAlgo25(
+        useCase: UpdateNoAuthAccountToAlgo25UseCase
+    ): UpdateNoAuthAccountToAlgo25 = useCase
+
+    @Provides
+    fun provideUpdateNoAuthAccountToLedgerBle(
+        useCase: UpdateNoAuthAccountToLedgerBleUseCase
+    ): UpdateNoAuthAccountToLedgerBle = useCase
+
+    @Provides
+    fun provideIsThereAnyAccountWithAddress(
+        useCase: IsThereAnyAccountWithAddressUseCase
+    ): IsThereAnyAccountWithAddress = useCase
+
+    @Provides
+    fun provideIsThereAnyNoAuthAccountWithAddress(
+        repository: NoAuthAccountRepository
+    ): IsThereAnyNoAuthAccountWithAddress {
+        return IsThereAnyNoAuthAccountWithAddress(repository::isAddressExists)
+    }
 }

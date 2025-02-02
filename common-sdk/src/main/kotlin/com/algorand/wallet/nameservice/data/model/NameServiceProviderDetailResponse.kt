@@ -21,4 +21,3 @@ internal data class NameServiceProviderDetailResponse(
     @SerializedName("logo")
     val logoUrl: String?
 )
-

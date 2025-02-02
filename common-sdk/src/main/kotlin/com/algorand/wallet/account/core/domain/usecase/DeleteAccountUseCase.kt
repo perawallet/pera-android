@@ -10,18 +10,22 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.usecase
+package com.algorand.wallet.account.core.domain.usecase
 
-import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.custom.domain.usecase.DeleteAccountCustomInfo
+import com.algorand.wallet.account.info.domain.usecase.DeleteAccountInformation
+import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccount
 import javax.inject.Inject
 
-internal class UpdateNoAuthAccountToLedgerBleUseCase @Inject constructor(
+internal class DeleteAccountUseCase @Inject constructor(
     private val deleteLocalAccount: DeleteLocalAccount,
-    private val saveLedgerBleAccount: SaveLedgerBleAccount
-) : UpdateNoAuthAccountToLedgerBle {
+    private val deleteAccountInformation: DeleteAccountInformation,
+    private val deleteAccountCustomInfo: DeleteAccountCustomInfo
+) : DeleteAccount {
 
-    override suspend fun invoke(address: String, deviceMacAddress: String, bluetoothName: String, indexInLedger: Int) {
+    override suspend fun invoke(address: String) {
+        deleteAccountCustomInfo(address)
+        deleteAccountInformation(address)
         deleteLocalAccount(address)
-        saveLedgerBleAccount(LocalAccount.LedgerBle(address, deviceMacAddress, bluetoothName, indexInLedger))
     }
 }

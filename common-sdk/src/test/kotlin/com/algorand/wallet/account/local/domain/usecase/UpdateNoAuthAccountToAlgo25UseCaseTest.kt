@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -20,11 +21,11 @@ import org.junit.Test
 class UpdateNoAuthAccountToAlgo25UseCaseTest {
 
     private val deleteLocalAccount: DeleteLocalAccount = mockk(relaxed = true)
-    private val createAlgo25Account: CreateAlgo25Account = mockk(relaxed = true)
+    private val saveAlgo25Account: SaveAlgo25Account = mockk(relaxed = true)
 
     private val sut = UpdateNoAuthAccountToAlgo25UseCase(
         deleteLocalAccount,
-        createAlgo25Account
+        saveAlgo25Account
     )
 
     @Test
@@ -32,7 +33,7 @@ class UpdateNoAuthAccountToAlgo25UseCaseTest {
         sut(ADDRESS, SECRET_KEY)
 
         coVerify { deleteLocalAccount(ADDRESS) }
-        coVerify { createAlgo25Account(ADDRESS, SECRET_KEY) }
+        coVerify { saveAlgo25Account(LocalAccount.Algo25(ADDRESS), SECRET_KEY) }
     }
 
     companion object {

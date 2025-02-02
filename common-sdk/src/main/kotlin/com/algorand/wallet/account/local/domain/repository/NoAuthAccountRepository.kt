@@ -29,5 +29,7 @@ internal interface NoAuthAccountRepository {
 
     suspend fun deleteAccount(address: String)
 
+    suspend fun isAddressExists(address: String): Boolean
+
     suspend fun deleteAllAccounts()
 }

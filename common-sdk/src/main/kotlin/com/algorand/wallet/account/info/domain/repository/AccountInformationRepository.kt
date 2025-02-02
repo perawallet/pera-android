@@ -39,4 +39,6 @@ internal interface AccountInformationRepository {
     fun getAllAccountInformationFlow(): Flow<Map<String, AccountInformation?>>
 
     fun getAccountInformationFlow(address: String): Flow<AccountInformation?>
+
+    suspend fun fetchRekeyedAccounts(address: String): PeraResult<List<AccountInformation>>
 }

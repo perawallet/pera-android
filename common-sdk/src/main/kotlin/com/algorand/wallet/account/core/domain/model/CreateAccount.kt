@@ -10,11 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.data.mapper.entity
+package com.algorand.wallet.account.core.domain.model
 
-import com.algorand.wallet.account.local.data.database.model.HdKeyEntity
-import com.algorand.wallet.account.local.domain.model.LocalAccount
+data class CreateAccount(
+    val address: String,
+    var customName: String?,
+    val isBackedUp: Boolean,
+    val type: Type
+) {
 
-internal interface HdKeyEntityMapper {
-    operator fun invoke(localAccount: LocalAccount.HdKey, privateKey: ByteArray): HdKeyEntity
+    sealed interface Type {
+        data class Algo25(val secretKey: ByteArray) : Type
+        data class LedgerBle(val deviceMacAddress: String, val indexInLedger: Int, val bluetoothName: String?) : Type
+        data object NoAuth : Type
+    }
 }

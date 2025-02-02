@@ -14,6 +14,7 @@ package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.wallet.account.info.domain.model.AccountCacheStatus
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
 
 fun interface ClearAccountInformationCache {
@@ -70,4 +71,12 @@ fun interface IsAssetOwnedByAccount {
 
 fun interface DeleteAccountInformation {
     suspend operator fun invoke(address: String)
+}
+
+fun interface FetchAccountInformation {
+    suspend operator fun invoke(address: String): PeraResult<AccountInformation>
+}
+
+fun interface FetchRekeyedAccounts {
+    suspend operator fun invoke(address: String): PeraResult<List<AccountInformation>>
 }

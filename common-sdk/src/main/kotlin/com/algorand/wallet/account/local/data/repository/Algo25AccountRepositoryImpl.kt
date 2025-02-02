@@ -54,9 +54,9 @@ internal class Algo25AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addAccount(account: Algo25) {
+    override suspend fun addAccount(account: Algo25, privateKey: ByteArray) {
         withContext(coroutineDispatcher) {
-            val algo25Entity = algo25EntityMapper(account)
+            val algo25Entity = algo25EntityMapper(account, privateKey)
             algo25Dao.insert(algo25Entity)
         }
     }

@@ -45,4 +45,7 @@ internal interface NoAuthDao {
 
     @Query("DELETE FROM no_auth")
     suspend fun clearAll()
+
+    @Query("SELECT EXISTS(SELECT * FROM no_auth WHERE :address = algo_address)")
+    suspend fun isAddressExists(address: String): Boolean
 }

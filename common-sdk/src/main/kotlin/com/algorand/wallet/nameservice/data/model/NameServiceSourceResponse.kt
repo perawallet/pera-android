@@ -20,4 +20,3 @@ internal enum class NameServiceSourceResponse {
 
     UNKNOWN
 }
-

@@ -10,24 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.repository
+package com.algorand.wallet.account.local.domain.usecase
 
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-internal interface Algo25AccountRepository {
+internal class GetLocalAccountUseCase @Inject constructor(
+    private val getLocalAccounts: GetLocalAccounts
+) : GetLocalAccount {
 
-    fun getAllAsFlow(): Flow<List<LocalAccount.Algo25>>
-
-    fun getAccountCountAsFlow(): Flow<Int>
-
-    suspend fun getAll(): List<LocalAccount.Algo25>
-
-    suspend fun getAccount(address: String): LocalAccount.Algo25?
-
-    suspend fun addAccount(account: LocalAccount.Algo25, privateKey: ByteArray)
-
-    suspend fun deleteAccount(address: String)
-
-    suspend fun deleteAllAccounts()
+    override suspend fun invoke(address: String): LocalAccount? {
+        return getLocalAccounts().firstOrNull { it.algoAddress == address }
+    }
 }

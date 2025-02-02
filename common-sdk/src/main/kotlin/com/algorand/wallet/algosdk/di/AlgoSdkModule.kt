@@ -12,10 +12,8 @@
 
 package com.algorand.wallet.algosdk.di
 
-import com.algorand.wallet.algosdk.AlgoAccountSdk
-import com.algorand.wallet.algosdk.AlgoAccountSdkImpl
-import com.algorand.wallet.algosdk.AlgoSdkUtils
-import com.algorand.wallet.algosdk.AlgoSdkUtilsImpl
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdkImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,8 +27,4 @@ internal object AlgoSdkModule {
     @Provides
     @Singleton
     fun provideAlgoAccountSdk(impl: AlgoAccountSdkImpl): AlgoAccountSdk = impl
-
-    @Provides
-    @Singleton
-    fun provideAlgoSdkUtilsImpl(impl: AlgoSdkUtilsImpl): AlgoSdkUtils = impl
 }

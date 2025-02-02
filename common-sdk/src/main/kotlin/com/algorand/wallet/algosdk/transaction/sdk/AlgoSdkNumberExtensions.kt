@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk
+package com.algorand.wallet.algosdk.transaction.sdk
 
 import com.algorand.algosdk.sdk.Uint64
 import java.math.BigInteger

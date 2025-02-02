@@ -26,6 +26,10 @@ import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddress
 import io.mockk.every
 import io.mockk.mockk
 import java.math.BigInteger
+import java.math.BigInteger.ONE
+import java.math.BigInteger.TEN
+import java.math.BigInteger.TWO
+import java.math.BigInteger.ZERO
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -112,10 +116,10 @@ class RawTransactionMapperImplTest {
         val APP_ARGS = peraFixture<List<String>?>()
         val APP_ON_COMPLETE = peraFixture<Int?>()
         val APP_ID = peraFixture<Long?>()
-        val APP_GLOBAL_SCHEMA_PAYLOAD = peraFixture<RawTransactionApplicationCallStateSchemaPayload>()
-        val APP_GLOBAL_SCHEMA = peraFixture<ApplicationCallStateSchema>()
-        val APP_LOCAL_SCHEMA_PAYLOAD = peraFixture<RawTransactionApplicationCallStateSchemaPayload>()
-        val APP_LOCAL_SCHEMA = peraFixture<ApplicationCallStateSchema>()
+        val APP_GLOBAL_SCHEMA_PAYLOAD = RawTransactionApplicationCallStateSchemaPayload(ZERO, TEN)
+        val APP_GLOBAL_SCHEMA = ApplicationCallStateSchema(ZERO, TEN)
+        val APP_LOCAL_SCHEMA_PAYLOAD = RawTransactionApplicationCallStateSchemaPayload(ONE, TWO)
+        val APP_LOCAL_SCHEMA = ApplicationCallStateSchema(ONE, TWO)
         val APP_EXTRA_PAGES = peraFixture<Int?>()
         val APPROVAL_HASH = peraFixture<String?>()
         val STATE_HASH = peraFixture<String?>()

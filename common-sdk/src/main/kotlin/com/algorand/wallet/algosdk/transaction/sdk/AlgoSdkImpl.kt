@@ -13,7 +13,7 @@
 package com.algorand.wallet.algosdk.transaction.sdk
 
 import com.algorand.algosdk.sdk.Sdk
-import com.algorand.wallet.algosdk.AlgoSdkNumberExtensions.toUint64
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkNumberExtensions.toUint64
 import com.algorand.wallet.algosdk.transaction.sdk.mapper.SuggestedParamsMapper
 import com.algorand.wallet.algosdk.transaction.sdk.model.SuggestedTransactionParams
 import java.math.BigInteger

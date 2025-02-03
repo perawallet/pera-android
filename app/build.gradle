@@ -14,7 +14,7 @@ plugins {
     alias(libs.plugins.compose)
 }
 
-apply from: 'https://raw.githubusercontent.com/Hipo/macaron/master/config/quality/quality.gradle'
+apply from: "$projectDir/quality.gradle"
 
 def flavorsGradlePath = 'flavors.gradle'
 def browsersGradlePath = 'browsers.gradle'
@@ -180,12 +180,12 @@ android {
     compileOptions {
         coreLibraryDesugaringEnabled true
 
-        targetCompatibility = JavaVersion.VERSION_17
-        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_21
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = JavaVersion.VERSION_21.toString()
     }
 
     sourceSets {

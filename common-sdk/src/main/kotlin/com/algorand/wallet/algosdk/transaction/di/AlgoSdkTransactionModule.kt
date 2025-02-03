@@ -25,6 +25,8 @@ import com.algorand.wallet.algosdk.transaction.builders.RemoveAssetTransactionBu
 import com.algorand.wallet.algosdk.transaction.builders.SendAndRemoveAssetTransactionBuilder
 import com.algorand.wallet.algosdk.transaction.builders.SendAndRemoveAssetTransactionBuilderImpl
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdk
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddress
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddressImpl
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkImpl
 import com.algorand.wallet.algosdk.transaction.sdk.mapper.SuggestedParamsMapper
 import com.algorand.wallet.algosdk.transaction.sdk.mapper.SuggestedParamsMapperImpl
@@ -71,4 +73,7 @@ internal object AlgoSdkTransactionModule {
 
     @Provides
     fun provideAlgoTransactionSigner(impl: AlgoTransactionSignerImpl): AlgoTransactionSigner = impl
+
+    @Provides
+    fun provideAlgoSdkAddress(impl: AlgoSdkAddressImpl): AlgoSdkAddress = impl
 }

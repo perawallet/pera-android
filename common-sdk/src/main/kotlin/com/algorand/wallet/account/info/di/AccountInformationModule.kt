@@ -30,6 +30,8 @@ import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapperImpl
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelper
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelperImpl
+import com.algorand.wallet.account.info.data.repository.AccountInformationCacheHelper
+import com.algorand.wallet.account.info.data.repository.AccountInformationCacheHelperImpl
 import com.algorand.wallet.account.info.data.repository.AccountInformationFetchHelper
 import com.algorand.wallet.account.info.data.repository.AccountInformationFetchHelperImpl
 import com.algorand.wallet.account.info.data.repository.AccountInformationRepositoryImpl
@@ -40,15 +42,25 @@ import com.algorand.wallet.account.info.domain.manager.AccountCacheManager
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManagerImpl
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.account.info.domain.usecase.ClearAccountInformationCache
+import com.algorand.wallet.account.info.domain.usecase.DeleteAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAndCacheAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAllAssetHoldingIds
 import com.algorand.wallet.account.info.domain.usecase.GetCachedAccountInformationCountFlow
 import com.algorand.wallet.account.info.domain.usecase.GetEarliestLastFetchedRound
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccountUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccount
+import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccountUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
+import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedSuccessAccountUseCase
 import com.algorand.wallet.foundation.database.PeraDatabase
 import dagger.Module
 import dagger.Provides
@@ -69,7 +81,7 @@ internal object AccountInformationModule {
     @Provides
     @Singleton
     fun provideAccountInformationApiService(
-        @Named("mobileAlgorandHttpClient") retrofit: Retrofit
+        @Named("indexerRetrofitInterface") retrofit: Retrofit
     ): AccountInformationApiService {
         return retrofit.create(AccountInformationApiService::class.java)
     }
@@ -86,9 +98,15 @@ internal object AccountInformationModule {
 
     @Provides
     @Singleton
-    fun provideAccountInformationCacheHelper(
+    fun provideAccountInformationFetchHelper(
         impl: AccountInformationFetchHelperImpl
     ): AccountInformationFetchHelper = impl
+
+    @Provides
+    @Singleton
+    fun provideAccountInformationCacheHelper(
+        impl: AccountInformationCacheHelperImpl
+    ): AccountInformationCacheHelper = impl
 
     @Provides
     @Singleton
@@ -191,4 +209,39 @@ internal object AccountInformationModule {
     fun provideAccountInformationErrorEntityMapper(
         impl: AccountInformationErrorEntityMapperImpl
     ): AccountInformationErrorEntityMapper = impl
+
+    @Provides
+    fun provideIsThereAnyCachedErrorAccount(
+        useCase: IsThereAnyCachedErrorAccountUseCase
+    ): IsThereAnyCachedErrorAccount = useCase
+
+    @Provides
+    fun provideIsThereAnyCachedSuccessAccount(
+        useCase: IsThereAnyCachedSuccessAccountUseCase
+    ): IsThereAnyCachedSuccessAccount = useCase
+
+    @Provides
+    fun provideIsAssetOwnedByAccount(useCase: IsAssetOwnedByAccountUseCase): IsAssetOwnedByAccount = useCase
+
+    @Provides
+    fun provideDeleteAccountInformation(
+        repository: AccountInformationRepository
+    ): DeleteAccountInformation {
+        return DeleteAccountInformation(repository::deleteAccountInformation)
+    }
+
+    @Provides
+    fun provideGetAccountInformationFlow(repository: AccountInformationRepository): GetAccountInformationFlow {
+        return GetAccountInformationFlow(repository::getAccountInformationFlow)
+    }
+
+    @Provides
+    fun provideFetchAccountInformation(repository: AccountInformationRepository): FetchAccountInformation {
+        return FetchAccountInformation(repository::fetchAccountInformation)
+    }
+
+    @Provides
+    fun provideFetchRekeyedAccounts(repository: AccountInformationRepository): FetchRekeyedAccounts {
+        return FetchRekeyedAccounts(repository::fetchRekeyedAccounts)
+    }
 }

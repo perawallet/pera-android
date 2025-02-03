@@ -72,12 +72,13 @@ class Algo25AccountRepositoryImplTest {
 
     @Test
     fun `EXPECT account to be added to database WHEN addAccount is invoked`() = runTest {
+        val privateKey = byteArrayOf(1, 2, 3)
         val account = LocalAccount.Algo25("address")
         val algo25Entity = Algo25Entity("address", byteArrayOf())
-        coEvery { algo25EntityMapper(account) } returns algo25Entity
+        coEvery { algo25EntityMapper.invoke(account, privateKey) } returns algo25Entity
         coEvery { algo25Dao.insert(algo25Entity) } returns Unit
 
-        sut.addAccount(account)
+        sut.addAccount(account, privateKey)
 
         coVerify { algo25Dao.insert(algo25Entity) }
     }

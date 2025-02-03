@@ -25,7 +25,7 @@ internal interface Algo25AccountRepository {
 
     suspend fun getAccount(address: String): LocalAccount.Algo25?
 
-    suspend fun addAccount(account: LocalAccount.Algo25)
+    suspend fun addAccount(account: LocalAccount.Algo25, privateKey: ByteArray)
 
     suspend fun deleteAccount(address: String)
 

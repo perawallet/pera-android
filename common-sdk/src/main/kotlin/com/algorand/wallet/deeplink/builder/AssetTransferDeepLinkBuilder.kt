@@ -12,12 +12,11 @@
 
 package com.algorand.wallet.deeplink.builder
 
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
-import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import javax.inject.Inject
 
-internal class AssetTransferDeepLinkBuilder @Inject constructor() : DeepLinkBuilder {
+internal class AssetTransferDeepLinkBuilder : DeepLinkBuilder {
 
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
         return with(payload) {

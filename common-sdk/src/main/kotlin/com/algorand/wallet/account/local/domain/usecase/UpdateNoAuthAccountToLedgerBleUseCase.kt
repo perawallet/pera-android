@@ -12,13 +12,16 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
-internal class UpdateNoAuthAccountToLedgerBleUseCase(
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+import javax.inject.Inject
+
+internal class UpdateNoAuthAccountToLedgerBleUseCase @Inject constructor(
     private val deleteLocalAccount: DeleteLocalAccount,
-    private val createLedgerBleAccount: CreateLedgerBleAccount
+    private val saveLedgerBleAccount: SaveLedgerBleAccount
 ) : UpdateNoAuthAccountToLedgerBle {
 
-    override suspend fun invoke(address: String, deviceMacAddress: String, indexInLedger: Int) {
+    override suspend fun invoke(address: String, deviceMacAddress: String, bluetoothName: String, indexInLedger: Int) {
         deleteLocalAccount(address)
-        createLedgerBleAccount(address, deviceMacAddress, indexInLedger)
+        saveLedgerBleAccount(LocalAccount.LedgerBle(address, deviceMacAddress, bluetoothName, indexInLedger))
     }
 }

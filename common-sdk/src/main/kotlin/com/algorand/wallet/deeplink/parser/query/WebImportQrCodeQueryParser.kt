@@ -16,9 +16,8 @@ import com.algorand.wallet.deeplink.model.PeraUri
 import com.algorand.wallet.deeplink.model.WebImportQrCode
 import com.algorand.wallet.foundation.json.JsonSerializer
 import com.google.gson.annotations.SerializedName
-import javax.inject.Inject
 
-internal class WebImportQrCodeQueryParser @Inject constructor(
+internal class WebImportQrCodeQueryParser(
     private val jsonSerializer: JsonSerializer
 ) : DeepLinkQueryParser<WebImportQrCode?> {
 

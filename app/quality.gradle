@@ -1,0 +1,84 @@
+apply plugin: 'io.gitlab.arturbosch.detekt'
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+
+configurations {
+    ktlint
+}
+
+dependencies {
+    ktlint libs.ktlint
+    detektPlugins libs.detekt.formatting
+}
+
+tasks.register('ktlint', JavaExec) {
+    description = "Check Kotlin code style."
+    classpath = configurations.ktlint
+    main = "com.pinterest.ktlint.Main"
+    args "src/**/*.kt"
+    args "--reporter=html,output=${buildDir}/reports/ktlint/ktlint.html"
+}
+
+detekt {
+    toolVersion = "${libs.versions.detekt.get()}"
+    def configFile = new File(rootDir, 'detekt-config.yml')
+    if (!configFile.exists()) {
+        new File("$projectDir/detekt-config.yml")
+                .withInputStream{ i -> configFile.withOutputStream{ it << i }}
+    }
+    input = files("$projectDir")
+    config = files("$configFile")
+    reports {
+        xml {
+            required = true
+            destination = file("$projectDir/build/reports/detekt/detek-report.xml")
+        }
+        html {
+            required = true
+            destination = file("$projectDir/build/reports/detekt/detek-report.html")
+        }
+    }
+}
+
+checkstyle {
+    // assign the latest checkstyle version explicitly
+    // default version is very old, likes 5.9
+    toolVersion = '10.21.2'
+}
+
+tasks.register('checkstyle', Checkstyle) {
+    // rules.xml copy from:
+    // https://raw.githubusercontent.com/checkstyle/checkstyle/checkstyle-7.4/src/main/resources/google_checks.xml
+    // the version should be as same as plugin version
+    config project.resources.text.fromFile("$projectDir/checkstyle.xml")
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+    exclude '**/R.java'
+    exclude '**/BuildConfig.java'
+    classpath = files()
+
+    showViolations true
+
+    reports {
+        xml.required = false
+        html.required = true
+    }
+}
+
+
+tasks.register('pmd', Pmd) {
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.required = false
+        html.required = true
+    }
+}
+
+preBuild.dependsOn('checkstyle')
+preBuild.dependsOn ktlint
+preBuild.dependsOn('detekt')
+//preBuild.dependsOn('pmd')

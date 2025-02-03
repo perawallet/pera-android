@@ -13,8 +13,6 @@
 package com.algorand.android
 
 import androidx.lifecycle.ViewModel
-import com.algorand.android.BuildConfig.DISCOVER_BROWSE_DAPP_MAINNET_URL
-import com.algorand.android.BuildConfig.DISCOVER_BROWSE_DAPP_TESTNET_URL
 import com.algorand.android.BuildConfig.DISCOVER_MAINNET_URL
 import com.algorand.android.BuildConfig.DISCOVER_TESTNET_URL
 import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
@@ -45,18 +43,12 @@ class CoreActionsTabBarViewModel @Inject constructor(
     }
 
     fun getDiscoverBrowseDappUrl(): String {
-        return if (isConnectedToTestnet())
-            DISCOVER_BROWSE_DAPP_TESTNET_URL
-        else
-            DISCOVER_BROWSE_DAPP_MAINNET_URL
+        val baseDiscoverUrl = if (isConnectedToTestnet()) DISCOVER_TESTNET_URL else DISCOVER_MAINNET_URL
+        return "$baseDiscoverUrl/main/browser"
     }
 
     fun getDiscoverUrlWithPath(path: String): String {
-        val baseDiscoverUrl = if (isConnectedToTestnet()) {
-            DISCOVER_TESTNET_URL
-        } else {
-            DISCOVER_MAINNET_URL
-        }
+        val baseDiscoverUrl = if (isConnectedToTestnet()) DISCOVER_TESTNET_URL else DISCOVER_MAINNET_URL
         return "$baseDiscoverUrl/$path"
     }
 

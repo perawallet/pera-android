@@ -32,11 +32,8 @@ class MeldIntroViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     fun getMeldUrl(walletAddress: String): String {
-        val meldUrl = if (isConnectedToTestnet())
-            MELD_TESTNET_URL
-        else
-            MELD_MAINNET_URL
-        return meldUrl + walletAddress
+        val baseUrl = if (isConnectedToTestnet()) MELD_TESTNET_URL else MELD_MAINNET_URL
+        return "$baseUrl/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress=$walletAddress"
     }
 
     fun isMainNet(): Boolean {

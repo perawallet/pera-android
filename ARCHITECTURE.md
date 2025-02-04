@@ -4,10 +4,7 @@ These diagrams are meant to be helpful and a WIP currently.  Eventually when we 
 
 # App Layers
 
-<img src="mermaid/flowcharts/flowchart_app_layers.png" width="500">
-
-
-```sh
+```mermaid
 flowchart TD
     subgraph Pera Android App
         subgraph Native UI
@@ -103,9 +100,7 @@ flowchart TD
 
 # Cache Initialization
 
-<img src="mermaid/flowcharts/flowchart_cache_initialization.png" width="500">
-
-```sh
+```mermaid
 flowchart TD
   subgraph ABC["**Cache Initialization**"]
     %% Nodes
@@ -152,9 +147,7 @@ flowchart TD
 
 # Polling
 
-<img src="mermaid/flowcharts/polling.png" width="500">
-
-```sh
+```mermaid
 flowchart TD
 subgraph ABC["**Polling**"]
 %% Nodes
@@ -178,10 +171,7 @@ end
 
 # Algorand Address Database
 
-<img src="mermaid/er-diagrams/database_address.png" width="500">
-
-
-```sh
+```mermaid
 ---
 title: AddressDatabase
 ---
@@ -220,10 +210,7 @@ erDiagram
 
 # Pera Database
 
-<img src="mermaid/er-diagrams/database_pera.png" width="500">
-
-
-```sh
+```mermaid
 ---
 title: Pera Database (cache tables)
 ---

@@ -30,8 +30,8 @@ android {
 dependencies {
 
     api(libs.algosdk)
+    api(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
 
-    implementation(project(":algosdk-aar"))
     implementation(libs.xhdwalletapi)
     implementation(libs.kotlin.bip39)
     implementation(libs.dagger.hilt.android)

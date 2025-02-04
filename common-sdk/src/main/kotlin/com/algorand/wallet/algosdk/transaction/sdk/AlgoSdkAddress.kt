@@ -10,21 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.di
+package com.algorand.wallet.algosdk.transaction.sdk
 
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdkImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.algorand.wallet.algosdk.transaction.model.AlgorandAddress
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal object AlgoSdkModule {
+interface AlgoSdkAddress {
 
-    @Provides
-    @Singleton
-    fun provideAlgoAccountSdk(impl: AlgoAccountSdkImpl): AlgoAccountSdk = impl
+    fun isValid(address: String): Boolean
+
+    fun generateAddressFromPublicKey(publicKey: ByteArray): AlgorandAddress?
+
+    fun generateAddressFromPublicKey(addressBase64: String): AlgorandAddress?
 }

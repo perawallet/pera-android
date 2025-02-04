@@ -10,21 +10,24 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.di
+package com.algorand.wallet.algosdk.transaction.sdk
 
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdkImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.algorand.algosdk.sdk.Uint64
+import java.math.BigInteger
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal object AlgoSdkModule {
+internal object AlgoSdkNumberExtensions {
 
-    @Provides
-    @Singleton
-    fun provideAlgoAccountSdk(impl: AlgoAccountSdkImpl): AlgoAccountSdk = impl
+    fun Long.toUint64(): Uint64 {
+        return Uint64().apply {
+            upper = shr(Int.SIZE_BITS)
+            lower = and(Int.MAX_VALUE.toLong())
+        }
+    }
+
+    fun BigInteger.toUint64(): Uint64 {
+        return Uint64().apply {
+            upper = shr(Int.SIZE_BITS).toLong()
+            lower = and(UInt.MAX_VALUE.toLong().toBigInteger()).toLong()
+        }
+    }
 }

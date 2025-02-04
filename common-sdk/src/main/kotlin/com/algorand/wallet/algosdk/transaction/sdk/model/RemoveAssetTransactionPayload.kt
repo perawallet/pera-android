@@ -10,21 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.di
+package com.algorand.wallet.algosdk.transaction.sdk.model
 
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdkImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
-
-@Module
-@InstallIn(SingletonComponent::class)
-internal object AlgoSdkModule {
-
-    @Provides
-    @Singleton
-    fun provideAlgoAccountSdk(impl: AlgoAccountSdkImpl): AlgoAccountSdk = impl
-}
+data class RemoveAssetTransactionPayload(
+    val senderAddress: String,
+    val creatorAddress: String,
+    val assetId: Long
+)

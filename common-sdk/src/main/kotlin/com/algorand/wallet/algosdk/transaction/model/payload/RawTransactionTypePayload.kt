@@ -10,21 +10,23 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.di
+package com.algorand.wallet.algosdk.transaction.model.payload
 
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdkImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.google.gson.annotations.SerializedName
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal object AlgoSdkModule {
+internal enum class RawTransactionTypePayload {
 
-    @Provides
-    @Singleton
-    fun provideAlgoAccountSdk(impl: AlgoAccountSdkImpl): AlgoAccountSdk = impl
+    @SerializedName("pay")
+    PAY_TRANSACTION,
+
+    @SerializedName("axfer")
+    ASSET_TRANSACTION,
+
+    @SerializedName("appl")
+    APP_TRANSACTION,
+
+    @SerializedName("acfg")
+    ASSET_CONFIGURATION,
+
+    UNDEFINED
 }

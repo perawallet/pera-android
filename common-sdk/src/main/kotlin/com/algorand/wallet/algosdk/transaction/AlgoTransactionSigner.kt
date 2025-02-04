@@ -10,21 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.di
+package com.algorand.wallet.algosdk.transaction
 
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdkImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+interface AlgoTransactionSigner {
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal object AlgoSdkModule {
+    fun signWithSecretKey(secretKey: ByteArray, transaction: ByteArray): ByteArray?
 
-    @Provides
-    @Singleton
-    fun provideAlgoAccountSdk(impl: AlgoAccountSdkImpl): AlgoAccountSdk = impl
+    fun attachSignature(signature: ByteArray, transaction: ByteArray?): ByteArray?
+
+    fun attachSignatureWithSigner(signature: ByteArray, transaction: ByteArray?, address: String?): ByteArray?
 }

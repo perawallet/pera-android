@@ -10,21 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.di
+package com.algorand.wallet.algosdk.transaction
 
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdkImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import java.math.BigInteger
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal object AlgoSdkModule {
-
-    @Provides
-    @Singleton
-    fun provideAlgoAccountSdk(impl: AlgoAccountSdkImpl): AlgoAccountSdk = impl
+object TransactionConstants {
+    val MIN_TXN_FEE: BigInteger = BigInteger.valueOf(1_000L)
+    val MIN_REQUIRED_BALANCE_PER_ASSET: BigInteger = BigInteger.valueOf(100_000L)
 }

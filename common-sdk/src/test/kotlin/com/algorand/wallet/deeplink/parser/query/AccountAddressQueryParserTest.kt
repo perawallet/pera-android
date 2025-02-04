@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.deeplink.parser.query
 
-import com.algorand.wallet.algosdk.AlgoSdkUtils
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddress
 import com.algorand.wallet.deeplink.PeraUriBuilder
 import io.mockk.every
 import io.mockk.mockk
@@ -22,11 +22,11 @@ import org.junit.Test
 
 class AccountAddressQueryParserTest {
 
-    private val algoSdkUtils: AlgoSdkUtils = mockk {
-        every { isValidAddress(ADDRESS) } returns true
-        every { isValidAddress("qr") } returns false
-        every { isValidAddress("1241231") } returns false
-        every { isValidAddress("") } returns false
+    private val algoSdkUtils: AlgoSdkAddress = mockk {
+        every { isValid(ADDRESS) } returns true
+        every { isValid("qr") } returns false
+        every { isValid("1241231") } returns false
+        every { isValid("") } returns false
     }
 
     private val sut = AccountAddressQueryParser(algoSdkUtils)
@@ -79,7 +79,7 @@ class AccountAddressQueryParserTest {
 
     @Test
     fun `EXPECT account address WHEN uri is coinbase uri with asset id`() {
-        every { algoSdkUtils.isValidAddress("31566704") } returns false
+        every { algoSdkUtils.isValid("31566704") } returns false
         val uri = PeraUriBuilder.create(
             scheme = "algo",
             host = "31566704",
@@ -93,7 +93,7 @@ class AccountAddressQueryParserTest {
 
     @Test
     fun `EXPECT null WHEN uri is coinbase uri but has no account address`() {
-        every { algoSdkUtils.isValidAddress("algo:31566704/transfer?address=1241231") } returns false
+        every { algoSdkUtils.isValid("algo:31566704/transfer?address=1241231") } returns false
         val uri = PeraUriBuilder.create(
             scheme = "algo",
             host = "31566704",
@@ -135,8 +135,8 @@ class AccountAddressQueryParserTest {
 
     @Test
     fun `EXPECT null WHEN uri is algorand deep link but has no account address`() {
-        every { algoSdkUtils.isValidAddress("31566704") } returns false
-        every { algoSdkUtils.isValidAddress("algorand:31566704/transfer?address=1241231") } returns false
+        every { algoSdkUtils.isValid("31566704") } returns false
+        every { algoSdkUtils.isValid("algorand:31566704/transfer?address=1241231") } returns false
         val uri = PeraUriBuilder.create(
             scheme = "algorand",
             host = "31566704",
@@ -181,7 +181,7 @@ class AccountAddressQueryParserTest {
 
     @Test
     fun `EXPECT null WHEN applink does not have account address`() {
-        every { algoSdkUtils.isValidAddress("https://perawallet.app/qr/1241231") } returns false
+        every { algoSdkUtils.isValid("https://perawallet.app/qr/1241231") } returns false
         val uri = PeraUriBuilder.create(
             scheme = "https",
             host = "perawallet.app",

@@ -10,22 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk
+package com.algorand.wallet.algosdk.transaction.mapper
 
-import com.algorand.algosdk.crypto.Address
+import com.algorand.wallet.algosdk.transaction.model.ApplicationCallStateSchema
+import com.algorand.wallet.algosdk.transaction.model.payload.RawTransactionApplicationCallStateSchemaPayload
 import javax.inject.Inject
 
-internal class AlgoSdkUtilsImpl @Inject constructor() : AlgoSdkUtils {
+internal class ApplicationCallStateSchemaMapperImpl @Inject constructor() : ApplicationCallStateSchemaMapper {
 
-    override fun isValidAddress(address: String?): Boolean {
-        if (address.isNullOrBlank()) {
-            return false
-        }
-        return try {
-            Address(address)
-            true
-        } catch (exception: Exception) {
-            false
-        }
+    override fun invoke(payload: RawTransactionApplicationCallStateSchemaPayload?): ApplicationCallStateSchema {
+        return ApplicationCallStateSchema(
+            numberOfBytes = payload?.numberOfBytes,
+            numberOfInts = payload?.numberOfInts
+        )
     }
 }

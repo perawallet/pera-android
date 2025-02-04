@@ -10,21 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.di
+package com.algorand.wallet.algosdk.transaction.sdk
 
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdkImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.algorand.wallet.algosdk.model.Algo25Account
+import com.algorand.wallet.algosdk.model.HdAccount
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal object AlgoSdkModule {
+interface AlgoAccountSdk {
 
-    @Provides
-    @Singleton
-    fun provideAlgoAccountSdk(impl: AlgoAccountSdkImpl): AlgoAccountSdk = impl
+    fun createHdAccount(): HdAccount
+
+    fun recoverHdAccount(mnemonic: String): HdAccount?
+
+    fun createAlgo25Account(): Algo25Account
+
+    fun recoverAlgo25Account(mnemonic: String): Algo25Account?
 }

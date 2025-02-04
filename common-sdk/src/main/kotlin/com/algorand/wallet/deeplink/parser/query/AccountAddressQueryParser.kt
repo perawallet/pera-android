@@ -12,12 +12,12 @@
 
 package com.algorand.wallet.deeplink.parser.query
 
-import com.algorand.wallet.algosdk.AlgoSdkUtils
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddress
 import com.algorand.wallet.deeplink.model.PeraUri
 import com.algorand.wallet.deeplink.utils.isCoinbaseDeepLink
 
 internal class AccountAddressQueryParser(
-    private val algoSdkUtils: AlgoSdkUtils
+    private val algoSdkAddress: AlgoSdkAddress
 ) : DeepLinkQueryParser<String?> {
 
     override fun parseQuery(peraUri: PeraUri): String? {
@@ -25,13 +25,13 @@ internal class AccountAddressQueryParser(
             peraUri.isAppLink() -> getAddressFromAppLink(peraUri)
             isCoinbaseDeepLink(peraUri) -> getAccountAddressForCoinbase(peraUri)
             else -> peraUri.getQueryParam(ACCOUNT_ID_QUERY_KEY) ?: peraUri.host
-        }?.takeIf { algoSdkUtils.isValidAddress(it) } ?: peraUri.rawUri.takeIf { algoSdkUtils.isValidAddress(it) }
+        }?.takeIf { algoSdkAddress.isValid(it) } ?: peraUri.rawUri.takeIf { algoSdkAddress.isValid(it) }
     }
 
     private fun getAddressFromAppLink(uri: PeraUri): String? {
         return uri.path
             ?.split("/")
-            ?.firstOrNull { algoSdkUtils.isValidAddress(it) }
+            ?.firstOrNull { algoSdkAddress.isValid(it) }
     }
 
     private fun getAccountAddressForCoinbase(uri: PeraUri): String? {

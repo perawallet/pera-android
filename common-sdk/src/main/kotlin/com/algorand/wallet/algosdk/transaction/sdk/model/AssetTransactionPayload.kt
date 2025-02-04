@@ -10,18 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk
+package com.algorand.wallet.algosdk.transaction.sdk.model
 
-import com.algorand.wallet.algosdk.model.Algo25Account
-import com.algorand.wallet.algosdk.model.HdAccount
+import java.math.BigInteger
 
-interface AlgoAccountSdk {
-
-    fun createHdAccount(): HdAccount
-
-    fun recoverHdAccount(mnemonic: String): HdAccount?
-
-    fun createAlgo25Account(): Algo25Account
-
-    fun recoverAlgo25Account(mnemonic: String): Algo25Account?
-}
+data class AssetTransactionPayload(
+    val senderAddress: String,
+    val receiverAddress: String,
+    val amount: BigInteger,
+    val assetId: Long,
+    val noteInByteArray: ByteArray?
+)

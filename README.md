@@ -19,3 +19,6 @@ And if you need support, our support knowledgebase and contact channels are here
 
 ## Building
 For instructions on how to build the applications in this repo, see [BUILDING.md](./BUILDING.md).
+
+## Testing
+This project is tested with BrowserStack (open source license).

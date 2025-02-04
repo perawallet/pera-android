@@ -225,6 +225,7 @@ android {
 
 dependencies {
     implementation project(':common-sdk')
+    implementation project(':algosdk-aar')
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation libs.kotlinx.coroutines.core
     implementation libs.kotlinx.coroutines.android

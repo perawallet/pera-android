@@ -55,6 +55,8 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(project(":test-utils"))
+
+    androidTestImplementation(libs.espresso.core)
 }
 
 room {

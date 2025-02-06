@@ -1,5 +1,8 @@
 package com.algorand.android
 
+import android.database.Cursor
+import android.database.DatabaseUtils
+import android.util.Log
 import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
@@ -10,11 +13,14 @@ import com.algorand.android.models.WalletConnectPeerMeta
 import com.algorand.android.models.WalletConnectSessionMeta
 import com.algorand.android.utils.defaultNodeList
 import com.google.gson.Gson
-import org.junit.Ignore
+import org.junit.After
+import org.junit.Assert
+import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.IOException
 
-@Ignore
 @RunWith(AndroidJUnit4::class)
 class DatabaseMigrationUnitTest {
 
@@ -26,7 +32,8 @@ class DatabaseMigrationUnitTest {
         AlgorandDatabase.MIGRATION_7_8,
         AlgorandDatabase.MIGRATION_8_9,
         AlgorandDatabase.MIGRATION_9_10,
-        AlgorandDatabase.MIGRATION_10_11
+        AlgorandDatabase.MIGRATION_10_11,
+        AlgorandDatabase.MIGRATION_11_12
     )
     private var migratedDb: SupportSQLiteDatabase? = null
     private lateinit var gson: Gson
@@ -39,68 +46,68 @@ class DatabaseMigrationUnitTest {
         FrameworkSQLiteOpenHelperFactory()
     )
 
-//    @Before
-//    @Test
-//    @Throws(IOException::class)
-//    fun migrate3ToLastVersion() {
-//        gson = Gson()
-//        migratedDb = helper.createDatabase(TEST_DB, 3).apply {
-//            insertNodeToDatabaseV3()
-//            insertUser("FirstPublicKey")
-//        }
-//
-//        migratedDb = helper.runMigrationsAndValidate(
-//            TEST_DB,
-//            AlgorandDatabase.LATEST_DB_VERSION,
-//            true,
-//            *allMigrations.toTypedArray()
-//        )
-//    }
-//
-//    @Test
-//    fun insertNodeToDatabase() {
-//        migratedDb!!.insertNodeToDatabaseLatestVersion()
-//        val queryString = "SELECT * FROM Node"
-//        val cursor: Cursor = migratedDb!!.query(queryString, emptyArray())
-//        Log.d(TAG, "Node DB: ${DatabaseUtils.dumpCursorToString(cursor)}")
-//        Log.d(TAG, "Node Count in Database: ${cursor.count}")
-//        Assert.assertTrue("Nodes Count After Migration Not Successful", cursor.count == defaultNodeList.count())
-//    }
-//
-//    @Test
-//    fun insertUserToDatabase() {
-//        migratedDb!!.insertUser("LastPublicKey")
-//        val queryString = "SELECT * FROM User"
-//        val cursor = migratedDb!!.query(queryString, emptyArray())
-//        Log.d(TAG, "User DB: ${DatabaseUtils.dumpCursorToString(cursor)}")
-//        Log.d(TAG, "User Count in Database: ${cursor.count}")
-//        Assert.assertTrue("Users Count After Migration Not Successful", cursor.count == 2)
-//    }
-//
-//    @Test
-//    fun insertWalletConnectSessionToDatabase() {
-//        migratedDb!!.insertWalletConnectSession()
-//        val queryString = "SELECT * FROM WalletConnectSessionEntity"
-//        val cursor = migratedDb!!.query(queryString, emptyArray())
-//        Log.d(TAG, "WalletConnectSessionEntity DB :${DatabaseUtils.dumpCursorToString(cursor)}")
-//        Log.d(TAG, "Session count in Database: ${cursor.count}")
-//        Assert.assertTrue("WalletConnectSession Count After Migration Not Successful", cursor.count == 1)
-//    }
-//
-//    @Test
-//    fun insertWalletConnectSessionAccountToDatabase() {
-//        migratedDb!!.insertWalletConnectSessionAccount()
-//        val queryString = "SELECT * FROM WalletConnectSessionAccountEntity"
-//        val cursor = migratedDb!!.query(queryString, emptyArray())
-//        Log.d(TAG, "WalletConnectSessionAccountEntity DB :${DatabaseUtils.dumpCursorToString(cursor)}")
-//        Log.d(TAG, "Connected account count in Database: ${cursor.count}")
-//        Assert.assertTrue("WalletConnectSession Count After Migration Not Successful", cursor.count == 1)
-//    }
-//
-//    @After
-//    fun closeMigratedDatabase() {
-//        migratedDb?.close()
-//    }
+    @Before
+    @Test
+    @Throws(IOException::class)
+    fun migrate3ToLastVersion() {
+        gson = Gson()
+        migratedDb = helper.createDatabase(TEST_DB, 3).apply {
+            insertNodeToDatabaseV3()
+            insertUser("FirstPublicKey")
+        }
+
+        migratedDb = helper.runMigrationsAndValidate(
+            TEST_DB,
+            AlgorandDatabase.LATEST_DB_VERSION,
+            true,
+            *allMigrations.toTypedArray()
+        )
+    }
+
+    @Test
+    fun insertNodeToDatabase() {
+        migratedDb!!.insertNodeToDatabaseLatestVersion()
+        val queryString = "SELECT * FROM Node"
+        val cursor: Cursor = migratedDb!!.query(queryString, emptyArray())
+        Log.d(TAG, "Node DB: ${DatabaseUtils.dumpCursorToString(cursor)}")
+        Log.d(TAG, "Node Count in Database: ${cursor.count}")
+        Assert.assertTrue("Nodes Count After Migration Not Successful", cursor.count == defaultNodeList.count())
+    }
+
+    @Test
+    fun insertUserToDatabase() {
+        migratedDb!!.insertUser("LastPublicKey")
+        val queryString = "SELECT * FROM User"
+        val cursor = migratedDb!!.query(queryString, emptyArray())
+        Log.d(TAG, "User DB: ${DatabaseUtils.dumpCursorToString(cursor)}")
+        Log.d(TAG, "User Count in Database: ${cursor.count}")
+        Assert.assertTrue("Users Count After Migration Not Successful", cursor.count == 2)
+    }
+
+    @Test
+    fun insertWalletConnectSessionToDatabase() {
+        migratedDb!!.insertWalletConnectSession()
+        val queryString = "SELECT * FROM WalletConnectSessionEntity"
+        val cursor = migratedDb!!.query(queryString, emptyArray())
+        Log.d(TAG, "WalletConnectSessionEntity DB :${DatabaseUtils.dumpCursorToString(cursor)}")
+        Log.d(TAG, "Session count in Database: ${cursor.count}")
+        Assert.assertTrue("WalletConnectSession Count After Migration Not Successful", cursor.count == 1)
+    }
+
+    @Test
+    fun insertWalletConnectSessionAccountToDatabase() {
+        migratedDb!!.insertWalletConnectSessionAccount()
+        val queryString = "SELECT * FROM WalletConnectSessionAccountEntity"
+        val cursor = migratedDb!!.query(queryString, emptyArray())
+        Log.d(TAG, "WalletConnectSessionAccountEntity DB :${DatabaseUtils.dumpCursorToString(cursor)}")
+        Log.d(TAG, "Connected account count in Database: ${cursor.count}")
+        Assert.assertTrue("WalletConnectSession Count After Migration Not Successful", cursor.count == 1)
+    }
+
+    @After
+    fun closeMigratedDatabase() {
+        migratedDb?.close()
+    }
 
     private fun SupportSQLiteDatabase.insertWalletConnectSession() {
         val peerMetaJson = gson.toJson(WalletConnectPeerMeta("name", "url", "description", listOf("icon_url")))

@@ -43,12 +43,14 @@ import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccountUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetLedgerBleAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlowUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetSecretKey
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddressUseCase
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyNoAuthAccountWithAddress
@@ -173,6 +175,14 @@ internal object LocalAccountsModule {
     fun provideGetLocalAccounts(
         useCase: GetLocalAccountsUseCase
     ): GetLocalAccounts = useCase
+
+    @Provides
+    fun provideGetLedgerBleAccount(repository: LedgerBleAccountRepository): GetLedgerBleAccount {
+        return GetLedgerBleAccount(repository::getAccount)
+    }
+
+    @Provides
+    fun provideGetSecretKey(repository: Algo25AccountRepository): GetSecretKey = GetSecretKey(repository::getSecretKey)
 
     @Provides
     fun provideGetLocalAccount(useCase: GetLocalAccountUseCase): GetLocalAccount = useCase

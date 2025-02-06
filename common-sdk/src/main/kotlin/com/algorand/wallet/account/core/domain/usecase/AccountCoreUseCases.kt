@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.core.domain.usecase
 
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.foundation.PeraResult
@@ -77,4 +78,8 @@ fun interface FetchAccountInformationAndCacheAssets {
 interface GetAccountMinBalance {
     suspend operator fun invoke(accountAddress: String): BigInteger
     suspend operator fun invoke(accountInformation: AccountInformation): BigInteger
+}
+
+fun interface GetTransactionSigner {
+    suspend operator fun invoke(address: String): TransactionSigner
 }

@@ -236,6 +236,7 @@ abstract class CoreMainActivity : BaseActivity() {
 
     private fun handleCoreActionsTabBarForChosenNetwork() {
         binding.coreActionsTabBarView.setBrowseDappsEnabled(isConnectedToTestNet.not())
+        binding.coreActionsTabBarView.setBuySellButtonEnabled(isConnectedToTestNet.not())
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {

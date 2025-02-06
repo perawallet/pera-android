@@ -16,7 +16,7 @@ data class HdAccount(
     val address: String,
     val publicKey: ByteArray,
     val encryptedPrivateKey: ByteArray,
-    val encryptedMnemonicEntropy: String,
+    val encryptedMnemonicEntropy: ByteArray,
     val account: Int,
     val change: Int,
     val keyIndex: Int,
@@ -29,7 +29,7 @@ data class HdAccount(
         other as HdAccount
 
         if (address != other.address) return false
-        if (encryptedMnemonicEntropy != other.encryptedMnemonicEntropy) return false
+        if (!encryptedMnemonicEntropy.contentEquals(other.encryptedMnemonicEntropy)) return false
         if (!encryptedPrivateKey.contentEquals(other.encryptedPrivateKey)) return false
 
         return true

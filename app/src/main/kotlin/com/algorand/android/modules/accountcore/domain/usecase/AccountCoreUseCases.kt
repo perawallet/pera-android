@@ -14,6 +14,7 @@ package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.modules.accountcore.domain.model.AccountAssetData
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.asset.domain.model.AssetDetail
@@ -22,6 +23,15 @@ import kotlinx.coroutines.flow.Flow
 
 fun interface GetAccountCollectibleDataFlow {
     operator fun invoke(address: String): Flow<List<BaseOwnedCollectibleData>>
+}
+
+fun interface GetAccountOwnedAssetsDataFlow {
+    operator fun invoke(address: String, includeAlgo: Boolean): Flow<List<OwnedAssetData>>
+}
+
+interface GetAccountOwnedAssetsData {
+    suspend operator fun invoke(address: String, includeAlgo: Boolean): List<OwnedAssetData>
+    suspend operator fun invoke(accountInformation: AccountInformation, includeAlgo: Boolean): List<OwnedAssetData>
 }
 
 fun interface GetAccountAssetDataFlow {
@@ -33,7 +43,7 @@ internal interface CreateAccountAssetData {
 }
 
 internal interface CreateAlgoOwnedAssetData {
-    suspend operator fun invoke(amount: BigInteger): BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
+    suspend operator fun invoke(amount: BigInteger): OwnedAssetData
 }
 
 internal interface CreateAccountPendingAdditionAssetData {
@@ -42,4 +52,12 @@ internal interface CreateAccountPendingAdditionAssetData {
 
 internal interface CreateAccountPendingDeletionAssetData {
     suspend operator fun invoke(assetDetail: AssetDetail): BaseAccountAssetData.PendingAssetData.DeletionAssetData
+}
+
+fun interface GetAccountBaseOwnedAssetData {
+    suspend operator fun invoke(address: String, assetId: Long): BaseAccountAssetData.BaseOwnedAssetData?
+}
+
+fun interface GetAccountOwnedAssetData {
+    suspend operator fun invoke(address: String, assetId: Long, includeAlgo: Boolean): OwnedAssetData?
 }

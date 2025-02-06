@@ -174,7 +174,7 @@ android {
             buildConfigField "String", "ARC59_APP_ADDR_MAINNET", arc59Props["ARC59_APP_ADDR_MAINNET"]
             buildConfigField "long", "ARC59_APP_ID_MAINNET", arc59Props["ARC59_APP_ID_MAINNET"]
 
-            buildConfigField "String", "MELD_TESTNET_URL", '"https://testnet.api.perawallet.app'
+            buildConfigField "String", "MELD_TESTNET_URL", '"https://testnet.api.perawallet.app"'
             buildConfigField "String", "DISCOVER_TESTNET_URL", '"https://discover-mobile-testnet.perawallet.app"'
             buildConfigField "String", "CARDS_TESTNET_URL", '"https://cards-mobile-prod-testnet.perawallet.app"'
             buildConfigField "String", "STAKING_TESTNET_URL", '"https://staking-mobile-testnet.perawallet.app"'

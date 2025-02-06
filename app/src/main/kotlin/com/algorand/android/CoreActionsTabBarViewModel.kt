@@ -38,7 +38,8 @@ class CoreActionsTabBarViewModel @Inject constructor(
     fun changeViewStateForFeatureFlag() {
         val isImmersveToggleEnabled = isFeatureToggleEnabled(IMMERSVE_BUTTON_TOGGLE) &&
                 !(isConnectedToTestnet() && isProdReleaseVariant())
-        val isStakingToggleEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE)
+        val isStakingToggleEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE) &&
+                !isConnectedToTestnet()
         _viewState.value = ViewState.Content(isImmersveToggleEnabled, isStakingToggleEnabled)
     }
 

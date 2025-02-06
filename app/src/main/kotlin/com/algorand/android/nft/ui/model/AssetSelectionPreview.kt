@@ -12,6 +12,7 @@
 
 package com.algorand.android.nft.ui.model
 
+import com.algorand.android.models.AssetSelectionOptInPayload
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.BaseSelectAssetItem
 import com.algorand.android.utils.Event
@@ -19,7 +20,7 @@ import com.algorand.android.utils.Event
 data class AssetSelectionPreview(
     val assetTransaction: AssetTransaction,
     val assetList: List<BaseSelectAssetItem>?,
-    val navigateToOptInEvent: Event<Long>?,
+    val navigateToOptInEvent: Event<AssetSelectionOptInPayload>?,
     val globalErrorTextEvent: Event<String>?,
     val navigateToAssetTransferAmountFragmentEvent: Event<Long>?,
     val isAssetListLoadingVisible: Boolean,

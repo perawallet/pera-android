@@ -19,22 +19,21 @@ import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.Result
 import com.algorand.android.modules.accountasset.domain.model.AccountAssetDetail
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetAccountMinimumBalanceUseCase
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.android.utils.exceptions.WarningException
-import com.algorand.android.utils.extensions.hasAsset
 import com.algorand.android.utils.isEqualTo
 import com.algorand.android.utils.isLesserThan
 import com.algorand.android.utils.isValidAddress
 import com.algorand.android.utils.minBalancePerAssetAsBigInteger
+import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import java.math.BigInteger
 import javax.inject.Inject
 
 class AccountTransactionValidator @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val getAccountMinimumBalanceUseCase: GetAccountMinimumBalanceUseCase
+    private val getAccountInformation: GetAccountInformation,
+    private val getAccountMinBalance: GetAccountMinBalance
 ) {
 
     fun isAccountAddressValid(toAccountPublicKey: String): Result<String> {
@@ -44,10 +43,11 @@ class AccountTransactionValidator @Inject constructor(
         return Result.Error(WarningException(R.string.warning, AnnotatedString(R.string.key_not_valid)))
     }
 
-    fun isSelectedAssetValid(fromAccountPublicKey: String, assetId: Long): Boolean {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(fromAccountPublicKey)?.data
-        val isAlgo = assetId == ALGO_ID
-        return isAlgo || accountDetail?.hasAsset(assetId) == true
+    suspend fun isSelectedAssetValid(fromAccountPublicKey: String, assetId: Long): Boolean {
+        if (assetId == ALGO_ID) {
+            return true
+        }
+        return getAccountInformation(fromAccountPublicKey)?.hasAsset(assetId) == true
     }
 
     fun isSendingAmountLesserThanMinimumBalance(
@@ -71,7 +71,7 @@ class AccountTransactionValidator @Inject constructor(
         return fromAccount?.address == toAccount && selectedAsset?.isAlgo() == true && isMax && hasOnlyAlgo
     }
 
-    fun isSendingMaxAmountToTheSameAccount(
+    suspend fun isSendingMaxAmountToTheSameAccount(
         fromAccount: String,
         toAccount: String,
         maxAmount: BigInteger,
@@ -79,7 +79,7 @@ class AccountTransactionValidator @Inject constructor(
         isAlgo: Boolean
     ): Boolean {
         val maxSelectableAmount = if (isAlgo) {
-            maxAmount - getAccountMinimumBalanceUseCase.getAccountMinimumBalance(toAccount) - MIN_FEE.toBigInteger()
+            maxAmount - getAccountMinBalance(toAccount) - MIN_FEE.toBigInteger()
         } else {
             maxAmount
         }

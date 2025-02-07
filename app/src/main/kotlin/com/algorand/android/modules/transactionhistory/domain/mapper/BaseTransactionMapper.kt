@@ -269,6 +269,21 @@ class BaseTransactionMapper @Inject constructor() {
         }
     }
 
+    fun mapToHeartbeat(
+        transaction: TransactionDTO
+    ): BaseTransaction.Transaction.Heartbeat {
+        return with(transaction) {
+            BaseTransaction.Transaction.Heartbeat(
+                id = id,
+                signature = signature?.signatureKey,
+                senderAddress = senderAddress.orEmpty(),
+                receiverAddress = null, // Heartbeat Transaction does not contain receiver address
+                zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
+                isPending = false
+            )
+        }
+    }
+
     fun mapToUndefined(
         transaction: TransactionDTO
     ): BaseTransaction.Transaction.Undefined {

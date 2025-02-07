@@ -73,6 +73,7 @@ class InnerTransactionDetailPreviewUseCase @Inject constructor(
                     is BaseTransactionDetail.AssetTransferTransaction,
                     is BaseTransactionDetail.PaymentTransaction,
                     is BaseTransactionDetail.UndefinedTransaction,
+                    is BaseTransactionDetail.HeartbeatTransaction,
                     is BaseTransactionDetail.BaseKeyRegTransaction -> {
                         createStandardTransactionItem(transaction = baseTransactionDetail, publicKey = publicKey)
                     }

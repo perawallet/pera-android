@@ -24,6 +24,7 @@ import com.algorand.android.modules.transaction.common.domain.model.TransactionD
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.APP_TRANSACTION
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.ASSET_CONFIGURATION
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.ASSET_TRANSACTION
+import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.HEARTBEAT_TRANSACTION
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.KEYREG_TRANSACTION
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.PAY_TRANSACTION
 import com.algorand.android.modules.transactionhistory.domain.mapper.BaseTransactionMapper
@@ -109,6 +110,7 @@ class TransactionHistoryUseCase @Inject constructor(
                             ASSET_CONFIGURATION -> baseTransactionMapper.mapToAssetConfiguration(txn)
                             APP_TRANSACTION -> baseTransactionMapper.mapToApplicationCall(txn)
                             KEYREG_TRANSACTION -> createKeyRegTransaction(txn)
+                            HEARTBEAT_TRANSACTION -> createHeartbeatTransaction(txn)
                             else -> baseTransactionMapper.mapToUndefined(txn)
                         }
                     }
@@ -261,5 +263,9 @@ class TransactionHistoryUseCase @Inject constructor(
         } else {
             baseTransactionMapper.mapToOfflineKeyReg(txn)
         }
+    }
+
+    private fun createHeartbeatTransaction(txn: TransactionDTO): BaseTransaction.Transaction.Heartbeat {
+        return baseTransactionMapper.mapToHeartbeat(txn)
     }
 }

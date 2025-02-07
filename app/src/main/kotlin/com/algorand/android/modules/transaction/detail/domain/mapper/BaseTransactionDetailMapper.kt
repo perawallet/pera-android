@@ -130,6 +130,22 @@ class BaseTransactionDetailMapper @Inject constructor() {
         }
     }
 
+    fun mapToHeartbeatTransactionDetail(transactionDTO: TransactionDTO): BaseTransactionDetail.HeartbeatTransaction {
+        return with(transactionDTO) {
+            BaseTransactionDetail.HeartbeatTransaction(
+                id = id,
+                signature = signature?.signatureKey,
+                senderAccountAddress = senderAddress,
+                receiverAccountAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
+                roundTimeAsTimestamp = roundTimeAsTimestamp,
+                confirmedRound = confirmedRound,
+                fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),
+                noteInBase64 = noteInBase64
+            )
+        }
+    }
+
     fun mapToUndefinedTransactionDetail(transactionDTO: TransactionDTO): BaseTransactionDetail.UndefinedTransaction {
         return with(transactionDTO) {
             BaseTransactionDetail.UndefinedTransaction(

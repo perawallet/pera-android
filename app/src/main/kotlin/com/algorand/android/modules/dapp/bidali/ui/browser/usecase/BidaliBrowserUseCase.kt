@@ -36,6 +36,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 class BidaliBrowserUseCase @Inject constructor(
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData,

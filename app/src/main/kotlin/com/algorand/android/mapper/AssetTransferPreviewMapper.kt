@@ -22,6 +22,7 @@ import javax.inject.Inject
 
 class AssetTransferPreviewMapper @Inject constructor() {
 
+    @Suppress("LongParameterList")
     fun mapToAssetTransferPreview(
         transactionData: TransactionSignData.Send,
         exchangePrice: BigDecimal,

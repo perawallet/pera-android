@@ -247,7 +247,9 @@ class TransactionSignManager @Inject constructor(
                 checkAndCacheSignedTransaction(transactionByteArray?.signTx(secretKey))
             }
             is TransactionSigner.LedgerBle -> sendTransactionWithLedger(signer as TransactionSigner.LedgerBle)
-            is TransactionSigner.SignerNotFound -> postResult(Defined(AnnotatedString(stringResId = R.string.the_signing_account_has)))
+            is TransactionSigner.SignerNotFound -> {
+                postResult(Defined(AnnotatedString(stringResId = R.string.the_signing_account_has)))
+            }
         }
     }
 

@@ -13,17 +13,16 @@
 package com.algorand.android.modules.rekey.undorekey.confirmation.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.Account
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountOriginalStateIconDrawableUseCase
 import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.rekey.domain.usecase.SendSignedTransactionUseCase
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.mapper.UndoRekeyConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.model.UndoRekeyConfirmationPreview
+import com.algorand.android.modules.transaction.refactor.usecase.CreateRekeyTransactionData
 import com.algorand.android.repository.TransactionsRepository
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.Event
@@ -32,6 +31,9 @@ import com.algorand.android.utils.calculateRekeyFee
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
+import com.algorand.wallet.account.detail.domain.model.AccountType.Rekeyed
+import com.algorand.wallet.account.detail.domain.model.AccountType.RekeyedAuth
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountState
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
@@ -43,7 +45,8 @@ class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
     private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
     private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
     private val createAccountOriginalStateIconDrawableUseCase: CreateAccountOriginalStateIconDrawableUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase
+    private val createRekeyTransactionData: CreateRekeyTransactionData,
+    private val getAccountState: GetAccountState
 ) {
 
     fun getInitialUndoRekeyConfirmationPreview(accountAddress: String): UndoRekeyConfirmationPreview {
@@ -105,19 +108,11 @@ class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
         )
     }
 
-    fun createUndoRekeyTransaction(accountAddress: String): TransactionData? {
-        val account = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data?.account ?: return null
-        return when (account.type) {
-            Account.Type.STANDARD, Account.Type.LEDGER, Account.Type.WATCH, null -> null
-            Account.Type.REKEYED -> createRekeyToStandardAccountTransaction(accountAddress)
-            Account.Type.REKEYED_AUTH -> {
-                val hasAccountValidSecretKey = accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                if (hasAccountValidSecretKey) {
-                    createRekeyToStandardAccountTransaction(accountAddress)
-                } else {
-                    createRekeyTransaction(accountAddress) ?: createRekeyToStandardAccountTransaction(accountAddress)
-                }
-            }
+    suspend fun createUndoRekeyTransaction(accountAddress: String): TransactionSignData.Rekey? {
+        val accountType = getAccountState(accountAddress).accountType
+        return when (accountType) {
+            Rekeyed, RekeyedAuth -> createRekeyTransactionData(accountAddress, accountAddress)
+            else -> null
         }
     }
 
@@ -143,46 +138,5 @@ class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
 
     fun getAccountAuthAddress(accountAddress: String): String {
         return accountDetailUseCase.getAuthAddress(accountAddress).orEmpty()
-    }
-
-    private fun createRekeyTransaction(accountAddress: String): TransactionData.Rekey? {
-        val senderAccountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
-        val senderAccountAccountDetail = senderAccountDetail.account.detail
-        if (senderAccountAccountDetail !is Account.Detail.RekeyedAuth) {
-            return null
-        }
-        val authAccountAddress = senderAccountDetail.accountInformation.rekeyAdminAddress.orEmpty()
-        val ledgerDetail = senderAccountAccountDetail.rekeyedAuthDetail[authAccountAddress] ?: return null
-        return TransactionData.Rekey(
-            senderAccountAddress = senderAccountDetail.account.address,
-            senderAccountDetail = senderAccountDetail.account.detail,
-            senderAccountType = senderAccountDetail.account.type,
-            senderAuthAddress = senderAccountDetail.accountInformation.rekeyAdminAddress,
-            senderAccountName = senderAccountDetail.account.name,
-            isSenderRekeyedToAnotherAccount = senderAccountDetail.accountInformation.isRekeyed(),
-            rekeyAdminAddress = accountAddress,
-            ledgerDetail = ledgerDetail,
-            senderAccountAuthTypeAndDetail = senderAccountDetail.account.getAuthTypeAndDetail()
-        )
-    }
-
-    private fun createRekeyToStandardAccountTransaction(
-        accountAddress: String
-    ): TransactionData.RekeyToStandardAccount? {
-        val senderAccountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
-        return TransactionData.RekeyToStandardAccount(
-            senderAccountAddress = senderAccountDetail.account.address,
-            senderAccountDetail = senderAccountDetail.account.detail,
-            senderAccountType = senderAccountDetail.account.type,
-            senderAuthAddress = senderAccountDetail.accountInformation.rekeyAdminAddress,
-            senderAccountName = senderAccountDetail.account.name,
-            isSenderRekeyedToAnotherAccount = senderAccountDetail.accountInformation.isRekeyed(),
-            rekeyAdminAddress = accountAddress,
-            senderAccountAuthTypeAndDetail = senderAccountDetail.account.getAuthTypeAndDetail()
-        )
-    }
-
-    companion object {
-        private val className = UndoRekeyConfirmationPreviewUseCase::class.java.simpleName
     }
 }

@@ -17,15 +17,13 @@ import com.algorand.android.models.Account
 import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.modules.accountdetail.removeaccount.ui.mapper.RemoveAccountConfirmationPreviewMapper
 import com.algorand.android.modules.accountdetail.removeaccount.ui.model.RemoveAccountConfirmationPreview
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.Event
 import javax.inject.Inject
 
 class RemoveAccountConfirmationPreviewUseCase @Inject constructor(
     private val accountDetailUseCase: AccountDetailUseCase,
-    private val removeAccountConfirmationPreviewMapper: RemoveAccountConfirmationPreviewMapper,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase
+    private val removeAccountConfirmationPreviewMapper: RemoveAccountConfirmationPreviewMapper
 ) {
 
     fun getRemoveAccountConfirmationPreview(): RemoveAccountConfirmationPreview {

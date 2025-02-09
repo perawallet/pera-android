@@ -15,9 +15,12 @@ package com.algorand.wallet.account.info.data.repository
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
 import com.algorand.wallet.account.info.data.mapper.AccountInformationMapper
+import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapper
 import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
+import com.algorand.wallet.account.info.data.mapper.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
@@ -37,7 +40,9 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     private val assetHoldingDao: AssetHoldingDao,
     private val assetHoldingMapper: AssetHoldingMapper,
     private val accountInformationCacheHelper: AccountInformationCacheHelper,
-    private val accountInformationFetchHelper: AccountInformationFetchHelper
+    private val accountInformationFetchHelper: AccountInformationFetchHelper,
+    private val assetStatusEntityMapper: AssetStatusEntityMapper,
+    private val assetHoldingEntityMapper: AssetHoldingEntityMapper
 ) : AccountInformationRepository {
 
     override suspend fun fetchAccountInformation(address: String): PeraResult<AccountInformation> {
@@ -146,6 +151,16 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     override suspend fun deleteAccountInformation(address: String) {
         accountInformationDao.delete(address)
         assetHoldingDao.deleteByAddress(address)
+    }
+
+    override suspend fun setAssetStatus(address: String, assetId: Long, status: AssetStatus) {
+        val statusEntity = assetStatusEntityMapper(status)
+        assetHoldingDao.updateStatus(address, assetId, statusEntity)
+    }
+
+    override suspend fun addAssetHoldingAsPending(address: String, assetId: Long) {
+        val entity = assetHoldingEntityMapper(address, assetId, AssetStatus.PENDING_FOR_ADDITION)
+        assetHoldingDao.insert(entity)
     }
 
     companion object {

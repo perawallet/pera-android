@@ -18,7 +18,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.algorand.android.R
-import com.algorand.android.core.TransactionBaseFragment
+import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.customviews.LoadingDialogFragment
 import com.algorand.android.databinding.FragmentBaseRekeyConfirmationBinding
 import com.algorand.android.models.AnnotatedString
@@ -36,7 +36,7 @@ import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 import kotlinx.coroutines.flow.map
 
-abstract class BaseRekeyConfirmationFragment : TransactionBaseFragment(R.layout.fragment_base_rekey_confirmation) {
+abstract class BaseRekeyConfirmationFragment : TransactionSignBaseFragment(R.layout.fragment_base_rekey_confirmation) {
 
     private var loadingDialogFragment: LoadingDialogFragment? = null
 

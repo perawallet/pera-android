@@ -16,7 +16,6 @@ import com.algorand.android.R
 import com.algorand.android.mapper.AccountDisplayNameMapper
 import com.algorand.android.models.Account
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
 import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
@@ -121,25 +120,6 @@ class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
                 val description = it.exception?.message.orEmpty()
                 emit(preview.copy(showGlobalErrorEvent = Event(title to description), isLoading = false))
             }
-        )
-    }
-
-    fun createRekeyToLedgerAccountTransaction(
-        accountAddress: String,
-        authAccountAddress: String,
-        ledgerDetail: Account.Detail.Ledger
-    ): TransactionData.Rekey? {
-        val senderAccountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
-        return TransactionData.Rekey(
-            senderAccountAddress = senderAccountDetail.account.address,
-            senderAccountDetail = senderAccountDetail.account.detail,
-            senderAccountType = senderAccountDetail.account.type,
-            senderAuthAddress = senderAccountDetail.accountInformation.rekeyAdminAddress,
-            senderAccountName = senderAccountDetail.account.name,
-            isSenderRekeyedToAnotherAccount = senderAccountDetail.accountInformation.isRekeyed(),
-            rekeyAdminAddress = authAccountAddress,
-            ledgerDetail = ledgerDetail,
-            senderAccountAuthTypeAndDetail = senderAccountDetail.account.getAuthTypeAndDetail()
         )
     }
 

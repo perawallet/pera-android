@@ -155,16 +155,19 @@ class SwapAccountSelectionFragment : BaseAccountSelectionFragment() {
                 shouldWaitForConfirmation = true
             )
         )
-        (activity as? MainActivity)?.mainViewModel?.assetOperationResultLiveData?.observe(viewLifecycleOwner) {
-            it.peek().use(
-                onSuccess = {
-                    if (it.assetId == assetAction.assetId) {
-                        assetAction.publicKey?.run {
-                            swapAccountSelectionViewModel.onAssetAdded(accountAddress = this, assetAction.assetId)
+        collectLatestOnLifecycle(
+            flow = (activity as? MainActivity)?.assetOperationViewModel?.assetOperationResultFlow,
+            collection = {
+                it?.peek()?.use(
+                    onSuccess = { operation ->
+                        if (operation.assetId == assetAction.assetId) {
+                            assetAction.publicKey?.run {
+                                swapAccountSelectionViewModel.onAssetAdded(accountAddress = this, assetAction.assetId)
+                            }
                         }
                     }
-                }
-            )
-        }
+                )
+            }
+        )
     }
 }

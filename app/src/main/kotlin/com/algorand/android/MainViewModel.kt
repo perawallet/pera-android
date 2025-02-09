@@ -14,18 +14,13 @@ package com.algorand.android
 
 import android.content.SharedPreferences
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.database.NodeDao
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdMigrationUseCase
-import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.AssetOperationResult
 import com.algorand.android.models.Node
-import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
 import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeningCountUseCase
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
@@ -38,19 +33,10 @@ import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.repository.NodeRepository
 import com.algorand.android.usecase.AccountCacheStatusUseCase
-import com.algorand.android.usecase.SendSignedTransactionUseCase
 import com.algorand.android.utils.AccountCacheManager
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.Event
-import com.algorand.android.utils.Resource
 import com.algorand.android.utils.coremanager.AccountDetailCacheManager
-import com.algorand.android.utils.exception.AccountAlreadyOptedIntoAssetException
-import com.algorand.android.utils.exception.AssetAlreadyPendingForRemovalException
-import com.algorand.android.utils.exceptions.TransactionConfirmationAwaitException
-import com.algorand.android.utils.exceptions.TransactionIdNullException
 import com.algorand.android.utils.findAllNodes
-import com.algorand.android.utils.sendErrorLog
 import com.algorand.wallet.cache.domain.usecase.InitializeAppCache
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -76,7 +62,6 @@ class MainViewModel @Inject constructor(
     private val increaseAppOpeningCountUseCase: IncreaseAppOpeningCountUseCase,
     private val tutorialUseCase: TutorialUseCase,
     private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
-    private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
     private val accountDetailCacheManager: AccountDetailCacheManager,
     private val nodeRepository: NodeRepository,
     accountCacheStatusUseCase: AccountCacheStatusUseCase,
@@ -84,9 +69,6 @@ class MainViewModel @Inject constructor(
     private val accountStateHelperUseCase: AccountStateHelperUseCase,
     private val initializeAppCache: InitializeAppCache
 ) : BaseViewModel() {
-
-    // TODO: Replace this with Flow whenever have time
-    val assetOperationResultLiveData = MutableLiveData<Event<Resource<AssetOperationResult>>>()
 
     // TODO I'll change after checking usage of flow in activity.
     val accountBalanceSyncStatus = accountCacheStatusUseCase.getAccountCacheStatusFlow().asLiveData()
@@ -97,10 +79,7 @@ class MainViewModel @Inject constructor(
 
     private val _activeNodeFlow = MutableStateFlow<Node?>(null)
     val activeNodeFlow: StateFlow<Node?> get() = _activeNodeFlow
-    private var sendTransactionJob: Job? = null
     var refreshBalanceJob: Job? = null
-
-    private var latestFailedAddAssetTransaction: TransactionData.AddAsset? = null
 
     init {
         initActiveNodeFlow()
@@ -150,77 +129,6 @@ class MainViewModel @Inject constructor(
         refreshBalanceJob?.cancel()
         accountDetailCacheManager.startJob()
         // blockPollingManager.startJob()
-    }
-
-    fun sendAssetOperationSignedTransaction(transaction: SignedTransactionDetail.AssetOperation) {
-        if (sendTransactionJob?.isActive == true) {
-            return
-        }
-
-        sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
-            sendSignedTransactionUseCase.sendSignedTransaction(transaction).collectLatest { dataResource ->
-                when (dataResource) {
-                    is DataResource.Success -> {
-                        latestFailedAddAssetTransaction = null
-                        val assetActionResult = getAssetOperationResult(transaction)
-                        assetOperationResultLiveData.postValue(Event(Resource.Success(assetActionResult)))
-                    }
-
-                    is DataResource.Error.Api -> {
-                        assetOperationResultLiveData.postValue(Event(Resource.Error.Api(dataResource.exception)))
-                    }
-
-                    is DataResource.Error.Local -> {
-                        // TODO add specific strings for exceptions
-                        val errorResourceId = when (dataResource.exception) {
-                            is AccountAlreadyOptedIntoAssetException -> {
-                                R.string.you_are_already
-                            }
-
-                            is TransactionConfirmationAwaitException -> {
-                                R.string.transaction_confirmation_timed_out
-                            }
-
-                            is TransactionIdNullException -> {
-                                R.string.an_error_occured
-                            }
-
-                            is AssetAlreadyPendingForRemovalException -> {
-                                R.string.this_asset_is
-                            }
-
-                            else -> {
-                                R.string.an_error_occured
-                            }
-                        }
-                        val assetName = transaction.assetInformation.fullName.toString()
-                        assetOperationResultLiveData.postValue(
-                            Event(
-                                Resource.Error.GlobalWarning(
-                                    titleRes = R.string.error,
-                                    annotatedString = AnnotatedString(
-                                        stringResId = errorResourceId,
-                                        replacementList = listOf("asset_name" to assetName)
-                                    )
-                                )
-                            )
-                        )
-                    }
-
-                    else -> {
-                        sendErrorLog("Unhandled else case in MainViewModel.sendSignedTransaction")
-                    }
-                }
-            }
-        }
-    }
-
-    fun getLatestAddAssetTransaction(): TransactionData.AddAsset? {
-        return latestFailedAddAssetTransaction
-    }
-
-    fun setLatestAddAssetTransaction(transactionData: TransactionData.AddAsset) {
-        latestFailedAddAssetTransaction = transactionData
     }
 
     fun handleDeepLink(uri: String) {
@@ -273,27 +181,6 @@ class MainViewModel @Inject constructor(
     private fun initializeTutorial() {
         viewModelScope.launch {
             tutorialUseCase.initializeTutorial()
-        }
-    }
-
-    private fun getAssetOperationResult(transaction: SignedTransactionDetail.AssetOperation): AssetOperationResult {
-        val assetName = transaction.assetInformation.fullName ?: transaction.assetInformation.shortName
-        return when (transaction) {
-            is SignedTransactionDetail.AssetOperation.AssetAddition -> {
-                AssetOperationResult.AssetAdditionOperationResult(
-                    resultTitleResId = R.string.asset_successfully_opted_in,
-                    assetName = AssetName.create(assetName),
-                    assetId = transaction.assetInformation.assetId
-                )
-            }
-
-            is SignedTransactionDetail.AssetOperation.AssetRemoval -> {
-                AssetOperationResult.AssetRemovalOperationResult(
-                    resultTitleResId = R.string.asset_successfully_opted_out_from_your,
-                    assetName = AssetName.create(assetName),
-                    assetId = transaction.assetInformation.assetId
-                )
-            }
         }
     }
 

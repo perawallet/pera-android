@@ -20,13 +20,13 @@ import android.view.ViewTreeObserver
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.core.TransactionBaseFragment
+import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.databinding.FragmentReceiverAccountSelectionBinding
 import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.TargetUser
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.models.TransactionData
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accountasset.domain.model.AccountAssetDetail
 import com.algorand.android.ui.accountselection.AccountSelectionAdapter
 import com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionQrScannerFragment.Companion.ACCOUNT_ADDRESS_SCAN_RESULT_KEY
@@ -44,7 +44,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 // TODO: 18.03.2022 Use BaseAccountSelectionFragment after refactoring TransactionBaseFragment
 @AndroidEntryPoint
-class ReceiverAccountSelectionFragment : TransactionBaseFragment(R.layout.fragment_receiver_account_selection) {
+class ReceiverAccountSelectionFragment : TransactionSignBaseFragment(R.layout.fragment_receiver_account_selection) {
 
     private val receiverAccountSelectionViewModel: ReceiverAccountSelectionViewModel by viewModels()
 
@@ -110,6 +110,10 @@ class ReceiverAccountSelectionFragment : TransactionBaseFragment(R.layout.fragme
         )
     }
 
+    private val sendTransactionDataCollector: suspend (Event<TransactionSignData.Send>?) -> Unit = {
+        handleSendTransactionDataEvent(it)
+    }
+
     private val windowFocusChangeListener = ViewTreeObserver.OnWindowFocusChangeListener { hasFocus ->
         if (hasFocus) updateLatestCopiedMessage()
     }
@@ -159,6 +163,10 @@ class ReceiverAccountSelectionFragment : TransactionBaseFragment(R.layout.fragme
             receiverAccountSelectionViewModel.toAccountTransactionRequirementsFlow,
             toAccountTransactionRequirementsCollector
         )
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            receiverAccountSelectionViewModel.sendTransactionDataFlow,
+            sendTransactionDataCollector
+        )
     }
 
     override fun onResume() {
@@ -176,27 +184,28 @@ class ReceiverAccountSelectionFragment : TransactionBaseFragment(R.layout.fragme
         )
     }
 
+    private fun handleSendTransactionDataEvent(event: Event<TransactionSignData.Send>?) {
+        event?.consume()?.let { assetTransaction ->
+            val isExpressSendWarningEnabled = receiverAccountSelectionViewModel.isExpressSendWarningEnabled(
+                assetTransaction.isArc59Transaction
+            )
+            if (isExpressSendWarningEnabled) {
+                navToArc59ExpressSendFragment(assetTransaction)
+            } else {
+                navToAssetTransferPreviewFragment(assetTransaction)
+            }
+        }
+    }
+
     private fun onNextButtonClick() {
         receiverAccountSelectionViewModel.checkIsGivenAddressValid(binding.searchView.text)
     }
 
     private fun handleNextNavigation(targetUser: TargetUser) {
-        val assetTransaction =
-            receiverAccountSelectionViewModel.getSendTransactionData(targetUser) ?: return
-
-        val isExpressSendWarningEnabled =
-            receiverAccountSelectionViewModel.isExpressSendWarningEnabled(
-                assetTransaction.isArc59Transaction
-            )
-
-        if (isExpressSendWarningEnabled) {
-            navToArc59ExpressSendFragment(assetTransaction)
-        } else {
-            navToAssetTransferPreviewFragment(assetTransaction)
-        }
+        receiverAccountSelectionViewModel.getSendTransactionData(targetUser)
     }
 
-    private fun navToAssetTransferPreviewFragment(sendTransactionData: TransactionData.Send) {
+    private fun navToAssetTransferPreviewFragment(sendTransactionData: TransactionSignData.Send) {
         nav(
             ReceiverAccountSelectionFragmentDirections
                 .actionReceiverAccountSelectionFragmentToAssetTransferPreviewFragment(
@@ -205,12 +214,10 @@ class ReceiverAccountSelectionFragment : TransactionBaseFragment(R.layout.fragme
         )
     }
 
-    private fun navToArc59ExpressSendFragment(sendTransactionData: TransactionData.Send) {
+    private fun navToArc59ExpressSendFragment(sendTransactionData: TransactionSignData.Send) {
         nav(
             ReceiverAccountSelectionFragmentDirections
-                .actionReceiverAccountSelectionFragmentToArc59ExpressSendFragment(
-                    sendTransactionData
-                )
+                .actionReceiverAccountSelectionFragmentToArc59ExpressSendFragment(sendTransactionData)
         )
     }
 

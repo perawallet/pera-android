@@ -20,15 +20,19 @@ import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.SenderAccountSelectionPreview
-import com.algorand.android.models.TransactionData
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.usecase.SenderAccountSelectionPreviewUseCase
 import com.algorand.android.usecase.SenderAccountSelectionUseCase
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrElse
+import com.algorand.wallet.account.info.domain.model.AccountInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -96,7 +100,46 @@ class SenderAccountSelectionViewModel @Inject constructor(
         )
     }
 
-    fun createSendTransactionData(assetTransaction: AssetTransaction): TransactionData.Send? {
+    // If user enter Send Algo flow via deeplink or qr code, then we have to check asset transaction params then
+    // we should navigate user to proper screen
+    fun handleNextNavigation(accountInformation: AccountInformation) {
+        viewModelScope.launch {
+            val assetTransaction = assetTransaction.copy(senderAddress = accountInformation.address)
+            val navDestination = when {
+                assetTransaction.assetId == -1L -> {
+                    SenderAccountSelectionFragmentDirections
+                        .actionSenderAccountSelectionFragmentToAssetSelectionFragment(assetTransaction)
+                }
+
+                assetTransaction.amount == BigInteger.ZERO -> {
+                    SenderAccountSelectionFragmentDirections
+                        .actionSenderAccountSelectionFragmentToAssetTransferAmountFragment(assetTransaction)
+                }
+
+                assetTransaction.receiverUser == null -> {
+                    SenderAccountSelectionFragmentDirections
+                        .actionSenderAccountSelectionFragmentToReceiverAccountSelectionFragment(assetTransaction)
+                }
+
+                else -> {
+                    val transactionData = createSendTransactionData(assetTransaction) ?: return@launch
+
+                    if (isExpressSendWarningEnabled(transactionData.isArc59Transaction)) {
+                        SenderAccountSelectionFragmentDirections
+                            .actionSenderAccountSelectionFragmentToArc59ExpressSendFragment(transactionData)
+                    } else {
+                        SenderAccountSelectionFragmentDirections
+                            .actionSenderAccountSelectionFragmentToAssetTransferPreviewFragment(transactionData)
+                    }
+                }
+            }
+            _senderAccountSelectionPreviewFlow.update {
+                it.copy(navigateToDestination = Event(navDestination))
+            }
+        }
+    }
+
+    private suspend fun createSendTransactionData(assetTransaction: AssetTransaction): TransactionSignData.Send? {
         return senderAccountSelectionPreviewUseCase.createSendTransactionData(
             accountAddress = assetTransaction.senderAddress,
             note = assetTransaction.xnote ?: assetTransaction.note,
@@ -106,7 +149,7 @@ class SenderAccountSelectionViewModel @Inject constructor(
         )
     }
 
-    fun isExpressSendWarningEnabled(isArc59Transaction: Boolean): Boolean {
+    private fun isExpressSendWarningEnabled(isArc59Transaction: Boolean): Boolean {
         return senderAccountSelectionUseCase.isExpressSendWarningEnabled(isArc59Transaction)
     }
 

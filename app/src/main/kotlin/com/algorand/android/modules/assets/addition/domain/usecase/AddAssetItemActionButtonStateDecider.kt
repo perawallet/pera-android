@@ -12,12 +12,12 @@
 
 package com.algorand.android.modules.assets.addition.domain.usecase
 
-import com.algorand.android.models.AssetHolding
-import com.algorand.android.models.AssetStatus.OWNED_BY_ACCOUNT
-import com.algorand.android.models.AssetStatus.PENDING_FOR_ADDITION
-import com.algorand.android.models.AssetStatus.PENDING_FOR_REMOVAL
-import com.algorand.android.models.AssetStatus.PENDING_FOR_SENDING
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.wallet.account.info.domain.model.AssetHolding
+import com.algorand.wallet.account.info.domain.model.AssetStatus.OWNED_BY_ACCOUNT
+import com.algorand.wallet.account.info.domain.model.AssetStatus.PENDING_FOR_ADDITION
+import com.algorand.wallet.account.info.domain.model.AssetStatus.PENDING_FOR_REMOVAL
+import com.algorand.wallet.account.info.domain.model.AssetStatus.PENDING_FOR_SENDING
 import javax.inject.Inject
 
 class AddAssetItemActionButtonStateDecider @Inject constructor() {

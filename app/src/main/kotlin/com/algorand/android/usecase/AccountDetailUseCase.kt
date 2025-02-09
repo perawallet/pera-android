@@ -19,13 +19,10 @@ import com.algorand.android.core.BaseUseCase
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountDetail
 import com.algorand.android.models.AccountIconResource
-import com.algorand.android.models.AssetStatus.PENDING_FOR_REMOVAL
 import com.algorand.android.repository.AccountRepository
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.exceptions.AccountNotFoundException
-import com.algorand.android.utils.extensions.getAssetHoldingOrNull
-import com.algorand.android.utils.extensions.getAssetStatusOrNull
 import com.algorand.android.utils.isRekeyedToAnotherAccount
 import com.algorand.android.utils.recordException
 import com.algorand.android.utils.toShortenedAddress
@@ -93,16 +90,6 @@ class AccountDetailUseCase @Inject constructor(
 
     fun isAssetOwnedByAccount(publicKey: String, assetId: Long): Boolean {
         return getCachedAccountDetail(publicKey)?.data?.accountInformation?.getAllAssetIds()?.contains(assetId) ?: false
-    }
-
-    fun isAssetPendingForRemovalFromAccount(accountAddress: String, assetId: Long): Boolean {
-        return getCachedAccountDetail(accountAddress)?.data?.getAssetStatusOrNull(assetId) == PENDING_FOR_REMOVAL
-    }
-
-    fun isAssetBalanceZero(publicKey: String, assetId: Long): Boolean? {
-        val account = getCachedAccountDetail(publicKey) ?: return null
-        val assetHolding = account.data?.getAssetHoldingOrNull(assetId) ?: return null
-        return assetHolding.amount == BigInteger.ZERO
     }
 
     fun isAssetOwnedByAnyAccount(assetId: Long): Boolean {

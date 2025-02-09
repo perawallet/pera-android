@@ -13,6 +13,7 @@
 package com.algorand.android.modules.dapp.bidali.ui.browser.model
 
 import com.algorand.android.discover.common.ui.model.WebViewError
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.dapp.bidali.domain.model.BidaliOpenUrlRequestDTO
 import com.algorand.android.modules.dapp.bidali.domain.model.BidaliPaymentRequestDTO
 import com.algorand.android.utils.Event
@@ -31,4 +32,6 @@ data class BidaliBrowserPreview(
     val toolbarSubtitle: String,
     val url: String,
     val updatedBalancesJavascript: String? = null,
+    val navigateToSendAlgo: Event<TransactionSignData.Send>? = null,
+    val onBidaliJsReady: Event<String>? = null
 )

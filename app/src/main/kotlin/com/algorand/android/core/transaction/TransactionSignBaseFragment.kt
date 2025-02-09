@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.core
+package com.algorand.android.core.transaction
 
 import android.app.Activity
 import android.content.pm.PackageManager
@@ -23,6 +23,7 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
+import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail

@@ -10,9 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.utils
+package com.algorand.wallet.account.info.data.mapper
 
-import com.algorand.android.models.TransactionData
-import javax.inject.Inject
+import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
+import com.algorand.wallet.account.info.domain.model.AssetStatus
 
-class TransactionSigningHelper @Inject constructor() : ListQueuingHelper<TransactionData, ByteArray>()
+internal interface AssetStatusEntityMapper {
+    operator fun invoke(status: AssetStatus): AssetStatusEntity
+}

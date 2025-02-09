@@ -76,8 +76,7 @@ class RekeyToLedgerAccountConfirmationFragment : BaseRekeyConfirmationFragment()
     }
 
     override fun onSendTransaction() {
-        val rekeyTx = rekeyToLedgerAccountConfirmationViewModel.createRekeyToLedgerAccountTransaction() ?: return
-        sendTransaction(rekeyTx)
+        rekeyToLedgerAccountConfirmationViewModel.createRekeyToLedgerAccountTransaction()
     }
 
     override fun onTransactionLoading() {

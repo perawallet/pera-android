@@ -15,11 +15,11 @@ package com.algorand.android.modules.rekey.undorekey.confirmation.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRekeyConfirmationFields
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.model.UndoRekeyConfirmationPreview
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.usecase.UndoRekeyConfirmationPreviewUseCase
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -50,10 +50,15 @@ class UndoRekeyConfirmationViewModel @Inject constructor(
         updatePreviewWithCalculatedTransactionFee()
     }
 
-    fun createRekeyToStandardAccountTransaction(): TransactionData? {
-        return undoRekeyConfirmationPreviewUseCase.createUndoRekeyTransaction(
-            accountAddress = accountAddress
-        )
+    fun createRekeyToStandardAccountTransaction() {
+        viewModelScope.launch {
+            val transactionData = undoRekeyConfirmationPreviewUseCase.createUndoRekeyTransaction(accountAddress)
+            if (transactionData != null) {
+                _undoRekeyConfirmationPreviewFlow.update {
+                    it.copy(onRekeyTransactionDataReady = Event(transactionData))
+                }
+            }
+        }
     }
 
     fun onTransactionSigningFailed() {

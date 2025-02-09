@@ -23,6 +23,7 @@ import com.algorand.android.customviews.LoadingDialogFragment
 import com.algorand.android.databinding.FragmentBaseRekeyConfirmationBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AccountIconDrawable
@@ -72,6 +73,10 @@ abstract class BaseRekeyConfirmationFragment : TransactionSignBaseFragment(R.lay
 
     private val onSendTransactionEventCollector: suspend (Event<Unit>?) -> Unit = { event ->
         event?.consume()?.run { onSendTransaction() }
+    }
+
+    private val onSignTransactionEventCollector: suspend (Event<TransactionSignData>?) -> Unit = { event ->
+        event?.consume()?.let { sendTransaction(it) }
     }
 
     private val navToRekeyedAccountConfirmationBottomSheetEventCollector: suspend (Event<Unit>?) -> Unit = { event ->
@@ -255,6 +260,10 @@ abstract class BaseRekeyConfirmationFragment : TransactionSignBaseFragment(R.lay
             collectLatestOnLifecycle(
                 flow = map { it.subtitleTextResId },
                 collection = subtitleTextResIdCollector
+            )
+            collectLatestOnLifecycle(
+                flow = map { it.onRekeyTransactionDataReady },
+                collection = onSignTransactionEventCollector
             )
         }
     }

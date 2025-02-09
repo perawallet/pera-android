@@ -15,11 +15,12 @@ package com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.u
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRekeyConfirmationFields
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.usecase.RekeyToStandardAccountConfirmationPreviewUseCase
+import com.algorand.android.modules.transaction.refactor.usecase.CreateRekeyTransactionData
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -34,6 +35,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class RekeyToStandardAccountConfirmationViewModel @Inject constructor(
     private val rekeyToStandardAccountConfirmationPreviewUseCase: RekeyToStandardAccountConfirmationPreviewUseCase,
+    private val createRekeyTransactionData: CreateRekeyTransactionData,
     savedStateHandle: SavedStateHandle
 ) : BaseRekeyConfirmationViewModel() {
 
@@ -51,11 +53,17 @@ class RekeyToStandardAccountConfirmationViewModel @Inject constructor(
         updatePreviewWithCalculatedTransactionFee()
     }
 
-    fun createRekeyToStandardAccountTransaction(): TransactionData.RekeyToStandardAccount? {
-        return rekeyToStandardAccountConfirmationPreviewUseCase.createRekeyToStandardAccountTransaction(
-            accountAddress = accountAddress,
-            authAccountAddress = authAccountAddress,
-        )
+    fun createRekeyToStandardAccountTransaction() {
+        viewModelScope.launch {
+            val transactionData = createRekeyTransactionData(accountAddress, authAccountAddress)
+            if (transactionData != null) {
+                _rekeyToStandardAccountConfirmationPreviewFlow.update {
+                    it.copy(
+                        onRekeyTransactionDataReady = Event(transactionData),
+                    )
+                }
+            }
+        }
     }
 
     fun onTransactionSigningFailed() {

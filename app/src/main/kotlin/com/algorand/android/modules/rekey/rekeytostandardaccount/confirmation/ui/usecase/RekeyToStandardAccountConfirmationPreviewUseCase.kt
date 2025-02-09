@@ -14,7 +14,6 @@ package com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.u
 
 import com.algorand.android.R
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
 import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.rekey.domain.usecase.SendSignedTransactionUseCase
@@ -61,23 +60,6 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
                 val description = it.exception?.message.orEmpty()
                 emit(preview.copy(showGlobalErrorEvent = Event(title to description), isLoading = false))
             }
-        )
-    }
-
-    fun createRekeyToStandardAccountTransaction(
-        accountAddress: String,
-        authAccountAddress: String
-    ): TransactionData.RekeyToStandardAccount? {
-        val senderAccountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
-        return TransactionData.RekeyToStandardAccount(
-            senderAccountAddress = senderAccountDetail.account.address,
-            senderAccountDetail = senderAccountDetail.account.detail,
-            senderAccountType = senderAccountDetail.account.type,
-            senderAuthAddress = senderAccountDetail.accountInformation.rekeyAdminAddress,
-            senderAccountName = senderAccountDetail.account.name,
-            isSenderRekeyedToAnotherAccount = senderAccountDetail.accountInformation.isRekeyed(),
-            rekeyAdminAddress = authAccountAddress,
-            senderAccountAuthTypeAndDetail = senderAccountDetail.account.getAuthTypeAndDetail()
         )
     }
 

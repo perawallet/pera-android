@@ -59,8 +59,7 @@
     <fragment
         android:id="@+id/watchAccountResultInfoFragment"
         android:name="com.algorand.android.ui.register.watch.result.WatchAccountResultInfoFragment"
-        android:label="WatchAccountResultInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="WatchAccountResultInfoFragment">
         <action
             android:id="@+id/action_watchAccountResultInfoFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"

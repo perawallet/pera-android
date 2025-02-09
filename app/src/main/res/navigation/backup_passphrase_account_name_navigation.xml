@@ -38,8 +38,7 @@
     <fragment
         android:id="@+id/createAccountResultInfoFragment"
         android:name="com.algorand.android.ui.register.createaccount.result.CreateAccountResultInfoFragment"
-        android:label="CreateAccountResultInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="CreateAccountResultInfoFragment">
         <action
             android:id="@+id/action_createAccountResultInfoFragment_to_meldNavigation"
             app:destination="@id/meldNavigation"

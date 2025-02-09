@@ -64,8 +64,7 @@
     <fragment
         android:id="@+id/passphraseVerifiedInfoFragment"
         android:name="com.algorand.android.ui.register.createaccount.passphraseverified.PassphraseVerifiedInfoFragment"
-        android:label="PassphraseVerifiedInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="PassphraseVerifiedInfoFragment">
         <argument
             android:name="accountCreation"
             app:argType="com.algorand.android.models.AccountCreation"

@@ -122,8 +122,7 @@
     <fragment
         android:id="@+id/verifyRekeyInfoFragment"
         android:name="com.algorand.android.modules.rekey.rekeytoledgeraccount.resultinfo.ui.RekeyToLedgerAccountVerifyInfoFragment"
-        android:label="VerifyRekeyInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="VerifyRekeyInfoFragment">
         <argument
             android:name="accountAddress"
             app:argType="string" />

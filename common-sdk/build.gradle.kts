@@ -30,7 +30,7 @@ android {
 dependencies {
 
     api(libs.algosdk)
-    api(project(":algosdk-aar"))
+    api(libs.algorand.go.mobile)
 
     implementation(libs.xhdwalletapi)
     implementation(libs.kotlin.bip39)

@@ -33,9 +33,7 @@ import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.repository.NodeRepository
 import com.algorand.android.usecase.AccountCacheStatusUseCase
-import com.algorand.android.utils.AccountCacheManager
 import com.algorand.android.utils.Event
-import com.algorand.android.utils.coremanager.AccountDetailCacheManager
 import com.algorand.android.utils.findAllNodes
 import com.algorand.wallet.cache.domain.usecase.InitializeAppCache
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,14 +53,12 @@ class MainViewModel @Inject constructor(
     private val indexerInterceptor: IndexerInterceptor,
     private val mobileHeaderInterceptor: MobileHeaderInterceptor,
     private val algodInterceptor: AlgodInterceptor,
-    private val accountCacheManager: AccountCacheManager,
     private val deviceIdMigrationUseCase: DeviceIdMigrationUseCase,
     private val mainActivityEventTracker: MainActivityEventTracker,
     private val deepLinkHandler: DeeplinkHandler,
     private val increaseAppOpeningCountUseCase: IncreaseAppOpeningCountUseCase,
     private val tutorialUseCase: TutorialUseCase,
     private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
-    private val accountDetailCacheManager: AccountDetailCacheManager,
     private val nodeRepository: NodeRepository,
     accountCacheStatusUseCase: AccountCacheStatusUseCase,
     private val autoLockManagerUseCase: AutoLockManagerUseCase,
@@ -83,7 +79,6 @@ class MainViewModel @Inject constructor(
 
     init {
         initActiveNodeFlow()
-        initializeAccountCacheManager()
         initializeNodeInterceptor()
         initializeTutorial()
     }
@@ -112,23 +107,9 @@ class MainViewModel @Inject constructor(
         deviceIdMigrationUseCase.migrateDeviceIdIfNeed()
     }
 
-    private fun initializeAccountCacheManager() {
-        viewModelScope.launch(Dispatchers.IO) {
-            accountCacheManager.initializeAccountCacheMap()
-        }
-    }
-
-    fun onNewNodeActivated() {
-        resetBlockPolling()
-    }
-
-    /**
-     * If we are going to re-enable block polling manager again, we should enable this job here.
-     */
-    private fun resetBlockPolling() {
+    fun onNewNodeActivated(lifecycle: Lifecycle) {
         refreshBalanceJob?.cancel()
-        accountDetailCacheManager.startJob()
-        // blockPollingManager.startJob()
+        viewModelScope.launch { initializeAppCache(lifecycle) }
     }
 
     fun handleDeepLink(uri: String) {

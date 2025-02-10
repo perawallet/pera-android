@@ -769,7 +769,7 @@ class MainActivity :
 
     private fun onNewNodeActivated() {
         hideProgress()
-        mainViewModel.onNewNodeActivated()
+        mainViewModel.onNewNodeActivated(lifecycle)
         coreActionsTabBarViewModel.changeViewStateForFeatureFlag()
     }
 

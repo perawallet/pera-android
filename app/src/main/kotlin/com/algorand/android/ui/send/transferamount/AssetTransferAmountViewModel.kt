@@ -16,7 +16,6 @@ package com.algorand.android.ui.send.transferamount
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.AssetTransferAmountPreview
 import com.algorand.android.usecase.AssetTransferAmountPreviewUseCase
@@ -86,10 +85,6 @@ class AssetTransferAmountViewModel @Inject constructor(
 
     fun getMaximumAmountOfAsset(): String {
         return with(assetTransaction) { assetTransferAmountUseCase.getMaximumAmountOfAsset(assetId, senderAddress) }
-    }
-
-    private fun getAssetInformation(): AssetInformation? {
-        return with(assetTransaction) { assetTransferAmountUseCase.getAssetInformation(senderAddress, assetId) }
     }
 
     fun shouldShowTransactionTips(): Boolean {

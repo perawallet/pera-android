@@ -21,7 +21,6 @@ import com.algorand.android.models.AccountDetail
 import com.algorand.android.models.AccountIconResource
 import com.algorand.android.repository.AccountRepository
 import com.algorand.android.utils.CacheResult
-import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.exceptions.AccountNotFoundException
 import com.algorand.android.utils.isRekeyedToAnotherAccount
 import com.algorand.android.utils.recordException
@@ -32,7 +31,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 
 class AccountDetailUseCase @Inject constructor(
@@ -80,14 +78,6 @@ class AccountDetailUseCase @Inject constructor(
         accountRepository.clearAccountDetailCache()
     }
 
-    suspend fun cacheAccountDetail(accountDetail: CacheResult.Success<AccountDetail>) {
-        accountRepository.cacheAccountDetail(accountDetail)
-    }
-
-    suspend fun cacheAccountDetails(accountDetailKeyValuePairList: List<Pair<String, CacheResult<AccountDetail>>>) {
-        accountRepository.cacheAllAccountDetails(accountDetailKeyValuePairList)
-    }
-
     fun isAssetOwnedByAccount(publicKey: String, assetId: Long): Boolean {
         return getCachedAccountDetail(publicKey)?.data?.accountInformation?.getAllAssetIds()?.contains(assetId) ?: false
     }
@@ -116,27 +106,6 @@ class AccountDetailUseCase @Inject constructor(
         val accountAuthAddress = getAuthAddress(accountAddress) ?: return false
         val authAccountDetail = getCachedAccountDetail(accountAuthAddress)?.data ?: return false
         return canAccountSignTransaction(authAccountDetail.account.address)
-    }
-
-    suspend fun fetchAccountDetail(account: Account): Flow<DataResource<AccountDetail>> {
-        return accountInformationUseCase.getAccountInformation(account.address).map { accountInformationData ->
-            when (accountInformationData) {
-                is DataResource.Success -> {
-                    val accountDetail = AccountDetail(
-                        account = account,
-                        accountInformation = accountInformationData.data,
-                        nameServiceName = getAccountNameService(account.address)
-                    )
-                    DataResource.Success(accountDetail)
-                }
-
-                is DataResource.Error.Api -> {
-                    DataResource.Error.Api(accountInformationData.exception, accountInformationData.code)
-                }
-
-                else -> DataResource.Loading()
-            }
-        }
     }
 
     fun getAccountType(publicKey: String): Account.Type? {
@@ -181,10 +150,6 @@ class AccountDetailUseCase @Inject constructor(
 
     fun setAccountNameService(accountAddress: String, nameServiceName: String?) {
         accountRepository.getCachedAccountDetail(accountAddress)?.data?.nameServiceName = nameServiceName
-    }
-
-    private fun getAccountNameService(accountAddress: String): String? {
-        return accountRepository.getCachedAccountDetail(accountAddress)?.data?.nameServiceName
     }
 
     fun getAuthAccount(accountAddress: String?): CacheResult<AccountDetail>? {

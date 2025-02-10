@@ -16,7 +16,6 @@ package com.algorand.android.ui.send.senderaccount
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.SenderAccountSelectionPreview
@@ -93,13 +92,6 @@ class SenderAccountSelectionViewModel @Inject constructor(
         return senderAccountSelectionUseCase.shouldShowTransactionTips()
     }
 
-    fun getAssetInformation(assetTransaction: AssetTransaction): AssetInformation? {
-        return senderAccountSelectionUseCase.getAssetInformation(
-            publicKey = assetTransaction.senderAddress,
-            assetId = assetTransaction.assetId
-        )
-    }
-
     // If user enter Send Algo flow via deeplink or qr code, then we have to check asset transaction params then
     // we should navigate user to proper screen
     fun handleNextNavigation(accountInformation: AccountInformation) {
@@ -143,7 +135,7 @@ class SenderAccountSelectionViewModel @Inject constructor(
         return senderAccountSelectionPreviewUseCase.createSendTransactionData(
             accountAddress = assetTransaction.senderAddress,
             note = assetTransaction.xnote ?: assetTransaction.note,
-            selectedAsset = getAssetInformation(assetTransaction),
+            assetId = assetTransaction.assetId,
             amount = assetTransaction.amount,
             assetTransaction = assetTransaction
         )

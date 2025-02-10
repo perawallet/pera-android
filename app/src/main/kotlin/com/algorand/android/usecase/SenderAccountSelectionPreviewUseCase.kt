@@ -13,7 +13,6 @@
 package com.algorand.android.usecase
 
 import com.algorand.android.mapper.SenderAccountSelectionPreviewMapper
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.models.Result
@@ -47,7 +46,7 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
     suspend fun createSendTransactionData(
         accountAddress: String,
         note: String?,
-        selectedAsset: AssetInformation?,
+        assetId: Long,
         amount: BigInteger,
         assetTransaction: AssetTransaction
     ): TransactionSignData.Send? {
@@ -62,14 +61,14 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
             senderAccountName = accountName.orEmpty(),
             minimumBalance = minBalance.toLong(),
             amount = amount,
-            assetId = selectedAsset?.assetId ?: return null,
+            assetId = assetId,
             note = note,
             targetUser = TargetUser(
                 contact = assetTransaction.receiverUser,
                 publicKey = assetTransaction.receiverUser?.publicKey.orEmpty(),
                 accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
             ),
-            isArc59Transaction = receiverAccountInfo?.hasAsset(selectedAsset.assetId)?.not() ?: false,
+            isArc59Transaction = receiverAccountInfo?.hasAsset(assetId)?.not() ?: false,
             signer = getTransactionSigner(accountAddress)
         )
     }

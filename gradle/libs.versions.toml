@@ -9,7 +9,8 @@ android-namespace = "com.algorand.android"
 android-targetSdk = "34"
 android-versionCode = "124"
 android-versionName = "5.202503.0"
-algosdk = "2.6.0"
+algoSdk = "2.6.0"
+algoGoMobilesdk = "1.0.0"
 androidx-compose-activity = "1.9.3"
 androidx-compose-fragment = "1.8.5"
 androidx-compose-material3 = "1.3.1"
@@ -41,7 +42,6 @@ flexbox = "3.0.0"
 fragmentKtx = "1.8.5"
 glide = "4.16.0"
 googleServicesVersion = "4.4.2"
-gosdk = "1.0.0"
 hiltCompiler = "1.2.0"
 javaWebSocket = "1.5.6"
 junit = "4.13.2"
@@ -72,6 +72,8 @@ navigation = "2.8.4"
 navigation-compose = "2.8.0-alpha10"
 okhttp = "4.12.0"
 paging = "3.3.4"
+peraCompactDecimalFormat = "1.0.0"
+peraWalletConnect = "1.0.0"
 retrofit = "2.11.0"
 review = "2.0.2"
 room = "2.7.0-alpha07"
@@ -189,9 +191,9 @@ zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", ve
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 # Wallet SDK - Security / Blockchain / Crypto
-algosdk = { module = "com.algorand:algosdk", version.ref = "algosdk" }
-algorand-go-mobile = { group = "io.github.perawallet", name = "algorand-go-mobile-sdk", version.ref = "gosdk" }
-pera-compact-decimal-format = { group = "io.github.perawallet", name = "peracompactdecimalformat", version.ref = "gosdk" }
+algosdk = { module = "com.algorand:algosdk", version.ref = "algoSdk" }
+algorand-go-mobile = { group = "io.github.perawallet", name = "algorand-go-mobile-sdk", version.ref = "algoGoMobilesdk" }
+pera-compact-decimal-format = { group = "io.github.perawallet", name = "peracompactdecimalformat", version.ref = "peraCompactDecimalFormat" }
 # jna = "net.java.dev.jna:jna:5.14.0@aar"
 xhdwalletapi = { module = "foundation.algorand.xhdwalletapi:xhdwalletapi-android", version.ref = "xhdwalletapi" }
 kotlin-bip39 = { module = "cash.z.ecc.android:kotlin-bip39", version.ref = "bip39" }
@@ -202,7 +204,7 @@ glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 # Wallet Connect
-pera-walletconnect-v1 = { group = "io.github.perawallet", name = "perawalletconnect", version.ref = "gosdk" }
+pera-walletconnect-v1 = { group = "io.github.perawallet", name = "perawalletconnect", version.ref = "peraWalletConnect" }
 walletconnect-v2-sign = { module = "com.walletconnect:sign" }
 walletconnect-v2 = { module = "com.walletconnect:android-bom", version.ref = "walletConnectBom" }
 walletconnect-v2-android-core = { module = "com.walletconnect:android-core" }

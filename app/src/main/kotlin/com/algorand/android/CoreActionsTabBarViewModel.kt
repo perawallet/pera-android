@@ -44,13 +44,14 @@ class CoreActionsTabBarViewModel @Inject constructor(
     }
 
     fun getDiscoverBrowseDappUrl(): String {
-        val baseDiscoverUrl = if (isConnectedToTestnet()) DISCOVER_TESTNET_URL else DISCOVER_MAINNET_URL
-        return "$baseDiscoverUrl/main/browser"
+        val path = "/main/browser"
+        return getDiscoverUrlWithPath(path)
     }
 
     fun getDiscoverUrlWithPath(path: String): String {
         val baseDiscoverUrl = if (isConnectedToTestnet()) DISCOVER_TESTNET_URL else DISCOVER_MAINNET_URL
-        return "$baseDiscoverUrl/$path"
+        val normalizedPath = if (path.startsWith("/")) path else "/$path"
+        return baseDiscoverUrl + normalizedPath
     }
 
     fun isConnectedToTestnet(): Boolean {

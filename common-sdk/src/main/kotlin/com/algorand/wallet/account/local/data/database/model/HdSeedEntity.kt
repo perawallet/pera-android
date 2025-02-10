@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "hd_seeds",
     indices = [
-        Index(value = ["encrypted_mnemonic_entropy"], unique = true),
+        Index(value = ["encrypted_entropy"], unique = true),
         Index(value = ["encrypted_seed"], unique = true)
     ]
 )

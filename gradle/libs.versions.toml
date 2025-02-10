@@ -41,7 +41,7 @@ flexbox = "3.0.0"
 fragmentKtx = "1.8.5"
 glide = "4.16.0"
 googleServicesVersion = "4.4.2"
-gosdk = "0.1.0"
+gosdk = "1.0.0"
 hiltCompiler = "1.2.0"
 javaWebSocket = "1.5.6"
 junit = "4.13.2"
@@ -192,7 +192,6 @@ napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 algosdk = { module = "com.algorand:algosdk", version.ref = "algosdk" }
 algorand-go-mobile = { group = "io.github.perawallet", name = "algorand-go-mobile-sdk", version.ref = "gosdk" }
 pera-compact-decimal-format = { group = "io.github.perawallet", name = "peracompactdecimalformat", version.ref = "gosdk" }
-pera-walletconnect = { group = "io.github.perawallet", name = "perawalletconnect", version.ref = "gosdk" }
 # jna = "net.java.dev.jna:jna:5.14.0@aar"
 xhdwalletapi = { module = "foundation.algorand.xhdwalletapi:xhdwalletapi-android", version.ref = "xhdwalletapi" }
 kotlin-bip39 = { module = "cash.z.ecc.android:kotlin-bip39", version.ref = "bip39" }
@@ -203,10 +202,11 @@ glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 # Wallet Connect
-sign = { module = "com.walletconnect:sign" }
-walletconnect = { module = "com.walletconnect:android-bom", version.ref = "walletConnectBom" }
-walletconnect-android-core = { module = "com.walletconnect:android-core" }
-web3wallet = { module = "com.walletconnect:web3wallet" }
+pera-walletconnect-v1 = { group = "io.github.perawallet", name = "perawalletconnect", version.ref = "gosdk" }
+walletconnect-v2-sign = { module = "com.walletconnect:sign" }
+walletconnect-v2 = { module = "com.walletconnect:android-bom", version.ref = "walletConnectBom" }
+walletconnect-v2-android-core = { module = "com.walletconnect:android-core" }
+walletconnect-v2-web3wallet = { module = "com.walletconnect:web3wallet" }
 
 [bundles]
 firebase = ["firebase-analytics",

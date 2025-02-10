@@ -79,7 +79,7 @@ internal class AlgoAccountSdkImpl(
         )
         return HdAccount(
             address = algoAddress.toString(),
-            encryptedMnemonicEntropy = secretKeyEncryptionManager.encrypt(mnemonic.toEntropy()),
+            encryptedEntropy = secretKeyEncryptionManager.encrypt(mnemonic.toEntropy()),
             publicKey = publicKey,
             encryptedPrivateKey = secretKeyEncryptionManager.encrypt(privateKey),
             account = account.toInt(),

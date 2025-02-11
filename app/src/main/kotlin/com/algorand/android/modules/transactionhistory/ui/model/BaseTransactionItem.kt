@@ -317,7 +317,7 @@ sealed class BaseTransactionItem : RecyclerListItem, Parcelable {
         ) : TransactionItem() {
 
             override fun isSameTransaction(other: RecyclerListItem): Boolean {
-                val transaction = other as? UndefinedItem ?: return false
+                val transaction = other as? HeartbeatItem ?: return false
                 return signature != null && signature == transaction.signature
             }
         }

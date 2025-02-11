@@ -197,7 +197,7 @@ sealed class BaseTransactionDetail : Parcelable {
         override val receiverAccountAddress: String? = null,
         override val roundTimeAsTimestamp: Long? = null,
         override val confirmedRound: Long?,
-        override val fee: BigInteger = BigInteger.ZERO,
+        override val fee: BigInteger,
         override val noteInBase64: String? = null,
         override val closeToAccountAddress: String? = null,
         override val transactionCloseAmount: BigInteger? = null,

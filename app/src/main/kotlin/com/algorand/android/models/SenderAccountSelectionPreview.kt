@@ -13,6 +13,7 @@
 
 package com.algorand.android.models
 
+import androidx.navigation.NavDirections
 import com.algorand.android.utils.Event
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 
@@ -21,5 +22,6 @@ data class SenderAccountSelectionPreview(
     val isLoading: Boolean,
     val isEmptyStateVisible: Boolean,
     val senderAccountInformationSuccessEvent: Event<AccountInformation>?,
-    val senderAccountInformationErrorEvent: Event<Result.Error>?
+    val senderAccountInformationErrorEvent: Event<Result.Error>?,
+    val navigateToDestination: Event<NavDirections>? = null
 )

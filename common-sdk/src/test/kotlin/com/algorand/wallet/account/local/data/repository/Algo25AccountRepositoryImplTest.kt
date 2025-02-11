@@ -17,6 +17,7 @@ import com.algorand.wallet.account.local.data.database.model.Algo25Entity
 import com.algorand.wallet.account.local.data.mapper.entity.Algo25EntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.Algo25Mapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.encryption.AESPlatformManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -31,10 +32,12 @@ class Algo25AccountRepositoryImplTest {
     private val algo25Dao: Algo25Dao = mockk()
     private val algo25EntityMapper: Algo25EntityMapper = mockk()
     private val algo25Mapper: Algo25Mapper = mockk()
+    private val aesPlatformManager: AESPlatformManager = mockk()
     private val sut = Algo25AccountRepositoryImpl(
         algo25Dao,
         algo25EntityMapper,
-        algo25Mapper
+        algo25Mapper,
+        aesPlatformManager
     )
 
     @Test

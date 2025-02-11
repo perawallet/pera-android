@@ -14,6 +14,7 @@
 package com.algorand.android.models
 
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -22,11 +23,15 @@ data class AssetTransferPreview(
     val senderAccountName: String,
     val accountIconDrawablePreview: AccountIconDrawablePreview,
     val amount: BigInteger,
-    val assetInformation: AssetInformation,
+    val assetId: Long,
+    val assetDecimals: Int,
+    val assetShortName: String,
+    val senderAssetAmount: BigInteger,
     val targetUser: TargetUser,
     val exchangePrice: BigDecimal,
     val currencySymbol: String,
     val fee: Long,
     val note: String? = null,
-    val isNoteEditable: Boolean
+    val isNoteEditable: Boolean,
+    val targetAccountDetail: AccountDetail
 )

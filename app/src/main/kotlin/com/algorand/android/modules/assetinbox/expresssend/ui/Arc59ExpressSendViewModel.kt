@@ -14,7 +14,7 @@ package com.algorand.android.modules.assetinbox.expresssend.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.algorand.android.models.TransactionData
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.assetinbox.expresssend.domain.usecase.Arc59ExpressSendUseCase
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,8 +26,7 @@ class Arc59ExpressSendViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val transactionData =
-        savedStateHandle.getOrThrow<TransactionData.Send>(TRANSACTION_DATA_KEY)
+    val transactionData = savedStateHandle.getOrThrow<TransactionSignData.Send>(TRANSACTION_DATA_KEY)
 
     fun disableArc59ExpressSendWarning() {
         arc59ExpressSendUseCase.disableExpressSendWarning()

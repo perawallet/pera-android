@@ -25,12 +25,12 @@ import com.algorand.android.models.TargetUser
 import com.algorand.android.models.User
 import com.algorand.android.modules.accountasset.GetAccountAssetUseCase
 import com.algorand.android.modules.accountasset.domain.model.AccountAssetDetail
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountItems
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionContactItems
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionItemsFromAccountAddress
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionNameServiceItems
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs
 import com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionFragmentDirections
 import com.algorand.android.utils.exceptions.GlobalException
@@ -39,6 +39,8 @@ import com.algorand.android.utils.exceptions.WarningException
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.isValidAddress
 import com.algorand.android.utils.validator.AccountTransactionValidator
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountState
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import java.math.BigInteger
 import javax.inject.Inject
@@ -50,8 +52,7 @@ import kotlinx.coroutines.flow.flow
 class ReceiverAccountSelectionUseCase @Inject constructor(
     private val contactUseCase: ContactUseCase,
     private val accountTransactionValidator: AccountTransactionValidator,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase,
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val assetDataProviderDecider: AssetDrawableProviderDecider, // TODO Remove decider after refactor AssetInfo
     private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
     private val getAccountSelectionContactItems: GetAccountSelectionContactItems,
@@ -59,6 +60,7 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
     private val getAccountSelectionItemsFromAccountAddress: GetAccountSelectionItemsFromAccountAddress,
     private val getAccountSelectionAccountItems: GetAccountSelectionAccountItems,
     private val getAccountInformation: GetAccountInformation,
+    private val getAccountState: GetAccountState,
     getAccountAssetUseCase: GetAccountAssetUseCase
 ) : BaseSendAccountSelectionUseCase(getAccountAssetUseCase) {
 
@@ -164,9 +166,8 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
         nftDomainServiceLogoUrl: String?
     ): Result<TargetUser> {
         val isSelectedAssetValid = accountTransactionValidator.isSelectedAssetValid(fromAccountAddress, assetId)
-        val isReceiverAccountInMyWallet = accountStateHelperUseCase.hasAccountAuthority(
-            accountAssetDetail.address
-        )
+        val receiverAccountType = getAccountState(accountAssetDetail.address).accountType
+        val isReceiverAccountInMyWallet = receiverAccountType?.canSignTransaction() == true
         if (!isSelectedAssetValid) {
             // TODO: 18.03.2022 Find better exception message
             return Result.Error(Exception())
@@ -249,11 +250,11 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
         val toAccountPublicKey = accountAssetDetail.address
         val contact = getContactByAddressIfExists(toAccountPublicKey)
         // TODO Will be implemented after transaction migration
-        val toAccountCacheData = null
         val targetUser = TargetUser(
             contact = contact,
             publicKey = toAccountPublicKey,
-            account = toAccountCacheData,
+            algoBalance = accountAssetDetail.algoAmount,
+            minBalance = accountAssetDetail.minBalanceRequired,
             nftDomainAddress = nftDomainAddress,
             nftDomainServiceLogoUrl = nftDomainServiceLogoUrl,
             accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(toAccountPublicKey)
@@ -265,8 +266,8 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
         return contactUseCase.getAllContacts().firstOrNull { it.publicKey == accountAddress }
     }
 
-    fun getAssetInformation(assetId: Long, accountAddress: String): AssetInformation? {
-        val ownedAssetData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, accountAddress)
+    private suspend fun getAssetInformation(assetId: Long, accountAddress: String): AssetInformation? {
+        val ownedAssetData = getAccountBaseOwnedAssetData(accountAddress, assetId)
         return AssetInformation.createAssetInformation(
             baseOwnedAssetData = ownedAssetData ?: return null,
             assetDrawableProvider = assetDataProviderDecider.getAssetDrawableProvider(assetId)

@@ -30,4 +30,6 @@ internal interface Algo25AccountRepository {
     suspend fun deleteAccount(address: String)
 
     suspend fun deleteAllAccounts()
+
+    suspend fun getSecretKey(address: String): ByteArray?
 }

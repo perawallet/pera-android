@@ -13,17 +13,20 @@
 package com.algorand.android.usecase
 
 import com.algorand.android.mapper.SenderAccountSelectionPreviewMapper
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.models.Result
 import com.algorand.android.models.SenderAccountSelectionPreview
 import com.algorand.android.models.TargetUser
-import com.algorand.android.models.TransactionData
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
 import com.algorand.android.utils.Event
 import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssets
+import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
+import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -31,39 +34,42 @@ import kotlinx.coroutines.flow.flow
 
 class SenderAccountSelectionPreviewUseCase @Inject constructor(
     private val senderAccountSelectionPreviewMapper: SenderAccountSelectionPreviewMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
     private val getAccountSelectionAccountsWhichCanSignTransaction: GetAccountSelectionAccountsWhichCanSignTransaction,
-    private val fetchAccountInformationAndCacheAssets: FetchAccountInformationAndCacheAssets
+    private val fetchAccountInformationAndCacheAssets: FetchAccountInformationAndCacheAssets,
+    private val getAccountInformation: GetAccountInformation,
+    private val getAccountMinBalance: GetAccountMinBalance,
+    private val getAccountCustomName: GetAccountCustomName,
+    private val getTransactionSigner: GetTransactionSigner
 ) {
 
-    fun createSendTransactionData(
+    suspend fun createSendTransactionData(
         accountAddress: String,
         note: String?,
-        selectedAsset: AssetInformation?,
+        assetId: Long,
         amount: BigInteger,
         assetTransaction: AssetTransaction
-    ): TransactionData.Send? {
-        val senderAccountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
-        val receiverAccountInfo = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data?.accountInformation
-        return TransactionData.Send(
-            senderAccountAddress = senderAccountDetail.account.address,
-            senderAccountDetail = senderAccountDetail.account.detail,
-            senderAccountType = senderAccountDetail.account.type,
-            senderAuthAddress = senderAccountDetail.accountInformation.rekeyAdminAddress,
-            senderAlgoAmount = senderAccountDetail.accountInformation.amount,
-            senderAccountName = senderAccountDetail.account.name,
-            isSenderRekeyedToAnotherAccount = senderAccountDetail.accountInformation.isRekeyed(),
-            minimumBalance = senderAccountDetail.accountInformation.getMinAlgoBalance().toLong(),
+    ): TransactionSignData.Send? {
+        val senderAccountDetail = getAccountInformation(accountAddress) ?: return null
+        val receiverAccountInfo = getAccountInformation(accountAddress)
+        val accountName = getAccountCustomName(accountAddress)
+        val minBalance = getAccountMinBalance(senderAccountDetail)
+        return TransactionSignData.Send(
+            senderAccountAddress = senderAccountDetail.address,
+            senderAuthAddress = senderAccountDetail.rekeyAdminAddress,
+            senderAlgoAmount = senderAccountDetail.amount,
+            senderAccountName = accountName.orEmpty(),
+            minimumBalance = minBalance.toLong(),
             amount = amount,
-            assetInformation = selectedAsset ?: return null,
+            assetId = assetId,
             note = note,
             targetUser = TargetUser(
                 contact = assetTransaction.receiverUser,
                 publicKey = assetTransaction.receiverUser?.publicKey.orEmpty(),
                 accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
             ),
-            isArc59Transaction = receiverAccountInfo?.hasAsset(selectedAsset.assetId)?.not() ?: false
+            isArc59Transaction = receiverAccountInfo?.hasAsset(assetId)?.not() ?: false,
+            signer = getTransactionSigner(accountAddress)
         )
     }
 

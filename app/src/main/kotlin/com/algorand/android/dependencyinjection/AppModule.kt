@@ -37,10 +37,7 @@ import com.algorand.android.database.WalletConnectTypeConverters
 import com.algorand.android.ledger.LedgerBleConnectionManager
 import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.notification.PeraNotificationManager
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.ALGORAND_KEYSTORE_URI
-import com.algorand.android.utils.AccountCacheManager
 import com.algorand.android.utils.ENCRYPTED_SHARED_PREF_NAME
 import com.algorand.android.utils.KEYSET_HANDLE
 import com.algorand.android.utils.KEY_TEMPLATE_AES256_GCM
@@ -71,7 +68,7 @@ object AppModule {
     ): AlgorandDatabase {
         return Room
             .databaseBuilder(appContext, AlgorandDatabase::class.java, AlgorandDatabase.DATABASE_NAME)
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .addMigrations(
                 MIGRATION_3_4,
                 MIGRATION_4_5,
@@ -136,16 +133,6 @@ object AppModule {
     @Provides
     fun provideAlgorandNotificationManager(): PeraNotificationManager {
         return PeraNotificationManager()
-    }
-
-    @Singleton
-    @Provides
-    fun provideAccountCacheManager(
-        accountManager: AccountManager,
-        accountDetailUseCase: AccountDetailUseCase,
-        assetDetailUseCase: SimpleAssetDetailUseCase
-    ): AccountCacheManager {
-        return AccountCacheManager(accountManager, accountDetailUseCase, assetDetailUseCase)
     }
 
     @Singleton

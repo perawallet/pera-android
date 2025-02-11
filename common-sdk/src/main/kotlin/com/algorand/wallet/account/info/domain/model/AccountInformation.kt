@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.info.domain.model
 
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 
 data class AccountInformation(
@@ -34,7 +35,7 @@ data class AccountInformation(
     }
 
     fun hasAsset(assetId: Long): Boolean {
-        return assetHoldings.any { it.assetId == assetId }
+        return assetId == ALGO_ID || assetHoldings.any { it.assetId == assetId }
     }
 
     fun hasAssetAmount(assetId: Long): Boolean {

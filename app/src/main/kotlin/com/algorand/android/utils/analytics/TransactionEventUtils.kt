@@ -13,7 +13,7 @@
 package com.algorand.android.utils.analytics
 
 import androidx.core.os.bundleOf
-import com.algorand.android.models.Account
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.google.firebase.analytics.FirebaseAnalytics
 import java.math.BigInteger
 
@@ -31,13 +31,13 @@ private const val TRANSACTION_ID = "tx_id" // param
 fun FirebaseAnalytics.logTransactionEvent(
     amount: BigInteger,
     assetId: Long,
-    accountType: Account.Type,
+    accountType: AccountRegistrationType,
     isMax: Boolean,
     transactionId: String?
 ) {
     val accountTypeValue = when (accountType) {
-        Account.Type.STANDARD -> TRANSACTION_STANDARD_ACCOUNT_KEY
-        Account.Type.LEDGER -> TRANSACTION_LEDGER_ACCOUNT_KEY
+        AccountRegistrationType.Algo25 -> TRANSACTION_STANDARD_ACCOUNT_KEY
+        AccountRegistrationType.LedgerBle -> TRANSACTION_LEDGER_ACCOUNT_KEY
         else -> "other"
     }
 

@@ -17,8 +17,6 @@ import com.algorand.android.models.AccountDetail
 import com.algorand.android.models.AccountInformationResponse
 import com.algorand.android.models.AccountsResponse
 import com.algorand.android.models.Result
-import com.algorand.android.modules.transactionhistory.data.model.PendingTransactionsResponse
-import com.algorand.android.network.AlgodApi
 import com.algorand.android.network.IndexerApi
 import com.algorand.android.network.safeApiCall
 import com.algorand.android.utils.CacheResult
@@ -27,7 +25,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.StateFlow
 
 class AccountRepository @Inject constructor(
-    private val algodApi: AlgodApi,
     private val indexerApi: IndexerApi,
     private val accountLocalCache: AccountLocalCache
 ) {
@@ -49,19 +46,6 @@ class AccountRepository @Inject constructor(
                 Result.Success(accountInformation)
             } else {
                 Result.Error(Exception(), code())
-            }
-        }
-    }
-
-    suspend fun getPendingTransactions(publicKey: String): Result<PendingTransactionsResponse> =
-        safeApiCall { requestGetPendingTransactions(publicKey) }
-
-    private suspend fun requestGetPendingTransactions(publicKey: String): Result<PendingTransactionsResponse> {
-        with(algodApi.getPendingTransactions(publicKey)) {
-            return if (isSuccessful && body() != null) {
-                Result.Success(body() as PendingTransactionsResponse)
-            } else {
-                Result.Error(Exception(errorBody()?.charStream()?.readText()))
             }
         }
     }
@@ -90,14 +74,6 @@ class AccountRepository @Inject constructor(
         accountLocalCache.put(accountDetail)
     }
 
-    suspend fun cacheAccountDetail(mapKey: String, accountDetail: CacheResult.Error<AccountDetail>) {
-        accountLocalCache.put(mapKey, accountDetail)
-    }
-
-    suspend fun cacheAccountDetail(accountDetailList: List<CacheResult.Success<AccountDetail>>) {
-        accountLocalCache.put(accountDetailList)
-    }
-
     suspend fun cacheAllAccountDetails(accountDetailKeyValuePairList: List<Pair<String, CacheResult<AccountDetail>>>) {
         accountLocalCache.putAll(accountDetailKeyValuePairList)
     }
@@ -108,10 +84,6 @@ class AccountRepository @Inject constructor(
 
     suspend fun clearAccountDetailCache() {
         accountLocalCache.clear()
-    }
-
-    suspend fun removeCachedAccount(publicKey: String) {
-        accountLocalCache.remove(publicKey)
     }
 
     companion object {

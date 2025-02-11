@@ -13,6 +13,7 @@
 package com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model
 
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.Event
@@ -33,6 +34,7 @@ interface BaseRekeyConfirmationFields {
     val showGlobalErrorEvent: Event<Pair<Int, String>>?
     val navToRekeyedAccountConfirmationBottomSheetEvent: Event<Unit>?
     val onSendTransactionEvent: Event<Unit>?
+    val onRekeyTransactionDataReady: Event<TransactionSignData>?
 
     val isTransactionFeeGroupIsVisible: Boolean
         get() = !formattedTransactionFee.isNullOrBlank()

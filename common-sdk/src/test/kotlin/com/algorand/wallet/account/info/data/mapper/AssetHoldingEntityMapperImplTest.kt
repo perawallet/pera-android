@@ -19,10 +19,13 @@ import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import org.mockito.kotlin.mock
 
 class AssetHoldingEntityMapperImplTest {
 
-    private val sut = AssetHoldingEntityMapperImpl()
+    private val assetStatusEntityMapper: AssetStatusEntityMapper = mock()
+
+    private val sut = AssetHoldingEntityMapperImpl(assetStatusEntityMapper)
 
     @Test
     fun `EXPECT null WHEN asset id is null`() {

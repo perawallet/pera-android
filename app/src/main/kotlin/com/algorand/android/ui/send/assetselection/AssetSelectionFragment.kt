@@ -18,7 +18,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.core.TransactionBaseFragment
+import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.databinding.FragmentAssetSelectionBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
@@ -30,7 +30,7 @@ import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AssetSelectionFragment : TransactionBaseFragment(R.layout.fragment_asset_selection) {
+class AssetSelectionFragment : TransactionSignBaseFragment(R.layout.fragment_asset_selection) {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.select_the_asset_to_send,
@@ -70,7 +70,7 @@ class AssetSelectionFragment : TransactionBaseFragment(R.layout.fragment_asset_s
                 isAssetListLoadingVisible || isReceiverAccountOptInCheckLoadingVisible
             assetList?.let { assetSelectionAdapter.submitList(it) }
             navigateToOptInEvent?.consume()?.run {
-                navToArc59SendSummaryFragment(this, assetSelectionPreview)
+                navToArc59SendSummaryFragment(assetId, assetSelectionPreview)
             }
             navigateToAssetTransferAmountFragmentEvent?.consume()?.run {
                 navToAssetTransferAmountFragment(this)

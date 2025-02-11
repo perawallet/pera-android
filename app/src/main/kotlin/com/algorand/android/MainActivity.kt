@@ -36,7 +36,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
-import com.algorand.android.core.TransactionManager
+import com.algorand.android.core.transaction.TransactionSignManager
 import com.algorand.android.customviews.CoreActionsTabBarView
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.customviews.alertview.ui.delegation.AlertDialogDelegation
@@ -50,8 +50,8 @@ import com.algorand.android.models.AssetOperationResult
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.Node
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
 import com.algorand.android.models.TransactionManagerResult
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
@@ -64,6 +64,7 @@ import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
 import com.algorand.android.modules.qrscanning.QrScannerViewModel
+import com.algorand.android.modules.transaction.refactor.ui.AssetOperationViewModel
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.WalletConnectConnectionBottomSheet
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WCSessionRequestResult
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
@@ -105,6 +106,7 @@ class MainActivity :
     AlertDialogDelegation by AlertDialogDelegationImpl() {
 
     val mainViewModel: MainViewModel by viewModels()
+    val assetOperationViewModel: AssetOperationViewModel by viewModels()
     private val coreActionsTabBarViewModel: CoreActionsTabBarViewModel by viewModels()
     private val walletConnectViewModel: WalletConnectViewModel by viewModels()
     private val qrScannerViewModel: QrScannerViewModel by viewModels()
@@ -112,7 +114,7 @@ class MainActivity :
     private var ledgerLoadingDialog: LedgerLoadingDialog? = null
 
     @Inject
-    lateinit var transactionManager: TransactionManager
+    lateinit var transactionManager: TransactionSignManager
 
     @Inject
     lateinit var firebaseAnalytics: FirebaseAnalytics
@@ -155,11 +157,17 @@ class MainActivity :
         }
     }
 
-    private val addAssetResultObserver = Observer<Event<Resource<AssetOperationResult>>> {
-        it.consume()?.use(
+    private val assetOperationResultCollector: suspend (Event<Resource<AssetOperationResult>>?) -> Unit = {
+        it?.consume()?.use(
             onSuccess = { assetOperationResult -> showAssetOperationForegroundNotification(assetOperationResult) },
             onFailed = { error -> showGlobalError(errorMessage = error.parse(this), tag = activityTag) }
         )
+    }
+
+    private val assetTransactionDataCollector: suspend (Event<TransactionSignData>?) -> Unit = {
+        it?.consume()?.let { transactionData ->
+            sendAssetOperationTransaction(transactionData)
+        }
     }
 
     private val assetSetupCompletedObserver = Observer<AccountCacheStatus> {
@@ -401,7 +409,7 @@ class MainActivity :
                     hideLedgerLoadingDialog()
                     val signedTransactionDetail = result.signedTransactionDetail
                     if (signedTransactionDetail is SignedTransactionDetail.AssetOperation) {
-                        mainViewModel.sendAssetOperationSignedTransaction(signedTransactionDetail)
+                        assetOperationViewModel.sendAssetOperationSignedTransaction(signedTransactionDetail)
                     }
                 }
 
@@ -464,7 +472,7 @@ class MainActivity :
     }
 
     private fun retryLatestAssetAdditionTransaction() {
-        mainViewModel.getLatestAddAssetTransaction()?.let { transactionData ->
+        assetOperationViewModel.getLatestAddAssetTransaction()?.let { transactionData ->
             sendAssetOperationTransaction(transactionData)
         }
     }
@@ -526,7 +534,15 @@ class MainActivity :
     private fun initObservers() {
         peraNotificationManager.newNotificationLiveData.observe(this, newNotificationObserver)
 
-        mainViewModel.assetOperationResultLiveData.observe(this, addAssetResultObserver)
+        collectLatestOnLifecycle(
+            flow = assetOperationViewModel.assetOperationResultFlow,
+            collection = assetOperationResultCollector
+        )
+
+        collectLatestOnLifecycle(
+            flow = assetOperationViewModel.assetTransactionDataFlow,
+            collection = assetTransactionDataCollector
+        )
 
         transactionManager.transactionManagerResultLiveData.observe(this, transactionManagerResultObserver)
 
@@ -753,7 +769,7 @@ class MainActivity :
 
     private fun onNewNodeActivated() {
         hideProgress()
-        mainViewModel.onNewNodeActivated()
+        mainViewModel.onNewNodeActivated(lifecycle)
         coreActionsTabBarViewModel.changeViewStateForFeatureFlag()
     }
 
@@ -781,42 +797,14 @@ class MainActivity :
     }
 
     fun signAddAssetTransaction(assetActionResult: AssetActionResult) {
-        if (!assetActionResult.publicKey.isNullOrBlank()) {
-            val accountCacheData = accountDetailUseCase.getCachedAccountDetail(
-                assetActionResult.publicKey
-            )?.data ?: return
-            val transactionData = TransactionData.AddAsset(
-                senderAccountAddress = accountCacheData.account.address,
-                assetInformation = assetActionResult.asset,
-                senderAuthAddress = accountCacheData.accountInformation.rekeyAdminAddress,
-                isSenderRekeyedToAnotherAccount = accountCacheData.accountInformation.isRekeyed(),
-                senderAccountType = accountCacheData.account.type,
-                senderAccountDetail = accountCacheData.account.detail
-            )
-            mainViewModel.setLatestAddAssetTransaction(transactionData)
-            sendAssetOperationTransaction(transactionData)
-        }
+        assetOperationViewModel.createAddAssetTransaction(assetActionResult)
     }
 
     fun signRemoveAssetTransaction(assetActionResult: AssetActionResult) {
-        if (!assetActionResult.publicKey.isNullOrBlank()) {
-            val accountCacheData = accountDetailUseCase.getCachedAccountDetail(
-                assetActionResult.publicKey
-            )?.data ?: return
-            val transactionData = TransactionData.RemoveAsset(
-                senderAccountAddress = accountCacheData.account.address,
-                assetInformation = assetActionResult.asset,
-                creatorPublicKey = assetActionResult.asset.creatorPublicKey.orEmpty(),
-                senderAuthAddress = accountCacheData.accountInformation.rekeyAdminAddress,
-                isSenderRekeyedToAnotherAccount = accountCacheData.accountInformation.isRekeyed(),
-                senderAccountType = accountCacheData.account.type,
-                senderAccountDetail = accountCacheData.account.detail
-            )
-            sendAssetOperationTransaction(transactionData)
-        }
+        assetOperationViewModel.createRemoveAssetTransaction(assetActionResult)
     }
 
-    private fun sendAssetOperationTransaction(transactionData: TransactionData) {
+    private fun sendAssetOperationTransaction(transactionData: TransactionSignData) {
         transactionManager.setup(lifecycle)
         transactionManager.initSigningTransactions(
             isGroupTransaction = false,

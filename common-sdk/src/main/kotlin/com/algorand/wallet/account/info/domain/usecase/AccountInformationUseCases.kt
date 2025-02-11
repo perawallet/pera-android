@@ -14,6 +14,7 @@ package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.wallet.account.info.domain.model.AccountCacheStatus
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
 
@@ -79,4 +80,12 @@ fun interface FetchAccountInformation {
 
 fun interface FetchRekeyedAccounts {
     suspend operator fun invoke(address: String): PeraResult<List<AccountInformation>>
+}
+
+fun interface SetAccountAssetStatus {
+    suspend operator fun invoke(address: String, assetId: Long, status: AssetStatus)
+}
+
+fun interface AddAssetHoldingToAccountAsPending {
+    suspend operator fun invoke(address: String, assetId: Long)
 }

@@ -31,5 +31,7 @@ data class AssetTransferAmountPreview(
     val minimumBalanceIsViolatedResultEvent: Event<String?>? = null,
     val assetNotFoundErrorEvent: Event<Unit>? = null,
     val accountName: String? = null,
-    val accountIconDrawablePreview: AccountIconDrawablePreview? = null
+    val accountIconDrawablePreview: AccountIconDrawablePreview? = null,
+    val onTransactionCreated: Event<TransactionSignData.Send>? = null,
+    val onNavigateToNextFragment: Event<BigInteger>? = null
 )

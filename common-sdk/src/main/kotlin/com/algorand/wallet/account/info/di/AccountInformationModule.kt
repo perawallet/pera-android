@@ -28,6 +28,8 @@ import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapper
 import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapperImpl
 import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapperImpl
+import com.algorand.wallet.account.info.data.mapper.AssetStatusEntityMapper
+import com.algorand.wallet.account.info.data.mapper.AssetStatusEntityMapperImpl
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelper
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelperImpl
 import com.algorand.wallet.account.info.data.repository.AccountInformationCacheHelper
@@ -41,6 +43,7 @@ import com.algorand.wallet.account.info.data.service.AccountInformationApiServic
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManager
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManagerImpl
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
+import com.algorand.wallet.account.info.domain.usecase.AddAssetHoldingToAccountAsPending
 import com.algorand.wallet.account.info.domain.usecase.ClearAccountInformationCache
 import com.algorand.wallet.account.info.domain.usecase.DeleteAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformation
@@ -61,6 +64,7 @@ import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAcco
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccountUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedSuccessAccountUseCase
+import com.algorand.wallet.account.info.domain.usecase.SetAccountAssetStatus
 import com.algorand.wallet.foundation.database.PeraDatabase
 import dagger.Module
 import dagger.Provides
@@ -243,5 +247,20 @@ internal object AccountInformationModule {
     @Provides
     fun provideFetchRekeyedAccounts(repository: AccountInformationRepository): FetchRekeyedAccounts {
         return FetchRekeyedAccounts(repository::fetchRekeyedAccounts)
+    }
+
+    @Provides
+    fun provideAssetStatusEntityMapper(impl: AssetStatusEntityMapperImpl): AssetStatusEntityMapper = impl
+
+    @Provides
+    fun provideSetAccountAssetStatus(repository: AccountInformationRepository): SetAccountAssetStatus {
+        return SetAccountAssetStatus(repository::setAssetStatus)
+    }
+
+    @Provides
+    fun provideAddAssetHoldingToAccountAsPending(
+        repository: AccountInformationRepository
+    ): AddAssetHoldingToAccountAsPending {
+        return AddAssetHoldingToAccountAsPending(repository::addAssetHoldingAsPending)
     }
 }

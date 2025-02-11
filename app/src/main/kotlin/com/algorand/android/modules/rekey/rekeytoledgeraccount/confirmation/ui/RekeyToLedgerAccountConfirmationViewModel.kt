@@ -15,10 +15,11 @@ package com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.model.RekeyToLedgerAccountConfirmationPreview
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.usecase.RekeyToLedgerAccountConfirmationPreviewUseCase
+import com.algorand.android.modules.transaction.refactor.usecase.CreateRekeyTransactionData
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -33,13 +34,13 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
     private val rekeyToLedgerAccountConfirmationPreviewUseCase: RekeyToLedgerAccountConfirmationPreviewUseCase,
+    private val createRekeyTransactionData: CreateRekeyTransactionData,
     savedStateHandle: SavedStateHandle
 ) : BaseRekeyConfirmationViewModel() {
 
     private val navArgs = RekeyToLedgerAccountConfirmationFragmentArgs.fromSavedStateHandle(savedStateHandle)
     val accountAddress = navArgs.accountAddress
     val authAccountAddress = navArgs.authAccountAddress
-    private val ledgerDetail = navArgs.ledgerDetail
 
     private var sendTransactionJob: Job? = null
 
@@ -51,12 +52,13 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
         updatePreviewWithCalculatedTransactionFee()
     }
 
-    fun createRekeyToLedgerAccountTransaction(): TransactionData.Rekey? {
-        return rekeyToLedgerAccountConfirmationPreviewUseCase.createRekeyToLedgerAccountTransaction(
-            accountAddress = accountAddress,
-            authAccountAddress = authAccountAddress,
-            ledgerDetail = ledgerDetail
-        )
+    fun createRekeyToLedgerAccountTransaction() {
+        viewModelScope.launch {
+            val transactionData = createRekeyTransactionData(accountAddress, authAccountAddress) ?: return@launch
+            rekeyToLedgerAccountConfirmationPreviewFlow.update {
+                it.copy(onRekeyTransactionDataReady = Event(transactionData))
+            }
+        }
     }
 
     fun onTransactionSigningFailed() {

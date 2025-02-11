@@ -26,8 +26,6 @@ import com.algorand.android.models.Pagination
 import com.algorand.android.models.PushTokenDeleteRequest
 import com.algorand.android.models.TrackTransactionRequest
 import com.algorand.android.models.VerifiedAssetDetail
-import com.algorand.android.modules.accountblockpolling.data.model.ShouldRefreshRequestBody
-import com.algorand.android.modules.accountblockpolling.data.model.ShouldRefreshResponse
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel.Companion.SEARCH_RESULT_LIMIT
 import com.algorand.android.modules.currency.data.model.CurrencyOptionResponse
 import com.algorand.android.modules.fetchnameservices.data.model.FetchNameServicesRequestBody
@@ -191,11 +189,6 @@ interface MobileAlgorandApi {
     suspend fun getQuoteTransactions(
         @Body requestBody: CreateSwapQuoteTransactionsRequestBody
     ): Response<CreateSwapQuoteTransactionsResponse>
-
-    @POST("v1/algorand-indexer/should-refresh/")
-    suspend fun shouldRefresh(
-        @Body shouldRefreshAccountInformationRequestBody: ShouldRefreshRequestBody
-    ): Response<ShouldRefreshResponse>
 
     @GET("v1/discover/assets/trending/")
     suspend fun getTrendingAssets(): Response<List<AssetSearchResponse>>

@@ -13,6 +13,14 @@
 package com.algorand.android.modules.accountcore.di
 
 import android.content.Context
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetDataUseCase
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetData
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetDataUseCase
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsDataFlow
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsDataFlowUseCase
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsDataUseCase
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValueUseCase
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
@@ -75,4 +83,20 @@ internal object AccountCoreUiModule {
     fun provideGetAccountOriginalStateIconDrawablePreview(
         useCase: GetAccountOriginalStateIconDrawablePreviewUseCase
     ): GetAccountOriginalStateIconDrawablePreview = useCase
+
+    @Provides
+    fun provideGetAccountOwnedAssetsData(useCase: GetAccountOwnedAssetsDataUseCase): GetAccountOwnedAssetsData = useCase
+
+    @Provides
+    fun provideGetAccountOwnedAssetsDataFlow(
+        useCase: GetAccountOwnedAssetsDataFlowUseCase
+    ): GetAccountOwnedAssetsDataFlow = useCase
+
+    @Provides
+    fun provideGetAccountOwnedAssetData(useCase: GetAccountOwnedAssetDataUseCase): GetAccountOwnedAssetData = useCase
+
+    @Provides
+    fun provideGetAccountBaseOwnedAssetData(
+        useCase: GetAccountBaseOwnedAssetDataUseCase
+    ): GetAccountBaseOwnedAssetData = useCase
 }

@@ -28,7 +28,8 @@ class BaseTransactionMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = payment?.receiverAddress,
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
                 amount = payment?.amount ?: BigInteger.ZERO
@@ -44,7 +45,8 @@ class BaseTransactionMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = payment?.receiverAddress,
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
                 amount = payment?.amount ?: BigInteger.ZERO
@@ -60,7 +62,8 @@ class BaseTransactionMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = payment?.receiverAddress,
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
                 amount = payment?.amount ?: BigInteger.ZERO
@@ -72,16 +75,16 @@ class BaseTransactionMapper @Inject constructor() {
         transaction: TransactionDTO
     ): BaseTransaction.Transaction.AssetTransfer.BaseSend.Send? {
         return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
             BaseTransaction.Transaction.AssetTransfer.BaseSend.Send(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null
             )
         }
     }
@@ -90,16 +93,16 @@ class BaseTransactionMapper @Inject constructor() {
         transaction: TransactionDTO
     ): BaseTransaction.Transaction.AssetTransfer.BaseReceive.Receive? {
         return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
             BaseTransaction.Transaction.AssetTransfer.BaseReceive.Receive(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null
             )
         }
     }
@@ -108,16 +111,16 @@ class BaseTransactionMapper @Inject constructor() {
         transaction: TransactionDTO
     ): BaseTransaction.Transaction.AssetTransfer.BaseReceive.ReceiveOptOut? {
         return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
             BaseTransaction.Transaction.AssetTransfer.BaseReceive.ReceiveOptOut(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null
             )
         }
     }
@@ -127,16 +130,16 @@ class BaseTransactionMapper @Inject constructor() {
         closeToAddress: String,
     ): BaseTransaction.Transaction.AssetTransfer.OptOut? {
         return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
             BaseTransaction.Transaction.AssetTransfer.OptOut(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId,
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null,
                 closeToAddress = closeToAddress
             )
         }
@@ -147,16 +150,16 @@ class BaseTransactionMapper @Inject constructor() {
         closeToAddress: String,
     ): BaseTransaction.Transaction.AssetTransfer.BaseSend.SendOptOut? {
         return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
             BaseTransaction.Transaction.AssetTransfer.BaseSend.SendOptOut(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId,
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null,
                 closeToAddress = closeToAddress
             )
         }
@@ -166,16 +169,16 @@ class BaseTransactionMapper @Inject constructor() {
         transaction: TransactionDTO,
     ): BaseTransaction.Transaction.AssetTransfer.BaseSelf.Self? {
         return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
             BaseTransaction.Transaction.AssetTransfer.BaseSelf.Self(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null
             )
         }
     }
@@ -184,16 +187,16 @@ class BaseTransactionMapper @Inject constructor() {
         transaction: TransactionDTO,
     ): BaseTransaction.Transaction.AssetTransfer.BaseSelf.SelfOptIn? {
         return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
             BaseTransaction.Transaction.AssetTransfer.BaseSelf.SelfOptIn(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null
             )
         }
     }
@@ -206,7 +209,8 @@ class BaseTransactionMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = null, // Asset Configuration Transaction does not contain receiver address
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
                 assetId = createdAssetIndex ?: assetConfiguration?.assetId
@@ -259,7 +263,8 @@ class BaseTransactionMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = null, // Application Call Transaction does not contain receiver address
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
                 applicationId = applicationCall?.applicationId,
@@ -277,7 +282,8 @@ class BaseTransactionMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = null, // Heartbeat Transaction does not contain receiver address
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false
             )
@@ -292,7 +298,8 @@ class BaseTransactionMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = null, // Undefined Transaction does not contain receiver address
+                receiverAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
+                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false
             )

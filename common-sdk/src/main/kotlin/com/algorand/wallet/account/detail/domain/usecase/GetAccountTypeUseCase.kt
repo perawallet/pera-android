@@ -40,9 +40,11 @@ internal class GetAccountTypeUseCase @Inject constructor(
         localAccounts: List<LocalAccount>,
         cachedAccount: AccountInformation
     ): AccountType {
-        val doWeHaveSigner = localAccounts.any { it.algoAddress == cachedAccount.rekeyAdminAddress }
+        val doWeHaveAuthSigner = localAccounts.any {
+            it.algoAddress == cachedAccount.rekeyAdminAddress && it !is LocalAccount.NoAuth
+        }
         return when {
-            doWeHaveSigner -> AccountType.RekeyedAuth
+            doWeHaveAuthSigner -> AccountType.RekeyedAuth
             account is LocalAccount.NoAuth -> AccountType.NoAuth
             else -> AccountType.Rekeyed
         }

@@ -26,9 +26,9 @@ internal class GetAccountOwnedAssetDataUseCase @Inject constructor(
     private val createAlgoOwnedAssetData: CreateAlgoOwnedAssetData
 ) : GetAccountOwnedAssetData {
 
-    override suspend fun invoke(address: String, assetId: Long, includeAlgo: Boolean): OwnedAssetData? {
+    override suspend fun invoke(address: String, assetId: Long): OwnedAssetData? {
         val accountInfo = getAccountInformation(address) ?: return null
-        return if (includeAlgo && assetId == ALGO_ID) {
+        return if (assetId == ALGO_ID) {
             createOwnedAlgo(accountInfo)
         } else {
             createOwnedAsset(accountInfo, assetId)

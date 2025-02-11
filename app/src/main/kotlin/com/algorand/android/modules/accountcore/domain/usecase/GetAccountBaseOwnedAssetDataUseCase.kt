@@ -26,7 +26,7 @@ internal class GetAccountBaseOwnedAssetDataUseCase @Inject constructor(
     }
 
     private suspend fun getAccountAssetData(address: String, assetId: Long): BaseOwnedAssetData? {
-        return getAccountOwnedAssetData(address, assetId, true)
+        return getAccountOwnedAssetData(address, assetId)
     }
 
     private suspend fun getAccountCollectibleData(address: String, assetId: Long): BaseOwnedAssetData? {

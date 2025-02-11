@@ -68,17 +68,6 @@ android {
         buildConfigField "String", "DEEPLINK_PREFIX", '"algorand://"'
         buildConfigField "String", "VERSION_NAME", "\"$versionName\""
         buildConfigField "Integer", "VERSION_CODE", "$versionCode"
-
-        buildConfigField "String", "DISCOVER_TESTNET_URL", '"https://discover-mobile-staging.perawallet.app"'
-        buildConfigField "String", "DISCOVER_MAINNET_URL", '"https://discover-mobile.perawallet.app"'
-        buildConfigField "String", "DISCOVER_BROWSE_DAPP_TESTNET_URL", '"https://discover-mobile-staging.perawallet.app/main/browser"'
-        buildConfigField "String", "DISCOVER_BROWSE_DAPP_MAINNET_URL", '"https://discover-mobile.perawallet.app/main/browser"'
-        buildConfigField "String", "CARDS_TESTNET_URL", '"https://cards-mobile-staging.perawallet.app"'
-        buildConfigField "String", "CARDS_MAINNET_URL", '"https://cards-mobile.perawallet.app"'
-        buildConfigField "String", "MELD_TESTNET_URL", '"https://mainnet.staging.api.perawallet.app/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="'
-        buildConfigField "String", "MELD_MAINNET_URL", '"https://mainnet.api.perawallet.app/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="'
-        buildConfigField "String", "STAKING_TESTNET_URL", '"https://staking-mobile-staging.perawallet.app"'
-        buildConfigField "String", "STAKING_MAINNET_URL", '"https://staking-mobile.perawallet.app"'
     }
 
     signingConfigs {
@@ -147,6 +136,16 @@ android {
             buildConfigField "long", "ARC59_APP_ID_TESTNET", arc59Props["ARC59_APP_ID_TESTNET"]
             buildConfigField "String", "ARC59_APP_ADDR_MAINNET", arc59Props["ARC59_APP_ADDR_MAINNET"]
             buildConfigField "long", "ARC59_APP_ID_MAINNET", arc59Props["ARC59_APP_ID_MAINNET"]
+
+            buildConfigField "String", "MELD_TESTNET_URL", '"https://testnet.api.perawallet.app"'
+            buildConfigField "String", "DISCOVER_TESTNET_URL", '"https://discover-mobile-testnet.perawallet.app"'
+            buildConfigField "String", "CARDS_TESTNET_URL", '"https://cards-mobile-staging-testnet.perawallet.app"'
+            buildConfigField "String", "STAKING_TESTNET_URL", '"https://staking-mobile-testnet.perawallet.app"'
+
+            buildConfigField "String", "MELD_MAINNET_URL", '"https://mainnet.staging.api.perawallet.app"'
+            buildConfigField "String", "DISCOVER_MAINNET_URL", '"https://discover-mobile-staging.perawallet.app"'
+            buildConfigField "String", "CARDS_MAINNET_URL", '"https://cards-mobile-staging-mainnet.perawallet.app"'
+            buildConfigField "String", "STAKING_MAINNET_URL", '"https://staking-mobile-staging.perawallet.app"'
         }
 
         prod {
@@ -174,6 +173,16 @@ android {
             buildConfigField "long", "ARC59_APP_ID_TESTNET", arc59Props["ARC59_APP_ID_TESTNET"]
             buildConfigField "String", "ARC59_APP_ADDR_MAINNET", arc59Props["ARC59_APP_ADDR_MAINNET"]
             buildConfigField "long", "ARC59_APP_ID_MAINNET", arc59Props["ARC59_APP_ID_MAINNET"]
+
+            buildConfigField "String", "MELD_TESTNET_URL", '"https://testnet.api.perawallet.app"'
+            buildConfigField "String", "DISCOVER_TESTNET_URL", '"https://discover-mobile-testnet.perawallet.app"'
+            buildConfigField "String", "CARDS_TESTNET_URL", '"https://cards-mobile-prod-testnet.perawallet.app"'
+            buildConfigField "String", "STAKING_TESTNET_URL", '"https://staking-mobile-testnet.perawallet.app"'
+
+            buildConfigField "String", "MELD_MAINNET_URL", '"https://mainnet.api.perawallet.app"'
+            buildConfigField "String", "DISCOVER_MAINNET_URL", '"https://discover-mobile.perawallet.app"'
+            buildConfigField "String", "CARDS_MAINNET_URL", '"https://cards-mobile.perawallet.app"'
+            buildConfigField "String", "STAKING_MAINNET_URL", '"https://staking-mobile.perawallet.app"'
         }
     }
 

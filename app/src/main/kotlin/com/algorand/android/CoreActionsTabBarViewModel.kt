@@ -13,8 +13,6 @@
 package com.algorand.android
 
 import androidx.lifecycle.ViewModel
-import com.algorand.android.BuildConfig.DISCOVER_BROWSE_DAPP_MAINNET_URL
-import com.algorand.android.BuildConfig.DISCOVER_BROWSE_DAPP_TESTNET_URL
 import com.algorand.android.BuildConfig.DISCOVER_MAINNET_URL
 import com.algorand.android.BuildConfig.DISCOVER_TESTNET_URL
 import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
@@ -40,24 +38,20 @@ class CoreActionsTabBarViewModel @Inject constructor(
     fun changeViewStateForFeatureFlag() {
         val isImmersveToggleEnabled = isFeatureToggleEnabled(IMMERSVE_BUTTON_TOGGLE) &&
                 !(isConnectedToTestnet() && isProdReleaseVariant())
-        val isStakingToggleEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE)
+        val isStakingToggleEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE) &&
+                !isConnectedToTestnet()
         _viewState.value = ViewState.Content(isImmersveToggleEnabled, isStakingToggleEnabled)
     }
 
     fun getDiscoverBrowseDappUrl(): String {
-        return if (isConnectedToTestnet())
-            DISCOVER_BROWSE_DAPP_TESTNET_URL
-        else
-            DISCOVER_BROWSE_DAPP_MAINNET_URL
+        val path = "/main/browser"
+        return getDiscoverUrlWithPath(path)
     }
 
     fun getDiscoverUrlWithPath(path: String): String {
-        val baseDiscoverUrl = if (isConnectedToTestnet()) {
-            DISCOVER_TESTNET_URL
-        } else {
-            DISCOVER_MAINNET_URL
-        }
-        return "$baseDiscoverUrl/$path"
+        val baseDiscoverUrl = if (isConnectedToTestnet()) DISCOVER_TESTNET_URL else DISCOVER_MAINNET_URL
+        val normalizedPath = if (path.startsWith("/")) path else "/$path"
+        return baseDiscoverUrl + normalizedPath
     }
 
     fun isConnectedToTestnet(): Boolean {

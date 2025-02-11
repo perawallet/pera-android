@@ -88,10 +88,7 @@ class UndoRekeyConfirmationFragment : BaseRekeyConfirmationFragment() {
     }
 
     override fun onTransactionSigned(signedTransactionDetail: SignedTransactionDetail) {
-        if (
-            signedTransactionDetail is SignedTransactionDetail.RekeyToStandardAccountOperation ||
-            signedTransactionDetail is SignedTransactionDetail.RekeyOperation
-        ) {
+        if (signedTransactionDetail is SignedTransactionDetail.RekeyOperation) {
             undoRekeyConfirmationViewModel.sendRekeyTransaction(signedTransactionDetail)
         }
     }

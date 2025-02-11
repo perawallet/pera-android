@@ -13,37 +13,36 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.usecase
 
 import com.algorand.android.R
+import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
 import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.rekey.domain.usecase.SendSignedTransactionUseCase
-import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.decider.RekeyToStandardAccountPreviewDecider
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.mapper.RekeyToStandardAccountConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
 import com.algorand.android.repository.TransactionsRepository
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.android.utils.calculateRekeyFee
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
 class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
     private val rekeyToStandardAccountConfirmationPreviewMapper: RekeyToStandardAccountConfirmationPreviewMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val transactionsRepository: TransactionsRepository,
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
     private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
     private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
-    private val rekeyToStandardAccountPreviewDecider: RekeyToStandardAccountPreviewDecider
+    private val getAccountInformation: GetAccountInformation
 ) {
 
     fun sendRekeyToStandardAccountTransaction(
         preview: RekeyToStandardAccountConfirmationPreview,
-        transactionDetail: SignedTransactionDetail.RekeyToStandardAccountOperation
+        transactionDetail: SignedTransactionDetail.RekeyOperation
     ) = flow {
         emit(preview.copy(isLoading = true))
         sendSignedTransactionUseCase.invoke(transactionDetail).useSuspended(
@@ -63,31 +62,30 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
         )
     }
 
-    fun getInitialRekeyToStandardAccountConfirmationPreview(
+    suspend fun getInitialRekeyToStandardAccountConfirmationPreview(
         accountAddress: String,
         authAccountAddress: String
     ): RekeyToStandardAccountConfirmationPreview {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
+        val accountInfo = getAccountInformation(accountAddress)
+        val isAccountRekeyed = accountInfo?.isRekeyed() == true
         val accountDisplayName = accountDisplayNameUseCase.invoke(accountAddress)
 
         val authAccountDisplayName = accountDisplayNameUseCase.invoke(authAccountAddress)
 
-        val currentlyRekeyedAccountDisplayName = if (accountDetail?.accountInformation?.isRekeyed() == true) {
-            accountDisplayNameUseCase.invoke(accountDetail.accountInformation.rekeyAdminAddress.orEmpty())
+        val currentlyRekeyedAccountDisplayName = if (isAccountRekeyed) {
+            accountDisplayNameUseCase.invoke(accountInfo?.rekeyAdminAddress.orEmpty())
         } else {
             null
         }
-        val currentlyRekeyAccountIconDrawable = if (accountDetail?.accountInformation?.isRekeyed() == true) {
-            createAccountIconDrawableUseCase.invoke(accountDetail.accountInformation.rekeyAdminAddress.orEmpty())
+        val currentlyRekeyAccountIconDrawable = if (isAccountRekeyed) {
+            createAccountIconDrawableUseCase.invoke(accountInfo?.rekeyAdminAddress.orEmpty())
         } else {
             null
         }
 
         return rekeyToStandardAccountConfirmationPreviewMapper.mapToRekeyToStandardAccountConfirmationPreview(
             isLoading = false,
-            descriptionAnnotatedString = rekeyToStandardAccountPreviewDecider.decideDescriptionAnnotatedString(
-                accountDetail = accountDetail
-            ),
+            descriptionAnnotatedString = getDescriptionAnnotatedString(isAccountRekeyed = isAccountRekeyed),
             rekeyedAccountDisplayName = accountDisplayName,
             rekeyedAccountIconResource = createAccountIconDrawableUseCase.invoke(accountAddress),
             authAccountDisplayName = authAccountDisplayName,
@@ -126,15 +124,23 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
         return preview.copy(isLoading = false)
     }
 
-    fun updatePreviewWithRekeyConfirmationClick(
+    suspend fun updatePreviewWithRekeyConfirmationClick(
         accountAddress: String,
         preview: RekeyToStandardAccountConfirmationPreview
     ): RekeyToStandardAccountConfirmationPreview {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return preview
-        return if (accountDetail.accountInformation.isRekeyed()) {
+        val accountInfo = getAccountInformation(accountAddress) ?: return preview
+        return if (accountInfo.isRekeyed()) {
             preview.copy(navToRekeyedAccountConfirmationBottomSheetEvent = Event(Unit))
         } else {
             preview.copy(onSendTransactionEvent = Event(Unit))
+        }
+    }
+
+    private fun getDescriptionAnnotatedString(isAccountRekeyed: Boolean): AnnotatedString {
+        return if (isAccountRekeyed) {
+            AnnotatedString(R.string.you_are_about_to_rekey_this)
+        } else {
+            AnnotatedString(R.string.you_are_about_to_rekey)
         }
     }
 }

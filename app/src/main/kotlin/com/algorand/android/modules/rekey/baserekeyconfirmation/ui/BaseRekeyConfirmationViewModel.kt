@@ -17,5 +17,5 @@ import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRek
 import kotlinx.coroutines.flow.StateFlow
 
 abstract class BaseRekeyConfirmationViewModel : BaseViewModel() {
-    abstract val baseRekeyConfirmationFieldsFlow: StateFlow<BaseRekeyConfirmationFields>
+    abstract val baseRekeyConfirmationFieldsFlow: StateFlow<BaseRekeyConfirmationFields?>
 }

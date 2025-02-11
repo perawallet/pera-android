@@ -21,7 +21,6 @@ import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.usecase.RekeyToStandardAccountConfirmationPreviewUseCase
 import com.algorand.android.modules.transaction.refactor.usecase.CreateRekeyTransactionData
 import com.algorand.android.utils.Event
-import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +33,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RekeyToStandardAccountConfirmationViewModel @Inject constructor(
-    private val rekeyToStandardAccountConfirmationPreviewUseCase: RekeyToStandardAccountConfirmationPreviewUseCase,
+    private val previewUseCase: RekeyToStandardAccountConfirmationPreviewUseCase,
     private val createRekeyTransactionData: CreateRekeyTransactionData,
     savedStateHandle: SavedStateHandle
 ) : BaseRekeyConfirmationViewModel() {
@@ -43,22 +42,22 @@ class RekeyToStandardAccountConfirmationViewModel @Inject constructor(
     val accountAddress = navArgs.accountAddress
     val authAccountAddress = navArgs.authAccountAddress
 
-    private val _rekeyToStandardAccountConfirmationPreviewFlow = MutableStateFlow(getInitialPreview())
-    override val baseRekeyConfirmationFieldsFlow: StateFlow<BaseRekeyConfirmationFields>
-        get() = _rekeyToStandardAccountConfirmationPreviewFlow
+    private val _previewFlow = MutableStateFlow<RekeyToStandardAccountConfirmationPreview?>(null)
+    override val baseRekeyConfirmationFieldsFlow: StateFlow<BaseRekeyConfirmationFields?>
+        get() = _previewFlow
 
     private var sendTransactionJob: Job? = null
 
     init {
-        updatePreviewWithCalculatedTransactionFee()
+        initPreview()
     }
 
     fun createRekeyToStandardAccountTransaction() {
         viewModelScope.launch {
             val transactionData = createRekeyTransactionData(accountAddress, authAccountAddress)
             if (transactionData != null) {
-                _rekeyToStandardAccountConfirmationPreviewFlow.update {
-                    it.copy(
+                _previewFlow.update {
+                    it?.copy(
                         onRekeyTransactionDataReady = Event(transactionData),
                     )
                 }
@@ -67,53 +66,58 @@ class RekeyToStandardAccountConfirmationViewModel @Inject constructor(
     }
 
     fun onTransactionSigningFailed() {
-        _rekeyToStandardAccountConfirmationPreviewFlow.update { preview ->
-            rekeyToStandardAccountConfirmationPreviewUseCase.updatePreviewWithClearLoadingState(preview)
+        _previewFlow.update { preview ->
+            preview?.run {
+                previewUseCase.updatePreviewWithClearLoadingState(preview)
+            }
         }
     }
 
     fun onTransactionSigningStarted() {
-        _rekeyToStandardAccountConfirmationPreviewFlow.update { preview ->
-            rekeyToStandardAccountConfirmationPreviewUseCase.updatePreviewWithLoadingState(preview)
+        _previewFlow.update { preview ->
+            preview?.run {
+                previewUseCase.updatePreviewWithLoadingState(preview)
+            }
         }
     }
 
-    fun sendRekeyTransaction(transactionDetail: SignedTransactionDetail.RekeyToStandardAccountOperation) {
+    fun sendRekeyTransaction(transactionDetail: SignedTransactionDetail.RekeyOperation) {
         if (sendTransactionJob?.isActive == true) {
             return
         }
         sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
-            rekeyToStandardAccountConfirmationPreviewUseCase.sendRekeyToStandardAccountTransaction(
+            val currentPreview = _previewFlow.value ?: return@launch
+            previewUseCase.sendRekeyToStandardAccountTransaction(
                 transactionDetail = transactionDetail,
-                preview = _rekeyToStandardAccountConfirmationPreviewFlow.value
+                preview = currentPreview
             ).collectLatest { preview ->
-                _rekeyToStandardAccountConfirmationPreviewFlow.emit(preview)
+                _previewFlow.emit(preview)
             }
         }
     }
 
     fun onConfirmRekeyClick() {
-        _rekeyToStandardAccountConfirmationPreviewFlow.update { preview ->
-            rekeyToStandardAccountConfirmationPreviewUseCase.updatePreviewWithRekeyConfirmationClick(
-                accountAddress = accountAddress,
-                preview = preview
-            )
+        viewModelScope.launch {
+            _previewFlow.update { preview ->
+                preview?.run {
+                    previewUseCase.updatePreviewWithRekeyConfirmationClick(
+                        accountAddress = accountAddress,
+                        preview = preview
+                    )
+                }
+            }
         }
     }
 
-    private fun getInitialPreview(): RekeyToStandardAccountConfirmationPreview {
-        return rekeyToStandardAccountConfirmationPreviewUseCase.getInitialRekeyToStandardAccountConfirmationPreview(
-            accountAddress = accountAddress,
-            authAccountAddress = authAccountAddress
-        )
-    }
-
-    private fun updatePreviewWithCalculatedTransactionFee() {
-        viewModelScope.launchIO {
-            rekeyToStandardAccountConfirmationPreviewUseCase.updatePreviewWithTransactionFee(
-                preview = _rekeyToStandardAccountConfirmationPreviewFlow.value
-            ).collectLatest { preview ->
-                _rekeyToStandardAccountConfirmationPreviewFlow.emit(preview)
+    private fun initPreview() {
+        viewModelScope.launch {
+            val initialPreview = previewUseCase.getInitialRekeyToStandardAccountConfirmationPreview(
+                accountAddress = accountAddress,
+                authAccountAddress = authAccountAddress
+            )
+            _previewFlow.value = initialPreview
+            previewUseCase.updatePreviewWithTransactionFee(preview = initialPreview).collectLatest { preview ->
+                _previewFlow.emit(preview)
             }
         }
     }

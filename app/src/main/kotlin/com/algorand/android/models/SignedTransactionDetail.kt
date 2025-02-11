@@ -65,14 +65,6 @@ sealed class SignedTransactionDetail : Parcelable {
     ) : SignedTransactionDetail()
 
     @Parcelize
-    data class RekeyToStandardAccountOperation(
-        override val signedTransactionData: ByteArray,
-        val accountAddress: String,
-        val accountName: String,
-        val rekeyAdminAddress: String,
-    ) : SignedTransactionDetail()
-
-    @Parcelize
     data class Group(
         override val signedTransactionData: ByteArray,
         val transactions: List<SignedTransactionDetail>?

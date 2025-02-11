@@ -92,7 +92,7 @@ class RekeyToStandardAccountConfirmationFragment : BaseRekeyConfirmationFragment
     }
 
     override fun onTransactionSigned(signedTransactionDetail: SignedTransactionDetail) {
-        if (signedTransactionDetail is SignedTransactionDetail.RekeyToStandardAccountOperation) {
+        if (signedTransactionDetail is SignedTransactionDetail.RekeyOperation) {
             rekeyToStandardAccountConfirmationViewModel.sendRekeyTransaction(signedTransactionDetail)
         }
     }

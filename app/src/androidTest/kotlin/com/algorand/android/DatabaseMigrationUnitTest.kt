@@ -13,13 +13,13 @@ import com.algorand.android.models.WalletConnectPeerMeta
 import com.algorand.android.models.WalletConnectSessionMeta
 import com.algorand.android.utils.defaultNodeList
 import com.google.gson.Gson
-import java.io.IOException
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
 class DatabaseMigrationUnitTest {
@@ -32,7 +32,8 @@ class DatabaseMigrationUnitTest {
         AlgorandDatabase.MIGRATION_7_8,
         AlgorandDatabase.MIGRATION_8_9,
         AlgorandDatabase.MIGRATION_9_10,
-        AlgorandDatabase.MIGRATION_10_11
+        AlgorandDatabase.MIGRATION_10_11,
+        AlgorandDatabase.MIGRATION_11_12
     )
     private var migratedDb: SupportSQLiteDatabase? = null
     private lateinit var gson: Gson
@@ -41,7 +42,7 @@ class DatabaseMigrationUnitTest {
     @JvmField
     val helper: MigrationTestHelper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
-        AlgorandDatabase::class.java.canonicalName,
+        AlgorandDatabase::class.java.canonicalName!!,
         FrameworkSQLiteOpenHelperFactory()
     )
 

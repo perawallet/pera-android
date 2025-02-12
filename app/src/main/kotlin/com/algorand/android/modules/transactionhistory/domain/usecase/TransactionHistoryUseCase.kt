@@ -213,13 +213,13 @@ class TransactionHistoryUseCase @Inject constructor(
         val senderAddress = transactionDTO.senderAddress
         return when {
             isSelfTransaction(publicKey, senderAddress, receiverAddress) -> {
-                baseTransactionMapper.mapToPayTransactionSelf(transaction = transactionDTO)
+                baseTransactionMapper.mapToPayTransactionSelf(transactionDTO = transactionDTO)
             }
             isReceiveTransaction(publicKey, closeToAddress, receiverAddress) -> {
-                baseTransactionMapper.mapToPayTransactionReceive(transaction = transactionDTO)
+                baseTransactionMapper.mapToPayTransactionReceive(transactionDTO = transactionDTO)
             }
             else -> {
-                baseTransactionMapper.mapToPayTransactionSend(transaction = transactionDTO)
+                baseTransactionMapper.mapToPayTransactionSend(transactionDTO = transactionDTO)
             }
         }
     }
@@ -235,22 +235,22 @@ class TransactionHistoryUseCase @Inject constructor(
         return with(baseTransactionMapper) {
             when {
                 !closeToAddress.isNullOrBlank() && closeToAddress == publicKey -> {
-                    mapToAssetTransactionReceiveOptOut(transaction = transactionDTO)
+                    mapToAssetTransactionReceiveOptOut(transactionDTO = transactionDTO)
                 }
                 !closeToAddress.isNullOrBlank() && amount.isGreaterThan(BigInteger.ZERO) -> {
-                    mapToAssetTransactionSendOptOut(closeToAddress = closeToAddress, transaction = transactionDTO)
+                    mapToAssetTransactionSendOptOut(closeToAddress = closeToAddress, transactionDTO = transactionDTO)
                 }
                 !closeToAddress.isNullOrBlank() -> {
-                    mapToAssetTransactionOptOut(closeToAddress = closeToAddress, transaction = transactionDTO)
+                    mapToAssetTransactionOptOut(closeToAddress = closeToAddress, transactionDTO = transactionDTO)
                 }
                 isSelfOptInTransaction(publicKey, senderAddress, receiverAddress, amount) -> {
-                    mapToAssetTransactionSelfOptIn(transaction = transactionDTO)
+                    mapToAssetTransactionSelfOptIn(transactionDTO = transactionDTO)
                 }
                 isSelfTransaction(publicKey, senderAddress, receiverAddress) -> {
-                    mapToAssetTransactionSelf(transaction = transactionDTO)
+                    mapToAssetTransactionSelf(transactionDTO = transactionDTO)
                 }
                 isReceiveTransaction(publicKey, closeToAddress, receiverAddress) -> {
-                    mapToAssetTransactionReceive(transaction = transactionDTO)
+                    mapToAssetTransactionReceive(transactionDTO = transactionDTO)
                 }
                 else -> mapToAssetTransactionSend(transactionDTO)
             }

@@ -235,7 +235,9 @@ android {
 
 dependencies {
     implementation project(':common-sdk')
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+    implementation libs.pera.compact.decimal.format
+    implementation libs.pera.walletconnect.v1
 
     implementation libs.kotlinx.coroutines.core
     implementation libs.kotlinx.coroutines.android
@@ -311,12 +313,12 @@ dependencies {
     implementation libs.moshi.kotlin
 
     // Wallet Connect v2
-    implementation(platform(libs.walletconnect))
-    implementation(libs.walletconnect.android.core) {
+    implementation(platform(libs.walletconnect.v2))
+    implementation(libs.walletconnect.v2.android.core) {
         exclude group: 'com.jakewharton.timber', module: 'timber'
     }
-    implementation libs.sign
-    implementation libs.web3wallet
+    implementation libs.walletconnect.v2.sign
+    implementation libs.walletconnect.v2.web3wallet
 
     // ExoPlayer
     implementation libs.exoplayer

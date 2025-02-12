@@ -271,7 +271,7 @@ class BaseTransactionMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = transactionDTO.getReceiverAddress(),
+                receiverAddress = null,
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false
             )

@@ -133,7 +133,7 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAccountAddress = senderAddress,
-                receiverAccountAddress = transactionDTO.getReceiverAddress(),
+                receiverAccountAddress = null,
                 roundTimeAsTimestamp = roundTimeAsTimestamp,
                 confirmedRound = confirmedRound,
                 fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),

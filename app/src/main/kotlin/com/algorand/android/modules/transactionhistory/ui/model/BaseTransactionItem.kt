@@ -305,6 +305,24 @@ sealed class BaseTransactionItem : RecyclerListItem, Parcelable {
         }
 
         @Parcelize
+        data class HeartbeatItem(
+            override val id: String? = null,
+            override val signature: String? = null,
+            override val nameRes: Int? = R.string.heartbeat,
+            override val description: String? = null,
+            override val formattedAmount: String? = null,
+            override val isAmountVisible: Boolean = false,
+            override val isPending: Boolean = false,
+            override val amountColorRes: Int? = null
+        ) : TransactionItem() {
+
+            override fun isSameTransaction(other: RecyclerListItem): Boolean {
+                val transaction = other as? HeartbeatItem ?: return false
+                return signature != null && signature == transaction.signature
+            }
+        }
+
+        @Parcelize
         data class UndefinedItem(
             override val id: String? = null,
             override val signature: String? = null,

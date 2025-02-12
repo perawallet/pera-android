@@ -24,6 +24,8 @@ class RawTransactionTypeDTODecider @Inject constructor() {
             RawTransactionTypePayload.ASSET_TRANSACTION -> RawTransactionTypeDTO.ASSET_TRANSACTION
             RawTransactionTypePayload.APP_TRANSACTION -> RawTransactionTypeDTO.APP_TRANSACTION
             RawTransactionTypePayload.ASSET_CONFIGURATION -> RawTransactionTypeDTO.ASSET_CONFIGURATION
+            RawTransactionTypePayload.KEYREG_TRANSACTION -> RawTransactionTypeDTO.KEYREG_TRANSACTION
+            RawTransactionTypePayload.HEARTBEAT_TRANSACTION -> RawTransactionTypeDTO.HEARTBEAT_TRANSACTION
             RawTransactionTypePayload.UNDEFINED -> RawTransactionTypeDTO.UNDEFINED
         }
     }

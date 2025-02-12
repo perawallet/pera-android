@@ -29,7 +29,10 @@ enum class TransactionTypeResponse {
     ASSET_CONFIGURATION,
 
     @SerializedName("keyreg")
-    KEYREG,
+    KEYREG_TRANSACTION,
+
+    @SerializedName("hb")
+    HEARTBEAT_TRANSACTION,
 
     UNDEFINED
 }

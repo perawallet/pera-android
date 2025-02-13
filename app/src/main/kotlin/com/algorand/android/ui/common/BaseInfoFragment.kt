@@ -69,35 +69,34 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState()) // equivalent to ScrollView
                     ) {
-                        TopStartButton(modifier = Modifier.align(alignment = Alignment.Start))
                         Icon(
                             modifier = Modifier
-                                .padding(start = 32.dp, top = 28.dp)
+                                .padding(start = 12.dp, top = 28.dp)
                                 .align(alignment = Alignment.Start)
                                 .fillMaxWidth(fraction = HALF_SIZE)
                                 .aspectRatio(ratio = 1F),
                         )
                         Title(
                             modifier = Modifier
-                                .padding(start = 32.dp, end = 32.dp, top = 40.dp)
+                                .padding(start = 24.dp, end = 24.dp, top = 40.dp)
                         )
                         Description(
                             modifier = Modifier
-                                .padding(horizontal = 32.dp, vertical = 16.dp)
-                        )
-                        Warning(
-                            modifier = Modifier
-                                .padding(start = 32.dp, end = 32.dp, bottom = 16.dp)
+                                .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 20.dp)
                         )
                         Spacer(modifier = Modifier.weight(1f))
+                        Warning(
+                            modifier = Modifier
+                                .padding(start = 24.dp, end = 24.dp, bottom = 20.dp)
+                        )
                         PrimaryButton(
                             modifier = Modifier
-                                .padding(start = 32.dp, end = 32.dp, bottom = 16.dp)
+                                .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
                                 .fillMaxWidth()
                         )
                         SecondaryButton(
                             modifier = Modifier
-                                .padding(start = 32.dp, end = 32.dp, bottom = 16.dp)
+                                .padding(start = 24.dp, end = 24.dp, bottom = 32.dp)
                                 .fillMaxWidth()
                         )
                     }

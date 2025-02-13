@@ -15,8 +15,6 @@ package com.algorand.android.ui.register.watch
 import android.os.Bundle
 import android.view.View
 import androidx.compose.foundation.Image
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -32,6 +30,7 @@ import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.widget.PeraDescriptionText
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.ui.compose.widget.PeraWarningText
 import com.algorand.android.utils.browser.openWatchAccountSupportUrl
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -78,10 +77,8 @@ class WatchAccountInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Warning(modifier: Modifier) =
-        Text(
+        PeraWarningText(
             text = stringResource(id = R.string.if_you_do_not),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.error,
             modifier = modifier
         )
 

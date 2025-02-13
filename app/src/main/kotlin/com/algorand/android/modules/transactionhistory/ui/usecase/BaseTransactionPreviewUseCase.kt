@@ -62,6 +62,7 @@ open class BaseTransactionPreviewUseCase constructor(
             is BaseTransaction.TransactionDateTitle -> transactionItemMapper.mapToTransactionDateTitle(txn)
             is BaseTransaction.PendingTransactionTitle -> transactionItemMapper.mapToPendingTransactionTitle(txn)
             is BaseTransaction.Transaction.KeyReg -> transactionItemMapper.mapToKeyRegTransactionItem(txn)
+            is BaseTransaction.Transaction.Heartbeat -> transactionItemMapper.mapToHeartbeatTransactionItem(txn)
         }
     }
 

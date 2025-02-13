@@ -14,6 +14,7 @@ package com.algorand.android.modules.transaction.detail.domain.mapper
 
 import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.transaction.common.domain.model.TransactionDTO
+import com.algorand.android.modules.transaction.common.domain.model.getReceiverAddress
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail.BaseKeyRegTransaction.OfflineKeyRegTransaction
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail.BaseKeyRegTransaction.OnlineKeyRegTransaction
@@ -32,8 +33,7 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAccountAddress = senderAddress,
-                receiverAccountAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
-                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
+                receiverAccountAddress = transactionDTO.getReceiverAddress(),
                 closeToAccountAddress = payment?.closeToAddress ?: assetTransfer?.closeTo,
                 roundTimeAsTimestamp = roundTimeAsTimestamp,
                 confirmedRound = confirmedRound,
@@ -53,8 +53,7 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAccountAddress = senderAddress,
-                receiverAccountAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
-                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
+                receiverAccountAddress = transactionDTO.getReceiverAddress(),
                 roundTimeAsTimestamp = roundTimeAsTimestamp,
                 confirmedRound = confirmedRound,
                 transactionAmount = payment?.amount ?: assetTransfer?.amount ?: BigInteger.ZERO,
@@ -76,8 +75,7 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAccountAddress = senderAddress,
-                receiverAccountAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
-                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
+                receiverAccountAddress = transactionDTO.getReceiverAddress(),
                 roundTimeAsTimestamp = roundTimeAsTimestamp,
                 confirmedRound = confirmedRound,
                 fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),
@@ -101,8 +99,7 @@ class BaseTransactionDetailMapper @Inject constructor() {
                 id = id,
                 signature = signature?.signatureKey,
                 senderAccountAddress = senderAddress,
-                receiverAccountAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
-                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
+                receiverAccountAddress = transactionDTO.getReceiverAddress(),
                 roundTimeAsTimestamp = roundTimeAsTimestamp,
                 confirmedRound = confirmedRound,
                 fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),
@@ -130,14 +127,28 @@ class BaseTransactionDetailMapper @Inject constructor() {
         }
     }
 
+    fun mapToHeartbeatTransactionDetail(transactionDTO: TransactionDTO): BaseTransactionDetail.HeartbeatTransaction {
+        return with(transactionDTO) {
+            BaseTransactionDetail.HeartbeatTransaction(
+                id = id,
+                signature = signature?.signatureKey,
+                senderAccountAddress = senderAddress,
+                receiverAccountAddress = null,
+                roundTimeAsTimestamp = roundTimeAsTimestamp,
+                confirmedRound = confirmedRound,
+                fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),
+                noteInBase64 = noteInBase64
+            )
+        }
+    }
+
     fun mapToUndefinedTransactionDetail(transactionDTO: TransactionDTO): BaseTransactionDetail.UndefinedTransaction {
         return with(transactionDTO) {
             BaseTransactionDetail.UndefinedTransaction(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAccountAddress = senderAddress,
-                receiverAccountAddress = payment?.receiverAddress ?: assetTransfer?.receiverAddress
-                ?: assetFreezeTransaction?.receiverAddress.orEmpty(),
+                receiverAccountAddress = transactionDTO.getReceiverAddress(),
                 roundTimeAsTimestamp = roundTimeAsTimestamp,
                 confirmedRound = confirmedRound,
                 fee = fee?.toBigInteger() ?: BigInteger.valueOf(MIN_FEE),

@@ -196,6 +196,15 @@ sealed class BaseTransaction {
             ) : KeyReg()
         }
 
+        data class Heartbeat(
+            override val id: String?,
+            override val signature: String?,
+            override val senderAddress: String?,
+            override val receiverAddress: String?,
+            override val zonedDateTime: ZonedDateTime?,
+            override val isPending: Boolean
+        ) : Transaction()
+
         data class Undefined(
             override val id: String? = null,
             override val signature: String? = null,

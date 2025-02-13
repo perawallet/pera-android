@@ -24,6 +24,7 @@ import com.algorand.android.modules.transaction.common.domain.model.TransactionD
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.APP_TRANSACTION
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.ASSET_CONFIGURATION
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.ASSET_TRANSACTION
+import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.HEARTBEAT_TRANSACTION
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.KEYREG_TRANSACTION
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.PAY_TRANSACTION
 import com.algorand.android.modules.transactionhistory.domain.mapper.BaseTransactionMapper
@@ -109,6 +110,7 @@ class TransactionHistoryUseCase @Inject constructor(
                             ASSET_CONFIGURATION -> baseTransactionMapper.mapToAssetConfiguration(txn)
                             APP_TRANSACTION -> baseTransactionMapper.mapToApplicationCall(txn)
                             KEYREG_TRANSACTION -> createKeyRegTransaction(txn)
+                            HEARTBEAT_TRANSACTION -> createHeartbeatTransaction(txn)
                             else -> baseTransactionMapper.mapToUndefined(txn)
                         }
                     }
@@ -211,13 +213,13 @@ class TransactionHistoryUseCase @Inject constructor(
         val senderAddress = transactionDTO.senderAddress
         return when {
             isSelfTransaction(publicKey, senderAddress, receiverAddress) -> {
-                baseTransactionMapper.mapToPayTransactionSelf(transaction = transactionDTO)
+                baseTransactionMapper.mapToPayTransactionSelf(transactionDTO = transactionDTO)
             }
             isReceiveTransaction(publicKey, closeToAddress, receiverAddress) -> {
-                baseTransactionMapper.mapToPayTransactionReceive(transaction = transactionDTO)
+                baseTransactionMapper.mapToPayTransactionReceive(transactionDTO = transactionDTO)
             }
             else -> {
-                baseTransactionMapper.mapToPayTransactionSend(transaction = transactionDTO)
+                baseTransactionMapper.mapToPayTransactionSend(transactionDTO = transactionDTO)
             }
         }
     }
@@ -233,22 +235,22 @@ class TransactionHistoryUseCase @Inject constructor(
         return with(baseTransactionMapper) {
             when {
                 !closeToAddress.isNullOrBlank() && closeToAddress == publicKey -> {
-                    mapToAssetTransactionReceiveOptOut(transaction = transactionDTO)
+                    mapToAssetTransactionReceiveOptOut(transactionDTO = transactionDTO)
                 }
                 !closeToAddress.isNullOrBlank() && amount.isGreaterThan(BigInteger.ZERO) -> {
-                    mapToAssetTransactionSendOptOut(closeToAddress = closeToAddress, transaction = transactionDTO)
+                    mapToAssetTransactionSendOptOut(closeToAddress = closeToAddress, transactionDTO = transactionDTO)
                 }
                 !closeToAddress.isNullOrBlank() -> {
-                    mapToAssetTransactionOptOut(closeToAddress = closeToAddress, transaction = transactionDTO)
+                    mapToAssetTransactionOptOut(closeToAddress = closeToAddress, transactionDTO = transactionDTO)
                 }
                 isSelfOptInTransaction(publicKey, senderAddress, receiverAddress, amount) -> {
-                    mapToAssetTransactionSelfOptIn(transaction = transactionDTO)
+                    mapToAssetTransactionSelfOptIn(transactionDTO = transactionDTO)
                 }
                 isSelfTransaction(publicKey, senderAddress, receiverAddress) -> {
-                    mapToAssetTransactionSelf(transaction = transactionDTO)
+                    mapToAssetTransactionSelf(transactionDTO = transactionDTO)
                 }
                 isReceiveTransaction(publicKey, closeToAddress, receiverAddress) -> {
-                    mapToAssetTransactionReceive(transaction = transactionDTO)
+                    mapToAssetTransactionReceive(transactionDTO = transactionDTO)
                 }
                 else -> mapToAssetTransactionSend(transactionDTO)
             }
@@ -261,5 +263,9 @@ class TransactionHistoryUseCase @Inject constructor(
         } else {
             baseTransactionMapper.mapToOfflineKeyReg(txn)
         }
+    }
+
+    private fun createHeartbeatTransaction(txn: TransactionDTO): BaseTransaction.Transaction.Heartbeat {
+        return baseTransactionMapper.mapToHeartbeat(txn)
     }
 }

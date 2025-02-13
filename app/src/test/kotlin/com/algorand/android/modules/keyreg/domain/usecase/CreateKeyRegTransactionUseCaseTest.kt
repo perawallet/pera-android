@@ -16,6 +16,7 @@ import com.algorand.android.models.Result
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.accounts.domain.usecase.GetAuthAddressOfAnAccount
 import com.algorand.android.modules.accounts.domain.usecase.IsSenderRekeyedToAnotherAccount
+import com.algorand.android.modules.algosdk.domain.model.OfflineKeyRegTransactionPayload
 import com.algorand.android.modules.algosdk.domain.model.OnlineKeyRegTransactionPayload
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOfflineTransaction
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOnlineTransaction
@@ -85,7 +86,7 @@ class CreateKeyRegTransactionUseCaseTest {
     fun `EXPECT offline txn array WHEN payload is for offline txn`() = runTest {
         val offlineTxnByteArray = "txnByteArray".toByteArray()
         coEvery { getTransactionParams() } returns Result.Success(TRANSACTION_PARAMS)
-        coEvery { buildKeyRegOfflineTransaction(ACCOUNT_ADDRESS, NOTE, TRANSACTION_PARAMS) } returns offlineTxnByteArray
+        coEvery { buildKeyRegOfflineTransaction(OFFLINE_TXN_PAYLOAD) } returns offlineTxnByteArray
 
         val result = sut(OFFLINE_KEY_REG_TXN_DETAIL)
 
@@ -95,7 +96,19 @@ class CreateKeyRegTransactionUseCaseTest {
 
     private companion object {
         const val ACCOUNT_ADDRESS = "address"
-        const val NOTE = "note"
+        val ONLINE_KEY_REG_TXN_DETAIL = KeyRegTransactionDetail(
+            address = ACCOUNT_ADDRESS,
+            type = "type",
+            voteKey = "voteKey",
+            selectionPublicKey = "selectionPublicKey",
+            sprfkey = "sprfkey",
+            voteFirstRound = "1",
+            voteLastRound = "2",
+            voteKeyDilution = "3",
+            fee = 2000000.toBigInteger(),
+            note = "note",
+            xnote = null
+        )
         val OFFLINE_KEY_REG_TXN_DETAIL = KeyRegTransactionDetail(
             address = ACCOUNT_ADDRESS,
             type = "type",
@@ -105,21 +118,8 @@ class CreateKeyRegTransactionUseCaseTest {
             voteFirstRound = null,
             voteLastRound = null,
             voteKeyDilution = null,
-            fee = null,
-            note = NOTE,
-            xnote = null
-        )
-        val ONLINE_KEY_REG_TXN_DETAIL = KeyRegTransactionDetail(
-            address = "address",
-            type = "type",
-            voteKey = "voteKey",
-            selectionPublicKey = "selectionPublicKey",
-            sprfkey = "sprfkey",
-            voteFirstRound = "1",
-            voteLastRound = "2",
-            voteKeyDilution = "3",
-            fee = null,
-            note = NOTE,
+            fee = 2000000.toBigInteger(),
+            note = "note",
             xnote = null
         )
         val TRANSACTION_PARAMS = peraFixture<TransactionParams>()
@@ -132,7 +132,14 @@ class CreateKeyRegTransactionUseCaseTest {
             voteLastRound = ONLINE_KEY_REG_TXN_DETAIL.voteLastRound.orEmpty(),
             voteKeyDilution = ONLINE_KEY_REG_TXN_DETAIL.voteKeyDilution.orEmpty(),
             txnParams = TRANSACTION_PARAMS,
-            note = ONLINE_KEY_REG_TXN_DETAIL.note.orEmpty()
+            note = ONLINE_KEY_REG_TXN_DETAIL.note,
+            flatFee = ONLINE_KEY_REG_TXN_DETAIL.fee
+        )
+        val OFFLINE_TXN_PAYLOAD = OfflineKeyRegTransactionPayload(
+            senderAddress = OFFLINE_KEY_REG_TXN_DETAIL.address,
+            txnParams = TRANSACTION_PARAMS,
+            note = OFFLINE_KEY_REG_TXN_DETAIL.note,
+            flatFee = OFFLINE_KEY_REG_TXN_DETAIL.fee
         )
     }
 }

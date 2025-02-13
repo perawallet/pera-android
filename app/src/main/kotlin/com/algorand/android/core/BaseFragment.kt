@@ -70,6 +70,9 @@ abstract class BaseFragment(@LayoutRes private val layoutResId: Int) : Fragment(
     fun handleBottomBarVisibility(isBottomBarVisible: Boolean?) {
         if (isBottomBarVisible != null) {
             (activity as? CoreMainActivity)?.isBottomBarNavigationVisible = isBottomBarVisible
+            if (isBottomBarVisible) {
+                (activity as? CoreMainActivity)?.handleNavigationButtonsForChosenNetwork()
+            }
         }
     }
 

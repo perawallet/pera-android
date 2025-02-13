@@ -31,3 +31,7 @@ fun interface GetAppCacheStatusFlow {
 fun interface UpdateAccountCache {
     suspend operator fun invoke()
 }
+
+fun interface IsAssetCacheStatusAtLeastEmpty {
+    operator fun invoke(): Boolean
+}

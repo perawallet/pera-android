@@ -13,7 +13,7 @@
 package com.algorand.wallet.foundation.network.utils
 
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.foundation.network.exceptions.RetrofitErrorHandler
+import com.algorand.wallet.foundation.network.exceptions.PeraRetrofitErrorHandler
 import java.io.IOException
 import retrofit2.Response
 
@@ -46,15 +46,15 @@ suspend fun <T : Any> request(
 }
 
 suspend fun <T : Any> requestWithHipoErrorHandler(
-    hipoApiErrorHandler: RetrofitErrorHandler,
+    peraApiErrorHandler: PeraRetrofitErrorHandler,
     doRequest: suspend () -> Response<T>
 ): PeraResult<T> {
     return request(
         doRequest = doRequest,
-        onFailed = { errorResponse -> hipoApiErrorHandler.getMessageAsResultError(errorResponse) }
+        onFailed = { errorResponse -> peraApiErrorHandler.getMessageAsResultError(errorResponse) }
     )
 }
 
-fun <T : Any> RetrofitErrorHandler.getMessageAsResultError(response: Response<T>): PeraResult<T> {
+fun <T : Any> PeraRetrofitErrorHandler.getMessageAsResultError(response: Response<T>): PeraResult<T> {
     return PeraResult.Error(Exception(parse(response).message))
 }

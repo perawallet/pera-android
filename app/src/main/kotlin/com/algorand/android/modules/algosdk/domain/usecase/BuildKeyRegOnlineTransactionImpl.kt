@@ -12,16 +12,19 @@
 
 package com.algorand.android.modules.algosdk.domain.usecase
 
-import com.algorand.algosdk.builder.transaction.KeyRegistrationTransactionBuilder
-import com.algorand.android.modules.algosdk.domain.mapper.TransactionParametersResponseMapper
+import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.modules.algosdk.domain.model.OnlineKeyRegTransactionPayload
+import com.algorand.android.utils.extensions.standardizeBase64
+import com.algorand.android.utils.toBigIntegerOrZero
+import com.algorand.android.utils.toSuggestedParams
+import com.algorand.android.utils.toUint64
 import javax.inject.Inject
 
-internal class BuildKeyRegOnlineTransactionImpl @Inject constructor(
-    private val transactionParametersResponseMapper: TransactionParametersResponseMapper
-) : BuildKeyRegOnlineTransaction {
+internal class BuildKeyRegOnlineTransactionImpl @Inject constructor() : BuildKeyRegOnlineTransaction {
 
-    override fun invoke(params: OnlineKeyRegTransactionPayload): ByteArray? {
+    override fun invoke(
+        params: OnlineKeyRegTransactionPayload
+    ): ByteArray? {
         return try {
             createTransaction(params)
         } catch (e: Exception) {
@@ -31,22 +34,25 @@ internal class BuildKeyRegOnlineTransactionImpl @Inject constructor(
 
     private fun createTransaction(params: OnlineKeyRegTransactionPayload): ByteArray {
         return with(params) {
-            val txnParamsResponse = transactionParametersResponseMapper(params.txnParams)
-            val builder = KeyRegistrationTransactionBuilder.Builder()
-                .suggestedParams(txnParamsResponse)
-                .sender(senderAddress)
-                .selectionPublicKeyBase64(selectionPublicKey)
-                .stateProofKeyBase64(stateProofKey)
-                .participationPublicKeyBase64(voteKey)
-                .voteFirst(params.voteFirstRound.toLong())
-                .voteLast(params.voteLastRound.toLong())
-                .voteKeyDilution(params.voteKeyDilution.toLong())
+            val suggestedParams = params.txnParams.toSuggestedParams()
 
-            if (note != null) {
-                builder.noteUTF8(params.note)
+            if (flatFee != null) {
+                suggestedParams.fee = flatFee.toLong()
+                suggestedParams.flatFee = true
             }
 
-            builder.build().bytes()
+            Sdk.makeKeyRegTxnWithStateProofKey(
+                senderAddress,
+                note?.toByteArray(),
+                suggestedParams,
+                voteKey.standardizeBase64(),
+                selectionPublicKey.standardizeBase64(),
+                stateProofKey.standardizeBase64(),
+                voteFirstRound.toBigIntegerOrZero().toUint64(),
+                voteLastRound.toBigIntegerOrZero().toUint64(),
+                voteKeyDilution.toBigIntegerOrZero().toUint64(),
+                false
+            )
         }
     }
 }

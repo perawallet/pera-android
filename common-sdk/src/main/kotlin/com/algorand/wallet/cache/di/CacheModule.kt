@@ -12,15 +12,17 @@
 
 package com.algorand.wallet.cache.di
 
+import com.algorand.wallet.cache.LifecycleAwareCacheManager
+import com.algorand.wallet.cache.LifecycleAwareCacheManagerImpl
 import com.algorand.wallet.cache.domain.usecase.ClearPreviousSessionCache
 import com.algorand.wallet.cache.domain.usecase.ClearPreviousSessionCacheUseCase
 import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
-import com.algorand.wallet.cache.domain.usecase.InitializeAppCache
-import com.algorand.wallet.cache.domain.usecase.UpdateAccountCache
-import com.algorand.wallet.cache.LifecycleAwareCacheManager
-import com.algorand.wallet.cache.LifecycleAwareCacheManagerImpl
 import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlowUseCase
+import com.algorand.wallet.cache.domain.usecase.InitializeAppCache
 import com.algorand.wallet.cache.domain.usecase.InitializeAppCacheImpl
+import com.algorand.wallet.cache.domain.usecase.IsAssetCacheStatusAtLeastEmpty
+import com.algorand.wallet.cache.domain.usecase.IsAssetCacheStatusAtLeastEmptyUseCase
+import com.algorand.wallet.cache.domain.usecase.UpdateAccountCache
 import com.algorand.wallet.cache.domain.usecase.UpdateAccountCacheUseCase
 import dagger.Module
 import dagger.Provides
@@ -30,7 +32,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface CacheModule {
+internal object CacheModule {
 
     @Provides
     fun provideLifecycleAwareCacheManager(impl: LifecycleAwareCacheManagerImpl): LifecycleAwareCacheManager = impl
@@ -48,4 +50,9 @@ internal interface CacheModule {
 
     @Provides
     fun provideUpdateAccountCache(useCase: UpdateAccountCacheUseCase): UpdateAccountCache = useCase
+
+    @Provides
+    fun provideIsAssetCacheStatusAtLeastEmpty(
+        useCase: IsAssetCacheStatusAtLeastEmptyUseCase
+    ): IsAssetCacheStatusAtLeastEmpty = useCase
 }

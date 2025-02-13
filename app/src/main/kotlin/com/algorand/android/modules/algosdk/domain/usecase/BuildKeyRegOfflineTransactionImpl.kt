@@ -12,37 +12,45 @@
 
 package com.algorand.android.modules.algosdk.domain.usecase
 
-import com.algorand.algosdk.builder.transaction.KeyRegistrationTransactionBuilder
-import com.algorand.android.models.TransactionParams
-import com.algorand.android.modules.algosdk.domain.mapper.TransactionParametersResponseMapper
+import com.algorand.algosdk.sdk.Sdk
+import com.algorand.android.modules.algosdk.domain.model.OfflineKeyRegTransactionPayload
+import com.algorand.android.utils.toSuggestedParams
+import com.algorand.android.utils.toUint64
+import java.math.BigInteger
 import javax.inject.Inject
 
-internal class BuildKeyRegOfflineTransactionImpl @Inject constructor(
-    private val transactionParametersResponseMapper: TransactionParametersResponseMapper
-) : BuildKeyRegOfflineTransaction {
+internal class BuildKeyRegOfflineTransactionImpl @Inject constructor() : BuildKeyRegOfflineTransaction {
 
-    override fun invoke(address: String, note: String?, txnParams: TransactionParams): ByteArray? {
+    override fun invoke(payload: OfflineKeyRegTransactionPayload): ByteArray {
         return try {
-            createTransaction(address, note, txnParams)
+            createTransaction(payload)
         } catch (e: Exception) {
-            null
+            ByteArray(0)
         }
     }
 
-    private fun createTransaction(
-        address: String,
-        note: String?,
-        txnParams: TransactionParams
-    ): ByteArray {
-        val params = transactionParametersResponseMapper(txnParams)
-        val builder = KeyRegistrationTransactionBuilder.Builder()
-            .suggestedParams(params)
-            .sender(address)
+    private fun createTransaction(payload: OfflineKeyRegTransactionPayload): ByteArray {
+        return with(payload) {
+            val suggestedParams = txnParams.toSuggestedParams()
+            if (flatFee != null) {
+                suggestedParams.fee = flatFee.toLong()
+                suggestedParams.flatFee = true
+            }
 
-        if (note != null) {
-            builder.noteUTF8(note)
+            val defaultVoteValue = BigInteger.ZERO.toUint64()
+
+            Sdk.makeKeyRegTxnWithStateProofKey(
+                senderAddress,
+                note?.toByteArray(),
+                suggestedParams,
+                null,
+                null,
+                null,
+                defaultVoteValue,
+                defaultVoteValue,
+                defaultVoteValue,
+                false
+            )
         }
-
-        return builder.build().bytes()
     }
 }

@@ -14,18 +14,27 @@ package com.algorand.wallet.account.local.data.mapper.entity
 
 import com.algorand.wallet.account.local.data.database.model.Algo25Entity
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.encryption.AESPlatformManager
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 internal class Algo25EntityMapperImplTest {
 
-    private val sut = Algo25EntityMapperImpl()
+    private val aesPlatformManager: AESPlatformManager = mockk(relaxed = true)
+
+    private val sut = Algo25EntityMapperImpl(aesPlatformManager)
 
     @Test
     fun `EXPECT mapped entity`() {
-        val result = sut(LocalAccount.Algo25(algoAddress = "unencrypted_address"))
+        every { aesPlatformManager.encryptByteArray(byteArrayOf(1, 2, 3)) } returns byteArrayOf(4, 5, 6)
 
-        val expected = Algo25Entity(algoAddress = "unencrypted_address", byteArrayOf())
+        val privateKey = byteArrayOf(1, 2, 3)
+
+        val result = sut(LocalAccount.Algo25(algoAddress = "unencrypted_address"), privateKey)
+
+        val expected = Algo25Entity(algoAddress = "unencrypted_address", byteArrayOf(4, 5, 6))
         assertEquals(expected, result)
     }
 }

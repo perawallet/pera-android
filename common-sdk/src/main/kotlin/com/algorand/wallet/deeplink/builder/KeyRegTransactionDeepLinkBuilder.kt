@@ -14,9 +14,8 @@ package com.algorand.wallet.deeplink.builder
 
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.DeepLinkPayload
-import javax.inject.Inject
 
-internal class KeyRegTransactionDeepLinkBuilder @Inject constructor() : DeepLinkBuilder {
+internal class KeyRegTransactionDeepLinkBuilder : DeepLinkBuilder {
 
     override fun doesDeeplinkMeetTheRequirements(payload: DeepLinkPayload): Boolean {
         return payload.type == "keyreg"
@@ -25,7 +24,7 @@ internal class KeyRegTransactionDeepLinkBuilder @Inject constructor() : DeepLink
     override fun createDeepLink(payload: DeepLinkPayload): DeepLink {
         return with(payload) {
             DeepLink.KeyReg(
-                senderAddress = accountAddress.orEmpty(),
+                senderAddress = accountAddress ?: host.orEmpty(),
                 fee = fee,
                 note = note,
                 xnote = xnote,

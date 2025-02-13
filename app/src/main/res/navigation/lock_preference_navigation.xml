@@ -19,8 +19,7 @@
     <fragment
         android:id="@+id/choosePasswordInfoFragment"
         android:name="com.algorand.android.ui.lockpreference.ChoosePasswordInfoFragment"
-        android:label="ChoosePasswordInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="ChoosePasswordInfoFragment">
         <argument
             android:name="shouldNavigateHome"
             android:defaultValue="false"
@@ -63,8 +62,7 @@
     <fragment
         android:id="@+id/biometricRegistrationFragment"
         android:name="com.algorand.android.ui.lockpreference.BiometricRegistrationFragment"
-        android:label="BiometricRegistrationFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="BiometricRegistrationFragment">
         <action
             android:id="@+id/action_biometricRegistrationFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"
@@ -78,8 +76,7 @@
     <fragment
         android:id="@+id/biometricAuthenticationEnabledFragment"
         android:name="com.algorand.android.ui.lockpreference.BiometricAuthenticationEnabledFragment"
-        android:label="fragment_biometric_authentication_enabled"
-        tools:layout="@layout/fragment_base_info">
+        android:label="fragment_biometric_authentication_enabled">
         <action
             android:id="@+id/action_biometricAuthenticationEnabledFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"

@@ -102,8 +102,7 @@
     <fragment
         android:id="@+id/recoverAccountInfoFragment"
         android:name="com.algorand.android.modules.onboarding.recoverypassphrase.info.ui.RecoverAccountInfoFragment"
-        android:label="fragment_recover_account_info"
-        tools:layout="@layout/fragment_base_info">
+        android:label="fragment_recover_account_info">
         <action
             android:id="@+id/action_recoverAccountInfoFragment_to_recoverWithPassphraseNavigation"
             app:destination="@id/recoverWithPassphraseNavigation">
@@ -118,8 +117,7 @@
     <fragment
         android:id="@+id/watchAccountInfoFragment"
         android:name="com.algorand.android.ui.register.watch.WatchAccountInfoFragment"
-        android:label="WatchAccountInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="WatchAccountInfoFragment">
         <action
             android:id="@+id/action_watchAccountInfoFragment_to_registerWatchAccountNavigation"
             app:destination="@id/registerWatchAccountNavigation">

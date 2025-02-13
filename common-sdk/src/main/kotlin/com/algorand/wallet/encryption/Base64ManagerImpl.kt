@@ -27,4 +27,9 @@ internal class Base64ManagerImpl @Inject constructor() : Base64Manager {
     override fun decode(value: String): ByteArray {
         return Base64.decode(value)
     }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    override fun decode(value: String, flags: Int): ByteArray {
+        return Base64.decode(value, flags)
+    }
 }

@@ -188,4 +188,23 @@ sealed class BaseTransactionDetail : Parcelable {
                 get() = R.string.transaction_detail
         }
     }
+
+    @Parcelize
+    data class HeartbeatTransaction(
+        override val id: String? = null,
+        override val signature: String? = null,
+        override val senderAccountAddress: String? = null,
+        override val receiverAccountAddress: String? = null,
+        override val roundTimeAsTimestamp: Long? = null,
+        override val confirmedRound: Long?,
+        override val fee: BigInteger,
+        override val noteInBase64: String? = null,
+        override val closeToAccountAddress: String? = null,
+        override val transactionCloseAmount: BigInteger? = null,
+        override val transactionAmount: BigInteger? = null
+    ) : BaseTransactionDetail() {
+
+        override val toolbarTitleResId: Int
+            get() = R.string.transaction_detail
+    }
 }

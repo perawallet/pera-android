@@ -34,8 +34,7 @@
     <fragment
         android:id="@+id/backupInfoFragment"
         android:name="com.algorand.android.ui.common.warningconfirmation.BackupInfoFragment"
-        android:label="fragment_backup_info"
-        tools:layout="@layout/fragment_base_info">
+        android:label="fragment_backup_info">
         <argument
             android:name="publicKeysOfAccountsToBackup"
             app:argType="string[]" />
@@ -54,8 +53,7 @@
     <fragment
         android:id="@+id/writeDownInfoFragment"
         android:name="com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragment"
-        android:label="fragment_write_down_info"
-        tools:layout="@layout/fragment_base_info">
+        android:label="fragment_write_down_info">
         <argument
             android:name="publicKeysOfAccountsToBackup"
             app:argType="string[]" />

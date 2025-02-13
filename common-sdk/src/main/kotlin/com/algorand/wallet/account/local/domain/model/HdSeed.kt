@@ -15,6 +15,6 @@ package com.algorand.wallet.account.local.domain.model
 data class HdSeed(
     val seedId: Int,
     val encryptedSeed: ByteArray,
-    val encryptedMnemonicEntropy: String,
+    val encryptedEntropy: ByteArray,
     val seedCustomName: String,
 )

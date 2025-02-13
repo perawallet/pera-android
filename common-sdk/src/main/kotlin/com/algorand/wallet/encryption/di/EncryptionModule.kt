@@ -12,10 +12,10 @@
 
 package com.algorand.wallet.encryption.di
 
+import com.algorand.wallet.encryption.AESPlatformManager
+import com.algorand.wallet.encryption.AESPlatformManagerImpl
 import com.algorand.wallet.encryption.Base64Manager
 import com.algorand.wallet.encryption.Base64ManagerImpl
-import com.algorand.wallet.encryption.EntropyEncryptionManager
-import com.algorand.wallet.encryption.EntropyEncryptionManagerImpl
 import com.algorand.wallet.encryption.SecretKeyEncryptionManager
 import com.algorand.wallet.encryption.SecretKeyEncryptionManagerImpl
 import dagger.Module
@@ -38,5 +38,5 @@ internal object EncryptionModule {
 
     @Provides
     @Singleton
-    fun provideEntropyEncryptionManager(impl: EntropyEncryptionManagerImpl): EntropyEncryptionManager = impl
+    fun provideAESPlatformManager(impl: AESPlatformManagerImpl): AESPlatformManager = impl
 }

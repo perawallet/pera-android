@@ -78,8 +78,7 @@
     <fragment
         android:id="@+id/rekeyToStandardAccountVerifyInfoFragment"
         android:name="com.algorand.android.modules.rekey.rekeytostandardaccount.resultinfo.ui.RekeyToStandardAccountVerifyInfoFragment"
-        android:label="RekeyToStandardAccountVerifyInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="RekeyToStandardAccountVerifyInfoFragment">
         <argument
             android:name="accountAddress"
             app:argType="string" />

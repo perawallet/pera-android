@@ -210,6 +210,8 @@
     <string name="by_creating_account">By creating an account, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
     <string name="create_new_account">Create new Account</string>
     <string name="watch_account">Watch Account</string>
+    <string name="bip_39">BIP 39</string>
+    <string name="hd_account">HD Account</string>
     <string name="receive">Receive</string>
     <string name="system_default">System Default</string>
     <string name="light">Light</string>

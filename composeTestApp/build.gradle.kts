@@ -18,8 +18,8 @@ kotlin {
         compilations.all {
             compileTaskProvider {
                 compilerOptions {
-                    jvmTarget.set(JvmTarget.JVM_17)
-                    freeCompilerArgs.add("-Xjdk-release=${JavaVersion.VERSION_17}")
+                    jvmTarget.set(JvmTarget.JVM_21)
+                    freeCompilerArgs.add("-Xjdk-release=${JavaVersion.VERSION_21}")
                 }
             }
         }
@@ -120,8 +120,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
         compose = true

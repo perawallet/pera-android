@@ -15,4 +15,5 @@ package com.algorand.wallet.encryption
 interface Base64Manager {
     fun encode(byteArray: ByteArray): String
     fun decode(value: String): ByteArray
+    fun decode(value: String, flags: Int): ByteArray
 }

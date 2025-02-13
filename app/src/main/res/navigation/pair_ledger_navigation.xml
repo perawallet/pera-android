@@ -74,8 +74,7 @@
     <fragment
         android:id="@+id/verifyLedgerInfoFragment"
         android:name="com.algorand.android.modules.onboarding.pairledger.resultinfo.VerifyLedgerInfoFragment"
-        android:label="VerifyLedgerInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="VerifyLedgerInfoFragment">
         <argument
             android:name="numberOfAccounts"
             app:argType="integer" />

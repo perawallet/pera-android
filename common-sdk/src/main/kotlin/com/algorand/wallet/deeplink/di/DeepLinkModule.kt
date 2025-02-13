@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.deeplink.di
 
-import com.algorand.wallet.algosdk.AlgoSdkUtils
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddress
 import com.algorand.wallet.deeplink.builder.AccountAddressDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.AssetInboxDeepLinkBuilder
 import com.algorand.wallet.deeplink.builder.AssetOptInDeepLinkBuilder
@@ -56,13 +56,13 @@ internal object DeepLinkModule {
     @Provides
     fun provideParseDeepLinkPayload(
         peraUriParser: PeraUriParser,
-        algoSdkUtils: AlgoSdkUtils,
+        algoSdkAddress: AlgoSdkAddress,
         jsonSerializer: JsonSerializer,
         base64Manager: Base64Manager
     ): ParseDeepLinkPayload {
         return ParseDeepLinkPayloadImpl(
             peraUriParser = peraUriParser,
-            accountAddressQueryParser = AccountAddressQueryParser(algoSdkUtils),
+            accountAddressQueryParser = AccountAddressQueryParser(algoSdkAddress),
             assetIdQueryParser = AssetIdQueryParser(),
             notificationGroupTypeQueryParser = NotificationGroupTypeQueryParser(),
             webImportQrCodeQueryParser = WebImportQrCodeQueryParser(jsonSerializer),

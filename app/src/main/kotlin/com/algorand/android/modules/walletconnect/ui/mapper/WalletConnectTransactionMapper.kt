@@ -25,7 +25,7 @@ import com.algorand.android.models.WalletConnectSession
 import com.algorand.android.modules.transaction.common.data.model.TransactionTypeResponse.APP_TRANSACTION
 import com.algorand.android.modules.transaction.common.data.model.TransactionTypeResponse.ASSET_CONFIGURATION
 import com.algorand.android.modules.transaction.common.data.model.TransactionTypeResponse.ASSET_TRANSACTION
-import com.algorand.android.modules.transaction.common.data.model.TransactionTypeResponse.KEYREG
+import com.algorand.android.modules.transaction.common.data.model.TransactionTypeResponse.KEYREG_TRANSACTION
 import com.algorand.android.modules.transaction.common.data.model.TransactionTypeResponse.PAY_TRANSACTION
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.utils.walletconnect.getTransactionRequest
@@ -95,7 +95,7 @@ class WalletConnectTransactionMapper @Inject constructor(
                 assetConfigurationTransactionMapper.createTransaction(walletConnectPeerMeta, transactionRequest, rawTxn)
             }
 
-            KEYREG -> {
+            KEYREG_TRANSACTION -> {
                 keyRegTransactionMapper.createTransaction(walletConnectPeerMeta, transactionRequest, rawTxn)
             }
 

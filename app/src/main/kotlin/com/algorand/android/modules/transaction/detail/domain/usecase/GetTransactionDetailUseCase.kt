@@ -18,6 +18,7 @@ import com.algorand.android.modules.transaction.common.domain.model.TransactionT
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.ASSET_TRANSACTION
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.KEYREG_TRANSACTION
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.PAY_TRANSACTION
+import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.HEARTBEAT_TRANSACTION
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO.UNDEFINED
 import com.algorand.android.modules.transaction.detail.domain.mapper.BaseTransactionDetailMapper
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
@@ -63,6 +64,7 @@ class GetTransactionDetailUseCase @Inject constructor(
                 ASSET_CONFIGURATION -> baseTransactionDetailMapper.mapToAssetConfigurationTransactionDetail(this)
                 UNDEFINED -> baseTransactionDetailMapper.mapToUndefinedTransactionDetail(this)
                 KEYREG_TRANSACTION -> baseTransactionDetailMapper.mapToKeyRegTransactionDetail(this)
+                HEARTBEAT_TRANSACTION -> baseTransactionDetailMapper.mapToHeartbeatTransactionDetail(this)
                 null -> baseTransactionDetailMapper.mapToUndefinedTransactionDetail(this)
             }
         }

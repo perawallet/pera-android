@@ -18,7 +18,7 @@ fun PeraPrimaryButton(modifier: Modifier, onClick: () -> Unit, text: String) {
         shape = ShapeDefaults.ExtraSmall,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
-            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             disabledContentColor = MaterialTheme.colorScheme.onSurface
         )
@@ -36,7 +36,7 @@ fun PeraSecondaryButton(modifier: Modifier, onClick: () -> Unit, text: String) {
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
             disabledContentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {

@@ -11,7 +11,7 @@ fun PeraTitleText(modifier: Modifier, text: String) {
     Text(
         modifier = modifier,
         text = text,
-        style = MaterialTheme.typography.titleLarge,
+        style = MaterialTheme.typography.headlineLarge,
         fontFamily = peraSans,
         fontWeight = FontWeight.Medium,
     )
@@ -22,7 +22,7 @@ fun PeraDescriptionText(modifier: Modifier, text: String) {
     Text(
         modifier = modifier,
         text = text,
-        style = MaterialTheme.typography.bodyLarge,
+        style = MaterialTheme.typography.bodyMedium,
         fontFamily = peraSans,
         fontWeight = FontWeight.Normal
     )

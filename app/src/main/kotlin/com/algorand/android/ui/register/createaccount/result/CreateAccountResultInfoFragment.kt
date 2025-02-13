@@ -12,11 +12,8 @@
 
 package com.algorand.android.ui.register.createaccount.result
 
-import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
@@ -24,6 +21,7 @@ import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraSecondaryButton
 import com.algorand.android.ui.compose.widget.PeraTitleText
@@ -37,9 +35,8 @@ class CreateAccountResultInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Icon(modifier: Modifier) =
-        Image(
+        PeraIconBig(
             painter = painterResource(id = R.drawable.ic_check),
-            colorFilter = ColorFilter.tint(color = colorResource(R.color.info_image_color)),
             contentDescription = "check",
             modifier = modifier
         )

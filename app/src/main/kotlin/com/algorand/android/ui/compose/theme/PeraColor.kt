@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 @Suppress("MagicNumber")
 object PeraColor {
-    val primaryLight = Color(0xFF646115)
+    val primaryLight = Color(0xFF27272A)
     val onPrimaryLight = Color(0xFFFFFFFF)
     val primaryContainerLight = Color(0xFF27272A)
     val onPrimaryContainerLight = Color(0xFFFFFFFF)
@@ -32,7 +32,7 @@ object PeraColor {
     val inverseSurfaceLight = Color(0xFF323128)
     val inverseOnSurfaceLight = Color(0xFFF5F1E3)
     val inversePrimaryLight = Color(0xFFCFCA74)
-    val surfaceDimLight = Color(0xFFDEDACD)
+    val surfaceDimLight = Color(0xFF2CB7BC)
     val surfaceBrightLight = Color(0xFFFEF9EB)
     val surfaceContainerLowestLight = Color(0xFFFFFFFF)
     val surfaceContainerLowLight = Color(0xFFF8F3E6)
@@ -40,7 +40,7 @@ object PeraColor {
     val surfaceContainerHighLight = Color(0xFFECE8DB)
     val surfaceContainerHighestLight = Color(0xFFE6E2D5)
 
-    val primaryDark = Color(0xFFCFCA74)
+    val primaryDark = Color(0xFFF1F1F2)
     val onPrimaryDark = Color(0xFF343200)
     val primaryContainerDark = Color(0xFFFFEE55)
     val onPrimaryContainerDark = Color(0xFF18181B)
@@ -68,7 +68,7 @@ object PeraColor {
     val inverseSurfaceDark = Color(0xFFE6E2D5)
     val inverseOnSurfaceDark = Color(0xFF323128)
     val inversePrimaryDark = Color(0xFF646115)
-    val surfaceDimDark = Color(0xFF14140C)
+    val surfaceDimDark = Color(0xFFF1F1F2)
     val surfaceBrightDark = Color(0xFF3B3930)
     val surfaceContainerLowestDark = Color(0xFF0F0E07)
     val surfaceContainerLowDark = Color(0xFF1D1C14)

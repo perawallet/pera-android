@@ -10,10 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.data.mapper
+package com.algorand.wallet.account.info.domain.usecase
 
-import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
+import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
+import javax.inject.Inject
 
-internal interface AccountInformationErrorEntityMapper {
-    operator fun invoke(address: String): AccountInformationEntity
+internal class IsAccountCachedSuccessfullyUseCase @Inject constructor(
+    private val accountInformationRepository: AccountInformationRepository
+) : IsAccountCachedSuccessfully {
+
+    override suspend fun invoke(address: String): Boolean {
+        return accountInformationRepository.getFailedAccountInformation().none {
+            it == address
+        }
+    }
 }

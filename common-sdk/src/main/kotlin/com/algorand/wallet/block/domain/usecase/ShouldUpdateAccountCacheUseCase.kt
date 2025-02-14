@@ -12,7 +12,8 @@
 
 package com.algorand.wallet.block.domain.usecase
 
-import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAllFailedCachedAccountAddresses
+import com.algorand.wallet.account.info.domain.usecase.GetAllSuccessfullyCachedAccountAddresses
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.block.domain.repository.BlockPollingRepository
 import com.algorand.wallet.foundation.PeraResult
@@ -21,12 +22,15 @@ import javax.inject.Inject
 internal class ShouldUpdateAccountCacheUseCase @Inject constructor(
     private val getLocalAccounts: GetLocalAccounts,
     private val blockPollingRepository: BlockPollingRepository,
-    private val getAllAccountInformation: GetAllAccountInformation
+    private val getAllSuccessfullyCachedAccountAddresses: GetAllSuccessfullyCachedAccountAddresses,
+    private val getAllFailedCachedAccountAddresses: GetAllFailedCachedAccountAddresses
 ) : ShouldUpdateAccountCache {
 
     override suspend fun invoke(): PeraResult<Boolean> {
         val localAccountAddresses = getLocalAccounts().map { it.algoAddress }
-        val cachedAccounts = getAllAccountInformation()
+        val successCachedAccounts = getAllSuccessfullyCachedAccountAddresses()
+        val failedCachedAccounts = getAllFailedCachedAccountAddresses()
+        val cachedAccounts = successCachedAccounts + failedCachedAccounts
         if (localAccountAddresses.size > cachedAccounts.size) {
             return PeraResult.Success(true)
         }

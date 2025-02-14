@@ -14,10 +14,10 @@ package com.algorand.android.modules.swap.assetswap.ui.usecase
 
 import com.algorand.android.models.AssetDetail
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuoteAssetDetail
 import com.algorand.android.modules.swap.assetswap.ui.mapper.SelectedAssetDetailMapper
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
-import com.algorand.android.usecase.AccountAssetDataUseCase
 import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.formatAsTwoDecimals
@@ -26,18 +26,18 @@ import javax.inject.Inject
 
 class AssetSwapPreviewAssetDetailUseCase @Inject constructor(
     private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val accountAssetDataUseCase: AccountAssetDataUseCase,
-    private val selectedAssetDetailMapper: SelectedAssetDetailMapper
+    private val selectedAssetDetailMapper: SelectedAssetDetailMapper,
+    private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData
 ) {
 
-    fun createFromSelectedAssetDetail(
+    suspend fun createFromSelectedAssetDetail(
         fromAssetId: Long,
         accountAddress: String,
         previousState: AssetSwapPreview
     ): AssetSwapPreview.SelectedAssetDetail {
         val isFromAssetHasChanged = previousState.fromSelectedAssetDetail.assetId != fromAssetId
         return if (isFromAssetHasChanged) {
-            val ownedAssetData = accountAssetDataUseCase.getAccountOwnedAssetData(accountAddress, true).run {
+            val ownedAssetData = getAccountOwnedAssetsData(accountAddress, true).run {
                 firstOrNull { fromAssetId == it.id } ?: first { it.isAlgo }
             }
             createSelectedAssetDetail(ownedAssetData)
@@ -54,7 +54,7 @@ class AssetSwapPreviewAssetDetailUseCase @Inject constructor(
         val isToAssetHasChanged = previousState.toSelectedAssetDetail?.assetId != toAssetId
         if (toAssetId == null) return null
         return if (isToAssetHasChanged) {
-            val ownedAssetData = accountAssetDataUseCase.getAccountOwnedAssetData(accountAddress, true).run {
+            val ownedAssetData = getAccountOwnedAssetsData(accountAddress, true).run {
                 firstOrNull { toAssetId == it.id }
             }
             if (ownedAssetData == null) {
@@ -68,11 +68,11 @@ class AssetSwapPreviewAssetDetailUseCase @Inject constructor(
         }
     }
 
-    fun createSelectedAssetDetailFromSwapQuoteAssetDetail(
+    suspend fun createSelectedAssetDetailFromSwapQuoteAssetDetail(
         accountAddress: String,
         swapQuoteAssetDetail: SwapQuoteAssetDetail
     ): AssetSwapPreview.SelectedAssetDetail {
-        val ownedAssetData = accountAssetDataUseCase.getAccountOwnedAssetData(accountAddress, true).run {
+        val ownedAssetData = getAccountOwnedAssetsData(accountAddress, true).run {
             firstOrNull { swapQuoteAssetDetail.assetId == it.id }
         }
         return selectedAssetDetailMapper.mapToSelectedAssetDetail(

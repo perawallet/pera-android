@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.info.domain.usecase
 
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -20,10 +21,12 @@ internal class IsAssetOwnedByAccountUseCase @Inject constructor(
 ) : IsAssetOwnedByAccount {
 
     override suspend operator fun invoke(address: String, assetId: Long): Boolean {
-        val assetHolding = getAccountInformation(address)
-            ?.assetHoldings
-            ?.firstOrNull { it.assetId == assetId }
-            ?: return false
-        return assetHolding.amount > BigInteger.ZERO
+        val accountInfo = getAccountInformation(address) ?: return false
+
+        return if (assetId == ALGO_ID) {
+            accountInfo.amount > BigInteger.ZERO
+        } else {
+            accountInfo.assetHoldings.any { it.assetId == assetId && it.amount > BigInteger.ZERO }
+        }
     }
 }

@@ -40,6 +40,12 @@ internal interface AccountInformationDao {
     @Query("SELECT * FROM account_information")
     suspend fun getAll(): List<AccountInformationEntity>
 
+    @Query("SELECT algo_address FROM account_information")
+    suspend fun getAllAddresses(): List<String>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM account_information WHERE algo_address = :address LIMIT 1)")
+    suspend fun isAddressExists(address: String): Boolean
+
     @Query("SELECT * FROM account_information")
     fun getAllAsFlow(): Flow<List<AccountInformationEntity>>
 

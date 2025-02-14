@@ -30,7 +30,7 @@ class SwapAccountItemViewHolder(
         if (item !is BaseSwapTransactionSummaryItem.SwapAccountItemTransaction) return
         with(item) {
             binding.accountTextView.apply {
-                text = accountDisplayName.getAccountPrimaryDisplayName()
+                text = accountDisplayName.primaryDisplayName
                 val accountIconDrawable = AccountIconDrawable.create(
                     context = context,
                     accountIconDrawablePreview = accountIconDrawablePreview,
@@ -38,7 +38,7 @@ class SwapAccountItemViewHolder(
                 )
                 setDrawable(start = accountIconDrawable)
                 setOnLongClickListener {
-                    listener.onAccountNameLongClick(accountDisplayName.getRawAccountAddress()); true
+                    listener.onAccountNameLongClick(accountDisplayName.accountAddress); true
                 }
             }
         }

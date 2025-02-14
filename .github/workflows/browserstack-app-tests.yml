@@ -1,8 +1,10 @@
 name: "Pera Android BrowserStack Tests"
 
 on:
+  workflow_run:
   push:
   pull_request:
+  pull_request_target:
 
 env:
   GITHUB_TOKEN: ${{ github.token }}
@@ -12,7 +14,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  main:
+  browserstack:
+    if: >
+      github.event_name != 'pull_request_target' ||
+      (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'external contribution'))
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Code"

@@ -25,7 +25,7 @@ internal interface AccountInformationRepository {
 
     fun getCachedAccountInformationCountFlow(): Flow<Int>
 
-    suspend fun getAllAccountInformation(): Map<String, AccountInformation?>
+    suspend fun getAllSuccessfullyCachedAccountAddresses(): List<String>
 
     suspend fun fetchAndCacheAccountInformation(addresses: List<String>): Map<String, AccountInformation?>
 
@@ -46,4 +46,6 @@ internal interface AccountInformationRepository {
     suspend fun setAssetStatus(address: String, assetId: Long, status: AssetStatus)
 
     suspend fun addAssetHoldingAsPending(address: String, assetId: Long)
+
+    suspend fun getFailedAccountInformation(): List<String>
 }

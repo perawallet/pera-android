@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.data.mapper
+package com.algorand.wallet.account.info.data.cache
 
-import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
-
-internal interface AccountInformationErrorEntityMapper {
-    operator fun invoke(address: String): AccountInformationEntity
+internal interface AccountInformationErrorCache {
+    fun put(address: String)
+    fun getAll(): List<String>
+    fun remove(address: String)
 }

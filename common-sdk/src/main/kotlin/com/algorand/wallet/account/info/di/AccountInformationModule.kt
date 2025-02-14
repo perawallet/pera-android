@@ -108,6 +108,12 @@ internal object AccountInformationModule {
 
     @Provides
     @Singleton
+    fun provideAccountInformationErrorCache(): AccountInformationErrorCache {
+        return AccountInformationErrorCacheImpl(SingleInMemoryLocalCache())
+    }
+
+    @Provides
+    @Singleton
     fun provideAccountInformationCacheHelper(
         impl: AccountInformationCacheHelperImpl
     ): AccountInformationCacheHelper = impl

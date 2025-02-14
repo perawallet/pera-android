@@ -14,7 +14,6 @@ package com.algorand.android.modules.swap.assetswap.ui.usecase
 
 import com.algorand.android.R
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.exceptions.InsufficientAlgoBalance
@@ -28,11 +27,10 @@ class AssetSwapPreviewUseCase @Inject constructor(
     private val toAssetUpdatedUseCase: AssetSwapToAssetUpdatedUseCase,
     private val assetSwapAssetsSwitchUpdatePreviewUseCase: AssetSwapAssetsSwitchUpdatePreviewUseCase,
     private val assetSwapAmountUpdatedPreviewUseCase: AssetSwapAmountUpdatedPreviewUseCase,
-    private val assetSwapInitialPreviewUseCase: AssetSwapInitialPreviewUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase
+    private val assetSwapInitialPreviewUseCase: AssetSwapInitialPreviewUseCase
 ) {
 
-    fun getAssetSwapPreviewInitializationState(
+    suspend fun getAssetSwapPreviewInitializationState(
         accountAddress: String,
         fromAssetId: Long,
         toAssetId: Long?
@@ -162,10 +160,6 @@ class AssetSwapPreviewUseCase @Inject constructor(
             errorEvent = errorEvent,
             isLoadingVisible = false
         )
-    }
-
-    fun isAccountCachedSuccessfully(accountAddress: String): Boolean {
-        return accountDetailUseCase.isAccountCachedSuccessfully(accountAddress)
     }
 
     companion object {

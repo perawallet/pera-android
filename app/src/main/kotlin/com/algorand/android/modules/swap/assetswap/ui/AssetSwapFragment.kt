@@ -22,6 +22,7 @@ import com.algorand.android.customviews.SwapAssetInputView
 import com.algorand.android.databinding.FragmentAssetSwapBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.swap.assetselection.fromasset.ui.SwapFromAssetSelectionFragment.Companion.SWAP_FROM_ASSET_ID_KEY
 import com.algorand.android.modules.swap.assetselection.toasset.ui.SwapToAssetSelectionFragment.Companion.SWAP_TO_ASSET_ID_KEY
@@ -29,7 +30,6 @@ import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview.SelectedAssetAmountDetail
 import com.algorand.android.modules.swap.balancepercentage.ui.BalancePercentageBottomSheet.Companion.CHECKED_BALANCE_PERCENTAGE_KEY
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.DecimalDigitsInputFilter
 import com.algorand.android.utils.ErrorResource
@@ -57,8 +57,6 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
 
     override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
-    private val assetIconSize by lazy { resources.getDimensionPixelSize(R.dimen.asset_avatar_image_size) }
-
     private val fromAssetDetailCollector: suspend (AssetSwapPreview.SelectedAssetDetail?) -> Unit = { assetDetail ->
         if (assetDetail != null) initFromAssetDetail(assetDetail)
     }
@@ -79,8 +77,8 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
         binding.progressBar.root.isVisible = isLoadingVisible == true
     }
 
-    private val isAccountCachedCollector: suspend (Boolean) -> Unit = { isAccountCached ->
-        handleAccountCacheStatus(isAccountCached)
+    private val isAccountCachedCollector: suspend (Boolean?) -> Unit = { isAccountCached ->
+        if (isAccountCached != null) handleAccountCacheStatus(isAccountCached)
     }
 
     private val fromAssetAmountDetailCollector: suspend (SelectedAssetAmountDetail?) -> Unit = { amountDetail ->
@@ -123,8 +121,8 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
 
     private val accountDisplayNameCollector: suspend (AccountDisplayName) -> Unit = { accountDisplayName ->
         getAppToolbar()?.run {
-            changeSubtitle(accountDisplayName.getAccountPrimaryDisplayName())
-            setOnTitleLongClickListener { onAccountAddressCopied(accountDisplayName.getRawAccountAddress()) }
+            changeSubtitle(accountDisplayName.primaryDisplayName)
+            setOnTitleLongClickListener { onAccountAddressCopied(accountDisplayName.accountAddress) }
         }
     }
 

@@ -14,15 +14,15 @@ package com.algorand.android.modules.swap.assetswap.ui.usecase
 
 import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
-import com.algorand.android.usecase.CheckUserHasAssetBalanceUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import javax.inject.Inject
 
 class AssetSwapSwitchButtonStatusUseCase @Inject constructor(
     private val assetSwapPreviewAssetDetailUseCase: AssetSwapPreviewAssetDetailUseCase,
-    private val checkUserHasAssetBalanceUseCase: CheckUserHasAssetBalanceUseCase
+    private val isAssetOwnedByAccount: IsAssetOwnedByAccount,
 ) {
 
-    fun isSwitchAssetsButtonEnabled(
+    suspend fun isSwitchAssetsButtonEnabled(
         accountAddress: String,
         fromAssetId: Long,
         toAssetId: Long,
@@ -33,7 +33,7 @@ class AssetSwapSwitchButtonStatusUseCase @Inject constructor(
             accountAddress = accountAddress,
             previousState = previousState
         ).verificationTierConfiguration.toVerificationTier()
-        val hasUserToAssetBalance = checkUserHasAssetBalanceUseCase.hasUserAssetBalance(accountAddress, toAssetId)
+        val hasUserToAssetBalance = isAssetOwnedByAccount(accountAddress, toAssetId)
         return hasUserToAssetBalance &&
             with(fromAssetVerificationTier) { this == VerificationTier.VERIFIED || this == VerificationTier.TRUSTED }
     }

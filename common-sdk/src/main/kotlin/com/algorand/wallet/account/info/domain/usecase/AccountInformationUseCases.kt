@@ -26,8 +26,12 @@ fun interface FetchAndCacheAccountInformation {
     suspend operator fun invoke(addresses: List<String>): Map<String, AccountInformation?>
 }
 
-fun interface GetAllAccountInformation {
-    suspend operator fun invoke(): Map<String, AccountInformation?>
+fun interface GetAllSuccessfullyCachedAccountAddresses {
+    suspend operator fun invoke(): List<String>
+}
+
+fun interface GetAllFailedCachedAccountAddresses {
+    suspend operator fun invoke(): List<String>
 }
 
 fun interface GetAllAssetHoldingIds {
@@ -88,4 +92,8 @@ fun interface SetAccountAssetStatus {
 
 fun interface AddAssetHoldingToAccountAsPending {
     suspend operator fun invoke(address: String, assetId: Long)
+}
+
+fun interface IsAccountCachedSuccessfully {
+    suspend operator fun invoke(address: String): Boolean
 }

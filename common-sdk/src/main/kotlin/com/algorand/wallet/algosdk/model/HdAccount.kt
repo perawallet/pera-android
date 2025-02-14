@@ -16,7 +16,7 @@ data class HdAccount(
     val address: String,
     val publicKey: ByteArray,
     val encryptedPrivateKey: ByteArray,
-    val encryptedMnemonicEntropy: String,
+    val encryptedEntropy: ByteArray,
     val account: Int,
     val change: Int,
     val keyIndex: Int,
@@ -29,7 +29,7 @@ data class HdAccount(
         other as HdAccount
 
         if (address != other.address) return false
-        if (encryptedMnemonicEntropy != other.encryptedMnemonicEntropy) return false
+        if (!encryptedEntropy.contentEquals(other.encryptedEntropy)) return false
         if (!encryptedPrivateKey.contentEquals(other.encryptedPrivateKey)) return false
 
         return true
@@ -37,7 +37,7 @@ data class HdAccount(
 
     override fun hashCode(): Int {
         var result = address.hashCode()
-        result = 31 * result + encryptedMnemonicEntropy.hashCode()
+        result = 31 * result + encryptedEntropy.hashCode()
         result = 31 * result + encryptedPrivateKey.hashCode()
         return result
     }

@@ -13,6 +13,7 @@
 package com.algorand.android.modules.transactionhistory.domain.mapper
 
 import com.algorand.android.modules.transaction.common.domain.model.TransactionDTO
+import com.algorand.android.modules.transaction.common.domain.model.getReceiverAddress
 import com.algorand.android.modules.transactionhistory.domain.model.BaseTransaction
 import com.algorand.android.utils.getAllNestedTransactions
 import com.algorand.android.utils.getZonedDateTimeFromTimeStamp
@@ -21,9 +22,9 @@ import javax.inject.Inject
 
 class BaseTransactionMapper @Inject constructor() {
     fun mapToPayTransactionSend(
-        transaction: TransactionDTO
+        transactionDTO: TransactionDTO
     ): BaseTransaction.Transaction.Pay.Send {
-        return with(transaction) {
+        return with(transactionDTO) {
             BaseTransaction.Transaction.Pay.Send(
                 id = id,
                 signature = signature?.signatureKey,
@@ -37,9 +38,9 @@ class BaseTransactionMapper @Inject constructor() {
     }
 
     fun mapToPayTransactionReceive(
-        transaction: TransactionDTO
+        transactionDTO: TransactionDTO
     ): BaseTransaction.Transaction.Pay.Receive {
-        return with(transaction) {
+        return with(transactionDTO) {
             BaseTransaction.Transaction.Pay.Receive(
                 id = id,
                 signature = signature?.signatureKey,
@@ -53,9 +54,9 @@ class BaseTransactionMapper @Inject constructor() {
     }
 
     fun mapToPayTransactionSelf(
-        transaction: TransactionDTO
+        transactionDTO: TransactionDTO
     ): BaseTransaction.Transaction.Pay.Self {
-        return with(transaction) {
+        return with(transactionDTO) {
             BaseTransaction.Transaction.Pay.Self(
                 id = id,
                 signature = signature?.signatureKey,
@@ -69,144 +70,137 @@ class BaseTransactionMapper @Inject constructor() {
     }
 
     fun mapToAssetTransactionSend(
-        transaction: TransactionDTO
+        transactionDTO: TransactionDTO
     ): BaseTransaction.Transaction.AssetTransfer.BaseSend.Send? {
-        return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
+        return with(transactionDTO) {
             BaseTransaction.Transaction.AssetTransfer.BaseSend.Send(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = assetTransfer?.receiverAddress,
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null
             )
         }
     }
 
     fun mapToAssetTransactionReceive(
-        transaction: TransactionDTO
+        transactionDTO: TransactionDTO
     ): BaseTransaction.Transaction.AssetTransfer.BaseReceive.Receive? {
-        return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
+        return with(transactionDTO) {
             BaseTransaction.Transaction.AssetTransfer.BaseReceive.Receive(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = assetTransfer?.receiverAddress,
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null
             )
         }
     }
 
     fun mapToAssetTransactionReceiveOptOut(
-        transaction: TransactionDTO
+        transactionDTO: TransactionDTO
     ): BaseTransaction.Transaction.AssetTransfer.BaseReceive.ReceiveOptOut? {
-        return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
+        return with(transactionDTO) {
             BaseTransaction.Transaction.AssetTransfer.BaseReceive.ReceiveOptOut(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = assetTransfer?.receiverAddress,
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null
             )
         }
     }
 
     fun mapToAssetTransactionOptOut(
-        transaction: TransactionDTO,
+        transactionDTO: TransactionDTO,
         closeToAddress: String,
     ): BaseTransaction.Transaction.AssetTransfer.OptOut? {
-        return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
+        return with(transactionDTO) {
             BaseTransaction.Transaction.AssetTransfer.OptOut(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = assetTransfer?.receiverAddress,
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId,
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null,
                 closeToAddress = closeToAddress
             )
         }
     }
 
     fun mapToAssetTransactionSendOptOut(
-        transaction: TransactionDTO,
+        transactionDTO: TransactionDTO,
         closeToAddress: String,
     ): BaseTransaction.Transaction.AssetTransfer.BaseSend.SendOptOut? {
-        return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
+        return with(transactionDTO) {
             BaseTransaction.Transaction.AssetTransfer.BaseSend.SendOptOut(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = assetTransfer?.receiverAddress,
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId,
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null,
                 closeToAddress = closeToAddress
             )
         }
     }
 
     fun mapToAssetTransactionSelf(
-        transaction: TransactionDTO,
+        transactionDTO: TransactionDTO,
     ): BaseTransaction.Transaction.AssetTransfer.BaseSelf.Self? {
-        return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
+        return with(transactionDTO) {
             BaseTransaction.Transaction.AssetTransfer.BaseSelf.Self(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = transactionDTO.getReceiverAddress(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null
             )
         }
     }
 
     fun mapToAssetTransactionSelfOptIn(
-        transaction: TransactionDTO,
+        transactionDTO: TransactionDTO,
     ): BaseTransaction.Transaction.AssetTransfer.BaseSelf.SelfOptIn? {
-        return with(transaction) {
-            val assetId = assetTransfer?.assetId ?: return null
+        return with(transactionDTO) {
             BaseTransaction.Transaction.AssetTransfer.BaseSelf.SelfOptIn(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = assetTransfer.receiverAddress,
+                receiverAddress = assetTransfer?.receiverAddress,
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
-                amount = assetTransfer.amount ?: BigInteger.ZERO,
-                assetId = assetId
+                amount = assetTransfer?.amount ?: BigInteger.ZERO,
+                assetId = assetTransfer?.assetId ?: return null
             )
         }
     }
 
     fun mapToAssetConfiguration(
-        transaction: TransactionDTO
+        transactionDTO: TransactionDTO
     ): BaseTransaction.Transaction.AssetConfiguration {
-        return with(transaction) {
+        return with(transactionDTO) {
             BaseTransaction.Transaction.AssetConfiguration(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = null, // Asset Configuration Transaction does not contain receiver address
+                receiverAddress = transactionDTO.getReceiverAddress(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
                 assetId = createdAssetIndex ?: assetConfiguration?.assetId
@@ -215,9 +209,9 @@ class BaseTransactionMapper @Inject constructor() {
     }
 
     fun mapToOnlineKeyReg(
-        transaction: TransactionDTO
+        transactionDTO: TransactionDTO
     ): BaseTransaction.Transaction.KeyReg.Online {
-        return with(transaction) {
+        return with(transactionDTO) {
             BaseTransaction.Transaction.KeyReg.Online(
                 id = id,
                 signature = signature?.signatureKey,
@@ -236,9 +230,9 @@ class BaseTransactionMapper @Inject constructor() {
     }
 
     fun mapToOfflineKeyReg(
-        transaction: TransactionDTO
+        transactionDTO: TransactionDTO
     ): BaseTransaction.Transaction.KeyReg.Offline {
-        return with(transaction) {
+        return with(transactionDTO) {
             BaseTransaction.Transaction.KeyReg.Offline(
                 id = id,
                 signature = signature?.signatureKey,
@@ -252,14 +246,14 @@ class BaseTransactionMapper @Inject constructor() {
     }
 
     fun mapToApplicationCall(
-        transaction: TransactionDTO
+        transactionDTO: TransactionDTO
     ): BaseTransaction.Transaction.ApplicationCall {
-        return with(transaction) {
+        return with(transactionDTO) {
             BaseTransaction.Transaction.ApplicationCall(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = null, // Application Call Transaction does not contain receiver address
+                receiverAddress = transactionDTO.getReceiverAddress(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false,
                 applicationId = applicationCall?.applicationId,
@@ -269,15 +263,30 @@ class BaseTransactionMapper @Inject constructor() {
         }
     }
 
+    fun mapToHeartbeat(
+        transactionDTO: TransactionDTO
+    ): BaseTransaction.Transaction.Heartbeat {
+        return with(transactionDTO) {
+            BaseTransaction.Transaction.Heartbeat(
+                id = id,
+                signature = signature?.signatureKey,
+                senderAddress = senderAddress.orEmpty(),
+                receiverAddress = null,
+                zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
+                isPending = false
+            )
+        }
+    }
+
     fun mapToUndefined(
-        transaction: TransactionDTO
+        transactionDTO: TransactionDTO
     ): BaseTransaction.Transaction.Undefined {
-        return with(transaction) {
+        return with(transactionDTO) {
             BaseTransaction.Transaction.Undefined(
                 id = id,
                 signature = signature?.signatureKey,
                 senderAddress = senderAddress.orEmpty(),
-                receiverAddress = null, // Undefined Transaction does not contain receiver address
+                receiverAddress = transactionDTO.getReceiverAddress(),
                 zonedDateTime = roundTimeAsTimestamp?.getZonedDateTimeFromTimeStamp(),
                 isPending = false
             )

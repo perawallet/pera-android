@@ -733,6 +733,7 @@ class MainActivity :
                 binding.bottomNavigationView.menu.forEach { menuItem ->
                     menuItem.isEnabled = isCoreActionsOpen.not()
                 }
+                handleNavigationButtonsForChosenNetwork()
             }
 
             override fun onSwapClick() {

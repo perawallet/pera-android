@@ -28,5 +28,11 @@ internal enum class RawTransactionTypePayload {
     @SerializedName("acfg")
     ASSET_CONFIGURATION,
 
+    @SerializedName("keyreg")
+    KEYREG_TRANSACTION,
+
+    @SerializedName("hb")
+    HEARTBEAT_TRANSACTION,
+
     UNDEFINED
 }

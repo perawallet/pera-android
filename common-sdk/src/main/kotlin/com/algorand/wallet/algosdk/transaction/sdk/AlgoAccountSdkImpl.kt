@@ -13,13 +13,13 @@
 package com.algorand.wallet.algosdk.transaction.sdk
 
 import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.bip39.toEntropy
 import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.account.Account
 import com.algorand.algosdk.crypto.Address
 import com.algorand.wallet.algosdk.model.Algo25Account
 import com.algorand.wallet.algosdk.model.Bip32DerivationType
 import com.algorand.wallet.algosdk.model.HdAccount
-import com.algorand.wallet.encryption.EntropyEncryptionManager
 import com.algorand.wallet.encryption.SecretKeyEncryptionManager
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
@@ -27,12 +27,12 @@ import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
 
 internal class AlgoAccountSdkImpl(
-    private val entropyEncryptionManager: EntropyEncryptionManager,
     private val secretKeyEncryptionManager: SecretKeyEncryptionManager
 ) : AlgoAccountSdk {
 
     override fun createHdAccount(): HdAccount {
-        val generatedMnemonic = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_24)
+        val entropy = Mnemonics.WordCount.COUNT_24.toEntropy()
+        val generatedMnemonic = Mnemonics.MnemonicCode(entropy)
         return getHdAccount(generatedMnemonic)
     }
 
@@ -79,7 +79,7 @@ internal class AlgoAccountSdkImpl(
         )
         return HdAccount(
             address = algoAddress.toString(),
-            encryptedMnemonicEntropy = entropyEncryptionManager.encrypt(mnemonic.toString()),
+            encryptedEntropy = secretKeyEncryptionManager.encrypt(mnemonic.toEntropy()),
             publicKey = publicKey,
             encryptedPrivateKey = secretKeyEncryptionManager.encrypt(privateKey),
             account = account.toInt(),

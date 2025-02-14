@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "hd_seeds",
     indices = [
-        Index(value = ["encrypted_mnemonic_entropy"], unique = true),
+        Index(value = ["encrypted_entropy"], unique = true),
         Index(value = ["encrypted_seed"], unique = true)
     ]
 )
@@ -29,8 +29,8 @@ internal data class HdSeedEntity(
     @ColumnInfo("seed_id")
     val seedId: Int,
 
-    @ColumnInfo("encrypted_mnemonic_entropy")
-    val encryptedMnemonicEntropy: String,
+    @ColumnInfo("encrypted_entropy")
+    val encryptedEntropy: ByteArray,
 
     @ColumnInfo("encrypted_seed", typeAffinity = ColumnInfo.BLOB)
     val encryptedSeed: ByteArray,

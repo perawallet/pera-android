@@ -139,7 +139,8 @@ open class BaseTransactionDetailPreviewUseCase constructor(
             is BaseTransactionDetail.PaymentTransaction -> ALGO_ID
             is BaseTransactionDetail.ApplicationCallTransaction,
             is BaseTransactionDetail.UndefinedTransaction,
-            is BaseTransactionDetail.BaseKeyRegTransaction -> null
+            is BaseTransactionDetail.BaseKeyRegTransaction,
+            is BaseTransactionDetail.HeartbeatTransaction -> null
         } ?: ALGO_ID
     }
 
@@ -166,7 +167,8 @@ open class BaseTransactionDetailPreviewUseCase constructor(
             is BaseTransactionDetail.ApplicationCallTransaction,
             is BaseTransactionDetail.AssetConfigurationTransaction,
             is BaseTransactionDetail.UndefinedTransaction,
-            is BaseTransactionDetail.BaseKeyRegTransaction -> null
+            is BaseTransactionDetail.BaseKeyRegTransaction,
+            is BaseTransactionDetail.HeartbeatTransaction -> null
         } ?: BigInteger.ZERO
     }
 

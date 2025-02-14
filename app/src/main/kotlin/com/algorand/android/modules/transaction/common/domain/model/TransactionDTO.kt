@@ -34,3 +34,8 @@ data class TransactionDTO(
     val createdAssetIndex: Long?,
     val keyRegTransactionDTO: KeyRegTransactionDTO?
 )
+
+fun TransactionDTO.getReceiverAddress(): String? {
+    return payment?.receiverAddress ?: assetTransfer?.receiverAddress
+    ?: assetFreezeTransaction?.receiverAddress.orEmpty()
+}

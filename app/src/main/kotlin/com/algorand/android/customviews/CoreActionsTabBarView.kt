@@ -70,6 +70,14 @@ class CoreActionsTabBarView @JvmOverloads constructor(
         binding.coreActionsButton.isEnabled = isEnabled
     }
 
+    fun setBrowseDappsEnabled(isEnabled: Boolean) {
+        binding.browseDAppsButton.isEnabled = isEnabled
+    }
+
+    fun setBuySellButtonEnabled(isEnabled: Boolean) {
+        binding.buySellButton.isEnabled = isEnabled
+    }
+
     fun initViewState(viewState: CoreActionsTabBarViewModel.ViewState) {
         when (viewState) {
             is Content -> {
@@ -77,6 +85,8 @@ class CoreActionsTabBarView @JvmOverloads constructor(
                 binding.stakingButton.isVisible = viewState.isStakingEnabled
                 binding.sendButton.isVisible = !viewState.isStakingEnabled
                 binding.scanQrButton.isVisible = !viewState.isStakingEnabled
+                binding.buySellButton.isVisible = binding.buySellButton.isEnabled
+                binding.browseDAppsButton.isVisible = binding.browseDAppsButton.isEnabled
             }
             Idle -> {
                 binding.cardsButton.visibility = GONE

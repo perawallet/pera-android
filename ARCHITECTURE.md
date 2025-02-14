@@ -191,7 +191,7 @@ erDiagram
     }
     hd_seeds {
         Int seed_id PK
-        String encrypted_mnemonic_entropy UK
+        ByteArray encrypted_entropy UK
         String entropy_custom_name
         ByteArray encrypted_seed UK
     }

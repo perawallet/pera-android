@@ -261,4 +261,16 @@ class TransactionItemMapper @Inject constructor() {
             isPending = transaction.isPending
         )
     }
+
+    fun mapToHeartbeatTransactionItem(
+        transaction: BaseTransaction.Transaction.Heartbeat
+    ): BaseTransactionItem.TransactionItem.HeartbeatItem {
+        return with(transaction) {
+            BaseTransactionItem.TransactionItem.HeartbeatItem(
+                id = id,
+                signature = signature,
+                isPending = isPending
+            )
+        }
+    }
 }

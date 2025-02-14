@@ -68,17 +68,6 @@ android {
         buildConfigField "String", "DEEPLINK_PREFIX", '"algorand://"'
         buildConfigField "String", "VERSION_NAME", "\"$versionName\""
         buildConfigField "Integer", "VERSION_CODE", "$versionCode"
-
-        buildConfigField "String", "DISCOVER_TESTNET_URL", '"https://discover-mobile-staging.perawallet.app"'
-        buildConfigField "String", "DISCOVER_MAINNET_URL", '"https://discover-mobile.perawallet.app"'
-        buildConfigField "String", "DISCOVER_BROWSE_DAPP_TESTNET_URL", '"https://discover-mobile-staging.perawallet.app/main/browser"'
-        buildConfigField "String", "DISCOVER_BROWSE_DAPP_MAINNET_URL", '"https://discover-mobile.perawallet.app/main/browser"'
-        buildConfigField "String", "CARDS_TESTNET_URL", '"https://cards-mobile-staging.perawallet.app"'
-        buildConfigField "String", "CARDS_MAINNET_URL", '"https://cards-mobile.perawallet.app"'
-        buildConfigField "String", "MELD_TESTNET_URL", '"https://mainnet.staging.api.perawallet.app/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="'
-        buildConfigField "String", "MELD_MAINNET_URL", '"https://mainnet.api.perawallet.app/v1/onramp-services/meld/redirect-to-fluidmoney/?walletAddress="'
-        buildConfigField "String", "STAKING_TESTNET_URL", '"https://staking-mobile-staging.perawallet.app"'
-        buildConfigField "String", "STAKING_MAINNET_URL", '"https://staking-mobile.perawallet.app"'
     }
 
     signingConfigs {
@@ -147,6 +136,16 @@ android {
             buildConfigField "long", "ARC59_APP_ID_TESTNET", arc59Props["ARC59_APP_ID_TESTNET"]
             buildConfigField "String", "ARC59_APP_ADDR_MAINNET", arc59Props["ARC59_APP_ADDR_MAINNET"]
             buildConfigField "long", "ARC59_APP_ID_MAINNET", arc59Props["ARC59_APP_ID_MAINNET"]
+
+            buildConfigField "String", "MELD_TESTNET_URL", '"https://testnet.api.perawallet.app"'
+            buildConfigField "String", "DISCOVER_TESTNET_URL", '"https://discover-mobile-testnet.perawallet.app"'
+            buildConfigField "String", "CARDS_TESTNET_URL", '"https://cards-mobile-staging-testnet.perawallet.app"'
+            buildConfigField "String", "STAKING_TESTNET_URL", '"https://staking-mobile-testnet.perawallet.app"'
+
+            buildConfigField "String", "MELD_MAINNET_URL", '"https://mainnet.staging.api.perawallet.app"'
+            buildConfigField "String", "DISCOVER_MAINNET_URL", '"https://discover-mobile-staging.perawallet.app"'
+            buildConfigField "String", "CARDS_MAINNET_URL", '"https://cards-mobile-staging-mainnet.perawallet.app"'
+            buildConfigField "String", "STAKING_MAINNET_URL", '"https://staking-mobile-staging.perawallet.app"'
         }
 
         prod {
@@ -174,6 +173,16 @@ android {
             buildConfigField "long", "ARC59_APP_ID_TESTNET", arc59Props["ARC59_APP_ID_TESTNET"]
             buildConfigField "String", "ARC59_APP_ADDR_MAINNET", arc59Props["ARC59_APP_ADDR_MAINNET"]
             buildConfigField "long", "ARC59_APP_ID_MAINNET", arc59Props["ARC59_APP_ID_MAINNET"]
+
+            buildConfigField "String", "MELD_TESTNET_URL", '"https://testnet.api.perawallet.app"'
+            buildConfigField "String", "DISCOVER_TESTNET_URL", '"https://discover-mobile-testnet.perawallet.app"'
+            buildConfigField "String", "CARDS_TESTNET_URL", '"https://cards-mobile-prod-testnet.perawallet.app"'
+            buildConfigField "String", "STAKING_TESTNET_URL", '"https://staking-mobile-testnet.perawallet.app"'
+
+            buildConfigField "String", "MELD_MAINNET_URL", '"https://mainnet.api.perawallet.app"'
+            buildConfigField "String", "DISCOVER_MAINNET_URL", '"https://discover-mobile.perawallet.app"'
+            buildConfigField "String", "CARDS_MAINNET_URL", '"https://cards-mobile.perawallet.app"'
+            buildConfigField "String", "STAKING_MAINNET_URL", '"https://staking-mobile.perawallet.app"'
         }
     }
 
@@ -200,6 +209,7 @@ android {
     }
 
     packagingOptions {
+        exclude 'META-INF/versions/9/OSGI-INF/MANIFEST.MF'
         exclude 'META-INF/DEPENDENCIES.md'
         exclude 'META-INF/NOTICE.md'
         exclude 'META-INF/LICENSE.md'
@@ -225,7 +235,9 @@ android {
 
 dependencies {
     implementation project(':common-sdk')
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+    implementation libs.pera.compact.decimal.format
+    implementation libs.pera.walletconnect.v1
 
     implementation libs.kotlinx.coroutines.core
     implementation libs.kotlinx.coroutines.android
@@ -301,12 +313,12 @@ dependencies {
     implementation libs.moshi.kotlin
 
     // Wallet Connect v2
-    implementation(platform(libs.walletconnect))
-    implementation(libs.walletconnect.android.core) {
+    implementation(platform(libs.walletconnect.v2))
+    implementation(libs.walletconnect.v2.android.core) {
         exclude group: 'com.jakewharton.timber', module: 'timber'
     }
-    implementation libs.sign
-    implementation libs.web3wallet
+    implementation libs.walletconnect.v2.sign
+    implementation libs.walletconnect.v2.web3wallet
 
     // ExoPlayer
     implementation libs.exoplayer

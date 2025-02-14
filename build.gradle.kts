@@ -14,7 +14,7 @@ buildscript {
         classpath(libs.kotlin.gradle.plugin)
         classpath(libs.ksp.gradle.plugin)
         classpath(libs.navigation.safe.args.gradle.plugin)
-        classpath(libs.perf.plugin)
+        classpath(libs.firebase.perf.plugin)
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

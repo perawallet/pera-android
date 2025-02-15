@@ -12,14 +12,18 @@
 
 package com.algorand.android.ui.register.createaccount.passphraseverified
 
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.google.android.material.button.MaterialButton
+import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraIconBig
+import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,33 +32,41 @@ class PassphraseVerifiedInfoFragment : BaseInfoFragment() {
 
     private val args: PassphraseVerifiedInfoFragmentArgs by navArgs()
 
-    override fun setImageView(imageView: ImageView) {
-        with(imageView) {
-            setImageResource(R.drawable.ic_shield_check_large)
-            setColorFilter(ContextCompat.getColor(requireContext(), R.color.info_image_color))
-        }
-    }
+    @Composable
+    override fun Icon(modifier: Modifier) =
+        PeraIconBig(
+            painter = painterResource(id = R.drawable.ic_shield_check_large),
+            contentDescription = "check large",
+            modifier = modifier
+        )
 
-    override fun setTitleText(textView: TextView) {
-        textView.setText(R.string.passphrase_verified)
-    }
+    @Composable
+    override fun Title(modifier: Modifier) =
+        PeraTitleText(
+            modifier = modifier,
+            text = stringResource(id = R.string.passphrase_verified)
+        )
 
-    override fun setDescriptionText(textView: TextView) {
-        textView.setText(R.string.keep_this_recovery)
-    }
+    @Composable
+    override fun Description(modifier: Modifier) =
+        PeraDescriptionText(
+            text = stringResource(id = R.string.keep_this_recovery),
+            modifier = modifier
+        )
 
-    override fun setFirstButton(materialButton: MaterialButton) {
-        with(materialButton) {
-            setText(
-                if (args.accountCreation != null) {
+    @Composable
+    override fun PrimaryButton(modifier: Modifier) =
+        PeraPrimaryButton(
+            onClick = { handleNextNavigation() },
+            modifier = modifier,
+            text = stringResource(
+                id = if (args.accountCreation != null) {
                     R.string.next
                 } else {
                     R.string.done
                 }
             )
-            setOnClickListener { handleNextNavigation() }
-        }
-    }
+        )
 
     private fun handleNextNavigation() {
         args.accountCreation?.let { accountCreation ->

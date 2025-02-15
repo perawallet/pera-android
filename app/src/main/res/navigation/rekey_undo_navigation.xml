@@ -42,8 +42,7 @@
     <fragment
         android:id="@+id/undoRekeyVerifyInfoFragment"
         android:name="com.algorand.android.modules.rekey.undorekey.resultinfo.ui.UndoRekeyVerifyInfoFragment"
-        android:label="UndoRekeyVerifyInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="UndoRekeyVerifyInfoFragment">
         <argument
             android:name="accountAddress"
             app:argType="string" />

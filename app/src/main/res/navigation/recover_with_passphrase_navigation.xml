@@ -57,8 +57,7 @@
     <fragment
         android:id="@+id/recoverAccountResultInfoFragment"
         android:name="com.algorand.android.modules.onboarding.recoverypassphrase.result.ui.RecoverAccountResultInfoFragment"
-        android:label="RecoverAccountResultInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="RecoverAccountResultInfoFragment">
         <action
             android:id="@+id/action_recoverAccountResultInfoFragment_to_meldNavigation"
             app:destination="@id/meldNavigation"

@@ -42,7 +42,6 @@ import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.customviews.alertview.ui.delegation.AlertDialogDelegation
 import com.algorand.android.customviews.alertview.ui.delegation.AlertDialogDelegationImpl
 import com.algorand.android.customviews.customsnackbar.CustomSnackbar
-import com.algorand.android.models.AccountCacheStatus
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.AssetActionResult
@@ -86,6 +85,7 @@ import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.walletconnect.WalletConnectUrlHandler
 import com.algorand.android.utils.walletconnect.WalletConnectViewModel
+import com.algorand.wallet.cache.domain.model.AppCacheStatus
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
@@ -170,9 +170,9 @@ class MainActivity :
         }
     }
 
-    private val assetSetupCompletedObserver = Observer<AccountCacheStatus> {
-        isAssetSetupCompleted = it == AccountCacheStatus.DONE
-        binding.coreActionsTabBarView.setCoreActionButtonEnabled(it == AccountCacheStatus.DONE)
+    private val appCacheStatusCollector: suspend (AppCacheStatus) -> Unit = {
+        isAssetSetupCompleted = it == AppCacheStatus.INITIALIZED
+        binding.coreActionsTabBarView.setCoreActionButtonEnabled(it == AppCacheStatus.INITIALIZED)
     }
 
     private val newNotificationObserver = Observer<Event<NotificationMetadata>> {
@@ -546,7 +546,10 @@ class MainActivity :
 
         transactionManager.transactionManagerResultLiveData.observe(this, transactionManagerResultObserver)
 
-        mainViewModel.accountBalanceSyncStatus.observe(this, assetSetupCompletedObserver)
+        collectLatestOnLifecycle(
+            flow = mainViewModel.appCacheStatusFlow,
+            collection = appCacheStatusCollector
+        )
 
         walletConnectViewModel.walletConnectRequestLiveData.observe(this, ::handleWalletConnectRequest)
 

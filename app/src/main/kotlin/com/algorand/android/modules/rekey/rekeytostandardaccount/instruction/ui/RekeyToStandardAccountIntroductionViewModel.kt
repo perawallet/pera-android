@@ -13,6 +13,7 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.baseintroduction.ui.BaseIntroductionViewModel
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.model.RekeyToStandardAccountIntroductionPreview
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.usecase.RekeyToStandardAccountInstructionPreviewUseCase
@@ -20,6 +21,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RekeyToStandardAccountIntroductionViewModel @Inject constructor(
@@ -30,13 +32,18 @@ class RekeyToStandardAccountIntroductionViewModel @Inject constructor(
     private val navArgs = RekeyToStandardAccountIntroductionFragmentArgs.fromSavedStateHandle(savedStateHandle)
     val accountAddress = navArgs.accountAddress
 
-    private val _rekeyToStandardAccountInstructionPreviewFlow = MutableStateFlow(getInitialPreview())
-    override val introductionPreviewFlow: StateFlow<RekeyToStandardAccountIntroductionPreview>
-        get() = _rekeyToStandardAccountInstructionPreviewFlow
+    private val _previewFlow = MutableStateFlow<RekeyToStandardAccountIntroductionPreview?>(null)
+    override val introductionPreviewFlow: StateFlow<RekeyToStandardAccountIntroductionPreview?>
+        get() = _previewFlow
 
-    private fun getInitialPreview(): RekeyToStandardAccountIntroductionPreview {
-        return rekeyToStandardAccountInstructionPreviewUseCase.getInitialRekeyToStandardAccountInstructionPreview(
-            accountAddress = accountAddress
-        )
+    init {
+        initPreview()
+    }
+
+    private fun initPreview() {
+        viewModelScope.launch {
+            _previewFlow.value = rekeyToStandardAccountInstructionPreviewUseCase
+                .getInitialRekeyToStandardAccountInstructionPreview(accountAddress)
+        }
     }
 }

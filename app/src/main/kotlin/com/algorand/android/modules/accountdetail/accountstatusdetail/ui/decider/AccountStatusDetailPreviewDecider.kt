@@ -14,7 +14,6 @@ package com.algorand.android.modules.accountdetail.accountstatusdetail.ui.decide
 
 import android.content.Context
 import com.algorand.android.R
-import com.algorand.android.models.Account
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
@@ -65,44 +64,6 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             null -> context.getString(R.string.no_auth)
         }
         return accountTypeString
-    }
-
-    fun decideDescriptionAnnotatedString(account: Account?): AnnotatedString {
-        val descriptionStringResId = when (account?.type) {
-            Account.Type.LEDGER -> R.string.your_account_is_a_Ledger
-            Account.Type.WATCH -> R.string.this_account_was_not
-            Account.Type.STANDARD -> {
-                val hasValidSecretKey = accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                if (hasValidSecretKey) R.string.your_account_is_a_standard else R.string.your_account_doesn_t
-            }
-            Account.Type.REKEYED -> {
-                val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(account)
-                if (hasAccountAuthority) {
-                    val hasValidSecretKey = accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                    if (hasValidSecretKey) {
-                        R.string.your_account_is_rekeyed_to_another
-                    } else {
-                        R.string.no_record_of_original_account
-                    }
-                } else {
-                    R.string.your_account_is_rekeyed_to_an
-                }
-            }
-            Account.Type.REKEYED_AUTH, null -> {
-                val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(account)
-                if (hasAccountAuthority) {
-                    val hasValidSecretKey = accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                    if (hasValidSecretKey) {
-                        R.string.your_account_is_rekeyed_to_an_account_on
-                    } else {
-                        R.string.no_record_of_original_account_type
-                    }
-                } else {
-                    R.string.your_account_is_rekeyed_to_an
-                }
-            }
-        }
-        return AnnotatedString(descriptionStringResId)
     }
 
     fun decideDescriptionAnnotatedString(accountDetail: AccountDetail): AnnotatedString {

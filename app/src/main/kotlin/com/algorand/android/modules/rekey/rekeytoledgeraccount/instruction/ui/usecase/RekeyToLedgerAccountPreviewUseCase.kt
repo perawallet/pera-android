@@ -17,31 +17,24 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.decider.RekeyToLedgerAccountPreviewDecider
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.mapper.RekeyToLedgerAccountPreviewMapper
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.instruction.ui.model.RekeyToLedgerAccountPreview
-import com.algorand.android.usecase.AccountDetailUseCase
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import javax.inject.Inject
 
 class RekeyToLedgerAccountPreviewUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val rekeyToLedgerAccountPreviewDecider: RekeyToLedgerAccountPreviewDecider,
-    private val rekeyToLedgerAccountPreviewMapper: RekeyToLedgerAccountPreviewMapper
+    private val rekeyToLedgerAccountPreviewMapper: RekeyToLedgerAccountPreviewMapper,
+    private val getAccountType: GetAccountType
 ) {
 
-    fun getInitialRekeyToLedgerAccountPreview(accountAddress: String): RekeyToLedgerAccountPreview {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
-        val accountType = accountDetail?.account?.type
-        val bannerDrawableResId = rekeyToLedgerAccountPreviewDecider.decideBannerDrawableResId(
-            accountType = accountType
-        )
-        val descriptionAnnotatedString = rekeyToLedgerAccountPreviewDecider.decideDescriptionAnnotatedString(
-            accountType = accountType
-        )
-        val expectationListItems = rekeyToLedgerAccountPreviewDecider.decideExpectationListItems(
-            accountType = accountType
-        )
+    suspend fun getInitialRekeyToLedgerAccountPreview(accountAddress: String): RekeyToLedgerAccountPreview {
+        val accountType = getAccountType(accountAddress)
+        val bannerDrawableResId = rekeyToLedgerAccountPreviewDecider.decideBannerDrawableResId(accountType)
+        val descriptionString = rekeyToLedgerAccountPreviewDecider.decideDescriptionAnnotatedString(accountType)
+        val expectationListItems = rekeyToLedgerAccountPreviewDecider.decideExpectationListItems(accountType)
         return rekeyToLedgerAccountPreviewMapper.mapToRekeyToLedgerAccountPreview(
             bannerDrawableResId = bannerDrawableResId,
             titleAnnotatedString = AnnotatedString(stringResId = R.string.rekey_to_ledger_account_lower_case),
-            descriptionAnnotatedString = descriptionAnnotatedString,
+            descriptionAnnotatedString = descriptionString,
             expectationListItems = expectationListItems,
             actionButtonAnnotatedString = AnnotatedString(stringResId = R.string.start_process)
         )

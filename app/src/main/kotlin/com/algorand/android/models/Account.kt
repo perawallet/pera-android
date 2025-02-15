@@ -43,15 +43,6 @@ data class Account(
         }
     }
 
-    fun getAuthTypeAndDetail(): Detail? {
-        return when (val accountDetail = detail) {
-            is Detail.RekeyedAuth -> accountDetail.authDetail
-            is Detail.Standard -> accountDetail
-            is Detail.Ledger -> accountDetail
-            else -> null
-        }
-    }
-
     // TODO Combine Detail class with Account.Type class
     sealed class Detail : Parcelable {
         @Parcelize

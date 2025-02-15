@@ -18,9 +18,9 @@ import com.algorand.android.R
 import com.algorand.android.databinding.ItemWalletConnectConnectionAccountBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.BaseWalletConnectConnectionItem
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AccountIconDrawable
 
 class WalletConnectConnectionAccountItemViewHolder(
@@ -50,15 +50,11 @@ class WalletConnectConnectionAccountItemViewHolder(
     }
 
     private fun setAccountTitleText(accountDisplayName: AccountDisplayName?) {
-        binding.statefulAccountItemView.run {
-            setTitleText(accountDisplayName?.getAccountPrimaryDisplayName())
-        }
+        binding.statefulAccountItemView.setTitleText(accountDisplayName?.primaryDisplayName)
     }
 
     private fun setAccountDescriptionText(accountDisplayName: AccountDisplayName?) {
-        binding.statefulAccountItemView.run {
-            setDescriptionText(accountDisplayName?.getAccountSecondaryDisplayName(resources))
-        }
+        binding.statefulAccountItemView.setDescriptionText(accountDisplayName?.secondaryDisplayName)
     }
 
     private fun setButtonState(buttonState: AccountAssetItemButtonState, accountAddress: String) {

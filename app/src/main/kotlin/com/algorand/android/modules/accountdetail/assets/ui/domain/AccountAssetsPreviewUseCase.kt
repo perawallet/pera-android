@@ -39,10 +39,11 @@ import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrency
 import com.algorand.android.modules.parity.domain.usecase.GetSelectedCurrencyDetailFlow
 import com.algorand.android.modules.sorting.assetsorting.ui.usecase.AssetItemSortUseCase
 import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibilityUseCase
-import com.algorand.android.usecase.GetFormattedAccountMinimumBalanceUseCase
 import com.algorand.android.utils.formatAsAlgoAmount
+import com.algorand.android.utils.formatAsAlgoDisplayString
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.isGreaterThan
+import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
@@ -60,7 +61,6 @@ class AccountAssetsPreviewUseCase @Inject constructor(
     private val getSelectedCurrencyDetailFlow: GetSelectedCurrencyDetailFlow,
     private val assetItemSortUseCase: AssetItemSortUseCase,
     private val getSwapFeatureRedDotVisibility: GetSwapFeatureRedDotVisibilityUseCase,
-    private val getFormattedAccountMinimumBalanceUseCase: GetFormattedAccountMinimumBalanceUseCase,
     private val shouldHideZeroBalanceAssetsPreferenceUseCase: ShouldHideZeroBalanceAssetsPreferenceUseCase,
     private val shouldDisplayNFTInAssetsPreferenceUseCase: ShouldDisplayNFTInAssetsPreferenceUseCase,
     private val shouldDisplayOptedInNFTInAssetsPreferenceUseCase: ShouldDisplayOptedInNFTInAssetsPreferenceUseCase,
@@ -68,7 +68,8 @@ class AccountAssetsPreviewUseCase @Inject constructor(
     private val accountAssetsPreviewMapper: AccountAssetsPreviewMapper,
     private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol,
     private val getPrimaryCurrencyName: GetPrimaryCurrencyName,
-    private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol
+    private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol,
+    private val getAccountMinBalance: GetAccountMinBalance
 ) {
 
     fun fetchAccountDetail(accountAddress: String, query: String, hasInboxItem: Boolean): Flow<AccountAssetsPreview> {
@@ -245,13 +246,11 @@ class AccountAssetsPreviewUseCase @Inject constructor(
         return AccountPortfolioItem(formattedPrimaryAccountValue, formattedSecondaryAccountValue)
     }
 
-    private fun createRequiredMinimumBalanceItem(
+    private suspend fun createRequiredMinimumBalanceItem(
         accountAddress: String
     ): AccountDetailAssetsItem.RequiredMinimumBalanceItem {
-        val accountMinimumBalance = getFormattedAccountMinimumBalanceUseCase.getFormattedAccountMinimumBalance(
-            accountAddress = accountAddress
-        )
-        val formattedRequiredMinimumBalance = accountMinimumBalance.formatAsAlgoAmount()
+        val minBalance = getAccountMinBalance(accountAddress)
+        val formattedRequiredMinimumBalance = minBalance.formatAsAlgoDisplayString().formatAsAlgoAmount()
         return accountDetailAssetItemMapper.mapToRequiredMinimumBalanceItem(
             formattedRequiredMinimumBalance = formattedRequiredMinimumBalance
         )

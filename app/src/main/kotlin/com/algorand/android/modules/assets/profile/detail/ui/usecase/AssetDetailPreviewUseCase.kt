@@ -181,7 +181,7 @@ class AssetDetailPreviewUseCase @Inject constructor(
                 isMarketInformationVisible = isMarketInformationVisible,
                 last24HoursChange = assetDetail?.last24HoursAlgoPriceChangePercentage,
                 formattedAssetPrice = formattedAssetPrice,
-                accountDetailSummary = accountDetailSummaryUseCase.getAccountDetailSummary(cachedAccountDetail.data)
+                accountDetailSummary = accountDetailSummaryUseCase.getAccountDetailSummary(accountAddress)
             )
         }.distinctUntilChanged()
     }

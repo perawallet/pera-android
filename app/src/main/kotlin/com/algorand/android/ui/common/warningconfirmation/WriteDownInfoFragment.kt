@@ -12,6 +12,8 @@
 
 package com.algorand.android.ui.common.warningconfirmation
 
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -84,8 +86,9 @@ class WriteDownInfoFragment : BaseInfoFragment() {
             modifier = modifier
         )
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier) =
+    override fun PrimaryButton(modifier: Modifier, bottomSheetState: BottomSheetScaffoldState) =
         PeraPrimaryButton(
             onClick = { onFirstButtonClicked() },
             modifier = modifier,

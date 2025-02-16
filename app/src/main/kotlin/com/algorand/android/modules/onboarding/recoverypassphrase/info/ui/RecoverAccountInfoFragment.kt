@@ -12,10 +12,20 @@
 
 package com.algorand.android.modules.onboarding.recoverypassphrase.info.ui
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
@@ -24,6 +34,7 @@ import com.algorand.android.ui.compose.widget.PeraDescriptionText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraTitleText
+import kotlinx.coroutines.launch
 
 class RecoverAccountInfoFragment : BaseInfoFragment() {
 
@@ -57,13 +68,44 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             text = stringResource(id = R.string.in_the_following)
         )
 
+    @ExperimentalMaterial3Api
     @Composable
-    override fun PrimaryButton(modifier: Modifier) =
+    override fun PrimaryButton(modifier: Modifier, bottomSheetState: BottomSheetScaffoldState) {
+        val coroutineScope = rememberCoroutineScope()
+
         PeraPrimaryButton(
             modifier = modifier,
-            onClick = { navigateToRecoverWithPassphraseFragment() },
+            onClick = {
+                coroutineScope.launch {
+                    if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Hidden) {
+                        bottomSheetState.bottomSheetState.expand()
+                    }
+                }
+            },
             text = stringResource(id = R.string.recover_an_algorand)
         )
+    }
+
+    @ExperimentalMaterial3Api
+    @Composable
+    override fun BottomSheetContent(bottomSheetState: BottomSheetScaffoldState) {
+        val coroutineScope = rememberCoroutineScope()
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(text = "This is the Recover Info bottom sheet content.")
+            Button(onClick = {
+                coroutineScope.launch {
+                    bottomSheetState.bottomSheetState.hide()
+                }
+            }) {
+                Text("Close")
+            }
+        }
+    }
 
     private fun navigateToRecoverWithPassphraseFragment() {
         nav(RecoverAccountInfoFragmentDirections.actionRecoverAccountInfoFragmentToRecoverWithPassphraseNavigation())

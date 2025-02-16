@@ -14,14 +14,16 @@ package com.algorand.android.ui.register.watch
 
 import android.os.Bundle
 import android.view.View
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
+import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.widget.PeraDescriptionText
@@ -79,8 +81,9 @@ class WatchAccountInfoFragment : BaseInfoFragment() {
             modifier = modifier
         )
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier) =
+    override fun PrimaryButton(modifier: Modifier, bottomSheetState: BottomSheetScaffoldState) =
         PeraPrimaryButton(
             onClick = { navigateToRegisterWatchAccountFragment() },
             modifier = modifier,

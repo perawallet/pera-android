@@ -24,13 +24,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.ui.compose.theme.PeraTheme
+import kotlinx.coroutines.launch
 
 abstract class BaseInfoFragment : DaggerBaseFragment(0) {
 
@@ -43,8 +53,9 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
     @Composable
     abstract fun Description(modifier: Modifier)
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    abstract fun PrimaryButton(modifier: Modifier)
+    abstract fun PrimaryButton(modifier: Modifier, bottomSheetState: BottomSheetScaffoldState)
 
     @Composable
     open fun Warning(modifier: Modifier) = Unit
@@ -55,6 +66,8 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
     @Composable
     open fun TopStartButton(modifier: Modifier) = Unit
 
+    @Suppress("LongMethod")
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -64,43 +77,85 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
         return ComposeView(requireContext()).apply {
             setContent {
                 PeraTheme {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState()) // equivalent to ScrollView
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .padding(start = 12.dp, top = 28.dp)
-                                .align(alignment = Alignment.Start)
-                                .fillMaxWidth(fraction = HALF_SIZE)
-                                .aspectRatio(ratio = 1F),
+                    val bottomSheetState = rememberBottomSheetScaffoldState(
+                        bottomSheetState = rememberStandardBottomSheetState(
+                            initialValue = SheetValue.PartiallyExpanded,
+                            skipHiddenState = false // Allow hidden state
                         )
-                        Title(
-                            modifier = Modifier
-                                .padding(start = 24.dp, end = 24.dp, top = 40.dp)
-                        )
-                        Description(
-                            modifier = Modifier
-                                .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 20.dp)
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        Warning(
-                            modifier = Modifier
-                                .padding(start = 24.dp, end = 24.dp, bottom = 20.dp)
-                        )
-                        PrimaryButton(
-                            modifier = Modifier
-                                .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
-                                .fillMaxWidth()
-                        )
-                        SecondaryButton(
-                            modifier = Modifier
-                                .padding(start = 24.dp, end = 24.dp, bottom = 32.dp)
-                                .fillMaxWidth()
-                        )
-                    }
+                    )
+
+                    BottomSheetScaffold(
+                        scaffoldState = bottomSheetState,
+                        sheetContent = {
+                            BottomSheetContent(bottomSheetState)
+                        },
+                        content = { paddingValues ->
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState()) // equivalent to ScrollView
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(start = 12.dp, top = 28.dp)
+                                        .align(alignment = Alignment.Start)
+                                        .fillMaxWidth(HALF_SIZE)
+                                        .aspectRatio(ratio = 1F),
+                                )
+                                Title(
+                                    modifier = Modifier
+                                        .padding(start = 24.dp, end = 24.dp, top = 40.dp)
+                                )
+                                Description(
+                                    modifier = Modifier
+                                        .padding(
+                                            start = 24.dp,
+                                            end = 24.dp,
+                                            top = 24.dp,
+                                            bottom = 20.dp
+                                        )
+                                )
+                                Spacer(modifier = Modifier.weight(1f))
+                                Warning(
+                                    modifier = Modifier
+                                        .padding(start = 24.dp, end = 24.dp, bottom = 20.dp)
+                                )
+                                PrimaryButton(
+                                    modifier = Modifier
+                                        .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
+                                        .fillMaxWidth(),
+                                    bottomSheetState = bottomSheetState
+                                )
+                                SecondaryButton(
+                                    modifier = Modifier
+                                        .padding(start = 24.dp, end = 24.dp, bottom = 32.dp)
+                                        .fillMaxWidth()
+                                )
+                            }
+                        }
+                    )
                 }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    open fun BottomSheetContent(bottomSheetState: BottomSheetScaffoldState) {
+        val coroutineScope = rememberCoroutineScope()
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(text = "This is the default bottom sheet content.")
+            Button(onClick = {
+                coroutineScope.launch {
+                    bottomSheetState.bottomSheetState.hide()
+                }
+            }) {
+                Text("Close")
             }
         }
     }

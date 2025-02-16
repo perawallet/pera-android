@@ -91,7 +91,7 @@ data class WalletConnectTransactionOperation(
         get() = transaction.signer.address?.decodedAddress.orEmpty()
 
     override val accountAuthAddress: String?
-        get() = transaction.authAddress
+        get() = transaction.transactionSigner?.address
 
     override val isRekeyedToAnotherAccount: Boolean
         get() = transaction.isRekeyedToAnotherAccount()

@@ -19,24 +19,21 @@ import com.algorand.android.models.BaseKeyRegTransaction.BaseOfflineKeyRegTransa
 import com.algorand.android.models.BaseKeyRegTransaction.BaseOnlineKeyRegTransaction.OnlineKeyRegTransaction
 import com.algorand.android.models.BaseKeyRegTransaction.BaseOnlineKeyRegTransaction.OnlineKeyRegTransactionWithRekey
 import com.algorand.android.models.WCAlgoTransactionRequest
-import com.algorand.android.models.WalletConnectAccount
-import com.algorand.android.models.WalletConnectAddress
 import com.algorand.android.models.WalletConnectPeerMeta
 import com.algorand.android.models.WalletConnectTransactionRequest
 import com.algorand.android.models.WalletConnectTransactionSigner
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.utils.extensions.mapNotBlank
+import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
+import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionSigner
 import javax.inject.Inject
 
 class KeyRegTransactionMapper @Inject constructor(
     private val errorProvider: WalletConnectErrorProvider,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getWalletConnectTransactionSigner: GetWalletConnectTransactionSigner,
+    private val createWalletConnectAccount: CreateWalletConnectAccount
 ) : BaseWalletConnectTransactionMapper() {
 
-    override fun createTransaction(
+    override suspend fun createTransaction(
         peerMeta: WalletConnectPeerMeta,
         transactionRequest: WalletConnectTransactionRequest,
         rawTxn: WCAlgoTransactionRequest
@@ -64,19 +61,16 @@ class KeyRegTransactionMapper @Inject constructor(
     private fun isOnlineKeyRegistrationTransaction(request: WalletConnectTransactionRequest): Boolean {
         return with(request) {
             !votePublicKey.isNullOrBlank() && !selectionPublicKey.isNullOrBlank() && voteKeyDilution != null &&
-                    voteFirstValidRound != null && voteLastValidRound != null
+                voteFirstValidRound != null && voteLastValidRound != null
         }
     }
 
-    private fun createOnlineKeyRegistrationTransaction(
+    private suspend fun createOnlineKeyRegistrationTransaction(
         peerMeta: WalletConnectPeerMeta,
         transactionRequest: WalletConnectTransactionRequest,
         rawTxn: WCAlgoTransactionRequest
     ): OnlineKeyRegTransaction? {
         val senderWCAddress = createWalletConnectAddress(transactionRequest.senderAddress) ?: return null
-        val accountData = senderWCAddress.decodedAddress?.mapNotBlank { safeAddress ->
-            accountDetailUseCase.getCachedAccountDetail(safeAddress)?.data
-        }
         val signer = WalletConnectTransactionSigner.create(rawTxn, senderWCAddress, errorProvider)
         return with(transactionRequest) {
             OnlineKeyRegTransaction(
@@ -86,29 +80,26 @@ class KeyRegTransactionMapper @Inject constructor(
                 senderAddress = senderWCAddress,
                 peerMeta = peerMeta,
                 signer = signer,
-                authAddress = getAuthAddress(accountData, signer),
                 groupId = groupId,
+                transactionSigner = getWalletConnectTransactionSigner(signer),
                 votePublicKey = votePublicKey ?: return null,
                 selectionPublicKey = selectionPublicKey ?: return null,
                 stateProofKey = stateProofPublicKey ?: return null,
                 voteFirstValidRound = voteFirstValidRound ?: return null,
                 voteLastValidRound = voteLastValidRound ?: return null,
                 voteKeyDilution = voteKeyDilution ?: return null,
-                fromAccount = createSenderAccountInformation(senderWCAddress)
+                fromAccount = createWalletConnectAccount(senderWCAddress)
             )
         }
     }
 
-    private fun createOnlineKeyRegistrationWithRekeyTransaction(
+    private suspend fun createOnlineKeyRegistrationWithRekeyTransaction(
         peerMeta: WalletConnectPeerMeta,
         transactionRequest: WalletConnectTransactionRequest,
         rawTxn: WCAlgoTransactionRequest
     ): OnlineKeyRegTransactionWithRekey? {
         return with(transactionRequest) {
             val senderWCAddress = createWalletConnectAddress(transactionRequest.senderAddress) ?: return null
-            val accountData = senderWCAddress.decodedAddress?.mapNotBlank { safeAddress ->
-                accountDetailUseCase.getCachedAccountDetail(safeAddress)?.data
-            }
             val signer = WalletConnectTransactionSigner.create(rawTxn, senderWCAddress, errorProvider)
             OnlineKeyRegTransactionWithRekey(
                 rawTransactionPayload = rawTxn,
@@ -117,7 +108,7 @@ class KeyRegTransactionMapper @Inject constructor(
                 senderAddress = senderWCAddress,
                 peerMeta = peerMeta,
                 signer = signer,
-                authAddress = getAuthAddress(accountData, signer),
+                transactionSigner = getWalletConnectTransactionSigner(signer),
                 groupId = groupId,
                 votePublicKey = votePublicKey ?: return null,
                 selectionPublicKey = selectionPublicKey ?: return null,
@@ -126,21 +117,18 @@ class KeyRegTransactionMapper @Inject constructor(
                 voteLastValidRound = voteLastValidRound ?: return null,
                 voteKeyDilution = voteKeyDilution ?: return null,
                 rekeyToAddress = createWalletConnectAddress(transactionRequest.rekeyAddress) ?: return null,
-                fromAccount = createSenderAccountInformation(senderWCAddress)
+                fromAccount = createWalletConnectAccount(senderWCAddress)
             )
         }
     }
 
-    private fun createOfflineKeyRegistrationTransaction(
+    private suspend fun createOfflineKeyRegistrationTransaction(
         peerMeta: WalletConnectPeerMeta,
         transactionRequest: WalletConnectTransactionRequest,
         rawTxn: WCAlgoTransactionRequest
     ): OfflineKeyRegTransaction? {
         return with(transactionRequest) {
             val senderWCAddress = createWalletConnectAddress(transactionRequest.senderAddress) ?: return null
-            val accountData = senderWCAddress.decodedAddress?.mapNotBlank { safeAddress ->
-                accountDetailUseCase.getCachedAccountDetail(safeAddress)?.data
-            }
             val signer = WalletConnectTransactionSigner.create(rawTxn, senderWCAddress, errorProvider)
             OfflineKeyRegTransaction(
                 rawTransactionPayload = rawTxn,
@@ -149,24 +137,21 @@ class KeyRegTransactionMapper @Inject constructor(
                 senderAddress = senderWCAddress,
                 peerMeta = peerMeta,
                 signer = signer,
-                authAddress = getAuthAddress(accountData, signer),
+                transactionSigner = getWalletConnectTransactionSigner(signer),
                 groupId = groupId,
                 nonParticipation = nonParticipation ?: DEFAULT_NON_PARTICIPATION,
-                fromAccount = createSenderAccountInformation(senderWCAddress)
+                fromAccount = createWalletConnectAccount(senderWCAddress)
             )
         }
     }
 
-    private fun createOfflineKeyRegistrationWithRekeyTransaction(
+    private suspend fun createOfflineKeyRegistrationWithRekeyTransaction(
         peerMeta: WalletConnectPeerMeta,
         transactionRequest: WalletConnectTransactionRequest,
         rawTxn: WCAlgoTransactionRequest
     ): OfflineKeyRegTransactionWithRekey? {
         return with(transactionRequest) {
             val senderWCAddress = createWalletConnectAddress(transactionRequest.senderAddress) ?: return null
-            val accountData = senderWCAddress.decodedAddress?.mapNotBlank { safeAddress ->
-                accountDetailUseCase.getCachedAccountDetail(safeAddress)?.data
-            }
             val signer = WalletConnectTransactionSigner.create(rawTxn, senderWCAddress, errorProvider)
             OfflineKeyRegTransactionWithRekey(
                 rawTransactionPayload = rawTxn,
@@ -175,25 +160,13 @@ class KeyRegTransactionMapper @Inject constructor(
                 senderAddress = senderWCAddress,
                 peerMeta = peerMeta,
                 signer = signer,
-                authAddress = getAuthAddress(accountData, signer),
+                transactionSigner = getWalletConnectTransactionSigner(signer),
                 groupId = groupId,
                 nonParticipation = nonParticipation ?: DEFAULT_NON_PARTICIPATION,
                 rekeyToAddress = createWalletConnectAddress(rekeyAddress) ?: return null,
-                fromAccount = createSenderAccountInformation(senderWCAddress)
+                fromAccount = createWalletConnectAccount(senderWCAddress)
             )
         }
-    }
-
-    private fun createSenderAccountInformation(senderWCAddress: WalletConnectAddress): WalletConnectAccount? {
-        val senderAccountData = senderWCAddress.decodedAddress?.mapNotBlank { safeAddress ->
-            accountDetailUseCase.getCachedAccountDetail(publicKey = safeAddress)?.data
-        }
-        return WalletConnectAccount.create(
-            account = senderAccountData?.account,
-            accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(
-                accountAddress = senderAccountData?.account?.address.orEmpty()
-            )
-        )
     }
 
     companion object {

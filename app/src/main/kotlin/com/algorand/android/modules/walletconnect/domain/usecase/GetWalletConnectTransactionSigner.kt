@@ -10,15 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.models
+package com.algorand.android.modules.walletconnect.domain.usecase
 
-import android.os.Parcelable
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import kotlinx.parcelize.Parcelize
+import com.algorand.android.models.WalletConnectTransactionSigner
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
 
-@Parcelize
-data class WalletConnectAccount(
-    val address: String,
-    var name: String = "",
-    val accountIconDrawablePreview: AccountIconDrawablePreview
-) : Parcelable
+fun interface GetWalletConnectTransactionSigner {
+    suspend operator fun invoke(signer: WalletConnectTransactionSigner): TransactionSigner?
+}

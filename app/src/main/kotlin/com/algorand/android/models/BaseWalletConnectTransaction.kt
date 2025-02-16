@@ -18,6 +18,7 @@ import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.decodeBase64
 import com.algorand.android.utils.isRekeyedToAnotherAccount
 import com.algorand.android.utils.isValidAddress
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import java.math.BigInteger
 
 abstract class BaseWalletConnectTransaction : Parcelable {
@@ -30,18 +31,18 @@ abstract class BaseWalletConnectTransaction : Parcelable {
     abstract val signer: WalletConnectTransactionSigner
     abstract val groupId: String?
     abstract val fee: Long
+    abstract val transactionSigner: TransactionSigner?
 
     var requestedBlockCurrentRound: Long = -1
 
     open val warningCount: Int? = null
 
-    open val authAddress: String? = null
     open val fromAccount: WalletConnectAccount? = null
     open val toAccount: WalletConnectAccount? = null
     open val assetInformation: WalletConnectAssetInformation? = null
 
     fun isRekeyedToAnotherAccount(): Boolean {
-        return isRekeyedToAnotherAccount(authAddress, fromAccount?.address)
+        return isRekeyedToAnotherAccount(transactionSigner?.address, fromAccount?.address)
     }
 
     fun getFromAccountIconResource(): AccountIconDrawablePreview? {

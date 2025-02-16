@@ -20,13 +20,13 @@ import com.algorand.android.models.WalletConnectAssetInformation
 import com.algorand.android.models.WalletConnectPeerMeta
 import com.algorand.android.models.WalletConnectTransactionRequest
 import com.algorand.android.models.WalletConnectTransactionSigner
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
 import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionSigner
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
 import com.algorand.android.utils.extensions.mapNotBlank
 import com.algorand.android.utils.multiplyOrZero
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import java.math.BigInteger
 import java.math.BigInteger.ZERO
 import javax.inject.Inject
@@ -35,8 +35,8 @@ import javax.inject.Inject
 @SuppressWarnings("ReturnCount")
 class AssetTransferTransactionMapper @Inject constructor(
     private val errorProvider: WalletConnectErrorProvider,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
+    private val getBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val walletConnectAssetInformationMapper: WalletConnectAssetInformationMapper,
     private val getWalletConnectTransactionSigner: GetWalletConnectTransactionSigner,
     private val createWalletConnectAccount: CreateWalletConnectAccount
@@ -78,11 +78,11 @@ class AssetTransferTransactionMapper @Inject constructor(
             val decodedAddress = senderWCAddress.decodedAddress ?: return null
             val assetId = assetId ?: return null
             val amount = assetAmount ?: ZERO
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, decodedAddress)
+            val ownedAsset = getBaseOwnedAssetData(decodedAddress, assetId)
             val assetInformation = createWalletConnectAssetInformation(ownedAsset, amount)
             val signer = WalletConnectTransactionSigner.create(rawTransaction, senderWCAddress, errorProvider)
             val isLocalAccountSigner = signer.address?.decodedAddress?.mapNotBlank { safeAddress ->
-                accountDetailUseCase.isThereAnyAccountWithPublicKey(safeAddress)
+                isThereAnyAccountWithAddress(safeAddress)
             } ?: false
             BaseAssetTransferTransaction.AssetTransferTransactionWithClose(
                 rawTransactionPayload = rawTransaction,
@@ -114,11 +114,11 @@ class AssetTransferTransactionMapper @Inject constructor(
             val decodedAddress = senderWCAddress.decodedAddress ?: return null
             val assetId = assetId ?: return null
             val amount = assetAmount ?: ZERO
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, decodedAddress)
+            val ownedAsset = getBaseOwnedAssetData(decodedAddress, assetId)
             val assetInformation = createWalletConnectAssetInformation(ownedAsset, amount)
             val signer = WalletConnectTransactionSigner.create(rawTransaction, senderWCAddress, errorProvider)
             val isLocalAccountSigner = signer.address?.decodedAddress?.mapNotBlank { safeAddress ->
-                accountDetailUseCase.isThereAnyAccountWithPublicKey(safeAddress)
+                isThereAnyAccountWithAddress(safeAddress)
             } ?: false
             BaseAssetTransferTransaction.AssetTransferTransactionWithRekey(
                 rawTransactionPayload = rawTransaction,
@@ -150,11 +150,11 @@ class AssetTransferTransactionMapper @Inject constructor(
             val decodedAddress = senderWCAddress.decodedAddress ?: return null
             val assetId = assetId ?: return null
             val amount = assetAmount ?: ZERO
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, decodedAddress)
+            val ownedAsset = getBaseOwnedAssetData(decodedAddress, assetId)
             val assetInformation = createWalletConnectAssetInformation(ownedAsset, amount)
             val signer = WalletConnectTransactionSigner.create(rawTransaction, senderWCAddress, errorProvider)
             val isLocalAccountSigner = signer.address?.decodedAddress?.mapNotBlank { safeAddress ->
-                accountDetailUseCase.isThereAnyAccountWithPublicKey(safeAddress)
+                isThereAnyAccountWithAddress(safeAddress)
             } ?: false
             BaseAssetTransferTransaction.AssetTransferTransactionWithRekeyAndClose(
                 rawTransactionPayload = rawTransaction,
@@ -188,7 +188,7 @@ class AssetTransferTransactionMapper @Inject constructor(
             val receiverWCAddress = createWalletConnectAddress(assetReceiverAddress) ?: return null
             val assetId = assetId ?: return null
             val amount = assetAmount ?: ZERO
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, senderDecodedAddress)
+            val ownedAsset = getBaseOwnedAssetData(senderDecodedAddress, assetId)
             val signer = WalletConnectTransactionSigner.create(rawTransaction, senderWCAddress, errorProvider)
             val assetInformation = createWalletConnectAssetInformation(ownedAsset, amount)
             BaseAssetTransferTransaction.AssetTransferTransaction(
@@ -221,7 +221,7 @@ class AssetTransferTransactionMapper @Inject constructor(
             val receiverWCAddress = createWalletConnectAddress(assetReceiverAddress) ?: return null
             val assetId = assetId ?: return null
             val amount = assetAmount ?: ZERO
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, senderDecodedAddress)
+            val ownedAsset = getBaseOwnedAssetData(senderDecodedAddress, assetId)
             val assetInformation = createWalletConnectAssetInformation(ownedAsset, amount)
             val signer = WalletConnectTransactionSigner.create(rawTransaction, senderWCAddress, errorProvider)
             BaseAssetTransferTransaction.AssetOptInTransaction(

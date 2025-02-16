@@ -21,10 +21,10 @@ import com.algorand.android.models.WalletConnectAssetInformation
 import com.algorand.android.models.WalletConnectPeerMeta
 import com.algorand.android.models.WalletConnectTransactionRequest
 import com.algorand.android.models.WalletConnectTransactionSigner
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
 import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionSigner
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
 import com.algorand.android.utils.extensions.mapNotBlank
 import com.algorand.android.utils.multiplyOrZero
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
@@ -36,7 +36,7 @@ import javax.inject.Inject
 class PaymentTransactionMapper @Inject constructor(
     private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
     private val errorProvider: WalletConnectErrorProvider,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
+    private val getBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val walletConnectAssetInformationMapper: WalletConnectAssetInformationMapper,
     private val getWalletConnectTransactionSigner: GetWalletConnectTransactionSigner,
     private val createWalletConnectAccount: CreateWalletConnectAccount
@@ -72,7 +72,7 @@ class PaymentTransactionMapper @Inject constructor(
             val senderWCAddress = createWalletConnectAddress(senderAddress) ?: return null
             val senderDecodedAddress = senderWCAddress.decodedAddress ?: return null
             val amount = amount ?: BigInteger.ZERO
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(ALGO_ID, senderDecodedAddress)
+            val ownedAsset = getBaseOwnedAssetData(senderDecodedAddress, ALGO_ID)
             val walletConnectAssetInformation = createWalletConnectAssetInformation(ownedAsset, amount)
             val signer = WalletConnectTransactionSigner.create(rawTransaction, senderWCAddress, errorProvider)
             val isLocalAccountSigner = signer.address?.decodedAddress?.mapNotBlank { safeAddress ->
@@ -107,7 +107,7 @@ class PaymentTransactionMapper @Inject constructor(
             val senderWCAddress = createWalletConnectAddress(senderAddress) ?: return null
             val senderDecodedAddress = senderWCAddress.decodedAddress ?: return null
             val amount = amount ?: BigInteger.ZERO
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(ALGO_ID, senderDecodedAddress)
+            val ownedAsset = getBaseOwnedAssetData(senderDecodedAddress, ALGO_ID)
             val walletConnectAssetInformation = createWalletConnectAssetInformation(ownedAsset, amount)
             val signer = WalletConnectTransactionSigner.create(rawTransaction, senderWCAddress, errorProvider)
             val isLocalAccountSigner = signer.address?.decodedAddress?.mapNotBlank { safeAddress ->
@@ -141,7 +141,7 @@ class PaymentTransactionMapper @Inject constructor(
             val senderWCAddress = createWalletConnectAddress(senderAddress) ?: return null
             val senderDecodedAddress = senderWCAddress.decodedAddress ?: return null
             val amount = amount ?: BigInteger.ZERO
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(ALGO_ID, senderDecodedAddress)
+            val ownedAsset = getBaseOwnedAssetData(senderDecodedAddress, ALGO_ID)
             val walletConnectAssetInformation = createWalletConnectAssetInformation(ownedAsset, amount)
             val signer = WalletConnectTransactionSigner.create(rawTransaction, senderWCAddress, errorProvider)
             val isLocalAccountSigner = signer.address?.decodedAddress?.mapNotBlank { safeAddress ->
@@ -176,7 +176,7 @@ class PaymentTransactionMapper @Inject constructor(
             val senderDecodedAddress = senderWCAddress.decodedAddress ?: return null
             val receiverWCAddress = createWalletConnectAddress(receiverAddress) ?: return null
             val amount = amount ?: BigInteger.ZERO
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(ALGO_ID, senderDecodedAddress)
+            val ownedAsset = getBaseOwnedAssetData(senderDecodedAddress, ALGO_ID)
             val walletConnectAssetInformation = createWalletConnectAssetInformation(ownedAsset, amount)
             val signer = WalletConnectTransactionSigner.create(rawTransaction, senderWCAddress, errorProvider)
             BasePaymentTransaction.PaymentTransaction(

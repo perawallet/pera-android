@@ -23,10 +23,10 @@ import com.algorand.android.models.WalletConnectAssetInformation
 import com.algorand.android.models.WalletConnectPeerMeta
 import com.algorand.android.models.WalletConnectTransactionRequest
 import com.algorand.android.models.WalletConnectTransactionSigner
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.modules.walletconnect.domain.usecase.CreateWalletConnectAccount
 import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnectTransactionSigner
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
 import com.algorand.android.utils.extensions.mapNotBlank
 import com.algorand.android.utils.multiplyOrZero
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
@@ -38,9 +38,9 @@ class BaseAssetDeletionTransactionMapper @Inject constructor(
     private val errorProvider: WalletConnectErrorProvider,
     private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
     private val walletConnectAssetInformationMapper: WalletConnectAssetInformationMapper,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
+    private val getBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val getWalletConnectTransactionSigner: GetWalletConnectTransactionSigner,
-    private val createWalletConnectAccount: CreateWalletConnectAccount
+    private val createWalletConnectAccount: CreateWalletConnectAccount,
 ) : BaseWalletConnectTransactionMapper() {
 
     override suspend fun createTransaction(
@@ -74,9 +74,9 @@ class BaseAssetDeletionTransactionMapper @Inject constructor(
             val decodedAddress = senderWalletConnectAddress.decodedAddress ?: return null
             val safeAmount = amount ?: BigInteger.ZERO
             if (assetIdBeingConfigured == null) return null
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(
+            val ownedAsset = getBaseOwnedAssetData(
                 assetId = assetIdBeingConfigured,
-                publicKey = decodedAddress
+                address = decodedAddress
             )
             val assetInformation = createWalletConnectAssetInformation(ownedAsset, safeAmount)
             val signer = WalletConnectTransactionSigner.create(rawTxn, senderWalletConnectAddress, errorProvider)
@@ -111,9 +111,9 @@ class BaseAssetDeletionTransactionMapper @Inject constructor(
             val decodedAddress = senderWalletConnectAddress.decodedAddress ?: return null
             val safeAmount = amount ?: BigInteger.ZERO
             if (assetIdBeingConfigured == null) return null
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(
+            val ownedAsset = getBaseOwnedAssetData(
                 assetId = assetIdBeingConfigured,
-                publicKey = decodedAddress
+                address = decodedAddress
             )
             val assetInformation = createWalletConnectAssetInformation(ownedAsset, safeAmount)
             val signer = WalletConnectTransactionSigner.create(rawTxn, senderWalletConnectAddress, errorProvider)
@@ -149,9 +149,9 @@ class BaseAssetDeletionTransactionMapper @Inject constructor(
             val decodedAddress = senderWalletConnectAddress.decodedAddress ?: return null
             val safeAmount = amount ?: BigInteger.ZERO
             if (assetIdBeingConfigured == null) return null
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(
+            val ownedAsset = getBaseOwnedAssetData(
                 assetId = assetIdBeingConfigured,
-                publicKey = decodedAddress
+                address = decodedAddress
             )
             val assetInformation = createWalletConnectAssetInformation(ownedAsset, safeAmount)
             val signer = WalletConnectTransactionSigner.create(rawTxn, senderWalletConnectAddress, errorProvider)
@@ -188,9 +188,9 @@ class BaseAssetDeletionTransactionMapper @Inject constructor(
             val decodedAddress = senderWalletConnectAddress.decodedAddress ?: return null
             val safeAmount = amount ?: BigInteger.ZERO
             if (assetIdBeingConfigured == null) return null
-            val ownedAsset = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(
+            val ownedAsset = getBaseOwnedAssetData(
                 assetId = assetIdBeingConfigured,
-                publicKey = decodedAddress
+                address = decodedAddress
             )
             val assetInformation = createWalletConnectAssetInformation(ownedAsset, safeAmount)
             val signer = WalletConnectTransactionSigner.create(rawTxn, senderWalletConnectAddress, errorProvider)

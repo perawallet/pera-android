@@ -10,9 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.code.domain.usecase
+package com.algorand.wallet.account.core.domain.usecase
 
-import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalanceUseCase
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AppStateScheme
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation

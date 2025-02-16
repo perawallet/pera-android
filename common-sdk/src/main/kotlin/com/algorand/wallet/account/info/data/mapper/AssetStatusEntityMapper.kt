@@ -12,12 +12,9 @@
 
 package com.algorand.wallet.account.info.data.mapper
 
-import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
-import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
+import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 
-internal interface AssetHoldingEntityMapper {
-    operator fun invoke(address: String, response: AssetHoldingResponse): AssetHoldingEntity?
-    operator fun invoke(responses: List<Pair<String, AssetHoldingResponse>>): List<AssetHoldingEntity>
-    operator fun invoke(address: String, assetId: Long, status: AssetStatus): AssetHoldingEntity
+internal interface AssetStatusEntityMapper {
+    operator fun invoke(status: AssetStatus): AssetStatusEntity
 }

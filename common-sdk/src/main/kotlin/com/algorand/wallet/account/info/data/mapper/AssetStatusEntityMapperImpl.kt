@@ -12,12 +12,18 @@
 
 package com.algorand.wallet.account.info.data.mapper
 
-import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
-import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
+import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import com.algorand.wallet.account.info.domain.model.AssetStatus
+import javax.inject.Inject
 
-internal interface AssetHoldingEntityMapper {
-    operator fun invoke(address: String, response: AssetHoldingResponse): AssetHoldingEntity?
-    operator fun invoke(responses: List<Pair<String, AssetHoldingResponse>>): List<AssetHoldingEntity>
-    operator fun invoke(address: String, assetId: Long, status: AssetStatus): AssetHoldingEntity
+internal class AssetStatusEntityMapperImpl @Inject constructor() : AssetStatusEntityMapper {
+
+    override fun invoke(status: AssetStatus): AssetStatusEntity {
+        return when (status) {
+            AssetStatus.PENDING_FOR_REMOVAL -> AssetStatusEntity.PENDING_FOR_REMOVAL
+            AssetStatus.PENDING_FOR_ADDITION -> AssetStatusEntity.PENDING_FOR_ADDITION
+            AssetStatus.PENDING_FOR_SENDING -> AssetStatusEntity.PENDING_FOR_SENDING
+            AssetStatus.OWNED_BY_ACCOUNT -> AssetStatusEntity.OWNED_BY_ACCOUNT
+        }
+    }
 }

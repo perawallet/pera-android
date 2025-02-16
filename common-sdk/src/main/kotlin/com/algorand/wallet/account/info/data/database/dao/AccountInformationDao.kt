@@ -55,6 +55,9 @@ internal interface AccountInformationDao {
     @Query("SELECT MIN(last_fetched_round) FROM account_information WHERE created_at_round IS NOT NULL")
     suspend fun getEarliestLastFetchedRound(): Long?
 
+    @Query("SELECT auth_algo_address FROM account_information WHERE :address = algo_address")
+    suspend fun getRekeyAuthAddress(address: String): String?
+
     @Query("DELETE FROM account_information")
     suspend fun clearAll()
 }

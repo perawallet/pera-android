@@ -16,7 +16,6 @@ import android.content.Context
 import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
@@ -24,8 +23,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class AccountStatusDetailPreviewDecider @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase
+    @ApplicationContext private val context: Context
 ) {
 
     fun decideTitleString(accountType: AccountType?): String {

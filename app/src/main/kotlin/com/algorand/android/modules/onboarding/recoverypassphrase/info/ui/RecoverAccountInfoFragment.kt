@@ -43,10 +43,10 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.widget.PeraBodyText
-import com.algorand.android.ui.compose.widget.PeraHeadelineText
 import com.algorand.android.ui.compose.widget.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -73,7 +73,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Title(modifier: Modifier) =
-        PeraHeadelineText(
+        PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.recover_an_algorand)
         )
@@ -137,7 +137,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             }
             Spacer(Modifier.weight(0.1f))
 
-            PeraHeadlineText(
+            PeraTitleText(
                 text = "Select your Mnemonic type"
             )
             Spacer(Modifier.weight(1f))

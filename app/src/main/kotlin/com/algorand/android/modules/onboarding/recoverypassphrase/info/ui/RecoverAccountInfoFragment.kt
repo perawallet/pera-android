@@ -38,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
@@ -46,8 +47,10 @@ import com.algorand.android.ui.compose.widget.PeraDescriptionText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraTitleText
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class RecoverAccountInfoFragment : BaseInfoFragment() {
 
     private val toolbarConfiguration = ToolbarConfiguration(
@@ -57,6 +60,8 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
     override val fragmentConfiguration =
         FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+
+    private val recoveryAccountInfoViewModel by viewModels<RecoveryAccountInfoViewModel>()
 
     @Composable
     override fun Icon(modifier: Modifier) =
@@ -89,8 +94,12 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             modifier = modifier,
             onClick = {
                 coroutineScope.launch {
-                    if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Hidden) {
-                        bottomSheetState.bottomSheetState.expand()
+                    if (recoveryAccountInfoViewModel.isHdWalletToggleEnabled()) {
+                        if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Hidden) {
+                            bottomSheetState.bottomSheetState.expand()
+                        }
+                    } else {
+                        navigateToRecoverWithPassphraseFragment()
                     }
                 }
             },
@@ -149,7 +158,6 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 description = "Legacy format that is specific to Algorand ecosystem",
                 footer = "25 Key mnemonic keys",
                 onClick = {
-                    // onMnemonicTypeSelected("Algo25")
                     navigateToRecoverWithPassphraseFragment()
                     coroutineScope.launch {
                         bottomSheetState.bottomSheetState.hide()

@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.asb.importbackup.accountselection.utils
 
-import com.algorand.android.core.AccountManager
 import com.algorand.android.models.Account
 import com.algorand.android.modules.algosdk.cryptoutil.domain.usecase.IsAccountAddressMatchWithSecretKeyUseCase
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.mapper.AsbAccountImportResultMapper
@@ -21,15 +20,16 @@ import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
 import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
 import com.algorand.android.utils.extensions.decodeBase64ToByteArray
 import com.algorand.android.utils.isValidAddress
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import javax.inject.Inject
 
 class AsbAccountImportParser @Inject constructor(
-    private val accountManager: AccountManager,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
     private val asbAccountImportResultMapper: AsbAccountImportResultMapper,
     private val isAccountAddressMatchWithSecretKeyUseCase: IsAccountAddressMatchWithSecretKeyUseCase
 ) {
 
-    fun parseAsbImportedAccounts(
+    suspend fun parseAsbImportedAccounts(
         accountImportMap: List<Pair<String, BackupProtocolElement>>,
         unsupportedAccounts: List<BackupProtocolElement>?
     ): AsbAccountImportResult {
@@ -37,7 +37,7 @@ class AsbAccountImportParser @Inject constructor(
         val existingAccountList = mutableListOf<String>()
         val unsupportedAccountList = unsupportedAccounts?.mapNotNull { it.address }.orEmpty()
         accountImportMap.forEach { (accountAddress, _) ->
-            val isAccountAlreadyExist = accountManager.isThereAnyAccountWithPublicKey(accountAddress)
+            val isAccountAlreadyExist = isThereAnyAccountWithAddress(accountAddress)
             if (isAccountAlreadyExist) {
                 existingAccountList.add(accountAddress)
                 return@forEach

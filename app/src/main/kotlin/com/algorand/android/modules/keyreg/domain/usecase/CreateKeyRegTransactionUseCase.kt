@@ -108,6 +108,6 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
 
     private fun KeyRegTransactionDetail.isOnlineKeyRegTxn(): Boolean {
         return !voteKey.isNullOrBlank() && !selectionPublicKey.isNullOrBlank() && !voteFirstRound.isNullOrBlank() &&
-            !voteLastRound.isNullOrBlank() && !voteKeyDilution.isNullOrBlank()
+                !voteLastRound.isNullOrBlank() && !voteKeyDilution.isNullOrBlank()
     }
 }

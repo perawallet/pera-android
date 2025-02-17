@@ -21,14 +21,12 @@ class CoreCacheUseCase @Inject constructor(
     private val accountCacheManager: AccountCacheManager,
     private val accountDetailUseCase: AccountDetailUseCase,
     private val assetDetailUseCase: SimpleAssetDetailUseCase,
-    private val blockPollingUseCase: BlockPollingUseCase,
     private val simpleCollectibleUseCase: SimpleCollectibleUseCase,
     private val bannersUseCase: BannersUseCase
 ) {
 
     suspend fun handleNodeChange() {
         accountCacheManager.removeCachedData()
-        blockPollingUseCase.clearBlockCache()
         accountDetailUseCase.clearAccountDetailCache()
         assetDetailUseCase.clearAssetDetailCache()
         simpleCollectibleUseCase.clearCollectibleCache()

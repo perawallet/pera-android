@@ -677,9 +677,6 @@
             app:popUpTo="@id/contactInfoFragment"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_contactInfoFragment_to_accountSelectionBottomSheet"
-            app:destination="@id/accountSelectionBottomSheet" />
-        <action
             android:id="@+id/action_contactInfoFragment_to_assetTransferAmountFragment"
             app:destination="@id/assetTransferAmountFragment" />
     </fragment>
@@ -1053,32 +1050,6 @@
         android:name="com.algorand.android.ui.settings.RateExperienceBottomSheet"
         android:label="RateExperienceBottomSheet"
         tools:layout="@layout/bottom_sheet_rate_experience" />
-
-    <dialog
-        android:id="@+id/accountSelectionBottomSheet"
-        android:name="com.algorand.android.ui.common.accountselector.AccountSelectionBottomSheet"
-        android:label="AccountSelectionBottomSheet"
-        tools:layout="@layout/bottom_sheet_account_selection">
-        <argument
-            android:name="assetId"
-            app:argType="long" />
-        <argument
-            android:name="titleResId"
-            app:argType="integer" />
-        <argument
-            android:name="showBalance"
-            android:defaultValue="true"
-            app:argType="boolean" />
-        <argument
-            android:name="selectedAccountAddress"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="showBackButton"
-            android:defaultValue="false"
-            app:argType="boolean" />
-    </dialog>
 
     <dialog
         android:id="@+id/renameAccountBottomSheet"

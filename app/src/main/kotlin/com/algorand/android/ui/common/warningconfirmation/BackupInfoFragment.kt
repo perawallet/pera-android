@@ -23,7 +23,6 @@ import androidx.navigation.fragment.navArgs
 import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.R
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
-import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
@@ -141,15 +140,15 @@ class BackupInfoFragment : BaseInfoFragment() {
     // TODO move this into util class
     private fun getAccountCreation(): AccountCreation? {
         try {
-            val secretKeyByteArray: ByteArray?
-            secretKeyByteArray = Sdk.generateSK()
+            val secretKeyByteArray: ByteArray = Sdk.generateSK()
             val publicKey = Sdk.generateAddressFromSK(secretKeyByteArray)
-            val tempAccount = Account.create(
-                publicKey = publicKey,
-                detail = Account.Detail.Standard(secretKeyByteArray),
-                isBackedUp = false
+            return AccountCreation(
+                address = publicKey,
+                customName = null,
+                isBackedUp = false,
+                type = AccountCreation.Type.Algo25(secretKeyByteArray),
+                creationType = CreationType.CREATE
             )
-            return AccountCreation(tempAccount, CreationType.CREATE)
         } catch (exception: Exception) {
             navBack()
         }

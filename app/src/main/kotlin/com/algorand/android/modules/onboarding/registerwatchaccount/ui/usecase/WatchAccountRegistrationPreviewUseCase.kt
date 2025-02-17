@@ -13,7 +13,6 @@
 package com.algorand.android.modules.onboarding.registerwatchaccount.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.nftdomain.domain.usecase.GetNftDomainSearchResultUseCase
 import com.algorand.android.modules.onboarding.registerwatchaccount.ui.mapper.BasePasteableWatchAccountItemMapper
@@ -49,13 +48,11 @@ class WatchAccountRegistrationPreviewUseCase @Inject constructor(
                 currentPreview.copy(showAccountAlreadyExistErrorEvent = Event(Unit))
             }
             else -> {
-                val tempAccount = Account.create(
-                    publicKey = accountAddress,
-                    detail = Account.Detail.Watch,
-                    accountName = nfDomainName.orEmpty()
-                )
                 val newAccount = AccountCreation(
-                    tempAccount = tempAccount,
+                    address = accountAddress,
+                    customName = nfDomainName.orEmpty(),
+                    isBackedUp = true,
+                    type = AccountCreation.Type.NoAuth,
                     creationType = CreationType.WATCH
                 )
                 currentPreview.copy(navToNameRegistrationEvent = Event(newAccount))

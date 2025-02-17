@@ -20,6 +20,8 @@ import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseBottomSheet
 import com.algorand.android.databinding.BottomSheetAccountDetailAccountsOptionsBinding
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.ui.accountoptions.model.AccountOptionsPreview
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.collectOnLifecycle
@@ -41,6 +43,17 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
 
     private val accountOptionsViewModel: AccountOptionsViewModel by viewModels()
 
+    private val accountOptionsPreviewCollector: suspend (AccountOptionsPreview?) -> Unit = { preview ->
+        preview?.run {
+            setupAuthAddressButton(isAuthAddressButtonVisible, authAddress)
+            setupViewPassphraseButton(isPassphraseButtonVisible)
+            setupCopyButton(accountAddress)
+            setupShowQrButton(accountAddress)
+            setupUndoRekeyOptionButton(isUndoRekeyButtonVisible, authAccountDisplayName)
+            setupRekeyToOptions(canSignTransaction)
+        }
+    }
+
     private val publicKey: String
         get() = args.publicKey
 
@@ -54,12 +67,6 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViewPassphraseButton()
-        setupCopyButton()
-        setupShowQrButton()
-        setupAuthAddressButton()
-        setupUndoRekeyOptionButton()
-        setupRekeyToOptions()
         setupRenameAccountButton()
         setupRemoveAccountButton()
         initObservers()
@@ -74,31 +81,33 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
             accountOptionsViewModel.notificationFilterCheckFlow,
             notificationFilterCheckCollector
         )
-    }
-
-    private fun setupUndoRekeyOptionButton() {
-        binding.undoRekeyConstraintLayout.apply {
-            setOnClickListener { navToUndoRekeyNavigation() }
-            isVisible = accountOptionsViewModel.isUndoRekeyPossible()
-        }
-        val authAccountDisplayName = accountOptionsViewModel.getAuthAccountDisplayName()
-        binding.rekeyedAccountTextView.text = context?.getString(
-            R.string.rekeyed_to_account_name,
-            authAccountDisplayName.getAccountPrimaryDisplayName()
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            accountOptionsViewModel.accountOptionsPreviewFlow,
+            accountOptionsPreviewCollector
         )
     }
 
-    private fun setupRekeyToOptions() {
-        val canAccountSignTransaction = accountOptionsViewModel.canAccountSignTransaction()
+    private fun setupUndoRekeyOptionButton(isUndoRekeyButtonVisible: Boolean, authAccDisplayName: AccountDisplayName?) {
+        binding.undoRekeyConstraintLayout.apply {
+            setOnClickListener { navToUndoRekeyNavigation() }
+            isVisible = isUndoRekeyButtonVisible
+        }
+        binding.rekeyedAccountTextView.text = context?.getString(
+            R.string.rekeyed_to_account_name,
+            authAccDisplayName?.primaryDisplayName.orEmpty()
+        )
+    }
+
+    private fun setupRekeyToOptions(canSignTransaction: Boolean) {
         binding.rekeyToLedgerAccountButton.apply {
-            isVisible = canAccountSignTransaction
+            isVisible = canSignTransaction
             setOnClickListener { navToRekeyToLedgerAccountFragment() }
         }
         binding.rekeyToStandardAccountButton.apply {
-            isVisible = canAccountSignTransaction
+            isVisible = canSignTransaction
             setOnClickListener { navToRekeyToStandardAccountFragment() }
         }
-        binding.rekeyDivider.isVisible = canAccountSignTransaction
+        binding.rekeyDivider.isVisible = canSignTransaction
     }
 
     private fun setupNotificationOptionButton(isMuted: Boolean) {
@@ -112,14 +121,14 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
         }
     }
 
-    private fun setupAuthAddressButton() {
-        if (accountOptionsViewModel.isRekeyedToAnotherAccount()) {
+    private fun setupAuthAddressButton(authAddressButtonVisible: Boolean, authAddress: String?) {
+        if (authAddressButtonVisible) {
             binding.authAddressButton.apply {
                 show()
                 setOnClickListener {
                     navToShowQrBottomSheet(
                         getString(R.string.auth_account_address),
-                        accountOptionsViewModel.getAuthAddress().orEmpty()
+                        authAddress.orEmpty()
                     )
                 }
             }
@@ -161,7 +170,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
         nav(
             AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToRenameAccountNavigation(
                 name = accountOptionsViewModel.getAccountName(),
-                publicKey = publicKey
+                publicKey = accountOptionsViewModel.getAccountAddress()
             )
         )
     }
@@ -178,8 +187,8 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
         }
     }
 
-    private fun setupViewPassphraseButton() {
-        if (accountOptionsViewModel.canDisplayPassphrases()) {
+    private fun setupViewPassphraseButton(isPassphraseButtonVisible: Boolean) {
+        if (isPassphraseButtonVisible) {
             binding.viewPassphraseButton.apply {
                 setOnClickListener { onViewPassphraseClicked() }
                 show()
@@ -187,19 +196,18 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
         }
     }
 
-    private fun setupCopyButton() {
+    private fun setupCopyButton(accountAddress: String) {
         with(binding) {
             copyAddressLayout.setOnClickListener {
-                val accountAddress = accountOptionsViewModel.getAccountAddress()
                 onAccountAddressCopied(accountAddress)
                 navBack()
             }
-            addressTextView.text = accountOptionsViewModel.getAccountAddress()
+            addressTextView.text = accountAddress
         }
     }
 
-    private fun setupShowQrButton() {
-        binding.showQrButton.setOnClickListener { navToShowQrBottomSheet(getString(R.string.qr_code), publicKey) }
+    private fun setupShowQrButton(accountAddress: String) {
+        binding.showQrButton.setOnClickListener { navToShowQrBottomSheet(getString(R.string.qr_code), accountAddress) }
     }
 
     private fun navToUndoRekeyNavigation() {

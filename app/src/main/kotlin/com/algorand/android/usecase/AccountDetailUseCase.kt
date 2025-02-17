@@ -29,14 +29,14 @@ import com.algorand.android.utils.extensions.getAssetStatusOrNull
 import com.algorand.android.utils.isRekeyedToAnotherAccount
 import com.algorand.android.utils.recordException
 import com.algorand.android.utils.toShortenedAddress
+import java.math.BigInteger
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
-import java.math.BigInteger
-import javax.inject.Inject
 
 class AccountDetailUseCase @Inject constructor(
     private val accountRepository: AccountRepository,
@@ -53,10 +53,6 @@ class AccountDetailUseCase @Inject constructor(
     }
 
     fun getCachedAccountDetails() = getAccountDetailCacheFlow().value.values
-
-    fun getCachedStandardAccountDetails() = getAccountDetailCacheFlow().value.values.filter {
-        it.data?.account?.detail is Account.Detail.Standard
-    }
 
     fun getCachedAccountDetail(publicKey: String): CacheResult<AccountDetail>? {
         return accountRepository.getCachedAccountDetail(publicKey)
@@ -91,10 +87,6 @@ class AccountDetailUseCase @Inject constructor(
         accountRepository.cacheAccountDetail(accountDetail)
     }
 
-    suspend fun cacheAccountDetail(accountPublicKey: String, accountDetail: CacheResult.Error<AccountDetail>) {
-        accountRepository.cacheAccountDetail(accountPublicKey, accountDetail)
-    }
-
     suspend fun cacheAccountDetails(accountDetailKeyValuePairList: List<Pair<String, CacheResult<AccountDetail>>>) {
         accountRepository.cacheAllAccountDetails(accountDetailKeyValuePairList)
     }
@@ -119,17 +111,6 @@ class AccountDetailUseCase @Inject constructor(
         }
     }
 
-    fun areAllAccountsCached(): Boolean {
-        return accountManager.accounts.value.size <= accountRepository.getAccountDetailCacheFlow().value.size
-    }
-
-    fun getCachedAccountsAssets(): Set<Long> {
-        return accountRepository.getAccountDetailCacheFlow().value
-            .mapNotNull { it.value.data?.accountInformation?.getAllAssetIds() }
-            .flatten()
-            .toSet()
-    }
-
     fun getCachedAccountAlgoAmount(publicKey: String): BigInteger? {
         return accountRepository.getCachedAccountDetail(publicKey)?.data?.accountInformation?.amount
     }
@@ -147,10 +128,7 @@ class AccountDetailUseCase @Inject constructor(
     fun isAuthAccountInDevice(accountAddress: String): Boolean {
         val accountAuthAddress = getAuthAddress(accountAddress) ?: return false
         val authAccountDetail = getCachedAccountDetail(accountAuthAddress)?.data ?: return false
-        if (canAccountSignTransaction(authAccountDetail.account.address)) {
-            return true
-        }
-        return false
+        return canAccountSignTransaction(authAccountDetail.account.address)
     }
 
     suspend fun fetchAccountDetail(account: Account): Flow<DataResource<AccountDetail>> {
@@ -172,13 +150,6 @@ class AccountDetailUseCase @Inject constructor(
                 else -> DataResource.Loading()
             }
         }
-    }
-
-    private fun isAccountRekeyed(accountDetail: AccountDetail?): Boolean {
-        return accountDetail?.run {
-            !accountInformation.rekeyAdminAddress.isNullOrBlank() &&
-                accountInformation.rekeyAdminAddress != account.address
-        } == true
     }
 
     fun getAccountType(publicKey: String): Account.Type? {
@@ -217,26 +188,6 @@ class AccountDetailUseCase @Inject constructor(
         return accountManager.isThereAnyAccountWithPublicKey(publicKey)
     }
 
-    fun isThereAnyCachedErrorAccount(excludeWatchAccounts: Boolean): Boolean {
-        val accountDetailCache = getCachedAccountDetails()
-        return accountDetailCache.any { cachedAccount ->
-            val isAccountFailed = cachedAccount is CacheResult.Error<*>
-            val isAccountNull = cachedAccount.data == null
-            val isAccountExcluded = excludeWatchAccounts.not()
-            isAccountFailed && isAccountNull && isAccountExcluded
-        }
-    }
-
-    fun isThereAnyCachedSuccessAccount(excludeWatchAccounts: Boolean): Boolean {
-        val accountDetailCache = getCachedAccountDetails()
-        return accountDetailCache.any { cachedAccount ->
-            val isAccountSucceeded = cachedAccount is CacheResult.Success<*>
-            val isAccountNotNull = cachedAccount.data != null
-            val isAccountExcluded = excludeWatchAccounts.not()
-            isAccountSucceeded && isAccountNotNull && isAccountExcluded
-        }
-    }
-
     fun isAccountCachedSuccessfully(accountAddress: String): Boolean {
         return accountRepository.getCachedAccountDetail(accountAddress) is CacheResult.Success
     }
@@ -252,11 +203,6 @@ class AccountDetailUseCase @Inject constructor(
     fun getAuthAccount(accountAddress: String?): CacheResult<AccountDetail>? {
         val authAccountAddress = getAuthAddress(accountAddress ?: return null) ?: return null
         return getCachedAccountDetail(authAccountAddress)
-    }
-
-    fun getCachedAccountSecretKey(accountAddress: String?): ByteArray? {
-        val safeAccountAddress = accountAddress ?: return null
-        return getCachedAccountDetail(safeAccountAddress)?.data?.account?.getSecretKey()
     }
 
     fun hasAccountAnyRekeyedAccount(accountAddress: String): Boolean {

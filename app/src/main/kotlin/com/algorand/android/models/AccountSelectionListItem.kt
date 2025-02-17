@@ -19,6 +19,7 @@ import com.algorand.android.modules.baseledgeraccountselection.accountselection.
 import com.algorand.android.utils.AccountDisplayName
 import kotlinx.parcelize.Parcelize
 
+// TODO Remove after refactoring LedgerInformationUseCase
 sealed class AccountSelectionListItem : RecyclerListItem, Parcelable {
 
     enum class ItemType {

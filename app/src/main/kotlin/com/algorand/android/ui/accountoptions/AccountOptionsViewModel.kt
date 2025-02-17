@@ -16,26 +16,25 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.database.NotificationFilterDao
-import com.algorand.android.models.WarningConfirmation
 import com.algorand.android.repository.NotificationRepository
+import com.algorand.android.ui.accountoptions.model.AccountOptionsPreview
 import com.algorand.android.usecase.AccountDeletionUseCase
-import com.algorand.android.usecase.AccountOptionsUseCase
 import com.algorand.android.usecase.SecurityUseCase
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AccountOptionsViewModel @Inject constructor(
     private val notificationFilterDao: NotificationFilterDao,
     private val notificationRepository: NotificationRepository,
-    private val accountOptionsUseCase: AccountOptionsUseCase,
     private val accountDeletionUseCase: AccountDeletionUseCase,
     private val securityUseCase: SecurityUseCase,
+    private val accountOptionsPreviewUseCase: AccountOptionsPreviewUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -43,9 +42,21 @@ class AccountOptionsViewModel @Inject constructor(
 
     val notificationFilterOperationFlow = MutableStateFlow<Resource<Unit>?>(null)
     val notificationFilterCheckFlow = MutableStateFlow<Boolean?>(null)
+    private val _accountOptionsPreviewFlow = MutableStateFlow<AccountOptionsPreview?>(null)
+    val accountOptionsPreviewFlow: StateFlow<AccountOptionsPreview?>
+        get() = _accountOptionsPreviewFlow
 
     init {
         checkIfNotificationFiltered()
+        initAccountOptionsPreview()
+    }
+
+    private fun initAccountOptionsPreview() {
+        viewModelScope.launch(Dispatchers.IO) {
+            accountOptionsPreviewUseCase.getPreview(publicKey)?.let {
+                _accountOptionsPreviewFlow.value = it
+            }
+        }
     }
 
     private fun checkIfNotificationFiltered() {
@@ -62,50 +73,22 @@ class AccountOptionsViewModel @Inject constructor(
         }
     }
 
-    fun isThereAnyAsset(): Boolean {
-        return accountOptionsUseCase.isThereAnyAsset(publicKey)
-    }
-
-    fun isRekeyedToAnotherAccount(): Boolean {
-        return accountOptionsUseCase.isAccountRekeyed(publicKey)
-    }
-
-    fun getAuthAddress(): String? {
-        return accountOptionsUseCase.getAuthAddress(publicKey)
-    }
-
     fun getAccountAddress(): String {
         return publicKey
     }
 
     fun canDisplayPassphrases(): Boolean {
-        return accountOptionsUseCase.canDisplayPassphrases(publicKey)
+        return _accountOptionsPreviewFlow.value?.isPassphraseButtonVisible == true
     }
 
     fun getAccountName(): String {
-        return accountOptionsUseCase.getAccountName(publicKey)
-    }
-
-    fun getRemovingAccountWarningConfirmationModel(): WarningConfirmation {
-        return accountOptionsUseCase.getRemovingAccountWarningConfirmationModel(publicKey)
+        return _accountOptionsPreviewFlow.value?.accountDisplayName?.primaryDisplayName.orEmpty()
     }
 
     fun removeAccount(address: String) {
         viewModelScope.launch(Dispatchers.IO) {
             accountDeletionUseCase.removeAccount(address)
         }
-    }
-
-    fun canAccountSignTransaction(): Boolean {
-        return accountOptionsUseCase.canAccountSignTransaction(publicKey)
-    }
-
-    fun getAuthAccountDisplayName(): AccountDisplayName {
-        return accountOptionsUseCase.getAuthAccountDisplayName(publicKey)
-    }
-
-    fun isUndoRekeyPossible(): Boolean {
-        return accountOptionsUseCase.isUndoRekeyPossible(publicKey)
     }
 
     fun isPinCodeEnabled(): Boolean {

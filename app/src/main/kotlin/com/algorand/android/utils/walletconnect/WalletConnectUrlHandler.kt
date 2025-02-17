@@ -13,18 +13,17 @@
 package com.algorand.android.utils.walletconnect
 
 import com.algorand.android.R
-import com.algorand.android.models.Account.Type.WATCH
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
-import com.algorand.android.utils.AccountCacheManager
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import javax.inject.Inject
 
 class WalletConnectUrlHandler @Inject constructor(
     private val walletConnectManager: WalletConnectManager,
-    private val accountCacheManager: AccountCacheManager
+    private val getAccountsDetail: GetAccountsDetails
 ) {
 
-    fun checkWalletConnectUrl(url: String, listener: Listener) {
+    suspend fun checkWalletConnectUrl(url: String, listener: Listener) {
         if (hasValidAccountForWalletConnect()) {
             if (!walletConnectManager.isValidWalletConnectUrl(url)) {
                 listener.onInvalidWalletConnectUrl(R.string.could_not_create_wallet_connect)
@@ -36,8 +35,10 @@ class WalletConnectUrlHandler @Inject constructor(
         }
     }
 
-    private fun hasValidAccountForWalletConnect(): Boolean {
-        return accountCacheManager.getAccountCacheWithSpecificAsset(ALGO_ID, listOf(WATCH)).isNotEmpty()
+    private suspend fun hasValidAccountForWalletConnect(): Boolean {
+        return getAccountsDetail().any {
+            it.accountType != null && it.accountType?.canSignTransaction() == true
+        }
     }
 
     interface Listener {

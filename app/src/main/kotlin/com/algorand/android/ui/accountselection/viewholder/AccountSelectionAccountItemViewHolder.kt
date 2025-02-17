@@ -29,8 +29,8 @@ class AccountSelectionAccountItemViewHolder(
         with(binding) {
             with(item.accountListItem.itemConfiguration) {
                 setAccountStartIconDrawable(accountIconDrawablePreview)
-                setAccountTitleText(accountDisplayName?.getAccountPrimaryDisplayName())
-                setAccountDescriptionText(accountDisplayName?.getAccountSecondaryDisplayName(root.resources))
+                setAccountTitleText(accountDisplayName?.primaryDisplayName)
+                setAccountDescriptionText(accountDisplayName?.secondaryDisplayName)
                 setAccountPrimaryValueText(primaryValueText)
                 setAccountSecondaryValueText(secondaryValueText)
             }

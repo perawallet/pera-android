@@ -12,17 +12,16 @@
 
 package com.algorand.android.deviceregistration.domain.usecase
 
-import com.algorand.android.core.AccountManager
 import com.algorand.android.deviceregistration.domain.mapper.DeviceRegistrationDTOMapper
 import com.algorand.android.deviceregistration.domain.model.DeviceRegistrationDTO
 import com.algorand.android.deviceregistration.domain.repository.UserDeviceIdRepository
 import com.algorand.android.models.Result
 import com.algorand.android.utils.DataResource
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import javax.inject.Inject
 import javax.inject.Named
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
 class RegisterDeviceIdUseCase @Inject constructor(
@@ -30,8 +29,8 @@ class RegisterDeviceIdUseCase @Inject constructor(
     private val userDeviceIdRepository: UserDeviceIdRepository,
     private val deviceRegisterDTOMapper: DeviceRegistrationDTOMapper,
     private val deviceIdUseCase: DeviceIdUseCase,
-    accountManager: AccountManager
-) : BaseDeviceIdOperationUseCase(accountManager) {
+    getLocalAccounts: GetLocalAccounts
+) : BaseDeviceIdOperationUseCase(getLocalAccounts) {
 
     fun registerDevice(token: String): Flow<DataResource<String>> = flow<DataResource<String>> {
         val deviceRegistrationDTO = getDeviceRegistrationDTO(token)
@@ -50,7 +49,7 @@ class RegisterDeviceIdUseCase @Inject constructor(
         }
     }
 
-    private fun getDeviceRegistrationDTO(token: String): DeviceRegistrationDTO {
+    private suspend fun getDeviceRegistrationDTO(token: String): DeviceRegistrationDTO {
         return deviceRegisterDTOMapper.mapToDeviceRegistrationDTO(
             token = token,
             accountPublicKeyList = getAccountPublicKeys(),

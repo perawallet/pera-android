@@ -12,19 +12,19 @@
 
 package com.algorand.android.ui.accountselection.receive
 
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.BaseAccountSelectionListItem
-import com.algorand.android.usecase.ReceiveAccountSelectionPreviewUseCase
+import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountItems
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ReceiveAccountSelectionViewModel @Inject constructor(
-    private val receiveAccountSelectionPreviewUseCase: ReceiveAccountSelectionPreviewUseCase
+    private val getAccountSelectionAccountItems: GetAccountSelectionAccountItems
 ) : ViewModel() {
 
     val accountItemsFlow: Flow<List<BaseAccountSelectionListItem>>
@@ -37,7 +37,11 @@ class ReceiveAccountSelectionViewModel @Inject constructor(
 
     private fun initAccountItems() {
         viewModelScope.launch {
-            _accountItemsFlow.emit(receiveAccountSelectionPreviewUseCase.getReceiveAccountSelectionPreview())
+            val accountSelectionItems = getAccountSelectionAccountItems(
+                showHoldings = true,
+                showFailedAccounts = true
+            )
+            _accountItemsFlow.emit(accountSelectionItems)
         }
     }
 }

@@ -37,3 +37,7 @@ object ParityUtils {
             .divide(assetOutAmountAsBigDecimal.movePointLeft(safeAssetDecimal), safeAssetDecimal, RoundingMode.DOWN)
     }
 }
+
+internal object ParityConstants {
+    const val SAFE_PARITY_DIVISION_DECIMALS = 10
+}

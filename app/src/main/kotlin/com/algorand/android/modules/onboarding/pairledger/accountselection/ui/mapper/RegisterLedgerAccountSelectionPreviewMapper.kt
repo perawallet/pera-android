@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.onboarding.pairledger.accountselection.ui.mapper
 
-import com.algorand.android.models.AccountSelectionListItem
 import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.model.RegisterLedgerAccountSelectionPreview
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import javax.inject.Inject
 
 class RegisterLedgerAccountSelectionPreviewMapper @Inject constructor() {

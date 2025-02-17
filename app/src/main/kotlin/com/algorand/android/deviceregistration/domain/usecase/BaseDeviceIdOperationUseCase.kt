@@ -13,13 +13,15 @@
 package com.algorand.android.deviceregistration.domain.usecase
 
 import com.algorand.android.BuildConfig
-import com.algorand.android.core.AccountManager
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import java.util.Locale
 
-open class BaseDeviceIdOperationUseCase(private val accountManager: AccountManager) {
+open class BaseDeviceIdOperationUseCase(
+    private val getLocalAccounts: GetLocalAccounts
+) {
 
-    protected fun getAccountPublicKeys(): List<String> {
-        return accountManager.getAccounts().map { account -> account.address }
+    protected suspend fun getAccountPublicKeys(): List<String> {
+        return getLocalAccounts().map { account -> account.algoAddress }
     }
 
     protected fun getLocaleLanguageCode(): String {

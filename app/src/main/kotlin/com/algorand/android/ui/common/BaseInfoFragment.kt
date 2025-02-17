@@ -16,7 +16,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -27,22 +26,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.ui.compose.theme.PeraTheme
-import kotlinx.coroutines.launch
 
 abstract class BaseInfoFragment : DaggerBaseFragment(0) {
 
@@ -91,12 +86,11 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
                         sheetContent = {
                             BottomSheetContent(bottomSheetState)
                         },
-                        sheetContainerColor = Color.Black,
-                        sheetContentColor = Color.White,
+                        sheetContainerColor = MaterialTheme.colorScheme.surface,
+                        sheetContentColor = MaterialTheme.colorScheme.onSurface,
                         content = { paddingValues ->
                             Column(
                                 modifier = Modifier
-                                    .background(Color.Black)
                                     .fillMaxSize()
                                     .verticalScroll(rememberScrollState()) // equivalent to ScrollView
                             ) {
@@ -146,24 +140,7 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    open fun BottomSheetContent(bottomSheetState: BottomSheetScaffoldState) {
-        val coroutineScope = rememberCoroutineScope()
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(text = "This is the default bottom sheet content.")
-            Button(onClick = {
-                coroutineScope.launch {
-                    bottomSheetState.bottomSheetState.hide()
-                }
-            }) {
-                Text("Close")
-            }
-        }
-    }
+    open fun BottomSheetContent(bottomSheetState: BottomSheetScaffoldState) = Unit
 
     companion object {
         const val HALF_SIZE = 0.5F

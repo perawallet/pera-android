@@ -9,6 +9,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
+package com.algorand.android.ui.compose.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,9 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.algorand.android.ui.compose.widget.PeraBodyText
-import com.algorand.android.ui.compose.widget.PeraLinkText
-import com.algorand.android.ui.compose.widget.PeraTitleText
 
 @SuppressWarnings("LongMethod")
 @Composable
@@ -91,12 +89,12 @@ fun MnemonicTypeCard(
                         .padding(start = 10.dp)
                         .size(40.dp)
                         .clip(shape = CircleShape)
-                        .background(color = MaterialTheme.colorScheme.tertiary)
+                        .background(color = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Icon(
                         modifier = Modifier.align(Alignment.Center),
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         contentDescription = "Right Arrow"
                     )
                 }

@@ -28,10 +28,15 @@ internal class GetWalletConnectTransactionSignerUseCase @Inject constructor(
 ) : GetWalletConnectTransactionSigner {
 
     override suspend fun invoke(signer: WalletConnectTransactionSigner): TransactionSigner? {
-        val address = signer.address?.decodedAddress ?: return null
         return when (signer) {
-            is WalletConnectTransactionSigner.Rekeyed -> getForcedSigner(address)
-            is WalletConnectTransactionSigner.Sender -> getTransactionSigner(address)
+            is WalletConnectTransactionSigner.Rekeyed -> {
+                val address = signer.address.decodedAddress ?: return null
+                getForcedSigner(address)
+            }
+            is WalletConnectTransactionSigner.Sender -> {
+                val address = signer.address.decodedAddress ?: return null
+                getTransactionSigner(address)
+            }
             else -> null
         }
     }
@@ -42,7 +47,7 @@ internal class GetWalletConnectTransactionSignerUseCase @Inject constructor(
             AccountRegistrationType.Algo25 -> TransactionSigner.Algo25(address)
             AccountRegistrationType.LedgerBle -> getLedgerSigner(address)
             AccountRegistrationType.NoAuth -> SignerNotFound.NoAuth(address)
-            AccountRegistrationType.HdKey -> TODO()
+            AccountRegistrationType.HdKey -> null // TODO
         }
     }
 

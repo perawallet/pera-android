@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.onboarding.recoverypassphrase.info.ui
 
-import MnemonicTypeCard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,14 +22,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +42,7 @@ import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
+import com.algorand.android.ui.compose.widget.MnemonicTypeCard
 import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.PeraIconBig
@@ -86,19 +87,18 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             text = stringResource(id = R.string.in_the_following)
         )
 
-    @ExperimentalMaterial3Api
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier, bottomSheetState: BottomSheetScaffoldState) {
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) {
         val coroutineScope = rememberCoroutineScope()
+        val showBottomSheet = rememberSaveable { mutableStateOf(false) }
 
         PeraPrimaryButton(
             modifier = modifier,
             onClick = {
                 coroutineScope.launch {
                     if (recoveryAccountInfoViewModel.isHdWalletToggleEnabled()) {
-                        if (bottomSheetState.bottomSheetState.currentValue == SheetValue.Hidden) {
-                            bottomSheetState.bottomSheetState.expand()
-                        }
+                        showBottomSheet.value = true
                     } else {
                         navigateToRecoverWithPassphraseFragment(
                             PassphraseKeywordUtils.ALGO25_WALLET_PASSPHRASES_WORD_COUNT
@@ -108,12 +108,23 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             },
             text = stringResource(id = R.string.recover_an_algorand)
         )
+
+        if (showBottomSheet.value) {
+            androidx.compose.material3.ModalBottomSheet(
+                onDismissRequest = { showBottomSheet.value = false },
+                sheetState = sheetState,
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            ) {
+                BottomSheetContent(sheetState)
+            }
+        }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Suppress("MagicNumber")
     @Composable
-    fun BottomSheetHeader(bottomSheetState: BottomSheetScaffoldState) {
+    fun BottomSheetHeader(sheetState: SheetState) {
         val coroutineScope = rememberCoroutineScope()
         Row(
             modifier = Modifier
@@ -129,7 +140,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             IconButton(
                 onClick = {
                     coroutineScope.launch {
-                        bottomSheetState.bottomSheetState.hide()
+                        sheetState.hide()
                     }
                 }) {
                 Icon(
@@ -149,7 +160,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun BottomSheetContent(bottomSheetState: BottomSheetScaffoldState) {
+    override fun BottomSheetContent(sheetState: SheetState) {
         val coroutineScope = rememberCoroutineScope()
         Column(
             modifier = Modifier
@@ -158,7 +169,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ) {
-            BottomSheetHeader(bottomSheetState)
+            BottomSheetHeader(sheetState)
 
             MnemonicTypeCard(
                 title = "Bip39",
@@ -169,7 +180,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                         PassphraseKeywordUtils.HD_WALLET_PASSPHRASES_WORD_COUNT
                     )
                     coroutineScope.launch {
-                        bottomSheetState.bottomSheetState.hide() // Use sheetState directly
+                        sheetState.hide()
                     }
                 }
             )
@@ -183,7 +194,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                         PassphraseKeywordUtils.ALGO25_WALLET_PASSPHRASES_WORD_COUNT
                     )
                     coroutineScope.launch {
-                        bottomSheetState.bottomSheetState.hide() // Use sheetState directly
+                        sheetState.hide()
                     }
                 }
             )

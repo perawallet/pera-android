@@ -3,8 +3,8 @@ package com.algorand.android.ui.compose.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
 private val lightScheme = lightColorScheme(
@@ -42,7 +42,7 @@ private val lightScheme = lightColorScheme(
     surfaceContainerLow = PeraColor.surfaceContainerLowLight,
     surfaceContainer = PeraColor.surfaceContainerLight,
     surfaceContainerHigh = PeraColor.surfaceContainerHighLight,
-    surfaceContainerHighest = PeraColor.surfaceContainerHighestLight
+    surfaceContainerHighest = PeraColor.surfaceContainerHighestLight,
 )
 
 private val darkScheme = darkColorScheme(
@@ -80,7 +80,7 @@ private val darkScheme = darkColorScheme(
     surfaceContainerLow = PeraColor.surfaceContainerLowDark,
     surfaceContainer = PeraColor.surfaceContainerDark,
     surfaceContainerHigh = PeraColor.surfaceContainerHighDark,
-    surfaceContainerHighest = PeraColor.surfaceContainerHighestDark
+    surfaceContainerHighest = PeraColor.surfaceContainerHighestDark,
 )
 
 @Composable

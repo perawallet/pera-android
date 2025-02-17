@@ -17,9 +17,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BottomSheetScaffoldState
@@ -28,24 +28,22 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraHeadelineText
 import com.algorand.android.ui.compose.widget.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -73,14 +71,14 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Title(modifier: Modifier) =
-        PeraTitleText(
+        PeraHeadelineText(
             modifier = modifier,
             text = stringResource(id = R.string.recover_an_algorand)
         )
 
     @Composable
     override fun Description(modifier: Modifier) =
-        PeraDescriptionText(
+        PeraBodyText(
             modifier = modifier,
             text = stringResource(id = R.string.in_the_following)
         )
@@ -107,6 +105,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
         )
     }
 
+    @SuppressWarnings("LongMethod")
     @ExperimentalMaterial3Api
     @Composable
     override fun BottomSheetContent(bottomSheetState: BottomSheetScaffoldState) {
@@ -114,38 +113,45 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .fillMaxWidth()
+                    .padding(
+                        start = 10.dp,
+                        end = 40.dp,
+                        bottom = 24.dp
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
             ) {
-                IconButton(onClick = {
-                    coroutineScope.launch {
-                        bottomSheetState.bottomSheetState.hide()
-                    }
-                }) {
+                IconButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            bottomSheetState.bottomSheetState.hide()
+                        }
+                    }) {
                     Icon(
                         imageVector = Icons.Filled.Close,
+                        tint = MaterialTheme.colorScheme.primary,
                         contentDescription = "Close"
                     )
                 }
-                Text(
-                    text = "Select your Mnemonic type",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                Spacer(Modifier.weight(HALF_SIZE))
+                PeraTitleText(
+                    text = "Select your Mnemonic type"
                 )
+                Spacer(Modifier.weight(HALF_SIZE))
             }
 
             MnemonicTypeCard(
-                title = "Bip39",
+                title = "BIP39",
                 description = "New inter-operable format that enables important features like HD Wallet",
                 footer = "24 Key mnemonic keys",
+                highlighted = "Recommended",
                 onClick = {
-                    // onMnemonicTypeSelected("Algo25")
                     navigateToRecoverWithPassphraseFragment()
                     coroutineScope.launch {
                         bottomSheetState.bottomSheetState.hide()
@@ -154,7 +160,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             )
 
             MnemonicTypeCard(
-                title = "Algo25",
+                title = "ALGO25",
                 description = "Legacy format that is specific to Algorand ecosystem",
                 footer = "25 Key mnemonic keys",
                 onClick = {

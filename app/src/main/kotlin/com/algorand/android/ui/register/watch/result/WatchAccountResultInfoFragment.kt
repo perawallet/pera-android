@@ -22,10 +22,10 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.ui.compose.widget.PeraHeadelineText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,13 +44,13 @@ class WatchAccountResultInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Title(modifier: Modifier) =
-        PeraTitleText(
+        PeraHeadelineText(
             modifier = modifier,
             text = stringResource(id = watchAccountResultInfoViewModel.getPreviewTitle())
         )
 
     @Composable
-    override fun Description(modifier: Modifier) = PeraDescriptionText(
+    override fun Description(modifier: Modifier) = PeraBodyText(
         text = stringResource(id = watchAccountResultInfoViewModel.getPreviewDescription()),
         modifier = modifier
     )

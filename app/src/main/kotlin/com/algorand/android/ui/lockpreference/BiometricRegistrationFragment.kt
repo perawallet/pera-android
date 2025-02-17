@@ -22,11 +22,11 @@ import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraSecondaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.ui.compose.widget.PeraHeadelineText
 import com.algorand.android.utils.alertDialog
 import com.algorand.android.utils.showBiometricAuthentication
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,14 +54,14 @@ class BiometricRegistrationFragment : BaseInfoFragment() {
 
     @Composable
     override fun Title(modifier: Modifier) =
-        PeraTitleText(
+        PeraHeadelineText(
             modifier = modifier,
             text = stringResource(id = R.string.enable_biometric_authentication)
         )
 
     @Composable
     override fun Description(modifier: Modifier) =
-        PeraDescriptionText(
+        PeraBodyText(
             modifier = modifier,
             text = stringResource(id = R.string.your_faceid_or_fingerprintid)
         )

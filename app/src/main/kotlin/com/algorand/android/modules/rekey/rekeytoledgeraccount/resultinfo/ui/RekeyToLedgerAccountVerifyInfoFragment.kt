@@ -23,10 +23,10 @@ import com.algorand.android.R
 import com.algorand.android.RekeyLedgerNavigationDirections
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.ui.compose.widget.PeraHeadelineText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -46,14 +46,14 @@ class RekeyToLedgerAccountVerifyInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Title(modifier: Modifier) =
-        PeraTitleText(
+        PeraHeadelineText(
             modifier = modifier,
             text = stringResource(id = R.string.account_successfully_rekeyed)
         )
 
     @Composable
     override fun Description(modifier: Modifier) =
-        PeraDescriptionText(
+        PeraBodyText(
             text = stringResource(
                 id = R.string.the_account_name_was_successfully_rekeyed_formatted,
                 rekeyToLedgerAccountVerifyInfoViewModel.accountDisplayName.getAccountPrimaryDisplayName()

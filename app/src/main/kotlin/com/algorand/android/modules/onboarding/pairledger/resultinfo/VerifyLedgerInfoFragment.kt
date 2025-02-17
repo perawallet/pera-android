@@ -28,7 +28,7 @@ import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraSecondaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.ui.compose.widget.PeraHeadelineText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,7 +47,7 @@ class VerifyLedgerInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) = PeraTitleText(
+    override fun Title(modifier: Modifier) = PeraHeadelineText(
         modifier = modifier,
         text = stringResource(id = verifyLedgerInfoViewModel.getPreviewTitle())
     )

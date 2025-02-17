@@ -11,11 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 
 @Composable
-fun PeraTitleText(modifier: Modifier, text: String) {
+fun PeraHeadelineText(modifier: Modifier = Modifier, text: String) {
     Text(
         modifier = modifier,
         text = text,
@@ -27,19 +28,44 @@ fun PeraTitleText(modifier: Modifier, text: String) {
 }
 
 @Composable
-fun PeraDescriptionText(modifier: Modifier, text: String) {
+fun PeraTitleText(modifier: Modifier = Modifier, text: String) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = MaterialTheme.typography.titleMedium,
+        fontFamily = peraSans,
+        color = MaterialTheme.colorScheme.primary,
+        fontWeight = FontWeight.Medium,
+    )
+}
+
+@Composable
+fun PeraBodyText(modifier: Modifier = Modifier, text: String) {
     Text(
         modifier = modifier,
         text = text,
         style = MaterialTheme.typography.bodyMedium,
         fontFamily = peraSans,
-        color = MaterialTheme.colorScheme.primary,
+        color = MaterialTheme.colorScheme.secondary,
+        fontWeight = FontWeight.Medium,
+        overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+fun PeraLinkText(modifier: Modifier = Modifier, text: String) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = MaterialTheme.typography.titleSmall,
+        fontFamily = peraSans,
+        color = MaterialTheme.colorScheme.outline,
         fontWeight = FontWeight.Medium
     )
 }
 
 @Composable
-fun PeraWarningText(modifier: Modifier, text: String) {
+fun PeraWarningText(modifier: Modifier = Modifier, text: String) {
     Row(modifier = modifier) {
         Image(
             modifier = Modifier.align(alignment = Alignment.CenterVertically),

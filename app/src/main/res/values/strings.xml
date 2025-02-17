@@ -264,7 +264,7 @@
     <string name="im_ready_to_begin">I\'m Ready to Begin</string>
     <string name="create_a_watch">Create a Watch Account</string>
     <string name="recover_an_algorand">Recover an Algorand account</string>
-    <string name="in_the_following">In the following steps, you\'ll enter your 25-word recovery passphrase to recover an Algorand account. Have your recovery phrase handy before you begin.</string>
+    <string name="in_the_following">In the following steps, you\'ll enter your recovery passphrase to recover an Algorand account. Have your recovery phrase handy before you begin.</string>
     <string name="finish_account_creation">Finish Account Creation</string>
     <string name="welcome_to_pera">Welcome to\nPera Wallet</string>
     <string name="i_want_to_monitor">I want to monitor an account that\'s held in cold storage.</string>

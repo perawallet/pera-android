@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -36,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import com.algorand.android.core.DaggerBaseFragment
@@ -79,7 +81,7 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
                 PeraTheme {
                     val bottomSheetState = rememberBottomSheetScaffoldState(
                         bottomSheetState = rememberStandardBottomSheetState(
-                            initialValue = SheetValue.PartiallyExpanded,
+                            initialValue = SheetValue.Hidden,
                             skipHiddenState = false // Allow hidden state
                         )
                     )
@@ -89,9 +91,12 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
                         sheetContent = {
                             BottomSheetContent(bottomSheetState)
                         },
+                        sheetContainerColor = Color.Black,
+                        sheetContentColor = Color.White,
                         content = { paddingValues ->
                             Column(
                                 modifier = Modifier
+                                    .background(Color.Black)
                                     .fillMaxSize()
                                     .verticalScroll(rememberScrollState()) // equivalent to ScrollView
                             ) {

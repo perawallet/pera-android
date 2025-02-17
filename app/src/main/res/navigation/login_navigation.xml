@@ -111,6 +111,11 @@
                 android:defaultValue="@null"
                 app:argType="string"
                 app:nullable="true" />
+            <argument
+                android:name="wordCount"
+                android:defaultValue="24"
+                app:argType="integer"
+                app:nullable="false" />
         </action>
     </fragment>
 

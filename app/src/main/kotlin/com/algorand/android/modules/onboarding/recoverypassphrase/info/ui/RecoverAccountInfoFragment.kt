@@ -47,6 +47,7 @@ import com.algorand.android.ui.compose.widget.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.utils.PassphraseKeywordUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -99,7 +100,9 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                             bottomSheetState.bottomSheetState.expand()
                         }
                     } else {
-                        navigateToRecoverWithPassphraseFragment()
+                        navigateToRecoverWithPassphraseFragment(
+                            PassphraseKeywordUtils.ALGO25_WALLET_PASSPHRASES_WORD_COUNT
+                        )
                     }
                 }
             },
@@ -162,8 +165,9 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 description = "New inter-operable format that enables important features like HD Wallet",
                 footer = "24 Key mnemonic keys",
                 onClick = {
-                    // onMnemonicTypeSelected("Algo25")
-                    navigateToRecoverWithPassphraseFragment()
+                    navigateToRecoverWithPassphraseFragment(
+                        PassphraseKeywordUtils.HD_WALLET_PASSPHRASES_WORD_COUNT
+                    )
                     coroutineScope.launch {
                         bottomSheetState.bottomSheetState.hide() // Use sheetState directly
                     }
@@ -175,7 +179,9 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 description = "Legacy format that is specific to Algorand ecosystem",
                 footer = "25 Key mnemonic keys",
                 onClick = {
-                    navigateToRecoverWithPassphraseFragment()
+                    navigateToRecoverWithPassphraseFragment(
+                        PassphraseKeywordUtils.ALGO25_WALLET_PASSPHRASES_WORD_COUNT
+                    )
                     coroutineScope.launch {
                         bottomSheetState.bottomSheetState.hide() // Use sheetState directly
                     }
@@ -184,7 +190,11 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
         }
     }
 
-    private fun navigateToRecoverWithPassphraseFragment() {
-        nav(RecoverAccountInfoFragmentDirections.actionRecoverAccountInfoFragmentToRecoverWithPassphraseNavigation())
+    private fun navigateToRecoverWithPassphraseFragment(wordCount: Int) {
+        nav(RecoverAccountInfoFragmentDirections
+            .actionRecoverAccountInfoFragmentToRecoverWithPassphraseNavigation(
+                mnemonic = null,
+                wordCount = wordCount)
+        )
     }
 }

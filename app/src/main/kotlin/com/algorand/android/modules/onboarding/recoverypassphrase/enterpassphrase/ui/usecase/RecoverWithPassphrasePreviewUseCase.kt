@@ -26,7 +26,8 @@ import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphras
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.model.RecoverWithPassphrasePreview
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.PassphraseKeywordUtils
-import com.algorand.android.utils.PassphraseKeywordUtils.ACCOUNT_PASSPHRASES_WORD_COUNT
+import com.algorand.android.utils.PassphraseKeywordUtils.ALGO25_WALLET_PASSPHRASES_WORD_COUNT
+import com.algorand.android.utils.PassphraseKeywordUtils.HD_WALLET_PASSPHRASES_WORD_COUNT
 import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
@@ -45,9 +46,11 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress
 ) {
 
-    fun getRecoverWithPassphraseInitialPreview(): RecoverWithPassphrasePreview {
+    fun getRecoverWithPassphraseInitialPreview(
+        wordCount: Int = ALGO25_WALLET_PASSPHRASES_WORD_COUNT
+    ): RecoverWithPassphrasePreview {
         val passphraseInputGroupConfiguration = passphraseInputGroupUseCase.createPassphraseInputGroupConfiguration(
-            itemCount = ACCOUNT_PASSPHRASES_WORD_COUNT
+            itemCount = wordCount
         )
         return recoverWithPassphrasePreviewMapper.mapToRecoverWithPassphrasePreview(
             passphraseInputGroupConfiguration = passphraseInputGroupConfiguration,
@@ -61,8 +64,11 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         clipboardData: String
     ): RecoverWithPassphrasePreview {
         val splittedText = clipboardData.splitMnemonic()
-        return if (splittedText.size != ACCOUNT_PASSPHRASES_WORD_COUNT) {
-            preview.copy(onGlobalErrorEvent = Event(R.string.the_last_copied_text))
+        return if (
+            splittedText.size != ALGO25_WALLET_PASSPHRASES_WORD_COUNT &&
+            splittedText.size != HD_WALLET_PASSPHRASES_WORD_COUNT
+            ) {
+                preview.copy(onGlobalErrorEvent = Event(R.string.the_last_copied_text))
         } else {
             val inputGroupConfiguration = passphraseInputGroupUseCase.recoverPassphraseInputGroupConfiguration(
                 configuration = preview.passphraseInputGroupConfiguration,

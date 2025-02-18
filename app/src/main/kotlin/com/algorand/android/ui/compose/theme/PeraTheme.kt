@@ -42,7 +42,7 @@ private val lightScheme = lightColorScheme(
     surfaceContainerLow = PeraColor.surfaceContainerLowLight,
     surfaceContainer = PeraColor.surfaceContainerLight,
     surfaceContainerHigh = PeraColor.surfaceContainerHighLight,
-    surfaceContainerHighest = PeraColor.surfaceContainerHighestLight,
+    surfaceContainerHighest = PeraColor.surfaceContainerHighestLight
 )
 
 private val darkScheme = darkColorScheme(
@@ -80,13 +80,13 @@ private val darkScheme = darkColorScheme(
     surfaceContainerLow = PeraColor.surfaceContainerLowDark,
     surfaceContainer = PeraColor.surfaceContainerDark,
     surfaceContainerHigh = PeraColor.surfaceContainerHighDark,
-    surfaceContainerHighest = PeraColor.surfaceContainerHighestDark,
+    surfaceContainerHighest = PeraColor.surfaceContainerHighestDark
 )
 
 @Composable
 fun PeraTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val colorScheme = when {
         darkTheme -> darkScheme

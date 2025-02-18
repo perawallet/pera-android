@@ -111,56 +111,27 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
         if (showBottomSheet.value) {
             androidx.compose.material3.ModalBottomSheet(
-                onDismissRequest = { showBottomSheet.value = false },
+                onDismissRequest = {
+                    showBottomSheet.value = false
+                },
                 sheetState = sheetState,
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.onSurface
             ) {
-                BottomSheetContent(sheetState)
-            }
-        }
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Suppress("MagicNumber")
-    @Composable
-    fun BottomSheetHeader(sheetState: SheetState) {
-        val coroutineScope = rememberCoroutineScope()
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = 10.dp,
-                    end = 40.dp,
-                    bottom = 24.dp
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            IconButton(
-                onClick = {
-                    coroutineScope.launch {
-                        sheetState.hide()
-                    }
-                }) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = "Close"
+                BottomSheetContent(
+                    sheetState = sheetState,
+                    onDismiss = { showBottomSheet.value = false }
                 )
             }
-            Spacer(Modifier.weight(0.1f))
-
-            PeraTitleText(
-                text = "Select your Mnemonic type"
-            )
-            Spacer(Modifier.weight(1f))
         }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun BottomSheetContent(sheetState: SheetState) {
+    override fun BottomSheetContent(
+        sheetState: SheetState,
+        onDismiss: () -> Unit
+    ) {
         val coroutineScope = rememberCoroutineScope()
         Column(
             modifier = Modifier
@@ -169,7 +140,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ) {
-            BottomSheetHeader(sheetState)
+            BottomSheetHeader(sheetState, onDismiss)
 
             MnemonicTypeCard(
                 title = "Bip39",
@@ -198,6 +169,47 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                     }
                 }
             )
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Suppress("MagicNumber")
+    @Composable
+    fun BottomSheetHeader(
+        sheetState: SheetState,
+        onDismiss: () -> Unit
+    ) {
+        val coroutineScope = rememberCoroutineScope()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 10.dp,
+                    end = 40.dp,
+                    bottom = 24.dp
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            IconButton(
+                onClick = {
+                    coroutineScope.launch {
+                        sheetState.hide()
+                        onDismiss()
+                    }
+                }) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = "Close"
+                )
+            }
+            Spacer(Modifier.weight(0.1f))
+
+            PeraTitleText(
+                text = "Select your Mnemonic type"
+            )
+            Spacer(Modifier.weight(1f))
         }
     }
 

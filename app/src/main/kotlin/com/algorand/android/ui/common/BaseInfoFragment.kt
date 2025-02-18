@@ -129,7 +129,10 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
                             containerColor = MaterialTheme.colorScheme.surface,
                             contentColor = MaterialTheme.colorScheme.onSurface
                         ) {
-                            BottomSheetContent(sheetState)
+                            BottomSheetContent(
+                                sheetState,
+                                { showBottomSheet.value = false }
+                            )
                         }
                     }
                 }
@@ -139,7 +142,7 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    open fun BottomSheetContent(sheetState: SheetState) = Unit
+    open fun BottomSheetContent(sheetState: SheetState, onDismiss: () -> Unit) = Unit
 
     companion object {
         const val HALF_SIZE = 0.5F

@@ -67,10 +67,8 @@ fun MnemonicTypeCard(
                     ) {
                         PeraBodyText(
                             modifier = Modifier.padding(
-                                start = 7.dp,
-                                end = 7.dp,
-                                top = 3.dp,
-                                bottom = 3.dp
+                                horizontal = 7.dp,
+                                vertical = 3.dp
                             ),
                             text = it
                         )
@@ -79,7 +77,7 @@ fun MnemonicTypeCard(
             }
 
             Row(
-                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                modifier = Modifier.padding(vertical = 16.dp),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {

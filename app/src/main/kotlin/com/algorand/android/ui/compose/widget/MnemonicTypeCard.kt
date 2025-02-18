@@ -63,7 +63,7 @@ fun MnemonicTypeCard(
                         modifier = Modifier
                             .padding(start = 10.dp)
                             .clip(shape = CircleShape)
-                            .background(color = MaterialTheme.colorScheme.tertiary)
+                            .background(color = MaterialTheme.colorScheme.surfaceVariant)
                     ) {
                         PeraBodyText(
                             modifier = Modifier.padding(

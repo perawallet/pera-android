@@ -269,7 +269,7 @@
     <string name="welcome_to_pera">Welcome to\nPera Wallet</string>
     <string name="i_want_to_monitor">I want to monitor an account that\'s held in cold storage.</string>
     <string name="recover">Recover</string>
-    <string name="the_last_copied_text">The last copied text is not valid passphrase with 24 or 25 words. Please copy valid passphrase and try again.</string>
+    <string name="the_last_copied_text">The last copied text is not a valid passphrase. Please copy a valid passphrase and try again.</string>
     <string name="make_sure_to_record">Make sure to record these words in the correct order, using the corresponding numbers.</string>
     <string name="this_6_digit_pin">This 6-digit PIN will be required to use the Pera Wallet. We highly recommend creating a PIN to help increase wallet security in the event your phone is stolen.</string>
     <string name="increase_your_security">Increase your security with a PIN</string>

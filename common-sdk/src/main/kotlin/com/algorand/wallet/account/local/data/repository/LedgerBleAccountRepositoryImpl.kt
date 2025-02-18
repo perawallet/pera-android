@@ -48,6 +48,12 @@ internal class LedgerBleAccountRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getAllAddresses(): List<String> {
+        return withContext(coroutineDispatcher) {
+            ledgerBleDao.getAllAddresses()
+        }
+    }
+
     override suspend fun getAccount(address: String): LedgerBle? {
         return withContext(coroutineDispatcher) {
             val ledgerBleEntity = ledgerBleDao.get(address)

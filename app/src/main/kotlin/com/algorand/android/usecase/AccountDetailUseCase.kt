@@ -165,17 +165,4 @@ class AccountDetailUseCase @Inject constructor(
             authAccountAddress == accountAddress && getAccountType(cachedAccountAddress) != Account.Type.WATCH
         }
     }
-
-    fun getRekeyedAccountAddresses(accountAddress: String): List<String> {
-        return getCachedAccountDetails().mapNotNull { accountDetail ->
-            val cachedAccountAddress = accountDetail.data?.account?.address ?: return@mapNotNull null
-            val authAccountDetail = getAuthAccount(cachedAccountAddress)?.data
-            val authAccountAddress = authAccountDetail?.account?.address
-            if (authAccountAddress == accountAddress && getAccountType(cachedAccountAddress) != Account.Type.WATCH) {
-                cachedAccountAddress
-            } else {
-                null
-            }
-        }
-    }
 }

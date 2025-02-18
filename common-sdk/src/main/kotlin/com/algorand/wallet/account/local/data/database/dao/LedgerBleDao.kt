@@ -31,6 +31,9 @@ internal interface LedgerBleDao {
     @Query("SELECT * FROM ledger_ble")
     suspend fun getAll(): List<LedgerBleEntity>
 
+    @Query("SELECT algo_address FROM ledger_ble")
+    suspend fun getAllAddresses(): List<String>
+
     @Query("SELECT * FROM ledger_ble")
     fun getAllAsFlow(): Flow<List<LedgerBleEntity>>
 

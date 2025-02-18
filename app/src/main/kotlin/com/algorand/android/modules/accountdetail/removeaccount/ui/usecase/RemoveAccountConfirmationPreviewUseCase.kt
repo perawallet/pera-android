@@ -19,11 +19,13 @@ import com.algorand.android.modules.accountdetail.removeaccount.ui.mapper.Remove
 import com.algorand.android.modules.accountdetail.removeaccount.ui.model.RemoveAccountConfirmationPreview
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.Event
+import com.algorand.wallet.account.detail.domain.usecase.GetLocalRekeyedAccountCount
 import javax.inject.Inject
 
 class RemoveAccountConfirmationPreviewUseCase @Inject constructor(
     private val accountDetailUseCase: AccountDetailUseCase,
-    private val removeAccountConfirmationPreviewMapper: RemoveAccountConfirmationPreviewMapper
+    private val removeAccountConfirmationPreviewMapper: RemoveAccountConfirmationPreviewMapper,
+    private val getLocalRekeyedAccountCount: GetLocalRekeyedAccountCount
 ) {
 
     fun getRemoveAccountConfirmationPreview(): RemoveAccountConfirmationPreview {
@@ -41,7 +43,7 @@ class RemoveAccountConfirmationPreviewUseCase @Inject constructor(
         }
     }
 
-    fun updatePreviewWithRemoveAccountConfirmation(
+    suspend fun updatePreviewWithRemoveAccountConfirmation(
         preview: RemoveAccountConfirmationPreview,
         accountAddress: String
     ): RemoveAccountConfirmationPreview {
@@ -55,13 +57,13 @@ class RemoveAccountConfirmationPreviewUseCase @Inject constructor(
             return preview.copy(navBackEvent = Event(true))
         }
 
-        val rekeyedAccountAddresses = accountDetailUseCase.getRekeyedAccountAddresses(accountAddress)
+        val rekeyedAccountCount = getLocalRekeyedAccountCount(accountAddress)
 
         return preview.copy(
             showGlobalErrorEvent = Event(
                 PluralAnnotatedString(
                     pluralStringResId = R.plurals.you_can_t_remove_this_account,
-                    quantity = rekeyedAccountAddresses.count()
+                    quantity = rekeyedAccountCount
                 )
             ),
             navBackEvent = Event(false)

@@ -48,6 +48,12 @@ internal class HdKeyAccountRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getAllAddresses(): List<String> {
+        return withContext(coroutineDispatcher) {
+            hdKeyDao.getAllAddresses()
+        }
+    }
+
     override suspend fun getAccount(address: String): HdKey? {
         return withContext(coroutineDispatcher) {
             hdKeyDao.get(address)?.let { hdKeyMapper(it) }

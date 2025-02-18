@@ -25,7 +25,6 @@ import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -33,6 +32,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class AccountInformationRepositoryImpl @Inject constructor(
     private val indexerApi: AccountInformationApiService,
@@ -165,6 +165,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
 
     override suspend fun getRekeyAuthAddress(address: String): String? {
         return accountInformationDao.getRekeyAuthAddress(address)
+    }
+
+    override suspend fun getFilteredRekeyedAccountCount(authAddress: String, algoAddresses: List<String>): Int {
+        return accountInformationDao.getAuthAccountCountFilteredByAddress(authAddress, algoAddresses)
     }
 
     companion object {

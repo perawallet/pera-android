@@ -85,6 +85,10 @@ fun interface GetLocalAccounts {
     suspend operator fun invoke(): List<LocalAccount>
 }
 
+fun interface GetLocalAccountsAddresses {
+    suspend operator fun invoke(): List<String>
+}
+
 fun interface GetLocalAccount {
     suspend operator fun invoke(address: String): LocalAccount?
 }

@@ -49,6 +49,8 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlowUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddressesUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetSecretKey
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
@@ -175,6 +177,11 @@ internal object LocalAccountsModule {
     fun provideGetLocalAccounts(
         useCase: GetLocalAccountsUseCase
     ): GetLocalAccounts = useCase
+
+    @Provides
+    fun provideGetLocalAccountsAddresses(
+        useCase: GetLocalAccountsAddressesUseCase
+    ): GetLocalAccountsAddresses = useCase
 
     @Provides
     fun provideGetLedgerBleAccount(repository: LedgerBleAccountRepository): GetLedgerBleAccount {

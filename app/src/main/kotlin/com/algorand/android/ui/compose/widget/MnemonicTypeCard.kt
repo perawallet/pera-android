@@ -108,7 +108,7 @@ fun MnemonicTypeCard(
 
 @Preview
 @Composable
-fun MnemonicTypeCardExample() {
+fun MnemonicTypeCardPreview() {
     MnemonicTypeCard(
         title = "Algo25",
         description = "Legacy format that is specific to Algorand ecosystem",

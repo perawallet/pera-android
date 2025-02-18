@@ -65,7 +65,7 @@ class BackupInfoFragment : BaseInfoFragment() {
     override fun Icon(modifier: Modifier) =
         PeraIconBig(
             painter = painterResource(id = R.drawable.ic_shield),
-            contentDescription = "shield",
+            contentDescription = stringResource(R.string.shield),
             modifier = modifier
         )
 

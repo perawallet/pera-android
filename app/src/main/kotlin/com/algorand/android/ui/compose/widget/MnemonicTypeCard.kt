@@ -30,8 +30,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.algorand.android.R
 
 @SuppressWarnings("LongMethod")
 @Composable
@@ -93,7 +95,7 @@ fun MnemonicTypeCard(
                         modifier = Modifier.align(Alignment.Center),
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        contentDescription = "Right Arrow"
+                        contentDescription = stringResource(id = R.string.right_arrow)
                     )
                 }
             }
@@ -106,9 +108,9 @@ fun MnemonicTypeCard(
 @Composable
 fun MnemonicTypeCardPreview() {
     MnemonicTypeCard(
-        title = "Algo25",
-        description = "Legacy format that is specific to Algorand ecosystem",
-        footer = "25 Key mnemonic keys",
+        title = stringResource(R.string.mnemonic_type_algo25_title),
+        description = stringResource(R.string.mnemonic_type_algo25_description),
+        footer = stringResource(R.string.mnemonic_type_algo25_footer),
         onClick = { }
     )
 }

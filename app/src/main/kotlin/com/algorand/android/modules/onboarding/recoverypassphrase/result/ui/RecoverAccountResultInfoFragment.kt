@@ -39,7 +39,7 @@ class RecoverAccountResultInfoFragment : BaseInfoFragment() {
     override fun Icon(modifier: Modifier) =
         PeraIconBig(
             painter = painterResource(id = R.drawable.ic_check),
-            contentDescription = "check",
+            contentDescription = stringResource(id = R.string.check),
             modifier = modifier
         )
 

@@ -48,7 +48,7 @@ class BiometricRegistrationFragment : BaseInfoFragment() {
     override fun Icon(modifier: Modifier) =
         PeraIconBig(
             painter = painterResource(id = R.drawable.ic_faceid),
-            contentDescription = "face id",
+            contentDescription = stringResource(R.string.face_id),
             modifier = modifier
         )
 

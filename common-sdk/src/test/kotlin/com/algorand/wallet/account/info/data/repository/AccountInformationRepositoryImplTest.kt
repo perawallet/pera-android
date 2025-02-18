@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.info.data.repository
 
+import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCache
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
 import com.algorand.wallet.account.info.data.mapper.AccountInformationMapper
@@ -35,6 +36,7 @@ class AccountInformationRepositoryImplTest {
     private val assetHoldingMapper: AssetHoldingMapper = mockk()
     private val assetStatusEntityMapper: AssetStatusEntityMapper = mockk()
     private val assetHoldingEntityMapper: AssetHoldingEntityMapper = mockk()
+    private val accountInformationErrorCache: AccountInformationErrorCache = mockk()
     private val sut = AccountInformationRepositoryImpl(
         indexerApi,
         accountInformationMapper,
@@ -44,7 +46,8 @@ class AccountInformationRepositoryImplTest {
         mockk(),
         mockk(),
         assetStatusEntityMapper,
-        assetHoldingEntityMapper
+        assetHoldingEntityMapper,
+        accountInformationErrorCache
     )
 
     @Test

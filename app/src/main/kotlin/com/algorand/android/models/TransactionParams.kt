@@ -20,7 +20,7 @@ data class TransactionParams(
     val minFee: Long?,
 
     @SerializedName("fee")
-    val fee: Long,
+    var fee: Long,
 
     @SerializedName("genesis-id")
     val genesisId: String,

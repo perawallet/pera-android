@@ -15,5 +15,7 @@ package com.algorand.android.modules.algosdk.domain.usecase
 import com.algorand.android.modules.algosdk.domain.model.OnlineKeyRegTransactionPayload
 
 interface BuildKeyRegOnlineTransaction {
-    operator fun invoke(params: OnlineKeyRegTransactionPayload): ByteArray?
+    operator fun invoke(
+        params: OnlineKeyRegTransactionPayload
+    ): ByteArray?
 }

@@ -18,6 +18,7 @@ import com.algorand.android.models.Result.Success
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.accounts.domain.usecase.GetAuthAddressOfAnAccount
 import com.algorand.android.modules.accounts.domain.usecase.IsSenderRekeyedToAnotherAccount
+import com.algorand.android.modules.algosdk.domain.model.OfflineKeyRegTransactionPayload
 import com.algorand.android.modules.algosdk.domain.model.OnlineKeyRegTransactionPayload
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOfflineTransaction
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOnlineTransaction
@@ -60,9 +61,18 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
         params: TransactionParams
     ): ByteArray? {
         return if (txnDetail.isOnlineKeyRegTxn()) {
-            buildKeyRegOnlineTransaction(txnDetail.toOnlineTxnPayload(params))
+            buildKeyRegOnlineTransaction(
+                params = txnDetail.toOnlineTxnPayload(txnDetail, params)
+            )
         } else {
-            buildKeyRegOfflineTransaction(txnDetail.address, txnDetail.note, params)
+            buildKeyRegOfflineTransaction(
+                OfflineKeyRegTransactionPayload(
+                    txnDetail.address,
+                    txnDetail.fee,
+                    txnDetail.note,
+                    params
+                )
+            )
         }
     }
 
@@ -78,7 +88,10 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
         )
     }
 
-    private fun KeyRegTransactionDetail.toOnlineTxnPayload(params: TransactionParams): OnlineKeyRegTransactionPayload {
+    private fun KeyRegTransactionDetail.toOnlineTxnPayload(
+        txnDetail: KeyRegTransactionDetail,
+        params: TransactionParams
+    ): OnlineKeyRegTransactionPayload {
         return OnlineKeyRegTransactionPayload(
             senderAddress = address,
             selectionPublicKey = selectionPublicKey.orEmpty(),
@@ -88,7 +101,8 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
             voteLastRound = voteLastRound.orEmpty(),
             voteKeyDilution = voteKeyDilution.orEmpty(),
             txnParams = params,
-            note = xnote ?: note
+            note = xnote ?: note,
+            flatFee = txnDetail.fee
         )
     }
 

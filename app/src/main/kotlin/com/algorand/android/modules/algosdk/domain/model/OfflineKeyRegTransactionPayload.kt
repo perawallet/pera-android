@@ -10,11 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.algosdk.domain.mapper
+package com.algorand.android.modules.algosdk.domain.model
 
-import com.algorand.algosdk.v2.client.model.TransactionParametersResponse
 import com.algorand.android.models.TransactionParams
+import java.math.BigInteger
 
-internal interface TransactionParametersResponseMapper {
-    operator fun invoke(params: TransactionParams): TransactionParametersResponse
-}
+data class OfflineKeyRegTransactionPayload(
+    val senderAddress: String,
+    val flatFee: BigInteger?,
+    val note: String?,
+    val txnParams: TransactionParams
+)

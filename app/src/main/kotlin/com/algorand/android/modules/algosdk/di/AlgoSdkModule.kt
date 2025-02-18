@@ -12,8 +12,6 @@
 
 package com.algorand.android.modules.algosdk.di
 
-import com.algorand.android.modules.algosdk.domain.mapper.TransactionParametersResponseMapper
-import com.algorand.android.modules.algosdk.domain.mapper.TransactionParametersResponseMapperImpl
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOfflineTransaction
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOfflineTransactionImpl
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOnlineTransaction
@@ -36,9 +34,4 @@ internal object AlgoSdkModule {
     fun provideBuildKeyRegOfflineTransaction(
         impl: BuildKeyRegOfflineTransactionImpl
     ): BuildKeyRegOfflineTransaction = impl
-
-    @Provides
-    fun provideTransactionParametersResponseMapper(
-        impl: TransactionParametersResponseMapperImpl
-    ): TransactionParametersResponseMapper = impl
 }

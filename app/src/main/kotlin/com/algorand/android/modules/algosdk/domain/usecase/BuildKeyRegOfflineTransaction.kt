@@ -12,8 +12,10 @@
 
 package com.algorand.android.modules.algosdk.domain.usecase
 
-import com.algorand.android.models.TransactionParams
+import com.algorand.android.modules.algosdk.domain.model.OfflineKeyRegTransactionPayload
 
 interface BuildKeyRegOfflineTransaction {
-    operator fun invoke(address: String, note: String?, txnParams: TransactionParams): ByteArray?
+    operator fun invoke(
+        payload: OfflineKeyRegTransactionPayload
+    ): ByteArray?
 }

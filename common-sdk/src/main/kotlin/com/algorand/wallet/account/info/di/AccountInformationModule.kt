@@ -53,6 +53,7 @@ import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStat
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAuthAddress
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAllAssetHoldingIds
 import com.algorand.wallet.account.info.domain.usecase.GetAllFailedCachedAccountAddresses
@@ -280,4 +281,9 @@ internal object AccountInformationModule {
     ): GetAllFailedCachedAccountAddresses {
         return GetAllFailedCachedAccountAddresses(repository::getFailedAccountInformation)
     }
+
+    @Provides
+    fun provideGetAccountRekeyAuthAddress(
+        repository: AccountInformationRepository
+    ): GetAccountRekeyAuthAddress = GetAccountRekeyAuthAddress(repository::getRekeyAuthAddress)
 }

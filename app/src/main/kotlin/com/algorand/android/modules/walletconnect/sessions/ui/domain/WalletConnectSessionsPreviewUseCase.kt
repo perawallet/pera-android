@@ -13,7 +13,6 @@
 package com.algorand.android.modules.walletconnect.sessions.ui.domain
 
 import androidx.core.net.toUri
-import com.algorand.android.modules.walletconnect.connectedapps.ui.mapper.WalletConnectSessionItemMapper
 import com.algorand.android.modules.walletconnect.domain.ConnectToExistingSessionUseCase
 import com.algorand.android.modules.walletconnect.domain.KillAllWalletConnectSessionsUseCase
 import com.algorand.android.modules.walletconnect.domain.KillWalletConnectSessionUseCase
@@ -24,7 +23,6 @@ import com.algorand.android.modules.walletconnect.sessions.ui.mapper.WalletConne
 import com.algorand.android.modules.walletconnect.sessions.ui.model.BaseWalletConnectSessionItem
 import com.algorand.android.modules.walletconnect.sessions.ui.model.WalletConnectSessionsPreview
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.formatAsDateAndTime
 import com.algorand.android.utils.getZonedDateTimeFromSec
 import javax.inject.Inject
@@ -35,9 +33,7 @@ class WalletConnectSessionsPreviewUseCase @Inject constructor(
     private val killWalletConnectSessionUseCase: KillWalletConnectSessionUseCase,
     private val connectToExistingSessionUseCase: ConnectToExistingSessionUseCase,
     private val killAllWalletConnectSessionsUseCase: KillAllWalletConnectSessionsUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val walletConnectSessionsPreviewMapper: WalletConnectSessionsPreviewMapper,
-    private val walletConnectSessionItemMapper: WalletConnectSessionItemMapper,
     private val walletConnectManager: WalletConnectManager,
     private val baseWalletConnectSessionItemMapper: BaseWalletConnectSessionItemMapper
 ) {

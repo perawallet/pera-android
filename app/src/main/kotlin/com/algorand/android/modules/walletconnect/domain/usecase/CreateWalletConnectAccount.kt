@@ -10,18 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.usecase
+package com.algorand.android.modules.walletconnect.domain.usecase
 
-import java.math.BigInteger
-import javax.inject.Inject
+import com.algorand.android.models.WalletConnectAccount
+import com.algorand.android.models.WalletConnectAddress
 
-class GetAccountMinimumBalanceUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase
-) {
-
-    fun getAccountMinimumBalance(accountAddress: String): BigInteger {
-        val cachedAccountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)
-        val accountDetail = cachedAccountDetail?.data
-        return accountDetail?.accountInformation?.getMinAlgoBalance() ?: BigInteger.ZERO
-    }
+interface CreateWalletConnectAccount {
+    suspend operator fun invoke(address: WalletConnectAddress): WalletConnectAccount?
 }

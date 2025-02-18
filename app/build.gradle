@@ -324,6 +324,7 @@ dependencies {
     implementation libs.exoplayer
 
     // Test
+    testImplementation(project(":test-utils"))
     testImplementation libs.mockk
     testImplementation libs.kotlinx.coroutines.test
     testImplementation libs.kotlin.test

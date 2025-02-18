@@ -13,12 +13,12 @@
 package com.algorand.android.modules.swap.confirmswap.ui.mapper
 
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
 import com.algorand.android.modules.swap.confirmswap.ui.mapper.decider.ConfirmSwapPriceImpactWarningStatusDecider
 import com.algorand.android.modules.swap.confirmswap.ui.model.ConfirmSwapPreview
 import com.algorand.android.modules.swap.utils.priceratioprovider.SwapPriceRatioProvider
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
 import javax.inject.Inject

@@ -12,6 +12,7 @@
 
 package com.algorand.android.models
 
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import kotlinx.parcelize.Parcelize
 
 sealed class BaseKeyRegTransaction : BaseWalletConnectTransaction() {
@@ -34,14 +35,14 @@ sealed class BaseKeyRegTransaction : BaseWalletConnectTransaction() {
             override val senderAddress: WalletConnectAddress,
             override val peerMeta: WalletConnectPeerMeta,
             override val signer: WalletConnectTransactionSigner,
-            override val authAddress: String?,
             override val groupId: String?,
             override val votePublicKey: String,
             override val selectionPublicKey: String,
             override val stateProofKey: String,
             override val voteFirstValidRound: Long,
             override val voteLastValidRound: Long,
-            override val voteKeyDilution: Long
+            override val voteKeyDilution: Long,
+            override val transactionSigner: TransactionSigner?
         ) : BaseOnlineKeyRegTransaction() {
 
             override fun getAllAddressPublicKeysTxnIncludes(): List<WalletConnectAddress> {
@@ -61,7 +62,6 @@ sealed class BaseKeyRegTransaction : BaseWalletConnectTransaction() {
             override val senderAddress: WalletConnectAddress,
             override val peerMeta: WalletConnectPeerMeta,
             override val signer: WalletConnectTransactionSigner,
-            override val authAddress: String?,
             override val groupId: String?,
             override val votePublicKey: String,
             override val selectionPublicKey: String,
@@ -69,6 +69,7 @@ sealed class BaseKeyRegTransaction : BaseWalletConnectTransaction() {
             override val voteFirstValidRound: Long,
             override val voteLastValidRound: Long,
             override val voteKeyDilution: Long,
+            override val transactionSigner: TransactionSigner?,
             val rekeyToAddress: WalletConnectAddress
         ) : BaseOnlineKeyRegTransaction() {
 
@@ -99,9 +100,9 @@ sealed class BaseKeyRegTransaction : BaseWalletConnectTransaction() {
             override val senderAddress: WalletConnectAddress,
             override val peerMeta: WalletConnectPeerMeta,
             override val signer: WalletConnectTransactionSigner,
-            override val authAddress: String?,
             override val groupId: String?,
-            override val nonParticipation: Boolean
+            override val nonParticipation: Boolean,
+            override val transactionSigner: TransactionSigner?
         ) : BaseOfflineKeyRegTransaction() {
 
             override fun getAllAddressPublicKeysTxnIncludes(): List<WalletConnectAddress> {
@@ -121,9 +122,9 @@ sealed class BaseKeyRegTransaction : BaseWalletConnectTransaction() {
             override val senderAddress: WalletConnectAddress,
             override val peerMeta: WalletConnectPeerMeta,
             override val signer: WalletConnectTransactionSigner,
-            override val authAddress: String?,
             override val groupId: String?,
             override val nonParticipation: Boolean,
+            override val transactionSigner: TransactionSigner?,
             val rekeyToAddress: WalletConnectAddress
         ) : BaseOfflineKeyRegTransaction() {
 

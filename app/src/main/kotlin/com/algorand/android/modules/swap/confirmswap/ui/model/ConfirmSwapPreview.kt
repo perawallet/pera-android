@@ -15,12 +15,12 @@ package com.algorand.android.modules.swap.confirmswap.ui.model
 import android.content.res.Resources
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
 import com.algorand.android.modules.swap.confirmswap.domain.model.SwapQuoteTransaction
 import com.algorand.android.modules.swap.ledger.signwithledger.ui.model.LedgerDialogPayload
 import com.algorand.android.modules.swap.utils.priceratioprovider.SwapPriceRatioProvider
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event

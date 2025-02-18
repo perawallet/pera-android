@@ -10,17 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.mapper
+package com.algorand.android.modules.walletconnect.domain.usecase
 
-import com.algorand.android.models.BaseAccountAndAssetListItem
-import com.algorand.android.customviews.accountandassetitem.model.BaseItemConfiguration
-import javax.inject.Inject
+import com.algorand.android.models.WalletConnectTransactionSigner
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
 
-class BaseAccountAndAssetListItemMapper @Inject constructor() {
-
-    fun mapToAccountListItem(
-        itemConfiguration: BaseItemConfiguration.AccountItemConfiguration
-    ): BaseAccountAndAssetListItem.AccountListItem {
-        return BaseAccountAndAssetListItem.AccountListItem(itemConfiguration)
-    }
+fun interface GetWalletConnectTransactionSigner {
+    suspend operator fun invoke(signer: WalletConnectTransactionSigner): TransactionSigner?
 }

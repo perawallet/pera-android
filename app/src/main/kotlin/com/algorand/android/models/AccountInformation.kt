@@ -14,9 +14,7 @@ package com.algorand.android.models
 
 import android.os.Parcelable
 import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
-import com.algorand.android.utils.calculateMinBalance
 import java.math.BigInteger
-import java.math.BigInteger.ZERO
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -48,27 +46,6 @@ data class AccountInformation(
     fun getAllAssetIds(): List<Long> {
         return assetHoldingMap.keys.toList()
     }
-
-    fun getOptedInAssetsCount() = allAssetHoldingMap.size
-
-    fun getMinAlgoBalance(): BigInteger {
-        return calculateMinBalance(
-            this,
-            isRekeyed() || isThereAnyDifferentAsset() || isThereAnOptedInApp()
-        ).toBigInteger()
-    }
-
-    fun getBalance(assetId: Long): BigInteger {
-        return if (assetId == ALGO_ID) {
-            amount
-        } else {
-            getAssetHoldingOrNull(assetId)?.amount ?: ZERO
-        }
-    }
-
-    fun isThereAnyDifferentAsset() = assetHoldingMap.isNotEmpty()
-
-    fun isThereAnOptedInApp() = appsLocalState?.isNotEmpty() == true || totalCreatedApps > 0
 
     fun hasAsset(assetId: Long): Boolean {
         return assetHoldingMap.containsKey(assetId) || assetId == ALGO_ID

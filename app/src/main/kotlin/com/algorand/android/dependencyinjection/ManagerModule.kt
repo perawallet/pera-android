@@ -14,7 +14,6 @@ package com.algorand.android.dependencyinjection
 
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
-import com.algorand.android.usecase.AccountCacheStatusUseCase
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.AssetFetchAndCacheUseCase
 import com.algorand.android.usecase.SimpleAssetDetailUseCase
@@ -42,13 +41,11 @@ object ManagerModule {
     @Singleton
     @Provides
     fun provideAssetCacheManager(
-        accountCacheStatusUseCase: AccountCacheStatusUseCase,
         simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
         accountDetailUseCase: AccountDetailUseCase,
         assetFetchAndCacheUseCase: AssetFetchAndCacheUseCase
     ): AssetCacheManager {
         return AssetCacheManager(
-            accountCacheStatusUseCase,
             simpleAssetDetailUseCase,
             accountDetailUseCase,
             assetFetchAndCacheUseCase

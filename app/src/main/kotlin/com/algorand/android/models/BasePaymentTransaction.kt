@@ -14,6 +14,7 @@ package com.algorand.android.models
 
 import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.utils.ALGO_DECIMALS
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
 
@@ -40,11 +41,11 @@ sealed class BasePaymentTransaction : BaseWalletConnectTransaction() {
         override val receiverAddress: WalletConnectAddress,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val assetInformation: WalletConnectAssetInformation?,
         override val fromAccount: WalletConnectAccount?,
         override val toAccount: WalletConnectAccount?,
-        override val groupId: String?
+        override val groupId: String?,
+        override val transactionSigner: TransactionSigner?
     ) : BasePaymentTransaction() {
 
         override fun getAllAddressPublicKeysTxnIncludes(): List<WalletConnectAddress> {
@@ -65,11 +66,11 @@ sealed class BasePaymentTransaction : BaseWalletConnectTransaction() {
         override val receiverAddress: WalletConnectAddress,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val assetInformation: WalletConnectAssetInformation?,
         override val fromAccount: WalletConnectAccount?,
         override val groupId: String?,
         override val warningCount: Int?,
+        override val transactionSigner: TransactionSigner?,
         val closeToAddress: WalletConnectAddress
     ) : BasePaymentTransaction() {
 
@@ -93,11 +94,11 @@ sealed class BasePaymentTransaction : BaseWalletConnectTransaction() {
         override val receiverAddress: WalletConnectAddress,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val assetInformation: WalletConnectAssetInformation?,
         override val fromAccount: WalletConnectAccount?,
         override val groupId: String?,
         override val warningCount: Int?,
+        override val transactionSigner: TransactionSigner?,
         val rekeyToAddress: WalletConnectAddress
     ) : BasePaymentTransaction() {
 
@@ -121,11 +122,11 @@ sealed class BasePaymentTransaction : BaseWalletConnectTransaction() {
         override val receiverAddress: WalletConnectAddress,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val assetInformation: WalletConnectAssetInformation?,
         override val fromAccount: WalletConnectAccount?,
         override val groupId: String?,
         override val warningCount: Int?,
+        override val transactionSigner: TransactionSigner?,
         val closeToAddress: WalletConnectAddress,
         val rekeyToAddress: WalletConnectAddress
     ) : BasePaymentTransaction() {

@@ -163,6 +163,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         return accountInformationErrorCache.getAll()
     }
 
+    override suspend fun getRekeyAuthAddress(address: String): String? {
+        return accountInformationDao.getRekeyAuthAddress(address)
+    }
+
     companion object {
         private const val DEFAULT_EARLIEST_LAST_FETCHED_ROUND = 0L
     }

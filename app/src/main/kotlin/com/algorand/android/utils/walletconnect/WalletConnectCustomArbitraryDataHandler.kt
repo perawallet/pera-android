@@ -53,7 +53,7 @@ class WalletConnectCustomArbitraryDataHandler @Inject constructor(
                 return
             }
 
-            val walletConnectArbitraryDataList = wcArbitraryDataList.mapNotNull {
+            val walletConnectArbitraryDataList = wcArbitraryDataList.map {
                 walletConnectArbitraryDataMapper.createWalletConnectArbitraryData(session.peerMeta, it)
             }
 

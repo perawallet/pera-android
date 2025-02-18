@@ -38,7 +38,7 @@ class PassphraseVerifiedInfoFragment : BaseInfoFragment() {
     override fun Icon(modifier: Modifier) =
         PeraIconBig(
             painter = painterResource(id = R.drawable.ic_shield_check_large),
-            contentDescription = "check large",
+            contentDescription = stringResource(id = R.string.check),
             modifier = modifier
         )
 

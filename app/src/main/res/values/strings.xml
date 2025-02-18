@@ -18,7 +18,15 @@
     <string name="next">Next</string>
     <string name="account_name">Account Name</string>
     <string name="name">Name</string>
+    <string name="back">Back</string>
     <string name="close">Close</string>
+    <string name="right_arrow">Right Arrow</string>
+    <string name="key">Key</string>
+    <string name="pen">Pen</string>
+    <string name="eye">Eye</string>
+    <string name="face_id">Face ID</string>
+    <string name="check">Check</string>
+    <string name="shield">Shield</string>
     <string name="account_verified">Account Verified</string>
     <string name="accounts">Accounts</string>
     <string name="settings">Settings</string>
@@ -1441,5 +1449,13 @@
     <string name="download_completed">Download completed: ID %1$d</string>
 
     <string name="you_dont_have_any">You don\'t have any authorized account matching with %1$s</string>
+
+    <string name="mnemonic_type_bip39_title">Bip39</string>
+    <string name="mnemonic_type_bip39_description">New inter-operable format that enables important features like HD Wallet</string>
+    <string name="mnemonic_type_bip39_footer">24 Key mnemonic keys</string>
+    <string name="mnemonic_type_algo25_title">Algo25</string>
+    <string name="mnemonic_type_algo25_description">Legacy format that is specific to Algorand ecosystem</string>
+    <string name="mnemonic_type_algo25_footer">25 Key mnemonic keys</string>
+    <string name="bottom_sheet_mnemonic_type_title">Select your Mnemonic type</string>
 
 </resources>

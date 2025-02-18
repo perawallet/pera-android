@@ -57,7 +57,7 @@ class WriteDownInfoFragment : BaseInfoFragment() {
     override fun Icon(modifier: Modifier) =
         PeraIconBig(
             painter = painterResource(id = R.drawable.ic_pen),
-            contentDescription = "pen",
+            contentDescription = stringResource(R.string.pen),
             modifier = modifier
         )
 

@@ -69,7 +69,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
     override fun Icon(modifier: Modifier) =
         PeraIconBig(
             painter = painterResource(id = R.drawable.ic_key),
-            contentDescription = "key",
+            contentDescription = stringResource(id = R.string.key),
             modifier = modifier
         )
 
@@ -143,9 +143,9 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             BottomSheetHeader(sheetState, onDismiss)
 
             MnemonicTypeCard(
-                title = "Bip39",
-                description = "New inter-operable format that enables important features like HD Wallet",
-                footer = "24 Key mnemonic keys",
+                title = stringResource(R.string.mnemonic_type_bip39_title),
+                description = stringResource(R.string.mnemonic_type_bip39_description),
+                footer = stringResource(R.string.mnemonic_type_bip39_footer),
                 onClick = {
                     navigateToRecoverWithPassphraseFragment(
                         PassphraseKeywordUtils.HD_WALLET_PASSPHRASES_WORD_COUNT
@@ -157,9 +157,9 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             )
 
             MnemonicTypeCard(
-                title = "Algo25",
-                description = "Legacy format that is specific to Algorand ecosystem",
-                footer = "25 Key mnemonic keys",
+                title = stringResource(R.string.mnemonic_type_algo25_title),
+                description = stringResource(R.string.mnemonic_type_algo25_description),
+                footer = stringResource(R.string.mnemonic_type_algo25_footer),
                 onClick = {
                     navigateToRecoverWithPassphraseFragment(
                         PassphraseKeywordUtils.ALGO25_WALLET_PASSPHRASES_WORD_COUNT
@@ -201,13 +201,13 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 Icon(
                     imageVector = Icons.Filled.Close,
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = "Close"
+                    contentDescription = stringResource(id = R.string.close)
                 )
             }
             Spacer(Modifier.weight(0.1f))
 
             PeraTitleText(
-                text = "Select your Mnemonic type"
+                text = stringResource(id = R.string.bottom_sheet_mnemonic_type_title)
             )
             Spacer(Modifier.weight(1f))
         }

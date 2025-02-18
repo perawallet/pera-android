@@ -73,7 +73,7 @@ class ChoosePasswordInfoFragment : BaseInfoFragment() {
     override fun Icon(modifier: Modifier) =
         PeraIconBig(
             painter = painterResource(id = R.drawable.ic_locked),
-            contentDescription = "check large",
+            contentDescription = stringResource(id = R.string.check),
             modifier = modifier
         )
 

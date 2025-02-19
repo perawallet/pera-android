@@ -30,7 +30,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 @AndroidEntryPoint
 class RekeyToStandardAccountIntroductionFragment : BaseIntroductionFragment() {
@@ -72,7 +72,7 @@ class RekeyToStandardAccountIntroductionFragment : BaseIntroductionFragment() {
         super.initObservers()
         with(rekeyToStandardAccountIntroductionViewModel.introductionPreviewFlow) {
             collectLatestOnLifecycle(
-                flow = map { it.expectationListItems },
+                flow = mapNotNull { it?.expectationListItems },
                 collection = expectationListItemsCollector
             )
         }

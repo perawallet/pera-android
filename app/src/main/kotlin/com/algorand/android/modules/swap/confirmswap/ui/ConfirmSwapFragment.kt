@@ -26,6 +26,7 @@ import com.algorand.android.databinding.FragmentConfirmSwapBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.swap.confirmswap.domain.model.SwapQuoteTransaction
 import com.algorand.android.modules.swap.confirmswap.ui.model.ConfirmSwapPreview
@@ -33,7 +34,6 @@ import com.algorand.android.modules.swap.confirmswap.ui.model.ConfirmSwapPriceIm
 import com.algorand.android.modules.swap.confirmswapconfirmation.SwapConfirmationBottomSheet.Companion.CONFIRMATION_SUCCESS_KEY
 import com.algorand.android.modules.swap.ledger.signwithledger.ui.model.LedgerDialogPayload
 import com.algorand.android.modules.swap.slippagetolerance.ui.SlippageToleranceBottomSheet.Companion.CHECKED_SLIPPAGE_TOLERANCE_KEY
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
@@ -44,7 +44,7 @@ import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 @AndroidEntryPoint
 class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
@@ -63,8 +63,8 @@ class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
 
     private var ledgerLoadingDialog: LedgerLoadingDialog? = null
 
-    private val confirmSwapPreviewCollector: suspend (ConfirmSwapPreview) -> Unit = { preview ->
-        initConfirmSwapPreview(preview)
+    private val confirmSwapPreviewCollector: suspend (ConfirmSwapPreview?) -> Unit = { preview ->
+        if (preview != null) initConfirmSwapPreview(preview)
     }
 
     private val isLoadingVisibleCollector: suspend (Boolean) -> Unit = { isLoading ->
@@ -195,43 +195,43 @@ class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
                     confirmSwapPreviewCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.minimumReceived }.distinctUntilChanged(),
+                    mapNotNull { it?.minimumReceived }.distinctUntilChanged(),
                     minimumReceivedAmountCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.isLoading }.distinctUntilChanged(),
+                    mapNotNull { it?.isLoading }.distinctUntilChanged(),
                     isLoadingVisibleCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.slippageTolerance }.distinctUntilChanged(),
+                    mapNotNull { it?.slippageTolerance }.distinctUntilChanged(),
                     slippageToleranceCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.errorEvent }.distinctUntilChanged(),
+                    mapNotNull { it?.errorEvent }.distinctUntilChanged(),
                     errorEventCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.slippageToleranceUpdateSuccessEvent }.distinctUntilChanged(),
+                    mapNotNull { it?.slippageToleranceUpdateSuccessEvent }.distinctUntilChanged(),
                     updateSlippageToleranceSuccessEventCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.navigateToLedgerNotFoundDialogEvent }.distinctUntilChanged(),
+                    mapNotNull { it?.navigateToLedgerNotFoundDialogEvent }.distinctUntilChanged(),
                     navigateToLedgerNotFoundDialogEventCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.navigateToLedgerWaitingForApprovalDialogEvent }.distinctUntilChanged(),
+                    mapNotNull { it?.navigateToLedgerWaitingForApprovalDialogEvent }.distinctUntilChanged(),
                     navigateToLedgerWaitingForApprovalDialogEventCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.navigateToTransactionStatusFragmentEvent }.distinctUntilChanged(),
+                    mapNotNull { it?.navigateToTransactionStatusFragmentEvent }.distinctUntilChanged(),
                     navigateToTransactionStatusFragmentEventCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.dismissLedgerWaitingForApprovalDialogEvent }.distinctUntilChanged(),
+                    mapNotNull { it?.dismissLedgerWaitingForApprovalDialogEvent }.distinctUntilChanged(),
                     dismissLedgerWaitingForApprovalDialogEventCollector
                 )
                 collectLatestOnLifecycle(
-                    map { it.navToSwapConfirmationBottomSheetEvent }.distinctUntilChanged(),
+                    mapNotNull { it?.navToSwapConfirmationBottomSheetEvent }.distinctUntilChanged(),
                     navigateToSwapConfirmationBottomSheetEventCollector
                 )
             }
@@ -284,13 +284,13 @@ class ConfirmSwapFragment : BaseFragment(R.layout.fragment_confirm_swap) {
                 sizeResId = R.dimen.spacing_normal
             )
             setSubtitleStartDrawable(accountIconDrawable)
-            changeSubtitle(accountDisplayName.getAccountPrimaryDisplayName())
-            setOnTitleLongClickListener { onAccountAddressCopied(accountDisplayName.getRawAccountAddress()) }
+            changeSubtitle(accountDisplayName.primaryDisplayName)
+            setOnTitleLongClickListener { onAccountAddressCopied(accountDisplayName.accountAddress) }
         }
     }
 
     private fun onSwitchPriceRatioClick() {
-        val priceRatioAnnotatedString = confirmSwapViewModel.getSwitchedPriceRatio(resources)
+        val priceRatioAnnotatedString = confirmSwapViewModel.getSwitchedPriceRatio(resources) ?: return
         binding.priceRatioTextView.text = context?.getXmlStyledString(priceRatioAnnotatedString)
     }
 

@@ -14,7 +14,6 @@ package com.algorand.android
 
 import android.content.SharedPreferences
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import com.algorand.android.core.BaseViewModel
@@ -32,9 +31,9 @@ import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.repository.NodeRepository
-import com.algorand.android.usecase.AccountCacheStatusUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.findAllNodes
+import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
 import com.algorand.wallet.cache.domain.usecase.InitializeAppCache
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -60,14 +59,13 @@ class MainViewModel @Inject constructor(
     private val tutorialUseCase: TutorialUseCase,
     private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
     private val nodeRepository: NodeRepository,
-    accountCacheStatusUseCase: AccountCacheStatusUseCase,
     private val autoLockManagerUseCase: AutoLockManagerUseCase,
     private val accountStateHelperUseCase: AccountStateHelperUseCase,
-    private val initializeAppCache: InitializeAppCache
+    private val initializeAppCache: InitializeAppCache,
+    getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : BaseViewModel() {
 
-    // TODO I'll change after checking usage of flow in activity.
-    val accountBalanceSyncStatus = accountCacheStatusUseCase.getAccountCacheStatusFlow().asLiveData()
+    val appCacheStatusFlow = getAppCacheStatusFlow()
 
     private val _swapNavigationResultFlow = MutableStateFlow<Event<NavDirections>?>(null)
     val swapNavigationResultFlow: StateFlow<Event<NavDirections>?>

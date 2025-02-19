@@ -20,16 +20,5 @@ import kotlinx.parcelize.Parcelize
 data class WalletConnectAccount(
     val address: String,
     var name: String = "",
-    val type: Account.Type? = null,
     val accountIconDrawablePreview: AccountIconDrawablePreview
-) : Parcelable {
-
-    companion object {
-        fun create(account: Account?, accountIconDrawablePreview: AccountIconDrawablePreview): WalletConnectAccount? {
-            with(account) {
-                if (this == null) return null
-                return WalletConnectAccount(address, name, type, accountIconDrawablePreview)
-            }
-        }
-    }
-}
+) : Parcelable

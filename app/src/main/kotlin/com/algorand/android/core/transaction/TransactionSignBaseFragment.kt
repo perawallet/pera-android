@@ -29,7 +29,6 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.TransactionManagerResult
 import com.algorand.android.models.TransactionSignData
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.LOCATION_PERMISSION_REQUEST_CODE
 import com.algorand.android.utils.Resource
@@ -49,9 +48,6 @@ abstract class TransactionSignBaseFragment(
 
     @Inject
     lateinit var transactionManager: TransactionSignManager
-
-    @Inject
-    lateinit var accountStateHelperUseCase: AccountStateHelperUseCase
 
     // TODO: 13.06.2022 Remove bleWaitingTransactionData and use a list instance for both txn type
     private var bleWaitingTransactionData: TransactionSignData? = null

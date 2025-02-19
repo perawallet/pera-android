@@ -12,20 +12,16 @@
 
 package com.algorand.android.utils.coremanager
 
-import com.algorand.android.models.AccountCacheStatus
 import com.algorand.android.modules.fetchnameservices.domain.usecase.FetchGivenAccountsNameServicesUseCase
 import com.algorand.android.modules.fetchnameservices.domain.usecase.SetGivenAccountsNameServicesNameUseCase
 import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
-import com.algorand.android.usecase.AccountCacheStatusUseCase
 import com.algorand.android.usecase.GetLocalAccountsUseCase
-import com.algorand.android.utils.DataResource
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 /**
  * Helper class to manage local accounts name services continuously.
@@ -36,7 +32,6 @@ class LocalAccountsNameServiceManager @Inject constructor(
     private val getLocalAccountsUseCase: GetLocalAccountsUseCase,
     private val fetchGivenAccountsNameServicesUseCase: FetchGivenAccountsNameServicesUseCase,
     private val setGivenAccountsNameServicesNameUseCase: SetGivenAccountsNameServicesNameUseCase,
-    private val accountCacheStatusUseCase: AccountCacheStatusUseCase
 ) : BaseCacheManager() {
 
     override suspend fun initialize(coroutineScope: CoroutineScope) {
@@ -65,14 +60,17 @@ class LocalAccountsNameServiceManager @Inject constructor(
     }
 
     private suspend fun updateLocalAccountNameServices() {
-        val localAccountAddresses = getLocalAccountsUseCase.getLocalAccountsFromAccountManagerCache().map { it.address }
-        combine(
-            accountCacheStatusUseCase.getAccountCacheStatusFlow().distinctUntilChanged(),
-            fetchGivenAccountsNameServicesUseCase.invoke(localAccountAddresses).distinctUntilChanged()
-        ) { accountCacheStatus, nameServicesOfLocalAccounts ->
-            if (accountCacheStatus == AccountCacheStatus.DONE && nameServicesOfLocalAccounts is DataResource.Success) {
-                setGivenAccountsNameServicesNameUseCase.invoke(nameServicesOfLocalAccounts.data)
-            }
-        }.distinctUntilChanged().collect()
+//        val localAccountAddresses = getLocalAccountsUseCase
+        //        .getLocalAccountsFromAccountManagerCache().map { it.address }
+//        combine(
+//            accountCacheStatusUseCase.getAccountCacheStatusFlow().distinctUntilChanged(),
+//            fetchGivenAccountsNameServicesUseCase.invoke(localAccountAddresses).distinctUntilChanged()
+//        ) { accountCacheStatus, nameServicesOfLocalAccounts ->
+//            if (accountCacheStatus == AccountCacheStatus.DONE
+        //            && nameServicesOfLocalAccounts is DataResource.Success
+        //            ) {
+//                setGivenAccountsNameServicesNameUseCase.invoke(nameServicesOfLocalAccounts.data)
+//            }
+//        }.distinctUntilChanged().collect()
     }
 }

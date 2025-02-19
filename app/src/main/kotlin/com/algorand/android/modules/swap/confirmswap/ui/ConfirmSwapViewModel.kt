@@ -44,12 +44,18 @@ class ConfirmSwapViewModel @Inject constructor(
     val swapQuote: SwapQuote
         get() = _swapQuote
 
-    private val _confirmSwapPreviewFlow = MutableStateFlow(confirmSwapPreviewUseCase.getConfirmSwapPreview(swapQuote))
-    val confirmSwapPreviewFlow: StateFlow<ConfirmSwapPreview>
+    private val _confirmSwapPreviewFlow = MutableStateFlow<ConfirmSwapPreview?>(null)
+    val confirmSwapPreviewFlow: StateFlow<ConfirmSwapPreview?>
         get() = _confirmSwapPreviewFlow
 
-    fun getSwitchedPriceRatio(resources: Resources): AnnotatedString {
-        return _confirmSwapPreviewFlow.value.getSwitchedPriceRatio(resources)
+    init {
+        viewModelScope.launch {
+            _confirmSwapPreviewFlow.value = confirmSwapPreviewUseCase.getConfirmSwapPreview(swapQuote)
+        }
+    }
+
+    fun getSwitchedPriceRatio(resources: Resources): AnnotatedString? {
+        return _confirmSwapPreviewFlow.value?.getSwitchedPriceRatio(resources)
     }
 
     fun setupSwapTransactionSignManager(lifecycle: Lifecycle) {
@@ -59,24 +65,26 @@ class ConfirmSwapViewModel @Inject constructor(
     fun getSlippageTolerance() = _swapQuote.slippage
 
     fun onSlippageToleranceUpdated(slippageTolerance: Float) {
-        viewModelScope.launch {
-            confirmSwapPreviewUseCase.updateSlippageTolerance(
-                slippageTolerance = slippageTolerance,
-                swapQuote = swapQuote,
-                previousState = _confirmSwapPreviewFlow.value
-            ).collectLatest { newPreview ->
-                _swapQuote = newPreview.swapQuote
-                _confirmSwapPreviewFlow.value = newPreview
+        _confirmSwapPreviewFlow.value?.let { currentState ->
+            viewModelScope.launch {
+                confirmSwapPreviewUseCase.updateSlippageTolerance(
+                    slippageTolerance = slippageTolerance,
+                    swapQuote = swapQuote,
+                    previousState = currentState
+                ).collectLatest { newPreview ->
+                    _swapQuote = newPreview.swapQuote
+                    _confirmSwapPreviewFlow.value = newPreview
+                }
             }
         }
     }
 
     fun onConfirmSwapClick() {
-        val priceImpactWarningStatus = _confirmSwapPreviewFlow.value.priceImpactWarningStatus
+        val priceImpactWarningStatus = _confirmSwapPreviewFlow.value?.priceImpactWarningStatus ?: return
         if (priceImpactWarningStatus.isConfirmationRequired) {
             _confirmSwapPreviewFlow.update {
                 val basePriceImpactValue = priceImpactWarningStatus.percentageRange.first.toLong()
-                it.copy(navToSwapConfirmationBottomSheetEvent = Event(basePriceImpactValue))
+                it?.copy(navToSwapConfirmationBottomSheetEvent = Event(basePriceImpactValue))
             }
         } else {
             createQuoteAndUpdateUi()
@@ -88,14 +96,16 @@ class ConfirmSwapViewModel @Inject constructor(
     }
 
     private fun createQuoteAndUpdateUi() {
-        viewModelScope.launchIO {
-            confirmClickEventTracker.logConfirmSwapClickEvent()
-            confirmSwapPreviewUseCase.createQuoteAndUpdateUi(
-                quoteId = swapQuote.quoteId,
-                accountAddress = swapQuote.accountAddress,
-                previousState = _confirmSwapPreviewFlow.value
-            ).collectLatest { newState ->
-                _confirmSwapPreviewFlow.emit(newState)
+        _confirmSwapPreviewFlow.value?.let { currentState ->
+            viewModelScope.launchIO {
+                confirmClickEventTracker.logConfirmSwapClickEvent()
+                confirmSwapPreviewUseCase.createQuoteAndUpdateUi(
+                    quoteId = swapQuote.quoteId,
+                    accountAddress = swapQuote.accountAddress,
+                    previousState = currentState
+                ).collectLatest { newState ->
+                    _confirmSwapPreviewFlow.emit(newState)
+                }
             }
         }
     }

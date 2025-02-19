@@ -17,20 +17,19 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.decider.RekeyToStandardAccountIntroductionPreviewDecider
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.mapper.RekeyToStandardAccountIntroductionPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.instruction.ui.model.RekeyToStandardAccountIntroductionPreview
-import com.algorand.android.usecase.AccountDetailUseCase
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import javax.inject.Inject
 
 class RekeyToStandardAccountInstructionPreviewUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val rekeyToStandardAccountIntroductionPreviewMapper: RekeyToStandardAccountIntroductionPreviewMapper,
-    private val rekeyToStandardAccountIntroductionPreviewDecider: RekeyToStandardAccountIntroductionPreviewDecider
+    private val rekeyToStandardAccountIntroductionPreviewDecider: RekeyToStandardAccountIntroductionPreviewDecider,
+    private val getAccountType: GetAccountType
 ) {
 
-    fun getInitialRekeyToStandardAccountInstructionPreview(
+    suspend fun getInitialRekeyToStandardAccountInstructionPreview(
         accountAddress: String
     ): RekeyToStandardAccountIntroductionPreview {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
-        val accountType = accountDetail?.account?.type
+        val accountType = getAccountType(accountAddress)
         val bannerDrawableResId = rekeyToStandardAccountIntroductionPreviewDecider.decideBannerDrawableResId(
             accountType = accountType
         )

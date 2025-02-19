@@ -14,7 +14,6 @@ package com.algorand.android.utils.coremanager
 
 import com.algorand.android.models.AccountCacheStatus
 import com.algorand.android.models.AccountDetail
-import com.algorand.android.usecase.AccountCacheStatusUseCase
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.AssetFetchAndCacheUseCase
 import com.algorand.android.usecase.SimpleAssetDetailUseCase
@@ -22,11 +21,8 @@ import com.algorand.android.utils.CacheResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
 
 class AssetCacheManager(
-    private val accountCacheStatusUseCase: AccountCacheStatusUseCase,
     private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
     private val accountDetailUseCase: AccountDetailUseCase,
     private val assetFetchAndCacheUseCase: AssetFetchAndCacheUseCase
@@ -50,9 +46,9 @@ class AssetCacheManager(
     }
 
     override suspend fun initialize(coroutineScope: CoroutineScope) {
-        accountCacheStatusUseCase.getAccountCacheStatusFlow()
-            .combine(accountDetailUseCase.getAccountDetailCacheFlow(), accountCacheAndAccountCollector)
-            .launchIn(coroutineScope)
+//        accountCacheStatusUseCase.getAccountCacheStatusFlow()
+//            .combine(accountDetailUseCase.getAccountDetailCacheFlow(), accountCacheAndAccountCollector)
+//            .launchIn(coroutineScope)
     }
 
     override suspend fun doJob(coroutineScope: CoroutineScope) {

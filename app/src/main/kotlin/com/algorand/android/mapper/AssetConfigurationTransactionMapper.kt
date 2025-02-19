@@ -27,7 +27,7 @@ class AssetConfigurationTransactionMapper @Inject constructor(
     private val baseAssetReconfigurationTransactionMapper: BaseAssetReconfigurationTransactionMapper
 ) : BaseWalletConnectTransactionMapper() {
 
-    override fun createTransaction(
+    override suspend fun createTransaction(
         peerMeta: WalletConnectPeerMeta,
         transactionRequest: WalletConnectTransactionRequest,
         rawTxn: WCAlgoTransactionRequest

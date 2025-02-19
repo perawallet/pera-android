@@ -12,9 +12,9 @@
 
 package com.algorand.android.modules.swap.transactionsummary.ui.mapper
 
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.swap.transactionsummary.ui.model.BaseSwapTransactionSummaryItem
-import com.algorand.android.utils.AccountDisplayName
 import javax.inject.Inject
 
 class BaseSwapTransactionSummaryItemMapper @Inject constructor() {

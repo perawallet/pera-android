@@ -97,3 +97,7 @@ fun interface AddAssetHoldingToAccountAsPending {
 fun interface IsAccountCachedSuccessfully {
     suspend operator fun invoke(address: String): Boolean
 }
+
+fun interface GetAccountRekeyAuthAddress {
+    suspend operator fun invoke(address: String): String?
+}

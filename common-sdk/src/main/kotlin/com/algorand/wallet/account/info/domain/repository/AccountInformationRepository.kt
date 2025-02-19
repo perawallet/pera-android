@@ -48,4 +48,6 @@ internal interface AccountInformationRepository {
     suspend fun addAssetHoldingAsPending(address: String, assetId: Long)
 
     suspend fun getFailedAccountInformation(): List<String>
+
+    suspend fun getRekeyAuthAddress(address: String): String?
 }

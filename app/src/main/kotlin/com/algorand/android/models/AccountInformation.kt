@@ -14,8 +14,6 @@ package com.algorand.android.models
 
 import android.os.Parcelable
 import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
-import com.algorand.android.models.Participation.Companion.DEFAULT_PARTICIPATION_KEY
-import com.algorand.android.utils.AccountCacheManager
 import com.algorand.android.utils.calculateMinBalance
 import java.math.BigInteger
 import java.math.BigInteger.ZERO
@@ -43,38 +41,12 @@ data class AccountInformation(
         return createdAtRound != null
     }
 
-    fun setAssetHoldingStatus(assetId: Long, status: AssetStatus) {
-        allAssetHoldingMap.get(assetId)?.status = status
-    }
-
-    fun addPendingAssetHolding(assetHolding: AssetHolding) {
-        if (!AssetStatus.isPending(assetHolding.status)) return
-        allAssetHoldingMap.put(assetHolding.assetId, assetHolding)
-    }
-
     fun isRekeyed(): Boolean {
         return !rekeyAdminAddress.isNullOrEmpty() && rekeyAdminAddress != address
     }
 
-    fun getAssetInformationList(accountCacheManager: AccountCacheManager): MutableList<AssetInformation> {
-        val assetInformationList = mutableListOf<AssetInformation>()
-        assetInformationList.add(
-            AssetInformation.getAlgorandAsset(amount)
-        )
-        assetHoldingMap.values.forEach { assetHolding ->
-            accountCacheManager.getAssetDescription(assetHolding.assetId)?.let { assetDescription ->
-                assetInformationList.add(AssetInformation.createAssetInformation(assetHolding, assetDescription))
-            }
-        }
-        return assetInformationList
-    }
-
     fun getAllAssetIds(): List<Long> {
         return assetHoldingMap.keys.toList()
-    }
-
-    fun getAllAssetIdsIncludeAlgorand(): List<Long> {
-        return getAllAssetIds().toMutableList().apply { add(0, ALGO_ID) }
     }
 
     fun getOptedInAssetsCount() = allAssetHoldingMap.size
@@ -93,9 +65,6 @@ data class AccountInformation(
             getAssetHoldingOrNull(assetId)?.amount ?: ZERO
         }
     }
-
-    fun doesUserHasParticipationKey() =
-        !(participation == null || participation.voteParticipationKey == DEFAULT_PARTICIPATION_KEY)
 
     fun isThereAnyDifferentAsset() = assetHoldingMap.isNotEmpty()
 

@@ -16,34 +16,39 @@ package com.algorand.android.ui.send.receiveraccount
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.AccountCacheData
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.models.Result
 import com.algorand.android.models.TargetUser
-import com.algorand.android.models.TransactionData
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accountasset.domain.model.AccountAssetDetail
 import com.algorand.android.modules.assetinbox.expresssend.domain.usecase.Arc59ExpressSendUseCase
 import com.algorand.android.usecase.ReceiverAccountSelectionUseCase
-import com.algorand.android.utils.AccountCacheManager
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
+import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
+import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ReceiverAccountSelectionViewModel @Inject constructor(
     private val receiverAccountSelectionUseCase: ReceiverAccountSelectionUseCase,
-    private val accountCacheManager: AccountCacheManager,
     private val arc59ExpressSendUseCase: Arc59ExpressSendUseCase,
+    private val getTransactionSigner: GetTransactionSigner,
+    private val getAccountInformation: GetAccountInformation,
+    private val getAccountMinBalance: GetAccountMinBalance,
+    private val getAccountCustomName: GetAccountCustomName,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -61,6 +66,10 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
     private val _toAccountTransactionRequirementsFlow = MutableStateFlow<Event<Resource<TargetUser>>?>(null)
     val toAccountTransactionRequirementsFlow: StateFlow<Event<Resource<TargetUser>>?> =
         _toAccountTransactionRequirementsFlow
+
+    private val _sendTransactionDataFlow: MutableStateFlow<Event<TransactionSignData.Send>?> = MutableStateFlow(null)
+    val sendTransactionDataFlow: StateFlow<Event<TransactionSignData.Send>?>
+        get() = _sendTransactionDataFlow.asStateFlow()
 
     private var nftDomainAddressServiceLogoPair: Pair<String, String?>? = null
 
@@ -127,16 +136,6 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
         }
     }
 
-    fun getFromAccountCachedData(): AccountCacheData? {
-        return accountCacheManager.getCacheData(assetTransaction.senderAddress)
-    }
-
-    fun getSelectedAssetInformation(): AssetInformation? {
-        return with(assetTransaction) {
-            receiverAccountSelectionUseCase.getAssetInformation(assetId, senderAddress)
-        }
-    }
-
     private fun combineLatestCopiedMessageAndQueryFlow() {
         viewModelScope.launch {
             combine(
@@ -159,36 +158,35 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
         }
     }
 
-    fun getSendTransactionData(targetUser: TargetUser): TransactionData.Send? {
+    fun getSendTransactionData(targetUser: TargetUser) {
         val assetTransaction = assetTransaction
         val note = assetTransaction.xnote ?: assetTransaction.note
-        val selectedAccountCacheData = getFromAccountCachedData() ?: return null
-        val selectedAsset = getSelectedAssetInformation() ?: return null
         val minBalanceCalculatedAmount = assetTransaction.amount
-        val isArc59Transaction = isArc59Transaction(targetUser, selectedAsset)
 
-        return TransactionData.Send(
-            senderAccountAddress = selectedAccountCacheData.account.address,
-            senderAccountDetail = selectedAccountCacheData.account.detail,
-            senderAccountType = selectedAccountCacheData.account.type,
-            senderAuthAddress = selectedAccountCacheData.authAddress,
-            senderAccountName = selectedAccountCacheData.account.name,
-            senderAlgoAmount = selectedAccountCacheData.accountInformation.amount,
-            isSenderRekeyedToAnotherAccount = selectedAccountCacheData.isRekeyedToAnotherAccount(),
-            minimumBalance = selectedAccountCacheData.getMinBalance(),
-            amount = minBalanceCalculatedAmount,
-            assetInformation = selectedAsset,
-            note = note,
-            targetUser = targetUser,
-            isArc59Transaction = isArc59Transaction
-        )
+        viewModelScope.launch {
+            val isArc59Transaction = isArc59Transaction(targetUser.publicKey, assetTransaction.assetId)
+            val accountInfo = getAccountInformation(assetTransaction.senderAddress) ?: return@launch
+            val accountName = getAccountCustomName(assetTransaction.senderAddress)
+            val minBalance = getAccountMinBalance(accountInfo)
+            val txnData = TransactionSignData.Send(
+                senderAccountAddress = assetTransaction.senderAddress,
+                senderAccountName = accountName.orEmpty(),
+                senderAuthAddress = accountInfo.rekeyAdminAddress,
+                senderAlgoAmount = accountInfo.amount,
+                minimumBalance = minBalance.toLong(),
+                amount = minBalanceCalculatedAmount,
+                assetId = assetTransaction.assetId,
+                note = note,
+                targetUser = targetUser,
+                isArc59Transaction = isArc59Transaction,
+                signer = getTransactionSigner(assetTransaction.senderAddress)
+            )
+            _sendTransactionDataFlow.emit(Event(txnData))
+        }
     }
 
-    private fun isArc59Transaction(
-        targetUser: TargetUser,
-        selectedAsset: AssetInformation
-    ): Boolean {
-        return targetUser.account?.accountInformation?.hasAsset(selectedAsset.assetId) == false
+    private suspend fun isArc59Transaction(targetUserAddress: String, assetId: Long): Boolean {
+        return getAccountInformation(targetUserAddress)?.hasAsset(assetId) == false
     }
 
     fun isExpressSendWarningEnabled(isArc59Transaction: Boolean): Boolean {

@@ -106,6 +106,16 @@ class AlgorandAmountView @JvmOverloads constructor(
     }
 
     fun setAmount(
+        amount: BigInteger?,
+        transactionSymbol: TransactionSymbol? = null,
+        assetShortName: String?,
+        assetDecimal: Int
+    ) {
+        val formattedAmount = amount.formatAmount(assetDecimal, isCompact = false)
+        setAmount(formattedAmount, transactionSymbol, assetShortName)
+    }
+
+    fun setAmount(
         formattedAmount: String?,
         @ColorRes
         color: Int?

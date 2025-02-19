@@ -80,8 +80,7 @@ class RekeyToStandardAccountConfirmationFragment : BaseRekeyConfirmationFragment
     }
 
     override fun onSendTransaction() {
-        val rekeyTx = rekeyToStandardAccountConfirmationViewModel.createRekeyToStandardAccountTransaction() ?: return
-        sendTransaction(rekeyTx)
+        rekeyToStandardAccountConfirmationViewModel.createRekeyToStandardAccountTransaction()
     }
 
     override fun onTransactionLoading() {
@@ -93,7 +92,7 @@ class RekeyToStandardAccountConfirmationFragment : BaseRekeyConfirmationFragment
     }
 
     override fun onTransactionSigned(signedTransactionDetail: SignedTransactionDetail) {
-        if (signedTransactionDetail is SignedTransactionDetail.RekeyToStandardAccountOperation) {
+        if (signedTransactionDetail is SignedTransactionDetail.RekeyOperation) {
             rekeyToStandardAccountConfirmationViewModel.sendRekeyTransaction(signedTransactionDetail)
         }
     }

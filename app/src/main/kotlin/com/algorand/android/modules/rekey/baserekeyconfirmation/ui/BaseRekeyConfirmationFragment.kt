@@ -18,11 +18,12 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.algorand.android.R
-import com.algorand.android.core.TransactionBaseFragment
+import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.customviews.LoadingDialogFragment
 import com.algorand.android.databinding.FragmentBaseRekeyConfirmationBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AccountIconDrawable
@@ -34,9 +35,9 @@ import com.algorand.android.utils.getCustomClickableSpan
 import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
-abstract class BaseRekeyConfirmationFragment : TransactionBaseFragment(R.layout.fragment_base_rekey_confirmation) {
+abstract class BaseRekeyConfirmationFragment : TransactionSignBaseFragment(R.layout.fragment_base_rekey_confirmation) {
 
     private var loadingDialogFragment: LoadingDialogFragment? = null
 
@@ -72,6 +73,10 @@ abstract class BaseRekeyConfirmationFragment : TransactionBaseFragment(R.layout.
 
     private val onSendTransactionEventCollector: suspend (Event<Unit>?) -> Unit = { event ->
         event?.consume()?.run { onSendTransaction() }
+    }
+
+    private val onSignTransactionEventCollector: suspend (Event<TransactionSignData>?) -> Unit = { event ->
+        event?.consume()?.let { sendTransaction(it) }
     }
 
     private val navToRekeyedAccountConfirmationBottomSheetEventCollector: suspend (Event<Unit>?) -> Unit = { event ->
@@ -189,72 +194,76 @@ abstract class BaseRekeyConfirmationFragment : TransactionBaseFragment(R.layout.
     protected open fun initObservers() {
         with(baseRekeyConfirmationViewModel.baseRekeyConfirmationFieldsFlow) {
             collectLatestOnLifecycle(
-                flow = map { it.isLoading },
+                flow = mapNotNull { it?.isLoading },
                 collection = loadingStateVisibilityCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.showGlobalErrorEvent },
+                flow = mapNotNull { it?.showGlobalErrorEvent },
                 collection = showGlobalErrorEventCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.descriptionAnnotatedString },
+                flow = mapNotNull { it?.descriptionAnnotatedString },
                 collection = descriptionAnnotatedStringCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.rekeyedAccountDisplayName },
+                flow = mapNotNull { it?.rekeyedAccountDisplayName },
                 collection = rekeyedAccountDisplayNameCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.rekeyedAccountIconResource },
+                flow = mapNotNull { it?.rekeyedAccountIconResource },
                 collection = rekeyedAccountIconResourceCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.authAccountDisplayName },
+                flow = mapNotNull { it?.authAccountDisplayName },
                 collection = authAccountDisplayNameCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.authAccountIconResource },
+                flow = mapNotNull { it?.authAccountIconResource },
                 collection = authAccountIconResourceCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.isCurrentlyRekeyedAccountGroupVisible },
+                flow = mapNotNull { it?.isCurrentlyRekeyedAccountGroupVisible },
                 collection = currentlyRekeyedAccountGroupVisiblityCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.currentlyRekeyedAccountDisplayName },
+                flow = mapNotNull { it?.currentlyRekeyedAccountDisplayName },
                 collection = currentlyRekeyedAccountDisplayNameCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.currentlyRekeyedAccountIconDrawable },
+                flow = mapNotNull { it?.currentlyRekeyedAccountIconDrawable },
                 collection = currentlyRekeyedAccountIconDrawableCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.isTransactionFeeGroupIsVisible },
+                flow = mapNotNull { it?.isTransactionFeeGroupIsVisible },
                 collection = transactionFeeGroupIsVisibilityCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.formattedTransactionFee },
+                flow = mapNotNull { it?.formattedTransactionFee },
                 collection = formattedTransactionFeeCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.navToRekeyResultInfoFragmentEvent },
+                flow = mapNotNull { it?.navToRekeyResultInfoFragmentEvent },
                 collection = navToRekeyResultInfoFragmentEventCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.navToRekeyedAccountConfirmationBottomSheetEvent },
+                flow = mapNotNull { it?.navToRekeyedAccountConfirmationBottomSheetEvent },
                 collection = navToRekeyedAccountConfirmationBottomSheetEventCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.onSendTransactionEvent },
+                flow = mapNotNull { it?.onSendTransactionEvent },
                 collection = onSendTransactionEventCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.titleTextResId },
+                flow = mapNotNull { it?.titleTextResId },
                 collection = titleTextResIdCollector
             )
             collectLatestOnLifecycle(
-                flow = map { it.subtitleTextResId },
+                flow = mapNotNull { it?.subtitleTextResId },
                 collection = subtitleTextResIdCollector
+            )
+            collectLatestOnLifecycle(
+                flow = mapNotNull { it?.onRekeyTransactionDataReady },
+                collection = onSignTransactionEventCollector
             )
         }
     }

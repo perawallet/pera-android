@@ -30,6 +30,7 @@ import com.algorand.android.usecase.NodeSettingsUseCase
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.combine
+import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.cache.domain.model.AppCacheStatus
 import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
@@ -50,7 +51,8 @@ class AccountsPreviewUseCase @Inject constructor(
     private val peraConnectivityManager: PeraConnectivityManager,
     private val getAppCacheStatusFlow: GetAppCacheStatusFlow,
     private val accountPreviewProcessor: AccountPreviewProcessor,
-    private val getLocalAccounts: GetLocalAccounts
+    private val getLocalAccounts: GetLocalAccounts,
+    private val getAllAccountInformationFlow: GetAllAccountInformationFlow
 ) {
 
     suspend fun dismissTutorial(tutorialId: Int) {
@@ -75,6 +77,7 @@ class AccountsPreviewUseCase @Inject constructor(
     suspend fun getAccountsPreview(initialState: AccountPreview): Flow<AccountPreview> {
         var lastState: AccountPreview = initialState
         return combine(
+            getAllAccountInformationFlow(),
             parityUseCase.getSelectedCurrencyDetailCacheFlow(),
             getAppCacheStatusFlow(),
             bannersUseCase.getBanner(),
@@ -82,7 +85,7 @@ class AccountsPreviewUseCase @Inject constructor(
             tutorialUseCase.getTutorial(),
             getAskNotificationPermissionEventFlowUseCase.invoke(),
             nodeSettingsUseCase.getAllNodeAsFlow()
-        ) { selectedCurrencyParityCache, appCacheStatusFlow, banner, assetInboxCount, tutorial,
+        ) { _, selectedCurrencyParityCache, appCacheStatusFlow, banner, assetInboxCount, tutorial,
             notificationPermissionEvent, _ ->
             val isTestnetBadgeVisible = false
             if (getLocalAccounts().isEmpty()) {

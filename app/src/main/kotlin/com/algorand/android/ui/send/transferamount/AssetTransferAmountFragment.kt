@@ -20,17 +20,17 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.SendAlgoNavigationDirections
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
-import com.algorand.android.core.TransactionBaseFragment
+import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.customviews.DialPadView
 import com.algorand.android.customviews.algorandamountinput.AlgorandAmountInputTextView
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentAssetTransferAmountBinding
 import com.algorand.android.models.AmountInput
+import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.AssetTransferAmountPreview
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
-import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.models.TransactionData
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.ui.common.warningconfirmation.BaseMaximumBalanceWarningBottomSheet
 import com.algorand.android.ui.send.shared.AddNoteBottomSheet
 import com.algorand.android.utils.ALGO_SHORT_NAME
@@ -65,7 +65,7 @@ import kotlin.properties.Delegates
  */
 @SuppressWarnings("TooManyFunctions")
 @AndroidEntryPoint
-class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_asset_transfer_amount) {
+class AssetTransferAmountFragment : TransactionSignBaseFragment(R.layout.fragment_asset_transfer_amount) {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
@@ -167,6 +167,8 @@ class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_as
             insufficientBalanceToPayFeeEvent?.consume()?.let { onInsufficientBalanceToPayFee() }
             minimumBalanceIsViolatedResultEvent?.consume()?.let { onMinimumBalanceViolated(it) }
             assetNotFoundErrorEvent?.consume()?.let { onAssetNotFound() }
+            onTransactionCreated?.consume()?.let { transactionData -> handleTransactionData(transactionData) }
+            onNavigateToNextFragment?.consume()?.let { handleNextNavigation(it) }
         }
     }
 
@@ -308,7 +310,7 @@ class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_as
     }
 
     private fun sendWithCalculatedSendableAmount() {
-        assetTransferAmountViewModel.getCalculatedSendableAmount()?.let { handleNextNavigation(it) }
+        assetTransferAmountViewModel.getCalculatedSendableAmount()
     }
 
     private fun showTransactionTipsIfNeed() {
@@ -324,30 +326,31 @@ class AssetTransferAmountFragment : TransactionBaseFragment(R.layout.fragment_as
     private fun handleNextNavigation(amount: BigInteger) {
         val assetTransaction = assetTransferAmountViewModel.assetTransaction
         if (assetTransaction.receiverUser != null) {
-            val transactionData = assetTransferAmountViewModel.createSendTransactionData(amount) ?: return
-            if (assetTransferAmountViewModel.isExpressSendWarningEnabled(transactionData.isArc59Transaction)) {
-                navToArc59ExpressSendFragment(transactionData)
-            } else {
-                navToAssetTransferPreviewFragment(transactionData)
-            }
+            assetTransferAmountViewModel.createSendTransactionData(amount)
         } else {
             navToReceiverAccountSelectionFragment(assetTransaction, amount)
         }
     }
 
-    private fun navToArc59ExpressSendFragment(transactionData: TransactionData.Send) {
+    private fun handleTransactionData(transactionData: TransactionSignData.Send) {
+        if (assetTransferAmountViewModel.isExpressSendWarningEnabled(transactionData.isArc59Transaction)) {
+            navToArc59ExpressSendFragment(transactionData)
+        } else {
+            navToAssetTransferPreviewFragment(transactionData)
+        }
+    }
+
+    private fun navToArc59ExpressSendFragment(transactionData: TransactionSignData.Send) {
         nav(
             AssetTransferAmountFragmentDirections
                 .actionAssetTransferAmountFragmentToArc59ExpressSendFragment(transactionData)
         )
     }
 
-    private fun navToAssetTransferPreviewFragment(transactionData: TransactionData.Send) {
+    private fun navToAssetTransferPreviewFragment(transactionData: TransactionSignData.Send) {
         nav(
             AssetTransferAmountFragmentDirections
-                .actionAssetTransferAmountFragmentToAssetTransferPreviewFragment(
-                    transactionData
-                )
+                .actionAssetTransferAmountFragmentToAssetTransferPreviewFragment(transactionData)
         )
     }
 

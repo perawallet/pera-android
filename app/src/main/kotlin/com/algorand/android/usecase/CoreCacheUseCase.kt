@@ -14,11 +14,9 @@ package com.algorand.android.usecase
 
 import com.algorand.android.banner.domain.usecase.BannersUseCase
 import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.utils.AccountCacheManager
 import javax.inject.Inject
 
 class CoreCacheUseCase @Inject constructor(
-    private val accountCacheManager: AccountCacheManager,
     private val accountDetailUseCase: AccountDetailUseCase,
     private val assetDetailUseCase: SimpleAssetDetailUseCase,
     private val simpleCollectibleUseCase: SimpleCollectibleUseCase,
@@ -26,7 +24,6 @@ class CoreCacheUseCase @Inject constructor(
 ) {
 
     suspend fun handleNodeChange() {
-        accountCacheManager.removeCachedData()
         accountDetailUseCase.clearAccountDetailCache()
         assetDetailUseCase.clearAssetDetailCache()
         simpleCollectibleUseCase.clearCollectibleCache()
@@ -34,7 +31,6 @@ class CoreCacheUseCase @Inject constructor(
     }
 
     suspend fun clearAllCachedData() {
-        accountCacheManager.removeCachedData()
         accountDetailUseCase.clearAccountDetailCache()
         assetDetailUseCase.clearAssetDetailCache()
         simpleCollectibleUseCase.clearCollectibleCache()

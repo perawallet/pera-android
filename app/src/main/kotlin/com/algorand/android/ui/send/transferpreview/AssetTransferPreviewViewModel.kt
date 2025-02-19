@@ -13,16 +13,15 @@
 
 package com.algorand.android.ui.send.transferpreview
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
-import com.algorand.android.core.TransactionManager
+import com.algorand.android.core.transaction.TransactionSignManager
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetTransferPreview
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.usecase.AssetTransferPreviewUseCase
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.Event
@@ -30,7 +29,10 @@ import com.algorand.android.utils.Resource
 import com.algorand.android.utils.Resource.Error.GlobalWarning
 import com.algorand.android.utils.flatten
 import com.algorand.android.utils.getOrThrow
+import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,13 +42,14 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class AssetTransferPreviewViewModel @Inject constructor(
     private val assetTransferPreviewUserCase: AssetTransferPreviewUseCase,
-    private val transactionManager: TransactionManager,
+    private val transactionSignManager: TransactionSignManager,
+    private val getTransactionSigner: GetTransactionSigner,
+    private val getAccountInformation: GetAccountInformation,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private var sendAlgoJob: Job? = null
-    private val transactionData =
-        savedStateHandle.getOrThrow<TransactionData.Send>(TRANSACTION_DATA_KEY)
+    private val transactionData = savedStateHandle.getOrThrow<TransactionSignData.Send>(TRANSACTION_DATA_KEY)
 
     private val _sendAlgoResponseFlow = MutableStateFlow<Event<Resource<String>>?>(null)
     val sendAlgoResponseFlow: StateFlow<Event<Resource<String>>?> = _sendAlgoResponseFlow
@@ -54,10 +57,10 @@ class AssetTransferPreviewViewModel @Inject constructor(
     private val _assetTransferPreviewFlow = MutableStateFlow<AssetTransferPreview?>(null)
     val assetTransferPreviewFlow: StateFlow<AssetTransferPreview?> = _assetTransferPreviewFlow
 
-    private val _signArc59TransactionFlow = MutableStateFlow<TransactionData?>(null)
-    val signArc59TransactionFlow: StateFlow<TransactionData?> = _signArc59TransactionFlow
+    private val _signArc59TransactionFlow = MutableStateFlow<TransactionSignData?>(null)
+    val signArc59TransactionFlow: StateFlow<TransactionSignData?> = _signArc59TransactionFlow
 
-    private var unsignedArc59Transactions = listOf<TransactionData>()
+    private var unsignedArc59Transactions = listOf<TransactionSignData>()
     private val signedArc59Transactions = mutableListOf<SignedTransactionDetail>()
 
     init {
@@ -68,7 +71,7 @@ class AssetTransferPreviewViewModel @Inject constructor(
     }
 
     private fun getAssetTransferPreview(
-        transactionList: List<TransactionData>,
+        transactionList: List<TransactionSignData>,
         receiverMinBalanceFee: Long? = null
     ) {
         viewModelScope.launch {
@@ -109,23 +112,12 @@ class AssetTransferPreviewViewModel @Inject constructor(
                                 _sendAlgoResponseFlow.emit(Event(Resource.Error.Api(it.exception!!)))
                             } else {
                                 _sendAlgoResponseFlow.emit(
-                                    Event(
-                                        GlobalWarning(
-                                            R.string.error,
-                                            AnnotatedString(R.string.an_error_occured)
-                                        )
-                                    )
+                                    Event(GlobalWarning(R.string.error, AnnotatedString(R.string.an_error_occured)))
                                 )
                             }
                         }
 
-                        is DataResource.Success -> _sendAlgoResponseFlow.emit(
-                            Event(
-                                Resource.Success(
-                                    it.data
-                                )
-                            )
-                        )
+                        is DataResource.Success -> _sendAlgoResponseFlow.emit(Event(Resource.Success(it.data)))
                     }
                 }
         }
@@ -140,40 +132,33 @@ class AssetTransferPreviewViewModel @Inject constructor(
         }
     }
 
-    private fun makeArc59Transactions(transactionData: TransactionData) {
+    private fun makeArc59Transactions(transactionData: TransactionSignData) {
         viewModelScope.launch {
-            (transactionData as TransactionData.Send).let {
-                val transactions =
-                    transactionManager.createArc59SendTransactionList(transactionData)
-                val arc59Transactions = mutableListOf<TransactionData>()
+            (transactionData as TransactionSignData.Send).let {
+                val transactions = transactionSignManager.createArc59SendTransactionList(transactionData)
+                val arc59Transactions = mutableListOf<TransactionSignData>()
                 transactions?.forEach { transaction ->
                     if (transaction.accountAddress == transactionData.senderAccountAddress) {
                         arc59Transactions.add(
-                            transactionData.copy(
-                                transactionByteArray = transaction.transactionByteArray
-                            )
+                            transactionData.copy(transactionByteArray = transaction.transactionByteArray)
                         )
                     } else {
+                        val targetAccountInfo = getAccountInformation(transactionData.targetUser.publicKey)
                         arc59Transactions.add(
-                            TransactionData.AddAsset(
+                            TransactionSignData.AddAsset(
                                 senderAccountAddress = transactionData.targetUser.publicKey,
-                                isSenderRekeyedToAnotherAccount =
-                                transactionData.targetUser.account?.isRekeyedToAnotherAccount()
-                                    ?: false,
-                                senderAccountType = transactionData.targetUser.account?.account?.type,
-                                senderAccountDetail = transactionData.targetUser.account?.account?.detail,
-                                senderAuthAddress = transactionData.targetUser.account?.authAddress,
-                                assetInformation = transactionData.assetInformation,
+                                senderAuthAddress = targetAccountInfo?.rekeyAdminAddress,
+                                assetId = transactionData.assetId,
                                 transactionByteArray = transaction.transactionByteArray,
-                                isArc59Transaction = transactionData.isArc59Transaction
+                                isArc59Transaction = transactionData.isArc59Transaction,
+                                signer = getTransactionSigner(transactionData.targetUser.publicKey)
                             )
                         )
                     }
                 }
                 signedArc59Transactions.clear()
                 unsignedArc59Transactions = arc59Transactions
-                val receiverMinBalanceFee =
-                    transactionManager.getReceiverMinBalanceFee(transactionData)
+                val receiverMinBalanceFee = transactionSignManager.getReceiverMinBalanceFee(transactionData)
                 getAssetTransferPreview(unsignedArc59Transactions, receiverMinBalanceFee)
             }
         }
@@ -185,7 +170,7 @@ class AssetTransferPreviewViewModel @Inject constructor(
         }
     }
 
-    fun getTransactionData(): TransactionData.Send {
+    fun getTransactionData(): TransactionSignData.Send {
         return if (_assetTransferPreviewFlow.value?.isNoteEditable == true) {
             transactionData.copy(
                 note = _assetTransferPreviewFlow.value?.note,

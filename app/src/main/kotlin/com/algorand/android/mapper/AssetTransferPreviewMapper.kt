@@ -14,26 +14,31 @@
 package com.algorand.android.mapper
 
 import com.algorand.android.models.AssetTransferPreview
-import com.algorand.android.models.TransactionData
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import java.math.BigDecimal
 import javax.inject.Inject
 
 class AssetTransferPreviewMapper @Inject constructor() {
 
+    @Suppress("LongParameterList")
     fun mapToAssetTransferPreview(
-        transactionData: TransactionData.Send,
+        transactionData: TransactionSignData.Send,
         exchangePrice: BigDecimal,
         currencySymbol: String,
+        assetId: Long,
+        assetShortName: String,
+        assetDecimals: Int,
         note: String?,
         isNoteEditable: Boolean,
         accountIconDrawablePreview: AccountIconDrawablePreview,
-        fee: Long
+        fee: Long,
+        targetAccountDetail: AccountDetail
     ): AssetTransferPreview {
         with(transactionData) {
             return AssetTransferPreview(
                 amount = amount,
-                assetInformation = assetInformation,
                 targetUser = targetUser,
                 exchangePrice = exchangePrice,
                 currencySymbol = currencySymbol,
@@ -42,7 +47,12 @@ class AssetTransferPreviewMapper @Inject constructor() {
                 isNoteEditable = isNoteEditable,
                 accountIconDrawablePreview = accountIconDrawablePreview,
                 senderAccountName = senderAccountName,
-                senderAccountAddress = senderAccountAddress
+                senderAccountAddress = senderAccountAddress,
+                targetAccountDetail = targetAccountDetail,
+                senderAssetAmount = senderAlgoAmount,
+                assetId = assetId,
+                assetShortName = assetShortName,
+                assetDecimals = assetDecimals
             )
         }
     }

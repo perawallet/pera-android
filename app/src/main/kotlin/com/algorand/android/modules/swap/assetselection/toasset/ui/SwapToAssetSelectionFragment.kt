@@ -18,7 +18,7 @@ import com.algorand.android.R
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.AssetActionResult
-import com.algorand.android.models.AssetOperationResult
+import com.algorand.android.models.AssetOperationResult.AssetAdditionOperationResult
 import com.algorand.android.modules.assets.action.addition.AddAssetActionBottomSheet.Companion.ADD_ASSET_ACTION_RESULT_KEY
 import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionFragment
 import com.algorand.android.modules.swap.assetselection.base.BaseSwapAssetSelectionViewModel
@@ -81,15 +81,18 @@ class SwapToAssetSelectionFragment : BaseSwapAssetSelectionFragment() {
             SwapToAssetSelectionFragmentDirections
                 .actionSwapToAssetSelectionFragmentToAssetAdditionActionNavigation(assetAction)
         )
-        (activity as? MainActivity)?.mainViewModel?.assetOperationResultLiveData?.observe(viewLifecycleOwner) {
-            it.peek().use(
-                onSuccess = {
-                    if (it is AssetOperationResult.AssetAdditionOperationResult && it.assetId == assetAction.assetId) {
-                        setResultAndNavigateBack(it.assetId)
+        collectLatestOnLifecycle(
+            flow = (activity as? MainActivity)?.assetOperationViewModel?.assetOperationResultFlow,
+            collection = {
+                it?.peek()?.use(
+                    onSuccess = { operation ->
+                        if (operation is AssetAdditionOperationResult && operation.assetId == assetAction.assetId) {
+                            setResultAndNavigateBack(operation.assetId)
+                        }
                     }
-                }
-            )
-        }
+                )
+            }
+        )
     }
 
     private fun setResultAndNavigateBack(assetId: Long) {

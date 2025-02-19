@@ -14,6 +14,7 @@ package com.algorand.android.models
 
 import android.os.Parcelable
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
 
 // this user is targetted to be sent.
@@ -21,7 +22,8 @@ import kotlinx.parcelize.Parcelize
 data class TargetUser(
     val contact: User? = null,
     val publicKey: String,
-    val account: AccountCacheData? = null,
+    val minBalance: BigInteger? = null,
+    val algoBalance: BigInteger? = null,
     val nftDomainAddress: String? = null,
     val nftDomainServiceLogoUrl: String? = null,
     val accountIconDrawablePreview: AccountIconDrawablePreview?,

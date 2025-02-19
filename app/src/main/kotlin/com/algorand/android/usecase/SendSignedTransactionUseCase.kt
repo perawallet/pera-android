@@ -12,7 +12,6 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.models.Account
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.SignedTransactionDetail.AssetOperation.AssetAddition
 import com.algorand.android.models.SignedTransactionDetail.Send
@@ -27,6 +26,13 @@ import com.algorand.android.utils.exception.AccountAlreadyOptedIntoAssetExceptio
 import com.algorand.android.utils.exception.AssetAlreadyPendingForRemovalException
 import com.algorand.android.utils.exceptions.TransactionConfirmationAwaitException
 import com.algorand.android.utils.exceptions.TransactionIdNullException
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountState
+import com.algorand.wallet.account.info.domain.model.AssetStatus
+import com.algorand.wallet.account.info.domain.usecase.AddAssetHoldingToAccountAsPending
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.wallet.account.info.domain.usecase.SetAccountAssetStatus
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
 import kotlinx.coroutines.flow.channelFlow
@@ -36,10 +42,12 @@ class SendSignedTransactionUseCase @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val algodInterceptor: AlgodInterceptor,
     private val firebaseAnalytics: FirebaseAnalytics,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val assetAdditionUseCase: AssetAdditionUseCase,
-    private val accountAssetRemovalUseCase: AccountAssetRemovalUseCase,
-    private val transactionConfirmationUseCase: TransactionConfirmationUseCase
+    private val transactionConfirmationUseCase: TransactionConfirmationUseCase,
+    private val setAccountAssetStatus: SetAccountAssetStatus,
+    private val isAssetOwnedByAccount: IsAssetOwnedByAccount,
+    private val getAccountInformation: GetAccountInformation,
+    private val getAccountState: GetAccountState,
+    private val addAssetHoldingToAccountAsPending: AddAssetHoldingToAccountAsPending
 ) {
 
     suspend fun sendSignedTransaction(
@@ -92,7 +100,7 @@ class SendSignedTransactionUseCase @Inject constructor(
     ): DataResource<String> {
         txnId?.let { transactionId ->
             transactionsRepository.postTrackTransaction(TrackTransactionRequest(transactionId))
-            if (shouldLogTransaction && signedTransactionDetail is SignedTransactionDetail.Send) {
+            if (shouldLogTransaction && signedTransactionDetail is Send) {
                 logTransactionEvent(signedTransactionDetail, transactionId)
             }
         }
@@ -100,13 +108,14 @@ class SendSignedTransactionUseCase @Inject constructor(
         return DataResource.Success(txnId.orEmpty())
     }
 
-    private fun logTransactionEvent(signedTransactionDetail: Send, taxId: String?) {
+    private suspend fun logTransactionEvent(signedTransactionDetail: Send, taxId: String?) {
         if (algodInterceptor.currentActiveNode?.networkSlug == MAINNET_NETWORK_SLUG) {
+            val accountState = getAccountState(signedTransactionDetail.senderAccountAddress)
             with(signedTransactionDetail) {
                 firebaseAnalytics.logTransactionEvent(
                     amount = amount,
-                    assetId = assetInformation.assetId,
-                    accountType = senderAccountType ?: Account.Type.STANDARD,
+                    assetId = assetId,
+                    accountType = accountState.accountRegistrationType ?: AccountRegistrationType.Algo25,
                     isMax = isMax,
                     transactionId = taxId
                 )
@@ -114,34 +123,35 @@ class SendSignedTransactionUseCase @Inject constructor(
         }
     }
 
-    private fun isAccountAlreadyOptedIntoAsset(transaction: AssetAddition): Boolean {
-        return accountDetailUseCase.isAssetOwnedByAccount(
-            publicKey = transaction.senderAccountAddress,
-            assetId = transaction.assetInformation.assetId
+    private suspend fun isAccountAlreadyOptedIntoAsset(transaction: AssetAddition): Boolean {
+        return isAssetOwnedByAccount(
+            address = transaction.senderAccountAddress,
+            assetId = transaction.assetId
         )
     }
 
-    private fun isAssetPendingForRemovalFromAccount(
+    private suspend fun isAssetPendingForRemovalFromAccount(
         transaction: SignedTransactionDetail.AssetOperation.AssetRemoval
     ): Boolean {
-        return accountDetailUseCase.isAssetPendingForRemovalFromAccount(
-            accountAddress = transaction.senderAccountAddress,
-            assetId = transaction.assetInformation.assetId
-        )
+        val assetHolding = getAccountInformation(transaction.senderAccountAddress)?.assetHoldings?.find {
+            it.assetId == transaction.assetId
+        }
+        return assetHolding != null && assetHolding.status == AssetStatus.PENDING_FOR_REMOVAL
     }
 
     private suspend fun cacheAssetIfAssetOperationTransaction(signedTransactionDetail: SignedTransactionDetail) {
         when (signedTransactionDetail) {
             is AssetAddition -> {
-                assetAdditionUseCase.addAssetAdditionToAccountCache(
-                    publicKey = signedTransactionDetail.senderAccountAddress,
-                    assetInformation = signedTransactionDetail.assetInformation
+                addAssetHoldingToAccountAsPending(
+                    address = signedTransactionDetail.senderAccountAddress,
+                    assetId = signedTransactionDetail.assetId
                 )
             }
             is SignedTransactionDetail.AssetOperation.AssetRemoval -> {
-                accountAssetRemovalUseCase.addAssetDeletionToAccountCache(
-                    publicKey = signedTransactionDetail.senderAccountAddress,
-                    assetId = signedTransactionDetail.assetInformation.assetId
+                setAccountAssetStatus(
+                    address = signedTransactionDetail.senderAccountAddress,
+                    assetId = signedTransactionDetail.assetId,
+                    status = AssetStatus.PENDING_FOR_REMOVAL
                 )
             }
             else -> Unit

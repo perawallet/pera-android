@@ -22,7 +22,7 @@ import com.algorand.android.ledger.operations.AccountFetchAllOperation
 import com.algorand.android.ledger.operations.BaseOperation
 import com.algorand.android.ledger.operations.BaseTransactionOperation
 import com.algorand.android.ledger.operations.ExternalTransactionOperation
-import com.algorand.android.ledger.operations.TransactionOperation
+import com.algorand.android.ledger.operations.TransactionSignOperation
 import com.algorand.android.ledger.operations.VerifyAddressOperation
 import com.algorand.android.ledger.operations.WalletConnectTransactionOperation
 import com.algorand.android.models.LedgerBleResult
@@ -78,7 +78,7 @@ class LedgerBleOperationManager @Inject constructor(
         currentOperation = newOperation
         currentScope.launch {
             when (newOperation) {
-                is TransactionOperation,
+                is TransactionSignOperation,
                 is AccountFetchAllOperation,
                 is WalletConnectTransactionOperation,
                 is ExternalTransactionOperation -> {
@@ -192,7 +192,7 @@ class LedgerBleOperationManager @Inject constructor(
                                         is AccountFetchAllOperation -> {
                                             LedgerBleResult.AccountResult(accounts, device)
                                         }
-                                        is TransactionOperation,
+                                        is TransactionSignOperation,
                                         is WalletConnectTransactionOperation,
                                         is ExternalTransactionOperation -> {
                                             LedgerBleResult.AppErrorResult(R.string.it_appears_this, R.string.error)

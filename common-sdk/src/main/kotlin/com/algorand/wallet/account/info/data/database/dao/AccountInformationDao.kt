@@ -40,6 +40,12 @@ internal interface AccountInformationDao {
     @Query("SELECT * FROM account_information")
     suspend fun getAll(): List<AccountInformationEntity>
 
+    @Query("SELECT algo_address FROM account_information")
+    suspend fun getAllAddresses(): List<String>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM account_information WHERE algo_address = :address LIMIT 1)")
+    suspend fun isAddressExists(address: String): Boolean
+
     @Query("SELECT * FROM account_information")
     fun getAllAsFlow(): Flow<List<AccountInformationEntity>>
 
@@ -48,6 +54,9 @@ internal interface AccountInformationDao {
 
     @Query("SELECT MIN(last_fetched_round) FROM account_information WHERE created_at_round IS NOT NULL")
     suspend fun getEarliestLastFetchedRound(): Long?
+
+    @Query("SELECT auth_algo_address FROM account_information WHERE :address = algo_address")
+    suspend fun getRekeyAuthAddress(address: String): String?
 
     @Query("DELETE FROM account_information")
     suspend fun clearAll()

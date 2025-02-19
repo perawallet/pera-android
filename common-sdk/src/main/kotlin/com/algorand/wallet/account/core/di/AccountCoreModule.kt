@@ -32,6 +32,8 @@ import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalanceUseCase
 import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlow
 import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlowUseCase
+import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
+import com.algorand.wallet.account.core.domain.usecase.GetTransactionSignerUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -72,4 +74,7 @@ internal object AccountCoreModule {
 
     @Provides
     fun provideGetAccountMinBalance(useCase: GetAccountMinBalanceUseCase): GetAccountMinBalance = useCase
+
+    @Provides
+    fun provideGetTransactionSigner(useCase: GetTransactionSignerUseCase): GetTransactionSigner = useCase
 }

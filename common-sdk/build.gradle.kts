@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.room)
     alias(libs.plugins.ksp)
+    id("kotlin-parcelize")
     id("dagger.hilt.android.plugin")
 }
 
@@ -53,6 +54,7 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
+    testImplementation(libs.mockito)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(project(":test-utils"))
 

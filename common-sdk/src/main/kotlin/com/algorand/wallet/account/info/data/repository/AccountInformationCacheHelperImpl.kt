@@ -12,10 +12,10 @@
 
 package com.algorand.wallet.account.info.data.repository
 
+import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCache
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
 import com.algorand.wallet.account.info.data.mapper.AccountInformationEntityMapper
-import com.algorand.wallet.account.info.data.mapper.AccountInformationErrorEntityMapper
 import com.algorand.wallet.account.info.data.mapper.AccountInformationMapper
 import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.account.info.domain.model.AccountInformation
@@ -26,8 +26,8 @@ internal class AccountInformationCacheHelperImpl @Inject constructor(
     private val accountInformationEntityMapper: AccountInformationEntityMapper,
     private val accountInformationMapper: AccountInformationMapper,
     private val accountInformationDao: AccountInformationDao,
-    private val accountInformationErrorEntityMapper: AccountInformationErrorEntityMapper,
-    private val assetHoldingCacheHelper: AssetHoldingCacheHelper
+    private val assetHoldingCacheHelper: AssetHoldingCacheHelper,
+    private val accountInformationErrorCache: AccountInformationErrorCache
 ) : AccountInformationCacheHelper {
 
     override suspend fun cacheAccountInformation(
@@ -38,9 +38,12 @@ internal class AccountInformationCacheHelperImpl @Inject constructor(
         return if (entity != null) {
             val assetHoldings =
                 assetHoldingCacheHelper.cacheAssetHolding(address, response.accountInformation?.allAssetHoldingList)
+            accountInformationErrorCache.remove(address)
             cacheAccountInformation(entity, assetHoldings)
         } else {
-            cacheErrorAccountInformation(address)
+            if (!accountInformationDao.isAddressExists(address)) {
+                accountInformationErrorCache.put(address)
+            }
             null
         }
     }
@@ -51,10 +54,5 @@ internal class AccountInformationCacheHelperImpl @Inject constructor(
     ): AccountInformation {
         accountInformationDao.insert(entity)
         return accountInformationMapper(entity, assetHoldings)
-    }
-
-    private suspend fun cacheErrorAccountInformation(address: String) {
-        val errorEntity = accountInformationErrorEntityMapper(address)
-        accountInformationDao.insert(errorEntity)
     }
 }

@@ -13,6 +13,7 @@
 package com.algorand.wallet.account.info.domain.repository
 
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
 
@@ -24,7 +25,7 @@ internal interface AccountInformationRepository {
 
     fun getCachedAccountInformationCountFlow(): Flow<Int>
 
-    suspend fun getAllAccountInformation(): Map<String, AccountInformation?>
+    suspend fun getAllSuccessfullyCachedAccountAddresses(): List<String>
 
     suspend fun fetchAndCacheAccountInformation(addresses: List<String>): Map<String, AccountInformation?>
 
@@ -41,4 +42,12 @@ internal interface AccountInformationRepository {
     fun getAccountInformationFlow(address: String): Flow<AccountInformation?>
 
     suspend fun fetchRekeyedAccounts(address: String): PeraResult<List<AccountInformation>>
+
+    suspend fun setAssetStatus(address: String, assetId: Long, status: AssetStatus)
+
+    suspend fun addAssetHoldingAsPending(address: String, assetId: Long)
+
+    suspend fun getFailedAccountInformation(): List<String>
+
+    suspend fun getRekeyAuthAddress(address: String): String?
 }

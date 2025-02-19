@@ -12,12 +12,16 @@
 
 package com.algorand.wallet.account.info.data.repository
 
+import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCache
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
 import com.algorand.wallet.account.info.data.mapper.AccountInformationMapper
+import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapper
 import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
+import com.algorand.wallet.account.info.data.mapper.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
@@ -37,7 +41,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     private val assetHoldingDao: AssetHoldingDao,
     private val assetHoldingMapper: AssetHoldingMapper,
     private val accountInformationCacheHelper: AccountInformationCacheHelper,
-    private val accountInformationFetchHelper: AccountInformationFetchHelper
+    private val accountInformationFetchHelper: AccountInformationFetchHelper,
+    private val assetStatusEntityMapper: AssetStatusEntityMapper,
+    private val assetHoldingEntityMapper: AssetHoldingEntityMapper,
+    private val accountInformationErrorCache: AccountInformationErrorCache
 ) : AccountInformationRepository {
 
     override suspend fun fetchAccountInformation(address: String): PeraResult<AccountInformation> {
@@ -85,14 +92,8 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllAccountInformation(): Map<String, AccountInformation?> {
-        val accountInformationMap = mutableMapOf<String, AccountInformation?>()
-        accountInformationDao.getAll().forEach {
-            val assetEntities = assetHoldingDao.getAssetsByAddress(it.algoAddress)
-            val assetHoldings = assetHoldingMapper(assetEntities)
-            accountInformationMap[it.algoAddress] = accountInformationMapper(it, assetHoldings)
-        }
-        return accountInformationMap
+    override suspend fun getAllSuccessfullyCachedAccountAddresses(): List<String> {
+        return accountInformationDao.getAllAddresses()
     }
 
     override fun getAllAccountInformationFlow(): Flow<Map<String, AccountInformation?>> {
@@ -146,6 +147,24 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     override suspend fun deleteAccountInformation(address: String) {
         accountInformationDao.delete(address)
         assetHoldingDao.deleteByAddress(address)
+    }
+
+    override suspend fun setAssetStatus(address: String, assetId: Long, status: AssetStatus) {
+        val statusEntity = assetStatusEntityMapper(status)
+        assetHoldingDao.updateStatus(address, assetId, statusEntity)
+    }
+
+    override suspend fun addAssetHoldingAsPending(address: String, assetId: Long) {
+        val entity = assetHoldingEntityMapper(address, assetId, AssetStatus.PENDING_FOR_ADDITION)
+        assetHoldingDao.insert(entity)
+    }
+
+    override suspend fun getFailedAccountInformation(): List<String> {
+        return accountInformationErrorCache.getAll()
+    }
+
+    override suspend fun getRekeyAuthAddress(address: String): String? {
+        return accountInformationDao.getRekeyAuthAddress(address)
     }
 
     companion object {

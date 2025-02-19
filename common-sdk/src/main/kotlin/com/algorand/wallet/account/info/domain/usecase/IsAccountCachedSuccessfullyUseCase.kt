@@ -12,21 +12,16 @@
 
 package com.algorand.wallet.account.info.domain.usecase
 
-import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import java.math.BigInteger
+import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import javax.inject.Inject
 
-internal class IsAssetOwnedByAccountUseCase @Inject constructor(
-    private val getAccountInformation: GetAccountInformation
-) : IsAssetOwnedByAccount {
+internal class IsAccountCachedSuccessfullyUseCase @Inject constructor(
+    private val accountInformationRepository: AccountInformationRepository
+) : IsAccountCachedSuccessfully {
 
-    override suspend operator fun invoke(address: String, assetId: Long): Boolean {
-        val accountInfo = getAccountInformation(address) ?: return false
-
-        return if (assetId == ALGO_ID) {
-            accountInfo.amount > BigInteger.ZERO
-        } else {
-            accountInfo.assetHoldings.any { it.assetId == assetId && it.amount > BigInteger.ZERO }
+    override suspend fun invoke(address: String): Boolean {
+        return accountInformationRepository.getFailedAccountInformation().none {
+            it == address
         }
     }
 }

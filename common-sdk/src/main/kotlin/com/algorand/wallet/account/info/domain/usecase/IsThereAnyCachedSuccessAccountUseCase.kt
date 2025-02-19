@@ -13,13 +13,27 @@
 package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import javax.inject.Inject
 
 internal class IsThereAnyCachedSuccessAccountUseCase @Inject constructor(
-    private val accountInformationRepository: AccountInformationRepository
+    private val accountInformationRepository: AccountInformationRepository,
+    private val getLocalAccounts: GetLocalAccounts
 ) : IsThereAnyCachedSuccessAccount {
 
     override suspend fun invoke(excludeNoAuthAccounts: Boolean): Boolean {
-        return accountInformationRepository.getAllAccountInformation().any { it.value != null }
+        val successAccounts = accountInformationRepository.getAllSuccessfullyCachedAccountAddresses()
+        val localAccounts = if (excludeNoAuthAccounts) {
+            getLocalAccounts().filter { it !is LocalAccount.NoAuth }
+        } else {
+            getLocalAccounts()
+        }
+
+        return localAccounts.any { localAccount ->
+            successAccounts.any { address ->
+                localAccount.algoAddress == address
+            }
+        }
     }
 }

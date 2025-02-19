@@ -14,6 +14,7 @@ package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.wallet.account.info.domain.model.AccountCacheStatus
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
 
@@ -25,8 +26,12 @@ fun interface FetchAndCacheAccountInformation {
     suspend operator fun invoke(addresses: List<String>): Map<String, AccountInformation?>
 }
 
-fun interface GetAllAccountInformation {
-    suspend operator fun invoke(): Map<String, AccountInformation?>
+fun interface GetAllSuccessfullyCachedAccountAddresses {
+    suspend operator fun invoke(): List<String>
+}
+
+fun interface GetAllFailedCachedAccountAddresses {
+    suspend operator fun invoke(): List<String>
 }
 
 fun interface GetAllAssetHoldingIds {
@@ -79,4 +84,20 @@ fun interface FetchAccountInformation {
 
 fun interface FetchRekeyedAccounts {
     suspend operator fun invoke(address: String): PeraResult<List<AccountInformation>>
+}
+
+fun interface SetAccountAssetStatus {
+    suspend operator fun invoke(address: String, assetId: Long, status: AssetStatus)
+}
+
+fun interface AddAssetHoldingToAccountAsPending {
+    suspend operator fun invoke(address: String, assetId: Long)
+}
+
+fun interface IsAccountCachedSuccessfully {
+    suspend operator fun invoke(address: String): Boolean
+}
+
+fun interface GetAccountRekeyAuthAddress {
+    suspend operator fun invoke(address: String): String?
 }

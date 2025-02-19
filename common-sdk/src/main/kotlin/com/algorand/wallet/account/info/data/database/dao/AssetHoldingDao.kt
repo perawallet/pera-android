@@ -64,8 +64,7 @@ internal interface AssetHoldingDao {
 
     @Transaction
     suspend fun updateAssetHoldings(algoAddress: String, assetHoldingEntities: List<AssetHoldingEntity>) {
-        val assetIds = assetHoldingEntities.map { it.assetId }
-        deleteAssetsNotInList(algoAddress, assetIds)
+        deleteByAddress(algoAddress)
         insertAll(assetHoldingEntities)
     }
 

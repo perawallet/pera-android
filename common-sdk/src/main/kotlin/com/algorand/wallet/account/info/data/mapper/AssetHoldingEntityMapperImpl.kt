@@ -15,9 +15,13 @@ package com.algorand.wallet.account.info.data.mapper
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
+import com.algorand.wallet.account.info.domain.model.AssetStatus
+import java.math.BigInteger
 import javax.inject.Inject
 
-internal class AssetHoldingEntityMapperImpl @Inject constructor() : AssetHoldingEntityMapper {
+internal class AssetHoldingEntityMapperImpl @Inject constructor(
+    private val assetStatusEntityMapper: AssetStatusEntityMapper
+) : AssetHoldingEntityMapper {
 
     override fun invoke(address: String, response: AssetHoldingResponse): AssetHoldingEntity? {
         return AssetHoldingEntity(
@@ -36,5 +40,18 @@ internal class AssetHoldingEntityMapperImpl @Inject constructor() : AssetHolding
         return responses.mapNotNull { (address, assetHoldingResponse) ->
             invoke(address, assetHoldingResponse)
         }
+    }
+
+    override fun invoke(address: String, assetId: Long, status: AssetStatus): AssetHoldingEntity {
+        return AssetHoldingEntity(
+            algoAddress = address,
+            assetId = assetId,
+            amount = BigInteger.ZERO,
+            isDeleted = false,
+            isFrozen = false,
+            optedInAtRound = null,
+            optedOutAtRound = null,
+            assetStatusEntity = assetStatusEntityMapper(status)
+        )
     }
 }

@@ -30,8 +30,8 @@ abstract class BaseRemoveCollectibleItemViewHolder(
         with(binding.collectibleStatefulItemView) {
             with(item) {
                 bindImage(baseAssetDrawableProvider = baseAssetDrawableProvider)
-                setTitleText(title = name.getName(resources))
-                setDescriptionText(description = shortName.getName(resources))
+                setTitleText(title = name.assetName)
+                setDescriptionText(description = shortName.assetName)
                 setPrimaryValueText(primaryValue = formattedCompactAmount)
                 setSecondaryValueText(secondaryValue = formattedSelectedCurrencyCompactValue)
                 setButtonState(state = actionItemButtonState)

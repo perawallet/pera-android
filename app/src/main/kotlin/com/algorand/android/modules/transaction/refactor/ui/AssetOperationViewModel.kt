@@ -66,7 +66,7 @@ class AssetOperationViewModel @Inject constructor(
     fun createAddAssetTransaction(assetActionResult: AssetActionResult) {
         val address = assetActionResult.publicKey ?: return
         viewModelScope.launch {
-            val transactionData = createAddAssetTransactionData(address, assetActionResult.asset.assetId)
+            val transactionData = createAddAssetTransactionData(address, assetActionResult.assetId)
             if (transactionData != null) {
                 setLatestAddAssetTransaction(transactionData)
                 _assetTransactionDataFlow.update { Event(transactionData) }
@@ -77,7 +77,7 @@ class AssetOperationViewModel @Inject constructor(
     fun createRemoveAssetTransaction(assetActionResult: AssetActionResult) {
         val address = assetActionResult.publicKey ?: return
         viewModelScope.launch {
-            val transactionData = createRemoveAssetTransactionData(address, assetActionResult.asset.assetId)
+            val transactionData = createRemoveAssetTransactionData(address, assetActionResult.assetId)
             if (transactionData != null) {
                 _assetTransactionDataFlow.update { Event(transactionData) }
             }

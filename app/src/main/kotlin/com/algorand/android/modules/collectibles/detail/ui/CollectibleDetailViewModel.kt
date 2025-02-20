@@ -14,13 +14,13 @@ package com.algorand.android.modules.collectibles.detail.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailViewModel
 import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
 import com.algorand.android.modules.collectibles.detail.ui.model.NFTDetailPreview
 import com.algorand.android.modules.collectibles.detail.ui.usecase.CollectibleDetailPreviewUseCase
 import com.algorand.android.modules.collectibles.download.DownloadFileUseCase
 import com.algorand.android.usecase.NetworkSlugUseCase
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -74,12 +74,6 @@ class CollectibleDetailViewModel @Inject constructor(
                 val fileName = "$collectibleId$mediaExtension"
                 downloadFileUseCase.execute(downloadUrl, fileName)
             }
-        }
-    }
-
-    fun onOptOutClick() {
-        with(_nftDetailPreviewFlow) {
-            update { collectibleDetailPreviewUseCase.getOptOutEventPreview(value, nftId, accountAddress) }
         }
     }
 

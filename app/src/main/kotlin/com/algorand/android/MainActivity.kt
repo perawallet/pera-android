@@ -678,10 +678,6 @@ class MainActivity :
 
     private fun handlePendingIntentWithExtras(pendingIntent: Intent): Boolean {
         with(pendingIntent) {
-            // TODO change your architecture for the bug here. https://issuetracker.google.com/issues/37053389
-            // This fixes the problem for now. Be careful when adding more than one parcelable.
-            setExtrasClassLoader(com.algorand.android.models.AssetInformation::class.java.classLoader)
-
             if (getLongExtra(WC_TRANSACTION_ID_INTENT_KEY, -1L) != -1L) {
                 nav(HomeNavigationDirections.actionGlobalWalletConnectTransactionRequestNavigation())
             } else if (getLongExtra(WC_ARBITRARY_DATA_ID_INTENT_KEY, -1L) != -1L) {

@@ -47,7 +47,7 @@ class RemoveAssetActionBottomSheet : BaseAssetActionBottomSheet() {
             stringResId = R.string.you_are_about_to,
             replacementList = listOf(
                 "account_name" to assetActionViewModel.accountAddress,
-                "asset_name" to assetActionViewModel.assetFullName.getName(resources)
+                "asset_name" to assetActionViewModel.assetFullName
             )
         )
     }
@@ -62,7 +62,7 @@ class RemoveAssetActionBottomSheet : BaseAssetActionBottomSheet() {
             setOnClickListener {
                 asset?.let { assetDescription ->
                     val assetActionResult = AssetActionResult(
-                        asset = assetDescription,
+                        assetId = assetDescription.id,
                         publicKey = assetActionViewModel.accountAddress
                     )
                     (activity as? MainActivity)?.signRemoveAssetTransaction(assetActionResult)

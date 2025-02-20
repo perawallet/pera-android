@@ -12,12 +12,12 @@
 
 package com.algorand.android.modules.collectibles.profile.ui.mapper
 
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaStatusPreview
 import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
 import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
 import com.algorand.android.modules.collectibles.profile.ui.model.CollectibleProfilePreview
 import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 
 class CollectibleProfilePreviewMapper @Inject constructor() {

@@ -12,68 +12,56 @@
 
 package com.algorand.android.modules.assets.action.base
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
-import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.modules.assets.profile.about.domain.usecase.GetAssetDetailUseCase
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.exception.AssetNotFoundException
+import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.model.VerificationTier
+import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
+import com.algorand.wallet.asset.domain.usecase.GetAsset
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-abstract class BaseAssetActionViewModel constructor(
-    private val assetDetailUseCase: SimpleAssetDetailUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase,
-    private val getAssetDetailUseCase: GetAssetDetailUseCase,
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
+abstract class BaseAssetActionViewModel(
+    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
+    private val fetchAndCacheAssets: FetchAndCacheAssets,
+    private val getAsset: GetAsset
 ) : BaseViewModel() {
 
     abstract val assetId: Long
 
-    val assetInformationLiveData = MutableLiveData<Resource<AssetInformation>>()
+    private val _assetFlow = MutableStateFlow<Resource<Asset>?>(null)
+    val assetFlow: StateFlow<Resource<Asset>?> = _assetFlow.asStateFlow()
 
     // TODO: Move this into UseCase
     protected fun fetchAssetDescription(assetId: Long) {
-        assetInformationLiveData.value = Resource.Loading
-        val isInAssetCache = assetDetailUseCase.isAssetCached(assetId)
-        val isInCollectibleCache = simpleCollectibleUseCase.isCollectibleCached(assetId)
+        _assetFlow.value = Resource.Loading
         viewModelScope.launch(Dispatchers.IO) {
-            when {
-                isInAssetCache -> {
-                    val assetDetail = assetDetailUseCase.getCachedAssetDetail(assetId)?.data
-                    assetInformationLiveData.postValue(Resource.Success(assetDetail?.convertToAssetInformation()))
-                }
-                isInCollectibleCache -> {
-                    val collectibleDetail = simpleCollectibleUseCase.getCachedCollectibleById(assetId)?.data
-                    assetInformationLiveData.postValue(Resource.Success(collectibleDetail?.convertToAssetInformation()))
-                }
-                else -> {
-                    getAssetDetailUseCase.getAssetDetail(assetId).collect { dataResource ->
-                        dataResource.useSuspended(
-                            onSuccess = { assetDetail ->
-                                val assetInformation = assetDetail.convertToAssetInformation()
-                                assetInformationLiveData.postValue(Resource.Success(assetInformation))
-                            },
-                            onFailed = {
-                                val errorResourceId = if (it.exception is AssetNotFoundException) {
-                                    R.string.asset_not_found_please_make
-                                } else {
-                                    R.string.an_error_occured
-                                }
-                                val annotatedErrorString = AnnotatedString(errorResourceId)
-                                assetInformationLiveData.postValue(Resource.Error.Annotated(annotatedErrorString))
-                            }
-                        )
+            val cachedAsset = getAsset(assetId)
+            if (cachedAsset != null) {
+                _assetFlow.value = Resource.Success(cachedAsset)
+            } else {
+                _assetFlow.value = fetchAndCacheAssets(listOf(assetId), includeDeleted = true).use(
+                    onSuccess = {
+                        Resource.Success(getAsset(assetId))
+                    },
+                    onFailed = { exception, _ ->
+                        val errorResourceId = if (exception is AssetNotFoundException) {
+                            R.string.asset_not_found_please_make
+                        } else {
+                            R.string.an_error_occured
+                        }
+                        Resource.Error.Annotated(AnnotatedString(errorResourceId))
                     }
-                }
+                )
             }
         }
     }

@@ -21,7 +21,6 @@ import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentRemoveAssetsBinding
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.AssetActionResult
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.BaseRemoveAssetItem
 import com.algorand.android.models.FragmentConfiguration
@@ -158,10 +157,7 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
             RemoveAssetsFragmentDirections.actionRemoveAssetsFragmentToAssetTransferBalanceActionNavigation(
                 AssetAction(
                     assetId = removeAssetItem.id,
-                    asset = AssetInformation.createAssetInformation(
-                        removeAssetItem = removeAssetItem,
-                        resources = binding.root.resources
-                    ),
+                    assetFullName = removeAssetItem.name,
                     publicKey = removeAssetsViewModel.accountAddress
                 )
             )
@@ -174,10 +170,7 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
                 AssetAction(
                     assetId = removeAssetItem.id,
                     publicKey = removeAssetsViewModel.accountAddress,
-                    asset = AssetInformation.createAssetInformation(
-                        removeAssetItem = removeAssetItem,
-                        resources = binding.root.resources
-                    )
+                    assetFullName = removeAssetItem.name
                 )
             )
         )
@@ -190,12 +183,7 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
             AssetAction(
                 assetId = id,
                 publicKey = removeAssetsViewModel.accountAddress,
-                asset = AssetInformation(
-                    assetId = id,
-                    creatorPublicKey = creatorPublicKey,
-                    fullName = name.getName(resources),
-                    verificationTier = null
-                )
+                assetFullName = name
             )
         }
         nav(
@@ -218,7 +206,7 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
         useFragmentResultListenerValue<AssetActionResult>(
             key = TRANSFER_ASSET_ACTION_RESULT,
             result = { assetActionResult ->
-                val assetId = assetActionResult.asset.assetId
+                val assetId = assetActionResult.assetId
                 val assetTransaction = AssetTransaction(
                     assetId = assetId,
                     senderAddress = removeAssetsViewModel.accountAddress,

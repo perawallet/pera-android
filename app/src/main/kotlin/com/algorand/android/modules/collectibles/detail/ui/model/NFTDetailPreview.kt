@@ -12,11 +12,10 @@
 
 package com.algorand.android.modules.collectibles.detail.ui.model
 
-import com.algorand.android.models.AssetInformation
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
 import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
 import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.Event
 
 data class NFTDetailPreview(
@@ -40,6 +39,5 @@ data class NFTDetailPreview(
     val isOptOutButtonVisible: Boolean,
     val isCopyEnabled: Boolean,
     val globalErrorEvent: Event<String>?,
-    val nftSendEvent: Event<Unit>?,
-    val optOutNFTEvent: Event<AssetInformation>?
+    val nftSendEvent: Event<Unit>?
 )

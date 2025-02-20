@@ -23,6 +23,8 @@ internal interface HdKeyAccountRepository {
 
     suspend fun getAll(): List<LocalAccount.HdKey>
 
+    suspend fun getAllAddresses(): List<String>
+
     suspend fun getAccount(address: String): LocalAccount.HdKey?
 
     suspend fun addAccount(account: LocalAccount.HdKey, privateKey: ByteArray)

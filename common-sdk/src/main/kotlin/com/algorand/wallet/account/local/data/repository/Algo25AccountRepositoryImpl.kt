@@ -50,6 +50,12 @@ internal class Algo25AccountRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getAllAddresses(): List<String> {
+        return withContext(coroutineDispatcher) {
+            algo25Dao.getAllAddresses()
+        }
+    }
+
     override suspend fun getAccount(address: String): Algo25? {
         return withContext(coroutineDispatcher) {
             algo25Dao.get(address)?.let { algo25Mapper(it) }

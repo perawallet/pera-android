@@ -31,6 +31,9 @@ internal interface AccountInformationDao {
     @Query("SELECT * FROM account_information WHERE :algoAddress = algo_address")
     suspend fun get(algoAddress: String): AccountInformationEntity?
 
+    @Query("SELECT COUNT(*) FROM account_information WHERE algo_address IN (:algoAddresses) AND :authAddress = auth_algo_address")
+    fun getAuthAccountCountFilteredByAddress(authAddress: String, algoAddresses: List<String>): Int
+
     @Query("SELECT * FROM account_information WHERE :algoAddress = algo_address")
     fun getAsFlow(algoAddress: String): Flow<AccountInformationEntity?>
 

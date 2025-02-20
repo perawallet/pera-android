@@ -50,4 +50,6 @@ internal interface AccountInformationRepository {
     suspend fun getFailedAccountInformation(): List<String>
 
     suspend fun getRekeyAuthAddress(address: String): String?
+    
+    suspend fun getFilteredRekeyedAccountCount(authAddress: String, algoAddresses: List<String>): Int
 }

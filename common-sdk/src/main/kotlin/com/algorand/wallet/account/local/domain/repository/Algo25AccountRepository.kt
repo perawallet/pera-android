@@ -23,6 +23,8 @@ internal interface Algo25AccountRepository {
 
     suspend fun getAll(): List<LocalAccount.Algo25>
 
+    suspend fun getAllAddresses(): List<String>
+
     suspend fun getAccount(address: String): LocalAccount.Algo25?
 
     suspend fun addAccount(account: LocalAccount.Algo25, privateKey: ByteArray)

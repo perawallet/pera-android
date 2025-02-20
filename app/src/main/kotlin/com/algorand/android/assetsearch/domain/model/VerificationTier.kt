@@ -12,6 +12,10 @@
 
 package com.algorand.android.assetsearch.domain.model
 
+@Deprecated(
+    message = "Legacy verification tier model. Will be replaced with common-sdk model.",
+    replaceWith = ReplaceWith("VerificationTier", "com.algorand.wallet.asset.domain.model.VerificationTier")
+)
 enum class VerificationTier {
     VERIFIED,
     UNVERIFIED,

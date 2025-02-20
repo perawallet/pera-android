@@ -22,6 +22,8 @@ import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountTypeUseCase
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetailsUseCase
+import com.algorand.wallet.account.detail.domain.usecase.GetLocalRekeyedAccountCount
+import com.algorand.wallet.account.detail.domain.usecase.GetLocalRekeyedAccountCountUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,4 +49,7 @@ internal object AccountDetailModule {
 
     @Provides
     fun provideGetAccountDetail(useCase: GetAccountDetailUseCase): GetAccountDetail = useCase
+
+    @Provides
+    fun provideGetRekeyedAccountCount(useCase: GetLocalRekeyedAccountCountUseCase): GetLocalRekeyedAccountCount = useCase
 }

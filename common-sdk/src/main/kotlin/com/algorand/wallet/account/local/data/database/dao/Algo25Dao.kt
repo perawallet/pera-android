@@ -31,6 +31,9 @@ internal interface Algo25Dao {
     @Query("SELECT * FROM algo_25")
     suspend fun getAll(): List<Algo25Entity>
 
+    @Query("SELECT algo_address FROM algo_25")
+    suspend fun getAllAddresses(): List<String>
+
     @Query("SELECT * FROM algo_25")
     fun getAllAsFlow(): Flow<List<Algo25Entity>>
 

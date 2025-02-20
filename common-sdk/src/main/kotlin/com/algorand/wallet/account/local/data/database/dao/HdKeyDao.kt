@@ -31,6 +31,9 @@ internal interface HdKeyDao {
     @Query("SELECT * FROM hd_keys")
     suspend fun getAll(): List<HdKeyEntity>
 
+    @Query("SELECT algo_address FROM hd_keys")
+    suspend fun getAllAddresses(): List<String>
+
     @Query("SELECT * FROM hd_keys")
     fun getAllAsFlow(): Flow<List<HdKeyEntity>>
 

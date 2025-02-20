@@ -18,7 +18,6 @@ import com.algorand.android.core.AccountManager
 import com.algorand.android.core.BaseUseCase
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountDetail
-import com.algorand.android.models.AccountIconResource
 import com.algorand.android.repository.AccountRepository
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.exceptions.AccountNotFoundException
@@ -53,7 +52,7 @@ class AccountDetailUseCase @Inject constructor(
         return accountRepository.getCachedAccountDetail(publicKey)
     }
 
-    suspend fun fetchAndCacheAccountDetail(
+    fun fetchAndCacheAccountDetail(
         accountAddress: String,
         scope: CoroutineScope
     ): Flow<CacheResult<AccountDetail>> = flow {
@@ -128,10 +127,6 @@ class AccountDetailUseCase @Inject constructor(
         return accountInformation?.rekeyAdminAddress
     }
 
-    fun getAccountIcon(publicKey: String): AccountIconResource {
-        return AccountIconResource.getAccountIconResourceByAccountType(accountManager.getAccount(publicKey)?.type)
-    }
-
     fun isAccountRekeyed(publicKey: String): Boolean {
         val authAddress = accountRepository.getCachedAccountDetail(publicKey)
             ?.data
@@ -144,38 +139,7 @@ class AccountDetailUseCase @Inject constructor(
         return accountManager.isThereAnyAccountWithPublicKey(publicKey)
     }
 
-    fun isAccountCachedSuccessfully(accountAddress: String): Boolean {
-        return accountRepository.getCachedAccountDetail(accountAddress) is CacheResult.Success
-    }
-
     fun setAccountNameService(accountAddress: String, nameServiceName: String?) {
         accountRepository.getCachedAccountDetail(accountAddress)?.data?.nameServiceName = nameServiceName
-    }
-
-    fun getAuthAccount(accountAddress: String?): CacheResult<AccountDetail>? {
-        val authAccountAddress = getAuthAddress(accountAddress ?: return null) ?: return null
-        return getCachedAccountDetail(authAccountAddress)
-    }
-
-    fun hasAccountAnyRekeyedAccount(accountAddress: String): Boolean {
-        return getCachedAccountDetails().any { accountDetail ->
-            val cachedAccountAddress = accountDetail.data?.account?.address ?: return@any false
-            val authAccountDetail = getAuthAccount(cachedAccountAddress)?.data
-            val authAccountAddress = authAccountDetail?.account?.address
-            authAccountAddress == accountAddress && getAccountType(cachedAccountAddress) != Account.Type.WATCH
-        }
-    }
-
-    fun getRekeyedAccountAddresses(accountAddress: String): List<String> {
-        return getCachedAccountDetails().mapNotNull { accountDetail ->
-            val cachedAccountAddress = accountDetail.data?.account?.address ?: return@mapNotNull null
-            val authAccountDetail = getAuthAccount(cachedAccountAddress)?.data
-            val authAccountAddress = authAccountDetail?.account?.address
-            if (authAccountAddress == accountAddress && getAccountType(cachedAccountAddress) != Account.Type.WATCH) {
-                cachedAccountAddress
-            } else {
-                null
-            }
-        }
     }
 }

@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.viewmodel
 
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,8 +30,7 @@ interface EventViewModel<ViewEvent> {
     val viewEvent: Flow<ViewEvent>
 }
 
-class StateDelegate<State> @Inject constructor() : StateViewModel<State> {
-
+class StateDelegate<State> : StateViewModel<State> {
     private lateinit var _state: MutableStateFlow<State>
     override val state: StateFlow<State>
         get() {
@@ -57,8 +55,7 @@ class StateDelegate<State> @Inject constructor() : StateViewModel<State> {
     }
 }
 
-class EventDelegate<ViewEvent> @Inject constructor() : EventViewModel<ViewEvent> {
-
+class EventDelegate<ViewEvent> : EventViewModel<ViewEvent> {
     private val _viewEvent = MutableSharedFlow<ViewEvent>()
     override val viewEvent: Flow<ViewEvent> = _viewEvent.asSharedFlow()
 

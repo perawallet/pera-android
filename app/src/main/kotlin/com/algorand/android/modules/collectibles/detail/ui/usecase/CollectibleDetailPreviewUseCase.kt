@@ -12,11 +12,10 @@
 
 package com.algorand.android.modules.collectibles.detail.ui.usecase
 
-import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountIconResource
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
+import com.algorand.android.modules.assets.core.ui.domain.usecase.GetAssetName
 import com.algorand.android.modules.collectibles.detail.base.domain.decider.CollectibleDetailDecider
 import com.algorand.android.modules.collectibles.detail.base.domain.usecase.GetCollectibleDetailUseCase
 import com.algorand.android.modules.collectibles.detail.base.ui.mapper.CollectibleMediaItemMapper
@@ -29,8 +28,6 @@ import com.algorand.android.modules.collectibles.util.deciders.NFTAmountFormatDe
 import com.algorand.android.nft.domain.model.BaseCollectibleDetail
 import com.algorand.android.usecase.AccountCollectibleDataUseCase
 import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.Event
 import javax.inject.Inject
 
@@ -43,30 +40,13 @@ open class CollectibleDetailPreviewUseCase @Inject constructor(
     private val collectibleMediaItemMapper: CollectibleMediaItemMapper,
     private val collectibleTraitItemMapper: CollectibleTraitItemMapper,
     private val collectibleDetailDecider: CollectibleDetailDecider,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
-    private val baseAssetDrawableProviderDecider: AssetDrawableProviderDecider,
     private val nftAmountFormatDecider: NFTAmountFormatDecider,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase
+    private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
+    private val getAssetName: GetAssetName
 ) {
-
-    fun getOptOutEventPreview(preview: NFTDetailPreview?, nftId: Long, accountAddress: String): NFTDetailPreview? {
-        val assetInformation = getAssetInformationOfGivenNFT(
-            nftId = nftId,
-            accountAddress = accountAddress
-        ) ?: return null
-        return preview?.copy(optOutNFTEvent = Event(assetInformation))
-    }
 
     fun getSendEventPreviewAccordingToNFTType(preview: NFTDetailPreview?): NFTDetailPreview? {
         return preview?.copy(nftSendEvent = Event(Unit))
-    }
-
-    private fun getAssetInformationOfGivenNFT(nftId: Long, accountAddress: String): AssetInformation? {
-        val ownedNFTData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(nftId, accountAddress) ?: return null
-        return AssetInformation.createAssetInformation(
-            baseOwnedAssetData = ownedNFTData,
-            assetDrawableProvider = baseAssetDrawableProviderDecider.getAssetDrawableProvider(nftId)
-        )
     }
 
     @SuppressWarnings("LongMethod")
@@ -88,7 +68,7 @@ open class CollectibleDetailPreviewUseCase @Inject constructor(
                 )
                 nftDetailPreview = nftDetailPreviewMapper.mapToNFTDetailPreview(
                     isLoadingVisible = false,
-                    nftName = AssetName.create(baseNFTDetail.title ?: baseNFTDetail.fullName),
+                    nftName = getAssetName(baseNFTDetail.title ?: baseNFTDetail.fullName.orEmpty()),
                     collectionNameOfNFT = baseNFTDetail.collectionName,
                     optedInAccountTypeDrawableResId = AccountIconResource.getAccountIconResourceByAccountType(
                         accountType = accountDetail?.account?.type

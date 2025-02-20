@@ -14,45 +14,36 @@ package com.algorand.android.modules.assets.remove.ui.usecase
 
 import com.algorand.android.R
 import com.algorand.android.mapper.RemoveAssetItemMapper
-import com.algorand.android.models.AssetHolding
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedUnsupportedCollectibleData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.models.BaseRemoveAssetItem
 import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem
 import com.algorand.android.models.ScreenState
-import com.algorand.android.modules.assets.remove.ui.decider.RemoveAssetItemActionButtonStateDecider
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountCollectibleDataFlow
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsDataFlow
 import com.algorand.android.modules.assets.remove.ui.mapper.RemoveAssetsPreviewMapper
 import com.algorand.android.modules.assets.remove.ui.model.RemoveAssetsPreview
 import com.algorand.android.modules.sorting.assetsorting.ui.usecase.AssetItemSortUseCase
-import com.algorand.android.usecase.AccountAssetDataUseCase
-import com.algorand.android.usecase.AccountCollectibleDataUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.utils.extensions.getAssetHoldingList
+import com.algorand.wallet.account.info.domain.model.AssetHolding
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 
 class RemoveAssetsPreviewUseCase @Inject constructor(
     private val removeAssetsPreviewMapper: RemoveAssetsPreviewMapper,
-    private val accountAssetDataUseCase: AccountAssetDataUseCase,
-    private val accountCollectibleDataUseCase: AccountCollectibleDataUseCase,
     private val assetItemSortUseCase: AssetItemSortUseCase,
     private val removeAssetItemMapper: RemoveAssetItemMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val removeAssetItemActionButtonStateDecider: RemoveAssetItemActionButtonStateDecider
+    private val getAccountOwnedAssetsDataFlow: GetAccountOwnedAssetsDataFlow,
+    private val getAccountOwnedCollectibleDataFlow: GetAccountCollectibleDataFlow,
+    private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow
 ) {
 
     fun initRemoveAssetsPreview(accountAddress: String, query: String): Flow<RemoveAssetsPreview?> {
         return combine(
-            accountAssetDataUseCase.getAccountOwnedAssetDataFlow(accountAddress, false),
-            accountCollectibleDataUseCase.getAccountOwnedCollectibleDataFlow(accountAddress),
-            accountDetailUseCase.getAccountDetailCacheFlow(accountAddress)
-                .map { it?.data?.getAssetHoldingList() }
+            getAccountOwnedAssetsDataFlow(accountAddress, false),
+            getAccountOwnedCollectibleDataFlow(accountAddress),
+            getAccountAssetHoldingsFlow(accountAddress)
         ) { accountOwnedAssets, accountOwnedCollectibles, assetHoldingList ->
             val sortedRemovableListItems = mutableListOf<BaseRemovableItem>().apply {
                 addAll(
@@ -102,8 +93,7 @@ class RemoveAssetsPreviewUseCase @Inject constructor(
             ) {
                 removeAssetItemMapper.mapToRemoveAssetItem(
                     ownedAssetData = ownedAssetData,
-                    actionItemButtonState =
-                    removeAssetItemActionButtonStateDecider.decideRemoveAssetItemActionButtonState(assetHolding?.status)
+                    assetHoldingStatus = assetHolding?.status
                 )
             } else {
                 null
@@ -118,44 +108,11 @@ class RemoveAssetsPreviewUseCase @Inject constructor(
         assetHoldingList: List<AssetHolding>?
     ): List<BaseRemovableItem> {
         return accountOwnedCollectibles.mapNotNull { ownedCollectible ->
-            val assetHolding = assetHoldingList?.firstOrNull { it.assetId == ownedCollectible.id }
-            val actionItemButtonState =
-                removeAssetItemActionButtonStateDecider.decideRemoveAssetItemActionButtonState(assetHolding?.status)
+            val assetHoldingStatus = assetHoldingList?.firstOrNull { it.assetId == ownedCollectible.id }?.status
             if (ownedCollectible.name?.contains(query, true) == true &&
                 ownedCollectible.creatorPublicKey != accountAddress
             ) {
-                when (ownedCollectible) {
-                    is OwnedCollectibleImageData -> {
-                        removeAssetItemMapper.mapToRemoveCollectibleImageItem(
-                            ownedCollectibleImageData = ownedCollectible,
-                            actionItemButtonState = actionItemButtonState
-                        )
-                    }
-                    is OwnedUnsupportedCollectibleData -> {
-                        removeAssetItemMapper.mapToRemoveNotSupportedCollectibleItem(
-                            ownedUnsupportedCollectibleData = ownedCollectible,
-                            actionItemButtonState = actionItemButtonState
-                        )
-                    }
-                    is OwnedCollectibleVideoData -> {
-                        removeAssetItemMapper.mapToRemoveCollectibleVideoItem(
-                            ownedCollectibleImageData = ownedCollectible,
-                            actionItemButtonState = actionItemButtonState
-                        )
-                    }
-                    is OwnedCollectibleMixedData -> {
-                        removeAssetItemMapper.mapToRemoveCollectibleMixedItem(
-                            ownedCollectibleMixedData = ownedCollectible,
-                            actionItemButtonState = actionItemButtonState
-                        )
-                    }
-                    is BaseOwnedCollectibleData.OwnedCollectibleAudioData -> {
-                        removeAssetItemMapper.mapTo(
-                            ownedCollectibleAudioData = ownedCollectible,
-                            actionItemButtonState = actionItemButtonState
-                        )
-                    }
-                }
+                removeAssetItemMapper.mapToRemovableItem(ownedCollectible, assetHoldingStatus)
             } else {
                 null
             }

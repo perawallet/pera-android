@@ -58,8 +58,4 @@ data class AccountInformation(
     fun getAssetHoldingList(): List<AssetHolding> {
         return assetHoldingMap.values.toList()
     }
-
-    fun getAssetIdList(): List<Long> {
-        return assetHoldingMap.keys.toList()
-    }
 }

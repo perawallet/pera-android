@@ -23,7 +23,6 @@ import com.algorand.android.models.AssetStatus.PENDING_FOR_SENDING
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.utils.extensions.getAssetHoldingList
-import com.algorand.android.utils.extensions.getAssetIdList
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -47,19 +46,8 @@ class AccountAssetDataUseCase @Inject constructor(
             .mapNotNull { account -> createAccountOwnedAssetData(account, includeAlgo) }
     }
 
-    fun getAccountAllAssetDataFlow(publicKey: String, includeAlgo: Boolean): Flow<List<BaseAccountAssetData>> {
-        return accountDetailUseCase.getAccountDetailCacheFlow()
-            .mapNotNull { it.getOrDefault(publicKey, null)?.data }
-            .distinctUntilChanged()
-            .mapNotNull { account -> createAccountAllAssetData(account, includeAlgo) }
-    }
-
     fun getNonCachedAccountAssetData(accountDetail: AccountDetail, includeAlgo: Boolean): List<OwnedAssetData> {
         return createNonCachedAccountAssetData(accountDetail, includeAlgo)
-    }
-
-    fun getAccountOwnedAssetData(accountDetail: AccountDetail, includeAlgo: Boolean): List<OwnedAssetData> {
-        return createAccountOwnedAssetData(accountDetail, includeAlgo)
     }
 
     fun getAccountOwnedAssetData(publicKey: String, includeAlgo: Boolean): List<OwnedAssetData> {
@@ -80,11 +68,6 @@ class AccountAssetDataUseCase @Inject constructor(
     private fun createAccountOwnedAssetData(account: AccountDetail, includeAlgo: Boolean): List<OwnedAssetData> {
         val accountOwnedAssetList = getAccountOwnedCachedAssetList(account)
         return createAssetDataList(account, includeAlgo, accountOwnedAssetList).filterIsInstance<OwnedAssetData>()
-    }
-
-    private fun createAccountAllAssetData(account: AccountDetail, includeAlgo: Boolean): List<BaseAccountAssetData> {
-        val cachedAccountAllAssetList = getAccountAllCachedAssetList(account)
-        return createAssetDataList(account, includeAlgo, cachedAccountAllAssetList)
     }
 
     private fun createAssetDataList(
@@ -117,11 +100,6 @@ class AccountAssetDataUseCase @Inject constructor(
         return account.getAssetHoldingList().mapNotNull { assetHolding ->
             assetHolding.assetId.takeIf { assetHolding.status == OWNED_BY_ACCOUNT }
         }
-    }
-
-    private fun getAccountAllCachedAssetList(account: AccountDetail): List<AssetDetail> {
-        val accountAssetIdList = account.getAssetIdList()
-        return assetDetailUseCase.getCachedAssetDetail(accountAssetIdList).mapNotNull { it.data }
     }
 
     private fun createNonCachedAccountAssetData(account: AccountDetail, includeAlgo: Boolean): List<OwnedAssetData> {

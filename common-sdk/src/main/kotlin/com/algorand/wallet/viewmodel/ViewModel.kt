@@ -32,6 +32,7 @@ interface EventViewModel<ViewEvent> {
 }
 
 class StateDelegate<State> @Inject constructor() : StateViewModel<State> {
+
     private lateinit var _state: MutableStateFlow<State>
     override val state: StateFlow<State>
         get() {
@@ -57,6 +58,7 @@ class StateDelegate<State> @Inject constructor() : StateViewModel<State> {
 }
 
 class EventDelegate<ViewEvent> @Inject constructor() : EventViewModel<ViewEvent> {
+
     private val _viewEvent = MutableSharedFlow<ViewEvent>()
     override val viewEvent: Flow<ViewEvent> = _viewEvent.asSharedFlow()
 

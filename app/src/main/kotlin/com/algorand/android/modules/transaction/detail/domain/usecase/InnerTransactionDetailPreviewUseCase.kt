@@ -13,7 +13,6 @@
 package com.algorand.android.modules.transaction.detail.domain.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.model.TransactionSign
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
@@ -30,8 +29,9 @@ import com.algorand.android.utils.appendAssetName
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.toShortenedAddress
-import kotlinx.coroutines.flow.flow
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 @SuppressWarnings("LongParameterList")
 class InnerTransactionDetailPreviewUseCase @Inject constructor(
@@ -113,7 +113,7 @@ class InnerTransactionDetailPreviewUseCase @Inject constructor(
         val assetDetail = getAssetDetail(assetId)
         val assetDecimal = assetDetail?.fractionDecimals ?: DEFAULT_ASSET_DECIMAL
         val assetName = AssetName.createShortName(assetDetail?.shortName)
-        val isAlgo = assetId == AssetInformation.ALGO_ID
+        val isAlgo = assetId == AssetConstants.ALGO_ID
         val formattedTransactionAmount = with(transactionAmount.formatAmount(assetDecimal)) {
             if (isAlgo) formatAsAlgoAmount() else appendAssetName(assetName)
         }

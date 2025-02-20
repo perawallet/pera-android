@@ -20,7 +20,6 @@ import com.algorand.android.assetsearch.domain.model.VerificationTier.TRUSTED
 import com.algorand.android.assetsearch.domain.model.VerificationTier.UNVERIFIED
 import com.algorand.android.assetsearch.domain.model.VerificationTier.VERIFIED
 import com.algorand.android.models.AssetCreator
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.assets.profile.about.domain.usecase.CacheAssetDetailToAsaProfileLocalCacheUseCase
 import com.algorand.android.modules.assets.profile.about.domain.usecase.ClearAsaProfileLocalCacheUseCase
@@ -37,6 +36,7 @@ import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.browser.addProtocolIfNeed
 import com.algorand.android.utils.browser.removeProtocolIfNeed
 import com.algorand.android.utils.formatAmount
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow

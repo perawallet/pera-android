@@ -15,7 +15,6 @@ package com.algorand.android.modules.swap.assetswap.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
 import com.algorand.android.modules.swap.assetswap.ui.usecase.AssetSwapPreviewUseCase
 import com.algorand.android.modules.tracking.swap.assetswap.AssetSwapSwapButtonClickEventTracker
@@ -23,6 +22,7 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
 import com.algorand.wallet.account.info.domain.usecase.IsAccountCachedSuccessfully
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers

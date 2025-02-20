@@ -24,7 +24,6 @@ import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.ledger.operations.TransactionSignOperation
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.Arc59TransactionData
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.LedgerBleResult
 import com.algorand.android.models.Result
 import com.algorand.android.models.SignedTransactionDetail
@@ -427,7 +426,7 @@ class TransactionSignManager @Inject constructor(
         assetId: Long,
         fee: Long
     ): BigInteger? {
-        val calculatedAmount = if (isMax && assetId == AssetInformation.ALGO_ID) {
+        val calculatedAmount = if (isMax && assetId == ALGO_ID) {
             if (isSenderRekeyedToAnotherAccount) {
                 projectedAmount - fee.toBigInteger() - senderMinimumBalance.toBigInteger()
             } else {
@@ -454,7 +453,7 @@ class TransactionSignManager @Inject constructor(
     }
 
     private suspend fun isTransactionMax(amount: BigInteger, publicKey: String, assetId: Long): Boolean {
-        return if (assetId != AssetInformation.ALGO_ID) {
+        return if (assetId != ALGO_ID) {
             false
         } else {
             getAccountInformation(publicKey)?.amount == amount

@@ -12,10 +12,10 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.utils.extensions.getAssetHoldingOrNull
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 
 class GetBaseOwnedAssetDataUseCase @Inject constructor(
@@ -28,7 +28,7 @@ class GetBaseOwnedAssetDataUseCase @Inject constructor(
 ) {
 
     fun getBaseOwnedAssetData(assetId: Long, publicKey: String): BaseAccountAssetData.BaseOwnedAssetData? {
-        val isAlgo = assetId == AssetInformation.ALGO_ID
+        val isAlgo = assetId == ALGO_ID
         val isAsset = simpleAssetDetailUseCase.isAssetCached(assetId)
         val isCollectible = simpleCollectibleUseCase.isCollectibleCached(assetId)
         return when {

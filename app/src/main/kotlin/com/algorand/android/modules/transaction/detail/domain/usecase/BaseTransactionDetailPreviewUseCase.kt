@@ -13,7 +13,6 @@
 package com.algorand.android.modules.transaction.detail.domain.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.model.TransactionSign
@@ -34,9 +33,10 @@ import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsDateAndTime
 import com.algorand.android.utils.getZonedDateTimeFromTimeStamp
 import com.algorand.android.utils.isNotEqualTo
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 
-open class BaseTransactionDetailPreviewUseCase constructor(
+open class BaseTransactionDetailPreviewUseCase(
     private val assetDetailUseCase: SimpleAssetDetailUseCase,
     private val collectibleUseCase: SimpleCollectibleUseCase,
     private val transactionDetailItemMapper: TransactionDetailItemMapper,

@@ -12,10 +12,10 @@
 
 package com.algorand.android.modules.swap.common
 
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.parity.domain.usecase.PrimaryCurrencyParityCalculationUseCase
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject

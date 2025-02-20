@@ -13,7 +13,6 @@
 package com.algorand.android.mapper
 
 import com.algorand.android.assetsearch.domain.model.VerificationTier
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.parity.domain.model.ParityValue
@@ -24,6 +23,7 @@ import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.isNotEqualTo
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
@@ -96,7 +96,7 @@ class AccountAssetDataMapper @Inject constructor() {
         usdValue: BigDecimal
     ): BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData {
         return BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData(
-            id = ALGO_ID,
+            id = AssetConstants.ALGO_ID,
             name = ALGO_FULL_NAME,
             shortName = ALGO_SHORT_NAME,
             amount = amount,

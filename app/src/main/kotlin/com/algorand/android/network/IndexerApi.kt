@@ -14,7 +14,6 @@ package com.algorand.android.network
 
 import com.algorand.android.models.AccountInformationResponse
 import com.algorand.android.models.AccountsResponse
-import com.algorand.android.models.AssetResponse
 import com.algorand.android.modules.transaction.detail.data.model.TransactionDetailResponse
 import com.algorand.android.modules.transactionhistory.data.model.PaginatedTransactionsResponse
 import retrofit2.Response
@@ -45,9 +44,6 @@ interface IndexerApi {
     suspend fun getRekeyedAccounts(
         @Query("auth-addr") rekeyAdminAddress: String
     ): Response<AccountsResponse>
-
-    @GET("v2/assets/{assetId}")
-    suspend fun getAssetDescription(@Path("assetId") assetId: Long): Response<AssetResponse>
 
     @GET("v2/transactions/{txid}")
     suspend fun getTransactionDetail(@Path("txid") transactionId: String): Response<TransactionDetailResponse>

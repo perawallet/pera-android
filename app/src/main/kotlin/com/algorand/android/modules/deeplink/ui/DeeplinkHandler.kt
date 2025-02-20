@@ -13,13 +13,13 @@
 package com.algorand.android.modules.deeplink.ui
 
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.User
 import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.toBigIntegerOrZero
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
@@ -112,7 +112,7 @@ class DeeplinkHandler @Inject constructor(
 
     private fun handleAssetTransferDeepLink(deepLink: DeepLink.AssetTransfer): Boolean {
         val assetId = deepLink.assetId
-        val isAssetOwnedByAnyAccount = if (assetId == AssetInformation.ALGO_ID) {
+        val isAssetOwnedByAnyAccount = if (assetId == AssetConstants.ALGO_ID) {
             true
         } else {
             accountDetailUseCase.isAssetOwnedByAnyAccount(deepLink.assetId)

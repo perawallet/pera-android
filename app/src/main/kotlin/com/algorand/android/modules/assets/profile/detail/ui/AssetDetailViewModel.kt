@@ -15,13 +15,13 @@ package com.algorand.android.modules.assets.profile.detail.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
 import com.algorand.android.modules.assets.profile.detail.ui.usecase.AssetDetailPreviewUseCase
 import com.algorand.android.modules.tracking.swap.assetdetail.AssetDetailAlgoSwapClickEventTracker
 import com.algorand.android.usecase.AccountDeletionUseCase
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers

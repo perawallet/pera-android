@@ -35,11 +35,7 @@ sealed class DecodedQrCode : Parcelable {
                 val xnote: String?,
                 val label: String?,
                 private val assetId: Long?
-            ) : Deeplink() {
-                fun getDecodedAssetID(): Long {
-                    return assetId ?: AssetInformation.ALGO_ID
-                }
-            }
+            ) : Deeplink()
 
             @Parcelize
             data class WalletConnect(val walletConnectUrl: String) : Deeplink()

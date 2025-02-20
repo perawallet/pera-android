@@ -17,7 +17,6 @@ import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.mapper.AssetActionMapper
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.assets.profile.about.domain.usecase.GetAssetDetailFlowFromAsaProfileLocalCache
 import com.algorand.android.modules.assets.profile.about.domain.usecase.GetSelectedAssetExchangeValueUseCase
@@ -34,6 +33,7 @@ import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.isGreaterThan
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject

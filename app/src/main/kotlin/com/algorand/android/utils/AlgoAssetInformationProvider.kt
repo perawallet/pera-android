@@ -15,11 +15,11 @@ package com.algorand.android.utils
 
 import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.models.AssetDetail
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.utils.browser.ALGORAND_DISCORD_URL
 import com.algorand.android.utils.browser.ALGORAND_TELEGRAM_URL
 import com.algorand.android.utils.browser.ALGORAND_TWITTER_USERNAME
 import com.algorand.android.utils.browser.ALGORAND_WEBSITE_URL
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 
 class AlgoAssetInformationProvider @Inject constructor() {

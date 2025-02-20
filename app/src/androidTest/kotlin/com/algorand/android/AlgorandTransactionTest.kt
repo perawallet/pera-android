@@ -14,13 +14,13 @@ package com.algorand.android
 
 import android.util.Base64
 import com.algorand.algosdk.sdk.SuggestedParams
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.utils.makeAddAssetTx
 import com.algorand.android.utils.makeRekeyTx
 import com.algorand.android.utils.makeRemoveAssetTx
 import com.algorand.android.utils.makeTx
 import com.algorand.android.utils.toSuggestedParams
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.math.BigInteger
 import org.junit.Test
 
@@ -39,7 +39,7 @@ class AlgorandTransactionTest {
             senderAddress = "53DDJWXPS6GV6QVTMVIQEZQSYSC2SV3XUAHFTFPGCTNJ77SHY7L3WSK5E4",
             receiverAddress = "5KYQMJHCDW6CJNLZPZCB6IBWO7FTEDYAH3U7DH3JWWPJP7NXH3BSGAGUUM",
             amount = BigInteger.valueOf(1000000),
-            assetId = AssetInformation.ALGO_ID,
+            assetId = AssetConstants.ALGO_ID,
             isMax = false,
             note = null
         )

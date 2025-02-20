@@ -13,7 +13,6 @@
 package com.algorand.android.modules.assetinbox.send.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.modules.assetinbox.send.domain.mapper.Arc59TransactionPayloadMapper
@@ -30,6 +29,7 @@ import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.isGreaterThan
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

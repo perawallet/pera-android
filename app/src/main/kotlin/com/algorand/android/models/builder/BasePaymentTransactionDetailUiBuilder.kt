@@ -13,7 +13,6 @@
 
 package com.algorand.android.models.builder
 
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BasePaymentTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation
@@ -24,6 +23,7 @@ import com.algorand.android.modules.verificationtier.ui.decider.VerificationTier
 import com.algorand.android.utils.ALGO_FULL_NAME
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.MIN_FEE
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 
 class BasePaymentTransactionDetailUiBuilder @Inject constructor(

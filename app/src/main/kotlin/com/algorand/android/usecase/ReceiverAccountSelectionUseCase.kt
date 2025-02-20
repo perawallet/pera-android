@@ -18,7 +18,6 @@ import com.algorand.android.SendAlgoNavigationDirections
 import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetInformation
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.models.Result
 import com.algorand.android.models.TargetUser
@@ -42,6 +41,7 @@ import com.algorand.android.utils.validator.AccountTransactionValidator
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountState
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

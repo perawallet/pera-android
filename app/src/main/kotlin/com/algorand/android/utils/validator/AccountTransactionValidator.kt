@@ -16,7 +16,6 @@ package com.algorand.android.utils.validator
 import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetInformation
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.Result
 import com.algorand.android.modules.accountasset.domain.model.AccountAssetDetail
 import com.algorand.android.utils.MIN_FEE
@@ -28,6 +27,7 @@ import com.algorand.android.utils.minBalancePerAssetAsBigInteger
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import javax.inject.Inject
 

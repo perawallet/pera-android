@@ -20,6 +20,7 @@ import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseBottomSheet
 import com.algorand.android.databinding.BottomSheetManageAssetsBinding
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,14 +34,21 @@ class ManageAssetsBottomSheet : DaggerBaseBottomSheet(
     private val binding by viewBinding(BottomSheetManageAssetsBinding::bind)
     private val manageAssetsViewModel by viewModels<ManageAssetsViewModel>()
 
+    private val viewStateCollector: suspend (ManageAssetsViewModel.ViewState) -> Unit = { state ->
+        if (state is ManageAssetsViewModel.ViewState.Content) {
+            configureRemoveAssetsButton(state.canAccountSignTransaction)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
+        collectLatestOnLifecycle(manageAssetsViewModel.state, viewStateCollector)
+        manageAssetsViewModel.initViewState()
     }
 
     private fun initUi() {
         configureToolbar()
-        configureRemoveAssetsButton()
         configureSortAssetsButton()
         configureFilterAssetsButton()
     }
@@ -50,10 +58,10 @@ class ManageAssetsBottomSheet : DaggerBaseBottomSheet(
         binding.customToolbar.configure(toolbarConfiguration)
     }
 
-    private fun configureRemoveAssetsButton() {
+    private fun configureRemoveAssetsButton(canAccountSignTransaction: Boolean) {
         with(binding.removeAssetsButton) {
             setOnClickListener { navToRemoveAssetsFragment() }
-            isVisible = manageAssetsViewModel.hasAccountAuthority()
+            isVisible = canAccountSignTransaction
         }
     }
 

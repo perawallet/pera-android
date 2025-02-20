@@ -12,11 +12,8 @@
 
 package com.algorand.android.modules.dapp.bidali.ui.browser.usecase
 
-import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.TargetUser
 import com.algorand.android.models.TransactionSignData
-import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
 import com.algorand.android.modules.dapp.bidali.domain.mapper.BidaliAssetMapper
@@ -38,10 +35,8 @@ import javax.inject.Inject
 
 @Suppress("LongParameterList")
 class BidaliBrowserUseCase @Inject constructor(
-    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData,
     private val bidaliAssetMapper: BidaliAssetMapper,
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
     private val isOnMainnetUseCase: IsOnMainnetUseCase,
     private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
     private val getAccountInformation: GetAccountInformation,
@@ -74,10 +69,6 @@ class BidaliBrowserUseCase @Inject constructor(
             bidaliId = paymentRequest.protocol,
             isMainnet = isOnMainnetUseCase.invoke()
         ) ?: return null
-        val selectedAsset = getAssetInformation(
-            accountAddress,
-            selectedAssetId
-        ) ?: return null
         val amountAsBigInteger = getAmountAsBigInteger(
             paymentRequest.amount.toBigDecimalOrZero(),
             selectedAssetId
@@ -89,13 +80,13 @@ class BidaliBrowserUseCase @Inject constructor(
             senderAlgoAmount = selectedAccount.amount,
             minimumBalance = getAccountMinBalance(selectedAccount.address).toLong(),
             amount = amountAsBigInteger,
-            assetId = selectedAsset.assetId,
+            assetId = selectedAssetId,
             xnote = paymentRequest.extraId,
             targetUser = TargetUser(
                 publicKey = paymentRequest.address,
                 accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
             ),
-            isArc59Transaction = !receiverAccount.hasAsset(selectedAsset.assetId),
+            isArc59Transaction = !receiverAccount.hasAsset(selectedAssetId),
             signer = getTransactionSigner(selectedAccount.address)
         )
     }
@@ -103,14 +94,6 @@ class BidaliBrowserUseCase @Inject constructor(
     private suspend fun getAmountAsBigInteger(amount: BigDecimal, assetId: Long): BigInteger? {
         val assetDecimals = getAsset(assetId)?.assetInfo?.decimals ?: return null
         return amount.formatAmountAsBigInteger(assetDecimals)
-    }
-
-    private suspend fun getAssetInformation(publicKey: String, assetId: Long): AssetInformation? {
-        val ownedAssetData = getAccountBaseOwnedAssetData(publicKey, assetId)
-        return AssetInformation.createAssetInformation(
-            baseOwnedAssetData = ownedAssetData ?: return null,
-            assetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetId)
-        )
     }
 
     private fun getAssetIdFromBidaliIdentifier(bidaliId: String, isMainnet: Boolean): Long? {

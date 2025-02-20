@@ -41,7 +41,7 @@ class TransferBalanceActionBottomSheet : BaseAssetActionBottomSheet() {
     override fun setDescriptionTextView(textView: TextView) {
         textView.text = context?.getXmlStyledString(
             stringResId = R.string.to_opt_out_and_remove,
-            replacementList = listOf("asset_name" to assetActionViewModel.assetFullName.getName(resources))
+            replacementList = listOf("asset_name" to assetActionViewModel.assetFullName)
         )
     }
 
@@ -55,7 +55,7 @@ class TransferBalanceActionBottomSheet : BaseAssetActionBottomSheet() {
             setOnClickListener {
                 asset?.let { assetDescription ->
                     val assetActionResult = AssetActionResult(
-                        asset = assetDescription,
+                        assetId = assetDescription.id,
                         publicKey = assetActionViewModel.accountAddress
                     )
                     setFragmentNavigationResult(key = TRANSFER_ASSET_ACTION_RESULT, value = assetActionResult)

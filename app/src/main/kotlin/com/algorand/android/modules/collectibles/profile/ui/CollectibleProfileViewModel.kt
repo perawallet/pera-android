@@ -15,11 +15,11 @@ package com.algorand.android.modules.collectibles.profile.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.AssetAction
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailViewModel
 import com.algorand.android.modules.collectibles.profile.ui.model.CollectibleProfilePreview
 import com.algorand.android.modules.collectibles.profile.ui.usecase.CollectibleProfilePreviewUseCase
 import com.algorand.android.usecase.NetworkSlugUseCase
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

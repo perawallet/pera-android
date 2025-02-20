@@ -17,13 +17,14 @@ import com.algorand.android.assetsearch.domain.model.BaseSearchedAsset
 import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem
 import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.modules.assets.core.ui.domain.usecase.GetAssetName
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 
 class BaseAssetSearchItemMapper @Inject constructor(
     private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider
+    private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
+    private val getAssetName: GetAssetName
 ) {
 
     fun mapToAssetSearchItem(
@@ -32,8 +33,8 @@ class BaseAssetSearchItemMapper @Inject constructor(
     ): BaseAssetSearchListItem.AssetListItem.AssetSearchItem {
         return BaseAssetSearchListItem.AssetListItem.AssetSearchItem(
             assetId = searchedAsset.assetId,
-            fullName = AssetName.create(searchedAsset.fullName),
-            shortName = AssetName.createShortName(searchedAsset.shortName),
+            fullName = getAssetName(searchedAsset.fullName),
+            shortName = getAssetName(searchedAsset.shortName),
             verificationTierConfiguration = verificationTierConfigurationDecider.decideVerificationTierConfiguration(
                 searchedAsset.verificationTier
             ),
@@ -48,8 +49,8 @@ class BaseAssetSearchItemMapper @Inject constructor(
     ): BaseAssetSearchListItem.AssetListItem.BaseCollectibleSearchListItem.ImageCollectibleSearchItem {
         return BaseAssetSearchListItem.AssetListItem.BaseCollectibleSearchListItem.ImageCollectibleSearchItem(
             assetId = searchedCollectible.assetId,
-            fullName = AssetName.create(searchedCollectible.fullName),
-            shortName = AssetName.createShortName(searchedCollectible.shortName),
+            fullName = getAssetName(searchedCollectible.fullName),
+            shortName = getAssetName(searchedCollectible.shortName),
             accountAssetItemButtonState = accountAssetItemButtonState,
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(searchedCollectible)
         )

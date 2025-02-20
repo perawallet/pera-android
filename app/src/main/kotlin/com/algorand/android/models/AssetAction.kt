@@ -14,11 +14,12 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AssetAction(
     val assetId: Long,
     val publicKey: String? = null,
-    val asset: AssetInformation? = null
+    val assetFullName: AssetName? = null
 ) : Parcelable

@@ -15,7 +15,7 @@ package com.algorand.android.assetsearch.ui.model
 import androidx.annotation.StringRes
 import com.algorand.android.models.RecyclerListItem
 import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.utils.AssetName
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 
 sealed class BaseAssetSearchListItem : RecyclerListItem {
@@ -32,16 +32,16 @@ sealed class BaseAssetSearchListItem : RecyclerListItem {
 
     abstract val itemType: ItemType
 
-    object InfoViewItem : BaseAssetSearchListItem() {
+    data object InfoViewItem : BaseAssetSearchListItem() {
 
         override val itemType: ItemType = ItemType.INFO_VIEW_ITEM
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is InfoViewItem && other == this
+            return other is InfoViewItem
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is InfoViewItem && other == this
+            return other is InfoViewItem
         }
     }
 

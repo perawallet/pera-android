@@ -16,14 +16,12 @@ import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.BaseAccountAddress
 import com.algorand.android.modules.assets.action.base.BaseAssetActionViewModel
-import com.algorand.android.modules.assets.profile.about.domain.usecase.GetAssetDetailUseCase
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.usecase.AccountAddressUseCase
 import com.algorand.android.usecase.GetFormattedTransactionFeeAmountUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.getOrThrow
+import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
+import com.algorand.wallet.asset.domain.usecase.GetAsset
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -31,23 +29,21 @@ import javax.inject.Inject
 class RemoveAssetActionViewModel @Inject constructor(
     private val getFormattedTransactionFeeAmountUseCase: GetFormattedTransactionFeeAmountUseCase,
     private val accountAddressUseCase: AccountAddressUseCase,
-    assetDetailUseCase: SimpleAssetDetailUseCase,
-    simpleCollectibleUseCase: SimpleCollectibleUseCase,
-    getAssetDetailUseCase: GetAssetDetailUseCase,
     verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
+    fetchAndCacheAssets: FetchAndCacheAssets,
+    getAsset: GetAsset,
     savedStateHandle: SavedStateHandle
 ) : BaseAssetActionViewModel(
-    assetDetailUseCase,
-    simpleCollectibleUseCase,
-    getAssetDetailUseCase,
-    verificationTierConfigurationDecider
+    verificationTierConfigurationDecider,
+    fetchAndCacheAssets,
+    getAsset
 ) {
 
     private val assetAction: AssetAction = savedStateHandle.getOrThrow(ASSET_ACTION_KEY)
     val accountAddress: String = assetAction.publicKey.orEmpty()
 
     override val assetId: Long = assetAction.assetId
-    val assetFullName: AssetName = AssetName.create(assetAction.asset?.fullName)
+    val assetFullName: String = assetAction.assetFullName?.assetName ?: assetAction.assetId.toString()
 
     init {
         fetchAssetDescription(assetId)

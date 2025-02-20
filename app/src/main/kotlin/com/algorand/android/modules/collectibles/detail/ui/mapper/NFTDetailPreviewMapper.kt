@@ -12,12 +12,11 @@
 
 package com.algorand.android.modules.collectibles.detail.ui.mapper
 
-import com.algorand.android.models.AssetInformation
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
 import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
 import com.algorand.android.modules.collectibles.detail.ui.model.NFTDetailPreview
 import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.Event
 import javax.inject.Inject
 
@@ -45,8 +44,7 @@ class NFTDetailPreviewMapper @Inject constructor() {
         isOptOutButtonVisible: Boolean,
         isCopyEnabled: Boolean,
         globalErrorEvent: Event<String>? = null,
-        nftSendEvent: Event<Unit>? = null,
-        optOutNFTEvent: Event<AssetInformation>? = null
+        nftSendEvent: Event<Unit>? = null
     ): NFTDetailPreview {
         return NFTDetailPreview(
             isLoadingVisible = isLoadingVisible,
@@ -70,7 +68,6 @@ class NFTDetailPreviewMapper @Inject constructor() {
             isOptOutButtonVisible = isOptOutButtonVisible,
             isOwnerActionsGroupVisible = isOwnerActionsGroupVisible,
             isCopyEnabled = isCopyEnabled && isOwnerActionsGroupVisible,
-            optOutNFTEvent = optOutNFTEvent
         )
     }
 }

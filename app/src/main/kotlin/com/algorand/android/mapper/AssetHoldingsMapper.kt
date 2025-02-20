@@ -14,8 +14,6 @@ package com.algorand.android.mapper
 
 import com.algorand.android.models.AssetHolding
 import com.algorand.android.models.AssetHoldingResponse
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.models.AssetStatus
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -27,16 +25,6 @@ class AssetHoldingsMapper @Inject constructor() {
             amount = assetHoldingResponse.amount ?: BigInteger.ZERO,
             isDeleted = assetHoldingResponse.isDeleted,
             optedInAtRound = assetHoldingResponse.optedInAtRound
-        )
-    }
-
-    fun mapToPendingAdditionAssetHoldings(assetInformation: AssetInformation): AssetHolding {
-        return AssetHolding(
-            assetId = assetInformation.assetId,
-            amount = BigInteger.ZERO,
-            isDeleted = false,
-            optedInAtRound = null,
-            status = AssetStatus.PENDING_FOR_ADDITION
         )
     }
 

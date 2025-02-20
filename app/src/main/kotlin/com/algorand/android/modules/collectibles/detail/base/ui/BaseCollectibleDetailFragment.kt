@@ -27,13 +27,13 @@ import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentCollectibleDetailBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.collectibles.action.optin.CollectibleOptInActionBottomSheet.Companion.OPT_IN_COLLECTIBLE_ACTION_RESULT_KEY
 import com.algorand.android.modules.collectibles.action.optout.CollectibleOptOutConfirmationBottomSheet.Companion.COLLECTIBLE_OPT_OUT_KEY
 import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
 import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
 import com.algorand.android.ui.send.confirmation.ui.TransactionConfirmationFragment.Companion.TRANSACTION_CONFIRMATION_KEY
 import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.PrismUrlBuilder
 import com.algorand.android.utils.browser.openAccountAddressInPeraExplorer
 import com.algorand.android.utils.browser.openUrl
@@ -158,7 +158,7 @@ abstract class BaseCollectibleDetailFragment : BaseFragment(R.layout.fragment_co
 
     protected fun setNFTName(collectibleName: AssetName) {
         binding.nftNameTextView.apply {
-            text = collectibleName.getName(resources)
+            text = collectibleName.assetName
             isVisible = !text.isNullOrBlank()
         }
     }

@@ -17,6 +17,7 @@ import com.algorand.android.mapper.AssetActionMapper
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.BaseAccountAddress
 import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
+import com.algorand.android.modules.assets.core.ui.domain.usecase.GetAssetName
 import com.algorand.android.modules.assets.profile.asaprofile.ui.mapper.AsaStatusPreviewMapper
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaStatusPreview
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.PeraButtonState
@@ -31,7 +32,6 @@ import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.nft.utils.CollectibleUtils
 import com.algorand.android.usecase.AccountAddressUseCase
 import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
@@ -49,18 +49,16 @@ class CollectibleProfilePreviewUseCase @Inject constructor(
     private val collectibleTraitItemMapper: CollectibleTraitItemMapper,
     private val collectibleDetailDecider: CollectibleDetailDecider,
     private val nftAmountFormatDecider: NFTAmountFormatDecider,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase
+    private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
+    private val getAssetName: GetAssetName
 ) {
 
     fun createAssetAction(assetId: Long, accountAddress: String?): AssetAction {
         val collectibleDetail = simpleCollectibleUseCase.getCachedCollectibleById(assetId)?.data
         return assetActionMapper.mapTo(
             assetId = assetId,
-            fullName = collectibleDetail?.fullName,
-            shortName = collectibleDetail?.shortName,
-            verificationTier = collectibleDetail?.verificationTier,
-            accountAddress = accountAddress,
-            creatorPublicKey = collectibleDetail?.assetCreator?.publicKey
+            assetName = getAssetName(collectibleDetail?.fullName),
+            accountAddress = accountAddress
         )
     }
 
@@ -87,7 +85,7 @@ class CollectibleProfilePreviewUseCase @Inject constructor(
                         isLoadingVisible = false,
                         asaStatusPreview = asaStatusPreview,
                         accountAddress = accountAddress,
-                        nftName = AssetName.create(nftDetail.title ?: nftDetail.fullName),
+                        nftName = getAssetName(nftDetail.title ?: nftDetail.fullName.orEmpty()),
                         collectionNameOfNFT = nftDetail.collectionName,
                         mediaListOfNFT = nftDetail.collectibleMedias?.map { nftMedia ->
                             collectibleMediaItemMapper.mapToCollectibleMediaItem(

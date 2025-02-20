@@ -17,10 +17,4 @@ enum class AssetStatus {
     PENDING_FOR_ADDITION,
     PENDING_FOR_SENDING,
     OWNED_BY_ACCOUNT;
-
-    companion object {
-        fun isPending(status: AssetStatus): Boolean {
-            return status != OWNED_BY_ACCOUNT
-        }
-    }
 }

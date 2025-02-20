@@ -32,8 +32,8 @@ class RemoveAssetItemViewHolder(
         with(item) {
             setActionButtonState(actionItemButtonState)
             setAssetStartIconDrawable(assetDrawableProvider = baseAssetDrawableProvider)
-            setAssetTitleText(name.getName(binding.root.resources))
-            setAssetDescriptionText(shortName.getName(binding.root.resources))
+            setAssetTitleText(name.assetName)
+            setAssetDescriptionText(shortName.assetName)
             setAssetPrimaryValue(formattedCompactAmount)
             setAssetSecondaryValue(formattedSelectedCurrencyCompactValue)
             setAssetVerificationTier(verificationTierConfiguration)

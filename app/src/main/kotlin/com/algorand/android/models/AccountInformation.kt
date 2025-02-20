@@ -55,10 +55,6 @@ data class AccountInformation(
         return assetHoldingMap.get(assetId)
     }
 
-    fun getAssetStatusOrNull(assetId: Long): AssetStatus? {
-        return getAssetHoldingOrNull(assetId)?.status
-    }
-
     fun getAssetHoldingList(): List<AssetHolding> {
         return assetHoldingMap.values.toList()
     }

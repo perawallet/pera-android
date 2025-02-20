@@ -39,7 +39,7 @@ class CollectibleOptOutConfirmationBottomSheet : BaseAssetActionBottomSheet() {
     }
 
     override fun setDescriptionTextView(textView: TextView) {
-        textView.text = getString(R.string.you_are_about_to_opt, assetActionViewModel.assetName.getName(resources))
+        textView.text = getString(R.string.you_are_about_to_opt, assetActionViewModel.assetFullName)
     }
 
     override fun setToolbar(customToolbar: CustomToolbar) {
@@ -52,7 +52,7 @@ class CollectibleOptOutConfirmationBottomSheet : BaseAssetActionBottomSheet() {
             setOnClickListener {
                 asset?.let { assetDescription ->
                     val assetActionResult = AssetActionResult(
-                        asset = assetDescription,
+                        assetId = assetDescription.id,
                         publicKey = assetActionViewModel.accountAddress
                     )
                     (activity as? MainActivity)?.signRemoveAssetTransaction(assetActionResult)

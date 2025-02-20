@@ -13,7 +13,6 @@
 package com.algorand.android.modules.swap.assetswap.domain.usecase
 
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.parity.utils.ParityUtils
 import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapType
@@ -35,6 +34,7 @@ import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.toBigDecimalOrZero
 import com.algorand.android.utils.toBigIntegerOrZero
 import com.algorand.android.utils.toFloatOrZero
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Named

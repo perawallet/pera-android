@@ -36,9 +36,9 @@ import androidx.core.text.inSpans
 import com.algorand.android.R
 import com.algorand.android.customviews.CenteredImageSpan
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.utils.exceptions.InvalidAnnotationException
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.util.Locale
 
 fun Appendable.appendSpace() {
@@ -73,7 +73,7 @@ fun SpannableStringBuilder.addAssetName(
 }
 
 fun SpannableStringBuilder.addAssetId(context: Context, assetId: Long?, textColor: Int? = null) {
-    if (assetId != null && assetId != AssetInformation.ALGO_ID) {
+    if (assetId != null && assetId != AssetConstants.ALGO_ID) {
         append("  ") // Tried to put \t but it's broken for SpannedString.
         color(ContextCompat.getColor(context, textColor ?: R.color.gray_500)) {
             append(assetId.toString())

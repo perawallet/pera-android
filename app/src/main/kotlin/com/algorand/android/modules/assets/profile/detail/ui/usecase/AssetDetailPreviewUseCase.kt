@@ -17,7 +17,6 @@ import com.algorand.android.R
 import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.models.Account
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.AccountQuickActionsBottomSheetDirections
 import com.algorand.android.modules.accounts.domain.usecase.AccountDetailSummaryUseCase
@@ -36,6 +35,7 @@ import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.AlgoAssetInformationProvider
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.Event
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

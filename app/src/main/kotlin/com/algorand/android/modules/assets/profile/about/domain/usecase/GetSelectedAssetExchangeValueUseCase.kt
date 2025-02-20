@@ -13,7 +13,6 @@
 package com.algorand.android.modules.assets.profile.about.domain.usecase
 
 import com.algorand.android.mapper.AssetHoldingsMapper
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.parity.domain.model.ParityValue
@@ -21,6 +20,7 @@ import com.algorand.android.modules.parity.domain.usecase.PrimaryCurrencyParityC
 import com.algorand.android.modules.parity.domain.usecase.SecondaryCurrencyParityCalculationUseCase
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject

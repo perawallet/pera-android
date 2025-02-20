@@ -15,7 +15,6 @@ package com.algorand.android.usecase
 
 import com.algorand.android.mapper.AssetTransferAmountAssetPreviewMapper
 import com.algorand.android.mapper.AssetTransferAmountPreviewMapper
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.AssetTransferAmountPreview
 import com.algorand.android.models.AssetTransferAmountValidationPreviewResult
@@ -34,6 +33,7 @@ import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject

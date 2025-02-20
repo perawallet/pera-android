@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.transactionhistory.data.repository
 
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.Result
 import com.algorand.android.modules.transactionhistory.data.mapper.PaginatedTransactionsDTOMapper
 import com.algorand.android.modules.transactionhistory.domain.model.PaginatedTransactionsDTO
@@ -20,6 +19,7 @@ import com.algorand.android.modules.transactionhistory.domain.repository.Transac
 import com.algorand.android.network.IndexerApi
 import com.algorand.android.network.request
 import com.algorand.android.utils.recordException
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 
 class TransactionHistoryRepositoryImpl @Inject constructor(
@@ -36,7 +36,7 @@ class TransactionHistoryRepositoryImpl @Inject constructor(
         txnType: String?
     ): Result<PaginatedTransactionsDTO> {
         return request {
-            val safeAssetId = if (assetId == AssetInformation.ALGO_ID) null else assetId
+            val safeAssetId = if (assetId == ALGO_ID) null else assetId
             indexerApi.getTransactions(
                 publicKey = publicKey,
                 assetId = safeAssetId,

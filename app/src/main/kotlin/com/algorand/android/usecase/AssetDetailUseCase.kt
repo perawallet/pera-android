@@ -17,7 +17,6 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.PagingData
 import com.algorand.android.core.BaseUseCase
 import com.algorand.android.decider.DateFilterUseCase
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.DateFilter
 import com.algorand.android.models.ui.DateFilterPreview
 import com.algorand.android.models.ui.TransactionLoadStatePreview
@@ -25,6 +24,7 @@ import com.algorand.android.modules.transaction.common.domain.model.TransactionT
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.modules.transactionhistory.ui.usecase.PendingTransactionsPreviewUseCase
 import com.algorand.android.modules.transactionhistory.ui.usecase.TransactionHistoryPreviewUseCase
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

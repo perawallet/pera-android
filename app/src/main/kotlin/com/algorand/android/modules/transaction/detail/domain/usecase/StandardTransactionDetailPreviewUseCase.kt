@@ -13,7 +13,6 @@
 package com.algorand.android.modules.transaction.detail.domain.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail.BaseKeyRegTransaction.OfflineKeyRegTransaction
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail.BaseKeyRegTransaction.OnlineKeyRegTransaction
@@ -29,8 +28,9 @@ import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.formatNumberWithDecimalSeparators
-import kotlinx.coroutines.flow.flow
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 @SuppressWarnings("LongParameterList")
 class StandardTransactionDetailPreviewUseCase @Inject constructor(
@@ -89,7 +89,7 @@ class StandardTransactionDetailPreviewUseCase @Inject constructor(
         val assetDetail = getAssetDetail(assetId)
         val assetDecimal = assetDetail?.fractionDecimals ?: DEFAULT_ASSET_DECIMAL
         val assetName = AssetName.createShortName(assetDetail?.shortName)
-        val isAlgo = assetId == AssetInformation.ALGO_ID
+        val isAlgo = assetId == ALGO_ID
 
         val transactionAmount = getTransactionDetailAmount(baseTransactionDetail, false)
 

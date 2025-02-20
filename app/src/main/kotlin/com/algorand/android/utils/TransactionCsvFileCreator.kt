@@ -12,9 +12,9 @@
 
 package com.algorand.android.utils
 
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.DateRange
 import com.algorand.android.modules.transaction.csv.domain.model.TransactionCsvDetail
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.io.File
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -98,7 +98,7 @@ class TransactionCsvFileCreator @Inject constructor() {
         val toFormatted = dateRange?.to?.format(csvFormatter)
         var fileName = "${accountName}_"
 
-        if (assetId == AssetInformation.ALGO_ID) {
+        if (assetId == AssetConstants.ALGO_ID) {
             fileName += ALGO_FULL_NAME.lowercase(Locale.ENGLISH)
         } else {
             fileName += assetId.getSafeCSVValue()

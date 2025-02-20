@@ -12,7 +12,6 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.models.BasePaymentTransaction
 import com.algorand.android.models.BaseWalletConnectTransaction
@@ -28,6 +27,7 @@ import com.algorand.android.modules.walletconnect.domain.usecase.GetWalletConnec
 import com.algorand.android.utils.extensions.mapNotBlank
 import com.algorand.android.utils.multiplyOrZero
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import javax.inject.Inject
 

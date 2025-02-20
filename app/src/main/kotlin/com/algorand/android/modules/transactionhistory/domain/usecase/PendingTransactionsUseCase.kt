@@ -14,13 +14,13 @@
 package com.algorand.android.modules.transactionhistory.domain.usecase
 
 import com.algorand.android.core.BaseUseCase
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.Result
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO
 import com.algorand.android.modules.transactionhistory.domain.mapper.PendingBaseTransactionMapper
 import com.algorand.android.modules.transactionhistory.domain.model.BaseTransaction
 import com.algorand.android.modules.transactionhistory.domain.model.PendingTransactionDTO
 import com.algorand.android.modules.transactionhistory.domain.repository.PendingTransactionsRepository
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -122,7 +122,7 @@ class PendingTransactionsUseCase @Inject constructor(
         senderAddress: String,
         receiverAddress: String
     ): BaseTransaction.Transaction.AssetTransfer {
-        val assetId = pendingTransaction.getAssetId() ?: AssetInformation.ALGO_ID
+        val assetId = pendingTransaction.getAssetId() ?: ALGO_ID
         return if (isSendTransaction(pendingTransaction, publicKey) == true) {
             pendingBaseTransactionMapper.mapToAssetTransactionSend(
                 transaction = pendingTransaction,

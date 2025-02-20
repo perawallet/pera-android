@@ -13,10 +13,10 @@
 package com.algorand.android.modules.swap.assetswap.domain.model
 
 import android.os.Parcelable
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapType
 import com.algorand.android.utils.formatAmount
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import kotlinx.parcelize.Parcelize
 

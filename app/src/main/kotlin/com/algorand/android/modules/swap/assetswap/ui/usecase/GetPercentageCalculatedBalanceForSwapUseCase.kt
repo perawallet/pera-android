@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.swap.assetswap.ui.usecase
 
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetData
 import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForRequest
 import com.algorand.android.modules.swap.assetswap.domain.usecase.GetPeraFeeUseCase
@@ -23,6 +22,7 @@ import com.algorand.android.utils.exceptions.InsufficientAlgoBalance
 import com.algorand.android.utils.isLesserThan
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode

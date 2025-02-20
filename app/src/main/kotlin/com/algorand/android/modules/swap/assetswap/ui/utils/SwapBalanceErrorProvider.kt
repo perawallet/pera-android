@@ -14,7 +14,6 @@ package com.algorand.android.modules.swap.assetswap.ui.utils
 
 import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
@@ -26,6 +25,7 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.isEqualTo
 import com.algorand.android.utils.isLesserThan
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import javax.inject.Inject
 

@@ -15,7 +15,6 @@ package com.algorand.android.modules.swap.assetselection.toasset.ui.usecase
 import com.algorand.android.R
 import com.algorand.android.mapper.ScreenStateMapper
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.modules.parity.domain.mapper.ParityValueMapper
@@ -27,6 +26,7 @@ import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapAssetS
 import com.algorand.android.modules.swap.assetselection.toasset.domain.GetAvailableTargetSwapAssetListUseCase
 import com.algorand.android.modules.swap.assetselection.toasset.domain.model.AvailableSwapAsset
 import com.algorand.android.utils.Event
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

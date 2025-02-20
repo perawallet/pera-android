@@ -15,11 +15,9 @@ package com.algorand.android.models
 import android.content.res.Resources
 import android.os.Parcelable
 import com.algorand.android.assetsearch.domain.model.VerificationTier
-import com.algorand.android.utils.ALGO_DECIMALS
-import com.algorand.android.utils.ALGO_FULL_NAME
-import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.formatAmount
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.math.BigInteger
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -42,40 +40,10 @@ data class AssetInformation(
     val formattedAmount by lazy { amount.formatAmount(decimals) }
 
     fun isAlgo(): Boolean {
-        return assetId == ALGO_ID
+        return assetId == AssetConstants.ALGO_ID
     }
 
     companion object {
-        const val ALGO_ID = -7L
-        const val USDC_MAINNET_ID = 31566704L
-        const val USDC_TESTNET_ID = 10458941L
-        const val USDT_MAINNET_ID = 312769L
-
-        fun getAlgorandAsset(amount: BigInteger = BigInteger.ZERO): AssetInformation {
-            return AssetInformation(
-                assetId = ALGO_ID,
-                fullName = ALGO_FULL_NAME,
-                shortName = ALGO_SHORT_NAME,
-                decimals = ALGO_DECIMALS,
-                amount = amount,
-                verificationTier = VerificationTier.TRUSTED
-            )
-        }
-
-        fun createAssetInformation(
-            assetHolding: AssetHolding,
-            assetParams: AssetDetail
-        ): AssetInformation {
-            return AssetInformation(
-                assetId = assetHolding.assetId,
-                creatorPublicKey = assetParams.assetCreator?.publicKey,
-                shortName = assetParams.shortName,
-                fullName = assetParams.fullName,
-                amount = assetHolding.amount,
-                decimals = assetParams.fractionDecimals ?: 0,
-                verificationTier = assetParams.verificationTier
-            )
-        }
 
         // TODO Remove this function after changing RemoveAssetFlow
         fun createAssetInformation(

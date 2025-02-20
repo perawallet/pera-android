@@ -14,7 +14,6 @@ package com.algorand.android.decider
 
 import com.algorand.android.assetsearch.domain.model.BaseSearchedAsset
 import com.algorand.android.models.AssetDetail
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.models.SimpleCollectibleDetail
 import com.algorand.android.nft.domain.model.BaseCollectibleDetail
@@ -25,6 +24,7 @@ import com.algorand.android.utils.assetdrawable.AlgoDrawableProvider
 import com.algorand.android.utils.assetdrawable.AssetDrawableProvider
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.assetdrawable.CollectibleDrawableProvider
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import javax.inject.Inject
 
 class AssetDrawableProviderDecider @Inject constructor(
@@ -33,7 +33,7 @@ class AssetDrawableProviderDecider @Inject constructor(
 ) {
 
     fun getAssetDrawableProvider(assetId: Long): BaseAssetDrawableProvider {
-        val isAlgo = assetId == AssetInformation.ALGO_ID
+        val isAlgo = assetId == AssetConstants.ALGO_ID
         val isAsset = simpleAssetDetailUseCase.isAssetCached(assetId)
         val isCollectible = simpleCollectibleUseCase.isCollectibleCached(assetId)
         return when {
@@ -45,7 +45,7 @@ class AssetDrawableProviderDecider @Inject constructor(
     }
 
     fun getAssetDrawableProvider(assetId: Long, assetName: AssetName, logoUri: String?): BaseAssetDrawableProvider {
-        val isAlgo = assetId == AssetInformation.ALGO_ID
+        val isAlgo = assetId == AssetConstants.ALGO_ID
         val isCollectible = simpleCollectibleUseCase.isCollectibleCached(assetId)
         return when {
             isAlgo -> createAlgoDrawableProvider()
@@ -80,7 +80,7 @@ class AssetDrawableProviderDecider @Inject constructor(
      */
     fun getAssetDrawableProvider(searchedAsset: BaseSearchedAsset): BaseAssetDrawableProvider {
         return when {
-            searchedAsset.assetId == AssetInformation.ALGO_ID -> {
+            searchedAsset.assetId == AssetConstants.ALGO_ID -> {
                 // This is unnecessary check but to keep consistency, I added this check, too
                 AlgoDrawableProvider()
             }
@@ -109,7 +109,7 @@ class AssetDrawableProviderDecider @Inject constructor(
      */
     fun getAssetDrawableProvider(baseAssetDetail: BaseAssetDetail): BaseAssetDrawableProvider {
         return when {
-            baseAssetDetail.assetId == AssetInformation.ALGO_ID -> {
+            baseAssetDetail.assetId == AssetConstants.ALGO_ID -> {
                 // This is unnecessary check but to keep consistency, I added this check, too
                 AlgoDrawableProvider()
             }

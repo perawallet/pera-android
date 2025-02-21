@@ -85,7 +85,7 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
                         sheetContent = {
                             BottomSheetContent(bottomSheetState)
                         },
-                        sheetContainerColor = MaterialTheme.colorScheme.surface,
+                        sheetContainerColor = MaterialTheme.colorScheme.background,
                         sheetContentColor = MaterialTheme.colorScheme.onSurface,
                         content = { paddingValues ->
                             Column(

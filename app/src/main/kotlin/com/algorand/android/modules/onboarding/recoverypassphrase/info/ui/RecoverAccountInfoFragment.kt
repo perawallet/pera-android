@@ -42,8 +42,8 @@ import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.MnemonicTypeCard
 import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.PeraCard
 import com.algorand.android.ui.compose.widget.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
@@ -142,7 +142,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
         ) {
             BottomSheetHeader(sheetState, onDismiss)
 
-            MnemonicTypeCard(
+            PeraCard(
                 title = stringResource(R.string.mnemonic_type_bip39_title),
                 description = stringResource(R.string.mnemonic_type_bip39_description),
                 footer = stringResource(R.string.mnemonic_type_bip39_footer),
@@ -156,7 +156,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 }
             )
 
-            MnemonicTypeCard(
+            PeraCard(
                 title = stringResource(R.string.mnemonic_type_algo25_title),
                 description = stringResource(R.string.mnemonic_type_algo25_description),
                 footer = stringResource(R.string.mnemonic_type_algo25_footer),

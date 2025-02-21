@@ -1,3 +1,4 @@
+package com.algorand.android.ui.compose.widget
 /*
  * Copyright 2022 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -9,7 +10,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package com.algorand.android.ui.compose.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +37,7 @@ import com.algorand.android.R
 
 @SuppressWarnings("LongMethod")
 @Composable
-fun MnemonicTypeCard(
+fun PeraCard(
     title: String,
     description: String,
     footer: String,
@@ -69,8 +69,10 @@ fun MnemonicTypeCard(
                     ) {
                         PeraBodyText(
                             modifier = Modifier.padding(
-                                horizontal = 7.dp,
-                                vertical = 3.dp
+                                start = 7.dp,
+                                end = 7.dp,
+                                top = 3.dp,
+                                bottom = 3.dp
                             ),
                             text = it
                         )
@@ -79,7 +81,7 @@ fun MnemonicTypeCard(
             }
 
             Row(
-                modifier = Modifier.padding(vertical = 16.dp),
+                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -95,7 +97,7 @@ fun MnemonicTypeCard(
                         modifier = Modifier.align(Alignment.Center),
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        contentDescription = stringResource(id = R.string.right_arrow)
+                        contentDescription = "Right Arrow"
                     )
                 }
             }
@@ -106,8 +108,8 @@ fun MnemonicTypeCard(
 
 @Preview
 @Composable
-fun MnemonicTypeCardPreview() {
-    MnemonicTypeCard(
+fun PeraCardPreview() {
+    PeraCard(
         title = stringResource(R.string.mnemonic_type_algo25_title),
         description = stringResource(R.string.mnemonic_type_algo25_description),
         footer = stringResource(R.string.mnemonic_type_algo25_footer),

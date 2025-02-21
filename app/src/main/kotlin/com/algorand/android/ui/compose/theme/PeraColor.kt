@@ -20,7 +20,7 @@ object PeraColor {
     val onErrorLight = Color(0xFFFFFFFF)
     val errorContainerLight = Color(0xFFFFDAD6)
     val onErrorContainerLight = Color(0xFF93000A)
-    val backgroundLight = Color(0xFFFEF9EB)
+    val backgroundLight = Color(0xFFFFFFFF)
     val onBackgroundLight = Color(0xFF1D1C14)
     val surfaceLight = Color(0xFFF1F1F2)
     val onSurfaceLight = Color(0xFF27272A)

@@ -207,6 +207,8 @@
     <string name="developer_settings">Developer Settings</string>
     <string name="currency">Currency</string>
     <string name="algorand_dispenser">Algorand Dispenser</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="privacy_click">Privacy Policy</string>
     <string name="by_creating_account">By creating an account, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
     <string name="create_new_account">Create new Account</string>
     <string name="watch_account">Watch Account</string>

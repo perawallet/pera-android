@@ -36,8 +36,8 @@ import com.algorand.android.utils.MAINNET_NETWORK_SLUG
 import com.algorand.android.utils.extensions.appendAt
 import com.algorand.android.utils.recordException
 
-private const val PRIVACY_POLICY_URL = "https://perawallet.app/privacy-policy/"
-private const val TERMS_AND_SERVICES_URL = "https://perawallet.app/terms-and-services/"
+const val PRIVACY_POLICY_URL = "https://perawallet.app/privacy-policy/"
+const val TERMS_AND_SERVICES_URL = "https://perawallet.app/terms-and-services/"
 private const val PERA_EXPLORER_URL = "explorer.perawallet.app"
 private const val MARKET_PAGE_URL = "https://play.google.com/store/apps/details?id=com.algorand.android"
 private const val SUPPORT_CENTER_URL = "https://perawallet.app/support/"

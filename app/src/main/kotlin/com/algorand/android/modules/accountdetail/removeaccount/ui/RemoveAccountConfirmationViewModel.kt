@@ -13,9 +13,11 @@
 package com.algorand.android.modules.accountdetail.removeaccount.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.accountdetail.removeaccount.ui.model.RemoveAccountConfirmationPreview
 import com.algorand.android.modules.accountdetail.removeaccount.ui.usecase.RemoveAccountConfirmationPreviewUseCase
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,8 +41,13 @@ class RemoveAccountConfirmationViewModel @Inject constructor(
         get() = _removeAccountConfirmationPreviewFlow
 
     fun onRemoveAccountClick() {
-        _removeAccountConfirmationPreviewFlow.update { preview ->
-            removeAccountConfirmationPreviewUseCase.updatePreviewWithRemoveAccountConfirmation(preview, accountAddress)
+        viewModelScope.launchIO {
+            _removeAccountConfirmationPreviewFlow.update { preview ->
+                removeAccountConfirmationPreviewUseCase.updatePreviewWithRemoveAccountConfirmation(
+                    preview,
+                    accountAddress
+                )
+            }
         }
     }
 

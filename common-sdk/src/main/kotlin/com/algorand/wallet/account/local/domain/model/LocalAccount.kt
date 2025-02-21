@@ -24,7 +24,23 @@ sealed interface LocalAccount {
         val change: Int,
         val keyIndex: Int,
         val derivationType: Int
-    ) : LocalAccount
+    ) : LocalAccount {
+
+        override fun equals(other: Any?): Boolean {
+            return other is HdKey &&
+                    algoAddress == other.algoAddress &&
+                    publicKey.contentEquals(other.publicKey) &&
+                    seedId == other.seedId &&
+                    account == other.account &&
+                    change == other.change &&
+                    keyIndex == other.keyIndex &&
+                    derivationType == other.derivationType
+        }
+
+        override fun hashCode(): Int {
+            return algoAddress.hashCode() + publicKey.contentHashCode() + seedId + account + change + keyIndex + derivationType
+        }
+    }
 
     data class Algo25(override val algoAddress: String) : LocalAccount
 

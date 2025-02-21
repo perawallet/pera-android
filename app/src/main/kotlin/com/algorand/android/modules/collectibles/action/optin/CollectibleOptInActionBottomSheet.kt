@@ -43,7 +43,7 @@ class CollectibleOptInActionBottomSheet : BaseAssetActionBottomSheet() {
             setOnClickListener {
                 asset?.let { assetDescription ->
                     val assetActionResult = AssetActionResult(
-                        asset = assetDescription,
+                        assetId = assetDescription.id,
                         publicKey = assetActionViewModel.accountAddress
                     )
                     (activity as? MainActivity)?.signAddAssetTransaction(assetActionResult)

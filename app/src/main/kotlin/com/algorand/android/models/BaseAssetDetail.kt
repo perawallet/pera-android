@@ -13,8 +13,7 @@
 package com.algorand.android.models
 
 import com.algorand.android.assetsearch.domain.model.VerificationTier
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
-import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -43,18 +42,6 @@ abstract class BaseAssetDetail {
     abstract val isAvailableOnDiscoverMobile: Boolean?
 
     fun hasUsdValue(): Boolean {
-        return usdValue != null || assetId == ALGO_ID
-    }
-
-    // TODO remove this function after deleting AssetInformation
-    fun convertToAssetInformation(): AssetInformation {
-        return AssetInformation(
-            assetId = assetId,
-            creatorPublicKey = assetCreator?.publicKey,
-            shortName = shortName,
-            fullName = fullName,
-            verificationTier = verificationTier,
-            decimals = fractionDecimals ?: DEFAULT_ASSET_DECIMAL
-        )
+        return usdValue != null || assetId == AssetConstants.ALGO_ID
     }
 }

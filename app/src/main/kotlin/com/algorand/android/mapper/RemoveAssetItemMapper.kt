@@ -32,13 +32,14 @@ import com.algorand.android.models.BaseRemoveAssetItem.SearchViewItem
 import com.algorand.android.models.BaseRemoveAssetItem.TitleViewItem
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.modules.assets.core.ui.domain.usecase.GetAssetName
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 
 class RemoveAssetItemMapper @Inject constructor(
     private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider
+    private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
+    private val getAssetName: GetAssetName
 ) {
 
     fun mapToRemoveAssetItem(
@@ -48,8 +49,8 @@ class RemoveAssetItemMapper @Inject constructor(
         return with(ownedAssetData) {
             RemoveAssetItem(
                 id = id,
-                name = AssetName.create(name),
-                shortName = AssetName.create(shortName),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
                 amount = amount,
                 creatorPublicKey = creatorPublicKey,
                 decimals = decimals,
@@ -77,8 +78,8 @@ class RemoveAssetItemMapper @Inject constructor(
         return with(ownedCollectibleImageData) {
             RemoveCollectibleImageItem(
                 id = id,
-                name = AssetName.create(name),
-                shortName = AssetName.create(shortName),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
                 amount = amount,
                 creatorPublicKey = creatorPublicKey,
                 decimals = decimals,
@@ -105,8 +106,8 @@ class RemoveAssetItemMapper @Inject constructor(
         return with(ownedCollectibleImageData) {
             RemoveCollectibleVideoItem(
                 id = id,
-                name = AssetName.create(name),
-                shortName = AssetName.create(shortName),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
                 amount = amount,
                 creatorPublicKey = creatorPublicKey,
                 decimals = decimals,
@@ -133,8 +134,8 @@ class RemoveAssetItemMapper @Inject constructor(
         return with(ownedCollectibleAudioData) {
             RemoveCollectibleAudioItem(
                 id = id,
-                name = AssetName.create(name),
-                shortName = AssetName.create(shortName),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
                 amount = amount,
                 creatorPublicKey = creatorPublicKey,
                 decimals = decimals,
@@ -157,8 +158,8 @@ class RemoveAssetItemMapper @Inject constructor(
         return with(ownedCollectibleMixedData) {
             RemoveCollectibleMixedItem(
                 id = id,
-                name = AssetName.create(name),
-                shortName = AssetName.create(shortName),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
                 amount = amount,
                 creatorPublicKey = creatorPublicKey,
                 decimals = decimals,
@@ -185,8 +186,8 @@ class RemoveAssetItemMapper @Inject constructor(
         return with(ownedUnsupportedCollectibleData) {
             RemoveNotSupportedCollectibleItem(
                 id = id,
-                name = AssetName.create(name),
-                shortName = AssetName.create(shortName),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
                 amount = amount,
                 creatorPublicKey = creatorPublicKey,
                 decimals = decimals,

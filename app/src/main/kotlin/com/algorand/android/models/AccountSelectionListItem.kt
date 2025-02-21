@@ -51,7 +51,6 @@ sealed class AccountSelectionListItem : RecyclerListItem, Parcelable {
     data class AccountItem(
         val account: Account,
         val accountInformation: AccountInformation,
-        val assetInformationList: List<AssetInformation>,
         val accountDisplayName: AccountDisplayName,
         val accountIconDrawablePreview: AccountIconDrawablePreview,
         var isSelected: Boolean = false,

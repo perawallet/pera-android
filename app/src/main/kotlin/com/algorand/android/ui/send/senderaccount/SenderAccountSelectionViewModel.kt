@@ -16,7 +16,6 @@ package com.algorand.android.ui.send.senderaccount
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.SenderAccountSelectionPreview
 import com.algorand.android.models.TransactionSignData
@@ -25,6 +24,7 @@ import com.algorand.android.usecase.SenderAccountSelectionUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrElse
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.math.BigInteger
 import javax.inject.Inject

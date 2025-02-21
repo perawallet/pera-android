@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.transactionhistory.data.repository
 
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.Result
 import com.algorand.android.modules.transactionhistory.data.mapper.PendingTransactionDTOMapper
 import com.algorand.android.modules.transactionhistory.data.model.PendingTransactionsResponse
@@ -20,6 +19,7 @@ import com.algorand.android.modules.transactionhistory.domain.model.PendingTrans
 import com.algorand.android.modules.transactionhistory.domain.repository.PendingTransactionsRepository
 import com.algorand.android.network.AlgodApi
 import com.algorand.android.network.safeApiCall
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 
 class PendingTransactionsRepositoryImpl @Inject constructor(
@@ -38,7 +38,7 @@ class PendingTransactionsRepositoryImpl @Inject constructor(
                     if (assetId == null) {
                         true
                     } else {
-                        val responseAssetId = it.detailResponse?.assetId ?: AssetInformation.ALGO_ID
+                        val responseAssetId = it.detailResponse?.assetId ?: ALGO_ID
                         responseAssetId == assetId
                     }
                 }

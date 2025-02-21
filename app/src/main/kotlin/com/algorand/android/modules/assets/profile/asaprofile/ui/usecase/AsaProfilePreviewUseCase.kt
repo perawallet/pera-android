@@ -17,8 +17,8 @@ import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.mapper.AssetActionMapper
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BaseAssetDetail
+import com.algorand.android.modules.assets.core.ui.domain.usecase.GetAssetName
 import com.algorand.android.modules.assets.profile.about.domain.usecase.GetAssetDetailFlowFromAsaProfileLocalCache
 import com.algorand.android.modules.assets.profile.about.domain.usecase.GetSelectedAssetExchangeValueUseCase
 import com.algorand.android.modules.assets.profile.asaprofile.ui.mapper.AsaProfilePreviewMapper
@@ -34,6 +34,7 @@ import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.isGreaterThan
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
@@ -54,7 +55,8 @@ class AsaProfilePreviewUseCase @Inject constructor(
     private val accountDetailUseCase: AccountDetailUseCase,
     private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
     private val assetActionMapper: AssetActionMapper,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase
+    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
+    private val getAssetName: GetAssetName
 ) {
 
     // TODO: We should fetch asset details from API
@@ -62,11 +64,8 @@ class AsaProfilePreviewUseCase @Inject constructor(
         val assetDetail = simpleAssetDetailUseCase.getCachedAssetDetail(assetId)?.data
         return assetActionMapper.mapTo(
             assetId = assetId,
-            fullName = assetDetail?.fullName ?: assetId.toString(),
-            shortName = assetDetail?.shortName,
-            verificationTier = assetDetail?.verificationTier,
-            accountAddress = accountAddress,
-            creatorPublicKey = assetDetail?.assetCreator?.publicKey
+            assetName = getAssetName(assetDetail?.fullName),
+            accountAddress = accountAddress
         )
     }
 

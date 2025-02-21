@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.transactionhistory.domain.model
 
-import com.algorand.android.models.AssetInformation
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 
 data class PendingTransactionDTO(
@@ -22,13 +22,15 @@ data class PendingTransactionDTO(
 
     fun isAlgorand() = detail?.assetId == null
     fun getAssetId(): Long? = if (isAlgorand()) {
-        AssetInformation.ALGO_ID
+        ALGO_ID
     } else {
         detail?.assetId
     }
+
     fun getAmount(): BigInteger {
         return detail?.amount ?: detail?.assetAmount ?: BigInteger.ZERO
     }
+
     fun getReceiverAddress(): String {
         return if (isAlgorand()) {
             detail?.receiverAddress.orEmpty()

@@ -13,7 +13,7 @@
 package com.algorand.android.utils.analytics
 
 import androidx.core.os.bundleOf
-import com.algorand.android.models.AssetInformation
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import com.google.firebase.analytics.FirebaseAnalytics
 
 private const val REKEY_EVENT_KEY = "rekey"
@@ -45,5 +45,5 @@ fun FirebaseAnalytics.logScreen(page: String) {
 }
 
 fun getAssetIdAsEventParam(assetId: Long): String {
-    return if (assetId == AssetInformation.ALGO_ID) ALGO_ASSET_ID else assetId.toString()
+    return if (assetId == AssetConstants.ALGO_ID) ALGO_ASSET_ID else assetId.toString()
 }

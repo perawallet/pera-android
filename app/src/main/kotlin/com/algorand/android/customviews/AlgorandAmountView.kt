@@ -20,7 +20,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import com.algorand.android.R
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.TransactionSymbol
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.extensions.changeTextAppearance
@@ -94,15 +93,6 @@ class AlgorandAmountView @JvmOverloads constructor(
             }
             append(xmlStyledAmount)
         }
-    }
-
-    fun setAmount(
-        amount: BigInteger?,
-        transactionSymbol: TransactionSymbol? = null,
-        assetInformation: AssetInformation
-    ) {
-        val formattedAmount = amount.formatAmount(assetInformation.decimals, isCompact = false)
-        setAmount(formattedAmount, transactionSymbol, assetInformation.shortName)
     }
 
     fun setAmount(

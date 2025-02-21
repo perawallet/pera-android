@@ -56,7 +56,7 @@ class WalletConnectAsaProfileFragment : BaseAsaProfileFragment() {
     }
 
     private fun navToSendAlgoFlow(assetActionResult: AssetActionResult) {
-        val assetId = assetActionResult.asset.assetId
+        val assetId = assetActionResult.assetId
         val assetTransaction = AssetTransaction(
             assetId = assetId,
             senderAddress = asaProfileViewModel.accountAddress.orEmpty(),

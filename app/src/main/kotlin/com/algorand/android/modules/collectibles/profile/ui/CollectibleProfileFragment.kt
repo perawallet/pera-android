@@ -188,7 +188,7 @@ class CollectibleProfileFragment : BaseCollectibleDetailFragment() {
 
     override fun onShareButtonClick() {
         context?.openTextShareBottomMenuChooser(
-            title = baseCollectibleDetailViewModel.getNFTName()?.getName(resources).orEmpty(),
+            title = baseCollectibleDetailViewModel.getNFTName()?.assetName.orEmpty(),
             text = baseCollectibleDetailViewModel.getNFTExplorerUrl().orEmpty()
         )
     }

@@ -15,9 +15,9 @@ package com.algorand.android.models
 import androidx.annotation.StringRes
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.sorting.assetsorting.ui.model.AssetSortableItem
 import com.algorand.android.modules.sorting.nftsorting.ui.model.CollectibleSortableItem
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -138,7 +138,7 @@ sealed class BaseRemoveAssetItem : RecyclerListItem {
                 return other is RemoveAssetItem && this == other
             }
 
-            override val assetSortingNameField: String? = name.getName()
+            override val assetSortingNameField: String = name.assetName
             override val assetSortingBalanceField: BigDecimal? = amountInPrimaryCurrency
         }
 
@@ -150,10 +150,10 @@ sealed class BaseRemoveAssetItem : RecyclerListItem {
                 get() = optedInAtRound
 
             override val collectibleSortingNameField: String?
-                get() = name.getName()
+                get() = name.assetName
 
             override val assetSortingNameField: String?
-                get() = name.getName()
+                get() = name.assetName
 
             override val assetSortingBalanceField: BigDecimal?
                 get() = amountInPrimaryCurrency

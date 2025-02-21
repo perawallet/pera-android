@@ -12,7 +12,6 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.models.WCArbitraryData
 import com.algorand.android.models.WalletConnectAccount
@@ -27,6 +26,7 @@ import com.algorand.android.utils.multiplyOrZero
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -53,7 +53,7 @@ class WalletConnectArbitraryDataMapper @Inject constructor(
                 accountIconDrawablePreview = createAccountIconDrawableUseCase(signerAddress)
             )
             val amount = getAccountInformation(signerAddress)?.amount ?: BigInteger.ZERO
-            val ownedAsset = getAccountOwnedAssetData(signerAddress, AssetInformation.ALGO_ID)
+            val ownedAsset = getAccountOwnedAssetData(signerAddress, AssetConstants.ALGO_ID)
 
             val walletConnectAssetInformation = createWalletConnectAssetInformation(ownedAsset, amount)
             val wcSigner = signer?.let {

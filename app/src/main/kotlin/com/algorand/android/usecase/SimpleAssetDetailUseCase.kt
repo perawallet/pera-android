@@ -22,7 +22,6 @@ import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.exception.AssetNotFoundException
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
 class SimpleAssetDetailUseCase @Inject constructor(
@@ -43,48 +42,8 @@ class SimpleAssetDetailUseCase @Inject constructor(
         }.values.toList()
     }
 
-    suspend fun cacheAssets(assetList: List<CacheResult.Success<AssetDetail>>) {
-        assetRepository.cacheAssets(assetList)
-    }
-
-    suspend fun cacheAsset(asset: CacheResult.Success<AssetDetail>) {
-        assetRepository.cacheAsset(asset)
-    }
-
-    suspend fun cacheAsset(assetId: Long, asset: CacheResult.Error<AssetDetail>) {
-        assetRepository.cacheAsset(assetId, asset)
-    }
-
-    suspend fun cacheAllAssets(assetKeyValuePairList: List<Pair<Long, CacheResult<AssetDetail>>>) {
-        assetRepository.cacheAllAssets(assetKeyValuePairList)
-    }
-
-    fun getCachedAssetsFlow() = assetRepository.getAssetCacheFlow()
-
-    fun areAllAssetsCached(assetIdList: Set<Long>): Boolean {
-        return assetRepository.getAssetCacheFlow().value.size == assetIdList.size
-    }
-
     suspend fun clearAssetDetailCache() {
         assetRepository.clearAssetCache()
-    }
-
-    suspend fun clearAssetDetailCache(assetId: Long) {
-        assetRepository.clearAssetCache(assetId)
-    }
-
-    suspend fun fetchAndCacheAsset(assetId: Long) {
-        fetchAssetById(listOf(assetId)).collect {
-            it.useSuspended(
-                onSuccess = { assetResultList ->
-                    val asset = assetResultList.firstOrNull() ?: return@useSuspended
-                    cacheAsset(CacheResult.Success.create(asset))
-                },
-                onFailed = {
-                    cacheAsset(assetId, CacheResult.Error.create(it.exception, it.code))
-                }
-            )
-        }
     }
 
     suspend fun fetchAssetById(assetIdList: List<Long>) = flow<DataResource<List<AssetDetail>>> {

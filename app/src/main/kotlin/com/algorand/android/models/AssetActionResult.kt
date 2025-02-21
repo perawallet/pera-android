@@ -18,7 +18,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AssetActionResult(
-    val asset: AssetInformation,
     val publicKey: String? = null,
+    val assetId: Long,
     val shouldWaitForConfirmation: Boolean = false
 ) : Parcelable

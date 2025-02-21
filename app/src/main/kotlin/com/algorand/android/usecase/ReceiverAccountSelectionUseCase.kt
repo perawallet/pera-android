@@ -15,10 +15,7 @@ package com.algorand.android.usecase
 
 import com.algorand.android.R
 import com.algorand.android.SendAlgoNavigationDirections
-import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.models.Result
 import com.algorand.android.models.TargetUser
@@ -42,6 +39,7 @@ import com.algorand.android.utils.validator.AccountTransactionValidator
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountState
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -53,7 +51,6 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
     private val contactUseCase: ContactUseCase,
     private val accountTransactionValidator: AccountTransactionValidator,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
-    private val assetDataProviderDecider: AssetDrawableProviderDecider, // TODO Remove decider after refactor AssetInfo
     private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
     private val getAccountSelectionContactItems: GetAccountSelectionContactItems,
     private val getAccountSelectionNameServiceItems: GetAccountSelectionNameServiceItems,
@@ -203,13 +200,13 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
             }
         }
 
-        val selectedAsset = getAssetInformation(assetId = assetId, accountAddress = fromAccountAddress)
+        val ownedAssetData = getAccountBaseOwnedAssetData(fromAccountAddress, assetId)
         val isSendingMaxAmountToSameAccount = accountTransactionValidator.isSendingMaxAmountToTheSameAccount(
             fromAccount = fromAccountAddress,
             toAccount = accountAssetDetail.address,
-            maxAmount = selectedAsset?.amount ?: BigInteger.ZERO,
+            maxAmount = ownedAssetData?.amount ?: BigInteger.ZERO,
             amount = amount,
-            isAlgo = selectedAsset?.isAlgo() ?: false
+            isAlgo = ownedAssetData?.isAlgo ?: false
         )
 
         if (isSendingMaxAmountToSameAccount) {
@@ -219,7 +216,7 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
         val isCloseTransactionToSameAccount = accountTransactionValidator.isCloseTransactionToSameAccount(
             getAccountInformation(fromAccountAddress),
             accountAssetDetail.address,
-            selectedAsset,
+            ownedAssetData,
             amount
         )
 
@@ -264,13 +261,5 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
 
     private suspend fun getContactByAddressIfExists(accountAddress: String): User? {
         return contactUseCase.getAllContacts().firstOrNull { it.publicKey == accountAddress }
-    }
-
-    private suspend fun getAssetInformation(assetId: Long, accountAddress: String): AssetInformation? {
-        val ownedAssetData = getAccountBaseOwnedAssetData(accountAddress, assetId)
-        return AssetInformation.createAssetInformation(
-            baseOwnedAssetData = ownedAssetData ?: return null,
-            assetDrawableProvider = assetDataProviderDecider.getAssetDrawableProvider(assetId)
-        )
     }
 }

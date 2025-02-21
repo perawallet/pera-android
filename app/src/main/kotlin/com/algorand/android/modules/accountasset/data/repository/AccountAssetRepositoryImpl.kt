@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.accountasset.data.repository
 
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.Result
 import com.algorand.android.modules.accountasset.data.mapper.AccountAssetDetailMapper
 import com.algorand.android.modules.accountasset.data.mapper.AssetDetailMapper
@@ -22,14 +21,15 @@ import com.algorand.android.modules.accountasset.domain.model.AccountAssetDetail
 import com.algorand.android.modules.accountasset.domain.repository.AccountAssetRepository
 import com.algorand.android.network.AlgodApi
 import com.algorand.android.network.safeApiCall
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import java.io.IOException
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import retrofit2.Response
-import java.io.IOException
-import javax.inject.Inject
 
 class AccountAssetRepositoryImpl @Inject constructor(
     private val algodApi: AlgodApi,

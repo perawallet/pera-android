@@ -12,11 +12,11 @@
 
 package com.algorand.android.ui.send.transferamount
 
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
 import com.algorand.android.utils.MIN_BALANCE_TO_KEEP_PER_OPTED_IN_APPS
 import com.algorand.android.utils.toAlgoDisplayValue
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 
 class BalanceWarningPreviewUseCase @Inject constructor(
@@ -48,6 +48,6 @@ class BalanceWarningPreviewUseCase @Inject constructor(
     }
 
     private fun getAlgoData(accountAddress: String): BaseAccountAssetData.BaseOwnedAssetData? {
-        return getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(AssetInformation.ALGO_ID, accountAddress)
+        return getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(ALGO_ID, accountAddress)
     }
 }

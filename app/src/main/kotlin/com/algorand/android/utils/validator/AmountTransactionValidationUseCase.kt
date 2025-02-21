@@ -13,7 +13,6 @@
 
 package com.algorand.android.utils.validator
 
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.AssetTransferAmountValidationResult
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.utils.MIN_FEE
@@ -23,6 +22,7 @@ import com.algorand.android.utils.isLesserThan
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
@@ -62,7 +62,7 @@ class AmountTransactionValidationUseCase @Inject constructor(
     suspend fun getMaximumSendableAmount(address: String, assetId: Long): BigInteger? {
         val accountMinRequiredBalance = getAccountMinBalance(address)
         val ownedAssetData = getAccountBaseOwnedAssetData(address, assetId) ?: return null
-        return if (assetId == ALGO_ID) {
+        return if (assetId == AssetConstants.ALGO_ID) {
             ownedAssetData.amount - accountMinRequiredBalance - MIN_FEE.toBigInteger()
         } else {
             ownedAssetData.amount

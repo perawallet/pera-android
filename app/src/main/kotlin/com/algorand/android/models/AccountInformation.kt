@@ -13,7 +13,7 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
 
@@ -48,15 +48,11 @@ data class AccountInformation(
     }
 
     fun hasAsset(assetId: Long): Boolean {
-        return assetHoldingMap.containsKey(assetId) || assetId == ALGO_ID
+        return assetHoldingMap.containsKey(assetId) || assetId == AssetConstants.ALGO_ID
     }
 
     fun getAssetHoldingOrNull(assetId: Long): AssetHolding? {
         return assetHoldingMap.get(assetId)
-    }
-
-    fun getAssetStatusOrNull(assetId: Long): AssetStatus? {
-        return getAssetHoldingOrNull(assetId)?.status
     }
 
     fun getAssetHoldingList(): List<AssetHolding> {

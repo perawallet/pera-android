@@ -34,8 +34,8 @@ class AssetSearchItemViewHolder(
         with(item) {
             setAssetButtonState(accountAssetItemButtonState)
             setAssetStartIconDrawable(assetDrawableProvider = baseAssetDrawableProvider)
-            setAssetTitleText(fullName.getName(binding.root.resources))
-            setAssetDescriptionText(shortName.getName(binding.root.resources), assetId)
+            setAssetTitleText(fullName.assetName)
+            setAssetDescriptionText(shortName.assetName, assetId)
             setAssetVerificationTier(verificationTierConfiguration)
             setAssetItemViewClickListeners(this)
         }

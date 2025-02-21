@@ -12,22 +12,33 @@
 
 package com.algorand.android.modules.verificationtier.ui.decider
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
-import com.algorand.android.assetsearch.domain.model.VerificationTier.SUSPICIOUS
-import com.algorand.android.assetsearch.domain.model.VerificationTier.TRUSTED
-import com.algorand.android.assetsearch.domain.model.VerificationTier.UNVERIFIED
-import com.algorand.android.assetsearch.domain.model.VerificationTier.VERIFIED
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration.SUSPICIOUS
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration.TRUSTED
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration.UNVERIFIED
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration.VERIFIED
+import com.algorand.wallet.asset.domain.model.VerificationTier
 import javax.inject.Inject
 
 class VerificationTierConfigurationDecider @Inject constructor() {
 
+    fun decideVerificationTierConfiguration(
+        verificationTier: com.algorand.android.assetsearch.domain.model.VerificationTier?
+    ): VerificationTierConfiguration {
+        return when (verificationTier) {
+            com.algorand.android.assetsearch.domain.model.VerificationTier.VERIFIED -> VERIFIED
+            com.algorand.android.assetsearch.domain.model.VerificationTier.TRUSTED -> TRUSTED
+            com.algorand.android.assetsearch.domain.model.VerificationTier.SUSPICIOUS -> SUSPICIOUS
+            com.algorand.android.assetsearch.domain.model.VerificationTier.UNVERIFIED, null -> UNVERIFIED
+        }
+    }
+
     fun decideVerificationTierConfiguration(verificationTier: VerificationTier?): VerificationTierConfiguration {
         return when (verificationTier) {
-            VERIFIED -> VerificationTierConfiguration.VERIFIED
-            TRUSTED -> VerificationTierConfiguration.TRUSTED
-            SUSPICIOUS -> VerificationTierConfiguration.SUSPICIOUS
-            UNVERIFIED, null -> VerificationTierConfiguration.UNVERIFIED
+            VerificationTier.VERIFIED -> VERIFIED
+            VerificationTier.TRUSTED -> TRUSTED
+            VerificationTier.SUSPICIOUS -> SUSPICIOUS
+            VerificationTier.UNVERIFIED, VerificationTier.UNKNOWN, null -> UNVERIFIED
         }
     }
 }

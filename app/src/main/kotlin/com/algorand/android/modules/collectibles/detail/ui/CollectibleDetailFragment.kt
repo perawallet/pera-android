@@ -23,7 +23,6 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailFragment
 import com.algorand.android.modules.collectibles.detail.ui.model.NFTDetailPreview
@@ -87,21 +86,7 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
             nftSendEvent?.consume()?.run {
                 navToSendAlgoNavigation(optedInAccountDisplayName.getRawAccountAddress(), nftId, isPureNFT)
             }
-            optOutNFTEvent?.consume()?.run { navToOptOutNavigation(this) }
         }
-    }
-
-    private fun navToOptOutNavigation(assetInformation: AssetInformation) {
-        nav(
-            CollectibleDetailFragmentDirections
-                .actionCollectibleDetailFragmentToNftOptOutConfirmationNavigation(
-                    assetAction = AssetAction(
-                        assetId = baseCollectibleDetailViewModel.nftId,
-                        publicKey = baseCollectibleDetailViewModel.accountAddress,
-                        asset = assetInformation
-                    )
-                )
-        )
     }
 
     private fun setOwnerActionsGroupVisibility(isOwnerActionsGroupVisible: Boolean) {
@@ -136,9 +121,23 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
 
     private fun setOptOutButton(isOptOutButtonVisible: Boolean) {
         with(binding.nftOptOutButton) {
-            setOnClickListener { baseCollectibleDetailViewModel.onOptOutClick() }
+            setOnClickListener { navToOptOutNavigation() }
             isVisible = isOptOutButtonVisible
         }
+    }
+
+    private fun navToOptOutNavigation() {
+        val assetName = baseCollectibleDetailViewModel.getAssetName() ?: return
+        nav(
+            CollectibleDetailFragmentDirections
+                .actionCollectibleDetailFragmentToNftOptOutConfirmationNavigation(
+                    assetAction = AssetAction(
+                        assetId = baseCollectibleDetailViewModel.nftId,
+                        publicKey = baseCollectibleDetailViewModel.accountAddress,
+                        assetFullName = assetName
+                    )
+                )
+        )
     }
 
     private fun navToSendAlgoNavigation(ownerAccountAddress: String, nftId: Long, isPureNFT: Boolean) {
@@ -197,7 +196,7 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
 
     override fun onShareButtonClick() {
         context?.openTextShareBottomMenuChooser(
-            title = baseCollectibleDetailViewModel.getAssetName()?.getName(resources).orEmpty(),
+            title = baseCollectibleDetailViewModel.getAssetName()?.assetName.orEmpty(),
             text = baseCollectibleDetailViewModel.getExplorerUrl().orEmpty()
         )
     }

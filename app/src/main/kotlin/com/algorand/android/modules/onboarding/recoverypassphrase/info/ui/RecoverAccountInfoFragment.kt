@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.onboarding.recoverypassphrase.info.ui
 
-import MnemonicTypeCard
+import PeraCard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -146,7 +146,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 Spacer(Modifier.weight(HALF_SIZE))
             }
 
-            MnemonicTypeCard(
+            PeraCard(
                 title = "BIP39",
                 description = "New inter-operable format that enables important features like HD Wallet",
                 footer = "24 Key mnemonic keys",
@@ -159,7 +159,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 }
             )
 
-            MnemonicTypeCard(
+            PeraCard(
                 title = "ALGO25",
                 description = "Legacy format that is specific to Algorand ecosystem",
                 footer = "25 Key mnemonic keys",

@@ -84,6 +84,7 @@ tink = "1.14.0"
 xhdwalletapi = "1.1.0"
 walletConnectBom = "1.34.1"
 zxing = "4.3.0"
+uiTooling = "1.7.8"
 
 [libraries]
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -209,6 +210,7 @@ walletconnect-v2-sign = { module = "com.walletconnect:sign" }
 walletconnect-v2 = { module = "com.walletconnect:android-bom", version.ref = "walletConnectBom" }
 walletconnect-v2-android-core = { module = "com.walletconnect:android-core" }
 walletconnect-v2-web3wallet = { module = "com.walletconnect:web3wallet" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 
 [bundles]
 firebase = ["firebase-analytics",

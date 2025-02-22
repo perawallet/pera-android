@@ -15,6 +15,7 @@ package com.algorand.wallet.account.info.data.mapper
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
+import com.algorand.wallet.account.info.domain.model.AssetStatus
 import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -23,7 +24,9 @@ import org.mockito.kotlin.mock
 
 class AssetHoldingEntityMapperImplTest {
 
-    private val assetStatusEntityMapper: AssetStatusEntityMapper = mock()
+    private val assetStatusEntityMapper: AssetStatusEntityMapper = mock {
+        on { invoke(AssetStatus.OWNED_BY_ACCOUNT) }.thenReturn(AssetStatusEntity.OWNED_BY_ACCOUNT)
+    }
 
     private val sut = AssetHoldingEntityMapperImpl(assetStatusEntityMapper)
 
@@ -31,7 +34,7 @@ class AssetHoldingEntityMapperImplTest {
     fun `EXPECT null WHEN asset id is null`() {
         val response = RESPONSE.copy(assetId = null)
 
-        val result = sut(ADDRESS, response)
+        val result = sut(ADDRESS, response, ASSET_STATUS)
 
         assertNull(result)
     }
@@ -40,14 +43,14 @@ class AssetHoldingEntityMapperImplTest {
     fun `EXPECT null WHEN amount is null`() {
         val response = RESPONSE.copy(amount = null)
 
-        val result = sut(ADDRESS, response)
+        val result = sut(ADDRESS, response, ASSET_STATUS)
 
         assertNull(result)
     }
 
     @Test
     fun `EXPECT mapped entity WHEN response is valid`() {
-        val result = sut(ADDRESS, RESPONSE)
+        val result = sut(ADDRESS, RESPONSE, ASSET_STATUS)
 
         assertEquals(EXPECTED_ENTITY, result)
     }
@@ -59,13 +62,14 @@ class AssetHoldingEntityMapperImplTest {
             isFrozen = null
         )
 
-        val result = sut(ADDRESS, response)
+        val result = sut(ADDRESS, response, ASSET_STATUS)
 
         assertEquals(EXPECTED_ENTITY, result)
     }
 
     private companion object {
         const val ADDRESS = "address"
+        val ASSET_STATUS = AssetStatus.OWNED_BY_ACCOUNT
         val RESPONSE = AssetHoldingResponse(
             assetId = 1,
             amount = "10",

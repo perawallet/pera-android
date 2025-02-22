@@ -97,20 +97,6 @@ class AssetHoldingMapperImplTest {
         assertEquals(expected, result)
     }
 
-    @Test
-    fun `EXPECT mapped object with pending sending asset status WHEN entity status is pending sending`() {
-        val entity = ASSET_HOLDING_ENTITY.copy(
-            assetStatusEntity = AssetStatusEntity.PENDING_FOR_SENDING
-        )
-
-        val result = sut(entity)
-
-        val expected = VALID_ASSET_HOLDING.copy(
-            status = AssetStatus.PENDING_FOR_SENDING
-        )
-        assertEquals(expected, result)
-    }
-
     private companion object {
         const val ADDRESS = "address"
 

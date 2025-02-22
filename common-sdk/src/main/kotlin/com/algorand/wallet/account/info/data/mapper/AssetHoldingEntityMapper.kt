@@ -17,7 +17,6 @@ import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 
 internal interface AssetHoldingEntityMapper {
-    operator fun invoke(address: String, response: AssetHoldingResponse): AssetHoldingEntity?
-    operator fun invoke(responses: List<Pair<String, AssetHoldingResponse>>): List<AssetHoldingEntity>
+    operator fun invoke(address: String, response: AssetHoldingResponse, status: AssetStatus): AssetHoldingEntity?
     operator fun invoke(address: String, assetId: Long, status: AssetStatus): AssetHoldingEntity
 }

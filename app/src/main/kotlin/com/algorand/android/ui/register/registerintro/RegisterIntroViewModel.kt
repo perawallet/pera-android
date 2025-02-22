@@ -16,13 +16,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.RegisterIntroPreview
-import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
-import com.algorand.android.usecase.GetIsProductionReleaseUseCase
+import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.usecase.RegisterIntroPreviewUseCase
 import com.algorand.android.usecase.RegistrationUseCase
 import com.algorand.android.utils.getOrElse
-import com.algorand.wallet.remoteconfig.domain.usecase.HD_WALLET_BUTTON_TOGGLE
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,9 +31,7 @@ import javax.inject.Inject
 class RegisterIntroViewModel @Inject constructor(
     private val registerIntroPreviewUseCase: RegisterIntroPreviewUseCase,
     private val registrationUseCase: RegistrationUseCase,
-    private val getIsProductionReleaseUseCase: GetIsProductionReleaseUseCase,
-    private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
-    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
+    private val isOnHdWalletUseCase: IsOnHdWalletUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -77,17 +72,7 @@ class RegisterIntroViewModel @Inject constructor(
     }
 
     fun isHdWalletToggleEnabled(): Boolean {
-        val isHdWalletToggleEnabled = isFeatureToggleEnabled(HD_WALLET_BUTTON_TOGGLE) &&
-                !isProdReleaseVariant()
-        return isHdWalletToggleEnabled
-    }
-
-    fun isConnectedToTestnet(): Boolean {
-        return getIsActiveNodeTestnetUseCase.invoke()
-    }
-
-    fun isProdReleaseVariant(): Boolean {
-        return getIsProductionReleaseUseCase.invoke()
+        return isOnHdWalletUseCase.invoke()
     }
 
     companion object {

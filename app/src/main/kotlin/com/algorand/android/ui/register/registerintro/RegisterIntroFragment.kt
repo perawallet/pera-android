@@ -287,6 +287,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                 title = stringResource(R.string.mnemonic_type_bip39_title),
                 description = stringResource(R.string.mnemonic_type_bip39_description),
                 footer = stringResource(R.string.mnemonic_type_bip39_footer),
+                highlighted = stringResource(R.string.recommended),
                 onClick = {
                     navToBackupPassphraseInfoNavigation(
                         PassphraseKeywordUtils.HD_WALLET_PASSPHRASES_WORD_COUNT

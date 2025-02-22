@@ -113,6 +113,7 @@ fun PeraCardPreview() {
         title = stringResource(R.string.mnemonic_type_algo25_title),
         description = stringResource(R.string.mnemonic_type_algo25_description),
         footer = stringResource(R.string.mnemonic_type_algo25_footer),
+        highlighted = stringResource(R.string.recommended),
         onClick = { }
     )
 }

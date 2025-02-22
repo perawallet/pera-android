@@ -17,7 +17,6 @@ import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus.OWNED_BY_ACCOUNT
 import com.algorand.wallet.account.info.domain.model.AssetStatus.PENDING_FOR_ADDITION
 import com.algorand.wallet.account.info.domain.model.AssetStatus.PENDING_FOR_REMOVAL
-import com.algorand.wallet.account.info.domain.model.AssetStatus.PENDING_FOR_SENDING
 import javax.inject.Inject
 
 class AddAssetItemActionButtonStateDecider @Inject constructor() {
@@ -25,7 +24,7 @@ class AddAssetItemActionButtonStateDecider @Inject constructor() {
     fun decideAddAssetItemActionButtonState(assetHolding: AssetHolding?): AccountAssetItemButtonState {
         return when (assetHolding?.status) {
             PENDING_FOR_REMOVAL, PENDING_FOR_ADDITION -> AccountAssetItemButtonState.PROGRESS
-            PENDING_FOR_SENDING, OWNED_BY_ACCOUNT -> AccountAssetItemButtonState.CONFIRMATION
+            OWNED_BY_ACCOUNT -> AccountAssetItemButtonState.CONFIRMATION
             else -> AccountAssetItemButtonState.ADDITION
         }
     }

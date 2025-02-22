@@ -51,7 +51,6 @@ internal class CreateAccountAssetDataUseCase @Inject constructor(
                     val assetData = createAccountOwnedAssetData(assetDetail, assetHolding)
                     ownedAssetDataList.add(assetData)
                 }
-                AssetStatus.PENDING_FOR_SENDING -> Unit // TODO
             }
         }
 

@@ -23,6 +23,8 @@ internal interface NoAuthAccountRepository {
 
     suspend fun getAll(): List<LocalAccount.NoAuth>
 
+    suspend fun getAllAddresses(): List<String>
+
     suspend fun getAccount(address: String): LocalAccount.NoAuth?
 
     suspend fun addAccount(account: LocalAccount.NoAuth)

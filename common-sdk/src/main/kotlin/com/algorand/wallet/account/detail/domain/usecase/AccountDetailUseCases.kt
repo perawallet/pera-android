@@ -36,3 +36,7 @@ fun interface GetAccountDetail {
 fun interface GetAccountsDetails {
     suspend operator fun invoke(): List<AccountDetail>
 }
+
+fun interface GetLocalRekeyedAccountCount {
+    suspend operator fun invoke(authAddress: String): Int
+}

@@ -13,6 +13,7 @@
 package com.algorand.wallet.account.local.data.repository
 
 import com.algorand.test.peraFixture
+import com.algorand.test.test
 import com.algorand.wallet.account.local.data.database.dao.LedgerBleDao
 import com.algorand.wallet.account.local.data.database.model.LedgerBleEntity
 import com.algorand.wallet.account.local.data.mapper.entity.LedgerBleEntityMapper
@@ -21,8 +22,10 @@ import com.algorand.wallet.account.local.domain.model.LocalAccount
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -52,22 +55,52 @@ class LedgerBleAccountRepositoryImplTest {
         assertEquals(expectedReturnedList, localAccounts)
     }
 
-//    @Test
-//    fun `EXPECT account WHEN account was registered before`() = runTest {
-//        coEvery { ledgerBleMapper(LEDGER_BLE_1_ENTITY) } returns LEDGER_BLE_1
-//        coEvery { ledgerBleDao.get(LEDGER_BLE_1_ENTITY.algoAddress) } returns LEDGER_BLE_1_ENTITY
-//        coEvery { LEDGER_BLE_1.address } returns LEDGER_BLE_1_ENTITY.algoAddress
-//
-//        val localAccount = sut.getAccount(LEDGER_BLE_1.address)
-//
-//        coVerify { ledgerBleMapper(LEDGER_BLE_1_ENTITY) }
-//        assertEquals(LEDGER_BLE_1, localAccount)
-//    }
+    @Test
+    fun `EXPECT account WHEN getAccount is invoked`() = runTest {
+        coEvery { ledgerBleDao.get(LEDGER_BLE_1_ENTITY.algoAddress) } returns LEDGER_BLE_1_ENTITY
+        coEvery { ledgerBleMapper(LEDGER_BLE_1_ENTITY) } returns LEDGER_BLE_1
+
+        val localAccount = sut.getAccount(LEDGER_BLE_1_ENTITY.algoAddress)
+
+        coVerify { ledgerBleDao.get(LEDGER_BLE_1_ENTITY.algoAddress) }
+        assertEquals(LEDGER_BLE_1, localAccount)
+    }
 
     @Test
-    fun `EXPECT account to be added to database  WHEN addAccount is invoked`() = runTest {
-        coEvery { ledgerBleDao.insert(LEDGER_BLE_1_ENTITY) } returns Unit
+    fun `EXPECT null WHEN getAccount is invoked with a non-existent address`() = runTest {
+        coEvery { ledgerBleDao.get("non_existent_address") } returns null
+
+        val result = sut.getAccount("non_existent_address")
+
+        coVerify { ledgerBleDao.get("non_existent_address") }
+        assertEquals(null, result)
+    }
+
+    @Test
+    fun `EXPECT account count as flow WHEN getAccountCountAsFlow is invoked`() = runTest {
+        val expectedCountFlow = MutableStateFlow(3)
+        coEvery { ledgerBleDao.getTableSizeAsFlow() } returns expectedCountFlow
+
+        val testObserver = sut.getAccountCountAsFlow().test()
+        expectedCountFlow.update { 5 }
+
+        testObserver.assertValueHistory(3, 5)
+    }
+
+    @Test
+    fun `EXPECT all addresses WHEN getAllAddresses is invoked`() = runTest {
+        val addresses = listOf("address1", "address2")
+        coEvery { ledgerBleDao.getAllAddresses() } returns addresses
+
+        val result = sut.getAllAddresses()
+
+        assertEquals(addresses, result)
+    }
+
+    @Test
+    fun `EXPECT account to be added to database WHEN addAccount is invoked`() = runTest {
         coEvery { ledgerBleEntityMapper(LEDGER_BLE_1) } returns LEDGER_BLE_1_ENTITY
+        coEvery { ledgerBleDao.insert(LEDGER_BLE_1_ENTITY) } returns Unit
 
         sut.addAccount(LEDGER_BLE_1)
 
@@ -75,7 +108,7 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account to be deleted WHEN deleteAccount is invoked`() = runTest {
+    fun `EXPECT account to be deleted from database WHEN deleteAccount is invoked`() = runTest {
         coEvery { ledgerBleDao.delete("address") } returns Unit
 
         sut.deleteAccount("address")
@@ -84,7 +117,7 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all accounts to be deleted WHEN deleteAllAccounts is invoked`() = runTest {
+    fun `EXPECT all accounts to be deleted from database WHEN deleteAllAccounts is invoked`() = runTest {
         coEvery { ledgerBleDao.clearAll() } returns Unit
 
         sut.deleteAllAccounts()
@@ -93,17 +126,26 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all accounts WHEN getAllAsFlow is invoked`() = runTest {
-        val entities = listOf(LEDGER_BLE_1_ENTITY, LEDGER_BLE_2_ENTITY)
-        coEvery { ledgerBleDao.getAllAsFlow() } returns flowOf(entities)
-        coEvery { ledgerBleMapper(LEDGER_BLE_1_ENTITY) } returns LEDGER_BLE_1
-        coEvery { ledgerBleMapper(LEDGER_BLE_2_ENTITY) } returns LEDGER_BLE_2
+    fun `EXPECT all accounts as flow WHEN getAllAsFlow is invoked`() = runTest {
+        val entitiesFlow = MutableStateFlow(
+            listOf(
+                LEDGER_BLE_1_ENTITY,
+                LEDGER_BLE_2_ENTITY
+            )
+        )
+        val expectedAccounts = listOf(
+            LEDGER_BLE_1,
+            LEDGER_BLE_2
+        )
 
-        val localAccounts = sut.getAllAsFlow().toList().first()
+        coEvery { ledgerBleDao.getAllAsFlow() } returns entitiesFlow
+        coEvery { ledgerBleMapper(LEDGER_BLE_1_ENTITY) } returns expectedAccounts[0]
+        coEvery { ledgerBleMapper(LEDGER_BLE_2_ENTITY) } returns expectedAccounts[1]
 
-        val expectedReturnedList = listOf(LEDGER_BLE_1, LEDGER_BLE_2)
-        coVerify { ledgerBleDao.getAllAsFlow() }
-        assertEquals(expectedReturnedList, localAccounts)
+        val testObserver = sut.getAllAsFlow().test()
+        entitiesFlow.update { emptyList() }
+
+        testObserver.assertValueHistory(expectedAccounts, emptyList())
     }
 
     companion object {

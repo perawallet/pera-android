@@ -48,6 +48,12 @@ internal class NoAuthAccountRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getAllAddresses(): List<String> {
+        return withContext(coroutineDispatcher) {
+            noAuthDao.getAllAddresses()
+        }
+    }
+
     override suspend fun getAccount(address: String): NoAuth? {
         return withContext(coroutineDispatcher) {
             val noAuthEntity = noAuthDao.get(address)

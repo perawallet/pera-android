@@ -31,6 +31,9 @@ internal interface NoAuthDao {
     @Query("SELECT * FROM no_auth")
     suspend fun getAll(): List<NoAuthEntity>
 
+    @Query("SELECT algo_address FROM no_auth")
+    suspend fun getAllAddresses(): List<String>
+
     @Query("SELECT * FROM no_auth")
     fun getAllAsFlow(): Flow<List<NoAuthEntity>>
 

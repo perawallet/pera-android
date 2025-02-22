@@ -23,6 +23,8 @@ internal interface LedgerBleAccountRepository {
 
     suspend fun getAll(): List<LocalAccount.LedgerBle>
 
+    suspend fun getAllAddresses(): List<String>
+
     suspend fun getAccount(address: String): LocalAccount.LedgerBle?
 
     suspend fun addAccount(account: LocalAccount.LedgerBle)

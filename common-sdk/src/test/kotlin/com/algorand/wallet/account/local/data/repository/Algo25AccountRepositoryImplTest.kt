@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.local.data.repository
 
+import com.algorand.test.test
 import com.algorand.wallet.account.local.data.database.dao.Algo25Dao
 import com.algorand.wallet.account.local.data.database.model.Algo25Entity
 import com.algorand.wallet.account.local.data.mapper.entity.Algo25EntityMapper
@@ -21,8 +22,8 @@ import com.algorand.wallet.encryption.AESPlatformManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -39,6 +40,29 @@ class Algo25AccountRepositoryImplTest {
         algo25Mapper,
         aesPlatformManager
     )
+
+    @Test
+    fun `EXPECT all accounts as flow WHEN getAllAsFlow is invoked`() = runTest {
+        val entitiesFlow = MutableStateFlow(
+            listOf(
+                Algo25Entity("address1", byteArrayOf()),
+                Algo25Entity("address2", byteArrayOf())
+            )
+        )
+        val expectedAccounts = listOf(
+            LocalAccount.Algo25("address1"),
+            LocalAccount.Algo25("address2")
+        )
+
+        coEvery { algo25Dao.getAllAsFlow() } returns entitiesFlow
+        coEvery { algo25Mapper(entitiesFlow.value[0]) } returns expectedAccounts[0]
+        coEvery { algo25Mapper(entitiesFlow.value[1]) } returns expectedAccounts[1]
+
+        val testObserver = sut.getAllAsFlow().test()
+        entitiesFlow.update { emptyList() }
+
+        testObserver.assertValueHistory(expectedAccounts, emptyList())
+    }
 
     @Test
     fun `EXPECT all accounts WHEN getAll is invoked`() = runTest {
@@ -60,18 +84,49 @@ class Algo25AccountRepositoryImplTest {
         assertEquals(expectedReturnedList, localAccounts)
     }
 
-//    @Test
-//    fun `EXPECT account WHEN account was registered before`() = runTest {
-//        coEvery { algo25Mapper(Algo25Entity("address", "encryptedSecretKey".toByteArray())) }
-//            .returns(LocalAccount.Algo25("address", byteArrayOf(1, 2, 3)))
-//        coEvery { algo25Dao.get("address") } returns Algo25Entity("address", "encryptedSecretKey".toByteArray())
-//
-//        val localAccount = sut.getAccount("address")
-//
-//        val expectedAccount = LocalAccount.Algo25("address", byteArrayOf(1, 2, 3))
-//        coVerify(exactly = 1) { algo25Dao.get("address") }
-//        assertEquals(expectedAccount, localAccount)
-//    }
+    @Test
+    fun `EXPECT account WHEN getAccount is invoked`() = runTest {
+        val entity = Algo25Entity("address", "encryptedSecretKey".toByteArray())
+        coEvery { algo25Dao.get("address") } returns entity
+        coEvery { algo25Mapper(entity) } returns LocalAccount.Algo25("address")
+
+        val localAccount = sut.getAccount("address")
+
+        val expectedAccount = LocalAccount.Algo25("address")
+        coVerify { algo25Dao.get("address") }
+        assertEquals(expectedAccount, localAccount)
+    }
+
+    @Test
+    fun `EXPECT null WHEN getAccount is invoked with a non-existent address`() = runTest {
+        coEvery { algo25Dao.get("non_existent_address") } returns null
+
+        val result = sut.getAccount("non_existent_address")
+
+        coVerify { algo25Dao.get("non_existent_address") }
+        assertEquals(null, result)
+    }
+
+    @Test
+    fun `EXPECT account count as flow WHEN getAccountCountAsFlow is invoked`() = runTest {
+        val expectedCountFlow = MutableStateFlow(5)
+        coEvery { algo25Dao.getTableSizeAsFlow() } returns expectedCountFlow
+
+        val testObserver = sut.getAccountCountAsFlow().test()
+        expectedCountFlow.update { 10 }
+
+        testObserver.assertValueHistory(5, 10)
+    }
+
+    @Test
+    fun `EXPECT all addresses WHEN getAllAddresses is invoked`() = runTest {
+        val addresses = listOf("address1", "address2", "address3")
+        coEvery { algo25Dao.getAllAddresses() } returns addresses
+
+        val result = sut.getAllAddresses()
+
+        assertEquals(addresses, result)
+    }
 
     @Test
     fun `EXPECT account to be added to database WHEN addAccount is invoked`() = runTest {
@@ -87,7 +142,7 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT account to be deleted from database  WHEN deleteAccount is invoked`() = runTest {
+    fun `EXPECT account to be deleted from database WHEN deleteAccount is invoked`() = runTest {
         val address = "address"
         coEvery { algo25Dao.delete(address) } returns Unit
 
@@ -106,24 +161,24 @@ class Algo25AccountRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT all accounts as flow WHEN getAllAsFlow is invoked`() {
-        val entities = listOf(
-            Algo25Entity("encryptedAddress1", "encryptedSecretKey1".toByteArray()),
-            Algo25Entity("encryptedAddress2", "encryptedSecretKey2".toByteArray())
-        )
-        val localAccounts = listOf(
-            LocalAccount.Algo25("address1"),
-            LocalAccount.Algo25("address2")
-        )
-        coEvery { algo25Dao.getAllAsFlow() } returns flowOf(entities)
-        coEvery { algo25Mapper(entities[0]) } returns localAccounts[0]
-        coEvery { algo25Mapper(entities[1]) } returns localAccounts[1]
+    fun `EXPECT secret key WHEN getSecretKey is invoked`() = runTest {
+        val encryptedSK = "encryptedSecretKey".toByteArray()
+        val decryptedSK = byteArrayOf(1, 2, 3)
+        coEvery { algo25Dao.get("address") } returns Algo25Entity("address", encryptedSK)
+        coEvery { aesPlatformManager.decryptByteArray(encryptedSK) } returns decryptedSK
 
-        val flow = sut.getAllAsFlow()
+        val result = sut.getSecretKey("address")
 
-        runTest {
-            val returnedList = flow.toList()
-            assertEquals(listOf(localAccounts), returnedList)
-        }
+        assertEquals(decryptedSK, result)
+    }
+
+    @Test
+    fun `EXPECT null WHEN getSecretKey is invoked with a non-existent address`() = runTest {
+        coEvery { algo25Dao.get("non_existent_address") } returns null
+
+        val result = sut.getSecretKey("non_existent_address")
+
+        coVerify { algo25Dao.get("non_existent_address") }
+        assertEquals(null, result)
     }
 }

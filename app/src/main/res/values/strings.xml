@@ -1459,5 +1459,6 @@
     <string name="mnemonic_type_algo25_description">Legacy format that is specific to Algorand ecosystem</string>
     <string name="mnemonic_type_algo25_footer">25 Key mnemonic keys</string>
     <string name="bottom_sheet_mnemonic_type_title">Select your Mnemonic type</string>
+    <string name="recommended">Recommended</string>
 
 </resources>

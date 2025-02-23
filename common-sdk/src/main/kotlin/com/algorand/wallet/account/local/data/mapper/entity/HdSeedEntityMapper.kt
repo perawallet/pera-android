@@ -10,9 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.model
+package com.algorand.wallet.account.local.data.mapper.entity
 
-data class HdSeed(
-    val seedId: Int,
-    var seedCustomName: String
-)
+import com.algorand.wallet.account.local.data.database.model.HdSeedEntity
+import com.algorand.wallet.account.local.domain.model.HdSeed
+
+internal interface HdSeedEntityMapper {
+    operator fun invoke(hdSeed: HdSeed, entropy: ByteArray, seed: ByteArray): HdSeedEntity
+}

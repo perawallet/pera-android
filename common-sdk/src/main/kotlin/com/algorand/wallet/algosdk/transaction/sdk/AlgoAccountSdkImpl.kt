@@ -17,6 +17,8 @@ import cash.z.ecc.android.bip39.toEntropy
 import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.account.Account
 import com.algorand.algosdk.crypto.Address
+import com.algorand.algosdk.sdk.Sdk
+import com.algorand.wallet.account.core.domain.usecase.AddHdSeedUseCase
 import com.algorand.wallet.algosdk.model.Algo25Account
 import com.algorand.wallet.algosdk.model.Bip32DerivationType
 import com.algorand.wallet.algosdk.model.HdAccount
@@ -25,38 +27,65 @@ import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 internal class AlgoAccountSdkImpl @Inject constructor(
-    private val secretKeyEncryptionManager: SecretKeyEncryptionManager
+    private val secretKeyEncryptionManager: SecretKeyEncryptionManager,
+    private val addHdSeedUseCase: AddHdSeedUseCase
 ) : AlgoAccountSdk {
 
-    override fun createHdAccount(): HdAccount {
+    override fun createHdAccount(): HdAccount? {
         val entropy = Mnemonics.WordCount.COUNT_24.toEntropy()
-        val generatedMnemonic = Mnemonics.MnemonicCode(entropy)
-        return getHdAccount(generatedMnemonic)
+        val m = Mnemonics.MnemonicCode(entropy)
+
+        var seedId = 0
+
+        runBlocking(Dispatchers.IO) {
+            addHdSeedUseCase.invoke(m).collect { collectedSeedId ->
+                seedId = collectedSeedId
+            }
+        }
+
+        if (seedId > 0)
+            return getHdAccount(m, seedId)
+        else
+            return null
     }
 
     override fun recoverHdAccount(mnemonic: String): HdAccount {
         val m = Mnemonics.MnemonicCode(mnemonic)
-        return getHdAccount(m)
+        return getHdAccount(m, 0)
     }
 
-    override fun createAlgo25Account(): Algo25Account {
-        val account = Account()
-        return Algo25Account(account.address.toString(), account.toMnemonic(), account.toSeed())
+    override fun createAlgo25Account(): Algo25Account? {
+        val secretKey = Sdk.generateSK()
+        try {
+            return Algo25Account(
+                Sdk.generateAddressFromSK(secretKey),
+                Sdk.mnemonicFromPrivateKey(secretKey),
+                secretKey
+            )
+        } finally {
+            secretKey.fill(0) // Overwrite secret key with zeros
+        }
     }
 
     override fun recoverAlgo25Account(mnemonic: String): Algo25Account? {
         try {
             val account = Account(mnemonic)
-            return Algo25Account(account.address.toString(), account.toMnemonic(), account.toSeed())
+            return Algo25Account(
+                account.address.toString(),
+                account.toMnemonic(),
+                account.toSeed()
+            )
         } catch (e: Exception) {
             return null
         }
     }
 
-    private fun getHdAccount(mnemonic: Mnemonics.MnemonicCode): HdAccount {
+    private fun getHdAccount(mnemonic: Mnemonics.MnemonicCode, seedId: Int): HdAccount {
         val seed = mnemonic.toSeed()
         val xHDWalletAPI = XHDWalletAPIAndroid(seed)
         val keyContext = KeyContext.Address
@@ -83,6 +112,7 @@ internal class AlgoAccountSdkImpl @Inject constructor(
             encryptedEntropy = secretKeyEncryptionManager.encrypt(mnemonic.toEntropy()),
             publicKey = publicKey,
             encryptedPrivateKey = secretKeyEncryptionManager.encrypt(privateKey),
+            seedId = seedId,
             account = account.toInt(),
             change = change.toInt(),
             keyIndex = keyIndex.toInt(),

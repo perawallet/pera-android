@@ -17,11 +17,11 @@ import com.algorand.wallet.algosdk.model.HdAccount
 
 interface AlgoAccountSdk {
 
-    fun createHdAccount(): HdAccount
+    fun createHdAccount(): HdAccount?
 
     fun recoverHdAccount(mnemonic: String): HdAccount?
 
-    fun createAlgo25Account(): Algo25Account
+    fun createAlgo25Account(): Algo25Account?
 
     fun recoverAlgo25Account(mnemonic: String): Algo25Account?
 }

@@ -10,9 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.model
+package com.algorand.wallet.account.local.data.mapper.model
 
-data class HdSeed(
-    val seedId: Int,
-    var seedCustomName: String
-)
+import com.algorand.wallet.account.local.data.database.model.HdSeedEntity
+import com.algorand.wallet.account.local.domain.model.HdSeed
+import javax.inject.Inject
+
+internal class HdSeedMapperImpl @Inject constructor() : HdSeedMapper {
+    override fun invoke(entity: HdSeedEntity): HdSeed {
+        return HdSeed(
+            seedId = entity.seedId,
+            seedCustomName = entity.entropyCustomName
+        )
+    }
+}

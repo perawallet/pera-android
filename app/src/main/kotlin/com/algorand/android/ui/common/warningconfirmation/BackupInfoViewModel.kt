@@ -46,6 +46,8 @@ class BackupInfoViewModel @Inject constructor(
     fun createAccount(): AccountCreation {
         if (accountType == AccountType.HdKey) {
             val account = algoAccountSdk.createHdAccount()
+                ?: throw IllegalArgumentException("Failed to create Bip39 account")
+
             return AccountCreation(
                 address = account.address,
                 customName = null,
@@ -53,7 +55,7 @@ class BackupInfoViewModel @Inject constructor(
                 type = AccountCreation.Type.HdKey(
                     account.publicKey,
                     account.encryptedPrivateKey,
-                    0,
+                    account.seedId,
                     account.account,
                     account.change,
                     account.keyIndex,
@@ -63,6 +65,8 @@ class BackupInfoViewModel @Inject constructor(
             )
         } else {
             val account = algoAccountSdk.createAlgo25Account()
+                ?: throw IllegalArgumentException("Failed to create Algo25 account")
+
             return AccountCreation(
                 address = account.address,
                 customName = null,

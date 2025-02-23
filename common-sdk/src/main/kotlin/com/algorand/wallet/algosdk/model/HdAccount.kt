@@ -17,6 +17,7 @@ data class HdAccount(
     val publicKey: ByteArray,
     val encryptedPrivateKey: ByteArray,
     val encryptedEntropy: ByteArray,
+    val seedId: Int,
     val account: Int,
     val change: Int,
     val keyIndex: Int,

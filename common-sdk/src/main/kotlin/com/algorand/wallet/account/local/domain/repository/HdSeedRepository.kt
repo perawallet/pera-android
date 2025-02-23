@@ -21,13 +21,21 @@ internal interface HdSeedRepository {
 
     fun getHdSeedCountAsFlow(): Flow<Int>
 
-    suspend fun getAll(): List<HdSeed>
+    suspend fun getAllHdSeeds(): List<HdSeed>
 
     suspend fun getHdSeed(seedId: Int): HdSeed?
 
-    suspend fun addHdSeed(seed: HdSeed)
+    suspend fun getHdSeed(encryptedEntropy: ByteArray): HdSeed?
 
-    suspend fun deleteHdSeed(address: String)
+    suspend fun getAllHdSeed(entropyCustomName: String): List<HdSeed>?
+
+    fun updateHdSeedCustomNameAsFlow(hdSeed: HdSeed): Flow<Unit>
+
+    fun addHdSeedAsFlow(hdSeed: HdSeed, encryptedEntropy: ByteArray, encryptedSeed: ByteArray): Flow<Unit>
+
+    suspend fun deleteHdSeed(seedId: Int)
+
+    suspend fun deleteHdSeed(encrypted_entropy: ByteArray)
 
     suspend fun deleteAllHdSeeds()
 }

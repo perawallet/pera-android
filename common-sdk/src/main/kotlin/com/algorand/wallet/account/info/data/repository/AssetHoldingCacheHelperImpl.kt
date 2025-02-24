@@ -14,33 +14,68 @@ package com.algorand.wallet.account.info.data.repository
 
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
+import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapper
 import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
 import com.algorand.wallet.account.info.domain.model.AssetHolding
+import com.algorand.wallet.account.info.domain.model.AssetStatus
 import javax.inject.Inject
 
 internal class AssetHoldingCacheHelperImpl @Inject constructor(
     private val assetHoldingDao: AssetHoldingDao,
     private val assetHoldingEntityMapper: AssetHoldingEntityMapper,
-    private val assetHoldingMapper: AssetHoldingMapper,
+    private val assetHoldingMapper: AssetHoldingMapper
 ) : AssetHoldingCacheHelper {
 
     override suspend fun cacheAssetHolding(
         address: String,
-        assetHoldings: List<AssetHoldingResponse>?
+        assetHoldings: List<AssetHoldingResponse>
     ): List<AssetHolding> {
-        val assetHoldingEntities = getAssetHoldingEntities(address, assetHoldings)
-        assetHoldingDao.updateAssetHoldings(address, assetHoldingEntities)
-        return assetHoldingMapper(assetHoldingEntities)
+        val updatedAssetHoldingEntities = getUpdatedAssetHoldings(address, assetHoldings)
+        assetHoldingDao.updateAssetHoldings(address, updatedAssetHoldingEntities)
+        return assetHoldingMapper(updatedAssetHoldingEntities)
     }
 
-    private fun getAssetHoldingEntities(
+    private suspend fun getUpdatedAssetHoldings(
         address: String,
-        assetHoldings: List<AssetHoldingResponse>?
+        assetHoldings: List<AssetHoldingResponse>
     ): List<AssetHoldingEntity> {
-        return assetHoldings?.mapNotNull {
-            assetHoldingEntityMapper(address, it)
-        }.orEmpty()
+        val updatedAssetHoldings = mutableListOf<AssetHoldingEntity>()
+        val cachedAssetHoldings = assetHoldingDao.getAssetsByAddress(address).toMutableList()
+
+        assetHoldings.forEach { response ->
+            val cachedAssetIndex = cachedAssetHoldings.indexOfFirst { it.assetId == response.assetId }
+
+            val isNewAsset = cachedAssetIndex == -1
+            if (isNewAsset) {
+                assetHoldingEntityMapper(address, response, AssetStatus.OWNED_BY_ACCOUNT)?.let {
+                    updatedAssetHoldings.add(it)
+                }
+                return@forEach
+            }
+
+            val cachedAsset = cachedAssetHoldings[cachedAssetIndex]
+            val updatedStatus = getUpdatedAssetStatus(cachedAsset.assetStatusEntity)
+            assetHoldingEntityMapper(address, response, updatedStatus)?.let {
+                updatedAssetHoldings.add(it)
+                cachedAssetHoldings.removeAt(cachedAssetIndex)
+            }
+        }
+
+        cachedAssetHoldings.forEach {
+            if (it.assetStatusEntity == AssetStatusEntity.PENDING_FOR_ADDITION) {
+                updatedAssetHoldings.add(it)
+            }
+        }
+        return updatedAssetHoldings
+    }
+
+    private fun getUpdatedAssetStatus(currentStatus: AssetStatusEntity): AssetStatus {
+        return when (currentStatus) {
+            AssetStatusEntity.PENDING_FOR_ADDITION -> AssetStatus.OWNED_BY_ACCOUNT
+            AssetStatusEntity.PENDING_FOR_REMOVAL -> AssetStatus.PENDING_FOR_REMOVAL
+            AssetStatusEntity.OWNED_BY_ACCOUNT -> AssetStatus.OWNED_BY_ACCOUNT
+        }
     }
 }

@@ -21,6 +21,7 @@ import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.mapper.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.foundation.PeraResult
@@ -31,6 +32,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -157,6 +159,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     override suspend fun addAssetHoldingAsPending(address: String, assetId: Long) {
         val entity = assetHoldingEntityMapper(address, assetId, AssetStatus.PENDING_FOR_ADDITION)
         assetHoldingDao.insert(entity)
+    }
+
+    override fun getAssetHoldingsFlow(address: String): Flow<List<AssetHolding>> {
+        return assetHoldingDao.getAssetsByAddressAsFlow(address).map { assetHoldingMapper(it) }
     }
 
     override suspend fun getFailedAccountInformation(): List<String> {

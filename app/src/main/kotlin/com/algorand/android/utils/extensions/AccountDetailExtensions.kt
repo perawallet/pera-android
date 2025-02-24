@@ -19,14 +19,6 @@ fun AccountDetail.getAssetHoldingOrNull(assetId: Long): AssetHolding? {
     return accountInformation.getAssetHoldingOrNull(assetId)
 }
 
-fun AccountDetail.hasAsset(assetId: Long): Boolean {
-    return accountInformation.hasAsset(assetId)
-}
-
 fun AccountDetail.getAssetHoldingList(): List<AssetHolding> {
     return accountInformation.getAssetHoldingList()
-}
-
-fun AccountDetail.getAssetIdList(): List<Long> {
-    return accountInformation.getAssetIdList().toList()
 }

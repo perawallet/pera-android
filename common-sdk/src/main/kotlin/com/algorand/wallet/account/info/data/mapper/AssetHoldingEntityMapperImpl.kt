@@ -13,7 +13,6 @@
 package com.algorand.wallet.account.info.data.mapper
 
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
-import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import java.math.BigInteger
@@ -23,7 +22,7 @@ internal class AssetHoldingEntityMapperImpl @Inject constructor(
     private val assetStatusEntityMapper: AssetStatusEntityMapper
 ) : AssetHoldingEntityMapper {
 
-    override fun invoke(address: String, response: AssetHoldingResponse): AssetHoldingEntity? {
+    override fun invoke(address: String, response: AssetHoldingResponse, status: AssetStatus): AssetHoldingEntity? {
         return AssetHoldingEntity(
             algoAddress = address,
             assetId = response.assetId ?: return null,
@@ -32,14 +31,8 @@ internal class AssetHoldingEntityMapperImpl @Inject constructor(
             isFrozen = response.isFrozen ?: false,
             optedInAtRound = response.optedInAtRound,
             optedOutAtRound = response.optedOutAtRound,
-            assetStatusEntity = AssetStatusEntity.OWNED_BY_ACCOUNT
+            assetStatusEntity = assetStatusEntityMapper(status)
         )
-    }
-
-    override fun invoke(responses: List<Pair<String, AssetHoldingResponse>>): List<AssetHoldingEntity> {
-        return responses.mapNotNull { (address, assetHoldingResponse) ->
-            invoke(address, assetHoldingResponse)
-        }
     }
 
     override fun invoke(address: String, assetId: Long, status: AssetStatus): AssetHoldingEntity {

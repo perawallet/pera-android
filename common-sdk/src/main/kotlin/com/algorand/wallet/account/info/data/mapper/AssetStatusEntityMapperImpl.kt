@@ -22,7 +22,6 @@ internal class AssetStatusEntityMapperImpl @Inject constructor() : AssetStatusEn
         return when (status) {
             AssetStatus.PENDING_FOR_REMOVAL -> AssetStatusEntity.PENDING_FOR_REMOVAL
             AssetStatus.PENDING_FOR_ADDITION -> AssetStatusEntity.PENDING_FOR_ADDITION
-            AssetStatus.PENDING_FOR_SENDING -> AssetStatusEntity.PENDING_FOR_SENDING
             AssetStatus.OWNED_BY_ACCOUNT -> AssetStatusEntity.OWNED_BY_ACCOUNT
         }
     }

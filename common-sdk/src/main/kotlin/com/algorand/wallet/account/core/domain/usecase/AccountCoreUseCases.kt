@@ -88,7 +88,3 @@ fun interface GetTransactionSigner {
 fun interface AddHdSeed {
     operator fun invoke(mnemonic: Mnemonics.MnemonicCode): Flow<Int>
 }
-
-fun interface GetHdWalletEntropyFromSeedId {
-    suspend operator fun invoke(seedId: Int): ByteArray?
-}

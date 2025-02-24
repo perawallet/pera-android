@@ -17,7 +17,7 @@ import com.algorand.wallet.account.local.data.mapper.entity.HdKeyEntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdKeyMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount.HdKey
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
-import com.algorand.wallet.encryption.SecretKeyEncryptionManager
+import com.algorand.wallet.encryption.AESPlatformManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -29,7 +29,7 @@ internal class HdKeyAccountRepositoryImpl @Inject constructor(
     private val hdKeyDao: HdKeyDao,
     private val hdKeyEntityMapper: HdKeyEntityMapper,
     private val hdKeyMapper: HdKeyMapper,
-    private val secretKeyEncryptionManager: SecretKeyEncryptionManager,
+    private val aesPlatformManager: AESPlatformManager,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : HdKeyAccountRepository {
 
@@ -84,7 +84,7 @@ internal class HdKeyAccountRepositoryImpl @Inject constructor(
     override suspend fun getPrivateKey(address: String): ByteArray? {
         return withContext(coroutineDispatcher) {
             val encryptedSK = hdKeyDao.get(address)?.encryptedPrivateKey
-            encryptedSK?.let { secretKeyEncryptionManager.decrypt(it) }
+            encryptedSK?.let { aesPlatformManager.decryptByteArray(it) }
         }
     }
 }

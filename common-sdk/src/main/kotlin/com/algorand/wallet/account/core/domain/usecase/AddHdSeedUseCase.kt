@@ -57,7 +57,7 @@ internal class AddHdSeedUseCase @Inject constructor(
     }
 
     private fun encryptData(data: ByteArray): ByteArray {
-        return secretKeyEncryptionManager.encrypt(data)
+        return secretKeyEncryptionManager.encryptByteArray(data)
     }
 
     companion object {

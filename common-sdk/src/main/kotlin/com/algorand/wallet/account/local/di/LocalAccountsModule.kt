@@ -49,6 +49,7 @@ import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccountUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetEntropy
 import com.algorand.wallet.account.local.domain.usecase.GetLedgerBleAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlow
@@ -211,6 +212,9 @@ internal object LocalAccountsModule {
 
     @Provides
     fun provideGetPrivateKey(repository: HdKeyAccountRepository): GetPrivateKey = GetPrivateKey(repository::getPrivateKey)
+
+    @Provides
+    fun provideGetEntropy(repository: HdSeedRepository): GetEntropy = GetEntropy(repository::getEntropy)
 
     @Provides
     fun provideGetLocalAccount(useCase: GetLocalAccountUseCase): GetLocalAccount = useCase

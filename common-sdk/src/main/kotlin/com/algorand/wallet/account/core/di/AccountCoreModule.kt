@@ -34,8 +34,6 @@ import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalanceUseCase
 import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlow
 import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlowUseCase
-import com.algorand.wallet.account.core.domain.usecase.GetHdWalletEntropyFromSeedId
-import com.algorand.wallet.account.core.domain.usecase.GetHdWalletEntropyFromSeedIdUseCase
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSignerUseCase
 import dagger.Module
@@ -61,9 +59,6 @@ internal object AccountCoreModule {
 
     @Provides
     fun provideAddHdSeed(useCase: AddHdSeedUseCase): AddHdSeed = useCase
-
-    @Provides
-    fun provideGetHdWalletEntropyFromSeedIdUseCase(useCase: GetHdWalletEntropyFromSeedIdUseCase): GetHdWalletEntropyFromSeedId = useCase
 
     @Provides
     fun provideDeleteAccount(useCase: DeleteAccountUseCase): DeleteAccount = useCase

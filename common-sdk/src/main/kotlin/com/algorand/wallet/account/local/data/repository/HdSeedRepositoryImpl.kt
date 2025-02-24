@@ -17,6 +17,7 @@ import com.algorand.wallet.account.local.data.mapper.entity.HdSeedEntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
+import com.algorand.wallet.encryption.SecretKeyEncryptionManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +31,7 @@ internal class HdSeedRepositoryImpl @Inject constructor(
     private val hdSeedDao: HdSeedDao,
     private val hdSeedEntityMapper: HdSeedEntityMapper,
     private val hdSeedMapper: HdSeedMapper,
+    private val secretKeyEncryptionManager: SecretKeyEncryptionManager,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : HdSeedRepository {
 
@@ -101,6 +103,13 @@ internal class HdSeedRepositoryImpl @Inject constructor(
     override suspend fun deleteAllHdSeeds() {
         withContext(coroutineDispatcher) {
             hdSeedDao.clearAll()
+        }
+    }
+
+    override suspend fun getEntropy(seedId: Int): ByteArray? {
+        return withContext(coroutineDispatcher) {
+            val encryptedSK = hdSeedDao.get(seedId)?.encryptedEntropy
+            encryptedSK?.let { secretKeyEncryptionManager.decryptByteArray(it) }
         }
     }
 }

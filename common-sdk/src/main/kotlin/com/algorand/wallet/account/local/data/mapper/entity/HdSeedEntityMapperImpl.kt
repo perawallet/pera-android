@@ -25,8 +25,8 @@ internal class HdSeedEntityMapperImpl @Inject constructor(
         return HdSeedEntity(
             seedId = 0, // Let Room auto-generate the ID
             entropyCustomName = hdSeed.seedCustomName,
-            encryptedEntropy = secretKeyEncryptionManager.encrypt(entropy),
-            encryptedSeed = secretKeyEncryptionManager.encrypt(seed)
+            encryptedEntropy = secretKeyEncryptionManager.encryptByteArray(entropy),
+            encryptedSeed = secretKeyEncryptionManager.encryptByteArray(seed)
         )
     }
 }

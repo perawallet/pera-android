@@ -62,3 +62,15 @@ fun interface GetCollectiblesDetail {
 fun interface InitializeAssets {
     suspend operator fun invoke(assetIds: List<Long>)
 }
+
+fun interface CacheSingleAssetDetail {
+    suspend operator fun invoke(assetId: Long)
+}
+
+fun interface GetSingleAssetDetailFlow {
+    operator fun invoke(): Flow<Asset>
+}
+
+fun interface ClearSingleAssetCache {
+    suspend operator fun invoke()
+}

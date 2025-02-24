@@ -13,6 +13,7 @@
 package com.algorand.wallet.asset.domain.model
 
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import java.math.BigDecimal
 
 sealed interface Asset {
 
@@ -29,7 +30,7 @@ sealed interface Asset {
     val shortName: String?
         get() = assetInfo?.name?.shortName
 
-    val usdValue: String?
+    val usdValue: BigDecimal?
         get() = assetInfo?.fiat?.usdValue
 
     val creatorAddress: String?
@@ -88,7 +89,7 @@ sealed interface Asset {
     )
 
     data class Fiat(
-        val usdValue: String?,
-        val last24HoursAlgoPriceChangePercentage: String?
+        val usdValue: BigDecimal?,
+        val last24HoursAlgoPriceChangePercentage: BigDecimal?
     )
 }

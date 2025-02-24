@@ -16,6 +16,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity.Companion.ASSET_DETAIL_TABLE_NAME
+import java.math.BigDecimal
 
 @Entity(tableName = ASSET_DETAIL_TABLE_NAME)
 internal data class AssetDetailEntity(
@@ -33,7 +34,7 @@ internal data class AssetDetailEntity(
     val decimals: Int,
 
     @ColumnInfo("usd_value")
-    val usdValue: String?,
+    val usdValue: BigDecimal?,
 
     @ColumnInfo("max_supply")
     val maxSupply: String,
@@ -72,7 +73,7 @@ internal data class AssetDetailEntity(
     val totalSupply: String?,
 
     @ColumnInfo("last_24_hours_algo_price_change_percentage")
-    val last24HoursAlgoPriceChangePercentage: String?,
+    val last24HoursAlgoPriceChangePercentage: BigDecimal?,
 
     @ColumnInfo("available_on_discover_mobile")
     val availableOnDiscoverMobile: Boolean,

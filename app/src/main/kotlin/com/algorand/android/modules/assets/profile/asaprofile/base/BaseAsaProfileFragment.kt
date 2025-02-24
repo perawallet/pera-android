@@ -26,13 +26,13 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.action.addition.AddAssetActionBottomSheet
 import com.algorand.android.modules.assets.action.removal.RemoveAssetActionBottomSheet
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.assets.profile.about.ui.AssetAboutFragment
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaProfilePreview
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaStatusPreview
 import com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.AsaProfileAccountSelectionFragment.Companion.ASA_PROFILE_ACCOUNT_SELECTION_RESULT_KEY
 import com.algorand.android.modules.collectibles.action.optin.CollectibleOptInActionBottomSheet
 import com.algorand.android.utils.AccountIconDrawable
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.copyToClipboard
 import com.algorand.android.utils.extensions.collectOnLifecycle
@@ -64,7 +64,7 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
     }
 
     private val assetShortNameCollector: suspend (AssetName?) -> Unit = {
-        val toolbarTitle = it?.getName(binding.root.resources).orEmpty()
+        val toolbarTitle = it?.assetName.orEmpty()
         binding.toolbar.changeTitle(toolbarTitle)
     }
 
@@ -93,7 +93,7 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
     }
 
     protected val assetShortName: String?
-        get() = asaProfileViewModel.asaProfilePreviewFlow.value?.assetShortName?.getName(resources)
+        get() = asaProfileViewModel.asaProfilePreviewFlow.value?.assetShortName?.assetName
 
     abstract fun navToAccountSelection()
     abstract fun navToAssetAdditionFlow()
@@ -198,7 +198,7 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
                 verificationTierConfiguration.drawableResId?.run {
                     setDrawable(end = AppCompatResources.getDrawable(context, this))
                 }
-                text = assetFullName.getName(resources)
+                text = assetFullName.assetName
             }
             if (!isAlgo) {
                 assetIdTextView.apply {
@@ -237,7 +237,7 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
         binding.assetStatusConstraintLayout.statusValueTextView.apply {
             when (asaStatusPreview) {
                 is AsaStatusPreview.AdditionStatus -> {
-                    asaStatusPreview.accountName?.run {
+                    asaStatusPreview.accountName.run {
                         text = getDisplayAddress()
                         setDrawable(
                             start = AccountIconDrawable.create(
@@ -256,14 +256,14 @@ abstract class BaseAsaProfileFragment : BaseFragment(R.layout.fragment_asa_profi
                     text = getString(
                         R.string.pair_value_format,
                         asaStatusPreview.formattedAccountBalance,
-                        asaStatusPreview.assetShortName?.getName(resources)
+                        asaStatusPreview.assetShortName?.assetName
                     )
                 }
                 is AsaStatusPreview.TransferStatus -> {
                     text = getString(
                         R.string.pair_value_format,
                         asaStatusPreview.formattedAccountBalance,
-                        asaStatusPreview.assetShortName?.getName(resources)
+                        asaStatusPreview.assetShortName?.assetName
                     )
                 }
                 is AsaStatusPreview.AccountSelectionStatus -> {

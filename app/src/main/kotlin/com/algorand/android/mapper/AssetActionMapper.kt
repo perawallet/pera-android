@@ -20,7 +20,7 @@ class AssetActionMapper @Inject constructor() {
 
     fun mapTo(
         assetId: Long,
-        assetName: AssetName,
+        assetName: AssetName?,
         accountAddress: String?,
     ): AssetAction {
         return AssetAction(

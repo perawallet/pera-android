@@ -13,9 +13,9 @@
 package com.algorand.android.modules.assets.profile.asaprofile.ui.mapper
 
 import com.algorand.android.models.BaseAccountAddress
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaStatusPreview
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.PeraButtonState
-import com.algorand.android.utils.AssetName
 import javax.inject.Inject
 
 class AsaStatusPreviewMapper @Inject constructor() {

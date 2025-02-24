@@ -16,6 +16,8 @@ import com.algorand.android.R
 import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.mapper.AssetActionMapper
 import com.algorand.android.models.AssetAction
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.assets.core.ui.domain.usecase.GetAssetName
 import com.algorand.android.modules.assets.profile.about.domain.usecase.GetSelectedAssetExchangeValueUseCase
 import com.algorand.android.modules.assets.profile.asaprofile.ui.mapper.AsaProfilePreviewMapper
@@ -25,12 +27,9 @@ import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaStatus
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.PeraButtonState
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.usecase.AccountAddressUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.ALGO_SHORT_NAME
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.isGreaterThan
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.VerificationTier
 import com.algorand.wallet.asset.domain.usecase.GetAsset
@@ -53,21 +52,18 @@ class AsaProfilePreviewUseCase @Inject constructor(
     private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
     private val accountAddressUseCase: AccountAddressUseCase,
     private val asaStatusPreviewMapper: AsaStatusPreviewMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
     private val assetActionMapper: AssetActionMapper,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
     private val getAssetName: GetAssetName,
     private val getSingleAssetDetailFlow: GetSingleAssetDetailFlow,
-    private val getAsset: GetAsset
+    private val getAsset: GetAsset,
+    private val getAccountInformationFlow: GetAccountInformationFlow,
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
 ) {
 
-    // TODO: We should fetch asset details from API
-    fun createAssetAction(assetId: Long, accountAddress: String?): AssetAction {
-        val assetDetail = simpleAssetDetailUseCase.getCachedAssetDetail(assetId)?.data
+    fun createAssetAction(assetId: Long, accountAddress: String?, assetName: AssetName?): AssetAction {
         return assetActionMapper.mapTo(
             assetId = assetId,
-            assetName = getAssetName(assetDetail?.fullName),
+            assetName = assetName,
             accountAddress = accountAddress
         )
     }
@@ -87,7 +83,7 @@ class AsaProfilePreviewUseCase @Inject constructor(
             isUserOptedInAsset = true,
             accountAddress = accountAddress,
             hasUserAmount = true,
-            assetShortName = AssetName.createShortName(ALGO_SHORT_NAME)
+            assetShortName = getAssetName(ALGO_SHORT_NAME)
         )
         val preview = createAsaProfilePreviewFromAssetDetail(algoDetail, asaStatusPreview)
         emit(preview)
@@ -99,18 +95,18 @@ class AsaProfilePreviewUseCase @Inject constructor(
     ): Flow<AsaProfilePreview?> {
         return combine(
             getSingleAssetDetailFlow(),
-            accountDetailUseCase.getAccountDetailCacheFlow(accountAddress)
-        ) { assetDetail, _ ->
-            val ownedAssetData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, accountAddress)
+            getAccountInformationFlow(accountAddress)
+        ) { assetDetail, accountInfo ->
+            val ownedAssetData = getAccountBaseOwnedAssetData(accountAddress, assetId)
             val hasUserAmount = ownedAssetData?.amount isGreaterThan BigInteger.ZERO
-            val isUserOptedInAsset = accountDetailUseCase.isAssetOwnedByAccount(accountAddress, assetId)
+            val isUserOptedInAsset = accountInfo?.hasAsset(assetId) == true
             val asaStatusPreview = createAsaStatusPreview(
                 isAlgo = false,
                 isUserOptedInAsset = isUserOptedInAsset,
                 accountAddress = accountAddress,
                 hasUserAmount = hasUserAmount,
                 formattedAccountBalance = ownedAssetData?.formattedAmount,
-                assetShortName = AssetName.createShortName(ownedAssetData?.shortName)
+                assetShortName = getAssetName(ownedAssetData?.shortName)
             )
             createAsaProfilePreviewFromAssetDetail(assetDetail = assetDetail, asaStatusPreview = asaStatusPreview)
         }
@@ -147,8 +143,8 @@ class AsaProfilePreviewUseCase @Inject constructor(
                 hasUsdValue()
             asaProfilePreviewMapper.mapToAsaProfilePreview(
                 isAlgo = assetDetail.id == ALGO_ID,
-                assetFullName = fullName,
-                assetShortName = shortName,
+                assetFullName = getAssetName(fullName),
+                assetShortName = getAssetName(shortName),
                 assetId = id,
                 formattedAssetPrice = formattedAssetPrice,
                 verificationTierConfiguration = verificationTierConfiguration,
@@ -161,7 +157,7 @@ class AsaProfilePreviewUseCase @Inject constructor(
         }
     }
 
-    private fun createAsaStatusPreview(
+    private suspend fun createAsaStatusPreview(
         isAlgo: Boolean,
         isUserOptedInAsset: Boolean,
         accountAddress: String?,
@@ -180,7 +176,7 @@ class AsaProfilePreviewUseCase @Inject constructor(
             }
             !isUserOptedInAsset -> {
                 asaStatusPreviewMapper.mapToAsaAdditionStatusPreview(
-                    accountAddress = accountAddressUseCase.createAccountAddress(accountAddress),
+                    accountAddress = accountAddressUseCase.getAccountAddress(accountAddress),
                     statusLabelTextResId = R.string.you_can_add_this_asset,
                     peraButtonState = PeraButtonState.ADDITION,
                     actionButtonTextResId = R.string.opt_dash_in

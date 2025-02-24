@@ -57,14 +57,15 @@ import com.algorand.android.utils.toBytesArray
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.local.domain.usecase.GetPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetSecretKey
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.launch
 import java.math.BigInteger
 import java.net.ConnectException
 import java.net.SocketException
 import javax.inject.Inject
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.launch
 
 class TransactionSignManager @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager,
@@ -73,7 +74,8 @@ class TransactionSignManager @Inject constructor(
     private val signHelper: TransactionSignSigningHelper,
     private val getAccountInformation: GetAccountInformation,
     private val getAccountMinBalance: GetAccountMinBalance,
-    private val getSecretKey: GetSecretKey
+    private val getSecretKey: GetSecretKey,
+    private val getPrivateKey: GetPrivateKey
 ) : LifecycleScopedCoroutineOwner() {
 
     val transactionManagerResultLiveData = MutableLiveData<Event<TransactionManagerResult>?>()
@@ -240,6 +242,13 @@ class TransactionSignManager @Inject constructor(
         when (signer) {
             is TransactionSigner.Algo25 -> {
                 val secretKey = getSecretKey(signer.address) ?: run {
+                    setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
+                    return
+                }
+                checkAndCacheSignedTransaction(transactionByteArray?.signTx(secretKey))
+            }
+            is TransactionSigner.HdKey -> {
+                val secretKey = getPrivateKey(signer.address) ?: run {
                     setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
                     return
                 }

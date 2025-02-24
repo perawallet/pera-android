@@ -37,7 +37,7 @@ sealed interface AccountType: Parcelable {
 
     companion object {
         fun AccountType.canSignTransaction(): Boolean {
-            return this is Algo25 || this is LedgerBle || this is RekeyedAuth
+            return this is Algo25 || this is HdKey || this is LedgerBle || this is RekeyedAuth
         }
         fun AccountType.wordCount(): Int {
             return when (this) {

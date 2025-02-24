@@ -39,17 +39,21 @@ internal class GetTransactionSignerUseCase @Inject constructor(
         val accountDetail = getAccountDetail(address)
         return when (accountDetail.accountType) {
             Algo25 -> getAlgo25Signer(address)
+            AccountType.HdKey -> getHdKeySigner(address)
             LedgerBle -> getLedgerSigner(address)
             NoAuth -> SignerNotFound.NoAuth(address)
             Rekeyed -> SignerNotFound.NoAuth(address)
             RekeyedAuth -> getRekeyedAuthSigner(accountDetail, address)
             null -> AccountNotFound(address)
-            AccountType.HdKey -> TODO()
         }
     }
 
     private fun getAlgo25Signer(address: String): TransactionSigner {
         return TransactionSigner.Algo25(address)
+    }
+
+    private fun getHdKeySigner(address: String): TransactionSigner {
+        return TransactionSigner.HdKey(address)
     }
 
     private suspend fun getRekeyedAuthSigner(rekeyedAccountDetail: AccountDetail, address: String): TransactionSigner {

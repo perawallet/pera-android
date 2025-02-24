@@ -13,7 +13,6 @@
 package com.algorand.android.modules.assets.profile.about.domain.usecase
 
 import com.algorand.android.mapper.AssetHoldingsMapper
-import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.parity.domain.usecase.PrimaryCurrencyParityCalculationUseCase
@@ -32,11 +31,6 @@ class GetSelectedAssetExchangeValueUseCase @Inject constructor(
     private val assetHoldingsMapper: AssetHoldingsMapper,
     private val currencyUseCase: CurrencyUseCase
 ) {
-
-    // Will be removed while migrating asset detail
-    fun getSelectedAssetExchangeValue(assetDetail: BaseAssetDetail?): ParityValue? {
-        return null
-    }
 
     fun getSelectedAssetExchangeValue(assetDetail: Asset?): ParityValue? {
         return when {

@@ -60,30 +60,36 @@ class AssetDetailViewModel @Inject constructor(
     }
 
     fun onAddAssetClick() {
-        _assetDetailPreviewFlow.update { preview ->
-            assetDetailPreviewUseCase.updatePreviewWithAssetAdditionNavigation(
-                preview = preview,
-                accountAddress = accountAddress
-            )
+        viewModelScope.launch {
+            _assetDetailPreviewFlow.update { preview ->
+                assetDetailPreviewUseCase.updatePreviewWithAssetAdditionNavigation(
+                    preview = preview,
+                    accountAddress = accountAddress
+                )
+            }
         }
     }
 
     fun onBuySellClick() {
-        _assetDetailPreviewFlow.update { preview ->
-            assetDetailPreviewUseCase.updatePreviewWithOfframpNavigation(
-                preview = preview,
-                accountAddress = accountAddress
-            )
+        viewModelScope.launch {
+            _assetDetailPreviewFlow.update { preview ->
+                assetDetailPreviewUseCase.updatePreviewWithOfframpNavigation(
+                    preview = preview,
+                    accountAddress = accountAddress
+                )
+            }
         }
     }
 
     fun onSendClick() {
-        _assetDetailPreviewFlow.update { preview ->
-            assetDetailPreviewUseCase.updatePreviewWithSendNavigation(
-                preview = preview,
-                accountAddress = accountAddress,
-                assetId = assetId
-            )
+        viewModelScope.launch {
+            _assetDetailPreviewFlow.update { preview ->
+                assetDetailPreviewUseCase.updatePreviewWithSendNavigation(
+                    preview = preview,
+                    accountAddress = accountAddress,
+                    assetId = assetId
+                )
+            }
         }
     }
 

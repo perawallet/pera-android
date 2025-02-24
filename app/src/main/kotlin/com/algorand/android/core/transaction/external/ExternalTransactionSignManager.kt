@@ -36,19 +36,21 @@ import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.signTx
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
+import com.algorand.wallet.account.local.domain.usecase.GetPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetSecretKey
-import javax.inject.Inject
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager,
     private val ledgerBleOperationManager: LedgerBleOperationManager,
     private val externalTransactionQueuingHelper: ExternalTransactionQueuingHelper,
     private val getTransactionSigner: GetTransactionSigner,
-    private val getSecretKey: GetSecretKey
+    private val getSecretKey: GetSecretKey,
+    private val getPrivateKey: GetPrivateKey
 ) : LifecycleScopedCoroutineOwner() {
 
     private val _signResultFlow = MutableStateFlow<ExternalTransactionSignResult>(NotInitialized)
@@ -160,6 +162,9 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
                 }
                 is TransactionSigner.Algo25 -> {
                     signTransactionWithSecretKey(this@signTransaction, getSecretKey(transactionSigner.address)!!)
+                }
+                is TransactionSigner.HdKey -> {
+                    signTransactionWithSecretKey(this@signTransaction, getPrivateKey(transactionSigner.address)!!)
                 }
                 is TransactionSigner.LedgerBle -> {
                     sendTransactionWithLedger(transactionSigner, currentTransactionIndex, totalTransactionCount)

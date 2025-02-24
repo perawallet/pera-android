@@ -96,6 +96,10 @@ fun interface GetSecretKey {
     suspend operator fun invoke(address: String): ByteArray?
 }
 
+fun interface GetPrivateKey {
+    suspend operator fun invoke(address: String): ByteArray?
+}
+
 fun interface IsThereAnyAccountWithAddress {
     suspend operator fun invoke(address: String): Boolean
 }

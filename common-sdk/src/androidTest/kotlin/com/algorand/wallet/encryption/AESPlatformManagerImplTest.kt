@@ -2,6 +2,7 @@ package com.algorand.wallet.encryption
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import cash.z.ecc.android.bip39.Mnemonics
+import com.algorand.algosdk.sdk.Sdk
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Assert.assertEquals
@@ -28,6 +29,23 @@ class AESPlatformManagerImplTest {
     }
 
     @Test
+    fun testEncryptDecryptAlgo25SecretKey_shouldMatchOriginal() {
+        // Given
+        val originalSecretKey = Sdk.generateSK()
+
+        // When
+        val encryptedSecretKey = aesPlatformManager.encryptByteArray(originalSecretKey)
+        val decryptedSecretKey = aesPlatformManager.decryptByteArray(encryptedSecretKey)
+
+        // Debugging: Log entropy values
+        println("Original Secret Key: ${originalSecretKey.joinToString()}")
+        println("Decrypted Secret Key: ${decryptedSecretKey.joinToString()}")
+
+        // Debugging: Verify secret key equality
+        assertTrue(originalSecretKey.contentEquals(decryptedSecretKey))
+    }
+
+    @Test
     fun testEncryptDecryptEntropy_shouldMatchOriginal() {
         // Given
         val wordCount = Mnemonics.WordCount.COUNT_24
@@ -37,18 +55,12 @@ class AESPlatformManagerImplTest {
         val encryptedEntropy = aesPlatformManager.encryptByteArray(originalEntropy)
         val decryptedEntropy = aesPlatformManager.decryptByteArray(encryptedEntropy)
 
-        // Debugging: Verify entropy equality
-        assertTrue(originalEntropy.contentEquals(decryptedEntropy))
-
         // Debugging: Log entropy values
         println("Original Entropy: ${originalEntropy.joinToString()}")
         println("Decrypted Entropy: ${decryptedEntropy.joinToString()}")
 
-        // Then
-        assertEquals("Decrypted entropy should match original entropy",
-            true,
-            originalEntropy.contentEquals(decryptedEntropy)
-        )
+        // Debugging: Verify entropy equality
+        assertTrue(originalEntropy.contentEquals(decryptedEntropy))
 
         // Generate words from both entropies
         val decryptedWords = Mnemonics.MnemonicCode(decryptedEntropy).words.joinToString(" ")

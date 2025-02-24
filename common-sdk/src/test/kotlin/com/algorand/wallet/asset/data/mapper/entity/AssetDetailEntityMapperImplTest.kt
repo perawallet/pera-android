@@ -19,12 +19,13 @@ import com.algorand.wallet.asset.data.model.AssetCreatorResponse
 import com.algorand.wallet.asset.data.model.AssetResponse
 import io.mockk.every
 import io.mockk.mockk
+import java.math.BigDecimal
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-internal class AssetAssetInfoEntityMapperImplTest {
+internal class AssetDetailEntityMapperImplTest {
 
     private val verificationTierEntityMapper: VerificationTierEntityMapper = mockk()
 
@@ -73,7 +74,7 @@ internal class AssetAssetInfoEntityMapperImplTest {
             fullName = "fullName",
             shortName = "shortName",
             fractionDecimals = 2,
-            usdValue = "10",
+            usdValue = BigDecimal.TEN,
             maxSupply = "10",
             explorerUrl = "explorerUrl",
             projectUrl = "projectUrl",
@@ -87,7 +88,7 @@ internal class AssetAssetInfoEntityMapperImplTest {
             twitterUsername = "twitterUsername",
             discordUrl = "discordUrl",
             isAvailableOnDiscoverMobile = true,
-            last24HoursAlgoPriceChangePercentage = "10",
+            last24HoursAlgoPriceChangePercentage = BigDecimal.TEN,
             verificationTier = null,
             assetCreator = AssetCreatorResponse(
                 publicKey = "publicKey",
@@ -102,7 +103,7 @@ internal class AssetAssetInfoEntityMapperImplTest {
             name = "fullName",
             unitName = "shortName",
             decimals = 2,
-            usdValue = "10",
+            usdValue = BigDecimal.TEN,
             maxSupply = "10",
             explorerUrl = "explorerUrl",
             projectUrl = "projectUrl",
@@ -116,7 +117,7 @@ internal class AssetAssetInfoEntityMapperImplTest {
             twitterUsername = "twitterUsername",
             discordUrl = "discordUrl",
             availableOnDiscoverMobile = true,
-            last24HoursAlgoPriceChangePercentage = "10",
+            last24HoursAlgoPriceChangePercentage = BigDecimal.TEN,
             verificationTier = VerificationTierEntity.UNKNOWN,
             assetCreatorAddress = "publicKey",
             assetCreatorId = 1L,

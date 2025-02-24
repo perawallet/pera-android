@@ -10,12 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.assets.profile.about.data.local
+package com.algorand.wallet.asset.domain.repository
 
-import com.algorand.android.cache.SingleLocalCache
-import com.algorand.android.models.BaseAssetDetail
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.algorand.wallet.asset.domain.model.Asset
+import kotlinx.coroutines.flow.Flow
 
-@Singleton
-class AsaProfileDetailSingleLocalCache @Inject constructor() : SingleLocalCache<BaseAssetDetail>()
+internal interface SingleAssetRepository {
+
+    suspend fun cacheAssetDetail(assetId: Long)
+
+    fun getAssetDetailFlow(): Flow<Asset>
+
+    suspend fun clearCache()
+}

@@ -14,7 +14,6 @@ package com.algorand.android.modules.collectibles.common.mapper
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
 import com.algorand.android.modules.parity.domain.model.ParityValue
-import com.algorand.android.utils.toBigDecimalOrZero
 import com.algorand.wallet.asset.domain.model.MixedCollectibleDetail
 import java.math.BigInteger
 import javax.inject.Inject
@@ -42,7 +41,7 @@ internal class OwnedCollectibleMixedDataMapperImpl @Inject constructor() : Owned
             isAlgo = false,
             decimals = collectibleDetail.getDecimalsOrZero(),
             creatorPublicKey = collectibleDetail.creatorAddress,
-            usdValue = collectibleDetail.usdValue.toBigDecimalOrZero(),
+            usdValue = collectibleDetail.usdValue,
             isAmountInSelectedCurrencyVisible = collectibleDetail.hasUsdValue(),
             prismUrl = collectibleDetail.prismUrl,
             collectibleName = collectibleDetail.title,

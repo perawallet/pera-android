@@ -24,6 +24,8 @@ import com.algorand.android.utils.assetdrawable.AlgoDrawableProvider
 import com.algorand.android.utils.assetdrawable.AssetDrawableProvider
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.assetdrawable.CollectibleDrawableProvider
+import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants
 import javax.inject.Inject
 
@@ -134,6 +136,29 @@ class AssetDrawableProviderDecider @Inject constructor(
             else -> AssetDrawableProvider(
                 assetName = AssetName.create(baseAssetDetail.fullName),
                 logoUri = baseAssetDetail.logoUri
+            )
+        }
+    }
+
+    fun getAssetDrawableProvider(asset: Asset): BaseAssetDrawableProvider {
+        val assetName = asset.assetInfo?.name?.fullName
+        return when {
+            asset.id == AssetConstants.ALGO_ID -> AlgoDrawableProvider()
+            asset is com.algorand.wallet.asset.domain.model.AssetDetail -> {
+                AssetDrawableProvider(
+                    assetName = AssetName.create(assetName),
+                    logoUri = asset.logoUri
+                )
+            }
+            asset is CollectibleDetail -> {
+                CollectibleDrawableProvider(
+                    assetName = AssetName.create(assetName),
+                    logoUri = asset.collectibleInfo.primaryImageUrl
+                )
+            }
+            else -> AssetDrawableProvider(
+                assetName = AssetName.create(assetName),
+                logoUri = asset.logoUri
             )
         }
     }

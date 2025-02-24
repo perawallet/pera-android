@@ -13,7 +13,7 @@
 package com.algorand.android.modules.assets.profile.asaprofile.ui.model
 
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
-import com.algorand.android.utils.AssetName
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import java.math.BigDecimal
 

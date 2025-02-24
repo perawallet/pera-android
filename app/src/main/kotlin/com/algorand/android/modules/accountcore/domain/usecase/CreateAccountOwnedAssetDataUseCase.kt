@@ -18,7 +18,7 @@ import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
 import com.algorand.android.utils.formatAmount
-import com.algorand.android.utils.toBigDecimalOrZero
+import com.algorand.android.utils.orZero
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.asset.domain.model.AssetDetail
 import javax.inject.Inject
@@ -48,7 +48,7 @@ internal class CreateAccountOwnedAssetDataUseCase @Inject constructor(
     private fun getParityValueInSelectedCurrency(assetDetail: AssetDetail, assetHolding: AssetHolding): ParityValue {
         return getPrimaryCurrencyAssetParityValue(
             assetHolding.amount,
-            assetDetail.usdValue.toBigDecimalOrZero(),
+            assetDetail.usdValue.orZero(),
             assetDetail.getDecimalsOrZero()
         )
     }
@@ -56,7 +56,7 @@ internal class CreateAccountOwnedAssetDataUseCase @Inject constructor(
     private fun getParityValueInSecondaryCurrency(assetDetail: AssetDetail, assetHolding: AssetHolding): ParityValue {
         return getSecondaryCurrencyAssetParityValue(
             assetHolding.amount,
-            assetDetail.usdValue.toBigDecimalOrZero(),
+            assetDetail.usdValue.orZero(),
             assetDetail.getDecimalsOrZero()
         )
     }

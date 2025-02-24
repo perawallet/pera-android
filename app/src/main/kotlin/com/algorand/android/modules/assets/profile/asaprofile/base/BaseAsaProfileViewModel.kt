@@ -32,7 +32,11 @@ abstract class BaseAsaProfileViewModel(
     val asaProfilePreviewFlow: StateFlow<AsaProfilePreview?> get() = _asaProfilePreviewFlow
 
     fun getAssetAction(): AssetAction {
-        return asaProfilePreviewUseCase.createAssetAction(assetId = assetId, accountAddress = accountAddress)
+        return asaProfilePreviewUseCase.createAssetAction(
+            assetId,
+            accountAddress,
+            _asaProfilePreviewFlow.value?.assetFullName
+        )
     }
 
     protected fun initAsaPreviewFlow() {

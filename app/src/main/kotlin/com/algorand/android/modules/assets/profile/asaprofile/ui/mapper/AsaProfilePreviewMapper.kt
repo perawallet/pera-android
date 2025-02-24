@@ -13,10 +13,10 @@
 package com.algorand.android.modules.assets.profile.asaprofile.ui.mapper
 
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaProfilePreview
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaStatusPreview
 import com.algorand.android.modules.assets.profile.detail.ui.mapper.AssetDetailMarketInformationDecider
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -28,8 +28,8 @@ class AsaProfilePreviewMapper @Inject constructor(
     @SuppressWarnings("LongParameterList")
     fun mapToAsaProfilePreview(
         isAlgo: Boolean,
-        assetFullName: String?,
-        assetShortName: String?,
+        assetFullName: AssetName,
+        assetShortName: AssetName,
         assetId: Long,
         formattedAssetPrice: String?,
         verificationTierConfiguration: VerificationTierConfiguration,
@@ -41,8 +41,8 @@ class AsaProfilePreviewMapper @Inject constructor(
     ): AsaProfilePreview {
         return AsaProfilePreview(
             isAlgo = isAlgo,
-            assetFullName = AssetName.create(assetFullName),
-            assetShortName = AssetName.createShortName(assetShortName),
+            assetFullName = assetFullName,
+            assetShortName = assetShortName,
             assetId = assetId,
             formattedAssetPrice = formattedAssetPrice,
             verificationTierConfiguration = verificationTierConfiguration,

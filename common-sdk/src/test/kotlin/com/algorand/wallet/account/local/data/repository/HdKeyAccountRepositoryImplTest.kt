@@ -17,7 +17,7 @@ import com.algorand.wallet.account.local.data.database.model.HdKeyEntity
 import com.algorand.wallet.account.local.data.mapper.entity.HdKeyEntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdKeyMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.encryption.SecretKeyEncryptionManager
+import com.algorand.wallet.encryption.AESPlatformManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -32,12 +32,12 @@ class HdKeyAccountRepositoryImplTest {
     private val hdKeyDao: HdKeyDao = mockk()
     private val hdKeyEntityMapper: HdKeyEntityMapper = mockk()
     private val hdKeyMapper: HdKeyMapper = mockk()
-    private val secretKeyEncryptionManager: SecretKeyEncryptionManager = mockk()
+    private val aesPlatformManager: AESPlatformManager = mockk()
     private val sut = HdKeyAccountRepositoryImpl(
         hdKeyDao,
         hdKeyEntityMapper,
         hdKeyMapper,
-        secretKeyEncryptionManager
+        aesPlatformManager
     )
 
     @Test

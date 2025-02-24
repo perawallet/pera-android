@@ -18,12 +18,12 @@ internal class SecretKeyEncryptionManagerImpl @Inject constructor(
     private val aesPlatformManager: AESPlatformManager
 ) : SecretKeyEncryptionManager {
 
-    override fun encrypt(secretKey: ByteArray): ByteArray {
+    override fun encryptByteArray(secretKey: ByteArray): ByteArray {
         // return aesPlatformManager.encryptByteArray(secretKey)
         return secretKey
     }
 
-    override fun decrypt(encryptedSecretKey: ByteArray): ByteArray {
+    override fun decryptByteArray(encryptedSecretKey: ByteArray): ByteArray {
         // return aesPlatformManager.decryptByteArray(encryptedSecretKey)
         return encryptedSecretKey
     }

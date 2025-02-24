@@ -40,4 +40,6 @@ internal interface HdSeedRepository {
     suspend fun deleteHdSeed(encrypted_entropy: ByteArray)
 
     suspend fun deleteAllHdSeeds()
+
+    suspend fun getEntropy(seedId: Int): ByteArray?
 }

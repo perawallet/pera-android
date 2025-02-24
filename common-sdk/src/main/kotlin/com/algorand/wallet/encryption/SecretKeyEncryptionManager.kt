@@ -13,6 +13,6 @@
 package com.algorand.wallet.encryption
 
 interface SecretKeyEncryptionManager {
-    fun encrypt(secretKey: ByteArray): ByteArray
-    fun decrypt(encryptedSecretKey: ByteArray): ByteArray
+    fun encryptByteArray(secretKey: ByteArray): ByteArray
+    fun decryptByteArray(encryptedSecretKey: ByteArray): ByteArray
 }

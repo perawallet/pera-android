@@ -22,7 +22,6 @@ import com.algorand.wallet.account.core.domain.usecase.AddHdSeedUseCase
 import com.algorand.wallet.algosdk.model.Algo25Account
 import com.algorand.wallet.algosdk.model.Bip32DerivationType
 import com.algorand.wallet.algosdk.model.HdAccount
-import com.algorand.wallet.encryption.SecretKeyEncryptionManager
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
@@ -32,7 +31,6 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 internal class AlgoAccountSdkImpl @Inject constructor(
-    private val secretKeyEncryptionManager: SecretKeyEncryptionManager,
     private val addHdSeedUseCase: AddHdSeedUseCase
 ) : AlgoAccountSdk {
 
@@ -103,6 +101,7 @@ internal class AlgoAccountSdkImpl @Inject constructor(
             getBIP44PathFromContext(keyContext, account, change, keyIndex),
             true
         )
+
         return HdAccount(
             address = algoAddress.toString(),
             publicKey = publicKey,

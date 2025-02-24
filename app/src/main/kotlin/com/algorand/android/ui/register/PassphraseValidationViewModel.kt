@@ -19,7 +19,7 @@ import com.algorand.android.core.AccountManager
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingVerifyPassphraseEventTracker
-import com.algorand.wallet.account.core.domain.usecase.GetHdWalletEntropyFromSeedId
+import com.algorand.wallet.account.local.domain.usecase.GetEntropy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,7 +30,7 @@ import javax.inject.Inject
 class PassphraseValidationViewModel @Inject constructor(
     private val onboardingVerifyPassphraseEventTracker: OnboardingVerifyPassphraseEventTracker,
     private val accountManager: AccountManager,
-    private val getHdWalletEntropyFromSeedId: GetHdWalletEntropyFromSeedId
+    private val getEntropy: GetEntropy
 ) : BaseViewModel() {
 
     fun logOnboardingNextClickEvent() {
@@ -52,7 +52,7 @@ class PassphraseValidationViewModel @Inject constructor(
 
         return seedId?.let {
             runBlocking(Dispatchers.IO) {
-                val entropy = getHdWalletEntropyFromSeedId.invoke(it)
+                val entropy = getEntropy(it)
                 entropy?.let {
                     val mnemonic = Mnemonics.MnemonicCode(entropy).words.joinToString(" ") { charArray ->
                         String(charArray)

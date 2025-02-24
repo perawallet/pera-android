@@ -16,7 +16,7 @@ import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
 import com.algorand.android.utils.formatting.FormatAmountByCollectibleFractionalDigit
-import com.algorand.android.utils.toBigDecimalOrZero
+import com.algorand.android.utils.orZero
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.asset.domain.model.AudioCollectibleDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
@@ -46,12 +46,12 @@ internal class BaseOwnedCollectibleDataFactoryImpl @Inject constructor(
         val amount = assetHolding.amount
         val parityValueInSelectedCurrency = getPrimaryCurrencyAssetParityValue(
             amount,
-            collectibleDetail.usdValue.toBigDecimalOrZero(),
+            collectibleDetail.usdValue.orZero(),
             safeDecimal
         )
         val parityValueInSecondaryCurrency = getSecondaryCurrencyAssetParityValue(
             amount,
-            collectibleDetail.usdValue.toBigDecimalOrZero(),
+            collectibleDetail.usdValue.orZero(),
             safeDecimal
         )
 

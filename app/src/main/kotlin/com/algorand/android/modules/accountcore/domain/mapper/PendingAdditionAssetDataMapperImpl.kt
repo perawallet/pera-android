@@ -14,7 +14,6 @@ package com.algorand.android.modules.accountcore.domain.mapper
 
 import com.algorand.android.assetsearch.domain.mapper.LegacyVerificationTierMapper
 import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.android.utils.toBigDecimalOrZero
 import com.algorand.wallet.asset.domain.model.Asset
 import javax.inject.Inject
 
@@ -30,7 +29,7 @@ internal class PendingAdditionAssetDataMapperImpl @Inject constructor(
             isAlgo = false,
             decimals = asset.getDecimalsOrZero(),
             creatorPublicKey = asset.creatorAddress,
-            usdValue = asset.usdValue.toBigDecimalOrZero(),
+            usdValue = asset.usdValue,
             verificationTier = legacyVerificationTierMapper(asset.verificationTier)
         )
     }

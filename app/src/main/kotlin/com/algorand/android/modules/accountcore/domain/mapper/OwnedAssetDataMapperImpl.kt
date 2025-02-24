@@ -15,7 +15,6 @@ package com.algorand.android.modules.accountcore.domain.mapper
 import com.algorand.android.assetsearch.domain.mapper.LegacyVerificationTierMapper
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.parity.domain.model.ParityValue
-import com.algorand.android.utils.toBigDecimalOrZero
 import com.algorand.wallet.asset.domain.model.AssetDetail
 import java.math.BigInteger
 import javax.inject.Inject
@@ -43,7 +42,7 @@ internal class OwnedAssetDataMapperImpl @Inject constructor(
             isAlgo = false,
             decimals = assetDetail.getDecimalsOrZero(),
             creatorPublicKey = assetDetail.creatorAddress,
-            usdValue = assetDetail.usdValue.toBigDecimalOrZero(),
+            usdValue = assetDetail.usdValue,
             isAmountInSelectedCurrencyVisible = assetDetail.usdValue != null && amount.compareTo(BigInteger.ZERO) == 1,
             parityValueInSelectedCurrency = parityValueInSelectedCurrency,
             parityValueInSecondaryCurrency = parityValueInSecondaryCurrency,

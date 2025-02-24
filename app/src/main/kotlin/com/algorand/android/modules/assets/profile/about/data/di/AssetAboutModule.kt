@@ -13,11 +13,9 @@
 package com.algorand.android.modules.assets.profile.about.data.di
 
 import com.algorand.android.mapper.AssetDetailMapper
-import com.algorand.android.modules.assets.profile.about.data.local.AsaProfileDetailSingleLocalCache
 import com.algorand.android.modules.assets.profile.about.data.repository.AssetAboutRepositoryImpl
 import com.algorand.android.modules.assets.profile.about.domain.repository.AssetAboutRepository
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.nft.domain.mapper.SimpleCollectibleDetailMapper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,15 +30,11 @@ object AssetAboutModule {
     @Named(AssetAboutRepository.INJECTION_NAME)
     fun provideAssetAboutRepository(
         mobileAlgorandApi: MobileAlgorandApi,
-        assetDetailMapper: AssetDetailMapper,
-        simpleCollectibleDetailMapper: SimpleCollectibleDetailMapper,
-        asaProfileDetailSingleLocalCache: AsaProfileDetailSingleLocalCache
+        assetDetailMapper: AssetDetailMapper
     ): AssetAboutRepository {
         return AssetAboutRepositoryImpl(
             mobileAlgorandApi = mobileAlgorandApi,
-            assetDetailMapper = assetDetailMapper,
-            simpleCollectibleDetailMapper = simpleCollectibleDetailMapper,
-            asaProfileDetailSingleLocalCache = asaProfileDetailSingleLocalCache
+            assetDetailMapper = assetDetailMapper
         )
     }
 }

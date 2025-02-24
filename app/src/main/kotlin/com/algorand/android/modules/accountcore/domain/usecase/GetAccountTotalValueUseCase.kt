@@ -17,7 +17,7 @@ import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetAlgoAmountValue
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
-import com.algorand.android.utils.toBigDecimalOrZero
+import com.algorand.android.utils.orZero
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import java.math.BigDecimal
@@ -45,7 +45,7 @@ internal class GetAccountTotalValueUseCase @Inject constructor(
                 val (primaryParityValue, secondaryParityValue) = getAssetParityValue(
                     fractionDecimals = assetInformation.getDecimalsOrZero(),
                     assetAmount = assetHolding.amount,
-                    assetUsdValue = assetInformation.usdValue.toBigDecimalOrZero()
+                    assetUsdValue = assetInformation.usdValue.orZero()
                 )
                 primaryAccountValue += primaryParityValue.amountAsCurrency
                 secondaryAccountValue += secondaryParityValue.amountAsCurrency

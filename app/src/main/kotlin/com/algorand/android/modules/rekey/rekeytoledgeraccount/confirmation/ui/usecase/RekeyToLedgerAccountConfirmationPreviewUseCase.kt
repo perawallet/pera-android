@@ -34,6 +34,7 @@ import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
@@ -47,10 +48,11 @@ class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
     private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
     private val rekeyToLedgerAccountConfirmationPreviewDecider: RekeyToLedgerAccountConfirmationPreviewDecider,
     private val accountDisplayNameMapper: AccountDisplayNameMapper,
-    private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper
+    private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress
 ) {
 
-    fun getInitialRekeyToStandardAccountConfirmationPreview(
+    suspend fun getInitialRekeyToStandardAccountConfirmationPreview(
         accountAddress: String,
         authAccountAddress: String
     ): RekeyToLedgerAccountConfirmationPreview {
@@ -87,7 +89,7 @@ class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
         )
     }
 
-    suspend fun updatePreviewWithTransactionFee(preview: RekeyToLedgerAccountConfirmationPreview) = flow {
+    fun updatePreviewWithTransactionFee(preview: RekeyToLedgerAccountConfirmationPreview) = flow {
         transactionsRepository.getTransactionParams().use(
             onSuccess = { params ->
                 val calculatedFee = calculateRekeyFee(params.fee, params.minFee)
@@ -147,10 +149,10 @@ class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun createAccountDisplayNameAndDrawablePair(
+    private suspend fun createAccountDisplayNameAndDrawablePair(
         accountAddress: String
     ): Pair<AccountDisplayName, AccountIconDrawablePreview> {
-        val isThereAnyAccountWithAddress = accountDetailUseCase.isThereAnyAccountWithPublicKey(accountAddress)
+        val isThereAnyAccountWithAddress = isThereAnyAccountWithAddress(accountAddress)
         return if (isThereAnyAccountWithAddress) {
             val accountDisplayName = accountDisplayNameUseCase.invoke(accountAddress)
             val accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)

@@ -44,12 +44,14 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
 
     private var sendTransactionJob: Job? = null
 
-    private val rekeyToLedgerAccountConfirmationPreviewFlow = MutableStateFlow(getInitialPreview())
+    private lateinit var rekeyToLedgerAccountConfirmationPreviewFlow:
+            MutableStateFlow<RekeyToLedgerAccountConfirmationPreview>
     override val baseRekeyConfirmationFieldsFlow: StateFlow<RekeyToLedgerAccountConfirmationPreview>
         get() = rekeyToLedgerAccountConfirmationPreviewFlow
 
     init {
         updatePreviewWithCalculatedTransactionFee()
+        getInitialPreview()
     }
 
     fun createRekeyToLedgerAccountTransaction() {
@@ -96,11 +98,15 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
         }
     }
 
-    private fun getInitialPreview(): RekeyToLedgerAccountConfirmationPreview {
-        return rekeyToLedgerAccountConfirmationPreviewUseCase.getInitialRekeyToStandardAccountConfirmationPreview(
-            accountAddress = accountAddress,
-            authAccountAddress = authAccountAddress
-        )
+    private fun getInitialPreview() {
+        viewModelScope.launchIO {
+            rekeyToLedgerAccountConfirmationPreviewFlow = MutableStateFlow(
+                rekeyToLedgerAccountConfirmationPreviewUseCase.getInitialRekeyToStandardAccountConfirmationPreview(
+                    accountAddress = accountAddress,
+                    authAccountAddress = authAccountAddress
+                )
+            )
+        }
     }
 
     private fun updatePreviewWithCalculatedTransactionFee() {

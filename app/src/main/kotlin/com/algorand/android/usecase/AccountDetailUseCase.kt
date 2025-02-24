@@ -135,10 +135,6 @@ class AccountDetailUseCase @Inject constructor(
         return isRekeyedToAnotherAccount(authAddress, publicKey)
     }
 
-    fun isThereAnyAccountWithPublicKey(publicKey: String): Boolean {
-        return accountManager.isThereAnyAccountWithPublicKey(publicKey)
-    }
-
     fun setAccountNameService(accountAddress: String, nameServiceName: String?) {
         accountRepository.getCachedAccountDetail(accountAddress)?.data?.nameServiceName = nameServiceName
     }

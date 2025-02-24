@@ -17,7 +17,6 @@ import com.algorand.android.R
 import com.algorand.android.core.AccountManager
 import com.algorand.android.customviews.passphraseinput.usecase.PassphraseInputGroupUseCase
 import com.algorand.android.customviews.passphraseinput.util.PassphraseInputConfigurationUtil
-import com.algorand.android.models.Account
 import com.algorand.android.models.Account.Type
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AnnotatedString
@@ -31,6 +30,7 @@ import com.algorand.android.utils.PassphraseKeywordUtils.ACCOUNT_PASSPHRASES_WOR
 import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
@@ -41,7 +41,8 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val passphraseInputConfigurationUtil: PassphraseInputConfigurationUtil,
     private val accountManager: AccountManager,
     private val getRekeyedAccountUseCase: GetRekeyedAccountUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase
+    private val accountStateHelperUseCase: AccountStateHelperUseCase,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress
 ) {
 
     fun getRecoverWithPassphraseInitialPreview(): RecoverWithPassphrasePreview {
@@ -133,8 +134,8 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                 return@flow
             }
             val accountAddress = Sdk.generateAddressFromSK(privateKey)
-            val isThereAnyAccountWithPublicKey = accountManager.isThereAnyAccountWithPublicKey(accountAddress)
-            if (isThereAnyAccountWithPublicKey) {
+            val isThereAnyAccountWithAddress = isThereAnyAccountWithAddress(accountAddress)
+            if (isThereAnyAccountWithAddress) {
                 val account = accountManager.getAccount(accountAddress)
                 val isAccountPromotable = when (account?.type) {
                     Type.STANDARD -> !accountStateHelperUseCase.hasAccountValidSecretKey(account)
@@ -175,9 +176,5 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         } catch (exception: Exception) {
             emit(preview.copy(onAccountNotFoundEvent = Event(AnnotatedString(R.string.account_not_found_please_try))))
         }
-    }
-
-    private fun getAccountIfExist(publicKey: String): Account? {
-        return accountManager.getAccounts().find { account -> account.address == publicKey }
     }
 }

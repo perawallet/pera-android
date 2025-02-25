@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
+    implementation(libs.installreferrer)
     implementation(project.dependencies.platform(libs.firebase.bom))
 
     ksp(libs.dagger.hilt.compiler)

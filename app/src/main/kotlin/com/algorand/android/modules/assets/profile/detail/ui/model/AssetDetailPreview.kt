@@ -16,7 +16,7 @@ import androidx.navigation.NavDirections
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.models.AccountDetailSummary
-import com.algorand.android.utils.AccountDisplayName
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider

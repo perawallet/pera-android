@@ -50,6 +50,10 @@ fun String?.toBigDecimalOrZero(): BigDecimal {
     return this?.toBigDecimalOrNull() ?: ZERO
 }
 
+fun BigDecimal?.orZero(): BigDecimal {
+    return this ?: ZERO
+}
+
 fun BigDecimal.isPositive(): Boolean {
     return signum() == 1
 }

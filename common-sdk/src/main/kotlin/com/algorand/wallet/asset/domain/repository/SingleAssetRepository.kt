@@ -10,18 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.assets.profile.about.domain.usecase
+package com.algorand.wallet.asset.domain.repository
 
-import com.algorand.android.modules.assets.profile.about.domain.repository.AssetAboutRepository
-import javax.inject.Inject
-import javax.inject.Named
+import com.algorand.wallet.asset.domain.model.Asset
+import kotlinx.coroutines.flow.Flow
 
-class ClearAsaProfileLocalCacheUseCase @Inject constructor(
-    @Named(AssetAboutRepository.INJECTION_NAME)
-    private val assetAboutRepository: AssetAboutRepository
-) {
+internal interface SingleAssetRepository {
 
-    fun clearAsaProfileLocalCache() {
-        assetAboutRepository.clearAsaProfileLocalCache()
-    }
+    suspend fun cacheAssetDetail(assetId: Long)
+
+    fun getAssetDetailFlow(): Flow<Asset>
+
+    suspend fun clearCache()
 }

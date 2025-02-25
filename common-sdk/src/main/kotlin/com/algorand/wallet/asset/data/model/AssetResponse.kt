@@ -14,6 +14,7 @@ package com.algorand.wallet.asset.data.model
 
 import com.algorand.wallet.asset.data.model.collectible.CollectibleResponse
 import com.google.gson.annotations.SerializedName
+import java.math.BigDecimal
 
 internal data class AssetResponse(
     @SerializedName("asset_id") val assetId: Long? = null,
@@ -21,7 +22,7 @@ internal data class AssetResponse(
     @SerializedName("logo") val logoUri: String? = null,
     @SerializedName("unit_name") val shortName: String? = null,
     @SerializedName("fraction_decimals") val fractionDecimals: Int? = null,
-    @SerializedName("usd_value") val usdValue: String? = null,
+    @SerializedName("usd_value") val usdValue: BigDecimal? = null,
     @SerializedName("creator") val assetCreator: AssetCreatorResponse? = null,
     @SerializedName("collectible") val collectible: CollectibleResponse? = null,
     @SerializedName("total") val maxSupply: String? = null,
@@ -36,6 +37,6 @@ internal data class AssetResponse(
     @SerializedName("description") val description: String? = null,
     @SerializedName("url") val url: String? = null,
     @SerializedName("total_supply") val totalSupply: String? = null,
-    @SerializedName("last_24_hours_algo_price_change_percentage") val last24HoursAlgoPriceChangePercentage: String? = null,
+    @SerializedName("last_24_hours_algo_price_change_percentage") val last24HoursAlgoPriceChangePercentage: BigDecimal? = null,
     @SerializedName("available_on_discover_mobile") val isAvailableOnDiscoverMobile: Boolean? = null
 )

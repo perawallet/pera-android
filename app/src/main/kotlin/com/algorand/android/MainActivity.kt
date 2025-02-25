@@ -178,36 +178,6 @@ class MainActivity :
         }
     }
 
-    private fun handleAssetOptInRequestDeepLink(accountAddress: String, assetId: Long) {
-        val assetAction = AssetAction(publicKey = accountAddress, assetId = assetId)
-        nav(
-            HomeNavigationDirections.actionGlobalAssetAdditionActionNavigation(
-                assetAction = assetAction
-            )
-        )
-    }
-
-    private fun handleAssetInboxDeepLink(accountAddress: String) {
-        navToAssetInboxOneAccountNavigation(accountAddress)
-    }
-
-    private fun handleAssetTransactionDeepLink(accountAddress: String, assetId: Long) {
-        nav(
-            HomeNavigationDirections.actionGlobalAssetProfileNavigation(
-                assetId = assetId,
-                accountAddress = accountAddress
-            )
-        )
-    }
-
-    private fun showGlobalNotificationError() {
-        showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
-    }
-
-    private fun showForegroundNotification(newNotificationData: NotificationMetadata) {
-        showForegroundNotification(notificationMetadata = newNotificationData, tag = activityTag)
-    }
-
     private val invalidTransactionCauseObserver = Observer<Event<Resource.Error.Local>> { cause ->
         cause.consume()?.let { onInvalidWalletConnectTransacitonReceived(it) }
     }
@@ -280,7 +250,7 @@ class MainActivity :
             assetId: Long,
             notificationGroupType: NotificationGroupType
         ): Boolean {
-            mainViewModel.onNotificationDeepLink(accountAddress, assetId, notificationGroupType)
+            mainViewModel.handleNotificationDeepLink(accountAddress, assetId, notificationGroupType)
             return true
         }
 
@@ -343,20 +313,6 @@ class MainActivity :
                     showGlobalError(getString(R.string.you_dont_have_any, deepLink.senderAddress), tag = activityTag)
                 }
             }
-        }
-    }
-
-    private fun navToAssetInboxOneAccountNavigation(accountAddress: String) {
-        if (accountDetailUseCase.canAccountSignTransaction(accountAddress)) {
-            navController.navigateSafe(
-                HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
-                    AssetInboxOneAccountNavArgs(
-                        accountAddress
-                    )
-                )
-            )
-        } else {
-            navToAccountDetailFragment(accountAddress)
         }
     }
 
@@ -439,25 +395,25 @@ class MainActivity :
 
     private val viewEventCollector: suspend (ViewEvent) -> Unit = { event ->
         when (event) {
-            is ViewEvent.ShowGlobalNotificationError -> showGlobalNotificationError()
+            is ViewEvent.HandleAssetTransactionDeepLink -> navToAssetProfileNavigation(
+                event.address,
+                event.assetId
+            )
+
+            is ViewEvent.HandleAssetOptInRequestDeepLink -> navToAssetAdditionActionNavigation(
+                event.address,
+                event.assetId
+            )
+
+            is ViewEvent.HandleAssetInboxDeepLink -> navToAssetInboxOneAccountNavigation(
+                event.address
+            )
 
             is ViewEvent.ShowForegroundNotification -> showForegroundNotification(
                 event.notificationMetadata
             )
 
-            is ViewEvent.HandleAssetTransactionDeepLink -> handleAssetTransactionDeepLink(
-                event.address,
-                event.assetId
-            )
-
-            is ViewEvent.HandleAssetOptInRequestDeepLink -> handleAssetOptInRequestDeepLink(
-                event.address,
-                event.assetId
-            )
-
-            is ViewEvent.HandleAssetInboxDeepLink -> handleAssetInboxDeepLink(
-                event.address
-            )
+            is ViewEvent.ShowGlobalNotificationError -> showGlobalNotificationError()
         }
     }
 
@@ -898,6 +854,46 @@ class MainActivity :
             ledgerLoadingDialog = LedgerLoadingDialog.createLedgerLoadingDialog(ledgerName, ledgerLoadingDialogListener)
             ledgerLoadingDialog?.showWithStateCheck(supportFragmentManager)
         }
+    }
+
+    private fun navToAssetProfileNavigation(accountAddress: String, assetId: Long) {
+        nav(
+            HomeNavigationDirections.actionGlobalAssetProfileNavigation(
+                assetId = assetId,
+                accountAddress = accountAddress
+            )
+        )
+    }
+
+    private fun navToAssetAdditionActionNavigation(accountAddress: String, assetId: Long) {
+        val assetAction = AssetAction(publicKey = accountAddress, assetId = assetId)
+        nav(
+            HomeNavigationDirections.actionGlobalAssetAdditionActionNavigation(
+                assetAction = assetAction
+            )
+        )
+    }
+
+    private fun navToAssetInboxOneAccountNavigation(accountAddress: String) {
+        if (accountDetailUseCase.canAccountSignTransaction(accountAddress)) {
+            navController.navigateSafe(
+                HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
+                    AssetInboxOneAccountNavArgs(
+                        accountAddress
+                    )
+                )
+            )
+        } else {
+            navToAccountDetailFragment(accountAddress)
+        }
+    }
+
+    private fun showForegroundNotification(newNotificationData: NotificationMetadata) {
+        showForegroundNotification(notificationMetadata = newNotificationData, tag = activityTag)
+    }
+
+    private fun showGlobalNotificationError() {
+        showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
     }
 
     companion object {

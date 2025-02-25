@@ -194,7 +194,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun onNotificationDeepLink(
+    fun handleNotificationDeepLink(
         accountAddress: String,
         assetId: Long,
         notificationGroupType: NotificationGroupType
@@ -236,10 +236,10 @@ class MainViewModel @Inject constructor(
     }
 
     sealed interface ViewEvent {
-        data object ShowGlobalNotificationError : ViewEvent
-        data class ShowForegroundNotification(val notificationMetadata: NotificationMetadata) : ViewEvent
         data class HandleAssetTransactionDeepLink(val address: String, val assetId: Long) : ViewEvent
         data class HandleAssetOptInRequestDeepLink(val address: String, val assetId: Long) : ViewEvent
         data class HandleAssetInboxDeepLink(val address: String) : ViewEvent
+        data class ShowForegroundNotification(val notificationMetadata: NotificationMetadata) : ViewEvent
+        data object ShowGlobalNotificationError : ViewEvent
     }
 }

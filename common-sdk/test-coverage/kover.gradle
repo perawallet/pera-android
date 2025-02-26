@@ -1,5 +1,5 @@
 apply plugin: 'org.jetbrains.kotlinx.kover'
-apply from: './test-coverage/excludes.gradle'
+apply from: './test-coverage/excludes.gradle.kts'
 
 kover {
     currentProject {

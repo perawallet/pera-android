@@ -61,7 +61,7 @@ object InstallReferrerHelper {
         })
     }
 
-    private fun saveReferrerData(context: Context, referrerString: String?) {
+    fun saveReferrerData(context: Context, referrerString: String?) {
         if (referrerString.isNullOrEmpty()) {
             Log.i("InstallReferrer", "No referrer string found.")
             return
@@ -81,7 +81,7 @@ object InstallReferrerHelper {
         Log.i("InstallReferrer", "Referrer data saved: $params")
     }
 
-    private fun decodeQueryParams(query: String?): Map<String, String> {
+    fun decodeQueryParams(query: String?): Map<String, String> {
         return query?.split("&")
             ?.mapNotNull { param ->
                 val parts = param.split("=", limit = 2)

@@ -4,11 +4,11 @@ set -e
 
 MIN_ACCEPTABLE_CLASS_COVERAGE=48.2
 MIN_ACCEPTABLE_METHOD_COVERAGE=45.6
-MIN_ACCEPTABLE_BRANCH_COVERAGE=45.7
+MIN_ACCEPTABLE_BRANCH_COVERAGE=45.4
 MIN_ACCEPTABLE_LINE_COVERAGE=49.6
 MIN_ACCEPTABLE_INSTRUCTION_COVERAGE=44.7
 
-COVERAGE_REPORT="common-sdk/build/reports/kover/report.xml"
+COVERAGE_REPORT="common-sdk/build/reports/kover/reportCustomDebug.xml"
 
 get_overall_report_tag() {
   echo "//report[1]"

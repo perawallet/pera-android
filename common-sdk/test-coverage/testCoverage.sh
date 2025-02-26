@@ -2,9 +2,9 @@
 set -e
 
 # Generate HTML report for devs
-./gradlew koverHtmlReport
+./gradlew koverHtmlReportCustomDebug
 
 # Generate XML report for coverage calculation
-./gradlew koverXmlReport
+./gradlew koverXmlReportCustomDebug
 
 ./common-sdk/test-coverage/coverageValidator.sh

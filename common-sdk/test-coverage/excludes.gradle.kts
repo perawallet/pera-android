@@ -8,6 +8,7 @@ val excludedClasses = listOf(
     // dagger
     "*.*_MembersInjector",
     "*.Dagger*Component",
+    "*.Dagger*Component\$Builder",
     "*.*Module_*Factory",
     "*.di.module.*",
     "*.*_Factory*",
@@ -20,6 +21,7 @@ val excludedClasses = listOf(
     // kotlin
     "*.*Component*",
     "*.*BR*",
+    "*.*\$Lambda$*",
     "*.*Companion*",
     "*.*MembersInjector*",
     "*.*_Provide*Factory*",

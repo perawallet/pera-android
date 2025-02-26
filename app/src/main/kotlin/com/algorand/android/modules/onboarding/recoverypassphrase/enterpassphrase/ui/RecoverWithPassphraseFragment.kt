@@ -14,8 +14,14 @@ package com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphra
 
 import android.os.Bundle
 import android.view.View
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
@@ -32,6 +38,8 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.onboarding.recoverypassphrase.options.ui.RecoverOptionsBottomSheet
 import com.algorand.android.modules.onboarding.recoverypassphrase.options.ui.RecoverOptionsBottomSheet.Companion.RESULT_KEY
+import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.AnimationLoader
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.delegation.keyboardvisibility.KeyboardHandlerDelegation
 import com.algorand.android.utils.delegation.keyboardvisibility.KeyboardHandlerDelegationImpl
@@ -48,22 +56,22 @@ import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
 class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recover_with_passphrase),
-    KeyboardHandlerDelegation by KeyboardHandlerDelegationImpl(), LoadingDialogFragment.DismissListener {
+    KeyboardHandlerDelegation by KeyboardHandlerDelegationImpl(),
+    LoadingDialogFragment.DismissListener {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
         startIconClick = ::navBack
     )
 
-    override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
+    override val fragmentConfiguration =
+        FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val args by navArgs<RecoverWithPassphraseFragmentArgs>()
 
     private val recoverWithPassphraseViewModel: RecoverWithPassphraseViewModel by viewModels()
 
     private val binding by viewBinding(FragmentRecoverWithPassphraseBinding::bind)
-
-    private var loadingDialogFragment: LoadingDialogFragment? = null
 
     private val recoverPassphraseTitleHeight by lazy { binding.recoverPassphraseTitle.height }
 
@@ -93,6 +101,20 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         }
     }
 
+    private fun hideComposeAnimationLoader() {
+        binding.scrollView.visibility = View.VISIBLE
+        binding.passphraseWordSuggestor.visibility = View.VISIBLE
+        binding.recoverButton.visibility = View.VISIBLE
+        binding.loadingAnimationCompose.visibility = View.GONE
+    }
+
+    private fun showComposeAnimationLoader() {
+        binding.scrollView.visibility = View.GONE
+        binding.passphraseWordSuggestor.visibility = View.GONE
+        binding.recoverButton.visibility = View.GONE
+        binding.loadingAnimationCompose.visibility = View.VISIBLE
+    }
+
     private val wordSuggestorListener = PassphraseWordSuggestor.Listener { word ->
         recoverWithPassphraseViewModel.onFocusedInputChanged(value = word)
         binding.passphraseInputGroup.focusNextItem()
@@ -118,9 +140,10 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         if (it != null) binding.passphraseInputGroup.updatePassphraseInputsConfiguration(it)
     }
 
-    private val unfocusedPassphraseItemCollector: suspend (PassphraseInputConfiguration?) -> Unit = {
-        if (it != null) binding.passphraseInputGroup.updatePassphraseInputsConfiguration(it)
-    }
+    private val unfocusedPassphraseItemCollector: suspend (PassphraseInputConfiguration?) -> Unit =
+        {
+            if (it != null) binding.passphraseInputGroup.updatePassphraseInputsConfiguration(it)
+        }
 
     private val globalErrorEventCollector: suspend (Event<Int>?) -> Unit = {
         it?.consume()?.run {
@@ -142,9 +165,10 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         }
     }
 
-    private val navToNameRegistrationScreenEventCollector: suspend (Event<AccountCreation>?) -> Unit = {
-        it?.consume()?.run { navigateToSuccess(this) }
-    }
+    private val navToNameRegistrationScreenEventCollector: suspend (Event<AccountCreation>?) -> Unit =
+        {
+            it?.consume()?.run { navigateToSuccess(this) }
+        }
 
     private val navToImportRekeyedAccountEventCollector: suspend (
         Event<Pair<AccountCreation, List<String>>>?
@@ -163,7 +187,23 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        registerKeyboardHandlerDelegation(baseFragment = this, onKeyboardOpenedListener = onKeyboardOpenedListener)
+        registerKeyboardHandlerDelegation(
+            baseFragment = this,
+            onKeyboardOpenedListener = onKeyboardOpenedListener
+        )
+        binding.loadingAnimationCompose.setContent {
+            PeraTheme {
+                Box {
+                    AnimationLoader(
+                        modifier = Modifier.align(alignment = Alignment.Center),
+                        start = ImageVector.vectorResource(R.drawable.ic_ledger_old_export),
+                        end = ImageVector.vectorResource(R.drawable.ic_phone_new),
+                        lottie = LottieCompositionSpec.RawRes(resId = R.raw.loading_dots),
+                        description = "Searching your accounts"
+                    )
+                }
+            }
+        }
         initUi()
         loadData()
         initObservers()
@@ -180,7 +220,9 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         with(binding) {
             passphraseInputGroup.setListener(passphraseInputGroupListener)
             passphraseWordSuggestor.listener = wordSuggestorListener
-            recoverButton.setOnClickListener { recoverWithPassphraseViewModel.onRecoverButtonClick() }
+            recoverButton.setOnClickListener {
+                recoverWithPassphraseViewModel.onRecoverButtonClick()
+            }
         }
     }
 
@@ -255,7 +297,12 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
     }
 
     private fun customizeToolbar() {
-        getAppToolbar()?.setEndButton(button = IconButton(R.drawable.ic_more, onClick = ::onOptionsClick))
+        getAppToolbar()?.setEndButton(
+            button = IconButton(
+                R.drawable.ic_more,
+                onClick = ::onOptionsClick
+            )
+        )
     }
 
     private fun pasteClipboard() {
@@ -266,7 +313,9 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
     private fun navigateToSuccess(accountCreation: AccountCreation) {
         nav(
             RecoverWithPassphraseFragmentDirections
-                .actionRecoverWithPassphraseFragmentToRecoverAccountNameRegistrationFragment(accountCreation)
+                .actionRecoverWithPassphraseFragmentToRecoverAccountNameRegistrationFragment(
+                    accountCreation
+                )
         )
     }
 
@@ -289,7 +338,10 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
     private fun scrollToFocusedInput() {
         with(binding) {
             val focusedInput = passphraseInputGroup.focusedChild ?: return
-            scrollView.smoothScrollTo(0, (focusedInput.y - focusedInput.height + recoverPassphraseTitleHeight).toInt())
+            scrollView.smoothScrollTo(
+                0,
+                (focusedInput.y - focusedInput.height + recoverPassphraseTitleHeight).toInt()
+            )
         }
     }
 
@@ -312,19 +364,17 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
 
     private fun showLoadingFragment() {
         hideLoadingFragment()
-        loadingDialogFragment = LoadingDialogFragment.show(
-            childFragmentManager = childFragmentManager,
-            descriptionResId = R.string.fetching_rekeyed_accounts,
-            isCancellable = true
-        )
+        showComposeAnimationLoader()
     }
 
     private fun hideLoadingFragment() {
-        loadingDialogFragment?.dismissAllowingStateLoss()
-        loadingDialogFragment = null
+        hideComposeAnimationLoader()
     }
 
-    private fun navToImportRekeyedAccount(accountCreation: AccountCreation, rekeyedAccountAddresses: List<String>) {
+    private fun navToImportRekeyedAccount(
+        accountCreation: AccountCreation,
+        rekeyedAccountAddresses: List<String>
+    ) {
         nav(
             RecoverWithPassphraseFragmentDirections
                 .actionRecoverWithPassphraseFragmentToRekeyedAccountSelectionFragment(

@@ -25,7 +25,7 @@ import com.algorand.android.LoginNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraIconBig
+import com.algorand.android.ui.compose.widget.PeraIcon
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraSecondaryButton
 import com.algorand.android.ui.compose.widget.PeraHeadelineText
@@ -40,7 +40,7 @@ class VerifyLedgerInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Icon(modifier: Modifier) =
-        PeraIconBig(
+        PeraIcon(
             painter = painterResource(id = R.drawable.ic_check),
             contentDescription = "check",
             modifier = modifier

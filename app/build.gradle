@@ -263,6 +263,7 @@ dependencies {
 
     implementation libs.room.runtime
     implementation libs.room.ktx
+    debugImplementation libs.androidx.ui.tooling
     ksp libs.room.compiler
 
     implementation libs.navigation.fragment.ktx
@@ -296,6 +297,7 @@ dependencies {
     ksp libs.glide.compiler
 
     implementation libs.lottie
+    implementation libs.lottie.compose
 
     implementation libs.retrofit
     implementation libs.converter.gson

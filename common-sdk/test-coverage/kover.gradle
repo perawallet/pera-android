@@ -1,0 +1,13 @@
+apply plugin: 'org.jetbrains.kotlinx.kover'
+apply from: './test-coverage/excludes.gradle'
+
+kover {
+    reports {
+        filters {
+            excludes {
+                classes(excludedClasses)
+                packages(excludedPackages)
+            }
+        }
+    }
+}

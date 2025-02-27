@@ -31,7 +31,6 @@ import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
 import com.algorand.wallet.asset.data.database.model.CollectibleTraitEntity
 import com.algorand.wallet.foundation.database.converters.BigDecimalTypeConverter
 import com.algorand.wallet.foundation.database.converters.BigIntegerTypeConverter
-import com.algorand.wallet.foundation.database.converters.CollectibleMediaTypeExtensionTypeConverter
 import com.algorand.wallet.foundation.database.converters.CollectibleMediaTypeTypeConverter
 import com.algorand.wallet.foundation.database.converters.CollectibleStandardTypeTypeConverter
 import com.algorand.wallet.foundation.database.converters.VerificationTierTypeConverter
@@ -41,8 +40,7 @@ import com.algorand.wallet.foundation.database.converters.VerificationTierTypeCo
     BigDecimalTypeConverter::class,
     CollectibleMediaTypeTypeConverter::class,
     CollectibleStandardTypeTypeConverter::class,
-    VerificationTierTypeConverter::class,
-    CollectibleMediaTypeExtensionTypeConverter::class
+    VerificationTierTypeConverter::class
 )
 @Database(
     entities = [

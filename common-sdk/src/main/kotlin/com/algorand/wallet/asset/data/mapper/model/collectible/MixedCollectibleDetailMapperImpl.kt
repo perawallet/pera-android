@@ -12,6 +12,11 @@
 
 package com.algorand.wallet.asset.data.mapper.model.collectible
 
+import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleMediaTypeEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleTraitEntity
 import com.algorand.wallet.asset.data.mapper.model.AssetInfoMapper
 import com.algorand.wallet.asset.data.mapper.model.CollectibleInfoMapper
 import com.algorand.wallet.asset.data.mapper.model.VerificationTierMapper
@@ -22,12 +27,11 @@ import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaTypeResp
 import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaTypeResponse.VIDEO
 import com.algorand.wallet.asset.data.model.collectible.CollectibleResponse
 import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia
+import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia.AudioCollectibleMedia
+import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia.ImageCollectibleMedia
+import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia.UnsupportedCollectibleMedia
+import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia.VideoCollectibleMedia
 import com.algorand.wallet.asset.domain.model.MixedCollectibleDetail
-import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
-import com.algorand.wallet.asset.data.database.model.CollectibleEntity
-import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
-import com.algorand.wallet.asset.data.database.model.CollectibleMediaTypeEntity
-import com.algorand.wallet.asset.data.database.model.CollectibleTraitEntity
 import javax.inject.Inject
 
 internal class MixedCollectibleDetailMapperImpl @Inject constructor(
@@ -70,19 +74,19 @@ internal class MixedCollectibleDetailMapperImpl @Inject constructor(
 
     private fun CollectibleMediaResponse.mapToCollectibleMedia(): BaseCollectibleMedia {
         return when (mediaType) {
-            IMAGE -> BaseCollectibleMedia.ImageCollectibleMedia(downloadUrl, previewUrl)
-            VIDEO -> BaseCollectibleMedia.VideoCollectibleMedia(downloadUrl, previewUrl)
-            AUDIO -> BaseCollectibleMedia.AudioCollectibleMedia(downloadUrl, previewUrl)
-            else -> BaseCollectibleMedia.UnsupportedCollectibleMedia(downloadUrl, previewUrl)
+            IMAGE -> ImageCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+            VIDEO -> VideoCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+            AUDIO -> AudioCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+            else -> UnsupportedCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
         }
     }
 
     private fun CollectibleMediaEntity.mapToCollectibleMedia(): BaseCollectibleMedia {
         return when (mediaType) {
-            CollectibleMediaTypeEntity.IMAGE -> BaseCollectibleMedia.ImageCollectibleMedia(downloadUrl, previewUrl)
-            CollectibleMediaTypeEntity.VIDEO -> BaseCollectibleMedia.VideoCollectibleMedia(downloadUrl, previewUrl)
-            CollectibleMediaTypeEntity.AUDIO -> BaseCollectibleMedia.AudioCollectibleMedia(downloadUrl, previewUrl)
-            else -> BaseCollectibleMedia.UnsupportedCollectibleMedia(downloadUrl, previewUrl)
+            CollectibleMediaTypeEntity.IMAGE -> ImageCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+            CollectibleMediaTypeEntity.VIDEO -> VideoCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+            CollectibleMediaTypeEntity.AUDIO -> AudioCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+            else -> UnsupportedCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
         }
     }
 }

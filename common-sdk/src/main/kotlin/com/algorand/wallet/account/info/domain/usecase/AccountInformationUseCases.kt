@@ -70,8 +70,9 @@ fun interface IsThereAnyCachedSuccessAccount {
     suspend operator fun invoke(excludeNoAuthAccounts: Boolean): Boolean
 }
 
-fun interface IsAssetOwnedByAccount {
+interface IsAssetOwnedByAccount {
     suspend operator fun invoke(address: String, assetId: Long): Boolean
+    suspend operator fun invoke(accountInfo: AccountInformation, assetId: Long): Boolean
 }
 
 fun interface DeleteAccountInformation {

@@ -76,7 +76,6 @@ peraCompactDecimalFormat = "1.0.1"
 peraWalletConnect = "1.0.1"
 retrofit = "2.11.0"
 review = "2.0.2"
-roboelectric = "4.14.1"
 room = "2.7.0-alpha07"
 sqlite = "2.5.0-alpha11"
 runner = "1.6.2"
@@ -208,8 +207,6 @@ ktlint = { module = "com.pinterest:ktlint", version.ref = "ktlint" }
 mockito = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
-robolectric = { group = "org.robolectric", name="robolectric", version.ref = "roboelectric" }
-
 runner = { module = "androidx.test:runner", version.ref = "runner" }
 
 # Android / Google Libraries

@@ -59,7 +59,6 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.mockito)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.robolectric)
     testImplementation(project(":test-utils"))
 
     androidTestImplementation(libs.espresso.core)

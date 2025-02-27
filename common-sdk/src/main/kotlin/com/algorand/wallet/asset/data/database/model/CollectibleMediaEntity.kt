@@ -36,7 +36,7 @@ internal data class CollectibleMediaEntity(
     val previewUrl: String?,
 
     @ColumnInfo("media_type_extension")
-    val mediaTypeExtension: CollectibleMediaTypeExtensionEntity
+    val mediaTypeExtension: String?
 ) {
 
     internal companion object {

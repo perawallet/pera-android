@@ -12,9 +12,9 @@
 
 package com.algorand.wallet.asset.data.mapper.model
 
-import com.algorand.wallet.asset.data.model.NodeAssetDetailResponse
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
 import com.algorand.wallet.asset.data.model.AssetResponse
+import com.algorand.wallet.asset.data.model.NodeAssetDetailResponse
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.AssetCreator
 import javax.inject.Inject
@@ -188,15 +188,15 @@ internal class AssetInfoMapperImpl @Inject constructor() : AssetInfoMapper {
 
     private fun AssetResponse.mapToSupply(): Asset.Supply {
         return Asset.Supply(
-            total = totalSupply,
-            max = maxSupply
+            total = totalSupply?.toBigDecimalOrNull(),
+            max = maxSupply?.toBigDecimalOrNull()
         )
     }
 
     private fun AssetDetailEntity.mapToSupply(): Asset.Supply {
         return Asset.Supply(
-            total = totalSupply,
-            max = maxSupply
+            total = totalSupply?.toBigDecimalOrNull(),
+            max = maxSupply?.toBigDecimalOrNull()
         )
     }
 }

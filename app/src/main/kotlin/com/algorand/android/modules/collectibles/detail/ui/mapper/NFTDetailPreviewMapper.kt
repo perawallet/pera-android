@@ -46,7 +46,6 @@ class NFTDetailPreviewMapper @Inject constructor(
     ): NFTDetailPreview {
         val mediaList = mapToMediaList(collectibleDetail)
         return NFTDetailPreview(
-            isLoadingVisible = false,
             nftName = nftName,
             collectionNameOfNFT = collectibleDetail.collectionName,
             optedInAccountTypeDrawableResId = optedInAccountTypeDrawableResId,

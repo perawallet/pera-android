@@ -19,7 +19,6 @@ import com.algorand.android.modules.collectibles.detail.base.ui.model.Collectibl
 import com.algorand.android.utils.Event
 
 data class NFTDetailPreview(
-    val isLoadingVisible: Boolean,
     val nftName: AssetName,
     val collectionNameOfNFT: String?,
     val optedInAccountTypeDrawableResId: Int,

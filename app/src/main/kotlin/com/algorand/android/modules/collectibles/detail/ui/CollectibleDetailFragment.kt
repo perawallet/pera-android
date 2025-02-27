@@ -52,18 +52,22 @@ class CollectibleDetailFragment : BaseCollectibleDetailFragment() {
 
     override fun initObservers() {
         viewLifecycleOwner.collectLatestOnLifecycle(
-            baseCollectibleDetailViewModel.nftDetailPreviewFlow,
+            baseCollectibleDetailViewModel.state,
             collectibleDetailPreviewCollector
         )
     }
 
-    private val collectibleDetailPreviewCollector: suspend (value: NFTDetailPreview?) -> Unit = { preview ->
-        if (preview != null) initCollectibleDetailPreview(preview)
+    private val collectibleDetailPreviewCollector: suspend (CollectibleDetailViewModel.ViewState?) -> Unit = { state ->
+        when (state) {
+            is CollectibleDetailViewModel.ViewState.Content -> initCollectibleDetailPreview(state.preview)
+            CollectibleDetailViewModel.ViewState.Loading -> setProgressBarVisibility(true)
+            null -> Unit
+        }
     }
 
     private fun initCollectibleDetailPreview(nftDetailPreview: NFTDetailPreview) {
         with(nftDetailPreview) {
-            setProgressBarVisibility(isLoadingVisible)
+            setProgressBarVisibility(false)
             setCollectibleMedias(mediaListOfNFT)
             setPrimaryWarningText(primaryWarningResId)
             setSecondaryWarningText(secondaryWarningResId)

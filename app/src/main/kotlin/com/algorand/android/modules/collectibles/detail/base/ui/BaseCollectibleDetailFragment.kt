@@ -171,9 +171,11 @@ abstract class BaseCollectibleDetailFragment : BaseFragment(R.layout.fragment_co
     }
 
     protected fun setNFTDescription(collectibleDescription: String?) {
+        val isDescriptionVisible = !collectibleDescription.isNullOrBlank()
         with(binding) {
+            collectibleDescriptionLabelTextView.isVisible = isDescriptionVisible
             with(collectibleDescriptionTextView) {
-                isVisible = !collectibleDescription.isNullOrBlank()
+                isVisible = isDescriptionVisible
                 text = collectibleDescription
                 post {
                     maxLines = nftDescriptionDefaultLineCount.takeIf { lineCount > it } ?: Int.MAX_VALUE

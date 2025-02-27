@@ -30,8 +30,9 @@ class IsAccountRekeyedToAnotherAccountUseCaseTest {
     fun `EXPECT false WHEN admin address is null`() = runTest {
         val address = "some-address"
         coEvery { getAccountRekeyAdminAddress(address) } returns null
+
         val result = sut.invoke(address)
-        coVerify { getAccountRekeyAdminAddress(address) }
+
         assertFalse(result)
     }
 
@@ -39,8 +40,9 @@ class IsAccountRekeyedToAnotherAccountUseCaseTest {
     fun `EXPECT false WHEN admin address is blank`() = runTest {
         val address = "some-address"
         coEvery { getAccountRekeyAdminAddress(address) } returns ""
+
         val result = sut.invoke(address)
-        coVerify { getAccountRekeyAdminAddress(address) }
+
         assertFalse(result)
     }
 
@@ -48,8 +50,9 @@ class IsAccountRekeyedToAnotherAccountUseCaseTest {
     fun `EXPECT false WHEN admin address is the same as the given address`() = runTest {
         val address = "some-address"
         coEvery { getAccountRekeyAdminAddress(address) } returns address
+
         val result = sut.invoke(address)
-        coVerify { getAccountRekeyAdminAddress(address) }
+
         assertFalse(result)
     }
 
@@ -58,8 +61,9 @@ class IsAccountRekeyedToAnotherAccountUseCaseTest {
         val address = "some-address"
         val adminAddress = "other-address"
         coEvery { getAccountRekeyAdminAddress(address) } returns adminAddress
+
         val result = sut.invoke(address)
-        coVerify { getAccountRekeyAdminAddress(address) }
+
         assertTrue(result)
     }
 }

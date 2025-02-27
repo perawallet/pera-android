@@ -13,10 +13,6 @@
 package com.algorand.android.decider
 
 import com.algorand.android.assetsearch.domain.model.BaseSearchedAsset
-import com.algorand.android.models.AssetDetail
-import com.algorand.android.models.BaseAssetDetail
-import com.algorand.android.models.SimpleCollectibleDetail
-import com.algorand.android.nft.domain.model.BaseCollectibleDetail
 import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
@@ -101,41 +97,6 @@ class AssetDrawableProviderDecider @Inject constructor(
             else -> AssetDrawableProvider(
                 assetName = AssetName.create(searchedAsset.fullName),
                 logoUri = searchedAsset.logo
-            )
-        }
-    }
-
-    /**
-     * Since we are caching base asset detail of opened asset in asa profile screen in somewhere else, we should check
-     * by [BaseAssetDetail] if it's ASA or NFT in ASA profile screens
-     */
-    fun getAssetDrawableProvider(baseAssetDetail: BaseAssetDetail): BaseAssetDrawableProvider {
-        return when {
-            baseAssetDetail.assetId == AssetConstants.ALGO_ID -> {
-                // This is unnecessary check but to keep consistency, I added this check, too
-                AlgoDrawableProvider()
-            }
-            baseAssetDetail is AssetDetail -> {
-                AssetDrawableProvider(
-                    assetName = AssetName.create(baseAssetDetail.fullName),
-                    logoUri = baseAssetDetail.logoUri
-                )
-            }
-            baseAssetDetail is SimpleCollectibleDetail -> {
-                CollectibleDrawableProvider(
-                    assetName = AssetName.create(baseAssetDetail.fullName),
-                    logoUri = baseAssetDetail.collectible?.primaryImageUrl
-                )
-            }
-            baseAssetDetail is BaseCollectibleDetail -> {
-                CollectibleDrawableProvider(
-                    assetName = AssetName.create(baseAssetDetail.fullName),
-                    logoUri = baseAssetDetail.prismUrl
-                )
-            }
-            else -> AssetDrawableProvider(
-                assetName = AssetName.create(baseAssetDetail.fullName),
-                logoUri = baseAssetDetail.logoUri
             )
         }
     }

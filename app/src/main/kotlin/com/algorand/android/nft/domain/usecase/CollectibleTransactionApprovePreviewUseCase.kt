@@ -14,20 +14,20 @@ package com.algorand.android.nft.domain.usecase
 
 import com.algorand.android.models.Account
 import com.algorand.android.nft.mapper.CollectibleTransactionApprovePreviewMapper
-import com.algorand.android.nft.utils.CollectibleUtils
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.AccountNameIconUseCase
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
 class CollectibleTransactionApprovePreviewUseCase @Inject constructor(
     private val collectibleTransactionApprovePreviewMapper: CollectibleTransactionApprovePreviewMapper,
     private val accountNameIconUseCase: AccountNameIconUseCase,
-    private val collectibleUtils: CollectibleUtils,
     private val accountDetailUseCase: AccountDetailUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase
+    private val simpleCollectibleUseCase: SimpleCollectibleUseCase,
+    private val isAssetOwnedByAccount: IsAssetOwnedByAccount
 ) {
 
     fun getCollectibleTransactionApprovePreviewFlow(
@@ -46,7 +46,7 @@ class CollectibleTransactionApprovePreviewUseCase @Inject constructor(
         )
         val ownerAccountDetail = accountDetailUseCase.getCachedAccountDetail(senderPublicKey)?.data
         val isHoldingByWatchAccount = ownerAccountDetail?.account?.type == Account.Type.WATCH
-        val isOwnedByTheUser = collectibleUtils.isCollectibleOwnedByTheUser(ownerAccountDetail, nftId)
+        val isOwnedByTheUser = isAssetOwnedByAccount(senderPublicKey, nftId)
         val nftDetail = simpleCollectibleUseCase.getCachedCollectibleById(nftId)?.data
         val isOptOutGroupVisible = isOwnedByTheUser &&
             !isHoldingByWatchAccount &&

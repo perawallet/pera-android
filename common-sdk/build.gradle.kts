@@ -7,6 +7,8 @@ plugins {
     id("dagger.hilt.android.plugin")
 }
 
+apply(from = "./test-coverage/kover.gradle")
+
 android {
     namespace = "com.algorand.wallet"
     compileSdk = libs.versions.android.compileSdk.get().toInt()

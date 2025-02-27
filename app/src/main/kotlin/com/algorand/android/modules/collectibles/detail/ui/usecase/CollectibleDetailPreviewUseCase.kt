@@ -24,8 +24,7 @@ import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.asset.domain.usecase.FetchCollectibleDetail
 import javax.inject.Inject
 
-@SuppressWarnings("LongParameterList")
-open class CollectibleDetailPreviewUseCase @Inject constructor(
+class CollectibleDetailPreviewUseCase @Inject constructor(
     private val nftDetailPreviewMapper: NFTDetailPreviewMapper,
     private val fetchCollectibleDetail: FetchCollectibleDetail,
     private val getAssetName: GetAssetName,
@@ -39,7 +38,6 @@ open class CollectibleDetailPreviewUseCase @Inject constructor(
         return preview?.copy(nftSendEvent = Event(Unit))
     }
 
-    @SuppressWarnings("LongMethod")
     suspend fun getCollectibleDetailPreview(nftId: Long, accountAddress: String): NFTDetailPreview? {
         return fetchCollectibleDetail(nftId).map { collectibleDetail ->
             val accountType = getAccountType(accountAddress)
@@ -50,7 +48,6 @@ open class CollectibleDetailPreviewUseCase @Inject constructor(
             nftDetailPreviewMapper.mapToNFTDetailPreview(
                 ownedCollectibleData = ownedCollectibleData,
                 collectibleDetail = collectibleDetail,
-                isLoadingVisible = false,
                 nftName = getAssetName(collectibleDetail.title ?: collectibleDetail.fullName.orEmpty()),
                 optedInAccountTypeDrawableResId = getAccountIconDrawablePreview(accountAddress).iconResId,
                 optedInAccountDisplayName = getAccountDisplayName(accountAddress),
@@ -61,5 +58,4 @@ open class CollectibleDetailPreviewUseCase @Inject constructor(
             )
         }.getDataOrNull()
     }
-
 }

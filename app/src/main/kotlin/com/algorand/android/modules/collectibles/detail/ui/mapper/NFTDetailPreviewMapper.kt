@@ -22,7 +22,6 @@ import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollec
 import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
 import com.algorand.android.modules.collectibles.detail.ui.model.NFTDetailPreview
 import com.algorand.android.modules.collectibles.util.deciders.NFTAmountFormatDecider
-import com.algorand.android.utils.Event
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import javax.inject.Inject
@@ -37,7 +36,6 @@ class NFTDetailPreviewMapper @Inject constructor(
     fun mapToNFTDetailPreview(
         ownedCollectibleData: BaseOwnedCollectibleData?,
         collectibleDetail: CollectibleDetail,
-        isLoadingVisible: Boolean,
         nftName: AssetName,
         optedInAccountTypeDrawableResId: Int,
         optedInAccountDisplayName: AccountDisplayName,
@@ -45,12 +43,10 @@ class NFTDetailPreviewMapper @Inject constructor(
         accountType: AccountType?,
         isOwnerActionsGroupVisible: Boolean,
         isOptOutButtonVisible: Boolean,
-        globalErrorEvent: Event<String>? = null,
-        nftSendEvent: Event<Unit>? = null
     ): NFTDetailPreview {
         val mediaList = mapToMediaList(collectibleDetail)
         return NFTDetailPreview(
-            isLoadingVisible = isLoadingVisible,
+            isLoadingVisible = false,
             nftName = nftName,
             collectionNameOfNFT = collectibleDetail.collectionName,
             optedInAccountTypeDrawableResId = optedInAccountTypeDrawableResId,
@@ -66,8 +62,8 @@ class NFTDetailPreviewMapper @Inject constructor(
             isPureNFT = collectibleDetail.isPure,
             primaryWarningResId = collectibleDetailDecider.decideWarningTextRes(collectibleDetail.prismUrl),
             secondaryWarningResId = getSecondaryWarningResId(ownedCollectibleData, accountType),
-            globalErrorEvent = globalErrorEvent,
-            nftSendEvent = nftSendEvent,
+            globalErrorEvent = null,
+            nftSendEvent = null,
             isOptOutButtonVisible = isOptOutButtonVisible,
             isOwnerActionsGroupVisible = isOwnerActionsGroupVisible,
             isCopyEnabled = isMediaCopiable(mediaList.firstOrNull()?.itemType) && isOwnerActionsGroupVisible,

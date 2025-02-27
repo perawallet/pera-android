@@ -50,8 +50,10 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
         get() = rekeyToLedgerAccountConfirmationPreviewFlow
 
     init {
-        updatePreviewWithCalculatedTransactionFee()
-        getInitialPreview()
+        viewModelScope.launchIO {
+            getInitialPreview()
+            updatePreviewWithCalculatedTransactionFee()
+        }
     }
 
     fun createRekeyToLedgerAccountTransaction() {
@@ -98,24 +100,20 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
         }
     }
 
-    private fun getInitialPreview() {
-        viewModelScope.launchIO {
-            rekeyToLedgerAccountConfirmationPreviewFlow = MutableStateFlow(
-                rekeyToLedgerAccountConfirmationPreviewUseCase.getInitialRekeyToStandardAccountConfirmationPreview(
-                    accountAddress = accountAddress,
-                    authAccountAddress = authAccountAddress
-                )
+    private suspend fun getInitialPreview() {
+        rekeyToLedgerAccountConfirmationPreviewFlow = MutableStateFlow(
+            rekeyToLedgerAccountConfirmationPreviewUseCase.getInitialRekeyToStandardAccountConfirmationPreview(
+                accountAddress = accountAddress,
+                authAccountAddress = authAccountAddress
             )
-        }
+        )
     }
 
-    private fun updatePreviewWithCalculatedTransactionFee() {
-        viewModelScope.launchIO {
-            rekeyToLedgerAccountConfirmationPreviewUseCase.updatePreviewWithTransactionFee(
-                preview = rekeyToLedgerAccountConfirmationPreviewFlow.value
-            ).collectLatest { preview ->
-                rekeyToLedgerAccountConfirmationPreviewFlow.emit(preview)
-            }
+    private suspend fun updatePreviewWithCalculatedTransactionFee() {
+        rekeyToLedgerAccountConfirmationPreviewUseCase.updatePreviewWithTransactionFee(
+            preview = rekeyToLedgerAccountConfirmationPreviewFlow.value
+        ).collectLatest { preview ->
+            rekeyToLedgerAccountConfirmationPreviewFlow.emit(preview)
         }
     }
 }

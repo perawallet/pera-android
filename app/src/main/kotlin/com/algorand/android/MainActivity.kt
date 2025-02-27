@@ -416,7 +416,7 @@ class MainActivity :
             FirebaseTokenResult.TokenFailed -> onNewTokenFailed()
         }
     }
-    
+
     private fun retryLatestAssetAdditionTransaction() {
         assetOperationViewModel.getLatestAddAssetTransaction()?.let { transactionData ->
             sendAssetOperationTransaction(transactionData)

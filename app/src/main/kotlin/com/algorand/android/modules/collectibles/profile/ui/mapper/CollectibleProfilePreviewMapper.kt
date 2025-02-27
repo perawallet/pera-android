@@ -34,7 +34,6 @@ class CollectibleProfilePreviewMapper @Inject constructor(
 
     fun mapToCollectibleProfilePreview(
         collectibleDetail: CollectibleDetail,
-        isLoadingVisible: Boolean,
         asaStatusPreview: AsaStatusPreview?,
         nftName: AssetName,
         creatorAccountAddressOfNFT: AccountDisplayName,
@@ -42,7 +41,6 @@ class CollectibleProfilePreviewMapper @Inject constructor(
         isOptedInByAccount: Boolean
     ): CollectibleProfilePreview {
         return CollectibleProfilePreview(
-            isLoadingVisible = isLoadingVisible,
             nftName = nftName,
             collectionNameOfNFT = collectibleDetail.collectionName,
             mediaListOfNFT = mapToMediaList(collectibleDetail, isOptedInByAccount),

@@ -13,6 +13,7 @@
 package com.algorand.android.decider
 
 import com.algorand.android.assetsearch.domain.model.BaseSearchedAsset
+import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
@@ -122,5 +123,23 @@ class AssetDrawableProviderDecider @Inject constructor(
                 logoUri = asset.logoUri
             )
         }
+    }
+
+    fun getAssetDrawableProvider(
+        collectibleData: BaseAccountAssetData.PendingAssetData.BasePendingCollectibleData
+    ): BaseAssetDrawableProvider {
+        return CollectibleDrawableProvider(
+            assetName = AssetName.create(collectibleData.collectibleName),
+            logoUri = collectibleData.primaryImageUrl
+        )
+    }
+
+    fun getAssetDrawableProvider(
+        collectibleData: BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+    ): BaseAssetDrawableProvider {
+        return CollectibleDrawableProvider(
+            assetName = AssetName.create(collectibleData.collectibleName),
+            logoUri = collectibleData.prismUrl
+        )
     }
 }

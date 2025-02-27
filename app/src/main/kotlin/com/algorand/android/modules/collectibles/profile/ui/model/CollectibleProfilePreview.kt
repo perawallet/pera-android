@@ -19,7 +19,6 @@ import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollec
 import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
 
 data class CollectibleProfilePreview(
-    val isLoadingVisible: Boolean,
     val nftName: AssetName,
     val collectionNameOfNFT: String?,
     val mediaListOfNFT: List<BaseCollectibleMediaItem>,

@@ -79,7 +79,7 @@ class CollectibleListingItemMapper @Inject constructor(
                 formattedCompactAmount = collectible.formattedCompactAmount
             ),
             isAmountVisible = isAmountVisible,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(collectible.id),
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(collectible),
             itemType = baseCollectibleListItemItemTypeDecider.decideSimpleNFTViewType(nftListingViewType),
             nftIndicatorDrawable = nftIndicatorDrawableDecider.decideNFTIndicatorDrawable(
                 isOwned = isOptedIn,
@@ -101,7 +101,7 @@ class CollectibleListingItemMapper @Inject constructor(
             collectionName = collectible.collectionName,
             optedInAccountAddress = optedInAccountAddress,
             optedInAtRound = null,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(collectible.id),
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(collectible),
             itemType = baseCollectibleListItemItemTypeDecider.decideSimplePendingNFTViewType(nftListingViewType)
         )
     }

@@ -65,7 +65,6 @@ class CollectibleProfilePreviewUseCase @Inject constructor(
                 collectibleProfilePreviewMapper.mapToCollectibleProfilePreview(
                     collectibleDetail = nftDetail,
                     isOptedInByAccount = isOptedInByAccount,
-                    isLoadingVisible = false,
                     asaStatusPreview = asaStatusPreview,
                     accountAddress = accountAddress,
                     nftName = getAssetName(nftDetail.title ?: nftDetail.fullName.orEmpty()),

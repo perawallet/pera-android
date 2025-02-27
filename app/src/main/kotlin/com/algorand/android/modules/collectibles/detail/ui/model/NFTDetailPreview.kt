@@ -12,10 +12,10 @@
 
 package com.algorand.android.modules.collectibles.detail.ui.model
 
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
 import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.Event
 
 data class NFTDetailPreview(

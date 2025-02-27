@@ -61,3 +61,7 @@ fun interface GetAccountBaseOwnedAssetData {
 fun interface GetAccountOwnedAssetData {
     suspend operator fun invoke(address: String, assetId: Long): OwnedAssetData?
 }
+
+fun interface GetAccountOwnedCollectibleData {
+    suspend operator fun invoke(address: String, collectibleId: Long): BaseOwnedCollectibleData?
+}

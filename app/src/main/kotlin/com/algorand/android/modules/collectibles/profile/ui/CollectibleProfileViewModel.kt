@@ -47,7 +47,8 @@ class CollectibleProfileViewModel @Inject constructor(
     fun getAssetAction(): AssetAction {
         return collectibleProfilePreviewUseCase.createAssetAction(
             assetId = collectibleId,
-            accountAddress = accountAddress
+            accountAddress = accountAddress,
+            collectibleFullName = collectibleProfilePreviewFlow.value?.nftName?.assetName
         )
     }
 

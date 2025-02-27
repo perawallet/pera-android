@@ -14,8 +14,8 @@ package com.algorand.android.modules.collectibles.detail.base.ui.mapper
 
 import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
-import com.algorand.android.nft.domain.model.BaseCollectibleDetail
-import com.algorand.android.nft.domain.model.BaseCollectibleMedia
+import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia
+import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import javax.inject.Inject
 
 class CollectibleMediaItemMapper @Inject constructor(
@@ -26,29 +26,27 @@ class CollectibleMediaItemMapper @Inject constructor(
     fun mapToCollectibleMediaItem(
         baseCollectibleMedia: BaseCollectibleMedia,
         shouldDecreaseOpacity: Boolean,
-        baseCollectibleDetail: BaseCollectibleDetail,
+        collectibleDetail: CollectibleDetail,
         showMediaButtons: Boolean
     ): BaseCollectibleMediaItem {
         return when (baseCollectibleMedia) {
             is BaseCollectibleMedia.GifCollectibleMedia -> {
                 mapToGifCollectibleMediaItem(
-                    collectibleId = baseCollectibleDetail.assetId,
+                    collectibleId = collectibleDetail.id,
                     shouldDecreaseOpacity = shouldDecreaseOpacity,
                     collectibleMedia = baseCollectibleMedia,
-                    baseCollectibleDetail = baseCollectibleDetail,
+                    collectibleDetail = collectibleDetail,
                     has3dSupport = showMediaButtons,
-                    hasFullScreenSupport = showMediaButtons,
-                    showPlayButton = false
+                    hasFullScreenSupport = showMediaButtons
                 )
             }
 
             is BaseCollectibleMedia.AudioCollectibleMedia -> {
                 mapToAudioCollectibleMediaItem(
-                    collectibleId = baseCollectibleDetail.assetId,
+                    collectibleId = collectibleDetail.id,
                     isOwnedByTheUser = shouldDecreaseOpacity,
                     collectibleMedia = baseCollectibleMedia,
-                    baseCollectibleDetail = baseCollectibleDetail,
-                    has3dSupport = false,
+                    collectibleDetail = collectibleDetail,
                     hasFullScreenSupport = showMediaButtons,
                     showPlayButton = showMediaButtons
                 )
@@ -56,47 +54,39 @@ class CollectibleMediaItemMapper @Inject constructor(
 
             is BaseCollectibleMedia.ImageCollectibleMedia -> {
                 mapToImageCollectibleMediaItem(
-                    collectibleId = baseCollectibleDetail.assetId,
+                    collectibleId = collectibleDetail.id,
                     shouldDecreaseOpacity = shouldDecreaseOpacity,
                     collectibleMedia = baseCollectibleMedia,
-                    baseCollectibleDetail = baseCollectibleDetail,
+                    collectibleDetail = collectibleDetail,
                     has3dSupport = showMediaButtons,
-                    hasFullScreenSupport = showMediaButtons,
-                    showPlayButton = false
+                    hasFullScreenSupport = showMediaButtons
                 )
             }
 
             is BaseCollectibleMedia.NoMediaCollectibleMedia -> {
                 mapToNoMediaCollectibleMediaItem(
-                    collectibleId = baseCollectibleDetail.assetId,
+                    collectibleId = collectibleDetail.id,
                     isOwnedByTheUser = shouldDecreaseOpacity,
                     collectibleMedia = baseCollectibleMedia,
-                    baseCollectibleDetail = baseCollectibleDetail,
-                    has3dSupport = false,
-                    hasFullScreenSupport = false,
-                    showPlayButton = false
+                    collectibleDetail = collectibleDetail
                 )
             }
 
             is BaseCollectibleMedia.UnsupportedCollectibleMedia -> {
                 mapToUnsupportedCollectibleMediaItem(
-                    collectibleId = baseCollectibleDetail.assetId,
+                    collectibleId = collectibleDetail.id,
                     isOwnedByTheUser = shouldDecreaseOpacity,
                     collectibleMedia = baseCollectibleMedia,
-                    baseCollectibleDetail = baseCollectibleDetail,
-                    has3dSupport = false,
-                    hasFullScreenSupport = false,
-                    showPlayButton = false
+                    collectibleDetail = collectibleDetail
                 )
             }
 
             is BaseCollectibleMedia.VideoCollectibleMedia -> {
                 mapToVideoCollectibleMediaItem(
-                    collectibleId = baseCollectibleDetail.assetId,
+                    collectibleId = collectibleDetail.id,
                     isOwnedByTheUser = shouldDecreaseOpacity,
                     collectibleMedia = baseCollectibleMedia,
-                    baseCollectibleDetail = baseCollectibleDetail,
-                    has3dSupport = false,
+                    collectibleDetail = collectibleDetail,
                     hasFullScreenSupport = showMediaButtons,
                     showPlayButton = showMediaButtons
                 )
@@ -108,10 +98,9 @@ class CollectibleMediaItemMapper @Inject constructor(
         collectibleId: Long,
         shouldDecreaseOpacity: Boolean,
         collectibleMedia: BaseCollectibleMedia,
-        baseCollectibleDetail: BaseCollectibleDetail,
+        collectibleDetail: CollectibleDetail,
         has3dSupport: Boolean,
         hasFullScreenSupport: Boolean,
-        showPlayButton: Boolean
     ): BaseCollectibleMediaItem.ImageCollectibleMediaItem {
         return BaseCollectibleMediaItem.ImageCollectibleMediaItem(
             downloadUrl = collectibleMedia.downloadUrl,
@@ -119,10 +108,10 @@ class CollectibleMediaItemMapper @Inject constructor(
             mediaExtension = collectibleMedia.mediaExtension,
             collectibleId = collectibleId,
             shouldDecreaseOpacity = shouldDecreaseOpacity,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(baseCollectibleDetail),
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(collectibleDetail),
             has3dSupport = has3dSupport,
             hasFullScreenSupport = hasFullScreenSupport,
-            showPlayButton = showPlayButton
+            showPlayButton = false
         )
     }
 
@@ -130,10 +119,9 @@ class CollectibleMediaItemMapper @Inject constructor(
         collectibleId: Long,
         shouldDecreaseOpacity: Boolean,
         collectibleMedia: BaseCollectibleMedia,
-        baseCollectibleDetail: BaseCollectibleDetail,
+        collectibleDetail: CollectibleDetail,
         has3dSupport: Boolean,
         hasFullScreenSupport: Boolean,
-        showPlayButton: Boolean
     ): BaseCollectibleMediaItem.GifCollectibleMediaItem {
         return BaseCollectibleMediaItem.GifCollectibleMediaItem(
             downloadUrl = collectibleMedia.downloadUrl,
@@ -141,10 +129,10 @@ class CollectibleMediaItemMapper @Inject constructor(
             mediaExtension = collectibleMedia.mediaExtension,
             collectibleId = collectibleId,
             shouldDecreaseOpacity = shouldDecreaseOpacity,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(baseCollectibleDetail),
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(collectibleDetail),
             has3dSupport = has3dSupport,
             hasFullScreenSupport = hasFullScreenSupport,
-            showPlayButton = showPlayButton
+            showPlayButton = false
         )
     }
 
@@ -152,8 +140,7 @@ class CollectibleMediaItemMapper @Inject constructor(
         collectibleId: Long,
         isOwnedByTheUser: Boolean,
         collectibleMedia: BaseCollectibleMedia,
-        baseCollectibleDetail: BaseCollectibleDetail,
-        has3dSupport: Boolean,
+        collectibleDetail: CollectibleDetail,
         hasFullScreenSupport: Boolean,
         showPlayButton: Boolean
     ): BaseCollectibleMediaItem.VideoCollectibleMediaItem {
@@ -163,8 +150,8 @@ class CollectibleMediaItemMapper @Inject constructor(
             mediaExtension = collectibleMedia.mediaExtension,
             collectibleId = collectibleId,
             shouldDecreaseOpacity = isOwnedByTheUser,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(baseCollectibleDetail),
-            has3dSupport = has3dSupport,
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(collectibleDetail),
+            has3dSupport = false,
             hasFullScreenSupport = hasFullScreenSupport,
             showPlayButton = showPlayButton
         )
@@ -174,8 +161,7 @@ class CollectibleMediaItemMapper @Inject constructor(
         collectibleId: Long,
         isOwnedByTheUser: Boolean,
         collectibleMedia: BaseCollectibleMedia,
-        baseCollectibleDetail: BaseCollectibleDetail,
-        has3dSupport: Boolean,
+        collectibleDetail: CollectibleDetail,
         hasFullScreenSupport: Boolean,
         showPlayButton: Boolean
     ): BaseCollectibleMediaItem.AudioCollectibleMediaItem {
@@ -185,8 +171,8 @@ class CollectibleMediaItemMapper @Inject constructor(
             mediaExtension = collectibleMedia.mediaExtension,
             collectibleId = collectibleId,
             shouldDecreaseOpacity = isOwnedByTheUser,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(baseCollectibleDetail),
-            has3dSupport = has3dSupport,
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(collectibleDetail),
+            has3dSupport = false,
             hasFullScreenSupport = hasFullScreenSupport,
             showPlayButton = showPlayButton
         )
@@ -196,10 +182,7 @@ class CollectibleMediaItemMapper @Inject constructor(
         collectibleId: Long,
         isOwnedByTheUser: Boolean,
         collectibleMedia: BaseCollectibleMedia,
-        baseCollectibleDetail: BaseCollectibleDetail,
-        has3dSupport: Boolean,
-        hasFullScreenSupport: Boolean,
-        showPlayButton: Boolean
+        collectibleDetail: CollectibleDetail
     ): BaseCollectibleMediaItem.UnsupportedCollectibleMediaItem {
         return BaseCollectibleMediaItem.UnsupportedCollectibleMediaItem(
             downloadUrl = collectibleMedia.downloadUrl,
@@ -207,10 +190,10 @@ class CollectibleMediaItemMapper @Inject constructor(
             mediaExtension = collectibleMedia.mediaExtension,
             collectibleId = collectibleId,
             shouldDecreaseOpacity = isOwnedByTheUser,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(baseCollectibleDetail),
-            has3dSupport = has3dSupport,
-            hasFullScreenSupport = hasFullScreenSupport,
-            showPlayButton = showPlayButton
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(collectibleDetail),
+            has3dSupport = false,
+            hasFullScreenSupport = false,
+            showPlayButton = false
         )
     }
 
@@ -218,10 +201,7 @@ class CollectibleMediaItemMapper @Inject constructor(
         collectibleId: Long,
         isOwnedByTheUser: Boolean,
         collectibleMedia: BaseCollectibleMedia,
-        baseCollectibleDetail: BaseCollectibleDetail,
-        has3dSupport: Boolean,
-        hasFullScreenSupport: Boolean,
-        showPlayButton: Boolean
+        collectibleDetail: CollectibleDetail
     ): BaseCollectibleMediaItem.NoMediaCollectibleMediaItem {
         return BaseCollectibleMediaItem.NoMediaCollectibleMediaItem(
             downloadUrl = collectibleMedia.downloadUrl,
@@ -229,10 +209,10 @@ class CollectibleMediaItemMapper @Inject constructor(
             mediaExtension = collectibleMedia.mediaExtension,
             collectibleId = collectibleId,
             shouldDecreaseOpacity = isOwnedByTheUser,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(baseCollectibleDetail),
-            has3dSupport = has3dSupport,
-            hasFullScreenSupport = hasFullScreenSupport,
-            showPlayButton = showPlayButton
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(collectibleDetail),
+            has3dSupport = false,
+            hasFullScreenSupport = false,
+            showPlayButton = false
         )
     }
 }

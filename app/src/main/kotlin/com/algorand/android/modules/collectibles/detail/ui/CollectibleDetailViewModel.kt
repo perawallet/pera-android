@@ -70,7 +70,7 @@ class CollectibleDetailViewModel @Inject constructor(
         getMediaByIndex(mediaIndex)?.let { mediaItem ->
             mediaItem.downloadUrl?.let { downloadUrl ->
                 val collectibleId = mediaItem.collectibleId.toString()
-                val mediaExtension = mediaItem.mediaExtension
+                val mediaExtension = mediaItem.mediaExtension.orEmpty()
                 val fileName = "$collectibleId$mediaExtension"
                 downloadFileUseCase.execute(downloadUrl, fileName)
             }

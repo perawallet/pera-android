@@ -85,7 +85,6 @@ import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.showWithStateCheck
 import com.algorand.android.utils.walletconnect.WalletConnectUrlHandler
 import com.algorand.android.utils.walletconnect.WalletConnectViewModel
-import com.algorand.wallet.InstallReferrerHelper
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
@@ -492,7 +491,7 @@ class MainActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
-        InstallReferrerHelper.fetchInstallReferrer(this)
+        mainViewModel.fetchInstallReferrer()
         mainViewModel.setDeepLinkHandlerListener(deepLinkHandlerListener)
         autoLockManager.setListener(autoLockManagerListener)
         setupCoreActionsTabBarView()

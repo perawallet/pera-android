@@ -14,19 +14,30 @@ package com.algorand.android.modules.tracking.core
 
 import android.os.Bundle
 import com.algorand.android.utils.recordException
+import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
+import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_CAMPAIGN
+import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_CONTENT
+import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_MEDIUM
+import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_SOURCE
+import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_TERM
 import com.google.firebase.analytics.FirebaseAnalytics
+import javax.inject.Inject
 
-class FirebaseEventTracker(
-    private val firebaseAnalytics: FirebaseAnalytics
+class FirebaseEventTracker @Inject constructor (
+    private val firebaseAnalytics: FirebaseAnalytics,
+    private val referrerRepository: ReferrerRepository
 ) : PeraEventTracker {
 
     override suspend fun logEvent(eventName: String) {
-        firebaseAnalytics.logEvent(eventName, null)
+        val bundle = Bundle()
+        val referralBundle = addReferralDataToBundle(bundle) // Add referral data
+        firebaseAnalytics.logEvent(eventName, referralBundle.takeIf { referralBundle.size() > 0 })
     }
 
     override suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>) {
         val payloadBundle = getPayloadBundle(payloadMap)
-        firebaseAnalytics.logEvent(eventName, payloadBundle)
+        val combinedBundle = addReferralDataToBundle(payloadBundle) // Merge referral data
+        firebaseAnalytics.logEvent(eventName, combinedBundle.takeIf { combinedBundle.size() > 0 })
     }
 
     private fun getPayloadBundle(payloadMap: Map<String, Any>): Bundle {
@@ -58,6 +69,18 @@ class FirebaseEventTracker(
                 }
             }
         }
+    }
+
+    suspend fun addReferralDataToBundle(bundle: Bundle): Bundle {
+        val referralData = referrerRepository.getReferrerData()
+        referralData.let {
+            it.utmSource?.let { source -> bundle.putString(UTM_SOURCE, source) }
+            it.utmMedium?.let { medium -> bundle.putString(UTM_MEDIUM, medium) }
+            it.utmCampaign?.let { campaign -> bundle.putString(UTM_CAMPAIGN, campaign) }
+            it.utmTerm?.let { term -> bundle.putString(UTM_TERM, term) }
+            it.utmContent?.let { content -> bundle.putString(UTM_CONTENT, content) }
+        }
+        return bundle
     }
 
     private fun recordIllegalArgumentException(value: Any) {

@@ -10,11 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.tracking.core
+package com.algorand.wallet.analytics.di
 
 import android.content.Context
+import com.algorand.wallet.analytics.data.InstallReferrerApiClient
+import com.algorand.wallet.analytics.data.ReferrerManagerImpl
+import com.algorand.wallet.analytics.data.repository.ReferrerRepositoryImpl
+import com.algorand.wallet.analytics.domain.ReferrerManager
 import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
-import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,20 +27,19 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object TrackingModule {
+internal object AnalyticsModule {
 
-    @Singleton
     @Provides
-    fun providePeraEventTracker(
-        firebaseAnalytics: FirebaseAnalytics,
-        referrerRepository: ReferrerRepository
-    ): PeraEventTracker {
-        return FirebaseEventTracker(firebaseAnalytics, referrerRepository)
-    }
+    @Singleton
+    fun provideReferrerManager(impl: ReferrerManagerImpl): ReferrerManager = impl
 
-    @Singleton
     @Provides
-    fun provideFirebaseAnalytics(@ApplicationContext appContext: Context): FirebaseAnalytics {
-        return FirebaseAnalytics.getInstance(appContext)
+    @Singleton
+    fun provideReferrerRepository(impl: ReferrerRepositoryImpl): ReferrerRepository = impl
+
+    @Provides
+    @Singleton
+    fun provideContext(@ApplicationContext context: Context): InstallReferrerApiClient {
+        return InstallReferrerApiClient(context)
     }
 }

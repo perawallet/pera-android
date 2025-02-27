@@ -12,14 +12,16 @@
 
 package com.algorand.android.dependencyinjection
 
+import com.algorand.android.modules.tracking.core.FirebaseEventTracker
 import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.utils.walletconnect.WalletConnectEventLogger
 import com.algorand.android.utils.walletconnect.WalletConnectFirebaseEventLogger
-import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -27,9 +29,10 @@ object WalletConnectModule {
 
     @Provides
     fun provideWalletConnectEventLogger(
-        firebaseAnalytics: FirebaseAnalytics,
-        algodInterceptor: AlgodInterceptor
+        firebaseEventTracker: FirebaseEventTracker,
+        algodInterceptor: AlgodInterceptor,
+        coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
     ): WalletConnectEventLogger {
-        return WalletConnectFirebaseEventLogger(firebaseAnalytics, algodInterceptor)
+        return WalletConnectFirebaseEventLogger(algodInterceptor, firebaseEventTracker, coroutineDispatcher)
     }
 }

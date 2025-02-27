@@ -12,21 +12,27 @@
 
 package com.algorand.android.utils.walletconnect
 
+import android.os.Bundle
 import androidx.core.os.bundleOf
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
+import com.algorand.android.modules.tracking.core.FirebaseEventTracker
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
 import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.utils.MAINNET_NETWORK_SLUG
-import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * This class will be provided by hilt - AppModule.kt
  */
 class WalletConnectFirebaseEventLogger(
-    private val firebaseAnalytics: FirebaseAnalytics,
-    private val algodInterceptor: AlgodInterceptor
+    private val algodInterceptor: AlgodInterceptor,
+    private val firebaseEventTracker: FirebaseEventTracker,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WalletConnectEventLogger {
 
     private val isCurrentNetworkMainNet: Boolean
@@ -41,7 +47,9 @@ class WalletConnectFirebaseEventLogger(
                 DAPP_URL_PARAM to session.peerMeta.url
             )
         }
-        firebaseAnalytics.logEvent(REQUEST_TRANSACTION_CONFIRMATION_EVENT_KEY, bundle)
+        CoroutineScope(coroutineDispatcher).launch {
+            firebaseEventTracker.logEvent(REQUEST_TRANSACTION_CONFIRMATION_EVENT_KEY, bundleToMap(bundle))
+        }
     }
 
     override fun logTransactionRequestRejection(transaction: WalletConnectTransaction) {
@@ -54,7 +62,9 @@ class WalletConnectFirebaseEventLogger(
                 TRANSACTION_COUNT_PARAM to getTransactionCount()
             )
         }
-        firebaseAnalytics.logEvent(REQUEST_TRANSACTION_REJECTION_EVENT_KEY, bundle)
+        CoroutineScope(coroutineDispatcher).launch {
+            firebaseEventTracker.logEvent(REQUEST_TRANSACTION_REJECTION_EVENT_KEY, bundleToMap(bundle))
+        }
     }
 
     override fun logArbitraryDataRequestConfirmation(arbitraryData: WalletConnectArbitraryDataRequest) {
@@ -65,7 +75,9 @@ class WalletConnectFirebaseEventLogger(
                 DAPP_URL_PARAM to session.peerMeta.url
             )
         }
-        firebaseAnalytics.logEvent(REQUEST_ARBITRARY_DATA_CONFIRMATION_EVENT_KEY, bundle)
+        CoroutineScope(coroutineDispatcher).launch {
+            firebaseEventTracker.logEvent(REQUEST_ARBITRARY_DATA_CONFIRMATION_EVENT_KEY, bundleToMap(bundle))
+        }
     }
 
     override fun logArbitraryDataRequestRejection(arbitraryData: WalletConnectArbitraryDataRequest) {
@@ -78,7 +90,9 @@ class WalletConnectFirebaseEventLogger(
                 TRANSACTION_COUNT_PARAM to getArbitraryDataCount()
             )
         }
-        firebaseAnalytics.logEvent(REQUEST_ARBITRARY_DATA_REJECTION_EVENT_KEY, bundle)
+        CoroutineScope(coroutineDispatcher).launch {
+            firebaseEventTracker.logEvent(REQUEST_ARBITRARY_DATA_REJECTION_EVENT_KEY, bundleToMap(bundle))
+        }
     }
 
     override fun logSessionConfirmation(
@@ -95,7 +109,9 @@ class WalletConnectFirebaseEventLogger(
                 TOTAL_ACCOUNT_ACCOUNT_PARAM to connectedAccountAddresses.count()
             )
         }
-        firebaseAnalytics.logEvent(SESSION_CONFIRMATION_EVENT_KEY, bundle)
+        CoroutineScope(coroutineDispatcher).launch {
+            firebaseEventTracker.logEvent(SESSION_CONFIRMATION_EVENT_KEY, bundleToMap(bundle))
+        }
     }
 
     override fun logSessionDisconnection(session: WalletConnect.SessionDetail) {
@@ -109,7 +125,9 @@ class WalletConnectFirebaseEventLogger(
                 }.toAccountAddressesString()
             )
         }
-        firebaseAnalytics.logEvent(SESSION_DISCONNECTION_EVENT_KEY, bundle)
+        CoroutineScope(coroutineDispatcher).launch {
+            firebaseEventTracker.logEvent(SESSION_DISCONNECTION_EVENT_KEY, bundleToMap(bundle))
+        }
     }
 
     override fun logSessionRejection(sessionProposal: WalletConnectSessionProposal) {
@@ -119,7 +137,20 @@ class WalletConnectFirebaseEventLogger(
             DAPP_URL_PARAM to sessionProposal.peerMeta.url,
             SESSION_TOPIC_PARAM to sessionProposal.proposalIdentifier.proposalIdentifier
         )
-        firebaseAnalytics.logEvent(SESSION_REJECTION_EVENT_KEY, bundle)
+        CoroutineScope(coroutineDispatcher).launch {
+            firebaseEventTracker.logEvent(SESSION_REJECTION_EVENT_KEY, bundleToMap(bundle))
+        }
+    }
+
+    private fun bundleToMap(bundle: Bundle): Map<String, Any> {
+        val map = mutableMapOf<String, Any>()
+        for (key in bundle.keySet()) {
+            val value = bundle.get(key)
+            if (value != null) {
+                map[key] = value
+            }
+        }
+        return map
     }
 
     /**

@@ -50,7 +50,10 @@ import com.algorand.android.utils.exceptions.TransactionConfirmationAwaitExcepti
 import com.algorand.android.utils.exceptions.TransactionIdNullException
 import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.sendErrorLog
+import com.algorand.wallet.analytics.domain.ReferrerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,8 +81,10 @@ class MainViewModel @Inject constructor(
     private val accountDetailCacheManager: AccountDetailCacheManager,
     private val nodeRepository: NodeRepository,
     accountCacheStatusUseCase: AccountCacheStatusUseCase,
+    private val referrerManager: ReferrerManager,
     private val autoLockManagerUseCase: AutoLockManagerUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase
+    private val accountStateHelperUseCase: AccountStateHelperUseCase,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel() {
 
     // TODO: Replace this with Flow whenever have time
@@ -298,5 +303,11 @@ class MainViewModel @Inject constructor(
 
     fun hasAccountAuthority(accountAddress: String): Boolean {
         return accountStateHelperUseCase.hasAccountAuthority(accountAddress)
+    }
+
+    fun fetchInstallReferrer() {
+        CoroutineScope(coroutineDispatcher).launch {
+            referrerManager.initialize()
+        }
     }
 }

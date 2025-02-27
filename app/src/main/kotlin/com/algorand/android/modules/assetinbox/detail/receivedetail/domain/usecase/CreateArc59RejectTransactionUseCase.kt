@@ -20,20 +20,22 @@ import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.assetinbox.detail.receivedetail.domain.model.Arc59RejectTransactionPayload
 import com.algorand.android.modules.assetinbox.detail.receivedetail.domain.model.BaseArc59ClaimRejectTransaction.Arc59RejectTransaction
 import com.algorand.android.repository.TransactionsRepository
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.IsOnTestnetUseCase
 import com.algorand.android.utils.toSuggestedParams
+import com.algorand.wallet.account.detail.domain.usecase.IsAccountRekeyedToAnotherAccount
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import javax.inject.Inject
 
 class CreateArc59RejectTransactionUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val transactionsRepository: TransactionsRepository,
-    private val isOnTestnetUseCase: IsOnTestnetUseCase
+    private val isOnTestnetUseCase: IsOnTestnetUseCase,
+    private val isAccountRekeyedToAnotherAccount: IsAccountRekeyedToAnotherAccount,
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) : CreateArc59RejectTransaction {
 
     override suspend fun invoke(payload: Arc59RejectTransactionPayload): Result<List<Arc59RejectTransaction>> {
-        val isAccountRekeyed = accountDetailUseCase.isAccountRekeyed(payload.receiverAddress)
-        val authAddress = accountDetailUseCase.getAuthAddress(payload.receiverAddress)
+        val isAccountRekeyed = isAccountRekeyedToAnotherAccount(payload.receiverAddress)
+        val authAddress = getAccountRekeyAdminAddress(payload.receiverAddress)
         return transactionsRepository.getTransactionParams().map { transactionParams ->
             createTransactions(payload, transactionParams).map { transactionByteArray ->
                 Arc59RejectTransaction(

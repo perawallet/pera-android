@@ -104,6 +104,6 @@ fun interface IsAccountCachedSuccessfully {
     suspend operator fun invoke(address: String): Boolean
 }
 
-fun interface GetAccountRekeyAuthAddress {
+fun interface GetAccountRekeyAdminAddress {
     suspend operator fun invoke(address: String): String?
 }

@@ -54,7 +54,7 @@ import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStat
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
-import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAuthAddress
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAllAssetHoldingIds
 import com.algorand.wallet.account.info.domain.usecase.GetAllFailedCachedAccountAddresses
@@ -284,9 +284,9 @@ internal object AccountInformationModule {
     }
 
     @Provides
-    fun provideGetAccountRekeyAuthAddress(
+    fun provideGetAccountRekeyAdminAddress(
         repository: AccountInformationRepository
-    ): GetAccountRekeyAuthAddress = GetAccountRekeyAuthAddress(repository::getRekeyAuthAddress)
+    ): GetAccountRekeyAdminAddress = GetAccountRekeyAdminAddress(repository::getRekeyAuthAddress)
 
     @Provides
     fun provideGetAccountAssetHoldingsFlow(

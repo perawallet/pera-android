@@ -50,6 +50,7 @@ kotlin = "2.0.21"
 kotlinfixture = "1.2.0"
 kotlinxDatetime = "0.5.0"
 kotlinxSerialization = "1.7.3"
+kover = "0.8.3"
 kspGradlePlugin = "2.0.21-1.0.25"
 ksp = "2.0.21-1.0.25"
 ktlint = "0.39.0"
@@ -200,6 +201,7 @@ espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref =
 google-services = { module = "com.google.gms:google-services", version.ref = "googleServicesVersion" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlinfixture = { module = "com.appmattus.fixture:fixture", version.ref = "kotlinfixture" }
+kover-plugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
 ktlint = { module = "com.pinterest:ktlint", version.ref = "ktlint" }
 mockito = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }

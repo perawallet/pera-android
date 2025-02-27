@@ -13,7 +13,6 @@
 package com.algorand.android.modules.accounts.di
 
 import com.algorand.android.modules.accounts.domain.usecase.GetAuthAddressOfAnAccount
-import com.algorand.android.modules.accounts.domain.usecase.IsSenderRekeyedToAnotherAccount
 import com.algorand.android.usecase.AccountDetailUseCase
 import dagger.Module
 import dagger.Provides
@@ -24,12 +23,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AccountsModule {
-
-    @Provides
-    @Singleton
-    fun provideIsSenderRekeyedToAnotherAccount(
-        useCase: AccountDetailUseCase
-    ): IsSenderRekeyedToAnotherAccount = IsSenderRekeyedToAnotherAccount(useCase::isAccountRekeyed)
 
     @Provides
     @Singleton

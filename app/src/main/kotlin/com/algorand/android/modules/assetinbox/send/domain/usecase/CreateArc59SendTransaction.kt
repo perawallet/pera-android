@@ -17,7 +17,7 @@ import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendTransa
 import com.algorand.android.modules.assetinbox.send.domain.model.Arc59TransactionPayload
 
 interface CreateArc59SendTransaction {
-    operator fun invoke(
+    suspend operator fun invoke(
         txnParams: TransactionParams,
         payload: Arc59TransactionPayload
     ): List<Arc59SendTransaction>?

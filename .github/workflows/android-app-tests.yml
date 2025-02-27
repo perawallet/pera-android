@@ -55,6 +55,32 @@ jobs:
             path: ./**/build/reports/**
             overwrite: true
 
+    android-test-coverage:
+      name: "Android common-sdk Test Coverage"
+      runs-on: ubuntu-latest
+      steps:
+        - name: "Checkout"
+          uses: actions/checkout@v4
+        - name: "Install JDK 21"
+          uses: actions/setup-java@v4
+          with:
+            distribution: "zulu"
+            java-version: "21"
+            cache: "gradle"
+        - name: "Update packages"
+          run: sudo apt-get update
+        - name: "Install xmlstarlet"
+          run: sudo apt-get install xmlstarlet
+        - name: "Generate Report and Validate Coverage"
+          run: ./common-sdk/test-coverage/testCoverage.sh
+        - name: "Archive Test Coverage Results"
+          uses: actions/upload-artifact@v4
+          if: ${{ always() }}
+          with:
+            name: "test-coverage-result"
+            path: ./common-sdk/build/reports/kover/**
+            overwrite: true
+
     android-bundle-publish-test:
       name: "Android App Bundle Publish Test"
       runs-on: ubuntu-latest

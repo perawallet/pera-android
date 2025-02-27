@@ -21,7 +21,6 @@ import com.algorand.android.models.AccountDetail
 import com.algorand.android.repository.AccountRepository
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.exceptions.AccountNotFoundException
-import com.algorand.android.utils.isRekeyedToAnotherAccount
 import com.algorand.android.utils.recordException
 import com.algorand.android.utils.toShortenedAddress
 import java.math.BigInteger
@@ -46,7 +45,7 @@ class AccountDetailUseCase @Inject constructor(
             .distinctUntilChanged()
     }
 
-    fun getCachedAccountDetails() = getAccountDetailCacheFlow().value.values
+    private fun getCachedAccountDetails() = getAccountDetailCacheFlow().value.values
 
     fun getCachedAccountDetail(publicKey: String): CacheResult<AccountDetail>? {
         return accountRepository.getCachedAccountDetail(publicKey)
@@ -101,7 +100,7 @@ class AccountDetailUseCase @Inject constructor(
         }
     }
 
-    fun isAuthAccountInDevice(accountAddress: String): Boolean {
+    private fun isAuthAccountInDevice(accountAddress: String): Boolean {
         val accountAuthAddress = getAuthAddress(accountAddress) ?: return false
         val authAccountDetail = getCachedAccountDetail(accountAuthAddress)?.data ?: return false
         return canAccountSignTransaction(authAccountDetail.account.address)
@@ -125,14 +124,6 @@ class AccountDetailUseCase @Inject constructor(
     fun getAuthAddress(publicKey: String): String? {
         val accountInformation = accountRepository.getCachedAccountDetail(publicKey)?.data?.accountInformation
         return accountInformation?.rekeyAdminAddress
-    }
-
-    fun isAccountRekeyed(publicKey: String): Boolean {
-        val authAddress = accountRepository.getCachedAccountDetail(publicKey)
-            ?.data
-            ?.accountInformation
-            ?.rekeyAdminAddress
-        return isRekeyedToAnotherAccount(authAddress, publicKey)
     }
 
     fun setAccountNameService(accountAddress: String, nameServiceName: String?) {

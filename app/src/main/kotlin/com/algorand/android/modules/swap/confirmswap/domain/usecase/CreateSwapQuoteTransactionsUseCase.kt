@@ -24,7 +24,7 @@ import com.algorand.android.modules.swap.confirmswap.domain.model.UnsignedSwapSi
 import com.algorand.android.usecase.NetworkSlugUseCase
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.decodeBase64
-import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAuthAddress
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import javax.inject.Inject
 import javax.inject.Named
 import kotlinx.coroutines.flow.collectLatest
@@ -37,7 +37,7 @@ class CreateSwapQuoteTransactionsUseCase @Inject constructor(
     private val swapTransactionItemFactory: SwapTransactionItemFactory,
     private val networkSlugUseCase: NetworkSlugUseCase,
     private val parseTransactionMsgPackUseCase: ParseTransactionMsgPackUseCase,
-    private val getAccountRekeyAuthAddress: GetAccountRekeyAuthAddress
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) {
 
     suspend fun createQuoteTransactions(
@@ -111,7 +111,7 @@ class CreateSwapQuoteTransactionsUseCase @Inject constructor(
                     transactionListIndex = index,
                     transactionMsgPack = unsignedTransaction,
                     accountAddress = accountAddress,
-                    accountAuthAddress = getAccountRekeyAuthAddress(accountAddress),
+                    accountAuthAddress = getAccountRekeyAdminAddress(accountAddress),
                     rawTransaction = unsignedTransaction?.decodeBase64()
                         ?.run { parseTransactionMsgPackUseCase.parse(this) }
                 )

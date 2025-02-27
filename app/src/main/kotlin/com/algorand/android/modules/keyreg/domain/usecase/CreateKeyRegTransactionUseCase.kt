@@ -17,7 +17,6 @@ import com.algorand.android.models.Result.Error
 import com.algorand.android.models.Result.Success
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.accounts.domain.usecase.GetAuthAddressOfAnAccount
-import com.algorand.android.modules.accounts.domain.usecase.IsSenderRekeyedToAnotherAccount
 import com.algorand.android.modules.algosdk.domain.model.OfflineKeyRegTransactionPayload
 import com.algorand.android.modules.algosdk.domain.model.OnlineKeyRegTransactionPayload
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOfflineTransaction
@@ -25,6 +24,7 @@ import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOnlineTran
 import com.algorand.android.modules.keyreg.domain.model.KeyRegTransaction
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.transaction.domain.GetTransactionParams
+import com.algorand.wallet.account.detail.domain.usecase.IsAccountRekeyedToAnotherAccount
 import javax.inject.Inject
 
 fun interface CreateKeyRegTransaction {
@@ -32,7 +32,7 @@ fun interface CreateKeyRegTransaction {
 }
 
 internal class CreateKeyRegTransactionUseCase @Inject constructor(
-    private val isSenderRekeyedToAnotherAccount: IsSenderRekeyedToAnotherAccount,
+    private val isAccountRekeyedToAnotherAccount: IsAccountRekeyedToAnotherAccount,
     private val getAuthAddressOfAnAccount: GetAuthAddressOfAnAccount,
     private val getTransactionParams: GetTransactionParams,
     private val buildKeyRegOfflineTransaction: BuildKeyRegOfflineTransaction,
@@ -76,7 +76,7 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
         }
     }
 
-    private fun createKeyRegTransactionResult(
+    private suspend fun createKeyRegTransactionResult(
         txnDetail: KeyRegTransactionDetail,
         txnByteArray: ByteArray
     ): KeyRegTransaction {
@@ -84,7 +84,7 @@ internal class CreateKeyRegTransactionUseCase @Inject constructor(
             transactionByteArray = txnByteArray,
             accountAddress = txnDetail.address,
             accountAuthAddress = getAuthAddressOfAnAccount(txnDetail.address),
-            isRekeyedToAnotherAccount = isSenderRekeyedToAnotherAccount(txnDetail.address)
+            isRekeyedToAnotherAccount = isAccountRekeyedToAnotherAccount(txnDetail.address)
         )
     }
 

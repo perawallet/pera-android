@@ -52,8 +52,6 @@ import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.wallet.analytics.domain.ReferrerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,8 +81,7 @@ class MainViewModel @Inject constructor(
     accountCacheStatusUseCase: AccountCacheStatusUseCase,
     private val referrerManager: ReferrerManager,
     private val autoLockManagerUseCase: AutoLockManagerUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase,
-    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val accountStateHelperUseCase: AccountStateHelperUseCase
 ) : BaseViewModel() {
 
     // TODO: Replace this with Flow whenever have time
@@ -306,7 +303,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun fetchInstallReferrer() {
-        CoroutineScope(coroutineDispatcher).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             referrerManager.initialize()
         }
     }

@@ -102,6 +102,30 @@ class MainActivity :
     ReceiveAccountSelectionFragment.ReceiveAccountSelectionFragmentListener,
     AlertDialogDelegation by AlertDialogDelegationImpl() {
 
+    private val viewEventCollector: suspend (ViewEvent) -> Unit = { event ->
+        when (event) {
+            is ViewEvent.HandleAssetTransactionDeepLink -> navToAssetProfileNavigation(
+                event.address,
+                event.assetId
+            )
+
+            is ViewEvent.HandleAssetOptInRequestDeepLink -> navToAssetAdditionActionNavigation(
+                event.address,
+                event.assetId
+            )
+
+            is ViewEvent.HandleAssetInboxDeepLink -> navToAssetInboxOneAccountNavigation(
+                event.address
+            )
+
+            is ViewEvent.ShowForegroundNotification -> showForegroundNotification(
+                event.notificationMetadata
+            )
+
+            is ViewEvent.ShowGlobalNotificationError -> showGlobalNotificationError()
+        }
+    }
+
     val mainViewModel: MainViewModel by viewModels()
     val assetOperationViewModel: AssetOperationViewModel by viewModels()
     private val coreActionsTabBarViewModel: CoreActionsTabBarViewModel by viewModels()
@@ -392,31 +416,7 @@ class MainActivity :
             FirebaseTokenResult.TokenFailed -> onNewTokenFailed()
         }
     }
-
-    private val viewEventCollector: suspend (ViewEvent) -> Unit = { event ->
-        when (event) {
-            is ViewEvent.HandleAssetTransactionDeepLink -> navToAssetProfileNavigation(
-                event.address,
-                event.assetId
-            )
-
-            is ViewEvent.HandleAssetOptInRequestDeepLink -> navToAssetAdditionActionNavigation(
-                event.address,
-                event.assetId
-            )
-
-            is ViewEvent.HandleAssetInboxDeepLink -> navToAssetInboxOneAccountNavigation(
-                event.address
-            )
-
-            is ViewEvent.ShowForegroundNotification -> showForegroundNotification(
-                event.notificationMetadata
-            )
-
-            is ViewEvent.ShowGlobalNotificationError -> showGlobalNotificationError()
-        }
-    }
-
+    
     private fun retryLatestAssetAdditionTransaction() {
         assetOperationViewModel.getLatestAddAssetTransaction()?.let { transactionData ->
             sendAssetOperationTransaction(transactionData)

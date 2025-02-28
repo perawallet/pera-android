@@ -12,8 +12,7 @@
 
 package com.algorand.wallet.analytics.domain.service
 
-import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
-
-internal interface ReferrerQueryParamParser {
-    fun getReferrerData(queryString: String?): ReferrerData
+interface PeraReferrerManager{
+    suspend fun fetchInstallReferrer()
+    suspend fun saveReferrerData(referrerUrl: String)
 }

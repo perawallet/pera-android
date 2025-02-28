@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.analytics.domain.usecase
 
-import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
+import com.algorand.wallet.analytics.domain.model.ReferrerData
 
 fun interface GetReferrerData {
     suspend operator fun invoke(): ReferrerData

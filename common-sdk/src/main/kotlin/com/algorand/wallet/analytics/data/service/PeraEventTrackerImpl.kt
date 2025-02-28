@@ -72,7 +72,7 @@ class PeraEventTrackerImpl @Inject constructor (
         }
     }
 
-    suspend fun addReferralDataToBundle(bundle: Bundle): Bundle {
+    private suspend fun addReferralDataToBundle(bundle: Bundle): Bundle {
         val referralData = getReferrerData.invoke()
         referralData.let {
             it.utmSource?.let { source -> bundle.putString(UTM_SOURCE, source) }

@@ -12,19 +12,19 @@
 
 package com.algorand.wallet.analytics.data.service
 
-import com.algorand.wallet.analytics.ReferrerQueryParamParserImpl
-import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
+import com.algorand.wallet.analytics.PeraReferrerQueryParamParserImpl
+import com.algorand.wallet.analytics.domain.model.ReferrerData
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class ReferrerQueryParamParserImplTest {
+class PeraReferrerQueryParamParserImplTest {
 
-    private lateinit var sut: ReferrerQueryParamParserImpl
+    private lateinit var sut: PeraReferrerQueryParamParserImpl
 
     @Before
     fun setup() {
-        sut = ReferrerQueryParamParserImpl()
+        sut = PeraReferrerQueryParamParserImpl()
     }
 
     @Test

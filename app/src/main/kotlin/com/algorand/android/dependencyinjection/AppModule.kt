@@ -12,7 +12,6 @@
 
 package com.algorand.android.dependencyinjection
 
-import android.app.Application
 import android.app.NotificationManager
 import android.bluetooth.BluetoothManager
 import android.content.Context
@@ -193,8 +192,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideContext(application: Application): Context {
-        return application.applicationContext
+    fun provideContext(@ApplicationContext appContext: Context): Context {
+        return appContext
     }
 
     @Singleton

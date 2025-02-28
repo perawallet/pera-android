@@ -12,6 +12,8 @@
 
 package com.algorand.wallet.analytics.domain.service
 
-interface ReferrerManager{
-    suspend fun saveReferrerData(referrerUrl: String)
+import com.algorand.wallet.analytics.domain.model.ReferrerData
+
+internal interface PeraReferrerQueryParamParser {
+    fun getReferrerData(queryString: String?): ReferrerData
 }

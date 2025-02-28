@@ -27,7 +27,7 @@ import com.algorand.wallet.analytics.domain.service.PeraEventTracker
  */
 class WalletConnectFirebaseEventLogger(
     private val algodInterceptor: AlgodInterceptor,
-    private val firebaseEventTracker: PeraEventTracker
+    private val peraEventTracker: PeraEventTracker
 ) : WalletConnectEventLogger {
 
     private val isCurrentNetworkMainNet: Boolean
@@ -43,7 +43,7 @@ class WalletConnectFirebaseEventLogger(
             )
         }
 
-        firebaseEventTracker.logEvent(REQUEST_TRANSACTION_CONFIRMATION_EVENT_KEY, bundleToMap(bundle))
+        peraEventTracker.logEvent(REQUEST_TRANSACTION_CONFIRMATION_EVENT_KEY, bundleToMap(bundle))
     }
 
     override suspend fun logTransactionRequestRejection(transaction: WalletConnectTransaction) {
@@ -57,7 +57,7 @@ class WalletConnectFirebaseEventLogger(
             )
         }
 
-        firebaseEventTracker.logEvent(REQUEST_TRANSACTION_REJECTION_EVENT_KEY, bundleToMap(bundle))
+        peraEventTracker.logEvent(REQUEST_TRANSACTION_REJECTION_EVENT_KEY, bundleToMap(bundle))
     }
 
     override suspend fun logArbitraryDataRequestConfirmation(arbitraryData: WalletConnectArbitraryDataRequest) {
@@ -69,7 +69,7 @@ class WalletConnectFirebaseEventLogger(
             )
         }
 
-        firebaseEventTracker.logEvent(REQUEST_ARBITRARY_DATA_CONFIRMATION_EVENT_KEY, bundleToMap(bundle))
+        peraEventTracker.logEvent(REQUEST_ARBITRARY_DATA_CONFIRMATION_EVENT_KEY, bundleToMap(bundle))
     }
 
     override suspend fun logArbitraryDataRequestRejection(arbitraryData: WalletConnectArbitraryDataRequest) {
@@ -83,7 +83,7 @@ class WalletConnectFirebaseEventLogger(
             )
         }
 
-        firebaseEventTracker.logEvent(REQUEST_ARBITRARY_DATA_REJECTION_EVENT_KEY, bundleToMap(bundle))
+        peraEventTracker.logEvent(REQUEST_ARBITRARY_DATA_REJECTION_EVENT_KEY, bundleToMap(bundle))
     }
 
     override suspend fun logSessionConfirmation(
@@ -101,7 +101,7 @@ class WalletConnectFirebaseEventLogger(
             )
         }
 
-        firebaseEventTracker.logEvent(SESSION_CONFIRMATION_EVENT_KEY, bundleToMap(bundle))
+        peraEventTracker.logEvent(SESSION_CONFIRMATION_EVENT_KEY, bundleToMap(bundle))
     }
 
     override suspend fun logSessionDisconnection(session: WalletConnect.SessionDetail) {
@@ -116,7 +116,7 @@ class WalletConnectFirebaseEventLogger(
             )
         }
 
-        firebaseEventTracker.logEvent(SESSION_DISCONNECTION_EVENT_KEY, bundleToMap(bundle))
+        peraEventTracker.logEvent(SESSION_DISCONNECTION_EVENT_KEY, bundleToMap(bundle))
     }
 
     override suspend fun logSessionRejection(sessionProposal: WalletConnectSessionProposal) {
@@ -127,7 +127,7 @@ class WalletConnectFirebaseEventLogger(
             SESSION_TOPIC_PARAM to sessionProposal.proposalIdentifier.proposalIdentifier
         )
 
-        firebaseEventTracker.logEvent(SESSION_REJECTION_EVENT_KEY, bundleToMap(bundle))
+        peraEventTracker.logEvent(SESSION_REJECTION_EVENT_KEY, bundleToMap(bundle))
     }
 
     private fun bundleToMap(bundle: Bundle): Map<String, Any> {

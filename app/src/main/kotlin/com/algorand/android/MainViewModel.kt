@@ -50,8 +50,7 @@ import com.algorand.android.utils.exceptions.TransactionConfirmationAwaitExcepti
 import com.algorand.android.utils.exceptions.TransactionIdNullException
 import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.sendErrorLog
-import com.algorand.wallet.analytics.domain.service.PeraReferrerInstallClient
-import com.algorand.wallet.analytics.domain.service.ReferrerManager
+import com.algorand.wallet.analytics.domain.service.PeraReferrerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -79,9 +78,8 @@ class MainViewModel @Inject constructor(
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
     private val accountDetailCacheManager: AccountDetailCacheManager,
     private val nodeRepository: NodeRepository,
+    private val peraReferrerManager: PeraReferrerManager,
     accountCacheStatusUseCase: AccountCacheStatusUseCase,
-    private val referrerClient: PeraReferrerInstallClient,
-    private val referrerManager: ReferrerManager,
     private val autoLockManagerUseCase: AutoLockManagerUseCase,
     private val accountStateHelperUseCase: AccountStateHelperUseCase
 ) : BaseViewModel() {
@@ -306,10 +304,7 @@ class MainViewModel @Inject constructor(
 
     fun fetchInstallReferrer() {
         viewModelScope.launch(Dispatchers.IO) {
-            val referrerUrl = referrerClient.getReferrerUrl()
-            referrerUrl?.let { url ->
-                referrerManager.saveReferrerData(url)
-            }
+            peraReferrerManager.fetchInstallReferrer()
         }
     }
 }

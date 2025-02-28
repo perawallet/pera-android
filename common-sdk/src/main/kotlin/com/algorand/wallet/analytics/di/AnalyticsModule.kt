@@ -13,18 +13,16 @@
 package com.algorand.wallet.analytics.di
 
 import android.content.Context
-import com.algorand.wallet.analytics.ReferrerQueryParamParserImpl
+import com.algorand.wallet.analytics.PeraReferrerQueryParamParserImpl
 import com.algorand.wallet.analytics.data.repository.ReferrerRepositoryImpl
 import com.algorand.wallet.analytics.data.service.PeraEventTrackerImpl
-import com.algorand.wallet.analytics.data.service.ReferrerManagerImpl
+import com.algorand.wallet.analytics.data.service.PeraReferrerManagerImpl
 import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
-import com.algorand.wallet.analytics.domain.service.ReferrerManager
-import com.algorand.wallet.analytics.domain.service.ReferrerQueryParamParser
+import com.algorand.wallet.analytics.domain.service.PeraReferrerManager
+import com.algorand.wallet.analytics.domain.service.PeraReferrerQueryParamParser
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
-import com.algorand.wallet.analytics.domain.usecase.GetReferrerDataUseCase
 import com.algorand.wallet.analytics.domain.usecase.SaveReferrerData
-import com.algorand.wallet.analytics.domain.usecase.SaveReferrerDataUseCase
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
@@ -54,18 +52,18 @@ internal object AnalyticsModule {
 
     @Provides
     @Singleton
-    fun provideReferrerManager(impl: ReferrerManagerImpl): ReferrerManager = impl
+    fun provideReferrerManager(impl: PeraReferrerManagerImpl): PeraReferrerManager = impl
 
     @Provides
     @Singleton
     fun provideReferrerRepository(impl: ReferrerRepositoryImpl): ReferrerRepository = impl
 
     @Provides
-    fun provideReferrerQueryParamParser(impl: ReferrerQueryParamParserImpl): ReferrerQueryParamParser = impl
+    fun provideReferrerQueryParamParser(impl: PeraReferrerQueryParamParserImpl): PeraReferrerQueryParamParser = impl
 
     @Provides
-    fun provideGetReferrerData(useCase: GetReferrerDataUseCase): GetReferrerData = useCase
+    fun provideGetReferrerData(repository: ReferrerRepository): GetReferrerData = GetReferrerData(repository::getReferrerData)
 
     @Provides
-    fun provideSaveReferrerData(useCase: SaveReferrerDataUseCase): SaveReferrerData = useCase
+    fun provideSaveReferrerData(repository: ReferrerRepository): SaveReferrerData = SaveReferrerData(repository::saveReferrerData)
 }

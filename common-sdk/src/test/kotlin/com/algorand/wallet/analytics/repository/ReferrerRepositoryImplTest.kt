@@ -14,7 +14,7 @@ package com.algorand.wallet.analytics.repository
 
 import android.content.SharedPreferences
 import com.algorand.wallet.analytics.data.repository.ReferrerRepositoryImpl
-import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
+import com.algorand.wallet.analytics.domain.model.ReferrerData
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_CAMPAIGN
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_CONTENT
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM

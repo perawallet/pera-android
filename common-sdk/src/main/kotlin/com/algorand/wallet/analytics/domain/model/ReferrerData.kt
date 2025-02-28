@@ -1,4 +1,4 @@
-package com.algorand.wallet.analytics.domain.usecases.model
+package com.algorand.wallet.analytics.domain.model
 
 data class ReferrerData(
     val utmSource: String?,

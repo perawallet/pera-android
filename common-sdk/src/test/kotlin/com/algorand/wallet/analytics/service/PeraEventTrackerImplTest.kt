@@ -13,7 +13,7 @@
 package com.algorand.wallet.analytics.data.service
 
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
-import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
+import com.algorand.wallet.analytics.domain.model.ReferrerData
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.mockk.coEvery
 import io.mockk.coVerify

@@ -10,90 +10,76 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.service
+package com.algorand.wallet.analytics.data.service
 
-import com.algorand.wallet.analytics.data.service.ReferrerManagerImpl
-import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
-import com.algorand.wallet.analytics.domain.service.ReferrerQueryParamParser
-import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
+import com.algorand.wallet.analytics.domain.model.ReferrerData
+import com.algorand.wallet.analytics.domain.service.PeraReferrerInstallClient
+import com.algorand.wallet.analytics.domain.service.PeraReferrerQueryParamParser
+import com.algorand.wallet.analytics.domain.usecase.SaveReferrerData
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.confirmVerified
+import io.mockk.every
 import io.mockk.mockk
-import org.junit.After
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 
-@ExperimentalCoroutinesApi
-class ReferrerManagerImplTest {
+class PeraReferrerManagerImplTest {
 
-    private lateinit var sut: ReferrerManagerImpl
+    private lateinit var sut: PeraReferrerManagerImpl
 
-    private val mockReferrerRepository: ReferrerRepository = mockk(relaxed = true)
-    private val mockReferrerQueryParamParser: ReferrerQueryParamParser = mockk(relaxed = true)
+    private val mockReferrerClient: PeraReferrerInstallClient = mockk(relaxed = true)
+    private val mockSaveReferrerData: SaveReferrerData = mockk(relaxed = true)
+    private val mockQueryParamParser: PeraReferrerQueryParamParser = mockk(relaxed = true)
+
+    private val testReferrerUrl = "https://example.com/app?utm_source=test&utm_medium=email"
+    private val testReferrerData = ReferrerData(
+        utmSource = "test",
+        utmMedium = "email",
+        utmCampaign = null,
+        utmTerm = null,
+        utmContent = null
+    )
 
     @Before
     fun setup() {
-        sut = ReferrerManagerImpl(
-            referrerRespository = mockReferrerRepository,
-            referrerQueryParamParser = mockReferrerQueryParamParser
-        )
-    }
-
-    @After
-    fun tearDown() {
-        confirmVerified(mockReferrerRepository, mockReferrerQueryParamParser)
-    }
-
-    @Test
-    fun `saveReferrerData should parse referrer url and save to repository`() = runTest {
-        val testReferrerUrl = "https://example.com?utm_source=test&utm_medium=email"
-        val mockReferrerData = ReferrerData(
-            utmSource = "test",
-            utmMedium = "email",
-            utmCampaign = null,
-            utmTerm = null,
-            utmContent = null
+        sut = PeraReferrerManagerImpl(
+            referrerClient = mockReferrerClient,
+            saveReferrerData = mockSaveReferrerData,
+            peraReferrerQueryParamParser = mockQueryParamParser
         )
 
-        coEvery {
-            mockReferrerQueryParamParser.getReferrerData(testReferrerUrl)
-        } returns mockReferrerData
-
-        sut.saveReferrerData(testReferrerUrl)
-
-        coVerify(exactly = 1) {
-            mockReferrerQueryParamParser.getReferrerData(testReferrerUrl)
-        }
-        coVerify(exactly = 1) {
-            mockReferrerRepository.saveReferrerData(mockReferrerData)
-        }
+        every { mockQueryParamParser.getReferrerData(any()) } returns testReferrerData
     }
 
     @Test
-    fun `saveReferrerData should handle empty referrer data`() = runTest {
-        val testReferrerUrl = "https://example.com"
-        val emptyReferrerData = ReferrerData(
-            utmSource = null,
-            utmMedium = null,
-            utmCampaign = null,
-            utmTerm = null,
-            utmContent = null
-        )
+    fun `fetchInstallReferrer should get URL from client and save data when URL is not null`() = runTest {
+        coEvery { mockReferrerClient.getReferrerUrl() } returns testReferrerUrl
 
-        coEvery {
-            mockReferrerQueryParamParser.getReferrerData(testReferrerUrl)
-        } returns emptyReferrerData
+        sut.fetchInstallReferrer()
 
+        coVerify { mockReferrerClient.getReferrerUrl() }
+        verify { mockQueryParamParser.getReferrerData(testReferrerUrl) }
+        coVerify { mockSaveReferrerData.invoke(testReferrerData) }
+    }
+
+    @Test
+    fun `fetchInstallReferrer should not save data when URL is null`() = runTest {
+        coEvery { mockReferrerClient.getReferrerUrl() } returns null
+
+        sut.fetchInstallReferrer()
+
+        coVerify { mockReferrerClient.getReferrerUrl() }
+        coVerify(exactly = 0) { mockSaveReferrerData.invoke(any<ReferrerData>()) }
+        verify(exactly = 0) { mockQueryParamParser.getReferrerData(any()) }
+    }
+
+    @Test
+    fun `saveReferrerData should parse URL and save parsed data`() = runTest {
         sut.saveReferrerData(testReferrerUrl)
 
-        coVerify(exactly = 1) {
-            mockReferrerQueryParamParser.getReferrerData(testReferrerUrl)
-        }
-        coVerify(exactly = 1) {
-            mockReferrerRepository.saveReferrerData(emptyReferrerData)
-        }
+        verify { mockQueryParamParser.getReferrerData(testReferrerUrl) }
+        coVerify { mockSaveReferrerData.invoke(testReferrerData) }
     }
 }

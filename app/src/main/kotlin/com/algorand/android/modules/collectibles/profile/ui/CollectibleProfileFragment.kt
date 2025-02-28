@@ -37,13 +37,17 @@ class CollectibleProfileFragment : BaseCollectibleDetailFragment() {
 
     override val baseCollectibleDetailViewModel: CollectibleProfileViewModel by viewModels()
 
-    private val collectibleProfileCollector: suspend (CollectibleProfilePreview?) -> Unit = {
-        if (it != null) initCollectibleProfilePreview(it)
+    private val collectibleProfileCollector: suspend (CollectibleProfileViewModel.ViewState?) -> Unit = { state ->
+        when (state) {
+            is CollectibleProfileViewModel.ViewState.Content -> initCollectibleProfilePreview(state.preview)
+            CollectibleProfileViewModel.ViewState.Loading -> setProgressBarVisibility(true)
+            null -> Unit
+        }
     }
 
     override fun initObservers() {
         collectLatestOnLifecycle(
-            flow = baseCollectibleDetailViewModel.collectibleProfilePreviewFlow,
+            flow = baseCollectibleDetailViewModel.state,
             collection = collectibleProfileCollector
         )
     }
@@ -61,7 +65,7 @@ class CollectibleProfileFragment : BaseCollectibleDetailFragment() {
             setNFTCreatorAccount(creatorAccountAddressOfNFT)
             setNFTTraits(traitListOfNFT)
             setShowOnPeraExplorer(peraExplorerUrl)
-            setProgressBarVisibility(isLoadingVisible)
+            setProgressBarVisibility(false)
             setAsaStatusPreview(collectibleStatusPreview)
         }
     }

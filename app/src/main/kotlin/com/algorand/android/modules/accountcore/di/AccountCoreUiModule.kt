@@ -1,3 +1,4 @@
+@file:Suppress("TooManyFunctions")
 /*
  * Copyright 2022 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +22,8 @@ import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAs
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsDataFlow
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsDataFlowUseCase
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsDataUseCase
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedCollectibleData
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedCollectibleDataUseCase
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValueUseCase
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
@@ -99,4 +102,9 @@ internal object AccountCoreUiModule {
     fun provideGetAccountBaseOwnedAssetData(
         useCase: GetAccountBaseOwnedAssetDataUseCase
     ): GetAccountBaseOwnedAssetData = useCase
+
+    @Provides
+    fun provideGetAccountOwnedCollectibleData(
+        useCase: GetAccountOwnedCollectibleDataUseCase
+    ): GetAccountOwnedCollectibleData = useCase
 }

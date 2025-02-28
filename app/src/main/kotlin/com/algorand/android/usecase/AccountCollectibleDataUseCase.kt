@@ -28,7 +28,6 @@ import com.algorand.android.nft.domain.model.CollectibleMediaType
 import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.extensions.getAssetHoldingList
-import com.algorand.android.utils.extensions.getAssetHoldingOrNull
 import com.algorand.android.utils.formatAmountByCollectibleFractionalDigit
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -43,26 +42,6 @@ class AccountCollectibleDataUseCase @Inject constructor(
     private val secondaryCurrencyParityCalculationUseCase: SecondaryCurrencyParityCalculationUseCase
 ) {
 
-    fun getAccountOwnedCollectibleDataList(publicKey: String): List<BaseOwnedCollectibleData> {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(publicKey)?.data ?: return emptyList()
-        return createAccountOwnedCollectibleDataList(accountDetail)
-    }
-
-    private fun createAccountOwnedCollectibleDataList(account: AccountDetail): List<BaseOwnedCollectibleData> {
-        val accountOwnedCollectibleList = getAccountOwnedCachedCollectibleList(account)
-        return createCollectibleDataList(
-            account,
-            accountOwnedCollectibleList
-        ).filterIsInstance<BaseOwnedCollectibleData>()
-    }
-
-    fun getAccountAllCollectibleDataFlow(publicKey: String): Flow<List<BaseAccountAssetData>> {
-        return accountDetailUseCase.getAccountDetailCacheFlow()
-            .mapNotNull { it.getOrDefault(publicKey, null)?.data }
-            .mapNotNull { account -> createAccountAllCollectibleDataList(account) }
-            .distinctUntilChanged()
-    }
-
     fun getAccountOwnedCollectibleDataFlow(publicKey: String): Flow<List<BaseOwnedCollectibleData>> {
         return accountDetailUseCase.getAccountDetailCacheFlow()
             .mapNotNull { it.getOrDefault(publicKey, null)?.data }
@@ -75,23 +54,6 @@ class AccountCollectibleDataUseCase @Inject constructor(
     private fun createAccountAllCollectibleDataList(account: AccountDetail): List<BaseAccountAssetData> {
         val accountAllCollectibleList = getAccountAllCachedCollectibleList(account)
         return createCollectibleDataList(account, accountAllCollectibleList)
-    }
-
-    fun getAllAccountsAllCollectibleDataFlow(): Flow<List<Pair<AccountDetail, List<BaseAccountAssetData>>>> {
-        return accountDetailUseCase.getAccountDetailCacheFlow()
-            .mapNotNull { accounts -> accounts.values.mapNotNull { it.data } }
-            .mapNotNull { account -> createAllAccountsAllCollectibleDataList(account) }
-            .distinctUntilChanged()
-    }
-
-    private fun createAllAccountsAllCollectibleDataList(
-        accounts: List<AccountDetail>
-    ): List<Pair<AccountDetail, List<BaseAccountAssetData>>> {
-        return accounts.map { account ->
-            val accountAllCollectibleList = getAccountAllCachedCollectibleList(account)
-            val collectibles = createCollectibleDataList(account, accountAllCollectibleList)
-            Pair(account, collectibles)
-        }
     }
 
     private fun getAccountAllCachedCollectibleList(account: AccountDetail): List<SimpleCollectibleDetail> {
@@ -259,13 +221,5 @@ class AccountCollectibleDataUseCase @Inject constructor(
                 CollectibleMediaType.AUDIO -> mapToPendingSendingAudioCollectibleData(collectibleItem)
             }
         }
-    }
-
-    fun getAccountCollectibleDetail(accountAddress: String, collectibleId: Long): BaseOwnedCollectibleData? {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return null
-        val assetHolding = accountDetail.getAssetHoldingOrNull(collectibleId)
-        val collectibleDetail = simpleCollectibleUseCase.getCachedCollectibleById(collectibleId)?.data
-        if (assetHolding == null || collectibleDetail == null) return null
-        return createCollectibleData(assetHolding, collectibleDetail)
     }
 }

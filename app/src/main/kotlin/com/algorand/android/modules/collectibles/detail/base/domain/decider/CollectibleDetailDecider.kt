@@ -13,7 +13,13 @@
 package com.algorand.android.modules.collectibles.detail.base.domain.decider
 
 import com.algorand.android.R
-import com.algorand.android.models.Account
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.model.AccountType.Algo25
+import com.algorand.wallet.account.detail.domain.model.AccountType.HdKey
+import com.algorand.wallet.account.detail.domain.model.AccountType.LedgerBle
+import com.algorand.wallet.account.detail.domain.model.AccountType.NoAuth
+import com.algorand.wallet.account.detail.domain.model.AccountType.Rekeyed
+import com.algorand.wallet.account.detail.domain.model.AccountType.RekeyedAuth
 import javax.inject.Inject
 
 class CollectibleDetailDecider @Inject constructor() {
@@ -27,13 +33,13 @@ class CollectibleDetailDecider @Inject constructor() {
         }
     }
 
-    fun decideOptedInWarningTextRes(isOwnedByTheUser: Boolean, accountType: Account.Type?): Int? {
+    fun decideOptedInWarningTextRes(isOwnedByTheUser: Boolean, accountType: AccountType?): Int? {
         if (isOwnedByTheUser) return null
         return when (accountType) {
-            Account.Type.STANDARD, Account.Type.LEDGER, Account.Type.REKEYED, Account.Type.REKEYED_AUTH -> {
+            Algo25, LedgerBle, Rekeyed, RekeyedAuth, HdKey -> {
                 R.string.you_are_not_the_owner
             }
-            Account.Type.WATCH -> {
+            NoAuth -> {
                 R.string.this_watch_account_has_opted
             }
             else -> null

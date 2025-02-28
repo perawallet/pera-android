@@ -12,6 +12,8 @@
 
 package com.algorand.wallet.asset.domain.model
 
+import java.math.BigDecimal
+
 sealed interface CollectibleDetail : Asset {
 
     val collectibleInfo: CollectibleInfo
@@ -29,6 +31,9 @@ sealed interface CollectibleDetail : Asset {
 
     val primaryImageUrl: String?
         get() = collectibleInfo.primaryImageUrl
+
+    val isPure: Boolean
+        get() = assetInfo?.supply?.total == BigDecimal.ONE && assetInfo?.decimals == 0
 
     data class CollectibleInfo(
         val title: String?,

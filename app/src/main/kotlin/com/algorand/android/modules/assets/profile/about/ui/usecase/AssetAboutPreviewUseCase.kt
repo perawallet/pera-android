@@ -25,7 +25,6 @@ import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.browser.addProtocolIfNeed
 import com.algorand.android.utils.browser.removeProtocolIfNeed
 import com.algorand.android.utils.formatAmount
-import com.algorand.android.utils.toBigDecimalOrZero
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.VerificationTier
 import com.algorand.wallet.asset.domain.model.VerificationTier.SUSPICIOUS
@@ -159,7 +158,7 @@ class AssetAboutPreviewUseCase @Inject constructor(
             val formattedAssetPrice = getSelectedAssetExchangeValueUseCase
                 .getSelectedAssetExchangeValue(assetDetail = this)
                 ?.getFormattedValue(minValueToDisplayExactAmount = minAmountToDisplay)
-            val formattedTotalSupply = assetDetail.assetInfo?.supply?.total?.toBigDecimalOrZero()?.formatAmount(
+            val formattedTotalSupply = assetDetail.assetInfo?.supply?.total?.formatAmount(
                 decimals = assetDetail.assetInfo?.decimals ?: DEFAULT_ASSET_DECIMAL,
                 isCompact = true,
                 isDecimalFixed = false

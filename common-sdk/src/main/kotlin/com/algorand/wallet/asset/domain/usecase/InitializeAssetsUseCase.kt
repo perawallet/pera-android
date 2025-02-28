@@ -20,6 +20,6 @@ internal class InitializeAssetsUseCase(
 
     override suspend fun invoke(assetIds: List<Long>) {
         assetRepository.clearCache()
-        assetRepository.fetchAndCacheAssets(assetIds.toList(), includeDeleted = false)
+        assetRepository.fetchAndCacheAssets(assetIds, includeDeleted = false)
     }
 }

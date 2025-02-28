@@ -15,7 +15,6 @@ package com.algorand.android.nft.domain.usecase
 import com.algorand.android.models.SimpleCollectibleDetail
 import com.algorand.android.nft.data.repository.SimpleCollectibleRepository
 import com.algorand.android.utils.CacheResult
-import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class SimpleCollectibleUseCase @Inject constructor(
@@ -26,12 +25,6 @@ class SimpleCollectibleUseCase @Inject constructor(
         return collectibleRepository.getCachedCollectibleById(collectibleAssetId) != null
     }
 
-    fun getCachedCollectibleList() = collectibleRepository.getCollectiblesCacheFlow().value
-
-    fun getCachedCollectibleListFlow(): StateFlow<HashMap<Long, CacheResult<SimpleCollectibleDetail>>> {
-        return collectibleRepository.getCollectiblesCacheFlow()
-    }
-
     fun getCachedCollectibleList(collectibleIdList: List<Long>): List<CacheResult<SimpleCollectibleDetail>> {
         return collectibleRepository.getCollectiblesCacheFlow().value.filter {
             collectibleIdList.contains(it.key)
@@ -40,14 +33,6 @@ class SimpleCollectibleUseCase @Inject constructor(
 
     fun getCachedCollectibleById(nftAssetId: Long): CacheResult<SimpleCollectibleDetail>? {
         return collectibleRepository.getCachedCollectibleById(nftAssetId)
-    }
-
-    suspend fun cacheCollectibleDetail(collectible: CacheResult.Success<SimpleCollectibleDetail>) {
-        collectibleRepository.cacheCollectible(collectible)
-    }
-
-    suspend fun cacheAllCollectibles(collectibles: List<Pair<Long, CacheResult<SimpleCollectibleDetail>>>) {
-        collectibleRepository.cacheAllCollectibles(collectibles)
     }
 
     suspend fun clearCollectibleCache() {

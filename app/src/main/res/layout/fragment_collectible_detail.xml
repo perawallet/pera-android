@@ -226,6 +226,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xxxxlarge"
                 android:text="@string/description"
+                android:visibility="gone"
                 android:textAppearance="@style/TextAppearance.Body.Large.Sans.Medium"
                 app:layout_constraintStart_toStartOf="@id/startGuideLine"
                 app:layout_constraintTop_toBottomOf="@id/collectibleTraitsLayout" />

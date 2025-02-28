@@ -13,10 +13,11 @@
 package com.algorand.wallet.asset.data.model
 
 import com.google.gson.annotations.SerializedName
+import java.math.BigDecimal
 
 internal data class NodeAssetDetailParamsResponse(
     @SerializedName("decimal") val fractionalDecimal: Int? = null,
     @SerializedName("name") val fullName: String? = null,
     @SerializedName("unit-name") val shortName: String? = null,
-    @SerializedName("total") val totalSupply: String? = null
+    @SerializedName("total") val totalSupply: BigDecimal? = null
 )

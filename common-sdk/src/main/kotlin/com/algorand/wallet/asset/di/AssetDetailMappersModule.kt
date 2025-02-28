@@ -20,8 +20,6 @@ import com.algorand.wallet.asset.data.mapper.entity.CollectibleMediaEntityMapper
 import com.algorand.wallet.asset.data.mapper.entity.CollectibleMediaEntityMapperImpl
 import com.algorand.wallet.asset.data.mapper.entity.CollectibleMediaTypeEntityMapper
 import com.algorand.wallet.asset.data.mapper.entity.CollectibleMediaTypeEntityMapperImpl
-import com.algorand.wallet.asset.data.mapper.entity.CollectibleMediaTypeExtensionEntityMapper
-import com.algorand.wallet.asset.data.mapper.entity.CollectibleMediaTypeExtensionEntityMapperImpl
 import com.algorand.wallet.asset.data.mapper.entity.CollectibleStandardTypeEntityMapper
 import com.algorand.wallet.asset.data.mapper.entity.CollectibleStandardTypeEntityMapperImpl
 import com.algorand.wallet.asset.data.mapper.entity.CollectibleTraitEntityMapper
@@ -50,8 +48,6 @@ import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleMapper
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleMediaMapper
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleMediaMapperImpl
-import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleMediaTypeExtensionMapper
-import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleMediaTypeExtensionMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleMediaTypeMapper
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleMediaTypeMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleSearchMapper
@@ -122,16 +118,6 @@ internal object AssetDetailMappersModule {
     fun provideCollectibleMediaTypeEntityMapper(
         impl: CollectibleMediaTypeEntityMapperImpl
     ): CollectibleMediaTypeEntityMapper = impl
-
-    @Provides
-    fun provideCollectibleMediaTypeExtensionEntityMapper(
-        impl: CollectibleMediaTypeExtensionEntityMapperImpl
-    ): CollectibleMediaTypeExtensionEntityMapper = impl
-
-    @Provides
-    fun provideCollectibleMediaTypeExtensionMapper(
-        impl: CollectibleMediaTypeExtensionMapperImpl
-    ): CollectibleMediaTypeExtensionMapper = impl
 
     @Provides
     fun provideCollectibleMediaTypeMapper(impl: CollectibleMediaTypeMapperImpl): CollectibleMediaTypeMapper = impl

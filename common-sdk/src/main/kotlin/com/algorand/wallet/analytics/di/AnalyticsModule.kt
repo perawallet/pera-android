@@ -13,11 +13,19 @@
 package com.algorand.wallet.analytics.di
 
 import android.content.Context
-import com.algorand.wallet.analytics.data.InstallReferrerApiClient
-import com.algorand.wallet.analytics.data.ReferrerManagerImpl
+import com.algorand.wallet.analytics.ReferrerQueryParamParserImpl
 import com.algorand.wallet.analytics.data.repository.ReferrerRepositoryImpl
-import com.algorand.wallet.analytics.domain.ReferrerManager
+import com.algorand.wallet.analytics.data.service.PeraEventTrackerImpl
+import com.algorand.wallet.analytics.data.service.ReferrerManagerImpl
 import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.ReferrerManager
+import com.algorand.wallet.analytics.domain.service.ReferrerQueryParamParser
+import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
+import com.algorand.wallet.analytics.domain.usecase.GetReferrerDataUseCase
+import com.algorand.wallet.analytics.domain.usecase.SaveReferrerData
+import com.algorand.wallet.analytics.domain.usecase.SaveReferrerDataUseCase
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,6 +37,21 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 internal object AnalyticsModule {
 
+    @Singleton
+    @Provides
+    fun providePeraEventTracker(
+        firebaseAnalytics: FirebaseAnalytics,
+        getReferrerData: GetReferrerData
+    ): PeraEventTracker {
+        return PeraEventTrackerImpl(firebaseAnalytics, getReferrerData)
+    }
+
+    @Singleton
+    @Provides
+    fun provideFirebaseAnalytics(@ApplicationContext appContext: Context): FirebaseAnalytics {
+        return FirebaseAnalytics.getInstance(appContext)
+    }
+
     @Provides
     @Singleton
     fun provideReferrerManager(impl: ReferrerManagerImpl): ReferrerManager = impl
@@ -38,8 +61,11 @@ internal object AnalyticsModule {
     fun provideReferrerRepository(impl: ReferrerRepositoryImpl): ReferrerRepository = impl
 
     @Provides
-    @Singleton
-    fun provideContext(@ApplicationContext context: Context): InstallReferrerApiClient {
-        return InstallReferrerApiClient(context)
-    }
+    fun provideReferrerQueryParamParser(impl: ReferrerQueryParamParserImpl): ReferrerQueryParamParser = impl
+
+    @Provides
+    fun provideGetReferrerData(useCase: GetReferrerDataUseCase): GetReferrerData = useCase
+
+    @Provides
+    fun provideSaveReferrerData(useCase: SaveReferrerDataUseCase): SaveReferrerData = useCase
 }

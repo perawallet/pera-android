@@ -10,16 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.data
+package com.algorand.wallet.analytics.domain.service
 
-import android.content.Context
-import com.android.installreferrer.api.InstallReferrerClient
-import javax.inject.Inject
+interface PeraEventTracker {
 
-class InstallReferrerApiClient @Inject constructor(
-    private val context: Context
-) {
-    fun initialize(): InstallReferrerClient {
-        return InstallReferrerClient.newBuilder(context).build()
-    }
+    suspend fun logEvent(eventName: String)
+
+    suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>)
 }

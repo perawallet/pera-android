@@ -13,6 +13,7 @@
 package com.algorand.android.modules.tracking.core
 
 import com.algorand.android.usecase.NodeSettingsUseCase
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import javax.inject.Inject
 
 open class BaseEventTracker protected constructor(private val peraEventTracker: PeraEventTracker) {

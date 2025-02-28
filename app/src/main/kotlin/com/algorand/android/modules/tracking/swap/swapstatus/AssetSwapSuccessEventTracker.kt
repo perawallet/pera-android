@@ -14,7 +14,7 @@ package com.algorand.android.modules.tracking.swap.swapstatus
 
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
 import com.algorand.android.modules.tracking.core.BaseEventTracker
-import com.algorand.android.modules.tracking.core.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.android.modules.tracking.swap.swapstatus.SwapConfirmedEventTrackerConstants.EXCHANGE_FEE_IN_ALGO_PAYLOAD_KEY
 import com.algorand.android.modules.tracking.swap.swapstatus.SwapConfirmedEventTrackerConstants.INPUT_ASA_AMOUNT_AS_ALGO_PAYLOAD_KEY
 import com.algorand.android.modules.tracking.swap.swapstatus.SwapConfirmedEventTrackerConstants.INPUT_ASA_AMOUNT_AS_ASA_PAYLOAD_KEY

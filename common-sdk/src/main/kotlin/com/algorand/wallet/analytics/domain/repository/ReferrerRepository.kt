@@ -12,9 +12,9 @@
 
 package com.algorand.wallet.analytics.domain.repository
 
-import com.algorand.wallet.analytics.domain.usecases.model.ReferralData
+import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
 
-interface ReferrerRepository{
-    suspend fun saveReferrerData(referrerData: ReferralData)
-    suspend fun getReferrerData(): ReferralData
+internal interface ReferrerRepository{
+    suspend fun saveReferrerData(referrerData: ReferrerData)
+    suspend fun getReferrerData(): ReferrerData
 }

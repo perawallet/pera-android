@@ -1,6 +1,6 @@
 package com.algorand.wallet.analytics.domain.usecases.model
 
-data class ReferralData(
+data class ReferrerData(
     val utmSource: String?,
     val utmMedium: String?,
     val utmCampaign: String?,

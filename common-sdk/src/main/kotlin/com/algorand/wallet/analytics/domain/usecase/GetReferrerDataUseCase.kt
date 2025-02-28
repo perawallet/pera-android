@@ -10,21 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.tracking.nft
+package com.algorand.wallet.analytics.domain.usecase
 
-import com.algorand.android.modules.tracking.core.BaseEventTracker
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
+import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
 import javax.inject.Inject
 
-class CollectibleReceiveEventTracker @Inject constructor(
-    peraEventTracker: PeraEventTracker
-) : BaseEventTracker(peraEventTracker) {
+internal class GetReferrerDataUseCase @Inject constructor(
+    private val referrerRepository: ReferrerRepository
+) : GetReferrerData {
 
-    suspend fun logReceiveEvent() {
-        logEvent(COLLECTIBLE_RECEIVE_EVENT_KEY)
-    }
-
-    companion object {
-        private const val COLLECTIBLE_RECEIVE_EVENT_KEY = "nftscr_nft_receive"
+    override suspend fun invoke(): ReferrerData {
+        return referrerRepository.getReferrerData()
     }
 }

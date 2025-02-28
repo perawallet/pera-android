@@ -10,16 +10,22 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.domain.utils
+package com.algorand.wallet.analytics
 
-import com.algorand.wallet.analytics.domain.usecases.model.ReferralData
+import com.algorand.wallet.analytics.domain.service.ReferrerQueryParamParser
+import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_CAMPAIGN
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_CONTENT
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_SOURCE
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_TERM
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
-class UrlReferrerParser @Inject constructor() {
+class ReferrerQueryParamParserImpl @Inject constructor(): ReferrerQueryParamParser {
 
-    fun getReferrerData(queryString: String?): ReferralData {
+    override fun getReferrerData(queryString: String?): ReferrerData {
         val params = mutableMapOf<String, String>()
 
         queryString?.split("&")?.forEach { param ->
@@ -31,20 +37,12 @@ class UrlReferrerParser @Inject constructor() {
             }
         }
 
-        return ReferralData(
+        return ReferrerData(
             utmSource = params.getOrDefault(UTM_SOURCE, null),
             utmMedium = params.getOrDefault(UTM_MEDIUM, null),
             utmCampaign = params.getOrDefault(UTM_CAMPAIGN, null),
             utmTerm = params.getOrDefault(UTM_TERM, null),
             utmContent = params.getOrDefault(UTM_CONTENT, null)
         )
-    }
-
-    companion object {
-        const val UTM_SOURCE = "utm_source"
-        const val UTM_MEDIUM = "utm_medium"
-        const val UTM_CAMPAIGN = "utm_campaign"
-        const val UTM_TERM = "utm_term"
-        const val UTM_CONTENT = "utm_content"
     }
 }

@@ -10,22 +10,23 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.tracking.core
+package com.algorand.wallet.analytics.data.service
 
 import android.os.Bundle
-import com.algorand.android.utils.recordException
-import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_CAMPAIGN
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_CONTENT
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_MEDIUM
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_SOURCE
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_TERM
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_CAMPAIGN
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_CONTENT
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_SOURCE
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_TERM
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import javax.inject.Inject
 
-class FirebaseEventTracker @Inject constructor (
+class PeraEventTrackerImpl @Inject constructor (
     private val firebaseAnalytics: FirebaseAnalytics,
-    private val referrerRepository: ReferrerRepository
+    private val getReferrerData: GetReferrerData
 ) : PeraEventTracker {
 
     override suspend fun logEvent(eventName: String) {
@@ -72,7 +73,7 @@ class FirebaseEventTracker @Inject constructor (
     }
 
     suspend fun addReferralDataToBundle(bundle: Bundle): Bundle {
-        val referralData = referrerRepository.getReferrerData()
+        val referralData = getReferrerData.invoke()
         referralData.let {
             it.utmSource?.let { source -> bundle.putString(UTM_SOURCE, source) }
             it.utmMedium?.let { medium -> bundle.putString(UTM_MEDIUM, medium) }
@@ -85,10 +86,10 @@ class FirebaseEventTracker @Inject constructor (
 
     private fun recordIllegalArgumentException(value: Any) {
         val errorMessage = "$logTag: Not handled bundle payload type: ${value::class.java}"
-        recordException(IllegalArgumentException(errorMessage))
+        FirebaseCrashlytics.getInstance().recordException(IllegalArgumentException(errorMessage))
     }
 
     companion object {
-        private val logTag = FirebaseEventTracker::class.java.simpleName
+        private val logTag = PeraEventTrackerImpl::class.java.simpleName
     }
 }

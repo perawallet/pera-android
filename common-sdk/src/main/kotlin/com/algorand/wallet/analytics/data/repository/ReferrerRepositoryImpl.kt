@@ -14,18 +14,18 @@ package com.algorand.wallet.analytics.data.repository
 
 import android.content.SharedPreferences
 import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
-import com.algorand.wallet.analytics.domain.usecases.model.ReferralData
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_CAMPAIGN
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_CONTENT
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_MEDIUM
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_SOURCE
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_TERM
+import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_CAMPAIGN
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_CONTENT
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_SOURCE
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_TERM
 import javax.inject.Inject
 
-class ReferrerRepositoryImpl @Inject constructor(
+internal class ReferrerRepositoryImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ): ReferrerRepository {
-    override suspend fun saveReferrerData(referrerData: ReferralData) {
+    override suspend fun saveReferrerData(referrerData: ReferrerData) {
         sharedPreferences.edit().apply {
             referrerData.utmSource?.let { putString(UTM_SOURCE, it) }
             referrerData.utmMedium?.let { putString(UTM_MEDIUM, it) }
@@ -36,8 +36,8 @@ class ReferrerRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getReferrerData(): ReferralData {
-        return ReferralData(
+    override suspend fun getReferrerData(): ReferrerData {
+        return ReferrerData(
             utmSource = sharedPreferences.getString(UTM_SOURCE, null),
             utmMedium = sharedPreferences.getString(UTM_MEDIUM, null) ,
             utmCampaign = sharedPreferences.getString(UTM_CAMPAIGN, null) ,

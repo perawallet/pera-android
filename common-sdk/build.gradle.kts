@@ -28,15 +28,21 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_21.toString()
     }
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {
 
     api(libs.algosdk)
     api(libs.algorand.go.mobile)
+    api(libs.xhdwalletapi)
+    api(libs.kotlin.bip39)
+    api(libs.installreferrer)
 
-    implementation(libs.xhdwalletapi)
-    implementation(libs.kotlin.bip39)
     implementation(libs.dagger.hilt.android)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
@@ -48,7 +54,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
-    implementation(libs.installreferrer)
+    implementation(libs.firebase.crashlytics)
     implementation(project.dependencies.platform(libs.firebase.bom))
 
     ksp(libs.dagger.hilt.compiler)

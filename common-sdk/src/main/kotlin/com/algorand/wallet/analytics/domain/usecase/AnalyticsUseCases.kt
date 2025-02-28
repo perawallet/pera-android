@@ -10,8 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.domain
+package com.algorand.wallet.analytics.domain.usecase
 
-interface ReferrerManager{
-    suspend fun initialize()
+import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
+
+fun interface GetReferrerData {
+    suspend operator fun invoke(): ReferrerData
+}
+
+fun interface SaveReferrerData {
+    suspend operator fun invoke(referrerData: ReferrerData)
 }

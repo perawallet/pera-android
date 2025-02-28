@@ -10,22 +10,23 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.data.repository
+package com.algorand.wallet.analytics.repository
 
 import android.content.SharedPreferences
-import com.algorand.wallet.analytics.domain.usecases.model.ReferralData
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_CAMPAIGN
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_CONTENT
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_MEDIUM
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_SOURCE
-import com.algorand.wallet.analytics.domain.utils.UrlReferrerParser.Companion.UTM_TERM
+import com.algorand.wallet.analytics.data.repository.ReferrerRepositoryImpl
+import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_CAMPAIGN
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_CONTENT
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_SOURCE
+import com.algorand.wallet.analytics.domain.util.GA4.UTM_TERM
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import kotlinx.coroutines.runBlocking
 
 class ReferrerRepositoryImplTest {
 
@@ -47,7 +48,7 @@ class ReferrerRepositoryImplTest {
 
     @Test
     fun `saveReferrerData should save data to SharedPreferences`() = runBlocking {
-        val referrerData = ReferralData(
+        val referrerData = ReferrerData(
             utmSource = "source",
             utmMedium = "medium",
             utmCampaign = "campaign",
@@ -67,7 +68,7 @@ class ReferrerRepositoryImplTest {
 
     @Test
     fun `saveReferrerData should handle null values`() = runBlocking {
-        val referrerData = ReferralData(
+        val referrerData = ReferrerData(
             utmSource = null,
             utmMedium = null,
             utmCampaign = null,
@@ -91,7 +92,7 @@ class ReferrerRepositoryImplTest {
 
         val result = sut.getReferrerData()
 
-        assertEquals(ReferralData(
+        assertEquals(ReferrerData(
             utmSource = "source",
             utmMedium = "medium",
             utmCampaign = "campaign",
@@ -104,7 +105,7 @@ class ReferrerRepositoryImplTest {
     fun `getReferrerData should handle null values in SharedPreferences`() = runBlocking {
         val result = sut.getReferrerData()
 
-        assertEquals(ReferralData(
+        assertEquals(ReferrerData(
             utmSource = null,
             utmMedium = null,
             utmCampaign = null,

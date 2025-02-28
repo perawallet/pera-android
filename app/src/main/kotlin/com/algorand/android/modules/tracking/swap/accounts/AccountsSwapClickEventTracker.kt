@@ -13,7 +13,7 @@
 package com.algorand.android.modules.tracking.swap.accounts
 
 import com.algorand.android.modules.tracking.core.BaseEventTracker
-import com.algorand.android.modules.tracking.core.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import javax.inject.Inject
 
 class AccountsSwapClickEventTracker @Inject constructor(

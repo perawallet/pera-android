@@ -10,11 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.tracking.core
+package com.algorand.wallet.analytics.domain.service
 
-interface PeraEventTracker {
-
-    suspend fun logEvent(eventName: String)
-
-    suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>)
+interface ReferrerManager{
+    suspend fun saveReferrerData(referrerUrl: String)
 }

@@ -140,4 +140,68 @@ class ReferrerQueryParamParserImplTest {
         )
         assertEquals(expected, result)
     }
+
+    @Test
+    fun `getReferrerData should properly process multiple parameters`() {
+        val queryString = "param1=value1&utm_source=pera_website&param2=value2&utm_medium=organic&param3=value3"
+
+        val result = sut.getReferrerData(queryString)
+
+        val expected = ReferrerData(
+            utmSource = "pera_website",
+            utmMedium = "organic",
+            utmCampaign = null,
+            utmTerm = null,
+            utmContent = null
+        )
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `getReferrerData should handle query string without ampersands`() {
+        val queryString = "utm_source=pera_website"
+
+        val result = sut.getReferrerData(queryString)
+
+        val expected = ReferrerData(
+            utmSource = "pera_website",
+            utmMedium = null,
+            utmCampaign = null,
+            utmTerm = null,
+            utmContent = null
+        )
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `getReferrerData should handle query parameter without value`() {
+        val queryString = "utm_source=pera_website&broken_param"
+
+        val result = sut.getReferrerData(queryString)
+
+        val expected = ReferrerData(
+            utmSource = "pera_website",
+            utmMedium = null,
+            utmCampaign = null,
+            utmTerm = null,
+            utmContent = null
+        )
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `getReferrerData should handle query parameter without key`() {
+        val queryString = "utm_source=pera_website&=invalid"
+
+        val result = sut.getReferrerData(queryString)
+
+        val expected = ReferrerData(
+            utmSource = "pera_website",
+            utmMedium = null,
+            utmCampaign = null,
+            utmTerm = null,
+            utmContent = null
+        )
+        assertEquals(expected, result)
+    }
 }

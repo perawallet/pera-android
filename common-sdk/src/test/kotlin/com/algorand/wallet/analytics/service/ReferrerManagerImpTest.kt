@@ -74,7 +74,6 @@ class ReferrerManagerImplTest {
 
     @Test
     fun `saveReferrerData should handle empty referrer data`() = runTest {
-        // Given
         val testReferrerUrl = "https://example.com"
         val emptyReferrerData = ReferrerData(
             utmSource = null,

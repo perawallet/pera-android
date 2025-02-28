@@ -1,5 +1,5 @@
 package com.algorand.wallet.analytics.domain.service
 
-interface PeraReferralInstallClient {
+interface PeraReferrerInstallClient {
     suspend fun getReferrerUrl(): String?
 }

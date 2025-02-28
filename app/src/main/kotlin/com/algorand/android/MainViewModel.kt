@@ -13,7 +13,6 @@
 package com.algorand.android
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -51,10 +50,8 @@ import com.algorand.android.utils.exceptions.TransactionConfirmationAwaitExcepti
 import com.algorand.android.utils.exceptions.TransactionIdNullException
 import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.sendErrorLog
+import com.algorand.wallet.analytics.domain.service.PeraReferrerInstallClient
 import com.algorand.wallet.analytics.domain.service.ReferrerManager
-import com.android.installreferrer.api.InstallReferrerClient
-import com.android.installreferrer.api.InstallReferrerStateListener
-import com.android.installreferrer.api.ReferrerDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -83,6 +80,7 @@ class MainViewModel @Inject constructor(
     private val accountDetailCacheManager: AccountDetailCacheManager,
     private val nodeRepository: NodeRepository,
     accountCacheStatusUseCase: AccountCacheStatusUseCase,
+    private val referrerClient: PeraReferrerInstallClient,
     private val referrerManager: ReferrerManager,
     private val autoLockManagerUseCase: AutoLockManagerUseCase,
     private val accountStateHelperUseCase: AccountStateHelperUseCase
@@ -306,32 +304,12 @@ class MainViewModel @Inject constructor(
         return accountStateHelperUseCase.hasAccountAuthority(accountAddress)
     }
 
-    fun fetchInstallReferrer(installReferrerClient: InstallReferrerClient) {
-        installReferrerClient.startConnection(object : InstallReferrerStateListener {
-            override fun onInstallReferrerSetupFinished(responseCode: Int) {
-                when (responseCode) {
-                    InstallReferrerClient.InstallReferrerResponse.OK -> {
-                        val response: ReferrerDetails = installReferrerClient.installReferrer
-                        val referrerUrl = response.installReferrer
-
-                        Log.i("InstallReferrer", "Referrer URL: $referrerUrl")
-                        viewModelScope.launch(Dispatchers.IO) {
-                            referrerManager.saveReferrerData(referrerUrl)
-                        }
-                    }
-                    InstallReferrerClient.InstallReferrerResponse.FEATURE_NOT_SUPPORTED -> {
-                        Log.i("InstallReferrer", "Feature not supported on this device")
-                    }
-                    InstallReferrerClient.InstallReferrerResponse.SERVICE_UNAVAILABLE -> {
-                        Log.i("InstallReferrer", "Referrer service unavailable")
-                    }
-                }
-                installReferrerClient.endConnection()
+    fun fetchInstallReferrer() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val referrerUrl = referrerClient.getReferrerUrl()
+            referrerUrl?.let { url ->
+                referrerManager.saveReferrerData(url)
             }
-
-            override fun onInstallReferrerServiceDisconnected() {
-                Log.i("InstallReferrer", "Referrer service disconnected")
-            }
-        })
+        }
     }
 }

@@ -14,6 +14,6 @@ package com.algorand.wallet.analytics.domain.service
 
 import com.algorand.wallet.analytics.domain.usecases.model.ReferrerData
 
-interface ReferrerQueryParamParser {
+internal interface ReferrerQueryParamParser {
     fun getReferrerData(queryString: String?): ReferrerData
 }

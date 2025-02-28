@@ -91,7 +91,6 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
 import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
 import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
-import com.android.installreferrer.api.InstallReferrerClient
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -492,8 +491,7 @@ class MainActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
-        val installReferrerClientBuilder = InstallReferrerClient.newBuilder(this).build()
-        mainViewModel.fetchInstallReferrer(installReferrerClientBuilder)
+        mainViewModel.fetchInstallReferrer()
         mainViewModel.setDeepLinkHandlerListener(deepLinkHandlerListener)
         autoLockManager.setListener(autoLockManagerListener)
         setupCoreActionsTabBarView()

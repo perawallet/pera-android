@@ -126,10 +126,6 @@ class AccountDetailUseCase @Inject constructor(
         return accountInformation?.rekeyAdminAddress
     }
 
-    fun isThereAnyAccountWithPublicKey(publicKey: String): Boolean {
-        return accountManager.isThereAnyAccountWithPublicKey(publicKey)
-    }
-
     fun setAccountNameService(accountAddress: String, nameServiceName: String?) {
         accountRepository.getCachedAccountDetail(accountAddress)?.data?.nameServiceName = nameServiceName
     }

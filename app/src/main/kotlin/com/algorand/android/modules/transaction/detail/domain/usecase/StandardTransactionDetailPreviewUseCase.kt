@@ -22,15 +22,15 @@ import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDeta
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
 import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.tooltip.domain.usecase.TransactionDetailTooltipDisplayPreferenceUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.GetActiveNodeUseCase
 import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.formatNumberWithDecimalSeparators
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import javax.inject.Inject
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class StandardTransactionDetailPreviewUseCase @Inject constructor(
@@ -39,7 +39,7 @@ class StandardTransactionDetailPreviewUseCase @Inject constructor(
     private val transactionDetailItemMapper: TransactionDetailItemMapper,
     private val transactionDetailTooltipDisplayPreferenceUseCase: TransactionDetailTooltipDisplayPreferenceUseCase,
     private val transactionDetailPreviewMapper: TransactionDetailPreviewMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
     getActiveNodeUseCase: GetActiveNodeUseCase,
     assetDetailUseCase: SimpleAssetDetailUseCase,
     collectibleUseCase: SimpleCollectibleUseCase,
@@ -53,7 +53,7 @@ class StandardTransactionDetailPreviewUseCase @Inject constructor(
     clearInnerTransactionStackCacheUseCase = clearInnerTransactionStackCacheUseCase
 ) {
 
-    suspend fun getTransactionDetailPreview(
+    fun getTransactionDetailPreview(
         transactionId: String,
         publicKey: String,
         isInnerTransaction: Boolean
@@ -96,8 +96,8 @@ class StandardTransactionDetailPreviewUseCase @Inject constructor(
         val receiverAccountPublicKey = baseTransactionDetail.receiverAccountAddress.orEmpty()
         val senderAccountPublicKey = baseTransactionDetail.senderAccountAddress.orEmpty()
 
-        val areAccountsInCache = accountDetailUseCase.isThereAnyAccountWithPublicKey(senderAccountPublicKey) ||
-            accountDetailUseCase.isThereAnyAccountWithPublicKey(receiverAccountPublicKey)
+        val areAccountsInCache = isThereAnyAccountWithAddress(senderAccountPublicKey) ||
+                isThereAnyAccountWithAddress(receiverAccountPublicKey)
 
         val transactionSign = getTransactionSign(
             receiverAccountPublicKey = receiverAccountPublicKey,

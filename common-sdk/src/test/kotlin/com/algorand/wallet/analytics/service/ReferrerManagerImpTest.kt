@@ -54,7 +54,7 @@ class PeraReferrerManagerImplTest {
     }
 
     @Test
-    fun `fetchInstallReferrer should get URL from client and save data when URL is not null`() = runTest {
+    fun `EXPECT URL retrieved and data saved WHEN fetchInstallReferrer is called with non-null URL`() = runTest {
         coEvery { mockReferrerClient.getReferrerUrl() } returns testReferrerUrl
 
         sut.fetchInstallReferrer()
@@ -65,7 +65,7 @@ class PeraReferrerManagerImplTest {
     }
 
     @Test
-    fun `fetchInstallReferrer should not save data when URL is null`() = runTest {
+    fun `EXPECT no data parsing or saving WHEN fetchInstallReferrer is called with null URL`() = runTest {
         coEvery { mockReferrerClient.getReferrerUrl() } returns null
 
         sut.fetchInstallReferrer()
@@ -76,7 +76,7 @@ class PeraReferrerManagerImplTest {
     }
 
     @Test
-    fun `saveReferrerData should parse URL and save parsed data`() = runTest {
+    fun `EXPECT URL parsed and data saved WHEN saveReferrerData is called directly`() = runTest {
         sut.saveReferrerData(testReferrerUrl)
 
         verify { mockQueryParamParser.getReferrerData(testReferrerUrl) }

@@ -12,8 +12,8 @@
 
 package com.algorand.wallet.analytics.data.service
 
-import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
 import com.algorand.wallet.analytics.domain.model.ReferrerData
+import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -53,7 +53,7 @@ class PeraEventTrackerImplTest {
     }
 
     @Test
-    fun `logEvent with only event name should log event with referral data`() = runTest {
+    fun `EXPECT event logged with referral data WHEN logEvent is called with only event name`() = runTest {
         val eventName = "test_event"
 
         sut.logEvent(eventName)
@@ -63,7 +63,7 @@ class PeraEventTrackerImplTest {
     }
 
     @Test
-    fun `logEvent with event name and payload should merge payload with referral data`() = runTest {
+    fun `EXPECT event logged with merged data WHEN logEvent is called with event name and payload`() = runTest {
         val eventName = "test_event_with_payload"
         val payload = mapOf(
             "string_param" to "string_value",
@@ -78,7 +78,7 @@ class PeraEventTrackerImplTest {
     }
 
     @Test
-    fun `logEvent should handle null referral data fields`() = runTest {
+    fun `EXPECT event logged successfully WHEN referral data has null fields`() = runTest {
         val partialReferrerData = ReferrerData(
             utmSource = "partial_source",
             utmMedium = null,
@@ -98,7 +98,7 @@ class PeraEventTrackerImplTest {
     }
 
     @Test
-    fun `logEvent should handle various payload data types`() = runTest {
+    fun `EXPECT event logged with all data types WHEN payload contains various data types`() = runTest {
         val eventName = "test_complex_payload"
         val complexPayload = mapOf(
             "string_param" to "string_value",
@@ -119,7 +119,7 @@ class PeraEventTrackerImplTest {
     }
 
     @Test
-    fun `logEvent should handle empty payload map`() = runTest {
+    fun `EXPECT event logged with only referral data WHEN payload is empty`() = runTest {
         val eventName = "test_empty_payload"
         val emptyPayload = emptyMap<String, Any>()
 

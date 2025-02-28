@@ -28,7 +28,7 @@ class PeraReferrerQueryParamParserImplTest {
     }
 
     @Test
-    fun `getReferrerData should parse all UTM parameters correctly`() {
+    fun `EXPECT all UTM parameters parsed correctly WHEN getReferrerData is called with complete data`() {
         val queryString = "utm_source=pera_website&utm_medium=cpc" +
                 "&utm_campaign=download_app&utm_term=crypto+wallet" +
                 "&utm_content=textlink"
@@ -46,7 +46,7 @@ class PeraReferrerQueryParamParserImplTest {
     }
 
     @Test
-    fun `getReferrerData should handle partial UTM parameters`() {
+    fun `EXPECT partial ReferrerData WHEN only some UTM parameters are present`() {
         val queryString = "utm_source=pera_website&utm_medium=social"
 
         val result = sut.getReferrerData(queryString)
@@ -62,7 +62,7 @@ class PeraReferrerQueryParamParserImplTest {
     }
 
     @Test
-    fun `getReferrerData should handle URL encoded values`() {
+    fun `EXPECT decoded values WHEN URL encoded values are present`() {
         val queryString = "utm_source=pera_website&utm_content=download%20app%20%2325"
 
         val result = sut.getReferrerData(queryString)
@@ -78,7 +78,7 @@ class PeraReferrerQueryParamParserImplTest {
     }
 
     @Test
-    fun `getReferrerData should return empty ReferrerData for null input`() {
+    fun `EXPECT empty ReferrerData WHEN input is null`() {
         val queryString: String? = null
 
         val result = sut.getReferrerData(queryString)
@@ -94,7 +94,7 @@ class PeraReferrerQueryParamParserImplTest {
     }
 
     @Test
-    fun `getReferrerData should return empty ReferrerData for empty string`() {
+    fun `EXPECT empty ReferrerData WHEN input is empty string`() {
         val queryString = ""
 
         val result = sut.getReferrerData(queryString)
@@ -110,7 +110,7 @@ class PeraReferrerQueryParamParserImplTest {
     }
 
     @Test
-    fun `getReferrerData should ignore non-UTM parameters`() {
+    fun `EXPECT only UTM parameters extracted WHEN non-UTM parameters are present`() {
         val queryString = "utm_source=pera_website&random_param=123&utm_medium=social&another_param=abc"
 
         val result = sut.getReferrerData(queryString)
@@ -126,7 +126,7 @@ class PeraReferrerQueryParamParserImplTest {
     }
 
     @Test
-    fun `getReferrerData should handle malformed query parameters`() {
+    fun `EXPECT valid parameters processed WHEN query string contains malformed parameters`() {
         val queryString = "utm_source=pera_website&broken_param&utm_medium=cpc&=invalid"
 
         val result = sut.getReferrerData(queryString)
@@ -142,7 +142,7 @@ class PeraReferrerQueryParamParserImplTest {
     }
 
     @Test
-    fun `getReferrerData should properly process multiple parameters`() {
+    fun `EXPECT UTM parameters extracted WHEN mixed with other parameters`() {
         val queryString = "param1=value1&utm_source=pera_website&param2=value2&utm_medium=organic&param3=value3"
 
         val result = sut.getReferrerData(queryString)
@@ -158,7 +158,7 @@ class PeraReferrerQueryParamParserImplTest {
     }
 
     @Test
-    fun `getReferrerData should handle query string without ampersands`() {
+    fun `EXPECT single parameter extracted WHEN query string has no ampersands`() {
         val queryString = "utm_source=pera_website"
 
         val result = sut.getReferrerData(queryString)
@@ -174,7 +174,7 @@ class PeraReferrerQueryParamParserImplTest {
     }
 
     @Test
-    fun `getReferrerData should handle query parameter without value`() {
+    fun `EXPECT valid parameters processed WHEN query contains parameter without value`() {
         val queryString = "utm_source=pera_website&broken_param"
 
         val result = sut.getReferrerData(queryString)
@@ -190,7 +190,7 @@ class PeraReferrerQueryParamParserImplTest {
     }
 
     @Test
-    fun `getReferrerData should handle query parameter without key`() {
+    fun `EXPECT valid parameters processed WHEN query contains parameter without key`() {
         val queryString = "utm_source=pera_website&=invalid"
 
         val result = sut.getReferrerData(queryString)

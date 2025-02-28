@@ -47,7 +47,7 @@ class ReferrerRepositoryImplTest {
     }
 
     @Test
-    fun `saveReferrerData should save data to SharedPreferences`() = runBlocking {
+    fun `EXPECT data saved to SharedPreferences WHEN saveReferrerData is called with valid data`() = runBlocking {
         val referrerData = ReferrerData(
             utmSource = "source",
             utmMedium = "medium",
@@ -67,7 +67,7 @@ class ReferrerRepositoryImplTest {
     }
 
     @Test
-    fun `saveReferrerData should handle null values`() = runBlocking {
+    fun `EXPECT no values saved WHEN saveReferrerData is called with all null values`() = runBlocking {
         val referrerData = ReferrerData(
             utmSource = null,
             utmMedium = null,
@@ -83,7 +83,7 @@ class ReferrerRepositoryImplTest {
     }
 
     @Test
-    fun `getReferrerData should retrieve data from SharedPreferences`() = runBlocking {
+    fun `EXPECT complete ReferrerData WHEN getReferrerData is called and SharedPreferences has all values`() = runBlocking {
         every { sharedPreferences.getString(UTM_SOURCE, null) } returns "source"
         every { sharedPreferences.getString(UTM_MEDIUM, null) } returns "medium"
         every { sharedPreferences.getString(UTM_CAMPAIGN, null) } returns "campaign"
@@ -102,7 +102,7 @@ class ReferrerRepositoryImplTest {
     }
 
     @Test
-    fun `getReferrerData should handle null values in SharedPreferences`() = runBlocking {
+    fun `EXPECT ReferrerData with null values WHEN getReferrerData is called and SharedPreferences has no values`() = runBlocking {
         val result = sut.getReferrerData()
 
         assertEquals(ReferrerData(

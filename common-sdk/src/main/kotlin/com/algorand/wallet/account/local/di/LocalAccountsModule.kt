@@ -61,6 +61,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetSecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetSeed
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddressUseCase
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyNoAuthAccountWithAddress
@@ -215,6 +216,9 @@ internal object LocalAccountsModule {
 
     @Provides
     fun provideGetEntropy(repository: HdSeedRepository): GetEntropy = GetEntropy(repository::getEntropy)
+
+    @Provides
+    fun provideGetSeed(repository: HdSeedRepository): GetSeed = GetSeed(repository::getSeed)
 
     @Provides
     fun provideGetLocalAccount(useCase: GetLocalAccountUseCase): GetLocalAccount = useCase

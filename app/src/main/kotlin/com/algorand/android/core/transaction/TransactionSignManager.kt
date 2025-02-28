@@ -16,8 +16,6 @@ import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.coroutineScope
-import cash.z.ecc.android.bip39.Mnemonics
-import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.crypto.Address
 import com.algorand.algosdk.crypto.Signature
 import com.algorand.algosdk.sdk.BytesArray
@@ -65,19 +63,18 @@ import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetEntropy
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetSecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetSeed
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.launch
 import java.math.BigInteger
 import java.net.ConnectException
 import java.net.SocketException
 import javax.inject.Inject
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.launch
 
 @Suppress("LongParameterList")
 class TransactionSignManager @Inject constructor(
@@ -88,8 +85,7 @@ class TransactionSignManager @Inject constructor(
     private val getAccountInformation: GetAccountInformation,
     private val getAccountMinBalance: GetAccountMinBalance,
     private val getSecretKey: GetSecretKey,
-    private val getPrivateKey: GetPrivateKey,
-    private val getEntropy: GetEntropy,
+    private val getSeed: GetSeed,
     private val getLocalAccount: GetLocalAccount
 ) : LifecycleScopedCoroutineOwner() {
 
@@ -268,15 +264,12 @@ class TransactionSignManager @Inject constructor(
                     setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
                     return
                 }
-                val entropy = getEntropy(seedId = hdKey.seedId) ?: run {
+                val seed = getSeed(seedId = hdKey.seedId) ?: run {
                     setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
                     return
                 }
 
-                val mnemonic = Mnemonics.MnemonicCode(entropy)
-                val seed = mnemonic.toSeed()
                 val xHDWalletAPI = XHDWalletAPIAndroid(seed)
-
                 val (accountIndex, changeIndex, keyIndex) = listOf(
                     hdKey.account.toUInt(),
                     hdKey.change.toUInt(),

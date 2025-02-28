@@ -25,9 +25,8 @@ import javax.inject.Inject
 internal class AESPlatformManagerImpl @Inject constructor() : AESPlatformManager {
 
     companion object {
-        // TODO change values before account-refactor launch
-        private const val KEY_ALIAS = "MyAESKey"
-        private const val ANDROID_KEYSTORE = "AndroidKeyStore"
+        private const val KEY_ALIAS = "PeraAESKey"
+        private const val ANDROID_KEYSTORE = "AndroidKeyStore" // this value should not change
         private const val AES_MODE = "AES/GCM/NoPadding"
     }
 
@@ -78,7 +77,6 @@ internal class AESPlatformManagerImpl @Inject constructor() : AESPlatformManager
         return cipher.doFinal(cipherData)
     }
 
-    // Encrypt a string
     @Throws(Exception::class)
     override fun encryptString(data: String): String {
         val cipher = Cipher.getInstance(AES_MODE)
@@ -95,7 +93,6 @@ internal class AESPlatformManagerImpl @Inject constructor() : AESPlatformManager
         return Base64.getEncoder().encodeToString(combined)
     }
 
-    // Decrypt a string
     @Throws(Exception::class)
     override fun decryptString(encryptedData: String): String {
         val combined = Base64.getDecoder().decode(encryptedData)

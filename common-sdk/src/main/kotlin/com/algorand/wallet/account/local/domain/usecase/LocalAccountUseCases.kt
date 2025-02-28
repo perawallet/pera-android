@@ -104,6 +104,10 @@ fun interface GetEntropy {
     suspend operator fun invoke(seedId: Int): ByteArray?
 }
 
+fun interface GetSeed {
+    suspend operator fun invoke(seedId: Int): ByteArray?
+}
+
 fun interface IsThereAnyAccountWithAddress {
     suspend operator fun invoke(address: String): Boolean
 }

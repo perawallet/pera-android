@@ -55,10 +55,6 @@ class AccountManager(
         sharedPref.removeAll()
     }
 
-    fun isThereAnyAccountWithPublicKey(publicKey: String?): Boolean {
-        return publicKey != null && getAccount(publicKey) != null
-    }
-
     fun isThereAnyRegisteredAccount(): Boolean {
         return getAccounts().isEmpty().not()
     }

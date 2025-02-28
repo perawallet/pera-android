@@ -44,12 +44,16 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
 
     private var sendTransactionJob: Job? = null
 
-    private val rekeyToLedgerAccountConfirmationPreviewFlow = MutableStateFlow(getInitialPreview())
+    private lateinit var rekeyToLedgerAccountConfirmationPreviewFlow:
+            MutableStateFlow<RekeyToLedgerAccountConfirmationPreview>
     override val baseRekeyConfirmationFieldsFlow: StateFlow<RekeyToLedgerAccountConfirmationPreview>
         get() = rekeyToLedgerAccountConfirmationPreviewFlow
 
     init {
-        updatePreviewWithCalculatedTransactionFee()
+        viewModelScope.launchIO {
+            getInitialPreview()
+            updatePreviewWithCalculatedTransactionFee()
+        }
     }
 
     fun createRekeyToLedgerAccountTransaction() {
@@ -96,20 +100,20 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
         }
     }
 
-    private fun getInitialPreview(): RekeyToLedgerAccountConfirmationPreview {
-        return rekeyToLedgerAccountConfirmationPreviewUseCase.getInitialRekeyToStandardAccountConfirmationPreview(
-            accountAddress = accountAddress,
-            authAccountAddress = authAccountAddress
+    private suspend fun getInitialPreview() {
+        rekeyToLedgerAccountConfirmationPreviewFlow = MutableStateFlow(
+            rekeyToLedgerAccountConfirmationPreviewUseCase.getInitialRekeyToStandardAccountConfirmationPreview(
+                accountAddress = accountAddress,
+                authAccountAddress = authAccountAddress
+            )
         )
     }
 
-    private fun updatePreviewWithCalculatedTransactionFee() {
-        viewModelScope.launchIO {
-            rekeyToLedgerAccountConfirmationPreviewUseCase.updatePreviewWithTransactionFee(
-                preview = rekeyToLedgerAccountConfirmationPreviewFlow.value
-            ).collectLatest { preview ->
-                rekeyToLedgerAccountConfirmationPreviewFlow.emit(preview)
-            }
+    private suspend fun updatePreviewWithCalculatedTransactionFee() {
+        rekeyToLedgerAccountConfirmationPreviewUseCase.updatePreviewWithTransactionFee(
+            preview = rekeyToLedgerAccountConfirmationPreviewFlow.value
+        ).collectLatest { preview ->
+            rekeyToLedgerAccountConfirmationPreviewFlow.emit(preview)
         }
     }
 }

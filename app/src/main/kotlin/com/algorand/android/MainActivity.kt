@@ -36,6 +36,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
+import com.algorand.android.MainViewModel.ViewEvent
 import com.algorand.android.core.transaction.TransactionSignManager
 import com.algorand.android.customviews.CoreActionsTabBarView
 import com.algorand.android.customviews.LedgerLoadingDialog
@@ -88,10 +89,6 @@ import com.algorand.android.utils.walletconnect.WalletConnectViewModel
 import com.algorand.wallet.cache.domain.model.AppCacheStatus
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
-import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
-import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
-import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
-import com.algorand.wallet.deeplink.parser.CreateDeepLink
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -104,6 +101,30 @@ class MainActivity :
     WalletConnectConnectionBottomSheet.Callback,
     ReceiveAccountSelectionFragment.ReceiveAccountSelectionFragmentListener,
     AlertDialogDelegation by AlertDialogDelegationImpl() {
+
+    private val viewEventCollector: suspend (ViewEvent) -> Unit = { event ->
+        when (event) {
+            is ViewEvent.HandleAssetTransactionDeepLink -> navToAssetProfileNavigation(
+                event.address,
+                event.assetId
+            )
+
+            is ViewEvent.HandleAssetOptInRequestDeepLink -> navToAssetAdditionActionNavigation(
+                event.address,
+                event.assetId
+            )
+
+            is ViewEvent.HandleAssetInboxDeepLink -> navToAssetInboxOneAccountNavigation(
+                event.address
+            )
+
+            is ViewEvent.ShowForegroundNotification -> showForegroundNotification(
+                event.notificationMetadata
+            )
+
+            is ViewEvent.ShowGlobalNotificationError -> showGlobalNotificationError()
+        }
+    }
 
     val mainViewModel: MainViewModel by viewModels()
     val assetOperationViewModel: AssetOperationViewModel by viewModels()
@@ -133,9 +154,6 @@ class MainActivity :
 
     @Inject
     lateinit var pendingIntentKeeper: PendingIntentKeeper
-
-    @Inject
-    lateinit var createDeepLink: CreateDeepLink
 
     private val isAppUnlocked: Boolean
         get() = autoLockManager.isAppUnlocked
@@ -180,62 +198,8 @@ class MainActivity :
             if (!isAppUnlocked) {
                 return@let
             }
-            handleNewNotification(newNotificationData)
+            mainViewModel.handleNewNotification(newNotificationData)
         }
-    }
-
-    private fun handleNewNotification(newNotificationData: NotificationMetadata) {
-        when (val baseDeepLink = createDeepLink(newNotificationData.url.orEmpty())) {
-            is DeepLink.Notification -> handleNotificationWithDeepLink(newNotificationData, baseDeepLink)
-            else -> showForegroundNotification(notificationMetadata = newNotificationData, tag = activityTag)
-        }
-    }
-
-    private fun handleNotificationWithDeepLink(
-        newNotificationData: NotificationMetadata,
-        deeplink: DeepLink.Notification
-    ) {
-        when (deeplink.notificationGroupType) {
-            OPT_IN -> handleAssetOptInRequestDeepLink(deeplink.address, deeplink.assetId)
-            ASSET_INBOX -> handleAssetInboxDeepLink(deeplink.address)
-            else -> showForegroundNotification(notificationMetadata = newNotificationData, tag = activityTag)
-        }
-    }
-
-    private fun handleAssetOptInRequestDeepLink(accountAddress: String, assetId: Long) {
-        if (!accountDetailUseCase.isThereAnyAccountWithPublicKey(accountAddress)) {
-            showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
-            return
-        }
-
-        val assetAction = AssetAction(publicKey = accountAddress, assetId = assetId)
-        nav(
-            HomeNavigationDirections.actionGlobalAssetAdditionActionNavigation(
-                assetAction = assetAction
-            )
-        )
-    }
-
-    private fun handleAssetInboxDeepLink(accountAddress: String) {
-        if (!accountDetailUseCase.isThereAnyAccountWithPublicKey(accountAddress)) {
-            showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
-            return
-        }
-        navToAssetInboxOneAccountNavigation(accountAddress)
-    }
-
-    private fun handleAssetTransactionDeepLink(accountAddress: String, assetId: Long) {
-        if (!accountDetailUseCase.isThereAnyAccountWithPublicKey(accountAddress)) {
-            showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
-            return
-        }
-
-        nav(
-            HomeNavigationDirections.actionGlobalAssetProfileNavigation(
-                assetId = assetId,
-                accountAddress = accountAddress
-            )
-        )
     }
 
     private val invalidTransactionCauseObserver = Observer<Event<Resource.Error.Local>> { cause ->
@@ -310,11 +274,7 @@ class MainActivity :
             assetId: Long,
             notificationGroupType: NotificationGroupType
         ): Boolean {
-            when (notificationGroupType) {
-                TRANSACTIONS -> handleAssetTransactionDeepLink(accountAddress, assetId)
-                OPT_IN -> handleAssetOptInRequestDeepLink(accountAddress, assetId)
-                ASSET_INBOX -> handleAssetInboxDeepLink(accountAddress)
-            }
+            mainViewModel.handleNotificationDeepLink(accountAddress, assetId, notificationGroupType)
             return true
         }
 
@@ -377,20 +337,6 @@ class MainActivity :
                     showGlobalError(getString(R.string.you_dont_have_any, deepLink.senderAddress), tag = activityTag)
                 }
             }
-        }
-    }
-
-    private fun navToAssetInboxOneAccountNavigation(accountAddress: String) {
-        if (accountDetailUseCase.canAccountSignTransaction(accountAddress)) {
-            navController.navigateSafe(
-                HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
-                    AssetInboxOneAccountNavArgs(
-                        accountAddress
-                    )
-                )
-            )
-        } else {
-            navToAccountDetailFragment(accountAddress)
         }
     }
 
@@ -585,6 +531,11 @@ class MainActivity :
         collectLatestOnLifecycle(
             flow = coreActionsTabBarViewModel.viewState,
             collection = { binding.coreActionsTabBarView.initViewState(it) }
+        )
+
+        collectLatestOnLifecycle(
+            mainViewModel.viewEvent,
+            viewEventCollector
         )
     }
 
@@ -903,6 +854,46 @@ class MainActivity :
             ledgerLoadingDialog = LedgerLoadingDialog.createLedgerLoadingDialog(ledgerName, ledgerLoadingDialogListener)
             ledgerLoadingDialog?.showWithStateCheck(supportFragmentManager)
         }
+    }
+
+    private fun navToAssetProfileNavigation(accountAddress: String, assetId: Long) {
+        nav(
+            HomeNavigationDirections.actionGlobalAssetProfileNavigation(
+                assetId = assetId,
+                accountAddress = accountAddress
+            )
+        )
+    }
+
+    private fun navToAssetAdditionActionNavigation(accountAddress: String, assetId: Long) {
+        val assetAction = AssetAction(publicKey = accountAddress, assetId = assetId)
+        nav(
+            HomeNavigationDirections.actionGlobalAssetAdditionActionNavigation(
+                assetAction = assetAction
+            )
+        )
+    }
+
+    private fun navToAssetInboxOneAccountNavigation(accountAddress: String) {
+        if (accountDetailUseCase.canAccountSignTransaction(accountAddress)) {
+            navController.navigateSafe(
+                HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
+                    AssetInboxOneAccountNavArgs(
+                        accountAddress
+                    )
+                )
+            )
+        } else {
+            navToAccountDetailFragment(accountAddress)
+        }
+    }
+
+    private fun showForegroundNotification(newNotificationData: NotificationMetadata) {
+        showForegroundNotification(notificationMetadata = newNotificationData, tag = activityTag)
+    }
+
+    private fun showGlobalNotificationError() {
+        showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
     }
 
     companion object {

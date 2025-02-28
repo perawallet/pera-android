@@ -39,10 +39,9 @@ dependencies {
 
     api(libs.algosdk)
     api(libs.algorand.go.mobile)
-    api(libs.xhdwalletapi)
-    api(libs.kotlin.bip39)
-    api(libs.installreferrer)
 
+    implementation(libs.xhdwalletapi)
+    implementation(libs.kotlin.bip39)
     implementation(libs.dagger.hilt.android)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)

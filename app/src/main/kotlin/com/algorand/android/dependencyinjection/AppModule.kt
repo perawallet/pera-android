@@ -190,12 +190,6 @@ object AppModule {
         return appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
     }
 
-    @Provides
-    @Singleton
-    fun provideContext(@ApplicationContext appContext: Context): Context {
-        return appContext
-    }
-
     @Singleton
     @Provides
     fun providePeraReferrerInstallClient(impl: PeraReferrerInstallClientImpl): PeraReferrerInstallClient = impl

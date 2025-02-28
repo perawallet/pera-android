@@ -5,12 +5,13 @@ import android.util.Log
 import com.algorand.wallet.analytics.domain.service.PeraReferrerInstallClient
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 class PeraReferrerInstallClientImpl @Inject constructor(
-    private val context: Context
+    @ApplicationContext private val context: Context
 ) : PeraReferrerInstallClient {
 
     override suspend fun getReferrerUrl(): String? = suspendCancellableCoroutine { continuation ->

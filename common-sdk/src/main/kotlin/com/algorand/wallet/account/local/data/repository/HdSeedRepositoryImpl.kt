@@ -17,7 +17,8 @@ import com.algorand.wallet.account.local.data.mapper.entity.HdSeedEntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
-import com.algorand.wallet.encryption.SecretKeyEncryptionManager
+import com.algorand.wallet.encryption.AESPlatformManager
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,13 +26,12 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 internal class HdSeedRepositoryImpl @Inject constructor(
     private val hdSeedDao: HdSeedDao,
     private val hdSeedEntityMapper: HdSeedEntityMapper,
     private val hdSeedMapper: HdSeedMapper,
-    private val secretKeyEncryptionManager: SecretKeyEncryptionManager,
+    private val aesPlatformManager: AESPlatformManager,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : HdSeedRepository {
 
@@ -77,8 +77,8 @@ internal class HdSeedRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun addHdSeedAsFlow(hdSeed: HdSeed, encryptedEntropy: ByteArray, encryptedSeed: ByteArray): Flow<Unit> = flow {
-        val hdKeyEntity = hdSeedEntityMapper(hdSeed, encryptedEntropy, encryptedSeed)
+    override fun addHdSeedAsFlow(hdSeed: HdSeed, entropy: ByteArray, seed: ByteArray): Flow<Unit> = flow {
+        val hdKeyEntity = hdSeedEntityMapper(hdSeed, entropy, seed)
         val rowsAffected = hdSeedDao.insert(hdKeyEntity)
         emit(rowsAffected)
     }.flowOn(Dispatchers.IO)
@@ -109,7 +109,14 @@ internal class HdSeedRepositoryImpl @Inject constructor(
     override suspend fun getEntropy(seedId: Int): ByteArray? {
         return withContext(coroutineDispatcher) {
             val encryptedSK = hdSeedDao.get(seedId)?.encryptedEntropy
-            encryptedSK?.let { secretKeyEncryptionManager.decryptByteArray(it) }
+            encryptedSK?.let { aesPlatformManager.decryptByteArray(it) }
+        }
+    }
+
+    override suspend fun getSeed(seedId: Int): ByteArray? {
+        return withContext(coroutineDispatcher) {
+            val encryptedSK = hdSeedDao.get(seedId)?.encryptedSeed
+            encryptedSK?.let { aesPlatformManager.decryptByteArray(it) }
         }
     }
 }

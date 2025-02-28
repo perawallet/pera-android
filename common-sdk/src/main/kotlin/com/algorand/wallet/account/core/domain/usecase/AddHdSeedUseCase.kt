@@ -17,26 +17,24 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
-import com.algorand.wallet.encryption.SecretKeyEncryptionManager
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
 internal class AddHdSeedUseCase @Inject constructor(
-    private val hdSeedRepository: HdSeedRepository,
-    private val secretKeyEncryptionManager: SecretKeyEncryptionManager
+    private val hdSeedRepository: HdSeedRepository
 ) : AddHdSeed {
 
     override fun invoke(mnemonic: Mnemonics.MnemonicCode): Flow<Int> {
-        val encryptedSeed = encryptData(mnemonic.toSeed())
-        val encryptedEntropy = encryptData(mnemonic.toEntropy())
+        val encryptedSeed = mnemonic.toSeed()
+        val encryptedEntropy = mnemonic.toEntropy()
         val entropyInitialCustomName = "insert"
 
         return flow {
             hdSeedRepository.addHdSeedAsFlow(
                 hdSeed = HdSeed(0, entropyInitialCustomName), // Seed will be auto-generated, update later
-                encryptedSeed = encryptedSeed,
-                encryptedEntropy = encryptedEntropy
+                seed = encryptedSeed,
+                entropy = encryptedEntropy
             ).collect {
                 // After collecting the seedId, retrieve the entity
                 val hdSeedEntities = hdSeedRepository.getAllHdSeed(entropyInitialCustomName)
@@ -54,10 +52,6 @@ internal class AddHdSeedUseCase @Inject constructor(
                 emit(hdSeedEntities.first().seedId)
             }
         }
-    }
-
-    private fun encryptData(data: ByteArray): ByteArray {
-        return secretKeyEncryptionManager.encryptByteArray(data)
     }
 
     companion object {

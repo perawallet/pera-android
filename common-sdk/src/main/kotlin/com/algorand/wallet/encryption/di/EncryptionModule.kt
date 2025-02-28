@@ -16,8 +16,6 @@ import com.algorand.wallet.encryption.AESPlatformManager
 import com.algorand.wallet.encryption.AESPlatformManagerImpl
 import com.algorand.wallet.encryption.Base64Manager
 import com.algorand.wallet.encryption.Base64ManagerImpl
-import com.algorand.wallet.encryption.SecretKeyEncryptionManager
-import com.algorand.wallet.encryption.SecretKeyEncryptionManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,10 +29,6 @@ internal object EncryptionModule {
     @Provides
     @Singleton
     fun provideBase64Manager(impl: Base64ManagerImpl): Base64Manager = impl
-
-    @Provides
-    @Singleton
-    fun provideSecretKeyEncryptionManager(impl: SecretKeyEncryptionManagerImpl): SecretKeyEncryptionManager = impl
 
     @Provides
     @Singleton

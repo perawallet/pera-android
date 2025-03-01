@@ -29,6 +29,7 @@ import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview.SelectedAssetAmountDetail
 import com.algorand.android.modules.swap.balancepercentage.ui.BalancePercentageBottomSheet.Companion.CHECKED_BALANCE_PERCENTAGE_KEY
+import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.DecimalDigitsInputFilter
@@ -138,6 +139,9 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
         binding.balancePercentageContainer.isVisible = isEnabled
     }
 
+    private var logFromEvent = false
+    private var logToEvent = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
@@ -232,9 +236,11 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
     override fun onResume() {
         super.onResume()
         useFragmentResultListenerValue<Long>(SWAP_FROM_ASSET_ID_KEY) { assetId ->
+            logFromEvent = true
             assetSwapViewModel.updateFromAssetId(assetId)
         }
         useFragmentResultListenerValue<Long>(SWAP_TO_ASSET_ID_KEY) { assetId ->
+            logToEvent = true
             assetSwapViewModel.updateToAssetId(assetId)
         }
         useFragmentResultListenerValue<Float>(CHECKED_BALANCE_PERCENTAGE_KEY) { balancePercentage ->
@@ -272,10 +278,28 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
     }
 
     private fun initFromAssetDetail(assetDetail: AssetSwapPreview.SelectedAssetDetail) {
+        if (logFromEvent) {
+            assetSwapViewModel.logEvent(
+                PeraEvent.SWAP_SELECT_ASSET_TOP,
+                mapOf(
+                    "asset" to "${assetDetail.assetId} | ${assetDetail.assetShortName.getName()}"
+                )
+            )
+            logFromEvent = false
+        }
         initSwapAssetInputViewDetails(assetDetail, binding.fromAssetInputView)
     }
 
     private fun initToAssetDetail(assetDetail: AssetSwapPreview.SelectedAssetDetail) {
+        if (logToEvent) {
+            assetSwapViewModel.logEvent(
+                PeraEvent.SWAP_SELECT_ASSET_LOWER,
+                mapOf(
+                    "asset" to "${assetDetail.assetId} | ${assetDetail.assetShortName.getName()}"
+                )
+            )
+            logToEvent = false
+        }
         initSwapAssetInputViewDetails(assetDetail, binding.toAssetInputView)
     }
 

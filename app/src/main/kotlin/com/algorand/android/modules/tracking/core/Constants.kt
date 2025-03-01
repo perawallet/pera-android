@@ -30,4 +30,6 @@ internal object PeraClickEvent {
 
 internal object PeraEvent {
     const val HOME_SCREEN_QR_SCAN = "homescr_qr_scan"
+    const val SWAP_SELECT_ASSET_TOP = "swapscr_select_top_asset_tap"
+    const val SWAP_SELECT_ASSET_LOWER = "swapscr_select_lower_asset_tap"
 }

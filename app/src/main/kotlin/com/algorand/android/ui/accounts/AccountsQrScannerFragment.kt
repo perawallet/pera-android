@@ -18,6 +18,7 @@ import com.algorand.android.R
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
+import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -101,7 +102,7 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
     }
 
     override fun onWalletConnectConnectionDeeplink(wcUrl: String): Boolean {
-        accountsQrScannerViewModel.logAccountsQrConnectEvent()
+        accountsQrScannerViewModel.logEvent(PeraEvent.HOME_SCREEN_QR_SCAN)
         handleWalletConnectUrl(wcUrl)
         return true.also { navBack() }
     }

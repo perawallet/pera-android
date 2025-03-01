@@ -17,21 +17,9 @@ import com.google.firebase.analytics.ktx.logEvent
 
 private const val ADDRESS_KEY = "address"
 
-private const val TAP_TAB_RECEIVE = "tap_tab_receive"
-private const val TAP_ASSET_DETAIL_RECEIVE = "tap_asset_detail_receive"
 private const val TAP_SHOW_QR_COPY = "tap_show_qr_copy"
 private const val TAP_SHOW_QR_SHARE = "tap_show_qr_share"
 private const val TAP_SHOW_QR_SHARE_COMPLETE = "tap_show_qr_share_complete"
-
-fun FirebaseAnalytics.logTapReceive() {
-    logEvent(TAP_TAB_RECEIVE, null)
-}
-
-fun FirebaseAnalytics.logTapAssetDetailReceive(address: String) {
-    logEvent(TAP_ASSET_DETAIL_RECEIVE) {
-        param(ADDRESS_KEY, address)
-    }
-}
 
 fun FirebaseAnalytics.logTapShowQrCopy(address: String) {
     logEvent(TAP_SHOW_QR_COPY) {

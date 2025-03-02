@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.remoteconfig.data.service
+package com.algorand.wallet.remoteconfig.domain.service
 
 internal interface FirebaseRemoteConfigService {
     suspend fun fetchRemoteConfig()

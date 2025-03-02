@@ -12,42 +12,34 @@
 
 package com.algorand.wallet.analytics.repository
 
-import android.content.SharedPreferences
 import com.algorand.wallet.analytics.data.repository.ReferrerRepositoryImpl
 import com.algorand.wallet.analytics.domain.model.ReferrerData
-import com.algorand.wallet.analytics.domain.util.GA4.UTM_CAMPAIGN
-import com.algorand.wallet.analytics.domain.util.GA4.UTM_CONTENT
-import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM
-import com.algorand.wallet.analytics.domain.util.GA4.UTM_SOURCE
-import com.algorand.wallet.analytics.domain.util.GA4.UTM_TERM
+import com.algorand.wallet.foundation.cache.PersistentCache
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Test
-import kotlinx.coroutines.runBlocking
 
 class ReferrerRepositoryImplTest {
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
-    private lateinit var sut: ReferrerRepositoryImpl
+    private val sourceCache: PersistentCache<String> = mockk(relaxed = true)
+    private val mediumCache: PersistentCache<String> = mockk(relaxed = true)
+    private val campaignCache: PersistentCache<String> = mockk(relaxed = true)
+    private val termCache: PersistentCache<String> = mockk(relaxed = true)
+    private val contentCache: PersistentCache<String> = mockk(relaxed = true)
 
-    @Before
-    fun setUp() {
-        sharedPreferences = mockk()
-        sharedPreferencesEditor = mockk()
-        sut = ReferrerRepositoryImpl(sharedPreferences)
-
-        every { sharedPreferences.edit() } returns sharedPreferencesEditor
-        every { sharedPreferencesEditor.putString(any(), any()) } returns sharedPreferencesEditor
-        every { sharedPreferencesEditor.apply() } returns Unit
-        every { sharedPreferences.getString(any(), any()) } returns null
-    }
+    private val sut = ReferrerRepositoryImpl(
+        utmSourceStorage = sourceCache,
+        utmMediumStorage = mediumCache,
+        utmCampaignStorage = campaignCache,
+        utmTermStorage = termCache,
+        utmContentStorage = contentCache
+    )
 
     @Test
-    fun `EXPECT data saved to SharedPreferences WHEN saveReferrerData is called with valid data`() = runBlocking {
+    fun `EXPECT data saved to SharedPreferences WHEN saveReferrerData is called with valid data`() = runTest {
         val referrerData = ReferrerData(
             utmSource = "source",
             utmMedium = "medium",
@@ -58,16 +50,15 @@ class ReferrerRepositoryImplTest {
 
         sut.saveReferrerData(referrerData)
 
-        verify { sharedPreferencesEditor.putString(UTM_SOURCE, "source") }
-        verify { sharedPreferencesEditor.putString(UTM_MEDIUM, "medium") }
-        verify { sharedPreferencesEditor.putString(UTM_CAMPAIGN, "campaign") }
-        verify { sharedPreferencesEditor.putString(UTM_TERM, "term") }
-        verify { sharedPreferencesEditor.putString(UTM_CONTENT, "content") }
-        verify { sharedPreferencesEditor.apply() }
+        verify { sourceCache.put("source") }
+        verify { mediumCache.put("medium") }
+        verify { campaignCache.put("campaign") }
+        verify { termCache.put("term") }
+        verify { contentCache.put("content") }
     }
 
     @Test
-    fun `EXPECT no values saved WHEN saveReferrerData is called with all null values`() = runBlocking {
+    fun `EXPECT no values saved WHEN saveReferrerData is called with all null values`() = runTest {
         val referrerData = ReferrerData(
             utmSource = null,
             utmMedium = null,
@@ -78,39 +69,51 @@ class ReferrerRepositoryImplTest {
 
         sut.saveReferrerData(referrerData)
 
-        verify(exactly = 0) { sharedPreferencesEditor.putString(any(), any()) }
-        verify { sharedPreferencesEditor.apply() }
+        verify(exactly = 0) { sourceCache.put(any()) }
+        verify(exactly = 0) { mediumCache.put(any()) }
+        verify(exactly = 0) { campaignCache.put(any()) }
+        verify(exactly = 0) { termCache.put(any()) }
+        verify(exactly = 0) { contentCache.put(any()) }
     }
 
     @Test
-    fun `EXPECT complete ReferrerData WHEN getReferrerData is called and SharedPreferences has all values`() = runBlocking {
-        every { sharedPreferences.getString(UTM_SOURCE, null) } returns "source"
-        every { sharedPreferences.getString(UTM_MEDIUM, null) } returns "medium"
-        every { sharedPreferences.getString(UTM_CAMPAIGN, null) } returns "campaign"
-        every { sharedPreferences.getString(UTM_TERM, null) } returns "term"
-        every { sharedPreferences.getString(UTM_CONTENT, null) } returns "content"
+    fun `EXPECT complete ReferrerData WHEN getReferrerData is called and SharedPreferences has all values`() = runTest {
+        every { sourceCache.get() } returns "source"
+        every { mediumCache.get() } returns "medium"
+        every { campaignCache.get() } returns "campaign"
+        every { termCache.get() } returns "term"
+        every { contentCache.get() } returns "content"
 
         val result = sut.getReferrerData()
 
-        assertEquals(ReferrerData(
+        val expected = ReferrerData(
             utmSource = "source",
             utmMedium = "medium",
             utmCampaign = "campaign",
             utmTerm = "term",
             utmContent = "content"
-        ), result)
+        )
+        assertEquals(expected, result)
     }
 
     @Test
-    fun `EXPECT ReferrerData with null values WHEN getReferrerData is called and SharedPreferences has no values`() = runBlocking {
-        val result = sut.getReferrerData()
+    fun `EXPECT ReferrerData with null values WHEN getReferrerData is called and SharedPreferences has no values`() =
+        runTest {
+            every { sourceCache.get() } returns null
+            every { mediumCache.get() } returns null
+            every { campaignCache.get() } returns null
+            every { termCache.get() } returns null
+            every { contentCache.get() } returns null
 
-        assertEquals(ReferrerData(
-            utmSource = null,
-            utmMedium = null,
-            utmCampaign = null,
-            utmTerm = null,
-            utmContent = null
-        ), result)
-    }
+            val result = sut.getReferrerData()
+
+            val expected = ReferrerData(
+                utmSource = null,
+                utmMedium = null,
+                utmCampaign = null,
+                utmTerm = null,
+                utmContent = null
+            )
+            assertEquals(expected, result)
+        }
 }

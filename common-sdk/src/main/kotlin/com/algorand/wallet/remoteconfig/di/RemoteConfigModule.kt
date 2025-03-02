@@ -13,11 +13,16 @@
 package com.algorand.wallet.remoteconfig.di
 
 import com.algorand.wallet.remoteconfig.data.repository.FeatureToggleRepositoryImpl
-import com.algorand.wallet.remoteconfig.data.service.FirebaseRemoteConfigService
 import com.algorand.wallet.remoteconfig.data.service.FirebaseRemoteConfigServiceImpl
 import com.algorand.wallet.remoteconfig.domain.repository.FeatureToggleRepository
+import com.algorand.wallet.remoteconfig.domain.service.FirebaseRemoteConfigService
 import com.algorand.wallet.remoteconfig.domain.usecase.InitializeOperationalToggles
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.google.firebase.BuildConfig
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.google.firebase.remoteconfig.remoteConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,4 +52,15 @@ internal object RemoteConfigModule {
     fun provideIsFeatureToggleEnabled(
         repository: FeatureToggleRepository
     ): IsFeatureToggleEnabled = IsFeatureToggleEnabled(repository::isFeatureEnabled)
+
+    @Provides
+    fun provideFirebaseRemoteConfig(): FirebaseRemoteConfig {
+        val FETCH_INTERVAL_IN_SECS = 3600L // 1 hour
+        val remoteConfig = Firebase.remoteConfig
+        val configSettings = FirebaseRemoteConfigSettings.Builder()
+            .setMinimumFetchIntervalInSeconds(if (BuildConfig.DEBUG) 0L else FETCH_INTERVAL_IN_SECS)
+            .build()
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        return remoteConfig
+    }
 }

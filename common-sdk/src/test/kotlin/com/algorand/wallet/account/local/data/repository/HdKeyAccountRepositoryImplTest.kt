@@ -21,11 +21,11 @@ import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import org.junit.Assert.assertEquals
+import org.junit.Test
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
-import org.junit.Test
 
 class HdKeyAccountRepositoryImplTest {
 
@@ -157,5 +157,27 @@ class HdKeyAccountRepositoryImplTest {
         sut.deleteAllAccounts()
 
         coVerify { hdKeyDao.clearAll() }
+    }
+
+    @Test
+    fun `EXPECT secret key WHEN getPrivateKey is invoked`() = runTest {
+        val encryptedSK = "encryptedSecretKey".toByteArray()
+        val decryptedSK = byteArrayOf(1, 2, 3)
+        coEvery { hdKeyDao.get("address") } returns HdKeyEntity("address", byteArrayOf(8), encryptedSK, 1, 0, 0, 0, 1)
+        coEvery { aesPlatformManager.decryptByteArray(encryptedSK) } returns decryptedSK
+
+        val result = sut.getPrivateKey("address")
+
+        assertEquals(decryptedSK, result)
+    }
+
+    @Test
+    fun `EXPECT null WHEN getPrivateKey is invoked with a non-existent address`() = runTest {
+        coEvery { hdKeyDao.get("non_existent_address") } returns null
+
+        val result = sut.getPrivateKey("non_existent_address")
+
+        coVerify { hdKeyDao.get("non_existent_address") }
+        assertEquals(null, result)
     }
 }

@@ -17,7 +17,7 @@ import com.algorand.wallet.account.local.data.mapper.entity.HdSeedEntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
-import com.algorand.wallet.encryption.AESPlatformManager
+import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

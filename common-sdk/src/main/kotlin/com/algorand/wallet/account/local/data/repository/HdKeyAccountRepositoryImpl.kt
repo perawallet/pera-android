@@ -17,7 +17,7 @@ import com.algorand.wallet.account.local.data.mapper.entity.HdKeyEntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdKeyMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount.HdKey
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
-import com.algorand.wallet.encryption.AESPlatformManager
+import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption
+package com.algorand.wallet.encryption.domain.services
 
 interface Base64Manager {
     fun encode(byteArray: ByteArray): String

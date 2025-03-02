@@ -61,12 +61,12 @@ import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraCard
 import com.algorand.android.ui.compose.widget.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.PeraTitleText
-import com.algorand.android.utils.PassphraseKeywordUtils
 import com.algorand.android.utils.browser.PRIVACY_POLICY_URL
 import com.algorand.android.utils.browser.TERMS_AND_SERVICES_URL
 import com.algorand.android.utils.browser.openPrivacyPolicyUrl
 import com.algorand.android.utils.browser.openTermsAndServicesUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -161,7 +161,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                             showBottomSheet.value = true
                         } else {
                             navToBackupPassphraseInfoNavigation(
-                                PassphraseKeywordUtils.HD_WALLET_PASSPHRASES_WORD_COUNT
+                                AccountType.Algo25
                             )
                         }
                     }
@@ -290,7 +290,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                 highlighted = stringResource(R.string.recommended),
                 onClick = {
                     navToBackupPassphraseInfoNavigation(
-                        PassphraseKeywordUtils.HD_WALLET_PASSPHRASES_WORD_COUNT
+                        AccountType.HdKey
                     )
                     coroutineScope.launch {
                         sheetState.hide()
@@ -304,7 +304,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                 footer = stringResource(R.string.mnemonic_type_algo25_footer),
                 onClick = {
                     navToBackupPassphraseInfoNavigation(
-                        PassphraseKeywordUtils.ALGO25_WALLET_PASSPHRASES_WORD_COUNT
+                        AccountType.Algo25
                     )
                     coroutineScope.launch {
                         sheetState.hide()
@@ -367,11 +367,12 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         )
     }
 
-    private fun navToBackupPassphraseInfoNavigation(wordCount: Int) {
+    private fun navToBackupPassphraseInfoNavigation(accountType: AccountType) {
         registerIntroViewModel.logOnboardingWelcomeAccountCreateClickEvent()
         nav(
             RegisterIntroFragmentDirections.actionRegisterIntroFragmentToBackupPassphraseInfoNavigation(
-                publicKeysOfAccountsToBackup = emptyArray()
+                publicKeysOfAccountsToBackup = emptyArray(),
+                accountType = accountType
             )
         )
     }

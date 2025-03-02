@@ -38,7 +38,7 @@ class UpdateNoAuthAccountToHdKeyUseCaseTest {
             ACCOUNT,
             CHANGE,
             KEY_INDEX,
-            Bip32DerivationType.Peikert
+            Bip32DerivationType.Peikert.value
         )
 
         coVerify { deleteLocalAccount(ADDRESS) }
@@ -51,7 +51,7 @@ class UpdateNoAuthAccountToHdKeyUseCaseTest {
                 ACCOUNT,
                 CHANGE,
                 KEY_INDEX,
-                Bip32DerivationType.Peikert
+                Bip32DerivationType.Peikert.value
             )
         }
     }

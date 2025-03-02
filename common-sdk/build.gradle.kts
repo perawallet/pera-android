@@ -40,6 +40,7 @@ dependencies {
     api(libs.algosdk)
     api(libs.algorand.go.mobile)
 
+    implementation("net.java.dev.jna:jna:5.14.0@aar")
     implementation(libs.xhdwalletapi)
     implementation(libs.kotlin.bip39)
     implementation(libs.dagger.hilt.android)

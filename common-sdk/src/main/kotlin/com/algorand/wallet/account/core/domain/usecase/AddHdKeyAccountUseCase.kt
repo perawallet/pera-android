@@ -16,8 +16,9 @@ import com.algorand.wallet.account.custom.domain.model.CustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomInfo
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.SaveHdKeyAccount
+import javax.inject.Inject
 
-internal class AddHdKeyAccountUseCase(
+internal class AddHdKeyAccountUseCase @Inject constructor(
     private val saveHdKeyAccount: SaveHdKeyAccount,
     private val setCustomInfo: SetAccountCustomInfo
 ) : AddHdKeyAccount {

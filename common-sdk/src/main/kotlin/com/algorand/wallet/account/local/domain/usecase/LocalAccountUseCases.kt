@@ -12,7 +12,6 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
-import com.algorand.wallet.account.local.domain.model.Bip32DerivationType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import kotlinx.coroutines.flow.Flow
 
@@ -45,7 +44,7 @@ fun interface CreateHdKeyAccount {
         account: Int,
         change: Int,
         keyIndex: Int,
-        derivationType: Bip32DerivationType
+        derivationType: Int
     )
 }
 
@@ -122,7 +121,7 @@ fun interface UpdateNoAuthAccountToHdKey {
         account: Int,
         change: Int,
         keyIndex: Int,
-        derivationType: Bip32DerivationType
+        derivationType: Int
     )
 }
 

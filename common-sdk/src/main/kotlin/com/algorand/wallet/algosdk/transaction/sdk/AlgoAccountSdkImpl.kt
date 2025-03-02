@@ -25,8 +25,9 @@ import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
+import javax.inject.Inject
 
-internal class AlgoAccountSdkImpl(
+internal class AlgoAccountSdkImpl @Inject constructor(
     private val secretKeyEncryptionManager: SecretKeyEncryptionManager
 ) : AlgoAccountSdk {
 
@@ -85,7 +86,7 @@ internal class AlgoAccountSdkImpl(
             account = account.toInt(),
             change = change.toInt(),
             keyIndex = keyIndex.toInt(),
-            derivationType = Bip32DerivationType.Peikert
+            derivationType = Bip32DerivationType.Peikert.value
         )
     }
 }

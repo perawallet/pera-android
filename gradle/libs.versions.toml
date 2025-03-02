@@ -108,7 +108,6 @@ legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref 
 lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
 lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExt" }
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
-material = { module = "com.google.android.material:material", version.ref = "material" }
 
 # Dependency Injection
 dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
@@ -215,6 +214,7 @@ agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbox" }
 installreferrer = { group = "com.android.installreferrer", name = "installreferrer", version.ref = "installreferrer" }
 ksp-gradle-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "kspGradlePlugin" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
 review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "review" }
 
 # Jetbrain / KMP

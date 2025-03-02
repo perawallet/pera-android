@@ -12,23 +12,39 @@
 
 package com.algorand.wallet.account.detail.domain.model
 
-sealed interface AccountType {
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+sealed interface AccountType: Parcelable {
+
+    @Parcelize
     data object Algo25 : AccountType
 
+    @Parcelize
     data object LedgerBle : AccountType
 
+    @Parcelize
     data object Rekeyed : AccountType
 
+    @Parcelize
     data object RekeyedAuth : AccountType
 
+    @Parcelize
     data object NoAuth : AccountType
 
+    @Parcelize
     data object HdKey : AccountType
 
     companion object {
         fun AccountType.canSignTransaction(): Boolean {
             return this is Algo25 || this is LedgerBle || this is RekeyedAuth
+        }
+        fun AccountType.wordCount(): Int {
+            return when (this) {
+                is Algo25 -> 25
+                is HdKey -> 24
+                else -> 0
+            }
         }
     }
 }

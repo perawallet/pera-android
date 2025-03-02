@@ -26,15 +26,15 @@ import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphras
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.model.RecoverWithPassphrasePreview
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.PassphraseKeywordUtils
-import com.algorand.android.utils.PassphraseKeywordUtils.ALGO25_WALLET_PASSPHRASES_WORD_COUNT
-import com.algorand.android.utils.PassphraseKeywordUtils.HD_WALLET_PASSPHRASES_WORD_COUNT
 import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.wordCount
+import kotlinx.coroutines.flow.flow
 import java.util.Locale
 import javax.inject.Inject
-import kotlinx.coroutines.flow.flow
 
 class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val recoverWithPassphrasePreviewMapper: RecoverWithPassphrasePreviewMapper,
@@ -47,7 +47,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
 ) {
 
     fun getRecoverWithPassphraseInitialPreview(
-        wordCount: Int = ALGO25_WALLET_PASSPHRASES_WORD_COUNT
+        wordCount: Int
     ): RecoverWithPassphrasePreview {
         val passphraseInputGroupConfiguration = passphraseInputGroupUseCase.createPassphraseInputGroupConfiguration(
             itemCount = wordCount
@@ -65,8 +65,8 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     ): RecoverWithPassphrasePreview {
         val splittedText = clipboardData.splitMnemonic()
         return if (
-            splittedText.size != ALGO25_WALLET_PASSPHRASES_WORD_COUNT &&
-            splittedText.size != HD_WALLET_PASSPHRASES_WORD_COUNT
+            splittedText.size != AccountType.Algo25.wordCount() &&
+            splittedText.size != AccountType.HdKey.wordCount()
             ) {
                 preview.copy(onGlobalErrorEvent = Event(R.string.the_last_copied_text))
         } else {

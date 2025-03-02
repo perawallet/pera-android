@@ -48,7 +48,7 @@ import com.algorand.android.ui.compose.widget.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraTitleText
-import com.algorand.android.utils.PassphraseKeywordUtils
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -101,7 +101,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                         showBottomSheet.value = true
                     } else {
                         navigateToRecoverWithPassphraseFragment(
-                            PassphraseKeywordUtils.ALGO25_WALLET_PASSPHRASES_WORD_COUNT
+                            AccountType.Algo25
                         )
                     }
                 }
@@ -148,7 +148,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 footer = stringResource(R.string.mnemonic_type_bip39_footer),
                 onClick = {
                     navigateToRecoverWithPassphraseFragment(
-                        PassphraseKeywordUtils.HD_WALLET_PASSPHRASES_WORD_COUNT
+                        AccountType.HdKey
                     )
                     coroutineScope.launch {
                         sheetState.hide()
@@ -162,7 +162,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 footer = stringResource(R.string.mnemonic_type_algo25_footer),
                 onClick = {
                     navigateToRecoverWithPassphraseFragment(
-                        PassphraseKeywordUtils.ALGO25_WALLET_PASSPHRASES_WORD_COUNT
+                        AccountType.Algo25
                     )
                     coroutineScope.launch {
                         sheetState.hide()
@@ -213,11 +213,11 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
         }
     }
 
-    private fun navigateToRecoverWithPassphraseFragment(wordCount: Int) {
+    private fun navigateToRecoverWithPassphraseFragment(accountType: AccountType) {
         nav(RecoverAccountInfoFragmentDirections
             .actionRecoverAccountInfoFragmentToRecoverWithPassphraseNavigation(
                 mnemonic = null,
-                wordCount = wordCount)
+                accountType = accountType)
         )
     }
 }

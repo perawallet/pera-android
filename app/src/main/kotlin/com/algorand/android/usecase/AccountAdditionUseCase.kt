@@ -19,9 +19,11 @@ import com.algorand.android.utils.analytics.logRegisterEvent
 import com.algorand.wallet.account.core.domain.model.CreateAccount
 import com.algorand.wallet.account.core.domain.model.CreateAccount.Type
 import com.algorand.wallet.account.core.domain.usecase.AddAlgo25Account
+import com.algorand.wallet.account.core.domain.usecase.AddHdKeyAccount
 import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccount
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
+import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToHdKey
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
@@ -29,10 +31,12 @@ import javax.inject.Inject
 class AccountAdditionUseCase @Inject constructor(
     private val firebaseAnalytics: FirebaseAnalytics,
     private val registrationUseCase: RegistrationUseCase,
+    private val addHdKeyAccount: AddHdKeyAccount,
     private val addAlgo25Account: AddAlgo25Account,
     private val addLedgerBleAccount: AddLedgerBleAccount,
     private val addNoAuthAccount: AddNoAuthAccount,
     private val updateNoAuthAccountToAlgo25: UpdateNoAuthAccountToAlgo25,
+    private val updateNoAuthAccountToHdKey: UpdateNoAuthAccountToHdKey,
     private val updateNoAuthAccountToLedgerBle: UpdateNoAuthAccountToLedgerBle
 ) : BaseUseCase() {
 
@@ -48,6 +52,16 @@ class AccountAdditionUseCase @Inject constructor(
         val address = accountCreation.address
         with(accountCreation.type) {
             when (this) {
+                is Type.HdKey -> updateNoAuthAccountToHdKey(
+                    address,
+                    publicKey,
+                    privateKey,
+                    seedId,
+                    account,
+                    change,
+                    keyIndex,
+                    derivationType,
+                )
                 is Type.Algo25 -> updateNoAuthAccountToAlgo25(address, secretKey)
                 is Type.LedgerBle -> updateNoAuthAccountToLedgerBle(
                     address,
@@ -62,9 +76,27 @@ class AccountAdditionUseCase @Inject constructor(
 
     private suspend fun addAccount(createAccount: CreateAccount) {
         when (createAccount.type) {
+            is Type.HdKey -> createHdKeyAccount(createAccount, createAccount.type as Type.HdKey)
             is Type.Algo25 -> createAlgo25Account(createAccount, createAccount.type as Type.Algo25)
             is Type.LedgerBle -> createLedgerBleAccount(createAccount, createAccount.type as Type.LedgerBle)
             is Type.NoAuth -> createNoAuthAccount(createAccount)
+        }
+    }
+
+    private suspend fun createHdKeyAccount(createAccount: CreateAccount, type: Type.HdKey) {
+        with(createAccount) {
+            addHdKeyAccount(
+                address,
+                type.publicKey,
+                type.privateKey,
+                type.seedId,
+                type.account,
+                type.change,
+                type.keyIndex,
+                type.derivationType,
+                isBackedUp,
+                customName
+            )
         }
     }
 

@@ -73,6 +73,10 @@
             <argument
                 android:name="publicKeysOfAccountsToBackup"
                 app:argType="string[]" />
+            <argument
+                android:name="accountType"
+                app:argType="com.algorand.wallet.account.detail.domain.model.AccountType"
+                app:nullable="false" />
         </action>
     </fragment>
 
@@ -111,9 +115,8 @@
                 app:argType="string"
                 app:nullable="true" />
             <argument
-                android:name="wordCount"
-                android:defaultValue="24"
-                app:argType="integer"
+                android:name="accountType"
+                app:argType="com.algorand.wallet.account.detail.domain.model.AccountType"
                 app:nullable="false" />
         </action>
     </fragment>

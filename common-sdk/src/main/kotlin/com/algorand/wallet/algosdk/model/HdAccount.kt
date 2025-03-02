@@ -20,7 +20,7 @@ data class HdAccount(
     val account: Int,
     val change: Int,
     val keyIndex: Int,
-    val derivationType: Bip32DerivationType
+    val derivationType: Int
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

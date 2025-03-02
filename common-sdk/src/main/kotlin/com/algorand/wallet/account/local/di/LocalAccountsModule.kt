@@ -62,6 +62,8 @@ import com.algorand.wallet.account.local.domain.usecase.SaveLedgerBleAccount
 import com.algorand.wallet.account.local.domain.usecase.SaveNoAuthAccount
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25UseCase
+import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToHdKey
+import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToHdKeyUseCase
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBleUseCase
 import dagger.Module
@@ -198,6 +200,11 @@ internal object LocalAccountsModule {
     fun provideGetLocalAccountCountFlow(
         useCase: GetLocalAccountCountFlowUseCase
     ): GetLocalAccountCountFlow = useCase
+
+    @Provides
+    fun provideUpdateNoAuthAccountToHdKey(
+        useCase: UpdateNoAuthAccountToHdKeyUseCase
+    ): UpdateNoAuthAccountToHdKey = useCase
 
     @Provides
     fun provideUpdateNoAuthAccountToAlgo25(

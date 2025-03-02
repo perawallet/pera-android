@@ -29,6 +29,17 @@ data class AccountCreation(
 
     sealed interface Type : Parcelable {
         @Parcelize
+        data class HdKey(
+            val publicKey: ByteArray,
+            val privateKey: ByteArray,
+            val seedId: Int,
+            val account: Int,
+            val change: Int,
+            val keyIndex: Int,
+            val derivationType: Int
+        ) : Type
+
+        @Parcelize
         data class Algo25(val secretKey: ByteArray) : Type
 
         @Parcelize
@@ -44,8 +55,17 @@ data class AccountCreation(
             customName = customName,
             isBackedUp = isBackedUp,
             type = when (type) {
+                is Type.HdKey -> CreateAccount.Type.HdKey(
+                    type.publicKey,
+                    type.privateKey,
+                    type.seedId,
+                    type.account,
+                    type.change,
+                    type.keyIndex,
+                    type.derivationType,
+                )
                 is Type.Algo25 -> CreateAccount.Type.Algo25(type.secretKey)
-                Type.NoAuth -> CreateAccount.Type.NoAuth
+                is Type.NoAuth -> CreateAccount.Type.NoAuth
                 is Type.LedgerBle -> CreateAccount.Type.LedgerBle(
                     type.deviceMacAddress,
                     type.indexInLedger,

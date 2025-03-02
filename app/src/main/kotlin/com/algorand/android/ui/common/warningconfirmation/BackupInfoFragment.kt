@@ -22,7 +22,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.R
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.AccountCreation
@@ -37,7 +36,6 @@ import com.algorand.android.ui.compose.widget.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraSecondaryButton
-import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.browser.openRecoveryPassphraseSupportUrl
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -144,18 +142,9 @@ class BackupInfoFragment : BaseInfoFragment() {
         context?.openRecoveryPassphraseSupportUrl()
     }
 
-    // TODO move this into util class
     private fun getAccountCreation(): AccountCreation? {
         try {
-            val secretKeyByteArray: ByteArray = Sdk.generateSK()
-            val publicKey = Sdk.generateAddressFromSK(secretKeyByteArray)
-            return AccountCreation(
-                address = publicKey,
-                customName = null,
-                isBackedUp = false,
-                type = AccountCreation.Type.Algo25(secretKeyByteArray),
-                creationType = CreationType.CREATE
-            )
+            return backupInfoViewModel.createAccount()
         } catch (exception: Exception) {
             navBack()
         }

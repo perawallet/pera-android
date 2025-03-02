@@ -12,7 +12,9 @@
 
 package com.algorand.wallet.encryption
 
-internal class SecretKeyEncryptionManagerImpl(
+import javax.inject.Inject
+
+internal class SecretKeyEncryptionManagerImpl @Inject constructor(
     private val aesPlatformManager: AESPlatformManager
 ) : SecretKeyEncryptionManager {
 

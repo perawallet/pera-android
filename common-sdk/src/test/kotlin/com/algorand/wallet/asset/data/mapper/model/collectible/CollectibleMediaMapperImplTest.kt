@@ -15,15 +15,11 @@ package com.algorand.wallet.asset.data.mapper.model.collectible
 import com.algorand.test.peraFixture
 import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
 import com.algorand.wallet.asset.data.database.model.CollectibleMediaTypeEntity
-import com.algorand.wallet.asset.data.database.model.CollectibleMediaTypeExtensionEntity
 import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaResponse
-import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaTypeExtensionResponse
 import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaTypeResponse
 import com.algorand.wallet.asset.domain.model.CollectibleMedia
 import com.algorand.wallet.asset.domain.model.CollectibleMediaType
 import com.algorand.wallet.asset.domain.model.CollectibleMediaType.AUDIO
-import com.algorand.wallet.asset.domain.model.CollectibleMediaTypeExtension
-import com.algorand.wallet.asset.domain.model.CollectibleMediaTypeExtension.GIF
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -35,14 +31,8 @@ internal class CollectibleMediaMapperImplTest {
     private val collectibleMediaTypeMapper: CollectibleMediaTypeMapper = mockk {
         every { invoke(response = COLLECTIBLE_MEDIA_TYPE_RESPONSE) } returns COLLECTIBLE_MEDIA_TYPE
     }
-    private val collectibleMediaTypeExtensionMapper: CollectibleMediaTypeExtensionMapper = mockk {
-        every { invoke(response = COLLECTIBLE_MEDIA_TYPE_EXTENSION_RESPONSE) } returns COLLECTIBLE_MEDIA_TYPE_EXTENSION
-    }
 
-    private val sut = CollectibleMediaMapperImpl(
-        collectibleMediaTypeMapper,
-        collectibleMediaTypeExtensionMapper
-    )
+    private val sut = CollectibleMediaMapperImpl(collectibleMediaTypeMapper)
 
     @Test
     fun `EXPECT collectible media WHEN response fields are valid`() {
@@ -67,7 +57,6 @@ internal class CollectibleMediaMapperImplTest {
 
     @Test
     fun `EXPECT collectible media list WHEN entity list is valid`() {
-        every { collectibleMediaTypeExtensionMapper(CollectibleMediaTypeExtensionEntity.GIF) } returns GIF
         every { collectibleMediaTypeMapper(CollectibleMediaTypeEntity.AUDIO) } returns AUDIO
 
         val collectibleMediaEntity = CollectibleMediaEntity(
@@ -76,7 +65,7 @@ internal class CollectibleMediaMapperImplTest {
             mediaType = CollectibleMediaTypeEntity.AUDIO,
             downloadUrl = "downloadUrl",
             previewUrl = "previewUrl",
-            mediaTypeExtension = CollectibleMediaTypeExtensionEntity.GIF
+            mediaTypeExtension = COLLECTIBLE_MEDIA_TYPE_EXTENSION
         )
         val collectibleMediaEntities = listOf(collectibleMediaEntity)
 
@@ -86,7 +75,7 @@ internal class CollectibleMediaMapperImplTest {
             mediaType = AUDIO,
             downloadUrl = "downloadUrl",
             previewUrl = "previewUrl",
-            mediaTypeExtension = GIF
+            mediaTypeExtension = COLLECTIBLE_MEDIA_TYPE_EXTENSION
         )
         assertEquals(listOf(expected), result)
     }
@@ -94,8 +83,7 @@ internal class CollectibleMediaMapperImplTest {
     companion object {
         private val COLLECTIBLE_MEDIA_TYPE = peraFixture<CollectibleMediaType>()
         private val COLLECTIBLE_MEDIA_TYPE_RESPONSE = peraFixture<CollectibleMediaTypeResponse>()
-        private val COLLECTIBLE_MEDIA_TYPE_EXTENSION = peraFixture<CollectibleMediaTypeExtension>()
-        private val COLLECTIBLE_MEDIA_TYPE_EXTENSION_RESPONSE = peraFixture<CollectibleMediaTypeExtensionResponse>()
+        private const val COLLECTIBLE_MEDIA_TYPE_EXTENSION = ".gif"
 
         private val COLLECTIBLE_MEDIA = CollectibleMedia(
             mediaType = COLLECTIBLE_MEDIA_TYPE,
@@ -108,7 +96,7 @@ internal class CollectibleMediaMapperImplTest {
             mediaType = COLLECTIBLE_MEDIA_TYPE_RESPONSE,
             downloadUrl = "downloadUrl",
             previewUrl = "previewUrl",
-            mediaTypeExtension = COLLECTIBLE_MEDIA_TYPE_EXTENSION_RESPONSE
+            mediaTypeExtension = COLLECTIBLE_MEDIA_TYPE_EXTENSION
         )
     }
 }

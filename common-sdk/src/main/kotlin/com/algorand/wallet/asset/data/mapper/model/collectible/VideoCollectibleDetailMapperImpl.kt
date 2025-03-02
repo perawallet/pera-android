@@ -12,6 +12,10 @@
 
 package com.algorand.wallet.asset.data.mapper.model.collectible
 
+import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleTraitEntity
 import com.algorand.wallet.asset.data.mapper.model.AssetInfoMapper
 import com.algorand.wallet.asset.data.mapper.model.CollectibleInfoMapper
 import com.algorand.wallet.asset.data.mapper.model.VerificationTierMapper
@@ -19,10 +23,6 @@ import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.asset.data.model.collectible.CollectibleResponse
 import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia
 import com.algorand.wallet.asset.domain.model.VideoCollectibleDetail
-import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
-import com.algorand.wallet.asset.data.database.model.CollectibleEntity
-import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
-import com.algorand.wallet.asset.data.database.model.CollectibleTraitEntity
 import javax.inject.Inject
 
 internal class VideoCollectibleDetailMapperImpl @Inject constructor(
@@ -41,7 +41,7 @@ internal class VideoCollectibleDetailMapperImpl @Inject constructor(
             assetInfo = assetInfoMapper(assetResponse),
             verificationTier = verificationTierMapper(assetResponse.verificationTier),
             collectibleMedias = collectibleResponse.collectibleMedias?.map {
-                BaseCollectibleMedia.VideoCollectibleMedia(it.downloadUrl, it.previewUrl)
+                BaseCollectibleMedia.VideoCollectibleMedia(it.downloadUrl, it.previewUrl, it.mediaTypeExtension)
             }.orEmpty()
         )
     }
@@ -58,7 +58,7 @@ internal class VideoCollectibleDetailMapperImpl @Inject constructor(
             assetInfo = assetInfoMapper(entity),
             verificationTier = verificationTierMapper(entity.verificationTier),
             collectibleMedias = collectibleMediaEntities?.map {
-                BaseCollectibleMedia.VideoCollectibleMedia(it.downloadUrl, it.previewUrl)
+                BaseCollectibleMedia.VideoCollectibleMedia(it.downloadUrl, it.previewUrl, it.mediaTypeExtension)
             }.orEmpty()
         )
     }

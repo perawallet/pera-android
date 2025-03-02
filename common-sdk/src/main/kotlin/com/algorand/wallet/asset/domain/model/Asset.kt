@@ -84,8 +84,8 @@ sealed interface Asset {
     )
 
     data class Supply(
-        val total: String?,
-        val max: String?
+        val total: BigDecimal?,
+        val max: BigDecimal?
     )
 
     data class Fiat(

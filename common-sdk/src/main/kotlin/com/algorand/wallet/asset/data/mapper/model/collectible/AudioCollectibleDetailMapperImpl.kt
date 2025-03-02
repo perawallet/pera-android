@@ -12,6 +12,10 @@
 
 package com.algorand.wallet.asset.data.mapper.model.collectible
 
+import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleTraitEntity
 import com.algorand.wallet.asset.data.mapper.model.AssetInfoMapper
 import com.algorand.wallet.asset.data.mapper.model.CollectibleInfoMapper
 import com.algorand.wallet.asset.data.mapper.model.VerificationTierMapper
@@ -19,10 +23,6 @@ import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.asset.data.model.collectible.CollectibleResponse
 import com.algorand.wallet.asset.domain.model.AudioCollectibleDetail
 import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia
-import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
-import com.algorand.wallet.asset.data.database.model.CollectibleEntity
-import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
-import com.algorand.wallet.asset.data.database.model.CollectibleTraitEntity
 import javax.inject.Inject
 
 internal class AudioCollectibleDetailMapperImpl @Inject constructor(
@@ -39,7 +39,7 @@ internal class AudioCollectibleDetailMapperImpl @Inject constructor(
             id = assetResponse.assetId ?: return null,
             collectibleInfo = collectibleInfoMapper(collectibleResponse, assetResponse.explorerUrl),
             collectibleMedias = collectibleResponse.collectibleMedias?.map {
-                BaseCollectibleMedia.AudioCollectibleMedia(it.downloadUrl, it.previewUrl)
+                BaseCollectibleMedia.AudioCollectibleMedia(it.downloadUrl, it.previewUrl, it.mediaTypeExtension)
             }.orEmpty(),
             assetInfo = assetInfoMapper(assetResponse),
             verificationTier = verificationTierMapper(assetResponse.verificationTier)
@@ -56,7 +56,7 @@ internal class AudioCollectibleDetailMapperImpl @Inject constructor(
             id = entity.assetId,
             collectibleInfo = collectibleInfoMapper(collectibleEntity, collectibleTraitEntities, entity.explorerUrl),
             collectibleMedias = collectibleMediaEntities?.map {
-                BaseCollectibleMedia.AudioCollectibleMedia(it.downloadUrl, it.previewUrl)
+                BaseCollectibleMedia.AudioCollectibleMedia(it.downloadUrl, it.previewUrl, it.mediaTypeExtension)
             }.orEmpty(),
             assetInfo = assetInfoMapper(entity),
             verificationTier = verificationTierMapper(entity.verificationTier)

@@ -18,5 +18,5 @@ internal data class CollectibleMediaResponse(
     @SerializedName("type") val mediaType: CollectibleMediaTypeResponse? = null,
     @SerializedName("download_url") val downloadUrl: String? = null,
     @SerializedName("preview_url") val previewUrl: String? = null,
-    @SerializedName("extension") val mediaTypeExtension: CollectibleMediaTypeExtensionResponse? = null
+    @SerializedName("extension") val mediaTypeExtension: String? = null
 )

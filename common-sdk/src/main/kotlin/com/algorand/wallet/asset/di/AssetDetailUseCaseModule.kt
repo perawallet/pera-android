@@ -17,6 +17,7 @@ import com.algorand.wallet.asset.domain.usecase.ClearAssetCache
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.wallet.asset.domain.usecase.FetchAsset
 import com.algorand.wallet.asset.domain.usecase.FetchAssetDetailFromNode
+import com.algorand.wallet.asset.domain.usecase.FetchCollectibleDetail
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
@@ -65,6 +66,11 @@ internal object AssetDetailUseCaseModule {
     @Provides
     fun provideGetCollectibleDetail(repository: AssetRepository): GetCollectibleDetail {
         return GetCollectibleDetail(repository::getCollectibleDetail)
+    }
+
+    @Provides
+    fun provideFetchCollectibleDetail(repository: AssetRepository): FetchCollectibleDetail {
+        return FetchCollectibleDetail(repository::fetchCollectibleDetail)
     }
 
     @Provides

@@ -18,14 +18,14 @@ import com.algorand.android.models.Result
 import com.algorand.android.repository.AccountRepository
 import com.algorand.android.repository.AccountRepository.Companion.ACCOUNT_NOT_FOUND_ERROR_CODE
 import com.algorand.android.utils.DataResource
+import com.algorand.wallet.asset.domain.usecase.FetchAndCacheMissingAssets
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.flow
 
 class AccountInformationUseCase @Inject constructor(
     private val accountRepository: AccountRepository,
     private val accountInformationMapper: AccountInformationMapper,
-    private val assetDetailUseCase: SimpleAssetDetailUseCase
+    private val fetchAndCacheMissingAssets: FetchAndCacheMissingAssets
 ) {
 
     suspend fun getAccountInformation(publicKey: String, includeClosedAccounts: Boolean = false) = flow {
@@ -51,7 +51,6 @@ class AccountInformationUseCase @Inject constructor(
     // TODO Return flow and remove accountNotFoundErrorCode duplication
     suspend fun getAccountInformationAndFetchAssets(
         publicKey: String,
-        coroutineScope: CoroutineScope,
         includeClosedAccounts: Boolean = false
     ): Result<AccountInformation> {
         lateinit var accountInformationResult: Result<AccountInformation>
@@ -62,7 +61,7 @@ class AccountInformationUseCase @Inject constructor(
                     ?.mapNotNull { it.assetId }
                     ?.toSet()
                     .orEmpty()
-                assetDetailUseCase.cacheIfThereIsNonCachedAsset(assetIds, coroutineScope)
+                fetchAndCacheMissingAssets(assetIds.toList(), includeDeleted = false)
                 val accountInformation = accountInformationMapper.mapToAccountInformation(
                     accountInformationPayload = accountInformationResponse,
                     currentRound = it.currentRound

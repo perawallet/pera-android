@@ -178,7 +178,7 @@ class LedgerBleOperationManager @Inject constructor(
                     sendTransactionRequest()
                     return@launch
                 } else {
-                    accountInformationUseCase.getAccountInformationAndFetchAssets(publicKey, this@launch, true).use(
+                    accountInformationUseCase.getAccountInformationAndFetchAssets(publicKey, true).use(
                         onSuccess = { fetchedAccountInformation ->
                             if (fetchedAccountInformation.isCreated() || nextIndex == 1) {
                                 if (this is AccountFetchAllOperation) {

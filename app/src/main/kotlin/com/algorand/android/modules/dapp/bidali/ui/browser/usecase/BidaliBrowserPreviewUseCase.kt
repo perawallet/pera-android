@@ -27,7 +27,6 @@ import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.getBaseUrlOrNull
 import com.google.gson.Gson
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 
@@ -137,13 +136,11 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
 
     fun generateUpdatedBalancesJavascript(
         previousState: BidaliBrowserPreview,
-        accountAddress: String,
-        scope: CoroutineScope
+        accountAddress: String
     ) = channelFlow {
         accountAssetDataUseCase.fetchAccountOwnedAssetData(
             publicKey = accountAddress,
-            includeAlgo = true,
-            coroutineScope = scope
+            includeAlgo = true
         ).collectLatest {
             send(
                 previousState.copy(

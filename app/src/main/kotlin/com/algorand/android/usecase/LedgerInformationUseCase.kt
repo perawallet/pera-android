@@ -24,6 +24,7 @@ import com.algorand.android.models.AccountBalance
 import com.algorand.android.models.AccountDetail
 import com.algorand.android.models.AccountSelectionListItem
 import com.algorand.android.models.LedgerInformationListItem
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
 import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
@@ -38,8 +39,6 @@ import kotlinx.coroutines.withContext
 class LedgerInformationUseCase @Inject constructor(
     private val accountTotalBalanceUseCase: AccountTotalBalanceUseCase,
     private val parityUseCase: ParityUseCase,
-    private val accountAssetAmountUseCase: AccountAssetAmountUseCase,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
     private val accountAlgoAmountUseCase: AccountAlgoAmountUseCase,
     private val ledgerInformationTitleItemMapper: LedgerInformationTitleItemMapper,
     private val ledgerInformationAccountItemMapper: LedgerInformationAccountItemMapper,
@@ -47,7 +46,8 @@ class LedgerInformationUseCase @Inject constructor(
     private val ledgerInformationCanSignByItemMapper: LedgerInformationCanSignByItemMapper,
     private val currencyUseCase: CurrencyUseCase,
     private val getAccountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper
+    private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData
 ) : BaseUseCase() {
 
     suspend fun getLedgerInformationListItem(
@@ -105,16 +105,15 @@ class LedgerInformationUseCase @Inject constructor(
         }
     }
 
-    private fun createAssetItems(accountDetail: AccountDetail): List<LedgerInformationListItem> {
+    private suspend fun createAssetItems(accountDetail: AccountDetail): List<LedgerInformationListItem> {
         return mutableListOf<LedgerInformationListItem>().apply {
             val algoAssetData = accountAlgoAmountUseCase.getAccountAlgoAmount(accountDetail)
             add(ledgerInformationTitleItemMapper.mapTo(R.string.assets))
             add(ledgerInformationAssetItemMapper.mapTo(algoAssetData))
             if (accountDetail.getAssetHoldingList().isNotEmpty()) {
                 accountDetail.getAssetHoldingList().forEach {
-                    val assetQueryItem = simpleAssetDetailUseCase.getCachedAssetDetail(it.assetId)?.data
+                    val accountAssetData = getAccountBaseOwnedAssetData(accountDetail.account.address, it.assetId)
                         ?: return@forEach
-                    val accountAssetData = accountAssetAmountUseCase.getAssetAmount(it, assetQueryItem)
                     add(ledgerInformationAssetItemMapper.mapTo(accountAssetData))
                 }
             }

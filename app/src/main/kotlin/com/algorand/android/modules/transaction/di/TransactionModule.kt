@@ -13,6 +13,8 @@
 package com.algorand.android.modules.transaction.di
 
 import com.algorand.android.modules.transaction.domain.GetTransactionParams
+import com.algorand.android.modules.transaction.domain.GetTransactionTargetUserDisplayName
+import com.algorand.android.modules.transaction.domain.GetTransactionTargetUserDisplayNameUseCase
 import com.algorand.android.repository.TransactionsRepository
 import dagger.Module
 import dagger.Provides
@@ -22,11 +24,16 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object TransactionModule {
+internal object TransactionModule {
 
     @Provides
     @Singleton
     fun provideGetTransactionParams(
         repository: TransactionsRepository
     ): GetTransactionParams = GetTransactionParams(repository::getTransactionParams)
+
+    @Provides
+    fun provideGetTransactionTargetUserDisplayName(
+        useCase: GetTransactionTargetUserDisplayNameUseCase
+    ): GetTransactionTargetUserDisplayName = useCase
 }

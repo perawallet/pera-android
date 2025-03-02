@@ -71,8 +71,7 @@ class BaseAssetConfigurationSingleTransactionUiBuilder @Inject constructor(
                 assetId = assetId,
                 assetName = AssetName.create(assetName),
                 isAssetUnnamed = assetName == null,
-                verificationTierConfiguration =
-                verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
+                verificationTierConfiguration = verificationTierConfiguration
             )
         }
     }
@@ -82,8 +81,7 @@ class BaseAssetConfigurationSingleTransactionUiBuilder @Inject constructor(
             WalletConnectTransactionAmount(
                 assetId = assetId,
                 assetName = AssetName.create(assetName),
-                verificationTierConfiguration =
-                verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
+                verificationTierConfiguration = verificationTierConfiguration
             )
         }
     }

@@ -12,33 +12,32 @@
 
 package com.algorand.android.ui.accounts
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.decider.TransactionUserUseCase
 import com.algorand.android.models.AssetTransaction
-import com.algorand.android.models.TransactionTargetUser
 import com.algorand.android.models.User
+import com.algorand.android.modules.transaction.domain.GetTransactionTargetUserDisplayName
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
-import kotlinx.coroutines.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AccountsAddressScanActionViewModel @Inject constructor(
-    private val transactionUserUseCase: TransactionUserUseCase,
+    private val getTransactionTargetUserDisplayName: GetTransactionTargetUserDisplayName,
     savedStateHandle: SavedStateHandle,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase
 ) : BaseViewModel() {
 
     private val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
     private val label: String? = savedStateHandle.getOrElse<String?>(LABEL_KEY, null)
-    private var transactionTargetUser: TransactionTargetUser = getInitialTargetUser()
+    private var transactionTargetUserDisplayName: String = ""
 
     init {
-        initTransactionTargetUser()
+        initTransactionTargetUserDisplayName()
     }
 
     fun getAccountAddress(): String = accountAddress
@@ -48,7 +47,7 @@ class AccountsAddressScanActionViewModel @Inject constructor(
     fun getAssetTransactionArg(): AssetTransaction {
         return AssetTransaction(
             receiverUser = User(
-                name = transactionTargetUser.displayName,
+                name = transactionTargetUserDisplayName,
                 publicKey = accountAddress,
                 imageUriAsString = null
             )
@@ -59,14 +58,10 @@ class AccountsAddressScanActionViewModel @Inject constructor(
         return isAccountLimitExceedUseCase.isAccountLimitExceed()
     }
 
-    private fun initTransactionTargetUser() {
+    private fun initTransactionTargetUserDisplayName() {
         viewModelScope.launch {
-            transactionTargetUser = transactionUserUseCase.getTransactionTargetUser(accountAddress)
+            transactionTargetUserDisplayName = getTransactionTargetUserDisplayName(accountAddress)
         }
-    }
-
-    private fun getInitialTargetUser(): TransactionTargetUser {
-        return TransactionTargetUser(publicKey = accountAddress, displayName = accountAddress)
     }
 
     companion object {

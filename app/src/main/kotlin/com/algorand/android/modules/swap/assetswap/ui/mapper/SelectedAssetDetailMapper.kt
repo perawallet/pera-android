@@ -46,6 +46,25 @@ class SelectedAssetDetailMapper @Inject constructor(
     fun mapToSelectedAssetDetail(
         assetId: Long,
         formattedBalance: String,
+        assetShortName: String?,
+        verificationTier: com.algorand.wallet.asset.domain.model.VerificationTier?,
+        assetDecimal: Int
+    ): AssetSwapPreview.SelectedAssetDetail {
+        return AssetSwapPreview.SelectedAssetDetail(
+            assetId = assetId,
+            formattedBalance = formattedBalance,
+            assetShortName = AssetName.createShortName(assetShortName),
+            verificationTierConfiguration = verificationTierConfigurationDecider.decideVerificationTierConfiguration(
+                verificationTier
+            ),
+            assetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetId),
+            assetDecimal = assetDecimal
+        )
+    }
+
+    fun mapToSelectedAssetDetail(
+        assetId: Long,
+        formattedBalance: String,
         assetShortName: AssetName,
         verificationTier: VerificationTier?,
         assetDecimal: Int

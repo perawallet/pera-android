@@ -14,13 +14,12 @@ package com.algorand.android.modules.transactionhistory.ui.usecase
 
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.algorand.android.decider.TransactionUserUseCase
 import com.algorand.android.models.DateFilter
+import com.algorand.android.modules.transaction.domain.GetTransactionTargetUserDisplayName
 import com.algorand.android.modules.transactionhistory.domain.usecase.TransactionHistoryUseCase
 import com.algorand.android.modules.transactionhistory.ui.mapper.TransactionItemMapper
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
+import com.algorand.wallet.asset.domain.usecase.GetAsset
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -29,14 +28,12 @@ import kotlinx.coroutines.flow.map
 class TransactionHistoryPreviewUseCase @Inject constructor(
     private val transactionHistoryUseCase: TransactionHistoryUseCase,
     transactionItemMapper: TransactionItemMapper,
-    transactionUserUseCase: TransactionUserUseCase,
-    collectibleUseCase: SimpleCollectibleUseCase,
-    simpleAssetDetailUseCase: SimpleAssetDetailUseCase
+    getTransactionTargetUserDisplayName: GetTransactionTargetUserDisplayName,
+    getAsset: GetAsset
 ) : BaseTransactionPreviewUseCase(
     transactionItemMapper,
-    transactionUserUseCase,
-    collectibleUseCase,
-    simpleAssetDetailUseCase
+    getTransactionTargetUserDisplayName,
+    getAsset
 ) {
 
     fun refreshTransactionHistory() {

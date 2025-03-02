@@ -13,24 +13,20 @@
 package com.algorand.android.utils.walletconnect
 
 import com.algorand.android.mapper.WalletConnectTransactionAssetDetailMapper
-import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.models.WalletConnectTransactionAssetDetail
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.usecase.AssetFetchAndCacheUseCase.Companion.MAX_ASSET_FETCH_COUNT
-import com.algorand.android.usecase.GetAssetDetailFromIndexerUseCase
-import com.algorand.android.usecase.GetAssetDetailFromNodeUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
+import com.algorand.wallet.asset.domain.usecase.FetchAssetDetailFromNode
+import com.algorand.wallet.asset.domain.usecase.FetchAssets
+import com.algorand.wallet.asset.domain.usecase.GetAsset
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import javax.inject.Inject
 
 class WalletConnectCustomTransactionAssetDetailHandler @Inject constructor(
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase,
-    private val getAssetDetailFromIndexerUseCase: GetAssetDetailFromIndexerUseCase,
-    private val getAssetDetailFromNodeUseCase: GetAssetDetailFromNodeUseCase,
-    private val walletConnectTransactionAssetDetailMapper: WalletConnectTransactionAssetDetailMapper
+    private val walletConnectTransactionAssetDetailMapper: WalletConnectTransactionAssetDetailMapper,
+    private val getAsset: GetAsset,
+    private val fetchAssets: FetchAssets,
+    private val fetchAssetDetailFromNode: FetchAssetDetailFromNode
 ) {
 
     /**
@@ -49,39 +45,32 @@ class WalletConnectCustomTransactionAssetDetailHandler @Inject constructor(
         return assetCacheMap
     }
 
-    private fun checkAssetsInLocalCacheAndReturnNonExistingIds(assetIdSet: Set<Long>): List<Long> {
+    private suspend fun checkAssetsInLocalCacheAndReturnNonExistingIds(assetIdSet: Set<Long>): List<Long> {
         return assetIdSet.mapNotNull { assetId ->
             val assetInWalletConnectCache = assetCacheMap.getOrDefault(assetId, null)
             if (assetInWalletConnectCache != null) return@mapNotNull null
-            getAssetDetailIfAvailableInAssetDetailCache(assetId)?.let { cachedAssetDetail ->
-                assetCacheMap[assetId] = cachedAssetDetail
-                return@mapNotNull null
-            }
-            getAssetDetailIfAvailableInNFTtDetailCache(assetId)?.let { cachedNftDetail ->
-                assetCacheMap[assetId] = cachedNftDetail
+            getAsset(assetId)?.let { cachedAssetDetail ->
+                assetCacheMap[assetId] = walletConnectTransactionAssetDetailMapper.map(cachedAssetDetail)
                 return@mapNotNull null
             }
             assetId
         }
     }
 
-    private suspend fun fetchAssetsFromIndexerAndUpdateCache(
-        assetIdList: List<Long>,
-        scope: CoroutineScope
-    ): List<Unit> {
+    private suspend fun fetchAssetsFromIndexerAndUpdateCache(assetIdList: List<Long>, scope: CoroutineScope) {
         val chunkedAssetIds = assetIdList.toSet().chunked(MAX_ASSET_FETCH_COUNT)
-        return chunkedAssetIds.map { assetIdChunk ->
+        chunkedAssetIds.map { assetIdChunk ->
             scope.async {
-                getAssetDetailFromIndexerUseCase(assetIdChunk).use(
+                fetchAssets(assetIdChunk).use(
                     onSuccess = { baseAssetDetails ->
-                        val missingAssets = assetIdList - baseAssetDetails.map { it.assetId }.toSet()
+                        val missingAssets = assetIdList - baseAssetDetails.map { it.id }.toSet()
 
                         if (missingAssets.isNotEmpty()) {
                             fetchAssetsFromNodeAndUpdateCache(missingAssets.toList(), scope)
                         }
 
                         baseAssetDetails.map { assetDetail ->
-                            assetCacheMap[assetDetail.assetId] = mapAssetDetailToWcAssetDetail(assetDetail)
+                            assetCacheMap[assetDetail.id] = walletConnectTransactionAssetDetailMapper.map(assetDetail)
                         }
                     },
                     onFailed = { _, _ ->
@@ -95,11 +84,9 @@ class WalletConnectCustomTransactionAssetDetailHandler @Inject constructor(
     private suspend fun fetchAssetsFromNodeAndUpdateCache(assetIdList: List<Long>, scope: CoroutineScope) {
         assetIdList.map { assetId ->
             scope.async {
-                getAssetDetailFromNodeUseCase.invoke(assetId).use(
-                    onSuccess = { assetDetail ->
-                        assetCacheMap[assetId] = mapAssetDetailToWcAssetDetail(assetDetail)
-                    }
-                )
+                fetchAssetDetailFromNode.invoke(assetId).map { assetDetail ->
+                    assetCacheMap[assetId] = walletConnectTransactionAssetDetailMapper.map(assetDetail)
+                }
             }
         }.awaitAll()
     }
@@ -108,41 +95,7 @@ class WalletConnectCustomTransactionAssetDetailHandler @Inject constructor(
         assetCacheMap.clear()
     }
 
-    private fun getAssetDetailIfAvailableInAssetDetailCache(assetId: Long): WalletConnectTransactionAssetDetail? {
-        val cachedAssetDetail = simpleAssetDetailUseCase.getCachedAssetDetail(assetId)?.data
-        return with(cachedAssetDetail ?: return null) {
-            walletConnectTransactionAssetDetailMapper.mapToWalletConnectTransactionAssetDetail(
-                assetId = assetId,
-                fullName = fullName,
-                shortName = shortName,
-                fractionDecimals = fractionDecimals,
-                verificationTier = verificationTier
-            )
-        }
-    }
-
-    private fun getAssetDetailIfAvailableInNFTtDetailCache(assetId: Long): WalletConnectTransactionAssetDetail? {
-        val cachedNFTDetail = simpleCollectibleUseCase.getCachedCollectibleById(assetId)?.data
-        return with(cachedNFTDetail ?: return null) {
-            walletConnectTransactionAssetDetailMapper.mapToWalletConnectTransactionAssetDetail(
-                assetId = assetId,
-                fullName = fullName,
-                shortName = shortName,
-                fractionDecimals = fractionDecimals,
-                verificationTier = verificationTier
-            )
-        }
-    }
-
-    private fun mapAssetDetailToWcAssetDetail(assetDetail: BaseAssetDetail): WalletConnectTransactionAssetDetail {
-        return with(assetDetail) {
-            walletConnectTransactionAssetDetailMapper.mapToWalletConnectTransactionAssetDetail(
-                assetId = assetId,
-                fullName = fullName,
-                shortName = shortName,
-                fractionDecimals = fractionDecimals,
-                verificationTier = verificationTier
-            )
-        }
+    private companion object {
+        const val MAX_ASSET_FETCH_COUNT = 100
     }
 }

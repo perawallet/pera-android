@@ -15,19 +15,21 @@ package com.algorand.android.modules.transaction.detail.domain.usecase
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
 import com.algorand.android.R
-import com.algorand.android.core.AccountManager
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
 import com.algorand.android.repository.ContactRepository
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import javax.inject.Inject
 
 class GetTransactionDetailAccountUseCase @Inject constructor(
-    private val accountManager: AccountManager,
     private val contactRepository: ContactRepository,
     private val transactionDetailItemMapper: TransactionDetailItemMapper,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getAccountDetail: GetAccountDetail,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) {
 
     suspend fun getTransactionToAccount(publicKey: String): TransactionDetailItem.StandardTransactionItem.AccountItem {
@@ -92,20 +94,20 @@ class GetTransactionDetailAccountUseCase @Inject constructor(
         return null
     }
 
-    private fun getAccountFromLocalAccountsByPublicKey(
+    private suspend fun getAccountFromLocalAccountsByPublicKey(
         publicKey: String,
         @StringRes labelTextResource: Int,
         showToolTipView: Boolean = false
     ): TransactionDetailItem.StandardTransactionItem.AccountItem.WalletItem? {
-        val foundAccount = accountManager.getAccount(publicKey)
+        val foundAccount = getAccountDetail(publicKey).takeIf { it.accountRegistrationType != null }
         if (foundAccount != null) {
             return transactionDetailItemMapper.mapToWalletAccountItem(
                 labelTextRes = labelTextResource,
-                displayAddress = foundAccount.name.ifEmpty { foundAccount.address.toShortenedAddress() },
+                displayAddress = getAccountDisplayName(foundAccount).primaryDisplayName,
                 publicKey = foundAccount.address,
                 isCopyButtonVisible = true,
                 isAccountAdditionButtonVisible = false,
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(publicKey),
+                accountIconDrawablePreview = getAccountIconDrawablePreview(publicKey),
                 showToolTipView = showToolTipView
             )
         }

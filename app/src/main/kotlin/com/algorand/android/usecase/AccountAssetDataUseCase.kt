@@ -24,27 +24,15 @@ import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.utils.extensions.getAssetHoldingList
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.mapNotNull
 
 class AccountAssetDataUseCase @Inject constructor(
     private val accountDetailUseCase: AccountDetailUseCase,
-    private val assetDetailUseCase: SimpleAssetDetailUseCase,
     private val accountAssetAmountUseCase: AccountAssetAmountUseCase,
     private val accountAlgoAmountUseCase: AccountAlgoAmountUseCase,
     private val accountAssetDataMapper: AccountAssetDataMapper
 ) {
-
-    fun getAccountOwnedAssetDataFlow(publicKey: String, includeAlgo: Boolean): Flow<List<OwnedAssetData>> {
-        return accountDetailUseCase.getAccountDetailCacheFlow()
-            .mapNotNull { it.getOrDefault(publicKey, null)?.data }
-            .distinctUntilChanged()
-            .mapNotNull { account -> createAccountOwnedAssetData(account, includeAlgo) }
-    }
 
     fun getNonCachedAccountAssetData(accountDetail: AccountDetail, includeAlgo: Boolean): List<OwnedAssetData> {
         return createNonCachedAccountAssetData(accountDetail, includeAlgo)
@@ -55,12 +43,11 @@ class AccountAssetDataUseCase @Inject constructor(
         return createAccountOwnedAssetData(accountDetail, includeAlgo)
     }
 
-    suspend fun fetchAccountOwnedAssetData(
+    fun fetchAccountOwnedAssetData(
         publicKey: String,
-        includeAlgo: Boolean,
-        coroutineScope: CoroutineScope
+        includeAlgo: Boolean
     ) = channelFlow<List<OwnedAssetData>> {
-        accountDetailUseCase.fetchAndCacheAccountDetail(publicKey, coroutineScope).collectLatest {
+        accountDetailUseCase.fetchAndCacheAccountDetail(publicKey).collectLatest {
             send(getAccountOwnedAssetData(publicKey, includeAlgo))
         }
     }
@@ -92,8 +79,10 @@ class AccountAssetDataUseCase @Inject constructor(
         return assetDataList
     }
 
+    @Deprecated("Cache is always empty")
     private fun getAccountOwnedCachedAssetList(account: AccountDetail): List<AssetDetail> {
-        return assetDetailUseCase.getCachedAssetDetail(getAccountOwnedAssetIdList(account)).mapNotNull { it.data }
+//        return assetDetailUseCase.getCachedAssetDetail(getAccountOwnedAssetIdList(account)).mapNotNull { it.data }
+        return emptyList()
     }
 
     private fun getAccountOwnedAssetIdList(account: AccountDetail): List<Long> {
@@ -123,8 +112,10 @@ class AccountAssetDataUseCase @Inject constructor(
         }
     }
 
+    @Deprecated("Cache is always empty")
     private fun getCachedAssetList(accountInformation: AccountInformation): List<AssetDetail> {
         val accountAssetHoldingList = accountInformation.getAllAssetIds()
-        return assetDetailUseCase.getCachedAssetDetail(accountAssetHoldingList).mapNotNull { it.data }
+//        return assetDetailUseCase.getCachedAssetDetail(accountAssetHoldingList).mapNotNull { it.data }
+        return emptyList()
     }
 }

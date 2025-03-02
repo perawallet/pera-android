@@ -12,36 +12,18 @@
 
 package com.algorand.android.repository
 
-import com.algorand.android.cache.SimpleAssetLocalCache
 import com.algorand.android.exceptions.RetrofitErrorHandler
-import com.algorand.android.models.AssetDetail
-import com.algorand.android.models.AssetDetailResponse
 import com.algorand.android.models.AssetSupportRequest
-import com.algorand.android.models.NodeAssetDetailResponse
 import com.algorand.android.models.Result
-import com.algorand.android.network.AlgodApi
 import com.algorand.android.network.MobileAlgorandApi
-import com.algorand.android.network.request
 import com.algorand.android.network.requestWithHipoErrorHandler
 import com.algorand.android.network.safeApiCall
-import com.algorand.android.utils.AlgoAssetInformationProvider
-import com.algorand.android.utils.CacheResult
-import com.algorand.android.utils.toQueryString
-import com.algorand.wallet.asset.domain.util.AssetConstants
 import javax.inject.Inject
 
 class AssetRepository @Inject constructor(
-    private val algodApi: AlgodApi,
     private val mobileAlgorandApi: MobileAlgorandApi,
     private val hipoApiErrorHandler: RetrofitErrorHandler,
-    private val simpleAssetLocalCache: SimpleAssetLocalCache,
-    private val algoAssetInformationProvider: AlgoAssetInformationProvider
 ) {
-    suspend fun fetchAssetsById(assetIdList: List<Long>, includeDeleted: Boolean? = null) =
-        requestWithHipoErrorHandler(hipoApiErrorHandler) {
-            mobileAlgorandApi.getAssetsByIds(assetIdList.toQueryString(), includeDeleted)
-        }
-
     suspend fun postAssetSupportRequest(assetSupportRequest: AssetSupportRequest): Result<Unit> {
         return safeApiCall { requestPostAssetSupportRequest(assetSupportRequest) }
     }
@@ -50,36 +32,4 @@ class AssetRepository @Inject constructor(
         requestWithHipoErrorHandler(hipoApiErrorHandler) {
             mobileAlgorandApi.postAssetSupportRequest(assetSupportRequest)
         }
-
-    suspend fun cacheAllAssets(assetKeyValuePairList: List<Pair<Long, CacheResult<AssetDetail>>>) {
-        simpleAssetLocalCache.putAll(assetKeyValuePairList)
-    }
-
-    fun getAssetCacheFlow() = simpleAssetLocalCache.cacheMapFlow
-
-    fun getCachedAssetById(assetId: Long): CacheResult<AssetDetail>? {
-        return if (assetId == AssetConstants.ALGO_ID) {
-            algoAssetInformationProvider.getAlgoAssetInformation()
-        } else {
-            simpleAssetLocalCache.getOrNull(assetId)
-        }
-    }
-
-    suspend fun clearAssetCache() {
-        simpleAssetLocalCache.clear()
-    }
-
-    suspend fun clearAssetCache(assetId: Long) {
-        simpleAssetLocalCache.remove(assetId)
-    }
-
-    suspend fun getAssetDetailFromNode(assetId: Long): Result<NodeAssetDetailResponse> {
-        return request { algodApi.getAssetDetail(assetId) }
-    }
-
-    suspend fun getAssetDetailFromIndexer(assetId: Long): Result<AssetDetailResponse> {
-        return requestWithHipoErrorHandler(hipoApiErrorHandler) {
-            mobileAlgorandApi.getAssetDetail(assetId)
-        }
-    }
 }

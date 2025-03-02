@@ -42,6 +42,7 @@ fragmentKtx = "1.8.5"
 glide = "4.16.0"
 googleServicesVersion = "4.4.2"
 hiltCompiler = "1.2.0"
+installreferrer = "2.2"
 javaWebSocket = "1.5.6"
 junit = "4.13.2"
 khex = "1.1.2"
@@ -211,6 +212,7 @@ runner = { module = "androidx.test:runner", version.ref = "runner" }
 # Android / Google Libraries
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbox" }
+installreferrer = { group = "com.android.installreferrer", name = "installreferrer", version.ref = "installreferrer" }
 ksp-gradle-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "kspGradlePlugin" }
 review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "review" }
 

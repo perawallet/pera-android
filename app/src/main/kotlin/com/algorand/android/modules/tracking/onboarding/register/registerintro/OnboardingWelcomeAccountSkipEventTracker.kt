@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.tracking.onboarding.register.registerintro
 
-import com.algorand.android.modules.tracking.core.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.android.modules.tracking.onboarding.BaseOnboardingEvenTracker
 import com.algorand.android.usecase.RegistrationUseCase
 import javax.inject.Inject

@@ -12,6 +12,7 @@
 
 package com.algorand.android.utils.walletconnect
 
+import android.os.Bundle
 import androidx.core.os.bundleOf
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
@@ -19,20 +20,20 @@ import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
 import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.utils.MAINNET_NETWORK_SLUG
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 
 /**
  * This class will be provided by hilt - AppModule.kt
  */
 class WalletConnectFirebaseEventLogger(
-    private val firebaseAnalytics: FirebaseAnalytics,
-    private val algodInterceptor: AlgodInterceptor
+    private val algodInterceptor: AlgodInterceptor,
+    private val peraEventTracker: PeraEventTracker
 ) : WalletConnectEventLogger {
 
     private val isCurrentNetworkMainNet: Boolean
         get() = algodInterceptor.currentActiveNode?.networkSlug == MAINNET_NETWORK_SLUG
 
-    override fun logTransactionRequestConfirmation(transaction: WalletConnectTransaction) {
+    override suspend fun logTransactionRequestConfirmation(transaction: WalletConnectTransaction) {
         if (!isCurrentNetworkMainNet) return
         val bundle = with(transaction) {
             bundleOf(
@@ -41,10 +42,11 @@ class WalletConnectFirebaseEventLogger(
                 DAPP_URL_PARAM to session.peerMeta.url
             )
         }
-        firebaseAnalytics.logEvent(REQUEST_TRANSACTION_CONFIRMATION_EVENT_KEY, bundle)
+
+        peraEventTracker.logEvent(REQUEST_TRANSACTION_CONFIRMATION_EVENT_KEY, bundleToMap(bundle))
     }
 
-    override fun logTransactionRequestRejection(transaction: WalletConnectTransaction) {
+    override suspend fun logTransactionRequestRejection(transaction: WalletConnectTransaction) {
         if (!isCurrentNetworkMainNet) return
         val bundle = with(transaction) {
             bundleOf(
@@ -54,10 +56,11 @@ class WalletConnectFirebaseEventLogger(
                 TRANSACTION_COUNT_PARAM to getTransactionCount()
             )
         }
-        firebaseAnalytics.logEvent(REQUEST_TRANSACTION_REJECTION_EVENT_KEY, bundle)
+
+        peraEventTracker.logEvent(REQUEST_TRANSACTION_REJECTION_EVENT_KEY, bundleToMap(bundle))
     }
 
-    override fun logArbitraryDataRequestConfirmation(arbitraryData: WalletConnectArbitraryDataRequest) {
+    override suspend fun logArbitraryDataRequestConfirmation(arbitraryData: WalletConnectArbitraryDataRequest) {
         if (!isCurrentNetworkMainNet) return
         val bundle = with(arbitraryData) {
             bundleOf(
@@ -65,10 +68,11 @@ class WalletConnectFirebaseEventLogger(
                 DAPP_URL_PARAM to session.peerMeta.url
             )
         }
-        firebaseAnalytics.logEvent(REQUEST_ARBITRARY_DATA_CONFIRMATION_EVENT_KEY, bundle)
+
+        peraEventTracker.logEvent(REQUEST_ARBITRARY_DATA_CONFIRMATION_EVENT_KEY, bundleToMap(bundle))
     }
 
-    override fun logArbitraryDataRequestRejection(arbitraryData: WalletConnectArbitraryDataRequest) {
+    override suspend fun logArbitraryDataRequestRejection(arbitraryData: WalletConnectArbitraryDataRequest) {
         if (!isCurrentNetworkMainNet) return
         val bundle = with(arbitraryData) {
             bundleOf(
@@ -78,10 +82,11 @@ class WalletConnectFirebaseEventLogger(
                 TRANSACTION_COUNT_PARAM to getArbitraryDataCount()
             )
         }
-        firebaseAnalytics.logEvent(REQUEST_ARBITRARY_DATA_REJECTION_EVENT_KEY, bundle)
+
+        peraEventTracker.logEvent(REQUEST_ARBITRARY_DATA_REJECTION_EVENT_KEY, bundleToMap(bundle))
     }
 
-    override fun logSessionConfirmation(
+    override suspend fun logSessionConfirmation(
         sessionProposal: WalletConnectSessionProposal,
         connectedAccountAddresses: List<String>
     ) {
@@ -95,10 +100,11 @@ class WalletConnectFirebaseEventLogger(
                 TOTAL_ACCOUNT_ACCOUNT_PARAM to connectedAccountAddresses.count()
             )
         }
-        firebaseAnalytics.logEvent(SESSION_CONFIRMATION_EVENT_KEY, bundle)
+
+        peraEventTracker.logEvent(SESSION_CONFIRMATION_EVENT_KEY, bundleToMap(bundle))
     }
 
-    override fun logSessionDisconnection(session: WalletConnect.SessionDetail) {
+    override suspend fun logSessionDisconnection(session: WalletConnect.SessionDetail) {
         if (!isCurrentNetworkMainNet) return
         val bundle = with(session) {
             bundleOf(
@@ -109,17 +115,30 @@ class WalletConnectFirebaseEventLogger(
                 }.toAccountAddressesString()
             )
         }
-        firebaseAnalytics.logEvent(SESSION_DISCONNECTION_EVENT_KEY, bundle)
+
+        peraEventTracker.logEvent(SESSION_DISCONNECTION_EVENT_KEY, bundleToMap(bundle))
     }
 
-    override fun logSessionRejection(sessionProposal: WalletConnectSessionProposal) {
+    override suspend fun logSessionRejection(sessionProposal: WalletConnectSessionProposal) {
         if (!isCurrentNetworkMainNet) return
         val bundle = bundleOf(
             DAPP_NAME_PARAM to sessionProposal.peerMeta.name,
             DAPP_URL_PARAM to sessionProposal.peerMeta.url,
             SESSION_TOPIC_PARAM to sessionProposal.proposalIdentifier.proposalIdentifier
         )
-        firebaseAnalytics.logEvent(SESSION_REJECTION_EVENT_KEY, bundle)
+
+        peraEventTracker.logEvent(SESSION_REJECTION_EVENT_KEY, bundleToMap(bundle))
+    }
+
+    private fun bundleToMap(bundle: Bundle): Map<String, Any> {
+        val map = mutableMapOf<String, Any>()
+        for (key in bundle.keySet()) {
+            val value = bundle.get(key)
+            if (value != null) {
+                map[key] = value
+            }
+        }
+        return map
     }
 
     /**

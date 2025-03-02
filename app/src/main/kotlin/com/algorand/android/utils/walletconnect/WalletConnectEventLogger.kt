@@ -26,7 +26,9 @@ interface WalletConnectEventLogger {
      *
      * PARAMS tx_id, dapp_name, dapp_url
      */
-    fun logTransactionRequestConfirmation(transaction: WalletConnectTransaction)
+    suspend fun logTransactionRequestConfirmation(
+        transaction: WalletConnectTransaction
+    )
 
     /**
      * After the transaction is declined
@@ -35,7 +37,7 @@ interface WalletConnectEventLogger {
      *
      * PARAMS dapp_name, dapp_url, address, transaction_count
      */
-    fun logTransactionRequestRejection(transaction: WalletConnectTransaction)
+    suspend fun logTransactionRequestRejection(transaction: WalletConnectTransaction)
 
     /**
      * After the arbitrary data is confirmed, for all signed arbitrary data
@@ -45,7 +47,9 @@ interface WalletConnectEventLogger {
      * PARAMS dapp_name, dapp_url
      */
 
-    fun logArbitraryDataRequestConfirmation(arbitraryData: WalletConnectArbitraryDataRequest)
+    suspend fun logArbitraryDataRequestConfirmation(
+        arbitraryData: WalletConnectArbitraryDataRequest
+    )
 
     /**
      * After the arbitrary data request is declined
@@ -54,7 +58,9 @@ interface WalletConnectEventLogger {
      *
      * PARAMS dapp_name, dapp_url, address, arbitrary_data_count
      */
-    fun logArbitraryDataRequestRejection(arbitraryData: WalletConnectArbitraryDataRequest)
+    suspend fun logArbitraryDataRequestRejection(
+        arbitraryData: WalletConnectArbitraryDataRequest
+    )
 
     /**
      * After the user approves the session
@@ -64,7 +70,10 @@ interface WalletConnectEventLogger {
      * PARAMS dapp_name, dapp_url, topic, address
      */
 
-    fun logSessionConfirmation(sessionProposal: WalletConnectSessionProposal, connectedAccountAddresses: List<String>)
+    suspend fun logSessionConfirmation(
+        sessionProposal: WalletConnectSessionProposal,
+        connectedAccountAddresses: List<String>
+    )
 
     /**
      * After the user rejects the session
@@ -73,7 +82,9 @@ interface WalletConnectEventLogger {
      *
      * PARAMS dapp_name, dapp_url, topic
      */
-    fun logSessionRejection(sessionProposal: WalletConnectSessionProposal)
+    suspend fun logSessionRejection(
+        sessionProposal: WalletConnectSessionProposal
+    )
 
     /**
      * After the user taps to disconnect
@@ -82,5 +93,7 @@ interface WalletConnectEventLogger {
      *
      * PARAMS dapp_name, dapp_url, address
      */
-    fun logSessionDisconnection(session: WalletConnect.SessionDetail)
+    suspend fun logSessionDisconnection(
+        session: WalletConnect.SessionDetail
+    )
 }

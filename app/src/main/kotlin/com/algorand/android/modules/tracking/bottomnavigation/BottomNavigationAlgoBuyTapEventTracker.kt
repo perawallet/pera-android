@@ -13,7 +13,7 @@
 package com.algorand.android.modules.tracking.bottomnavigation
 
 import com.algorand.android.modules.tracking.core.BaseEventTracker
-import com.algorand.android.modules.tracking.core.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import javax.inject.Inject
 
 class BottomNavigationAlgoBuyTapEventTracker @Inject constructor(

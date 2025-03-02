@@ -28,6 +28,11 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_21.toString()
     }
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {
@@ -48,6 +53,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
+    implementation(libs.firebase.crashlytics)
     implementation(project.dependencies.platform(libs.firebase.bom))
 
     ksp(libs.dagger.hilt.compiler)

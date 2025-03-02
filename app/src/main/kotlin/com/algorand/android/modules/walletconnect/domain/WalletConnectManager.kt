@@ -302,7 +302,7 @@ class WalletConnectManager @Inject constructor(
         }
     }
 
-    private fun logWalletConnectRequestRejection() {
+    private suspend fun logWalletConnectRequestRejection() {
         when (wcRequest) {
             is WalletConnectArbitraryDataRequest -> {
                 eventLogger.logArbitraryDataRequestRejection(wcRequest as WalletConnectArbitraryDataRequest)
@@ -316,7 +316,7 @@ class WalletConnectManager @Inject constructor(
         }
     }
 
-    private fun logWalletConnectRequestConfirmation() {
+    private suspend fun logWalletConnectRequestConfirmation() {
         when (wcRequest) {
             is WalletConnectArbitraryDataRequest -> {
                 eventLogger.logArbitraryDataRequestConfirmation(wcRequest as WalletConnectArbitraryDataRequest)

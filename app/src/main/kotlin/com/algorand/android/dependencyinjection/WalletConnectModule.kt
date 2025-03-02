@@ -15,7 +15,7 @@ package com.algorand.android.dependencyinjection
 import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.utils.walletconnect.WalletConnectEventLogger
 import com.algorand.android.utils.walletconnect.WalletConnectFirebaseEventLogger
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,9 +27,9 @@ object WalletConnectModule {
 
     @Provides
     fun provideWalletConnectEventLogger(
-        firebaseAnalytics: FirebaseAnalytics,
+        peraEventTracker: PeraEventTracker,
         algodInterceptor: AlgodInterceptor
     ): WalletConnectEventLogger {
-        return WalletConnectFirebaseEventLogger(firebaseAnalytics, algodInterceptor)
+        return WalletConnectFirebaseEventLogger(algodInterceptor, peraEventTracker)
     }
 }

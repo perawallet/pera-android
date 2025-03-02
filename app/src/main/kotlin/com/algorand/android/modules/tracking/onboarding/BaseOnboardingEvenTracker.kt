@@ -13,7 +13,7 @@
 package com.algorand.android.modules.tracking.onboarding
 
 import com.algorand.android.modules.tracking.core.BaseEventTracker
-import com.algorand.android.modules.tracking.core.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.android.usecase.RegistrationUseCase
 
 abstract class BaseOnboardingEvenTracker constructor(

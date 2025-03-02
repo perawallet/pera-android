@@ -13,7 +13,7 @@
 package com.algorand.android.modules.tracking.discover.home
 
 import com.algorand.android.modules.tracking.core.BaseEventTracker
-import com.algorand.android.modules.tracking.core.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.android.modules.tracking.discover.DiscoverEventTrackerConstants.ASSET_ID_PAYLOAD_KEY
 import com.algorand.android.modules.tracking.discover.DiscoverEventTrackerConstants.QUERY_PAYLOAD_KEY
 import javax.inject.Inject

@@ -446,6 +446,7 @@ class MainActivity :
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         mainViewModel.initAppCache(lifecycle)
+        mainViewModel.fetchInstallReferrer()
         mainViewModel.setDeepLinkHandlerListener(deepLinkHandlerListener)
         autoLockManager.setListener(autoLockManagerListener)
         setupCoreActionsTabBarView()

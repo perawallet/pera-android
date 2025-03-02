@@ -36,12 +36,14 @@ import com.algorand.android.database.WalletConnectDao
 import com.algorand.android.database.WalletConnectTypeConverters
 import com.algorand.android.ledger.LedgerBleConnectionManager
 import com.algorand.android.ledger.LedgerBleSearchManager
+import com.algorand.android.modules.tracking.core.PeraReferrerInstallClientImpl
 import com.algorand.android.notification.PeraNotificationManager
 import com.algorand.android.utils.ALGORAND_KEYSTORE_URI
 import com.algorand.android.utils.ENCRYPTED_SHARED_PREF_NAME
 import com.algorand.android.utils.KEYSET_HANDLE
 import com.algorand.android.utils.KEY_TEMPLATE_AES256_GCM
 import com.algorand.android.utils.preference.SETTINGS
+import com.algorand.wallet.analytics.domain.service.PeraReferrerInstallClient
 import com.google.crypto.tink.Aead
 import com.google.crypto.tink.KeyTemplates
 import com.google.crypto.tink.KeysetHandle
@@ -172,4 +174,8 @@ object AppModule {
     fun provideNotificationManager(@ApplicationContext appContext: Context): NotificationManager? {
         return appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
     }
+
+    @Singleton
+    @Provides
+    fun providePeraReferrerInstallClient(impl: PeraReferrerInstallClientImpl): PeraReferrerInstallClient = impl
 }

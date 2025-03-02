@@ -35,6 +35,7 @@ import com.algorand.android.repository.NodeRepository
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.findAllNodes
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.analytics.domain.service.PeraReferrerManager
 import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
 import com.algorand.wallet.cache.domain.usecase.InitializeAppCache
 import com.algorand.wallet.deeplink.model.DeepLink
@@ -69,6 +70,7 @@ class MainViewModel @Inject constructor(
     private val tutorialUseCase: TutorialUseCase,
     private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
     private val nodeRepository: NodeRepository,
+    private val peraReferrerManager: PeraReferrerManager,
     private val autoLockManagerUseCase: AutoLockManagerUseCase,
     private val accountStateHelperUseCase: AccountStateHelperUseCase,
     private val initializeAppCache: InitializeAppCache,
@@ -185,6 +187,12 @@ class MainViewModel @Inject constructor(
 
     fun hasAccountAuthority(accountAddress: String): Boolean {
         return accountStateHelperUseCase.hasAccountAuthority(accountAddress)
+    }
+
+    fun fetchInstallReferrer() {
+        viewModelScope.launch(Dispatchers.IO) {
+            peraReferrerManager.fetchInstallReferrer()
+        }
     }
 
     fun handleNewNotification(newNotificationData: NotificationMetadata) {

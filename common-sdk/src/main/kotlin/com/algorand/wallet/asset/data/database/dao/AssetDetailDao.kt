@@ -36,6 +36,9 @@ internal interface AssetDetailDao {
     @Query("SELECT * FROM asset_detail WHERE asset_id IN (:assetIds)")
     suspend fun getByAssetIds(assetIds: List<Long>): List<AssetDetailEntity>
 
+    @Query("SELECT asset_id FROM asset_detail")
+    suspend fun getAllIds(): List<Long>
+
     @Query("DELETE FROM asset_detail")
     suspend fun clearAll()
 }

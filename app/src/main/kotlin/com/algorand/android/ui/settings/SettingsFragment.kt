@@ -65,6 +65,13 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings),
         binding.algorandSecureBackupListItem.updateSubTitle(getString(R.string.not_backed_up, notBackedUpAccountCount))
     }
 
+    private val firebaseInstanceIdCollector: suspend (String?) -> Unit = { firebaseId ->
+        binding.firebaseIdTextView.text = getString(
+            R.string.firebase_id_format,
+            firebaseId ?: R.string.not_available
+        )
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         registerBottomNavBarFragmentDelegation(this)
@@ -115,6 +122,10 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings),
             collectLatestOnLifecycle(
                 flow = map { it?.notBackedUpAccountCounts },
                 collection = notBackedUpAccountCountsCollector
+            )
+            collectLatestOnLifecycle(
+                flow = map { it?.firebaseInstanceId },
+                collection = firebaseInstanceIdCollector
             )
         }
     }

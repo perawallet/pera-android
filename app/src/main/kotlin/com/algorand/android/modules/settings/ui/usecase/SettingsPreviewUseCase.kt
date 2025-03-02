@@ -20,6 +20,7 @@ import com.algorand.android.modules.settings.ui.mapper.SettingsPreviewMapper
 import com.algorand.android.modules.settings.ui.model.SettingsPreview
 import com.algorand.android.sharedpref.SharedPrefLocalSource
 import com.algorand.android.usecase.GetLocalAccountsUseCase
+import com.algorand.wallet.analytics.domain.usecase.GetFirebaseInstanceIdUseCase
 import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -29,7 +30,8 @@ class SettingsPreviewUseCase @Inject constructor(
     private val getBackedUpAccountsUseCase: GetBackedUpAccountsUseCase,
     private val settingsPreviewMapper: SettingsPreviewMapper,
     private val removeBackedUpAccountListenerUseCase: RemoveBackedUpAccountListenerUseCase,
-    private val addBackedUpAccountListenerUseCase: AddBackedUpAccountListenerUseCase
+    private val addBackedUpAccountListenerUseCase: AddBackedUpAccountListenerUseCase,
+    private val getFirebaseInstanceIdUseCase: GetFirebaseInstanceIdUseCase,
 ) {
 
     private fun addBackedUpAccountListener(listener: SharedPrefLocalSource.OnChangeListener<Set<String>>) {
@@ -42,18 +44,19 @@ class SettingsPreviewUseCase @Inject constructor(
 
     suspend fun getSettingsPreviewFlow() = callbackFlow<SettingsPreview> {
         val backedUpAccounts = getBackedUpAccountsUseCase.invoke()
-        var preview = createSettingsPreview(backedUpAccounts)
+        val firebaseInstanceId = getFirebaseInstanceIdUseCase.invoke()
+        var preview = createSettingsPreview(backedUpAccounts, firebaseInstanceId)
         send(preview)
 
         val onChangeListener = SharedPrefLocalSource.OnChangeListener<Set<String>> { accounts ->
-            preview = createSettingsPreview(accounts.orEmpty())
+            preview = createSettingsPreview(accounts.orEmpty(), firebaseInstanceId)
             trySend(preview)
         }
         addBackedUpAccountListener(onChangeListener)
         awaitClose { removeBackedUpAccountListener(onChangeListener) }
     }
 
-    private fun createSettingsPreview(backedUpAccounts: Set<String>): SettingsPreview {
+    private fun createSettingsPreview(backedUpAccounts: Set<String>, firebaseInstanceId: String): SettingsPreview {
         val localAccounts = getLocalAccountsUseCase.getLocalAccountsFromAccountManagerCache().toSet()
         val localAccountAddresses = localAccounts.map { it.address }
         val remainingAccounts = localAccountAddresses - backedUpAccounts
@@ -63,7 +66,8 @@ class SettingsPreviewUseCase @Inject constructor(
         }
         return settingsPreviewMapper.mapToSettingsPreview(
             isAlgorandSecureBackupDescriptionVisible = eligibleLocalAccounts.isNotEmpty(),
-            notBackedUpAccountCounts = eligibleLocalAccounts.size
+            notBackedUpAccountCounts = eligibleLocalAccounts.size,
+            firebaseInstanceId = firebaseInstanceId
         )
     }
 }

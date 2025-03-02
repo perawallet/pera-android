@@ -15,10 +15,8 @@ package com.algorand.wallet.asset.data.mapper.entity
 import com.algorand.test.peraFixture
 import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
 import com.algorand.wallet.asset.data.database.model.CollectibleMediaTypeEntity.IMAGE
-import com.algorand.wallet.asset.data.database.model.CollectibleMediaTypeExtensionEntity.GIF
 import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaResponse
-import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaTypeExtensionResponse
 import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaTypeResponse
 import com.algorand.wallet.asset.data.model.collectible.CollectibleResponse
 import io.mockk.every
@@ -30,12 +28,8 @@ import org.junit.Test
 internal class CollectibleMediaEntityMapperImplTest {
 
     private val collectibleMediaTypeEntityMapper: CollectibleMediaTypeEntityMapper = mockk()
-    private val collectibleMediaTypeExtensionEntityMapper: CollectibleMediaTypeExtensionEntityMapper = mockk()
 
-    private val sut = CollectibleMediaEntityMapperImpl(
-        collectibleMediaTypeEntityMapper,
-        collectibleMediaTypeExtensionEntityMapper,
-    )
+    private val sut = CollectibleMediaEntityMapperImpl(collectibleMediaTypeEntityMapper)
 
     @Test
     fun `EXPECT null WHEN asset id is null`() {
@@ -49,10 +43,8 @@ internal class CollectibleMediaEntityMapperImplTest {
     @Test
     fun `EXPECT response to be mapped to entity successfully`() {
         val mediaTypeResponse = peraFixture<CollectibleMediaTypeResponse>()
-        val mediaTypeExtensionResponse = peraFixture<CollectibleMediaTypeExtensionResponse>()
         val collectibleMediaResponse = peraFixture<CollectibleMediaResponse>().copy(
-            mediaType = mediaTypeResponse,
-            mediaTypeExtension = mediaTypeExtensionResponse
+            mediaType = mediaTypeResponse
         )
         val collectibleResponse = peraFixture<CollectibleResponse>().copy(
             collectibleMedias = listOf(collectibleMediaResponse)
@@ -62,7 +54,6 @@ internal class CollectibleMediaEntityMapperImplTest {
             collectible = collectibleResponse
         )
         every { collectibleMediaTypeEntityMapper(mediaTypeResponse) } returns IMAGE
-        every { collectibleMediaTypeExtensionEntityMapper(mediaTypeExtensionResponse) } returns GIF
 
         val result = sut(assetDetailResponse)
 
@@ -72,7 +63,7 @@ internal class CollectibleMediaEntityMapperImplTest {
                 mediaType = IMAGE,
                 downloadUrl = collectibleMediaResponse.downloadUrl,
                 previewUrl = collectibleMediaResponse.previewUrl,
-                mediaTypeExtension = GIF
+                mediaTypeExtension = collectibleMediaResponse.mediaTypeExtension
             )
         )
         assertEquals(expected, result)

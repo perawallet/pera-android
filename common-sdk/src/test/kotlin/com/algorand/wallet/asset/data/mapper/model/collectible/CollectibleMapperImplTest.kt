@@ -15,11 +15,9 @@ package com.algorand.wallet.asset.data.mapper.model.collectible
 import com.algorand.wallet.asset.data.database.model.CollectibleEntity
 import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
 import com.algorand.wallet.asset.data.database.model.CollectibleMediaTypeEntity
-import com.algorand.wallet.asset.data.database.model.CollectibleMediaTypeExtensionEntity
 import com.algorand.wallet.asset.data.database.model.CollectibleStandardTypeEntity
 import com.algorand.wallet.asset.data.database.model.CollectibleTraitEntity
 import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaResponse
-import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaTypeExtensionResponse
 import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaTypeResponse
 import com.algorand.wallet.asset.data.model.collectible.CollectibleResponse
 import com.algorand.wallet.asset.data.model.collectible.CollectibleStandardTypeResponse
@@ -28,7 +26,6 @@ import com.algorand.wallet.asset.data.model.collectible.CollectionResponse
 import com.algorand.wallet.asset.domain.model.Collectible
 import com.algorand.wallet.asset.domain.model.CollectibleMedia
 import com.algorand.wallet.asset.domain.model.CollectibleMediaType
-import com.algorand.wallet.asset.domain.model.CollectibleMediaTypeExtension
 import com.algorand.wallet.asset.domain.model.CollectibleStandardType.ARC_3
 import com.algorand.wallet.asset.domain.model.CollectibleTrait
 import com.algorand.wallet.asset.domain.model.Collection
@@ -110,17 +107,18 @@ internal class CollectibleMapperImplTest {
     }
 
     companion object {
+        private const val COLLECTIBLE_MEDIA_TYPE_EXTENSION = ".gif"
         private val COLLECTIBLE_MEDIA_RESPONSE = CollectibleMediaResponse(
             mediaType = CollectibleMediaTypeResponse.IMAGE,
             downloadUrl = "downloadUrl",
             previewUrl = "previewUrl",
-            mediaTypeExtension = CollectibleMediaTypeExtensionResponse.GIF
+            mediaTypeExtension = COLLECTIBLE_MEDIA_TYPE_EXTENSION
         )
         private val COLLECTIBLE_MEDIA = CollectibleMedia(
             mediaType = CollectibleMediaType.IMAGE,
             downloadUrl = "downloadUrl",
             previewUrl = "previewUrl",
-            mediaTypeExtension = CollectibleMediaTypeExtension.GIF
+            mediaTypeExtension = COLLECTIBLE_MEDIA_TYPE_EXTENSION
         )
         private val COLLECTIBLE_TRAIT_RESPONSE = CollectibleTraitResponse(
             name = "name",
@@ -181,7 +179,7 @@ internal class CollectibleMapperImplTest {
             mediaType = CollectibleMediaTypeEntity.IMAGE,
             downloadUrl = "downloadUrl",
             previewUrl = "previewUrl",
-            mediaTypeExtension = CollectibleMediaTypeExtensionEntity.GIF
+            mediaTypeExtension = COLLECTIBLE_MEDIA_TYPE_EXTENSION
         )
         private val COLLECTIBLE_TRAIT_ENTITY = CollectibleTraitEntity(
             id = 3L,

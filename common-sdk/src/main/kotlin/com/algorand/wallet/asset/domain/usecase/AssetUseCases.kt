@@ -55,6 +55,10 @@ fun interface GetCollectibleDetail {
     suspend operator fun invoke(collectibleId: Long): CollectibleDetail?
 }
 
+fun interface FetchCollectibleDetail {
+    suspend operator fun invoke(collectibleId: Long): PeraResult<CollectibleDetail>
+}
+
 fun interface GetCollectiblesDetail {
     suspend operator fun invoke(collectibleIds: List<Long>): List<CollectibleDetail>
 }

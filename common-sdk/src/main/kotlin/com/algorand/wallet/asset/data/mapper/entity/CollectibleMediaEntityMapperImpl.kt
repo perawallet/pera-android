@@ -12,13 +12,12 @@
 
 package com.algorand.wallet.asset.data.mapper.entity
 
-import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
+import com.algorand.wallet.asset.data.model.AssetResponse
 import javax.inject.Inject
 
 internal class CollectibleMediaEntityMapperImpl @Inject constructor(
-    private val collectibleMediaTypeEntityMapper: CollectibleMediaTypeEntityMapper,
-    private val collectibleMediaTypeExtensionEntityMapper: CollectibleMediaTypeExtensionEntityMapper
+    private val collectibleMediaTypeEntityMapper: CollectibleMediaTypeEntityMapper
 ) : CollectibleMediaEntityMapper {
 
     override fun invoke(response: AssetResponse): List<CollectibleMediaEntity> {
@@ -28,7 +27,7 @@ internal class CollectibleMediaEntityMapperImpl @Inject constructor(
                 mediaType = collectibleMediaTypeEntityMapper(it.mediaType),
                 downloadUrl = it.downloadUrl,
                 previewUrl = it.previewUrl,
-                mediaTypeExtension = collectibleMediaTypeExtensionEntityMapper(it.mediaTypeExtension)
+                mediaTypeExtension = it.mediaTypeExtension
             )
         }.orEmpty()
     }

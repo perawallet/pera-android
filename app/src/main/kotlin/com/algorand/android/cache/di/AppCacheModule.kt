@@ -17,6 +17,7 @@ import com.algorand.android.cache.PersistentCacheProviderImpl
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.google.gson.Gson
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
@@ -24,6 +25,7 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 internal object AppCacheModule {
 
+    @Provides
     fun providePersistentCacheProvider(sharedPreferences: SharedPreferences, gson: Gson): PersistentCacheProvider {
         return PersistentCacheProviderImpl(sharedPreferences, gson)
     }

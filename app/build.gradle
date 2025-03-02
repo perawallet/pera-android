@@ -234,9 +234,11 @@ android {
 }
 
 dependencies {
+
     implementation project(':common-sdk')
 
     implementation libs.installreferrer
+    implementation libs.kotlin.bip39
 
     implementation libs.pera.compact.decimal.format
     implementation libs.pera.walletconnect.v1

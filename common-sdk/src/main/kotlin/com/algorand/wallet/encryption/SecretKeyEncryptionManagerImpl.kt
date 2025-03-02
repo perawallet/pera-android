@@ -19,12 +19,12 @@ internal class SecretKeyEncryptionManagerImpl @Inject constructor(
 ) : SecretKeyEncryptionManager {
 
     override fun encrypt(secretKey: ByteArray): ByteArray {
-        // TODO Will be implemented at the end of the account refactor
-        return aesPlatformManager.encryptByteArray(secretKey)
+        // return aesPlatformManager.encryptByteArray(secretKey)
+        return secretKey
     }
 
     override fun decrypt(encryptedSecretKey: ByteArray): ByteArray {
-        // TODO Will be implemented at the end of the account refactor
-        return aesPlatformManager.decryptByteArray(encryptedSecretKey)
+        // return aesPlatformManager.decryptByteArray(encryptedSecretKey)
+        return encryptedSecretKey
     }
 }

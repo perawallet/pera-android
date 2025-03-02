@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -151,10 +152,11 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
             )
             Spacer(modifier = Modifier.weight(1f))
             ItemChoiceWidget(
-                modifier = Modifier.padding(bottom = 40.dp),
+                modifier = Modifier,
                 title = stringResource(id = R.string.create_a_new_account),
                 description = stringResource(id = R.string.create_a_new_algorand_account_with),
                 icon = ImageVector.vectorResource(R.drawable.ic_wallet),
+                iconContentDescription = stringResource(id = R.string.create_a_new_algorand_account_with),
                 onClick = {
                     coroutineScope.launch {
                         if (registerIntroViewModel.isHdWalletToggleEnabled()) {
@@ -167,16 +169,21 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                     }
                 }
             )
+            Spacer(modifier = Modifier.height(40.dp))
             ItemChoiceWidget(
-                modifier = Modifier.padding(bottom = 40.dp),
+                modifier = Modifier,
                 title = stringResource(id = R.string.import_an_account),
                 description = stringResource(id = R.string.import_an_existing),
+                iconContentDescription = stringResource(id = R.string.import_an_existing),
                 icon = ImageVector.vectorResource(R.drawable.ic_key),
                 onClick = ::navToAccountRecoveryTypeSelectionFragment
             )
+            Spacer(modifier = Modifier.height(40.dp))
             ItemChoiceWidget(
+                modifier = Modifier,
                 title = stringResource(id = R.string.watch_an_account),
                 description = stringResource(id = R.string.monitor_an_algorand_account),
+                iconContentDescription = stringResource(id = R.string.monitor_an_algorand_account),
                 icon = ImageVector.vectorResource(R.drawable.ic_eye),
                 onClick = ::navToWatchAccountInfoFragment
             )

@@ -12,19 +12,18 @@
 
 package com.algorand.wallet.account.core.domain.usecase
 
-import cash.z.ecc.android.bip39.Mnemonics
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.encryption.SecretKeyEncryptionManager
 import javax.inject.Inject
 
-internal class GetHdSeedIdUseCase @Inject constructor(
+internal class GetHdWalletEntropyFromSeedIdUseCase @Inject constructor(
     private val hdSeedRepository: HdSeedRepository,
     private val secretKeyEncryptionManager: SecretKeyEncryptionManager,
-) : GetHdSeedId {
+) : GetHdWalletEntropyFromSeedId {
 
-    override suspend fun invoke(mnemonic: Mnemonics.MnemonicCode): Int? {
-        return hdSeedRepository.getHdSeed(
-            secretKeyEncryptionManager.encrypt(mnemonic.toEntropy())
-        )?.seedId
+    override suspend fun invoke(seedId: Int): ByteArray? {
+        hdSeedRepository.getEncryptedEntropy(seedId)?.let {
+            return secretKeyEncryptionManager.decrypt(it)
+        } ?: return null
     }
 }

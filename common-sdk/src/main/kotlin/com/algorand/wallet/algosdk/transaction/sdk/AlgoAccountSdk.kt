@@ -21,7 +21,7 @@ interface AlgoAccountSdk {
 
     fun recoverHdAccount(mnemonic: String): HdAccount?
 
-    fun createAlgo25Account(): Algo25Account?
+    fun createAlgo25Account(): Algo25Account
 
     fun recoverAlgo25Account(mnemonic: String): Algo25Account?
 }

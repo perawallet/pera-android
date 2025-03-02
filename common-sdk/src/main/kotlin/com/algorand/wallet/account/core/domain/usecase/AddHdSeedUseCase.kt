@@ -37,26 +37,30 @@ internal class AddHdSeedUseCase @Inject constructor(
                 hdSeed = HdSeed(0, entropyInitialCustomName), // Seed will be auto-generated, update later
                 encryptedSeed = encryptedSeed,
                 encryptedEntropy = encryptedEntropy
-            ).collect { rowsAffectedAdd ->
+            ).collect {
                 // After collecting the seedId, retrieve the entity
                 val hdSeedEntities = hdSeedRepository.getAllHdSeed(entropyInitialCustomName)
 
-                hdSeedEntities?.forEach { hdSeedEntity ->
+                hdSeedEntities.forEach { hdSeedEntity ->
                     // Set custom name after the insert
                     hdSeedEntity.seedCustomName = "Wallet #${hdSeedEntity.seedId}"
 
                     hdSeedEntity.let {
                         hdSeedRepository.updateHdSeedCustomNameAsFlow(it)
-                    }.collect { rowsAffectedUpdate ->
-                        Log.e("CHUANGM", "${hdSeedEntity.seedId} updated")
+                    }.collect {
+                        Log.i(TAG, "${hdSeedEntity.seedId} updated with ${hdSeedEntity.seedCustomName}")
                     }
                 }
-                emit(hdSeedEntities?.first()?.seedId ?: 0)
+                emit(hdSeedEntities.first().seedId)
             }
         }
     }
 
     private fun encryptData(data: ByteArray): ByteArray {
         return secretKeyEncryptionManager.encrypt(data)
+    }
+
+    companion object {
+        private const val TAG: String = "AddHdSeedUseCase"
     }
 }

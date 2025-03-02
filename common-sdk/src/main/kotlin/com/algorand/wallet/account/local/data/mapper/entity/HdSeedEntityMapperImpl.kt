@@ -14,7 +14,7 @@ package com.algorand.wallet.account.local.data.mapper.entity
 
 import com.algorand.wallet.account.local.data.database.model.HdSeedEntity
 import com.algorand.wallet.account.local.domain.model.HdSeed
-import com.algorand.wallet.encryption.AESPlatformManager
+import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import javax.inject.Inject
 
 internal class HdSeedEntityMapperImpl @Inject constructor(

@@ -13,7 +13,7 @@
 package com.algorand.wallet.deeplink.parser.query
 
 import com.algorand.wallet.deeplink.model.PeraUri
-import com.algorand.wallet.encryption.Base64Manager
+import com.algorand.wallet.encryption.domain.services.Base64Manager
 
 internal class UrlQueryParser(
     private val base64Manager: Base64Manager

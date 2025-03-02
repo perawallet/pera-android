@@ -18,7 +18,7 @@ import com.algorand.wallet.account.local.data.database.model.Algo25Entity
 import com.algorand.wallet.account.local.data.mapper.entity.Algo25EntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.Algo25Mapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.encryption.AESPlatformManager
+import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

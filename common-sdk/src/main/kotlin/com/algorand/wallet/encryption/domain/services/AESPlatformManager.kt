@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption
+package com.algorand.wallet.encryption.domain.services
 
 interface AESPlatformManager {
     fun encryptByteArray(data: ByteArray): ByteArray

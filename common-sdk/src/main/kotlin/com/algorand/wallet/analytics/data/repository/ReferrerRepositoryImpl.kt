@@ -12,37 +12,35 @@
 
 package com.algorand.wallet.analytics.data.repository
 
-import android.content.SharedPreferences
-import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
 import com.algorand.wallet.analytics.domain.model.ReferrerData
-import com.algorand.wallet.analytics.domain.util.GA4.UTM_CAMPAIGN
-import com.algorand.wallet.analytics.domain.util.GA4.UTM_CONTENT
-import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM
-import com.algorand.wallet.analytics.domain.util.GA4.UTM_SOURCE
-import com.algorand.wallet.analytics.domain.util.GA4.UTM_TERM
-import javax.inject.Inject
+import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
+import com.algorand.wallet.foundation.cache.PersistentCache
 
-internal class ReferrerRepositoryImpl @Inject constructor(
-    private val sharedPreferences: SharedPreferences
-): ReferrerRepository {
+internal class ReferrerRepositoryImpl(
+    private val utmSourceStorage: PersistentCache<String>,
+    private val utmMediumStorage: PersistentCache<String>,
+    private val utmCampaignStorage: PersistentCache<String>,
+    private val utmTermStorage: PersistentCache<String>,
+    private val utmContentStorage: PersistentCache<String>
+) : ReferrerRepository {
+
     override suspend fun saveReferrerData(referrerData: ReferrerData) {
-        sharedPreferences.edit().apply {
-            referrerData.utmSource?.let { putString(UTM_SOURCE, it) }
-            referrerData.utmMedium?.let { putString(UTM_MEDIUM, it) }
-            referrerData.utmCampaign?.let { putString(UTM_CAMPAIGN, it) }
-            referrerData.utmTerm?.let { putString(UTM_TERM, it) }
-            referrerData.utmContent?.let { putString(UTM_CONTENT, it) }
-            apply()
+        with(referrerData) {
+            if (utmSource != null) utmSourceStorage.put(utmSource)
+            if (utmMedium != null) utmMediumStorage.put(utmMedium)
+            if (utmCampaign != null) utmCampaignStorage.put(utmCampaign)
+            if (utmTerm != null) utmTermStorage.put(utmTerm)
+            if (utmContent != null) utmContentStorage.put(utmContent)
         }
     }
 
     override suspend fun getReferrerData(): ReferrerData {
         return ReferrerData(
-            utmSource = sharedPreferences.getString(UTM_SOURCE, null),
-            utmMedium = sharedPreferences.getString(UTM_MEDIUM, null) ,
-            utmCampaign = sharedPreferences.getString(UTM_CAMPAIGN, null) ,
-            utmTerm = sharedPreferences.getString(UTM_TERM, null) ,
-            utmContent = sharedPreferences.getString(UTM_CONTENT, null)
+            utmSource = utmSourceStorage.get().takeUnless { it.isNullOrBlank() },
+            utmMedium = utmMediumStorage.get().takeUnless { it.isNullOrBlank() },
+            utmCampaign = utmCampaignStorage.get().takeUnless { it.isNullOrBlank() },
+            utmTerm = utmTermStorage.get().takeUnless { it.isNullOrBlank() },
+            utmContent = utmContentStorage.get().takeUnless { it.isNullOrBlank() }
         )
     }
 }

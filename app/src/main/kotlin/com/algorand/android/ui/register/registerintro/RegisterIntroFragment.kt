@@ -16,6 +16,7 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.RegisterIntroPreview
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.utils.browser.openPrivacyPolicyUrl
 import com.algorand.android.utils.browser.openTermsAndServicesUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -85,7 +86,7 @@ class RegisterIntroFragment : DaggerBaseFragment(R.layout.fragment_register_type
     }
 
     private fun navToWatchAccountInfoFragment() {
-        registerIntroViewModel.logOnboardingCreateWatchAccountClickEvent()
+        registerIntroViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_WELCOME_WATCH)
         nav(RegisterIntroFragmentDirections.actionRegisterIntroFragmentToWatchAccountInfoFragment())
     }
 
@@ -117,7 +118,7 @@ class RegisterIntroFragment : DaggerBaseFragment(R.layout.fragment_register_type
     }
 
     private fun onSkipClick() {
-        registerIntroViewModel.logOnboardingCreateAccountSkipClickEvent()
+        registerIntroViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_WELCOME_SKIP)
         registerIntroViewModel.setRegisterSkip()
         nav(LoginNavigationDirections.actionGlobalToHomeNavigation())
     }

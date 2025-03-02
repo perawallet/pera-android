@@ -23,6 +23,7 @@ import com.algorand.android.customviews.PassphraseValidationGroupView
 import com.algorand.android.databinding.FragmentPassphraseValidationBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.ui.register.PassphraseValidationFragmentDirections.Companion.actionPassphraseValidationFragmentToPassphraseVerifiedInfoFragment
 import com.algorand.android.utils.singleVibrate
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -76,6 +77,7 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
                 args.publicKeyOfAccountToBackup,
                 isBackedUp = true
             )
+            passphraseValidationViewModel.logEvent(PeraEvent.ONBOARDING_PASSPHRASE_VERIFIED_COMPLETE)
             navToPassphraseVerifiedInfoFragment()
         } else {
             showGlobalError(errorMessage = getString(R.string.selected_words_are))

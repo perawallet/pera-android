@@ -27,6 +27,7 @@ import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToBackupPassphraseAccountNameNavigation
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToWriteDownInfoFragment
@@ -95,7 +96,10 @@ class BackupInfoFragment : BaseInfoFragment() {
     override fun SecondaryButton(modifier: Modifier) {
         if (args.publicKeysOfAccountsToBackup.isEmpty()) {
             PeraSecondaryButton(
-                onClick = { navToBackupPassphraseAccountNameNavigation() },
+                onClick = {
+                    backupInfoViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_CREATE_PASSPHRASE_SKIP)
+                    navToBackupPassphraseAccountNameNavigation()
+                },
                 modifier = modifier,
                 text = stringResource(id = R.string.skip_for_now)
             )

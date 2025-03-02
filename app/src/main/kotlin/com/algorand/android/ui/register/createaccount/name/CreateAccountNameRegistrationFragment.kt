@@ -14,18 +14,20 @@ package com.algorand.android.ui.register.createaccount.name
 
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.models.AccountCreation
+import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.ui.register.nameregistration.BaseNameRegistrationFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class CreateAccountNameRegistrationFragment : BaseNameRegistrationFragment() {
 
-    override val accountCreation: AccountCreation?
+    override val accountCreation: AccountCreation
         get() = args.accountCreation
 
     private val args: CreateAccountNameRegistrationFragmentArgs by navArgs()
 
     override fun navToNextFragment() {
+        nameRegistrationViewModel.logEvent(PeraEvent.ONBOARDING_NAME_WALLET_COMPLETE)
         nav(
             CreateAccountNameRegistrationFragmentDirections
                 .actionCreateAccountNameRegistrationFragmentToCreateAccountResultInfoFragment()

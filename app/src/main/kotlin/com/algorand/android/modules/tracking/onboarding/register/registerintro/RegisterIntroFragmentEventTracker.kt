@@ -16,9 +16,7 @@ import javax.inject.Inject
 
 class RegisterIntroFragmentEventTracker @Inject constructor(
     private val onboardingCreateNewAccountEventTracker: OnboardingCreateNewAccountEventTracker,
-    private val onboardingWelcomeAccountRecoverEventTracker: OnboardingWelcomeAccountRecoverEventTracker,
-    private val onboardingCreateWatchAccountEventTracker: OnboardingCreateWatchAccountEventTracker,
-    private val onboardingWelcomeAccountSkipEventTracker: OnboardingWelcomeAccountSkipEventTracker
+    private val onboardingWelcomeAccountRecoverEventTracker: OnboardingWelcomeAccountRecoverEventTracker
 ) {
     suspend fun logOnboardingCreateNewAccountEventTracker() {
         onboardingCreateNewAccountEventTracker.logOnboardingCreateNewAccountEvent()
@@ -26,13 +24,5 @@ class RegisterIntroFragmentEventTracker @Inject constructor(
 
     suspend fun logOnboardingWelcomeAccountRecoverEvent() {
         onboardingWelcomeAccountRecoverEventTracker.logOnboardingWelcomeAccountRecoverEvent()
-    }
-
-    suspend fun logOnboardingCreateWatchAccountEvent() {
-        onboardingCreateWatchAccountEventTracker.logOnboardingCreateWatchAccountEvent()
-    }
-
-    suspend fun logOnboardingWelcomeAccountSkipEvent() {
-        onboardingWelcomeAccountSkipEventTracker.logOnboardingWelcomeAccountSkipEvent()
     }
 }

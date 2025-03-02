@@ -29,7 +29,7 @@ import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview.SelectedAssetAmountDetail
 import com.algorand.android.modules.swap.balancepercentage.ui.BalancePercentageBottomSheet.Companion.CHECKED_BALANCE_PERCENTAGE_KEY
-import com.algorand.android.modules.tracking.core.PeraEvent
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.DecimalDigitsInputFilter
@@ -280,7 +280,7 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
     private fun initFromAssetDetail(assetDetail: AssetSwapPreview.SelectedAssetDetail) {
         if (logFromEvent) {
             assetSwapViewModel.logEvent(
-                PeraEvent.SWAP_SELECT_ASSET_TOP,
+                PeraClickEvent.SWAP_SELECT_ASSET_TOP,
                 mapOf(
                     "asset" to "${assetDetail.assetId} | ${assetDetail.assetShortName.getName()}"
                 )
@@ -293,7 +293,7 @@ class AssetSwapFragment : BaseFragment(R.layout.fragment_asset_swap) {
     private fun initToAssetDetail(assetDetail: AssetSwapPreview.SelectedAssetDetail) {
         if (logToEvent) {
             assetSwapViewModel.logEvent(
-                PeraEvent.SWAP_SELECT_ASSET_LOWER,
+                PeraClickEvent.SWAP_SELECT_ASSET_LOWER,
                 mapOf(
                     "asset" to "${assetDetail.assetId} | ${assetDetail.assetShortName.getName()}"
                 )

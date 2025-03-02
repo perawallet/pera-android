@@ -38,8 +38,10 @@ class FirebaseAnalyticsRepositoryImplTest {
         every { mockFirebaseInstallations.getId() } returns mockTask
         every { mockTask.isSuccessful } returns true
         every { mockTask.result } returns expectedId
+
         every { mockTask.addOnCompleteListener(any()) } answers {
-            firstArg<(Task<String>) -> Unit>().invoke(mockTask)
+            val listener = firstArg<com.google.android.gms.tasks.OnCompleteListener<String>>()
+            listener.onComplete(mockTask)
             mockTask
         }
 

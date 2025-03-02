@@ -54,7 +54,7 @@ class BackupInfoViewModel @Inject constructor(
                 isBackedUp = false,
                 type = AccountCreation.Type.HdKey(
                     account.publicKey,
-                    account.encryptedPrivateKey,
+                    account.privateKey,
                     account.seedId,
                     account.account,
                     account.change,
@@ -65,13 +65,12 @@ class BackupInfoViewModel @Inject constructor(
             )
         } else {
             val account = algoAccountSdk.createAlgo25Account()
-                ?: throw IllegalArgumentException("Failed to create Algo25 account")
 
             return AccountCreation(
                 address = account.address,
                 customName = null,
                 isBackedUp = false,
-                type = AccountCreation.Type.Algo25(account.encryptedSecretKey),
+                type = AccountCreation.Type.Algo25(account.secretKey),
                 creationType = CreationType.CREATE
             )
         }

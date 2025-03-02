@@ -59,17 +59,14 @@ internal class AlgoAccountSdkImpl @Inject constructor(
         return getHdAccount(m, 0)
     }
 
-    override fun createAlgo25Account(): Algo25Account? {
-        val secretKey = Sdk.generateSK()
-        try {
-            return Algo25Account(
-                Sdk.generateAddressFromSK(secretKey),
-                Sdk.mnemonicFromPrivateKey(secretKey),
-                secretKey
-            )
-        } finally {
-            secretKey.fill(0) // Overwrite secret key with zeros
-        }
+    override fun createAlgo25Account(): Algo25Account {
+        var secretKey = Sdk.generateSK()
+        val output = Algo25Account(
+            address = Sdk.generateAddressFromSK(secretKey),
+            secretKey = secretKey
+        )
+        secretKey = ByteArray(0) // delete secret key from memory
+        return output
     }
 
     override fun recoverAlgo25Account(mnemonic: String): Algo25Account? {
@@ -77,7 +74,6 @@ internal class AlgoAccountSdkImpl @Inject constructor(
             val account = Account(mnemonic)
             return Algo25Account(
                 account.address.toString(),
-                account.toMnemonic(),
                 account.toSeed()
             )
         } catch (e: Exception) {
@@ -109,9 +105,8 @@ internal class AlgoAccountSdkImpl @Inject constructor(
         )
         return HdAccount(
             address = algoAddress.toString(),
-            encryptedEntropy = secretKeyEncryptionManager.encrypt(mnemonic.toEntropy()),
             publicKey = publicKey,
-            encryptedPrivateKey = secretKeyEncryptionManager.encrypt(privateKey),
+            privateKey = privateKey,
             seedId = seedId,
             account = account.toInt(),
             change = change.toInt(),

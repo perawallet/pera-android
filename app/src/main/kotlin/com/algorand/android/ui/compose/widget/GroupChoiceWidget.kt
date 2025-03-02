@@ -12,6 +12,7 @@
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,37 +42,48 @@ fun ItemChoiceWidget(
     title: String,
     description: String,
     icon: ImageVector,
+    iconContentDescription: String,
     onClick: () -> Unit
 ) {
     Row(
         modifier = modifier.then(Modifier
-            .padding(start = 24.dp, end = 24.dp)
+            .padding(horizontal = 16.dp)
+            .requiredHeight(72.dp)
             .clickable {
                 onClick()
             }),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(
-            modifier = Modifier
-                .padding(end = 24.dp)
-                .size(40.dp)
-                .clip(shape = CircleShape)
-                .background(color = MaterialTheme.colorScheme.tertiary)
+        Column(
+            verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                modifier = Modifier.align(Alignment.Center),
-                imageVector = icon,
-                tint = MaterialTheme.colorScheme.primary,
-                contentDescription = "Right Arrow"
-            )
+            Box(
+                modifier = Modifier
+                    .padding(end = 24.dp)
+                    .size(40.dp)
+                    .clip(shape = CircleShape)
+                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .align(Alignment.Center),
+                    imageVector = icon,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    contentDescription = iconContentDescription
+                )
+            }
         }
-        Column {
+        Column(
+            verticalArrangement = Arrangement.Center,
+        ) {
             PeraTitleText(
-                modifier = Modifier.requiredHeight(height = 24.dp),
+                modifier = Modifier
+                    .requiredHeight(height = 24.dp),
                 text = title
             )
             PeraBodyText(
-                modifier = Modifier.requiredHeight(height = 40.dp),
+                modifier = Modifier
+                    .requiredHeight(height = 48.dp),
                 text = description
             )
         }
@@ -81,9 +94,10 @@ fun ItemChoiceWidget(
 @Composable
 fun GroupChoiceWidgetPreview() {
     ItemChoiceWidget(
-        title = "Create a new account",
-        description = "Create a new Algorand account with a new address and recovery passphrase",
-        icon = ImageVector.vectorResource(R.drawable.ic_error),
+        title = stringResource(id = R.string.import_an_account),
+        description = stringResource(id = R.string.import_an_existing),
+        iconContentDescription = stringResource(id = R.string.import_an_existing),
+        icon = ImageVector.vectorResource(R.drawable.ic_key),
         onClick = { },
     )
 }

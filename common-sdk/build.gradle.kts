@@ -18,19 +18,36 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+    }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_21.toString()
     }
-    testOptions {
-        unitTests {
-            isReturnDefaultValues = true
+
+    packaging {
+        resources {
+            excludes.apply {
+                add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
+                add("META-INF/DEPENDENCIES.md")
+                add("META-INF/NOTICE.md")
+                add("META-INF/LICENSE.md")
+                add("META-INF/LICENSE.txt")
+                add("META-INF/LICENSE-notice.md")
+                add("META-INF/NOTICE.txt")
+                add("META-INF/ASL2.0.md")
+            }
         }
     }
 }
@@ -68,6 +85,14 @@ dependencies {
     testImplementation(project(":test-utils"))
 
     androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.mockk)
+    androidTestImplementation(libs.androidx.core)
+    androidTestImplementation(libs.runner)
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.junit.ktx)
+    androidTestImplementation(libs.hilt.android.testing)
 }
 
 room {

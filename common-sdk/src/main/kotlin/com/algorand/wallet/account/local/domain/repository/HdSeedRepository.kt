@@ -25,9 +25,11 @@ internal interface HdSeedRepository {
 
     suspend fun getHdSeed(seedId: Int): HdSeed?
 
+    suspend fun getEncryptedEntropy(seedId: Int): ByteArray?
+
     suspend fun getHdSeed(encryptedEntropy: ByteArray): HdSeed?
 
-    suspend fun getAllHdSeed(entropyCustomName: String): List<HdSeed>?
+    suspend fun getAllHdSeed(entropyCustomName: String): List<HdSeed>
 
     fun updateHdSeedCustomNameAsFlow(hdSeed: HdSeed): Flow<Unit>
 

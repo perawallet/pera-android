@@ -45,8 +45,11 @@ internal interface HdSeedDao {
     @Query("SELECT * FROM hd_seeds WHERE :encryptedEntropy = encrypted_entropy")
     suspend fun get(encryptedEntropy: ByteArray): HdSeedEntity?
 
+    @Query("SELECT encrypted_entropy FROM hd_seeds WHERE :seedId = seed_id")
+    suspend fun getEncryptedEntropy(seedId: Int): ByteArray?
+
     @Query("SELECT * FROM hd_seeds WHERE :entropyCustomName = entropy_custom_name")
-    suspend fun getAll(entropyCustomName: String): List<HdSeedEntity>?
+    suspend fun getAll(entropyCustomName: String): List<HdSeedEntity>
 
     @Query("DELETE FROM hd_seeds WHERE :seedId = seed_id")
     suspend fun delete(seedId: Int)

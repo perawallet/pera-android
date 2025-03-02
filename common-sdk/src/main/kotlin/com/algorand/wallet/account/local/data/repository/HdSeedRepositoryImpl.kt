@@ -62,10 +62,16 @@ internal class HdSeedRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllHdSeed(entropyCustomName: String): List<HdSeed>? {
+    override suspend fun getEncryptedEntropy(seedId: Int): ByteArray? {
+        return withContext(coroutineDispatcher) {
+            hdSeedDao.getEncryptedEntropy(seedId)
+        }
+    }
+
+    override suspend fun getAllHdSeed(entropyCustomName: String): List<HdSeed> {
         return withContext(coroutineDispatcher) {
             val hdSeedEntities = hdSeedDao.getAll(entropyCustomName)
-            hdSeedEntities?.map { hdSeedMapper(it) }
+            hdSeedEntities.map { hdSeedMapper(it) }
         }
     }
 

@@ -85,10 +85,10 @@ fun interface GetTransactionSigner {
     suspend operator fun invoke(address: String): TransactionSigner
 }
 
-fun interface GetHdSeedId {
-    suspend operator fun invoke(mnemonic: Mnemonics.MnemonicCode): Int?
-}
-
 fun interface AddHdSeed {
     operator fun invoke(mnemonic: Mnemonics.MnemonicCode): Flow<Int>
+}
+
+fun interface GetHdWalletEntropyFromSeedId {
+    suspend operator fun invoke(seedId: Int): ByteArray?
 }

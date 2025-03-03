@@ -21,11 +21,13 @@ class RemoveAccountConfirmationPreviewMapper @Inject constructor() {
 
     fun mapToRemoveAccountConfirmationPreview(
         showGlobalErrorEvent: Event<PluralAnnotatedString>? = null,
-        navBackEvent: Event<Boolean>? = null
+        navBackEvent: Event<Boolean>? = null,
+        descriptionTextResId: Event<Int>? = null
     ): RemoveAccountConfirmationPreview {
         return RemoveAccountConfirmationPreview(
             showGlobalErrorEvent = showGlobalErrorEvent,
-            navBackEvent = navBackEvent
+            navBackEvent = navBackEvent,
+            descriptionTextResId = descriptionTextResId
         )
     }
 }

@@ -12,7 +12,7 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.walletconnect.WalletConnectAssetDetail
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
@@ -30,7 +30,7 @@ sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), Wall
 
     open val assetBalance: BigInteger? = null
 
-    open val verificationTier: VerificationTier?
+    open val verificationTierConfiguration: VerificationTierConfiguration?
         get() = walletConnectTransactionAssetDetail?.verificationTier
 
     @Parcelize

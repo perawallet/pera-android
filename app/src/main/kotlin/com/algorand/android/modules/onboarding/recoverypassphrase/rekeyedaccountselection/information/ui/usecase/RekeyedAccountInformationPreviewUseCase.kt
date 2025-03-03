@@ -18,6 +18,7 @@ import com.algorand.android.mapper.AccountDisplayNameMapper
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountInformation
 import com.algorand.android.models.BaseAccountAssetData
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
 import com.algorand.android.modules.basefoundaccount.information.ui.mapoer.BaseFoundAccountInformationItemMapper
 import com.algorand.android.modules.basefoundaccount.information.ui.model.BaseFoundAccountInformationItem
@@ -28,16 +29,13 @@ import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccount
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.usecase.AccountAlgoAmountUseCase
-import com.algorand.android.usecase.AccountAssetAmountUseCase
 import com.algorand.android.usecase.AccountInformationUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.extensions.mapNotBlank
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.toShortenedAddress
 import java.math.BigDecimal
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.flow
 
 @SuppressWarnings("LongParameterList")
@@ -45,14 +43,13 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
     private val rekeyedAccountInformationPreviewMapper: RekeyedAccountInformationPreviewMapper,
     private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val accountAssetAmountUseCase: AccountAssetAmountUseCase,
     private val accountAlgoAmountUseCase: AccountAlgoAmountUseCase,
     private val accountInformationUseCase: AccountInformationUseCase,
     private val parityUseCase: ParityUseCase,
     private val accountDisplayNameMapper: AccountDisplayNameMapper,
     private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
     private val getRekeyedAccountUseCase: GetRekeyedAccountUseCase,
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     baseFoundAccountInformationItemMapper: BaseFoundAccountInformationItemMapper
 ) : BaseFoundAccountInformationItemUseCase(baseFoundAccountInformationItemMapper) {
 
@@ -65,13 +62,9 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
 
     suspend fun getRekeyedAccountInformationPreviewFlow(
         accountAddress: String,
-        coroutineScope: CoroutineScope,
         preview: RekeyedAccountInformationPreview
     ) = flow {
-        accountInformationUseCase.getAccountInformationAndFetchAssets(
-            publicKey = accountAddress,
-            coroutineScope = coroutineScope
-        ).use(
+        accountInformationUseCase.getAccountInformationAndFetchAssets(accountAddress).use(
             onSuccess = { accountInformation ->
                 lateinit var foundAccountInformationItemList: List<BaseFoundAccountInformationItem>
                 getRekeyedAccountUseCase.invoke(accountAddress).useSuspended(
@@ -98,15 +91,14 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
         )
     }
 
-    private fun createBaseFoundAccountInformationItemList(
+    private suspend fun createBaseFoundAccountInformationItemList(
         accountInformation: AccountInformation,
         rekeyedAccounts: List<AccountInformation>
     ): List<BaseFoundAccountInformationItem> {
         var primaryAccountValue = BigDecimal.ZERO
         var secondaryAccountValue = BigDecimal.ZERO
         val accountAssetDataList = accountInformation.assetHoldingMap.mapNotNull { (assetId, assetHolding) ->
-            val assetDetail = simpleAssetDetailUseCase.getCachedAssetDetail(assetId)?.data ?: return@mapNotNull null
-            accountAssetAmountUseCase.getAssetAmount(assetHolding, assetDetail)
+            getAccountBaseOwnedAssetData(accountInformation.address, assetId)
         }
         val algoAssetItem = accountAlgoAmountUseCase.getAccountAlgoAmount(accountInformation).run {
             createAssetItem(

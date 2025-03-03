@@ -13,7 +13,7 @@
 package com.algorand.android.models
 
 import android.os.Parcelable
-import com.algorand.android.assetsearch.domain.model.VerificationTier
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -22,5 +22,5 @@ class WalletConnectTransactionAssetDetail(
     val fullName: String?,
     val shortName: String?,
     val fractionDecimals: Int?,
-    val verificationTier: VerificationTier
+    val verificationTier: VerificationTierConfiguration
 ) : Parcelable

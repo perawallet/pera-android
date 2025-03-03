@@ -25,7 +25,6 @@ import com.algorand.android.utils.recordException
 import com.algorand.android.utils.toShortenedAddress
 import java.math.BigInteger
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
@@ -51,11 +50,8 @@ class AccountDetailUseCase @Inject constructor(
         return accountRepository.getCachedAccountDetail(publicKey)
     }
 
-    fun fetchAndCacheAccountDetail(
-        accountAddress: String,
-        scope: CoroutineScope
-    ): Flow<CacheResult<AccountDetail>> = flow {
-        accountInformationUseCase.getAccountInformationAndFetchAssets(accountAddress, scope).use(
+    fun fetchAndCacheAccountDetail(accountAddress: String): Flow<CacheResult<AccountDetail>> = flow {
+        accountInformationUseCase.getAccountInformationAndFetchAssets(accountAddress).use(
             onSuccess = { accountInformation ->
                 val localAccount = accountManager.getAccount(accountAddress) ?: run {
                     emit(CacheResult.Error.create(AccountNotFoundException()))

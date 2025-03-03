@@ -15,8 +15,11 @@ package com.algorand.wallet.asset.di
 import com.algorand.wallet.asset.domain.repository.AssetRepository
 import com.algorand.wallet.asset.domain.usecase.ClearAssetCache
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
+import com.algorand.wallet.asset.domain.usecase.FetchAndCacheMissingAssets
+import com.algorand.wallet.asset.domain.usecase.FetchAndCacheMissingAssetsUseCase
 import com.algorand.wallet.asset.domain.usecase.FetchAsset
 import com.algorand.wallet.asset.domain.usecase.FetchAssetDetailFromNode
+import com.algorand.wallet.asset.domain.usecase.FetchAssets
 import com.algorand.wallet.asset.domain.usecase.FetchCollectibleDetail
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
@@ -46,6 +49,11 @@ internal object AssetDetailUseCaseModule {
     @Provides
     fun provideFetchAsset(repository: AssetRepository): FetchAsset {
         return FetchAsset(repository::fetchAsset)
+    }
+
+    @Provides
+    fun provideFetchAssets(repository: AssetRepository): FetchAssets {
+        return FetchAssets(repository::fetchAssets)
     }
 
     @Provides
@@ -80,4 +88,9 @@ internal object AssetDetailUseCaseModule {
 
     @Provides
     fun provideInitializeAssets(useCase: InitializeAssetsUseCase): InitializeAssets = useCase
+
+    @Provides
+    fun provideFetchAndCacheMissingAssets(
+        useCase: FetchAndCacheMissingAssetsUseCase
+    ): FetchAndCacheMissingAssets = useCase
 }

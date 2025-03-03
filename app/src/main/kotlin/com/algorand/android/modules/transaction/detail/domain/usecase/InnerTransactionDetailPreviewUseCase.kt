@@ -18,20 +18,19 @@ import com.algorand.android.modules.transaction.detail.domain.model.TransactionS
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailPreviewMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.tooltip.domain.usecase.TransactionDetailTooltipDisplayPreferenceUseCase
 import com.algorand.android.usecase.GetActiveNodeUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.appendAssetName
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.asset.domain.util.AssetConstants
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
-import kotlinx.coroutines.flow.flow
+import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 @SuppressWarnings("LongParameterList")
 class InnerTransactionDetailPreviewUseCase @Inject constructor(
@@ -40,14 +39,11 @@ class InnerTransactionDetailPreviewUseCase @Inject constructor(
     private val peekInnerTransactionFromCacheUseCase: PeekInnerTransactionFromCacheUseCase,
     private val popInnerTransactionFromStackCacheUseCase: PopInnerTransactionFromStackCacheUseCase,
     private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
-    assetDetailUseCase: SimpleAssetDetailUseCase,
-    collectibleUseCase: SimpleCollectibleUseCase,
+    private val getAssetDetail: GetAssetDetail,
     getActiveNodeUseCase: GetActiveNodeUseCase,
     transactionDetailTooltipDisplayPreferenceUseCase: TransactionDetailTooltipDisplayPreferenceUseCase,
     clearInnerTransactionStackCacheUseCase: ClearInnerTransactionStackCacheUseCase
 ) : BaseTransactionDetailPreviewUseCase(
-    assetDetailUseCase = assetDetailUseCase,
-    collectibleUseCase = collectibleUseCase,
     transactionDetailItemMapper = transactionDetailItemMapper,
     getActiveNodeUseCase = getActiveNodeUseCase,
     transactionDetailTooltipDisplayPreferenceUseCase = transactionDetailTooltipDisplayPreferenceUseCase,
@@ -111,7 +107,7 @@ class InnerTransactionDetailPreviewUseCase @Inject constructor(
         val transactionAmount = getTransactionDetailAmount(transaction, true)
         val assetId = getTransactionAssetId(transaction)
         val assetDetail = getAssetDetail(assetId)
-        val assetDecimal = assetDetail?.fractionDecimals ?: DEFAULT_ASSET_DECIMAL
+        val assetDecimal = assetDetail?.getDecimalsOrZero() ?: DEFAULT_ASSET_DECIMAL
         val assetName = AssetName.createShortName(assetDetail?.shortName)
         val isAlgo = assetId == AssetConstants.ALGO_ID
         val formattedTransactionAmount = with(transactionAmount.formatAmount(assetDecimal)) {

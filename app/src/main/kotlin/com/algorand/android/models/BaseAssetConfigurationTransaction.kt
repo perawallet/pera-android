@@ -12,7 +12,7 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.utils.walletconnect.WalletConnectAssetDetail
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import java.math.BigInteger
@@ -23,7 +23,7 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
     abstract val assetId: Long?
     abstract val assetName: String?
     abstract val url: String?
-    abstract val verificationTier: VerificationTier?
+    abstract val verificationTierConfiguration: VerificationTierConfiguration?
 
     sealed class BaseAssetCreationTransaction : BaseAssetConfigurationTransaction() {
 
@@ -47,7 +47,7 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
         override val assetId: Long?
             get() = null
 
-        override val verificationTier: VerificationTier?
+        override val verificationTierConfiguration: VerificationTierConfiguration?
             get() = null
 
         @Parcelize
@@ -211,7 +211,7 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
         val shortName: String?
             get() = walletConnectTransactionAssetDetail?.shortName
 
-        override val verificationTier: VerificationTier?
+        override val verificationTierConfiguration: VerificationTierConfiguration?
             get() = walletConnectTransactionAssetDetail?.verificationTier
 
         @Parcelize
@@ -354,7 +354,7 @@ sealed class BaseAssetConfigurationTransaction : BaseWalletConnectTransaction() 
         val shortName: String?
             get() = walletConnectTransactionAssetDetail?.shortName
 
-        override val verificationTier: VerificationTier?
+        override val verificationTierConfiguration: VerificationTierConfiguration?
             get() = walletConnectTransactionAssetDetail?.verificationTier
 
         @Parcelize

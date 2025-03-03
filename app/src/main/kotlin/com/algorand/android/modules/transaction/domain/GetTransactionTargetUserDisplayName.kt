@@ -10,11 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.android.nft.domain.model
+package com.algorand.android.modules.transaction.domain
 
-data class SimpleCollectible(
-    val mediaType: CollectibleMediaType,
-    val primaryImageUrl: String?,
-    val title: String?,
-    val collection: SimpleCollection?
-)
+interface GetTransactionTargetUserDisplayName {
+    suspend operator fun invoke(address: String): String
+}

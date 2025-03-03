@@ -13,6 +13,7 @@
 
 package com.algorand.android.models.builder
 
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration.UNVERIFIED
 import com.algorand.android.models.BaseAssetConfigurationTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation
@@ -84,8 +85,7 @@ class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor(
                     assetId = assetId,
                     fullName = assetName,
                     shortName = shortName,
-                    verificationTierConfiguration =
-                    verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
+                    verificationTierConfiguration = verificationTierConfiguration ?: UNVERIFIED
                 ),
                 rekeyToAccountAddress = getFromAddressAsDisplayAddress(
                     getRekeyToAccountAddress()?.decodedAddress.orEmpty()
@@ -130,8 +130,7 @@ class BaseAssetConfigurationTransactionDetailUiBuilder @Inject constructor(
                     assetId = assetId,
                     fullName = assetName,
                     shortName = shortName,
-                    verificationTierConfiguration =
-                    verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
+                    verificationTierConfiguration = verificationTierConfiguration ?: UNVERIFIED
                 ),
                 showDeletionWarning = true,
                 rekeyToAccountAddress = getFromAddressAsDisplayAddress(

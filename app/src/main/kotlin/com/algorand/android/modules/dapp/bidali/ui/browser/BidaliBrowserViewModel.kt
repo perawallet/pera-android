@@ -93,7 +93,7 @@ class BidaliBrowserViewModel @Inject constructor(
     fun generateUpdatedBalancesJavascript() {
         viewModelScope.launch {
             bidaliBrowserPreviewUseCase
-                .generateUpdatedBalancesJavascript(_bidaliBrowserPreviewFlow.value, accountAddress, viewModelScope)
+                .generateUpdatedBalancesJavascript(_bidaliBrowserPreviewFlow.value, accountAddress)
                 .collectLatest {
                     _bidaliBrowserPreviewFlow
                         .emit(it)

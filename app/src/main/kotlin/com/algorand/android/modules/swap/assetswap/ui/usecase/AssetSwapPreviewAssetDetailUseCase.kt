@@ -12,22 +12,22 @@
 
 package com.algorand.android.modules.swap.assetswap.ui.usecase
 
-import com.algorand.android.models.AssetDetail
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuoteAssetDetail
 import com.algorand.android.modules.swap.assetswap.ui.mapper.SelectedAssetDetailMapper
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.formatAsTwoDecimals
+import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.usecase.FetchAsset
 import java.math.BigDecimal
 import javax.inject.Inject
 
 class AssetSwapPreviewAssetDetailUseCase @Inject constructor(
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
     private val selectedAssetDetailMapper: SelectedAssetDetailMapper,
-    private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData
+    private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData,
+    private val fetchAsset: FetchAsset
 ) {
 
     suspend fun createFromSelectedAssetDetail(
@@ -58,7 +58,7 @@ class AssetSwapPreviewAssetDetailUseCase @Inject constructor(
                 firstOrNull { toAssetId == it.id }
             }
             if (ownedAssetData == null) {
-                val assetDetail = fetchAssetDetail(toAssetId)
+                val assetDetail = fetchAsset(toAssetId).getDataOrNull()
                 createSelectedAssetDetail(assetDetail ?: return null)
             } else {
                 createSelectedAssetDetail(ownedAssetData)
@@ -94,25 +94,15 @@ class AssetSwapPreviewAssetDetailUseCase @Inject constructor(
         )
     }
 
-    private fun createSelectedAssetDetail(assetDetail: AssetDetail): AssetSwapPreview.SelectedAssetDetail {
-        return selectedAssetDetailMapper.mapToSelectedAssetDetail(
-            assetId = assetDetail.assetId,
-            formattedBalance = BigDecimal.ZERO.formatAsTwoDecimals(),
-            assetShortName = assetDetail.shortName,
-            verificationTier = assetDetail.verificationTier,
-            assetDecimal = assetDetail.fractionDecimals ?: DEFAULT_ASSET_DECIMAL
-        )
-    }
-
-    private suspend fun fetchAssetDetail(toAssetId: Long): AssetDetail? {
-        var assetDetail: AssetDetail? = null
-        simpleAssetDetailUseCase.fetchAssetById(listOf(toAssetId)).collect {
-            it.useSuspended(
-                onSuccess = { assetDetailList ->
-                    assetDetail = assetDetailList.firstOrNull { it.assetId == toAssetId }
-                }
+    private fun createSelectedAssetDetail(asset: Asset): AssetSwapPreview.SelectedAssetDetail {
+        return with(asset) {
+            selectedAssetDetailMapper.mapToSelectedAssetDetail(
+                assetId = id,
+                formattedBalance = BigDecimal.ZERO.formatAsTwoDecimals(),
+                assetShortName = shortName,
+                verificationTier = verificationTier,
+                assetDecimal = getDecimalsOrZero()
             )
         }
-        return assetDetail
     }
 }

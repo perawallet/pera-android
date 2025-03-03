@@ -13,8 +13,7 @@
 package com.algorand.android.modules.transactionhistory.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.decider.TransactionUserUseCase
-import com.algorand.android.models.BaseAssetDetail
+import com.algorand.android.modules.transaction.domain.GetTransactionTargetUserDisplayName
 import com.algorand.android.modules.transactionhistory.domain.model.BaseTransaction
 import com.algorand.android.modules.transactionhistory.domain.model.BaseTransaction.Transaction.AssetTransfer
 import com.algorand.android.modules.transactionhistory.domain.model.BaseTransaction.Transaction.Pay
@@ -23,8 +22,6 @@ import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionI
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem.TransactionItem.PayItem.PayReceiveItem
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem.TransactionItem.PayItem.PaySelfItem
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem.TransactionItem.PayItem.PaySendItem
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.NEGATIVE_SIGN
@@ -33,12 +30,13 @@ import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAssetAmount
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.usecase.GetAsset
 
-open class BaseTransactionPreviewUseCase constructor(
+open class BaseTransactionPreviewUseCase(
     private val transactionItemMapper: TransactionItemMapper,
-    private val transactionUserUseCase: TransactionUserUseCase,
-    private val collectibleUseCase: SimpleCollectibleUseCase,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase
+    private val getTransactionTargetUserDisplayName: GetTransactionTargetUserDisplayName,
+    private val getAsset: GetAsset
 ) {
 
     suspend fun createBaseTransactionItem(
@@ -66,17 +64,16 @@ open class BaseTransactionPreviewUseCase constructor(
         }
     }
 
-    private fun getAssetDetail(assetId: Long?): BaseAssetDetail? {
+    private suspend fun getAssetDetail(assetId: Long?): Asset? {
         if (assetId == null) return null
-        return simpleAssetDetailUseCase.getCachedAssetDetail(assetId)?.data
-            ?: collectibleUseCase.getCachedCollectibleById(assetId)?.data
+        return getAsset(assetId)
     }
 
-    private fun getAssetDecimals(transaction: AssetTransfer): Int {
-        return getAssetDetail(transaction.assetId)?.fractionDecimals ?: DEFAULT_ASSET_DECIMAL
+    private suspend fun getAssetDecimals(transaction: AssetTransfer): Int {
+        return getAssetDetail(transaction.assetId)?.getDecimalsOrZero() ?: DEFAULT_ASSET_DECIMAL
     }
 
-    private fun getAssetShortName(transaction: AssetTransfer): String {
+    private suspend fun getAssetShortName(transaction: AssetTransfer): String {
         return getAssetDetail(transaction.assetId)?.shortName.orEmpty()
     }
 
@@ -117,7 +114,7 @@ open class BaseTransactionPreviewUseCase constructor(
                 null
             } else {
                 val otherPublicKey = if (receiverAddress == publicKey) senderAddress else receiverAddress
-                otherPublicKey?.let { transactionUserUseCase.getTransactionTargetUser(otherPublicKey).displayName }
+                otherPublicKey?.let { getTransactionTargetUserDisplayName(otherPublicKey) }
             }
         }
     }
@@ -220,7 +217,7 @@ open class BaseTransactionPreviewUseCase constructor(
         )
     }
 
-    private fun createAssetTransferOptOutItem(
+    private suspend fun createAssetTransferOptOutItem(
         txn: AssetTransfer.OptOut
     ): BaseTransactionItem.TransactionItem.AssetTransferItem.AssetOptOutItem {
         return transactionItemMapper.mapToAssetTransactionOptOutItem(

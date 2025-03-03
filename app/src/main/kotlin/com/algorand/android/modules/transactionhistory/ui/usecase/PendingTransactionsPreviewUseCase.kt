@@ -13,25 +13,22 @@
 package com.algorand.android.modules.transactionhistory.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.decider.TransactionUserUseCase
+import com.algorand.android.modules.transaction.domain.GetTransactionTargetUserDisplayName
 import com.algorand.android.modules.transactionhistory.domain.usecase.PendingTransactionsUseCase
 import com.algorand.android.modules.transactionhistory.ui.mapper.TransactionItemMapper
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
+import com.algorand.wallet.asset.domain.usecase.GetAsset
 import javax.inject.Inject
 
 class PendingTransactionsPreviewUseCase @Inject constructor(
     private val pendingTransactionsUseCase: PendingTransactionsUseCase,
-    private val transactionUserUseCase: TransactionUserUseCase,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val collectibleUseCase: SimpleCollectibleUseCase,
-    private val transactionItemMapper: TransactionItemMapper
+    transactionItemMapper: TransactionItemMapper,
+    getTransactionTargetUserDisplayName: GetTransactionTargetUserDisplayName,
+    getAsset: GetAsset
 ) : BaseTransactionPreviewUseCase(
     transactionItemMapper,
-    transactionUserUseCase,
-    collectibleUseCase,
-    simpleAssetDetailUseCase
+    getTransactionTargetUserDisplayName,
+    getAsset
 ) {
 
     val pendingFlowDistinctUntilChangedListener: (

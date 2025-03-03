@@ -26,7 +26,7 @@ class LedgerInformationAssetItemMapper @Inject constructor(
 ) {
 
     fun mapTo(
-        accountAssetData: BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
+        accountAssetData: BaseAccountAssetData.BaseOwnedAssetData
     ): LedgerInformationListItem.AssetInformationItem {
         return LedgerInformationListItem.AssetInformationItem(
             id = accountAssetData.id,

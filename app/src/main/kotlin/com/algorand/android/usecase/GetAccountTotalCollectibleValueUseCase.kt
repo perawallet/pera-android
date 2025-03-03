@@ -13,6 +13,7 @@
 package com.algorand.android.usecase
 
 import com.algorand.android.models.BaseAccountAssetData
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountCollectibleDataFlow
 import com.algorand.android.modules.accounts.domain.mapper.AccountValueMapper
 import com.algorand.android.modules.accounts.domain.model.AccountValue
 import java.math.BigDecimal
@@ -21,12 +22,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class GetAccountTotalCollectibleValueUseCase @Inject constructor(
-    private val accountCollectibleDataUseCase: AccountCollectibleDataUseCase,
+    private val getAccountCollectibleDataFlow: GetAccountCollectibleDataFlow,
     private val accountValueMapper: AccountValueMapper
 ) {
 
     fun getAccountTotalCollectibleValueFlow(accountAddress: String): Flow<AccountValue> {
-        return accountCollectibleDataUseCase.getAccountOwnedCollectibleDataFlow(accountAddress).map {
+        return getAccountCollectibleDataFlow(accountAddress).map {
             getAccountTotalCollectibleValue(it)
         }
     }

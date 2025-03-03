@@ -37,7 +37,6 @@ import com.algorand.android.notification.NotificationPermissionManager
 import com.algorand.android.notification.PeraNotificationManager
 import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.TESTNET_NETWORK_SLUG
-import com.algorand.android.utils.coremanager.AssetCacheManager
 import com.algorand.android.utils.coremanager.LocalAccountsNameServiceManager
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.extensions.hide
@@ -70,9 +69,6 @@ abstract class CoreMainActivity : BaseActivity() {
 
     @Inject
     lateinit var parityManager: ParityManager
-
-    @Inject
-    lateinit var assetCacheManager: AssetCacheManager
 
     @Inject
     lateinit var localAccountsNameServiceManager: LocalAccountsNameServiceManager
@@ -127,7 +123,6 @@ abstract class CoreMainActivity : BaseActivity() {
     private fun initializeCoreManagers() {
         with(lifecycle) {
             addObserver(parityManager)
-            addObserver(assetCacheManager)
             addObserver(localAccountsNameServiceManager)
             addObserver(notificationPermissionManager)
         }

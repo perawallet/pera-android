@@ -10,10 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.domain
+package com.algorand.wallet.asset.domain.usecase
 
 import com.algorand.wallet.asset.domain.repository.AssetRepository
-import com.algorand.wallet.asset.domain.usecase.InitializeAssetsUseCase
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest

@@ -16,7 +16,6 @@ import com.algorand.android.banner.data.model.BannerListResponse
 import com.algorand.android.deviceregistration.data.model.DeviceRegistrationRequest
 import com.algorand.android.deviceregistration.data.model.DeviceRegistrationResponse
 import com.algorand.android.deviceregistration.data.model.DeviceUpdateRequest
-import com.algorand.android.models.AssetDetailResponse
 import com.algorand.android.models.AssetSearchResponse
 import com.algorand.android.models.AssetSupportRequest
 import com.algorand.android.models.Feedback
@@ -120,17 +119,6 @@ interface MobileAlgorandApi {
         @Query("has_collectible") hasCollectible: Boolean? = null,
         @Query("available_on_discover_mobile") availableOnDiscoverMobile: Boolean? = null
     ): Response<Pagination<AssetSearchResponse>>
-
-    @GET("v1/assets/")
-    suspend fun getAssetsByIds(
-        @Query("asset_ids", encoded = true) assetIdsList: String,
-        @Query("include_deleted") includeDeleted: Boolean? = null
-    ): Response<Pagination<AssetDetailResponse>>
-
-    @GET("v1/assets/{asset_id}/")
-    suspend fun getAssetDetail(
-        @Path("asset_id") nftAssetId: Long
-    ): Response<AssetDetailResponse>
 
     @GET
     suspend fun getAssetsMore(@Url url: String): Response<Pagination<AssetSearchResponse>>

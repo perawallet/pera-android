@@ -45,7 +45,7 @@ class WebImportLoadingPreviewUseCase @Inject constructor(
         ).collect {
             when (it) {
                 is DataResource.Success -> {
-                    cacheAccounts(it.data.importedAccountList, coroutineScope)
+                    cacheAccounts(it.data.importedAccountList)
                     emit(getSuccessStateOfImportRequest(previousState, it.data))
                 }
                 is DataResource.Error -> emit(getErrorStateOfImportRequest(previousState, it.exception))
@@ -54,9 +54,9 @@ class WebImportLoadingPreviewUseCase @Inject constructor(
         }
     }
 
-    private suspend fun cacheAccounts(importedAccountList: List<String>, coroutineScope: CoroutineScope) {
+    private suspend fun cacheAccounts(importedAccountList: List<String>) {
         importedAccountList.forEach {
-            accountDetailUseCase.fetchAndCacheAccountDetail(it, coroutineScope).collect()
+            accountDetailUseCase.fetchAndCacheAccountDetail(it).collect()
         }
     }
 

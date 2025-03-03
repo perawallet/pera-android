@@ -31,26 +31,26 @@ import com.algorand.android.modules.transactionhistory.domain.mapper.BaseTransac
 import com.algorand.android.modules.transactionhistory.domain.model.BaseTransaction
 import com.algorand.android.modules.transactionhistory.domain.pagination.TransactionHistoryPaginationHelper
 import com.algorand.android.modules.transactionhistory.domain.repository.TransactionHistoryRepository
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.formatAsDate
 import com.algorand.android.utils.formatAsRFC3339Version
 import com.algorand.android.utils.getZonedDateTimeFromTimeStamp
 import com.algorand.android.utils.isGreaterThan
 import com.algorand.android.utils.sendErrorLog
+import com.algorand.wallet.asset.domain.usecase.FetchAndCacheMissingAssets
+import java.math.BigInteger
+import javax.inject.Inject
+import javax.inject.Named
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
-import java.math.BigInteger
-import javax.inject.Inject
-import javax.inject.Named
 
 class TransactionHistoryUseCase @Inject constructor(
     @Named(TransactionHistoryRepository.INJECTION_NAME)
     private val transactionHistoryRepository: TransactionHistoryRepository,
     private val transactionHistoryPaginationHelper: TransactionHistoryPaginationHelper,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val baseTransactionMapper: BaseTransactionMapper
+    private val baseTransactionMapper: BaseTransactionMapper,
+    private val fetchAndCacheMissingAssets: FetchAndCacheMissingAssets
 ) : BaseUseCase() {
 
     private val dateFilterQuery = MutableStateFlow<DateFilter>(DateFilter.AllTime)
@@ -62,7 +62,7 @@ class TransactionHistoryUseCase @Inject constructor(
         txnType: String? = null
     ): Flow<PagingData<BaseTransaction>>? {
         transactionHistoryPaginationHelper.fetchTransactionHistory(coroutineScope) { params ->
-            onLoadTransactions(publicKey, params, coroutineScope, assetIdFilter, txnType)
+            onLoadTransactions(publicKey, params, assetIdFilter, txnType)
         }
         return transactionHistoryPaginationHelper.transactionPaginationFlow?.map { pagingData ->
             pagingData.insertSeparators { txn1: BaseTransaction.Transaction?, txn2: BaseTransaction.Transaction? ->
@@ -83,7 +83,6 @@ class TransactionHistoryUseCase @Inject constructor(
     private suspend fun onLoadTransactions(
         publicKey: String,
         nextKey: String?,
-        coroutineScope: CoroutineScope,
         assetId: Long? = null,
         txnType: String? = null
     ): PagingSource.LoadResult<String, BaseTransaction.Transaction> {
@@ -116,11 +115,7 @@ class TransactionHistoryUseCase @Inject constructor(
                     }
                     val assetIds = getAssetIdsFromTransactions(baseTransactionList)
                     if (assetIds.isNotEmpty()) {
-                        simpleAssetDetailUseCase.cacheIfThereIsNonCachedAsset(
-                            assetIdList = assetIds,
-                            coroutineScope = coroutineScope,
-                            includeDeleted = true
-                        )
+                        fetchAndCacheMissingAssets(assetIds.toList(), includeDeleted = true)
                     }
                     PagingSource.LoadResult.Page(
                         data = baseTransactionList,

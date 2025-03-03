@@ -27,14 +27,12 @@ import com.algorand.android.modules.transaction.detail.ui.mapper.ApplicationCall
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailPreviewMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.tooltip.domain.usecase.TransactionDetailTooltipDisplayPreferenceUseCase
 import com.algorand.android.usecase.GetActiveNodeUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
 @SuppressWarnings("LongParameterList")
@@ -44,14 +42,11 @@ class ApplicationCallTransactionDetailPreviewUseCase @Inject constructor(
     private val getTransactionDetailUseCase: GetTransactionDetailUseCase,
     private val putInnerTransactionToStackCacheUseCase: PutInnerTransactionToStackCacheUseCase,
     private val applicationCallAssetInformationMapper: ApplicationCallAssetInformationMapper,
-    assetDetailUseCase: SimpleAssetDetailUseCase,
-    collectibleUseCase: SimpleCollectibleUseCase,
+    private val getAssetDetail: GetAssetDetail,
     getActiveNodeUseCase: GetActiveNodeUseCase,
     transactionDetailTooltipDisplayPreferenceUseCase: TransactionDetailTooltipDisplayPreferenceUseCase,
     clearInnerTransactionStackCacheUseCase: ClearInnerTransactionStackCacheUseCase
 ) : BaseTransactionDetailPreviewUseCase(
-    assetDetailUseCase = assetDetailUseCase,
-    collectibleUseCase = collectibleUseCase,
     transactionDetailItemMapper = transactionDetailItemMapper,
     getActiveNodeUseCase = getActiveNodeUseCase,
     transactionDetailTooltipDisplayPreferenceUseCase = transactionDetailTooltipDisplayPreferenceUseCase,
@@ -84,7 +79,7 @@ class ApplicationCallTransactionDetailPreviewUseCase @Inject constructor(
     }
 
     @SuppressWarnings("LongMethod")
-    fun createApplicationCallTransactionPreview(
+    suspend fun createApplicationCallTransactionPreview(
         applicationCallTransactionDetail: BaseTransactionDetail.ApplicationCallTransaction,
         transactionId: String,
         isInnerTransaction: Boolean

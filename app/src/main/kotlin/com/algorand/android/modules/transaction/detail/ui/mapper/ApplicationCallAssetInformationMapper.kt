@@ -12,10 +12,10 @@
 
 package com.algorand.android.modules.transaction.detail.ui.mapper
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.modules.transaction.detail.ui.model.ApplicationCallAssetInformation
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.AssetName
+import com.algorand.wallet.asset.domain.model.VerificationTier
 import javax.inject.Inject
 
 class ApplicationCallAssetInformationMapper @Inject constructor(

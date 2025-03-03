@@ -5,21 +5,36 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
@@ -43,7 +58,10 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.PeraCard
 import com.algorand.android.ui.compose.widget.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.utils.PassphraseKeywordUtils
 import com.algorand.android.utils.browser.PRIVACY_POLICY_URL
 import com.algorand.android.utils.browser.TERMS_AND_SERVICES_URL
 import com.algorand.android.utils.browser.openPrivacyPolicyUrl
@@ -51,6 +69,7 @@ import com.algorand.android.utils.browser.openTermsAndServicesUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.launch
 
 // TODO: 16.02.2022 login_navigation graph should be separated into multiple graphs
 @AndroidEntryPoint
@@ -74,6 +93,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         (activity as MainActivity).hideProgress()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -82,11 +102,31 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         return ComposeView(requireContext()).apply {
             setContent {
                 PeraTheme {
+                    val sheetState = rememberModalBottomSheetState(
+                        skipPartiallyExpanded = true
+                    )
+                    val showBottomSheet = rememberSaveable { mutableStateOf(false) }
+
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        RegisterTypeSelectionScreen()
+                        RegisterTypeSelectionScreen(showBottomSheet)
+                        if (showBottomSheet.value) {
+                            androidx.compose.material3.ModalBottomSheet(
+                                onDismissRequest = {
+                                    showBottomSheet.value = false
+                                },
+                                sheetState = sheetState,
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                contentColor = MaterialTheme.colorScheme.onSurface
+                            ) {
+                                BottomSheetContent(
+                                    sheetState = sheetState,
+                                    onDismiss = { showBottomSheet.value = false }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -94,7 +134,8 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
     }
 
     @Composable
-    fun RegisterTypeSelectionScreen() {
+    fun RegisterTypeSelectionScreen(showBottomSheet: MutableState<Boolean>) {
+        val coroutineScope = rememberCoroutineScope()
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -114,7 +155,17 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                 title = stringResource(id = R.string.create_a_new_account),
                 description = stringResource(id = R.string.create_a_new_algorand_account_with),
                 icon = ImageVector.vectorResource(R.drawable.ic_wallet),
-                onClick = ::navToBackupPassphraseInfoNavigation
+                onClick = {
+                    coroutineScope.launch {
+                        if (registerIntroViewModel.isHdWalletToggleEnabled()) {
+                            showBottomSheet.value = true
+                        } else {
+                            navToBackupPassphraseInfoNavigation(
+                                PassphraseKeywordUtils.HD_WALLET_PASSPHRASES_WORD_COUNT
+                            )
+                        }
+                    }
+                }
             )
             ItemChoiceWidget(
                 modifier = Modifier.padding(bottom = 40.dp),
@@ -216,6 +267,93 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun BottomSheetContent(
+        sheetState: SheetState,
+        onDismiss: () -> Unit
+    ) {
+        val coroutineScope = rememberCoroutineScope()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+        ) {
+            BottomSheetHeader(sheetState, onDismiss)
+
+            PeraCard(
+                title = stringResource(R.string.mnemonic_type_bip39_title),
+                description = stringResource(R.string.mnemonic_type_bip39_description),
+                footer = stringResource(R.string.mnemonic_type_bip39_footer),
+                onClick = {
+                    navToBackupPassphraseInfoNavigation(
+                        PassphraseKeywordUtils.HD_WALLET_PASSPHRASES_WORD_COUNT
+                    )
+                    coroutineScope.launch {
+                        sheetState.hide()
+                    }
+                }
+            )
+
+            PeraCard(
+                title = stringResource(R.string.mnemonic_type_algo25_title),
+                description = stringResource(R.string.mnemonic_type_algo25_description),
+                footer = stringResource(R.string.mnemonic_type_algo25_footer),
+                onClick = {
+                    navToBackupPassphraseInfoNavigation(
+                        PassphraseKeywordUtils.ALGO25_WALLET_PASSPHRASES_WORD_COUNT
+                    )
+                    coroutineScope.launch {
+                        sheetState.hide()
+                    }
+                }
+            )
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Suppress("MagicNumber")
+    @Composable
+    fun BottomSheetHeader(
+        sheetState: SheetState,
+        onDismiss: () -> Unit
+    ) {
+        val coroutineScope = rememberCoroutineScope()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 10.dp,
+                    end = 40.dp,
+                    bottom = 24.dp
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            IconButton(
+                onClick = {
+                    coroutineScope.launch {
+                        sheetState.hide()
+                        onDismiss()
+                    }
+                }) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = stringResource(id = R.string.close)
+                )
+            }
+            Spacer(Modifier.weight(0.1f))
+
+            PeraTitleText(
+                text = stringResource(id = R.string.bottom_sheet_mnemonic_type_title)
+            )
+            Spacer(Modifier.weight(1f))
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
@@ -228,7 +366,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         )
     }
 
-    private fun navToBackupPassphraseInfoNavigation() {
+    private fun navToBackupPassphraseInfoNavigation(wordCount: Int) {
         registerIntroViewModel.logOnboardingWelcomeAccountCreateClickEvent()
         nav(
             RegisterIntroFragmentDirections.actionRegisterIntroFragmentToBackupPassphraseInfoNavigation(

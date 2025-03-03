@@ -14,10 +14,12 @@ package com.algorand.android.modules.onramp.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.databinding.BottomSheetBuySellActionsBinding
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.utils.viewbinding.viewBinding
 
 class BuySellActionsBottomSheet : BaseBottomSheet(
@@ -26,6 +28,8 @@ class BuySellActionsBottomSheet : BaseBottomSheet(
     private val binding by viewBinding(BottomSheetBuySellActionsBinding::bind)
 
     private val args: BuySellActionsBottomSheetArgs by navArgs()
+
+    private val buySellActionsBottomSheetViewModel by viewModels<BuySellActionsBottomSheetViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,10 +45,12 @@ class BuySellActionsBottomSheet : BaseBottomSheet(
     }
 
     private fun navToMeldNavigation() {
+        buySellActionsBottomSheetViewModel.logEvent(PeraClickEvent.TAP_MELD_SCREEN_ALGO_SELECT_WALLET)
         nav(BuySellActionsBottomSheetDirections.actionBuySellActionsBottomSheetToMeldNavigation(args.accountAddress))
     }
 
     private fun navToBidaliNavigation() {
+        buySellActionsBottomSheetViewModel.logEvent(PeraClickEvent.TAP_BIDALI_SCREEN_ALGO_SELL)
         nav(BuySellActionsBottomSheetDirections.actionBuySellActionsBottomSheetToBidaliNavigation(args.accountAddress))
     }
 }

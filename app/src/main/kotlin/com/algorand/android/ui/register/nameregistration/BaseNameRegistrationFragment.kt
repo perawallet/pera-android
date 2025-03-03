@@ -37,7 +37,7 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
     abstract val accountCreation: AccountCreation?
     abstract fun navToNextFragment()
 
-    private val nameRegistrationViewModel: NameRegistrationViewModel by viewModels()
+    protected val nameRegistrationViewModel: NameRegistrationViewModel by viewModels()
 
     private val binding by viewBinding(FragmentNameRegistrationBinding::bind)
 

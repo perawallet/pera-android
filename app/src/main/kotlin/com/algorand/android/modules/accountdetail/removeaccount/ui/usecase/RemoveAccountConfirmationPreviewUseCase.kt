@@ -13,43 +13,46 @@
 package com.algorand.android.modules.accountdetail.removeaccount.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.Account
 import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.modules.accountdetail.removeaccount.ui.mapper.RemoveAccountConfirmationPreviewMapper
 import com.algorand.android.modules.accountdetail.removeaccount.ui.model.RemoveAccountConfirmationPreview
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.Event
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetLocalRekeyedAccountCount
 import javax.inject.Inject
 
 class RemoveAccountConfirmationPreviewUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val removeAccountConfirmationPreviewMapper: RemoveAccountConfirmationPreviewMapper,
-    private val getLocalRekeyedAccountCount: GetLocalRekeyedAccountCount
+    private val getLocalRekeyedAccountCount: GetLocalRekeyedAccountCount,
+    private val getAccountType: GetAccountType
 ) {
 
     fun getRemoveAccountConfirmationPreview(): RemoveAccountConfirmationPreview {
         return removeAccountConfirmationPreviewMapper.mapToRemoveAccountConfirmationPreview()
     }
 
-    fun getDescriptionResId(accountAddress: String): Int {
-        return when (accountDetailUseCase.getAccountType(accountAddress)) {
-            Account.Type.STANDARD, Account.Type.LEDGER, Account.Type.REKEYED, Account.Type.REKEYED_AUTH -> {
-                R.string.you_are_about_to_remove_account
-            }
-
-            Account.Type.WATCH -> R.string.you_are_about_to_remove_watch_account
+    suspend fun updatePreviewWithDescriptionText(
+        preview: RemoveAccountConfirmationPreview,
+        accountAddress: String
+    ): RemoveAccountConfirmationPreview {
+        val accountType = getAccountType(accountAddress)
+        val descriptionTextResId = when (accountType) {
+            AccountType.NoAuth -> R.string.you_are_about_to_remove_watch_account
             else -> R.string.you_are_about_to_remove_account
         }
+
+        return preview.copy(
+            descriptionTextResId = Event(descriptionTextResId)
+        )
     }
 
     suspend fun updatePreviewWithRemoveAccountConfirmation(
         preview: RemoveAccountConfirmationPreview,
         accountAddress: String
     ): RemoveAccountConfirmationPreview {
-        val accountType = accountDetailUseCase.getAccountType(accountAddress)
-
-        if (accountType == Account.Type.WATCH) {
+        val accountType = getAccountType(accountAddress)
+        if (accountType == AccountType.NoAuth) {
             return preview.copy(navBackEvent = Event(true))
         }
 

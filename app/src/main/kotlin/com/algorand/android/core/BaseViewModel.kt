@@ -23,11 +23,9 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
     companion object {
         @JvmStatic
         private var eventTracker: PeraEventTracker? = null
-        private var isInitialized = false
 
         fun initialize(tracker: PeraEventTracker) {
             eventTracker = tracker
-            isInitialized = true
         }
     }
 

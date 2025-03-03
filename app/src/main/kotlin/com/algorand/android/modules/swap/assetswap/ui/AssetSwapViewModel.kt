@@ -18,6 +18,7 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
 import com.algorand.android.modules.swap.assetswap.ui.usecase.AssetSwapPreviewUseCase
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.tracking.swap.assetswap.AssetSwapSwapButtonClickEventTracker
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrElse
@@ -160,6 +161,13 @@ class AssetSwapViewModel @Inject constructor(
                     previousState = _assetSwapPreviewFlow.value ?: return@launch
                 ).collectLatest { newPreview ->
                     _assetSwapPreviewFlow.value = newPreview
+                    logEvent(
+                        PeraClickEvent.SWAP_SELECT_ASSET_TOP,
+                        mapOf("asset" to formatAssetString(
+                            newPreview.fromSelectedAssetDetail.assetId.toString(),
+                            newPreview.fromSelectedAssetDetail.assetShortName.getName()
+                        ))
+                    )
                 }
             }
         }
@@ -180,9 +188,24 @@ class AssetSwapViewModel @Inject constructor(
                     previousState = _assetSwapPreviewFlow.value ?: return@launch
                 ).collectLatest { newPreview ->
                     _assetSwapPreviewFlow.value = newPreview
+                    newPreview.toSelectedAssetDetail?.let {
+                        logEvent(
+                            PeraClickEvent.SWAP_SELECT_ASSET_LOWER,
+                            mapOf(
+                                "asset" to formatAssetString(
+                                    newPreview.toSelectedAssetDetail.assetId.toString(),
+                                    newPreview.toSelectedAssetDetail.assetShortName.getName()
+                                )
+                            )
+                        )
+                    }
                 }
             }
         }
+    }
+
+    private fun formatAssetString(assetId: String, assetName: String?): String {
+        return "$assetId | ${assetName ?: "Unknown"}"
     }
 
     fun refreshPreview() {

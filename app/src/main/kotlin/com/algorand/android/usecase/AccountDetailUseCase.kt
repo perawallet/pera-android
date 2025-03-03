@@ -68,10 +68,6 @@ class AccountDetailUseCase @Inject constructor(
         )
     }
 
-    suspend fun clearAccountDetailCache() {
-        accountRepository.clearAccountDetailCache()
-    }
-
     fun isAssetOwnedByAccount(publicKey: String, assetId: Long): Boolean {
         return getCachedAccountDetail(publicKey)?.data?.accountInformation?.getAllAssetIds()?.contains(assetId) ?: false
     }
@@ -100,10 +96,6 @@ class AccountDetailUseCase @Inject constructor(
         val accountAuthAddress = getAuthAddress(accountAddress) ?: return false
         val authAccountDetail = getCachedAccountDetail(accountAuthAddress)?.data ?: return false
         return canAccountSignTransaction(authAccountDetail.account.address)
-    }
-
-    fun getAccountType(publicKey: String): Account.Type? {
-        return accountManager.getAccount(publicKey)?.type
     }
 
     fun getAccount(publicKey: String): Account? {

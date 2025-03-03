@@ -49,6 +49,10 @@ abstract class BaseDoubleButtonBottomSheet : BaseBottomSheet(
         binding.progressBar.loadingProgressBar.isVisible = isVisible
     }
 
+    protected fun setDescriptionText(descriptionTextResId: Int) {
+        binding.descriptionTextView.setText(descriptionTextResId)
+    }
+
     private fun initUi() {
         with(binding) {
             setTitleText(titleTextView)

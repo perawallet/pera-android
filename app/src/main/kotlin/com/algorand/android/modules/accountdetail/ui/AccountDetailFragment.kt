@@ -51,6 +51,7 @@ import com.algorand.android.modules.inapppin.pin.ui.InAppPinFragment
 import com.algorand.android.modules.swap.model.SwapNavigationDestination
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.Introduction
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.Swap
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.ui.accountoptions.AccountOptionsBottomSheet.Companion.ACCOUNT_REMOVE_ACTION_KEY
@@ -165,18 +166,22 @@ class AccountDetailFragment :
     }
 
     override fun onAssetInboxClick() {
+        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_ASSET_INBOX)
         navToAssetInboxOneAccountNavigation()
     }
 
     override fun onSendClick() {
+        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SEND)
         handleSendClick()
     }
 
     override fun onSwapClick() {
+        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SWAP)
         handleSwapClick()
     }
 
     override fun onMoreClick() {
+        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_MORE)
         navToAccountOptionsBottomSheet()
     }
 

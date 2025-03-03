@@ -23,6 +23,7 @@ import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentDirections.Companion.actionWriteDownInfoFragmentToBackupAccountSelectionFragment
 import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentDirections.Companion.actionWriteDownInfoFragmentToBackupPassphraseAccountNameNavigation
@@ -95,7 +96,8 @@ class WriteDownInfoFragment : BaseInfoFragment() {
     override fun SecondaryButton(modifier: Modifier) {
         if (args.publicKeysOfAccountsToBackup.isEmpty()) {
             PeraSecondaryButton(
-                onClick = { onSecondButtonClicked() },
+                onClick = {
+                    onSecondButtonClicked() },
                 modifier = modifier,
                 text = stringResource(id = R.string.skip_for_now)
             )
@@ -111,6 +113,7 @@ class WriteDownInfoFragment : BaseInfoFragment() {
     }
 
     private fun onSecondButtonClicked() {
+        writeDownInfoViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_WRITE_PASSPHRASE_SKIP)
         navToBackupPassphraseAccountNameNavigation()
     }
 

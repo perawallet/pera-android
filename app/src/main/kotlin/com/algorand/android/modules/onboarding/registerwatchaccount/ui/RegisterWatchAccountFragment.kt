@@ -25,6 +25,7 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.onboarding.registerwatchaccount.ui.adapter.PasteableWatchAccountAdapter
 import com.algorand.android.modules.onboarding.registerwatchaccount.ui.model.BasePasteableWatchAccountItem
+import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.ui.register.watch.RegisterWatchAccountQrScannerFragment.Companion.ACCOUNT_ADDRESS_SCAN_RESULT_KEY
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -193,6 +194,7 @@ class RegisterWatchAccountFragment : DaggerBaseFragment(R.layout.fragment_regist
     }
 
     private fun navToNameRegistrationFragment(createdAccount: AccountCreation) {
+        registerWatchAccountViewModel.logEvent(PeraEvent.ONBOARDING_WATCH_COMPLETE)
         nav(
             RegisterWatchAccountFragmentDirections
                 .actionRegisterWatchAccountFragmentToWatchAccountNameRegistrationFragment(createdAccount)

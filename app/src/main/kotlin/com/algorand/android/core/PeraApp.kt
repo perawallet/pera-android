@@ -26,6 +26,7 @@ import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.utils.coremanager.ApplicationStatusObserver
 import com.algorand.android.utils.preference.getSavedThemePreference
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.wallet.foundation.security.PeraSecurityManager
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
@@ -61,6 +62,9 @@ open class PeraApp : Application() {
     @Inject
     lateinit var peraSecurityManager: PeraSecurityManager
 
+    @Inject
+    lateinit var peraEventTracker: PeraEventTracker
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         MultiDex.install(this)
@@ -70,6 +74,7 @@ open class PeraApp : Application() {
         super.onCreate()
         KoinInitializer.initKoin(this)
         initializeFirebase()
+        BaseViewModel.initialize(peraEventTracker)
         migrationManager.makeMigrations()
         peraSecurityManager.initializeSecurityManager()
         AppCompatDelegate.setDefaultNightMode(sharedPref.getSavedThemePreference().convertToSystemAbbr())

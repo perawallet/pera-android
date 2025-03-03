@@ -51,6 +51,7 @@ import com.algorand.android.modules.inapppin.pin.ui.InAppPinFragment
 import com.algorand.android.modules.swap.model.SwapNavigationDestination
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.Introduction
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.Swap
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.ui.accountoptions.AccountOptionsBottomSheet.Companion.ACCOUNT_REMOVE_ACTION_KEY
@@ -165,6 +166,7 @@ class AccountDetailFragment :
     }
 
     override fun onAssetInboxClick() {
+        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_ASSET_INBOX)
         navToAssetInboxOneAccountNavigation()
     }
 
@@ -177,6 +179,7 @@ class AccountDetailFragment :
     }
 
     override fun onMoreClick() {
+        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_MORE)
         navToAccountOptionsBottomSheet()
     }
 
@@ -447,6 +450,7 @@ class AccountDetailFragment :
 
     private fun handleSendClick() {
         if (accountDetailViewModel.canAccountSignTransaction) {
+            accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SEND)
             val assetTransaction = AssetTransaction(senderAddress = accountDetailViewModel.accountPublicKey)
             nav(AccountDetailFragmentDirections.actionGlobalSendAlgoNavigation(assetTransaction))
         } else {
@@ -483,6 +487,7 @@ class AccountDetailFragment :
 
     private fun handleSwapClick() {
         if (accountDetailViewModel.canAccountSignTransaction) {
+            accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SWAP)
             accountDetailViewModel.onSwapClick()
         } else {
             showActionNotAvailableError()

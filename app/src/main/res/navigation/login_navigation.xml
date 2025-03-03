@@ -49,8 +49,7 @@
     <fragment
         android:id="@+id/registerIntroFragment"
         android:name="com.algorand.android.ui.register.registerintro.RegisterIntroFragment"
-        android:label="RegisterIntroFragment"
-        tools:layout="@layout/fragment_register_type_selection">
+        android:label="RegisterIntroFragment">
         <argument
             android:name="isShowingCloseButton"
             app:argType="boolean" />

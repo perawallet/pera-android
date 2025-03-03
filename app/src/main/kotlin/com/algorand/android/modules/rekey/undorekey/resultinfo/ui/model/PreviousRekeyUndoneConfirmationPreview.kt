@@ -10,17 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.rekey.undorekey.previousrekeyundoneconfirmation.ui.usecase
+package com.algorand.android.modules.rekey.undorekey.resultinfo.ui.model
 
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.utils.AccountDisplayName
-import javax.inject.Inject
-
-class PreviousRekeyUndoneConfirmationPreviewUseCase @Inject constructor(
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase
-) {
-
-    fun getAccountDisplayName(accountAddress: String): AccountDisplayName {
-        return accountDisplayNameUseCase.invoke(accountAddress)
-    }
-}
+data class PreviousRekeyUndoneConfirmationPreview(
+    val accountName: String,
+    val rekeyAdminAccountName: String
+)

@@ -23,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -62,6 +64,20 @@ fun PeraBodyText(modifier: Modifier = Modifier, text: String) {
         color = MaterialTheme.colorScheme.secondary,
         fontWeight = FontWeight.Medium,
         overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+fun PeraBodyText(modifier: Modifier = Modifier, text: AnnotatedString, onTextLayout: (TextLayoutResult) -> Unit) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        fontFamily = peraSans,
+        color = MaterialTheme.colorScheme.secondary,
+        fontWeight = FontWeight.Medium,
+        overflow = TextOverflow.Ellipsis,
+        onTextLayout = onTextLayout
     )
 }
 

@@ -141,7 +141,7 @@ open class BaseMultipleAccountSelectionPreviewUseCase(
             },
             onFailedAccountConfiguration = {
                 accountItemConfigurationMapper(
-                    accountDisplayName = getAccountDisplayName.invoke(this),
+                    accountDisplayName = getAccountDisplayName(this),
                     accountAddress = this,
                     accountType = null,
                     accountIconDrawablePreview = getAccountIconDrawablePreview(this),

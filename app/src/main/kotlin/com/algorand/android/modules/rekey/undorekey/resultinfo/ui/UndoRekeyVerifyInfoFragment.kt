@@ -16,6 +16,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -63,14 +65,17 @@ class UndoRekeyVerifyInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Description(modifier: Modifier) =
+    override fun Description(modifier: Modifier) {
+        val accountDisplayName by undoRekeyVerifyInfoViewModel.accountDisplayName.collectAsState()
+
         PeraDescriptionText(
             text = stringResource(
                 id = R.string.the_account_has_been_reverted,
-                undoRekeyVerifyInfoViewModel.accountDisplayName.getAccountPrimaryDisplayName()
+                accountDisplayName
             ),
             modifier = modifier
         )
+    }
 
     @Composable
     override fun PrimaryButton(modifier: Modifier) =

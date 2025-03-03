@@ -53,6 +53,10 @@ abstract class BaseDoubleButtonBottomSheet : BaseBottomSheet(
         binding.descriptionTextView.setText(descriptionTextResId)
     }
 
+    protected fun getDescriptionTextView(): TextView {
+        return binding.descriptionTextView
+    }
+
     private fun initUi() {
         with(binding) {
             setTitleText(titleTextView)

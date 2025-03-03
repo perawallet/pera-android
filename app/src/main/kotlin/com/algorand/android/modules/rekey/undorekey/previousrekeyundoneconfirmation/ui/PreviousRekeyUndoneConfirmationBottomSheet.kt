@@ -12,16 +12,20 @@
 
 package com.algorand.android.modules.rekey.undorekey.previousrekeyundoneconfirmation.ui
 
+import android.os.Bundle
 import android.text.method.LinkMovementMethod
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.modules.rekey.undorekey.resultinfo.ui.model.PreviousRekeyUndoneConfirmationPreview
 import com.algorand.android.utils.BaseDoubleButtonBottomSheet
 import com.algorand.android.utils.browser.REKEY_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
+import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.getCustomClickableSpan
 import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.setFragmentNavigationResult
@@ -33,16 +37,34 @@ class PreviousRekeyUndoneConfirmationBottomSheet : BaseDoubleButtonBottomSheet()
 
     private val previousRekeyUndoneConfirmationViewModel by viewModels<PreviousRekeyUndoneConfirmationViewModel>()
 
+    private val previousRekeyUndoneConfirmationPreviewCollector: suspend (
+        PreviousRekeyUndoneConfirmationPreview?
+    ) -> Unit = { preview ->
+        preview?.let { updateUi(it) }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initObservers()
+    }
+
+    private fun initObservers() {
+        viewLifecycleOwner.collectOnLifecycle(
+            previousRekeyUndoneConfirmationViewModel.undoRekeyVerifyInfoPreviewFlow,
+            previousRekeyUndoneConfirmationPreviewCollector
+        )
+    }
+
     override fun setTitleText(textView: TextView) {
         textView.setText(R.string.your_previous_rekey_will_be_undone)
     }
 
     override fun setDescriptionText(textView: TextView) {
-        val accountAddress = previousRekeyUndoneConfirmationViewModel.accountDisplayName
-            .getAccountPrimaryDisplayName()
-        val authAccountAddress = previousRekeyUndoneConfirmationViewModel.authAccountDisplayName
-            .getAccountPrimaryDisplayName()
-        textView.apply {
+        // Description will be observed
+    }
+
+    private fun updateUi(preview: PreviousRekeyUndoneConfirmationPreview) {
+        getDescriptionTextView().apply {
             val linkTextColor = ContextCompat.getColor(context, R.color.link_primary)
             val clickSpannable = getCustomClickableSpan(
                 clickableColor = linkTextColor,
@@ -51,8 +73,8 @@ class PreviousRekeyUndoneConfirmationBottomSheet : BaseDoubleButtonBottomSheet()
             val annotatedString = AnnotatedString(
                 stringResId = R.string.auth_account_will_no_longer_be,
                 replacementList = listOf(
-                    "account_address" to accountAddress,
-                    "auth_account_address" to authAccountAddress
+                    "account_address" to preview.accountName,
+                    "auth_account_address" to preview.rekeyAdminAccountName
                 ),
                 customAnnotationList = listOf("learn_more" to clickSpannable)
             )

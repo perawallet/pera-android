@@ -54,9 +54,6 @@
         android:label="PreviousRekeyUndoneConfirmationBottomSheet"
         tools:layout="@layout/bottom_sheet_double_button">
         <argument
-            android:name="authAccountAddress"
-            app:argType="string" />
-        <argument
             android:name="accountAddress"
             app:argType="string" />
     </dialog>

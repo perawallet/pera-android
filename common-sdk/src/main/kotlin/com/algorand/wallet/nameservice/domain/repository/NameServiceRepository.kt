@@ -20,4 +20,5 @@ internal interface NameServiceRepository {
     suspend fun initializeNameServiceCache(addresses: List<String>): PeraResult<List<NameService>>
     suspend fun getNameService(address: String): NameService?
     suspend fun getNameServiceSearchResults(query: String): PeraResult<List<NameServiceSearchResult>>
+    suspend fun clearCache()
 }

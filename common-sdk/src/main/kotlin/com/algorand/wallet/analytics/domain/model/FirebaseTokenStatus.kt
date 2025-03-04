@@ -10,14 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.fetchnameservices.data.model
+package com.algorand.wallet.analytics.domain.model
 
-import com.google.gson.annotations.SerializedName
+sealed interface FirebaseTokenStatus {
 
-enum class NameServiceSourceResponse {
+    data object Loading : FirebaseTokenStatus
 
-    @SerializedName("nfdomain")
-    NFDOMAIN,
+    data object Success : FirebaseTokenStatus
 
-    UNKNOWN
+    data object Error : FirebaseTokenStatus
 }

@@ -61,4 +61,8 @@ internal class NameServiceRepositoryImpl @Inject constructor(
     override suspend fun getNameService(address: String): NameService? {
         return inMemoryLocalCache[address]
     }
+
+    override suspend fun clearCache() {
+        inMemoryLocalCache.clear()
+    }
 }

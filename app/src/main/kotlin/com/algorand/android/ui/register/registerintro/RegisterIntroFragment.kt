@@ -29,6 +29,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -134,9 +136,11 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         }
     }
 
+    @Suppress("LongMethod")
     @Composable
     fun RegisterTypeSelectionScreen(showBottomSheet: MutableState<Boolean>) {
         val coroutineScope = rememberCoroutineScope()
+        val registerIntroPreview by registerIntroViewModel.registerIntroPreviewFlow.collectAsState()
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -151,9 +155,26 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                     .align(alignment = Alignment.Start)
             )
             Spacer(modifier = Modifier.weight(1f))
+            if (registerIntroViewModel.isHdWalletToggleEnabled() &&
+                (registerIntroPreview?.hasHdWallet ?: false)
+            ) {
+                ItemChoiceWidget(
+                    modifier = Modifier,
+                    title = stringResource(id = R.string.create_a_new_account),
+                    description = stringResource(id = R.string.create_a_new_account_desc),
+                    icon = ImageVector.vectorResource(R.drawable.ic_wallet),
+                    iconContentDescription = stringResource(id = R.string.create_a_new_account_desc),
+                    onClick = {
+                        coroutineScope.launch {
+                            showBottomSheet.value = true
+                        }
+                    }
+                )
+                Spacer(modifier = Modifier.height(40.dp))
+            }
             ItemChoiceWidget(
                 modifier = Modifier,
-                title = stringResource(id = R.string.create_a_new_account),
+                title = stringResource(id = R.string.create_a_new_wallet),
                 description = stringResource(id = R.string.create_a_new_algorand_account_with),
                 icon = ImageVector.vectorResource(R.drawable.ic_wallet),
                 iconContentDescription = stringResource(id = R.string.create_a_new_algorand_account_with),

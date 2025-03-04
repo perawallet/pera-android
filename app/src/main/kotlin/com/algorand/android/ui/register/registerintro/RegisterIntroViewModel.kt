@@ -21,11 +21,11 @@ import com.algorand.android.usecase.RegisterIntroPreviewUseCase
 import com.algorand.android.usecase.RegistrationUseCase
 import com.algorand.android.utils.getOrElse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class RegisterIntroViewModel @Inject constructor(

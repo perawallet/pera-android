@@ -586,7 +586,9 @@
     <string name="i_want_to_create">I want to create an account</string>
     <string name="i_want_to_create_an_algorand_account">I want to create\nan Algorand account</string>
     <string name="create_a_new_account">Create a new account</string>
-    <string name="create_a_new_algorand_account_with">Create a new Algorand account with a new address and recovery passphrase</string>
+    <string name="create_a_new_account_desc">Create a new account for an existing HD Wallet</string>
+    <string name="create_a_new_wallet">Create a new wallet</string>
+    <string name="create_a_new_algorand_account_with">Create a new Algorand account with a new wallet and recovery passphrase</string>
     <string name="recover_an_account">Recover an account</string>
     <string name="i_want_to_recover">I want to recover an Algorand account using my 25-word passphrase</string>
     <string name="pair_Ledger_device">Pair Ledger device</string>
@@ -1460,5 +1462,8 @@
     <string name="mnemonic_type_algo25_footer">25 Key mnemonic keys</string>
     <string name="bottom_sheet_mnemonic_type_title">Select your Mnemonic type</string>
     <string name="recommended">Recommended</string>
-
+    <string name="hd_wallet">HD Wallet #</string>
+    <string name="wallet_number">Wallet #%1$d</string>
+    <string name="select_hd_wallet">Select HD Wallet</string>
+    <string name="create_your_new_account_under">Create your new account under an HD wallet you already have</string>
 </resources>

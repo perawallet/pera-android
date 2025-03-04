@@ -43,6 +43,10 @@ internal class HdSeedRepositoryImpl @Inject constructor(
         return hdSeedDao.getTableSizeAsFlow()
     }
 
+    override suspend fun getMaxSeedId(): Int? {
+        return hdSeedDao.getMaxSeedId()
+    }
+
     override suspend fun getAllHdSeeds(): List<HdSeed> {
         return withContext(coroutineDispatcher) {
             val hdSeedEntities = hdSeedDao.getAll()
@@ -53,12 +57,6 @@ internal class HdSeedRepositoryImpl @Inject constructor(
     override suspend fun getHdSeed(seedId: Int): HdSeed? {
         return withContext(coroutineDispatcher) {
             hdSeedDao.get(seedId)?.let { hdSeedMapper(it) }
-        }
-    }
-
-    override suspend fun getHdSeed(encryptedEntropy: ByteArray): HdSeed? {
-        return withContext(coroutineDispatcher) {
-            hdSeedDao.get(encryptedEntropy)?.let { hdSeedMapper(it) }
         }
     }
 

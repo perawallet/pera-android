@@ -39,11 +39,11 @@ internal interface HdSeedDao {
     @Query("SELECT COUNT(*) FROM hd_seeds")
     fun getTableSizeAsFlow(): Flow<Int>
 
+    @Query("SELECT MAX(seed_id) FROM hd_seeds")
+    suspend fun getMaxSeedId(): Int?
+
     @Query("SELECT * FROM hd_seeds WHERE :seedId = seed_id")
     suspend fun get(seedId: Int): HdSeedEntity?
-
-    @Query("SELECT * FROM hd_seeds WHERE :encryptedEntropy = encrypted_entropy")
-    suspend fun get(encryptedEntropy: ByteArray): HdSeedEntity?
 
     @Query("SELECT encrypted_entropy FROM hd_seeds WHERE :seedId = seed_id")
     suspend fun getEncryptedEntropy(seedId: Int): ByteArray?

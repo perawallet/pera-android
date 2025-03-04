@@ -12,7 +12,10 @@
 
 package com.algorand.android.ui.register.createaccount.name
 
+import android.os.Bundle
+import android.view.View
 import androidx.navigation.fragment.navArgs
+import com.algorand.android.R
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.ui.register.nameregistration.BaseNameRegistrationFragment
@@ -32,5 +35,22 @@ class CreateAccountNameRegistrationFragment : BaseNameRegistrationFragment() {
             CreateAccountNameRegistrationFragmentDirections
                 .actionCreateAccountNameRegistrationFragmentToCreateAccountResultInfoFragment()
         )
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val isVisible = nameRegistrationViewModel.isOnHdWallet() &&
+                nameRegistrationViewModel.isHdKey()
+        binding.cardviewWalletNumber.visibility = if (isVisible) View.VISIBLE else View.GONE
+
+        if (isVisible) {
+            nameRegistrationViewModel.getWalletId { walletId ->
+                binding.tvWalletNumber.text = getString(
+                    R.string.wallet_number,
+                    walletId
+                )
+            }
+        }
     }
 }

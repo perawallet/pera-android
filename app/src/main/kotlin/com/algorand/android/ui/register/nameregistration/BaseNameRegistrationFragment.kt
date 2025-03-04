@@ -39,7 +39,7 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
 
     protected val nameRegistrationViewModel: NameRegistrationViewModel by viewModels()
 
-    private val binding by viewBinding(FragmentNameRegistrationBinding::bind)
+    protected val binding by viewBinding(FragmentNameRegistrationBinding::bind)
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,

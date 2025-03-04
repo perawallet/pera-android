@@ -49,9 +49,18 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun given_encryptedEntropy_when_getHdSeed_then_returnHdSeed() = runTest {
-        coEvery { hdSeedDao.get(byteArrayOf(1, 2, 3)) } returns null
-        assertNull(sut.getHdSeed(byteArrayOf(1, 2, 3)))
+    fun given_getMaxSeedId_when_called_then_returnMaxSeedId() = runTest {
+        val maxSeedId = 5
+        coEvery { hdSeedDao.getMaxSeedId() } returns maxSeedId
+        val result = sut.getMaxSeedId()
+        assertEquals(maxSeedId, result)
+    }
+
+    @Test
+    fun given_getMaxSeedId_when_noSeeds_then_returnNull() = runTest {
+        coEvery { hdSeedDao.getMaxSeedId() } returns null
+        val result = sut.getMaxSeedId()
+        assertNull(result)
     }
 
     @Test

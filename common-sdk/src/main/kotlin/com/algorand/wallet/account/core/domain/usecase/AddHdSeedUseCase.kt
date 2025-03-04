@@ -26,7 +26,7 @@ internal class AddHdSeedUseCase @Inject constructor(
         val mnemonic = Mnemonics.MnemonicCode(entropy)
         val seed = mnemonic.toSeed()
         val entropy = mnemonic.toEntropy()
-        val entropyInitialCustomName = "insert"
+        val entropyInitialCustomName = "Wallet #"
 
         val seedId = hdSeedRepository.addHdSeed(
             hdSeed = HdSeed(

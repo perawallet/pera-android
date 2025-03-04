@@ -19,9 +19,11 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.ui.NameRegistrationPreview
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
+import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.usecase.NameRegistrationPreviewUseCase
 import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +34,9 @@ import kotlinx.coroutines.launch
 class NameRegistrationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val nameRegistrationPreviewUseCase: NameRegistrationPreviewUseCase,
-    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase
+    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
+    private val isOnHdWalletUseCase: IsOnHdWalletUseCase,
+    private val getMaxHdSeedId: GetMaxHdSeedId
 ) : BaseViewModel() {
 
     private val _nameRegistrationPreviewFlow = MutableStateFlow(getInitialPreview())
@@ -42,6 +46,7 @@ class NameRegistrationViewModel @Inject constructor(
     private val accountCreation = savedStateHandle.get<AccountCreation>(ACCOUNT_CREATION_KEY)
     private val accountAddress = accountCreation?.address
     private val accountName = accountCreation?.customName
+    protected val accountType = accountCreation?.type
 
     val predefinedAccountName: String
         get() = accountName.takeUnless { it.isNullOrBlank() } ?: accountAddress.toShortenedAddress()
@@ -77,6 +82,22 @@ class NameRegistrationViewModel @Inject constructor(
 
     fun isAccountLimitExceed(): Boolean {
         return isAccountLimitExceedUseCase.isAccountLimitExceed()
+    }
+
+    fun isOnHdWallet(): Boolean {
+        return isOnHdWalletUseCase.invoke()
+    }
+
+    fun isHdKey(): Boolean {
+        return accountType is AccountCreation.Type.HdKey
+    }
+
+    fun getWalletId(callback: (Int) -> Unit) {
+        viewModelScope.launch {
+            val maxSeedId: Int? = getMaxHdSeedId.invoke()
+            val walletId = (maxSeedId ?: 0) + 1
+            callback(walletId)
+        }
     }
 
     companion object {

@@ -47,6 +47,7 @@ import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepos
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccountUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeeds
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetEntropy
@@ -59,6 +60,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddressesUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.GetPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetSecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetSeed
@@ -219,6 +221,12 @@ internal object LocalAccountsModule {
 
     @Provides
     fun provideGetSeed(repository: HdSeedRepository): GetSeed = GetSeed(repository::getSeed)
+
+    @Provides
+    fun provideGetMaxHdSeedId(repository: HdSeedRepository): GetMaxHdSeedId = GetMaxHdSeedId(repository::getMaxSeedId)
+
+    @Provides
+    fun provideGetAllHdSeeds(repository: HdSeedRepository): GetAllHdSeeds = GetAllHdSeeds(repository::getAllHdSeeds)
 
     @Provides
     fun provideGetLocalAccount(useCase: GetLocalAccountUseCase): GetLocalAccount = useCase

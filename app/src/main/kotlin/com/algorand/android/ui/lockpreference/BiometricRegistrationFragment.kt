@@ -24,7 +24,7 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.PeraIconBig
+import com.algorand.android.ui.compose.widget.PeraIcon
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraSecondaryButton
 import com.algorand.android.utils.alertDialog
@@ -46,7 +46,7 @@ class BiometricRegistrationFragment : BaseInfoFragment() {
 
     @Composable
     override fun Icon(modifier: Modifier) =
-        PeraIconBig(
+        PeraIcon(
             painter = painterResource(id = R.drawable.ic_faceid),
             contentDescription = stringResource(R.string.face_id),
             modifier = modifier

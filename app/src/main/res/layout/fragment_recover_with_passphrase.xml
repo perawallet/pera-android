@@ -42,6 +42,18 @@
 
     </ScrollView>
 
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/loadingAnimationCompose"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </androidx.compose.ui.platform.ComposeView>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/recoverButton"
         style="@style/Button.Primary"

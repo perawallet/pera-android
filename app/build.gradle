@@ -302,6 +302,7 @@ dependencies {
     ksp libs.glide.compiler
 
     implementation libs.lottie
+    implementation libs.lottie.compose
 
     implementation libs.retrofit
     implementation libs.converter.gson

@@ -32,7 +32,7 @@ import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentD
 import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentDirections.Companion.actionWriteDownInfoFragmentToBackupPassphrasesNavigation
 import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.PeraIconBig
+import com.algorand.android.ui.compose.widget.PeraIcon
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraSecondaryButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,7 +55,7 @@ class WriteDownInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Icon(modifier: Modifier) =
-        PeraIconBig(
+        PeraIcon(
             painter = painterResource(id = R.drawable.ic_pen),
             contentDescription = stringResource(R.string.pen),
             modifier = modifier

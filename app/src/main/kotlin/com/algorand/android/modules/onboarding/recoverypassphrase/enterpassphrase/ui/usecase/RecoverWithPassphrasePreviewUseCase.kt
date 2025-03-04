@@ -32,9 +32,10 @@ import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import java.util.Locale
 import javax.inject.Inject
-import kotlinx.coroutines.flow.flow
 
 class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val recoverWithPassphrasePreviewMapper: RecoverWithPassphrasePreviewMapper,
@@ -127,9 +128,14 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         )
     }
 
+    @SuppressWarnings("MagicNumber")
     fun validateEnteredMnemonics(preview: RecoverWithPassphrasePreview) = flow {
         try {
             emit(preview.copy(showLoadingDialogEvent = Event(Unit)))
+            // faking the duration of this process for some time before moving forward
+            // so the loading animation is effective.
+            // After deleting it delete also the @SuppressWarnings("MagicNumber")
+            delay(2500L)
             val mnemonics = passphraseInputConfigurationUtil.getOrderedInput(preview.passphraseInputGroupConfiguration)
             val privateKey = Sdk.mnemonicToPrivateKey(mnemonics.lowercase(Locale.ENGLISH))
             if (privateKey == null) {

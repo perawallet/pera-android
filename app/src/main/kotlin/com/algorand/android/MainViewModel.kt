@@ -33,6 +33,8 @@ import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.repository.NodeRepository
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.findAllNodes
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.analytics.domain.service.PeraReferrerManager
 import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
@@ -75,16 +77,17 @@ class MainViewModel @Inject constructor(
     private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
     private val createDeepLink: CreateDeepLink,
     private val eventDelegate: EventDelegate<ViewEvent>,
+    private val getAccountType: GetAccountType,
     getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
-    val appCacheStatusFlow = getAppCacheStatusFlow()
 
-    private val _swapNavigationResultFlow = MutableStateFlow<Event<NavDirections>?>(null)
+    val appCacheStatusFlow = getAppCacheStatusFlow()
+    val activeNodeFlow: StateFlow<Node?> get() = _activeNodeFlow
     val swapNavigationResultFlow: StateFlow<Event<NavDirections>?>
         get() = _swapNavigationResultFlow
 
+    private val _swapNavigationResultFlow = MutableStateFlow<Event<NavDirections>?>(null)
     private val _activeNodeFlow = MutableStateFlow<Node?>(null)
-    val activeNodeFlow: StateFlow<Node?> get() = _activeNodeFlow
     private var refreshBalanceJob: Job? = null
 
     init {
@@ -101,20 +104,6 @@ class MainViewModel @Inject constructor(
 
     fun shouldAppLocked(): Boolean {
         return autoLockManagerUseCase.shouldAppLocked()
-    }
-
-    private fun initializeNodeInterceptor() {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (indexerInterceptor.currentActiveNode == null) {
-                val lastActivatedNode = findAllNodes(sharedPref, nodeDao).find { it.isActive }
-                lastActivatedNode?.activate(indexerInterceptor, mobileHeaderInterceptor, algodInterceptor)
-            }
-            migrateDeviceIdIfNeed()
-        }
-    }
-
-    private suspend fun migrateDeviceIdIfNeed() {
-        deviceIdMigrationUseCase.migrateDeviceIdIfNeed()
     }
 
     fun onNewNodeActivated(lifecycle: Lifecycle) {
@@ -156,20 +145,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun initializeTutorial() {
-        viewModelScope.launch {
-            tutorialUseCase.initializeTutorial()
-        }
-    }
-
-    private fun initActiveNodeFlow() {
-        viewModelScope.launch(Dispatchers.IO) {
-            nodeRepository.getActiveNodeAsFlow().collectLatest {
-                _activeNodeFlow.value = it
-            }
-        }
-    }
-
     fun hasAccountAuthority(accountAddress: String): Boolean {
         return accountStateHelperUseCase.hasAccountAuthority(accountAddress)
     }
@@ -201,10 +176,44 @@ class MainViewModel @Inject constructor(
             val viewEvent = when (notificationGroupType) {
                 TRANSACTIONS -> ViewEvent.HandleAssetTransactionDeepLink(accountAddress, assetId)
                 OPT_IN -> ViewEvent.HandleAssetOptInRequestDeepLink(accountAddress, assetId)
-                ASSET_INBOX -> ViewEvent.HandleAssetInboxDeepLink(accountAddress)
+                ASSET_INBOX -> getAssetInboxDeepLinkEvent(accountAddress)
             }
 
             eventDelegate.sendEvent(viewEvent)
+        }
+    }
+
+    fun handleAssetInboxDeepLink(accountAddress: String) {
+        viewModelScope.launch {
+            eventDelegate.sendEvent(getAssetInboxDeepLinkEvent(accountAddress))
+        }
+    }
+
+    private fun initializeNodeInterceptor() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (indexerInterceptor.currentActiveNode == null) {
+                val lastActivatedNode = findAllNodes(sharedPref, nodeDao).find { it.isActive }
+                lastActivatedNode?.activate(indexerInterceptor, mobileHeaderInterceptor, algodInterceptor)
+            }
+            migrateDeviceIdIfNeed()
+        }
+    }
+
+    private suspend fun migrateDeviceIdIfNeed() {
+        deviceIdMigrationUseCase.migrateDeviceIdIfNeed()
+    }
+
+    private fun initializeTutorial() {
+        viewModelScope.launch {
+            tutorialUseCase.initializeTutorial()
+        }
+    }
+
+    private fun initActiveNodeFlow() {
+        viewModelScope.launch(Dispatchers.IO) {
+            nodeRepository.getActiveNodeAsFlow().collectLatest {
+                _activeNodeFlow.value = it
+            }
         }
     }
 
@@ -220,7 +229,7 @@ class MainViewModel @Inject constructor(
 
             val viewEvent = when (deeplink.notificationGroupType) {
                 OPT_IN -> ViewEvent.HandleAssetOptInRequestDeepLink(deeplink.address, deeplink.assetId)
-                ASSET_INBOX -> ViewEvent.HandleAssetInboxDeepLink(deeplink.address)
+                ASSET_INBOX -> getAssetInboxDeepLinkEvent(deeplink.address)
                 else -> ViewEvent.ShowForegroundNotification(notificationMetadata = newNotificationData)
             }
 
@@ -228,10 +237,20 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private suspend fun getAssetInboxDeepLinkEvent(accountAddress: String): ViewEvent {
+        val canSignTransaction = getAccountType(accountAddress)?.canSignTransaction() ?: false
+        return if (canSignTransaction) {
+            ViewEvent.NavToAssetInboxOneAccountNavigation(accountAddress)
+        } else {
+            ViewEvent.NavToAccountDetailFragment(accountAddress)
+        }
+    }
+
     sealed interface ViewEvent {
         data class HandleAssetTransactionDeepLink(val address: String, val assetId: Long) : ViewEvent
         data class HandleAssetOptInRequestDeepLink(val address: String, val assetId: Long) : ViewEvent
-        data class HandleAssetInboxDeepLink(val address: String) : ViewEvent
+        data class NavToAssetInboxOneAccountNavigation(val address: String) : ViewEvent
+        data class NavToAccountDetailFragment(val address: String) : ViewEvent
         data class ShowForegroundNotification(val notificationMetadata: NotificationMetadata) : ViewEvent
         data object ShowGlobalNotificationError : ViewEvent
     }

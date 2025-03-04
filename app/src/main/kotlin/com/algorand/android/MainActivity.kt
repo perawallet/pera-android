@@ -113,7 +113,11 @@ class MainActivity :
                 event.assetId
             )
 
-            is ViewEvent.HandleAssetInboxDeepLink -> navToAssetInboxOneAccountNavigation(
+            is ViewEvent.NavToAssetInboxOneAccountNavigation -> navToAssetInboxOneAccountNavigation(
+                event.address
+            )
+
+            is ViewEvent.NavToAccountDetailFragment -> navToAccountDetailFragment(
                 event.address
             )
 
@@ -310,7 +314,7 @@ class MainActivity :
             notificationGroupType: NotificationGroupType
         ): Boolean {
             return true.also {
-                navToAssetInboxOneAccountNavigation(accountAddress)
+                mainViewModel.handleAssetInboxDeepLink(accountAddress)
             }
         }
 
@@ -884,17 +888,13 @@ class MainActivity :
     }
 
     private fun navToAssetInboxOneAccountNavigation(accountAddress: String) {
-        if (accountDetailUseCase.canAccountSignTransaction(accountAddress)) {
-            navController.navigateSafe(
-                HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
-                    AssetInboxOneAccountNavArgs(
-                        accountAddress
-                    )
+        navController.navigateSafe(
+            HomeNavigationDirections.actionGlobalAssetInboxOneAccountNavigation(
+                AssetInboxOneAccountNavArgs(
+                    accountAddress
                 )
             )
-        } else {
-            navToAccountDetailFragment(accountAddress)
-        }
+        )
     }
 
     private fun showForegroundNotification(newNotificationData: NotificationMetadata) {

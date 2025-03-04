@@ -82,22 +82,6 @@ class AccountDetailUseCase @Inject constructor(
         return accountRepository.getCachedAccountDetail(publicKey)?.data?.accountInformation?.amount
     }
 
-    fun canAccountSignTransaction(publicKey: String): Boolean {
-        val account = accountManager.getAccount(publicKey)
-        return when (account?.type) {
-            Account.Type.LEDGER, Account.Type.REKEYED_AUTH -> true
-            Account.Type.STANDARD -> (account.getSecretKey() ?: byteArrayOf()).isNotEmpty()
-            Account.Type.REKEYED -> isAuthAccountInDevice(account.address)
-            Account.Type.WATCH, null -> false
-        }
-    }
-
-    private fun isAuthAccountInDevice(accountAddress: String): Boolean {
-        val accountAuthAddress = getAuthAddress(accountAddress) ?: return false
-        val authAccountDetail = getCachedAccountDetail(accountAuthAddress)?.data ?: return false
-        return canAccountSignTransaction(authAccountDetail.account.address)
-    }
-
     fun getAccount(publicKey: String): Account? {
         return accountManager.getAccount(publicKey)
     }

@@ -10,13 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.fetchnameservices.domain.model
+package com.algorand.android.modules.fetchnameservices.data.model
 
-import com.algorand.wallet.nameservice.domain.model.NameServiceSource
+import com.google.gson.annotations.SerializedName
 
-data class NameService(
-    val accountAddress: String,
-    val nameServiceName: String?,
-    val nameServiceSource: NameServiceSource?,
-    val nameServiceUri: String?
-)
+enum class NameServiceSourceResponse {
+
+    @SerializedName("nfdomain")
+    NFDOMAIN,
+
+    UNKNOWN
+}

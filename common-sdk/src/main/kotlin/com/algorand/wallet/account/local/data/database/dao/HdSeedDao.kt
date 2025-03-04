@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 internal interface HdSeedDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entity: HdSeedEntity)
+    suspend fun insert(entity: HdSeedEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(entities: List<HdSeedEntity>)

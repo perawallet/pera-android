@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.widget.PeraBodyText
@@ -48,7 +49,6 @@ import com.algorand.android.ui.compose.widget.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraTitleText
-import com.algorand.wallet.account.detail.domain.model.AccountType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -101,7 +101,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                         showBottomSheet.value = true
                     } else {
                         navigateToRecoverWithPassphraseFragment(
-                            AccountType.Algo25
+                            OnboardingAccountType.Algo25
                         )
                     }
                 }
@@ -148,7 +148,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 footer = stringResource(R.string.mnemonic_type_bip39_footer),
                 onClick = {
                     navigateToRecoverWithPassphraseFragment(
-                        AccountType.HdKey
+                        OnboardingAccountType.HdKey
                     )
                     coroutineScope.launch {
                         sheetState.hide()
@@ -162,7 +162,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 footer = stringResource(R.string.mnemonic_type_algo25_footer),
                 onClick = {
                     navigateToRecoverWithPassphraseFragment(
-                        AccountType.Algo25
+                        OnboardingAccountType.Algo25
                     )
                     coroutineScope.launch {
                         sheetState.hide()
@@ -213,11 +213,11 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
         }
     }
 
-    private fun navigateToRecoverWithPassphraseFragment(accountType: AccountType) {
+    private fun navigateToRecoverWithPassphraseFragment(onboardingAccountType: OnboardingAccountType) {
         nav(RecoverAccountInfoFragmentDirections
             .actionRecoverAccountInfoFragmentToRecoverWithPassphraseNavigation(
                 mnemonic = null,
-                accountType = accountType)
+                onboardingAccountType = onboardingAccountType)
         )
     }
 }

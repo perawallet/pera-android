@@ -20,6 +20,8 @@ import com.algorand.android.customviews.passphraseinput.util.PassphraseInputConf
 import com.algorand.android.models.Account.Type
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.models.OnboardingAccountType
+import com.algorand.android.models.OnboardingAccountType.Companion.wordCount
 import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.domain.usecase.GetRekeyedAccountUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.mapper.RecoverWithPassphrasePreviewMapper
@@ -30,11 +32,9 @@ import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
-import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.wordCount
-import kotlinx.coroutines.flow.flow
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val recoverWithPassphrasePreviewMapper: RecoverWithPassphrasePreviewMapper,
@@ -65,8 +65,8 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     ): RecoverWithPassphrasePreview {
         val splittedText = clipboardData.splitMnemonic()
         return if (
-            splittedText.size != AccountType.Algo25.wordCount() &&
-            splittedText.size != AccountType.HdKey.wordCount()
+            splittedText.size != OnboardingAccountType.Algo25.wordCount() &&
+            splittedText.size != OnboardingAccountType.HdKey.wordCount()
             ) {
                 preview.copy(onGlobalErrorEvent = Event(R.string.the_last_copied_text))
         } else {

@@ -74,8 +74,8 @@
                 android:name="publicKeysOfAccountsToBackup"
                 app:argType="string[]" />
             <argument
-                android:name="accountType"
-                app:argType="com.algorand.wallet.account.detail.domain.model.AccountType"
+                android:name="onboardingAccountType"
+                app:argType="com.algorand.android.models.OnboardingAccountType"
                 app:nullable="false" />
         </action>
     </fragment>
@@ -115,8 +115,8 @@
                 app:argType="string"
                 app:nullable="true" />
             <argument
-                android:name="accountType"
-                app:argType="com.algorand.wallet.account.detail.domain.model.AccountType"
+                android:name="onboardingAccountType"
+                app:argType="com.algorand.android.models.OnboardingAccountType"
                 app:nullable="false" />
         </action>
     </fragment>

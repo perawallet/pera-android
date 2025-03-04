@@ -16,14 +16,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingPassphraseUnderstandEventTracker
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.getOrElse
-import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class BackupInfoViewModel @Inject constructor(
@@ -32,9 +32,9 @@ class BackupInfoViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    private val accountType: AccountType = savedStateHandle.getOrElse(
-        ACCOUNT_TYPE,
-        AccountType.Algo25
+    private val onboardingAccountType: OnboardingAccountType = savedStateHandle.getOrElse(
+        ONBOARDING_ACCOUNT_TYPE,
+        OnboardingAccountType.Algo25
     )
 
     fun logOnboardingIUnderstandClickEvent() {
@@ -44,7 +44,7 @@ class BackupInfoViewModel @Inject constructor(
     }
 
     fun createAccount(): AccountCreation {
-        if (accountType == AccountType.HdKey) {
+        if (onboardingAccountType == OnboardingAccountType.HdKey) {
             val account = algoAccountSdk.createHdAccount()
                 ?: throw IllegalArgumentException("Failed to create Bip39 account")
 
@@ -54,8 +54,8 @@ class BackupInfoViewModel @Inject constructor(
                 isBackedUp = false,
                 type = AccountCreation.Type.HdKey(
                     account.publicKey,
-                    account.privateKey,
-                    account.seedId,
+                    account.encryptedPrivateKey,
+                    account.encryptedEntropy,
                     account.account,
                     account.change,
                     account.keyIndex,
@@ -70,13 +70,13 @@ class BackupInfoViewModel @Inject constructor(
                 address = account.address,
                 customName = null,
                 isBackedUp = false,
-                type = AccountCreation.Type.Algo25(account.secretKey),
+                type = AccountCreation.Type.Algo25(account.encryptedSecretKey),
                 creationType = CreationType.CREATE
             )
         }
     }
 
     companion object {
-        private const val ACCOUNT_TYPE = "accountType"
+        private const val ONBOARDING_ACCOUNT_TYPE = "onboardingAccountType"
     }
 }

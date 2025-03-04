@@ -22,8 +22,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -77,16 +75,15 @@ internal class HdSeedRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun addHdSeedAsFlow(hdSeed: HdSeed, entropy: ByteArray, seed: ByteArray): Flow<Unit> = flow {
+    override suspend fun addHdSeed(hdSeed: HdSeed, entropy: ByteArray, seed: ByteArray): Long {
         val hdKeyEntity = hdSeedEntityMapper(hdSeed, entropy, seed)
-        val rowsAffected = hdSeedDao.insert(hdKeyEntity)
-        emit(rowsAffected)
-    }.flowOn(Dispatchers.IO)
+        val seedId = hdSeedDao.insert(hdKeyEntity)
+        return seedId
+    }
 
-    override fun updateHdSeedCustomNameAsFlow(hdSeed: HdSeed): Flow<Unit> = flow {
-        val rowsAffected = hdSeedDao.update(hdSeed.seedId, hdSeed.seedCustomName)
-        emit(rowsAffected)
-    }.flowOn(Dispatchers.IO)
+    override suspend fun setEntropyCustomName(seedId: Int, customName: String) {
+        hdSeedDao.update(seedId, customName)
+    }
 
     override suspend fun deleteHdSeed(seedId: Int) {
         withContext(coroutineDispatcher) {

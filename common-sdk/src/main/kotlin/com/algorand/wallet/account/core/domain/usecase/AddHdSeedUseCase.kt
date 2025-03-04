@@ -12,49 +12,33 @@
 
 package com.algorand.wallet.account.core.domain.usecase
 
-import android.util.Log
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 internal class AddHdSeedUseCase @Inject constructor(
     private val hdSeedRepository: HdSeedRepository
 ) : AddHdSeed {
 
-    override fun invoke(mnemonic: Mnemonics.MnemonicCode): Flow<Int> {
-        val encryptedSeed = mnemonic.toSeed()
-        val encryptedEntropy = mnemonic.toEntropy()
+    override suspend fun invoke(entropy: ByteArray): Int {
+        val mnemonic = Mnemonics.MnemonicCode(entropy)
+        val seed = mnemonic.toSeed()
+        val entropy = mnemonic.toEntropy()
         val entropyInitialCustomName = "insert"
 
-        return flow {
-            hdSeedRepository.addHdSeedAsFlow(
-                hdSeed = HdSeed(0, entropyInitialCustomName), // Seed will be auto-generated, update later
-                seed = encryptedSeed,
-                entropy = encryptedEntropy
-            ).collect {
-                // After collecting the seedId, retrieve the entity
-                val hdSeedEntities = hdSeedRepository.getAllHdSeed(entropyInitialCustomName)
+        val seedId = hdSeedRepository.addHdSeed(
+            hdSeed = HdSeed(
+                0,
+                entropyInitialCustomName
+            ), // Seed will be auto-generated, update name next step
+            seed = seed,
+            entropy = entropy
+        ).toInt()
 
-                hdSeedEntities.forEach { hdSeedEntity ->
-                    // Set custom name after the insert
-                    hdSeedEntity.seedCustomName = "Wallet #${hdSeedEntity.seedId}"
+        hdSeedRepository.setEntropyCustomName(seedId, "Wallet #${seedId}")
 
-                    hdSeedEntity.let {
-                        hdSeedRepository.updateHdSeedCustomNameAsFlow(it)
-                    }.collect {
-                        Log.i(TAG, "${hdSeedEntity.seedId} updated with ${hdSeedEntity.seedCustomName}")
-                    }
-                }
-                emit(hdSeedEntities.first().seedId)
-            }
-        }
-    }
-
-    companion object {
-        private const val TAG: String = "AddHdSeedUseCase"
+        return seedId
     }
 }

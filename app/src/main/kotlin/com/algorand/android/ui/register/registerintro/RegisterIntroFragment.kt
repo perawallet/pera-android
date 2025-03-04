@@ -53,6 +53,7 @@ import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.RegisterIntroPreview
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
@@ -67,7 +68,6 @@ import com.algorand.android.utils.browser.TERMS_AND_SERVICES_URL
 import com.algorand.android.utils.browser.openPrivacyPolicyUrl
 import com.algorand.android.utils.browser.openTermsAndServicesUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
-import com.algorand.wallet.account.detail.domain.model.AccountType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -163,7 +163,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                             showBottomSheet.value = true
                         } else {
                             navToBackupPassphraseInfoNavigation(
-                                AccountType.Algo25
+                                OnboardingAccountType.Algo25
                             )
                         }
                     }
@@ -297,7 +297,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                 highlighted = stringResource(R.string.recommended),
                 onClick = {
                     navToBackupPassphraseInfoNavigation(
-                        AccountType.HdKey
+                        OnboardingAccountType.HdKey
                     )
                     coroutineScope.launch {
                         sheetState.hide()
@@ -311,7 +311,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                 footer = stringResource(R.string.mnemonic_type_algo25_footer),
                 onClick = {
                     navToBackupPassphraseInfoNavigation(
-                        AccountType.Algo25
+                        OnboardingAccountType.Algo25
                     )
                     coroutineScope.launch {
                         sheetState.hide()
@@ -374,12 +374,12 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         )
     }
 
-    private fun navToBackupPassphraseInfoNavigation(accountType: AccountType) {
+    private fun navToBackupPassphraseInfoNavigation(onboardingAccountType: OnboardingAccountType) {
         registerIntroViewModel.logOnboardingWelcomeAccountCreateClickEvent()
         nav(
             RegisterIntroFragmentDirections.actionRegisterIntroFragmentToBackupPassphraseInfoNavigation(
                 publicKeysOfAccountsToBackup = emptyArray(),
-                accountType = accountType
+                onboardingAccountType = onboardingAccountType
             )
         )
     }

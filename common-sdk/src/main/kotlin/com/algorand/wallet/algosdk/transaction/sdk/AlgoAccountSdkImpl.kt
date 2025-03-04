@@ -15,71 +15,56 @@ package com.algorand.wallet.algosdk.transaction.sdk
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toEntropy
 import cash.z.ecc.android.bip39.toSeed
-import com.algorand.algosdk.account.Account
 import com.algorand.algosdk.crypto.Address
 import com.algorand.algosdk.sdk.Sdk
-import com.algorand.wallet.account.core.domain.usecase.AddHdSeedUseCase
 import com.algorand.wallet.algosdk.model.Algo25Account
 import com.algorand.wallet.algosdk.model.Bip32DerivationType
-import com.algorand.wallet.algosdk.model.HdAccount
+import com.algorand.wallet.algosdk.model.HdKeyAccount
+import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 internal class AlgoAccountSdkImpl @Inject constructor(
-    private val addHdSeedUseCase: AddHdSeedUseCase
+    private val aesPlatformManager: AESPlatformManager
 ) : AlgoAccountSdk {
 
-    override fun createHdAccount(): HdAccount? {
+    override fun createHdAccount(): HdKeyAccount {
         val entropy = Mnemonics.WordCount.COUNT_24.toEntropy()
         val m = Mnemonics.MnemonicCode(entropy)
-
-        var seedId = 0
-
-        runBlocking(Dispatchers.IO) {
-            addHdSeedUseCase.invoke(m).collect { collectedSeedId ->
-                seedId = collectedSeedId
-            }
-        }
-
-        if (seedId > 0)
-            return getHdAccount(m, seedId)
-        else
-            return null
+        return getHdKeyAccount(m)
     }
 
-    override fun recoverHdAccount(mnemonic: String): HdAccount {
+    override fun recoverHdAccount(mnemonic: String): HdKeyAccount {
         val m = Mnemonics.MnemonicCode(mnemonic)
-        return getHdAccount(m, 0)
+        return getHdKeyAccount(m)
     }
 
     override fun createAlgo25Account(): Algo25Account {
         var secretKey = Sdk.generateSK()
         val output = Algo25Account(
             address = Sdk.generateAddressFromSK(secretKey),
-            secretKey = secretKey
+            encryptedSecretKey = aesPlatformManager.encryptByteArray(secretKey)
         )
         secretKey = ByteArray(0) // delete secret key from memory
         return output
     }
 
-    override fun recoverAlgo25Account(mnemonic: String): Algo25Account? {
-        try {
-            val account = Account(mnemonic)
-            return Algo25Account(
-                account.address.toString(),
-                account.toSeed()
-            )
-        } catch (e: Exception) {
-            return null
-        }
+    override fun recoverAlgo25Account(mnemonic: String): Algo25Account {
+        var secretKey = Sdk.mnemonicToPrivateKey(mnemonic)
+
+        val output = Algo25Account(
+            address = Sdk.generateAddressFromSK(secretKey),
+            encryptedSecretKey = aesPlatformManager.encryptByteArray(secretKey)
+        )
+        secretKey = ByteArray(0) // delete secret key from memory
+        return output
     }
 
-    private fun getHdAccount(mnemonic: Mnemonics.MnemonicCode, seedId: Int): HdAccount {
+    private fun getHdKeyAccount(mnemonic: Mnemonics.MnemonicCode): HdKeyAccount {
+        var entropy = mnemonic.toEntropy()
         val seed = mnemonic.toSeed()
         val xHDWalletAPI = XHDWalletAPIAndroid(seed)
         val keyContext = KeyContext.Address
@@ -96,21 +81,24 @@ internal class AlgoAccountSdkImpl @Inject constructor(
 
         // Produce the PK and turn it into an Algorand formatted address
         val algoAddress = Address(publicKey)
-        val privateKey: ByteArray = xHDWalletAPI.deriveKey(
+        var privateKey: ByteArray = xHDWalletAPI.deriveKey(
             fromSeed(seed),
             getBIP44PathFromContext(keyContext, account, change, keyIndex),
             true
         )
 
-        return HdAccount(
+        val output = HdKeyAccount(
             address = algoAddress.toString(),
             publicKey = publicKey,
-            privateKey = privateKey,
-            seedId = seedId,
+            encryptedPrivateKey = aesPlatformManager.encryptByteArray(privateKey),
+            encryptedEntropy = aesPlatformManager.encryptByteArray(entropy),
             account = account.toInt(),
             change = change.toInt(),
             keyIndex = keyIndex.toInt(),
             derivationType = Bip32DerivationType.Peikert.value
         )
+        privateKey = ByteArray(0) // delete secret key from memory
+        entropy = ByteArray(0) // delete secret key from memory
+        return output
     }
 }

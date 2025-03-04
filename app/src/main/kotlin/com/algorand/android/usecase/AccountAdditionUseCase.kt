@@ -20,24 +20,29 @@ import com.algorand.wallet.account.core.domain.model.CreateAccount
 import com.algorand.wallet.account.core.domain.model.CreateAccount.Type
 import com.algorand.wallet.account.core.domain.usecase.AddAlgo25Account
 import com.algorand.wallet.account.core.domain.usecase.AddHdKeyAccount
+import com.algorand.wallet.account.core.domain.usecase.AddHdSeed
 import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccount
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToHdKey
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
+import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 class AccountAdditionUseCase @Inject constructor(
     private val firebaseAnalytics: FirebaseAnalytics,
     private val registrationUseCase: RegistrationUseCase,
     private val addHdKeyAccount: AddHdKeyAccount,
+    private val addHdSeed: AddHdSeed,
     private val addAlgo25Account: AddAlgo25Account,
     private val addLedgerBleAccount: AddLedgerBleAccount,
     private val addNoAuthAccount: AddNoAuthAccount,
     private val updateNoAuthAccountToAlgo25: UpdateNoAuthAccountToAlgo25,
     private val updateNoAuthAccountToHdKey: UpdateNoAuthAccountToHdKey,
-    private val updateNoAuthAccountToLedgerBle: UpdateNoAuthAccountToLedgerBle
+    private val updateNoAuthAccountToLedgerBle: UpdateNoAuthAccountToLedgerBle,
+    private val aesPlatformManager: AESPlatformManager
 ) : BaseUseCase() {
 
     suspend fun addNewAccount(accountCreation: AccountCreation) {
@@ -52,17 +57,27 @@ class AccountAdditionUseCase @Inject constructor(
         val address = accountCreation.address
         with(accountCreation.type) {
             when (this) {
-                is Type.HdKey -> updateNoAuthAccountToHdKey(
-                    address,
-                    publicKey,
-                    privateKey,
-                    seedId,
-                    account,
-                    change,
-                    keyIndex,
-                    derivationType,
-                )
-                is Type.Algo25 -> updateNoAuthAccountToAlgo25(address, secretKey)
+                is Type.HdKey -> {
+                    var entropy = aesPlatformManager.decryptByteArray(this.encryptedEntropy)
+                    val seedId = addHdSeed(entropy)
+                    updateNoAuthAccountToHdKey(
+                        address,
+                        publicKey,
+                        encryptedPrivateKey,
+                        seedId,
+                        account,
+                        change,
+                        keyIndex,
+                        derivationType,
+                    )
+                    entropy = ByteArray(0) // clear secret from memory
+                }
+                is Type.Algo25 -> {
+                    val secretKey = aesPlatformManager.decryptByteArray(encryptedSecretKey)
+                    updateNoAuthAccountToAlgo25(
+                        address, secretKey
+                    )
+                }
                 is Type.LedgerBle -> updateNoAuthAccountToLedgerBle(
                     address,
                     deviceMacAddress,
@@ -85,11 +100,14 @@ class AccountAdditionUseCase @Inject constructor(
 
     private suspend fun createHdKeyAccount(createAccount: CreateAccount, type: Type.HdKey) {
         with(createAccount) {
+            var privateKey = aesPlatformManager.decryptByteArray(type.encryptedPrivateKey)
+            var entropy = aesPlatformManager.decryptByteArray(type.encryptedEntropy)
+            val seedId = addHdSeed(entropy)
             addHdKeyAccount(
                 address,
                 type.publicKey,
-                type.privateKey,
-                type.seedId,
+                privateKey,
+                seedId,
                 type.account,
                 type.change,
                 type.keyIndex,
@@ -97,12 +115,14 @@ class AccountAdditionUseCase @Inject constructor(
                 isBackedUp,
                 customName
             )
+            privateKey = ByteArray(0) // clear secret from memory
+            entropy = ByteArray(0) // clear secret from memory
         }
     }
 
     private suspend fun createAlgo25Account(createAccount: CreateAccount, type: Type.Algo25) {
         with(createAccount) {
-            addAlgo25Account(address, type.secretKey, isBackedUp, customName)
+            addAlgo25Account(address, type.encryptedSecretKey, isBackedUp, customName)
         }
     }
 

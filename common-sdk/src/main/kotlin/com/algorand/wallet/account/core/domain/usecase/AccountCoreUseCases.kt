@@ -12,16 +12,19 @@
 
 package com.algorand.wallet.account.core.domain.usecase
 
-import cash.z.ecc.android.bip39.Mnemonics
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.foundation.PeraResult
-import kotlinx.coroutines.flow.Flow
 import java.math.BigInteger
+import kotlinx.coroutines.flow.Flow
 
 fun interface AddAlgo25Account {
     suspend operator fun invoke(address: String, secretKey: ByteArray, isBackedUp: Boolean, customName: String?)
+}
+
+fun interface AddHdSeed {
+    suspend operator fun invoke(entropy: ByteArray): Int
 }
 
 fun interface AddHdKeyAccount {
@@ -83,8 +86,4 @@ interface GetAccountMinBalance {
 
 fun interface GetTransactionSigner {
     suspend operator fun invoke(address: String): TransactionSigner
-}
-
-fun interface AddHdSeed {
-    operator fun invoke(mnemonic: Mnemonics.MnemonicCode): Flow<Int>
 }

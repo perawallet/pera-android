@@ -1,6 +1,7 @@
 package com.algorand.wallet.account.local.data.repository
 
 import com.algorand.wallet.account.local.data.database.dao.HdSeedDao
+import com.algorand.wallet.account.local.data.database.model.HdSeedEntity
 import com.algorand.wallet.account.local.data.mapper.entity.HdSeedEntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.domain.model.HdSeed
@@ -8,6 +9,7 @@ import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 import kotlinx.coroutines.Dispatchers
@@ -65,20 +67,28 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun given_hdSeed_when_addHdSeedAsFlow_then_returnFlowOfUnit() {
+    fun given_hdSeed_when_addHdSeed_then_returnLong() = runTest {
         val hdSeed = mockk<HdSeed>()
         val entropy = byteArrayOf(1, 2, 3)
         val seed = byteArrayOf(4, 5, 6)
-        coEvery { hdSeedEntityMapper(hdSeed, entropy, seed) } returns mockk()
-        coEvery { hdSeedDao.insert(any()) } returns Unit
-        sut.addHdSeedAsFlow(hdSeed, entropy, seed)
+        val entity = mockk<HdSeedEntity>()
+        val generatedId = 123L
+
+        every { hdSeedEntityMapper(hdSeed, entropy, seed) } returns entity
+        coEvery { hdSeedDao.insert(entity) } returns generatedId
+
+        val result = sut.addHdSeed(hdSeed, entropy, seed)
+        assertEquals(generatedId, result)
     }
 
     @Test
-    fun given_hdSeed_when_updateHdSeedCustomNameAsFlow_then_returnFlowOfUnit() {
-        val hdSeed = mockk<HdSeed>()
-        coEvery { hdSeedDao.update(any(), any()) } returns Unit
-        sut.updateHdSeedCustomNameAsFlow(hdSeed)
+    fun given_seedIdAndCustomName_when_setEntropyCustomName_then_success() = runTest {
+        val seedId = 123
+        val customName = "MyWallet"
+
+        coEvery { hdSeedDao.update(seedId, customName) } returns Unit
+
+        sut.setEntropyCustomName(seedId, customName)
     }
 
     @Test

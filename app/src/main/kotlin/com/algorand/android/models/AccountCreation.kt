@@ -31,8 +31,8 @@ data class AccountCreation(
         @Parcelize
         data class HdKey(
             val publicKey: ByteArray,
-            val privateKey: ByteArray,
-            val seedId: Int,
+            val encryptedPrivateKey: ByteArray,
+            val encryptedEntropy: ByteArray,
             val account: Int,
             val change: Int,
             val keyIndex: Int,
@@ -40,7 +40,7 @@ data class AccountCreation(
         ) : Type
 
         @Parcelize
-        data class Algo25(val secretKey: ByteArray) : Type
+        data class Algo25(val encryptedSecretKey: ByteArray) : Type
 
         @Parcelize
         data class LedgerBle(val deviceMacAddress: String, val indexInLedger: Int, val bluetoothName: String?) : Type
@@ -57,14 +57,14 @@ data class AccountCreation(
             type = when (type) {
                 is Type.HdKey -> CreateAccount.Type.HdKey(
                     type.publicKey,
-                    type.privateKey,
-                    type.seedId,
+                    type.encryptedPrivateKey,
+                    type.encryptedEntropy,
                     type.account,
                     type.change,
                     type.keyIndex,
                     type.derivationType,
                 )
-                is Type.Algo25 -> CreateAccount.Type.Algo25(type.secretKey)
+                is Type.Algo25 -> CreateAccount.Type.Algo25(type.encryptedSecretKey)
                 is Type.NoAuth -> CreateAccount.Type.NoAuth
                 is Type.LedgerBle -> CreateAccount.Type.LedgerBle(
                     type.deviceMacAddress,

@@ -31,9 +31,9 @@ internal interface HdSeedRepository {
 
     suspend fun getAllHdSeed(entropyCustomName: String): List<HdSeed>
 
-    fun updateHdSeedCustomNameAsFlow(hdSeed: HdSeed): Flow<Unit>
+    suspend fun setEntropyCustomName(seedId: Int, customName: String)
 
-    fun addHdSeedAsFlow(hdSeed: HdSeed, entropy: ByteArray, seed: ByteArray): Flow<Unit>
+    suspend fun addHdSeed(hdSeed: HdSeed, entropy: ByteArray, seed: ByteArray): Long
 
     suspend fun deleteHdSeed(seedId: Int)
 

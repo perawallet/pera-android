@@ -19,18 +19,16 @@ import com.algorand.android.core.AccountManager
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingVerifyPassphraseEventTracker
-import com.algorand.wallet.account.local.domain.usecase.GetEntropy
+import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class PassphraseValidationViewModel @Inject constructor(
     private val onboardingVerifyPassphraseEventTracker: OnboardingVerifyPassphraseEventTracker,
     private val accountManager: AccountManager,
-    private val getEntropy: GetEntropy
+    private val aesPlatformManager: AESPlatformManager
 ) : BaseViewModel() {
 
     fun logOnboardingNextClickEvent() {
@@ -48,21 +46,20 @@ class PassphraseValidationViewModel @Inject constructor(
     }
 
     fun getMnemonic(args: PassphraseValidationFragmentArgs): String? {
-        val seedId = (args.accountCreation?.type as? AccountCreation.Type.HdKey)?.seedId
-
-        return seedId?.let {
-            runBlocking(Dispatchers.IO) {
-                val entropy = getEntropy(it)
-                entropy?.let {
-                    val mnemonic = Mnemonics.MnemonicCode(entropy).words.joinToString(" ") { charArray ->
-                        String(charArray)
-                    }
-                    mnemonic
-                }
+        val encryptedEntropy = (args.accountCreation?.type as? AccountCreation.Type.HdKey)?.encryptedEntropy
+        return encryptedEntropy?.let {
+            val entropy = aesPlatformManager.decryptByteArray(it)
+            val mnemonic = Mnemonics.MnemonicCode(entropy).words.joinToString(" ") { charArray ->
+                String(charArray)
             }
+            mnemonic
         } ?: run {
-            val secretKey = (args.accountCreation?.type as? AccountCreation.Type.Algo25)?.secretKey
-                ?: getAccountSecretKey(args.publicKeyOfAccountToBackup)
+            val encryptedAlgo25Key = (args.accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey
+
+            val secretKey = encryptedAlgo25Key?.let {
+                aesPlatformManager.decryptByteArray(encryptedAlgo25Key)
+            } ?: getAccountSecretKey(args.publicKeyOfAccountToBackup)
+
             secretKey?.let {
                 try {
                     val mnemonic = Sdk.mnemonicFromPrivateKey(it) ?: throw Exception("Mnemonic cannot be null.")

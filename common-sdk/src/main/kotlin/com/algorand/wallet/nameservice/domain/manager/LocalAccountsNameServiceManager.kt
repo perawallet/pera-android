@@ -10,20 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.domain.usecase
+package com.algorand.wallet.nameservice.domain.manager
 
-import com.algorand.wallet.analytics.domain.model.FirebaseTokenStatus
-import com.algorand.wallet.analytics.domain.model.ReferrerData
-import kotlinx.coroutines.flow.Flow
+import androidx.lifecycle.Lifecycle
 
-fun interface GetReferrerData {
-    suspend operator fun invoke(): ReferrerData
-}
-
-fun interface SaveReferrerData {
-    suspend operator fun invoke(referrerData: ReferrerData)
-}
-
-fun interface GetFirebaseTokenStatusFlow {
-    operator fun invoke(): Flow<FirebaseTokenStatus>
+interface LocalAccountsNameServiceManager {
+    fun initialize(lifecycle: Lifecycle)
 }

@@ -10,9 +10,21 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.fetchnameservices.domain.model
+package com.algorand.android.modules.firebase.token.di
 
-enum class NameServiceSource {
-    NFDOMAIN,
-    UNKNOWN
+import com.algorand.android.modules.firebase.token.usecase.GetFirebaseTokenStatusFlowUseCase
+import com.algorand.wallet.analytics.domain.usecase.GetFirebaseTokenStatusFlow
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+
+@Module
+@InstallIn(SingletonComponent::class)
+object FirebaseModule {
+
+    @Provides
+    fun provideGetFirebaseTokenStatusFlow(
+        useCase: GetFirebaseTokenStatusFlowUseCase
+    ): GetFirebaseTokenStatusFlow = useCase
 }

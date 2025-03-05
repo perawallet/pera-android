@@ -12,12 +12,6 @@
 
 package com.algorand.wallet.asset.data.repository
 
-import com.algorand.wallet.asset.data.utils.toQueryString
-import com.algorand.wallet.asset.domain.model.Asset
-import com.algorand.wallet.asset.domain.model.AssetDetail
-import com.algorand.wallet.asset.domain.model.CollectibleDetail
-import com.algorand.wallet.asset.domain.repository.AssetRepository
-import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.data.database.dao.AssetDetailDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleMediaDao
@@ -28,6 +22,12 @@ import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleDetail
 import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.asset.data.service.AssetDetailApiService
 import com.algorand.wallet.asset.data.service.AssetDetailNodeApiService
+import com.algorand.wallet.asset.data.utils.toQueryString
+import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.model.AssetDetail
+import com.algorand.wallet.asset.domain.model.CollectibleDetail
+import com.algorand.wallet.asset.domain.repository.AssetRepository
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
 import javax.inject.Inject
@@ -159,6 +159,12 @@ internal class AssetRepositoryImpl @Inject constructor(
                 async { collectibleMediaDao.clearAll() },
                 async { collectibleTraitDao.clearAll() }
             )
+        }
+    }
+
+    override suspend fun getCachedAssetIds(): List<Long> {
+        return withContext(coroutineDispatcher) {
+            assetDetailDao.getAllIds()
         }
     }
 

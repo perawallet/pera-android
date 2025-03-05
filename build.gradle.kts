@@ -45,3 +45,9 @@ allprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+
+tasks.register("kover") {
+    dependsOn(":common-sdk:koverHtmlReport")
+    group = "verification"
+    description = "Runs koverHtmlReport for the common-sdk module"
+}

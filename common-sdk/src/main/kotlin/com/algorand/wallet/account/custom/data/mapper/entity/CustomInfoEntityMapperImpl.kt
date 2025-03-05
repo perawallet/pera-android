@@ -13,6 +13,7 @@
 package com.algorand.wallet.account.custom.data.mapper.entity
 
 import com.algorand.wallet.account.custom.data.database.model.CustomInfoEntity
+import com.algorand.wallet.account.custom.domain.mapper.entity.CustomInfoEntityMapper
 import com.algorand.wallet.account.custom.domain.model.CustomInfo
 import javax.inject.Inject
 

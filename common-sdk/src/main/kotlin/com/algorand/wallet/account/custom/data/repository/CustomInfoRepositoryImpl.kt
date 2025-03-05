@@ -13,8 +13,8 @@
 package com.algorand.wallet.account.custom.data.repository
 
 import com.algorand.wallet.account.custom.data.database.dao.CustomInfoDao
-import com.algorand.wallet.account.custom.data.mapper.entity.CustomInfoEntityMapper
-import com.algorand.wallet.account.custom.data.mapper.model.CustomInfoMapper
+import com.algorand.wallet.account.custom.domain.mapper.entity.CustomInfoEntityMapper
+import com.algorand.wallet.account.custom.domain.mapper.model.CustomInfoMapper
 import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
 import com.algorand.wallet.account.custom.domain.model.CustomInfo
 import com.algorand.wallet.account.custom.domain.repository.CustomInfoRepository

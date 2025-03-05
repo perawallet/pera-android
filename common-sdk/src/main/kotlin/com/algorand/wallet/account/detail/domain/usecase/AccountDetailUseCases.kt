@@ -40,3 +40,7 @@ fun interface GetAccountsDetails {
 fun interface GetLocalRekeyedAccountCount {
     suspend operator fun invoke(authAddress: String): Int
 }
+
+fun interface IsAccountRekeyedToAnotherAccount {
+    suspend operator fun invoke(address: String): Boolean
+}

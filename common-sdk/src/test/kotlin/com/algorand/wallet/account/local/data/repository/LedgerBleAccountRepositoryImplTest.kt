@@ -16,15 +16,13 @@ import com.algorand.test.peraFixture
 import com.algorand.test.test
 import com.algorand.wallet.account.local.data.database.dao.LedgerBleDao
 import com.algorand.wallet.account.local.data.database.model.LedgerBleEntity
-import com.algorand.wallet.account.local.data.mapper.entity.LedgerBleEntityMapper
-import com.algorand.wallet.account.local.data.mapper.model.LedgerBleMapper
+import com.algorand.wallet.account.local.domain.mapper.entity.LedgerBleEntityMapper
+import com.algorand.wallet.account.local.domain.mapper.model.LedgerBleMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

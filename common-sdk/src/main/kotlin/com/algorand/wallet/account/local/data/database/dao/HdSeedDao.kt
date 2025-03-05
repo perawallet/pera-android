@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 internal interface HdSeedDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entity: HdSeedEntity)
+    suspend fun insert(entity: HdSeedEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(entities: List<HdSeedEntity>)
@@ -36,8 +36,14 @@ internal interface HdSeedDao {
     @Query("SELECT COUNT(*) FROM hd_seeds")
     fun getTableSizeAsFlow(): Flow<Int>
 
+    @Query("SELECT MAX(seed_id) FROM hd_seeds")
+    suspend fun getMaxSeedId(): Int?
+
     @Query("SELECT * FROM hd_seeds WHERE :seedId = seed_id")
     suspend fun get(seedId: Int): HdSeedEntity?
+
+    @Query("SELECT encrypted_entropy FROM hd_seeds WHERE :seedId = seed_id")
+    suspend fun getEncryptedEntropy(seedId: Int): ByteArray?
 
     @Query("DELETE FROM hd_seeds WHERE :seedId = seed_id")
     suspend fun delete(seedId: Int)

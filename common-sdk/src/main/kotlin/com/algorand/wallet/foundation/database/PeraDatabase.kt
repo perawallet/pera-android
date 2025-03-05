@@ -19,8 +19,10 @@ import com.algorand.wallet.account.custom.data.database.dao.CustomInfoDao
 import com.algorand.wallet.account.custom.data.database.model.CustomInfoEntity
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
+import com.algorand.wallet.account.info.data.database.dao.EntropyInformationDao
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
+import com.algorand.wallet.account.info.data.database.model.EntropyInformationEntity
 import com.algorand.wallet.asset.data.database.dao.AssetDetailDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleMediaDao
@@ -50,12 +52,14 @@ import com.algorand.wallet.foundation.database.converters.VerificationTierTypeCo
         CollectibleEntity::class,
         CollectibleMediaEntity::class,
         CollectibleTraitEntity::class,
-        CustomInfoEntity::class
+        CustomInfoEntity::class,
+        EntropyInformationEntity::class
     ],
     version = PeraDatabase.DATABASE_VERSION
 )
 internal abstract class PeraDatabase : RoomDatabase() {
 
+    abstract fun entropyInformationDao(): EntropyInformationDao
     abstract fun accountInformationDao(): AccountInformationDao
     abstract fun assetHoldingDao(): AssetHoldingDao
     abstract fun assetDetailDao(): AssetDetailDao

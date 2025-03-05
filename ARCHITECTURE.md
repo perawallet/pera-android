@@ -192,7 +192,6 @@ erDiagram
     hd_seeds {
         Int seed_id PK
         ByteArray encrypted_entropy UK
-        String entropy_custom_name
         ByteArray encrypted_seed UK
     }
     hd_keys {
@@ -215,6 +214,10 @@ erDiagram
 title: Pera Database (cache tables)
 ---
 erDiagram
+    entropy_information {
+        Int seed_id PK
+        String entropy_custom_name
+    }
     account_information {
         String algo_address PK
         String algo_amount

@@ -171,10 +171,12 @@ class AccountDetailFragment :
     }
 
     override fun onSendClick() {
+        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SEND)
         handleSendClick()
     }
 
     override fun onSwapClick() {
+        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SWAP)
         handleSwapClick()
     }
 
@@ -450,7 +452,6 @@ class AccountDetailFragment :
 
     private fun handleSendClick() {
         if (accountDetailViewModel.canAccountSignTransaction) {
-            accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SEND)
             val assetTransaction = AssetTransaction(senderAddress = accountDetailViewModel.accountPublicKey)
             nav(AccountDetailFragmentDirections.actionGlobalSendAlgoNavigation(assetTransaction))
         } else {

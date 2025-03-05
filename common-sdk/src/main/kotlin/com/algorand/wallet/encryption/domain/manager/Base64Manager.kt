@@ -10,11 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.mapper.model
+package com.algorand.wallet.encryption.domain.manager
 
-import com.algorand.wallet.account.local.data.database.model.NoAuthEntity
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-
-internal interface NoAuthMapper {
-    operator fun invoke(entity: NoAuthEntity): LocalAccount.NoAuth
+interface Base64Manager {
+    fun encode(byteArray: ByteArray): String
+    fun decode(value: String): ByteArray
+    fun decode(value: String, flags: Int): ByteArray
 }

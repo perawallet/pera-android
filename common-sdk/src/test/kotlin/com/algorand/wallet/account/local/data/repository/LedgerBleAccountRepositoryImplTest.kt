@@ -16,8 +16,8 @@ import com.algorand.test.peraFixture
 import com.algorand.test.test
 import com.algorand.wallet.account.local.data.database.dao.LedgerBleDao
 import com.algorand.wallet.account.local.data.database.model.LedgerBleEntity
-import com.algorand.wallet.account.local.domain.mapper.entity.LedgerBleEntityMapper
-import com.algorand.wallet.account.local.domain.mapper.model.LedgerBleMapper
+import com.algorand.wallet.account.local.data.mapper.entity.LedgerBleEntityMapper
+import com.algorand.wallet.account.local.data.mapper.model.LedgerBleMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import io.mockk.coEvery
 import io.mockk.coVerify

@@ -26,7 +26,7 @@ import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccount
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToHdKey
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
-import com.algorand.wallet.encryption.domain.services.AESPlatformManager
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
 

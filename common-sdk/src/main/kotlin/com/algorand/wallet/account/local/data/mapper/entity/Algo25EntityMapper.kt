@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.mapper.model
+package com.algorand.wallet.account.local.data.mapper.entity
 
-import com.algorand.wallet.account.local.data.database.model.HdSeedEntity
-import com.algorand.wallet.account.local.domain.model.HdSeed
+import com.algorand.wallet.account.local.data.database.model.Algo25Entity
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 
-internal interface HdSeedMapper {
-    operator fun invoke(entity: HdSeedEntity): HdSeed
+internal interface Algo25EntityMapper {
+    operator fun invoke(localAccount: LocalAccount.Algo25, privateKey: ByteArray): Algo25Entity
 }

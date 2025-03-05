@@ -15,10 +15,10 @@ package com.algorand.wallet.account.info.data.repository
 import com.algorand.wallet.account.info.domain.service.AccountInformationErrorCache
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
-import com.algorand.wallet.account.info.domain.mapper.entity.AccountInformationMapper
-import com.algorand.wallet.account.info.domain.mapper.entity.AssetHoldingEntityMapper
-import com.algorand.wallet.account.info.domain.mapper.entity.AssetHoldingMapper
-import com.algorand.wallet.account.info.domain.mapper.entity.AssetStatusEntityMapper
+import com.algorand.wallet.account.info.data.mapper.entity.AccountInformationMapper
+import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapper
+import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingMapper
+import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
 import io.mockk.coEvery
 import io.mockk.coVerify

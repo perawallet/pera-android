@@ -10,11 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.domain.services
+package com.algorand.wallet.account.local.data.mapper.entity
 
-interface AESPlatformManager {
-    fun encryptByteArray(data: ByteArray): ByteArray
-    fun decryptByteArray(encryptedData: ByteArray): ByteArray
-    fun encryptString(data: String): String
-    fun decryptString(encryptedData: String): String
+import com.algorand.wallet.account.local.data.database.model.LedgerBleEntity
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+
+internal interface LedgerBleEntityMapper {
+
+    operator fun invoke(localAccount: LocalAccount.LedgerBle): LedgerBleEntity
 }

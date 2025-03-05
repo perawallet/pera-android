@@ -26,7 +26,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.model.Algo25Account
 import com.algorand.wallet.algosdk.model.Bip32DerivationType
 import com.algorand.wallet.algosdk.model.HdKeyAccount
-import com.algorand.wallet.encryption.domain.services.AESPlatformManager
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed

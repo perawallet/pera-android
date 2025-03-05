@@ -13,7 +13,6 @@
 package com.algorand.wallet.account.info.data.mapper.model
 
 import com.algorand.wallet.account.info.data.database.model.EntropyInformationEntity
-import com.algorand.wallet.account.info.domain.mapper.model.EntropyInformationMapper
 import com.algorand.wallet.account.info.domain.model.EntropyInformation
 import javax.inject.Inject
 

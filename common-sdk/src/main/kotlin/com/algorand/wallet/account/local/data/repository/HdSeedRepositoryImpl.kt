@@ -13,11 +13,11 @@
 package com.algorand.wallet.account.local.data.repository
 
 import com.algorand.wallet.account.local.data.database.dao.HdSeedDao
-import com.algorand.wallet.account.local.domain.mapper.entity.HdSeedEntityMapper
-import com.algorand.wallet.account.local.domain.mapper.model.HdSeedMapper
+import com.algorand.wallet.account.local.data.mapper.entity.HdSeedEntityMapper
+import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
-import com.algorand.wallet.encryption.domain.services.AESPlatformManager
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

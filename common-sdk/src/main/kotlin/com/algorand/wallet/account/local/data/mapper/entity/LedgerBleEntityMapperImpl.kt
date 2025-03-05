@@ -13,7 +13,6 @@
 package com.algorand.wallet.account.local.data.mapper.entity
 
 import com.algorand.wallet.account.local.data.database.model.LedgerBleEntity
-import com.algorand.wallet.account.local.domain.mapper.entity.LedgerBleEntityMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import javax.inject.Inject
 

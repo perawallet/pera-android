@@ -10,14 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.domain.mapper.entity
+package com.algorand.wallet.account.local.data.mapper.entity
 
-import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
-import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
-import com.algorand.wallet.account.info.domain.model.AssetHolding
+import com.algorand.wallet.account.local.data.database.model.HdKeyEntity
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 
-internal interface AssetHoldingMapper {
-    operator fun invoke(response: AssetHoldingResponse): AssetHolding?
-    operator fun invoke(entity: AssetHoldingEntity): AssetHolding
-    operator fun invoke(entities: List<AssetHoldingEntity>): List<AssetHolding>
+internal interface HdKeyEntityMapper {
+    operator fun invoke(localAccount: LocalAccount.HdKey, privateKey: ByteArray): HdKeyEntity
 }

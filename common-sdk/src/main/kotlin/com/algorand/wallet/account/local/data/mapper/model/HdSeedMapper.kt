@@ -10,10 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.domain.mapper.entity
+package com.algorand.wallet.account.local.data.mapper.model
 
-import com.algorand.wallet.account.info.data.model.AccountInformationResponse
+import com.algorand.wallet.account.local.data.database.model.HdSeedEntity
+import com.algorand.wallet.account.local.domain.model.HdSeed
 
-internal interface AccountInformationResponseMapper {
-    fun createEmptyAccount(address: String): AccountInformationResponse
+internal interface HdSeedMapper {
+    operator fun invoke(entity: HdSeedEntity): HdSeed
 }

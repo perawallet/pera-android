@@ -10,12 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.mapper.entity
+package com.algorand.wallet.account.info.data.mapper.entity
 
-import com.algorand.wallet.account.local.data.database.model.LedgerBleEntity
-import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
+import com.algorand.wallet.account.info.domain.model.AssetStatus
 
-internal interface LedgerBleEntityMapper {
-
-    operator fun invoke(localAccount: LocalAccount.LedgerBle): LedgerBleEntity
+internal interface AssetStatusEntityMapper {
+    operator fun invoke(status: AssetStatus): AssetStatusEntity
 }

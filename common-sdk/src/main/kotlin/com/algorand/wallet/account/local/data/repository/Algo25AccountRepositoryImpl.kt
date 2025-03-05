@@ -13,11 +13,11 @@
 package com.algorand.wallet.account.local.data.repository
 
 import com.algorand.wallet.account.local.data.database.dao.Algo25Dao
-import com.algorand.wallet.account.local.domain.mapper.entity.Algo25EntityMapper
-import com.algorand.wallet.account.local.domain.mapper.model.Algo25Mapper
+import com.algorand.wallet.account.local.data.mapper.entity.Algo25EntityMapper
+import com.algorand.wallet.account.local.data.mapper.model.Algo25Mapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount.Algo25
 import com.algorand.wallet.account.local.domain.repository.Algo25AccountRepository
-import com.algorand.wallet.encryption.domain.services.AESPlatformManager
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

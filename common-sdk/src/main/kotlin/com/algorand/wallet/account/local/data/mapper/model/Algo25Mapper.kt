@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.domain.mapper.model
+package com.algorand.wallet.account.local.data.mapper.model
 
-import com.algorand.wallet.account.info.data.database.model.EntropyInformationEntity
-import com.algorand.wallet.account.info.domain.model.EntropyInformation
+import com.algorand.wallet.account.local.data.database.model.Algo25Entity
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 
-internal interface EntropyInformationMapper {
-    operator fun invoke(entity: EntropyInformationEntity): EntropyInformation
+internal interface Algo25Mapper {
+    operator fun invoke(entity: Algo25Entity): LocalAccount.Algo25
 }

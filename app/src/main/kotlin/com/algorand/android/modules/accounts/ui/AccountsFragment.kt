@@ -36,6 +36,7 @@ import com.algorand.android.models.ScreenState
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.ui.adapter.AccountAdapter
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.tutorialdialog.util.showCopyAccountAddressTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showGiftCardsTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showSwapFeatureTutorialDialog
@@ -115,25 +116,26 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onBuySellClick() {
-            // TODO refactor with a better name for logging
-            accountsViewModel.logAccountsFragmentAlgoBuyTapEvent()
+            accountsViewModel.onAccountsFragmentAlgoBuyTapEvent()
             navToBuySellActionsBottomSheet()
         }
 
         override fun onSendClick() {
+            accountsViewModel.onSendTapEvent()
             navToSendAlgoNavigation()
         }
 
         override fun onSwapClick() {
-            accountsViewModel.onSwapClick()
+            accountsViewModel.onSwapTapEvent()
         }
 
         override fun onScanQrClick() {
-            accountsViewModel.logQrScanTapEvent()
+            accountsViewModel.onQrScanTapEvent()
             navToQrScanFragment()
         }
 
         override fun onSortClick() {
+            accountsViewModel.onSortTapEvent()
             onArrangeListClick()
         }
 
@@ -142,6 +144,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onStakingClick() {
+            accountsViewModel.logEvent(PeraClickEvent.TAP_HOME_SCREEN_STAKE)
             nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
         }
     }

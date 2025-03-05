@@ -10,21 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.tracking.swap.quickaction
+package com.algorand.android.cache
 
-import com.algorand.android.modules.tracking.core.BaseEventTracker
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
-import javax.inject.Inject
+import android.content.SharedPreferences
+import com.algorand.wallet.foundation.cache.PersistentCache
+import com.algorand.wallet.foundation.cache.PersistentCacheProvider
+import com.google.gson.Gson
+import java.lang.reflect.Type
 
-class QuickActionSwapButtonClickEventTracker @Inject constructor(
-    peraEventTracker: PeraEventTracker
-) : BaseEventTracker(peraEventTracker) {
+internal class PersistentCacheProviderImpl(
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson
+) : PersistentCacheProvider {
 
-    suspend fun logSwapButtonClickEvent() {
-        logEvent(SWAP_BUTTON_CLICK_EVENT_KEY)
-    }
-
-    companion object {
-        private const val SWAP_BUTTON_CLICK_EVENT_KEY = "quickaction_swap_click"
+    override fun <T : Any> getPersistentCache(type: Type, key: String): PersistentCache<T> {
+        return SharedPrefPersistentCache(type, key, sharedPreferences, gson)
     }
 }

@@ -10,21 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.tracking.accounts
+package com.algorand.wallet.analytics.domain.model
 
-import com.algorand.android.modules.tracking.core.BaseEventTracker
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
-import javax.inject.Inject
+sealed interface FirebaseTokenStatus {
 
-class AccountsQrScanEventTracker @Inject constructor(
-    peraEventTracker: PeraEventTracker
-) : BaseEventTracker(peraEventTracker) {
+    data object Loading : FirebaseTokenStatus
 
-    suspend fun logQrScanEvent() {
-        logEvent(QR_SCAN_TAP_EVENT_KEY)
-    }
+    data object Success : FirebaseTokenStatus
 
-    companion object {
-        private const val QR_SCAN_TAP_EVENT_KEY = "homescr_qr_scan"
-    }
+    data object Error : FirebaseTokenStatus
 }

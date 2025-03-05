@@ -22,7 +22,10 @@ import com.algorand.wallet.nameservice.data.mapper.NameServiceSourceMapper
 import com.algorand.wallet.nameservice.data.mapper.NameServiceSourceMapperImpl
 import com.algorand.wallet.nameservice.data.repository.NameServiceRepositoryImpl
 import com.algorand.wallet.nameservice.data.service.NameServiceApiService
+import com.algorand.wallet.nameservice.domain.manager.LocalAccountsNameServiceManager
+import com.algorand.wallet.nameservice.domain.manager.LocalAccountsNameServiceManagerImpl
 import com.algorand.wallet.nameservice.domain.repository.NameServiceRepository
+import com.algorand.wallet.nameservice.domain.usecase.ClearNameServiceCache
 import com.algorand.wallet.nameservice.domain.usecase.GetAccountNameService
 import com.algorand.wallet.nameservice.domain.usecase.GetNameServiceSearchResults
 import com.algorand.wallet.nameservice.domain.usecase.GetNameServiceSearchResultsUseCase
@@ -85,4 +88,15 @@ internal object NameServiceModule {
     fun provideGetNameServiceSearchResults(
         useCase: GetNameServiceSearchResultsUseCase
     ): GetNameServiceSearchResults = useCase
+
+    @Provides
+    fun provideClearNameServiceCache(
+        repository: NameServiceRepository
+    ): ClearNameServiceCache = ClearNameServiceCache(repository::clearCache)
+
+    @Provides
+    @Singleton
+    fun provideLocalAccountsNameServiceManager(
+        impl: LocalAccountsNameServiceManagerImpl
+    ): LocalAccountsNameServiceManager = impl
 }

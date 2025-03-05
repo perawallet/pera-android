@@ -13,8 +13,8 @@
 package com.algorand.android.ui.register.registerintro
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.RegisterIntroPreview
 import com.algorand.android.usecase.RegisterIntroPreviewUseCase
 import com.algorand.android.usecase.RegistrationUseCase
@@ -31,7 +31,7 @@ class RegisterIntroViewModel @Inject constructor(
     private val registerIntroPreviewUseCase: RegisterIntroPreviewUseCase,
     private val registrationUseCase: RegistrationUseCase,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val accountAddress: String? = savedStateHandle.getOrElse(ACCOUNT_ADDRESS_KEY, null)
     private val isShowingCloseButton = savedStateHandle.getOrElse(IS_SHOWING_CLOSE_BUTTON_KEY, false)
@@ -66,18 +66,6 @@ class RegisterIntroViewModel @Inject constructor(
     fun logOnboardingWelcomeAccountRecoverClickEvent() {
         viewModelScope.launch {
             registerIntroPreviewUseCase.logOnboardingWelcomeAccountRecoverClickEvent()
-        }
-    }
-
-    fun logOnboardingCreateAccountSkipClickEvent() {
-        viewModelScope.launch {
-            registerIntroPreviewUseCase.logOnboardingCreateAccountSkipClickEvent()
-        }
-    }
-
-    fun logOnboardingCreateWatchAccountClickEvent() {
-        viewModelScope.launch {
-            registerIntroPreviewUseCase.logOnboardingCreateWatchAccountClickEvent()
         }
     }
 

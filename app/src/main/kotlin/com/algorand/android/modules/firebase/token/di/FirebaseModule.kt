@@ -10,21 +10,21 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.tracking.bottomnavigation
+package com.algorand.android.modules.firebase.token.di
 
-import com.algorand.android.modules.tracking.core.BaseEventTracker
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
-import javax.inject.Inject
+import com.algorand.android.modules.firebase.token.usecase.GetFirebaseTokenStatusFlowUseCase
+import com.algorand.wallet.analytics.domain.usecase.GetFirebaseTokenStatusFlow
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-class BottomNavigationAccountsTapEventTracker @Inject constructor(
-    peraEventTracker: PeraEventTracker
-) : BaseEventTracker(peraEventTracker) {
+@Module
+@InstallIn(SingletonComponent::class)
+object FirebaseModule {
 
-    suspend fun logAccountTapEvent() {
-        logEvent(ACCOUNTS_TAP_EVENT_KEY)
-    }
-
-    companion object {
-        private const val ACCOUNTS_TAP_EVENT_KEY = "homesc_accounts_tap"
-    }
+    @Provides
+    fun provideGetFirebaseTokenStatusFlow(
+        useCase: GetFirebaseTokenStatusFlowUseCase
+    ): GetFirebaseTokenStatusFlow = useCase
 }

@@ -14,15 +14,18 @@ package com.algorand.wallet.cache.domain.usecase
 
 import com.algorand.wallet.account.info.domain.usecase.ClearAccountInformationCache
 import com.algorand.wallet.asset.domain.usecase.ClearAssetCache
+import com.algorand.wallet.nameservice.domain.usecase.ClearNameServiceCache
 import javax.inject.Inject
 
 internal class ClearPreviousSessionCacheUseCase @Inject constructor(
     private val clearAccountInformationCache: ClearAccountInformationCache,
-    private val clearAssetCache: ClearAssetCache
+    private val clearAssetCache: ClearAssetCache,
+    private val clearNameServiceCache: ClearNameServiceCache
 ) : ClearPreviousSessionCache {
 
     override suspend fun invoke() {
         clearAccountInformationCache()
         clearAssetCache()
+        clearNameServiceCache()
     }
 }

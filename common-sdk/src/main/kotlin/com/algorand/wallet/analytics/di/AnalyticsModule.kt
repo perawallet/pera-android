@@ -25,6 +25,8 @@ import com.algorand.wallet.analytics.domain.service.PeraReferrerManager
 import com.algorand.wallet.analytics.domain.service.PeraReferrerQueryParamParser
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
 import com.algorand.wallet.analytics.domain.usecase.SaveReferrerData
+import com.algorand.wallet.analytics.domain.util.GA4
+import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
 import dagger.Module
@@ -59,7 +61,17 @@ internal object AnalyticsModule {
 
     @Provides
     @Singleton
-    fun provideReferrerRepository(impl: ReferrerRepositoryImpl): ReferrerRepository = impl
+    fun provideReferrerRepository(
+        persistentCacheProvider: PersistentCacheProvider
+    ): ReferrerRepository {
+        return ReferrerRepositoryImpl(
+            persistentCacheProvider.getPersistentCache(String::class.java, GA4.UTM_SOURCE),
+            persistentCacheProvider.getPersistentCache(String::class.java, GA4.UTM_MEDIUM),
+            persistentCacheProvider.getPersistentCache(String::class.java, GA4.UTM_CAMPAIGN),
+            persistentCacheProvider.getPersistentCache(String::class.java, GA4.UTM_TERM),
+            persistentCacheProvider.getPersistentCache(String::class.java, GA4.UTM_CONTENT)
+        )
+    }
 
     @Provides
     fun provideReferrerQueryParamParser(impl: PeraReferrerQueryParamParserImpl): PeraReferrerQueryParamParser = impl

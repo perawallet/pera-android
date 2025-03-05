@@ -18,6 +18,8 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.accounts.domain.model.AccountPreview
 import com.algorand.android.modules.accounts.domain.usecase.AccountsPreviewUseCase
 import com.algorand.android.modules.tracking.accounts.AccountsEventTracker
+import com.algorand.android.modules.tracking.core.PeraClickEvent
+import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
@@ -66,9 +68,15 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    fun logQrScanTapEvent() {
+    fun onQrScanTapEvent() {
         viewModelScope.launch {
-            accountsEventTracker.logQrScanTapEvent()
+            logEvent(PeraEvent.HOME_SCREEN_QR_SCAN)
+        }
+    }
+
+    fun onSortTapEvent() {
+        viewModelScope.launch {
+            logEvent(PeraClickEvent.TAP_HOME_SCREEN_SORT)
         }
     }
 
@@ -78,7 +86,7 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    fun logAccountsFragmentAlgoBuyTapEvent() {
+    fun onAccountsFragmentAlgoBuyTapEvent() {
         viewModelScope.launch {
             accountsEventTracker.logAccountsFragmentAlgoBuyTapEvent()
         }
@@ -104,9 +112,15 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    fun onSwapClick() {
+    fun onSendTapEvent() {
         viewModelScope.launch {
-            accountsEventTracker.logSwapClickEvent()
+            logEvent(PeraClickEvent.TAP_HOME_SCREEN_SEND)
+        }
+    }
+
+    fun onSwapTapEvent() {
+        viewModelScope.launch {
+            logEvent(PeraClickEvent.TAP_HOME_SCREEN_SWAP)
             updatePreviewForSwapNavigation()
         }
     }

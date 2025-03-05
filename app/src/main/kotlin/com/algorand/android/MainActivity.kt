@@ -64,6 +64,7 @@ import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
 import com.algorand.android.modules.qrscanning.QrScannerViewModel
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.WalletConnectConnectionBottomSheet
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WCSessionRequestResult
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
@@ -74,8 +75,6 @@ import com.algorand.android.ui.lockpreference.AutoLockSuggestionManager
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase.Companion.MAX_NUMBER_OF_ACCOUNTS
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
-import com.algorand.android.utils.analytics.logTapReceive
-import com.algorand.android.utils.analytics.logTapSend
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.getSafeParcelableExtra
@@ -508,7 +507,10 @@ class MainActivity :
 
     override fun onMenuItemClicked(item: MenuItem) {
         when (item.itemId) {
-            R.id.accountsFragment -> mainViewModel.logBottomNavAccountsTapEvent()
+            R.id.accountsFragment -> mainViewModel.logEvent(PeraClickEvent.TAP_LOWERMENU_HOME)
+            R.id.discoverHomeNavigation -> mainViewModel.logEvent(PeraClickEvent.TAP_LOWERMENU_DISCOVER)
+            R.id.collectiblesFragment -> mainViewModel.logEvent(PeraClickEvent.TAP_LOWERMENU_NFTS)
+            R.id.settingsFragment -> mainViewModel.logEvent(PeraClickEvent.TAP_LOWERMENU_SETTINGS)
         }
     }
 
@@ -694,26 +696,28 @@ class MainActivity :
         coreActionsTabBarViewModel.changeViewStateForFeatureFlag()
         binding.coreActionsTabBarView.setListener(object : CoreActionsTabBarView.Listener {
             override fun onSendClick() {
-                firebaseAnalytics.logTapSend()
+                mainViewModel.logEvent(PeraClickEvent.TAP_TAB_SEND)
                 nav(HomeNavigationDirections.actionGlobalSendAlgoNavigation(null))
             }
 
             override fun onReceiveClick() {
-                firebaseAnalytics.logTapReceive()
+                mainViewModel.logEvent(PeraClickEvent.TAP_TAB_RECEIVE)
                 nav(HomeNavigationDirections.actionGlobalReceiveAccountSelectionFragment())
             }
 
             override fun onBuySellClick() {
-                // TODO refactor with a better name for logging
-                mainViewModel.logBottomNavigationBuyAlgoEvent()
+                mainViewModel.logEvent(PeraClickEvent.TAP_BOTTOM_NAVIGATION_BUY_ALGO)
                 navToBuySellActionsBottomSheet()
             }
 
             override fun onScanQRClick() {
+                mainViewModel.logEvent(PeraClickEvent.TAP_BOTTOM_NAVIGATION_QR_SCAN)
                 navToQRCodeScannerNavigation()
             }
 
             override fun onCoreActionsClick(isCoreActionsOpen: Boolean) {
+                if (isCoreActionsOpen)
+                    mainViewModel.logEvent(PeraClickEvent.TAP_LOWERMENU_PERA)
                 binding.bottomNavigationView.menu.forEach { menuItem ->
                     menuItem.isEnabled = isCoreActionsOpen.not()
                 }
@@ -721,18 +725,22 @@ class MainActivity :
             }
 
             override fun onSwapClick() {
+                mainViewModel.logEvent(PeraClickEvent.TAP_BOTTOM_NAVIGATION_SWAP)
                 mainViewModel.onSwapActionButtonClick()
             }
 
             override fun onBrowseDappsClick() {
+                mainViewModel.logEvent(PeraClickEvent.TAP_BOTTOM_NAVIGATION_BROWSE_DAPPS)
                 handleBrowseDappsClick()
             }
 
             override fun onCardsClick() {
+                mainViewModel.logEvent(PeraClickEvent.TAP_BOTTOM_NAVIGATION_CARDS)
                 navToCardsFragment()
             }
 
             override fun onStakingClick() {
+                mainViewModel.logEvent(PeraClickEvent.TAP_BOTTOM_NAVIGATION_STAKE)
                 navToStakingFragment()
             }
         })

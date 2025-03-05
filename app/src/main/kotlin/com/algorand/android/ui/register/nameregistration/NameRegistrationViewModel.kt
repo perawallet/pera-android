@@ -14,8 +14,8 @@
 package com.algorand.android.ui.register.nameregistration
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.ui.NameRegistrationPreview
@@ -35,7 +35,7 @@ class NameRegistrationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val nameRegistrationPreviewUseCase: NameRegistrationPreviewUseCase,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _nameRegistrationPreviewFlow = MutableStateFlow(getInitialPreview())
     val nameRegistrationPreviewFlow: Flow<NameRegistrationPreview>

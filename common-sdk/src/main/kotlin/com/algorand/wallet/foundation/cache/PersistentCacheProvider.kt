@@ -10,22 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.utils.analytics
+package com.algorand.wallet.foundation.cache
 
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
+import java.lang.reflect.Type
 
-private const val ADDRESS_KEY = "address"
-
-private const val TAP_TAB_SEND = "tap_tab_receive"
-private const val TAP_ASSET_DETAIL_SEND = "tap_asset_detail_receive"
-
-fun FirebaseAnalytics.logTapSend() {
-    logEvent(TAP_TAB_SEND, null)
-}
-
-fun FirebaseAnalytics.logTapAssetDetailSend(address: String) {
-    logEvent(TAP_ASSET_DETAIL_SEND) {
-        param(ADDRESS_KEY, address)
-    }
+interface PersistentCacheProvider {
+    fun <T: Any> getPersistentCache(type: Type, key: String): PersistentCache<T>
 }

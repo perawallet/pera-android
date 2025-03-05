@@ -12,6 +12,42 @@
 
 package com.algorand.android.core
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import javax.inject.Inject
+import kotlinx.coroutines.launch
 
-open class BaseViewModel : ViewModel()
+open class BaseViewModel @Inject constructor() : ViewModel() {
+    companion object {
+        @JvmStatic
+        private var eventTracker: PeraEventTracker? = null
+
+        fun initialize(tracker: PeraEventTracker) {
+            eventTracker = tracker
+        }
+    }
+
+    fun logEvent(eventName: String) {
+        if (eventTracker == null) {
+            Log.e("PeraEventTracker", "Event tracker not initialized. Event '$eventName' not logged.")
+            return
+        }
+
+        viewModelScope.launch {
+            eventTracker?.logEvent(eventName)
+        }
+    }
+
+    fun logEvent(eventName: String, params: Map<String, Any>) {
+        if (eventTracker == null) {
+            Log.e("PeraEventTracker", "Event tracker not initialized. Event '$eventName' with params not logged.")
+            return
+        }
+
+        viewModelScope.launch {
+            eventTracker?.logEvent(eventName, params)
+        }
+    }
+}

@@ -12,7 +12,9 @@
 
 package com.algorand.wallet.analytics.domain.usecase
 
+import com.algorand.wallet.analytics.domain.model.FirebaseTokenStatus
 import com.algorand.wallet.analytics.domain.model.ReferrerData
+import kotlinx.coroutines.flow.Flow
 
 fun interface GetReferrerData {
     suspend operator fun invoke(): ReferrerData
@@ -20,4 +22,8 @@ fun interface GetReferrerData {
 
 fun interface SaveReferrerData {
     suspend operator fun invoke(referrerData: ReferrerData)
+}
+
+fun interface GetFirebaseTokenStatusFlow {
+    operator fun invoke(): Flow<FirebaseTokenStatus>
 }

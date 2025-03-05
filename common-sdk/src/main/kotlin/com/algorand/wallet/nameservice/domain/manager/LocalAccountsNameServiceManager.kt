@@ -10,9 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.fetchnameservices.domain.model
+package com.algorand.wallet.nameservice.domain.manager
 
-enum class NameServiceSource {
-    NFDOMAIN,
-    UNKNOWN
+import androidx.lifecycle.Lifecycle
+
+interface LocalAccountsNameServiceManager {
+    fun initialize(lifecycle: Lifecycle)
 }

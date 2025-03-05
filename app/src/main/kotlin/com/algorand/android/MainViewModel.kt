@@ -30,7 +30,6 @@ import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeni
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
-import com.algorand.android.modules.tracking.main.MainActivityEventTracker
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.network.IndexerInterceptor
@@ -70,7 +69,6 @@ class MainViewModel @Inject constructor(
     private val algodInterceptor: AlgodInterceptor,
     private val accountCacheManager: AccountCacheManager,
     private val deviceIdMigrationUseCase: DeviceIdMigrationUseCase,
-    private val mainActivityEventTracker: MainActivityEventTracker,
     private val deepLinkHandler: DeeplinkHandler,
     private val increaseAppOpeningCountUseCase: IncreaseAppOpeningCountUseCase,
     private val tutorialUseCase: TutorialUseCase,
@@ -224,18 +222,6 @@ class MainViewModel @Inject constructor(
         deepLinkHandler.setListener(listener)
     }
 
-    fun logBottomNavAccountsTapEvent() {
-        viewModelScope.launch {
-            mainActivityEventTracker.logAccountsTapEvent()
-        }
-    }
-
-    fun logBottomNavigationBuyAlgoEvent() {
-        viewModelScope.launch {
-            mainActivityEventTracker.logBottomNavigationAlgoBuyTapEvent()
-        }
-    }
-
     fun increseAppOpeningCount() {
         viewModelScope.launch {
             increaseAppOpeningCountUseCase.increaseAppOpeningCount()
@@ -244,7 +230,6 @@ class MainViewModel @Inject constructor(
 
     fun onSwapActionButtonClick() {
         viewModelScope.launch {
-            mainActivityEventTracker.logQuickActionSwapButtonClickEvent()
             var swapNavDirection: NavDirections? = null
             swapNavigationDestinationHelper.getSwapNavigationDestination(
                 onNavToIntroduction = {

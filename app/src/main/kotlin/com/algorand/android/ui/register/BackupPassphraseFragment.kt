@@ -24,6 +24,7 @@ import com.algorand.android.databinding.FragmentBackupPassphraseBinding
 import com.algorand.android.models.Account
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.register.BackupPassphraseFragmentDirections.Companion.actionBackupPassphraseFragmentToBackupPassphraseAccountNameNavigation
 import com.algorand.android.utils.disableScreenCapture
 import com.algorand.android.utils.enableScreenCapture
@@ -88,14 +89,15 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
     }
 
     private fun onNextClick() {
-        navToPassphraseValidaitonFragment()
+        navToPassphraseValidationFragment()
     }
 
     private fun onSkipClick() {
+        backupPassphraseViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_RECOVER_PASSPHRASE_SKIP)
         navToBackupPassphraseAccountNameNavigation()
     }
 
-    private fun navToPassphraseValidaitonFragment() {
+    private fun navToPassphraseValidationFragment() {
         backupPassphraseViewModel.logOnboardingNextClickEvent()
         nav(
             BackupPassphraseFragmentDirections.actionBackupPassphraseFragmentToPassphraseValidationFragment(

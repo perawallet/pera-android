@@ -10,21 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.tracking.accounts
+package com.algorand.wallet.foundation.cache
 
-import com.algorand.android.modules.tracking.core.BaseEventTracker
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
-import javax.inject.Inject
-
-class AccountsQrConnectEventTracker @Inject constructor(
-    peraEventTracker: PeraEventTracker
-) : BaseEventTracker(peraEventTracker) {
-
-    suspend fun logAccountsQrConnectEvent() {
-        logEvent(QR_SCAN_CONNECTED_EVENT_KEY)
-    }
-
-    companion object {
-        private const val QR_SCAN_CONNECTED_EVENT_KEY = "homescr_qr_scan_connected"
-    }
+interface PersistentCache<T> {
+    fun put(data: T)
+    fun get(): T?
+    fun clear()
 }

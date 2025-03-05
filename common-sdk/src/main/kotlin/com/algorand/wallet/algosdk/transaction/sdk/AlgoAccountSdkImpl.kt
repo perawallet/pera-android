@@ -16,7 +16,13 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toEntropy
 import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.crypto.Address
+import com.algorand.algosdk.crypto.Signature
 import com.algorand.algosdk.sdk.Sdk
+import com.algorand.algosdk.transaction.SignedTransaction
+import com.algorand.algosdk.transaction.Transaction
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.model.Algo25Account
 import com.algorand.wallet.algosdk.model.Bip32DerivationType
 import com.algorand.wallet.algosdk.model.HdKeyAccount
@@ -28,42 +34,60 @@ import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathF
 import javax.inject.Inject
 
 internal class AlgoAccountSdkImpl @Inject constructor(
-    private val aesPlatformManager: AESPlatformManager
+    private val aesPlatformManager: AESPlatformManager,
+    private val getHdSeed: GetHdSeed,
+    private val getLocalAccount: GetLocalAccount,
 ) : AlgoAccountSdk {
 
-    override fun createHdAccount(): HdKeyAccount {
-        val entropy = Mnemonics.WordCount.COUNT_24.toEntropy()
-        val m = Mnemonics.MnemonicCode(entropy)
-        return getHdKeyAccount(m)
+    override fun createHdAccount(): HdKeyAccount? {
+        return try {
+            val entropy = Mnemonics.WordCount.COUNT_24.toEntropy()
+            val m = Mnemonics.MnemonicCode(entropy)
+            getHdKeyAccount(m)
+        } catch (e: Exception) {
+            null
+        }
     }
 
-    override fun recoverHdAccount(mnemonic: String): HdKeyAccount {
-        val m = Mnemonics.MnemonicCode(mnemonic)
-        return getHdKeyAccount(m)
+    override fun recoverHdAccount(mnemonic: String): HdKeyAccount? {
+        return try {
+            val m = Mnemonics.MnemonicCode(mnemonic)
+            getHdKeyAccount(m)
+        } catch (e: Exception) {
+            null
+        }
     }
 
-    override fun createAlgo25Account(): Algo25Account {
-        var secretKey = Sdk.generateSK()
-        val output = Algo25Account(
-            address = Sdk.generateAddressFromSK(secretKey),
-            encryptedSecretKey = aesPlatformManager.encryptByteArray(secretKey)
-        )
-        secretKey = ByteArray(0) // delete secret key from memory
-        return output
+    override fun createAlgo25Account(): Algo25Account? {
+        return try {
+            var secretKey = Sdk.generateSK()
+            val output = Algo25Account(
+                address = Sdk.generateAddressFromSK(secretKey),
+                encryptedSecretKey = aesPlatformManager.encryptByteArray(secretKey)
+            )
+            secretKey = ByteArray(0) // delete secret key from memory
+            output
+        } catch (e: Exception) {
+            null
+        }
     }
 
-    override fun recoverAlgo25Account(mnemonic: String): Algo25Account {
-        var secretKey = Sdk.mnemonicToPrivateKey(mnemonic)
+    override fun recoverAlgo25Account(mnemonic: String): Algo25Account? {
+        return try {
+            var secretKey = Sdk.mnemonicToPrivateKey(mnemonic)
 
-        val output = Algo25Account(
-            address = Sdk.generateAddressFromSK(secretKey),
-            encryptedSecretKey = aesPlatformManager.encryptByteArray(secretKey)
-        )
-        secretKey = ByteArray(0) // delete secret key from memory
-        return output
+            val output = Algo25Account(
+                address = Sdk.generateAddressFromSK(secretKey),
+                encryptedSecretKey = aesPlatformManager.encryptByteArray(secretKey)
+            )
+            secretKey = ByteArray(0) // delete secret key from memory
+            output
+        } catch (e: Exception) {
+            null
+        }
     }
 
-    private fun getHdKeyAccount(mnemonic: Mnemonics.MnemonicCode): HdKeyAccount {
+    private fun getHdKeyAccount(mnemonic: Mnemonics.MnemonicCode): HdKeyAccount? {
         var entropy = mnemonic.toEntropy()
         val seed = mnemonic.toSeed()
         val xHDWalletAPI = XHDWalletAPIAndroid(seed)
@@ -100,5 +124,39 @@ internal class AlgoAccountSdkImpl @Inject constructor(
         privateKey = ByteArray(0) // delete secret key from memory
         entropy = ByteArray(0) // delete secret key from memory
         return output
+    }
+
+    override suspend fun createSignedTransaction(
+        address: String,
+        tx: Transaction
+    ): SignedTransaction? {
+        val hdKey = getLocalAccount(address) as? LocalAccount.HdKey ?: run {
+            return null
+        }
+
+        var seed = getHdSeed(seedId = hdKey.seedId) ?: run {
+            return null
+        }
+
+        val xHDWalletAPI = XHDWalletAPIAndroid(seed)
+        val (accountIndex, changeIndex, keyIndex) = listOf(
+            hdKey.account.toUInt(),
+            hdKey.change.toUInt(),
+            hdKey.keyIndex.toUInt()
+        )
+
+        val txSig = Signature(
+            xHDWalletAPI.signAlgoTransaction(
+                KeyContext.Address, accountIndex, changeIndex, keyIndex, tx.bytesToSign()
+            )
+        )
+
+        val pkAddress = Address(hdKey.publicKey)
+        val stx = SignedTransaction(tx, txSig, tx.txID()).apply {
+            if (tx.sender != pkAddress) authAddr(pkAddress)
+        }
+
+        seed = ByteArray(0)
+        return stx
     }
 }

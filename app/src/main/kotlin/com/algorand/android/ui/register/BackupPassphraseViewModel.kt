@@ -13,12 +13,12 @@
 package com.algorand.android.ui.register
 
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.bip39.Mnemonics
 import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.core.AccountManager
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingCopyPassphraseEventTracker
+import com.algorand.wallet.algosdk.transaction.sdk.Bip39MnemonicGenerator
 import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -28,7 +28,8 @@ import kotlinx.coroutines.launch
 class BackupPassphraseViewModel @Inject constructor(
     private val onboardingCopyPassphraseEventTracker: OnboardingCopyPassphraseEventTracker,
     private val accountManager: AccountManager,
-    private val aesPlatformManager: AESPlatformManager
+    private val aesPlatformManager: AESPlatformManager,
+    private val bip39MnemonicGenerator: Bip39MnemonicGenerator
 ) : BaseViewModel() {
 
     fun logOnboardingNextClickEvent() {
@@ -45,10 +46,7 @@ class BackupPassphraseViewModel @Inject constructor(
         val encryptedEntropy = (args.accountCreation?.type as? AccountCreation.Type.HdKey)?.encryptedEntropy
         return encryptedEntropy?.let {
             val entropy = aesPlatformManager.decryptByteArray(it)
-            val mnemonic = Mnemonics.MnemonicCode(entropy).words.joinToString(" ") { charArray ->
-                String(charArray)
-            }
-            mnemonic
+            bip39MnemonicGenerator.getMnemonicFromEntropy(entropy)
         } ?: run {
             val encryptedAlgo25Key = (args.accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey
 

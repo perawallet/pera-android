@@ -27,9 +27,6 @@ internal interface HdSeedDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(entities: List<HdSeedEntity>)
 
-    @Query("UPDATE hd_seeds SET entropy_custom_name = :seedCustomName WHERE seed_id = :seedId")
-    suspend fun update(seedId: Int, seedCustomName: String)
-
     @Query("SELECT * FROM hd_seeds")
     suspend fun getAll(): List<HdSeedEntity>
 
@@ -48,14 +45,8 @@ internal interface HdSeedDao {
     @Query("SELECT encrypted_entropy FROM hd_seeds WHERE :seedId = seed_id")
     suspend fun getEncryptedEntropy(seedId: Int): ByteArray?
 
-    @Query("SELECT * FROM hd_seeds WHERE :entropyCustomName = entropy_custom_name")
-    suspend fun getAll(entropyCustomName: String): List<HdSeedEntity>
-
     @Query("DELETE FROM hd_seeds WHERE :seedId = seed_id")
     suspend fun delete(seedId: Int)
-
-    @Query("DELETE FROM hd_seeds WHERE :encryptedEntropy = encrypted_entropy")
-    suspend fun delete(encryptedEntropy: ByteArray)
 
     @Query("DELETE FROM hd_seeds")
     suspend fun clearAll()

@@ -33,8 +33,5 @@ internal data class HdSeedEntity(
     val encryptedEntropy: ByteArray,
 
     @ColumnInfo("encrypted_seed", typeAffinity = ColumnInfo.BLOB)
-    val encryptedSeed: ByteArray,
-
-    @ColumnInfo("entropy_custom_name")
-    val entropyCustomName: String
+    val encryptedSeed: ByteArray
 )

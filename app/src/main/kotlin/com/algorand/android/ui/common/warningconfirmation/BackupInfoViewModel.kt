@@ -65,6 +65,7 @@ class BackupInfoViewModel @Inject constructor(
             )
         } else {
             val account = algoAccountSdk.createAlgo25Account()
+                ?: throw IllegalArgumentException("Failed to create Algo25 account")
 
             return AccountCreation(
                 address = account.address,

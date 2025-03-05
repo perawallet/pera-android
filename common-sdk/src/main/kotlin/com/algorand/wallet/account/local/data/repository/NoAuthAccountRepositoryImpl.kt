@@ -13,8 +13,8 @@
 package com.algorand.wallet.account.local.data.repository
 
 import com.algorand.wallet.account.local.data.database.dao.NoAuthDao
-import com.algorand.wallet.account.local.data.mapper.entity.NoAuthEntityMapper
-import com.algorand.wallet.account.local.data.mapper.model.NoAuthMapper
+import com.algorand.wallet.account.local.domain.mapper.entity.NoAuthEntityMapper
+import com.algorand.wallet.account.local.domain.mapper.model.NoAuthMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount.NoAuth
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import javax.inject.Inject

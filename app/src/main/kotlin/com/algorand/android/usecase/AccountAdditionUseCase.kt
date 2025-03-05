@@ -103,18 +103,21 @@ class AccountAdditionUseCase @Inject constructor(
             var privateKey = aesPlatformManager.decryptByteArray(type.encryptedPrivateKey)
             var entropy = aesPlatformManager.decryptByteArray(type.encryptedEntropy)
             val seedId = addHdSeed(entropy)
-            addHdKeyAccount(
-                address,
-                type.publicKey,
-                privateKey,
-                seedId,
-                type.account,
-                type.change,
-                type.keyIndex,
-                type.derivationType,
-                isBackedUp,
-                customName
-            )
+            if (seedId > 0) {
+                // seedId was entered successfully
+                addHdKeyAccount(
+                    address,
+                    type.publicKey,
+                    privateKey,
+                    seedId,
+                    type.account,
+                    type.change,
+                    type.keyIndex,
+                    type.derivationType,
+                    isBackedUp,
+                    customName
+                )
+            }
             privateKey = ByteArray(0) // clear secret from memory
             entropy = ByteArray(0) // clear secret from memory
         }
@@ -122,7 +125,9 @@ class AccountAdditionUseCase @Inject constructor(
 
     private suspend fun createAlgo25Account(createAccount: CreateAccount, type: Type.Algo25) {
         with(createAccount) {
-            addAlgo25Account(address, type.encryptedSecretKey, isBackedUp, customName)
+            var secretKey = aesPlatformManager.decryptByteArray(type.encryptedSecretKey)
+            addAlgo25Account(address, secretKey, isBackedUp, customName)
+            secretKey = ByteArray(0)
         }
     }
 

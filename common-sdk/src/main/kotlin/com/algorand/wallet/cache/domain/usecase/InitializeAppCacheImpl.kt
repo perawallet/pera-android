@@ -14,7 +14,7 @@ package com.algorand.wallet.cache.domain.usecase
 
 import androidx.lifecycle.Lifecycle
 import com.algorand.wallet.asset.domain.manager.AssetDetailCacheManager
-import com.algorand.wallet.account.info.domain.manager.AccountCacheManager
+import com.algorand.wallet.account.info.domain.service.AccountCacheManager
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

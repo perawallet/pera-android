@@ -12,6 +12,8 @@
 
 package com.algorand.wallet.algosdk.transaction.sdk
 
+import com.algorand.algosdk.transaction.SignedTransaction
+import com.algorand.algosdk.transaction.Transaction
 import com.algorand.wallet.algosdk.model.Algo25Account
 import com.algorand.wallet.algosdk.model.HdKeyAccount
 
@@ -21,7 +23,12 @@ interface AlgoAccountSdk {
 
     fun recoverHdAccount(mnemonic: String): HdKeyAccount?
 
-    fun createAlgo25Account(): Algo25Account
+    fun createAlgo25Account(): Algo25Account?
 
     fun recoverAlgo25Account(mnemonic: String): Algo25Account?
+
+    suspend fun createSignedTransaction(
+        address: String,
+        tx: Transaction
+    ): SignedTransaction?
 }

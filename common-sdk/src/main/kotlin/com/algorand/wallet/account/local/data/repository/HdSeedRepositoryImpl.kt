@@ -13,8 +13,8 @@
 package com.algorand.wallet.account.local.data.repository
 
 import com.algorand.wallet.account.local.data.database.dao.HdSeedDao
-import com.algorand.wallet.account.local.data.mapper.entity.HdSeedEntityMapper
-import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
+import com.algorand.wallet.account.local.domain.mapper.entity.HdSeedEntityMapper
+import com.algorand.wallet.account.local.domain.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.encryption.domain.services.AESPlatformManager
@@ -49,8 +49,8 @@ internal class HdSeedRepositoryImpl @Inject constructor(
 
     override suspend fun getAllHdSeeds(): List<HdSeed> {
         return withContext(coroutineDispatcher) {
-            val hdSeedEntities = hdSeedDao.getAll()
-            hdSeedEntities.map { hdSeedMapper(it) }
+            val entities = hdSeedDao.getAll()
+            entities.map { hdSeedMapper(it) }
         }
     }
 
@@ -66,32 +66,15 @@ internal class HdSeedRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllHdSeed(entropyCustomName: String): List<HdSeed> {
-        return withContext(coroutineDispatcher) {
-            val hdSeedEntities = hdSeedDao.getAll(entropyCustomName)
-            hdSeedEntities.map { hdSeedMapper(it) }
-        }
-    }
-
-    override suspend fun addHdSeed(hdSeed: HdSeed, entropy: ByteArray, seed: ByteArray): Long {
-        val hdKeyEntity = hdSeedEntityMapper(hdSeed, entropy, seed)
+    override suspend fun addHdSeed(seedId: Int, entropy: ByteArray, seed: ByteArray): Long {
+        val hdKeyEntity = hdSeedEntityMapper(seedId, entropy, seed)
         val seedId = hdSeedDao.insert(hdKeyEntity)
         return seedId
-    }
-
-    override suspend fun setEntropyCustomName(seedId: Int, customName: String) {
-        hdSeedDao.update(seedId, customName)
     }
 
     override suspend fun deleteHdSeed(seedId: Int) {
         withContext(coroutineDispatcher) {
             hdSeedDao.delete(seedId)
-        }
-    }
-
-    override suspend fun deleteHdSeed(encrypted_entropy: ByteArray) {
-        return withContext(coroutineDispatcher) {
-            hdSeedDao.delete(encrypted_entropy)
         }
     }
 

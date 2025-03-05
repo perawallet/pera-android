@@ -13,6 +13,5 @@
 package com.algorand.wallet.account.local.domain.model
 
 data class HdSeed(
-    val seedId: Int,
-    var seedCustomName: String
+    val seedId: Int
 )

@@ -2,8 +2,8 @@ package com.algorand.wallet.account.local.data.repository
 
 import com.algorand.wallet.account.local.data.database.dao.HdSeedDao
 import com.algorand.wallet.account.local.data.database.model.HdSeedEntity
-import com.algorand.wallet.account.local.data.mapper.entity.HdSeedEntityMapper
-import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
+import com.algorand.wallet.account.local.domain.mapper.entity.HdSeedEntityMapper
+import com.algorand.wallet.account.local.domain.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import io.mockk.coEvery
@@ -12,121 +12,214 @@ import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 
 class HdSeedRepositoryImplTest {
 
-    private val hdSeedDao: HdSeedDao = mockk()
-    private val hdSeedEntityMapper: HdSeedEntityMapper = mockk()
-    private val hdSeedMapper: HdSeedMapper = mockk()
-    private val aesPlatformManager: AESPlatformManager = mockk()
-    private val sut = HdSeedRepositoryImpl(hdSeedDao, hdSeedEntityMapper, hdSeedMapper, aesPlatformManager, Dispatchers.Unconfined)
+    private val hdSeedDao = mockk<HdSeedDao>()
+    private val hdSeedEntityMapper = mockk<HdSeedEntityMapper>()
+    private val hdSeedMapper = mockk<HdSeedMapper>()
+    private val aesPlatformManager = mockk<AESPlatformManager>()
+
+    private val sut = HdSeedRepositoryImpl(
+        hdSeedDao = hdSeedDao,
+        hdSeedEntityMapper = hdSeedEntityMapper,
+        hdSeedMapper = hdSeedMapper,
+        aesPlatformManager = aesPlatformManager
+    )
 
     @Test
-    fun given_getAllAsFlow_when_called_then_returnFlowOfHdSeedList() {
-        every { hdSeedDao.getAllAsFlow() } returns flowOf(emptyList())
-        sut.getAllAsFlow()
+    fun `EXPECT mapped seed list WHEN getting all seeds as flow`() = runTest {
+        val entity1 = mockk<HdSeedEntity>()
+        val entity2 = mockk<HdSeedEntity>()
+        val entityList = listOf(entity1, entity2)
+
+        val mappedSeed1 = mockk<HdSeed>()
+        val mappedSeed2 = mockk<HdSeed>()
+        val mappedList = listOf(mappedSeed1, mappedSeed2)
+
+        every { hdSeedDao.getAllAsFlow() } returns flowOf(entityList)
+        every { hdSeedMapper(entity1) } returns mappedSeed1
+        every { hdSeedMapper(entity2) } returns mappedSeed2
+
+        val result = sut.getAllAsFlow().first()
+
+        assertEquals(mappedList, result)
     }
 
     @Test
-    fun given_getHdSeedCountAsFlow_when_called_then_returnFlowOfInt() {
-        every { hdSeedDao.getTableSizeAsFlow() } returns flowOf(0)
-        sut.getHdSeedCountAsFlow()
+    fun `EXPECT correct count WHEN getting seed count as flow`() = runTest {
+        val count = 5
+        every { hdSeedDao.getTableSizeAsFlow() } returns flowOf(count)
+
+        val result = sut.getHdSeedCountAsFlow().first()
+
+        assertEquals(count, result)
     }
 
     @Test
-    fun given_getAllHdSeeds_when_called_then_returnListOfHdSeed() = runTest {
-        coEvery { hdSeedDao.getAll() } returns emptyList()
-        sut.getAllHdSeeds()
-    }
+    fun `EXPECT highest id value WHEN getting max seed id from populated database`() = runTest {
+        val maxId = 10
+        coEvery { hdSeedDao.getMaxSeedId() } returns maxId
 
-    @Test
-    fun given_seedId_when_getHdSeed_then_returnHdSeed() = runTest {
-        coEvery { hdSeedDao.get(1) } returns null
-        assertNull(sut.getHdSeed(1))
-    }
-
-    @Test
-    fun given_getMaxSeedId_when_called_then_returnMaxSeedId() = runTest {
-        val maxSeedId = 5
-        coEvery { hdSeedDao.getMaxSeedId() } returns maxSeedId
         val result = sut.getMaxSeedId()
-        assertEquals(maxSeedId, result)
+
+        assertEquals(maxId, result)
     }
 
     @Test
-    fun given_getMaxSeedId_when_noSeeds_then_returnNull() = runTest {
+    fun `EXPECT null WHEN getting max seed id from empty database`() = runTest {
         coEvery { hdSeedDao.getMaxSeedId() } returns null
+
         val result = sut.getMaxSeedId()
+
         assertNull(result)
     }
 
     @Test
-    fun given_seedId_when_getEncryptedEntropy_then_returnByteArray() = runTest {
-        coEvery { hdSeedDao.getEncryptedEntropy(1) } returns null
-        assertNull(sut.getEncryptedEntropy(1))
+    fun `EXPECT complete mapped list WHEN getting all seeds`() = runTest {
+        val entity1 = mockk<HdSeedEntity>()
+        val entity2 = mockk<HdSeedEntity>()
+        val entityList = listOf(entity1, entity2)
+
+        val mappedSeed1 = mockk<HdSeed>()
+        val mappedSeed2 = mockk<HdSeed>()
+        val mappedList = listOf(mappedSeed1, mappedSeed2)
+
+        coEvery { hdSeedDao.getAll() } returns entityList
+        every { hdSeedMapper(entity1) } returns mappedSeed1
+        every { hdSeedMapper(entity2) } returns mappedSeed2
+
+        val result = sut.getAllHdSeeds()
+
+        assertEquals(mappedList, result)
     }
 
     @Test
-    fun given_entropyCustomName_when_getAllHdSeed_then_returnListOfHdSeed() = runTest {
-        coEvery { hdSeedDao.getAll("test") } returns emptyList()
-        sut.getAllHdSeed("test")
+    fun `EXPECT correctly mapped seed WHEN getting seed by existing id`() = runTest {
+        val seedId = 123
+        val seedEntity = mockk<HdSeedEntity>()
+        val mappedSeed = mockk<HdSeed>()
+
+        coEvery { hdSeedDao.get(seedId) } returns seedEntity
+        every { hdSeedMapper(seedEntity) } returns mappedSeed
+
+        val result = sut.getHdSeed(seedId)
+
+        assertEquals(mappedSeed, result)
     }
 
     @Test
-    fun given_hdSeed_when_addHdSeed_then_returnLong() = runTest {
-        val hdSeed = mockk<HdSeed>()
-        val entropy = byteArrayOf(1, 2, 3)
-        val seed = byteArrayOf(4, 5, 6)
+    fun `EXPECT null WHEN getting seed by non-existent id`() = runTest {
+        val seedId = 123
+        coEvery { hdSeedDao.get(seedId) } returns null
+
+        val result = sut.getHdSeed(seedId)
+
+        assertNull(result)
+    }
+
+    @Test
+    fun `EXPECT entropy bytes WHEN getting encrypted entropy by existing id`() = runTest {
+        val seedId = 123
+        val entropy = ByteArray(32) { 1 }
+
+        coEvery { hdSeedDao.getEncryptedEntropy(seedId) } returns entropy
+
+        val result = sut.getEncryptedEntropy(seedId)
+
+        assertEquals(entropy, result)
+    }
+
+    @Test
+    fun `EXPECT null WHEN getting encrypted entropy by non-existent id`() = runTest {
+        val seedId = 123
+
+        coEvery { hdSeedDao.getEncryptedEntropy(seedId) } returns null
+
+        val result = sut.getEncryptedEntropy(seedId)
+
+        assertNull(result)
+    }
+
+    @Test
+    fun `EXPECT generated id value WHEN adding new seed`() = runTest {
+        val seedId = 123
+        val entropy = ByteArray(32) { 1 }
+        val seed = ByteArray(64) { 2 }
         val entity = mockk<HdSeedEntity>()
         val generatedId = 123L
 
-        every { hdSeedEntityMapper(hdSeed, entropy, seed) } returns entity
+        every { hdSeedEntityMapper(seedId, entropy, seed) } returns entity
         coEvery { hdSeedDao.insert(entity) } returns generatedId
 
-        val result = sut.addHdSeed(hdSeed, entropy, seed)
+        val result = sut.addHdSeed(seedId, entropy, seed)
+
         assertEquals(generatedId, result)
     }
 
     @Test
-    fun given_seedIdAndCustomName_when_setEntropyCustomName_then_success() = runTest {
+    fun `EXPECT successful completion WHEN deleting seed by id`() = runTest {
         val seedId = 123
-        val customName = "MyWallet"
 
-        coEvery { hdSeedDao.update(seedId, customName) } returns Unit
+        coEvery { hdSeedDao.delete(seedId) } returns Unit
 
-        sut.setEntropyCustomName(seedId, customName)
+        val result = sut.deleteHdSeed(seedId)
+
+        assertEquals(Unit, result)
     }
 
     @Test
-    fun given_seedId_when_deleteHdSeed_then_success() = runTest {
-        coEvery { hdSeedDao.delete(1) } returns Unit
-        sut.deleteHdSeed(1)
-    }
-
-    @Test
-    fun given_encryptedEntropy_when_deleteHdSeed_then_success() = runTest {
-        coEvery { hdSeedDao.delete(byteArrayOf(1, 2, 3)) } returns Unit
-        sut.deleteHdSeed(byteArrayOf(1, 2, 3))
-    }
-
-    @Test
-    fun given_deleteAllHdSeeds_when_called_then_success() = runTest {
+    fun `EXPECT successful completion WHEN clearing all seeds`() = runTest {
         coEvery { hdSeedDao.clearAll() } returns Unit
-        sut.deleteAllHdSeeds()
+
+        val result = sut.deleteAllHdSeeds()
+
+        assertEquals(Unit, result)
     }
 
     @Test
-    fun given_seedId_when_getEntropy_then_returnByteArray() = runTest {
-        coEvery { hdSeedDao.get(1) } returns null
-        assertNull(sut.getEntropy(1))
+    fun `EXPECT decrypted entropy bytes WHEN getting entropy by existing id`() = runTest {
+        val seedId = 123
+        val encryptedEntropy = ByteArray(32) { 1 }
+        val decryptedEntropy = ByteArray(32) { 2 }
+        val entity = mockk<HdSeedEntity>()
+        every { entity.encryptedEntropy } returns encryptedEntropy
+
+        coEvery { hdSeedDao.get(seedId) } returns entity
+        coEvery { aesPlatformManager.decryptByteArray(encryptedEntropy) } returns decryptedEntropy
+
+        val result = sut.getEntropy(seedId)
+
+        assertEquals(decryptedEntropy, result)
     }
 
     @Test
-    fun given_seedId_when_getSeed_then_returnByteArray() = runTest {
-        coEvery { hdSeedDao.get(1) } returns null
-        assertNull(sut.getSeed(1))
+    fun `EXPECT null WHEN getting entropy by non-existent id`() = runTest {
+        val seedId = 123
+
+        coEvery { hdSeedDao.get(seedId) } returns null
+
+        val result = sut.getEntropy(seedId)
+
+        assertNull(result)
+    }
+
+    @Test
+    fun `EXPECT decrypted seed bytes WHEN getting seed by existing id`() = runTest {
+        val seedId = 123
+        val encryptedSeed = ByteArray(64) { 1 }
+        val decryptedSeed = ByteArray(64) { 2 }
+        val entity = mockk<HdSeedEntity>()
+        every { entity.encryptedSeed } returns encryptedSeed
+
+        coEvery { hdSeedDao.get(seedId) } returns entity
+        coEvery { aesPlatformManager.decryptByteArray(encryptedSeed) } returns decryptedSeed
+
+        val result = sut.getSeed(seedId)
+
+        assertEquals(decryptedSeed, result)
     }
 }

@@ -13,7 +13,7 @@
 package com.algorand.wallet.account.local.data.mapper.entity
 
 import com.algorand.wallet.account.local.data.database.model.HdSeedEntity
-import com.algorand.wallet.account.local.domain.model.HdSeed
+import com.algorand.wallet.account.local.domain.mapper.entity.HdSeedEntityMapper
 import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import javax.inject.Inject
 
@@ -21,10 +21,9 @@ internal class HdSeedEntityMapperImpl @Inject constructor(
     private val aesPlatformManager: AESPlatformManager
 ) : HdSeedEntityMapper {
 
-    override fun invoke(hdSeed: HdSeed, entropy: ByteArray, seed: ByteArray): HdSeedEntity {
+    override fun invoke(seedId: Int, entropy: ByteArray, seed: ByteArray): HdSeedEntity {
         return HdSeedEntity(
             seedId = 0, // Let Room auto-generate the ID
-            entropyCustomName = hdSeed.seedCustomName,
             encryptedEntropy = aesPlatformManager.encryptByteArray(entropy),
             encryptedSeed = aesPlatformManager.encryptByteArray(seed)
         )

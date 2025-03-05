@@ -93,19 +93,19 @@ fun interface GetLocalAccount {
     suspend operator fun invoke(address: String): LocalAccount?
 }
 
-fun interface GetSecretKey {
+fun interface GetAlgo25SecretKey {
     suspend operator fun invoke(address: String): ByteArray?
 }
 
-fun interface GetPrivateKey {
+fun interface GetHdKeyPrivateKey {
     suspend operator fun invoke(address: String): ByteArray?
 }
 
-fun interface GetEntropy {
+fun interface GetHdEntropy {
     suspend operator fun invoke(seedId: Int): ByteArray?
 }
 
-fun interface GetSeed {
+fun interface GetHdSeed {
     suspend operator fun invoke(seedId: Int): ByteArray?
 }
 

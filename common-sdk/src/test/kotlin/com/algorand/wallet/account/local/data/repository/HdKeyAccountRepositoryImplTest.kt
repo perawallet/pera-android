@@ -14,14 +14,15 @@ package com.algorand.wallet.account.local.data.repository
 
 import com.algorand.wallet.account.local.data.database.dao.HdKeyDao
 import com.algorand.wallet.account.local.data.database.model.HdKeyEntity
-import com.algorand.wallet.account.local.data.mapper.entity.HdKeyEntityMapper
-import com.algorand.wallet.account.local.data.mapper.model.HdKeyMapper
+import com.algorand.wallet.account.local.domain.mapper.entity.HdKeyEntityMapper
+import com.algorand.wallet.account.local.domain.mapper.model.HdKeyMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.encryption.domain.services.AESPlatformManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
@@ -99,7 +100,6 @@ class HdKeyAccountRepositoryImplTest {
         coEvery { hdKeyDao.getAllAddresses() } returns addresses
 
         val result = sut.getAllAddresses()
-
         assertEquals(addresses, result)
     }
 
@@ -124,7 +124,7 @@ class HdKeyAccountRepositoryImplTest {
         val result = sut.getAccount("non_existent_address")
 
         coVerify { hdKeyDao.get("non_existent_address") }
-        assertEquals(null, result)
+        assertNull(result)
     }
 
     @Test
@@ -136,27 +136,30 @@ class HdKeyAccountRepositoryImplTest {
         coEvery { hdKeyEntityMapper(account, privateKey) } returns entity
         coEvery { hdKeyDao.insert(entity) } returns Unit
 
-        sut.addAccount(account, privateKey)
+        val result = sut.addAccount(account, privateKey)
 
         coVerify { hdKeyDao.insert(entity) }
+        assertEquals(Unit, result)
     }
 
     @Test
     fun `EXPECT account to be deleted WHEN deleteAccount is invoked`() = runTest {
         coEvery { hdKeyDao.delete("address") } returns Unit
 
-        sut.deleteAccount("address")
+        val result = sut.deleteAccount("address")
 
         coVerify { hdKeyDao.delete("address") }
+        assertEquals(Unit, result)
     }
 
     @Test
     fun `EXPECT all accounts to be deleted WHEN deleteAllAccounts is invoked`() = runTest {
         coEvery { hdKeyDao.clearAll() } returns Unit
 
-        sut.deleteAllAccounts()
+        val result = sut.deleteAllAccounts()
 
         coVerify { hdKeyDao.clearAll() }
+        assertEquals(Unit, result)
     }
 
     @Test
@@ -167,7 +170,6 @@ class HdKeyAccountRepositoryImplTest {
         coEvery { aesPlatformManager.decryptByteArray(encryptedSK) } returns decryptedSK
 
         val result = sut.getPrivateKey("address")
-
         assertEquals(decryptedSK, result)
     }
 

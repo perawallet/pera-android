@@ -13,8 +13,8 @@
 package com.algorand.wallet.account.local.data.repository
 
 import com.algorand.wallet.account.local.data.database.dao.LedgerBleDao
-import com.algorand.wallet.account.local.data.mapper.entity.LedgerBleEntityMapper
-import com.algorand.wallet.account.local.data.mapper.model.LedgerBleMapper
+import com.algorand.wallet.account.local.domain.mapper.entity.LedgerBleEntityMapper
+import com.algorand.wallet.account.local.domain.mapper.model.LedgerBleMapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount.LedgerBle
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import javax.inject.Inject

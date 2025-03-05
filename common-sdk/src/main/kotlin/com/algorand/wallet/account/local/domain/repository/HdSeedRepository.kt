@@ -29,15 +29,9 @@ internal interface HdSeedRepository {
 
     suspend fun getEncryptedEntropy(seedId: Int): ByteArray?
 
-    suspend fun getAllHdSeed(entropyCustomName: String): List<HdSeed>
-
-    suspend fun setEntropyCustomName(seedId: Int, customName: String)
-
-    suspend fun addHdSeed(hdSeed: HdSeed, entropy: ByteArray, seed: ByteArray): Long
+    suspend fun addHdSeed(seedId: Int, entropy: ByteArray, seed: ByteArray): Long
 
     suspend fun deleteHdSeed(seedId: Int)
-
-    suspend fun deleteHdSeed(encrypted_entropy: ByteArray)
 
     suspend fun deleteAllHdSeeds()
 

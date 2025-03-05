@@ -12,33 +12,36 @@
 
 package com.algorand.wallet.account.core.domain.usecase
 
-import cash.z.ecc.android.bip39.Mnemonics
-import cash.z.ecc.android.bip39.toSeed
-import com.algorand.wallet.account.local.domain.model.HdSeed
+import com.algorand.wallet.account.info.domain.model.EntropyInformation
+import com.algorand.wallet.account.info.domain.repository.EntropyInformationRepository
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
+import com.algorand.wallet.algosdk.transaction.sdk.Bip39MnemonicGenerator
 import javax.inject.Inject
 
 internal class AddHdSeedUseCase @Inject constructor(
-    private val hdSeedRepository: HdSeedRepository
+    private val hdSeedRepository: HdSeedRepository,
+    private val entropyInformationRepository: EntropyInformationRepository,
+    private val bip39MnemonicGenerator: Bip39MnemonicGenerator
 ) : AddHdSeed {
 
     override suspend fun invoke(entropy: ByteArray): Int {
-        val mnemonic = Mnemonics.MnemonicCode(entropy)
-        val seed = mnemonic.toSeed()
-        val entropy = mnemonic.toEntropy()
-        val entropyInitialCustomName = "Wallet #"
+        var seed = bip39MnemonicGenerator.getSeedFromEntropy(entropy)
+        seed?.let {
+            val newSeedIdInDB = hdSeedRepository.addHdSeed(
+                seedId = 0, // Seed will be auto-generated, update name next step
+                seed = it,
+                entropy = entropy
+            ).toInt()
 
-        val seedId = hdSeedRepository.addHdSeed(
-            hdSeed = HdSeed(
-                0,
-                entropyInitialCustomName
-            ), // Seed will be auto-generated, update name next step
-            seed = seed,
-            entropy = entropy
-        ).toInt()
-
-        hdSeedRepository.setEntropyCustomName(seedId, "Wallet #${seedId}")
-
-        return seedId
+            entropyInformationRepository.addEntropyInformation(
+                EntropyInformation(
+                    seedId = newSeedIdInDB,
+                    entropyCustomName = "Wallet #${newSeedIdInDB}"
+                ) )
+            seed = ByteArray(0)
+            return newSeedIdInDB
+        } ?: run {
+            return -1
+        }
     }
 }

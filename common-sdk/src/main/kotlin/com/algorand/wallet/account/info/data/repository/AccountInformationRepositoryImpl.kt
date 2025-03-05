@@ -12,20 +12,21 @@
 
 package com.algorand.wallet.account.info.data.repository
 
-import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCache
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
-import com.algorand.wallet.account.info.data.mapper.AccountInformationMapper
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapper
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
-import com.algorand.wallet.account.info.data.mapper.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
+import com.algorand.wallet.account.info.domain.mapper.entity.AccountInformationMapper
+import com.algorand.wallet.account.info.domain.mapper.entity.AssetHoldingEntityMapper
+import com.algorand.wallet.account.info.domain.mapper.entity.AssetHoldingMapper
+import com.algorand.wallet.account.info.domain.mapper.entity.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
+import com.algorand.wallet.account.info.domain.service.AccountInformationErrorCache
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -34,7 +35,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 internal class AccountInformationRepositoryImpl @Inject constructor(
     private val indexerApi: AccountInformationApiService,

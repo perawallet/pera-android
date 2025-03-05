@@ -16,10 +16,7 @@ import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.coroutineScope
-import com.algorand.algosdk.crypto.Address
-import com.algorand.algosdk.crypto.Signature
 import com.algorand.algosdk.sdk.BytesArray
-import com.algorand.algosdk.transaction.SignedTransaction
 import com.algorand.algosdk.transaction.Transaction
 import com.algorand.algosdk.util.Encoder
 import com.algorand.android.R
@@ -62,13 +59,9 @@ import com.algorand.android.utils.toBytesArray
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
-import com.algorand.wallet.account.local.domain.usecase.GetSecretKey
-import com.algorand.wallet.account.local.domain.usecase.GetSeed
+import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import foundation.algorand.xhdwalletapi.KeyContext
-import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import java.math.BigInteger
 import java.net.ConnectException
 import java.net.SocketException
@@ -84,9 +77,8 @@ class TransactionSignManager @Inject constructor(
     private val signHelper: TransactionSignSigningHelper,
     private val getAccountInformation: GetAccountInformation,
     private val getAccountMinBalance: GetAccountMinBalance,
-    private val getSecretKey: GetSecretKey,
-    private val getSeed: GetSeed,
-    private val getLocalAccount: GetLocalAccount
+    private val getAlgo25SecretKey: GetAlgo25SecretKey,
+    private val algoAccountSdk: AlgoAccountSdk
 ) : LifecycleScopedCoroutineOwner() {
 
     val transactionManagerResultLiveData = MutableLiveData<Event<TransactionManagerResult>?>()
@@ -252,7 +244,7 @@ class TransactionSignManager @Inject constructor(
     private suspend fun TransactionSignData.signTxn() {
         when (signer) {
             is TransactionSigner.Algo25 -> {
-                val secretKey = getSecretKey(signer.address) ?: run {
+                val secretKey = getAlgo25SecretKey(signer.address) ?: run {
                     setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
                     return
                 }
@@ -260,33 +252,10 @@ class TransactionSignManager @Inject constructor(
             }
             is TransactionSigner.HdKey -> {
                 val tx = Encoder.decodeFromMsgPack(transactionByteArray, Transaction::class.java)
-                val hdKey = getLocalAccount(signer.address) as? LocalAccount.HdKey ?: run {
+                val stx = algoAccountSdk.createSignedTransaction(signer.address, tx) ?: run {
                     setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
                     return
                 }
-                val seed = getSeed(seedId = hdKey.seedId) ?: run {
-                    setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
-                    return
-                }
-
-                val xHDWalletAPI = XHDWalletAPIAndroid(seed)
-                val (accountIndex, changeIndex, keyIndex) = listOf(
-                    hdKey.account.toUInt(),
-                    hdKey.change.toUInt(),
-                    hdKey.keyIndex.toUInt()
-                )
-
-                val txSig = Signature(
-                    xHDWalletAPI.signAlgoTransaction(
-                        KeyContext.Address, accountIndex, changeIndex, keyIndex, tx.bytesToSign()
-                    )
-                )
-
-                val pkAddress = Address(hdKey.publicKey)
-                val stx = SignedTransaction(tx, txSig, tx.txID()).apply {
-                    if (tx.sender != pkAddress) authAddr(pkAddress)
-                }
-
                 checkAndCacheSignedTransaction(Encoder.encodeToMsgPack(stx))
             }
             is TransactionSigner.LedgerBle -> sendTransactionWithLedger(signer as TransactionSigner.LedgerBle)

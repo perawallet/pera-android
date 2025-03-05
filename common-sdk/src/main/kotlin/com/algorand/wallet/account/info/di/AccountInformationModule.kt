@@ -12,24 +12,18 @@
 
 package com.algorand.wallet.account.info.di
 
-import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCache
-import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCacheImpl
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
-import com.algorand.wallet.account.info.data.mapper.AccountInformationEntityMapper
-import com.algorand.wallet.account.info.data.mapper.AccountInformationEntityMapperImpl
-import com.algorand.wallet.account.info.data.mapper.AccountInformationMapper
-import com.algorand.wallet.account.info.data.mapper.AccountInformationMapperImpl
-import com.algorand.wallet.account.info.data.mapper.AccountInformationResponseMapper
-import com.algorand.wallet.account.info.data.mapper.AccountInformationResponseMapperImpl
-import com.algorand.wallet.account.info.data.mapper.AppStateSchemeMapper
-import com.algorand.wallet.account.info.data.mapper.AppStateSchemeMapperImpl
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapper
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapperImpl
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapperImpl
-import com.algorand.wallet.account.info.data.mapper.AssetStatusEntityMapper
-import com.algorand.wallet.account.info.data.mapper.AssetStatusEntityMapperImpl
+import com.algorand.wallet.account.info.data.database.dao.EntropyInformationDao
+import com.algorand.wallet.account.info.data.mapper.entity.AccountInformationEntityMapperImpl
+import com.algorand.wallet.account.info.data.mapper.entity.AccountInformationMapperImpl
+import com.algorand.wallet.account.info.data.mapper.entity.AccountInformationResponseMapperImpl
+import com.algorand.wallet.account.info.data.mapper.entity.AppStateSchemeMapperImpl
+import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapperImpl
+import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingMapperImpl
+import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapperImpl
+import com.algorand.wallet.account.info.data.mapper.entity.EntropyInformationEntityMapperImpl
+import com.algorand.wallet.account.info.data.mapper.model.EntropyInformationMapperImpl
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelper
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelperImpl
 import com.algorand.wallet.account.info.data.repository.AccountInformationCacheHelper
@@ -39,10 +33,23 @@ import com.algorand.wallet.account.info.data.repository.AccountInformationFetchH
 import com.algorand.wallet.account.info.data.repository.AccountInformationRepositoryImpl
 import com.algorand.wallet.account.info.data.repository.AssetHoldingCacheHelper
 import com.algorand.wallet.account.info.data.repository.AssetHoldingCacheHelperImpl
+import com.algorand.wallet.account.info.data.repository.EntropyInformationRepositoryImpl
+import com.algorand.wallet.account.info.data.service.AccountCacheManagerImpl
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
-import com.algorand.wallet.account.info.domain.manager.AccountCacheManager
-import com.algorand.wallet.account.info.domain.manager.AccountCacheManagerImpl
+import com.algorand.wallet.account.info.data.service.AccountInformationErrorCacheImpl
+import com.algorand.wallet.account.info.domain.mapper.entity.AccountInformationEntityMapper
+import com.algorand.wallet.account.info.domain.mapper.entity.AccountInformationMapper
+import com.algorand.wallet.account.info.domain.mapper.entity.AccountInformationResponseMapper
+import com.algorand.wallet.account.info.domain.mapper.entity.AppStateSchemeMapper
+import com.algorand.wallet.account.info.domain.mapper.entity.AssetHoldingEntityMapper
+import com.algorand.wallet.account.info.domain.mapper.entity.AssetHoldingMapper
+import com.algorand.wallet.account.info.domain.mapper.entity.AssetStatusEntityMapper
+import com.algorand.wallet.account.info.domain.mapper.entity.EntropyInformationEntityMapper
+import com.algorand.wallet.account.info.domain.mapper.model.EntropyInformationMapper
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
+import com.algorand.wallet.account.info.domain.repository.EntropyInformationRepository
+import com.algorand.wallet.account.info.domain.service.AccountCacheManager
+import com.algorand.wallet.account.info.domain.service.AccountInformationErrorCache
 import com.algorand.wallet.account.info.domain.usecase.AddAssetHoldingToAccountAsPending
 import com.algorand.wallet.account.info.domain.usecase.ClearAccountInformationCache
 import com.algorand.wallet.account.info.domain.usecase.DeleteAccountInformation
@@ -76,9 +83,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
-import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -95,6 +102,10 @@ internal object AccountInformationModule {
     ): AccountInformationApiService {
         return retrofit.create(AccountInformationApiService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideEntropyInformationRepository(impl: EntropyInformationRepositoryImpl): EntropyInformationRepository = impl
 
     @Provides
     @Singleton
@@ -140,6 +151,9 @@ internal object AccountInformationModule {
     fun provideAssetHoldingMapper(impl: AssetHoldingMapperImpl): AssetHoldingMapper = impl
 
     @Provides
+    fun provideEntropyInformationDao(database: PeraDatabase): EntropyInformationDao = database.entropyInformationDao()
+
+    @Provides
     fun provideAccountInformationDao(database: PeraDatabase): AccountInformationDao = database.accountInformationDao()
 
     @Provides
@@ -151,6 +165,11 @@ internal object AccountInformationModule {
     ): AccountInformationResponseMapper = impl
 
     @Provides
+    fun provideEntropyInformationEntityMapper(
+        impl: EntropyInformationEntityMapperImpl
+    ): EntropyInformationEntityMapper = impl
+
+    @Provides
     fun provideAccountInformationEntityMapper(
         impl: AccountInformationEntityMapperImpl
     ): AccountInformationEntityMapper = impl
@@ -159,6 +178,11 @@ internal object AccountInformationModule {
     fun provideAssetHoldingEntityMapper(
         impl: AssetHoldingEntityMapperImpl
     ): AssetHoldingEntityMapper = impl
+
+    @Provides
+    fun provideEntropyInformationMapper(
+        impl: EntropyInformationMapperImpl
+    ): EntropyInformationMapper = impl
 
     @Provides
     fun provideGetAccountDetailCacheStatusFlow(

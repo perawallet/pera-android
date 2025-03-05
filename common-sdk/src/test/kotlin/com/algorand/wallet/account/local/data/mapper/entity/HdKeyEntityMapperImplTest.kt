@@ -13,7 +13,7 @@
 package com.algorand.wallet.account.local.data.mapper.entity
 
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.encryption.domain.services.AESPlatformManager
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals

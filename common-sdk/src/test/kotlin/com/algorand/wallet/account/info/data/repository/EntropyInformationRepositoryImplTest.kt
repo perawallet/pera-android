@@ -2,8 +2,8 @@ package com.algorand.wallet.account.info.data.repository
 
 import com.algorand.wallet.account.info.data.database.dao.EntropyInformationDao
 import com.algorand.wallet.account.info.data.database.model.EntropyInformationEntity
-import com.algorand.wallet.account.info.domain.mapper.entity.EntropyInformationEntityMapper
-import com.algorand.wallet.account.info.domain.mapper.model.EntropyInformationMapper
+import com.algorand.wallet.account.info.data.mapper.entity.EntropyInformationEntityMapper
+import com.algorand.wallet.account.info.data.mapper.model.EntropyInformationMapper
 import com.algorand.wallet.account.info.domain.model.EntropyInformation
 import io.mockk.coEvery
 import io.mockk.every

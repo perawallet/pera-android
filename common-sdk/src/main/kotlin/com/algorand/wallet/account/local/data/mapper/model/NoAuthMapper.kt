@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.mapper.entity
+package com.algorand.wallet.account.local.data.mapper.model
 
-import com.algorand.wallet.account.local.data.database.model.HdKeyEntity
+import com.algorand.wallet.account.local.data.database.model.NoAuthEntity
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 
-internal interface HdKeyEntityMapper {
-    operator fun invoke(localAccount: LocalAccount.HdKey, privateKey: ByteArray): HdKeyEntity
+internal interface NoAuthMapper {
+    operator fun invoke(entity: NoAuthEntity): LocalAccount.NoAuth
 }

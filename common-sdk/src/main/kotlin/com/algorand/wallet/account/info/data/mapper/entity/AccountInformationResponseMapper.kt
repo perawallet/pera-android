@@ -10,12 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.mapper.entity
+package com.algorand.wallet.account.info.data.mapper.entity
 
-import com.algorand.wallet.account.local.data.database.model.NoAuthEntity
-import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 
-internal interface NoAuthEntityMapper {
-
-    operator fun invoke(localAccount: LocalAccount.NoAuth): NoAuthEntity
+internal interface AccountInformationResponseMapper {
+    fun createEmptyAccount(address: String): AccountInformationResponse
 }

@@ -12,8 +12,6 @@
 
 package com.algorand.wallet.account.info.data.mapper.entity
 
-import com.algorand.wallet.account.info.domain.mapper.entity.AppStateSchemeMapper
-import com.algorand.wallet.account.info.domain.mapper.entity.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.account.info.data.model.AccountInformationResponsePayloadResponse
 import com.algorand.wallet.account.info.data.model.AppStateSchemaResponse

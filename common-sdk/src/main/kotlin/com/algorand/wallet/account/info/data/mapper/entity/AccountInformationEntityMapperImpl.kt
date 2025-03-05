@@ -14,7 +14,6 @@ package com.algorand.wallet.account.info.data.mapper.entity
 
 import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
-import com.algorand.wallet.account.info.domain.mapper.entity.AccountInformationEntityMapper
 import javax.inject.Inject
 
 internal class AccountInformationEntityMapperImpl @Inject constructor() :

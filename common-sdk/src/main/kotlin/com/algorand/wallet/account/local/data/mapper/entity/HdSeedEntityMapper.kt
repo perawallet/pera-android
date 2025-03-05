@@ -10,11 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.domain.mapper.entity
+package com.algorand.wallet.account.local.data.mapper.entity
 
-import com.algorand.wallet.account.info.data.model.AccountInformationResponse
-import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
+import com.algorand.wallet.account.local.data.database.model.HdSeedEntity
 
-internal interface AccountInformationEntityMapper {
-    operator fun invoke(response: AccountInformationResponse): AccountInformationEntity?
+internal interface HdSeedEntityMapper {
+    operator fun invoke(seedId: Int, entropy: ByteArray, seed: ByteArray): HdSeedEntity
 }

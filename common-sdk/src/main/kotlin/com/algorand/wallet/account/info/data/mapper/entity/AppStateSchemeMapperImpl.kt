@@ -13,7 +13,6 @@
 package com.algorand.wallet.account.info.data.mapper.entity
 
 import com.algorand.wallet.account.info.data.model.AppStateSchemaResponse
-import com.algorand.wallet.account.info.domain.mapper.entity.AppStateSchemeMapper
 import com.algorand.wallet.account.info.domain.model.AppStateScheme
 import javax.inject.Inject
 

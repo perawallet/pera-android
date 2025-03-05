@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.data.services
+package com.algorand.wallet.encryption.data.manager
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import com.algorand.wallet.encryption.domain.services.AESPlatformManager
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import java.security.KeyStore
 import java.util.Base64
 import javax.crypto.Cipher

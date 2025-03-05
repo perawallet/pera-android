@@ -13,7 +13,6 @@
 package com.algorand.wallet.account.info.data.mapper.entity
 
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
-import com.algorand.wallet.account.info.domain.mapper.entity.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import javax.inject.Inject
 

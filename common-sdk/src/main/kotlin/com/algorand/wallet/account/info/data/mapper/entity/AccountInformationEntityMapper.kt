@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.mapper.entity
+package com.algorand.wallet.account.info.data.mapper.entity
 
-import com.algorand.wallet.account.local.data.database.model.Algo25Entity
-import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.info.data.model.AccountInformationResponse
+import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
 
-internal interface Algo25EntityMapper {
-    operator fun invoke(localAccount: LocalAccount.Algo25, privateKey: ByteArray): Algo25Entity
+internal interface AccountInformationEntityMapper {
+    operator fun invoke(response: AccountInformationResponse): AccountInformationEntity?
 }

@@ -13,7 +13,6 @@
 package com.algorand.wallet.account.local.data.mapper.model
 
 import com.algorand.wallet.account.local.data.database.model.HdSeedEntity
-import com.algorand.wallet.account.local.domain.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import javax.inject.Inject
 

@@ -12,10 +12,10 @@
 
 package com.algorand.wallet.encryption.di
 
-import com.algorand.wallet.encryption.data.services.AESPlatformManagerImpl
-import com.algorand.wallet.encryption.data.services.Base64ManagerImpl
-import com.algorand.wallet.encryption.domain.services.AESPlatformManager
-import com.algorand.wallet.encryption.domain.services.Base64Manager
+import com.algorand.wallet.encryption.data.manager.AESPlatformManagerImpl
+import com.algorand.wallet.encryption.data.manager.Base64ManagerImpl
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

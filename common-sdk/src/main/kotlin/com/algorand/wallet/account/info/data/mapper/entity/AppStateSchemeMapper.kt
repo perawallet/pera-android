@@ -10,10 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.domain.services
+package com.algorand.wallet.account.info.data.mapper.entity
 
-interface Base64Manager {
-    fun encode(byteArray: ByteArray): String
-    fun decode(value: String): ByteArray
-    fun decode(value: String, flags: Int): ByteArray
+import com.algorand.wallet.account.info.data.model.AppStateSchemaResponse
+import com.algorand.wallet.account.info.domain.model.AppStateScheme
+
+internal interface AppStateSchemeMapper {
+    operator fun invoke(response: AppStateSchemaResponse?): AppStateScheme
+    operator fun invoke(numByteSlice: Long?, numUint: Long?): AppStateScheme
 }

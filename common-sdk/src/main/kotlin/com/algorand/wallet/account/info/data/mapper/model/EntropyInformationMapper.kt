@@ -10,12 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.domain.mapper.entity
+package com.algorand.wallet.account.info.data.mapper.model
 
-import com.algorand.wallet.account.info.data.model.AppStateSchemaResponse
-import com.algorand.wallet.account.info.domain.model.AppStateScheme
+import com.algorand.wallet.account.info.data.database.model.EntropyInformationEntity
+import com.algorand.wallet.account.info.domain.model.EntropyInformation
 
-internal interface AppStateSchemeMapper {
-    operator fun invoke(response: AppStateSchemaResponse?): AppStateScheme
-    operator fun invoke(numByteSlice: Long?, numUint: Long?): AppStateScheme
+internal interface EntropyInformationMapper {
+    operator fun invoke(entity: EntropyInformationEntity): EntropyInformation
 }

@@ -10,11 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.mapper.model
+package com.algorand.wallet.account.local.data.mapper.entity
 
-import com.algorand.wallet.account.local.data.database.model.LedgerBleEntity
+import com.algorand.wallet.account.local.data.database.model.NoAuthEntity
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 
-internal interface LedgerBleMapper {
-    operator fun invoke(entity: LedgerBleEntity): LocalAccount.LedgerBle
+internal interface NoAuthEntityMapper {
+
+    operator fun invoke(localAccount: LocalAccount.NoAuth): NoAuthEntity
 }

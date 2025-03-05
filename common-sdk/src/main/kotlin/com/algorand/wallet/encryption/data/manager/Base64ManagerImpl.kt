@@ -10,9 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.data.services
+package com.algorand.wallet.encryption.data.manager
 
-import com.algorand.wallet.encryption.domain.services.Base64Manager
+import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import javax.inject.Inject
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi

@@ -14,8 +14,6 @@ package com.algorand.wallet.account.info.data.mapper.entity
 
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
-import com.algorand.wallet.account.info.domain.mapper.entity.AssetHoldingEntityMapper
-import com.algorand.wallet.account.info.domain.mapper.entity.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import java.math.BigInteger
 import javax.inject.Inject

@@ -17,6 +17,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +29,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -36,17 +36,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.PeraHeadelineText
+import com.algorand.android.ui.compose.widget.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -73,14 +73,14 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Title(modifier: Modifier) =
-        PeraTitleText(
+        PeraHeadelineText(
             modifier = modifier,
             text = stringResource(id = R.string.recover_an_algorand)
         )
 
     @Composable
     override fun Description(modifier: Modifier) =
-        PeraDescriptionText(
+        PeraBodyText(
             modifier = modifier,
             text = stringResource(id = R.string.in_the_following)
         )
@@ -107,7 +107,44 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
         )
     }
 
-    @ExperimentalMaterial3Api
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Suppress("MagicNumber")
+    @Composable
+    fun BottomSheetHeader(bottomSheetState: BottomSheetScaffoldState) {
+        val coroutineScope = rememberCoroutineScope()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 10.dp,
+                    end = 40.dp,
+                    bottom = 24.dp
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            IconButton(
+                onClick = {
+                    coroutineScope.launch {
+                        bottomSheetState.bottomSheetState.hide()
+                    }
+                }) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = "Close"
+                )
+            }
+            Spacer(Modifier.weight(0.1f))
+
+            PeraHeadlineText(
+                text = "Select your Mnemonic type"
+            )
+            Spacer(Modifier.weight(1f))
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun BottomSheetContent(bottomSheetState: BottomSheetScaffoldState) {
         val coroutineScope = rememberCoroutineScope()
@@ -118,27 +155,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = {
-                    coroutineScope.launch {
-                        bottomSheetState.bottomSheetState.hide()
-                    }
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Close"
-                    )
-                }
-                Text(
-                    text = "Select your Mnemonic type",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+            BottomSheetHeader(bottomSheetState)
 
             MnemonicTypeCard(
                 title = "Bip39",
@@ -148,7 +165,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                     // onMnemonicTypeSelected("Algo25")
                     navigateToRecoverWithPassphraseFragment()
                     coroutineScope.launch {
-                        bottomSheetState.bottomSheetState.hide()
+                        bottomSheetState.bottomSheetState.hide() // Use sheetState directly
                     }
                 }
             )
@@ -160,7 +177,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 onClick = {
                     navigateToRecoverWithPassphraseFragment()
                     coroutineScope.launch {
-                        bottomSheetState.bottomSheetState.hide()
+                        bottomSheetState.bottomSheetState.hide() // Use sheetState directly
                     }
                 }
             )

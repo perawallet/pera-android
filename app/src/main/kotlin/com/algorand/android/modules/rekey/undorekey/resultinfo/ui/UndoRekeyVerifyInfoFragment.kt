@@ -27,10 +27,10 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -61,7 +61,7 @@ class UndoRekeyVerifyInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Title(modifier: Modifier) =
-        PeraTitleText(
+        PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.rekey_successfully_undone)
         )
@@ -70,7 +70,7 @@ class UndoRekeyVerifyInfoFragment : BaseInfoFragment() {
     override fun Description(modifier: Modifier) {
         val accountDisplayName by undoRekeyVerifyInfoViewModel.accountDisplayName.collectAsState()
 
-        PeraDescriptionText(
+        PeraBodyText(
             text = stringResource(
                 id = R.string.the_account_has_been_reverted,
                 accountDisplayName

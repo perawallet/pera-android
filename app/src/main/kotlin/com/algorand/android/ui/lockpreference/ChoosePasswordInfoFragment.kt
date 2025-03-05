@@ -29,11 +29,11 @@ import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraDescriptionText
+import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.PeraIconBig
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraSecondaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
 import com.algorand.android.utils.preference.setLockDontAskAgain
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -79,14 +79,14 @@ class ChoosePasswordInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Title(modifier: Modifier) =
-        PeraTitleText(
+        PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.increase_your_security)
         )
 
     @Composable
     override fun Description(modifier: Modifier) =
-        PeraDescriptionText(
+        PeraBodyText(
             text = stringResource(id = R.string.this_6_digit_pin),
             modifier = modifier
         )

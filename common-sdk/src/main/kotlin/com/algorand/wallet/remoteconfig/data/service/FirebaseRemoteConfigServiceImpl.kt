@@ -14,14 +14,22 @@ package com.algorand.wallet.remoteconfig.data.service
 
 import android.util.Log
 import com.algorand.wallet.remoteconfig.domain.service.FirebaseRemoteConfigService
+import com.google.firebase.BuildConfig
+import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.google.firebase.remoteconfig.remoteConfig
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-internal class FirebaseRemoteConfigServiceImpl @Inject constructor(
-    private val remoteConfig: FirebaseRemoteConfig
-) : FirebaseRemoteConfigService {
+internal class FirebaseRemoteConfigServiceImpl @Inject constructor() : FirebaseRemoteConfigService {
+
+    private val remoteConfig: FirebaseRemoteConfig by lazy {
+        Firebase.remoteConfig.apply {
+            setConfigSettingsAsync(getFirebaseRemoteConfigSettings())
+        }
+    }
 
     override suspend fun fetchRemoteConfig() = suspendCoroutine { continuation ->
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
@@ -39,7 +47,14 @@ internal class FirebaseRemoteConfigServiceImpl @Inject constructor(
         return remoteConfig.getBoolean(key)
     }
 
+    private fun getFirebaseRemoteConfigSettings(): FirebaseRemoteConfigSettings {
+        return FirebaseRemoteConfigSettings.Builder()
+            .setMinimumFetchIntervalInSeconds(if (BuildConfig.DEBUG) 0L else FETCH_INTERVAL_IN_SECS)
+            .build()
+    }
+
     private companion object {
+        const val FETCH_INTERVAL_IN_SECS: Long = 3600L // 1 hour
         const val TAG = "FirebaseRemoteConfigServiceImpl"
     }
 }

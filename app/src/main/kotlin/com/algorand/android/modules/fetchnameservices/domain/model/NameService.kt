@@ -12,6 +12,8 @@
 
 package com.algorand.android.modules.fetchnameservices.domain.model
 
+import com.algorand.wallet.nameservice.domain.model.NameServiceSource
+
 data class NameService(
     val accountAddress: String,
     val nameServiceName: String?,

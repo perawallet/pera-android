@@ -10,20 +10,21 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.domain.usecase
+package com.algorand.android.modules.firebase.token.di
 
-import com.algorand.wallet.analytics.domain.model.FirebaseTokenStatus
-import com.algorand.wallet.analytics.domain.model.ReferrerData
-import kotlinx.coroutines.flow.Flow
+import com.algorand.android.modules.firebase.token.usecase.GetFirebaseTokenStatusFlowUseCase
+import com.algorand.wallet.analytics.domain.usecase.GetFirebaseTokenStatusFlow
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-fun interface GetReferrerData {
-    suspend operator fun invoke(): ReferrerData
-}
+@Module
+@InstallIn(SingletonComponent::class)
+object FirebaseModule {
 
-fun interface SaveReferrerData {
-    suspend operator fun invoke(referrerData: ReferrerData)
-}
-
-fun interface GetFirebaseTokenStatusFlow {
-    operator fun invoke(): Flow<FirebaseTokenStatus>
+    @Provides
+    fun provideGetFirebaseTokenStatusFlow(
+        useCase: GetFirebaseTokenStatusFlowUseCase
+    ): GetFirebaseTokenStatusFlow = useCase
 }

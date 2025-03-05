@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.custom.domain.mapper.model
+package com.algorand.wallet.account.custom.data.mapper.entity
 
 import com.algorand.wallet.account.custom.data.database.model.CustomInfoEntity
 import com.algorand.wallet.account.custom.domain.model.CustomInfo
 
-internal interface CustomInfoMapper {
-    operator fun invoke(address: String, customInfoEntity: CustomInfoEntity?): CustomInfo
+internal interface CustomInfoEntityMapper {
+    operator fun invoke(customInfo: CustomInfo): CustomInfoEntity
 }

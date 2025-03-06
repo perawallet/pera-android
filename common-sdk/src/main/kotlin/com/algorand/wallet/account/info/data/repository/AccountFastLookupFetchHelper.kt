@@ -10,16 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.transaction.sdk
+package com.algorand.wallet.account.info.data.repository
 
-import com.algorand.wallet.algosdk.model.Algo25Account
-import com.algorand.wallet.algosdk.model.HdKeyAccount
+import com.algorand.wallet.account.info.data.model.AccountFastLookupResponse
+import com.algorand.wallet.foundation.PeraResult
 
-interface AlgoAccountSdk {
-
-    fun createHdAccount(): HdKeyAccount?
-
-    fun createAlgo25Account(): Algo25Account?
-
-    fun recoverAlgo25Account(mnemonic: String): Algo25Account?
+internal interface AccountFastLookupFetchHelper {
+    suspend fun fetchAccountFastLookup(accountAddress: String): PeraResult<AccountFastLookupResponse>
 }

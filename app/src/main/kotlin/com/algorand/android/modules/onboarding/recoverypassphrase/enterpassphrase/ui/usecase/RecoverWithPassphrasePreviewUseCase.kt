@@ -32,10 +32,12 @@ import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
+import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 
 class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val recoverWithPassphrasePreviewMapper: RecoverWithPassphrasePreviewMapper,
@@ -44,7 +46,9 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val accountManager: AccountManager,
     private val getRekeyedAccountUseCase: GetRekeyedAccountUseCase,
     private val accountStateHelperUseCase: AccountStateHelperUseCase,
-    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
+    private val aesPlatformManager: AESPlatformManager,
+    private val peraBip39Sdk: PeraBip39Sdk
 ) {
 
     fun getRecoverWithPassphraseInitialPreview(
@@ -128,44 +132,49 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         )
     }
 
-    @SuppressWarnings("MagicNumber")
-    fun validateEnteredMnemonics(preview: RecoverWithPassphrasePreview) = flow {
+    @SuppressWarnings("MagicNumber", "LongMethod")
+    fun validateEnteredMnemonics(
+        preview: RecoverWithPassphrasePreview,
+        onboardingAccountType: OnboardingAccountType
+    ) = flow {
         try {
             emit(preview.copy(showLoadingDialogEvent = Event(Unit)))
             // faking the duration of this process for some time before moving forward
             // so the loading animation is effective.
             // After deleting it delete also the @SuppressWarnings("MagicNumber")
             delay(2500L)
-            val mnemonics = passphraseInputConfigurationUtil.getOrderedInput(preview.passphraseInputGroupConfiguration)
-            val privateKey = Sdk.mnemonicToPrivateKey(mnemonics.lowercase(Locale.ENGLISH))
-            if (privateKey == null) {
+
+            var accountAddress = ""
+            var mnemonics = passphraseInputConfigurationUtil.getOrderedInput(preview.passphraseInputGroupConfiguration)
+
+            val recoveredAccount = getAccount(onboardingAccountType, mnemonics, accountAddress) ?: run {
+                // Handle the case where account creation fails (e.g., invalid mnemonic)
                 val copiedPreview = preview.copy(
                     onAccountNotFoundEvent = Event(AnnotatedString(R.string.account_not_found_please_try))
                 )
                 emit(copiedPreview)
                 return@flow
             }
-            val accountAddress = Sdk.generateAddressFromSK(privateKey)
-            val isThereAnyAccountWithAddress = isThereAnyAccountWithAddress(accountAddress)
-            if (isThereAnyAccountWithAddress) {
-                val account = accountManager.getAccount(accountAddress)
-                val isAccountPromotable = when (account?.type) {
-                    Type.STANDARD -> !accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                    Type.LEDGER -> false
-                    else -> true
-                }
-                if (account != null && !isAccountPromotable) {
-                    emit(preview.copy(onGlobalErrorEvent = Event(R.string.this_account_already_exists)))
-                    return@flow
+
+            // Check if the account already exists (only for Algo25)
+            if (onboardingAccountType == OnboardingAccountType.Algo25) {
+                accountAddress = recoveredAccount.address // Get the address from the created account
+
+                val isThereAnyAccountWithAddress = isThereAnyAccountWithAddress(accountAddress)
+                if (isThereAnyAccountWithAddress) {
+                    val account = accountManager.getAccount(accountAddress)
+                    val isAccountPromotable = when (account?.type) {
+                        Type.STANDARD -> !accountStateHelperUseCase.hasAccountValidSecretKey(account)
+                        Type.LEDGER -> false
+                        else -> true
+                    }
+                    if (account != null && !isAccountPromotable) {
+                        emit(preview.copy(onGlobalErrorEvent = Event(R.string.this_account_already_exists)))
+                        return@flow
+                    }
                 }
             }
-            val recoveredAccount = AccountCreation(
-                address = accountAddress,
-                customName = accountAddress.toShortenedAddress(),
-                isBackedUp = true,
-                type = AccountCreation.Type.Algo25(privateKey),
-                creationType = RECOVER
-            )
+
             getRekeyedAccountUseCase.invoke(accountAddress).useSuspended(
                 onSuccess = {
                     val updatedPreview = if (it.isEmpty()) {
@@ -187,6 +196,44 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
             )
         } catch (exception: Exception) {
             emit(preview.copy(onAccountNotFoundEvent = Event(AnnotatedString(R.string.account_not_found_please_try))))
+        }
+    }
+
+    private fun getAccount(
+        accountType: OnboardingAccountType,
+        mnemonics: String,
+        accountAddress: String
+    ): AccountCreation? {
+        return when (accountType) {
+            OnboardingAccountType.Algo25 -> {
+                val privateKey = Sdk.mnemonicToPrivateKey(mnemonics.lowercase(Locale.ENGLISH)) ?: return null
+                AccountCreation(
+                    address = accountAddress,
+                    customName = accountAddress.toShortenedAddress(),
+                    isBackedUp = true,
+                    type = AccountCreation.Type.Algo25(privateKey),
+                    creationType = RECOVER
+                )
+            }
+            OnboardingAccountType.HdKey -> {
+                // only entropy is needed for next screen (importing regostered addreesses)
+                val entropy = peraBip39Sdk.getEntropyFromMnemonic(mnemonics) ?: return null
+                AccountCreation(
+                    address = accountAddress,
+                    customName = accountAddress.toShortenedAddress(),
+                    isBackedUp = true,
+                    type = AccountCreation.Type.HdKey(
+                        publicKey = ByteArray(0),
+                        encryptedPrivateKey = ByteArray(0),
+                        encryptedEntropy = aesPlatformManager.encryptByteArray(entropy),
+                        account = 0,
+                        change = 0,
+                        keyIndex = 0,
+                        derivationType = 0
+                    ),
+                    creationType = RECOVER
+                )
+            }
         }
     }
 }

@@ -1466,4 +1466,6 @@
     <string name="wallet_number">Wallet #%1$d</string>
     <string name="select_hd_wallet">Select HD Wallet</string>
     <string name="create_your_new_account_under">Create your new account under an HD wallet you already have</string>
+    <string name="select_accounts_to_add">Select accounts to add</string>
+    <string name="select_accounts_to_add_desc">We found that there are #%1$d addresses registered to this wallet</string>
 </resources>

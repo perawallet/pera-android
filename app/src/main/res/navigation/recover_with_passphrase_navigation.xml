@@ -39,10 +39,25 @@
             android:id="@+id/action_recoverWithPassphraseFragment_to_recoverAccountNameRegistrationFragment"
             app:destination="@id/recoverAccountNameRegistrationFragment" />
         <action
+            android:id="@+id/action_recoverWithPassphraseFragment_to_recoverImportHdAddressesFragment"
+            app:destination="@id/recoverImportHdAddressesFragment" />
+        <action
             android:id="@+id/action_recoverWithPassphraseFragment_to_rekeyedAccountSelectionFragment"
             app:destination="@id/rekeyedAccountSelectionFragment" />
     </fragment>
-
+    <fragment
+        android:id="@+id/recoverImportHdAddressesFragment"
+        android:name="com.algorand.android.modules.onboarding.recoverypassphrase.importaddresses.RecoverRegisteredAccountsFragment"
+        android:label="RecoveryImportHdAddressesFragment">
+        <argument
+            android:name="accountCreation"
+            app:argType="com.algorand.android.models.AccountCreation" />
+        <action
+            android:id="@+id/action_recoverImportHdAddressesFragment_to_recoverAccountResultInfoFragment"
+            app:destination="@id/recoverAccountResultInfoFragment"
+            app:popUpTo="@id/loginNavigation"
+            app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/recoverAccountNameRegistrationFragment"
         android:name="com.algorand.android.modules.onboarding.recoverypassphrase.nameregistration.RecoverAccountNameRegistrationFragment"

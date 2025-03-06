@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.transaction
+package com.algorand.wallet.algosdk.transaction.sdk
 
 import com.algorand.algosdk.sdk.Sdk
 import javax.inject.Inject

@@ -15,8 +15,8 @@ package com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.u
 import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.rekey.domain.usecase.SendSignedTransactionUseCase
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.mapper.RekeyToStandardAccountConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
@@ -35,7 +35,7 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
     private val rekeyToStandardAccountConfirmationPreviewMapper: RekeyToStandardAccountConfirmationPreviewMapper,
     private val transactionsRepository: TransactionsRepository,
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
     private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
     private val getAccountInformation: GetAccountInformation
 ) {
@@ -68,12 +68,12 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
     ): RekeyToStandardAccountConfirmationPreview {
         val accountInfo = getAccountInformation(accountAddress)
         val isAccountRekeyed = accountInfo?.isRekeyed() == true
-        val accountDisplayName = accountDisplayNameUseCase.invoke(accountAddress)
+        val accountDisplayName = getAccountDisplayName(accountAddress)
 
-        val authAccountDisplayName = accountDisplayNameUseCase.invoke(authAccountAddress)
+        val authAccountDisplayName = getAccountDisplayName(authAccountAddress)
 
         val currentlyRekeyedAccountDisplayName = if (isAccountRekeyed) {
-            accountDisplayNameUseCase.invoke(accountInfo?.rekeyAdminAddress.orEmpty())
+            getAccountDisplayName(accountInfo?.rekeyAdminAddress.orEmpty())
         } else {
             null
         }

@@ -13,20 +13,18 @@
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.mapper.AccountDisplayNameMapper
-import com.algorand.android.models.Account
 import com.algorand.android.models.SignedTransactionDetail
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.rekey.domain.usecase.SendSignedTransactionUseCase
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.decider.RekeyToLedgerAccountConfirmationPreviewDecider
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.mapper.RekeyToLedgerAccountConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.model.RekeyToLedgerAccountConfirmationPreview
 import com.algorand.android.repository.TransactionsRepository
 import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.android.utils.calculateRekeyFee
@@ -44,10 +42,9 @@ class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
     private val accountDetailUseCase: AccountDetailUseCase,
     private val transactionsRepository: TransactionsRepository,
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val rekeyToLedgerAccountConfirmationPreviewDecider: RekeyToLedgerAccountConfirmationPreviewDecider,
-    private val accountDisplayNameMapper: AccountDisplayNameMapper,
     private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
     private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress
 ) {
@@ -57,18 +54,18 @@ class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
         authAccountAddress: String
     ): RekeyToLedgerAccountConfirmationPreview {
         val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
-        val accountDisplayName = accountDisplayNameUseCase.invoke(accountAddress)
-        val accountIconResource = createAccountIconDrawableUseCase.invoke(accountAddress)
+        val accountDisplayName = getAccountDisplayName(accountAddress)
+        val accountIconResource = getAccountIconDrawablePreview(accountAddress)
         val (authAccountDisplayName, authAccountIconResource) = createAccountDisplayNameAndDrawablePair(
             accountAddress = authAccountAddress
         )
         val currentlyRekeyedAccountDisplayName = if (accountDetail?.accountInformation?.isRekeyed() == true) {
-            accountDisplayNameUseCase.invoke(accountDetail.accountInformation.rekeyAdminAddress.orEmpty())
+            getAccountDisplayName(accountDetail.accountInformation.rekeyAdminAddress.orEmpty())
         } else {
             null
         }
         val currentlyRekeyAccountIconDrawable = if (accountDetail?.accountInformation?.isRekeyed() == true) {
-            createAccountIconDrawableUseCase.invoke(accountDetail.accountInformation.rekeyAdminAddress.orEmpty())
+            getAccountIconDrawablePreview(accountDetail.accountInformation.rekeyAdminAddress.orEmpty())
         } else {
             null
         }
@@ -154,15 +151,14 @@ class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
     ): Pair<AccountDisplayName, AccountIconDrawablePreview> {
         val isThereAnyAccountWithAddress = isThereAnyAccountWithAddress(accountAddress)
         return if (isThereAnyAccountWithAddress) {
-            val accountDisplayName = accountDisplayNameUseCase.invoke(accountAddress)
-            val accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
+            val accountDisplayName = getAccountDisplayName(accountAddress)
+            val accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             accountDisplayName to accountIconDrawablePreview
         } else {
-            val accountDisplayName = accountDisplayNameMapper.mapToAccountDisplayName(
+            val accountDisplayName = AccountDisplayName(
                 accountAddress = accountAddress,
-                accountName = accountAddress.toShortenedAddress(),
-                nfDomainName = null,
-                type = Account.Type.LEDGER
+                primaryDisplayName = accountAddress.toShortenedAddress(),
+                secondaryDisplayName = accountAddress.toShortenedAddress()
             )
             val accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
                 backgroundColorResId = R.color.wallet_3,

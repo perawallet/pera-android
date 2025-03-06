@@ -13,9 +13,9 @@
 package com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.mapper
 
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.Event
 import javax.inject.Inject
 

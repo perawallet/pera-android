@@ -24,8 +24,8 @@ import com.algorand.android.databinding.FragmentBaseRekeyConfirmationBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.TransactionSignData
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.browser.REKEY_SUPPORT_URL
@@ -123,7 +123,7 @@ abstract class BaseRekeyConfirmationFragment : TransactionSignBaseFragment(R.lay
     }
 
     private val currentlyRekeyedAccountDisplayNameCollector: suspend (AccountDisplayName?) -> Unit = { displayName ->
-        binding.currentlyRekeyedAccountTextView.text = displayName?.getAccountPrimaryDisplayName()
+        binding.currentlyRekeyedAccountTextView.text = displayName?.primaryDisplayName
     }
 
     private val currentlyRekeyedAccountGroupVisiblityCollector: suspend (Boolean) -> Unit = { isVisible ->
@@ -137,8 +137,8 @@ abstract class BaseRekeyConfirmationFragment : TransactionSignBaseFragment(R.lay
 
     private val authAccountDisplayNameCollector: suspend (AccountDisplayName) -> Unit = { displayName ->
         with(binding.authAccountItemView) {
-            setTitleText(displayName.getAccountPrimaryDisplayName())
-            setDescriptionText(displayName.getAccountSecondaryDisplayName(resources))
+            setTitleText(displayName.primaryDisplayName)
+            setDescriptionText(displayName.secondaryDisplayName)
         }
     }
 
@@ -149,8 +149,8 @@ abstract class BaseRekeyConfirmationFragment : TransactionSignBaseFragment(R.lay
 
     private val rekeyedAccountDisplayNameCollector: suspend (AccountDisplayName) -> Unit = { displayName ->
         with(binding.rekeyedAccountItemView) {
-            setTitleText(displayName.getAccountPrimaryDisplayName())
-            setDescriptionText(displayName.getAccountSecondaryDisplayName(resources))
+            setTitleText(displayName.primaryDisplayName)
+            setDescriptionText(displayName.secondaryDisplayName)
         }
     }
 

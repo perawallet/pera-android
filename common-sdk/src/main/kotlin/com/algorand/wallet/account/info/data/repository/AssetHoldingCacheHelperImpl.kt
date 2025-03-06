@@ -15,8 +15,8 @@ package com.algorand.wallet.account.info.data.repository
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapper
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
+import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapper
+import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus

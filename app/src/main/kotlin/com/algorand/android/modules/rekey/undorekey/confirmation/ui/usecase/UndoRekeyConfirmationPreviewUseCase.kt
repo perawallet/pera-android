@@ -16,15 +16,12 @@ import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.TransactionSignData
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountOriginalStateIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.rekey.domain.usecase.SendSignedTransactionUseCase
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.mapper.UndoRekeyConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.model.UndoRekeyConfirmationPreview
 import com.algorand.android.modules.transaction.refactor.usecase.CreateRekeyTransactionData
 import com.algorand.android.repository.TransactionsRepository
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.android.utils.calculateRekeyFee
@@ -33,37 +30,42 @@ import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.wallet.account.detail.domain.model.AccountType.Rekeyed
 import com.algorand.wallet.account.detail.domain.model.AccountType.RekeyedAuth
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountState
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.account.detail.domain.usecase.IsAccountRekeyedToAnotherAccount
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreview
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
+@Suppress("LongParameterList")
 class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
     private val undoRekeyConfirmationPreviewMapper: UndoRekeyConfirmationPreviewMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
+    private val isAccountRekeyedToAnotherAccount: IsAccountRekeyedToAnotherAccount,
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getAccountOriginalStateIconDrawablePreview: GetAccountOriginalStateIconDrawablePreview,
+    private val getAccountType: GetAccountType,
     private val transactionsRepository: TransactionsRepository,
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
-    private val createAccountOriginalStateIconDrawableUseCase: CreateAccountOriginalStateIconDrawableUseCase,
     private val createRekeyTransactionData: CreateRekeyTransactionData,
-    private val getAccountState: GetAccountState
 ) {
 
-    fun getInitialUndoRekeyConfirmationPreview(accountAddress: String): UndoRekeyConfirmationPreview {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
-        val accountDisplayName = accountDisplayNameUseCase.invoke(accountAddress)
+    suspend fun getInitialUndoRekeyConfirmationPreview(accountAddress: String): UndoRekeyConfirmationPreview {
+        val accountDisplayName = getAccountDisplayName(accountAddress)
 
-        val authAccountAddress = accountDetail?.accountInformation?.rekeyAdminAddress.orEmpty()
-        val authAccountDisplayName = accountDisplayNameUseCase.invoke(authAccountAddress)
-        val authAccountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(authAccountAddress)
+        val authAccountAddress = getAccountRekeyAdminAddress(accountAddress).orEmpty()
+        val authAccountDisplayName = getAccountDisplayName(authAccountAddress)
+        val authAccountIconDrawablePreview = getAccountIconDrawablePreview(authAccountAddress)
 
         return undoRekeyConfirmationPreviewMapper.mapToUndoRekeyConfirmationPreview(
             isLoading = false,
             descriptionAnnotatedString = AnnotatedString(stringResId = R.string.you_are_about_to_undo_this),
             rekeyedAccountDisplayName = accountDisplayName,
-            rekeyedAccountIconResource = createAccountIconDrawableUseCase.invoke(accountAddress),
+            rekeyedAccountIconResource = getAccountIconDrawablePreview(accountAddress),
             authAccountDisplayName = accountDisplayName,
-            authAccountIconResource = createAccountOriginalStateIconDrawableUseCase.invoke(accountAddress),
+            authAccountIconResource = getAccountOriginalStateIconDrawablePreview(accountAddress),
             currentlyRekeyedAccountDisplayName = authAccountDisplayName,
             currentlyRekeyedAccountIconDrawable = authAccountIconDrawablePreview,
             formattedTransactionFee = emptyString(),
@@ -72,7 +74,16 @@ class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
         )
     }
 
-    suspend fun updatePreviewWithTransactionFee(preview: UndoRekeyConfirmationPreview) = flow {
+    suspend fun updatePreviewWithAccountIcon(
+        accountAddress: String,
+        preview: UndoRekeyConfirmationPreview
+    ): UndoRekeyConfirmationPreview {
+        return preview.copy(
+            rekeyedAccountIconResource = getAccountIconDrawablePreview(accountAddress)
+        )
+    }
+
+    fun updatePreviewWithTransactionFee(preview: UndoRekeyConfirmationPreview) = flow {
         transactionsRepository.getTransactionParams().use(
             onSuccess = { params ->
                 val calculatedFee = calculateRekeyFee(params.fee, params.minFee)
@@ -109,7 +120,7 @@ class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
     }
 
     suspend fun createUndoRekeyTransaction(accountAddress: String): TransactionSignData.Rekey? {
-        val accountType = getAccountState(accountAddress).accountType
+        val accountType = getAccountType(accountAddress)
         return when (accountType) {
             Rekeyed, RekeyedAuth -> createRekeyTransactionData(accountAddress, accountAddress)
             else -> null
@@ -124,19 +135,15 @@ class UndoRekeyConfirmationPreviewUseCase @Inject constructor(
         return preview.copy(isLoading = false)
     }
 
-    fun updatePreviewWithRekeyConfirmationClick(
+    suspend fun updatePreviewWithRekeyConfirmationClick(
         accountAddress: String,
         preview: UndoRekeyConfirmationPreview
     ): UndoRekeyConfirmationPreview {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data ?: return preview
-        return if (accountDetail.accountInformation.isRekeyed()) {
+        val isRekeyed = isAccountRekeyedToAnotherAccount(accountAddress)
+        return if (isRekeyed) {
             preview.copy(navToRekeyedAccountConfirmationBottomSheetEvent = Event(Unit))
         } else {
             preview.copy(onSendTransactionEvent = Event(Unit))
         }
-    }
-
-    fun getAccountAuthAddress(accountAddress: String): String {
-        return accountDetailUseCase.getAuthAddress(accountAddress).orEmpty()
     }
 }

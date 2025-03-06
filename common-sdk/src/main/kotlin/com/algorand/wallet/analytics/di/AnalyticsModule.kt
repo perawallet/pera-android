@@ -14,9 +14,11 @@ package com.algorand.wallet.analytics.di
 
 import android.content.Context
 import com.algorand.wallet.analytics.PeraReferrerQueryParamParserImpl
+import com.algorand.wallet.analytics.data.repository.FirebaseAnalyticsRepositoryImpl
 import com.algorand.wallet.analytics.data.repository.ReferrerRepositoryImpl
 import com.algorand.wallet.analytics.data.service.PeraEventTrackerImpl
 import com.algorand.wallet.analytics.data.service.PeraReferrerManagerImpl
+import com.algorand.wallet.analytics.domain.repository.FirebaseAnalyticsRepository
 import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.wallet.analytics.domain.service.PeraReferrerManager
@@ -26,6 +28,7 @@ import com.algorand.wallet.analytics.domain.usecase.SaveReferrerData
 import com.algorand.wallet.analytics.domain.util.GA4
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.installations.FirebaseInstallations
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -78,4 +81,18 @@ internal object AnalyticsModule {
 
     @Provides
     fun provideSaveReferrerData(repository: ReferrerRepository): SaveReferrerData = SaveReferrerData(repository::saveReferrerData)
+
+    @Provides
+    @Singleton
+    fun provideFirebaseInstallations(): FirebaseInstallations {
+        return FirebaseInstallations.getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAnalyticsRepository(
+        firebaseInstallations: FirebaseInstallations
+    ): FirebaseAnalyticsRepository {
+        return FirebaseAnalyticsRepositoryImpl(firebaseInstallations)
+    }
 }

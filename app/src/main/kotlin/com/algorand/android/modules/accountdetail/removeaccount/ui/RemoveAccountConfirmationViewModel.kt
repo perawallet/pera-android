@@ -33,12 +33,20 @@ class RemoveAccountConfirmationViewModel @Inject constructor(
     private val navArgs = RemoveAccountConfirmationBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
     private val accountAddress = navArgs.accountAddress
 
-    val descriptionTextResId: Int
-        get() = removeAccountConfirmationPreviewUseCase.getDescriptionResId(accountAddress)
-
     private val _removeAccountConfirmationPreviewFlow = MutableStateFlow(createInitialPreview())
     val removeAccountConfirmationPreviewFlow: StateFlow<RemoveAccountConfirmationPreview>
         get() = _removeAccountConfirmationPreviewFlow
+
+    init {
+        viewModelScope.launchIO {
+            _removeAccountConfirmationPreviewFlow.update { preview ->
+                removeAccountConfirmationPreviewUseCase.updatePreviewWithDescriptionText(
+                    preview,
+                    accountAddress
+                )
+            }
+        }
+    }
 
     fun onRemoveAccountClick() {
         viewModelScope.launchIO {

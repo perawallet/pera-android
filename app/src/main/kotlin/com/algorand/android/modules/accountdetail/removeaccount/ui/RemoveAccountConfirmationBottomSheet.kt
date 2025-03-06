@@ -52,12 +52,18 @@ class RemoveAccountConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
         }
     }
 
+    private val setDescriptionTextResIdCollector: suspend (Event<Int>?) -> Unit = { event ->
+        event?.consume()?.let { descriptionTextResId ->
+            setDescriptionText(descriptionTextResId)
+        }
+    }
+
     override fun setTitleText(textView: TextView) {
         textView.setText(R.string.remove_account)
     }
 
     override fun setDescriptionText(textView: TextView) {
-        textView.setText(removeAccountConfirmationViewModel.descriptionTextResId)
+        // Description will be observed
     }
 
     override fun setAcceptButton(materialButton: MaterialButton) {
@@ -95,6 +101,10 @@ class RemoveAccountConfirmationBottomSheet : BaseDoubleButtonBottomSheet() {
             collectLatestOnLifecycle(
                 flow = map { it.navBackEvent },
                 collection = navBackEventCollector
+            )
+            collectLatestOnLifecycle(
+                flow = map { it.descriptionTextResId },
+                collection = setDescriptionTextResIdCollector
             )
         }
     }

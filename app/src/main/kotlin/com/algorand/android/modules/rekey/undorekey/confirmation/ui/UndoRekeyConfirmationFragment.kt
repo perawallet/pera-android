@@ -61,11 +61,9 @@ class UndoRekeyConfirmationFragment : BaseRekeyConfirmationFragment() {
 
     override fun navToRekeyedAccountConfirmationBottomSheet() {
         val accountAddress = undoRekeyConfirmationViewModel.accountAddress
-        val authAccountAddress = undoRekeyConfirmationViewModel.getAccountAuthAddress()
         nav(
             UndoRekeyConfirmationFragmentDirections
                 .actionUndoRekeyConfirmationFragmentToPreviousRekeyUndoneConfirmationBottomSheet(
-                    authAccountAddress = authAccountAddress,
                     accountAddress = accountAddress
                 )
         )

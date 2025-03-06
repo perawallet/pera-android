@@ -155,23 +155,24 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                     .align(alignment = Alignment.Start)
             )
             Spacer(modifier = Modifier.weight(1f))
-            if (registerIntroViewModel.isHdWalletToggleEnabled() &&
-                (registerIntroPreview?.hasHdWallet ?: false)
-            ) {
-                ItemChoiceWidget(
-                    modifier = Modifier,
-                    title = stringResource(id = R.string.create_a_new_account),
-                    description = stringResource(id = R.string.create_a_new_account_desc),
-                    icon = ImageVector.vectorResource(R.drawable.ic_wallet),
-                    iconContentDescription = stringResource(id = R.string.create_a_new_account_desc),
-                    onClick = {
-                        coroutineScope.launch {
-                            showBottomSheet.value = true
-                        }
-                    }
-                )
-                Spacer(modifier = Modifier.height(40.dp))
-            }
+            // uncomment when we get add HD address screen designed
+//            if (registerIntroViewModel.isHdWalletToggleEnabled() &&
+//                (registerIntroPreview?.hasHdWallet ?: false)
+//            ) {
+//                ItemChoiceWidget(
+//                    modifier = Modifier,
+//                    title = stringResource(id = R.string.create_a_new_account),
+//                    description = stringResource(id = R.string.create_a_new_account_desc),
+//                    icon = ImageVector.vectorResource(R.drawable.ic_wallet),
+//                    iconContentDescription = stringResource(id = R.string.create_a_new_account_desc),
+//                    onClick = {
+//                        coroutineScope.launch {
+//                            showBottomSheet.value = true
+//                        }
+//                    }
+//                )
+//                Spacer(modifier = Modifier.height(40.dp))
+//            }
             ItemChoiceWidget(
                 modifier = Modifier,
                 title = stringResource(id = R.string.create_a_new_wallet),

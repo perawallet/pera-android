@@ -276,7 +276,6 @@ class TransactionSignManager @Inject constructor(
     }
 
     private suspend fun TransactionSignData.createArc59SendTransactions(): List<Arc59TransactionData>? {
-
         val transactionParams = getTransactionParams(this) ?: return null
         this@TransactionSignManager.transactionParams = transactionParams
         val arc59TransactionData = mutableListOf<Arc59TransactionData>()

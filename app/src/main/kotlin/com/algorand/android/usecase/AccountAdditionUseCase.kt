@@ -23,6 +23,7 @@ import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccount
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
 
@@ -33,7 +34,8 @@ class AccountAdditionUseCase @Inject constructor(
     private val addLedgerBleAccount: AddLedgerBleAccount,
     private val addNoAuthAccount: AddNoAuthAccount,
     private val updateNoAuthAccountToAlgo25: UpdateNoAuthAccountToAlgo25,
-    private val updateNoAuthAccountToLedgerBle: UpdateNoAuthAccountToLedgerBle
+    private val updateNoAuthAccountToLedgerBle: UpdateNoAuthAccountToLedgerBle,
+    private val aesPlatformManager: AESPlatformManager
 ) : BaseUseCase() {
 
     suspend fun addNewAccount(accountCreation: AccountCreation) {
@@ -48,7 +50,9 @@ class AccountAdditionUseCase @Inject constructor(
         val address = accountCreation.address
         with(accountCreation.type) {
             when (this) {
-                is Type.Algo25 -> updateNoAuthAccountToAlgo25(address, secretKey)
+                is Type.Algo25 -> {
+                    updateNoAuthAccountToAlgo25(address, aesPlatformManager.decryptByteArray(encryptedSecretKey))
+                }
                 is Type.LedgerBle -> updateNoAuthAccountToLedgerBle(
                     address,
                     deviceMacAddress,
@@ -56,6 +60,7 @@ class AccountAdditionUseCase @Inject constructor(
                     indexInLedger
                 )
                 is Type.NoAuth -> Unit
+                is Type.HdKey -> TODO()
             }
         }
     }
@@ -65,12 +70,14 @@ class AccountAdditionUseCase @Inject constructor(
             is Type.Algo25 -> createAlgo25Account(createAccount, createAccount.type as Type.Algo25)
             is Type.LedgerBle -> createLedgerBleAccount(createAccount, createAccount.type as Type.LedgerBle)
             is Type.NoAuth -> createNoAuthAccount(createAccount)
+            is Type.HdKey -> TODO()
         }
     }
 
     private suspend fun createAlgo25Account(createAccount: CreateAccount, type: Type.Algo25) {
         with(createAccount) {
-            addAlgo25Account(address, type.secretKey, isBackedUp, customName)
+            val secretKey = aesPlatformManager.decryptByteArray(type.encryptedSecretKey)
+            addAlgo25Account(address, secretKey, isBackedUp, customName)
         }
     }
 

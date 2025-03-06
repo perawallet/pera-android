@@ -23,7 +23,7 @@ import com.algorand.android.utils.LifecycleScopedCoroutineOwner
 import com.algorand.android.utils.ListQueuingHelper
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.signArbitraryData
-import com.algorand.wallet.account.local.domain.usecase.GetSecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import javax.inject.Inject
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 class WalletConnectArbitraryDataSignManager @Inject constructor(
     private val walletConnectSignValidator: WalletConnectSignValidator,
     private val signHelper: WalletConnectArbitraryDataSignHelper,
-    private val getSecretKey: GetSecretKey
+    private val getAlgo25SecretKey: GetAlgo25SecretKey
 ) : LifecycleScopedCoroutineOwner() {
 
     val signResultLiveData: LiveData<WalletConnectSignResult>
@@ -57,7 +57,7 @@ class WalletConnectArbitraryDataSignManager @Inject constructor(
                 if (signerAddress.isNullOrBlank()) {
                     signHelper.cacheDequeuedItem(null)
                 } else {
-                    val secretKey = getSecretKey(signerAddress)
+                    val secretKey = getAlgo25SecretKey(signerAddress)
                     arbitraryData.signArbitraryData(secretKey)
                 }
             }

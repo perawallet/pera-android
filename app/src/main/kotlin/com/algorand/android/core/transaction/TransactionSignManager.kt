@@ -57,7 +57,7 @@ import com.algorand.android.utils.toBytesArray
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
-import com.algorand.wallet.account.local.domain.usecase.GetSecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import java.net.ConnectException
@@ -73,7 +73,7 @@ class TransactionSignManager @Inject constructor(
     private val signHelper: TransactionSignSigningHelper,
     private val getAccountInformation: GetAccountInformation,
     private val getAccountMinBalance: GetAccountMinBalance,
-    private val getSecretKey: GetSecretKey
+    private val getAlgo25SecretKey: GetAlgo25SecretKey
 ) : LifecycleScopedCoroutineOwner() {
 
     val transactionManagerResultLiveData = MutableLiveData<Event<TransactionManagerResult>?>()
@@ -239,7 +239,7 @@ class TransactionSignManager @Inject constructor(
     private suspend fun TransactionSignData.signTxn() {
         when (signer) {
             is TransactionSigner.Algo25 -> {
-                val secretKey = getSecretKey(signer.address) ?: run {
+                val secretKey = getAlgo25SecretKey(signer.address) ?: run {
                     setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
                     return
                 }
@@ -249,6 +249,7 @@ class TransactionSignManager @Inject constructor(
             is TransactionSigner.SignerNotFound -> {
                 postResult(Defined(AnnotatedString(stringResId = R.string.the_signing_account_has)))
             }
+            is TransactionSigner.HdKey -> TODO()
         }
     }
 

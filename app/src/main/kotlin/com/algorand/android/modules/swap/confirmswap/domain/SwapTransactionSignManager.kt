@@ -22,7 +22,7 @@ import com.algorand.android.modules.swap.confirmswap.domain.model.UnsignedSwapSi
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionQueuingHelper
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.local.domain.usecase.GetSecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import javax.inject.Inject
 import kotlinx.coroutines.flow.map
 
@@ -31,13 +31,13 @@ class SwapTransactionSignManager @Inject constructor(
     ledgerBleOperationManager: LedgerBleOperationManager,
     externalTransactionQueuingHelper: ExternalTransactionQueuingHelper,
     getTransactionSigner: GetTransactionSigner,
-    getSecretKey: GetSecretKey
+    getAlgo25SecretKey: GetAlgo25SecretKey,
 ) : ExternalTransactionSignManager<UnsignedSwapSingleTransactionData>(
     ledgerBleSearchManager,
     ledgerBleOperationManager,
     externalTransactionQueuingHelper,
     getTransactionSigner,
-    getSecretKey
+    getAlgo25SecretKey
 ) {
 
     val swapTransactionSignResultFlow = signResultFlow.map {

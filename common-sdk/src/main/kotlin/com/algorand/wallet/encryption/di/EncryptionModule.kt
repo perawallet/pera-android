@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.encryption.di
 
-import com.algorand.wallet.encryption.data.manager.AESPlatformManagerImpl
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManagerImpl
 import com.algorand.wallet.encryption.data.manager.Base64ManagerImpl
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.encryption.domain.manager.Base64Manager

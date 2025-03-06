@@ -148,7 +148,7 @@ class AlgorandUserView @JvmOverloads constructor(
         with(binding) {
             mainTextView.apply {
                 maxLines = MAX_LINES_FOR_ACCOUNT
-                text = accountDetail.customInfo?.customName ?: accountDetail.address.toShortenedAddress()
+                text = accountDetail.customAccountInfo?.customName ?: accountDetail.address.toShortenedAddress()
                 changeTextAppearance(R.style.TextAppearance_Body_Sans)
             }
             if (accountDetail.accountType != null) {

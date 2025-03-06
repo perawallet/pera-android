@@ -27,8 +27,6 @@ import com.algorand.android.models.TrackTransactionRequest
 import com.algorand.android.models.VerifiedAssetDetail
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel.Companion.SEARCH_RESULT_LIMIT
 import com.algorand.android.modules.currency.data.model.CurrencyOptionResponse
-import com.algorand.android.modules.fetchnameservices.data.model.FetchNameServicesRequestBody
-import com.algorand.android.modules.fetchnameservices.data.model.FetchNameServicesResponse
 import com.algorand.android.modules.nftdomain.data.model.NftDomainSearchResponse
 import com.algorand.android.modules.notification.data.model.LastSeenNotificationRequest
 import com.algorand.android.modules.notification.data.model.LastSeenNotificationResponse
@@ -185,11 +183,6 @@ interface MobileAlgorandApi {
     suspend fun getBackup(
         @Path("id") id: String
     ): Response<ImportBackupResponse>
-
-    @POST("v1/accounts/names/bulk-read/")
-    suspend fun readAccountsNameServices(
-        @Body fetchNameServicesRequestBody: FetchNameServicesRequestBody
-    ): Response<FetchNameServicesResponse>
 
     @PATCH("v1/dex-swap/quotes/{quote_id}/")
     suspend fun putSwapQuoteException(

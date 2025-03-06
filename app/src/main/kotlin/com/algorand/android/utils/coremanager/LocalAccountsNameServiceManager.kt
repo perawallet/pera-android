@@ -12,8 +12,6 @@
 
 package com.algorand.android.utils.coremanager
 
-import com.algorand.android.modules.fetchnameservices.domain.usecase.FetchGivenAccountsNameServicesUseCase
-import com.algorand.android.modules.fetchnameservices.domain.usecase.SetGivenAccountsNameServicesNameUseCase
 import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
 import com.algorand.android.usecase.GetLocalAccountsUseCase
@@ -29,9 +27,7 @@ import kotlinx.coroutines.flow.combine
 @Singleton
 class LocalAccountsNameServiceManager @Inject constructor(
     private val firebaseTokenManager: FirebaseTokenManager,
-    private val getLocalAccountsUseCase: GetLocalAccountsUseCase,
-    private val fetchGivenAccountsNameServicesUseCase: FetchGivenAccountsNameServicesUseCase,
-    private val setGivenAccountsNameServicesNameUseCase: SetGivenAccountsNameServicesNameUseCase,
+    private val getLocalAccountsUseCase: GetLocalAccountsUseCase
 ) : BaseCacheManager() {
 
     override suspend fun initialize(coroutineScope: CoroutineScope) {

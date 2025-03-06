@@ -18,8 +18,8 @@ import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity.OWNED_BY_ACCOUNT
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity.PENDING_FOR_ADDITION
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity.PENDING_FOR_REMOVAL
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapper
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
+import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapper
+import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus

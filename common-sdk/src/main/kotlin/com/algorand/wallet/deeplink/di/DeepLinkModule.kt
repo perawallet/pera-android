@@ -39,7 +39,7 @@ import com.algorand.wallet.deeplink.parser.query.NotificationGroupTypeQueryParse
 import com.algorand.wallet.deeplink.parser.query.UrlQueryParser
 import com.algorand.wallet.deeplink.parser.query.WalletConnectUrlQueryParser
 import com.algorand.wallet.deeplink.parser.query.WebImportQrCodeQueryParser
-import com.algorand.wallet.encryption.Base64Manager
+import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import com.algorand.wallet.foundation.json.JsonSerializer
 import dagger.Module
 import dagger.Provides

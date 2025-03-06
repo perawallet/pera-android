@@ -32,4 +32,6 @@ internal interface HdKeyAccountRepository {
     suspend fun deleteAccount(address: String)
 
     suspend fun deleteAllAccounts()
+
+    suspend fun getPrivateKey(address: String): ByteArray?
 }

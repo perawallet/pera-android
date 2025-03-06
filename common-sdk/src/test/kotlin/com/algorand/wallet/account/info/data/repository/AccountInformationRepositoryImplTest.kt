@@ -20,6 +20,7 @@ import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapper
 import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.mapper.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -37,6 +38,7 @@ class AccountInformationRepositoryImplTest {
     private val assetStatusEntityMapper: AssetStatusEntityMapper = mockk()
     private val assetHoldingEntityMapper: AssetHoldingEntityMapper = mockk()
     private val accountInformationErrorCache: AccountInformationErrorCache = mockk()
+    private val getLocalAccountsAddresses: GetLocalAccountsAddresses = mockk()
     private val sut = AccountInformationRepositoryImpl(
         indexerApi,
         accountInformationMapper,
@@ -47,7 +49,8 @@ class AccountInformationRepositoryImplTest {
         mockk(),
         assetStatusEntityMapper,
         assetHoldingEntityMapper,
-        accountInformationErrorCache
+        accountInformationErrorCache,
+        getLocalAccountsAddresses
     )
 
     @Test
@@ -66,4 +69,16 @@ class AccountInformationRepositoryImplTest {
         assertEquals(expectedCount, result)
     }
 
+    @Test
+    fun `EXPECT asset opted-in status WHEN isAssetOptedInByAnyLocalAccount is invoked`() = runTest {
+        val assetId = 1234L
+        val localAccountAddresses = listOf("address1", "address2")
+
+        coEvery { getLocalAccountsAddresses() } returns localAccountAddresses
+        coEvery { assetHoldingDao.isAssetOptedInByAnyLocalAccount(localAccountAddresses, assetId) } returns true
+
+        val result = sut.isAssetOptedInByAnyLocalAccount(assetId)
+
+        assertEquals(true, result)
+    }
 }

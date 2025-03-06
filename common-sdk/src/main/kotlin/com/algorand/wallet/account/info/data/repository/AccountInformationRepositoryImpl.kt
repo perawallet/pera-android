@@ -24,6 +24,8 @@ import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
 import kotlinx.coroutines.Dispatchers
@@ -46,7 +48,8 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     private val accountInformationFetchHelper: AccountInformationFetchHelper,
     private val assetStatusEntityMapper: AssetStatusEntityMapper,
     private val assetHoldingEntityMapper: AssetHoldingEntityMapper,
-    private val accountInformationErrorCache: AccountInformationErrorCache
+    private val accountInformationErrorCache: AccountInformationErrorCache,
+    private val getLocalAccountsAddresses: GetLocalAccountsAddresses
 ) : AccountInformationRepository {
 
     override suspend fun fetchAccountInformation(address: String): PeraResult<AccountInformation> {
@@ -71,6 +74,11 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
 
     override suspend fun getAllAssetHoldingIds(addresses: List<String>): List<Long> {
         return assetHoldingDao.getAssetIdsByAddresses(addresses).toSet().toList()
+    }
+
+    override suspend fun isAssetOptedInByAnyLocalAccount(assetId: Long): Boolean {
+        val localAccountAddresses = getLocalAccountsAddresses()
+        return assetHoldingDao.isAssetOptedInByAnyLocalAccount(localAccountAddresses, assetId)
     }
 
     override suspend fun fetchAndCacheAccountInformation(

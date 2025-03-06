@@ -38,11 +38,11 @@ import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
+import javax.inject.Inject
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager,

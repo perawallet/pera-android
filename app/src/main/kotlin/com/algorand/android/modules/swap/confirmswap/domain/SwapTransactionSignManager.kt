@@ -22,10 +22,10 @@ import com.algorand.android.modules.swap.confirmswap.domain.model.UnsignedSwapSi
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionQueuingHelper
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
-import kotlinx.coroutines.flow.map
+import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
 import javax.inject.Inject
+import kotlinx.coroutines.flow.map
 
 class SwapTransactionSignManager @Inject constructor(
     ledgerBleSearchManager: LedgerBleSearchManager,

@@ -214,10 +214,6 @@ erDiagram
 title: Pera Database (cache tables)
 ---
 erDiagram
-    entropy_information {
-        Int seed_id PK
-        String entropy_custom_name
-    }
     account_information {
         String algo_address PK
         String algo_amount
@@ -292,5 +288,17 @@ erDiagram
         Long collectible_asset_id
         String display_name
         String display_value
+    }
+    custom_account_info {
+        String algo_address PK
+        String custom_name
+        Int order_index
+        Boolean is_backed_up
+    }
+    custom_hd_seed_info {
+        Int seed_id PK
+        String entropy_custom_name
+        Int order_index
+        Boolean is_backed_up
     }
 ```

@@ -28,8 +28,10 @@ import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdk
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddress
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddressImpl
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkImpl
-import com.algorand.wallet.algosdk.transaction.sdk.Bip39MnemonicGenerator
-import com.algorand.wallet.algosdk.transaction.sdk.Bip39MnemonicGeneratorImpl
+import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39SdkImpl
+import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
+import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransactionImpl
 import com.algorand.wallet.algosdk.transaction.sdk.mapper.SuggestedParamsMapper
 import com.algorand.wallet.algosdk.transaction.sdk.mapper.SuggestedParamsMapperImpl
 import dagger.Module
@@ -80,5 +82,8 @@ internal object AlgoSdkTransactionModule {
     fun provideAlgoSdkAddress(impl: AlgoSdkAddressImpl): AlgoSdkAddress = impl
 
     @Provides
-    fun provideBip39MnemonicGenerator(impl: Bip39MnemonicGeneratorImpl): Bip39MnemonicGenerator = impl
+    fun providePeraBip39Sdk(impl: PeraBip39SdkImpl): PeraBip39Sdk = impl
+
+    @Provides
+    fun provideSignHdKeyTransaction(impl: SignHdKeyTransactionImpl): SignHdKeyTransaction = impl
 }

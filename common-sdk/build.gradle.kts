@@ -83,16 +83,6 @@ dependencies {
     testImplementation(libs.mockito)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(project(":test-utils"))
-
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(libs.junit)
-    androidTestImplementation(libs.mockk)
-    androidTestImplementation(libs.androidx.core)
-    androidTestImplementation(libs.runner)
-    androidTestImplementation(libs.androidx.rules)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.junit.ktx)
-    androidTestImplementation(libs.hilt.android.testing)
 }
 
 room {

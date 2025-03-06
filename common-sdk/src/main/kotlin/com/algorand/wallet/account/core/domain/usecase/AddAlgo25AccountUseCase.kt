@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.account.core.domain.usecase
 
-import com.algorand.wallet.account.custom.domain.model.CustomInfo
+import com.algorand.wallet.account.custom.domain.model.CustomAccountInfo
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomInfo
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.SaveAlgo25Account
@@ -26,6 +26,6 @@ internal class AddAlgo25AccountUseCase @Inject constructor(
     override suspend fun invoke(address: String, secretKey: ByteArray, isBackedUp: Boolean, customName: String?) {
         val account = LocalAccount.Algo25(address)
         saveAlgo25Account(account, secretKey)
-        setCustomInfo(CustomInfo(address, customName, Int.MAX_VALUE, isBackedUp))
+        setCustomInfo(CustomAccountInfo(address, customName, Int.MAX_VALUE, isBackedUp))
     }
 }

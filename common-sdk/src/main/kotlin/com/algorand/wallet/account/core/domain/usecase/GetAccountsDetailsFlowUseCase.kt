@@ -34,7 +34,7 @@ internal class GetAccountsDetailsFlowUseCase @Inject constructor(
                 val customInfo = getAccountCustomInfoOrNull(address)
                 AccountDetail(
                     address = address,
-                    customInfo = customInfo,
+                    customAccountInfo = customInfo,
                     accountRegistrationType = getAccountRegistrationType(address),
                     accountType = getAccountType(address)
                 )

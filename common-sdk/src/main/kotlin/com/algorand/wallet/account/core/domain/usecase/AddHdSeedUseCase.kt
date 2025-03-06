@@ -12,20 +12,21 @@
 
 package com.algorand.wallet.account.core.domain.usecase
 
-import com.algorand.wallet.account.info.domain.model.EntropyInformation
-import com.algorand.wallet.account.info.domain.repository.EntropyInformationRepository
+import com.algorand.wallet.account.custom.domain.model.CustomHdSeedInfo
+import com.algorand.wallet.account.custom.domain.repository.CustomHdSeedInfoRepository
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
-import com.algorand.wallet.algosdk.transaction.sdk.Bip39MnemonicGenerator
+import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 
 internal class AddHdSeedUseCase @Inject constructor(
     private val hdSeedRepository: HdSeedRepository,
-    private val entropyInformationRepository: EntropyInformationRepository,
-    private val bip39MnemonicGenerator: Bip39MnemonicGenerator
+    private val customHdSeedInfoRepository: CustomHdSeedInfoRepository,
+    private val peraBip39Sdk: PeraBip39Sdk
 ) : AddHdSeed {
 
-    override suspend fun invoke(entropy: ByteArray): Int {
-        var seed = bip39MnemonicGenerator.getSeedFromEntropy(entropy)
+    override suspend fun invoke(entropy: ByteArray): PeraResult<Int> {
+        var seed = peraBip39Sdk.getSeedFromEntropy(entropy)
         seed?.let {
             val newSeedIdInDB = hdSeedRepository.addHdSeed(
                 seedId = 0, // Seed will be auto-generated, update name next step
@@ -33,15 +34,17 @@ internal class AddHdSeedUseCase @Inject constructor(
                 entropy = entropy
             ).toInt()
 
-            entropyInformationRepository.addEntropyInformation(
-                EntropyInformation(
+            customHdSeedInfoRepository.setCustomInfo(
+                CustomHdSeedInfo(
                     seedId = newSeedIdInDB,
-                    entropyCustomName = "Wallet #${newSeedIdInDB}"
+                    entropyCustomName = "Wallet #${newSeedIdInDB}",
+                    orderIndex = newSeedIdInDB,
+                    isBackedUp = false
                 ) )
             seed = ByteArray(0)
-            return newSeedIdInDB
+            return PeraResult.Success(newSeedIdInDB)
         } ?: run {
-            return -1
+            return PeraResult.Error(Exception("Failed to insert hd seed"))
         }
     }
 }

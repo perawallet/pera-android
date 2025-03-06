@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.fetchnameservices.domain.mapper
 
-import com.algorand.android.modules.fetchnameservices.domain.model.NameServiceSource
 import com.algorand.android.modules.fetchnameservices.domain.model.NameServiceSourceDTO
+import com.algorand.wallet.nameservice.domain.model.NameServiceSource
 import javax.inject.Inject
 
 class NameServiceSourceMapper @Inject constructor() {

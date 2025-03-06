@@ -27,3 +27,7 @@ fun interface GetAccountNameService {
 fun interface GetNameServiceSearchResults {
     suspend operator fun invoke(query: String): List<NameServiceSearchResult>
 }
+
+fun interface ClearNameServiceCache {
+    suspend operator fun invoke()
+}

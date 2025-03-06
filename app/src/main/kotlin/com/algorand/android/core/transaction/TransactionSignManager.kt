@@ -268,7 +268,6 @@ class TransactionSignManager @Inject constructor(
             is TransactionSigner.SignerNotFound -> {
                 postResult(Defined(AnnotatedString(stringResId = R.string.the_signing_account_has)))
             }
-            is TransactionSigner.HdKey -> TODO()
         }
     }
 

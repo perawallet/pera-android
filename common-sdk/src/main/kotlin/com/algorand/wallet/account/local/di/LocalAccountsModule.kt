@@ -47,10 +47,13 @@ import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepos
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccountUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeeds
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
+import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
+import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLedgerBleAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlow
@@ -61,9 +64,6 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddressesUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
-import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
-import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
-import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddressUseCase
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyNoAuthAccountWithAddress
@@ -214,13 +214,13 @@ internal object LocalAccountsModule {
     fun provideGetSecretKey(repository: Algo25AccountRepository): GetAlgo25SecretKey = GetAlgo25SecretKey(repository::getSecretKey)
 
     @Provides
-    fun provideGetPrivateKey(repository: HdKeyAccountRepository): GetHdKeyPrivateKey = GetHdKeyPrivateKey(repository::getPrivateKey)
+    fun provideGetHdKeyPrivateKey(repository: HdKeyAccountRepository): GetHdKeyPrivateKey = GetHdKeyPrivateKey(repository::getPrivateKey)
 
     @Provides
-    fun provideGetEntropy(repository: HdSeedRepository): GetHdEntropy = GetHdEntropy(repository::getEntropy)
+    fun provideGetHdEntropy(repository: HdSeedRepository): GetHdEntropy = GetHdEntropy(repository::getEntropy)
 
     @Provides
-    fun provideGetSeed(repository: HdSeedRepository): GetHdSeed = GetHdSeed(repository::getSeed)
+    fun provideHdGetSeed(repository: HdSeedRepository): GetHdSeed = GetHdSeed(repository::getSeed)
 
     @Provides
     fun provideGetMaxHdSeedId(repository: HdSeedRepository): GetMaxHdSeedId = GetMaxHdSeedId(repository::getMaxSeedId)

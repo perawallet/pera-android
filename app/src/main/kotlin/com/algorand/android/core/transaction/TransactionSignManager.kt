@@ -17,8 +17,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.coroutineScope
 import com.algorand.algosdk.sdk.BytesArray
-import com.algorand.algosdk.transaction.Transaction
-import com.algorand.algosdk.util.Encoder
 import com.algorand.android.R
 import com.algorand.android.ledger.CustomScanCallback
 import com.algorand.android.ledger.LedgerBleOperationManager
@@ -59,8 +57,11 @@ import com.algorand.android.utils.toBytesArray
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
+import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
+import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import java.net.ConnectException
@@ -78,7 +79,9 @@ class TransactionSignManager @Inject constructor(
     private val getAccountInformation: GetAccountInformation,
     private val getAccountMinBalance: GetAccountMinBalance,
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
-    private val algoAccountSdk: AlgoAccountSdk
+    private val getHdSeed: GetHdSeed,
+    private val getLocalAccount: GetLocalAccount,
+    private val signHdKeyTransaction: SignHdKeyTransaction
 ) : LifecycleScopedCoroutineOwner() {
 
     val transactionManagerResultLiveData = MutableLiveData<Event<TransactionManagerResult>?>()
@@ -251,18 +254,25 @@ class TransactionSignManager @Inject constructor(
                 checkAndCacheSignedTransaction(transactionByteArray?.signTx(secretKey))
             }
             is TransactionSigner.HdKey -> {
-                val tx = Encoder.decodeFromMsgPack(transactionByteArray, Transaction::class.java)
-                val stx = algoAccountSdk.createSignedTransaction(signer.address, tx) ?: run {
-                    setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
-                    return
-                }
-                checkAndCacheSignedTransaction(Encoder.encodeToMsgPack(stx))
+                val transactionBytes = transactionByteArray ?: return handleSignError()
+                val hdKey = getLocalAccount(signer.address) as? LocalAccount.HdKey ?: return handleSignError()
+                val seed = getHdSeed(seedId = hdKey.seedId) ?: return handleSignError()
+
+                val transactionSignedByteArray = signHdKeyTransaction.signTransaction(
+                    transactionBytes, seed, hdKey.account, hdKey.change, hdKey.keyIndex
+                ) ?: return handleSignError()
+
+                checkAndCacheSignedTransaction(transactionSignedByteArray)
             }
             is TransactionSigner.LedgerBle -> sendTransactionWithLedger(signer as TransactionSigner.LedgerBle)
             is TransactionSigner.SignerNotFound -> {
                 postResult(Defined(AnnotatedString(stringResId = R.string.the_signing_account_has)))
             }
         }
+    }
+
+    private fun handleSignError() {
+        setSignFailed(Defined(AnnotatedString(stringResId = R.string.an_error_occured)))
     }
 
     private suspend fun TransactionSignData.createArc59SendTransactions(): List<Arc59TransactionData>? {

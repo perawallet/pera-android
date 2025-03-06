@@ -24,7 +24,7 @@ fun interface AddAlgo25Account {
 }
 
 fun interface AddHdSeed {
-    suspend operator fun invoke(entropy: ByteArray): Int
+    suspend operator fun invoke(entropy: ByteArray): PeraResult<Int>
 }
 
 fun interface AddHdKeyAccount {

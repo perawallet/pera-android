@@ -15,8 +15,8 @@ package com.algorand.wallet.algosdk.model
 data class HdKeyAccount(
     val address: String,
     val publicKey: ByteArray,
-    val encryptedPrivateKey: ByteArray,
-    val encryptedEntropy: ByteArray,
+    val privateKey: ByteArray,
+    val entropy: ByteArray,
     val account: Int,
     val change: Int,
     val keyIndex: Int,
@@ -29,16 +29,16 @@ data class HdKeyAccount(
         other as HdKeyAccount
 
         if (address != other.address) return false
-        if (!encryptedPrivateKey.contentEquals(other.encryptedPrivateKey)) return false
-        if (!encryptedEntropy.contentEquals(other.encryptedEntropy)) return false
+        if (!privateKey.contentEquals(other.privateKey)) return false
+        if (!entropy.contentEquals(other.entropy)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = address.hashCode()
-        result = 31 * result + encryptedPrivateKey.hashCode()
-        result = 31 * result + encryptedEntropy.hashCode()
+        result = 31 * result + privateKey.hashCode()
+        result = 31 * result + entropy.hashCode()
         return result
     }
 }

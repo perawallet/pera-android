@@ -21,6 +21,7 @@ import com.algorand.android.modules.tracking.onboarding.register.OnboardingPassp
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.getOrElse
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -29,6 +30,7 @@ import kotlinx.coroutines.launch
 class BackupInfoViewModel @Inject constructor(
     private val onboardingPassphraseUnderstandEventTracker: OnboardingPassphraseUnderstandEventTracker,
     private val algoAccountSdk: AlgoAccountSdk,
+    private val aesPlatformManager: AESPlatformManager,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -54,8 +56,8 @@ class BackupInfoViewModel @Inject constructor(
                 isBackedUp = false,
                 type = AccountCreation.Type.HdKey(
                     account.publicKey,
-                    account.encryptedPrivateKey,
-                    account.encryptedEntropy,
+                    aesPlatformManager.encryptByteArray(account.privateKey),
+                    aesPlatformManager.encryptByteArray(account.entropy),
                     account.account,
                     account.change,
                     account.keyIndex,
@@ -71,7 +73,9 @@ class BackupInfoViewModel @Inject constructor(
                 address = account.address,
                 customName = null,
                 isBackedUp = false,
-                type = AccountCreation.Type.Algo25(account.encryptedSecretKey),
+                type = AccountCreation.Type.Algo25(
+                    aesPlatformManager.encryptByteArray(account.secretKey)
+                ),
                 creationType = CreationType.CREATE
             )
         }

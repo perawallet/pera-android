@@ -13,7 +13,7 @@
 package com.algorand.wallet.remoteconfig.data.repository
 
 import com.algorand.wallet.remoteconfig.domain.repository.FeatureToggleRepository
-import com.algorand.wallet.remoteconfig.domain.service.FirebaseRemoteConfigService
+import com.algorand.wallet.remoteconfig.data.service.FirebaseRemoteConfigService
 import javax.inject.Inject
 
 internal class FeatureToggleRepositoryImpl @Inject constructor(

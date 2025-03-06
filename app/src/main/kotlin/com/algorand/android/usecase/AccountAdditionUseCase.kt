@@ -60,16 +60,18 @@ class AccountAdditionUseCase @Inject constructor(
                 is Type.HdKey -> {
                     var entropy = aesPlatformManager.decryptByteArray(this.encryptedEntropy)
                     val seedId = addHdSeed(entropy)
-                    updateNoAuthAccountToHdKey(
-                        address,
-                        publicKey,
-                        encryptedPrivateKey,
-                        seedId,
-                        account,
-                        change,
-                        keyIndex,
-                        derivationType,
-                    )
+                    if (seedId.isSuccess) {
+                        updateNoAuthAccountToHdKey(
+                            address,
+                            publicKey,
+                            encryptedPrivateKey,
+                            seedId.getDataOrNull() ?: -1,
+                            account,
+                            change,
+                            keyIndex,
+                            derivationType,
+                        )
+                    }
                     entropy = ByteArray(0) // clear secret from memory
                 }
                 is Type.Algo25 -> {
@@ -103,13 +105,13 @@ class AccountAdditionUseCase @Inject constructor(
             var privateKey = aesPlatformManager.decryptByteArray(type.encryptedPrivateKey)
             var entropy = aesPlatformManager.decryptByteArray(type.encryptedEntropy)
             val seedId = addHdSeed(entropy)
-            if (seedId > 0) {
+            if (seedId.isSuccess) {
                 // seedId was entered successfully
                 addHdKeyAccount(
                     address,
                     type.publicKey,
                     privateKey,
-                    seedId,
+                    seedId.getDataOrNull() ?: -1,
                     type.account,
                     type.change,
                     type.keyIndex,

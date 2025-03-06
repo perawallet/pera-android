@@ -13,7 +13,6 @@
 package com.algorand.wallet.remoteconfig.data.service
 
 import android.util.Log
-import com.algorand.wallet.remoteconfig.domain.service.FirebaseRemoteConfigService
 import com.google.firebase.BuildConfig
 import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig

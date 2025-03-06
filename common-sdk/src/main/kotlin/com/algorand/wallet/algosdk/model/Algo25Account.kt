@@ -14,7 +14,7 @@ package com.algorand.wallet.algosdk.model
 
 data class Algo25Account(
     val address: String,
-    val encryptedSecretKey: ByteArray
+    val secretKey: ByteArray
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -23,14 +23,14 @@ data class Algo25Account(
         other as Algo25Account
 
         if (address != other.address) return false
-        if (!encryptedSecretKey.contentEquals(other.encryptedSecretKey)) return false
+        if (!secretKey.contentEquals(other.secretKey)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = address.hashCode()
-        result = 31 * result + encryptedSecretKey.contentHashCode()
+        result = 31 * result + secretKey.contentHashCode()
         return result
     }
 }

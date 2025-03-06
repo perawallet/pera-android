@@ -18,7 +18,7 @@ import com.algorand.android.core.AccountManager
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingCopyPassphraseEventTracker
-import com.algorand.wallet.algosdk.transaction.sdk.Bip39MnemonicGenerator
+import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -29,7 +29,7 @@ class BackupPassphraseViewModel @Inject constructor(
     private val onboardingCopyPassphraseEventTracker: OnboardingCopyPassphraseEventTracker,
     private val accountManager: AccountManager,
     private val aesPlatformManager: AESPlatformManager,
-    private val bip39MnemonicGenerator: Bip39MnemonicGenerator
+    private val peraBip39Sdk: PeraBip39Sdk
 ) : BaseViewModel() {
 
     fun logOnboardingNextClickEvent() {
@@ -46,7 +46,7 @@ class BackupPassphraseViewModel @Inject constructor(
         val encryptedEntropy = (args.accountCreation?.type as? AccountCreation.Type.HdKey)?.encryptedEntropy
         return encryptedEntropy?.let {
             val entropy = aesPlatformManager.decryptByteArray(it)
-            bip39MnemonicGenerator.getMnemonicFromEntropy(entropy)
+            peraBip39Sdk.getMnemonicFromEntropy(entropy)
         } ?: run {
             val encryptedAlgo25Key = (args.accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey
 

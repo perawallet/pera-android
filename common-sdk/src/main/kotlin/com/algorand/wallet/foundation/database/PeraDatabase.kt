@@ -15,14 +15,14 @@ package com.algorand.wallet.foundation.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.algorand.wallet.account.custom.data.database.dao.CustomInfoDao
-import com.algorand.wallet.account.custom.data.database.model.CustomInfoEntity
+import com.algorand.wallet.account.custom.data.database.dao.CustomAccountInfoDao
+import com.algorand.wallet.account.custom.data.database.dao.CustomHdSeedInfoDao
+import com.algorand.wallet.account.custom.data.database.model.CustomAccountInfoEntity
+import com.algorand.wallet.account.custom.data.database.model.CustomHdSeedInfoEntity
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
-import com.algorand.wallet.account.info.data.database.dao.EntropyInformationDao
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
-import com.algorand.wallet.account.info.data.database.model.EntropyInformationEntity
 import com.algorand.wallet.asset.data.database.dao.AssetDetailDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleMediaDao
@@ -52,21 +52,21 @@ import com.algorand.wallet.foundation.database.converters.VerificationTierTypeCo
         CollectibleEntity::class,
         CollectibleMediaEntity::class,
         CollectibleTraitEntity::class,
-        CustomInfoEntity::class,
-        EntropyInformationEntity::class
+        CustomAccountInfoEntity::class,
+        CustomHdSeedInfoEntity::class
     ],
     version = PeraDatabase.DATABASE_VERSION
 )
 internal abstract class PeraDatabase : RoomDatabase() {
 
-    abstract fun entropyInformationDao(): EntropyInformationDao
     abstract fun accountInformationDao(): AccountInformationDao
     abstract fun assetHoldingDao(): AssetHoldingDao
     abstract fun assetDetailDao(): AssetDetailDao
     abstract fun collectibleDao(): CollectibleDao
     abstract fun collectibleMediaDao(): CollectibleMediaDao
     abstract fun collectibleTraitDao(): CollectibleTraitDao
-    abstract fun customInfoDao(): CustomInfoDao
+    abstract fun customAccountInfoDao(): CustomAccountInfoDao
+    abstract fun customHdSeedInfoDao(): CustomHdSeedInfoDao
 
     companion object {
         const val DATABASE_VERSION = 1

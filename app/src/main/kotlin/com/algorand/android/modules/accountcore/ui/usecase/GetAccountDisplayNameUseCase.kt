@@ -79,8 +79,8 @@ internal class GetAccountDisplayNameUseCase @Inject constructor(
         return with(accountDetail) {
             AccountDisplayName(
                 accountAddress = address,
-                primaryDisplayName = getPrimaryName(address, customInfo?.customName, nameService),
-                secondaryDisplayName = getSecondaryName(address, customInfo?.customName, nameService)
+                primaryDisplayName = getPrimaryName(address, customAccountInfo?.customName, nameService),
+                secondaryDisplayName = getSecondaryName(address, customAccountInfo?.customName, nameService)
             )
         }
     }

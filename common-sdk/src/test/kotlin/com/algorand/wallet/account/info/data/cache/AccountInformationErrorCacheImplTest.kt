@@ -1,6 +1,5 @@
 package com.algorand.wallet.account.info.data.cache
 
-import com.algorand.wallet.account.info.data.service.AccountInformationErrorCacheImpl
 import com.algorand.wallet.foundation.cache.CacheResult
 import com.algorand.wallet.foundation.cache.SingleInMemoryLocalCache
 import org.junit.Assert.assertEquals

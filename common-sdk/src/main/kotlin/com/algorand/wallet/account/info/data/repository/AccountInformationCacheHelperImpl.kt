@@ -12,11 +12,11 @@
 
 package com.algorand.wallet.account.info.data.repository
 
-import com.algorand.wallet.account.info.domain.service.AccountInformationErrorCache
+import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCache
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
 import com.algorand.wallet.account.info.data.mapper.entity.AccountInformationEntityMapper
-import com.algorand.wallet.account.info.data.mapper.entity.AccountInformationMapper
+import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
 import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding

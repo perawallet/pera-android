@@ -17,6 +17,7 @@ import com.algorand.android.modules.settings.ui.mapper.SettingsPreviewMapper
 import com.algorand.android.modules.settings.ui.model.SettingsPreview
 import com.algorand.wallet.account.custom.domain.usecase.GetBackedUpAccounts
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.wallet.analytics.domain.usecase.GetFirebaseInstanceIdUseCase
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -24,7 +25,8 @@ import kotlinx.coroutines.flow.flow
 class SettingsPreviewUseCase @Inject constructor(
     private val settingsPreviewMapper: SettingsPreviewMapper,
     private val getBackedUpAccounts: GetBackedUpAccounts,
-    private val getLocalAccounts: GetLocalAccounts
+    private val getLocalAccounts: GetLocalAccounts,
+    private val getFirebaseInstanceIdUseCase: GetFirebaseInstanceIdUseCase,
 ) {
 
     fun getSettingsPreviewFlow(): Flow<SettingsPreview> = flow {
@@ -36,13 +38,15 @@ class SettingsPreviewUseCase @Inject constructor(
         val localAccounts = getLocalAccounts()
         val localAccountAddresses = localAccounts.map { it.algoAddress }
         val remainingAccounts = localAccountAddresses.filter { it !in backedUpAccounts }
+        val firebaseInstanceId = getFirebaseInstanceIdUseCase.invoke()
         val eligibleLocalAccounts = remainingAccounts.filter { accountAddress ->
             val account = localAccounts.first { it.algoAddress == accountAddress }
             AlgorandSecureBackupUtils.isAccountEligible(account)
         }
         return settingsPreviewMapper.mapToSettingsPreview(
             isAlgorandSecureBackupDescriptionVisible = eligibleLocalAccounts.isNotEmpty(),
-            notBackedUpAccountCounts = eligibleLocalAccounts.size
+            notBackedUpAccountCounts = eligibleLocalAccounts.size,
+            firebaseInstanceId = firebaseInstanceId
         )
     }
 }

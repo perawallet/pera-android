@@ -10,10 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.ui.model
+package com.algorand.wallet.analytics.domain.usecase
 
-data class SettingsPreview(
-    val isAlgorandSecureBackupDescriptionVisible: Boolean,
-    val notBackedUpAccountCounts: Int,
-    val firebaseInstanceId: String
-)
+import com.algorand.wallet.analytics.domain.repository.FirebaseAnalyticsRepository
+import javax.inject.Inject
+
+class GetFirebaseInstanceIdUseCase @Inject constructor(
+    private val repository: FirebaseAnalyticsRepository
+) {
+    suspend operator fun invoke(): String {
+        return repository.getFirebaseInstanceId()
+    }
+}

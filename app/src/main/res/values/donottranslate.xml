@@ -17,6 +17,7 @@
     <string name="com.crashlytics.android.build_id">1</string>
 
     <string name="version_format">Pera Algo Wallet v%1$s</string>
+    <string name="firebase_id_format">Firebase ID: %1$s</string>
     <string name="min_seconds_template">%1$02d:%2$02d</string>
     <string name="hidden_passphrase">*************</string>
     <string name="plus">+</string>

@@ -10,9 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.fetchnameservices.domain.model
+package com.algorand.wallet.analytics.domain.model
 
-enum class NameServiceSource {
-    NFDOMAIN,
-    UNKNOWN
+sealed interface FirebaseTokenStatus {
+
+    data object Loading : FirebaseTokenStatus
+
+    data object Success : FirebaseTokenStatus
+
+    data object Error : FirebaseTokenStatus
 }

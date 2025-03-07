@@ -28,6 +28,7 @@ import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.filterNotNull
 
 @AndroidEntryPoint
 class SwapPreviewSummaryBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_swap_preview_summary) {
@@ -50,6 +51,7 @@ class SwapPreviewSummaryBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_swap
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObservers()
+        swapPreviewSummaryViewModel.initializePreview()
     }
 
     private fun initUi() {
@@ -61,7 +63,7 @@ class SwapPreviewSummaryBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_swap
 
     private fun initObservers() {
         viewLifecycleOwner.collectLatestOnLifecycle(
-            swapPreviewSummaryViewModel.swapPreviewSummaryPreviewFlow,
+            swapPreviewSummaryViewModel.swapPreviewSummaryPreviewFlow.filterNotNull(),
             swapPreviewSummaryPreviewCollector
         )
     }
@@ -100,7 +102,7 @@ class SwapPreviewSummaryBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_swap
     }
 
     private fun onSwitchPriceRatioClick() {
-        val newPriceRatio = swapPreviewSummaryViewModel.getUpdatedPriceRatio(resources)
+        val newPriceRatio = swapPreviewSummaryViewModel.getUpdatedPriceRatio(resources) ?: return
         binding.priceRatioTextView.text = context?.getXmlStyledString(newPriceRatio)
     }
 }

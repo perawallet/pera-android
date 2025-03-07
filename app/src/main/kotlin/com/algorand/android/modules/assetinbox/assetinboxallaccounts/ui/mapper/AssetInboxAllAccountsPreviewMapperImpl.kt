@@ -10,10 +10,10 @@
  *  limitations under the License
  */
 
-package com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.mapper
+package com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.mapper
 
 import com.algorand.android.models.Account
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccounts
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccountsWithAccount
@@ -24,10 +24,10 @@ import javax.inject.Inject
 
 class AssetInboxAllAccountsPreviewMapperImpl @Inject constructor(
     private val getAccountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
 ) : AssetInboxAllAccountsPreviewMapper {
 
-    override fun invoke(
+    override suspend fun invoke(
         assetInboxAllAccountsList: List<AssetInboxAllAccounts>,
         accounts: List<Account>,
         isLoading: Boolean,
@@ -55,7 +55,7 @@ class AssetInboxAllAccountsPreviewMapperImpl @Inject constructor(
         )
     }
 
-    override fun mapToAssetInboxAllAccountsWithAccount(
+    override suspend fun mapToAssetInboxAllAccountsWithAccount(
         assetInboxAllAccountsList: List<AssetInboxAllAccounts>,
         accounts: List<Account>
     ): List<AssetInboxAllAccountsWithAccount> {
@@ -70,7 +70,7 @@ class AssetInboxAllAccountsPreviewMapperImpl @Inject constructor(
                         accountAddress = account.address,
                         accountType = account.type ?: Account.Type.STANDARD,
                         accountDisplayName = getAccountDisplayNameUseCase.invoke(account.address),
-                        accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(account.address)
+                        accountIconDrawablePreview = getAccountIconDrawablePreview(account.address)
                     )
                 }
             }

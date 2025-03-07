@@ -18,12 +18,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.domain.Arc59ReceiveDetailPreviewUseCase
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailNavArgs
+import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailPreview
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 
@@ -36,33 +38,42 @@ class Arc59ReceiveDetailViewModel @Inject constructor(
     private val args =
         savedStateHandle.getOrThrow<Arc59ReceiveDetailNavArgs>(ARC_59_RECEIVE_DETAIL_NAV_ARGS)
 
-    private val _previewFlow =
-        MutableStateFlow(arc59ReceiveDetailPreviewUseCase.getInitialPreview(args))
-    val previewFlow = _previewFlow.asStateFlow()
+    private val _previewFlow = MutableStateFlow<Arc59ReceiveDetailPreview?>(null)
+    val previewFlow: StateFlow<Arc59ReceiveDetailPreview?> = _previewFlow.asStateFlow()
+
+    fun initializePreview() {
+        viewModelScope.launchIO {
+            _previewFlow.value = arc59ReceiveDetailPreviewUseCase.getInitialPreview(args)
+        }
+    }
 
     fun rejectTransaction() {
         viewModelScope.launchIO {
-            arc59ReceiveDetailPreviewUseCase.createRejectTransaction(args, _previewFlow.value)
-                .collectLatest {
+            _previewFlow.value?.let { currentPreview ->
+                arc59ReceiveDetailPreviewUseCase.createRejectTransaction(args, currentPreview).collectLatest {
                     _previewFlow.value = it
                 }
+            }
         }
     }
 
     fun claimTransaction() {
         viewModelScope.launchIO {
-            arc59ReceiveDetailPreviewUseCase.createClaimTransaction(args, _previewFlow.value)
-                .collectLatest {
+            _previewFlow.value?.let { currentPreview ->
+                arc59ReceiveDetailPreviewUseCase.createClaimTransaction(args, currentPreview).collectLatest {
                     _previewFlow.value = it
                 }
+            }
         }
     }
 
     fun sendSignedTransaction(signedTransactions: List<Any?>) {
         viewModelScope.launchIO {
-            arc59ReceiveDetailPreviewUseCase
-                .sendSignedTransaction(signedTransactions, _previewFlow.value)
-                .collectLatest { _previewFlow.value = it }
+            _previewFlow.value?.let { currentPreview ->
+                arc59ReceiveDetailPreviewUseCase
+                    .sendSignedTransaction(signedTransactions, currentPreview)
+                    .collectLatest { _previewFlow.value = it }
+            }
         }
     }
 

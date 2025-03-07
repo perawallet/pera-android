@@ -13,10 +13,12 @@
 package com.algorand.android.modules.webimport.result.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.webimport.result.ui.model.WebImportResultPreview
 import com.algorand.android.modules.webimport.result.ui.usecase.WebImportResultPreviewUseCase
 import com.algorand.android.utils.getOrThrow
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,15 +35,17 @@ class WebImportResultViewModel @Inject constructor(
     private val unimportedAccountList = savedStateHandle
         .getOrThrow<Array<String>>(NAVIGATION_UNIMPORTED_ACCOUNT_LIST_KEY).toList()
 
-    val webImportResultPreviewFlow: StateFlow<WebImportResultPreview>
+    private val _webImportResultPreviewFlow = MutableStateFlow<WebImportResultPreview?>(null)
+    val webImportResultPreviewFlow: StateFlow<WebImportResultPreview?>
         get() = _webImportResultPreviewFlow
-    private val _webImportResultPreviewFlow = MutableStateFlow(getInitialPreview())
 
-    private fun getInitialPreview(): WebImportResultPreview {
-        return webImportResultPreviewUseCase.getInitialPreview(
-            importedAccountList = importedAccountList,
-            unimportedAccountList = unimportedAccountList
-        )
+    fun initializePreview() {
+        viewModelScope.launchIO {
+            _webImportResultPreviewFlow.value = webImportResultPreviewUseCase.getInitialPreview(
+                importedAccountList = importedAccountList,
+                unimportedAccountList = unimportedAccountList
+            )
+        }
     }
 
     companion object {

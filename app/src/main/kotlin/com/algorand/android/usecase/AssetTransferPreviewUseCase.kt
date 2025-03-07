@@ -17,7 +17,7 @@ import com.algorand.android.mapper.AssetTransferPreviewMapper
 import com.algorand.android.models.AssetTransferPreview
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.models.TransactionSignData
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.MIN_FEE
@@ -31,7 +31,7 @@ class AssetTransferPreviewUseCase @Inject constructor(
     private val assetTransferPreviewMapper: AssetTransferPreviewMapper,
     private val parityUseCase: ParityUseCase,
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAsset: GetAsset,
     private val fetchAsset: FetchAsset,
     private val getAccountDetail: GetAccountDetail
@@ -56,9 +56,7 @@ class AssetTransferPreviewUseCase @Inject constructor(
             currencySymbol = parityUseCase.getPrimaryCurrencySymbolOrName(),
             note = sendTransactionData.xnote ?: sendTransactionData.note,
             isNoteEditable = sendTransactionData.xnote == null,
-            accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(
-                sendTransactionData.senderAccountAddress
-            ),
+            accountIconDrawablePreview = getAccountIconDrawablePreview(sendTransactionData.senderAccountAddress),
             assetId = sendTransactionData.assetId,
             assetShortName = asset?.shortName ?: sendTransactionData.assetId.toString(),
             assetDecimals = asset?.assetInfo?.decimals ?: 0,

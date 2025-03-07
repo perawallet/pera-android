@@ -15,13 +15,14 @@ package com.algorand.android.nft.ui.receivenftasset
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel
 import com.algorand.android.modules.assets.addition.base.ui.domain.BaseAddAssetPreviewUseCase
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -38,6 +39,9 @@ class ReceiveCollectibleViewModel @Inject constructor(
 
     private val queryTextFlow = MutableStateFlow("")
 
+    private val _previewFlow = MutableStateFlow<ReceiveCollectibleFragmentPreview?>(null)
+    val previewFlow: StateFlow<ReceiveCollectibleFragmentPreview?> = _previewFlow.asStateFlow()
+
     override val searchPaginationFlow = receiveCollectiblePreviewUseCase.getSearchPaginationFlow(
         searchPagerBuilder = assetSearchPagerBuilder,
         scope = viewModelScope,
@@ -49,12 +53,14 @@ class ReceiveCollectibleViewModel @Inject constructor(
         initQueryTextFlow()
     }
 
-    fun refreshReceiveCollectiblePreview() {
-        receiveCollectiblePreviewUseCase.invalidateDataSource()
+    fun initializePreview() {
+        viewModelScope.launch {
+            _previewFlow.value = receiveCollectiblePreviewUseCase.getReceiveCollectiblePreview(accountAddress)
+        }
     }
 
-    fun getReceiverAccountDisplayTextAndIcon(publicKey: String): Pair<String, AccountIconDrawablePreview> {
-        return receiveCollectiblePreviewUseCase.getReceiverAccountDisplayTextAndIcon(publicKey)
+    fun refreshReceiveCollectiblePreview() {
+        receiveCollectiblePreviewUseCase.invalidateDataSource()
     }
 
     fun updateQuery(query: String) {

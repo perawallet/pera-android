@@ -47,7 +47,7 @@
     </fragment>
     <fragment
         android:id="@+id/recoverImportHdAddressesFragment"
-        android:name="com.algorand.android.modules.onboarding.recoverypassphrase.importaddresses.RecoverImportHdAddressesFragment"
+        android:name="com.algorand.android.modules.onboarding.recoverypassphrase.importaddresses.RecoverRegisteredAccountsFragment"
         android:label="RecoveryImportHdAddressesFragment">
         <argument
             android:name="accountCreation"

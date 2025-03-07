@@ -29,14 +29,6 @@ internal class AlgoAccountSdkImpl @Inject constructor(
         }
     }
 
-    override fun recoverHdAccount(mnemonic: String): HdKeyAccount? {
-        return try {
-            bip39Sdk.getHdKeyAccountFromMnemonic(mnemonic)
-        } catch (e: Exception) {
-            null
-        }
-    }
-
     override fun createAlgo25Account(): Algo25Account? {
         return try {
             var secretKey = Sdk.generateSK()

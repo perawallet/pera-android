@@ -34,6 +34,8 @@ import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapperImpl
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelper
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelperImpl
+import com.algorand.wallet.account.info.data.repository.AccountFastLookupFetchHelper
+import com.algorand.wallet.account.info.data.repository.AccountFastLookupFetchHelperImpl
 import com.algorand.wallet.account.info.data.repository.AccountInformationCacheHelper
 import com.algorand.wallet.account.info.data.repository.AccountInformationCacheHelperImpl
 import com.algorand.wallet.account.info.data.repository.AccountInformationFetchHelper
@@ -55,6 +57,8 @@ import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
+import com.algorand.wallet.account.info.domain.usecase.GetAccountFastLookup
+import com.algorand.wallet.account.info.domain.usecase.GetAccountFastLookupUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
@@ -94,7 +98,7 @@ internal object AccountInformationModule {
     @Provides
     @Singleton
     fun provideAccountFastLookupApiService(
-        @Named("indexerRetrofitInterface") retrofit: Retrofit
+        @Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit
     ): AccountFastLookupApiService {
         return retrofit.create(AccountFastLookupApiService::class.java)
     }
@@ -116,6 +120,12 @@ internal object AccountInformationModule {
     fun provideAssetHoldingCacheHelper(
         impl: AssetHoldingCacheHelperImpl
     ): AssetHoldingCacheHelper = impl
+
+    @Provides
+    @Singleton
+    fun provideAccountFastLookupFetchHelper(
+        impl: AccountFastLookupFetchHelperImpl
+    ): AccountFastLookupFetchHelper = impl
 
     @Provides
     @Singleton
@@ -227,6 +237,9 @@ internal object AccountInformationModule {
     ): GetAllAccountInformationFlow {
         return GetAllAccountInformationFlow(repository::getAllAccountInformationFlow)
     }
+
+    @Provides
+    fun provideGetAccountFastLookup(useCase: GetAccountFastLookupUseCase): GetAccountFastLookup = useCase
 
     @Provides
     fun provideGetAccountInformation(

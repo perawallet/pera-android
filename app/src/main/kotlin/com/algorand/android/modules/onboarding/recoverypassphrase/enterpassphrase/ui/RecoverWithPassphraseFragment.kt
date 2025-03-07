@@ -316,7 +316,7 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
                 nav(
                     RecoverWithPassphraseFragmentDirections
                         .actionRecoverWithPassphraseFragmentToRecoverAccountNameRegistrationFragment(
-                            accountCreation
+                            accountCreation = accountCreation
                         )
                 )
             }
@@ -325,12 +325,11 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
                 nav(
                     RecoverWithPassphraseFragmentDirections
                         .actionRecoverWithPassphraseFragmentToRecoverImportHdAddressesFragment(
-                            accountCreation
+                            accountCreation = accountCreation
                         )
                 )
             }
-            is AccountCreation.Type.LedgerBle -> TODO()
-            AccountCreation.Type.NoAuth -> TODO()
+            else -> {}
         }
     }
 

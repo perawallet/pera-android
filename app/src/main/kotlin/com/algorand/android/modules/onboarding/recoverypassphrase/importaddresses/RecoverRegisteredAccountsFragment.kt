@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,19 +42,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
-import com.algorand.android.MainActivity
+import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.RegisterIntroPreview
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class RecoverImportHdAddressesFragment : DaggerBaseFragment(0) {
+class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
 
-    private val recoverImportHdAddressesViewModel: RecoverImportHdAddressesViewModel by viewModels()
+    private val args: RecoverRegisteredAccountsFragmentArgs by navArgs()
+
+    private val recoverRegisteredAccountsViewModel: RecoverRegisteredAccountsViewModel by viewModels()
 
     private val statusBarConfiguration =
         StatusBarConfiguration(backgroundColor = R.color.tertiary_background)
@@ -65,11 +68,6 @@ class RecoverImportHdAddressesFragment : DaggerBaseFragment(0) {
         toolbarConfiguration = toolbarConfiguration,
         statusBarConfiguration = statusBarConfiguration
     )
-
-    private val registerIntroPreviewCollector: suspend (RegisterIntroPreview) -> Unit = {
-        configureToolbar(it.isCloseButtonVisible)
-        (activity as MainActivity).hideProgress()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,25 +83,11 @@ class RecoverImportHdAddressesFragment : DaggerBaseFragment(0) {
         }
     }
 
-    data class AddressData(
-        val address: String,
-        val amount1: String,
-        val amount2: String,
-        val alreadyImported: Boolean
-    )
-
     @Suppress("LongMethod")
     @Composable
     fun SelectAccountsToAddScreen() {
 
-        // Dummy data for addresses (replace with your actual data)
-        val addressesList = listOf(
-            AddressData("G2SAB7...5sEDNAB", "A62,045.00", "$20,006.15", false),
-            AddressData("45HFS4...SGSPAF", "ALREADY IMPORTED", "", true),
-            AddressData("MUSAB7...KIEDNA", "A16,234.32", "$6,236.32", false),
-            AddressData("S454SG...APFORH", "A5,075.00", "$1,406.00", false),
-            AddressData("FS454S...45HGTY", "A545.02", "$6,006.15", false)
-        )
+        val registeredAccounts by recoverRegisteredAccountsViewModel.registeredAccountsFlow.collectAsState()
 
         var selectedAddresses by remember { mutableStateOf(setOf<String>()) }
 
@@ -128,7 +112,7 @@ class RecoverImportHdAddressesFragment : DaggerBaseFragment(0) {
             ) {
 
                 // Description
-                Text(text = "We found that there are 21 addresses registered to this wallet.",
+                Text(text = "We found that there are ${registeredAccounts.size} addresses registered to this wallet.",
                     modifier = Modifier.padding(bottom = 16.dp))
 
                 // Address List Header
@@ -138,19 +122,19 @@ class RecoverImportHdAddressesFragment : DaggerBaseFragment(0) {
                         .padding(bottom = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "21 addresses", modifier = Modifier.weight(1f))
+                    Text(text = "${registeredAccounts.size} addresses", modifier = Modifier.weight(1f))
                     Text(text = "Select all", fontWeight = FontWeight.SemiBold, modifier = Modifier.clickable {
-                        selectedAddresses = if (selectedAddresses.size == addressesList.size) {
+                        selectedAddresses = if (selectedAddresses.size == registeredAccounts.size) {
                             emptySet()
                         } else {
-                            addressesList.filter { !it.alreadyImported }.map { it.address }.toSet()
+                            registeredAccounts.filter { !it.isImportedToDB }.map { it.address }.toSet()
                         }
                     })
-                    Checkbox(checked = selectedAddresses.size == addressesList.filter {
-                        !it.alreadyImported }.size,
+                    Checkbox(checked = selectedAddresses.size == registeredAccounts.filter {
+                        !it.isImportedToDB }.size,
                         onCheckedChange = {
                         selectedAddresses = if (it) {
-                            addressesList.filter { !it.alreadyImported }.map { it.address }.toSet()
+                            registeredAccounts.filter { !it.isImportedToDB }.map { it.address }.toSet()
                         } else {
                             emptySet()
                         }
@@ -159,7 +143,7 @@ class RecoverImportHdAddressesFragment : DaggerBaseFragment(0) {
 
                 // Address List
                 LazyColumn(modifier = Modifier.weight(1f)) {
-                    items(addressesList) { address ->
+                    items(registeredAccounts) { address ->
                         AddressItem(address, selectedAddresses.contains(address.address)) { isChecked ->
                             selectedAddresses = if (isChecked) {
                                 selectedAddresses + address.address
@@ -182,7 +166,7 @@ class RecoverImportHdAddressesFragment : DaggerBaseFragment(0) {
     }
 
     @Composable
-    fun AddressItem(address: AddressData, isChecked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    fun AddressItem(account: RegisteredAlgorandAccount, isChecked: Boolean, onCheckedChange: (Boolean) -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -190,17 +174,17 @@ class RecoverImportHdAddressesFragment : DaggerBaseFragment(0) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = address.address, fontWeight = FontWeight.SemiBold)
-                if (address.alreadyImported) {
+                Text(text = account.address, fontWeight = FontWeight.SemiBold)
+                if (account.isImportedToDB) {
                     Text(text = "ALREADY IMPORTED", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
                 } else {
-                    Text(text = address.amount1)
-                    if (address.amount2.isNotEmpty()) {
-                        Text(text = address.amount2, fontSize = 12.sp)
+                    Text(text = account.algoValue)
+                    if (account.usdValue.isNotEmpty()) {
+                        Text(text = account.usdValue, fontSize = 12.sp)
                     }
                 }
             }
-            if (!address.alreadyImported) {
+            if (!account.isImportedToDB) {
                 Checkbox(checked = isChecked, onCheckedChange = onCheckedChange)
             }
         }

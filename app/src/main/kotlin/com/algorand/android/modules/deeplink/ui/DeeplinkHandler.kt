@@ -23,6 +23,8 @@ import com.algorand.wallet.asset.domain.util.AssetConstants
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class DeeplinkHandler @Inject constructor(
@@ -37,8 +39,10 @@ class DeeplinkHandler @Inject constructor(
     }
 
     suspend fun handleDeepLink(uri: String) {
-        val parsedDeepLink = createDeepLink(uri)
-        handleDeepLink(parsedDeepLink)
+        withContext(Dispatchers.Main) {
+            val parsedDeepLink = createDeepLink(uri)
+            handleDeepLink(parsedDeepLink)
+        }
     }
 
     private suspend fun handleDeepLink(deepLink: DeepLink) {
@@ -115,7 +119,9 @@ class DeeplinkHandler @Inject constructor(
         val isAssetOptedInByAnyLocalAccount = if (assetId == AssetConstants.ALGO_ID) {
             true
         } else {
-            isAssetOptedInByAnyLocalAccount(deepLink.assetId)
+            withContext(Dispatchers.IO) {
+                isAssetOptedInByAnyLocalAccount(deepLink.assetId)
+            }
         }
         return if (isAssetOptedInByAnyLocalAccount) {
             with(deepLink) {

@@ -50,7 +50,7 @@ class WebImportLoadingViewModel @Inject constructor(
 
     private suspend fun startImportBackupFlow() {
         webImportLoadingPreviewUseCase
-            .importEncryptedBackup(_webImportLoadingPreviewFlow.value, webImportQrCode, viewModelScope)
+            .importEncryptedBackup(_webImportLoadingPreviewFlow.value, webImportQrCode)
             .collectLatest {
                 _webImportLoadingPreviewFlow.emit(it)
             }

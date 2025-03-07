@@ -122,7 +122,7 @@ class MainViewModel @Inject constructor(
         deepLinkHandler.setListener(listener)
     }
 
-    fun increseAppOpeningCount() {
+    fun increaseAppOpeningCount() {
         viewModelScope.launch {
             increaseAppOpeningCountUseCase.increaseAppOpeningCount()
         }

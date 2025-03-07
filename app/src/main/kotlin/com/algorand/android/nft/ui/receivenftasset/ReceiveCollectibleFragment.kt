@@ -12,6 +12,8 @@
 
 package com.algorand.android.nft.ui.receivenftasset
 
+import android.os.Bundle
+import android.view.View
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -28,8 +30,10 @@ import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetFragment
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetFragment.BaseAddAssetFragmentListener
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel
 import com.algorand.android.modules.assets.addition.ui.model.AssetAdditionType
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.filterNotNull
 
 @AndroidEntryPoint
 class ReceiveCollectibleFragment : BaseAddAssetFragment(R.layout.fragment_receive_collectible) {
@@ -66,6 +70,13 @@ class ReceiveCollectibleFragment : BaseAddAssetFragment(R.layout.fragment_receiv
         receiveCollectibleViewModel.updateBaseAddAssetPreviewWithHandleQueryChangeForScrollEvent()
     }
 
+    private val previewCollector: suspend (ReceiveCollectibleFragmentPreview) -> Unit = { preview ->
+        binding.accountCopyQrView.apply {
+            setAccountName(preview.accountDisplayName)
+            setAccountIcon(preview.accountIconDrawablePreview)
+        }
+    }
+
     private val toolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.opt_in_to_nft,
         startIconResId = R.drawable.ic_left_arrow,
@@ -89,16 +100,19 @@ class ReceiveCollectibleFragment : BaseAddAssetFragment(R.layout.fragment_receiv
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        collectLatestOnLifecycle(
+            receiveCollectibleViewModel.previewFlow.filterNotNull(),
+            previewCollector
+        )
+    }
+
     override fun initUi() {
+        receiveCollectibleViewModel.initializePreview()
         with(binding) {
             collectiblesRecyclerView.adapter = assetSearchAdapter
-            accountCopyQrView.apply {
-                setListener(accountCopyQrViewListener)
-                val (senderDisplayText, senderAccountIcon) =
-                    receiveCollectibleViewModel.getReceiverAccountDisplayTextAndIcon(accountPublicKey)
-                setAccountName(senderDisplayText)
-                setAccountIcon(senderAccountIcon)
-            }
+            accountCopyQrView.setListener(accountCopyQrViewListener)
             screenStateView.setOnNeutralButtonClickListener {
                 receiveCollectibleViewModel.refreshReceiveCollectiblePreview()
             }

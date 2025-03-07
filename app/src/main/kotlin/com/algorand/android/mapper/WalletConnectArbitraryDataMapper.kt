@@ -20,7 +20,7 @@ import com.algorand.android.models.WalletConnectArbitraryDataSigner
 import com.algorand.android.models.WalletConnectAssetInformation
 import com.algorand.android.models.WalletConnectPeerMeta
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetData
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvider
 import com.algorand.android.utils.multiplyOrZero
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
@@ -33,7 +33,7 @@ import javax.inject.Inject
 @SuppressWarnings("ReturnCount")
 class WalletConnectArbitraryDataMapper @Inject constructor(
     private val errorProvider: WalletConnectErrorProvider,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val walletConnectAssetInformationMapper: WalletConnectAssetInformationMapper,
     private val getAccountCustomName: GetAccountCustomName,
     private val getAccountInformation: GetAccountInformation,
@@ -50,7 +50,7 @@ class WalletConnectArbitraryDataMapper @Inject constructor(
             val wcAccount = WalletConnectAccount(
                 address = signerAddress,
                 name = getAccountCustomName(signerAddress).orEmpty(),
-                accountIconDrawablePreview = createAccountIconDrawableUseCase(signerAddress)
+                accountIconDrawablePreview = getAccountIconDrawablePreview(signerAddress)
             )
             val amount = getAccountInformation(signerAddress)?.amount ?: BigInteger.ZERO
             val ownedAsset = getAccountOwnedAssetData(signerAddress, AssetConstants.ALGO_ID)

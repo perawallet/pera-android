@@ -16,8 +16,7 @@ import com.algorand.android.R
 import com.algorand.android.core.AccountManager
 import com.algorand.android.mapper.AccountDisplayNameMapper
 import com.algorand.android.models.PluralAnnotatedString
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.mapper.AsbAccountRestoreResultPreviewMapper
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbAccountRestoreResultPreview
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult
@@ -31,12 +30,11 @@ class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
     private val asbAccountRestoreResultPreviewMapper: AsbAccountRestoreResultPreviewMapper,
     private val accountManager: AccountManager,
     private val accountDisplayNameMapper: AccountDisplayNameMapper,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     resultListItemMapper: ResultListItemMapper
 ) : BaseResultPreviewUseCase(resultListItemMapper) {
 
-    fun getAsbAccountRestoreResultPreview(
+    suspend fun getAsbAccountRestoreResultPreview(
         asbAccountImportResult: AsbAccountImportResult
     ): AsbAccountRestoreResultPreview {
         val importedAccountSize = asbAccountImportResult.importedAccountList.size
@@ -68,14 +66,9 @@ class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
                 type = account?.type
             )
 
-            val accountIconDrawablePreview = createAccountIconDrawableUseCase(
-                account?.type,
-                accountStateHelperUseCase.hasAccountAuthority(account)
-            )
-
             createAccountItem(
                 accountDisplayName = accountDisplayName,
-                accountIconDrawablePreview = accountIconDrawablePreview
+                accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             )
         }
         val resultItemList = mutableListOf<ResultListItem>().apply {

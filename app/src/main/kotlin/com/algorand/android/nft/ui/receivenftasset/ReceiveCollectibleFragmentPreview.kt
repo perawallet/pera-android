@@ -10,13 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.baseresult.ui
+package com.algorand.android.nft.ui.receivenftasset
 
-import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.baseresult.ui.model.BaseResultPreviewFields
-import kotlinx.coroutines.flow.StateFlow
+import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 
-abstract class BaseResultViewModel : BaseViewModel() {
-
-    abstract val baseResultPreviewFlow: StateFlow<BaseResultPreviewFields?>
-}
+data class ReceiveCollectibleFragmentPreview(
+    val accountDisplayName: String,
+    val accountIconDrawablePreview: AccountIconDrawablePreview
+)

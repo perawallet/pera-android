@@ -14,34 +14,40 @@ package com.algorand.android.modules.swap.previewsummary.ui
 
 import android.content.res.Resources
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
 import com.algorand.android.modules.swap.previewsummary.ui.model.SwapPreviewSummaryPreview
 import com.algorand.android.modules.swap.previewsummary.ui.usecase.SwapPreviewSummaryPreviewUseCase
 import com.algorand.android.utils.getOrThrow
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class SwapPreviewSummaryViewModel @Inject constructor(
-    swapPreviewSummaryPreviewUseCase: SwapPreviewSummaryPreviewUseCase,
+    private val swapPreviewSummaryPreviewUseCase: SwapPreviewSummaryPreviewUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
     private val swapQuote = savedStateHandle.getOrThrow<SwapQuote>(SWAP_QUOTE_KEY)
 
-    private val _swapPreviewSummaryPreviewFlow = MutableStateFlow<SwapPreviewSummaryPreview>(
-        swapPreviewSummaryPreviewUseCase.getInitialPreview(swapQuote)
-    )
-    val swapPreviewSummaryPreviewFlow: StateFlow<SwapPreviewSummaryPreview>
-        get() = _swapPreviewSummaryPreviewFlow
+    private val _swapPreviewSummaryPreviewFlow = MutableStateFlow<SwapPreviewSummaryPreview?>(null)
+    val swapPreviewSummaryPreviewFlow: StateFlow<SwapPreviewSummaryPreview?>
+        get() = _swapPreviewSummaryPreviewFlow.asStateFlow()
 
-    // TODO Move this logic into previewUseCase
-    fun getUpdatedPriceRatio(resources: Resources): AnnotatedString {
-        return _swapPreviewSummaryPreviewFlow.value.getSwitchedPriceRatio(resources)
+    fun initializePreview() {
+        viewModelScope.launchIO {
+            _swapPreviewSummaryPreviewFlow.value = swapPreviewSummaryPreviewUseCase.getInitialPreview(swapQuote)
+        }
+    }
+
+    fun getUpdatedPriceRatio(resources: Resources): AnnotatedString? {
+        return _swapPreviewSummaryPreviewFlow.value?.getSwitchedPriceRatio(resources)
     }
 
     companion object {

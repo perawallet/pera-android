@@ -10,7 +10,7 @@
  *  limitations under the License
  */
 
-package com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.mapper
+package com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.mapper
 
 import com.algorand.android.models.Account
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccounts
@@ -20,7 +20,7 @@ import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
 
 interface AssetInboxAllAccountsPreviewMapper {
-    operator fun invoke(
+    suspend operator fun invoke(
         assetInboxAllAccountsList: List<AssetInboxAllAccounts>,
         accounts: List<Account>,
         isLoading: Boolean,
@@ -31,7 +31,7 @@ interface AssetInboxAllAccountsPreviewMapper {
 
     fun getInitialPreview(): AssetInboxAllAccountsPreview
 
-    fun mapToAssetInboxAllAccountsWithAccount(
+    suspend fun mapToAssetInboxAllAccountsWithAccount(
         assetInboxAllAccountsList: List<AssetInboxAllAccounts>,
         accounts: List<Account>
     ): List<AssetInboxAllAccountsWithAccount>

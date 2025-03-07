@@ -15,7 +15,7 @@ package com.algorand.android.modules.dapp.bidali.ui.browser.usecase
 import com.algorand.android.models.TargetUser
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.dapp.bidali.domain.mapper.BidaliAssetMapper
 import com.algorand.android.modules.dapp.bidali.domain.model.BidaliPaymentRequestDTO
 import com.algorand.android.modules.dapp.bidali.domain.model.MainnetBidaliSupportedCurrency
@@ -38,7 +38,7 @@ class BidaliBrowserUseCase @Inject constructor(
     private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData,
     private val bidaliAssetMapper: BidaliAssetMapper,
     private val isOnMainnetUseCase: IsOnMainnetUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountInformation: GetAccountInformation,
     private val getAccountMinBalance: GetAccountMinBalance,
     private val getAccountCustomName: GetAccountCustomName,
@@ -84,7 +84,7 @@ class BidaliBrowserUseCase @Inject constructor(
             xnote = paymentRequest.extraId,
             targetUser = TargetUser(
                 publicKey = paymentRequest.address,
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
+                accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             ),
             isArc59Transaction = !receiverAccount.hasAsset(selectedAssetId),
             signer = getTransactionSigner(selectedAccount.address)

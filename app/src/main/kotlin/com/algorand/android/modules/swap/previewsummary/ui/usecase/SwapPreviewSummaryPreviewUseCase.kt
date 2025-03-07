@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.swap.previewsummary.ui.usecase
 
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
@@ -28,10 +28,10 @@ class SwapPreviewSummaryPreviewUseCase @Inject constructor(
     private val swapPriceRatioProviderMapper: SwapPriceRatioProviderMapper,
     private val swapPreviewSummaryPreviewMapper: SwapPreviewSummaryPreviewMapper,
     private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) {
 
-    fun getInitialPreview(swapQuote: SwapQuote): SwapPreviewSummaryPreview {
+    suspend fun getInitialPreview(swapQuote: SwapQuote): SwapPreviewSummaryPreview {
         return with(swapQuote) {
             swapPreviewSummaryPreviewMapper.mapToSwapPreviewSummaryPreview(
                 priceRatioProvider = swapPriceRatioProviderMapper.mapToSwapPriceRatioProvider(swapQuote),
@@ -42,7 +42,7 @@ class SwapPreviewSummaryPreviewUseCase @Inject constructor(
                 formattedPeraFee = peraFeeAmount.formatAsCurrency(Currency.ALGO.symbol),
                 formattedTotalFee = totalFee.formatAsCurrency(Currency.ALGO.symbol),
                 accountDisplayName = accountDisplayNameUseCase.invoke(swapQuote.accountAddress),
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
+                accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             )
         }
     }

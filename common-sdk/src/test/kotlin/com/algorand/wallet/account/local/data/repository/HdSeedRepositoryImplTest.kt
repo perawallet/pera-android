@@ -54,7 +54,7 @@ class HdSeedRepositoryImplTest {
         val count = 5
         every { hdSeedDao.getTableSizeAsFlow() } returns flowOf(count)
 
-        val result = sut.getHdSeedCountAsFlow().first()
+        val result = sut.getSeedCountAsFlow().first()
 
         assertEquals(count, result)
     }
@@ -117,29 +117,6 @@ class HdSeedRepositoryImplTest {
         coEvery { hdSeedDao.get(seedId) } returns null
 
         val result = sut.getHdSeed(seedId)
-
-        assertNull(result)
-    }
-
-    @Test
-    fun `EXPECT entropy bytes WHEN getting encrypted entropy by existing id`() = runTest {
-        val seedId = 123
-        val entropy = ByteArray(32) { 1 }
-
-        coEvery { hdSeedDao.getEncryptedEntropy(seedId) } returns entropy
-
-        val result = sut.getEncryptedEntropy(seedId)
-
-        assertEquals(entropy, result)
-    }
-
-    @Test
-    fun `EXPECT null WHEN getting encrypted entropy by non-existent id`() = runTest {
-        val seedId = 123
-
-        coEvery { hdSeedDao.getEncryptedEntropy(seedId) } returns null
-
-        val result = sut.getEncryptedEntropy(seedId)
 
         assertNull(result)
     }
@@ -221,5 +198,23 @@ class HdSeedRepositoryImplTest {
         val result = sut.getSeed(seedId)
 
         assertEquals(decryptedSeed, result)
+    }
+
+    @Test
+    fun `EXPECT true WHEN checking if any seed exists in table`() = runTest {
+        coEvery { hdSeedDao.hasAnySeed() } returns true
+
+        val result = sut.hasAnySeed()
+
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `EXPECT false WHEN checking if any seed exists in table and it is empty`() = runTest {
+        coEvery { hdSeedDao.hasAnySeed() } returns false
+
+        val result = sut.hasAnySeed()
+
+        assertEquals(false, result)
     }
 }

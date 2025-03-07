@@ -5,19 +5,17 @@ import kotlinx.parcelize.Parcelize
 
 sealed interface OnboardingAccountType : Parcelable {
 
-    @Parcelize
-    data object Algo25 : OnboardingAccountType
+    val wordCount: Int
 
+    @Suppress("MagicNumber")
     @Parcelize
-    data object HdKey : OnboardingAccountType
+    data object Algo25 : OnboardingAccountType {
+        override val wordCount: Int = 25
+    }
 
-    companion object {
-        @Suppress("MagicNumber")
-        fun OnboardingAccountType.wordCount(): Int {
-            return when (this) {
-                is Algo25 -> 25
-                is HdKey -> 24
-            }
-        }
+    @Suppress("MagicNumber")
+    @Parcelize
+    data object HdKey : OnboardingAccountType {
+        override val wordCount: Int = 24
     }
 }

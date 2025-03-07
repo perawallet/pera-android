@@ -17,7 +17,6 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.customviews.passphraseinput.model.PassphraseInputGroupConfiguration
 import com.algorand.android.models.OnboardingAccountType
-import com.algorand.android.models.OnboardingAccountType.Companion.wordCount
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.model.RecoverWithPassphrasePreview
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.usecase.RecoverWithPassphrasePreviewUseCase
 import com.algorand.android.utils.getOrElse
@@ -106,7 +105,7 @@ class RecoverWithPassphraseViewModel @Inject constructor(
     }
 
     private fun createInitialPreview(): RecoverWithPassphrasePreview {
-        val wordCount = mnemonic?.splitMnemonic()?.size ?: onboardingAccountType.wordCount()
+        val wordCount = mnemonic?.splitMnemonic()?.size ?: onboardingAccountType.wordCount
         return recoverWithPassphrasePreviewUseCase.getRecoverWithPassphraseInitialPreview(wordCount)
     }
 

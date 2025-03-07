@@ -15,8 +15,8 @@ package com.algorand.wallet.algosdk.transaction.sdk
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.crypto.Address
-import com.algorand.wallet.algosdk.model.Bip32DerivationType
-import com.algorand.wallet.algosdk.model.HdKeyAccount
+import com.algorand.wallet.algosdk.domain.model.Bip32DerivationType
+import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed

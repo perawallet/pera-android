@@ -147,6 +147,14 @@ fun interface GetMaxHdSeedId {
     suspend operator fun invoke(): Int?
 }
 
+fun interface GetHasAnyHdSeedId {
+    suspend operator fun invoke(): Boolean
+}
+
+fun interface GetSeedIdIfExistingEntropy {
+    suspend operator fun invoke(entropy: ByteArray): Int?
+}
+
 fun interface GetAllHdSeeds {
     suspend operator fun invoke(): List<HdSeed>
 }

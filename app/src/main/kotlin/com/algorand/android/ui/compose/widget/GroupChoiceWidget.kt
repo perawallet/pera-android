@@ -12,13 +12,14 @@
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,44 +47,30 @@ fun ItemChoiceWidget(
     onClick: () -> Unit
 ) {
     Row(
-        modifier = modifier.then(Modifier
+        modifier = modifier
+            .clickable { onClick() }
             .padding(horizontal = 16.dp)
-            .requiredHeight(72.dp)
-            .clickable {
-                onClick()
-            }),
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .padding(end = 24.dp)
-                    .size(40.dp)
-                    .clip(shape = CircleShape)
-                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    imageVector = icon,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    contentDescription = iconContentDescription
-                )
-            }
-        }
-        Column(
-            verticalArrangement = Arrangement.Center,
-        ) {
+        Icon(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .padding(8.dp),
+            imageVector = icon,
+            contentDescription = iconContentDescription,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Column {
             PeraTitleText(
-                modifier = Modifier
-                    .requiredHeight(height = 24.dp),
                 text = title
             )
+            Spacer(modifier = Modifier.height(4.dp))
             PeraBodyText(
-                modifier = Modifier
-                    .requiredHeight(height = 48.dp),
                 text = description
             )
         }

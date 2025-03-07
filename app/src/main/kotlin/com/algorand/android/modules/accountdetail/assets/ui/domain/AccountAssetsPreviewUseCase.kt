@@ -106,7 +106,7 @@ class AccountAssetsPreviewUseCase @Inject constructor(
                 add(requiredMinimumBalanceItem)
                 add(createQuickActionItemList(isWatchAccount, hasInboxItem))
                 val hasAccountAuthority = accountDetail.accountType?.canSignTransaction() == true
-                val isBackedUp = accountDetail.customInfo?.isBackedUp ?: false
+                val isBackedUp = accountDetail.customAccountInfo?.isBackedUp ?: false
                 if (!isBackedUp) {
                     add(accountDetailAssetItemMapper.mapToBackupWarningItem(isBackedUp = false))
                 }

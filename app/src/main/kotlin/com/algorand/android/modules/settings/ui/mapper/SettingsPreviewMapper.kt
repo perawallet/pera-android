@@ -19,11 +19,13 @@ class SettingsPreviewMapper @Inject constructor() {
 
     fun mapToSettingsPreview(
         isAlgorandSecureBackupDescriptionVisible: Boolean,
-        notBackedUpAccountCounts: Int
+        notBackedUpAccountCounts: Int,
+        firebaseInstanceId: String
     ): SettingsPreview {
         return SettingsPreview(
             isAlgorandSecureBackupDescriptionVisible = isAlgorandSecureBackupDescriptionVisible,
-            notBackedUpAccountCounts = notBackedUpAccountCounts
+            notBackedUpAccountCounts = notBackedUpAccountCounts,
+            firebaseInstanceId = firebaseInstanceId
         )
     }
 }

@@ -34,7 +34,6 @@ import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.notification.NotificationPermissionManager
 import com.algorand.android.notification.PeraNotificationManager
 import com.algorand.android.utils.TESTNET_NETWORK_SLUG
-import com.algorand.android.utils.coremanager.LocalAccountsNameServiceManager
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
@@ -60,9 +59,6 @@ abstract class CoreMainActivity : BaseActivity() {
 
     @Inject
     lateinit var parityManager: ParityManager
-
-    @Inject
-    lateinit var localAccountsNameServiceManager: LocalAccountsNameServiceManager
 
     @Inject
     lateinit var notificationPermissionManager: NotificationPermissionManager
@@ -163,7 +159,6 @@ abstract class CoreMainActivity : BaseActivity() {
     private fun initializeCoreManagers() {
         with(lifecycle) {
             addObserver(parityManager)
-            addObserver(localAccountsNameServiceManager)
             addObserver(notificationPermissionManager)
         }
     }

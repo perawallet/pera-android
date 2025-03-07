@@ -12,80 +12,57 @@
 
 package com.algorand.wallet.algosdk.transaction.sdk
 
-import cash.z.ecc.android.bip39.Mnemonics
-import cash.z.ecc.android.bip39.toEntropy
-import cash.z.ecc.android.bip39.toSeed
-import com.algorand.algosdk.account.Account
-import com.algorand.algosdk.crypto.Address
+import com.algorand.algosdk.sdk.Sdk
 import com.algorand.wallet.algosdk.model.Algo25Account
-import com.algorand.wallet.algosdk.model.Bip32DerivationType
-import com.algorand.wallet.algosdk.model.HdAccount
-import com.algorand.wallet.encryption.SecretKeyEncryptionManager
-import foundation.algorand.xhdwalletapi.KeyContext
-import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
-import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
-import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
+import com.algorand.wallet.algosdk.model.HdKeyAccount
+import javax.inject.Inject
 
-internal class AlgoAccountSdkImpl(
-    private val secretKeyEncryptionManager: SecretKeyEncryptionManager
+internal class AlgoAccountSdkImpl @Inject constructor(
+    private val bip39Sdk: PeraBip39Sdk
 ) : AlgoAccountSdk {
 
-    override fun createHdAccount(): HdAccount {
-        val entropy = Mnemonics.WordCount.COUNT_24.toEntropy()
-        val generatedMnemonic = Mnemonics.MnemonicCode(entropy)
-        return getHdAccount(generatedMnemonic)
-    }
-
-    override fun recoverHdAccount(mnemonic: String): HdAccount {
-        val m = Mnemonics.MnemonicCode(mnemonic)
-        return getHdAccount(m)
-    }
-
-    override fun createAlgo25Account(): Algo25Account {
-        val account = Account()
-        return Algo25Account(account.address.toString(), account.toMnemonic(), account.toSeed())
-    }
-
-    override fun recoverAlgo25Account(mnemonic: String): Algo25Account? {
-        try {
-            val account = Account(mnemonic)
-            return Algo25Account(account.address.toString(), account.toMnemonic(), account.toSeed())
+    override fun createHdAccount(): HdKeyAccount? {
+        return try {
+            bip39Sdk.createHdKeyAccount()
         } catch (e: Exception) {
-            return null
+            null
         }
     }
 
-    private fun getHdAccount(mnemonic: Mnemonics.MnemonicCode): HdAccount {
-        val seed = mnemonic.toSeed()
-        val xHDWalletAPI = XHDWalletAPIAndroid(seed)
-        val keyContext = KeyContext.Address
-        val account = 0.toUInt()
-        val change = 0.toUInt()
-        val keyIndex = 0.toUInt()
+    override fun recoverHdAccount(mnemonic: String): HdKeyAccount? {
+        return try {
+            bip39Sdk.getHdKeyAccountFromMnemonic(mnemonic)
+        } catch (e: Exception) {
+            null
+        }
+    }
 
-        val publicKey = xHDWalletAPI.keyGen(
-            keyContext,
-            account,
-            change,
-            keyIndex
-        )
+    override fun createAlgo25Account(): Algo25Account? {
+        return try {
+            var secretKey = Sdk.generateSK()
+            val output = Algo25Account(
+                address = Sdk.generateAddressFromSK(secretKey),
+                secretKey = secretKey
+            )
+            secretKey = ByteArray(0) // delete secret key from memory
+            output
+        } catch (e: Exception) {
+            null
+        }
+    }
 
-        // Produce the PK and turn it into an Algorand formatted address
-        val algoAddress = Address(publicKey)
-        val privateKey: ByteArray = xHDWalletAPI.deriveKey(
-            fromSeed(seed),
-            getBIP44PathFromContext(keyContext, account, change, keyIndex),
-            true
-        )
-        return HdAccount(
-            address = algoAddress.toString(),
-            encryptedEntropy = secretKeyEncryptionManager.encrypt(mnemonic.toEntropy()),
-            publicKey = publicKey,
-            encryptedPrivateKey = secretKeyEncryptionManager.encrypt(privateKey),
-            account = account.toInt(),
-            change = change.toInt(),
-            keyIndex = keyIndex.toInt(),
-            derivationType = Bip32DerivationType.Peikert
-        )
+    override fun recoverAlgo25Account(mnemonic: String): Algo25Account? {
+        return try {
+            var secretKey = Sdk.mnemonicToPrivateKey(mnemonic)
+
+            val output = Algo25Account(
+                address = Sdk.generateAddressFromSK(secretKey),
+                secretKey = secretKey
+            )
+            secretKey = ByteArray(0) // delete secret key from memory
+            output
+        } catch (e: Exception) {
+            null
+        }
     }
 }

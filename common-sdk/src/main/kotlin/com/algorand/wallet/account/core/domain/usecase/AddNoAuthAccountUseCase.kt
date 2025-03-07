@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.account.core.domain.usecase
 
-import com.algorand.wallet.account.custom.domain.model.CustomInfo
+import com.algorand.wallet.account.custom.domain.model.CustomAccountInfo
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomInfo
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.SaveNoAuthAccount
@@ -26,6 +26,6 @@ internal class AddNoAuthAccountUseCase @Inject constructor(
     override suspend fun invoke(address: String, customName: String?) {
         val account = LocalAccount.NoAuth(address)
         saveNoAuthAccount(account)
-        setAccountCustomInfo(CustomInfo(address, customName, Int.MAX_VALUE, isBackedUp = true))
+        setAccountCustomInfo(CustomAccountInfo(address, customName, Int.MAX_VALUE, isBackedUp = true))
     }
 }

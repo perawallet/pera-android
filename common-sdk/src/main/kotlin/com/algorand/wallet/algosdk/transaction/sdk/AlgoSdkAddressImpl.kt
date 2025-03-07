@@ -15,7 +15,7 @@ package com.algorand.wallet.algosdk.transaction.sdk
 import android.util.Base64
 import com.algorand.algosdk.sdk.Sdk
 import com.algorand.wallet.algosdk.transaction.model.AlgorandAddress
-import com.algorand.wallet.encryption.Base64Manager
+import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import javax.inject.Inject
 
 internal class AlgoSdkAddressImpl @Inject constructor(

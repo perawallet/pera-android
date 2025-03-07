@@ -192,7 +192,6 @@ erDiagram
     hd_seeds {
         Int seed_id PK
         ByteArray encrypted_entropy UK
-        String entropy_custom_name
         ByteArray encrypted_seed UK
     }
     hd_keys {
@@ -289,5 +288,17 @@ erDiagram
         Long collectible_asset_id
         String display_name
         String display_value
+    }
+    custom_account_info {
+        String algo_address PK
+        String custom_name
+        Int order_index
+        Boolean is_backed_up
+    }
+    custom_hd_seed_info {
+        Int seed_id PK
+        String entropy_custom_name
+        Int order_index
+        Boolean is_backed_up
     }
 ```

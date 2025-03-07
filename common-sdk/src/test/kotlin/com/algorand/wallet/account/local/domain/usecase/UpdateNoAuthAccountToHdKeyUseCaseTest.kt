@@ -13,6 +13,7 @@
 package com.algorand.wallet.account.local.domain.usecase
 
 import com.algorand.wallet.account.local.domain.model.Bip32DerivationType
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -21,11 +22,11 @@ import org.junit.Test
 class UpdateNoAuthAccountToHdKeyUseCaseTest {
 
     private val deleteLocalAccount: DeleteLocalAccount = mockk(relaxed = true)
-    private val createHdKeyAccount: CreateHdKeyAccount = mockk(relaxed = true)
+    private val savedHdKeyAccount: SaveHdKeyAccount = mockk(relaxed = true)
 
     private val sut = UpdateNoAuthAccountToHdKeyUseCase(
         deleteLocalAccount,
-        createHdKeyAccount
+        savedHdKeyAccount
     )
 
     @Test
@@ -38,20 +39,22 @@ class UpdateNoAuthAccountToHdKeyUseCaseTest {
             ACCOUNT,
             CHANGE,
             KEY_INDEX,
-            Bip32DerivationType.Peikert
+            Bip32DerivationType.Peikert.value
         )
 
         coVerify { deleteLocalAccount(ADDRESS) }
         coVerify {
-            createHdKeyAccount(
-                ADDRESS,
-                PUBLIC_KEY,
-                PRIVATE_KEY,
-                SEED_ID,
-                ACCOUNT,
-                CHANGE,
-                KEY_INDEX,
-                Bip32DerivationType.Peikert
+            savedHdKeyAccount(
+                LocalAccount.HdKey(
+                    ADDRESS,
+                    PUBLIC_KEY,
+                    SEED_ID,
+                    ACCOUNT,
+                    CHANGE,
+                    KEY_INDEX,
+                    Bip32DerivationType.Peikert.value
+                ),
+                PRIVATE_KEY
             )
         }
     }

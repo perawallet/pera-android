@@ -41,7 +41,7 @@ import com.algorand.android.utils.ListQueuingHelper
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.signTx
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
-import com.algorand.wallet.account.local.domain.usecase.GetSecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import javax.inject.Inject
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
@@ -51,7 +51,7 @@ class WalletConnectTransactionSignManager @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager,
     private val ledgerBleOperationManager: LedgerBleOperationManager,
     private val signHelper: WalletConnectTransactionSignHelper,
-    private val getSecretKey: GetSecretKey
+    private val getAlgo25SecretKey: GetAlgo25SecretKey
 ) : LifecycleScopedCoroutineOwner() {
 
     val signResultLiveData: LiveData<WalletConnectSignResult>
@@ -159,7 +159,7 @@ class WalletConnectTransactionSignManager @Inject constructor(
     ) {
         when (transactionSigner) {
             is TransactionSigner.Algo25 -> {
-                val secretKey = getSecretKey(transactionSigner?.address.orEmpty()) ?: run {
+                val secretKey = getAlgo25SecretKey(transactionSigner?.address.orEmpty()) ?: run {
                     signHelper.cacheDequeuedItem(null)
                     return
                 }

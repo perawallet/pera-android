@@ -14,5 +14,6 @@ package com.algorand.android.modules.settings.ui.model
 
 data class SettingsPreview(
     val isAlgorandSecureBackupDescriptionVisible: Boolean,
-    val notBackedUpAccountCounts: Int
+    val notBackedUpAccountCounts: Int,
+    val firebaseInstanceId: String
 )

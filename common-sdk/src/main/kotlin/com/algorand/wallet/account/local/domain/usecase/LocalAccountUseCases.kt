@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
-import com.algorand.wallet.account.local.domain.model.Bip32DerivationType
+import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import kotlinx.coroutines.flow.Flow
 
@@ -45,7 +45,7 @@ fun interface CreateHdKeyAccount {
         account: Int,
         change: Int,
         keyIndex: Int,
-        derivationType: Bip32DerivationType
+        derivationType: Int
     )
 }
 
@@ -93,8 +93,20 @@ fun interface GetLocalAccount {
     suspend operator fun invoke(address: String): LocalAccount?
 }
 
-fun interface GetSecretKey {
+fun interface GetAlgo25SecretKey {
     suspend operator fun invoke(address: String): ByteArray?
+}
+
+fun interface GetHdKeyPrivateKey {
+    suspend operator fun invoke(address: String): ByteArray?
+}
+
+fun interface GetHdEntropy {
+    suspend operator fun invoke(seedId: Int): ByteArray?
+}
+
+fun interface GetHdSeed {
+    suspend operator fun invoke(seedId: Int): ByteArray?
 }
 
 fun interface IsThereAnyAccountWithAddress {
@@ -122,11 +134,19 @@ fun interface UpdateNoAuthAccountToHdKey {
         account: Int,
         change: Int,
         keyIndex: Int,
-        derivationType: Bip32DerivationType
+        derivationType: Int
     )
 }
 
 fun interface UpdateNoAuthAccountToLedgerBle {
     suspend operator fun invoke(address: String, deviceMacAddress: String, bluetoothName: String, indexInLedger: Int
     )
+}
+
+fun interface GetMaxHdSeedId {
+    suspend operator fun invoke(): Int?
+}
+
+fun interface GetAllHdSeeds {
+    suspend operator fun invoke(): List<HdSeed>
 }

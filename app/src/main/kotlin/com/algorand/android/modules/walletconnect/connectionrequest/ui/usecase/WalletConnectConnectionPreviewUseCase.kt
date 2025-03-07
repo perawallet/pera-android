@@ -17,7 +17,7 @@ import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
 import com.algorand.android.models.ui.AccountAssetItemButtonState.UNCHECKED
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.CreateLoadedAccountConfiguration
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.CreateNotLoadedAccountConfiguration
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
 import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbol
@@ -40,7 +40,7 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
     private val walletConnectConnectionPreviewMapper: WalletConnectConnectionPreviewMapper,
     private val wcSessionRequestResultMapper: WCSessionRequestResultMapper,
     private val walletConnectNetworkItemMapper: WalletConnectNetworkItemMapper,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val wcDomainScammerStateUseCase: WCDomainScammerStateUseCase,
     private val getAuthFilteredSortedAccounts: GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction,
     private val createLoadedAccountConfiguration: CreateLoadedAccountConfiguration,
@@ -58,8 +58,8 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
         val accountItems = sortedAccountList.map { accountListItem ->
             baseWalletConnectConnectionItemMapper.mapToAccountItem(
                 accountAddress = accountListItem.itemConfiguration.accountAddress,
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(
-                    accountAddress = accountListItem.itemConfiguration.accountAddress
+                accountIconDrawablePreview = getAccountIconDrawablePreview(
+                    address = accountListItem.itemConfiguration.accountAddress
                 ),
                 accountDisplayName = accountListItem.itemConfiguration.accountDisplayName,
                 buttonState = preSelectedButtonState,

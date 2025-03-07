@@ -40,7 +40,7 @@ class Arc59ReceiveDetailPreviewUseCase @Inject constructor(
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase
 ) {
 
-    fun getInitialPreview(args: Arc59ReceiveDetailNavArgs): Arc59ReceiveDetailPreview {
+    suspend fun getInitialPreview(args: Arc59ReceiveDetailNavArgs): Arc59ReceiveDetailPreview {
         return arc59ReceiveDetailPreviewMapper.getInitialPreview(args)
     }
 

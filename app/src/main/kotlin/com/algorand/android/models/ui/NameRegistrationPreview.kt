@@ -19,7 +19,8 @@ data class NameRegistrationPreview(
     val handleNextNavigationEvent: Event<Unit?>?,
     private val accountAlreadyExistsEvent: Event<Unit?>?,
     private val createAccountEvent: Event<AccountCreation>?,
-    private val updateWatchAccountEvent: Event<AccountCreation>?
+    private val updateWatchAccountEvent: Event<AccountCreation>?,
+    private val walletId: Int? = null
 ) {
     fun getAccountAlreadyExistsEvent(): Event<Unit?>? {
         if (accountAlreadyExistsEvent?.consumed == false) {
@@ -43,5 +44,9 @@ data class NameRegistrationPreview(
             createAccountEvent?.consume()
         }
         return updateWatchAccountEvent
+    }
+
+    fun getWalletId(): Int? {
+        return walletId
     }
 }

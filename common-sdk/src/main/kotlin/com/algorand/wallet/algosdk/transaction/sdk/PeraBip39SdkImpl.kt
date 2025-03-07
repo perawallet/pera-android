@@ -18,9 +18,9 @@ import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.crypto.Address
 import com.algorand.wallet.account.info.domain.usecase.GetAccountFastLookup
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddressUseCase
-import com.algorand.wallet.algosdk.model.Bip32DerivationType
-import com.algorand.wallet.algosdk.model.HdKeyAccount
 import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
+import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
+import foundation.algorand.xhdwalletapi.Bip32DerivationType
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
@@ -124,7 +124,8 @@ internal class PeraBip39SdkImpl @Inject constructor(
                                 context = KeyContext.Address,
                                 account = accountIndex.toUInt(),
                                 change = changeIndex.toUInt(),
-                                keyIndex = keyIndex.toUInt()
+                                keyIndex = keyIndex.toUInt(),
+                                derivationType = Bip32DerivationType.Peikert
                             )
                         ).toString()
 
@@ -142,7 +143,9 @@ internal class PeraBip39SdkImpl @Inject constructor(
                             isImportedToDB = isThereAnyAccountWithAddressUseCase(algoAddress),
                             derivationType = Bip32DerivationType.Peikert.value
                         )
-                        Log.e(TAG, "$algoAddress - ${fastLookupAccount?.accountExists}" )
+
+                        Log.i(TAG, "$algoAddress | Accounts Exists: ${fastLookupAccount?.accountExists}" )
+
                         if (fastLookupAccount?.accountExists ?: false) {
                             output.add(tempAccount)
                         }

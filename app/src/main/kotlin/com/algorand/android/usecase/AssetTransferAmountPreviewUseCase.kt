@@ -21,7 +21,7 @@ import com.algorand.android.models.AssetTransferAmountValidationPreviewResult
 import com.algorand.android.models.TargetUser
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.utils.Event
@@ -46,7 +46,7 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
     private val amountTransactionValidationUseCase: AmountTransactionValidationUseCase,
     private val assetTransferAmountAssetPreviewMapper: AssetTransferAmountAssetPreviewMapper,
     private val accountNameIconUseCase: AccountNameIconUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val getAccountInformation: GetAccountInformation,
     private val getAccountMinBalance: GetAccountMinBalance,
@@ -77,7 +77,7 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
             targetUser = TargetUser(
                 contact = assetTransaction.receiverUser,
                 publicKey = assetTransaction.receiverUser?.publicKey.orEmpty(),
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
+                accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             ),
             signer = getTransactionSigner(accountAddress),
             isArc59Transaction = receiverAccountInfo?.hasAsset(assetId)?.not() ?: false

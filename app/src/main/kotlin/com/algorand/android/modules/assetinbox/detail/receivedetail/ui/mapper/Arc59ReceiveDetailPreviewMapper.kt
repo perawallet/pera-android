@@ -17,5 +17,5 @@ import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailPreview
 
 interface Arc59ReceiveDetailPreviewMapper {
-    fun getInitialPreview(args: Arc59ReceiveDetailNavArgs): Arc59ReceiveDetailPreview
+    suspend fun getInitialPreview(args: Arc59ReceiveDetailNavArgs): Arc59ReceiveDetailPreview
 }

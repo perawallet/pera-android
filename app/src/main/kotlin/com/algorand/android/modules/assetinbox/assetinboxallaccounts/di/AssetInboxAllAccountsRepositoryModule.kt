@@ -18,8 +18,8 @@ import com.algorand.android.modules.assetinbox.assetinboxallaccounts.data.reposi
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.data.service.AssetInboxAllAccountsApiService
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.repository.AssetInboxAllAccountsRepository
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.GetAssetInboxAllAccounts
-import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.mapper.AssetInboxAllAccountsPreviewMapper
-import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.mapper.AssetInboxAllAccountsPreviewMapperImpl
+import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.mapper.AssetInboxAllAccountsPreviewMapper
+import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.mapper.AssetInboxAllAccountsPreviewMapperImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

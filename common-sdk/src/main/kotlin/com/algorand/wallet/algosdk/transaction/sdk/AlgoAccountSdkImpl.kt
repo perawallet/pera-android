@@ -13,8 +13,8 @@
 package com.algorand.wallet.algosdk.transaction.sdk
 
 import com.algorand.algosdk.sdk.Sdk
-import com.algorand.wallet.algosdk.model.Algo25Account
-import com.algorand.wallet.algosdk.model.HdKeyAccount
+import com.algorand.wallet.algosdk.domain.model.Algo25Account
+import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 import javax.inject.Inject
 
 internal class AlgoAccountSdkImpl @Inject constructor(

@@ -37,8 +37,7 @@ class WebImportResultFragment : BaseFragment(R.layout.fragment_web_import_result
     private val webImportResultAdapter: WebImportResultAdapter =
         WebImportResultAdapter()
 
-    private val webImportResultPreviewCollector:
-        suspend (preview: WebImportResultPreview?) -> Unit = { preview ->
+    private val webImportResultPreviewCollector: suspend (preview: WebImportResultPreview?) -> Unit = { preview ->
         preview?.let {
             webImportResultAdapter.submitList(it.listItems)
             binding.firstButton.text = getString(it.buttonTextRes)

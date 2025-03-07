@@ -27,7 +27,7 @@ import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetA
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionContactItems
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionItemsFromAccountAddress
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionNameServiceItems
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs
 import com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionFragmentDirections
 import com.algorand.android.utils.exceptions.GlobalException
@@ -51,7 +51,7 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
     private val contactUseCase: ContactUseCase,
     private val accountTransactionValidator: AccountTransactionValidator,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountSelectionContactItems: GetAccountSelectionContactItems,
     private val getAccountSelectionNameServiceItems: GetAccountSelectionNameServiceItems,
     private val getAccountSelectionItemsFromAccountAddress: GetAccountSelectionItemsFromAccountAddress,
@@ -254,7 +254,7 @@ class ReceiverAccountSelectionUseCase @Inject constructor(
             minBalance = accountAssetDetail.minBalanceRequired,
             nftDomainAddress = nftDomainAddress,
             nftDomainServiceLogoUrl = nftDomainServiceLogoUrl,
-            accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(toAccountPublicKey)
+            accountIconDrawablePreview = getAccountIconDrawablePreview(toAccountPublicKey)
         )
         return Result.Success(targetUser)
     }

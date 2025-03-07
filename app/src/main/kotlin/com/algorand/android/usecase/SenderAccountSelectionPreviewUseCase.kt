@@ -20,7 +20,7 @@ import com.algorand.android.models.SenderAccountSelectionPreview
 import com.algorand.android.models.TargetUser
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.utils.Event
 import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssets
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.flow
 
 class SenderAccountSelectionPreviewUseCase @Inject constructor(
     private val senderAccountSelectionPreviewMapper: SenderAccountSelectionPreviewMapper,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountSelectionAccountsWhichCanSignTransaction: GetAccountSelectionAccountsWhichCanSignTransaction,
     private val fetchAccountInformationAndCacheAssets: FetchAccountInformationAndCacheAssets,
     private val getAccountInformation: GetAccountInformation,
@@ -66,7 +66,7 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
             targetUser = TargetUser(
                 contact = assetTransaction.receiverUser,
                 publicKey = assetTransaction.receiverUser?.publicKey.orEmpty(),
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
+                accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             ),
             isArc59Transaction = receiverAccountInfo?.hasAsset(assetId)?.not() ?: false,
             signer = getTransactionSigner(accountAddress)

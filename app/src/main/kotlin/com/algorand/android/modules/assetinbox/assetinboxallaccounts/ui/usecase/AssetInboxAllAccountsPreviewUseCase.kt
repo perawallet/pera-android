@@ -3,8 +3,8 @@ package com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.usecase
 import com.algorand.android.core.AccountManager
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccounts
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.GetAssetInboxAllAccounts
+import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.mapper.AssetInboxAllAccountsPreviewMapper
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.model.AssetInboxAllAccountsPreview
-import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.mapper.AssetInboxAllAccountsPreviewMapper
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
 import javax.inject.Inject
@@ -41,7 +41,7 @@ class AssetInboxAllAccountsPreviewUseCase @Inject constructor(
         )
     }
 
-    private fun createAssetInboxAllAccountsPreview(
+    private suspend fun createAssetInboxAllAccountsPreview(
         assetInboxAllAccountsList: List<AssetInboxAllAccounts>,
     ): AssetInboxAllAccountsPreview {
         return assetInboxAllAccountsPreviewMapper.invoke(

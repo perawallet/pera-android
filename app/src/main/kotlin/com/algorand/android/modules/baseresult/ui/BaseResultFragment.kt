@@ -22,7 +22,7 @@ import com.algorand.android.modules.baseresult.ui.adapter.BaseResultAdapter
 import com.algorand.android.modules.baseresult.ui.model.ResultListItem
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 abstract class BaseResultFragment : BaseFragment(R.layout.fragment_base_result) {
 
@@ -53,7 +53,7 @@ abstract class BaseResultFragment : BaseFragment(R.layout.fragment_base_result) 
     open fun initObservers() {
         with(baseResultViewModel.baseResultPreviewFlow) {
             collectLatestOnLifecycle(
-                flow = map { it.resultListItems },
+                flow = mapNotNull { it?.resultListItems },
                 collection = resultListItemsCollector
             )
         }

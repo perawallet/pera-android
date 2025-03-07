@@ -45,6 +45,7 @@ import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlinx.coroutines.flow.filterNotNull
 
 @AndroidEntryPoint
 class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_detail) {
@@ -95,6 +96,7 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObservers()
+        viewModel.initializePreview()
         arc59ClaimRejectTransactionSignManager.setup(viewLifecycleOwner.lifecycle)
     }
 
@@ -123,7 +125,7 @@ class Arc59ReceiveDetailFragment : BaseFragment(R.layout.fragment_arc59_receive_
 
     private fun initObservers() {
         collectLatestOnLifecycle(
-            flow = viewModel.previewFlow,
+            flow = viewModel.previewFlow.filterNotNull(),
             collection = previewFlowObserver
         )
         collectLatestOnLifecycle(

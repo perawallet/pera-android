@@ -76,8 +76,8 @@ class AccountAdditionUseCase @Inject constructor(
 
     private suspend fun createAlgo25Account(createAccount: CreateAccount, type: Type.Algo25) {
         with(createAccount) {
-            val secretKey = aesPlatformManager.decryptByteArray(type.encryptedSecretKey)
-            addAlgo25Account(address, secretKey, isBackedUp, customName)
+            // val secretKey = aesPlatformManager.decryptByteArray(type.encryptedSecretKey)
+            addAlgo25Account(address, type.encryptedSecretKey, isBackedUp, customName)
         }
     }
 

@@ -13,6 +13,7 @@
 package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.wallet.account.info.domain.model.AccountCacheStatus
+import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
@@ -106,4 +107,8 @@ fun interface IsAccountCachedSuccessfully {
 
 fun interface GetAccountRekeyAdminAddress {
     suspend operator fun invoke(address: String): String?
+}
+
+fun interface GetAccountFastLookup {
+    suspend operator fun invoke(address: String): AccountFastLookup?
 }

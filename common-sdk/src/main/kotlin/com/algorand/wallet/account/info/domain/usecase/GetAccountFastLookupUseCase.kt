@@ -12,26 +12,20 @@
 
 package com.algorand.wallet.account.info.domain.usecase
 
+import com.algorand.wallet.account.info.data.mapper.model.AccountFastLookupMapper
+import com.algorand.wallet.account.info.data.repository.AccountFastLookupFetchHelper
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
-import com.algorand.wallet.account.info.domain.model.AccountInformation
-import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import java.math.BigInteger
 import javax.inject.Inject
 
-internal class IsAssetOwnedByAccountUseCase @Inject constructor(
-    private val getAccountFastLookup: AccountFastLookup
-) : IsAssetOwnedByAccount {
+internal class GetAccountFastLookupUseCase @Inject constructor(
+    private val accountFastLookupFetchHelper: AccountFastLookupFetchHelper,
+    private val accountFastLookupMapper: AccountFastLookupMapper
+) : GetAccountFastLookup {
 
-    override suspend operator fun invoke(address: String, assetId: Long): Boolean {
-        val accountInfo = getAccountFastLookup(address) ?: return false
-        return invoke(accountInfo, assetId)
-    }
-
-    override suspend fun invoke(accountInfo: AccountInformation, assetId: Long): Boolean {
-        return if (assetId == ALGO_ID) {
-            accountInfo.amount > BigInteger.ZERO
-        } else {
-            accountInfo.assetHoldings.any { it.assetId == assetId && it.amount > BigInteger.ZERO }
+    override suspend operator fun invoke(address: String): AccountFastLookup? {
+        val data = accountFastLookupFetchHelper.fetchAccountFastLookup(address).getDataOrNull()
+        return data?.let {
+            accountFastLookupMapper(it)
         }
     }
 }

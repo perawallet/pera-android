@@ -10,20 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.data.model
+package com.algorand.wallet.account.info.data.repository
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.wallet.account.info.data.model.AccountFastLookupResponse
+import com.algorand.wallet.foundation.PeraResult
 
-internal data class AccountFastLookupResponse(
-    @SerializedName("algo_value")
-    val algoValue: String,
-
-    @SerializedName("usd_value")
-    val usdValue: String,
-
-    @SerializedName("calculation_type")
-    val calculationType: String,
-
-    @SerializedName("account_exists")
-    val accountExists: Boolean
-)
+internal interface AccountFastLookupFetchHelper {
+    suspend fun fetchAccountFastLookup(accountAddress: String): PeraResult<AccountFastLookupResponse>
+}

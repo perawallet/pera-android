@@ -93,7 +93,7 @@ class RecoverWithPassphraseViewModel @Inject constructor(
         }
         accountRecoveryJob = viewModelScope.launch(Dispatchers.IO) {
             recoverWithPassphrasePreviewUseCase.validateEnteredMnemonics(
-                preview = _recoverWithPassphrasePreviewFlow.value,
+                preview = _recoverWithPassphrasePreviewFlow.value, onboardingAccountType
             ).collectLatest { preview ->
                 _recoverWithPassphrasePreviewFlow.emit(preview)
             }

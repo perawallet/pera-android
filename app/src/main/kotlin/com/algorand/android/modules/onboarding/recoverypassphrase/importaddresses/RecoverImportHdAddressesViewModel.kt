@@ -10,20 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.data.model
+package com.algorand.android.modules.onboarding.recoverypassphrase.importaddresses
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.android.core.BaseViewModel
+import javax.inject.Inject
 
-internal data class AccountFastLookupResponse(
-    @SerializedName("algo_value")
-    val algoValue: String,
-
-    @SerializedName("usd_value")
-    val usdValue: String,
-
-    @SerializedName("calculation_type")
-    val calculationType: String,
-
-    @SerializedName("account_exists")
-    val accountExists: Boolean
-)
+class RecoverImportHdAddressesViewModel @Inject constructor() : BaseViewModel()

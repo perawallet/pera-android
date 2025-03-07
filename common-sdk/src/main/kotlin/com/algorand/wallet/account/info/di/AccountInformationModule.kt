@@ -22,6 +22,8 @@ import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMap
 import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapperImpl
 import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapperImpl
+import com.algorand.wallet.account.info.data.mapper.model.AccountFastLookupMapper
+import com.algorand.wallet.account.info.data.mapper.model.AccountFastLookupMapperImpl
 import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
 import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapperImpl
 import com.algorand.wallet.account.info.data.mapper.model.AccountInformationResponseMapper
@@ -138,6 +140,9 @@ internal object AccountInformationModule {
     fun provideAccountAssetHoldingsFetchHelper(
         impl: AccountAssetHoldingsFetchHelperImpl
     ): AccountAssetHoldingsFetchHelper = impl
+
+    @Provides
+    fun provideAccountFastLookupMapper(impl: AccountFastLookupMapperImpl): AccountFastLookupMapper = impl
 
     @Provides
     fun provideAccountInformationMapper(impl: AccountInformationMapperImpl): AccountInformationMapper = impl

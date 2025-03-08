@@ -155,11 +155,15 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                 }
 
                 Button(
-                    onClick = { /* Handle continue */ },
+                    onClick = {
+                        recoverRegisteredAccountsViewModel
+                            .importRegisteredAccounts(selectedAddresses, registeredAccounts)
+                        navToHomeNavigation()
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = selectedAddresses.isNotEmpty()
                 ) {
-                    Text(text = "Continue")
+                    Text(text = "Import")
                 }
             }
         }
@@ -202,10 +206,10 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
 //        )
     }
 
-//    private fun navToAccountRecoveryTypeSelectionFragment() {
-//        registerIntroViewModel.logOnboardingWelcomeAccountRecoverClickEvent()
-//        nav(RegisterIntroFragmentDirections.actionRegisterIntroFragmentToAccountRecoveryTypeSelectionFragment())
-//    }
+    private fun navToHomeNavigation() {
+        nav(RecoverRegisteredAccountsFragmentDirections.actionRecoverRegisteredAccountsFragmentToHomeNavigation())
+    }
+
     private fun configureToolbar(isCloseButtonVisible: Boolean) {
         getAppToolbar()?.let { toolbar ->
             if (isCloseButtonVisible) {

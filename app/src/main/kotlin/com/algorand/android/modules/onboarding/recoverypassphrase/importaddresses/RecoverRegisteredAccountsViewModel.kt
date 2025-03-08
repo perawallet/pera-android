@@ -16,13 +16,15 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
-import com.algorand.android.modules.onboarding.recoverypassphrase.importaddresses.model.RecoverRegisteredAccountsPreview
+import com.algorand.android.usecase.AccountAdditionUseCase
+import com.algorand.android.utils.analytics.CreationType
 import com.algorand.wallet.account.core.domain.model.CreateAccount.Type
 import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -31,14 +33,11 @@ import kotlinx.coroutines.launch
 class RecoverRegisteredAccountsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val aesPlatformManager: AESPlatformManager,
-    private val bip39Sdk: PeraBip39Sdk
+    private val bip39Sdk: PeraBip39Sdk,
+    private val accountAdditionUseCase: AccountAdditionUseCase
 ) : BaseViewModel() {
     private val accountCreation: AccountCreation = savedStateHandle["accountCreation"]
         ?: error("Missing accountCreation argument")
-
-    private val _recoverImportHdAddressesPreviewFlow = MutableStateFlow(createInitialPreview())
-    val recoverRegisteredAccountsPreviewFlow: StateFlow<RecoverRegisteredAccountsPreview?>
-        get() = _recoverImportHdAddressesPreviewFlow
 
     private val _registeredAccountsFlow = MutableStateFlow<List<RegisteredAlgorandAccount>>(emptyList())
     val registeredAccountsFlow: StateFlow<List<RegisteredAlgorandAccount>>
@@ -53,18 +52,52 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
                             var entropy = aesPlatformManager.decryptByteArray(this.encryptedEntropy)
                             val registeredAccounts = bip39Sdk.fetchRegisteredAccounts(entropy)
                             entropy = ByteArray(0) // clear secret from memory
-                            registeredAccounts.let { seed ->
-                                _registeredAccountsFlow.value = registeredAccounts
+                            registeredAccounts.let {
+                                _registeredAccountsFlow.value = it
                             }
                         }
-                        else -> {}
+                        else -> {
+                            _registeredAccountsFlow.value = emptyList()
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun createInitialPreview(): RecoverRegisteredAccountsPreview? {
-        return null
+    fun importRegisteredAccounts(selectedAddresses: Set<String>, registeredAccounts: List<RegisteredAlgorandAccount>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val encryptedEntropy = (accountCreation.type
+                    as AccountCreation.Type.HdKey).encryptedEntropy
+            var entropy = aesPlatformManager.decryptByteArray(encryptedEntropy)
+
+            registeredAccounts.filter { selectedAddresses.contains(it.address) }
+                .forEach { accountItem ->
+                    bip39Sdk.getHdKeyAccount(
+                        entropy,
+                        accountItem.account,
+                        accountItem.change,
+                        accountItem.keyIndex
+                    )?.let { account ->
+                        val accountCreation = AccountCreation(
+                            address = account.address,
+                            customName = null,
+                            isBackedUp = false,
+                            type = AccountCreation.Type.HdKey(
+                                account.publicKey,
+                                aesPlatformManager.encryptByteArray(account.privateKey),
+                                aesPlatformManager.encryptByteArray(account.entropy),
+                                account.account,
+                                account.change,
+                                account.keyIndex,
+                                account.derivationType,
+                            ),
+                            creationType = CreationType.RECOVER
+                        )
+                        accountAdditionUseCase.addNewAccount(accountCreation)
+                    }
+                }
+            entropy = ByteArray(0) // clear secret from memory
+        }
     }
 }

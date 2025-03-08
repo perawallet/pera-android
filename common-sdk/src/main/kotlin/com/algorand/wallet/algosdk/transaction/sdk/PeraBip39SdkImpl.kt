@@ -126,9 +126,9 @@ internal class PeraBip39SdkImpl @Inject constructor(
             var seed = mnemonicCode.toSeed()
             val xHDWalletAPI = XHDWalletAPIAndroid(seed)
 
-            for (accountIndex in 0 until 1) {
-                for (changeIndex in 0 until 1) {
-                    for (keyIndex in 0 until 1) {
+            for (accountIndex in 0 until 5) {
+                for (changeIndex in 0 until 5) {
+                    for (keyIndex in 0 until 5) {
                         val algoAddress = Address(
                             xHDWalletAPI.keyGen(
                                 context = KeyContext.Address,

@@ -88,6 +88,7 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
     fun SelectAccountsToAddScreen() {
 
         val registeredAccounts by recoverRegisteredAccountsViewModel.registeredAccountsFlow.collectAsState()
+        val importDone by recoverRegisteredAccountsViewModel.importDoneFlow.collectAsState()
 
         var selectedAddresses by remember { mutableStateOf(setOf<String>()) }
 
@@ -158,13 +159,16 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                     onClick = {
                         recoverRegisteredAccountsViewModel
                             .importRegisteredAccounts(selectedAddresses, registeredAccounts)
-                        navToHomeNavigation()
                     },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = selectedAddresses.isNotEmpty()
                 ) {
                     Text(text = "Import")
                 }
+            }
+
+            if (importDone) {
+                navToHomeNavigation()
             }
         }
     }

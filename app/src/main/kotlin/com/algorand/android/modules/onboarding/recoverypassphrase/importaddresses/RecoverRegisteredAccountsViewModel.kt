@@ -43,6 +43,10 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
     val registeredAccountsFlow: StateFlow<List<RegisteredAlgorandAccount>>
         get() = _registeredAccountsFlow
 
+    private val _importDoneFlow = MutableStateFlow<Boolean>(false)
+    val importDoneFlow: StateFlow<Boolean>
+        get() = _importDoneFlow
+
     init {
         viewModelScope.launch {
             accountCreation.let {
@@ -98,6 +102,7 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
                     }
                 }
             entropy = ByteArray(0) // clear secret from memory
+            _importDoneFlow.value = true
         }
     }
 }

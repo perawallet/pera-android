@@ -51,6 +51,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeeds
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlowUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetHasAnyHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
 import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
@@ -64,6 +65,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddressesUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
+import com.algorand.wallet.account.local.domain.usecase.GetSeedIdIfExistingEntropy
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddressUseCase
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyNoAuthAccountWithAddress
@@ -220,7 +222,15 @@ internal object LocalAccountsModule {
     fun provideGetHdEntropy(repository: HdSeedRepository): GetHdEntropy = GetHdEntropy(repository::getEntropy)
 
     @Provides
-    fun provideHdGetSeed(repository: HdSeedRepository): GetHdSeed = GetHdSeed(repository::getSeed)
+    fun provideGetHdSeed(repository: HdSeedRepository): GetHdSeed = GetHdSeed(repository::getSeed)
+
+    @Provides
+    fun provideHasAnyHdSeedId(repository: HdSeedRepository): GetHasAnyHdSeedId = GetHasAnyHdSeedId(repository::hasAnySeed)
+
+    @Provides
+    fun provideGetSeedIdIfExistingEntropy(
+        repository: HdSeedRepository
+    ): GetSeedIdIfExistingEntropy = GetSeedIdIfExistingEntropy(repository::getSeedIdIfExistingEntropy)
 
     @Provides
     fun provideGetMaxHdSeedId(repository: HdSeedRepository): GetMaxHdSeedId = GetMaxHdSeedId(repository::getMaxSeedId)

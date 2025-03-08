@@ -16,7 +16,7 @@ import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.rekey.domain.usecase.SendSignedTransactionUseCase
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.mapper.RekeyToStandardAccountConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
@@ -36,7 +36,7 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
     private val getAccountDisplayName: GetAccountDisplayName,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountInformation: GetAccountInformation
 ) {
 
@@ -78,7 +78,7 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
             null
         }
         val currentlyRekeyAccountIconDrawable = if (isAccountRekeyed) {
-            createAccountIconDrawableUseCase.invoke(accountInfo?.rekeyAdminAddress.orEmpty())
+            getAccountIconDrawablePreview(accountInfo?.rekeyAdminAddress.orEmpty())
         } else {
             null
         }
@@ -87,9 +87,9 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
             isLoading = false,
             descriptionAnnotatedString = getDescriptionAnnotatedString(isAccountRekeyed = isAccountRekeyed),
             rekeyedAccountDisplayName = accountDisplayName,
-            rekeyedAccountIconResource = createAccountIconDrawableUseCase.invoke(accountAddress),
+            rekeyedAccountIconResource = getAccountIconDrawablePreview(accountAddress),
             authAccountDisplayName = authAccountDisplayName,
-            authAccountIconResource = createAccountIconDrawableUseCase.invoke(authAccountAddress),
+            authAccountIconResource = getAccountIconDrawablePreview(authAccountAddress),
             currentlyRekeyedAccountDisplayName = currentlyRekeyedAccountDisplayName,
             currentlyRekeyedAccountIconDrawable = currentlyRekeyAccountIconDrawable,
             formattedTransactionFee = emptyString(),

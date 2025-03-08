@@ -26,6 +26,7 @@ import com.algorand.android.R
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.common.BaseInfoFragment
@@ -113,19 +114,25 @@ class BackupInfoFragment : BaseInfoFragment() {
             null
         }
 
-        backupInfoViewModel.logOnboardingIUnderstandClickEvent()
-        nav(
-            actionBackupInfoFragmentToWriteDownInfoFragment(
-                args.publicKeysOfAccountsToBackup,
-                accountCreation
+        accountCreation?.let {
+            backupInfoViewModel.logOnboardingIUnderstandClickEvent()
+            nav(
+                actionBackupInfoFragmentToWriteDownInfoFragment(
+                    args.publicKeysOfAccountsToBackup,
+                    accountCreation
+                )
             )
-        )
+        } ?: run {
+            navBack()
+        }
     }
 
     private fun navToBackupPassphraseAccountNameNavigation() {
         val accountCreation = getAccountCreation()
         accountCreation?.let {
             nav(actionBackupInfoFragmentToBackupPassphraseAccountNameNavigation(it))
+        } ?: run {
+            navBack()
         }
     }
 
@@ -143,12 +150,19 @@ class BackupInfoFragment : BaseInfoFragment() {
     }
 
     private fun getAccountCreation(): AccountCreation? {
-        try {
-            return backupInfoViewModel.createAccount()
+        return try {
+            when (backupInfoViewModel.onboardingAccountType) {
+                is OnboardingAccountType.HdKey -> {
+                    backupInfoViewModel.createHdKeyAccount()
+                }
+                is OnboardingAccountType.Algo25 -> {
+                    backupInfoViewModel.createAlgo25Account()
+                }
+            }
         } catch (exception: Exception) {
             navBack()
+            null
         }
-        return null
     }
 
     companion object {

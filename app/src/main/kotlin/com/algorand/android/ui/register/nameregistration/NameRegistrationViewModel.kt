@@ -26,6 +26,7 @@ import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -47,15 +48,36 @@ class NameRegistrationViewModel @Inject constructor(
     private val accountAddress = accountCreation?.address
     private val accountName = accountCreation?.customName
     protected val accountType = accountCreation?.type
+    private var walletId: Int? = null
 
     val predefinedAccountName: String
         get() = accountName.takeUnless { it.isNullOrBlank() } ?: accountAddress.toShortenedAddress()
+
+    init {
+        viewModelScope.launch {
+            updatePreviewWithHdWalletData()
+        }
+    }
+
+    fun updatePreviewWithHdWalletData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            walletId = (getMaxHdSeedId.invoke() ?: 0) + 1
+            walletId?.let {
+                nameRegistrationPreviewUseCase.getInitialPreviewWithHdWalletData(
+                    walletId = it
+                ).let {
+                    _nameRegistrationPreviewFlow.emit(it)
+                }
+            }
+        }
+    }
 
     fun updatePreviewWithAccountCreation(accountCreation: AccountCreation?, inputName: String) {
         viewModelScope.launch {
             nameRegistrationPreviewUseCase.getPreviewWithAccountCreation(
                 accountCreation = accountCreation,
-                inputName = inputName
+                inputName = inputName,
+                walletId = walletId
             )?.let {
                 _nameRegistrationPreviewFlow.emit(it)
             }
@@ -90,14 +112,6 @@ class NameRegistrationViewModel @Inject constructor(
 
     fun isHdKey(): Boolean {
         return accountType is AccountCreation.Type.HdKey
-    }
-
-    fun getWalletId(callback: (Int) -> Unit) {
-        viewModelScope.launch {
-            val maxSeedId: Int? = getMaxHdSeedId.invoke()
-            val walletId = (maxSeedId ?: 0) + 1
-            callback(walletId)
-        }
     }
 
     companion object {

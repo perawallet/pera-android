@@ -58,21 +58,20 @@ class AccountAdditionUseCase @Inject constructor(
         with(accountCreation.type) {
             when (this) {
                 is Type.HdKey -> {
-                    var entropy = aesPlatformManager.decryptByteArray(this.encryptedEntropy)
-                    val seedId = addHdSeed(entropy)
-                    if (seedId.isSuccess) {
-                        updateNoAuthAccountToHdKey(
-                            address,
-                            publicKey,
-                            encryptedPrivateKey,
-                            seedId.getDataOrNull() ?: -1,
-                            account,
-                            change,
-                            keyIndex,
-                            derivationType,
-                        )
+                    aesPlatformManager.decryptByteArray(this.encryptedEntropy).let { entropy ->
+                        addHdSeed(entropy).getDataOrNull()?.let { seedId ->
+                            updateNoAuthAccountToHdKey(
+                                address,
+                                publicKey,
+                                encryptedPrivateKey,
+                                seedId,
+                                account,
+                                change,
+                                keyIndex,
+                                derivationType,
+                            )
+                        }
                     }
-                    entropy = ByteArray(0) // clear secret from memory
                 }
                 is Type.Algo25 -> {
                     val secretKey = aesPlatformManager.decryptByteArray(encryptedSecretKey)
@@ -102,26 +101,26 @@ class AccountAdditionUseCase @Inject constructor(
 
     private suspend fun createHdKeyAccount(createAccount: CreateAccount, type: Type.HdKey) {
         with(createAccount) {
-            var privateKey = aesPlatformManager.decryptByteArray(type.encryptedPrivateKey)
-            var entropy = aesPlatformManager.decryptByteArray(type.encryptedEntropy)
-            val seedId = addHdSeed(entropy)
-            if (seedId.isSuccess) {
-                // seedId was entered successfully
-                addHdKeyAccount(
-                    address,
-                    type.publicKey,
-                    privateKey,
-                    seedId.getDataOrNull() ?: -1,
-                    type.account,
-                    type.change,
-                    type.keyIndex,
-                    type.derivationType,
-                    isBackedUp,
-                    customName
-                )
+            aesPlatformManager.decryptByteArray(type.encryptedPrivateKey).let { privateKey ->
+                aesPlatformManager.decryptByteArray(type.encryptedEntropy).let { entropy ->
+                    val seedIdResult = addHdSeed(entropy)
+                    val seedId = seedIdResult.getDataOrNull()
+                    if (seedIdResult.isSuccess && seedId != null) {
+                        addHdKeyAccount(
+                            address,
+                            type.publicKey,
+                            privateKey,
+                            seedId,
+                            type.account,
+                            type.change,
+                            type.keyIndex,
+                            type.derivationType,
+                            isBackedUp,
+                            customName
+                        )
+                    }
+                }
             }
-            privateKey = ByteArray(0) // clear secret from memory
-            entropy = ByteArray(0) // clear secret from memory
         }
     }
 

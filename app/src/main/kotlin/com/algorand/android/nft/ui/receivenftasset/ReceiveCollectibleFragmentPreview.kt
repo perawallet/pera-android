@@ -10,9 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.model
+package com.algorand.android.nft.ui.receivenftasset
 
-enum class Bip32DerivationType(val value: Int) {
-    Peikert(9),
-    Khovratovich(32)
-}
+import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+
+data class ReceiveCollectibleFragmentPreview(
+    val accountDisplayName: String,
+    val accountIconDrawablePreview: AccountIconDrawablePreview
+)

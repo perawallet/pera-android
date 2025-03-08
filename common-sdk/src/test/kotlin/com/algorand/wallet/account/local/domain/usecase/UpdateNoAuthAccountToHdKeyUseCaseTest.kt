@@ -12,12 +12,12 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
-import com.algorand.wallet.account.local.domain.model.Bip32DerivationType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import foundation.algorand.xhdwalletapi.Bip32DerivationType
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import kotlinx.coroutines.test.runTest
 
 class UpdateNoAuthAccountToHdKeyUseCaseTest {
 

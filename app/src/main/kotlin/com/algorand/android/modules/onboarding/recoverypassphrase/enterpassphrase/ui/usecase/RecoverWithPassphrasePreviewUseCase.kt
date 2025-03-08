@@ -21,7 +21,6 @@ import com.algorand.android.models.Account.Type
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.OnboardingAccountType
-import com.algorand.android.models.OnboardingAccountType.Companion.wordCount
 import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.domain.usecase.GetRekeyedAccountUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.mapper.RecoverWithPassphrasePreviewMapper
@@ -36,7 +35,6 @@ import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import java.util.Locale
 import javax.inject.Inject
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 
 class RecoverWithPassphrasePreviewUseCase @Inject constructor(
@@ -70,8 +68,8 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     ): RecoverWithPassphrasePreview {
         val splittedText = clipboardData.splitMnemonic()
         return if (
-            splittedText.size != OnboardingAccountType.Algo25.wordCount() &&
-            splittedText.size != OnboardingAccountType.HdKey.wordCount()
+            splittedText.size != OnboardingAccountType.Algo25.wordCount &&
+            splittedText.size != OnboardingAccountType.HdKey.wordCount
             ) {
                 preview.copy(onGlobalErrorEvent = Event(R.string.the_last_copied_text))
         } else {
@@ -139,14 +137,8 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     ) = flow {
         try {
             emit(preview.copy(showLoadingDialogEvent = Event(Unit)))
-            // faking the duration of this process for some time before moving forward
-            // so the loading animation is effective.
-            // After deleting it delete also the @SuppressWarnings("MagicNumber")
-            delay(2500L)
-
             var accountAddress = ""
             var mnemonics = passphraseInputConfigurationUtil.getOrderedInput(preview.passphraseInputGroupConfiguration)
-
             val recoveredAccount = getAccount(onboardingAccountType, mnemonics, accountAddress) ?: run {
                 // Handle the case where account creation fails (e.g., invalid mnemonic)
                 val copiedPreview = preview.copy(

@@ -115,6 +115,19 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
             getUpdateWatchAccountEvent()?.consume()
                 ?.let { nameRegistrationViewModel.updateWatchAccount(it) }
             handleNextNavigationEvent?.consume()?.let { navToNextFragment() }
+
+            val isVisible = nameRegistrationViewModel.isOnHdWallet() &&
+                    nameRegistrationViewModel.isHdKey()
+            binding.cardviewWalletNumber.visibility = if (isVisible) View.VISIBLE else View.GONE
+
+            if (isVisible) {
+                preview.getWalletId()?.let {
+                    binding.tvWalletNumber.text = getString(
+                        R.string.wallet_number,
+                        it
+                    )
+                }
+            }
         }
     }
 }

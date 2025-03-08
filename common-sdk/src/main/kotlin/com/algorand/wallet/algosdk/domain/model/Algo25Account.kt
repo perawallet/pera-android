@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.model
+package com.algorand.wallet.algosdk.domain.model
 
 data class Algo25Account(
     val address: String,

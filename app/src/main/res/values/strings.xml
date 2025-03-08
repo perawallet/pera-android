@@ -1468,4 +1468,11 @@
     <string name="create_your_new_account_under">Create your new account under an HD wallet you already have</string>
     <string name="select_accounts_to_add">Select accounts to add</string>
     <string name="select_accounts_to_add_desc">We found that there are #%1$d addresses registered to this wallet</string>
+    <string name="already_imported">Already Imported</string>
+
+    <plurals name="search_address_count">
+        <item quantity="zero">No addresses</item>
+        <item quantity="one">1 address</item>
+        <item quantity="other">%1$d addresses</item>
+    </plurals>
 </resources>

@@ -61,22 +61,9 @@ fun PeraCard(
             Row {
                 PeraTitleText(text = title)
                 highlighted?.let {
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                            .clip(shape = CircleShape)
-                            .background(color = MaterialTheme.colorScheme.surfaceVariant)
-                    ) {
-                        PeraBodyText(
-                            modifier = Modifier.padding(
-                                start = 7.dp,
-                                end = 7.dp,
-                                top = 3.dp,
-                                bottom = 3.dp
-                            ),
-                            text = it
-                        )
-                    }
+                    PeraHeadlineText(
+                        text = it
+                    )
                 }
             }
 

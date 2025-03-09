@@ -13,11 +13,12 @@
 package com.algorand.android.modules.onboarding.recoverypassphrase.importaddresses
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.utils.analytics.CreationType
+import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.core.domain.model.CreateAccount.Type
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
@@ -39,7 +40,7 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
     private val aesPlatformManager: AESPlatformManager,
     private val bip39Sdk: PeraBip39Sdk,
     private val accountAdditionUseCase: AccountAdditionUseCase
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val accountCreation: AccountCreation = savedStateHandle["accountCreation"]
         ?: error("Missing accountCreation argument")
@@ -153,7 +154,7 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
                         )?.let { account ->
                             val accountCreation = AccountCreation(
                                 address = account.address,
-                                customName = null,
+                                customName = account.address.toShortenedAddress(),
                                 isBackedUp = false,
                                 type = AccountCreation.Type.HdKey(
                                     account.publicKey,

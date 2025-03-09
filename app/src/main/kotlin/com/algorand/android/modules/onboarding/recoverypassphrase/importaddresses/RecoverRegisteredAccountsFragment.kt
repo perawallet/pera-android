@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +27,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -40,7 +40,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,12 +51,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
+import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.AnimationLoader
 import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -121,7 +125,6 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
         val snackbarHostState = remember { SnackbarHostState() }
         val scope = rememberCoroutineScope()
 
-        // Handle error state
         LaunchedEffect(state.error) {
             state.error?.let { error ->
                 scope.launch {
@@ -130,83 +133,88 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
             }
         }
 
-        Scaffold(
-            snackbarHost = { SnackbarHost(snackbarHostState) }
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(16.dp)
-            ) {
-                // Description
-                Text(
-                    text = "We found that there are ${state.registeredAccounts.size} addresses " +
-                            "registered to this wallet.",
-                    modifier = Modifier.padding(bottom = 16.dp)
+        if (state.isLoading) {
+            Box {
+                AnimationLoader(
+                    modifier = Modifier.align(alignment = Alignment.Center),
+                    start = ImageVector.vectorResource(R.drawable.ic_ledger_old_export),
+                    end = ImageVector.vectorResource(R.drawable.ic_phone_new),
+                    lottie = LottieCompositionSpec.RawRes(resId = R.raw.loading_dots),
+                    description = "Searching your accounts"
                 )
+            }
+        } else {
 
-                // Address List Header
-                Row(
+            Scaffold(
+                snackbarHost = { SnackbarHost(snackbarHostState) }
+            ) { innerPadding ->
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(16.dp)
                 ) {
-                    Text(
-                        text = "${state.registeredAccounts.size} addresses",
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = "Select all",
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.clickable {
-                            if (state.selectedAddresses.size ==
-                                state.registeredAccounts.filter { !it.isImportedToDB }.size) {
-                                onIntent(RecoverRegisteredAccountsIntent.UnselectAllAccounts)
-                            } else {
-                                onIntent(RecoverRegisteredAccountsIntent.SelectAllAccounts)
-                            }
-                        }
-                    )
-                    Checkbox(
-                        checked = state.selectedAddresses.size ==
-                                state.registeredAccounts.filter { !it.isImportedToDB }.size &&
-                                state.registeredAccounts.isNotEmpty(),
-                        onCheckedChange = { isChecked ->
-                            if (isChecked) {
-                                onIntent(RecoverRegisteredAccountsIntent.SelectAllAccounts)
-                            } else {
-                                onIntent(RecoverRegisteredAccountsIntent.UnselectAllAccounts)
-                            }
-                        }
-                    )
-                }
 
-                // Address List
-                LazyColumn(modifier = Modifier.weight(1f)) {
-                    items(state.registeredAccounts) { account ->
-                        AddressItem(
-                            account = account,
-                            isChecked = state.selectedAddresses.contains(account.address),
+                    Text(
+                        text = "We found that there are ${state.registeredAccounts.size} addresses " +
+                                "registered to this wallet.",
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "${state.registeredAccounts.size} addresses",
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = "Select all",
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.clickable {
+                                if (state.selectedAddresses.size ==
+                                    state.registeredAccounts.filter { !it.isImportedToDB }.size
+                                ) {
+                                    onIntent(RecoverRegisteredAccountsIntent.UnselectAllAccounts)
+                                } else {
+                                    onIntent(RecoverRegisteredAccountsIntent.SelectAllAccounts)
+                                }
+                            }
+                        )
+                        Checkbox(
+                            checked = state.selectedAddresses.size ==
+                                    state.registeredAccounts.filter { !it.isImportedToDB }.size &&
+                                    state.registeredAccounts.isNotEmpty(),
                             onCheckedChange = { isChecked ->
-                                onIntent(
-                                    RecoverRegisteredAccountsIntent.ToggleAccountSelection(
-                                        address = account.address,
-                                        isSelected = isChecked
-                                    )
-                                )
+                                if (isChecked) {
+                                    onIntent(RecoverRegisteredAccountsIntent.SelectAllAccounts)
+                                } else {
+                                    onIntent(RecoverRegisteredAccountsIntent.UnselectAllAccounts)
+                                }
                             }
                         )
                     }
-                }
 
-                // Import Button & Loading Indicator
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                } else {
+                    LazyColumn(modifier = Modifier.weight(1f)) {
+                        items(state.registeredAccounts) { account ->
+                            AddressItem(
+                                account = account,
+                                isChecked = state.selectedAddresses.contains(account.address),
+                                onCheckedChange = { isChecked ->
+                                    onIntent(
+                                        RecoverRegisteredAccountsIntent.ToggleAccountSelection(
+                                            address = account.address,
+                                            isSelected = isChecked
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                    }
+
                     Button(
                         onClick = {
                             onIntent(RecoverRegisteredAccountsIntent.ImportSelectedAccounts)

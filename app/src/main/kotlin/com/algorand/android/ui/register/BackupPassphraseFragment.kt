@@ -74,10 +74,10 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
     }
 
     private fun setupPassphrase() {
-        try {
-            val mnemonic = backupPassphraseViewModel.getMnemonic(args) ?: throw Exception("Mnemonic cannot be null.")
-            binding.passphraseBoxView.setPassphrases(mnemonic)
-        } catch (exception: Exception) {
+        val mnemonic = backupPassphraseViewModel.getMnemonic(args)
+        mnemonic?.let {
+            binding.passphraseBoxView.setPassphrases(it)
+        } ?: run {
             navBack()
         }
     }

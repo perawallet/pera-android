@@ -76,6 +76,10 @@ interface IsAssetOwnedByAccount {
     suspend operator fun invoke(accountInfo: AccountInformation, assetId: Long): Boolean
 }
 
+fun interface IsAssetOptedInByAnyLocalAccount {
+    suspend operator fun invoke(assetId: Long): Boolean
+}
+
 fun interface DeleteAccountInformation {
     suspend operator fun invoke(address: String)
 }

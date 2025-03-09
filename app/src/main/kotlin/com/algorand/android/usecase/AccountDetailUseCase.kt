@@ -44,8 +44,6 @@ class AccountDetailUseCase @Inject constructor(
             .distinctUntilChanged()
     }
 
-    private fun getCachedAccountDetails() = getAccountDetailCacheFlow().value.values
-
     fun getCachedAccountDetail(publicKey: String): CacheResult<AccountDetail>? {
         return accountRepository.getCachedAccountDetail(publicKey)
     }
@@ -68,16 +66,6 @@ class AccountDetailUseCase @Inject constructor(
         )
     }
 
-    fun isAssetOwnedByAccount(publicKey: String, assetId: Long): Boolean {
-        return getCachedAccountDetail(publicKey)?.data?.accountInformation?.getAllAssetIds()?.contains(assetId) ?: false
-    }
-
-    fun isAssetOwnedByAnyAccount(assetId: Long): Boolean {
-        return getCachedAccountDetails().any {
-            it.data?.accountInformation?.getAllAssetIds()?.contains(assetId) ?: false
-        }
-    }
-
     fun getCachedAccountAlgoAmount(publicKey: String): BigInteger? {
         return accountRepository.getCachedAccountDetail(publicKey)?.data?.accountInformation?.amount
     }
@@ -96,9 +84,5 @@ class AccountDetailUseCase @Inject constructor(
     fun getAuthAddress(publicKey: String): String? {
         val accountInformation = accountRepository.getCachedAccountDetail(publicKey)?.data?.accountInformation
         return accountInformation?.rekeyAdminAddress
-    }
-
-    fun setAccountNameService(accountAddress: String, nameServiceName: String?) {
-        accountRepository.getCachedAccountDetail(accountAddress)?.data?.nameServiceName = nameServiceName
     }
 }

@@ -147,7 +147,6 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                 emit(copiedPreview)
                 return@flow
             }
-
             // Check if the account already exists (only for Algo25)
             if (onboardingAccountType == OnboardingAccountType.Algo25) {
                 accountAddress = recoveredAccount.address // Get the address from the created account
@@ -165,27 +164,30 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                         return@flow
                     }
                 }
-            }
 
-            getRekeyedAccountUseCase.invoke(accountAddress).useSuspended(
-                onSuccess = {
-                    val updatedPreview = if (it.isEmpty()) {
-                        preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
-                    } else {
-                        val rekeyedAccountAddresses = it.map { it.address }
-                        val event = Event(recoveredAccount to rekeyedAccountAddresses)
-                        preview.copy(navToImportRekeyedAccountEvent = event)
+                getRekeyedAccountUseCase.invoke(accountAddress).useSuspended(
+                    onSuccess = {
+                        val updatedPreview = if (it.isEmpty()) {
+                            preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
+                        } else {
+                            val rekeyedAccountAddresses = it.map { it.address }
+                            val event = Event(recoveredAccount to rekeyedAccountAddresses)
+                            preview.copy(navToImportRekeyedAccountEvent = event)
+                        }
+                        emit(updatedPreview)
+                    },
+                    onFailed = {
+                        val updatedPreview = preview.copy(
+                            navToNameRegistrationEvent = Event(recoveredAccount),
+                            showErrorEvent = Event(AnnotatedString(R.string.failed_to_fetch_rekeyed))
+                        )
+                        emit(updatedPreview)
                     }
-                    emit(updatedPreview)
-                },
-                onFailed = {
-                    val updatedPreview = preview.copy(
-                        navToNameRegistrationEvent = Event(recoveredAccount),
-                        showErrorEvent = Event(AnnotatedString(R.string.failed_to_fetch_rekeyed))
-                    )
-                    emit(updatedPreview)
-                }
-            )
+                )
+            } else {
+                val updatedPreview = preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
+                emit(updatedPreview)
+            }
         } catch (exception: Exception) {
             emit(preview.copy(onAccountNotFoundEvent = Event(AnnotatedString(R.string.account_not_found_please_try))))
         }

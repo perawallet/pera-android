@@ -26,15 +26,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -42,21 +45,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
 
     private val args: RecoverRegisteredAccountsFragmentArgs by navArgs()
 
-    private val recoverRegisteredAccountsViewModel: RecoverRegisteredAccountsViewModel by viewModels()
+    private val viewModel: RecoverRegisteredAccountsViewModel by viewModels()
 
     private val statusBarConfiguration =
         StatusBarConfiguration(backgroundColor = R.color.tertiary_background)
@@ -76,8 +85,28 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                MaterialTheme { // Use MaterialTheme from material3
-                    SelectAccountsToAddScreen()
+                PeraTheme {
+                    RecoverRegisteredAccountsScreen(
+                        onIntent = viewModel::processIntent
+                    )
+                }
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        configureToolbar(true)
+        observeEffects()
+    }
+
+    private fun observeEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.effect.collectLatest { effect ->
+                    when (effect) {
+                        is RecoverRegisteredAccountsEffect.NavigateToHome -> navToHomeNavigation()
+                    }
                 }
             }
         }
@@ -85,36 +114,37 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
 
     @Suppress("LongMethod")
     @Composable
-    fun SelectAccountsToAddScreen() {
+    fun RecoverRegisteredAccountsScreen(
+        onIntent: (RecoverRegisteredAccountsIntent) -> Unit
+    ) {
+        val state by viewModel.state.collectAsState()
+        val snackbarHostState = remember { SnackbarHostState() }
+        val scope = rememberCoroutineScope()
 
-        val registeredAccounts by recoverRegisteredAccountsViewModel.registeredAccountsFlow.collectAsState()
-        val importDone by recoverRegisteredAccountsViewModel.importDoneFlow.collectAsState()
-
-        var selectedAddresses by remember { mutableStateOf(setOf<String>()) }
+        // Handle error state
+        LaunchedEffect(state.error) {
+            state.error?.let { error ->
+                scope.launch {
+                    snackbarHostState.showSnackbar(error)
+                }
+            }
+        }
 
         Scaffold(
-//            topBar = {
-//                TopAppBar(
-//                    title = { Text("Select accounts to add") },
-//                    navigationIcon = {
-//                        IconButton(onClick = { /* back button press */ }) {
-//                            Icon(imageVector = androidx.compose.material.icons.Icons.Filled.ArrowBack,
-        //                            contentDescription = "Back")
-//                        }
-//                    }
-//                )
-//            }
+            snackbarHost = { SnackbarHost(snackbarHostState) }
         ) { innerPadding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding) // Use innerPadding from Scaffold
+                    .padding(innerPadding)
                     .padding(16.dp)
             ) {
-
                 // Description
-                Text(text = "We found that there are ${registeredAccounts.size} addresses registered to this wallet.",
-                    modifier = Modifier.padding(bottom = 16.dp))
+                Text(
+                    text = "We found that there are ${state.registeredAccounts.size} addresses " +
+                            "registered to this wallet.",
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
 
                 // Address List Header
                 Row(
@@ -123,58 +153,80 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                         .padding(bottom = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "${registeredAccounts.size} addresses", modifier = Modifier.weight(1f))
-                    Text(text = "Select all", fontWeight = FontWeight.SemiBold, modifier = Modifier.clickable {
-                        selectedAddresses = if (selectedAddresses.size == registeredAccounts.size) {
-                            emptySet()
-                        } else {
-                            registeredAccounts.filter { !it.isImportedToDB }.map { it.address }.toSet()
+                    Text(
+                        text = "${state.registeredAccounts.size} addresses",
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = "Select all",
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.clickable {
+                            if (state.selectedAddresses.size ==
+                                state.registeredAccounts.filter { !it.isImportedToDB }.size) {
+                                onIntent(RecoverRegisteredAccountsIntent.UnselectAllAccounts)
+                            } else {
+                                onIntent(RecoverRegisteredAccountsIntent.SelectAllAccounts)
+                            }
                         }
-                    })
-                    Checkbox(checked = selectedAddresses.size == registeredAccounts.filter {
-                        !it.isImportedToDB }.size,
-                        onCheckedChange = {
-                        selectedAddresses = if (it) {
-                            registeredAccounts.filter { !it.isImportedToDB }.map { it.address }.toSet()
-                        } else {
-                            emptySet()
+                    )
+                    Checkbox(
+                        checked = state.selectedAddresses.size ==
+                                state.registeredAccounts.filter { !it.isImportedToDB }.size &&
+                                state.registeredAccounts.isNotEmpty(),
+                        onCheckedChange = { isChecked ->
+                            if (isChecked) {
+                                onIntent(RecoverRegisteredAccountsIntent.SelectAllAccounts)
+                            } else {
+                                onIntent(RecoverRegisteredAccountsIntent.UnselectAllAccounts)
+                            }
                         }
-                    })
+                    )
                 }
 
                 // Address List
                 LazyColumn(modifier = Modifier.weight(1f)) {
-                    items(registeredAccounts) { address ->
-                        AddressItem(address, selectedAddresses.contains(address.address)) { isChecked ->
-                            selectedAddresses = if (isChecked) {
-                                selectedAddresses + address.address
-                            } else {
-                                selectedAddresses - address.address
+                    items(state.registeredAccounts) { account ->
+                        AddressItem(
+                            account = account,
+                            isChecked = state.selectedAddresses.contains(account.address),
+                            onCheckedChange = { isChecked ->
+                                onIntent(
+                                    RecoverRegisteredAccountsIntent.ToggleAccountSelection(
+                                        address = account.address,
+                                        isSelected = isChecked
+                                    )
+                                )
                             }
-                        }
+                        )
                     }
                 }
 
-                Button(
-                    onClick = {
-                        recoverRegisteredAccountsViewModel
-                            .importRegisteredAccounts(selectedAddresses, registeredAccounts)
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = selectedAddresses.isNotEmpty()
-                ) {
-                    Text(text = "Import")
+                // Import Button & Loading Indicator
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                } else {
+                    Button(
+                        onClick = {
+                            onIntent(RecoverRegisteredAccountsIntent.ImportSelectedAccounts)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = state.canImport
+                    ) {
+                        Text(text = "Import")
+                    }
                 }
-            }
-
-            if (importDone) {
-                navToHomeNavigation()
             }
         }
     }
 
     @Composable
-    fun AddressItem(account: RegisteredAlgorandAccount, isChecked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    fun AddressItem(
+        account: RegisteredAlgorandAccount,
+        isChecked: Boolean,
+        onCheckedChange: (Boolean) -> Unit
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -184,7 +236,11 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = account.address, fontWeight = FontWeight.SemiBold)
                 if (account.isImportedToDB) {
-                    Text(text = "ALREADY IMPORTED", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
+                    Text(
+                        text = "ALREADY IMPORTED",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp
+                    )
                 } else {
                     Text(text = account.algoValue)
                     if (account.usdValue.isNotEmpty()) {
@@ -193,21 +249,12 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                 }
             }
             if (!account.isImportedToDB) {
-                Checkbox(checked = isChecked, onCheckedChange = onCheckedChange)
+                Checkbox(
+                    checked = isChecked,
+                    onCheckedChange = onCheckedChange
+                )
             }
         }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initObservers()
-    }
-
-    fun initObservers() {
-//        viewLifecycleOwner.collectLatestOnLifecycle(
-//            registerIntroViewModel.registerIntroPreviewFlow.filterNotNull(),
-//            registerIntroPreviewCollector
-//        )
     }
 
     private fun navToHomeNavigation() {

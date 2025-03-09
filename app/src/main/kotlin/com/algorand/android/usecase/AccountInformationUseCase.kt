@@ -28,7 +28,7 @@ class AccountInformationUseCase @Inject constructor(
     private val fetchAndCacheMissingAssets: FetchAndCacheMissingAssets
 ) {
 
-    suspend fun getAccountInformation(publicKey: String, includeClosedAccounts: Boolean = false) = flow {
+    fun getAccountInformation(publicKey: String, includeClosedAccounts: Boolean = false) = flow {
         accountRepository.getAccountInformation(publicKey, includeClosedAccounts).use(
             onSuccess = {
                 val accountInformation = accountInformationMapper.mapToAccountInformation(

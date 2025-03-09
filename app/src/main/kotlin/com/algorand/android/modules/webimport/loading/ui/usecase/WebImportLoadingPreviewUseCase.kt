@@ -21,7 +21,6 @@ import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.Event
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 
 class WebImportLoadingPreviewUseCase @Inject constructor(
@@ -35,8 +34,7 @@ class WebImportLoadingPreviewUseCase @Inject constructor(
 
     fun importEncryptedBackup(
         previousState: WebImportLoadingPreview,
-        webImportQrCode: WebImportQrCode,
-        coroutineScope: CoroutineScope
+        webImportQrCode: WebImportQrCode
     ) = flow {
         emit(previousState.copy(isLoadingVisible = true))
         webImportAccountDecryptionUseCase.importEncryptedBackup(

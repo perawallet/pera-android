@@ -32,7 +32,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -95,8 +94,8 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
     @Composable
     fun SelectAccountsToAddScreen() {
         val registeredAccounts by recoverRegisteredAccountsViewModel.registeredAccountsFlow.collectAsState()
-        var selectedAddresses by remember { mutableStateOf(setOf<String>()) }
-        Scaffold { innerPadding ->
+        val selectedAddresses = remember { mutableStateOf(setOf<String>()) }
+            Scaffold { innerPadding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -106,9 +105,9 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                 val interactionSource = remember { MutableInteractionSource() }
                 val selectAllCheckedState = remember {
                     mutableStateOf(
-                        if (selectedAddresses.size == 0) {
+                        if (selectedAddresses.value.size == 0) {
                             ToggleableState.Off
-                        } else if (selectedAddresses.size == registeredAccounts.filter {
+                        } else if (selectedAddresses.value.size == registeredAccounts.filter {
                                 it.isImportedToDB.not()
                             }.size) {
                             ToggleableState.Indeterminate
@@ -117,11 +116,11 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                         }
                     )
                 }
-                PeraTitleText(text = stringResource(R.string.select_accounts_to_add))
+                PeraHeadlineText(text = stringResource(R.string.select_address_to_add))
                 PeraBodyText(
                     modifier = Modifier.padding(top = 10.dp),
-                    text = stringResource(
-                        R.string.select_accounts_to_add_desc,
+                    text = pluralStringResource(
+                        R.plurals.select_accounts_to_add_desc,
                         registeredAccounts.size
                     )
                 )
@@ -141,12 +140,12 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                     )
                     PeraScrimText(
                         modifier = Modifier.clickable {
-                            selectedAddresses =
-                                if (selectedAddresses.size == registeredAccounts.size) {
-                                    emptySet()
+                            selectedAddresses.value =
+                                if (selectedAddresses.value.size == registeredAccounts.size) {
+                                    mutableSetOf()
                                 } else {
                                     registeredAccounts.filter { it.isImportedToDB.not() }
-                                        .map { it.address }.toSet()
+                                        .map { it.address }.toMutableSet()
                                 }
                         },
                         text = stringResource(R.string.select_all)
@@ -156,8 +155,8 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                         interactionSource = interactionSource,
                         checkedState = { selectAllCheckedState.value },
                         onClick = {
-                            selectedAddresses =
-                                if (selectedAddresses.size < registeredAccounts.size) {
+                            selectedAddresses.value =
+                                if (selectedAddresses.value.size < registeredAccounts.size) {
                                     selectAllCheckedState.value = ToggleableState.On
                                     registeredAccounts.filter { !it.isImportedToDB }
                                         .map { it.address }
@@ -176,26 +175,19 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                         .padding(top = 12.dp)
                 ) {
                     items(registeredAccounts) { address ->
-                        val checkedState = remember {
-                            mutableStateOf(
-                                ToggleableState(selectedAddresses.contains(address.address))
-                            )
-                        }
                         AddressItem(
                             account = address,
                             interactionSource = interactionSource,
-                            checkedState = checkedState.value
+                            startCheckState = selectedAddresses.value.contains(address.address)
                         ) { isChecked ->
-                            selectedAddresses = if (isChecked) {
-                                checkedState.value = ToggleableState.On
-                                selectedAddresses + address.address
+                            selectedAddresses.value = if (isChecked) {
+                                selectedAddresses.value + address.address
                             } else {
-                                checkedState.value = ToggleableState.Off
-                                selectedAddresses - address.address
+                                selectedAddresses.value - address.address
                             }
-                            if (selectedAddresses.size == registeredAccounts.size) {
+                            if (selectedAddresses.value.size == registeredAccounts.size) {
                                 selectAllCheckedState.value = ToggleableState.On
-                            } else if (selectedAddresses.isEmpty()) {
+                            } else if (selectedAddresses.value.isEmpty()) {
                                 selectAllCheckedState.value = ToggleableState.Off
                             } else {
                                 selectAllCheckedState.value = ToggleableState.Indeterminate
@@ -210,7 +202,7 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.continue_text),
                     enabled = {
-                        selectedAddresses.isNotEmpty()
+                        selectedAddresses.value.isNotEmpty()
                     }
                 )
             }
@@ -222,9 +214,14 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
     fun AddressItem(
         account: RegisteredAlgorandAccount,
         interactionSource: MutableInteractionSource,
-        checkedState: ToggleableState,
+        startCheckState: Boolean,
         onCheckedChange: (Boolean) -> Unit
     ) {
+        val checkedState = remember {
+            mutableStateOf(
+                ToggleableState(startCheckState)
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -252,12 +249,14 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
 
                     PeraCheckbox(
                         interactionSource = interactionSource,
-                        checkedState = { checkedState },
+                        checkedState = { checkedState.value },
                         onClick = {
-                            if (checkedState == ToggleableState.On) {
+                            checkedState.value = if (checkedState.value == ToggleableState.On) {
                                 onCheckedChange(false)
+                                ToggleableState.Off
                             } else {
                                 onCheckedChange(true)
+                                ToggleableState.On
                             }
                         }
                     )

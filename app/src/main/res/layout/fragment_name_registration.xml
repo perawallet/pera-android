@@ -42,6 +42,49 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/labelTextView" />
+        <Space
+            android:id="@+id/space"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/spacing_xlarge"
+            app:layout_constraintTop_toBottomOf="@id/descriptionTextView"
+            app:layout_constraintBottom_toTopOf="@+id/cardviewWalletNumber"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.cardview.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cardviewWalletNumber"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTextView"
+            app:layout_constraintBottom_toTopOf="@+id/nameInputLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="329dp"
+            android:layout_height="32dp"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/layer_gray_lighter">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:padding="8dp" >
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_wallet"
+                        android:layout_marginEnd="8dp" />
+                    <TextView
+                        android:id="@+id/tvWalletNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hd_wallet"
+                        android:textSize="12sp" />
+                </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <com.algorand.android.customviews.AlgorandInputLayout
             android:id="@+id/nameInputLayout"
@@ -53,7 +96,7 @@
             app:hint="@string/account_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/descriptionTextView"
+            app:layout_constraintTop_toBottomOf="@id/cardviewWalletNumber"
             app:singleLine="true" />
 
         <com.google.android.material.button.MaterialButton

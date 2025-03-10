@@ -24,7 +24,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -43,8 +50,9 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
     @Composable
     abstract fun Description(modifier: Modifier)
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    abstract fun PrimaryButton(modifier: Modifier)
+    abstract fun PrimaryButton(modifier: Modifier, sheetState: SheetState)
 
     @Composable
     open fun Warning(modifier: Modifier) = Unit
@@ -55,6 +63,8 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
     @Composable
     open fun TopStartButton(modifier: Modifier) = Unit
 
+    @Suppress("LongMethod")
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -64,16 +74,21 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
         return ComposeView(requireContext()).apply {
             setContent {
                 PeraTheme {
+                    val sheetState = rememberModalBottomSheetState(
+                        skipPartiallyExpanded = true
+                    )
+                    val showBottomSheet = rememberSaveable { mutableStateOf(false) }
+
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .verticalScroll(rememberScrollState()) // equivalent to ScrollView
+                            .verticalScroll(rememberScrollState())
                     ) {
                         Icon(
                             modifier = Modifier
                                 .padding(start = 12.dp, top = 28.dp)
                                 .align(alignment = Alignment.Start)
-                                .fillMaxWidth(fraction = HALF_SIZE)
+                                .fillMaxWidth(HALF_SIZE)
                                 .aspectRatio(ratio = 1F),
                         )
                         Title(
@@ -82,7 +97,12 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
                         )
                         Description(
                             modifier = Modifier
-                                .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 20.dp)
+                                .padding(
+                                    start = 24.dp,
+                                    end = 24.dp,
+                                    top = 24.dp,
+                                    bottom = 20.dp
+                                )
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Warning(
@@ -92,7 +112,8 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
                         PrimaryButton(
                             modifier = Modifier
                                 .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
+                            sheetState = sheetState
                         )
                         SecondaryButton(
                             modifier = Modifier
@@ -100,10 +121,28 @@ abstract class BaseInfoFragment : DaggerBaseFragment(0) {
                                 .fillMaxWidth()
                         )
                     }
+
+                    if (showBottomSheet.value) {
+                        ModalBottomSheet(
+                            onDismissRequest = { showBottomSheet.value = false },
+                            sheetState = sheetState,
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        ) {
+                            BottomSheetContent(
+                                sheetState,
+                                { showBottomSheet.value = false }
+                            )
+                        }
+                    }
                 }
             }
         }
     }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    open fun BottomSheetContent(sheetState: SheetState, onDismiss: () -> Unit) = Unit
 
     companion object {
         const val HALF_SIZE = 0.5F

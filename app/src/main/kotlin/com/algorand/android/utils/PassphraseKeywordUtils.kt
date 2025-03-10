@@ -14,7 +14,6 @@ package com.algorand.android.utils
 
 @SuppressWarnings("LargeClass")
 object PassphraseKeywordUtils {
-    const val ACCOUNT_PASSPHRASES_WORD_COUNT = 25
     const val SUGGESTED_WORD_COUNT = 3
 
     fun getSuggestedWords(wordCount: Int, prefix: String): List<String> {

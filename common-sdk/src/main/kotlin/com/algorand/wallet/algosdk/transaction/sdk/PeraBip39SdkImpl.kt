@@ -15,8 +15,8 @@ package com.algorand.wallet.algosdk.transaction.sdk
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.crypto.Address
-import com.algorand.wallet.algosdk.model.Bip32DerivationType
-import com.algorand.wallet.algosdk.model.HdKeyAccount
+import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
+import foundation.algorand.xhdwalletapi.Bip32DerivationType
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
@@ -66,10 +66,11 @@ internal class PeraBip39SdkImpl @Inject constructor() : PeraBip39Sdk {
         val keyIndex = 0.toUInt()
 
         val publicKey = xHDWalletAPI.keyGen(
-            keyContext,
-            account,
-            change,
-            keyIndex
+            context = keyContext,
+            account = account,
+            change = change,
+            keyIndex = keyIndex,
+            derivationType = Bip32DerivationType.Peikert
         )
 
         // Produce the PK and turn it into an Algorand formatted address

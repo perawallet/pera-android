@@ -16,6 +16,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.RegisterIntroPreview
+import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.usecase.RegisterIntroPreviewUseCase
 import com.algorand.android.usecase.RegistrationUseCase
 import com.algorand.android.utils.getOrElse
@@ -30,6 +31,7 @@ import kotlinx.coroutines.launch
 class RegisterIntroViewModel @Inject constructor(
     private val registerIntroPreviewUseCase: RegisterIntroPreviewUseCase,
     private val registrationUseCase: RegistrationUseCase,
+    private val isOnHdWalletUseCase: IsOnHdWalletUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -67,6 +69,10 @@ class RegisterIntroViewModel @Inject constructor(
         viewModelScope.launch {
             registerIntroPreviewUseCase.logOnboardingWelcomeAccountRecoverClickEvent()
         }
+    }
+
+    fun isHdWalletToggleEnabled(): Boolean {
+        return isOnHdWalletUseCase.invoke()
     }
 
     companion object {

@@ -36,9 +36,16 @@ class NameRegistrationPreviewUseCase @Inject constructor(
         return nameRegistrationPreviewMapper.mapToInitialPreview()
     }
 
+    fun getInitialPreviewWithHdWalletData(walletId: Int): NameRegistrationPreview {
+        return nameRegistrationPreviewMapper.mapToInitialPreview(
+            walletId
+        )
+    }
+
     suspend fun getPreviewWithAccountCreation(
         accountCreation: AccountCreation?,
-        inputName: String
+        inputName: String,
+        walletId: Int?
     ): NameRegistrationPreview? {
         if (accountCreation == null) return null
         val address = accountCreation.address
@@ -46,7 +53,10 @@ class NameRegistrationPreviewUseCase @Inject constructor(
         accountCreation.customName = accountName
         val doesAccountAlreadyExists = isThereAnyAccountWithAddress(address)
         if (doesAccountAlreadyExists.not()) {
-            return nameRegistrationPreviewMapper.mapToCreateAccountPreview(accountCreation)
+            return nameRegistrationPreviewMapper.mapToCreateAccountPreview(
+                accountCreation,
+                walletId
+            )
         }
         if (shouldUpdateWatchAccountEvent(address, accountCreation.creationType)) {
             return nameRegistrationPreviewMapper.mapToUpdateWatchAccountPreview(accountCreation)

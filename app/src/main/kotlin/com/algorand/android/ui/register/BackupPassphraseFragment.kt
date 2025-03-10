@@ -16,12 +16,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentBackupPassphraseBinding
-import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraClickEvent
@@ -76,16 +74,12 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
     }
 
     private fun setupPassphrase() {
-        val secretKey = (args.accountCreation?.type as? AccountCreation.Type.Algo25)?.secretKey
-            ?: backupPassphraseViewModel.getAccountSecretKey(args.publicKeyOfAccountToBackup)
-        secretKey?.let {
-            try {
-                val mnemonic = Sdk.mnemonicFromPrivateKey(it) ?: throw Exception("Mnemonic cannot be null.")
-                binding.passphraseBoxView.setPassphrases(mnemonic)
-            } catch (exception: Exception) {
-                navBack()
-            }
-        } ?: run { navBack() }
+        val mnemonic = backupPassphraseViewModel.getMnemonic(args)
+        mnemonic?.let {
+            binding.passphraseBoxView.setPassphrases(it)
+        } ?: run {
+            navBack()
+        }
     }
 
     private fun onNextClick() {

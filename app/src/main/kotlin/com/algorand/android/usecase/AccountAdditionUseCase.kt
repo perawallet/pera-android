@@ -19,21 +19,28 @@ import com.algorand.android.utils.analytics.logRegisterEvent
 import com.algorand.wallet.account.core.domain.model.CreateAccount
 import com.algorand.wallet.account.core.domain.model.CreateAccount.Type
 import com.algorand.wallet.account.core.domain.usecase.AddAlgo25Account
+import com.algorand.wallet.account.core.domain.usecase.AddHdKeyAccount
+import com.algorand.wallet.account.core.domain.usecase.AddHdSeed
 import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccount
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
+import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToHdKey
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 class AccountAdditionUseCase @Inject constructor(
     private val firebaseAnalytics: FirebaseAnalytics,
     private val registrationUseCase: RegistrationUseCase,
+    private val addHdKeyAccount: AddHdKeyAccount,
+    private val addHdSeed: AddHdSeed,
     private val addAlgo25Account: AddAlgo25Account,
     private val addLedgerBleAccount: AddLedgerBleAccount,
     private val addNoAuthAccount: AddNoAuthAccount,
     private val updateNoAuthAccountToAlgo25: UpdateNoAuthAccountToAlgo25,
+    private val updateNoAuthAccountToHdKey: UpdateNoAuthAccountToHdKey,
     private val updateNoAuthAccountToLedgerBle: UpdateNoAuthAccountToLedgerBle,
     private val aesPlatformManager: AESPlatformManager
 ) : BaseUseCase() {
@@ -50,8 +57,27 @@ class AccountAdditionUseCase @Inject constructor(
         val address = accountCreation.address
         with(accountCreation.type) {
             when (this) {
+                is Type.HdKey -> {
+                    aesPlatformManager.decryptByteArray(this.encryptedEntropy).let { entropy ->
+                        addHdSeed(entropy).getDataOrNull()?.let { seedId ->
+                            updateNoAuthAccountToHdKey(
+                                address,
+                                publicKey,
+                                encryptedPrivateKey,
+                                seedId,
+                                account,
+                                change,
+                                keyIndex,
+                                derivationType,
+                            )
+                        }
+                    }
+                }
                 is Type.Algo25 -> {
-                    updateNoAuthAccountToAlgo25(address, aesPlatformManager.decryptByteArray(encryptedSecretKey))
+                    val secretKey = aesPlatformManager.decryptByteArray(encryptedSecretKey)
+                    updateNoAuthAccountToAlgo25(
+                        address, secretKey
+                    )
                 }
                 is Type.LedgerBle -> updateNoAuthAccountToLedgerBle(
                     address,
@@ -60,24 +86,49 @@ class AccountAdditionUseCase @Inject constructor(
                     indexInLedger
                 )
                 is Type.NoAuth -> Unit
-                is Type.HdKey -> TODO()
             }
         }
     }
 
     private suspend fun addAccount(createAccount: CreateAccount) {
         when (createAccount.type) {
+            is Type.HdKey -> createHdKeyAccount(createAccount, createAccount.type as Type.HdKey)
             is Type.Algo25 -> createAlgo25Account(createAccount, createAccount.type as Type.Algo25)
             is Type.LedgerBle -> createLedgerBleAccount(createAccount, createAccount.type as Type.LedgerBle)
             is Type.NoAuth -> createNoAuthAccount(createAccount)
-            is Type.HdKey -> TODO()
+        }
+    }
+
+    private suspend fun createHdKeyAccount(createAccount: CreateAccount, type: Type.HdKey) {
+        with(createAccount) {
+            aesPlatformManager.decryptByteArray(type.encryptedPrivateKey).let { privateKey ->
+                aesPlatformManager.decryptByteArray(type.encryptedEntropy).let { entropy ->
+                    val seedIdResult = addHdSeed(entropy)
+                    val seedId = seedIdResult.getDataOrNull()
+                    if (seedIdResult.isSuccess && seedId != null) {
+                        addHdKeyAccount(
+                            address,
+                            type.publicKey,
+                            privateKey,
+                            seedId,
+                            type.account,
+                            type.change,
+                            type.keyIndex,
+                            type.derivationType,
+                            isBackedUp,
+                            customName
+                        )
+                    }
+                }
+            }
         }
     }
 
     private suspend fun createAlgo25Account(createAccount: CreateAccount, type: Type.Algo25) {
         with(createAccount) {
-            // val secretKey = aesPlatformManager.decryptByteArray(type.encryptedSecretKey)
-            addAlgo25Account(address, type.encryptedSecretKey, isBackedUp, customName)
+            var secretKey = aesPlatformManager.decryptByteArray(type.encryptedSecretKey)
+            addAlgo25Account(address, secretKey, isBackedUp, customName)
+            secretKey = ByteArray(0)
         }
     }
 

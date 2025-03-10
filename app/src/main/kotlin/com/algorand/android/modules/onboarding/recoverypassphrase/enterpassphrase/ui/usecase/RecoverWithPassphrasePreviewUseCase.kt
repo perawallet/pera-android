@@ -20,13 +20,13 @@ import com.algorand.android.customviews.passphraseinput.util.PassphraseInputConf
 import com.algorand.android.models.Account.Type
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.domain.usecase.GetRekeyedAccountUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.mapper.RecoverWithPassphrasePreviewMapper
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.model.RecoverWithPassphrasePreview
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.PassphraseKeywordUtils
-import com.algorand.android.utils.PassphraseKeywordUtils.ACCOUNT_PASSPHRASES_WORD_COUNT
 import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
@@ -45,9 +45,11 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress
 ) {
 
-    fun getRecoverWithPassphraseInitialPreview(): RecoverWithPassphrasePreview {
+    fun getRecoverWithPassphraseInitialPreview(
+        wordCount: Int
+    ): RecoverWithPassphrasePreview {
         val passphraseInputGroupConfiguration = passphraseInputGroupUseCase.createPassphraseInputGroupConfiguration(
-            itemCount = ACCOUNT_PASSPHRASES_WORD_COUNT
+            itemCount = wordCount
         )
         return recoverWithPassphrasePreviewMapper.mapToRecoverWithPassphrasePreview(
             passphraseInputGroupConfiguration = passphraseInputGroupConfiguration,
@@ -61,8 +63,11 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         clipboardData: String
     ): RecoverWithPassphrasePreview {
         val splittedText = clipboardData.splitMnemonic()
-        return if (splittedText.size != ACCOUNT_PASSPHRASES_WORD_COUNT) {
-            preview.copy(onGlobalErrorEvent = Event(R.string.the_last_copied_text))
+        return if (
+            splittedText.size != OnboardingAccountType.Algo25.wordCount &&
+            splittedText.size != OnboardingAccountType.HdKey.wordCount
+            ) {
+                preview.copy(onGlobalErrorEvent = Event(R.string.the_last_copied_text))
         } else {
             val inputGroupConfiguration = passphraseInputGroupUseCase.recoverPassphraseInputGroupConfiguration(
                 configuration = preview.passphraseInputGroupConfiguration,

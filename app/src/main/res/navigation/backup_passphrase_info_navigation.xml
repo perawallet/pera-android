@@ -38,6 +38,10 @@
         <argument
             android:name="publicKeysOfAccountsToBackup"
             app:argType="string[]" />
+        <argument
+            android:name="onboardingAccountType"
+            app:argType="com.algorand.android.models.OnboardingAccountType"
+            app:nullable="false" />
         <action
             android:id="@+id/action_backupInfoFragment_to_backupPassphraseAccountNameNavigation"
             app:destination="@id/backupPassphraseAccountNameNavigation">

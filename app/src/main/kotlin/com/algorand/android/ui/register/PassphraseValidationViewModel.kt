@@ -13,9 +13,13 @@
 package com.algorand.android.ui.register
 
 import androidx.lifecycle.viewModelScope
+import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.core.AccountManager
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingVerifyPassphraseEventTracker
+import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -23,7 +27,9 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class PassphraseValidationViewModel @Inject constructor(
     private val onboardingVerifyPassphraseEventTracker: OnboardingVerifyPassphraseEventTracker,
-    private val accountManager: AccountManager
+    private val accountManager: AccountManager,
+    private val aesPlatformManager: AESPlatformManager,
+    private val peraBip39Sdk: PeraBip39Sdk
 ) : BaseViewModel() {
 
     fun logOnboardingNextClickEvent() {
@@ -38,5 +44,28 @@ class PassphraseValidationViewModel @Inject constructor(
 
     fun updateAccountBackupState(publicKey: String, isBackedUp: Boolean) {
         accountManager.updateAccountBackupState(publicKey, isBackedUp)
+    }
+
+    fun getMnemonic(args: PassphraseValidationFragmentArgs): String? {
+        val encryptedEntropy = (args.accountCreation?.type as? AccountCreation.Type.HdKey)?.encryptedEntropy
+        return encryptedEntropy?.let {
+            val entropy = aesPlatformManager.decryptByteArray(it)
+            peraBip39Sdk.getMnemonicFromEntropy(entropy)
+        } ?: run {
+            val encryptedAlgo25Key = (args.accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey
+
+            val secretKey = encryptedAlgo25Key?.let {
+                aesPlatformManager.decryptByteArray(encryptedAlgo25Key)
+            } ?: getAccountSecretKey(args.publicKeyOfAccountToBackup)
+
+            secretKey?.let {
+                try {
+                    val mnemonic = Sdk.mnemonicFromPrivateKey(it) ?: throw Exception("Mnemonic cannot be null.")
+                    mnemonic
+                } catch (exception: Exception) {
+                    null
+                }
+            } ?: run { null }
+        }
     }
 }

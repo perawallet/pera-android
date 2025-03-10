@@ -12,7 +12,9 @@
 
 package com.algorand.android.modules.onboarding.pairledger.resultinfo
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,10 +25,10 @@ import com.algorand.android.LoginNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraIconBig
+import com.algorand.android.ui.compose.widget.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.PeraIcon
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraSecondaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -38,14 +40,14 @@ class VerifyLedgerInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Icon(modifier: Modifier) =
-        PeraIconBig(
+        PeraIcon(
             painter = painterResource(id = R.drawable.ic_check),
-            contentDescription = "check",
+            contentDescription = stringResource(id = R.string.check),
             modifier = modifier
         )
 
     @Composable
-    override fun Title(modifier: Modifier) = PeraTitleText(
+    override fun Title(modifier: Modifier) = PeraHeadlineText(
         modifier = modifier,
         text = stringResource(id = verifyLedgerInfoViewModel.getPreviewTitle())
     )
@@ -59,8 +61,9 @@ class VerifyLedgerInfoFragment : BaseInfoFragment() {
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
         PeraPrimaryButton(
             onClick = { navToMeldNavigation() },
             modifier = modifier,

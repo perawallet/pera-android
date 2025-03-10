@@ -26,23 +26,13 @@ import com.algorand.android.utils.toShortenedAddress
 import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.mapNotNull
 
 class AccountDetailUseCase @Inject constructor(
     private val accountRepository: AccountRepository,
     private val accountInformationUseCase: AccountInformationUseCase,
     private val accountManager: AccountManager
 ) : BaseUseCase() {
-
-    fun getAccountDetailCacheFlow() = accountRepository.getAccountDetailCacheFlow()
-
-    fun getAccountDetailCacheFlow(publicKey: String): Flow<CacheResult<AccountDetail>?> {
-        return accountRepository.getAccountDetailCacheFlow()
-            .mapNotNull { it.getOrDefault(publicKey, null) }
-            .distinctUntilChanged()
-    }
 
     fun getCachedAccountDetail(publicKey: String): CacheResult<AccountDetail>? {
         return accountRepository.getCachedAccountDetail(publicKey)

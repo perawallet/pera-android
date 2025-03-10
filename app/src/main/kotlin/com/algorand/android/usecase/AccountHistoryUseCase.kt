@@ -20,25 +20,18 @@ import com.algorand.android.decider.DateFilterUseCase
 import com.algorand.android.models.DateFilter
 import com.algorand.android.models.ui.DateFilterPreview
 import com.algorand.android.models.ui.TransactionLoadStatePreview
-import com.algorand.android.modules.accounts.domain.mapper.AccountValueMapper
-import com.algorand.android.modules.accounts.domain.model.AccountValue
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.modules.transactionhistory.ui.usecase.PendingTransactionsPreviewUseCase
 import com.algorand.android.modules.transactionhistory.ui.usecase.TransactionHistoryPreviewUseCase
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 class AccountHistoryUseCase @Inject constructor(
     private val transactionHistoryPreviewUseCase: TransactionHistoryPreviewUseCase,
     private val pendingTransactionsPreviewUseCase: PendingTransactionsPreviewUseCase,
     private val dateFilterUseCase: DateFilterUseCase,
-    private val transactionLoadStateUseCase: TransactionLoadStateUseCase,
-    private val getAccountTotalCollectibleValueUseCase: GetAccountTotalCollectibleValueUseCase,
-    private val getAccountTotalAssetValueUseCase: GetAccountTotalAssetValueUseCase,
-    private val accountValueMapper: AccountValueMapper
+    private val transactionLoadStateUseCase: TransactionLoadStateUseCase
 ) : BaseUseCase() {
 
     val pendingTransactionDistinctUntilChangedListener
@@ -53,27 +46,6 @@ class AccountHistoryUseCase @Inject constructor(
 
     fun refreshAccountHistoryData() {
         transactionHistoryPreviewUseCase.refreshTransactionHistory()
-    }
-
-    fun getAccountTotalValueFlow(accountAddress: String): Flow<AccountValue> {
-        return combine(
-            getAccountAssetValueFlow(accountAddress).distinctUntilChanged(),
-            getAccountCollectibleValueFlow(accountAddress).distinctUntilChanged()
-        ) { assetValue, collectibleValue ->
-            accountValueMapper.mapTo(
-                primaryAccountValue = assetValue.primaryAccountValue + collectibleValue.primaryAccountValue,
-                secondaryAccountValue = assetValue.secondaryAccountValue + collectibleValue.secondaryAccountValue,
-                assetCount = assetValue.assetCount + collectibleValue.assetCount
-            )
-        }
-    }
-
-    private fun getAccountAssetValueFlow(publicKey: String): Flow<AccountValue> {
-        return getAccountTotalAssetValueUseCase.getAccountTotalAssetValueFlow(publicKey)
-    }
-
-    private fun getAccountCollectibleValueFlow(accountAddress: String): Flow<AccountValue> {
-        return getAccountTotalCollectibleValueUseCase.getAccountTotalCollectibleValueFlow(accountAddress)
     }
 
     suspend fun fetchPendingTransactions(publicKey: String): List<BaseTransactionItem> {

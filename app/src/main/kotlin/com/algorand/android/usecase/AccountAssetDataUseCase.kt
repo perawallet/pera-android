@@ -34,10 +34,6 @@ class AccountAssetDataUseCase @Inject constructor(
     private val accountAssetDataMapper: AccountAssetDataMapper
 ) {
 
-    fun getNonCachedAccountAssetData(accountDetail: AccountDetail, includeAlgo: Boolean): List<OwnedAssetData> {
-        return createNonCachedAccountAssetData(accountDetail, includeAlgo)
-    }
-
     fun getAccountOwnedAssetData(publicKey: String, includeAlgo: Boolean): List<OwnedAssetData> {
         val accountDetail = accountDetailUseCase.getCachedAccountDetail(publicKey)?.data ?: return emptyList()
         return createAccountOwnedAssetData(accountDetail, includeAlgo)
@@ -83,33 +79,6 @@ class AccountAssetDataUseCase @Inject constructor(
     private fun getAccountOwnedCachedAssetList(account: AccountDetail): List<AssetDetail> {
 //        return assetDetailUseCase.getCachedAssetDetail(getAccountOwnedAssetIdList(account)).mapNotNull { it.data }
         return emptyList()
-    }
-
-    private fun getAccountOwnedAssetIdList(account: AccountDetail): List<Long> {
-        return account.getAssetHoldingList().mapNotNull { assetHolding ->
-            assetHolding.assetId.takeIf { assetHolding.status == OWNED_BY_ACCOUNT }
-        }
-    }
-
-    private fun createNonCachedAccountAssetData(account: AccountDetail, includeAlgo: Boolean): List<OwnedAssetData> {
-        return mutableListOf<OwnedAssetData>().apply {
-            if (includeAlgo) {
-                add(accountAlgoAmountUseCase.getAccountAlgoAmount(account))
-            }
-            addAll(createAccountOtherAssetsData(account.accountInformation))
-        }
-    }
-
-    private fun createAccountOtherAssetsData(accountInformation: AccountInformation): List<OwnedAssetData> {
-        val cachedAssetList = getCachedAssetList(accountInformation)
-        return mutableListOf<OwnedAssetData>().apply {
-            accountInformation.getAssetHoldingList().forEach { assetHolding ->
-                cachedAssetList.firstOrNull { it.assetId == assetHolding.assetId }?.let { assetItem ->
-                    val accountAssetData = accountAssetAmountUseCase.getAssetAmount(assetHolding, assetItem)
-                    add(accountAssetData)
-                }
-            }
-        }
     }
 
     @Deprecated("Cache is always empty")

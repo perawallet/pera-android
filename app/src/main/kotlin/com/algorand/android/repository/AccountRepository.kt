@@ -22,7 +22,6 @@ import com.algorand.android.network.safeApiCall
 import com.algorand.android.utils.CacheResult
 import java.net.HttpURLConnection
 import javax.inject.Inject
-import kotlinx.coroutines.flow.StateFlow
 
 class AccountRepository @Inject constructor(
     private val indexerApi: IndexerApi,
@@ -64,10 +63,6 @@ class AccountRepository @Inject constructor(
                 Result.Error(Exception())
             }
         }
-    }
-
-    fun getAccountDetailCacheFlow(): StateFlow<HashMap<String, CacheResult<AccountDetail>>> {
-        return accountLocalCache.cacheMapFlow
     }
 
     suspend fun cacheAccountDetail(accountDetail: CacheResult.Success<AccountDetail>) {

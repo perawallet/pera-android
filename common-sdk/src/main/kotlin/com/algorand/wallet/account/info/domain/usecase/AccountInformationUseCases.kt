@@ -18,6 +18,7 @@ import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.foundation.PeraResult
+import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
 
 fun interface ClearAccountInformationCache {
@@ -115,4 +116,8 @@ fun interface GetAccountRekeyAdminAddress {
 
 fun interface GetAccountFastLookup {
     suspend operator fun invoke(address: String): AccountFastLookup?
+}
+
+fun interface GetAccountAlgoBalance {
+    suspend operator fun invoke(address: String): BigInteger?
 }

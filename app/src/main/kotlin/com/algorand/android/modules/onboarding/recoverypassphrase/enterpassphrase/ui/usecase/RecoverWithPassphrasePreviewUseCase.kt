@@ -132,7 +132,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         )
     }
 
-    @SuppressWarnings("MagicNumber", "LongMethod")
+    @SuppressWarnings("LongMethod")
     fun validateEnteredMnemonics(
         preview: RecoverWithPassphrasePreview,
         onboardingAccountType: OnboardingAccountType

@@ -18,6 +18,7 @@ import com.algorand.android.modules.parity.domain.usecase.GetAlgoAmountValue
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
 import com.algorand.android.utils.orZero
+import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import java.math.BigDecimal
@@ -34,11 +35,20 @@ internal class GetAccountTotalValueUseCase @Inject constructor(
 
     override suspend fun invoke(address: String, includeAlgo: Boolean): AccountTotalValue {
         val accountInformation = getAccountInformation(address) ?: return getDefaultAccountValue()
+        return getAccountTotalValue(accountInformation, includeAlgo)
+    }
 
+    override suspend fun invoke(accountInformation: AccountInformation, includeAlgo: Boolean): AccountTotalValue {
+        return getAccountTotalValue(accountInformation, includeAlgo)
+    }
+
+    private suspend fun getAccountTotalValue(
+        accountInformation: AccountInformation,
+        includeAlgo: Boolean
+    ): AccountTotalValue {
         var primaryAccountValue = BigDecimal.ZERO
         var secondaryAccountValue = BigDecimal.ZERO
         var assetCount = 0
-
         accountInformation.assetHoldings.forEach { assetHolding ->
             val assetInformation = getAsset(assetHolding.assetId)
             if (assetInformation != null) {

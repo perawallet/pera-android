@@ -23,17 +23,11 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class AccountAlgoAmountUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val parityUseCase: ParityUseCase,
     private val accountAssetDataMapper: AccountAssetDataMapper,
     private val primaryCurrencyParityCalculationUseCase: PrimaryCurrencyParityCalculationUseCase,
     private val secondaryCurrencyParityCalculationUseCase: SecondaryCurrencyParityCalculationUseCase
 ) {
-
-    fun getAccountAlgoAmount(publicKey: String): BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData {
-        val accountAlgoAmount = accountDetailUseCase.getCachedAccountAlgoAmount(publicKey) ?: BigInteger.ZERO
-        return createAccountAlgoAmount(accountAlgoAmount)
-    }
 
     fun getAccountAlgoAmount(accountDetail: AccountDetail): BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData {
         val accountAlgoAmount = accountDetail.accountInformation.amount

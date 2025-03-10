@@ -20,54 +20,16 @@ import com.algorand.android.models.Account
 import com.algorand.android.models.AccountDetail
 import com.algorand.android.repository.AccountRepository
 import com.algorand.android.utils.CacheResult
-import com.algorand.android.utils.exceptions.AccountNotFoundException
-import com.algorand.android.utils.recordException
 import com.algorand.android.utils.toShortenedAddress
-import java.math.BigInteger
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.mapNotNull
 
 class AccountDetailUseCase @Inject constructor(
     private val accountRepository: AccountRepository,
-    private val accountInformationUseCase: AccountInformationUseCase,
     private val accountManager: AccountManager
 ) : BaseUseCase() {
 
-    fun getAccountDetailCacheFlow() = accountRepository.getAccountDetailCacheFlow()
-
-    fun getAccountDetailCacheFlow(publicKey: String): Flow<CacheResult<AccountDetail>?> {
-        return accountRepository.getAccountDetailCacheFlow()
-            .mapNotNull { it.getOrDefault(publicKey, null) }
-            .distinctUntilChanged()
-    }
-
     fun getCachedAccountDetail(publicKey: String): CacheResult<AccountDetail>? {
         return accountRepository.getCachedAccountDetail(publicKey)
-    }
-
-    fun fetchAndCacheAccountDetail(accountAddress: String): Flow<CacheResult<AccountDetail>> = flow {
-        accountInformationUseCase.getAccountInformationAndFetchAssets(accountAddress).use(
-            onSuccess = { accountInformation ->
-                val localAccount = accountManager.getAccount(accountAddress) ?: run {
-                    emit(CacheResult.Error.create(AccountNotFoundException()))
-                    recordException(AccountNotFoundException())
-                    return@use
-                }
-                val cacheResult = CacheResult.Success.create(AccountDetail(localAccount, accountInformation))
-                accountRepository.cacheAccountDetail(cacheResult)
-                emit(cacheResult)
-            },
-            onFailed = { exception, code ->
-                emit(CacheResult.Error.create(exception, code))
-            }
-        )
-    }
-
-    fun getCachedAccountAlgoAmount(publicKey: String): BigInteger? {
-        return accountRepository.getCachedAccountDetail(publicKey)?.data?.accountInformation?.amount
     }
 
     fun getAccount(publicKey: String): Account? {

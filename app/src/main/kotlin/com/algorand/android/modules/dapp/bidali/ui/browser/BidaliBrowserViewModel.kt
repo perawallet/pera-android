@@ -27,7 +27,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -92,12 +91,11 @@ class BidaliBrowserViewModel @Inject constructor(
 
     fun generateUpdatedBalancesJavascript() {
         viewModelScope.launch {
-            bidaliBrowserPreviewUseCase
-                .generateUpdatedBalancesJavascript(_bidaliBrowserPreviewFlow.value, accountAddress)
-                .collectLatest {
-                    _bidaliBrowserPreviewFlow
-                        .emit(it)
-                }
+            val updatedPreview = bidaliBrowserPreviewUseCase.generateUpdatedBalancesJavascript(
+                previousState = _bidaliBrowserPreviewFlow.value,
+                accountAddress = accountAddress
+            ) ?: return@launch
+            _bidaliBrowserPreviewFlow.emit(updatedPreview)
         }
     }
 

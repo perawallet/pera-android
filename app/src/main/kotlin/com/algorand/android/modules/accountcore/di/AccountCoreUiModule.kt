@@ -25,6 +25,8 @@ import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAs
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedCollectibleData
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedCollectibleDataUseCase
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValueFlow
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValueFlowUseCase
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValueUseCase
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapperImpl
@@ -71,6 +73,9 @@ internal object AccountCoreUiModule {
 
     @Provides
     fun provideGetAccountTotalValue(useCase: GetAccountTotalValueUseCase): GetAccountTotalValue = useCase
+
+    @Provides
+    fun provideGetAccountTotalValueFlow(useCase: GetAccountTotalValueFlowUseCase): GetAccountTotalValueFlow = useCase
 
     @Provides
     fun provideAccountItemConfigurationMapper(

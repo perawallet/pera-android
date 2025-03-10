@@ -31,6 +31,7 @@ import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
@@ -42,7 +43,8 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val accountManager: AccountManager,
     private val getRekeyedAccountUseCase: GetRekeyedAccountUseCase,
     private val accountStateHelperUseCase: AccountStateHelperUseCase,
-    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
+    private val aesPlatformManager: AESPlatformManager,
 ) {
 
     fun getRecoverWithPassphraseInitialPreview(
@@ -126,6 +128,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         )
     }
 
+    @SuppressWarnings("LongMethod")
     fun validateEnteredMnemonics(preview: RecoverWithPassphrasePreview) = flow {
         try {
             emit(preview.copy(showLoadingDialogEvent = Event(Unit)))
@@ -156,7 +159,11 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                 address = accountAddress,
                 customName = accountAddress.toShortenedAddress(),
                 isBackedUp = true,
-                type = AccountCreation.Type.Algo25(privateKey),
+                type = AccountCreation.Type.Algo25(
+                    aesPlatformManager.encryptByteArray(
+                        privateKey
+                    )
+                ),
                 creationType = RECOVER
             )
             getRekeyedAccountUseCase.invoke(accountAddress).useSuspended(

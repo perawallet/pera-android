@@ -14,6 +14,7 @@ package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.wallet.account.info.domain.model.AccountCacheStatus
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
@@ -95,10 +96,14 @@ fun interface AddAssetHoldingToAccountAsPending {
     suspend operator fun invoke(address: String, assetId: Long)
 }
 
+fun interface GetAccountAssetHoldingsFlow {
+    operator fun invoke(address: String): Flow<List<AssetHolding>>
+}
+
 fun interface IsAccountCachedSuccessfully {
     suspend operator fun invoke(address: String): Boolean
 }
 
-fun interface GetAccountRekeyAuthAddress {
+fun interface GetAccountRekeyAdminAddress {
     suspend operator fun invoke(address: String): String?
 }

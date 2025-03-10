@@ -234,6 +234,7 @@ android {
 }
 
 dependencies {
+
     implementation project(':common-sdk')
 
     implementation libs.installreferrer
@@ -275,7 +276,8 @@ dependencies {
     implementation libs.fragment.ktx
 
     implementation libs.androidx.compose.fragment
-    implementation libs.androidx.compose.ui.tooling.preview
+    implementation libs.compose.ui.tooling.preview
+    implementation libs.compose.ui.tooling
 
     implementation libs.multidex
 
@@ -298,6 +300,7 @@ dependencies {
     ksp libs.glide.compiler
 
     implementation libs.lottie
+    implementation libs.lottie.compose
 
     implementation libs.retrofit
     implementation libs.converter.gson
@@ -326,12 +329,12 @@ dependencies {
     implementation libs.exoplayer
 
     // Test
+    testImplementation(project(":test-utils"))
     testImplementation libs.mockk
     testImplementation libs.kotlinx.coroutines.test
     testImplementation libs.kotlin.test
     testImplementation libs.junit
     testImplementation libs.mockito
-    testImplementation(project(":test-utils"))
     androidTestImplementation libs.room.testing
     androidTestImplementation libs.runner
     androidTestImplementation libs.espresso.core

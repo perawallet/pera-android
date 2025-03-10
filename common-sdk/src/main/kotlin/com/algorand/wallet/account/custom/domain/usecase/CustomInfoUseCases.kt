@@ -13,7 +13,9 @@
 package com.algorand.wallet.account.custom.domain.usecase
 
 import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
-import com.algorand.wallet.account.custom.domain.model.CustomInfo
+import com.algorand.wallet.account.custom.domain.model.CustomAccountInfo
+import com.algorand.wallet.account.custom.domain.model.CustomHdSeedInfo
+import com.algorand.wallet.account.custom.domain.model.HdSeedOrderIndex
 
 fun interface SetAccountCustomName {
     suspend operator fun invoke(address: String, name: String)
@@ -24,11 +26,11 @@ fun interface GetAccountCustomName {
 }
 
 fun interface SetAccountCustomInfo {
-    suspend operator fun invoke(customInfo: CustomInfo)
+    suspend operator fun invoke(customInfo: CustomAccountInfo)
 }
 
 fun interface GetAccountCustomInfoOrNull {
-    suspend operator fun invoke(address: String): CustomInfo?
+    suspend operator fun invoke(address: String): CustomAccountInfo?
 }
 
 fun interface DeleteAccountCustomInfo {
@@ -36,7 +38,7 @@ fun interface DeleteAccountCustomInfo {
 }
 
 fun interface GetAccountCustomInfo {
-    suspend operator fun invoke(address: String): CustomInfo
+    suspend operator fun invoke(address: String): CustomAccountInfo
 }
 
 fun interface SetAccountOrderIndex {
@@ -57,4 +59,51 @@ fun interface GetAccountAsbBackUpStatus {
 
 fun interface GetAllAccountOrderIndexes {
     suspend operator fun invoke(): List<AccountOrderIndex>
+}
+
+
+// custom_hd_seed_info
+
+fun interface SetHdSeedCustomName {
+    suspend operator fun invoke(seedId: Int, name: String)
+}
+
+fun interface GetHdSeedCustomName {
+    suspend operator fun invoke(seedId: Int): String?
+}
+
+fun interface SetHdSeedCustomInfo {
+    suspend operator fun invoke(customInfo: CustomHdSeedInfo)
+}
+
+fun interface GetHdSeedCustomInfoOrNull {
+    suspend operator fun invoke(seedId: Int): CustomHdSeedInfo?
+}
+
+fun interface DeleteHdSeedCustomInfo {
+    suspend operator fun invoke(aseedId: Int)
+}
+
+fun interface GetHdSeedCustomInfo {
+    suspend operator fun invoke(seedId: Int): CustomHdSeedInfo
+}
+
+fun interface SetHdSeedOrderIndex {
+    suspend operator fun invoke(seedId: Int, orderIndex: Int)
+}
+
+fun interface GetBackedUpHdSeeds {
+    suspend operator fun invoke(): Set<String>
+}
+
+fun interface GetNotBackedUpHdSeeds {
+    suspend operator fun invoke(): Set<String>
+}
+
+fun interface GetHdSeedAsbBackUpStatus {
+    suspend operator fun invoke(seedId: Int): Boolean
+}
+
+fun interface GetAllHdSeedOrderIndexes {
+    suspend operator fun invoke(): List<HdSeedOrderIndex>
 }

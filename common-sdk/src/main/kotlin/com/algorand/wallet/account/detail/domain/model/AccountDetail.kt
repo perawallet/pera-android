@@ -12,12 +12,12 @@
 
 package com.algorand.wallet.account.detail.domain.model
 
-import com.algorand.wallet.account.custom.domain.model.CustomInfo
+import com.algorand.wallet.account.custom.domain.model.CustomAccountInfo
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 
 data class AccountDetail(
     val address: String,
-    val customInfo: CustomInfo?,
+    val customAccountInfo: CustomAccountInfo?,
     val accountRegistrationType: AccountRegistrationType?,
     val accountType: AccountType?
 ) {

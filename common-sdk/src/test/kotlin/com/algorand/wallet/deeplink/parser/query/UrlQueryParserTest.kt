@@ -13,7 +13,7 @@
 package com.algorand.wallet.deeplink.parser.query
 
 import com.algorand.wallet.deeplink.PeraUriBuilder
-import com.algorand.wallet.encryption.Base64Manager
+import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals

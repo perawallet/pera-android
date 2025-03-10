@@ -13,12 +13,12 @@
 package com.algorand.wallet.account.info.domain.manager
 
 import androidx.lifecycle.Lifecycle
-import com.algorand.wallet.cache.domain.usecase.UpdateAccountCache
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.wallet.block.domain.usecase.ClearLastKnownBlockNumber
 import com.algorand.wallet.block.domain.usecase.ShouldUpdateAccountCache
 import com.algorand.wallet.block.domain.usecase.UpdateLastKnownBlockNumber
 import com.algorand.wallet.cache.LifecycleAwareCacheManager
+import com.algorand.wallet.cache.domain.usecase.UpdateAccountCache
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay

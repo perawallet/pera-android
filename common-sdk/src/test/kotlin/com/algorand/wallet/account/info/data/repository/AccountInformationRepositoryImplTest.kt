@@ -15,17 +15,17 @@ package com.algorand.wallet.account.info.data.repository
 import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCache
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
-import com.algorand.wallet.account.info.data.mapper.AccountInformationMapper
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapper
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
-import com.algorand.wallet.account.info.data.mapper.AssetStatusEntityMapper
+import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
+import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapper
+import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
+import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import kotlinx.coroutines.test.runTest
 
 class AccountInformationRepositoryImplTest {
 

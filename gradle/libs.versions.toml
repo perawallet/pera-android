@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.2"
+agp = "8.7.3"
 algoSdk = "2.7.0"
 algoGoMobilesdk = "1.0.1"
 android-application = "8.2.2"
@@ -14,7 +14,6 @@ android-versionName = "5.202505.0"
 androidx-compose-activity = "1.9.3"
 androidx-compose-fragment = "1.8.5"
 androidx-compose-material3 = "1.3.1"
-androidx-compose-ui = "1.7.5"
 appCompat = "1.7.0"
 biometric = "1.1.0"
 bip39 = "1.0.7"
@@ -24,14 +23,15 @@ buildConfig = "4.1.1"
 constraintLayout = "2.2.0"
 coil = "3.0.1"
 compose = "1.6.10"
+compose-ui = "1.7.8"
 composeFoundation = "1.7.5"
 converterGson = "2.11.0"
+core = "1.6.1"
 coreKtx = "1.13.1"
 coroutines = "1.9.0"
-dagger = "2.52"
 desugar = "2.1.3"
 datastore = "1.1.1"
-detekt = "1.23.7"
+detekt = "1.23.8"
 espresso = "3.6.1"
 exoPlayer = "2.19.1"
 firebaseBom = "33.6.0"
@@ -41,10 +41,12 @@ flexbox = "3.0.0"
 fragmentKtx = "1.8.5"
 glide = "4.16.0"
 googleServicesVersion = "4.4.2"
+hilt = "2.55"
 hiltCompiler = "1.2.0"
 installreferrer = "2.2"
 javaWebSocket = "1.5.6"
 junit = "4.13.2"
+junitKtx = "1.2.1"
 khex = "1.1.2"
 koin = "4.0.1-Beta1"
 kotlin = "2.0.21"
@@ -60,7 +62,7 @@ ktorContentNegotiation = "3.0.0"
 legacySupport = "1.0.0"
 lifecycle = "2.8.7"
 lifecycleExt = "2.2.0"
-lottie = "6.4.1"
+lottie = "6.6.2"
 material = "1.12.0"
 mockito = "5.4.0"
 mockk = "1.13.13"
@@ -68,7 +70,7 @@ moshi = "1.15.1"
 mpAndroidChart = "3.1.0"
 multidex = "2.0.1"
 napier = "2.7.1"
-navigation = "2.8.4"
+navigation = "2.8.7"
 navigation-compose = "2.8.0-alpha10"
 okhttp = "4.12.0"
 paging = "3.3.4"
@@ -92,13 +94,14 @@ browser = { module = "androidx.browser:browser", version.ref = "browser" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
 androidx-compose-fragment = { module = "androidx.fragment:fragment-compose", version.ref = "androidx-compose-fragment" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidx-compose-material3" }
-androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "androidx-compose-ui" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
-androidx-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose-ui" }
-androidx-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose-ui" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose-ui" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose-ui" }
+compose-ui-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-ui" }
+compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-ui" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -107,12 +110,11 @@ legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref 
 lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
 lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExt" }
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
-material = { module = "com.google.android.material:material", version.ref = "material" }
 
 # Dependency Injection
-dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
-dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger" }
-dagger-hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "dagger" }
+dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+dagger-hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
@@ -169,6 +171,7 @@ exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "
 glide-image = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpAndroidChart" }
 
 # Sensors - Bluetooth / Camera
@@ -196,10 +199,15 @@ walletconnect-v2-android-core = { module = "com.walletconnect:android-core" }
 walletconnect-v2-web3wallet = { module = "com.walletconnect:web3wallet" }
 
 # Testing / Utilities
+androidx-core = { module = "androidx.test:core", version.ref = "core" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitKtx" }
+androidx-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junitKtx" }
+androidx-rules = { module = "androidx.test:rules", version.ref = "core" }
 desugar-jdk = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 google-services = { module = "com.google.gms:google-services", version.ref = "googleServicesVersion" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlinfixture = { module = "com.appmattus.fixture:fixture", version.ref = "kotlinfixture" }
 kover-plugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
@@ -215,6 +223,7 @@ agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 flexbox = { module = "com.google.android.flexbox:flexbox", version.ref = "flexbox" }
 installreferrer = { group = "com.android.installreferrer", name = "installreferrer", version.ref = "installreferrer" }
 ksp-gradle-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "kspGradlePlugin" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
 review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "review" }
 
 # Jetbrain / KMP
@@ -239,6 +248,7 @@ firebase = ["firebase-analytics",
 ]
 
 [plugins]
+android-library = { id = "com.android.library", version.ref = "android-application" }
 android-application = { id = "com.android.application", version.ref = "android-application" }
 buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
@@ -247,6 +257,5 @@ kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", vers
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "room" }
-android-library = { id = "com.android.library", version.ref = "android-application" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-hilt = { id = "dagger.hilt.android.plugin", version.ref = "dagger" }
+hilt = { id = "dagger.hilt.android.plugin", version.ref = "hilt" }

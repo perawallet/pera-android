@@ -13,6 +13,7 @@
 package com.algorand.wallet.account.info.domain.repository
 
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
@@ -46,6 +47,8 @@ internal interface AccountInformationRepository {
     suspend fun setAssetStatus(address: String, assetId: Long, status: AssetStatus)
 
     suspend fun addAssetHoldingAsPending(address: String, assetId: Long)
+
+    fun getAssetHoldingsFlow(address: String): Flow<List<AssetHolding>>
 
     suspend fun getFailedAccountInformation(): List<String>
 

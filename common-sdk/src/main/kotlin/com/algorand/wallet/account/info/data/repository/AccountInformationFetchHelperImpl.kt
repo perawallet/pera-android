@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.account.info.data.repository
 
-import com.algorand.wallet.account.info.data.mapper.AccountInformationResponseMapper
+import com.algorand.wallet.account.info.data.mapper.model.AccountInformationResponseMapper
 import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.account.info.data.model.IndexerAccountFetchRequestExcludes.ASSETS
 import com.algorand.wallet.account.info.data.model.IndexerAccountFetchRequestExcludes.CREATED_APPS

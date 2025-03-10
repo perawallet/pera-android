@@ -48,6 +48,8 @@ internal interface AccountInformationRepository {
 
     suspend fun addAssetHoldingAsPending(address: String, assetId: Long)
 
+    suspend fun isAssetOptedInByAnyLocalAccount(assetId: Long): Boolean
+
     fun getAssetHoldingsFlow(address: String): Flow<List<AssetHolding>>
 
     suspend fun getFailedAccountInformation(): List<String>

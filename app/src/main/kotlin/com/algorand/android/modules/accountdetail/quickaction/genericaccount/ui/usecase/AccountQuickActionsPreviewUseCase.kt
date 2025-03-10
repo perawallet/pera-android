@@ -19,15 +19,16 @@ import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.AccountQuickActionsBottomSheetDirections
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.mapper.AccountQuickActionsPreviewMapper
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.ui.model.AccountQuickActionsPreview
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.utils.Event
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import javax.inject.Inject
 
 class AccountQuickActionsPreviewUseCase @Inject constructor(
     private val accountQuickActionsPreviewMapper: AccountQuickActionsPreviewMapper,
     private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase
+    private val getAccountType: GetAccountType
 ) {
 
     fun getInitialPreview(): AccountQuickActionsPreview {
@@ -38,8 +39,7 @@ class AccountQuickActionsPreviewUseCase @Inject constructor(
         preview: AccountQuickActionsPreview,
         accountAddress: String
     ): AccountQuickActionsPreview {
-        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-        return if (hasAccountAuthority) {
+        return if (hasAccountAuthority(accountAddress)) {
             var swapNavDirection: NavDirections? = null
             swapNavigationDestinationHelper.getSwapNavigationDestination(
                 accountAddress = accountAddress,
@@ -59,12 +59,11 @@ class AccountQuickActionsPreviewUseCase @Inject constructor(
         }
     }
 
-    fun updatePreviewWithAssetAdditionNavigation(
+    suspend fun updatePreviewWithAssetAdditionNavigation(
         preview: AccountQuickActionsPreview,
         accountAddress: String
     ): AccountQuickActionsPreview {
-        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-        return if (hasAccountAuthority) {
+        return if (hasAccountAuthority(accountAddress)) {
             preview.copy(
                 onNavigationEvent = Event(
                     AccountQuickActionsBottomSheetDirections
@@ -76,12 +75,11 @@ class AccountQuickActionsPreviewUseCase @Inject constructor(
         }
     }
 
-    fun updatePreviewWithOfframpNavigation(
+    suspend fun updatePreviewWithOfframpNavigation(
         preview: AccountQuickActionsPreview,
         accountAddress: String
     ): AccountQuickActionsPreview {
-        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-        return if (hasAccountAuthority) {
+        return if (hasAccountAuthority(accountAddress)) {
             preview.copy(
                 onNavigationEvent = Event(
                     AccountQuickActionsBottomSheetDirections
@@ -93,12 +91,11 @@ class AccountQuickActionsPreviewUseCase @Inject constructor(
         }
     }
 
-    fun updatePreviewWithSendNavigation(
+    suspend fun updatePreviewWithSendNavigation(
         preview: AccountQuickActionsPreview,
         accountAddress: String
     ): AccountQuickActionsPreview {
-        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-        return if (hasAccountAuthority) {
+        return if (hasAccountAuthority(accountAddress)) {
             val assetTransaction = AssetTransaction(senderAddress = accountAddress)
             preview.copy(
                 onNavigationEvent = Event(HomeNavigationDirections.actionGlobalSendAlgoNavigation(assetTransaction))
@@ -106,5 +103,9 @@ class AccountQuickActionsPreviewUseCase @Inject constructor(
         } else {
             preview.copy(showGlobalErrorEvent = Event(R.string.this_action_is_not_available))
         }
+    }
+
+    private suspend fun hasAccountAuthority(accountAddress: String): Boolean {
+        return getAccountType(accountAddress)?.canSignTransaction() == true
     }
 }

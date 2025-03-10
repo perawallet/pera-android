@@ -12,49 +12,31 @@
 
 package com.algorand.android.modules.assets.action.trylater
 
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.customviews.toolbar.CustomToolbar
-import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.modules.assets.action.base.BaseAssetActionBottomSheet
-import com.algorand.android.utils.extensions.hide
-import com.algorand.android.utils.extensions.show
+import com.algorand.android.modules.informationbottomsheet.ui.BaseInformationBottomSheet
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UnsupportedAddAssetTryLaterBottomSheet : BaseAssetActionBottomSheet() {
+class UnsupportedAddAssetTryLaterBottomSheet : BaseInformationBottomSheet() {
 
-    private val toolbarConfiguration = ToolbarConfiguration(titleResId = R.string.your_accounts_don_t)
+    override fun initTitleTextView(titleTextView: TextView) {
+        titleTextView.setText(R.string.your_accounts_don_t)
+    }
 
-    override val assetActionViewModel by viewModels<UnsupportedAddAssetTryLaterViewModel>()
-
-    override fun setDescriptionTextView(textView: TextView) {
-        textView.apply {
+    override fun initDescriptionTextView(descriptionTextView: TextView) {
+        descriptionTextView.apply {
             text = getString(R.string.your_accounts_don_t_contain_this)
             setTextColor(ContextCompat.getColor(context, R.color.negative))
         }
     }
 
-    override fun setWarningIconImageView(imageView: ImageView) {
-        imageView.show()
-    }
-
-    override fun setToolbar(customToolbar: CustomToolbar) {
-        customToolbar.configure(toolbarConfiguration)
-    }
-
-    override fun setPositiveButton(materialButton: MaterialButton) {
-        materialButton.apply {
+    override fun initNeutralButton(neutralButton: MaterialButton) {
+        neutralButton.apply {
             setText(R.string.ok)
             setOnClickListener { navBack() }
         }
-    }
-
-    override fun setNegativeButton(materialButton: MaterialButton) {
-        materialButton.hide()
     }
 }

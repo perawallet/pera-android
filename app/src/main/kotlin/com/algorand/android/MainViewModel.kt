@@ -33,6 +33,7 @@ import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.repository.NodeRepository
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.findAllNodes
+import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
@@ -112,14 +113,16 @@ class MainViewModel @Inject constructor(
     }
 
     fun handleDeepLink(uri: String) {
-        deepLinkHandler.handleDeepLink(uri)
+        viewModelScope.launchIO {
+            deepLinkHandler.handleDeepLink(uri)
+        }
     }
 
     fun setDeepLinkHandlerListener(listener: DeeplinkHandler.Listener) {
         deepLinkHandler.setListener(listener)
     }
 
-    fun increseAppOpeningCount() {
+    fun increaseAppOpeningCount() {
         viewModelScope.launch {
             increaseAppOpeningCountUseCase.increaseAppOpeningCount()
         }
@@ -143,10 +146,6 @@ class MainViewModel @Inject constructor(
                 _swapNavigationResultFlow.emit(Event(direction))
             }
         }
-    }
-
-    fun hasAccountAuthority(accountAddress: String): Boolean {
-        return accountStateHelperUseCase.hasAccountAuthority(accountAddress)
     }
 
     fun fetchInstallReferrer() {
@@ -238,7 +237,7 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun getAssetInboxDeepLinkEvent(accountAddress: String): ViewEvent {
-        val canSignTransaction = getAccountType(accountAddress)?.canSignTransaction() ?: false
+        val canSignTransaction = getAccountType(accountAddress)?.canSignTransaction() == true
         return if (canSignTransaction) {
             ViewEvent.NavToAssetInboxOneAccountNavigation(accountAddress)
         } else {

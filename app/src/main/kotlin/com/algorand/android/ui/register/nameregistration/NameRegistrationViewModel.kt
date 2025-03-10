@@ -47,19 +47,17 @@ class NameRegistrationViewModel @Inject constructor(
     private val accountCreation = savedStateHandle.get<AccountCreation>(ACCOUNT_CREATION_KEY)
     private val accountAddress = accountCreation?.address
     private val accountName = accountCreation?.customName
-    protected val accountType = accountCreation?.type
+    private val accountType = accountCreation?.type
     private var walletId: Int? = null
 
     val predefinedAccountName: String
         get() = accountName.takeUnless { it.isNullOrBlank() } ?: accountAddress.toShortenedAddress()
 
     init {
-        viewModelScope.launch {
-            updatePreviewWithHdWalletData()
-        }
+        updatePreviewWithHdWalletData()
     }
 
-    fun updatePreviewWithHdWalletData() {
+    private fun updatePreviewWithHdWalletData() {
         viewModelScope.launch(Dispatchers.IO) {
             walletId = (getMaxHdSeedId.invoke() ?: 0) + 1
             walletId?.let {

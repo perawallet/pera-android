@@ -72,6 +72,7 @@ import com.algorand.wallet.account.info.domain.usecase.IsAccountCachedSuccessful
 import com.algorand.wallet.account.info.domain.usecase.IsAccountCachedSuccessfullyUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccountUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAnyLocalAccount
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccount
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccountUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
@@ -260,6 +261,14 @@ internal object AccountInformationModule {
 
     @Provides
     fun provideIsAssetOwnedByAccount(useCase: IsAssetOwnedByAccountUseCase): IsAssetOwnedByAccount = useCase
+
+
+    @Provides
+    fun provideIsAssetOptedInByAnyLocalAccount(
+        repository: AccountInformationRepository
+    ): IsAssetOptedInByAnyLocalAccount {
+        return IsAssetOptedInByAnyLocalAccount(repository::isAssetOptedInByAnyLocalAccount)
+    }
 
     @Provides
     fun provideDeleteAccountInformation(

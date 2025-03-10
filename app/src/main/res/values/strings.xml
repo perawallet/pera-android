@@ -1471,7 +1471,8 @@
     <string name="already_imported">Already Imported</string>
 
     <plurals name="select_accounts_to_add_desc">
-        <item quantity="one">We found that there is %1$d address registered to this wallet</item>
+        <item quantity="zero">We found that there are no address registered to this wallet</item>
+        <item quantity="one">We found that there is one address registered to this wallet</item>
         <item quantity="other">We found that there are %1$d addresses registered to this wallet</item>
     </plurals>
 

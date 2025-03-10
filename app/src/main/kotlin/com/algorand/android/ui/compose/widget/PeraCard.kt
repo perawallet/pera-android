@@ -61,7 +61,7 @@ fun PeraCard(
             Row {
                 PeraTitleText(text = title)
                 highlighted?.let {
-                    PeraHeadlineText(
+                    PeraHighlightedText(
                         text = it
                     )
                 }

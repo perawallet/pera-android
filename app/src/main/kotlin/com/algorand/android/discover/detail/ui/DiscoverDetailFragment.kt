@@ -20,6 +20,7 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.databinding.FragmentDiscoverDetailBinding
 import com.algorand.android.discover.common.ui.BaseDiscoverFragment
+import com.algorand.android.discover.common.ui.model.DappFavoriteElement
 import com.algorand.android.discover.common.ui.model.PeraWebChromeClient
 import com.algorand.android.discover.common.ui.model.PeraWebViewClient
 import com.algorand.android.discover.common.ui.model.WebViewError
@@ -72,6 +73,12 @@ class DiscoverDetailFragment :
             externalPageRequestedEvent?.consume()?.run {
                 context?.openUrl(this)
             }
+            dappViewerScreenRequestEvent?.consume()?.run {
+                val (dappInfo, favoritesList) = this
+                dappInfo.url?.let { url ->
+                    navigateToDappUrl(url, dappInfo.name, favoritesList)
+                }
+            }
         }
     }
 
@@ -92,6 +99,10 @@ class DiscoverDetailFragment :
                 shouldDescriptionHasLinkMovementMethod = true
             )
         )
+    }
+
+    override fun pushDappViewerScreen(jsonEncodedPayload: String) {
+        discoverViewModel.pushDappViewerScreen(jsonEncodedPayload)
     }
 
     override fun bindWebView(view: View?) {
@@ -182,6 +193,21 @@ class DiscoverDetailFragment :
         viewLifecycleOwner.collectLatestOnLifecycle(
             discoverViewModel.discoverDetailPreviewFlow,
             discoverDetailPreviewCollector
+        )
+    }
+
+    private fun navigateToDappUrl(
+        url: String,
+        title: String?,
+        favorites: Array<DappFavoriteElement>
+    ) {
+        nav(
+            DiscoverDetailFragmentDirections.actionDiscoverDetailFragmentToDiscoverDappNavigation(
+                dappUrl = url,
+                dappTitle = title ?: "",
+                favorites = favorites,
+                showFavorites = true
+            )
         )
     }
 }

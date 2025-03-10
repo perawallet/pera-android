@@ -23,7 +23,9 @@ import com.algorand.android.discover.detail.ui.mapper.BuySellActionRequestMapper
 import com.algorand.android.discover.detail.ui.model.BuySellActionRequest
 import com.algorand.android.discover.detail.ui.model.DiscoverDetailAction
 import com.algorand.android.discover.detail.ui.model.DiscoverDetailPreview
+import com.algorand.android.discover.home.domain.model.DappInfo
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
+import com.algorand.android.discover.home.ui.mapper.DiscoverDappFavoritesMapper
 import com.algorand.android.discover.utils.getSendDeviceId
 import com.algorand.android.discover.utils.isValidDiscoverURL
 import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForResponse
@@ -41,6 +43,7 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
     private val discoverSwapNavigationDestinationHelper: DiscoverSwapNavigationDestinationHelper,
     private val discoverDetailEventTracker: DiscoverDetailEventTracker,
     private val deviceIdUseCase: DeviceIdUseCase,
+    private val discoverDappFavoritesMapper: DiscoverDappFavoritesMapper,
     private val gson: Gson
 ) {
 
@@ -165,5 +168,22 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
                 // No log action defined here
             }
         }
+    }
+
+    fun pushDappViewerScreen(
+        data: String,
+        previousState: DiscoverDetailPreview
+    ): DiscoverDetailPreview {
+        val dappInfo = gson.fromJson(data, DappInfo::class.java)
+        return previousState.copy(
+            dappViewerScreenRequestEvent = Event(
+                Pair(
+                    dappInfo,
+                    dappInfo.favorites?.map {
+                        discoverDappFavoritesMapper.mapToDappFavoriteElement(it)
+                    }?.toTypedArray() ?: emptyArray()
+                )
+            )
+        )
     }
 }

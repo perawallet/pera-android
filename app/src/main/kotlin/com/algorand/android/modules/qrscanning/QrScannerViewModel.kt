@@ -16,6 +16,7 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -42,7 +43,9 @@ class QrScannerViewModel @Inject constructor(
     }
 
     fun handleDeeplink(uri: String) {
-        deeplinkHandler.handleDeepLink(uri)
+        viewModelScope.launchIO {
+            deeplinkHandler.handleDeepLink(uri)
+        }
     }
 
     fun removeDeeplinkHandlerListener() {

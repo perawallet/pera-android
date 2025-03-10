@@ -20,6 +20,7 @@ import com.algorand.android.decider.DateFilterUseCase
 import com.algorand.android.models.DateFilter
 import com.algorand.android.models.ui.DateFilterPreview
 import com.algorand.android.models.ui.TransactionLoadStatePreview
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValueFlow
 import com.algorand.android.modules.transaction.common.domain.model.TransactionTypeDTO
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.modules.transactionhistory.ui.usecase.PendingTransactionsPreviewUseCase
@@ -35,13 +36,13 @@ class AssetDetailUseCase @Inject constructor(
     private val pendingTransactionsPreviewUseCase: PendingTransactionsPreviewUseCase,
     private val dateFilterUseCase: DateFilterUseCase,
     private val transactionLoadStateUseCase: TransactionLoadStateUseCase,
-    private val accountTotalBalanceUseCase: AccountTotalBalanceUseCase
+    private val getAccountTotalValueFlow: GetAccountTotalValueFlow
 ) : BaseUseCase() {
 
     val pendingTransactionDistinctUntilChangedListener
         get() = pendingTransactionsPreviewUseCase.pendingFlowDistinctUntilChangedListener
 
-    fun getAccountBalanceFlow(publicKey: String) = accountTotalBalanceUseCase.getAccountBalanceFlow(publicKey)
+    fun getAccountBalanceFlow(publicKey: String) = getAccountTotalValueFlow(publicKey, includeAlgo = true)
 
     fun getTransactionFlow(
         publicKey: String,

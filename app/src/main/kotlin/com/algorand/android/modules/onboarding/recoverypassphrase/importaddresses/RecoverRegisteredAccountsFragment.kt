@@ -27,11 +27,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -42,6 +45,9 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
@@ -57,13 +63,15 @@ import com.algorand.android.ui.compose.widget.PeraScrimText
 import com.algorand.android.ui.compose.widget.PeraTitleText
 import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
 
     private val args: RecoverRegisteredAccountsFragmentArgs by navArgs()
 
-    private val recoverRegisteredAccountsViewModel: RecoverRegisteredAccountsViewModel by viewModels()
+    private val viewModel: RecoverRegisteredAccountsViewModel by viewModels()
 
     private val statusBarConfiguration =
         StatusBarConfiguration(backgroundColor = R.color.tertiary_background)
@@ -84,7 +92,27 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
         return ComposeView(requireContext()).apply {
             setContent {
                 PeraTheme {
-                    SelectAccountsToAddScreen()
+                    RecoverRegisteredAccountsScreen(
+                        onIntent = viewModel::processIntent
+                    )
+                }
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        configureToolbar(true)
+        observeEffects()
+    }
+
+    private fun observeEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.effect.collectLatest { effect ->
+                    when (effect) {
+                        is RecoverRegisteredAccountsEffect.NavigateToHome -> navToHomeNavigation()
+                    }
                 }
             }
         }
@@ -92,10 +120,23 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
 
     @Suppress("LongMethod")
     @Composable
-    fun SelectAccountsToAddScreen() {
-        val registeredAccounts by recoverRegisteredAccountsViewModel.registeredAccountsFlow.collectAsState()
+    fun RecoverRegisteredAccountsScreen(
+        onIntent: (RecoverRegisteredAccountsIntent) -> Unit
+    ) {
+        val state by viewModel.state.collectAsState()
+        val snackbarHostState = remember { SnackbarHostState() }
+        val scope = rememberCoroutineScope()
+
+        LaunchedEffect(state.error) {
+            state.error?.let { error ->
+                scope.launch {
+                    snackbarHostState.showSnackbar(error)
+                }
+            }
+        }
+
         val selectedAddresses = remember { mutableStateOf(setOf<String>()) }
-            Scaffold { innerPadding ->
+        Scaffold { innerPadding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -105,9 +146,9 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                 val interactionSource = remember { MutableInteractionSource() }
                 val selectAllCheckedState = remember {
                     mutableStateOf(
-                        if (selectedAddresses.value.size == 0) {
+                        if (selectedAddresses.value.isEmpty()) {
                             ToggleableState.Off
-                        } else if (selectedAddresses.value.size == registeredAccounts.filter {
+                        } else if (selectedAddresses.value.size == state.registeredAccounts.filter {
                                 it.isImportedToDB.not()
                             }.size) {
                             ToggleableState.Indeterminate
@@ -121,7 +162,7 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                     modifier = Modifier.padding(top = 10.dp),
                     text = pluralStringResource(
                         R.plurals.select_accounts_to_add_desc,
-                        registeredAccounts.size
+                        state.registeredAccounts.size
                     )
                 )
 
@@ -134,17 +175,17 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                     PeraTitleText(
                         text = pluralStringResource(
                             R.plurals.search_address_count,
-                            registeredAccounts.size
+                            state.registeredAccounts.size
                         ),
                         modifier = Modifier.weight(1f)
                     )
                     PeraScrimText(
                         modifier = Modifier.clickable {
                             selectedAddresses.value =
-                                if (selectedAddresses.value.size == registeredAccounts.size) {
+                                if (selectedAddresses.value.size == state.registeredAccounts.size) {
                                     mutableSetOf()
                                 } else {
-                                    registeredAccounts.filter { it.isImportedToDB.not() }
+                                    state.registeredAccounts.filter { it.isImportedToDB.not() }
                                         .map { it.address }.toMutableSet()
                                 }
                         },
@@ -156,9 +197,9 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                         checkedState = { selectAllCheckedState.value },
                         onClick = {
                             selectedAddresses.value =
-                                if (selectedAddresses.value.size < registeredAccounts.size) {
+                                if (selectedAddresses.value.size < state.registeredAccounts.size) {
                                     selectAllCheckedState.value = ToggleableState.On
-                                    registeredAccounts.filter { !it.isImportedToDB }
+                                    state.registeredAccounts.filter { !it.isImportedToDB }
                                         .map { it.address }
                                         .toSet()
                                 } else {
@@ -168,33 +209,24 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                         }
                     )
                 }
-
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(top = 12.dp)
-                ) {
-                    items(registeredAccounts) { address ->
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    items(state.registeredAccounts) { account ->
                         AddressItem(
-                            account = address,
+                            account = account,
                             interactionSource = interactionSource,
-                            startCheckState = selectedAddresses.value.contains(address.address)
-                        ) { isChecked ->
-                            selectedAddresses.value = if (isChecked) {
-                                selectedAddresses.value + address.address
-                            } else {
-                                selectedAddresses.value - address.address
+                            startCheckState = state.selectedAddresses.contains(account.address),
+                            onCheckedChange = { isChecked ->
+                                onIntent(
+                                    RecoverRegisteredAccountsIntent.ToggleAccountSelection(
+                                        address = account.address,
+                                        isSelected = isChecked
+                                    )
+                                )
                             }
-                            if (selectedAddresses.value.size == registeredAccounts.size) {
-                                selectAllCheckedState.value = ToggleableState.On
-                            } else if (selectedAddresses.value.isEmpty()) {
-                                selectAllCheckedState.value = ToggleableState.Off
-                            } else {
-                                selectAllCheckedState.value = ToggleableState.Indeterminate
-                            }
-                        }
+                        )
                     }
                 }
+
                 PeraPrimaryButton(
                     onClick = {
                         /* Handle continue */
@@ -265,22 +297,10 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initObservers()
+    private fun navToHomeNavigation() {
+        nav(RecoverRegisteredAccountsFragmentDirections.actionRecoverRegisteredAccountsFragmentToHomeNavigation())
     }
 
-    fun initObservers() {
-//        viewLifecycleOwner.collectLatestOnLifecycle(
-//            registerIntroViewModel.registerIntroPreviewFlow.filterNotNull(),
-//            registerIntroPreviewCollector
-//        )
-    }
-
-    //    private fun navToAccountRecoveryTypeSelectionFragment() {
-//        registerIntroViewModel.logOnboardingWelcomeAccountRecoverClickEvent()
-//        nav(RegisterIntroFragmentDirections.actionRegisterIntroFragmentToAccountRecoveryTypeSelectionFragment())
-//    }
     private fun configureToolbar(isCloseButtonVisible: Boolean) {
         getAppToolbar()?.let { toolbar ->
             if (isCloseButtonVisible) {

@@ -16,7 +16,9 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.fragment.app.viewModels
-import com.algorand.algosdk.sdk.Sdk
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentViewPassphraseBinding
@@ -26,6 +28,8 @@ import com.algorand.android.utils.disableScreenCapture
 import com.algorand.android.utils.enableScreenCapture
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ViewPassphraseFragment : DaggerBaseFragment(R.layout.fragment_view_passphrase) {
@@ -40,7 +44,7 @@ class ViewPassphraseFragment : DaggerBaseFragment(R.layout.fragment_view_passphr
 
     private val binding by viewBinding(FragmentViewPassphraseBinding::bind)
 
-    private val viewPassphraseViewModel: ViewPassphraseViewModel by viewModels()
+    private val viewModel: ViewPassphraseViewModel by viewModels()
 
     private var isScreenCaptureEnablingAllowed = true
 
@@ -51,18 +55,53 @@ class ViewPassphraseFragment : DaggerBaseFragment(R.layout.fragment_view_passphr
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewPassphraseToolbar.configure(toolbarConfiguration)
-        setupPassphraseLayout()
+        observeState()
+        observeEffects()
+
+        viewModel.processIntent(ViewPassphraseContract.Intent.LoadMnemonic)
     }
 
-    private fun setupPassphraseLayout() {
-        viewPassphraseViewModel.getAccountSecretKey()?.let {
-            try {
-                val mnemonic = Sdk.mnemonicFromPrivateKey(it) ?: throw Exception("Mnemonic cannot be null.")
-                binding.passphraseBoxView.setPassphrases(mnemonic)
-            } catch (exception: Exception) {
+    private fun observeState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collectLatest { state ->
+                    handleState(state)
+                }
+            }
+        }
+    }
+
+    private fun handleState(state: ViewPassphraseContract.State) {
+        when {
+            state.isLoading -> {
+                // show a loading indicator here if we want
+            }
+            state.error != null -> {
+                showError(state.error)
+            }
+            state.mnemonic != null -> {
+                binding.passphraseBoxView.setPassphrases(state.mnemonic)
+            }
+            else -> {
                 navBack()
             }
-        } ?: run { navBack() }
+        }
+    }
+
+    private fun showError(error: String) {
+        showGlobalError(errorMessage = error)
+    }
+
+    private fun observeEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.effect.collectLatest { effect ->
+                    when (effect) {
+                        is ViewPassphraseContract.Effect.NavigateBack -> navBack()
+                    }
+                }
+            }
+        }
     }
 
     override fun onResume() {

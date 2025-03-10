@@ -461,7 +461,7 @@ class MainActivity :
             handleDeeplinkAndNotificationNavigation()
         }
 
-        mainViewModel.increseAppOpeningCount()
+        mainViewModel.increaseAppOpeningCount()
     }
 
     override fun onMenuItemClicked(item: MenuItem) {

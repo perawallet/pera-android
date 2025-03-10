@@ -7,15 +7,25 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License
+ *  limitations under the License
+ *
  */
 
-package com.algorand.android.models
+package com.algorand.android.ui.accounts
 
-import java.math.BigDecimal
+sealed class ViewPassphraseContract {
 
-data class AccountBalance(
-    val algoHoldingsInSelectedCurrency: BigDecimal,
-    val assetHoldingsInSelectedCurrency: BigDecimal,
-    val assetCount: Int
-)
+    data class State(
+        val mnemonic: String? = null,
+        val isLoading: Boolean = false,
+        val error: String? = null
+    )
+
+    sealed class Intent {
+        object LoadMnemonic : Intent()
+    }
+
+    sealed class Effect {
+        object NavigateBack : Effect()
+    }
+}

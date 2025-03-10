@@ -18,8 +18,8 @@ import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.crypto.Address
 import com.algorand.wallet.account.info.domain.usecase.GetAccountFastLookup
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddressUseCase
-import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
 import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
+import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
 import foundation.algorand.xhdwalletapi.Bip32DerivationType
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
@@ -59,20 +59,31 @@ internal class PeraBip39SdkImpl @Inject constructor(
     }
 
     override fun createHdKeyAccount(): HdKeyAccount? {
-        return try {
-            var mnemonic = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_24)
-                .words.joinToString(" ") { charArray ->
+        var mnemonic = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_24)
+            .words.joinToString(" ") { charArray ->
                 String(charArray)
             }
+        val mnemonicCode = Mnemonics.MnemonicCode(mnemonic)
+        var entropy = mnemonicCode.toEntropy()
+        val output = getHdKeyAccount(entropy,0,0, 0)
+        entropy = ByteArray(0) // delete secret from memory
+        return output
+    }
 
-            val mnemonicCode = Mnemonics.MnemonicCode(mnemonic)
-            var entropy = mnemonicCode.toEntropy()
+    override fun getHdKeyAccount(
+        entropy: ByteArray,
+        accountIndex: Int,
+        changeIndex: Int,
+        keyIndex: Int
+    ): HdKeyAccount? {
+        return try {
+            val mnemonicCode = Mnemonics.MnemonicCode(entropy)
             var seed = mnemonicCode.toSeed()
             val xHDWalletAPI = XHDWalletAPIAndroid(seed)
             val keyContext = KeyContext.Address
-            val account = 0.toUInt()
-            val change = 0.toUInt()
-            val keyIndex = 0.toUInt()
+            val account = accountIndex.toUInt()
+            val change = changeIndex.toUInt()
+            val keyIndex = keyIndex.toUInt()
 
             val publicKey = xHDWalletAPI.keyGen(
                 keyContext,
@@ -99,9 +110,8 @@ internal class PeraBip39SdkImpl @Inject constructor(
                 keyIndex = keyIndex.toInt(),
                 derivationType = Bip32DerivationType.Peikert.value
             )
-            mnemonic = "" // delete secret from memory
+
             privateKey = ByteArray(0) // delete secret from memory
-            entropy = ByteArray(0) // delete secret from memory
             seed = ByteArray(0) // delete secret from memory
             return output
         } catch (e: Exception) {
@@ -116,9 +126,9 @@ internal class PeraBip39SdkImpl @Inject constructor(
             var seed = mnemonicCode.toSeed()
             val xHDWalletAPI = XHDWalletAPIAndroid(seed)
 
-            for (accountIndex in 0 until 1) {
-                for (changeIndex in 0 until 1) {
-                    for (keyIndex in 0 until 1) {
+            for (accountIndex in 0 until 5) {
+                for (changeIndex in 0 until 5) {
+                    for (keyIndex in 0 until 5) {
                         val algoAddress = Address(
                             xHDWalletAPI.keyGen(
                                 context = KeyContext.Address,

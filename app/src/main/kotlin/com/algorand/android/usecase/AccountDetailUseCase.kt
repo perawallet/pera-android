@@ -21,7 +21,6 @@ import com.algorand.android.models.AccountDetail
 import com.algorand.android.repository.AccountRepository
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.toShortenedAddress
-import java.math.BigInteger
 import javax.inject.Inject
 
 class AccountDetailUseCase @Inject constructor(

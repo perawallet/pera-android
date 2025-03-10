@@ -148,10 +148,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun hasAccountAuthority(accountAddress: String): Boolean {
-        return accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-    }
-
     fun fetchInstallReferrer() {
         viewModelScope.launch(Dispatchers.IO) {
             peraReferrerManager.fetchInstallReferrer()
@@ -241,7 +237,7 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun getAssetInboxDeepLinkEvent(accountAddress: String): ViewEvent {
-        val canSignTransaction = getAccountType(accountAddress)?.canSignTransaction() ?: false
+        val canSignTransaction = getAccountType(accountAddress)?.canSignTransaction() == true
         return if (canSignTransaction) {
             ViewEvent.NavToAssetInboxOneAccountNavigation(accountAddress)
         } else {

@@ -51,29 +51,35 @@ class AccountQuickActionsViewModel @Inject constructor(
     }
 
     fun onAddAssetClick() {
-        _accountQuickActionsPreviewFlow.update { preview ->
-            accountQuickActionsPreviewUseCase.updatePreviewWithAssetAdditionNavigation(
-                preview = preview,
-                accountAddress = accountAddress
-            )
+        viewModelScope.launchIO {
+            _accountQuickActionsPreviewFlow.update { preview ->
+                accountQuickActionsPreviewUseCase.updatePreviewWithAssetAdditionNavigation(
+                    preview = preview,
+                    accountAddress = accountAddress
+                )
+            }
         }
     }
 
     fun onBuySellClick() {
-        _accountQuickActionsPreviewFlow.update { preview ->
-            accountQuickActionsPreviewUseCase.updatePreviewWithOfframpNavigation(
-                preview = preview,
-                accountAddress = accountAddress
-            )
+        viewModelScope.launchIO {
+            _accountQuickActionsPreviewFlow.update { preview ->
+                accountQuickActionsPreviewUseCase.updatePreviewWithOfframpNavigation(
+                    preview = preview,
+                    accountAddress = accountAddress
+                )
+            }
         }
     }
 
     fun onSendClick() {
-        _accountQuickActionsPreviewFlow.update { preview ->
-            accountQuickActionsPreviewUseCase.updatePreviewWithSendNavigation(
-                preview = preview,
-                accountAddress = accountAddress
-            )
+        viewModelScope.launchIO {
+            _accountQuickActionsPreviewFlow.update { preview ->
+                accountQuickActionsPreviewUseCase.updatePreviewWithSendNavigation(
+                    preview = preview,
+                    accountAddress = accountAddress
+                )
+            }
         }
     }
 

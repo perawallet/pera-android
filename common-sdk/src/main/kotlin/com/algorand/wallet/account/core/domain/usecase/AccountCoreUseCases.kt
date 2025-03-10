@@ -76,7 +76,7 @@ fun interface CacheAccountDetail {
 }
 
 fun interface FetchAccountInformationAndCacheAssets {
-    suspend operator fun invoke(address: String): PeraResult<AccountInformation>
+    suspend operator fun invoke(address: String, includeClosedAccount: Boolean): PeraResult<AccountInformation>
 }
 
 interface GetAccountMinBalance {

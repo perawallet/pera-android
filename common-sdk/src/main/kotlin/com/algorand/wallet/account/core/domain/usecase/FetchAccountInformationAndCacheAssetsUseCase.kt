@@ -24,8 +24,8 @@ internal class FetchAccountInformationAndCacheAssetsUseCase @Inject constructor(
     private val fetchAndCacheAssets: FetchAndCacheAssets
 ) : FetchAccountInformationAndCacheAssets {
 
-    override suspend fun invoke(address: String): PeraResult<AccountInformation> {
-        val accountInformationResult = fetchAccountInformation(address)
+    override suspend fun invoke(address: String, includeClosedAccount: Boolean): PeraResult<AccountInformation> {
+        val accountInformationResult = fetchAccountInformation(address, includeClosedAccount)
         if (accountInformationResult.isFailed || accountInformationResult.getDataOrNull() == null) {
             return accountInformationResult
         }

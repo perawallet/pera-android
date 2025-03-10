@@ -16,5 +16,5 @@ import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.foundation.PeraResult
 
 internal interface AccountInformationFetchHelper {
-    suspend fun fetchAccount(address: String): PeraResult<AccountInformationResponse>
+    suspend fun fetchAccount(address: String, includeClosedAccount: Boolean): PeraResult<AccountInformationResponse>
 }

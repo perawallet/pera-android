@@ -17,6 +17,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
+import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -63,4 +64,7 @@ internal interface AccountInformationDao {
 
     @Query("DELETE FROM account_information")
     suspend fun clearAll()
+
+    @Query("SELECT algo_amount FROM account_information WHERE :address = algo_address")
+    suspend fun getAccountAlgoBalance(address: String): BigInteger?
 }

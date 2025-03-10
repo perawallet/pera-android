@@ -14,80 +14,18 @@ package com.algorand.android.mapper
 
 import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.ALGO_FULL_NAME
 import com.algorand.android.utils.ALGO_SHORT_NAME
-import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoAmount
-import com.algorand.android.utils.isNotEqualTo
 import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
 class AccountAssetDataMapper @Inject constructor() {
-
-    fun mapToOwnedAssetData(
-        assetDetail: BaseAssetDetail,
-        amount: BigInteger,
-        formattedAmount: String,
-        formattedCompactAmount: String,
-        parityValueInSelectedCurrency: ParityValue,
-        parityValueInSecondaryCurrency: ParityValue,
-        optedInAtRound: Long?
-    ): BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData {
-        return BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData(
-            id = assetDetail.assetId,
-            name = assetDetail.fullName,
-            shortName = assetDetail.shortName,
-            amount = amount,
-            formattedAmount = formattedAmount,
-            formattedCompactAmount = formattedCompactAmount,
-            isAlgo = false,
-            decimals = assetDetail.fractionDecimals ?: DEFAULT_ASSET_DECIMAL,
-            creatorPublicKey = assetDetail.assetCreator?.publicKey,
-            usdValue = assetDetail.usdValue,
-            isAmountInSelectedCurrencyVisible = assetDetail.usdValue != null && amount isNotEqualTo BigInteger.ZERO,
-            parityValueInSelectedCurrency = parityValueInSelectedCurrency,
-            parityValueInSecondaryCurrency = parityValueInSecondaryCurrency,
-            prismUrl = assetDetail.logoUri,
-            verificationTier = assetDetail.verificationTier,
-            optedInAtRound = optedInAtRound
-        )
-    }
-
-    fun mapToPendingAdditionAssetData(
-        assetDetail: BaseAssetDetail
-    ): BaseAccountAssetData.PendingAssetData.AdditionAssetData {
-        return BaseAccountAssetData.PendingAssetData.AdditionAssetData(
-            id = assetDetail.assetId,
-            name = assetDetail.fullName,
-            shortName = assetDetail.shortName,
-            isAlgo = false,
-            decimals = assetDetail.fractionDecimals ?: DEFAULT_ASSET_DECIMAL,
-            creatorPublicKey = assetDetail.assetCreator?.publicKey,
-            usdValue = assetDetail.usdValue,
-            verificationTier = assetDetail.verificationTier
-        )
-    }
-
-    fun mapToPendingRemovalAssetData(
-        assetDetail: BaseAssetDetail
-    ): BaseAccountAssetData.PendingAssetData.DeletionAssetData {
-        return BaseAccountAssetData.PendingAssetData.DeletionAssetData(
-            id = assetDetail.assetId,
-            name = assetDetail.fullName,
-            shortName = assetDetail.shortName,
-            isAlgo = false,
-            decimals = assetDetail.fractionDecimals ?: DEFAULT_ASSET_DECIMAL,
-            creatorPublicKey = assetDetail.assetCreator?.publicKey,
-            usdValue = assetDetail.usdValue,
-            verificationTier = assetDetail.verificationTier
-        )
-    }
 
     fun mapToAlgoAssetData(
         amount: BigInteger,

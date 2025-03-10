@@ -13,7 +13,6 @@
 
 package com.algorand.android.modules.accountdetail.history.ui
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,6 +21,7 @@ import androidx.paging.PagingData
 import com.algorand.android.models.DateFilter
 import com.algorand.android.models.ui.DateFilterPreview
 import com.algorand.android.models.ui.TransactionLoadStatePreview
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValueFlow
 import com.algorand.android.modules.tracking.accountdetail.accounthistory.AccountHistoryFragmentEventTracker
 import com.algorand.android.modules.transaction.csv.ui.model.CsvStatusPreview
 import com.algorand.android.modules.transaction.csv.ui.usecase.CsvStatusPreviewUseCase
@@ -30,6 +30,7 @@ import com.algorand.android.usecase.AccountHistoryUseCase
 import com.algorand.android.utils.getOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -47,6 +48,7 @@ class AccountHistoryViewModel @Inject constructor(
     private val accountHistoryUseCase: AccountHistoryUseCase,
     private val csvStatusPreviewUseCase: CsvStatusPreviewUseCase,
     private val accountHistoryFragmentEventTracker: AccountHistoryFragmentEventTracker,
+    private val getAccountTotalValueFlow: GetAccountTotalValueFlow,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -152,7 +154,7 @@ class AccountHistoryViewModel @Inject constructor(
 
     private fun startAccountBalanceFlow() {
         viewModelScope.launch {
-            accountHistoryUseCase.getAccountTotalValueFlow(accountAddress).distinctUntilChanged().collectLatest {
+            getAccountTotalValueFlow(accountAddress, includeAlgo = true).distinctUntilChanged().collectLatest {
                 refreshAccountHistoryData()
             }
         }

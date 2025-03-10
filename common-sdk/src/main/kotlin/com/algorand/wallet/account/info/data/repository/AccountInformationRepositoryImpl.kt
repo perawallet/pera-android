@@ -12,21 +12,22 @@
 
 package com.algorand.wallet.account.info.data.repository
 
+import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCache
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
-import com.algorand.wallet.account.info.data.service.AccountInformationApiService
-import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
 import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapper
-import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapper
+import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
+import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
+import com.algorand.wallet.account.info.data.service.AccountInformationApiService
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
-import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCache
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
+import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -182,6 +183,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
 
     override suspend fun getFilteredRekeyedAccountCount(authAddress: String, algoAddresses: List<String>): Int {
         return accountInformationDao.getAuthAccountCountFilteredByAddress(authAddress, algoAddresses)
+    }
+
+    override suspend fun getAccountAlgoBalance(address: String): BigInteger? {
+        return accountInformationDao.getAccountAlgoBalance(address)
     }
 
     companion object {

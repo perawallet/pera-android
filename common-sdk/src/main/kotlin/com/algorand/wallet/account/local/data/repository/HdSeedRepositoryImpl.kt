@@ -53,12 +53,14 @@ internal class HdSeedRepositoryImpl @Inject constructor(
 
     override suspend fun getSeedIdIfExistingEntropy(entropy: ByteArray): Int? {
         val entities = hdSeedDao.getAll()
-        val encryptedEntropy = aesPlatformManager.encryptByteArray(entropy)
+
         for (entity in entities) {
-            if (encryptedEntropy.contentEquals(entity.encryptedEntropy)) {
+            val decryptedEntropy = aesPlatformManager.decryptByteArray(entity.encryptedEntropy)
+            if (entropy.contentEquals(decryptedEntropy)) {
                 return entity.seedId
             }
         }
+
         return null
     }
 

@@ -100,7 +100,7 @@
             app:popUpTo="@id/accountOptionsBottomSheet"
             app:popUpToInclusive="true">
             <argument
-                android:name="publicKey"
+                android:name="accountAddress"
                 app:argType="string" />
         </action>
     </dialog>

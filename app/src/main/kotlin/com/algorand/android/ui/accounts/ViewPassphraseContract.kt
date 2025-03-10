@@ -13,21 +13,19 @@
 
 package com.algorand.android.ui.accounts
 
-import javax.inject.Inject
-import androidx.lifecycle.ViewModel
-import com.algorand.android.usecase.ViewPassphrasesUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
+sealed class ViewPassphraseContract {
 
-@HiltViewModel
-class ViewPassphraseLockViewModel @Inject constructor(
-    private val viewPassphrasesUseCase: ViewPassphrasesUseCase
-) : ViewModel() {
+    data class State(
+        val mnemonic: String? = null,
+        val isLoading: Boolean = false,
+        val error: String? = null
+    )
 
-    fun getPassword(): String? {
-        return viewPassphrasesUseCase.getPassword()
+    sealed class Intent {
+        object LoadMnemonic : Intent()
     }
 
-    fun isNotPasswordChosen(): Boolean {
-        return viewPassphrasesUseCase.isNotPasswordChosen()
+    sealed class Effect {
+        object NavigateBack : Effect()
     }
 }

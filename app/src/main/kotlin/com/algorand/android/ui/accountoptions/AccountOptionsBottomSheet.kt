@@ -224,7 +224,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     private fun navToViewPassphraseNavigation() {
         nav(
             AccountOptionsBottomSheetDirections
-                .actionAccountOptionsBottomSheetToViewPassphraseNavigation(publicKey)
+                .actionAccountOptionsBottomSheetToViewPassphraseNavigation(accountOptionsViewModel.getAccountAddress())
         )
     }
 

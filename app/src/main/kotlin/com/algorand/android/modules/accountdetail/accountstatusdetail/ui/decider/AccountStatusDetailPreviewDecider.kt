@@ -33,10 +33,14 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             AccountType.Algo25 -> R.string.standard
             AccountType.RekeyedAuth -> R.string.rekeyed
             AccountType.Rekeyed, null -> R.string.no_auth
-            AccountType.HdKey -> R.string.bip_39 // TODO Bip39
+            AccountType.HdKey -> R.string.hd_wallet_address
         }
-        val accountTypeString = context.getString(typeResId)
-        return context.getString(R.string.account_type_account, accountTypeString)
+        var accountTypeString = context.getString(typeResId)
+        if (accountType != AccountType.HdKey) {
+            accountTypeString += " account"
+        }
+
+        return accountTypeString
     }
 
     fun decideAccountTypeString(accountDetail: AccountDetail): String {
@@ -58,7 +62,7 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                     authAccountState
                 )
             }
-            AccountType.HdKey -> context.getString(R.string.bip_39) // TODO Bip39
+            AccountType.HdKey -> context.getString(R.string.hd_wallet_address)
             null -> context.getString(R.string.no_auth)
         }
         return accountTypeString
@@ -79,7 +83,7 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                 }
             }
             null -> R.string.your_account_is_rekeyed_to_an
-            AccountType.HdKey -> R.string.your_account_is_a_standard // TODO Bip39
+            AccountType.HdKey -> R.string.your_account_is_a_hd_wallet_address
         }
         return AnnotatedString(descriptionStringResId)
     }

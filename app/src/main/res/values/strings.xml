@@ -41,7 +41,7 @@
     <string name="add_contact">Add contact</string>
     <string name="contact_name">Contact name</string>
     <string name="edit_contact">Edit Contact</string>
-    <string name="view_passphrase">View Passphrase</string>
+    <string name="view_passphrase">View root wallet passphrase</string>
     <string name="remove_account">Remove Account</string>
     <string name="copied_to_clipboard">Copied to Clipboard</string>
     <string name="remove">Remove</string>
@@ -221,6 +221,7 @@
     <string name="create_new_account">Create new Account</string>
     <string name="watch_account">Watch Account</string>
     <string name="bip_39">BIP 39</string>
+    <string name="hd_wallet_address">HD Wallet address</string>
     <string name="hd_account">HD Account</string>
     <string name="receive">Receive</string>
     <string name="system_default">System Default</string>
@@ -1271,9 +1272,8 @@
     <string name="no_auth">No Auth</string>
     <string name="unknown">Unknown*</string>
 
-    <string name="account_type_account">%1$s account</string>
-
     <string name="rekeyed_to">Rekeyed to</string>
+    <string name="your_account_is_a_hd_wallet_address">Your account is under a HD wallet. You can have multiple accounts under a HD wallet <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_a_standard">Your account is a standard Algorand account. It has not been rekeyed and it is not associated with a Ledger device. It was added to your wallet with its keys. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_a_Ledger">Your account is a Ledger account. It was added to your wallet directly from the hardware device. All transactions for this account must be confirmed on your Ledger. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="this_account_was_not">This account was not added to your wallet with its keys. It is read-only and cannot interact with other accounts or authorize transactions.</string>

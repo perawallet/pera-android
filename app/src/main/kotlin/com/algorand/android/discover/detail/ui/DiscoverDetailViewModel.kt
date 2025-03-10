@@ -23,10 +23,10 @@ import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.preference.ThemePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverDetailViewModel @Inject constructor(
@@ -125,6 +125,16 @@ class DiscoverDetailViewModel @Inject constructor(
 
     override fun getDiscoverThemePreference(): ThemePreference {
         return discoverDetailPreviewFlow.value.themePreference
+    }
+
+    fun pushDappViewerScreen(jsonEncodedPayload: String) {
+        viewModelScope.launch {
+            _discoverDetailPreviewFlow
+                .emit(
+                    discoverDetailPreviewUseCase
+                        .pushDappViewerScreen(jsonEncodedPayload, _discoverDetailPreviewFlow.value)
+                )
+        }
     }
 
     companion object {

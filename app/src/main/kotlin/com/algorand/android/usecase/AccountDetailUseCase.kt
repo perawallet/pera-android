@@ -33,10 +33,6 @@ class AccountDetailUseCase @Inject constructor(
         return accountRepository.getCachedAccountDetail(publicKey)
     }
 
-    fun getCachedAccountAlgoAmount(publicKey: String): BigInteger? {
-        return accountRepository.getCachedAccountDetail(publicKey)?.data?.accountInformation?.amount
-    }
-
     fun getAccount(publicKey: String): Account? {
         return accountManager.getAccount(publicKey)
     }

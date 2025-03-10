@@ -16,7 +16,7 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 fun PeraCheckbox(
     modifier: Modifier = Modifier,
     checkedState: () -> ToggleableState = { ToggleableState.Indeterminate },
-    interactionSource: MutableInteractionSource,
+    interactionSource: MutableInteractionSource? = MutableInteractionSource(),
     onClick: () -> Unit,
     enabled: () -> Boolean = { true }
 ) {

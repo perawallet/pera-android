@@ -13,7 +13,20 @@
 package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.modules.accountcore.domain.model.AccountTotalValue
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
+import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 
-fun interface GetAccountTotalValue {
-    suspend operator fun invoke(address: String, includeAlgo: Boolean): AccountTotalValue
+internal class GetAccountTotalValueFlowUseCase @Inject constructor(
+    private val getAccountInformationFlow: GetAccountInformationFlow,
+    private val getAccountTotalValue: GetAccountTotalValue
+) : GetAccountTotalValueFlow {
+
+    override fun invoke(address: String, includeAlgo: Boolean): Flow<AccountTotalValue> {
+        return getAccountInformationFlow(address)
+            .filterNotNull()
+            .map { accountInformation -> getAccountTotalValue(accountInformation, includeAlgo) }
+    }
 }

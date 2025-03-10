@@ -16,40 +16,39 @@ import com.algorand.android.R
 import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.mapper.AccountDisplayNameMapper
 import com.algorand.android.models.Account
-import com.algorand.android.models.AccountInformation
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
 import com.algorand.android.modules.basefoundaccount.information.ui.mapoer.BaseFoundAccountInformationItemMapper
 import com.algorand.android.modules.basefoundaccount.information.ui.model.BaseFoundAccountInformationItem
 import com.algorand.android.modules.basefoundaccount.information.ui.usecase.BaseFoundAccountInformationItemUseCase
-import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.domain.usecase.GetRekeyedAccountUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.mapper.RekeyedAccountInformationPreviewMapper
 import com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.model.RekeyedAccountInformationPreview
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.usecase.AccountAlgoAmountUseCase
-import com.algorand.android.usecase.AccountInformationUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.extensions.mapNotBlank
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssets
+import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.foundation.PeraResult
 import java.math.BigDecimal
 import javax.inject.Inject
-import kotlinx.coroutines.flow.flow
 
 @SuppressWarnings("LongParameterList")
 class RekeyedAccountInformationPreviewUseCase @Inject constructor(
     private val rekeyedAccountInformationPreviewMapper: RekeyedAccountInformationPreviewMapper,
     private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
-    private val accountAlgoAmountUseCase: AccountAlgoAmountUseCase,
-    private val accountInformationUseCase: AccountInformationUseCase,
     private val parityUseCase: ParityUseCase,
     private val accountDisplayNameMapper: AccountDisplayNameMapper,
     private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
-    private val getRekeyedAccountUseCase: GetRekeyedAccountUseCase,
+    private val fetchRekeyedAccounts: FetchRekeyedAccounts,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
+    private val fetchAccountInformationAndCacheAssets: FetchAccountInformationAndCacheAssets,
     baseFoundAccountInformationItemMapper: BaseFoundAccountInformationItemMapper
 ) : BaseFoundAccountInformationItemUseCase(baseFoundAccountInformationItemMapper) {
 
@@ -63,32 +62,31 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
     suspend fun getRekeyedAccountInformationPreviewFlow(
         accountAddress: String,
         preview: RekeyedAccountInformationPreview
-    ) = flow {
-        accountInformationUseCase.getAccountInformationAndFetchAssets(accountAddress).use(
-            onSuccess = { accountInformation ->
-                lateinit var foundAccountInformationItemList: List<BaseFoundAccountInformationItem>
-                getRekeyedAccountUseCase.invoke(accountAddress).useSuspended(
-                    onSuccess = { rekeyedAccountInformation ->
-                        foundAccountInformationItemList = createBaseFoundAccountInformationItemList(
-                            accountInformation = accountInformation,
-                            rekeyedAccounts = rekeyedAccountInformation
-                        )
-                    },
-                    onFailed = {
-                        foundAccountInformationItemList = createBaseFoundAccountInformationItemList(
-                            accountInformation = accountInformation,
-                            rekeyedAccounts = emptyList()
-                        )
-                    }
-                )
-                val copiedPreview = preview.copy(
-                    isLoading = false,
-                    foundAccountInformationItemList = foundAccountInformationItemList
-                )
-
-                emit(copiedPreview)
-            }
-        )
+    ): PeraResult<RekeyedAccountInformationPreview> {
+        return fetchAccountInformationAndCacheAssets(
+            address = accountAddress,
+            includeClosedAccount = false
+        ).map { accountInformation ->
+            lateinit var foundAccountInformationItemList: List<BaseFoundAccountInformationItem>
+            fetchRekeyedAccounts(accountAddress).use(
+                onSuccess = { rekeyedAccountInformation ->
+                    foundAccountInformationItemList = createBaseFoundAccountInformationItemList(
+                        accountInformation = accountInformation,
+                        rekeyedAccounts = rekeyedAccountInformation
+                    )
+                },
+                onFailed = { _, _ ->
+                    foundAccountInformationItemList = createBaseFoundAccountInformationItemList(
+                        accountInformation = accountInformation,
+                        rekeyedAccounts = emptyList()
+                    )
+                }
+            )
+            preview.copy(
+                isLoading = false,
+                foundAccountInformationItemList = foundAccountInformationItemList
+            )
+        }
     }
 
     private suspend fun createBaseFoundAccountInformationItemList(
@@ -97,10 +95,10 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
     ): List<BaseFoundAccountInformationItem> {
         var primaryAccountValue = BigDecimal.ZERO
         var secondaryAccountValue = BigDecimal.ZERO
-        val accountAssetDataList = accountInformation.assetHoldingMap.mapNotNull { (assetId, assetHolding) ->
-            getAccountBaseOwnedAssetData(accountInformation.address, assetId)
+        val accountAssetDataList = accountInformation.assetHoldings.mapNotNull {
+            getAccountBaseOwnedAssetData(accountInformation.address, it.assetId)
         }
-        val algoAssetItem = accountAlgoAmountUseCase.getAccountAlgoAmount(accountInformation).run {
+        val algoAssetItem = getAccountBaseOwnedAssetData(accountInformation.address, ALGO_ID)?.run {
             createAssetItem(
                 baseAccountAssetData = this,
                 onCalculationDone = { primaryValue, secondaryValue ->
@@ -182,9 +180,7 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
                 shortName = AssetName.createShortName(shortName),
                 verificationTierConfiguration = verificationTierConfigurationDecider
                     .decideVerificationTierConfiguration(verificationTier),
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                    assetId = id
-                ),
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 formattedPrimaryValue = parityValueInSelectedCurrency.getFormattedCompactValue(),
                 formattedSecondaryValue = parityValueInSecondaryCurrency.getFormattedCompactValue()
             ).also {

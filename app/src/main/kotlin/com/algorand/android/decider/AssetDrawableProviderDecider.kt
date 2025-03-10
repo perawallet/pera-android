@@ -111,6 +111,13 @@ class AssetDrawableProviderDecider @Inject constructor() {
         }
     }
 
+    fun getAssetDrawableProvider(assetData: BaseAccountAssetData.BaseOwnedAssetData): BaseAssetDrawableProvider {
+        return AssetDrawableProvider(
+            assetName = AssetName.create(assetData.name),
+            logoUri = assetData.prismUrl
+        )
+    }
+
     fun getAssetDrawableProvider(
         collectibleData: BaseAccountAssetData.PendingAssetData.BasePendingCollectibleData
     ): BaseAssetDrawableProvider {

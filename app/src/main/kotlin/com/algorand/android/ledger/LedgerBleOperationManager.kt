@@ -26,12 +26,12 @@ import com.algorand.android.ledger.operations.TransactionSignOperation
 import com.algorand.android.ledger.operations.VerifyAddressOperation
 import com.algorand.android.ledger.operations.WalletConnectTransactionOperation
 import com.algorand.android.models.LedgerBleResult
-import com.algorand.android.usecase.AccountInformationUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.LifecycleScopedCoroutineOwner
 import com.algorand.android.utils.getPublicKey
 import com.algorand.android.utils.recordException
 import com.algorand.android.utils.sendErrorLog
+import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssets
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
@@ -41,8 +41,8 @@ import kotlinx.coroutines.launch
 import no.nordicsemi.android.ble.observer.ConnectionObserver
 
 class LedgerBleOperationManager @Inject constructor(
-    private val accountInformationUseCase: AccountInformationUseCase,
-    private val ledgerBleConnectionManager: LedgerBleConnectionManager
+    private val ledgerBleConnectionManager: LedgerBleConnectionManager,
+    private val fetchAccountInformationAndCacheAssets: FetchAccountInformationAndCacheAssets
 ) : LifecycleScopedCoroutineOwner(), LedgerBleObserver {
 
     val connectedBluetoothDevice: BluetoothDevice?
@@ -178,7 +178,7 @@ class LedgerBleOperationManager @Inject constructor(
                     sendTransactionRequest()
                     return@launch
                 } else {
-                    accountInformationUseCase.getAccountInformationAndFetchAssets(publicKey, true).use(
+                    fetchAccountInformationAndCacheAssets(publicKey, includeClosedAccount = true).use(
                         onSuccess = { fetchedAccountInformation ->
                             if (fetchedAccountInformation.isCreated() || nextIndex == 1) {
                                 if (this is AccountFetchAllOperation) {

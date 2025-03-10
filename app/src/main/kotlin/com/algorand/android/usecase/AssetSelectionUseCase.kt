@@ -126,7 +126,7 @@ class AssetSelectionUseCase @Inject constructor(
         val receiverAddress = previousState.assetTransaction.receiverUser?.publicKey
         val loadingFinishedStatePreview = previousState.copy(isReceiverAccountOptInCheckLoadingVisible = false)
         receiverAddress?.let {
-            fetchAccountInformation(it).use(
+            fetchAccountInformation(it, includeDeletedAccount = false).use(
                 onSuccess = { accountInformation ->
                     val isReceiverOptedInToAsset = assetId == ALGO_ID || accountInformation.hasAsset(assetId)
                     val newState = if (!isReceiverOptedInToAsset) {

@@ -14,8 +14,8 @@
 package com.algorand.android.mapper
 
 import com.algorand.android.models.LedgerInformationListItem
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
 import javax.inject.Inject
 
 class LedgerInformationAccountItemMapper @Inject constructor() {

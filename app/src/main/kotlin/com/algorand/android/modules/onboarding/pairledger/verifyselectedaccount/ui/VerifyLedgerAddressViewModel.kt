@@ -15,14 +15,17 @@ package com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.Account
+import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount.ui.model.VerifiableLedgerAddressItemStatus
 import com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount.ui.model.VerifyLedgerAddressListItem
 import com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount.util.VerifyLedgerAddressQueueManager
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccounts
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.launchIO
+import com.algorand.android.utils.toShortenedAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -34,7 +37,7 @@ class VerifyLedgerAddressViewModel @Inject constructor(
 
     val currentLedgerAddressesListLiveData = MutableLiveData<List<VerifyLedgerAddressListItem>>()
 
-    val awaitingLedgerAccountLiveData = MutableLiveData<Account?>()
+    val awaitingLedgerAccountLiveData = MutableLiveData<SelectedLedgerAccount.LedgerAccount?>()
 
     val awaitingLedgerAccount
         get() = awaitingLedgerAccountLiveData.value
@@ -44,7 +47,7 @@ class VerifyLedgerAddressViewModel @Inject constructor(
     private val listLock = Any()
 
     private val verifyLedgerAddressQueueManagerListener = object : VerifyLedgerAddressQueueManager.Listener {
-        override fun onNextQueueItem(ledgerDetail: Account) {
+        override fun onNextQueueItem(ledgerDetail: SelectedLedgerAccount.LedgerAccount) {
             awaitingLedgerAccountLiveData.value = ledgerDetail
             changeCurrentOperatedAddressStatus(VerifiableLedgerAddressItemStatus.AWAITING_VERIFICATION)
         }
@@ -59,7 +62,7 @@ class VerifyLedgerAddressViewModel @Inject constructor(
         verifyLedgerAddressQueueManager.setListener(verifyLedgerAddressQueueManagerListener)
     }
 
-    fun createListAuthLedgerAccounts(authLedgerAccounts: List<Account>) {
+    fun createListAuthLedgerAccounts(authLedgerAccounts: List<SelectedLedgerAccount.LedgerAccount>) {
         val verifiableLedgerAddress: List<VerifyLedgerAddressListItem> = authLedgerAccounts.map { ledgerAccount ->
             VerifyLedgerAddressListItem.VerifiableLedgerAddressItem(ledgerAccount.address)
         }
@@ -110,30 +113,58 @@ class VerifyLedgerAddressViewModel @Inject constructor(
             .orEmpty()
     }
 
-    fun getSelectedVerifiedAccounts(allSelectedAccounts: List<Account>): List<Account> {
+    fun getSelectedVerifiedAccounts(allSelectedAccounts: SelectedLedgerAccounts?): List<SelectedLedgerAccount> {
         val approvedLedgerAuths = getAllApprovedAuths()
         if (approvedLedgerAuths.isEmpty()) {
             return emptyList()
         }
-        val accountList = mutableListOf<Account>()
-        for (selectedAccount in allSelectedAccounts) {
-            when (selectedAccount.detail) {
-                is Account.Detail.RekeyedAuth -> {
-                    if (approvedLedgerAuths.any { selectedAccount.detail.rekeyedAuthDetail.containsKey(it.address) })
-                        accountList.add(selectedAccount)
-                }
-                else -> {
-                    if (approvedLedgerAuths.any { selectedAccount.address == it.address })
-                        accountList.add(selectedAccount)
-                }
+        val accountList = mutableListOf<SelectedLedgerAccount>()
+        allSelectedAccounts?.rekeyedAccounts?.forEach { rekeyedAccount ->
+            if (approvedLedgerAuths.any { it.address == rekeyedAccount.authDetail.address }) {
+                accountList.add(rekeyedAccount)
+            }
+        }
+        allSelectedAccounts?.ledgerAccounts?.forEach { ledgerAccount ->
+            if (approvedLedgerAuths.any { it.address == ledgerAccount.address }) {
+                accountList.add(ledgerAccount)
             }
         }
         return accountList
     }
 
-    fun addNewAccount(account: Account, creationType: CreationType?) {
+    fun addNewAccount(accounts: List<SelectedLedgerAccount>) {
         viewModelScope.launchIO {
-//            accountAdditionUseCase.addNewAccount(account, creationType) // TODO will be implemented after ledger
+            accounts.forEach { selectedAccount ->
+                val accountCreation = when (selectedAccount) {
+                    is SelectedLedgerAccount.RekeyedAccount -> createNoAuthAccount(selectedAccount)
+                    is SelectedLedgerAccount.LedgerAccount -> createLedgerAccount(selectedAccount)
+                }
+                accountAdditionUseCase.addNewAccount(accountCreation)
+            }
         }
+    }
+
+    private fun createLedgerAccount(selectedAccount: SelectedLedgerAccount.LedgerAccount): AccountCreation {
+        return AccountCreation(
+            address = selectedAccount.address,
+            customName = selectedAccount.address.toShortenedAddress(),
+            isBackedUp = true,
+            type = AccountCreation.Type.LedgerBle(
+                deviceMacAddress = selectedAccount.bleAddress,
+                bluetoothName = selectedAccount.bleName,
+                indexInLedger = selectedAccount.indexInLedger
+            ),
+            creationType = CreationType.LEDGER
+        )
+    }
+
+    private fun createNoAuthAccount(selectedAccount: SelectedLedgerAccount.RekeyedAccount): AccountCreation {
+        return AccountCreation(
+            address = selectedAccount.address,
+            customName = selectedAccount.address.toShortenedAddress(),
+            isBackedUp = true,
+            type = AccountCreation.Type.NoAuth,
+            creationType = CreationType.REKEYED
+        )
     }
 }

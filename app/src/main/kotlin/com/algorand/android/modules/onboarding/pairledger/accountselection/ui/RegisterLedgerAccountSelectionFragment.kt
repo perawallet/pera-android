@@ -78,12 +78,11 @@ class RegisterLedgerAccountSelectionFragment : BaseLedgerAccountSelectionFragmen
     }
 
     override fun onConfirmationClick(selectedLedgerAccounts: SelectedLedgerAccounts) {
-        // TODO Will be implemented after ledger flow
-//        pairLedgerNavigationViewModel.selectedLedgerAccounts = selectedLedgerAccounts
-//        nav(
-//            RegisterLedgerAccountSelectionFragmentDirections
-//                .actionRegisterLedgerAccountSelectionFragmentToVerifyLedgerAddressFragment()
-//        )
+        pairLedgerNavigationViewModel.selectedLedgerAccounts = selectedLedgerAccounts
+        nav(
+            RegisterLedgerAccountSelectionFragmentDirections
+                .actionRegisterLedgerAccountSelectionFragmentToVerifyLedgerAddressFragment()
+        )
     }
 
     override fun changeToolbarTitle() {

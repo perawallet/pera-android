@@ -45,6 +45,13 @@ import kotlinx.parcelize.Parcelize
  *          - If Watch account: Watch Account
  *          - else: empty field
  */
+@Deprecated(
+    message = "Use new AccountDisplayName",
+    replaceWith = ReplaceWith(
+        "AccountDisplayName",
+        "package com.algorand.android.modules.accountcore.ui.model.AccountDisplayName"
+    )
+)
 @Parcelize
 class AccountDisplayName(
     private val accountAddress: String,

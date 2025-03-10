@@ -24,6 +24,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import java.math.BigInteger
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlinx.coroutines.test.runTest
@@ -80,5 +81,14 @@ class AccountInformationRepositoryImplTest {
         val result = sut.isAssetOptedInByAnyLocalAccount(assetId)
 
         assertEquals(true, result)
+    }
+
+    @Test
+    fun `EXPECT dao result WHEN get account algo balance is invoked`() = runTest {
+        coEvery { accountInformationDao.getAccountAlgoBalance("address") } returns BigInteger.TWO
+
+        val result = sut.getAccountAlgoBalance("address")
+
+        assertEquals(BigInteger.TWO, result)
     }
 }

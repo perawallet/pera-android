@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,7 +38,10 @@ import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 
 @Composable
-fun PeraHeadlineText(modifier: Modifier = Modifier, text: String) {
+fun PeraHeadlineText(
+    modifier: Modifier = Modifier,
+    text: String
+) {
     Text(
         modifier = modifier,
         text = text,
@@ -49,13 +53,17 @@ fun PeraHeadlineText(modifier: Modifier = Modifier, text: String) {
 }
 
 @Composable
-fun PeraTitleText(modifier: Modifier = Modifier, text: String) {
+fun PeraTitleText(
+    modifier: Modifier = Modifier,
+    text: String,
+    color: Color? = MaterialTheme.colorScheme.primary
+) {
     Text(
         modifier = modifier,
         text = text,
         style = MaterialTheme.typography.titleMedium,
         fontFamily = peraSans,
-        color = MaterialTheme.colorScheme.primary,
+        color = color ?: MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Medium,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis

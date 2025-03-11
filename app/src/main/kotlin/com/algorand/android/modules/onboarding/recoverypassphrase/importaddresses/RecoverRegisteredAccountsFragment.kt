@@ -159,7 +159,9 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                         .padding(innerPadding)
                         .padding(start = 24.dp, end = 24.dp)
                 ) {
-                    PeraHeadlineText(text = stringResource(R.string.select_address_to_add))
+                    PeraHeadlineText(
+                        text = stringResource(R.string.select_address_to_add)
+                    )
                     PeraBodyText(
                         modifier = Modifier.padding(top = 10.dp),
                         text = pluralStringResource(
@@ -182,6 +184,11 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                                 state.registeredAccounts.size
                             ),
                             modifier = Modifier.weight(1f)
+                        )
+
+                        PeraTitleText(
+                            text = "Select all",
+                            color = MaterialTheme.colorScheme.outline,
                         )
 
                         val currentToggleState = if (state.selectedAddresses.isEmpty()) {

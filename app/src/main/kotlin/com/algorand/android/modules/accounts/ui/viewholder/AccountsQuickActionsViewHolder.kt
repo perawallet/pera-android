@@ -32,7 +32,6 @@ class AccountsQuickActionsViewHolder(
                 setOnClickListener { listener.onStakingClick() }
             }
             buySellButton.apply {
-                isVisible = !item.isStakingEnabled
                 setOnClickListener { listener.onBuySellClick() }
             }
             sendButton.setOnClickListener { listener.onSendClick() }
@@ -40,7 +39,6 @@ class AccountsQuickActionsViewHolder(
                 isSelected = item.isSwapButtonSelected
                 setOnClickListener { listener.onSwapClick() }
             }
-            scanQrButton.setOnClickListener { listener.onScanQrClick() }
         }
     }
 

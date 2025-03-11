@@ -8,6 +8,7 @@ internal object PeraClickEvent {
     const val TAP_HOME_SCREEN_STAKE = "homescr_stake_tap"
     const val TAP_HOME_SCREEN_SEND = "homescr_send_tap"
     const val TAP_HOME_SCREEN_SORT = "homescr_sort_tap"
+    const val TAP_HOME_SCREEN_NOTIFICATION = "homescr_notification_tap"
 
     const val TAP_LOWERMENU_HOME = "lowermenu_home_tap"
     const val TAP_LOWERMENU_DISCOVER = "lowermenu_discover_tap"
@@ -25,6 +26,7 @@ internal object PeraClickEvent {
     const val TAP_ACCOUNT_SCREEN_ASSET_INBOX = "accountscr_tapmenu_asset_inbox_tap"
     const val TAP_ACCOUNT_SCREEN_SEND = "accountscr_tapmenu_send_tap"
     const val TAP_ACCOUNT_SCREEN_SWAP = "accountscr_tapmenu_swap_tap"
+    const val TAP_ACCOUNT_SCREEN_BUY_ALGO = "accountscr_tapmenu_buy_algo_tap"
     const val TAP_ACCOUNT_SCREEN_MORE = "accountscr_tapmenu_more_tap"
 
     const val SWAP_SELECT_ASSET_TOP = "swapscr_select_top_asset_tap"

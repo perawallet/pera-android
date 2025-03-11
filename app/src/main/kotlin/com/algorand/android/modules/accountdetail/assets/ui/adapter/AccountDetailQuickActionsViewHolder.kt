@@ -71,6 +71,7 @@ class AccountDetailQuickActionsViewHolder(
                 SendButton -> listener.onSendClick()
                 ShowAddressButton -> listener.onShowAddressClick()
                 is SwapButton -> listener.onSwapClick()
+                is QuickActionItem.BuyAlgoButton -> listener.onBuySellClick()
             }
         }
     }
@@ -100,6 +101,7 @@ class AccountDetailQuickActionsViewHolder(
         fun onMoreClick()
         fun onCopyAddressClick()
         fun onShowAddressClick()
+        fun onBuySellClick()
     }
 
     companion object {

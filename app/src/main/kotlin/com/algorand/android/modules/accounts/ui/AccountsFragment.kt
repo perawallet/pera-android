@@ -161,6 +161,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
     private val emptyStateVisibilityCollector: suspend (Boolean?) -> Unit = { isEmptyStateVisible ->
         binding.emptyScreenStateView.isVisible = isEmptyStateVisible == true
         binding.notificationImageButton.isInvisible = isEmptyStateVisible == true
+        binding.qrImageButton.isInvisible = isEmptyStateVisible == true
     }
 
     private val fullScreenLoadingCollector: suspend (Boolean?) -> Unit = { isFullScreenLoadingVisible ->
@@ -304,7 +305,14 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             setOnNeutralButtonClickListener(::onAddAccountClick)
             setupUi(accountsEmptyState)
         }
-        binding.notificationImageButton.setOnClickListener { navigateToNotifications() }
+        binding.qrImageButton.setOnClickListener {
+            accountsViewModel.onQrScanTapEvent()
+            navToQrScanFragment()
+        }
+        binding.notificationImageButton.setOnClickListener {
+            accountsViewModel.onNotificationTapEvent()
+            navigateToNotifications()
+        }
         binding.assetInboxAllAccountsButton.setOnClickListener { navToAssetInboxAllAccountsNavigation() }
     }
 

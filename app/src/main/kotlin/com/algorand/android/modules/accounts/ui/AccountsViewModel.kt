@@ -68,6 +68,12 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
+    fun onNotificationTapEvent() {
+        viewModelScope.launch {
+            logEvent(PeraClickEvent.TAP_HOME_SCREEN_NOTIFICATION)
+        }
+    }
+
     fun onQrScanTapEvent() {
         viewModelScope.launch {
             logEvent(PeraEvent.HOME_SCREEN_QR_SCAN)

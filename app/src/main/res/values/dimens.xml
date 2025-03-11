@@ -25,6 +25,7 @@
     <dimen name="spacing_xxlarge">32dp</dimen>
     <dimen name="spacing_xxxlarge">36dp</dimen>
     <dimen name="spacing_xxxxlarge">40dp</dimen>
+    <dimen name="spacing_xxxxxlarge">48dp</dimen>
 
     <!-- Text Sizes -->
     <dimen name="text_size_11">11sp</dimen>

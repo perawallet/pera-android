@@ -185,6 +185,11 @@ class AccountDetailFragment :
         accountDetailViewModel.onSwapClick()
     }
 
+    override fun onBuySellClick() {
+        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_BUY_ALGO)
+        accountDetailViewModel.onBuySellClick()
+    }
+
     override fun onMoreClick() {
         accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_MORE)
         navToAccountOptionsBottomSheet()

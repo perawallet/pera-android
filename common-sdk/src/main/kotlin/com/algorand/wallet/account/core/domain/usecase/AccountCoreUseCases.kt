@@ -23,6 +23,10 @@ fun interface AddAlgo25Account {
     suspend operator fun invoke(address: String, secretKey: ByteArray, isBackedUp: Boolean, customName: String?)
 }
 
+fun interface AddHdSeed {
+    suspend operator fun invoke(entropy: ByteArray): PeraResult<Int>
+}
+
 fun interface AddHdKeyAccount {
     suspend operator fun invoke(
         address: String,

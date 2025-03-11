@@ -12,11 +12,12 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
-import com.algorand.wallet.account.local.domain.model.Bip32DerivationType
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+import javax.inject.Inject
 
-internal class UpdateNoAuthAccountToHdKeyUseCase(
+internal class UpdateNoAuthAccountToHdKeyUseCase @Inject constructor (
     private val deleteLocalAccount: DeleteLocalAccount,
-    private val createHdKeyAccount: CreateHdKeyAccount
+    private val saveHdKeyAccount: SaveHdKeyAccount
 ) : UpdateNoAuthAccountToHdKey {
 
     override suspend fun invoke(
@@ -27,18 +28,20 @@ internal class UpdateNoAuthAccountToHdKeyUseCase(
         account: Int,
         change: Int,
         keyIndex: Int,
-        derivationType: Bip32DerivationType
+        derivationType: Int
     ) {
         deleteLocalAccount(address)
-        createHdKeyAccount.invoke(
-            address,
-            publicKey,
-            privateKey,
-            seedId,
-            account,
-            change,
-            keyIndex,
-            derivationType
+        saveHdKeyAccount.invoke(
+            LocalAccount.HdKey(
+                address,
+                publicKey,
+                seedId,
+                account,
+                change,
+                keyIndex,
+                derivationType
+            ),
+            privateKey
         )
     }
 }

@@ -13,7 +13,9 @@
 package com.algorand.android.discover.detail.ui.model
 
 import androidx.navigation.NavDirections
+import com.algorand.android.discover.common.ui.model.DappFavoriteElement
 import com.algorand.android.discover.common.ui.model.WebViewError
+import com.algorand.android.discover.home.domain.model.DappInfo
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.preference.ThemePreference
@@ -25,5 +27,6 @@ data class DiscoverDetailPreview(
     val reloadPageEvent: Event<Unit>? = null,
     val buySellActionEvent: Event<NavDirections>? = null,
     val externalPageRequestedEvent: Event<String>? = null,
+    val dappViewerScreenRequestEvent: Event<Pair<DappInfo, Array<DappFavoriteElement>>>? = null,
     val tokenDetail: TokenDetailInfo
 )

@@ -14,7 +14,7 @@ package com.algorand.wallet.account.local.data.mapper.entity
 
 import com.algorand.wallet.account.local.data.database.model.Algo25Entity
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.encryption.AESPlatformManager
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import javax.inject.Inject
 
 internal class Algo25EntityMapperImpl @Inject constructor(

@@ -25,7 +25,7 @@ internal class GetAccountDetailUseCase @Inject constructor(
         val accountState = getAccountState(address)
         return AccountDetail(
             address = address,
-            customInfo = getCustomInfoOrNull(address),
+            customAccountInfo = getCustomInfoOrNull(address),
             accountRegistrationType = accountState.accountRegistrationType,
             accountType = accountState.accountType
         )

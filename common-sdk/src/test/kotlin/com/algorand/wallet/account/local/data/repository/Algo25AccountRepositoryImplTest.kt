@@ -18,15 +18,15 @@ import com.algorand.wallet.account.local.data.database.model.Algo25Entity
 import com.algorand.wallet.account.local.data.mapper.entity.Algo25EntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.Algo25Mapper
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import com.algorand.wallet.encryption.AESPlatformManager
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import org.junit.Assert.assertEquals
+import org.junit.Test
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
-import org.junit.Test
 
 class Algo25AccountRepositoryImplTest {
 
@@ -80,7 +80,9 @@ class Algo25AccountRepositoryImplTest {
             LocalAccount.Algo25("address1"),
             LocalAccount.Algo25("address2")
         )
+
         coVerify { algo25Dao.getAll() }
+
         assertEquals(expectedReturnedList, localAccounts)
     }
 
@@ -136,9 +138,10 @@ class Algo25AccountRepositoryImplTest {
         coEvery { algo25EntityMapper.invoke(account, privateKey) } returns algo25Entity
         coEvery { algo25Dao.insert(algo25Entity) } returns Unit
 
-        sut.addAccount(account, privateKey)
+        val result = sut.addAccount(account, privateKey)
 
         coVerify { algo25Dao.insert(algo25Entity) }
+        assertEquals(Unit, result)
     }
 
     @Test
@@ -146,18 +149,20 @@ class Algo25AccountRepositoryImplTest {
         val address = "address"
         coEvery { algo25Dao.delete(address) } returns Unit
 
-        sut.deleteAccount(address)
+        val result = sut.deleteAccount(address)
 
         coVerify { algo25Dao.delete(address) }
+        assertEquals(Unit, result)
     }
 
     @Test
     fun `EXPECT all accounts to be deleted from database WHEN deleteAllAccounts is invoked`() = runTest {
         coEvery { algo25Dao.clearAll() } returns Unit
 
-        sut.deleteAllAccounts()
+        val result = sut.deleteAllAccounts()
 
         coVerify { algo25Dao.clearAll() }
+        assertEquals(Unit, result)
     }
 
     @Test

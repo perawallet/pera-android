@@ -33,7 +33,7 @@ internal class GetAccountDetailFlowUseCase @Inject constructor(
             if (it == null) return@map null
             AccountDetail(
                 address = address,
-                customInfo = getAccountCustomInfoOrNull(address),
+                customAccountInfo = getAccountCustomInfoOrNull(address),
                 accountRegistrationType = getAccountRegistrationType(address),
                 accountType = getAccountType(address),
             )

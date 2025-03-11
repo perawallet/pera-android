@@ -18,19 +18,36 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+    }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_21.toString()
     }
-    testOptions {
-        unitTests {
-            isReturnDefaultValues = true
+
+    packaging {
+        resources {
+            excludes.apply {
+                add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
+                add("META-INF/DEPENDENCIES.md")
+                add("META-INF/NOTICE.md")
+                add("META-INF/LICENSE.md")
+                add("META-INF/LICENSE.txt")
+                add("META-INF/LICENSE-notice.md")
+                add("META-INF/NOTICE.txt")
+                add("META-INF/ASL2.0.md")
+            }
         }
     }
 }
@@ -40,6 +57,7 @@ dependencies {
     api(libs.algosdk)
     api(libs.algorand.go.mobile)
 
+    implementation("net.java.dev.jna:jna:5.14.0@aar")
     implementation(libs.xhdwalletapi)
     implementation(libs.kotlin.bip39)
     implementation(libs.dagger.hilt.android)
@@ -66,8 +84,6 @@ dependencies {
     testImplementation(libs.mockito)
     testImplementation(libs.mockk)
     testImplementation(project(":test-utils"))
-
-    androidTestImplementation(libs.espresso.core)
 }
 
 room {

@@ -16,7 +16,7 @@ import android.util.Base64
 import com.algorand.algosdk.sdk.SuggestedParams
 import com.algorand.wallet.algosdk.transaction.sdk.model.SuggestedTransactionParams
 import com.algorand.wallet.algosdk.transaction.sdk.model.SuggestedTransactionParams.TransactionFee.FeeType
-import com.algorand.wallet.encryption.Base64Manager
+import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import javax.inject.Inject
 
 internal class SuggestedParamsMapperImpl @Inject constructor(

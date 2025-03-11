@@ -16,20 +16,20 @@ import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCache
 import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCacheImpl
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
-import com.algorand.wallet.account.info.data.mapper.AccountInformationEntityMapper
-import com.algorand.wallet.account.info.data.mapper.AccountInformationEntityMapperImpl
-import com.algorand.wallet.account.info.data.mapper.AccountInformationMapper
-import com.algorand.wallet.account.info.data.mapper.AccountInformationMapperImpl
-import com.algorand.wallet.account.info.data.mapper.AccountInformationResponseMapper
-import com.algorand.wallet.account.info.data.mapper.AccountInformationResponseMapperImpl
-import com.algorand.wallet.account.info.data.mapper.AppStateSchemeMapper
-import com.algorand.wallet.account.info.data.mapper.AppStateSchemeMapperImpl
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapper
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingEntityMapperImpl
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapper
-import com.algorand.wallet.account.info.data.mapper.AssetHoldingMapperImpl
-import com.algorand.wallet.account.info.data.mapper.AssetStatusEntityMapper
-import com.algorand.wallet.account.info.data.mapper.AssetStatusEntityMapperImpl
+import com.algorand.wallet.account.info.data.mapper.entity.AccountInformationEntityMapper
+import com.algorand.wallet.account.info.data.mapper.entity.AccountInformationEntityMapperImpl
+import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapper
+import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapperImpl
+import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapper
+import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapperImpl
+import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
+import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapperImpl
+import com.algorand.wallet.account.info.data.mapper.model.AccountInformationResponseMapper
+import com.algorand.wallet.account.info.data.mapper.model.AccountInformationResponseMapperImpl
+import com.algorand.wallet.account.info.data.mapper.model.AppStateSchemeMapper
+import com.algorand.wallet.account.info.data.mapper.model.AppStateSchemeMapperImpl
+import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
+import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapperImpl
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelper
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelperImpl
 import com.algorand.wallet.account.info.data.repository.AccountInformationCacheHelper
@@ -49,11 +49,12 @@ import com.algorand.wallet.account.info.domain.usecase.DeleteAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
-import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAuthAddress
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAllAssetHoldingIds
 import com.algorand.wallet.account.info.domain.usecase.GetAllFailedCachedAccountAddresses
@@ -75,9 +76,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
-import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -283,7 +284,14 @@ internal object AccountInformationModule {
     }
 
     @Provides
-    fun provideGetAccountRekeyAuthAddress(
+    fun provideGetAccountRekeyAdminAddress(
         repository: AccountInformationRepository
-    ): GetAccountRekeyAuthAddress = GetAccountRekeyAuthAddress(repository::getRekeyAuthAddress)
+    ): GetAccountRekeyAdminAddress = GetAccountRekeyAdminAddress(repository::getRekeyAuthAddress)
+
+    @Provides
+    fun provideGetAccountAssetHoldingsFlow(
+        repository: AccountInformationRepository
+    ): GetAccountAssetHoldingsFlow {
+        return GetAccountAssetHoldingsFlow(repository::getAssetHoldingsFlow)
+    }
 }

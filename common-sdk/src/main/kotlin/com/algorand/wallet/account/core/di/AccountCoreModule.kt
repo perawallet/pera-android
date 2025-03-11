@@ -16,6 +16,8 @@ import com.algorand.wallet.account.core.domain.usecase.AddAlgo25Account
 import com.algorand.wallet.account.core.domain.usecase.AddAlgo25AccountUseCase
 import com.algorand.wallet.account.core.domain.usecase.AddHdKeyAccount
 import com.algorand.wallet.account.core.domain.usecase.AddHdKeyAccountUseCase
+import com.algorand.wallet.account.core.domain.usecase.AddHdSeed
+import com.algorand.wallet.account.core.domain.usecase.AddHdSeedUseCase
 import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccount
 import com.algorand.wallet.account.core.domain.usecase.AddLedgerBleAccountUseCase
 import com.algorand.wallet.account.core.domain.usecase.AddNoAuthAccount
@@ -54,6 +56,9 @@ internal object AccountCoreModule {
 
     @Provides
     fun provideAddHdKeyAccount(useCase: AddHdKeyAccountUseCase): AddHdKeyAccount = useCase
+
+    @Provides
+    fun provideAddHdSeed(useCase: AddHdSeedUseCase): AddHdSeed = useCase
 
     @Provides
     fun provideDeleteAccount(useCase: DeleteAccountUseCase): DeleteAccount = useCase

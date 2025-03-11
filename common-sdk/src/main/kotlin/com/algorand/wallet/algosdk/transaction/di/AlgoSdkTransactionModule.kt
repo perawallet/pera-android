@@ -12,8 +12,6 @@
 
 package com.algorand.wallet.algosdk.transaction.di
 
-import com.algorand.wallet.algosdk.transaction.AlgoTransactionSigner
-import com.algorand.wallet.algosdk.transaction.AlgoTransactionSignerImpl
 import com.algorand.wallet.algosdk.transaction.builders.AddAssetTransactionBuilder
 import com.algorand.wallet.algosdk.transaction.builders.AddAssetTransactionBuilderBuilderImpl
 import com.algorand.wallet.algosdk.transaction.builders.AlgoTransactionBuilder
@@ -28,6 +26,12 @@ import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdk
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddress
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkAddressImpl
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoSdkImpl
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoTransactionSigner
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoTransactionSignerImpl
+import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39SdkImpl
+import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
+import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransactionImpl
 import com.algorand.wallet.algosdk.transaction.sdk.mapper.SuggestedParamsMapper
 import com.algorand.wallet.algosdk.transaction.sdk.mapper.SuggestedParamsMapperImpl
 import dagger.Module
@@ -76,4 +80,10 @@ internal object AlgoSdkTransactionModule {
 
     @Provides
     fun provideAlgoSdkAddress(impl: AlgoSdkAddressImpl): AlgoSdkAddress = impl
+
+    @Provides
+    fun providePeraBip39Sdk(impl: PeraBip39SdkImpl): PeraBip39Sdk = impl
+
+    @Provides
+    fun provideSignHdKeyTransaction(impl: SignHdKeyTransactionImpl): SignHdKeyTransaction = impl
 }

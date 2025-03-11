@@ -43,6 +43,10 @@ fun interface GetAsset {
     suspend operator fun invoke(assetId: Long): Asset?
 }
 
+fun interface FetchAndCacheMissingAssets {
+    suspend operator fun invoke(assetIds: List<Long>, includeDeleted: Boolean): PeraResult<Unit>
+}
+
 fun interface GetAssetDetail {
     suspend operator fun invoke(assetId: Long): AssetDetail?
 }

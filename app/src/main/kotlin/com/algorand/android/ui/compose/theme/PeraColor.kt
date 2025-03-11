@@ -62,7 +62,7 @@ object PeraColor {
     val onSurfaceDark = Color(0xFF71717A)
     val surfaceVariantDark = Color(0xFF27272A)
     val onSurfaceVariantDark = Color(0xFF71717A)
-    val outlineDark = Color(0xFF1F8E9D)
+    val outlineDark = Color(0xFFFFEE55)
     val outlineVariantDark = Color(0xFF49473A)
     val scrimDark = Color(0xFF000000)
     val inverseSurfaceDark = Color(0xFFE6E2D5)

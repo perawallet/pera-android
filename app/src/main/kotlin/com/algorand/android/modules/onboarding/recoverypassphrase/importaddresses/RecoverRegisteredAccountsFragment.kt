@@ -25,6 +25,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -60,9 +62,10 @@ import com.algorand.android.ui.compose.widget.AnimationLoader
 import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraCheckbox
 import com.algorand.android.ui.compose.widget.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.PeraHighlightedText
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraScrimText
 import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -161,6 +164,7 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                         modifier = Modifier.padding(top = 10.dp),
                         text = pluralStringResource(
                             R.plurals.select_accounts_to_add_desc,
+                            state.registeredAccounts.size,
                             state.registeredAccounts.size
                         )
                     )
@@ -174,34 +178,27 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                         PeraTitleText(
                             text = pluralStringResource(
                                 R.plurals.search_address_count,
+                                state.registeredAccounts.size,
                                 state.registeredAccounts.size
                             ),
                             modifier = Modifier.weight(1f)
                         )
-                        PeraScrimText(
-                            text = stringResource(R.string.select_all)
-                        )
-                        val current = if (state.selectedAddresses.isEmpty()) {
+
+                        val currentToggleState = if (state.selectedAddresses.isEmpty()) {
                             ToggleableState.Off
-                        } else if (state.selectedAddresses.size == state.registeredAccounts.size) {
+                        } else if (state.selectedAddresses.size == state.registeredAddressesNotImported.size) {
                             ToggleableState.On
                         } else {
                             ToggleableState.Indeterminate
                         }
-                        PeraCheckbox(
-                            checkedState = {
-                                current
-                            },
-                            onClick = {
-                                when (current) {
-                                    ToggleableState.Off,
-                                    ToggleableState.Indeterminate -> {
-                                        viewModel.processIntent(RecoverRegisteredAccountsIntent.SelectAllAccounts)
-                                    }
 
-                                    ToggleableState.On -> {
-                                        viewModel.processIntent(RecoverRegisteredAccountsIntent.UnselectAllAccounts)
-                                    }
+                        PeraCheckbox(
+                            checkedState = { currentToggleState },
+                            onClick = {
+                                if (currentToggleState == ToggleableState.On) {
+                                    viewModel.processIntent(RecoverRegisteredAccountsIntent.UnselectAllAccounts)
+                                } else {
+                                    viewModel.processIntent(RecoverRegisteredAccountsIntent.SelectAllAccounts)
                                 }
                             }
                         )
@@ -253,12 +250,11 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
         ) {
             PeraTitleText(
                 modifier = Modifier.fillMaxWidth(0.4f),
-                text = account.address.toUpperCase(Locale.current)
+                text = account.address.toShortenedAddress().toUpperCase(Locale.current)
             )
             if (account.isImportedToDB) {
-                PeraHeadlineText(
-                    text = stringResource(R.string.already_imported)
-                        .toUpperCase(Locale.current)
+                PeraHighlightedText(
+                    text = stringResource(R.string.already_imported).toUpperCase(Locale.current)
                 )
             } else {
                 Row {
@@ -284,6 +280,11 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                 }
             }
         }
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            thickness = 1.dp,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
     }
 
     private fun navToHomeNavigation() {

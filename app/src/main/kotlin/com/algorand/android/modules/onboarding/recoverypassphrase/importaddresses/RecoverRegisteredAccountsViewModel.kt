@@ -121,12 +121,23 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
 
     private fun selectAllAccounts() {
         _state.update { currentState ->
-            val selectableAddresses = currentState.registeredAccounts
+            val registeredAddressesNotImported = currentState.registeredAccounts
                 .filter { !it.isImportedToDB }
                 .map { it.address }
                 .toSet()
 
-            currentState.copy(selectedAddresses = selectableAddresses)
+            val newSelectedAddresses = if (registeredAddressesNotImported.all {
+                currentState.selectedAddresses.contains(it)
+            }) {
+                currentState.selectedAddresses
+            } else {
+                registeredAddressesNotImported
+            }
+
+            currentState.copy(
+                selectedAddresses = newSelectedAddresses,
+                registeredAddressesNotImported = registeredAddressesNotImported
+            )
         }
     }
 

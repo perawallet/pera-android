@@ -16,6 +16,7 @@ import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
 
 data class RecoverRegisteredAccountsState(
     val registeredAccounts: List<RegisteredAlgorandAccount> = emptyList(),
+    val registeredAddressesNotImported: Set<String> = emptySet(),
     val selectedAddresses: Set<String> = emptySet(),
     val isLoading: Boolean = false,
     val isImportDone: Boolean = false,

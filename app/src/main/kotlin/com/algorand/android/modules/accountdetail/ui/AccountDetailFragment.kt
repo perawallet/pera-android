@@ -32,6 +32,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.BaseAccountIconButton
@@ -182,7 +183,7 @@ class AccountDetailFragment :
 
     override fun onBuySellClick() {
         accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_BUY_ALGO)
-        accountDetailViewModel.onBuySellClick()
+        navToBuySellActionsBottomSheet()
     }
 
     override fun onMoreClick() {
@@ -512,5 +513,9 @@ class AccountDetailFragment :
                     AssetInboxOneAccountNavArgs(args.publicKey)
                 )
         )
+    }
+
+    private fun navToBuySellActionsBottomSheet() {
+        nav(HomeNavigationDirections.actionGlobalBuySellActionsBottomSheet())
     }
 }

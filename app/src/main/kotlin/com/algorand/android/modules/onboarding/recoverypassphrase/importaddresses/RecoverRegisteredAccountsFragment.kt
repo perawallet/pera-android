@@ -16,7 +16,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,13 +25,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,10 +39,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.state.ToggleableState
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -59,6 +59,13 @@ import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AnimationLoader
+import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.PeraCheckbox
+import com.algorand.android.ui.compose.widget.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.PeraHighlightedText
+import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -140,69 +147,73 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                     start = ImageVector.vectorResource(R.drawable.ic_ledger_old_export),
                     end = ImageVector.vectorResource(R.drawable.ic_phone_new),
                     lottie = LottieCompositionSpec.RawRes(resId = R.raw.loading_dots),
-                    description = "Searching your accounts"
+                    description = stringResource(R.string.searching_your_accounts)
                 )
             }
         } else {
 
-            Scaffold(
-                snackbarHost = { SnackbarHost(snackbarHostState) }
-            ) { innerPadding ->
+            Scaffold { innerPadding ->
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                        .padding(16.dp)
+                        .padding(start = 24.dp, end = 24.dp)
                 ) {
-
-                    Text(
-                        text = "We found that there are ${state.registeredAccounts.size} addresses " +
-                                "registered to this wallet.",
-                        modifier = Modifier.padding(bottom = 16.dp)
+                    PeraHeadlineText(
+                        text = stringResource(R.string.select_address_to_add)
+                    )
+                    PeraBodyText(
+                        modifier = Modifier.padding(top = 10.dp),
+                        text = pluralStringResource(
+                            R.plurals.select_accounts_to_add_desc,
+                            state.registeredAccounts.size,
+                            state.registeredAccounts.size
+                        )
                     )
 
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 8.dp),
+                            .padding(top = 34.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "${state.registeredAccounts.size} addresses",
+                        PeraTitleText(
+                            text = pluralStringResource(
+                                R.plurals.search_address_count,
+                                state.registeredAccounts.size,
+                                state.registeredAccounts.size
+                            ),
                             modifier = Modifier.weight(1f)
                         )
-                        Text(
+
+                        PeraTitleText(
                             text = "Select all",
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.clickable {
-                                if (state.selectedAddresses.size ==
-                                    state.registeredAccounts.filter { !it.isImportedToDB }.size
-                                ) {
-                                    onIntent(RecoverRegisteredAccountsIntent.UnselectAllAccounts)
-                                } else {
-                                    onIntent(RecoverRegisteredAccountsIntent.SelectAllAccounts)
-                                }
-                            }
+                            color = MaterialTheme.colorScheme.outline,
                         )
-                        Checkbox(
-                            checked = state.selectedAddresses.size ==
-                                    state.registeredAccounts.filter { !it.isImportedToDB }.size &&
-                                    state.registeredAccounts.isNotEmpty(),
-                            onCheckedChange = { isChecked ->
-                                if (isChecked) {
-                                    onIntent(RecoverRegisteredAccountsIntent.SelectAllAccounts)
+
+                        val currentToggleState = if (state.selectedAddresses.isEmpty()) {
+                            ToggleableState.Off
+                        } else if (state.selectedAddresses.size == state.registeredAddressesNotImported.size) {
+                            ToggleableState.On
+                        } else {
+                            ToggleableState.Indeterminate
+                        }
+
+                        PeraCheckbox(
+                            checkedState = { currentToggleState },
+                            onClick = {
+                                if (currentToggleState == ToggleableState.On) {
+                                    viewModel.processIntent(RecoverRegisteredAccountsIntent.UnselectAllAccounts)
                                 } else {
-                                    onIntent(RecoverRegisteredAccountsIntent.UnselectAllAccounts)
+                                    viewModel.processIntent(RecoverRegisteredAccountsIntent.SelectAllAccounts)
                                 }
                             }
                         )
                     }
-
                     LazyColumn(modifier = Modifier.weight(1f)) {
                         items(state.registeredAccounts) { account ->
                             AddressItem(
                                 account = account,
-                                isChecked = state.selectedAddresses.contains(account.address),
                                 onCheckedChange = { isChecked ->
                                     onIntent(
                                         RecoverRegisteredAccountsIntent.ToggleAccountSelection(
@@ -215,54 +226,72 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                         }
                     }
 
-                    Button(
+                    PeraPrimaryButton(
                         onClick = {
                             onIntent(RecoverRegisteredAccountsIntent.ImportSelectedAccounts)
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = state.canImport
-                    ) {
-                        Text(text = "Import")
-                    }
+                        text = stringResource(R.string.continue_text),
+                        enabled = {
+                            state.selectedAddresses.isNotEmpty()
+                        }
+                    )
                 }
             }
         }
     }
 
+    @Suppress("MagicNumber")
     @Composable
     fun AddressItem(
         account: RegisteredAlgorandAccount,
-        isChecked: Boolean,
         onCheckedChange: (Boolean) -> Unit
     ) {
+        val state by viewModel.state.collectAsState()
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = account.address, fontWeight = FontWeight.SemiBold)
-                if (account.isImportedToDB) {
-                    Text(
-                        text = "ALREADY IMPORTED",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 12.sp
-                    )
-                } else {
-                    Text(text = account.algoValue)
-                    if (account.usdValue.isNotEmpty()) {
-                        Text(text = account.usdValue, fontSize = 12.sp)
+            PeraTitleText(
+                modifier = Modifier.fillMaxWidth(0.4f),
+                text = account.address.toShortenedAddress().toUpperCase(Locale.current)
+            )
+            if (account.isImportedToDB) {
+                PeraHighlightedText(
+                    text = stringResource(R.string.already_imported).toUpperCase(Locale.current)
+                )
+            } else {
+                Row {
+                    Column {
+                        PeraTitleText(text = "\u0086${account.algoValue}")
+                        if (account.usdValue.isNotEmpty()) {
+                            PeraBodyText(text = "$${account.usdValue}")
+                        }
                     }
+                    val current = ToggleableState(state.selectedAddresses.contains(account.address))
+                    PeraCheckbox(
+                        checkedState = {
+                            current
+                        },
+                        onClick = {
+                            if (current == ToggleableState.On) {
+                                onCheckedChange(false)
+                            } else {
+                                onCheckedChange(true)
+                            }
+                        }
+                    )
                 }
             }
-            if (!account.isImportedToDB) {
-                Checkbox(
-                    checked = isChecked,
-                    onCheckedChange = onCheckedChange
-                )
-            }
         }
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            thickness = 1.dp,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
     }
 
     private fun navToHomeNavigation() {

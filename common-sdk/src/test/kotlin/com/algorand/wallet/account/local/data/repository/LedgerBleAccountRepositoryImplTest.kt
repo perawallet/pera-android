@@ -86,6 +86,16 @@ class LedgerBleAccountRepositoryImplTest {
     }
 
     @Test
+    fun `EXPECT account count WHEN getAccountCount is invoked`() = runTest {
+        val expectedCount = 3
+        coEvery { ledgerBleDao.getTableSize() } returns expectedCount
+
+        val result = sut.getAccountCount()
+
+        assertEquals(expectedCount, result)
+    }
+
+    @Test
     fun `EXPECT all addresses WHEN getAllAddresses is invoked`() = runTest {
         val addresses = listOf("address1", "address2")
         coEvery { ledgerBleDao.getAllAddresses() } returns addresses

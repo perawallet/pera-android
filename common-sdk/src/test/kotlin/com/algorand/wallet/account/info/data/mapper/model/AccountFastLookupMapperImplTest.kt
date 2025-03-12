@@ -1,0 +1,62 @@
+/*
+ * Copyright 2022 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.wallet.account.info.data.mapper.model
+
+import com.algorand.wallet.account.info.data.model.AccountFastLookupResponse
+import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Test
+
+class AccountFastLookupMapperImplTest {
+
+    private lateinit var sut: AccountFastLookupMapperImpl
+
+    @Before
+    fun setup() {
+        sut = AccountFastLookupMapperImpl()
+    }
+
+    @Test
+    fun `EXPECT correct account fast lookup WHEN mapping response`() {
+        val response = AccountFastLookupResponse(
+            algoValue = "1000000",
+            usdValue = "150.25",
+            calculationType = "estimated",
+            accountExists = true
+        )
+
+        val result = sut.invoke(response)
+
+        assertEquals("1000000", result.algoValue)
+        assertEquals("150.25", result.usdValue)
+        assertEquals("estimated", result.calculationType)
+        assertEquals(true, result.accountExists)
+    }
+
+    @Test
+    fun `EXPECT account does not exist WHEN response has accountExists false`() {
+        val response = AccountFastLookupResponse(
+            algoValue = "0",
+            usdValue = "0.00",
+            calculationType = "estimated",
+            accountExists = false
+        )
+
+        val result = sut.invoke(response)
+
+        assertEquals("0", result.algoValue)
+        assertEquals("0.00", result.usdValue)
+        assertEquals("estimated", result.calculationType)
+        assertEquals(false, result.accountExists)
+    }
+}

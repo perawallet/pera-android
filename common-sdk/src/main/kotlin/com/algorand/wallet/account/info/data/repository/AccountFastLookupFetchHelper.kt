@@ -10,9 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.model
+package com.algorand.wallet.account.info.data.repository
 
-enum class Bip32DerivationType(val value: Int) {
-    Peikert(9),
-    Khovratovich(32)
+import com.algorand.wallet.account.info.data.model.AccountFastLookupResponse
+import com.algorand.wallet.foundation.PeraResult
+
+internal interface AccountFastLookupFetchHelper {
+    suspend fun fetchAccountFastLookup(accountAddress: String): PeraResult<AccountFastLookupResponse>
 }

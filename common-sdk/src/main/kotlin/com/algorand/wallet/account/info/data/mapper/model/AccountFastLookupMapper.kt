@@ -10,9 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.model
+package com.algorand.wallet.account.info.data.mapper.model
 
-enum class Bip32DerivationType(val value: Int) {
-    Peikert(9),
-    Khovratovich(32)
+import com.algorand.wallet.account.info.data.model.AccountFastLookupResponse
+import com.algorand.wallet.account.info.domain.model.AccountFastLookup
+
+internal interface AccountFastLookupMapper {
+    operator fun invoke(response: AccountFastLookupResponse): AccountFastLookup
 }

@@ -33,6 +33,9 @@ internal interface AssetHoldingDao {
     @Query("SELECT * FROM asset_holding_table WHERE :algoAddress = algo_address AND :assetId = asset_id")
     suspend fun get(algoAddress: String, assetId: Long): AssetHoldingEntity
 
+    @Query("SELECT COUNT(*) > 0 FROM asset_holding_table WHERE asset_id = :assetId AND  algo_address IN (:algoAddressList)")
+    suspend fun isAssetOptedInByAnyLocalAccount(algoAddressList: List<String>, assetId: Long): Boolean
+
     @Query("SELECT * FROM asset_holding_table WHERE :algoAddress = algo_address")
     suspend fun getAssetsByAddress(algoAddress: String): List<AssetHoldingEntity>
 

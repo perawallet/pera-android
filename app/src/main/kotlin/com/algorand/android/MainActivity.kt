@@ -36,7 +36,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
-import com.algorand.android.MainViewModel.ViewEvent
 import com.algorand.android.core.transaction.TransactionSignManager
 import com.algorand.android.customviews.CoreActionsTabBarView
 import com.algorand.android.customviews.LedgerLoadingDialog
@@ -101,31 +100,43 @@ class MainActivity :
     ReceiveAccountSelectionFragment.ReceiveAccountSelectionFragmentListener,
     AlertDialogDelegation by AlertDialogDelegationImpl() {
 
-    private val viewEventCollector: suspend (ViewEvent) -> Unit = { event ->
+    private val mainViewEventCollector: suspend (MainViewModel.ViewEvent) -> Unit = { event ->
         when (event) {
-            is ViewEvent.HandleAssetTransactionDeepLink -> navToAssetProfileNavigation(
+            is MainViewModel.ViewEvent.HandleAssetTransactionDeepLink -> navToAssetProfileNavigation(
                 event.address,
                 event.assetId
             )
 
-            is ViewEvent.HandleAssetOptInRequestDeepLink -> navToAssetAdditionActionNavigation(
+            is MainViewModel.ViewEvent.HandleAssetOptInRequestDeepLink -> navToAssetAdditionActionNavigation(
                 event.address,
                 event.assetId
             )
 
-            is ViewEvent.NavToAssetInboxOneAccountNavigation -> navToAssetInboxOneAccountNavigation(
+            is MainViewModel.ViewEvent.NavToAssetInboxOneAccountNavigation -> navToAssetInboxOneAccountNavigation(
                 event.address
             )
 
-            is ViewEvent.NavToAccountDetailFragment -> navToAccountDetailFragment(
+            is MainViewModel.ViewEvent.NavToAccountDetailFragment -> navToAccountDetailFragment(
                 event.address
             )
 
-            is ViewEvent.ShowForegroundNotification -> showForegroundNotification(
+            is MainViewModel.ViewEvent.ShowForegroundNotification -> showForegroundNotification(
                 event.notificationMetadata
             )
 
-            is ViewEvent.ShowGlobalNotificationError -> showGlobalNotificationError()
+            is MainViewModel.ViewEvent.ShowGlobalNotificationError -> showGlobalNotificationError()
+        }
+    }
+
+    private val qrScannerViewEventCollector: suspend (QrScannerViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is QrScannerViewModel.ViewEvent.NavigateToKeyRegTransactionFragment -> navToKeyRegTransactionFragment(
+                event.transactionDetail
+            )
+
+            is QrScannerViewModel.ViewEvent.ShowKeyRegDeeplinkError -> showKeyRegDeeplinkError(
+                event.address
+            )
         }
     }
 
@@ -320,25 +331,7 @@ class MainActivity :
 
         override fun onKeyRegDeeplink(deepLink: DeepLink.KeyReg): Boolean {
             return true.also {
-                val txnDetail = KeyRegTransactionDetail(
-                    address = deepLink.senderAddress,
-                    type = deepLink.type,
-                    voteKey = deepLink.voteKey,
-                    selectionPublicKey = deepLink.selkey,
-                    sprfkey = deepLink.sprfkey,
-                    voteFirstRound = deepLink.votefst,
-                    voteLastRound = deepLink.votelst,
-                    voteKeyDilution = deepLink.votekd,
-                    fee = deepLink.fee?.toBigIntegerOrNull(),
-                    note = deepLink.note,
-                    xnote = deepLink.xnote
-                )
-
-                if (qrScannerViewModel.hasAccountAuthority(deepLink.senderAddress)) {
-                    nav(HomeNavigationDirections.actionGlobalKeyRegTransactionFragment(txnDetail))
-                } else {
-                    showGlobalError(getString(R.string.you_dont_have_any, deepLink.senderAddress), tag = activityTag)
-                }
+                qrScannerViewModel.handleKeyRegDeepLink(deepLink)
             }
         }
     }
@@ -542,7 +535,12 @@ class MainActivity :
 
         collectLatestOnLifecycle(
             mainViewModel.viewEvent,
-            viewEventCollector
+            mainViewEventCollector
+        )
+
+        collectLatestOnLifecycle(
+            qrScannerViewModel.viewEvent,
+            qrScannerViewEventCollector
         )
     }
 
@@ -903,6 +901,14 @@ class MainActivity :
 
     private fun showGlobalNotificationError() {
         showGlobalError(errorMessage = getString(R.string.you_cannot_take), tag = activityTag)
+    }
+
+    private fun navToKeyRegTransactionFragment(transactionDetail: KeyRegTransactionDetail) {
+        nav(HomeNavigationDirections.actionGlobalKeyRegTransactionFragment(transactionDetail))
+    }
+
+    private fun showKeyRegDeeplinkError(accountAddress: String) {
+        showGlobalError(getString(R.string.you_dont_have_any, accountAddress), tag = activityTag)
     }
 
     companion object {

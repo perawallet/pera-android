@@ -14,7 +14,9 @@ package com.algorand.android.usecase
 
 import javax.inject.Inject
 
-class IsAccountLimitExceedUseCase @Inject constructor(private val getLocalAccountsUseCase: GetLocalAccountsUseCase) {
+class IsAccountLimitExceedUseCase @Inject constructor(
+    private val getLocalAccountsUseCase: GetLocalAccountsUseCase
+) {
 
     fun isAccountLimitExceed(): Boolean {
         return getLocalAccountsUseCase.getLocalAccountsFromAccountManagerCache().size >= MAX_NUMBER_OF_ACCOUNTS

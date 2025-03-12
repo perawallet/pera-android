@@ -22,7 +22,7 @@
     <androidx.constraintlayout.helper.widget.Flow
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="swapButton, stakingButton, buySellButton, sendButton,scanQrButton"
+        app:constraint_referenced_ids="swapButton, buySellButton, stakingButton, sendButton"
         app:flow_maxElementsWrap="4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,14 +37,6 @@
         app:icon="@drawable/ic_swap_quick_actions" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/stakingButton"
-        style="@style/IconButton.Transparent.QuickAction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/staking"
-        app:icon="@drawable/ic_stake_helper_button_bg_ghost" />
-
-    <com.google.android.material.button.MaterialButton
         android:id="@+id/buySellButton"
         style="@style/IconButton.Transparent.QuickAction"
         android:layout_width="wrap_content"
@@ -53,19 +45,18 @@
         app:icon="@drawable/ic_buy_sell_quick_actions" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/stakingButton"
+        style="@style/IconButton.Transparent.QuickAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/staking"
+        app:icon="@drawable/ic_stake_helper_button_bg_ghost" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/sendButton"
         style="@style/IconButton.Transparent.QuickAction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/send"
         app:icon="@drawable/ic_send_helper_button_bg_ghost" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/scanQrButton"
-        style="@style/IconButton.Transparent.QuickAction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/scan_qr"
-        app:icon="@drawable/ic_qr_scan_helper_button_bg_ghost" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

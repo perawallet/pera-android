@@ -21,6 +21,8 @@ internal interface NoAuthAccountRepository {
 
     fun getAccountCountAsFlow(): Flow<Int>
 
+    suspend fun getAccountCount(): Int
+
     suspend fun getAll(): List<LocalAccount.NoAuth>
 
     suspend fun getAllAddresses(): List<String>

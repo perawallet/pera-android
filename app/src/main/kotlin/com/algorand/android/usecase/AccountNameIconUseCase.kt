@@ -16,26 +16,24 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawabl
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.repository.ContactRepository
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import javax.inject.Inject
 
 class AccountNameIconUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
+    private val getAccountCustomName: GetAccountCustomName,
     private val contactRepository: ContactRepository,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) {
 
     suspend fun getAccountDisplayTextAndIcon(accountAddress: String): Pair<String, AccountIconDrawablePreview> {
-        return with(accountDetailUseCase) {
-            getAccountName(accountAddress) to getAccountIconDrawablePreview(accountAddress)
-        }
+        return getAccountCustomName(accountAddress).orEmpty() to getAccountIconDrawablePreview(accountAddress)
     }
 
     suspend fun getAccountOrContactDisplayTextAndIcon(
         accountAddress: String
     ): Pair<String, AccountIconDrawablePreview?> {
-        val localReceiver = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
-        if (localReceiver != null) {
-            val accountName = accountDetailUseCase.getAccountName(accountAddress)
+        val accountName = getAccountCustomName(accountAddress)
+        if (accountName != null) {
             val accountIcon = getAccountIconDrawablePreview(accountAddress)
             return accountName to accountIcon
         }

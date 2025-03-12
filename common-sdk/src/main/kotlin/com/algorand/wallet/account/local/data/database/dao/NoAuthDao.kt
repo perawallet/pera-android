@@ -40,6 +40,9 @@ internal interface NoAuthDao {
     @Query("SELECT COUNT(*) FROM no_auth")
     fun getTableSizeAsFlow(): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM no_auth")
+    suspend fun getTableSize(): Int
+
     @Query("SELECT * FROM no_auth WHERE :algoAddress = algo_address")
     suspend fun get(algoAddress: String): NoAuthEntity?
 

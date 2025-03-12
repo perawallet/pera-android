@@ -40,6 +40,9 @@ internal interface Algo25Dao {
     @Query("SELECT COUNT(*) FROM algo_25")
     fun getTableSizeAsFlow(): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM algo_25")
+    suspend fun getTableSize(): Int
+
     @Query("SELECT * FROM algo_25 WHERE :algoAddress = algo_address")
     suspend fun get(algoAddress: String): Algo25Entity?
 

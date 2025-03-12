@@ -74,6 +74,16 @@ class HdKeyAccountRepositoryImplTest {
     }
 
     @Test
+    fun `EXPECT account count WHEN getAccountCount is invoked`() = runTest {
+        val expectedCount = 3
+        coEvery { hdKeyDao.getTableSize() } returns expectedCount
+
+        val result = sut.getAccountCount()
+
+        assertEquals(expectedCount, result)
+    }
+
+    @Test
     fun `EXPECT all accounts WHEN getAll is invoked`() = runTest {
         val entities = listOf(
             HdKeyEntity("address1", byteArrayOf(1), byteArrayOf(2), 1, 0, 0, 0, 1),

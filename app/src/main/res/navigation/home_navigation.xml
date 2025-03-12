@@ -1018,6 +1018,9 @@
                 android:name="assetInboxOneAccountNavArgs"
                 app:argType="com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs" />
         </action>
+        <action
+            android:id="@+id/action_global_buySellActionsBottomSheet"
+            app:destination="@id/buySellActionsBottomSheet" />
     </fragment>
 
     <fragment

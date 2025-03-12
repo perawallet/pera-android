@@ -18,8 +18,8 @@ import javax.inject.Inject
 
 class RekeyToLedgerAccountConfirmationPreviewDecider @Inject constructor() {
 
-    fun decideDescriptionAnnotatedString(isRekeyed: Boolean): AnnotatedString {
-        return if (isRekeyed) {
+    fun decideDescriptionAnnotatedString(isAccountRekeyed: Boolean): AnnotatedString {
+        return if (isAccountRekeyed) {
             AnnotatedString(R.string.you_are_about_to_rekey_this)
         } else {
             AnnotatedString(R.string.you_are_about_to_rekey)

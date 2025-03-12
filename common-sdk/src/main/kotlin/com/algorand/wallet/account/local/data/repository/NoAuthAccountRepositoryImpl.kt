@@ -41,6 +41,10 @@ internal class NoAuthAccountRepositoryImpl @Inject constructor(
         return noAuthDao.getTableSizeAsFlow()
     }
 
+    override suspend fun getAccountCount(): Int {
+        return noAuthDao.getTableSize()
+    }
+
     override suspend fun getAll(): List<NoAuth> {
         return withContext(coroutineDispatcher) {
             val noAuthEntities = noAuthDao.getAll()

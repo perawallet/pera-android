@@ -20,7 +20,6 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.database.NodeDao
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdMigrationUseCase
 import com.algorand.android.models.Node
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeningCountUseCase
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
@@ -73,7 +72,6 @@ class MainViewModel @Inject constructor(
     private val nodeRepository: NodeRepository,
     private val peraReferrerManager: PeraReferrerManager,
     private val autoLockManagerUseCase: AutoLockManagerUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase,
     private val initializeAppCache: InitializeAppCache,
     private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
     private val createDeepLink: CreateDeepLink,

@@ -31,7 +31,7 @@ import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
@@ -46,34 +46,27 @@ class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
     private val rekeyToLedgerAccountConfirmationPreviewDecider: RekeyToLedgerAccountConfirmationPreviewDecider,
     private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
     private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
-    private val getAccountInformation: GetAccountInformation
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) {
 
     suspend fun getInitialRekeyToStandardAccountConfirmationPreview(
         accountAddress: String,
         authAccountAddress: String
     ): RekeyToLedgerAccountConfirmationPreview {
-        val accountInfo = getAccountInformation(accountAddress)
+        val rekeyAdminAddress = getAccountRekeyAdminAddress(accountAddress)
         val accountDisplayName = getAccountDisplayName(accountAddress)
         val accountIconResource = getAccountIconDrawablePreview(accountAddress)
         val (authAccountDisplayName, authAccountIconResource) = createAccountDisplayNameAndDrawablePair(
             accountAddress = authAccountAddress
         )
-        val currentlyRekeyedAccountDisplayName = if (accountInfo?.isRekeyed() == true) {
-            getAccountDisplayName(accountInfo.rekeyAdminAddress.orEmpty())
-        } else {
-            null
-        }
-        val currentlyRekeyAccountIconDrawable = if (accountInfo?.isRekeyed() == true) {
-            getAccountIconDrawablePreview(accountInfo.rekeyAdminAddress.orEmpty())
-        } else {
-            null
-        }
+
+        val currentlyRekeyedAccountDisplayName = rekeyAdminAddress?.let { getAccountDisplayName(it) }
+        val currentlyRekeyAccountIconDrawable = rekeyAdminAddress?.let { getAccountIconDrawablePreview(it) }
 
         return rekeyToLedgerAccountConfirmationPreviewMapper.mapToRekeyToLedgerAccountConfirmationPreview(
             isLoading = false,
             descriptionAnnotatedString = rekeyToLedgerAccountConfirmationPreviewDecider
-                .decideDescriptionAnnotatedString(isRekeyed = accountInfo?.isRekeyed() == true),
+                .decideDescriptionAnnotatedString(rekeyAdminAddress != null),
             rekeyedAccountDisplayName = accountDisplayName,
             rekeyedAccountIconResource = accountIconResource,
             authAccountDisplayName = authAccountDisplayName,
@@ -138,8 +131,8 @@ class RekeyToLedgerAccountConfirmationPreviewUseCase @Inject constructor(
         accountAddress: String,
         preview: RekeyToLedgerAccountConfirmationPreview
     ): RekeyToLedgerAccountConfirmationPreview {
-        val accountInfo = getAccountInformation(accountAddress)
-        return if (accountInfo?.isRekeyed() == true) {
+        val rekeyAdminAddress = getAccountRekeyAdminAddress(accountAddress)
+        return if (rekeyAdminAddress != null) {
             preview.copy(navToRekeyedAccountConfirmationBottomSheetEvent = Event(Unit))
         } else {
             preview.copy(onSendTransactionEvent = Event(Unit))

@@ -104,10 +104,9 @@ class Arc59TransactionDetailFragment : Fragment(R.layout.fragment_arc59_transact
                 accountIconDrawablePreview = receiver.accountIconDrawable,
                 sizeResId = R.dimen.spacing_xlarge
             )
-            val accountName = receiver.displayName.getAccountPrimaryDisplayName()
             accountTextView.apply {
                 setDrawable(start = accountIconDrawable)
-                text = accountName
+                text = receiver.displayName.primaryDisplayName
             }
         }
     }

@@ -13,9 +13,9 @@
 package com.algorand.android.modules.basefoundaccount.information.ui.mapoer
 
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.basefoundaccount.information.ui.model.BaseFoundAccountInformationItem
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import javax.inject.Inject

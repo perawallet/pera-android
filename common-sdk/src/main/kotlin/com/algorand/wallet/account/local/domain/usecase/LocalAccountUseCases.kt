@@ -81,6 +81,10 @@ fun interface GetLocalAccountCountFlow {
     operator fun invoke(): Flow<Int>
 }
 
+fun interface GetLocalAccountCount {
+    suspend operator fun invoke(): Int
+}
+
 fun interface GetLocalAccounts {
     suspend operator fun invoke(): List<LocalAccount>
 }
@@ -139,7 +143,8 @@ fun interface UpdateNoAuthAccountToHdKey {
 }
 
 fun interface UpdateNoAuthAccountToLedgerBle {
-    suspend operator fun invoke(address: String, deviceMacAddress: String, bluetoothName: String, indexInLedger: Int
+    suspend operator fun invoke(
+        address: String, deviceMacAddress: String, bluetoothName: String, indexInLedger: Int
     )
 }
 

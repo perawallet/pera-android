@@ -85,6 +85,16 @@ class NoAuthAccountRepositoryImplTest {
     }
 
     @Test
+    fun `EXPECT account count WHEN getAccountCount is invoked`() = runTest {
+        val expectedCount = 3
+        coEvery { noAuthDao.getTableSize() } returns expectedCount
+
+        val result = sut.getAccountCount()
+
+        assertEquals(expectedCount, result)
+    }
+
+    @Test
     fun `EXPECT all addresses WHEN getAllAddresses is invoked`() = runTest {
         val addresses = listOf("address1", "address2")
         coEvery { noAuthDao.getAllAddresses() } returns addresses

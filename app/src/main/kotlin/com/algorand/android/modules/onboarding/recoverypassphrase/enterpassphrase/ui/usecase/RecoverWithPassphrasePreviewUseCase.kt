@@ -29,6 +29,7 @@ import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
@@ -38,7 +39,8 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val passphraseInputGroupUseCase: PassphraseInputGroupUseCase,
     private val passphraseInputConfigurationUtil: PassphraseInputConfigurationUtil,
     private val getRekeyedAccountUseCase: GetRekeyedAccountUseCase,
-    private val getAccountRegistrationType: GetAccountRegistrationType
+    private val getAccountRegistrationType: GetAccountRegistrationType,
+    private val aesPlatformManager: AESPlatformManager
 ) {
 
     fun getRecoverWithPassphraseInitialPreview(
@@ -62,8 +64,8 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         return if (
             splittedText.size != OnboardingAccountType.Algo25.wordCount &&
             splittedText.size != OnboardingAccountType.HdKey.wordCount
-            ) {
-                preview.copy(onGlobalErrorEvent = Event(R.string.the_last_copied_text))
+        ) {
+            preview.copy(onGlobalErrorEvent = Event(R.string.the_last_copied_text))
         } else {
             val inputGroupConfiguration = passphraseInputGroupUseCase.recoverPassphraseInputGroupConfiguration(
                 configuration = preview.passphraseInputGroupConfiguration,
@@ -151,7 +153,11 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                 address = accountAddress,
                 customName = accountAddress.toShortenedAddress(),
                 isBackedUp = true,
-                type = AccountCreation.Type.Algo25(privateKey),
+                type = AccountCreation.Type.Algo25(
+                    aesPlatformManager.encryptByteArray(
+                        privateKey
+                    )
+                ),
                 creationType = RECOVER
             )
             getRekeyedAccountUseCase.invoke(accountAddress).useSuspended(

@@ -14,16 +14,18 @@
 package com.algorand.android.modules.assetinbox.detail.receivedetail.ui
 
 import com.algorand.android.R
+import com.algorand.android.core.transaction.external.ExternalTransactionSignManager
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.modules.assetinbox.detail.receivedetail.domain.model.BaseArc59ClaimRejectTransaction
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionQueuingHelper
-import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignManager
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.flatten
+import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
+import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
 import javax.inject.Inject
 import kotlinx.coroutines.flow.map
 
@@ -31,12 +33,16 @@ class Arc59ClaimRejectTransactionSignManager @Inject constructor(
     ledgerBleSearchManager: LedgerBleSearchManager,
     ledgerBleOperationManager: LedgerBleOperationManager,
     externalTransactionQueuingHelper: ExternalTransactionQueuingHelper,
-    accountDetailUseCase: AccountDetailUseCase
+    getTransactionSigner: GetTransactionSigner,
+    getAlgo25SecretKey: GetAlgo25SecretKey,
+    getHdKeyPrivateKey: GetHdKeyPrivateKey
 ) : ExternalTransactionSignManager<BaseArc59ClaimRejectTransaction>(
     ledgerBleSearchManager,
     ledgerBleOperationManager,
     externalTransactionQueuingHelper,
-    accountDetailUseCase
+    getTransactionSigner,
+    getAlgo25SecretKey,
+    getHdKeyPrivateKey
 ) {
 
     val arc59ClaimRejectTransactionSignResultFlow = signResultFlow.map { externalTransactionSignResult ->
@@ -44,6 +50,7 @@ class Arc59ClaimRejectTransactionSignManager @Inject constructor(
             is ExternalTransactionSignResult.Success<*> -> mapSignedTransactions(
                 externalTransactionSignResult.signedTransactionsByteArray
             )
+
             else -> externalTransactionSignResult
         }
     }

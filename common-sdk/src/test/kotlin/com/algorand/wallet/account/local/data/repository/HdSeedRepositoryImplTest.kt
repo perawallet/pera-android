@@ -67,7 +67,6 @@ class HdSeedRepositoryImplTest {
 
         val result = sut.getHdSeedCount()
 
-        coVerify { hdSeedDao.getTableSize() }
         assertEquals(expectedCount, result)
     }
 

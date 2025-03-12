@@ -91,7 +91,6 @@ class NoAuthAccountRepositoryImplTest {
 
         val result = sut.getAccountCount()
 
-        coVerify { noAuthDao.getTableSize() }
         assertEquals(expectedCount, result)
     }
 

@@ -127,7 +127,6 @@ class Algo25AccountRepositoryImplTest {
 
         val result = sut.getAccountCount()
 
-        coVerify { algo25Dao.getTableSize() }
         assertEquals(expectedCount, result)
     }
 

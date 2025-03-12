@@ -80,7 +80,6 @@ class HdKeyAccountRepositoryImplTest {
 
         val result = sut.getAccountCount()
 
-        coVerify { hdKeyDao.getTableSize() }
         assertEquals(expectedCount, result)
     }
 

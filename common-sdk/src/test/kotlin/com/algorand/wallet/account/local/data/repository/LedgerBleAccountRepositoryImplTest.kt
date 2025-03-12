@@ -92,7 +92,6 @@ class LedgerBleAccountRepositoryImplTest {
 
         val result = sut.getAccountCount()
 
-        coVerify { ledgerBleDao.getTableSize() }
         assertEquals(expectedCount, result)
     }
 

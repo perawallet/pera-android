@@ -21,6 +21,8 @@ internal interface HdSeedRepository {
 
     fun getSeedCountAsFlow(): Flow<Int>
 
+    suspend fun getHdSeedCount(): Int
+
     suspend fun getMaxSeedId(): Int?
 
     suspend fun hasAnySeed(): Boolean

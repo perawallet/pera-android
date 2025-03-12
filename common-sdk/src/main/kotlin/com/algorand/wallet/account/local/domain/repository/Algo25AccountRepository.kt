@@ -21,6 +21,8 @@ internal interface Algo25AccountRepository {
 
     fun getAccountCountAsFlow(): Flow<Int>
 
+    suspend fun getAccountCount(): Int
+
     suspend fun getAll(): List<LocalAccount.Algo25>
 
     suspend fun getAllAddresses(): List<String>

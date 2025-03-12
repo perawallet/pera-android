@@ -92,6 +92,18 @@
         tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/qrImageButton"
+        style="?attr/toolbarNavigationButtonStyle"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/spacing_xxxsmall"
+        android:layout_marginEnd="@dimen/spacing_xxxxxlarge"
+        app:layout_constraintEnd_toEndOf="@id/notificationImageButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_qr_scan" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/notificationImageButton"
         style="?attr/toolbarNavigationButtonStyle"
         android:layout_width="40dp"
@@ -99,6 +111,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/spacing_xxxsmall"
         android:layout_marginEnd="@dimen/spacing_xlarge"
+        app:layout_constraintStart_toEndOf="@id/qrImageButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/selector_notification_button" />

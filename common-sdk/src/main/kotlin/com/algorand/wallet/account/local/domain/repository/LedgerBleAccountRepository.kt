@@ -21,6 +21,8 @@ internal interface LedgerBleAccountRepository {
 
     fun getAccountCountAsFlow(): Flow<Int>
 
+    suspend fun getAccountCount(): Int
+
     suspend fun getAll(): List<LocalAccount.LedgerBle>
 
     suspend fun getAllAddresses(): List<String>

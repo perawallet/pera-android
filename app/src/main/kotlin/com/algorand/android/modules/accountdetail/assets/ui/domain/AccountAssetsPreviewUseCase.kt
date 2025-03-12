@@ -140,8 +140,8 @@ class AccountAssetsPreviewUseCase @Inject constructor(
                     QuickActionItem.AssetInbox
                 }
                 add(accountDetailAssetItemMapper.mapToSwapQuickActionItem(isSwapSelected))
+                add(QuickActionItem.BuyAlgoButton)
                 add(inboxItem)
-                add(QuickActionItem.SendButton)
             }
             add(QuickActionItem.MoreButton)
         }

@@ -53,4 +53,9 @@ sealed class QuickActionItem {
         override val iconResId: Int = R.drawable.ic_qr_helper_button_bg_ghost
         override val labelResId: Int = R.string.show_address
     }
+
+    data object BuyAlgoButton : QuickActionItem() {
+        override val iconResId: Int = R.drawable.ic_buy_sell_quick_actions
+        override val labelResId: Int = R.string.buy_sell
+    }
 }

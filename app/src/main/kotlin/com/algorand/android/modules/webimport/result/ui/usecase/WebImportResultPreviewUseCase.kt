@@ -43,10 +43,11 @@ class WebImportResultPreviewUseCase @Inject constructor(
             if (isImportSuccessful && unimportedAccountList.isNotEmpty()) {
                 add(getWarningBoxItem(unimportedAccountList.size))
             }
-            importedAccountList
-                .map { getAccountDetail(it) }
-                .map { getAccountItem(accountDetail = it) }
-                .forEach { add(it) }
+            importedAccountList.forEach {
+                val accountDetail = getAccountDetail(it)
+                val accountItem = getAccountItem(accountDetail = accountDetail)
+                add(accountItem)
+            }
         }
         return webImportResultPreviewMapper.mapToWebImportResultPreview(
             listItems = listItems,

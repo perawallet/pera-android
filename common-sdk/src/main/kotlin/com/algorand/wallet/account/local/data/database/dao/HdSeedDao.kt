@@ -36,6 +36,9 @@ internal interface HdSeedDao {
     @Query("SELECT COUNT(*) FROM hd_seeds")
     fun getTableSizeAsFlow(): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM hd_seeds")
+    suspend fun getTableSize(): Int
+
     @Query("SELECT MAX(seed_id) FROM hd_seeds")
     suspend fun getMaxSeedId(): Int?
 

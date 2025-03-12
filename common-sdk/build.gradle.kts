@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.lifecycle.viewmodel.ktx)
     implementation(project.dependencies.platform(libs.firebase.bom))
 
     ksp(libs.dagger.hilt.compiler)

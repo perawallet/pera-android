@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/viewPassphraseFragment"
-        android:name="com.algorand.android.ui.accounts.ViewPassphraseFragment"
+        android:name="com.algorand.android.modules.viewpassphrase.view.ViewPassphraseFragment"
         android:label="ViewPassphraseFragment"
         tools:layout="@layout/fragment_view_passphrase">
         <argument

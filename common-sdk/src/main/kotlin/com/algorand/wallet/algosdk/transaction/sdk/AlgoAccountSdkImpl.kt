@@ -65,4 +65,12 @@ internal class AlgoAccountSdkImpl @Inject constructor(
             null
         }
     }
+
+    override fun getMnemonicFromSecretKey(secretKey: ByteArray): String? {
+        return try {
+            Sdk.mnemonicFromPrivateKey(secretKey)
+        } catch (exception: Exception) {
+            null
+        }
+    }
 }

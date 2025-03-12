@@ -12,8 +12,10 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
+import com.algorand.wallet.account.local.domain.model.AccountMnemonic
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
 
 internal fun interface SaveHdKeyAccount {
@@ -136,6 +138,10 @@ fun interface UpdateNoAuthAccountToHdKey {
         keyIndex: Int,
         derivationType: Int
     )
+}
+
+fun interface GetAccountMnemonic {
+    suspend operator fun invoke(address: String): PeraResult<AccountMnemonic>
 }
 
 fun interface UpdateNoAuthAccountToLedgerBle {

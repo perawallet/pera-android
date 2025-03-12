@@ -10,13 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.accounts
+package com.algorand.android.modules.viewpassphrase.view
 
 import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.fragment.app.viewModels
-import com.algorand.algosdk.sdk.Sdk
+import androidx.lifecycle.Lifecycle
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentViewPassphraseBinding
@@ -24,7 +24,15 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.disableScreenCapture
 import com.algorand.android.utils.enableScreenCapture
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel
+import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewEvent.NavigateBack
+import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewEvent.ShowGenericError
+import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewState.Content
+import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewState.Idle
+import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewState.Loading
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -48,27 +56,34 @@ class ViewPassphraseFragment : DaggerBaseFragment(R.layout.fragment_view_passphr
         isScreenCaptureEnablingAllowed = hasFocus
     }
 
+    private val viewStateCollector: suspend (ViewPassphraseViewModel.ViewState) -> Unit = {
+        updateViewState(it)
+    }
+
+    private val viewEventCollector: suspend (ViewPassphraseViewModel.ViewEvent) -> Unit = {
+        when (it) {
+            ShowGenericError -> showGlobalError(getString(R.string.an_error_occured), tag = baseActivityTag)
+            NavigateBack -> navBack()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewPassphraseToolbar.configure(toolbarConfiguration)
-        setupPassphraseLayout()
+        initObserver()
     }
 
-    private fun setupPassphraseLayout() {
-        viewPassphraseViewModel.getAccountSecretKey()?.let {
-            try {
-                val mnemonic = Sdk.mnemonicFromPrivateKey(it) ?: throw Exception("Mnemonic cannot be null.")
-                binding.passphraseBoxView.setPassphrases(mnemonic)
-            } catch (exception: Exception) {
-                navBack()
-            }
-        } ?: run { navBack() }
+    private fun initObserver() {
+        collectLatestOnLifecycle(viewPassphraseViewModel.viewEvent, viewEventCollector, Lifecycle.State.CREATED)
+        collectLatestOnLifecycle(viewPassphraseViewModel.state, viewStateCollector)
     }
 
     override fun onResume() {
         super.onResume()
         view?.viewTreeObserver?.addOnWindowFocusChangeListener(onWindowFocusChangeListener)
         activity?.disableScreenCapture()
+        val address = requireArguments().getString(PUBLIC_KEY).orEmpty()
+        viewPassphraseViewModel.initViewState(address)
     }
 
     override fun onStop() {
@@ -77,5 +92,25 @@ class ViewPassphraseFragment : DaggerBaseFragment(R.layout.fragment_view_passphr
         }
         view?.viewTreeObserver?.removeOnWindowFocusChangeListener(onWindowFocusChangeListener)
         super.onStop()
+    }
+
+    private fun updateViewState(state: ViewPassphraseViewModel.ViewState) {
+        when (state) {
+            Idle -> Unit
+            Loading -> binding.progressBar.show()
+            is Content -> showMnemonics(state.mnemonicWords)
+        }
+    }
+
+    private fun showMnemonics(mnemonicWords: List<String>) {
+        binding.progressBar.hide()
+        binding.passphraseBoxView.apply {
+            setPassphrases(mnemonicWords)
+            show()
+        }
+    }
+
+    private companion object {
+        const val PUBLIC_KEY = "publicKey"
     }
 }

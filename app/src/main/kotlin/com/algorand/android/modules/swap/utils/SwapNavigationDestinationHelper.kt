@@ -14,11 +14,13 @@ package com.algorand.android.modules.swap.utils
 
 import com.algorand.android.modules.swap.introduction.domain.usecase.IsSwapFeatureIntroductionPageShownUseCase
 import com.algorand.android.modules.swap.reddot.domain.usecase.SetSwapFeatureRedDotVisibilityUseCase
-import com.algorand.android.usecase.GetLocalAccountsUseCase
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import javax.inject.Inject
 
 class SwapNavigationDestinationHelper @Inject constructor(
-    private val getLocalAccountsUseCase: GetLocalAccountsUseCase,
+    private val getAccountsDetails: GetAccountsDetails,
     isSwapFeatureIntroductionPageShownUseCase: IsSwapFeatureIntroductionPageShownUseCase,
     setSwapFeatureRedDotVisibilityUseCase: SetSwapFeatureRedDotVisibilityUseCase
 ) : BaseSwapNavigationDestinationHelper(
@@ -32,10 +34,12 @@ class SwapNavigationDestinationHelper @Inject constructor(
         onNavToSwap: (accountAddress: String) -> Unit,
         onNavToAccountSelection: (() -> Unit)? = null
     ) {
+        val authorizedAccounts = getAccountsDetails().filter { it.accountType?.canSignTransaction() == true }
+
         handleNavigationDestination(
             navToIntroduction = { onNavToIntroduction() },
             handleDestinationWithAccount = {
-                handleDestinationWithAccount(accountAddress, onNavToSwap, onNavToAccountSelection)
+                handleDestinationWithAccount(accountAddress, onNavToSwap, onNavToAccountSelection, authorizedAccounts)
             }
         )
     }
@@ -43,12 +47,12 @@ class SwapNavigationDestinationHelper @Inject constructor(
     private fun handleDestinationWithAccount(
         accountAddress: String?,
         onNavToSwap: (accountAddress: String) -> Unit,
-        onNavToAccountSelection: (() -> Unit)?
+        onNavToAccountSelection: (() -> Unit)?,
+        authorizedAccounts: List<AccountDetail>
     ) {
         if (accountAddress != null) {
             onNavToSwap(accountAddress)
         } else {
-            val authorizedAccounts = getLocalAccountsUseCase.getLocalAccountsThatCanSignTransaction()
             if (authorizedAccounts.size == 1) {
                 onNavToSwap(authorizedAccounts.first().address)
             } else {

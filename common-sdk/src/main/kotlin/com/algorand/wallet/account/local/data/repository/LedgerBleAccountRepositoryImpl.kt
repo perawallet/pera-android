@@ -41,6 +41,10 @@ internal class LedgerBleAccountRepositoryImpl @Inject constructor(
         return ledgerBleDao.getTableSizeAsFlow()
     }
 
+    override suspend fun getAccountCount(): Int {
+        return ledgerBleDao.getTableSize()
+    }
+
     override suspend fun getAll(): List<LedgerBle> {
         return withContext(coroutineDispatcher) {
             val ledgerBleEntities = ledgerBleDao.getAll()

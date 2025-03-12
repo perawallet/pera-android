@@ -7,6 +7,7 @@ import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -57,6 +58,17 @@ class HdSeedRepositoryImplTest {
         val result = sut.getSeedCountAsFlow().first()
 
         assertEquals(count, result)
+    }
+
+    @Test
+    fun `EXPECT account count WHEN getAccountCount is invoked`() = runTest {
+        val expectedCount = 3
+        coEvery { hdSeedDao.getTableSize() } returns expectedCount
+
+        val result = sut.getHdSeedCount()
+
+        coVerify { hdSeedDao.getTableSize() }
+        assertEquals(expectedCount, result)
     }
 
     @Test

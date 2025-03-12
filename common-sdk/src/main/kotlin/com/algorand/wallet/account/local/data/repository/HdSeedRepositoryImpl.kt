@@ -43,6 +43,10 @@ internal class HdSeedRepositoryImpl @Inject constructor(
         return hdSeedDao.getTableSizeAsFlow()
     }
 
+    override suspend fun getHdSeedCount(): Int {
+        return hdSeedDao.getTableSize()
+    }
+
     override suspend fun getMaxSeedId(): Int? {
         return hdSeedDao.getMaxSeedId()
     }

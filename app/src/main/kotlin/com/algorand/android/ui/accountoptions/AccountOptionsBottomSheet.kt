@@ -54,9 +54,6 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
         }
     }
 
-    private val publicKey: String
-        get() = args.publicKey
-
     private val notificationObserverCollector: suspend (Resource<Unit>?) -> Unit = {
         it?.use(onLoadingFinished = ::navBack)
     }
@@ -150,13 +147,14 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     }
 
     private fun navToRekeyToLedgerAccountFragment() {
-        nav(AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToRekeyLedgerNavigation(publicKey))
+        nav(AccountOptionsBottomSheetDirections
+            .actionAccountOptionsBottomSheetToRekeyLedgerNavigation(accountOptionsViewModel.accountAddress))
     }
 
     private fun navToRekeyToStandardAccountFragment() {
         nav(
             AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToRekeyToStandardAccountNavigation(
-                accountOptionsViewModel.getAccountAddress()
+                accountOptionsViewModel.accountAddress
             )
         )
     }
@@ -170,13 +168,14 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
         nav(
             AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToRenameAccountNavigation(
                 name = accountOptionsViewModel.getAccountName(),
-                publicKey = accountOptionsViewModel.getAccountAddress()
+                accountAddress = accountOptionsViewModel.accountAddress
             )
         )
     }
 
-    private fun navToShowQrBottomSheet(title: String, publicKey: String) {
-        nav(AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToShowQrNavigation(title, publicKey))
+    private fun navToShowQrBottomSheet(title: String, accountAddress: String) {
+        nav(AccountOptionsBottomSheetDirections
+            .actionAccountOptionsBottomSheetToShowQrNavigation(title, accountAddress))
     }
 
     private fun onViewPassphraseClicked() {
@@ -211,7 +210,8 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     }
 
     private fun navToUndoRekeyNavigation() {
-        nav(AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToRekeyUndoNavigation(publicKey))
+        nav(AccountOptionsBottomSheetDirections
+            .actionAccountOptionsBottomSheetToRekeyUndoNavigation(accountOptionsViewModel.accountAddress))
     }
 
     private fun navToInAppPinNavigation() {
@@ -224,7 +224,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     private fun navToViewPassphraseNavigation() {
         nav(
             AccountOptionsBottomSheetDirections
-                .actionAccountOptionsBottomSheetToViewPassphraseNavigation(publicKey)
+                .actionAccountOptionsBottomSheetToViewPassphraseNavigation(accountOptionsViewModel.accountAddress)
         )
     }
 

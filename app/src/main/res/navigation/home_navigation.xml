@@ -955,7 +955,7 @@
             android:id="@+id/action_accountDetailFragment_to_accountOptionsNavigation"
             app:destination="@id/accountOptionsNavigation">
             <argument
-                android:name="publicKey"
+                android:name="accountAddress"
                 app:argType="string" />
         </action>
         <action
@@ -1063,7 +1063,7 @@
             android:name="name"
             app:argType="string" />
         <argument
-            android:name="publicKey"
+            android:name="accountAddress"
             app:argType="string" />
     </dialog>
 
@@ -1259,7 +1259,7 @@
         android:label="AccountErrorOptionsBottomSheet"
         tools:layout="@layout/bottom_sheet_accounts_options">
         <argument
-            android:name="publicKey"
+            android:name="accountAddress"
             app:argType="string" />
         <action
             android:id="@+id/action_accountErrorOptionsBottomSheet_to_viewPassphraseNavigation"
@@ -1267,7 +1267,7 @@
             app:popUpTo="@id/accountErrorOptionsBottomSheet"
             app:popUpToInclusive="true">
             <argument
-                android:name="publicKey"
+                android:name="accountAddress"
                 app:argType="string" />
         </action>
         <action

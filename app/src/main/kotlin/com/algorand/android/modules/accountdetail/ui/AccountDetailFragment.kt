@@ -118,7 +118,7 @@ class AccountDetailFragment :
         nav(
             AccountDetailFragmentDirections.actionAccountDetailFragmentToTransactionDetailNavigation(
                 transactionId = transaction.id ?: return,
-                accountAddress = accountDetailViewModel.accountPublicKey,
+                accountAddress = accountDetailViewModel.accountAddress,
                 entryPoint = TransactionDetailEntryPoint.STANDARD_TRANSACTION
             )
         )
@@ -130,7 +130,7 @@ class AccountDetailFragment :
         nav(
             AccountDetailFragmentDirections.actionAccountDetailFragmentToTransactionDetailNavigation(
                 transactionId = transaction.id ?: return,
-                accountAddress = accountDetailViewModel.accountPublicKey,
+                accountAddress = accountDetailViewModel.accountAddress,
                 entryPoint = TransactionDetailEntryPoint.APPLICATION_CALL_TRANSACTION
             )
         )
@@ -145,11 +145,10 @@ class AccountDetailFragment :
     }
 
     override fun onAssetClick(assetId: Long) {
-        val publicKey = accountDetailViewModel.accountPublicKey
         nav(
             AccountDetailFragmentDirections.actionAccountDetailFragmentToAssetProfileNavigation(
                 assetId = assetId,
-                accountAddress = publicKey
+                accountAddress = accountDetailViewModel.accountAddress
             )
         )
     }
@@ -198,9 +197,13 @@ class AccountDetailFragment :
     override fun onAccountQuickActionsFloatingActionButtonClicked(isWatchAccount: Boolean) {
         val navigationDestination = with(AccountDetailFragmentDirections) {
             if (isWatchAccount) {
-                actionAccountDetailFragmentToWatchAccountQuickActionsBottomSheet(args.publicKey)
+                actionAccountDetailFragmentToWatchAccountQuickActionsBottomSheet(
+                    accountDetailViewModel.accountAddress
+                )
             } else {
-                actionAccountDetailFragmentToAccountQuickActionsBottomSheet(args.publicKey)
+                actionAccountDetailFragmentToAccountQuickActionsBottomSheet(
+                    accountDetailViewModel.accountAddress
+                )
             }
         }
         nav(navigationDestination)
@@ -211,7 +214,7 @@ class AccountDetailFragment :
     }
 
     override fun onCopyAddressClick() {
-        onAccountAddressCopied(args.publicKey)
+        onAccountAddressCopied(accountDetailViewModel.accountAddress)
     }
 
     override fun onShowAddressClick() {
@@ -250,13 +253,14 @@ class AccountDetailFragment :
         nav(
             AccountDetailFragmentDirections.actionAccountDetailFragmentToCollectibleDetailFragment(
                 collectibleId,
-                args.publicKey
+                accountDetailViewModel.accountAddress
             )
         )
     }
 
     override fun onReceiveCollectibleClick() {
-        nav(AccountDetailFragmentDirections.actionAccountDetailFragmentToReceiveCollectibleFragment(args.publicKey))
+        nav(AccountDetailFragmentDirections
+            .actionAccountDetailFragmentToReceiveCollectibleFragment(accountDetailViewModel.accountAddress))
     }
 
     override fun onManageCollectiblesClick() {
@@ -287,12 +291,14 @@ class AccountDetailFragment :
         }
         useFragmentResultListenerValue<Boolean>(ACCOUNT_REMOVE_CONFIRMATION_KEY) { isConfirmed ->
             if (isConfirmed) {
-                accountDetailViewModel.removeAccount(args.publicKey)
+                accountDetailViewModel.removeAccount(
+                    accountDetailViewModel.accountAddress
+                )
             }
         }
         useFragmentResultListenerValue<Boolean>(InAppPinFragment.IN_APP_PIN_CONFIRMATION_KEY) { isConfirmed ->
             if (isConfirmed) {
-                navToViewPassphraseNavigation(accountDetailViewModel.accountPublicKey)
+                navToViewPassphraseNavigation(accountDetailViewModel.accountAddress)
             }
         }
 
@@ -373,17 +379,17 @@ class AccountDetailFragment :
     }
 
     private fun navToAccountOptionsBottomSheet() {
-        val publicKey = accountDetailViewModel.accountPublicKey
-        nav(AccountDetailFragmentDirections.actionAccountDetailFragmentToAccountOptionsNavigation(publicKey))
+        nav(AccountDetailFragmentDirections
+            .actionAccountDetailFragmentToAccountOptionsNavigation(accountDetailViewModel.accountAddress))
     }
 
     private fun navToAccountStatusDetailBottomSheet() {
-        val publicKey = accountDetailViewModel.accountPublicKey
-        nav(AccountDetailFragmentDirections.actionAccountDetailFragmentToAccountStatusDetailNavigation(publicKey))
+        nav(AccountDetailFragmentDirections
+            .actionAccountDetailFragmentToAccountStatusDetailNavigation(accountDetailViewModel.accountAddress))
     }
 
     private fun initAccountDetailPager() {
-        accountDetailPagerAdapter = AccountDetailPagerAdapter(this, args.publicKey)
+        accountDetailPagerAdapter = AccountDetailPagerAdapter(this, accountDetailViewModel.accountAddress)
         binding.accountDetailViewPager.adapter = accountDetailPagerAdapter
     }
 
@@ -394,7 +400,8 @@ class AccountDetailFragment :
     }
 
     private fun navToManageAssetsFragment() {
-        nav(AccountDetailFragmentDirections.actionAccountDetailFragmentToManageAssetsBottomSheet(args.publicKey))
+        nav(AccountDetailFragmentDirections
+            .actionAccountDetailFragmentToManageAssetsBottomSheet(accountDetailViewModel.accountAddress))
     }
 
     private fun onSelectedPageChange(position: Int) {
@@ -414,7 +421,7 @@ class AccountDetailFragment :
     private fun navToRemoveAccountConfirmationNavigation() {
         nav(
             AccountDetailFragmentDirections.actionAccountDetailFragmentToRemoveAccountConfirmationNavigation(
-                accountAddress = accountDetailViewModel.accountPublicKey
+                accountAddress = accountDetailViewModel.accountAddress
             )
         )
     }
@@ -426,10 +433,10 @@ class AccountDetailFragment :
         )
     }
 
-    private fun navToViewPassphraseNavigation(publicKey: String) {
+    private fun navToViewPassphraseNavigation(accountAddress: String) {
         nav(
             AccountDetailFragmentDirections
-                .actionAccountDetailFragmentToViewPassphraseNavigation(publicKey)
+                .actionAccountDetailFragmentToViewPassphraseNavigation(accountAddress)
         )
     }
 
@@ -438,7 +445,7 @@ class AccountDetailFragment :
             AccountDetailFragmentDirections
                 .actionGlobalShowQrNavigation(
                     title = getString(R.string.qr_code),
-                    qrText = accountDetailViewModel.accountPublicKey
+                    qrText = accountDetailViewModel.accountAddress
                 )
         )
     }
@@ -447,7 +454,7 @@ class AccountDetailFragment :
         nav(
             AccountDetailFragmentDirections
                 .actionAccountDetailFragmentToBackupPassphraseInfoNavigation(
-                    publicKeysOfAccountsToBackup = arrayOf(args.publicKey)
+                    publicKeysOfAccountsToBackup = arrayOf(accountDetailViewModel.accountAddress)
                 )
         )
     }
@@ -458,7 +465,7 @@ class AccountDetailFragment :
 
     private fun handleSendClick() {
         if (accountDetailViewModel.canAccountSignTransaction) {
-            val assetTransaction = AssetTransaction(senderAddress = accountDetailViewModel.accountPublicKey)
+            val assetTransaction = AssetTransaction(senderAddress = accountDetailViewModel.accountAddress)
             nav(AccountDetailFragmentDirections.actionGlobalSendAlgoNavigation(assetTransaction))
         } else {
             showActionNotAvailableError()
@@ -468,7 +475,7 @@ class AccountDetailFragment :
     private fun handleAddAssetClick() {
         if (accountDetailViewModel.canAccountSignTransaction) {
             val direction = AccountDetailFragmentDirections
-                .actionAccountDetailFragmentToAssetAdditionNavigation(accountDetailViewModel.accountPublicKey)
+                .actionAccountDetailFragmentToAssetAdditionNavigation(accountDetailViewModel.accountAddress)
             nav(direction)
         } else {
             showActionNotAvailableError()
@@ -480,8 +487,8 @@ class AccountDetailFragment :
             if (canAccountSignTransaction) {
                 with(AccountDetailFragmentDirections) {
                     val destination = when (swapNavigationDestination) {
-                        is Introduction -> actionAccountDetailFragmentToSwapIntroductionNavigation(accountPublicKey)
-                        is Swap -> actionAccountDetailFragmentToSwapNavigation(accountPublicKey)
+                        is Introduction -> actionAccountDetailFragmentToSwapIntroductionNavigation(accountAddress)
+                        is Swap -> actionAccountDetailFragmentToSwapNavigation(accountAddress)
                         else -> null
                     }
                     if (destination != null) nav(destination)
@@ -510,7 +517,7 @@ class AccountDetailFragment :
         nav(
             AccountDetailFragmentDirections
                 .actionAccountDetailFragmentToAssetInboxOneAccountNavigation(
-                    AssetInboxOneAccountNavArgs(args.publicKey)
+                    AssetInboxOneAccountNavArgs(accountDetailViewModel.accountAddress)
                 )
         )
     }

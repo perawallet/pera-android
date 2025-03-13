@@ -38,7 +38,7 @@ class AccountOptionsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    private val publicKey by lazy { savedStateHandle.get<String>(ACCOUNT_PUBLIC_KEY).orEmpty() }
+    val accountAddress = savedStateHandle.get<String>(ACCOUNT_ADDRESS).orEmpty()
 
     val notificationFilterOperationFlow = MutableStateFlow<Resource<Unit>?>(null)
     val notificationFilterCheckFlow = MutableStateFlow<Boolean?>(null)
@@ -53,7 +53,7 @@ class AccountOptionsViewModel @Inject constructor(
 
     private fun initAccountOptionsPreview() {
         viewModelScope.launch(Dispatchers.IO) {
-            accountOptionsPreviewUseCase.getPreview(publicKey)?.let {
+            accountOptionsPreviewUseCase.getPreview(accountAddress)?.let {
                 _accountOptionsPreviewFlow.value = it
             }
         }
@@ -62,19 +62,16 @@ class AccountOptionsViewModel @Inject constructor(
     private fun checkIfNotificationFiltered() {
         viewModelScope.launch(Dispatchers.IO) {
             notificationFilterCheckFlow.value =
-                notificationFilterDao.getNotificationFilterForUser(publicKey).isNotEmpty()
+                notificationFilterDao.getNotificationFilterForUser(accountAddress).isNotEmpty()
         }
     }
 
     fun startFilterOperation(isFiltered: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             notificationFilterOperationFlow.value = Resource.Loading
-            notificationFilterOperationFlow.value = notificationRepository.addNotificationFilter(publicKey, isFiltered)
+            notificationFilterOperationFlow.value = notificationRepository
+                .addNotificationFilter(accountAddress, isFiltered)
         }
-    }
-
-    fun getAccountAddress(): String {
-        return publicKey
     }
 
     fun canDisplayPassphrases(): Boolean {
@@ -96,6 +93,6 @@ class AccountOptionsViewModel @Inject constructor(
     }
 
     companion object {
-        private const val ACCOUNT_PUBLIC_KEY = "publicKey"
+        private const val ACCOUNT_ADDRESS = "accountAddress"
     }
 }

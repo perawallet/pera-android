@@ -26,8 +26,8 @@ class AccountErrorOptionsBottomSheet : BaseAccountOptionsBottomSheet() {
 
     private val args by navArgs<AccountErrorOptionsBottomSheetArgs>()
 
-    override val publicKey: String
-        get() = args.publicKey
+    override val accountAddress: String
+        get() = args.accountAddress
 
     override fun onResume() {
         super.onResume()
@@ -40,21 +40,21 @@ class AccountErrorOptionsBottomSheet : BaseAccountOptionsBottomSheet() {
         setupRemoveAccountButton()
     }
 
-    override fun navToShowQrFragment(title: String, publicKey: String) {
-        nav(AccountErrorOptionsBottomSheetDirections.actionGlobalShowQrNavigation(title, publicKey))
+    override fun navToShowQrFragment(title: String, accountAddress: String) {
+        nav(AccountErrorOptionsBottomSheetDirections.actionGlobalShowQrNavigation(title, accountAddress))
     }
 
     override fun navToViewPassphraseNavigation() {
         nav(
             AccountErrorOptionsBottomSheetDirections
-                .actionAccountErrorOptionsBottomSheetToViewPassphraseNavigation(publicKey)
+                .actionAccountErrorOptionsBottomSheetToViewPassphraseNavigation(accountAddress)
         )
     }
 
     private fun initSavedStateListener() {
         useFragmentResultListenerValue<Boolean>(ACCOUNT_REMOVE_CONFIRMATION_KEY) { isConfirmed ->
             if (isConfirmed) {
-                accountOptionsViewModel.removeAccount(publicKey)
+                accountOptionsViewModel.removeAccount(accountAddress)
                 navBack()
             }
         }
@@ -78,7 +78,7 @@ class AccountErrorOptionsBottomSheet : BaseAccountOptionsBottomSheet() {
         nav(
             AccountErrorOptionsBottomSheetDirections
                 .actionAccountErrorOptionsBottomSheetToRemoveAccountConfirmationNavigation(
-                    accountAddress = publicKey
+                    accountAddress = accountAddress
                 )
         )
     }

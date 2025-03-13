@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import com.algorand.android.core.DaggerBaseFragment
-import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.wallet.ui.theme.PeraTheme
 
 abstract class BaseInfoFragment : DaggerBaseFragment(0) {
 

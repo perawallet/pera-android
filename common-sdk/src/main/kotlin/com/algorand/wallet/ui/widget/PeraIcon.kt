@@ -1,4 +1,4 @@
-package com.algorand.android.ui.compose.widget
+package com.algorand.wallet.ui.widget
 
 import androidx.compose.foundation.Image
 import androidx.compose.material3.MaterialTheme

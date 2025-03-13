@@ -20,11 +20,11 @@ import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraDescriptionText
-import com.algorand.android.ui.compose.widget.PeraIconBig
-import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraSecondaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.wallet.ui.widget.PeraDescriptionText
+import com.algorand.wallet.ui.widget.PeraIconBig
+import com.algorand.wallet.ui.widget.PeraPrimaryButton
+import com.algorand.wallet.ui.widget.PeraSecondaryButton
+import com.algorand.wallet.ui.widget.PeraTitleText
 import com.algorand.android.utils.alertDialog
 import com.algorand.android.utils.showBiometricAuthentication
 import dagger.hilt.android.AndroidEntryPoint

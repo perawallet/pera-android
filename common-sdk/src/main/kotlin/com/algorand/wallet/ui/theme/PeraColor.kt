@@ -1,4 +1,4 @@
-package com.algorand.android.ui.compose.theme
+package com.algorand.wallet.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -31,11 +31,11 @@ import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToBackupPassphraseAccountNameNavigation
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToWriteDownInfoFragment
-import com.algorand.android.ui.compose.widget.PeraDescriptionText
-import com.algorand.android.ui.compose.widget.PeraIconBig
-import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraSecondaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.wallet.ui.widget.PeraDescriptionText
+import com.algorand.wallet.ui.widget.PeraIconBig
+import com.algorand.wallet.ui.widget.PeraPrimaryButton
+import com.algorand.wallet.ui.widget.PeraSecondaryButton
+import com.algorand.wallet.ui.widget.PeraTitleText
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.browser.openRecoveryPassphraseSupportUrl
 import dagger.hilt.android.AndroidEntryPoint

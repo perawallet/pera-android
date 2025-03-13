@@ -1,4 +1,4 @@
-package com.algorand.android.ui.compose.widget
+package com.algorand.wallet.ui.widget
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.algorand.android.R
+import com.algorand.wallet.R
 
 @Composable
 fun PeraTitleText(modifier: Modifier, text: String) {

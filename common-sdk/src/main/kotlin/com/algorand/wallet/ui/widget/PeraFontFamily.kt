@@ -1,9 +1,9 @@
-package com.algorand.android.ui.compose.widget
+package com.algorand.wallet.ui.widget
 
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import com.algorand.android.R
+import com.algorand.wallet.R
 
 val peraSans = FontFamily(
     Font(R.font.dmsans_regular, FontWeight.Normal),

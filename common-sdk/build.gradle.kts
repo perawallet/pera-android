@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.ksp)
     id("kotlin-parcelize")
     id("dagger.hilt.android.plugin")
+
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose)
 }
 
 apply(from = "./test-coverage/kover.gradle")
@@ -34,6 +37,10 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_21.toString()
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     packaging {
@@ -69,6 +76,9 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.material)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.ui.tooling)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
     implementation(libs.firebase.crashlytics)

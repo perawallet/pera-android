@@ -25,7 +25,7 @@ import javax.inject.Inject
 internal class GetAccountMnemonicUseCase @Inject constructor(
     private val getLocalAccount: GetLocalAccount,
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
-    private val getHdKeyPrivateKey: GetHdKeyPrivateKey,
+    private val getHdEntropy: GetHdEntropy,
     private val algoAccountSdk: AlgoAccountSdk,
     private val bip39Sdk: PeraBip39Sdk
 ) : GetAccountMnemonic {
@@ -46,8 +46,15 @@ internal class GetAccountMnemonicUseCase @Inject constructor(
     }
 
     private suspend fun getHdKeyMnemonic(address: String): PeraResult<AccountMnemonic> {
-        val privateKey = getHdKeyPrivateKey(address) ?: return PeraResult.Error(IllegalArgumentException())
-        val mnemonic = bip39Sdk.getMnemonicFromEntropy(privateKey)
+        val localAccount = getLocalAccount(address)
+        if (localAccount !is LocalAccount.HdKey) {
+            return PeraResult.Error(IllegalArgumentException("Account is not an HD key account."))
+        }
+
+        val entropy = getHdEntropy(localAccount.seedId) ?:
+            return PeraResult.Error(IllegalArgumentException("HD entropy not found for seed"))
+
+        val mnemonic = bip39Sdk.getMnemonicFromEntropy(entropy)
         return getAccountMnemonic(mnemonic, HdKey)
     }
 

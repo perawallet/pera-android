@@ -31,9 +31,9 @@ abstract class BaseAccountOptionsBottomSheet : DaggerBaseBottomSheet(
 
     protected val accountOptionsViewModel: AccountOptionsViewModel by viewModels()
 
-    abstract val publicKey: String
+    abstract val accountAddress: String
 
-    abstract fun navToShowQrFragment(title: String, publicKey: String)
+    abstract fun navToShowQrFragment(title: String, accountAddress: String)
 
     abstract fun navToViewPassphraseNavigation()
 
@@ -47,16 +47,16 @@ abstract class BaseAccountOptionsBottomSheet : DaggerBaseBottomSheet(
     private fun setupCopyButton() {
         with(binding) {
             copyAddressLayout.setOnClickListener {
-                onAccountAddressCopied(accountOptionsViewModel.getAccountAddress())
+                onAccountAddressCopied(accountOptionsViewModel.accountAddress)
                 navBack()
             }
-            addressTextView.text = accountOptionsViewModel.getAccountAddress()
+            addressTextView.text = accountOptionsViewModel.accountAddress
         }
     }
 
     private fun setupShowQrButton() {
         binding.showQrButton.setOnClickListener {
-            navToShowQrFragment(getString(R.string.qr_code), publicKey)
+            navToShowQrFragment(getString(R.string.qr_code), accountOptionsViewModel.accountAddress)
         }
     }
 
@@ -67,9 +67,5 @@ abstract class BaseAccountOptionsBottomSheet : DaggerBaseBottomSheet(
                 setOnClickListener { navToViewPassphraseNavigation() }
             }
         }
-    }
-
-    companion object {
-        private const val ADDRESS_COPY_LABEL = "address"
     }
 }

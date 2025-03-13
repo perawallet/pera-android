@@ -10,15 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.ui.viewpassphrase.viewmodel
+package com.algorand.wallet.ui.accountdetail.viewpassphrase
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.wallet.account.local.domain.model.AccountMnemonic
 import com.algorand.wallet.account.local.domain.usecase.GetAccountMnemonic
-import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewEvent
-import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewState
-import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewState.Idle
+import com.algorand.wallet.ui.accountdetail.viewpassphrase.ViewPassphraseViewModel.ViewEvent
+import com.algorand.wallet.ui.accountdetail.viewpassphrase.ViewPassphraseViewModel.ViewState
+import com.algorand.wallet.ui.accountdetail.viewpassphrase.ViewPassphraseViewModel.ViewState.Idle
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate

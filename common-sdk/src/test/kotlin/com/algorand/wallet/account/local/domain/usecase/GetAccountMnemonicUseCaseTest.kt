@@ -29,14 +29,14 @@ class GetAccountMnemonicUseCaseTest {
 
     private val getLocalAccount: GetLocalAccount = mockk()
     private val getAlgo25SecretKey: GetAlgo25SecretKey = mockk()
-    private val getHdKeyPrivateKey: GetHdKeyPrivateKey = mockk()
+    private val getHdEntropy: GetHdEntropy = mockk()
     private val algoAccountSdk: AlgoAccountSdk = mockk()
     private val bip39Sdk: PeraBip39Sdk = mockk()
 
     private val sut = GetAccountMnemonicUseCase(
         getLocalAccount,
         getAlgo25SecretKey,
-        getHdKeyPrivateKey,
+        getHdEntropy,
         algoAccountSdk,
         bip39Sdk
     )
@@ -97,7 +97,7 @@ class GetAccountMnemonicUseCaseTest {
     @Test
     fun `EXPECT error WHEN account type is HdKey and private key is null`() = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns HD_KEY
-        coEvery { getHdKeyPrivateKey(ADDRESS) } returns null
+        coEvery { getHdEntropy(HD_KEY.seedId) } returns null
 
         val result = sut(ADDRESS)
 
@@ -107,8 +107,8 @@ class GetAccountMnemonicUseCaseTest {
     @Test
     fun `EXPECT error WHEN account type is HdKey and mnemonic is blank`() = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns HD_KEY
-        coEvery { getHdKeyPrivateKey(ADDRESS) } returns SECRET_KEY
-        coEvery { bip39Sdk.getMnemonicFromEntropy(SECRET_KEY) } returns ""
+        coEvery { getHdEntropy(HD_KEY.seedId) } returns HD_ENTROPY
+        coEvery { bip39Sdk.getMnemonicFromEntropy(HD_ENTROPY) } returns ""
 
         val result = sut(ADDRESS)
 
@@ -118,8 +118,8 @@ class GetAccountMnemonicUseCaseTest {
     @Test
     fun `EXPECT error WHEN account type is HdKey and mnemonic is null`() = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns HD_KEY
-        coEvery { getHdKeyPrivateKey(ADDRESS) } returns SECRET_KEY
-        coEvery { bip39Sdk.getMnemonicFromEntropy(SECRET_KEY) } returns null
+        coEvery { getHdEntropy(HD_KEY.seedId) } returns HD_ENTROPY
+        coEvery { bip39Sdk.getMnemonicFromEntropy(HD_ENTROPY) } returns null
 
         val result = sut(ADDRESS)
 
@@ -129,8 +129,8 @@ class GetAccountMnemonicUseCaseTest {
     @Test
     fun `EXPECT mnemonic WHEN account type is HdKey and mnemonic is valid`() = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns HD_KEY
-        coEvery { getHdKeyPrivateKey(ADDRESS) } returns SECRET_KEY
-        coEvery { bip39Sdk.getMnemonicFromEntropy(SECRET_KEY) } returns MNEMONIC
+        coEvery { getHdEntropy(HD_KEY.seedId) } returns HD_ENTROPY
+        coEvery { bip39Sdk.getMnemonicFromEntropy(HD_ENTROPY) } returns MNEMONIC
 
         val result = sut(ADDRESS)
 
@@ -146,5 +146,6 @@ class GetAccountMnemonicUseCaseTest {
         val NO_AUTH = peraFixture<LocalAccount.NoAuth>()
         val ALGO_25 = peraFixture<LocalAccount.Algo25>()
         val HD_KEY = peraFixture<LocalAccount.HdKey>()
+        val HD_ENTROPY = byteArrayOf(1, 2, 3)
     }
 }

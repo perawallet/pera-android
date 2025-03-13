@@ -45,7 +45,7 @@ class AccountDetailViewModel @Inject constructor(
     private val getAccountDetailSummary: GetAccountDetailSummary
 ) : BaseViewModel() {
 
-    val accountPublicKey: String = savedStateHandle.getOrThrow(ACCOUNT_PUBLIC_KEY)
+    val accountAddress: String = savedStateHandle.getOrThrow(PUBLIC_KEY)
     private val accountDetailTab = savedStateHandle.get<AccountDetailTab?>(ACCOUNT_DETAIL_TAB)
 
     private val _accountDetailTabArgFlow = MutableStateFlow<Event<Int>?>(null)
@@ -84,7 +84,7 @@ class AccountDetailViewModel @Inject constructor(
 
     fun initAccountDetailPreview() {
         viewModelScope.launchIO {
-            getAccountDetailFlow(accountPublicKey).collectLatest { accountDetail ->
+            getAccountDetailFlow(accountAddress).collectLatest { accountDetail ->
                 if (accountDetail != null) {
                     _accountDetailPreviewFlow.update {
                         AccountDetailPreview(getAccountDetailSummary(accountDetail), null)
@@ -117,14 +117,15 @@ class AccountDetailViewModel @Inject constructor(
             accountDetailFragmentEventTracker.logAccountDetailSwapButtonClickEvent()
             _accountDetailPreviewFlow.update {
                 it?.copy(
-                    swapNavigationDestinationEvent = Event(getSwapNavigationDestination(accountPublicKey))
+                    swapNavigationDestinationEvent = Event(getSwapNavigationDestination(accountAddress))
                 )
             }
         }
     }
 
     companion object {
-        private const val ACCOUNT_PUBLIC_KEY = "publicKey"
+        private const val PUBLIC_KEY = "publicKey"
+        private const val ACCOUNT_ADDRESS = "accountAddress"
         private const val ACCOUNT_DETAIL_TAB = "accountDetailTab"
     }
 }

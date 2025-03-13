@@ -27,12 +27,12 @@ import com.algorand.android.utils.enableScreenCapture
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.viewbinding.viewBinding
-import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel
-import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewEvent.NavigateBack
-import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewEvent.ShowGenericError
-import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewState.Content
-import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewState.Idle
-import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewState.Loading
+import com.algorand.wallet.ui.accountdetail.viewpassphrase.ViewPassphraseViewModel
+import com.algorand.wallet.ui.accountdetail.viewpassphrase.ViewPassphraseViewModel.ViewEvent.NavigateBack
+import com.algorand.wallet.ui.accountdetail.viewpassphrase.ViewPassphraseViewModel.ViewEvent.ShowGenericError
+import com.algorand.wallet.ui.accountdetail.viewpassphrase.ViewPassphraseViewModel.ViewState.Content
+import com.algorand.wallet.ui.accountdetail.viewpassphrase.ViewPassphraseViewModel.ViewState.Idle
+import com.algorand.wallet.ui.accountdetail.viewpassphrase.ViewPassphraseViewModel.ViewState.Loading
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -82,7 +82,7 @@ class ViewPassphraseFragment : DaggerBaseFragment(R.layout.fragment_view_passphr
         super.onResume()
         view?.viewTreeObserver?.addOnWindowFocusChangeListener(onWindowFocusChangeListener)
         activity?.disableScreenCapture()
-        val address = requireArguments().getString(PUBLIC_KEY).orEmpty()
+        val address = requireArguments().getString(ACCOUNT_ADDRESS).orEmpty()
         viewPassphraseViewModel.initViewState(address)
     }
 
@@ -111,6 +111,6 @@ class ViewPassphraseFragment : DaggerBaseFragment(R.layout.fragment_view_passphr
     }
 
     private companion object {
-        const val PUBLIC_KEY = "publicKey"
+        const val ACCOUNT_ADDRESS = "accountAddress"
     }
 }

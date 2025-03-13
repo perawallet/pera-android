@@ -12,19 +12,22 @@
 
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
-package com.algorand.wallet.ui.viewpassphrase.viewmodel
+package com.algorand.wallet.ui.accountdetail.viewpassphrase
 
 import com.algorand.test.peraFixture
 import com.algorand.test.test
 import com.algorand.wallet.account.local.domain.model.AccountMnemonic
 import com.algorand.wallet.account.local.domain.usecase.GetAccountMnemonic
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewEvent
-import com.algorand.wallet.ui.viewpassphrase.viewmodel.ViewPassphraseViewModel.ViewState
+import com.algorand.wallet.ui.accountdetail.viewpassphrase.ViewPassphraseViewModel.ViewEvent
+import com.algorand.wallet.ui.accountdetail.viewpassphrase.ViewPassphraseViewModel.ViewState
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.StateDelegate
 import io.mockk.coEvery
 import io.mockk.mockk
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
@@ -32,9 +35,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
 
 class ViewPassphraseViewModelTest {
 

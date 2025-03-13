@@ -27,6 +27,7 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
+import com.algorand.android.modules.qrscanning.QrScannerViewModel.ViewEvent
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.utils.CAMERA_PERMISSION
 import com.algorand.android.utils.CAMERA_PERMISSION_REQUEST_CODE
@@ -61,6 +62,18 @@ abstract class BaseQrScannerFragment(
     private val fragmentId: Int
 ) : BaseFragment(R.layout.fragment_qr_code_scanner), DeeplinkHandler.Listener {
 
+    private val viewEventCollector: suspend (ViewEvent) -> Unit = { event ->
+        when (event) {
+            is ViewEvent.NavigateToKeyRegTransactionFragment -> navToKeyRegTransactionFragment(
+                event.transactionDetail
+            )
+
+            is ViewEvent.ShowKeyRegDeeplinkError -> showKeyRegDeeplinkError(
+                event.address
+            )
+        }
+    }
+
     private val isCameraPermissionGranted: Boolean
         get() = view?.context?.isPermissionGranted(CAMERA_PERMISSION) ?: false
 
@@ -84,6 +97,20 @@ abstract class BaseQrScannerFragment(
         resumeCameraIfPossibleOrPause()
     }
 
+    private val barcodeCallback: BarcodeCallback = object : BarcodeCallback {
+        override fun barcodeResult(barcodeResult: BarcodeResult?) {
+            view?.let {
+                binding.cameraPreview.pause()
+                if (barcodeResult != null) qrScannerViewModel.handleDeeplink(barcodeResult.text)
+                resumeCameraIfPossibleOrPause()
+            }
+        }
+
+        override fun possibleResultPoints(resultPoints: MutableList<ResultPoint>?) {
+            // nothing to do
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
@@ -96,9 +123,64 @@ abstract class BaseQrScannerFragment(
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        startSavedStateListener(fragmentId) {
+            useSavedStateValue<Boolean>(SingleButtonBottomSheet.CLOSE_KEY) { isSuccessBottomSheetClosed ->
+                if (isSuccessBottomSheetClosed) {
+                    navBack()
+                }
+            }
+        }
+        resumeCameraIfPossibleOrPause()
+        view?.viewTreeObserver?.addOnWindowFocusChangeListener(onWindowFocusChangeListener)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.cameraPreview.pause()
+        view?.viewTreeObserver?.removeOnWindowFocusChangeListener(onWindowFocusChangeListener)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         qrScannerViewModel.removeDeeplinkHandlerListener()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            setupBarcodeView()
+            resumeCameraIfPossibleOrPause()
+        }
+    }
+
+    override fun onUndefinedDeepLink(deepLink: DeepLink.Undefined) {
+        showGlobalError(getString(R.string.scanned_qr_is_not_valid))
+    }
+
+    override fun onDeepLinkNotHandled(deepLink: DeepLink) {
+        showGlobalError(getString(R.string.scanned_qr_is_not_valid))
+    }
+
+    override fun onKeyRegDeeplink(deepLink: DeepLink.KeyReg): Boolean {
+        qrScannerViewModel.handleKeyRegDeepLink(deepLink)
+        return true
+    }
+
+    override fun onDiscoverDeepLink(path: String): Boolean {
+        (activity as? MainActivity)?.navToDiscoverWithPath(path)
+        return true
+    }
+
+    override fun onCardsDeepLink(path: String): Boolean {
+        (activity as? MainActivity)?.navToCardsFragment(path)
+        return true
+    }
+
+    override fun onStakingDeepLink(path: String): Boolean {
+        (activity as? MainActivity)?.navToStakingFragment(path)
+        return true
     }
 
     private fun initUi() {
@@ -120,6 +202,11 @@ abstract class BaseQrScannerFragment(
             qrScannerViewModel.isQrCodeInProgressFlow,
             ::onQrCodeProgressChanged
         )
+
+        collectLatestOnLifecycle(
+            qrScannerViewModel.viewEvent,
+            viewEventCollector
+        )
     }
 
     private fun onLeftArrowButtonClicked() {
@@ -137,47 +224,6 @@ abstract class BaseQrScannerFragment(
                 decodeContinuous(barcodeCallback)
             }
         }
-    }
-
-    private val barcodeCallback: BarcodeCallback = object : BarcodeCallback {
-        override fun barcodeResult(barcodeResult: BarcodeResult?) {
-            view?.let {
-                binding.cameraPreview.pause()
-                if (barcodeResult != null) qrScannerViewModel.handleDeeplink(barcodeResult.text)
-                resumeCameraIfPossibleOrPause()
-            }
-        }
-
-        override fun possibleResultPoints(resultPoints: MutableList<ResultPoint>?) {
-            // nothing to do
-        }
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            setupBarcodeView()
-            resumeCameraIfPossibleOrPause()
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        startSavedStateListener(fragmentId) {
-            useSavedStateValue<Boolean>(SingleButtonBottomSheet.CLOSE_KEY) { isSuccessBottomSheetClosed ->
-                if (isSuccessBottomSheetClosed) {
-                    navBack()
-                }
-            }
-        }
-        resumeCameraIfPossibleOrPause()
-        view?.viewTreeObserver?.addOnWindowFocusChangeListener(onWindowFocusChangeListener)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        binding.cameraPreview.pause()
-        view?.viewTreeObserver?.removeOnWindowFocusChangeListener(onWindowFocusChangeListener)
     }
 
     private fun onGetLocalSessionsSuccess(wcSessions: List<WalletConnect.SessionDetail>) {
@@ -215,50 +261,11 @@ abstract class BaseQrScannerFragment(
         }
     }
 
-    override fun onUndefinedDeepLink(deepLink: DeepLink.Undefined) {
-        showGlobalError(getString(R.string.scanned_qr_is_not_valid))
+    private fun navToKeyRegTransactionFragment(transactionDetail: KeyRegTransactionDetail) {
+        nav(HomeNavigationDirections.actionGlobalKeyRegTransactionFragment(transactionDetail))
     }
 
-    override fun onDeepLinkNotHandled(deepLink: DeepLink) {
-        showGlobalError(getString(R.string.scanned_qr_is_not_valid))
-    }
-
-    override fun onKeyRegDeeplink(deepLink: DeepLink.KeyReg): Boolean {
-        val txnDetail = KeyRegTransactionDetail(
-            address = deepLink.senderAddress,
-            type = deepLink.type,
-            voteKey = deepLink.voteKey,
-            selectionPublicKey = deepLink.selkey,
-            sprfkey = deepLink.sprfkey,
-            voteFirstRound = deepLink.votefst,
-            voteLastRound = deepLink.votelst,
-            voteKeyDilution = deepLink.votekd,
-            fee = deepLink.fee?.toBigIntegerOrNull(),
-            note = deepLink.note,
-            xnote = deepLink.xnote
-        )
-
-        if (qrScannerViewModel.hasAccountAuthority(deepLink.senderAddress)) {
-            nav(HomeNavigationDirections.actionGlobalKeyRegTransactionFragment(txnDetail))
-        } else {
-            showGlobalError(getString(R.string.you_dont_have_any, deepLink.senderAddress))
-        }
-
-        return true
-    }
-
-    override fun onDiscoverDeepLink(path: String): Boolean {
-        (activity as? MainActivity)?.navToDiscoverWithPath(path)
-        return true
-    }
-
-    override fun onCardsDeepLink(path: String): Boolean {
-        (activity as? MainActivity)?.navToCardsFragment(path)
-        return true
-    }
-
-    override fun onStakingDeepLink(path: String): Boolean {
-        (activity as? MainActivity)?.navToStakingFragment(path)
-        return true
+    private fun showKeyRegDeeplinkError(accountAddress: String) {
+        showGlobalError(getString(R.string.you_dont_have_any, accountAddress))
     }
 }

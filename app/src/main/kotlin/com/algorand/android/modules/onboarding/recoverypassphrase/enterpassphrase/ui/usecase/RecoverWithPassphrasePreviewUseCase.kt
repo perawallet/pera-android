@@ -13,14 +13,11 @@
 package com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.core.AccountManager
 import com.algorand.android.customviews.passphraseinput.usecase.PassphraseInputGroupUseCase
 import com.algorand.android.customviews.passphraseinput.util.PassphraseInputConfigurationUtil
-import com.algorand.android.models.Account.Type
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.OnboardingAccountType
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.domain.usecase.GetRekeyedAccountUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.mapper.RecoverWithPassphrasePreviewMapper
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.model.RecoverWithPassphrasePreview
@@ -29,7 +26,8 @@ import com.algorand.android.utils.PassphraseKeywordUtils
 import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
@@ -42,13 +40,11 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val recoverWithPassphrasePreviewMapper: RecoverWithPassphrasePreviewMapper,
     private val passphraseInputGroupUseCase: PassphraseInputGroupUseCase,
     private val passphraseInputConfigurationUtil: PassphraseInputConfigurationUtil,
-    private val accountManager: AccountManager,
     private val getRekeyedAccountUseCase: GetRekeyedAccountUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase,
-    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
-    private val aesPlatformManager: AESPlatformManager,
     private val peraBip39Sdk: PeraBip39Sdk,
-    private val algoAccountSdk: AlgoAccountSdk
+    private val algoAccountSdk: AlgoAccountSdk,
+    private val getAccountRegistrationType: GetAccountRegistrationType,
+    private val aesPlatformManager: AESPlatformManager
 ) {
 
     fun getRecoverWithPassphraseInitialPreview(
@@ -72,8 +68,8 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         return if (
             splittedText.size != OnboardingAccountType.Algo25.wordCount &&
             splittedText.size != OnboardingAccountType.HdKey.wordCount
-            ) {
-                preview.copy(onGlobalErrorEvent = Event(R.string.the_last_copied_text))
+        ) {
+            preview.copy(onGlobalErrorEvent = Event(R.string.the_last_copied_text))
         } else {
             val inputGroupConfiguration = passphraseInputGroupUseCase.recoverPassphraseInputGroupConfiguration(
                 configuration = preview.passphraseInputGroupConfiguration,
@@ -151,17 +147,15 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
             }
 
             if (onboardingAccountType == OnboardingAccountType.Algo25) {
-                accountAddress = recoveredAccount.address // Get the address from the created account
+                accountAddress = recoveredAccount.address
 
-                val isThereAnyAccountWithAddress = isThereAnyAccountWithAddress(accountAddress)
-                if (isThereAnyAccountWithAddress) {
-                    val account = accountManager.getAccount(accountAddress)
-                    val isAccountPromotable = when (account?.type) {
-                        Type.STANDARD -> !accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                        Type.LEDGER -> false
-                        else -> true
+                val accountRegistrationType = getAccountRegistrationType(accountAddress)
+                if (accountRegistrationType != null) {
+                    val isLocalAccountReplaceable = when (accountRegistrationType) {
+                        AccountRegistrationType.NoAuth -> true
+                        else -> false
                     }
-                    if (account != null && !isAccountPromotable) {
+                    if (!isLocalAccountReplaceable) {
                         emit(preview.copy(onGlobalErrorEvent = Event(R.string.this_account_already_exists)))
                         return@flow
                     }

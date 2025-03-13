@@ -43,6 +43,10 @@ internal class Algo25AccountRepositoryImpl @Inject constructor(
         return algo25Dao.getTableSizeAsFlow()
     }
 
+    override suspend fun getAccountCount(): Int {
+        return algo25Dao.getTableSize()
+    }
+
     override suspend fun getAll(): List<Algo25> {
         return withContext(coroutineDispatcher) {
             val algo25Entities = algo25Dao.getAll()

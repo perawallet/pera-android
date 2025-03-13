@@ -92,11 +92,13 @@ class RekeyToLedgerAccountConfirmationViewModel @Inject constructor(
     }
 
     fun onConfirmRekeyClick() {
-        rekeyToLedgerAccountConfirmationPreviewFlow.update { preview ->
-            rekeyToLedgerAccountConfirmationPreviewUseCase.updatePreviewWithRekeyConfirmationClick(
-                accountAddress = accountAddress,
-                preview = preview
-            )
+        viewModelScope.launchIO {
+            rekeyToLedgerAccountConfirmationPreviewFlow.update { preview ->
+                rekeyToLedgerAccountConfirmationPreviewUseCase.updatePreviewWithRekeyConfirmationClick(
+                    accountAddress = accountAddress,
+                    preview = preview
+                )
+            }
         }
     }
 

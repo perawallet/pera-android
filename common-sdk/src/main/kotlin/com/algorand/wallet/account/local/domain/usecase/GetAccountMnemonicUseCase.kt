@@ -41,7 +41,7 @@ internal class GetAccountMnemonicUseCase @Inject constructor(
 
     private suspend fun getAlgo25Mnemonic(address: String): PeraResult<AccountMnemonic> {
         val secretKey = getAlgo25SecretKey(address) ?: return PeraResult.Error(IllegalArgumentException())
-        val mnemonic = algoAccountSdk.getMnemonicFromSecretKey(secretKey)
+        val mnemonic = algoAccountSdk.getMnemonicFromAlgo25SecretKey(secretKey)
         return getAccountMnemonic(mnemonic, Algo25)
     }
 

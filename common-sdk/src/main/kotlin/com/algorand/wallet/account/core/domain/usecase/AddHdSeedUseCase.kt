@@ -29,32 +29,42 @@ internal class AddHdSeedUseCase @Inject constructor(
 
     override suspend fun invoke(entropy: ByteArray): PeraResult<Int> {
         val existingSeedId = getSeedIdIfExistingEntropy.invoke(entropy)
-        existingSeedId?.let {
-            // seedId already exists in hd_seeds table
-            return PeraResult.Success(it)
-        } ?: run {
-            // seedId doesn't exists in hd_seeds table
-            var seed = peraBip39Sdk.getSeedFromEntropy(entropy)
-            seed?.let {
-                val newSeedIdInDB = hdSeedRepository.addHdSeed(
-                    seedId = 0, // Seed will be auto-generated, update name next step
-                    seed = it,
-                    entropy = entropy
-                ).toInt()
-
-                customHdSeedInfoRepository.setCustomInfo(
-                    CustomHdSeedInfo(
-                        seedId = newSeedIdInDB,
-                        entropyCustomName = "Wallet #${newSeedIdInDB}",
-                        orderIndex = newSeedIdInDB,
-                        isBackedUp = false
-                    )
-                )
-                seed = ByteArray(0)
-                return PeraResult.Success(newSeedIdInDB)
-            } ?: run {
-                return PeraResult.Error(Exception("Failed to insert hd seed"))
-            }
+        return if (existingSeedId != null) {
+            PeraResult.Success(existingSeedId)
+        } else {
+            createNewSeed(entropy)
         }
+    }
+
+    private suspend fun createNewSeed(entropy: ByteArray): PeraResult<Int> {
+        try {
+            val seed = peraBip39Sdk.getSeedFromEntropy(entropy)
+                ?: return PeraResult.Error(Exception("Failed to generate seed from entropy"))
+            val newSeedId = addHdSeed(seed, entropy)
+            setCustomInfo(newSeedId)
+            seed.fill(0)
+            return PeraResult.Success(newSeedId)
+        } catch (e: Exception) {
+            return PeraResult.Error(e)
+        }
+    }
+
+    private suspend fun addHdSeed(seed: ByteArray, entropy: ByteArray): Int {
+        return hdSeedRepository.addHdSeed(
+            seedId = 0, // ID will be auto-generated
+            seed = seed,
+            entropy = entropy
+        ).toInt()
+    }
+
+    private suspend fun setCustomInfo(seedId: Int) {
+        customHdSeedInfoRepository.setCustomInfo(
+            CustomHdSeedInfo(
+                seedId = seedId,
+                entropyCustomName = "Wallet #$seedId",
+                orderIndex = seedId,
+                isBackedUp = false
+            )
+        )
     }
 }

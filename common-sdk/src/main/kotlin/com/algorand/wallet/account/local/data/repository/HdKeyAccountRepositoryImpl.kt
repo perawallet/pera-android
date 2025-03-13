@@ -43,6 +43,10 @@ internal class HdKeyAccountRepositoryImpl @Inject constructor(
         return hdKeyDao.getTableSizeAsFlow()
     }
 
+    override suspend fun getAccountCount(): Int {
+        return hdKeyDao.getTableSize()
+    }
+
     override suspend fun getAll(): List<HdKey> {
         return withContext(coroutineDispatcher) {
             val hdKeyEntities = hdKeyDao.getAll()

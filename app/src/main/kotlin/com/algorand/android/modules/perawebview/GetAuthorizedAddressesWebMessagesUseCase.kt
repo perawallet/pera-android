@@ -13,13 +13,14 @@
 package com.algorand.android.modules.perawebview
 
 import com.algorand.android.modules.peraserializer.PeraSerializer
-import com.algorand.android.usecase.GetLocalAccountsUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import com.google.crypto.tink.subtle.Base64
 import javax.inject.Inject
 
 class GetAuthorizedAddressesWebMessagesUseCase @Inject constructor(
-    private val localAccountsUseCase: GetLocalAccountsUseCase,
+    private val getAccountsDetails: GetAccountsDetails,
     private val peraSerializer: PeraSerializer,
     private val peraWebMessageBuilder: PeraWebMessageBuilder,
     private val getAccountAlgoBalance: GetAccountAlgoBalance
@@ -32,12 +33,12 @@ class GetAuthorizedAddressesWebMessagesUseCase @Inject constructor(
     }
 
     private suspend fun getAddressNameMap(): List<Map<String, String>> {
-        val localAccounts = localAccountsUseCase.getLocalAccountsThatCanSignTransaction()
+        val localAccounts = getAccountsDetails().filter { it.accountType?.canSignTransaction() == true }
         val sortedAddressAlgoBalanceMap = localAccounts.map {
             it to getAccountAlgoBalance(it.address)
         }.sortedByDescending { (_, algoBalance) -> algoBalance }
         return sortedAddressAlgoBalanceMap.map { (account, _) ->
-            mapOf(account.address to account.name)
+            mapOf(account.address to account.customAccountInfo?.customName.orEmpty())
         }
     }
 

@@ -13,17 +13,19 @@
 package com.algorand.android.modules.assetinbox.send.ui
 
 import com.algorand.android.R
+import com.algorand.android.core.transaction.external.ExternalTransactionSignManager
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.LedgerBleSearchManager
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.assetinbox.send.domain.mapper.Arc59SignedTransactionDetailMapper
 import com.algorand.android.modules.assetinbox.send.domain.model.Arc59SendTransaction
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionQueuingHelper
-import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignManager
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.Error
 import com.algorand.android.modules.transaction.signmanager.ExternalTransactionSignResult.Success
-import com.algorand.android.usecase.AccountDetailUseCase
+import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
+import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
 import javax.inject.Inject
 import kotlinx.coroutines.flow.map
 
@@ -32,12 +34,16 @@ class Arc59SendTransactionSignManager @Inject constructor(
     ledgerBleSearchManager: LedgerBleSearchManager,
     ledgerBleOperationManager: LedgerBleOperationManager,
     externalTransactionQueuingHelper: ExternalTransactionQueuingHelper,
-    accountDetailUseCase: AccountDetailUseCase
+    getTransactionSigner: GetTransactionSigner,
+    getAlgo25SecretKey: GetAlgo25SecretKey,
+    getHdKeyPrivateKey: GetHdKeyPrivateKey
 ) : ExternalTransactionSignManager<Arc59SendTransaction>(
     ledgerBleSearchManager,
     ledgerBleOperationManager,
     externalTransactionQueuingHelper,
-    accountDetailUseCase
+    getTransactionSigner,
+    getAlgo25SecretKey,
+    getHdKeyPrivateKey
 ) {
 
     private var unsignedTransactions: List<Arc59SendTransaction>? = null

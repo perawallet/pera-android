@@ -33,7 +33,9 @@ val excludedClasses = listOf(
     "*.data.service.*",
     "*.database.model.*",
     "*.database.dao.*",
-    "*PeraResult*"
+    "*PeraResult*",
+    "*ui.widget*",
+    "*ui.theme*"
 )
 
 val excludedPackages = listOf(

@@ -25,6 +25,8 @@ import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
+import java.math.BigDecimal
+import java.math.BigInteger
 import javax.inject.Inject
 
 internal class PeraBip39SdkImpl @Inject constructor(
@@ -145,8 +147,8 @@ internal class PeraBip39SdkImpl @Inject constructor(
 
                             val tempAccount = RegisteredAlgorandAccount(
                                 address = algoAddress,
-                                algoValue = fastLookupAccount?.algoValue ?: "0.000",
-                                usdValue = fastLookupAccount?.algoValue ?: "0.000",
+                                algoValue = fastLookupAccount?.algoValue ?: BigDecimal.ZERO,
+                                usdValue = fastLookupAccount?.algoValue ?: BigDecimal.ZERO,
                                 calculationType = fastLookupAccount?.calculationType ?: "exact",
                                 accountExists = fastLookupAccount?.accountExists ?: false,
                                 account = accountIndex,

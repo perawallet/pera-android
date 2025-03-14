@@ -13,6 +13,8 @@
 package com.algorand.wallet.account.info.data.mapper.model
 
 import com.algorand.wallet.account.info.data.model.AccountFastLookupResponse
+import com.algorand.wallet.account.info.domain.model.AccountFastLookup
+import java.math.BigDecimal
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -35,12 +37,16 @@ class AccountFastLookupMapperImplTest {
             accountExists = true
         )
 
+        val expected = AccountFastLookup(
+            algoValue = BigDecimal("1000000"),
+            usdValue = BigDecimal("150.25"),
+            calculationType = "estimated",
+            accountExists = true
+        )
+
         val result = sut.invoke(response)
 
-        assertEquals("1000000", result.algoValue)
-        assertEquals("150.25", result.usdValue)
-        assertEquals("estimated", result.calculationType)
-        assertEquals(true, result.accountExists)
+        assertEquals(expected, result)
     }
 
     @Test
@@ -52,11 +58,15 @@ class AccountFastLookupMapperImplTest {
             accountExists = false
         )
 
+        val expected = AccountFastLookup(
+            algoValue = BigDecimal.ZERO,
+            usdValue = BigDecimal.ZERO,
+            calculationType = "estimated",
+            accountExists = false
+        )
+
         val result = sut.invoke(response)
 
-        assertEquals("0", result.algoValue)
-        assertEquals("0.00", result.usdValue)
-        assertEquals("estimated", result.calculationType)
-        assertEquals(false, result.accountExists)
+        assertEquals(expected, result)
     }
 }

@@ -15,6 +15,7 @@ package com.algorand.wallet.account.info.domain.usecase
 import com.algorand.wallet.account.info.data.mapper.model.AccountFastLookupMapper
 import com.algorand.wallet.account.info.data.repository.AccountFastLookupRepository
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
+import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 
 internal class GetAccountFastLookupUseCase @Inject constructor(
@@ -22,10 +23,19 @@ internal class GetAccountFastLookupUseCase @Inject constructor(
     private val accountFastLookupMapper: AccountFastLookupMapper
 ) : GetAccountFastLookup {
 
-    override suspend operator fun invoke(address: String): AccountFastLookup? {
-        val data = accountFastLookupRepository.fetchAccountFastLookup(address).getDataOrNull()
-        return data?.let {
-            accountFastLookupMapper(it)
+    override suspend operator fun invoke(address: String): PeraResult<AccountFastLookup> {
+        try {
+            val response = accountFastLookupRepository.fetchAccountFastLookup(address)
+            response.getDataOrNull()?.let { data ->
+                val accountFastLookup = accountFastLookupMapper(
+                    response = data
+                )
+                return PeraResult.Success(accountFastLookup)
+            } ?: run {
+                throw IllegalArgumentException("Empty AccountFastLookupResponse object")
+            }
+        } catch (e: Exception) {
+            return PeraResult.Error(exception = e)
         }
     }
 }

@@ -21,8 +21,8 @@ internal class AccountFastLookupMapperImpl @Inject constructor() : AccountFastLo
         response: AccountFastLookupResponse
     ): AccountFastLookup {
         return AccountFastLookup(
-            algoValue = response.algoValue,
-            usdValue = response.usdValue,
+            algoValue = response.algoValue.toBigDecimal(),
+            usdValue = response.usdValue.toBigDecimal(),
             calculationType = response.calculationType,
             accountExists = response.accountExists,
         )

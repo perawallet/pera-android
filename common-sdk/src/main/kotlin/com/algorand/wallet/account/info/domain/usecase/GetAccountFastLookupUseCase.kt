@@ -13,17 +13,17 @@
 package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.wallet.account.info.data.mapper.model.AccountFastLookupMapper
-import com.algorand.wallet.account.info.data.repository.AccountFastLookupFetchHelper
+import com.algorand.wallet.account.info.data.repository.AccountFastLookupRepository
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import javax.inject.Inject
 
 internal class GetAccountFastLookupUseCase @Inject constructor(
-    private val accountFastLookupFetchHelper: AccountFastLookupFetchHelper,
+    private val accountFastLookupRepository: AccountFastLookupRepository,
     private val accountFastLookupMapper: AccountFastLookupMapper
 ) : GetAccountFastLookup {
 
     override suspend operator fun invoke(address: String): AccountFastLookup? {
-        val data = accountFastLookupFetchHelper.fetchAccountFastLookup(address).getDataOrNull()
+        val data = accountFastLookupRepository.fetchAccountFastLookup(address).getDataOrNull()
         return data?.let {
             accountFastLookupMapper(it)
         }

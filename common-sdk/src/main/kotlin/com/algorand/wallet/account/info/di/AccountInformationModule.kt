@@ -34,8 +34,8 @@ import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapperImpl
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelper
 import com.algorand.wallet.account.info.data.repository.AccountAssetHoldingsFetchHelperImpl
-import com.algorand.wallet.account.info.data.repository.AccountFastLookupFetchHelper
-import com.algorand.wallet.account.info.data.repository.AccountFastLookupFetchHelperImpl
+import com.algorand.wallet.account.info.data.repository.AccountFastLookupRepository
+import com.algorand.wallet.account.info.data.repository.AccountFastLookupRepositoryImpl
 import com.algorand.wallet.account.info.data.repository.AccountInformationCacheHelper
 import com.algorand.wallet.account.info.data.repository.AccountInformationCacheHelperImpl
 import com.algorand.wallet.account.info.data.repository.AccountInformationFetchHelper
@@ -125,9 +125,9 @@ internal object AccountInformationModule {
 
     @Provides
     @Singleton
-    fun provideAccountFastLookupFetchHelper(
-        impl: AccountFastLookupFetchHelperImpl
-    ): AccountFastLookupFetchHelper = impl
+    fun provideAccountFastLookupRepository(
+        impl: AccountFastLookupRepositoryImpl
+    ): AccountFastLookupRepository = impl
 
     @Provides
     @Singleton

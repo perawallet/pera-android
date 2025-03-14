@@ -18,9 +18,9 @@ import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
 import javax.inject.Inject
 
-internal class AccountFastLookupFetchHelperImpl @Inject constructor(
+internal class AccountFastLookupRepositoryImpl @Inject constructor(
     private val api: AccountFastLookupApiService
-) : AccountFastLookupFetchHelper {
+) : AccountFastLookupRepository {
 
     override suspend fun fetchAccountFastLookup(accountAddress: String): PeraResult<AccountFastLookupResponse> {
         return fetch(accountAddress)

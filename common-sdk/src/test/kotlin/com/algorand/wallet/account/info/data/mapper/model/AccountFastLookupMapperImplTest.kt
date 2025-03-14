@@ -52,15 +52,15 @@ class AccountFastLookupMapperImplTest {
     @Test
     fun `EXPECT account does not exist WHEN response has accountExists false`() {
         val response = AccountFastLookupResponse(
-            algoValue = "0",
+            algoValue = "0.00",
             usdValue = "0.00",
             calculationType = "estimated",
             accountExists = false
         )
 
         val expected = AccountFastLookup(
-            algoValue = BigDecimal.ZERO,
-            usdValue = BigDecimal.ZERO,
+            algoValue = BigDecimal.ZERO.setScale(2),
+            usdValue = BigDecimal.ZERO.setScale(2),
             calculationType = "estimated",
             accountExists = false
         )

@@ -18,50 +18,64 @@ import com.algorand.wallet.account.info.data.repository.AccountFastLookupReposit
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.Before
-import org.junit.Test
+import java.io.IOException
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
 class GetAccountFastLookupUseCaseTest {
-
-    private lateinit var sut: GetAccountFastLookupUseCase
-    private val mockAccountFastLookupRepository = mockk<AccountFastLookupRepository>()
-    private val mockAccountFastLookupMapper = mockk<AccountFastLookupMapper>()
-
-    @Before
-    fun setup() {
-        sut = GetAccountFastLookupUseCase(
-            mockAccountFastLookupRepository,
-            mockAccountFastLookupMapper
-        )
-    }
+    private var mockRepository: AccountFastLookupRepository = mockk()
+    private var mockMapper: AccountFastLookupMapper = mockk()
+    private var sut: GetAccountFastLookupUseCase = GetAccountFastLookupUseCase(
+        mockRepository,
+        mockMapper
+    )
 
     @Test
-    fun `EXPECT mapped account fast lookup WHEN fetch is successful`() = runTest {
+    fun `EXPECT Success result WHEN repository returns valid data`() = runTest {
         val address = "TEST_ADDRESS"
         val mockResponse = mockk<AccountFastLookupResponse>()
-        val expectedResult = mockk<AccountFastLookup>()
+        val expectedAccountFastLookup = mockk<AccountFastLookup>()
+        val repositoryResult = PeraResult.Success(mockResponse)
 
-        coEvery { mockAccountFastLookupRepository.fetchAccountFastLookup(address) } returns PeraResult.Success(mockResponse)
-        coEvery { mockAccountFastLookupMapper(mockResponse) } returns expectedResult
+        coEvery { mockRepository.fetchAccountFastLookup(address) } returns repositoryResult
+        every { mockMapper.invoke(mockResponse) } returns expectedAccountFastLookup
 
         val result = sut(address)
 
-        assertEquals(expectedResult, result)
+        assertTrue(result is PeraResult.Success)
+        assertEquals(expectedAccountFastLookup, (result as PeraResult.Success).data)
     }
 
     @Test
-    fun `EXPECT null WHEN fetch fails`() = runTest {
+    fun `EXPECT Error result WHEN repository throws exception`() = runTest {
         val address = "TEST_ADDRESS"
-        val exception = java.io.IOException("Network error")
+        val expectedException = IOException("Network error")
 
-        coEvery { mockAccountFastLookupRepository.fetchAccountFastLookup(address) } returns PeraResult.Error(exception)
+        coEvery { mockRepository.fetchAccountFastLookup(address) } throws expectedException
 
         val result = sut(address)
 
-        assertNull(result)
+        assertTrue(result is PeraResult.Error)
+        assertEquals(expectedException, (result as PeraResult.Error).exception)
+    }
+
+    @Test
+    fun `EXPECT Error result WHEN repository returns error`() = runTest {
+        // Given
+        val address = "TEST_ADDRESS"
+        val expectedException = IllegalArgumentException("Empty AccountFastLookupResponse object")
+        val repositoryResult = PeraResult.Error(expectedException)
+
+        coEvery { mockRepository.fetchAccountFastLookup(address) } returns repositoryResult
+
+        val result = sut(address)
+
+        assertTrue(result is PeraResult.Error)
+        assertTrue((result as PeraResult.Error).exception is IllegalArgumentException)
+        assertEquals("Empty AccountFastLookupResponse object", result.exception.message)
     }
 }

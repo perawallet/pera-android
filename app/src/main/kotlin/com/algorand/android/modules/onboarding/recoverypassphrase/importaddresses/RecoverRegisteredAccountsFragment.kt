@@ -267,9 +267,7 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                 Row {
                     Column {
                         PeraTitleText(text = "\u0086${account.algoValue}")
-                        if (account.usdValue.isNotEmpty()) {
-                            PeraBodyText(text = "$${account.usdValue}")
-                        }
+                        PeraBodyText(text = "$${account.usdValue}")
                     }
                     val current = ToggleableState(state.selectedAddresses.contains(account.address))
                     PeraCheckbox(

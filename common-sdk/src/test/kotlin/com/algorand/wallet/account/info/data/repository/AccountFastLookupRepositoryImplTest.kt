@@ -28,14 +28,14 @@ import java.io.IOException
 import kotlinx.coroutines.test.runTest
 
 
-class AccountFastLookupFetchHelperImplTest {
+class AccountFastLookupRepositoryImplTest {
 
-    private lateinit var sut: AccountFastLookupFetchHelperImpl
+    private lateinit var sut: AccountFastLookupRepositoryImpl
     private val mockApi = mockk<AccountFastLookupApiService>()
 
     @Before
     fun setup() {
-        sut = AccountFastLookupFetchHelperImpl(mockApi)
+        sut = AccountFastLookupRepositoryImpl(mockApi)
     }
 
     @Test

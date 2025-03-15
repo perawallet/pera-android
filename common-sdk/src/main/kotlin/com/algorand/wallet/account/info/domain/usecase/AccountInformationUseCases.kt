@@ -115,7 +115,7 @@ fun interface GetAccountRekeyAdminAddress {
 }
 
 fun interface GetAccountFastLookup {
-    suspend operator fun invoke(address: String): AccountFastLookup?
+    suspend operator fun invoke(address: String): PeraResult<AccountFastLookup>
 }
 
 fun interface GetAccountAlgoBalance {

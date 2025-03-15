@@ -15,6 +15,6 @@ package com.algorand.wallet.account.info.data.repository
 import com.algorand.wallet.account.info.data.model.AccountFastLookupResponse
 import com.algorand.wallet.foundation.PeraResult
 
-internal interface AccountFastLookupFetchHelper {
+internal interface AccountFastLookupRepository {
     suspend fun fetchAccountFastLookup(accountAddress: String): PeraResult<AccountFastLookupResponse>
 }

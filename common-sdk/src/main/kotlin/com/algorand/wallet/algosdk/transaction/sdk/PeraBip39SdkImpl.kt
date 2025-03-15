@@ -25,6 +25,8 @@ import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
+import java.math.BigDecimal
+import java.math.BigInteger
 import javax.inject.Inject
 
 internal class PeraBip39SdkImpl @Inject constructor(
@@ -139,25 +141,31 @@ internal class PeraBip39SdkImpl @Inject constructor(
                             )
                         ).toString()
 
-                        val fastLookupAccount = getAccountFastLookup(algoAddress)
+                        val fastLookupAccountResponse = getAccountFastLookup(algoAddress)
+                        if (fastLookupAccountResponse.isSuccess) {
+                            val fastLookupAccount = fastLookupAccountResponse.getDataOrNull()
 
-                        val tempAccount = RegisteredAlgorandAccount(
-                            address = algoAddress,
-                            algoValue = fastLookupAccount?.algoValue ?: "0.000",
-                            usdValue = fastLookupAccount?.algoValue ?: "0.000",
-                            calculationType = fastLookupAccount?.calculationType ?: "exact",
-                            accountExists = fastLookupAccount?.accountExists ?: false,
-                            account = accountIndex,
-                            change = changeIndex,
-                            keyIndex = keyIndex,
-                            isImportedToDB = isThereAnyAccountWithAddressUseCase(algoAddress),
-                            derivationType = Bip32DerivationType.Peikert.value
-                        )
+                            val tempAccount = RegisteredAlgorandAccount(
+                                address = algoAddress,
+                                algoValue = fastLookupAccount?.algoValue ?: BigDecimal.ZERO,
+                                usdValue = fastLookupAccount?.algoValue ?: BigDecimal.ZERO,
+                                calculationType = fastLookupAccount?.calculationType ?: "exact",
+                                accountExists = fastLookupAccount?.accountExists ?: false,
+                                account = accountIndex,
+                                change = changeIndex,
+                                keyIndex = keyIndex,
+                                isImportedToDB = isThereAnyAccountWithAddressUseCase(algoAddress),
+                                derivationType = Bip32DerivationType.Peikert.value
+                            )
 
-                        Log.i(TAG, "$algoAddress | Accounts Exists: ${fastLookupAccount?.accountExists}" )
+                            Log.i(
+                                TAG,
+                                "$algoAddress | Accounts Exists: ${fastLookupAccount?.accountExists}"
+                            )
 
-                        if (fastLookupAccount?.accountExists ?: false) {
-                            output.add(tempAccount)
+                            if (fastLookupAccount?.accountExists == true) {
+                                output.add(tempAccount)
+                            }
                         }
                     }
                 }

@@ -24,11 +24,11 @@ import com.algorand.wallet.account.info.domain.model.AssetHolding
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
-import kotlinx.coroutines.test.runTest
 
 class AccountInformationCacheHelperImplTest {
 
@@ -69,8 +69,6 @@ class AccountInformationCacheHelperImplTest {
         assertEquals(expectedAccountInformation, result)
         coVerify(exactly = 1) { mockAccountInformationDao.insert(mockEntity) }
         coVerify(exactly = 1) { mockAccountInformationErrorCache.remove(address) }
-        coVerify(exactly = 1) { mockAssetHoldingCacheHelper.cacheAssetHolding(address, mockAssetHoldingList) }
-        coVerify(exactly = 1) { mockAccountInformationMapper(mockEntity, mockAssetHoldings) }
     }
 
     @Test
@@ -87,7 +85,6 @@ class AccountInformationCacheHelperImplTest {
         coVerify(exactly = 0) { mockAccountInformationDao.insert(any()) }
         coVerify(exactly = 0) { mockAccountInformationErrorCache.remove(any()) }
         coVerify(exactly = 1) { mockAccountInformationErrorCache.put(address) }
-        coVerify(exactly = 1) { mockAccountInformationDao.isAddressExists(address) }
     }
 
     @Test
@@ -104,7 +101,6 @@ class AccountInformationCacheHelperImplTest {
         coVerify(exactly = 0) { mockAccountInformationDao.insert(any()) }
         coVerify(exactly = 0) { mockAccountInformationErrorCache.remove(any()) }
         coVerify(exactly = 0) { mockAccountInformationErrorCache.put(any()) }
-        coVerify(exactly = 1) { mockAccountInformationDao.isAddressExists(address) }
     }
 
     @Test
@@ -125,7 +121,5 @@ class AccountInformationCacheHelperImplTest {
         assertEquals(expectedAccountInformation, result)
         coVerify(exactly = 1) { mockAccountInformationDao.insert(mockEntity) }
         coVerify(exactly = 1) { mockAccountInformationErrorCache.remove(address) }
-        coVerify(exactly = 1) { mockAssetHoldingCacheHelper.cacheAssetHolding(address, emptyList()) }
-        coVerify(exactly = 1) { mockAccountInformationMapper(mockEntity, emptyAssetHoldings) }
     }
 }

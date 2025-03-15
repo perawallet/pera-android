@@ -14,7 +14,7 @@ package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.wallet.account.info.data.mapper.model.AccountFastLookupMapper
 import com.algorand.wallet.account.info.data.model.AccountFastLookupResponse
-import com.algorand.wallet.account.info.data.repository.AccountFastLookupFetchHelper
+import com.algorand.wallet.account.info.data.repository.AccountFastLookupRepository
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
@@ -28,13 +28,13 @@ import kotlinx.coroutines.test.runTest
 class GetAccountFastLookupUseCaseTest {
 
     private lateinit var sut: GetAccountFastLookupUseCase
-    private val mockAccountFastLookupFetchHelper = mockk<AccountFastLookupFetchHelper>()
+    private val mockAccountFastLookupRepository = mockk<AccountFastLookupRepository>()
     private val mockAccountFastLookupMapper = mockk<AccountFastLookupMapper>()
 
     @Before
     fun setup() {
         sut = GetAccountFastLookupUseCase(
-            mockAccountFastLookupFetchHelper,
+            mockAccountFastLookupRepository,
             mockAccountFastLookupMapper
         )
     }
@@ -45,7 +45,7 @@ class GetAccountFastLookupUseCaseTest {
         val mockResponse = mockk<AccountFastLookupResponse>()
         val expectedResult = mockk<AccountFastLookup>()
 
-        coEvery { mockAccountFastLookupFetchHelper.fetchAccountFastLookup(address) } returns PeraResult.Success(mockResponse)
+        coEvery { mockAccountFastLookupRepository.fetchAccountFastLookup(address) } returns PeraResult.Success(mockResponse)
         coEvery { mockAccountFastLookupMapper(mockResponse) } returns expectedResult
 
         val result = sut(address)
@@ -58,7 +58,7 @@ class GetAccountFastLookupUseCaseTest {
         val address = "TEST_ADDRESS"
         val exception = java.io.IOException("Network error")
 
-        coEvery { mockAccountFastLookupFetchHelper.fetchAccountFastLookup(address) } returns PeraResult.Error(exception)
+        coEvery { mockAccountFastLookupRepository.fetchAccountFastLookup(address) } returns PeraResult.Error(exception)
 
         val result = sut(address)
 

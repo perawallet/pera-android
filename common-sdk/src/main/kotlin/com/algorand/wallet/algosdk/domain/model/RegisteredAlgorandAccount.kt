@@ -1,9 +1,11 @@
 package com.algorand.wallet.algosdk.model
 
+import java.math.BigDecimal
+
 data class RegisteredAlgorandAccount(
     val address: String,
-    val algoValue: String,
-    val usdValue: String,
+    val algoValue: BigDecimal,
+    val usdValue: BigDecimal,
     val calculationType: String,
     val accountExists: Boolean,
     val isImportedToDB: Boolean,

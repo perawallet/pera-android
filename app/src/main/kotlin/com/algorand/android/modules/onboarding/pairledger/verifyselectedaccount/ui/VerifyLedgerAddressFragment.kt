@@ -128,7 +128,7 @@ class VerifyLedgerAddressFragment : DaggerBaseFragment(R.layout.fragment_verify_
 
     private fun setupViewModel() {
         verifyLedgerAddressViewModel.createListAuthLedgerAccounts(
-            authLedgerAccounts = pairLedgerNavigationViewModel.selectedLedgerAccounts?.ledgerAccounts.orEmpty()
+            selectedAccounts = pairLedgerNavigationViewModel.selectedLedgerAccounts
         )
     }
 

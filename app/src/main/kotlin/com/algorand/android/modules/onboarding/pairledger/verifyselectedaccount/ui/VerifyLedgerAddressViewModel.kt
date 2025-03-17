@@ -20,6 +20,7 @@ import com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount.
 import com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount.ui.model.VerifyLedgerAddressListItem
 import com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount.util.VerifyLedgerAddressQueueManager
 import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccount.LedgerAccount
 import com.algorand.android.modules.rekey.model.SelectedLedgerAccounts
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.utils.Event
@@ -37,7 +38,7 @@ class VerifyLedgerAddressViewModel @Inject constructor(
 
     val currentLedgerAddressesListLiveData = MutableLiveData<List<VerifyLedgerAddressListItem>>()
 
-    val awaitingLedgerAccountLiveData = MutableLiveData<SelectedLedgerAccount.LedgerAccount?>()
+    val awaitingLedgerAccountLiveData = MutableLiveData<LedgerAccount?>()
 
     val awaitingLedgerAccount
         get() = awaitingLedgerAccountLiveData.value
@@ -47,7 +48,7 @@ class VerifyLedgerAddressViewModel @Inject constructor(
     private val listLock = Any()
 
     private val verifyLedgerAddressQueueManagerListener = object : VerifyLedgerAddressQueueManager.Listener {
-        override fun onNextQueueItem(ledgerDetail: SelectedLedgerAccount.LedgerAccount) {
+        override fun onNextQueueItem(ledgerDetail: LedgerAccount) {
             awaitingLedgerAccountLiveData.value = ledgerDetail
             changeCurrentOperatedAddressStatus(VerifiableLedgerAddressItemStatus.AWAITING_VERIFICATION)
         }
@@ -62,13 +63,26 @@ class VerifyLedgerAddressViewModel @Inject constructor(
         verifyLedgerAddressQueueManager.setListener(verifyLedgerAddressQueueManagerListener)
     }
 
-    fun createListAuthLedgerAccounts(authLedgerAccounts: List<SelectedLedgerAccount.LedgerAccount>) {
-        val verifiableLedgerAddress: List<VerifyLedgerAddressListItem> = authLedgerAccounts.map { ledgerAccount ->
-            VerifyLedgerAddressListItem.VerifiableLedgerAddressItem(ledgerAccount.address)
+    fun createListAuthLedgerAccounts(selectedAccounts: SelectedLedgerAccounts?) {
+        if (selectedAccounts == null) return
+        val ledgerAddresses = getVerifyRequiredLedgerAddresses(selectedAccounts)
+        val verifiableLedgerAddress: List<VerifyLedgerAddressListItem> = ledgerAddresses.map { account ->
+            VerifyLedgerAddressListItem.VerifiableLedgerAddressItem(account.address)
         }
         verifiableLedgerAddress.toMutableList().add(0, VerifyLedgerAddressListItem.VerifyLedgerHeaderItem)
         currentLedgerAddressesListLiveData.value = verifiableLedgerAddress
-        verifyLedgerAddressQueueManager.fillQueue(authLedgerAccounts)
+        verifyLedgerAddressQueueManager.fillQueue(ledgerAddresses)
+    }
+
+    private fun getVerifyRequiredLedgerAddresses(selectedAccounts: SelectedLedgerAccounts): List<LedgerAccount> {
+        val addressDetailMap = mutableMapOf<String, LedgerAccount>()
+        selectedAccounts.ledgerAccounts.forEach {
+            addressDetailMap[it.address] = it
+        }
+        selectedAccounts.rekeyedAccounts.forEach {
+            addressDetailMap[it.authDetail.address] = it.authDetail
+        }
+        return addressDetailMap.values.toList()
     }
 
     fun onCurrentOperationDone(isVerified: Boolean) {
@@ -137,14 +151,14 @@ class VerifyLedgerAddressViewModel @Inject constructor(
             accounts.forEach { selectedAccount ->
                 val accountCreation = when (selectedAccount) {
                     is SelectedLedgerAccount.RekeyedAccount -> createNoAuthAccount(selectedAccount)
-                    is SelectedLedgerAccount.LedgerAccount -> createLedgerAccount(selectedAccount)
+                    is LedgerAccount -> createLedgerAccount(selectedAccount)
                 }
                 accountAdditionUseCase.addNewAccount(accountCreation)
             }
         }
     }
 
-    private fun createLedgerAccount(selectedAccount: SelectedLedgerAccount.LedgerAccount): AccountCreation {
+    private fun createLedgerAccount(selectedAccount: LedgerAccount): AccountCreation {
         return AccountCreation(
             address = selectedAccount.address,
             customName = selectedAccount.address.toShortenedAddress(),

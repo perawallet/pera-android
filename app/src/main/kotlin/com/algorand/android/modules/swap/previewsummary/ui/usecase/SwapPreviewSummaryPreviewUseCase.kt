@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.swap.previewsummary.ui.usecase
 
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
 import com.algorand.android.modules.swap.previewsummary.ui.mapper.SwapPreviewSummaryPreviewMapper
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class SwapPreviewSummaryPreviewUseCase @Inject constructor(
     private val swapPriceRatioProviderMapper: SwapPriceRatioProviderMapper,
     private val swapPreviewSummaryPreviewMapper: SwapPreviewSummaryPreviewMapper,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) {
 
@@ -41,7 +41,7 @@ class SwapPreviewSummaryPreviewUseCase @Inject constructor(
                 formattedExchangeFee = exchangeFeeAmount.formatAsCurrency(Currency.ALGO.symbol),
                 formattedPeraFee = peraFeeAmount.formatAsCurrency(Currency.ALGO.symbol),
                 formattedTotalFee = totalFee.formatAsCurrency(Currency.ALGO.symbol),
-                accountDisplayName = accountDisplayNameUseCase.invoke(swapQuote.accountAddress),
+                accountDisplayName = getAccountDisplayName(swapQuote.accountAddress),
                 accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             )
         }

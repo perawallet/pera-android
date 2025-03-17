@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.RekeyToStandardAccountNavigationDirections
 import com.algorand.android.models.FragmentConfiguration
@@ -66,14 +67,16 @@ class RekeyToStandardAccountVerifyInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Description(modifier: Modifier) =
+    override fun Description(modifier: Modifier) {
+        val state = rekeyToStandardAccountVerifyInfoViewModel.state.collectAsStateWithLifecycle().value
         PeraBodyText(
             text = stringResource(
                 id = R.string.the_account_name_was_successfully_rekeyed_formatted,
-                rekeyToStandardAccountVerifyInfoViewModel.accountDisplayName.getAccountPrimaryDisplayName()
+                state.accountDisplayName
             ),
             modifier = modifier
         )
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable

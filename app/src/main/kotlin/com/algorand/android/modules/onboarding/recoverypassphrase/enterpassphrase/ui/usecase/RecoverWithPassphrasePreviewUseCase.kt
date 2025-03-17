@@ -19,7 +19,6 @@ import com.algorand.android.customviews.passphraseinput.util.PassphraseInputConf
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.OnboardingAccountType
-import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.domain.usecase.GetRekeyedAccountUseCase
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.mapper.RecoverWithPassphrasePreviewMapper
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.model.RecoverWithPassphrasePreview
 import com.algorand.android.utils.Event
@@ -27,6 +26,7 @@ import com.algorand.android.utils.PassphraseKeywordUtils
 import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
@@ -38,7 +38,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val recoverWithPassphrasePreviewMapper: RecoverWithPassphrasePreviewMapper,
     private val passphraseInputGroupUseCase: PassphraseInputGroupUseCase,
     private val passphraseInputConfigurationUtil: PassphraseInputConfigurationUtil,
-    private val getRekeyedAccountUseCase: GetRekeyedAccountUseCase,
+    private val fetchRekeyedAccounts: FetchRekeyedAccounts,
     private val getAccountRegistrationType: GetAccountRegistrationType,
     private val aesPlatformManager: AESPlatformManager
 ) {
@@ -160,7 +160,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                 ),
                 creationType = RECOVER
             )
-            getRekeyedAccountUseCase.invoke(accountAddress).useSuspended(
+            fetchRekeyedAccounts(accountAddress).use(
                 onSuccess = {
                     val updatedPreview = if (it.isEmpty()) {
                         preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
@@ -171,7 +171,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                     }
                     emit(updatedPreview)
                 },
-                onFailed = {
+                onFailed = { _, _ ->
                     val updatedPreview = preview.copy(
                         navToNameRegistrationEvent = Event(recoveredAccount),
                         showErrorEvent = Event(AnnotatedString(R.string.failed_to_fetch_rekeyed))

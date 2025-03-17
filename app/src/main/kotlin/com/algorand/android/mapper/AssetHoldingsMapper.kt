@@ -13,20 +13,10 @@
 package com.algorand.android.mapper
 
 import com.algorand.android.models.AssetHolding
-import com.algorand.android.models.AssetHoldingResponse
 import java.math.BigInteger
 import javax.inject.Inject
 
 class AssetHoldingsMapper @Inject constructor() {
-
-    fun mapToAssetHoldings(assetHoldingResponse: AssetHoldingResponse): AssetHolding {
-        return AssetHolding(
-            assetId = assetHoldingResponse.assetId ?: 0L,
-            amount = assetHoldingResponse.amount ?: BigInteger.ZERO,
-            isDeleted = assetHoldingResponse.isDeleted,
-            optedInAtRound = assetHoldingResponse.optedInAtRound
-        )
-    }
 
     fun mapToAssetHoldings(
         assetId: Long,

@@ -13,8 +13,8 @@
 package com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.mapper
 
 import com.algorand.android.models.Account
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccounts
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccountsWithAccount
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.model.AssetInboxAllAccountsPreview
@@ -23,7 +23,7 @@ import com.algorand.android.utils.Event
 import javax.inject.Inject
 
 class AssetInboxAllAccountsPreviewMapperImpl @Inject constructor(
-    private val getAccountDisplayNameUseCase: AccountDisplayNameUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
 ) : AssetInboxAllAccountsPreviewMapper {
 
@@ -69,7 +69,7 @@ class AssetInboxAllAccountsPreviewMapperImpl @Inject constructor(
                         requestCount = assetInboxAllAccounts.requestCount,
                         accountAddress = account.address,
                         accountType = account.type ?: Account.Type.STANDARD,
-                        accountDisplayName = getAccountDisplayNameUseCase.invoke(account.address),
+                        accountDisplayName = getAccountDisplayName(account.address),
                         accountIconDrawablePreview = getAccountIconDrawablePreview(account.address)
                     )
                 }

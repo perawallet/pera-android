@@ -13,25 +13,44 @@
 package com.algorand.android.modules.rekey.previouslyrekeyedaccountconfirmation.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.rekey.previouslyrekeyedaccountconfirmation.ui.usecase.RekeyedAccountRekeyConfirmationPreviewUseCase
-import com.algorand.android.utils.AccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.rekey.previouslyrekeyedaccountconfirmation.ui.RekeyedAccountRekeyConfirmationViewModel.ViewState
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RekeyedAccountRekeyConfirmationViewModel @Inject constructor(
-    private val rekeyedAccountRekeyConfirmationPreviewUseCase: RekeyedAccountRekeyConfirmationPreviewUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val stateDelegate: StateDelegate<ViewState>,
     savedStateHandle: SavedStateHandle
-) : BaseViewModel() {
+) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate {
 
     private val navArgs = RekeyedAccountRekeyConfirmationBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
     private val accountAddress: String = navArgs.accountAddress
     private val authAccountAddress: String = navArgs.authAccountAddress
 
-    val accountDisplayName: AccountDisplayName
-        get() = rekeyedAccountRekeyConfirmationPreviewUseCase.getAccountDisplayName(accountAddress)
+    init {
+        initViewState()
+    }
 
-    val authAccountDisplayName: AccountDisplayName
-        get() = rekeyedAccountRekeyConfirmationPreviewUseCase.getAccountDisplayName(authAccountAddress)
+    private fun initViewState() {
+        stateDelegate.setDefaultState(ViewState("", ""))
+        viewModelScope.launch {
+            val viewState = ViewState(
+                accountDisplayName = getAccountDisplayName(accountAddress).primaryDisplayName,
+                authAccountDisplayName = getAccountDisplayName(authAccountAddress).primaryDisplayName
+            )
+            stateDelegate.updateState { viewState }
+        }
+    }
+
+    data class ViewState(
+        val accountDisplayName: String,
+        val authAccountDisplayName: String
+    )
 }

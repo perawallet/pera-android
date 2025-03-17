@@ -106,7 +106,7 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
     ): Flow<SenderAccountSelectionPreview> = flow {
         emit(preview.copy(isLoading = true))
         val loadingFinishedPreview = preview.copy(isLoading = false)
-        fetchAccountInformationAndCacheAssets(senderAccountAddress).use(
+        fetchAccountInformationAndCacheAssets(senderAccountAddress, false).use(
             onSuccess = {
                 emit(loadingFinishedPreview.copy(senderAccountInformationSuccessEvent = Event(it)))
             },

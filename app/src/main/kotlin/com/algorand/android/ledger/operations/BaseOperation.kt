@@ -13,9 +13,9 @@
 package com.algorand.android.ledger.operations
 
 import android.bluetooth.BluetoothDevice
-import com.algorand.android.models.AccountInformation
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.TransactionSignData
+import com.algorand.wallet.account.info.domain.model.AccountInformation
 
 sealed class BaseOperation {
     abstract val bluetoothDevice: BluetoothDevice

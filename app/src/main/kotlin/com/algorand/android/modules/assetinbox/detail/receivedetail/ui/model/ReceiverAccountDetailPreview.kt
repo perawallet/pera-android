@@ -13,8 +13,8 @@
 package com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model
 
 import android.os.Parcelable
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

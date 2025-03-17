@@ -16,8 +16,8 @@ package com.algorand.android.modules.assetinbox.detail.receivedetail.ui.mapper
 import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.modules.accountcore.domain.model.AccountTotalValue
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailNavArgs
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailPreview
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailPreview.AssetPreviewDetail
@@ -34,7 +34,7 @@ import java.math.BigDecimal.ZERO
 import javax.inject.Inject
 
 class Arc59ReceiveDetailPreviewMapperImpl @Inject constructor(
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val verificationTierConfigDecider: VerificationTierConfigurationDecider,
     private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
@@ -63,7 +63,7 @@ class Arc59ReceiveDetailPreviewMapperImpl @Inject constructor(
             AccountTotalValue(ZERO, ZERO, 0)
         }
         return ReceiverAccountDetailPreview(
-            displayName = accountDisplayNameUseCase(args.receiverAddress),
+            displayName = getAccountDisplayName(args.receiverAddress),
             formattedPrimaryValue = accountValue.primaryAccountValue.formatAsCurrency(Currency.ALGO.symbol),
             formattedSecondaryValue = getFormattedFiatValue(accountValue),
             accountIconDrawable = getAccountIconDrawablePreview(args.receiverAddress)

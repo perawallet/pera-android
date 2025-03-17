@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.coroutineScope
@@ -28,17 +27,16 @@ import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.LoadingDialogFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentLedgerSearchBinding
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.operations.AccountFetchAllOperation
-import com.algorand.android.models.AccountInformation
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.LedgerBleResult
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.adapter.LedgerSearchAdapter
 import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.model.LedgerBaseItem
 import com.algorand.android.modules.baseledgersearch.pairinginstruction.ui.LedgerPairInstructionsBottomSheet.Companion.BLUETOOTH_DEVICE_KEY
-import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.adapter.LedgerSearchAdapter
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.checkIfBluetoothPermissionAreTaken
 import com.algorand.android.utils.isLocationEnabled
@@ -47,6 +45,7 @@ import com.algorand.android.utils.showEnableBluetoothPopup
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.account.info.domain.model.AccountInformation
 import java.util.Timer
 import java.util.TimerTask
 import javax.inject.Inject

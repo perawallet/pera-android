@@ -24,15 +24,14 @@ import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentVerifyLedgerAddressBinding
 import com.algorand.android.ledger.LedgerBleOperationManager
 import com.algorand.android.ledger.operations.VerifyAddressOperation
-import com.algorand.android.models.Account
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.LedgerBleResult
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.onboarding.pairledger.PairLedgerNavigationViewModel
 import com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount.ui.adapter.VerifiableLedgerAddressesAdapter
 import com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount.ui.model.VerifyLedgerAddressListItem
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import com.algorand.android.utils.Event
-import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -129,11 +128,11 @@ class VerifyLedgerAddressFragment : DaggerBaseFragment(R.layout.fragment_verify_
 
     private fun setupViewModel() {
         verifyLedgerAddressViewModel.createListAuthLedgerAccounts(
-            authLedgerAccounts = pairLedgerNavigationViewModel.getSelectedAuthAccounts()
+            selectedAccounts = pairLedgerNavigationViewModel.selectedLedgerAccounts
         )
     }
 
-    private fun startVerifyOperation(account: Account?) {
+    private fun startVerifyOperation(account: SelectedLedgerAccount.LedgerAccount?) {
         if (account == null) {
             return
         }
@@ -142,13 +141,9 @@ class VerifyLedgerAddressFragment : DaggerBaseFragment(R.layout.fragment_verify_
             sendErrorLog("Ledger is not found while operating startVerifyOperation function.")
             return
         }
-        if (account.detail is Account.Detail.Ledger) {
-            ledgerBleOperationManager.startLedgerOperation(
-                VerifyAddressOperation(currentOperatedLedger, account.detail.positionInLedger, account.address)
-            )
-        } else {
-            sendErrorLog("Other than Ledger Account is in the verify operation.")
-        }
+        ledgerBleOperationManager.startLedgerOperation(
+            VerifyAddressOperation(currentOperatedLedger, account.indexInLedger, account.address)
+        )
     }
 
     private fun retryCurrentOperation() {
@@ -178,16 +173,9 @@ class VerifyLedgerAddressFragment : DaggerBaseFragment(R.layout.fragment_verify_
 
     private fun onConfirmationClick() {
         val selectedVerifiedAccounts = verifyLedgerAddressViewModel.getSelectedVerifiedAccounts(
-            pairLedgerNavigationViewModel.selectedAccounts
+            pairLedgerNavigationViewModel.selectedLedgerAccounts
         )
-        selectedVerifiedAccounts.forEach { selectedAccount ->
-            val creationType = if (selectedAccount.type == Account.Type.REKEYED) {
-                CreationType.REKEYED
-            } else {
-                CreationType.LEDGER
-            }
-            verifyLedgerAddressViewModel.addNewAccount(selectedAccount, creationType)
-        }
+        verifyLedgerAddressViewModel.addNewAccount(selectedVerifiedAccounts)
         nav(
             VerifyLedgerAddressFragmentDirections.actionVerifyLedgerAddressFragmentToVerifyLedgerInfoFragment(
                 selectedVerifiedAccounts.size

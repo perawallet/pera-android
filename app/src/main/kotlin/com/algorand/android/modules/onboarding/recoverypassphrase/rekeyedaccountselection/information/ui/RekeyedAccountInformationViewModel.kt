@@ -22,7 +22,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -47,7 +46,7 @@ class RekeyedAccountInformationViewModel @Inject constructor(
             rekeyedAccountInformationPreviewUseCase.getRekeyedAccountInformationPreviewFlow(
                 accountAddress = accountAddress,
                 preview = rekeyedAccountInformationPreviewFlow.value
-            ).collectLatest { preview ->
+            ).getDataOrNull()?.let { preview ->
                 rekeyedAccountInformationPreviewFlow.emit(preview)
             }
         }

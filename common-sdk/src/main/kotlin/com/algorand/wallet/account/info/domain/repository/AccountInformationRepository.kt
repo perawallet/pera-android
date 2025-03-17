@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.Flow
 
 internal interface AccountInformationRepository {
 
-    suspend fun fetchAccountInformation(address: String): PeraResult<AccountInformation>
+    suspend fun fetchAccountInformation(address: String, includeClosedAccount: Boolean): PeraResult<AccountInformation>
 
     suspend fun getAccountInformation(address: String): AccountInformation?
 

@@ -12,7 +12,9 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
-internal class IsThereAnyLocalAccountUseCase(
+import javax.inject.Inject
+
+internal class IsThereAnyLocalAccountUseCase @Inject constructor(
     private val getLocalAccounts: GetLocalAccounts
 ) : IsThereAnyLocalAccount {
 

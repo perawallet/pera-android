@@ -59,8 +59,10 @@ import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
 import com.algorand.wallet.account.local.domain.usecase.GetLedgerBleAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlowUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
@@ -70,6 +72,8 @@ import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.GetSeedIdIfExistingEntropy
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddressUseCase
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccountUseCase
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyNoAuthAccountWithAddress
 import com.algorand.wallet.account.local.domain.usecase.SaveAlgo25Account
 import com.algorand.wallet.account.local.domain.usecase.SaveHdKeyAccount
@@ -215,10 +219,12 @@ internal object LocalAccountsModule {
     }
 
     @Provides
-    fun provideGetSecretKey(repository: Algo25AccountRepository): GetAlgo25SecretKey = GetAlgo25SecretKey(repository::getSecretKey)
+    fun provideGetSecretKey(repository: Algo25AccountRepository): GetAlgo25SecretKey =
+        GetAlgo25SecretKey(repository::getSecretKey)
 
     @Provides
-    fun provideGetHdKeyPrivateKey(repository: HdKeyAccountRepository): GetHdKeyPrivateKey = GetHdKeyPrivateKey(repository::getPrivateKey)
+    fun provideGetHdKeyPrivateKey(repository: HdKeyAccountRepository): GetHdKeyPrivateKey =
+        GetHdKeyPrivateKey(repository::getPrivateKey)
 
     @Provides
     fun provideGetHdEntropy(repository: HdSeedRepository): GetHdEntropy = GetHdEntropy(repository::getEntropy)
@@ -227,7 +233,8 @@ internal object LocalAccountsModule {
     fun provideGetHdSeed(repository: HdSeedRepository): GetHdSeed = GetHdSeed(repository::getSeed)
 
     @Provides
-    fun provideHasAnyHdSeedId(repository: HdSeedRepository): GetHasAnyHdSeedId = GetHasAnyHdSeedId(repository::hasAnySeed)
+    fun provideHasAnyHdSeedId(repository: HdSeedRepository): GetHasAnyHdSeedId =
+        GetHasAnyHdSeedId(repository::hasAnySeed)
 
     @Provides
     fun provideGetSeedIdIfExistingEntropy(
@@ -249,6 +256,11 @@ internal object LocalAccountsModule {
     ): GetLocalAccountCountFlow = useCase
 
     @Provides
+    fun provideGetLocalAccountCount(
+        useCase: GetLocalAccountCountUseCase
+    ): GetLocalAccountCount = useCase
+
+    @Provides
     fun provideUpdateNoAuthAccountToHdKey(
         useCase: UpdateNoAuthAccountToHdKeyUseCase
     ): UpdateNoAuthAccountToHdKey = useCase
@@ -267,6 +279,11 @@ internal object LocalAccountsModule {
     fun provideIsThereAnyAccountWithAddress(
         useCase: IsThereAnyAccountWithAddressUseCase
     ): IsThereAnyAccountWithAddress = useCase
+
+    @Provides
+    fun provideIsThereAnyLocalAccount(
+        useCase: IsThereAnyLocalAccountUseCase
+    ): IsThereAnyLocalAccount = useCase
 
     @Provides
     fun provideIsThereAnyNoAuthAccountWithAddress(

@@ -25,6 +25,7 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.ui.NameRegistrationPreview
 import com.algorand.android.utils.KeyboardToggleListener
 import com.algorand.android.utils.addKeyboardToggleListener
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.hideKeyboard
 import com.algorand.android.utils.removeKeyboardToggleListener
 import com.algorand.android.utils.showAlertDialog
@@ -33,6 +34,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragment_name_registration) {
+
+    private val viewEventCollector: suspend (NameRegistrationViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is NameRegistrationViewModel.ViewEvent.ShowMaxAccountLimitExceededError ->
+                showMaxAccountLimitExceededError()
+        }
+    }
 
     abstract val accountCreation: AccountCreation?
     abstract fun navToNextFragment()
@@ -83,6 +91,11 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
         lifecycleScope.launch {
             nameRegistrationViewModel.nameRegistrationPreviewFlow.collectLatest(nameRegistrationPreviewCollector)
         }
+
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            nameRegistrationViewModel.viewEvent,
+            viewEventCollector
+        )
     }
 
     override fun onResume() {
@@ -97,12 +110,7 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
     }
 
     private fun onNextButtonClick() {
-        if (nameRegistrationViewModel.isAccountLimitExceed()) {
-            showMaxAccountLimitExceededError()
-            return
-        }
-        val inputName = binding.nameInputLayout.text
-        nameRegistrationViewModel.updatePreviewWithAccountCreation(accountCreation, inputName)
+        nameRegistrationViewModel.onNextButtonClick(binding.nameInputLayout.text)
     }
 
     private fun updateUiWithNameRegistrationPreview(preview: NameRegistrationPreview) {

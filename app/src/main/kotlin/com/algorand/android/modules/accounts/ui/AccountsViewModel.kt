@@ -24,6 +24,8 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -38,8 +40,9 @@ class AccountsViewModel @Inject constructor(
     private val accountsEventTracker: AccountsEventTracker,
     private val parityManager: ParityManager,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
-    private val getNotBackedUpAccounts: GetNotBackedUpAccounts
-) : BaseViewModel() {
+    private val getNotBackedUpAccounts: GetNotBackedUpAccounts,
+    private val eventDelegate: EventDelegate<ViewEvent>
+) : BaseViewModel(), EventViewModel<AccountsViewModel.ViewEvent> by eventDelegate {
 
     private val _accountPreviewFlow = MutableStateFlow<AccountPreview?>(null)
     val accountPreviewFlow: Flow<AccountPreview?>
@@ -61,16 +64,6 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    private fun initializeAccountPreviewFlow() {
-        viewModelScope.launchIO {
-            val initialAccountPreview = accountsPreviewUseCase.getInitialAccountPreview()
-            _accountPreviewFlow.emit(initialAccountPreview)
-            accountsPreviewUseCase.getAccountsPreview(initialAccountPreview).collectLatest {
-                _accountPreviewFlow.emit(it)
-            }
-        }
-    }
-
     fun onNotificationTapEvent() {
         viewModelScope.launch {
             logEvent(PeraClickEvent.TAP_HOME_SCREEN_NOTIFICATION)
@@ -89,12 +82,6 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    fun logAddAccountTapEvent() {
-        viewModelScope.launch {
-            accountsEventTracker.logAddAccountTapEvent()
-        }
-    }
-
     fun onAccountsFragmentAlgoBuyTapEvent() {
         viewModelScope.launch {
             accountsEventTracker.logAccountsFragmentAlgoBuyTapEvent()
@@ -109,10 +96,6 @@ class AccountsViewModel @Inject constructor(
                 BannerType.GENERIC -> {}
             }
         }
-    }
-
-    fun isAccountLimitExceed(): Boolean {
-        return isAccountLimitExceedUseCase.isAccountLimitExceed()
     }
 
     fun dismissTutorial(tutorialId: Int) {
@@ -169,6 +152,35 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
+    fun onAddAccountClick() {
+        viewModelScope.launchIO {
+            logAddAccountTapEvent()
+            eventDelegate.sendEvent(
+                if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {
+                    ViewEvent.ShowMaxAccountLimitExceededError
+                } else {
+                    ViewEvent.NavToRegisterWatchAccount(shouldNavToRegisterWatchAccount = false)
+                }
+            )
+        }
+    }
+
+    private fun initializeAccountPreviewFlow() {
+        viewModelScope.launchIO {
+            val initialAccountPreview = accountsPreviewUseCase.getInitialAccountPreview()
+            _accountPreviewFlow.emit(initialAccountPreview)
+            accountsPreviewUseCase.getAccountsPreview(initialAccountPreview).collectLatest {
+                _accountPreviewFlow.emit(it)
+            }
+        }
+    }
+
+    private fun logAddAccountTapEvent() {
+        viewModelScope.launch {
+            accountsEventTracker.logAddAccountTapEvent()
+        }
+    }
+
     private suspend fun updatePreviewForSwapNavigation() {
         with(_accountPreviewFlow) {
             val newState = accountsPreviewUseCase.getSwapNavigationUpdatedPreview(value ?: return@with)
@@ -181,5 +193,10 @@ class AccountsViewModel @Inject constructor(
             val newState = accountsPreviewUseCase.getGiftCardsNavigationUpdatedPreview(value ?: return@with)
             emit(newState)
         }
+    }
+
+    sealed interface ViewEvent {
+        data class NavToRegisterWatchAccount(val shouldNavToRegisterWatchAccount: Boolean) : ViewEvent
+        data object ShowMaxAccountLimitExceededError : ViewEvent
     }
 }

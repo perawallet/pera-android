@@ -12,28 +12,50 @@
 
 package com.algorand.android.modules.onboarding.recoverypassphrase.qrscanner.ui
 
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
+import com.algorand.android.modules.onboarding.recoverypassphrase.qrscanner.ui.RecoverWithPassphraseQrScannerFragmentDirections.Companion.actionRecoverWithPassphraseQrScannerFragmentToRecoverWithPassphraseNavigation
 import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RecoverWithPassphraseQrScannerFragment : BaseQrScannerFragment(R.id.recoverWithPassphraseQrScannerFragment) {
 
+    private val viewEventCollector: suspend (RecoverWithPassphraseQrScannerViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is RecoverWithPassphraseQrScannerViewModel.ViewEvent.NavToRecoverWithPassphraseNavigation ->
+                navToRecoverWithPassphraseNavigation(event.mnemonic)
+
+            is RecoverWithPassphraseQrScannerViewModel.ViewEvent.ShowMaxAccountLimitExceededError ->
+                showMaxAccountLimitExceededError()
+        }
+    }
+
     private val recoverWithPassphraseQrScannerViewModel: RecoverWithPassphraseQrScannerViewModel by viewModels()
 
     override fun onImportAccountDeepLink(mnemonic: String): Boolean {
-        if (recoverWithPassphraseQrScannerViewModel.isAccountLimitExceed()) {
-            showMaxAccountLimitExceededError()
-            navBack()
-        } else {
-            nav(
-                RecoverWithPassphraseQrScannerFragmentDirections
-                    .actionRecoverWithPassphraseQrScannerFragmentToRecoverWithPassphraseNavigation(
-                        mnemonic
-                    )
-            )
+        return true.also {
+            recoverWithPassphraseQrScannerViewModel.onImportAccountDeepLink(mnemonic)
         }
-        return true
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initObservers()
+    }
+
+    override fun initObservers() {
+        super.initObservers()
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            recoverWithPassphraseQrScannerViewModel.viewEvent,
+            viewEventCollector
+        )
+    }
+
+    private fun navToRecoverWithPassphraseNavigation(mnemonic: String) {
+        nav(actionRecoverWithPassphraseQrScannerFragmentToRecoverWithPassphraseNavigation(mnemonic))
     }
 }

@@ -32,18 +32,4 @@ enum class AccountIconResource(
     STANDARD(R.drawable.ic_wallet, R.color.wallet_4, R.color.wallet_4_icon),
 
     UNDEFINED(R.drawable.ic_wallet, R.color.transparent, R.color.transparent);
-
-    companion object {
-
-        fun getAccountIconResourceByAccountType(accountType: Account.Type?): AccountIconResource {
-            return when (accountType) {
-                Account.Type.STANDARD -> STANDARD
-                Account.Type.LEDGER -> LEDGER
-                Account.Type.REKEYED -> REKEYED
-                Account.Type.REKEYED_AUTH -> REKEYED_AUTH
-                Account.Type.WATCH -> WATCH
-                null -> UNDEFINED
-            }
-        }
-    }
 }

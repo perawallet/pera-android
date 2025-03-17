@@ -57,6 +57,15 @@ import kotlinx.coroutines.flow.map
 class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
     BottomNavBarFragmentDelegation by BottomNavBarFragmentDelegationImpl() {
 
+    private val viewEventCollector: suspend (AccountsViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is AccountsViewModel.ViewEvent.NavToRegisterWatchAccount ->
+                navToLoginNavigation(event.shouldNavToRegisterWatchAccount)
+
+            is AccountsViewModel.ViewEvent.ShowMaxAccountLimitExceededError -> showMaxAccountLimitExceededError()
+        }
+    }
+
     override val fragmentConfiguration = FragmentConfiguration(
         isBottomBarNeeded = true,
         firebaseEventScreenId = FIREBASE_EVENT_SCREEN_ID
@@ -140,7 +149,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onAddAccountClick() {
-            this@AccountsFragment.onAddAccountClick()
+            accountsViewModel.onAddAccountClick()
         }
 
         override fun onStakingClick() {
@@ -216,10 +225,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
     private val swapNavigationDirectionEventCollector: suspend (Event<NavDirections>?) -> Unit = {
         it?.consume()?.run { nav(this) }
     }
+
     private val giftCardsNavigationDirectionEventCollector: suspend (Event<NavDirections>?) -> Unit = {
         it?.consume()?.run { nav(this) }
     }
-
     private val askNotificationPermissionEventCollector: suspend (Event<Unit>?) -> Unit = {
         it?.consume()?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -390,7 +399,15 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 accountPreviewFlow.map { it?.onNavToBackUpPassphraseInfo }.distinctUntilChanged(),
                 { navToBackupPassphraseInfoNavigation(it) }
             )
+            viewLifecycleOwner.collectLatestOnLifecycle(
+                accountsViewModel.viewEvent,
+                viewEventCollector
+            )
         }
+    }
+
+    private fun onAddAccountClick() {
+        accountsViewModel.onAddAccountClick()
     }
 
     private fun loadAccountsAndBalancePreview(accountListItems: List<BaseAccountListItem>) {
@@ -407,16 +424,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private fun navToAssetInboxAllAccountsNavigation() {
         nav(AccountsFragmentDirections.actionAccountsFragmentToAssetInboxAllAccountsNavigation())
-    }
-
-    private fun onAddAccountClick() {
-        accountsViewModel.logAddAccountTapEvent()
-        // TODO: Handle this in error with an event inside preview
-        if (accountsViewModel.isAccountLimitExceed()) {
-            showMaxAccountLimitExceededError()
-            return
-        }
-        nav(MainNavigationDirections.actionNewAccount(shouldNavToRegisterWatchAccount = false))
     }
 
     private fun onArrangeListClick() {
@@ -445,6 +452,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         event?.consume()?.let { addresses ->
             AccountsFragmentDirections.actionAccountsFragmentToBackupPassphraseInfoNavigation(addresses.toTypedArray())
         }
+    }
+
+    private fun navToLoginNavigation(shouldNavToRegisterWatchAccount: Boolean) {
+        nav(MainNavigationDirections.actionGlobalLoginNavigation(shouldNavToRegisterWatchAccount))
     }
 
     companion object {

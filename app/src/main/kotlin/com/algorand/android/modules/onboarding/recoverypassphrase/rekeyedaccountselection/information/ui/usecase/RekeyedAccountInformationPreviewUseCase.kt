@@ -60,7 +60,7 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
         )
     }
 
-    suspend fun getRekeyedAccountInformationPreviewFlow(
+    fun getRekeyedAccountInformationPreviewFlow(
         accountAddress: String,
         preview: RekeyedAccountInformationPreview
     ) = flow {

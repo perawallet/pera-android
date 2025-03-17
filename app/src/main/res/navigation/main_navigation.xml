@@ -64,7 +64,7 @@
         app:popUpToInclusive="true" />
 
     <action
-        android:id="@+id/action_newAccount"
+        android:id="@+id/action_global_loginNavigation"
         app:destination="@id/loginNavigation">
         <argument
             android:name="isShowingCloseButton"

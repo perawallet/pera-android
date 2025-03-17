@@ -21,6 +21,9 @@ import com.algorand.android.modules.transaction.domain.GetTransactionTargetUserD
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
+import com.algorand.android.utils.launchIO
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -29,8 +32,9 @@ import kotlinx.coroutines.launch
 class AccountsAddressScanActionViewModel @Inject constructor(
     private val getTransactionTargetUserDisplayName: GetTransactionTargetUserDisplayName,
     savedStateHandle: SavedStateHandle,
+    private val eventDelegate: EventDelegate<ViewEvent>,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase
-) : BaseViewModel() {
+) : BaseViewModel(), EventViewModel<AccountsAddressScanActionViewModel.ViewEvent> by eventDelegate {
 
     private val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
     private val label: String? = savedStateHandle.getOrElse<String?>(LABEL_KEY, null)
@@ -54,8 +58,16 @@ class AccountsAddressScanActionViewModel @Inject constructor(
         )
     }
 
-    fun isAccountLimitExceed(): Boolean {
-        return isAccountLimitExceedUseCase.isAccountLimitExceed()
+    fun onAddWatchAccountClick() {
+        viewModelScope.launchIO {
+            eventDelegate.sendEvent(
+                if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {
+                    ViewEvent.ShowMaxAccountLimitExceededError
+                } else {
+                    ViewEvent.NavToRegisterWatchAccountNavigation(getAccountAddress())
+                }
+            )
+        }
     }
 
     private fun initTransactionTargetUserDisplayName() {
@@ -67,5 +79,10 @@ class AccountsAddressScanActionViewModel @Inject constructor(
     companion object {
         private const val ACCOUNT_ADDRESS_KEY = "accountAddress"
         private const val LABEL_KEY = "label"
+    }
+
+    sealed interface ViewEvent {
+        data class NavToRegisterWatchAccountNavigation(val accountAddress: String) : ViewEvent
+        data object ShowMaxAccountLimitExceededError : ViewEvent
     }
 }

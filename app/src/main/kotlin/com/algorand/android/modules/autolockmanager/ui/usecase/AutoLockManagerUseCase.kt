@@ -30,7 +30,7 @@ class AutoLockManagerUseCase @Inject constructor(
         setAppAtBackgroundTimeUseCase.invoke(appAtBackgroundDefaultPreference)
     }
 
-    fun shouldAppLocked(): Boolean {
+    suspend fun shouldAppLocked(): Boolean {
         return shouldAppLockedUseCase.invoke()
     }
 }

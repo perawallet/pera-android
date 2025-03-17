@@ -20,6 +20,7 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.databinding.BottomSheetAccountsAddressScanActionBinding
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,6 +28,16 @@ import dagger.hilt.android.AndroidEntryPoint
 class AccountsAddressScanActionBottomSheet : BaseBottomSheet(
     layoutResId = R.layout.bottom_sheet_accounts_address_scan_action
 ) {
+
+    private val viewEventCollector: suspend (AccountsAddressScanActionViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is AccountsAddressScanActionViewModel.ViewEvent.NavToRegisterWatchAccountNavigation ->
+                navToRegisterWatchAccountNavigation(event.accountAddress)
+
+            is AccountsAddressScanActionViewModel.ViewEvent.ShowMaxAccountLimitExceededError ->
+                showMaxAccountLimitExceededError()
+        }
+    }
 
     private val binding by viewBinding(BottomSheetAccountsAddressScanActionBinding::bind)
 
@@ -41,6 +52,14 @@ class AccountsAddressScanActionBottomSheet : BaseBottomSheet(
         super.onViewCreated(view, savedInstanceState)
         configureToolbar()
         initUi()
+        initObservers()
+    }
+
+    private fun initObservers() {
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            accountsAddressScanActionViewModel.viewEvent,
+            viewEventCollector
+        )
     }
 
     private fun configureToolbar() {
@@ -51,7 +70,7 @@ class AccountsAddressScanActionBottomSheet : BaseBottomSheet(
         with(binding) {
             val accountAddress = accountsAddressScanActionViewModel.getAccountAddress()
             sendTransactionButton.setOnClickListener { onSendTransactionClick() }
-            addWatchAccountButton.setOnClickListener { onAddWatchAccountClick() }
+            addWatchAccountButton.setOnClickListener { accountsAddressScanActionViewModel.onAddWatchAccountClick() }
             addNewContactButton.setOnClickListener { onAddContactClick() }
             accountAddressTextView.text = accountAddress
             accountAddressContainerView.setOnLongClickListener { onAccountAddressCopied(accountAddress); true }
@@ -63,17 +82,10 @@ class AccountsAddressScanActionBottomSheet : BaseBottomSheet(
         nav(HomeNavigationDirections.actionGlobalSendAlgoNavigation(assetTransactionArg))
     }
 
-    private fun onAddWatchAccountClick() {
-        if (accountsAddressScanActionViewModel.isAccountLimitExceed()) {
-            showMaxAccountLimitExceededError()
-            navBack()
-            return
-        }
+    private fun navToRegisterWatchAccountNavigation(accountAddress: String) {
         nav(
             AccountsAddressScanActionBottomSheetDirections
-                .actionAccountsAddressScanActionBottomSheetToRegisterWatchAccountNavigation(
-                    accountAddress = accountsAddressScanActionViewModel.getAccountAddress()
-                )
+                .actionAccountsAddressScanActionBottomSheetToRegisterWatchAccountNavigation(accountAddress)
         )
     }
 

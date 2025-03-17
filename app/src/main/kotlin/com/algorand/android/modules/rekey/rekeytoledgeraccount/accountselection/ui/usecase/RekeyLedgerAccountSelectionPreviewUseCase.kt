@@ -71,7 +71,7 @@ class RekeyLedgerAccountSelectionPreviewUseCase @Inject constructor(
                 fetchAndCacheAssets(ledgerAccount.assetHoldingIds, false)
 
                 val authAccountDetail = SelectedLedgerAccount.LedgerAccount(
-                    address = ledgerAccount.authAddress.orEmpty(),
+                    address = ledgerAccount.address,
                     bleAddress = bluetoothAddress,
                     bleName = bluetoothName,
                     indexInLedger = index
@@ -88,10 +88,7 @@ class RekeyLedgerAccountSelectionPreviewUseCase @Inject constructor(
                     selectorDrawableRes = R.drawable.selector_found_account_radio,
                     accountDisplayName = accountDisplayName,
                     accountIconDrawablePreview = accountIconDrawablePreview,
-                    selectedLedgerAccount = SelectedLedgerAccount.RekeyedAccount(
-                        address = ledgerAccount.address,
-                        authDetail = authAccountDetail
-                    )
+                    selectedLedgerAccount = authAccountDetail
                 )
                 add(authAccountSelectionListItem)
             }

@@ -12,16 +12,16 @@
 
 package com.algorand.android.modules.onboarding.pairledger.verifyselectedaccount.util
 
-import com.algorand.android.models.Account
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import javax.inject.Inject
 
 class VerifyLedgerAddressQueueManager @Inject constructor() {
 
-    private val authLedgerAccountQueue = ArrayDeque<Account>()
+    private val authLedgerAccountQueue = ArrayDeque<SelectedLedgerAccount.LedgerAccount>()
 
     private var listener: Listener? = null
 
-    fun fillQueue(authAccountList: List<Account>) {
+    fun fillQueue(authAccountList: List<SelectedLedgerAccount.LedgerAccount>) {
         authLedgerAccountQueue.addAll(authAccountList)
         if (authLedgerAccountQueue.isNotEmpty()) {
             moveQueue()
@@ -43,7 +43,7 @@ class VerifyLedgerAddressQueueManager @Inject constructor() {
     }
 
     interface Listener {
-        fun onNextQueueItem(ledgerDetail: Account)
+        fun onNextQueueItem(ledgerDetail: SelectedLedgerAccount.LedgerAccount)
         fun onQueueCompleted()
     }
 }

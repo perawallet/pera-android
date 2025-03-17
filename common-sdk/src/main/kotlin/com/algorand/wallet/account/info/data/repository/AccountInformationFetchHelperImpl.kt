@@ -29,12 +29,15 @@ internal class AccountInformationFetchHelperImpl @Inject constructor(
     private val accountInformationResponseMapper: AccountInformationResponseMapper,
 ) : AccountInformationFetchHelper {
 
-    override suspend fun fetchAccount(address: String): PeraResult<AccountInformationResponse> {
+    override suspend fun fetchAccount(
+        address: String,
+        includeClosedAccount: Boolean
+    ): PeraResult<AccountInformationResponse> {
         val excludesQuery = IndexerAccountFetchRequestExcludesQueryBuilder.newBuilder()
             .addExclude(CREATED_ASSETS)
             .addExclude(CREATED_APPS)
             .build()
-        return request { indexerApi.getAccountInformation(address, excludesQuery) }.use(
+        return request { indexerApi.getAccountInformation(address, excludesQuery, includeClosedAccount) }.use(
             onSuccess = { response ->
                 PeraResult.Success(response)
             },

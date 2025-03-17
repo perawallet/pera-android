@@ -14,6 +14,7 @@ package com.algorand.android.models
 
 import android.bluetooth.BluetoothDevice
 import androidx.annotation.StringRes
+import com.algorand.wallet.account.info.domain.model.AccountInformation
 
 sealed class LedgerBleResult {
     data class LedgerWaitingForApproval(

@@ -13,21 +13,37 @@
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.resultinfo.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.rekey.rekeytoledgeraccount.resultinfo.ui.usecase.RekeyToLedgerAccountVerifyInfoPreviewUseCase
-import com.algorand.android.utils.AccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.rekey.rekeytoledgeraccount.resultinfo.ui.RekeyToLedgerAccountVerifyInfoViewModel.ViewState
+import com.algorand.android.utils.launchIO
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class RekeyToLedgerAccountVerifyInfoViewModel @Inject constructor(
-    private val rekeyToLedgerAccountVerifyInfoPreviewUseCase: RekeyToLedgerAccountVerifyInfoPreviewUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val stateDelegate: StateDelegate<ViewState>,
     savedStateHandle: SavedStateHandle
-) : BaseViewModel() {
+) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate {
 
     private val navArgs = RekeyToLedgerAccountVerifyInfoFragmentArgs.fromSavedStateHandle(savedStateHandle)
     private val accountAddress = navArgs.accountAddress
 
-    val accountDisplayName: AccountDisplayName
-        get() = rekeyToLedgerAccountVerifyInfoPreviewUseCase.getAccountDisplayName(accountAddress)
+    init {
+        initViewState()
+    }
+
+    private fun initViewState() {
+        stateDelegate.setDefaultState(ViewState(accountDisplayName = ""))
+        viewModelScope.launchIO {
+            val displayName = getAccountDisplayName(accountAddress).primaryDisplayName
+            stateDelegate.updateState { ViewState(displayName) }
+        }
+    }
+
+    data class ViewState(val accountDisplayName: String)
 }

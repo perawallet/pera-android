@@ -70,18 +70,17 @@ class RekeyToLedgerAccountSelectionFragment : BaseLedgerAccountSelectionFragment
     }
 
     override fun onConfirmationClick(selectedLedgerAccounts: SelectedLedgerAccounts) {
-        // TODO Will be implemented after ledger flow
-//        val selectedLedgerAccount = selectedLedgerAccounts.ledgerAccounts.firstOrNull()
-//        if (selectedLedgerAccount != null) {
-//            nav(
-//                RekeyToLedgerAccountSelectionFragmentDirections
-//                    .rekeyLedgerAccountSelectionFragmentToRekeyToLedgerAccountConfirmationFragment(
-//                        accountAddress = rekeyLedgerAccountSelectionViewModel.accountAddress,
-//                        authAccountAddress = selectedAccount.address,
-//                        ledgerDetail = selectedAccount.detail
-//                    )
-//            )
-//        }
+        val selectedLedgerAccount = selectedLedgerAccounts.ledgerAccounts.firstOrNull()
+        if (selectedLedgerAccount != null) {
+            nav(
+                RekeyToLedgerAccountSelectionFragmentDirections
+                    .rekeyLedgerAccountSelectionFragmentToRekeyToLedgerAccountConfirmationFragment(
+                        accountAddress = rekeyLedgerAccountSelectionViewModel.accountAddress,
+                        authAccountAddress = selectedLedgerAccount.address,
+                        ledgerDetail = selectedLedgerAccount
+                    )
+            )
+        }
     }
 
     override fun changeToolbarTitle() {

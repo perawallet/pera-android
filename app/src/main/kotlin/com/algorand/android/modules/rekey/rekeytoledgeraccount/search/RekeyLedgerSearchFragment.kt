@@ -16,9 +16,9 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
-import com.algorand.android.models.AccountInformation
 import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.BaseLedgerSearchFragment
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionNavArgs
+import com.algorand.wallet.account.info.domain.model.AccountInformation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -58,7 +58,7 @@ class RekeyLedgerSearchFragment : BaseLedgerSearchFragment() {
                 RekeyLedgerAccountSelectionNavArgs.LedgerAccountsNavArgs(
                     isRekeyed = it.isRekeyed(),
                     address = it.address,
-                    assetHoldingIds = it.assetHoldingMap.map { it.key },
+                    assetHoldingIds = it.getAssetHoldingIds(),
                     authAddress = it.rekeyAdminAddress
                 )
             }

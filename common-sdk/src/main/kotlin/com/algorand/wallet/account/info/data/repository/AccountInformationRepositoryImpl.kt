@@ -52,8 +52,11 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     private val getLocalAccountsAddresses: GetLocalAccountsAddresses
 ) : AccountInformationRepository {
 
-    override suspend fun fetchAccountInformation(address: String): PeraResult<AccountInformation> {
-        return accountInformationFetchHelper.fetchAccount(address).use(
+    override suspend fun fetchAccountInformation(
+        address: String,
+        includeClosedAccount: Boolean
+    ): PeraResult<AccountInformation> {
+        return accountInformationFetchHelper.fetchAccount(address, includeClosedAccount).use(
             onSuccess = { response ->
                 val accountInformation = accountInformationMapper(response)
                 if (accountInformation == null) {
@@ -88,7 +91,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
             val result = mutableMapOf<String, AccountInformation?>()
             addresses.map { address ->
                 async {
-                    result[address] = accountInformationFetchHelper.fetchAccount(address).use(
+                    result[address] = accountInformationFetchHelper.fetchAccount(
+                        address,
+                        includeClosedAccount = false
+                    ).use(
                         onSuccess = { response ->
                             accountInformationCacheHelper.cacheAccountInformation(address, response)
                         },

@@ -14,6 +14,7 @@ package com.algorand.android.modules.baseledgeraccountselection.accountselection
 
 import android.os.Bundle
 import android.view.View
+import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
@@ -55,18 +56,17 @@ abstract class BaseLedgerAccountSelectionFragment : DaggerBaseFragment(R.layout.
         }
 
         override fun onAccountInfoClick(accountItem: AccountSelectionListItem.AccountItem) {
-            // TODO Will be implemented after ledger flow
-//            nav(
-//                MainNavigationDirections.actionGlobalLedgerAccountInformationBottomSheet(
-//                    selectedLedgerAccountSelectionListItem = accountItem,
-//                    authLedgerAccountSelectionListItem = baseLedgerAccountSelectionViewModel.getAuthAccountOf(
-//                        accountSelectionListItem = accountItem
-//                    ),
-//                    rekeyedAccountSelectionListItem = baseLedgerAccountSelectionViewModel.getRekeyedAccountOf(
-//                        accountSelectionListItem = accountItem
-//                    )
-//                )
-//            )
+            nav(
+                MainNavigationDirections.actionGlobalLedgerAccountInformationBottomSheet(
+                    selectedLedgerAccountSelectionListItem = accountItem,
+                    authLedgerAccountSelectionListItem = baseLedgerAccountSelectionViewModel.getAuthAccountOf(
+                        accountSelectionListItem = accountItem
+                    ),
+                    rekeyedAccountSelectionListItem = baseLedgerAccountSelectionViewModel.getRekeyedAccountOf(
+                        accountSelectionListItem = accountItem
+                    )
+                )
+            )
         }
     }
 

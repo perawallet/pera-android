@@ -15,6 +15,7 @@ package com.algorand.android.modules.rekey.rekeytoledgeraccount.resultinfo.ui
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -52,14 +53,16 @@ class RekeyToLedgerAccountVerifyInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Description(modifier: Modifier) =
+    override fun Description(modifier: Modifier) {
+        val state = rekeyToLedgerAccountVerifyInfoViewModel.state.collectAsState().value
         PeraBodyText(
             text = stringResource(
                 id = R.string.the_account_name_was_successfully_rekeyed_formatted,
-                rekeyToLedgerAccountVerifyInfoViewModel.accountDisplayName.getAccountPrimaryDisplayName()
+                state.accountDisplayName
             ),
             modifier = modifier
         )
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable

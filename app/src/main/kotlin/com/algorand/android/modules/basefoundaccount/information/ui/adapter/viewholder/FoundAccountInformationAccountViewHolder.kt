@@ -37,10 +37,10 @@ class FoundAccountInformationAccountViewHolder(
                 setStartIconDrawable(accountIconDrawable)
                 setPrimaryValueText(formattedPrimaryValue)
                 setSecondaryValueText(formattedSecondaryValue)
-                setTitleText(accountDisplayName.getAccountPrimaryDisplayName())
-                setDescriptionText(accountDisplayName.getAccountSecondaryDisplayName(resources))
+                setTitleText(accountDisplayName.primaryDisplayName)
+                setDescriptionText(accountDisplayName.secondaryDisplayName)
                 setOnLongClickListener {
-                    listener.onAccountItemLongClick(accountDisplayName.getRawAccountAddress())
+                    listener.onAccountItemLongClick(accountDisplayName.accountAddress)
                     true
                 }
             }

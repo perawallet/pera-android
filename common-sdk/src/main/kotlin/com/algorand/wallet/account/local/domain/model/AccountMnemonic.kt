@@ -10,20 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.transaction.sdk
+package com.algorand.wallet.account.local.domain.model
 
-import com.algorand.wallet.algosdk.domain.model.Algo25Account
-import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
+data class AccountMnemonic(
+    val words: List<String>,
+    val type: AccountType
+) {
 
-interface AlgoAccountSdk {
-
-    fun createHdAccount(): HdKeyAccount?
-
-    fun recoverHdAccount(mnemonic: String): HdKeyAccount?
-
-    fun createAlgo25Account(): Algo25Account?
-
-    fun recoverAlgo25Account(mnemonic: String): Algo25Account?
-
-    fun getMnemonicFromSecretKey(secretKey: ByteArray): String?
+    sealed interface AccountType {
+        data object Algo25 : AccountType
+        data object HdKey : AccountType
+    }
 }

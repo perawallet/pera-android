@@ -25,7 +25,7 @@
             android:name="name"
             app:argType="string" />
         <argument
-            android:name="publicKey"
+            android:name="accountAddress"
             app:argType="string" />
     </dialog>
 

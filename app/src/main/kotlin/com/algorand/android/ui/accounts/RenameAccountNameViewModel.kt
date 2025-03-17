@@ -28,15 +28,15 @@ class RenameAccountNameViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val accountPublicKey: String = savedStateHandle.getOrThrow(PUBLIC_KEY)
+    val accountAccountAddress: String = savedStateHandle.getOrThrow(ACCOUNT_ADDRESS)
 
     fun changeAccountName(accountName: String) {
         viewModelScope.launchIO {
-            setCustomName(accountPublicKey, accountName)
+            setCustomName(accountAccountAddress, accountName)
         }
     }
 
     companion object {
-        private const val PUBLIC_KEY = "publicKey"
+        private const val ACCOUNT_ADDRESS = "accountAddress"
     }
 }

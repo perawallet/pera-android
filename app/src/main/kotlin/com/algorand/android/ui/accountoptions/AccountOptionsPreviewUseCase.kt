@@ -36,7 +36,8 @@ class AccountOptionsPreviewUseCase @Inject constructor(
                 accountDisplayName = getAccountDisplayName(address),
                 authAccountDisplayName = if (isRekeyed()) getAccountDisplayName(rekeyAdminAddress.orEmpty()) else null,
                 isAuthAddressButtonVisible = isRekeyed(),
-                isPassphraseButtonVisible = accountDetail.accountRegistrationType == AccountRegistrationType.Algo25,
+                isPassphraseButtonVisible = accountDetail.accountRegistrationType == AccountRegistrationType.Algo25 ||
+                        accountDetail.accountRegistrationType == AccountRegistrationType.HdKey,
                 isUndoRekeyButtonVisible = isRekeyed() && canSignTransaction,
                 canSignTransaction = canSignTransaction
             )

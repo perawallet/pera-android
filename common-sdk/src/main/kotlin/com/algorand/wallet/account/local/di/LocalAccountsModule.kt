@@ -47,6 +47,8 @@ import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepos
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccountUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetAccountMnemonic
+import com.algorand.wallet.account.local.domain.usecase.GetAccountMnemonicUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeeds
 import com.algorand.wallet.account.local.domain.usecase.GetAllLocalAccountAddressesAsFlow
@@ -272,4 +274,7 @@ internal object LocalAccountsModule {
     ): IsThereAnyNoAuthAccountWithAddress {
         return IsThereAnyNoAuthAccountWithAddress(repository::isAddressExists)
     }
+
+    @Provides
+    fun provideGetAccountMnemonic(useCase: GetAccountMnemonicUseCase): GetAccountMnemonic = useCase
 }

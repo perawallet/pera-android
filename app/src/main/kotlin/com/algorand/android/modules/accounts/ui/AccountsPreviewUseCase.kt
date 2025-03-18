@@ -18,7 +18,6 @@ import com.algorand.android.banner.domain.usecase.BannersUseCase
 import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.modules.accounts.domain.mapper.PortfolioValueItemMapper
 import com.algorand.android.modules.accounts.domain.model.AccountPreview
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.AssetInboxAllAccountsUseCase
 import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.peraconnectivitymanager.ui.PeraConnectivityManager
@@ -32,6 +31,7 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.combine
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequestCountFlow
 import com.algorand.wallet.cache.domain.model.AppCacheStatus
 import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
 import javax.inject.Inject
@@ -42,7 +42,7 @@ class AccountsPreviewUseCase @Inject constructor(
     private val parityUseCase: ParityUseCase,
     private val accountPreviewMapper: AccountPreviewMapper,
     private val bannersUseCase: BannersUseCase,
-    private val assetInboxAllAccountsUseCase: AssetInboxAllAccountsUseCase,
+    private val getAssetInboxRequestCountFlow: GetAssetInboxRequestCountFlow,
     private val nodeSettingsUseCase: NodeSettingsUseCase,
     private val portfolioValueItemMapper: PortfolioValueItemMapper,
     private val tutorialUseCase: TutorialUseCase,
@@ -81,7 +81,7 @@ class AccountsPreviewUseCase @Inject constructor(
             parityUseCase.getSelectedCurrencyDetailCacheFlow(),
             getAppCacheStatusFlow(),
             bannersUseCase.getBanner(),
-            assetInboxAllAccountsUseCase.getAssetInboxCountCacheFlow(),
+            getAssetInboxRequestCountFlow(),
             tutorialUseCase.getTutorial(),
             getAskNotificationPermissionEventFlowUseCase.invoke(),
             nodeSettingsUseCase.getAllNodeAsFlow()

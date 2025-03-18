@@ -14,7 +14,6 @@ package com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccoun
 
 import com.algorand.android.R
 import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.mapper.AccountDisplayNameMapper
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
@@ -45,7 +44,6 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
     private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
     private val parityUseCase: ParityUseCase,
-    private val accountDisplayNameMapper: AccountDisplayNameMapper,
     private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
     private val fetchRekeyedAccounts: FetchRekeyedAccounts,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
@@ -61,7 +59,7 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
         )
     }
 
-    fun getRekeyedAccountInformationPreviewFlow(
+    suspend fun getRekeyedAccountInformationPreviewFlow(
         accountAddress: String,
         preview: RekeyedAccountInformationPreview
     ): PeraResult<RekeyedAccountInformationPreview> {

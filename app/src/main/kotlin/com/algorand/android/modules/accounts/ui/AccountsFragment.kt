@@ -59,8 +59,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private val viewEventCollector: suspend (AccountsViewModel.ViewEvent) -> Unit = { event ->
         when (event) {
-            is AccountsViewModel.ViewEvent.NavToRegisterWatchAccount ->
-                navToLoginNavigation(event.shouldNavToRegisterWatchAccount)
+            is AccountsViewModel.ViewEvent.NavToLoginNavigation ->
+                navToLoginNavigation()
 
             is AccountsViewModel.ViewEvent.ShowMaxAccountLimitExceededError -> showMaxAccountLimitExceededError()
         }
@@ -454,8 +454,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
-    private fun navToLoginNavigation(shouldNavToRegisterWatchAccount: Boolean) {
-        nav(MainNavigationDirections.actionGlobalLoginNavigation(shouldNavToRegisterWatchAccount))
+    private fun navToLoginNavigation() {
+        nav(MainNavigationDirections.actionGlobalLoginNavigation())
     }
 
     companion object {

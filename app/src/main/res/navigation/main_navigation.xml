@@ -71,10 +71,6 @@
             android:defaultValue="true"
             app:argType="boolean" />
         <argument
-            android:name="shouldNavToRegisterWatchAccount"
-            android:defaultValue="false"
-            app:argType="boolean" />
-        <argument
             android:name="mnemonic"
             android:defaultValue="@null"
             app:argType="string"

@@ -159,7 +159,7 @@ class AccountsViewModel @Inject constructor(
                 if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {
                     ViewEvent.ShowMaxAccountLimitExceededError
                 } else {
-                    ViewEvent.NavToRegisterWatchAccount(shouldNavToRegisterWatchAccount = false)
+                    ViewEvent.NavToLoginNavigation
                 }
             )
         }
@@ -196,7 +196,7 @@ class AccountsViewModel @Inject constructor(
     }
 
     sealed interface ViewEvent {
-        data class NavToRegisterWatchAccount(val shouldNavToRegisterWatchAccount: Boolean) : ViewEvent
+        data object NavToLoginNavigation : ViewEvent
         data object ShowMaxAccountLimitExceededError : ViewEvent
     }
 }

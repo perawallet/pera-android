@@ -20,6 +20,8 @@ import com.algorand.android.MainActivity
 import com.algorand.android.utils.ActivityLifecycleObserver
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
 import com.algorand.android.utils.launchIO
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -55,7 +57,9 @@ class AutoLockManager @Inject constructor(
         if (activity !is MainActivity) return
         activity.lifecycleScope.launchIO {
             if (autoLockManagerUseCase.shouldAppLocked() || !isAppUnlocked) {
-                lockApplication()
+                withContext(Dispatchers.Main) {
+                    lockApplication()
+                }
             }
         }
     }

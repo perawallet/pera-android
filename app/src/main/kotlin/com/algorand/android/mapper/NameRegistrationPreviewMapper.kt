@@ -37,7 +37,7 @@ class NameRegistrationPreviewMapper @Inject constructor() {
             accountAlreadyExistsEvent = null,
             updateWatchAccountEvent = null,
             createAccountEvent = Event(accountCreation),
-            handleNextNavigationEvent = Event(Unit),
+            handleNextNavigationEvent = null,
             walletId = walletId
         )
     }

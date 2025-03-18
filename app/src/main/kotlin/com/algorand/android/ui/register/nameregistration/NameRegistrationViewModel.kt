@@ -21,6 +21,7 @@ import com.algorand.android.models.ui.NameRegistrationPreview
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.usecase.NameRegistrationPreviewUseCase
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
@@ -29,6 +30,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -95,6 +97,9 @@ class NameRegistrationViewModel @Inject constructor(
     fun addNewAccount(account: AccountCreation) {
         viewModelScope.launchIO {
             nameRegistrationPreviewUseCase.addNewAccount(account)
+            _nameRegistrationPreviewFlow.update {
+                it.copy(handleNextNavigationEvent = Event(Unit))
+            }
         }
     }
 

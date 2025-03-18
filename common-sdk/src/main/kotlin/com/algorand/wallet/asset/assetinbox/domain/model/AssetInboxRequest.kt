@@ -10,9 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model
+package com.algorand.wallet.asset.assetinbox.domain.model
 
-data class AssetInboxAllAccounts(
+data class AssetInboxRequest(
     val address: String,
     val requestCount: Int
 )

@@ -32,17 +32,4 @@ enum class GovernorIconResource(
     STANDARD(R.drawable.ic_crown_filled, R.color.background, R.color.wallet_4_icon_governor),
 
     UNDEFINED(R.drawable.ic_crown_filled, R.color.transparent, R.color.transparent);
-
-    companion object {
-        fun getGovernorIconResourceByAccountType(accountType: Account.Type?): GovernorIconResource {
-            return when (accountType) {
-                Account.Type.STANDARD -> STANDARD
-                Account.Type.LEDGER -> LEDGER
-                Account.Type.REKEYED -> REKEYED
-                Account.Type.REKEYED_AUTH -> REKEYED_AUTH
-                Account.Type.WATCH -> WATCH
-                null -> UNDEFINED
-            }
-        }
-    }
 }

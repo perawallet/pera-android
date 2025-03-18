@@ -82,9 +82,11 @@ internal class HdSeedRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addHdSeed(seedId: Int, entropy: ByteArray, seed: ByteArray): Long {
-        val hdKeyEntity = hdSeedEntityMapper(seedId, entropy, seed)
-        val seedId = hdSeedDao.insert(hdKeyEntity)
-        return seedId
+        return withContext(coroutineDispatcher) {
+            val hdKeyEntity = hdSeedEntityMapper(seedId, entropy, seed)
+            val seedId = hdSeedDao.insert(hdKeyEntity)
+            seedId
+        }
     }
 
     override suspend fun deleteHdSeed(seedId: Int) {

@@ -19,9 +19,9 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragment.Companion.ADDRESS_KEY
 import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountAssetsPreviewUseCase
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountAssetsPreview
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.AssetInboxAllAccountsUseCase
 import com.algorand.android.modules.tracking.accountdetail.accountassets.AccountAssetsFragmentEventTracker
 import com.algorand.android.utils.getOrThrow
+import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -37,8 +37,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class AccountAssetsViewModel @Inject constructor(
     private val accountAssetsPreviewUseCase: AccountAssetsPreviewUseCase,
-    private val assetInboxAllAccountsUseCase: AssetInboxAllAccountsUseCase,
     private val accountAssetsFragmentEventTracker: AccountAssetsFragmentEventTracker,
+    private val getAssetInboxRequest: GetAssetInboxRequest,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -83,13 +83,8 @@ class AccountAssetsViewModel @Inject constructor(
     }
 
     private suspend fun hasInboxItem(): Boolean {
-        return assetInboxAllAccountsUseCase
-            .getAssetInboxAllAccountsCacheFlow()
-            .value
-            .values
-            .any { inboxItem ->
-                inboxItem.data?.let { it.address == accountAddress && it.requestCount > 0 } == true
-            }
+        val addressRequest = getAssetInboxRequest(accountAddress) ?: return false
+        return addressRequest.requestCount > 0
     }
 
     companion object {

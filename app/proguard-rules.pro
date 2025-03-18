@@ -24,6 +24,7 @@
 -keep public enum com.algorand.android.**{ *; }
 -keep class com.algorand.android.** { *; }
 -keep class com.algorand.wallet.** { *; }
+-keep interface com.algorand.wallet.** { *; }
 -keep class androidx.** { *; }
 -keep class com.algorand.android.**.model.** { *; }
 
@@ -159,6 +160,13 @@
 # ---------------- BEGIN DAGGER -------------------
 -dontwarn com.google.errorprone.annotations.*
 -keep,allowobfuscation,allowshrinking @dagger.hilt.android.EarlyEntryPoint class *
+-keep class javax.inject.* { *; }
+-keep class dagger.hilt.** { *; }
+-keep class **.Hilt_* { *; }
+-keep @dagger.hilt.EntryPoint class *
+-keep @dagger.hilt.android.EarlyEntryPoint class *
+-keep,allowobfuscation,allowshrinking @dagger.hilt.EntryPoint class *
+-keep,allowobfuscation,allowshrinking @dagger.hilt.android.EarlyEntryPoint class *
 # ---------------- END DAGGER -------------------
 
 
@@ -184,6 +192,165 @@
 # ---------------- END WALLET CONNECT -------------------
 
 
+# ---------------- BEGIN ROOM -------------------
+# Keep Room database classes and their fields
+-keep class androidx.room.** { *; }
+-keep interface androidx.room.** { *; }
+-keep @androidx.room.Dao class *
+-keep @androidx.room.Entity class *
+-keep @androidx.room.Dao interface *
+-keep @androidx.room.Entity interface *
+-keep class * extends androidx.room.RoomDatabase
+
+-keep class com.algorand.wallet.account.local.data.database.AddressDatabase { *; }
+-keep class com.algorand.wallet.foundation.database.PeraDatabase { *; }
+-keepclassmembers class com.algorand.wallet.**.model.** { *; }
+-keepclassmembers class com.algorand.wallet.**.mapper.** { *; }
+-keepclassmembers class com.algorand.wallet.**.dao.** { *; }
+-keepclassmembers class com.algorand.wallet.**.entity.** { *; }
+
+-keepclassmembers interface com.algorand.wallet.**.model.** { *; }
+-keepclassmembers interface com.algorand.wallet.**.mapper.** { *; }
+-keepclassmembers interface com.algorand.wallet.**.dao.** { *; }
+-keepclassmembers interface com.algorand.wallet.**.entity.** { *; }
+-keep @androidx.room.Dao interface *
+
+# Keep any classes and methods annotated with Room annotations
+-keep class * {
+    @androidx.room.Query <methods>;
+}
+
+# Keep Room's AutoMigration-annotated classes
+-keep class * {
+    @androidx.room.AutoMigration <methods>;
+}
+
+# Keep Embedded and Relation fields
+-keepclassmembers class ** {
+    @androidx.room.Embedded <fields>;
+    @androidx.room.Relation <fields>;
+    @androidx.room.ColumnInfo <fields>;
+    @androidx.room.PrimaryKey <fields>;
+    @androidx.room.ForeignKey <fields>;
+    @androidx.room.Index <fields>;
+}
+
+# Keep constructors of @Entity classes with @Ignore annotations
+-keepclassmembers class * extends androidx.room.RoomDatabase {
+    androidx.room.InvalidationTracker invalidationTracker;
+    androidx.room.dao.* *;
+}
+
+-keepattributes *Annotation*
+
+# Keep TypeConverters
+-keep class * extends androidx.room.TypeConverter
+# ---------------- END ROOM -------------------
+
+
+# ---------------- BEGIN GMS -------------------
+# Keep classes used by Google Play Services
+-keep class com.google.android.gms.** { *; }
+-keep class com.google.firebase.** { *; }
+
+# Keep methods with @Keep annotation
+-keep @androidx.annotation.Keep class *
+-keepclassmembers class * {
+    @androidx.annotation.Keep *;
+}
+
+# Firebase Analytics
+-keep class com.google.firebase.analytics.** { *; }
+
+# Firebase Crashlytics
+-keepattributes SourceFile,LineNumberTable
+-keep class com.crashlytics.** { *; }
+-keep class com.google.firebase.crashlytics.** { *; }
+
+# Google Play Services measurement
+-keep class com.google.android.gms.measurement.** { *; }
+
+# For Google Play Services auth
+-keepattributes Signature
+-keepattributes *Annotation*
+
+# Google Location
+-keep class com.google.android.gms.location.** { *; }
+# ---------------- END GMS -------------------
+
+
+# ---------------- BEGIN COROUTINE -------------------
+
+-keep class kotlinx.coroutines.** { *; }
+-keep class kotlin.coroutines.** { *; }
+-keep class kotlin.ranges.** { *; } # needed for ranges in coroutines
+-keep class kotlin.sequences.** { *; } # needed for sequences in coroutines
+-keep class kotlin.collections.** { *; } # needed for collections in coroutines
+-keep class kotlinx.atomicfu.** { *; } # needed for atomic operations in coroutines
+-keep class kotlinx.serialization.** { *; } # if you are using kotlinx-serialization with coroutines
+-keep class kotlinx.io.** { *; } # if you are using kotlinx-io with coroutines
+-keep class kotlinx.datetime.** { *; } # if you are using kotlinx-datetime with coroutines
+-keep class kotlin.coroutines.Continuation { *; }
+-keep class kotlin.coroutines.CoroutineContext { *; }
+# ---------------- END COROUTINE -------------------
+
+
+# ---------------- BEGIN COMPOSE -------------------
+-keep class androidx.compose.** { *; }
+-keep class androidx.compose.runtime.** { *; }
+-keep class androidx.compose.runtime.snapshots.** { *; }
+
+-keepclasseswithmembers class * {
+    @androidx.compose.runtime.Composable <methods>;
+}
+
+-keepclasseswithmembers class * {
+    @androidx.compose.ui.tooling.preview.Preview <methods>;
+}
+# ---------------- END COMPOSE -------------------
+
+
+# ---------------- BEGIN JNA -------------------
+-keep class net.java.dev.jna.** { *; }
+-keepclassmembers class net.java.dev.jna.** { *; }
+
+-keep class **.jna.** { *; }
+
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keep class ** {
+    @**.Structure$FieldOrder *;
+}
+
+-keep class ** {
+    @**.** *;
+}
+
+-keepclassmembers class * {
+    @net.java.dev.jna.annotation.* *;
+}
+
+-dontwarn com.sun.jna.Native
+
+-keep class foundation.algorand.xhdwalletapi.** { *; }
+-keep interface foundation.algorand.xhdwalletapi.** { *; }
+# ---------------- END JNA -------------------
+
+
+# ---------------- BEGIN AES -------------------
+-keep interface com.algorand.wallet.encryption.domain.manager.AESPlatformManager { *; }
+-keep class com.algorand.wallet.encryption.domain.manager.AESPlatformManagerImpl { *; }
+-keepclassmembers class com.algorand.wallet.encryption.domain.manager.AESPlatformManagerImpl { *; }
+
+-keep class javax.crypto.** { *; }
+-keep class android.security.keystore.** { *; }
+-keep class java.security.** { *; }
+-keep class java.util.Base64 { *; }
+# ---------------- END JNA -------------------
+
+
 # ---------------- BEGIN OTHERS -------------------
 # Prevent R8 from leaving Data object members always null
 -keepclassmembers,allowobfuscation class * {
@@ -195,4 +362,14 @@
 -keep class * extends com.google.gson.reflect.TypeToken
 # ---------------- END OTHERS -------------------
 
--dontwarn com.sun.jna.Native
+# Needed to supress warnings recommended by Android Studio
+-dontwarn com.google.android.gms.common.annotation.NoNullnessRewrite
+-dontwarn java.lang.management.ManagementFactory
+-dontwarn java.lang.management.ThreadMXBean
+-dontwarn net.pwall.json.schema.JSONSchema
+-dontwarn java.awt.Component
+-dontwarn java.awt.GraphicsEnvironment
+-dontwarn java.awt.HeadlessException
+-dontwarn java.awt.Window
+-dontwarn net.pwall.json.pointer.JSONPointer
+-dontwarn net.pwall.json.schema.output.BasicOutput

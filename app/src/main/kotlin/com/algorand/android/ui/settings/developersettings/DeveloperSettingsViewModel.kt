@@ -14,13 +14,15 @@ package com.algorand.android.ui.settings.developersettings
 
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class DeveloperSettingsViewModel @Inject constructor(
-    private val developerSettingsPreviewUseCase: DeveloperSettingsPreviewUseCase
+    private val developerSettingsPreviewUseCase: DeveloperSettingsPreviewUseCase,
+    private val getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase
 ) : BaseViewModel() {
 
     var firstAccountAddress: String? = null
@@ -37,5 +39,11 @@ class DeveloperSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             firstAccountAddress = developerSettingsPreviewUseCase.getFirstAccountAddress()
         }
+    }
+
+    fun showMigrationViewer(): Boolean {
+//        return getLocalAccountsFromSharedPrefUseCase
+//            .getLocalAccountsFromSharedPref()?.isNotEmpty() ?: false
+        return true
     }
 }

@@ -14,21 +14,21 @@ package com.algorand.android.modules.autolockmanager.domain.usecase
 
 import com.algorand.android.repository.SecurityRepository
 import com.algorand.android.usecase.EncryptedPinUseCase
-import com.algorand.android.usecase.GetLocalAccountsUseCase
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
 import javax.inject.Inject
 
 class ShouldAppLockedUseCase @Inject constructor(
     private val getAppAtBackgroundTimeUseCase: GetAppAtBackgroundTimeUseCase,
     private val encryptedPinUseCase: EncryptedPinUseCase,
     private val securityRepository: SecurityRepository,
-    private val getLocalAccountsUseCase: GetLocalAccountsUseCase
+    private val isThereAnyLocalAccount: IsThereAnyLocalAccount
 ) {
 
-    operator fun invoke(): Boolean {
+    suspend operator fun invoke(): Boolean {
         val appAtBackgroundTime = getAppAtBackgroundTimeUseCase.invoke()
         return when {
             !encryptedPinUseCase.isEncryptedPinSet() -> false
-            !isThereAnyRegisteredAccount() -> false
+            !isThereAnyLocalAccount() -> false
             isAppFreshOpened(appAtBackgroundTime) -> true
             isThresholdExpired(appAtBackgroundTime) -> true
             isPenaltyTimeActive() -> true
@@ -48,10 +48,6 @@ class ShouldAppLockedUseCase @Inject constructor(
 
     private fun isPenaltyTimeActive(): Boolean {
         return securityRepository.getLockPenaltyRemainingTime() != defaultLockPenaltyRemainingTimePreference
-    }
-
-    private fun isThereAnyRegisteredAccount(): Boolean {
-        return getLocalAccountsUseCase.getLocalAccountsFromAccountManagerCache().isNotEmpty()
     }
 
     companion object {

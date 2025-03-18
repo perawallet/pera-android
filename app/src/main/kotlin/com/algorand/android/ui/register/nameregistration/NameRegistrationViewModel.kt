@@ -25,6 +25,8 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -39,8 +41,9 @@ class NameRegistrationViewModel @Inject constructor(
     private val nameRegistrationPreviewUseCase: NameRegistrationPreviewUseCase,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
     private val isOnHdWalletUseCase: IsOnHdWalletUseCase,
-    private val getMaxHdSeedId: GetMaxHdSeedId
-) : BaseViewModel() {
+    private val getMaxHdSeedId: GetMaxHdSeedId,
+    private val eventDelegate: EventDelegate<ViewEvent>
+) : BaseViewModel(), EventViewModel<NameRegistrationViewModel.ViewEvent> by eventDelegate {
 
     private val _nameRegistrationPreviewFlow = MutableStateFlow(getInitialPreview())
     val nameRegistrationPreviewFlow: Flow<NameRegistrationPreview>
@@ -49,7 +52,7 @@ class NameRegistrationViewModel @Inject constructor(
     private val accountCreation = savedStateHandle.get<AccountCreation>(ACCOUNT_CREATION_KEY)
     private val accountAddress = accountCreation?.address
     private val accountName = accountCreation?.customName
-    protected val accountType = accountCreation?.type
+    private val accountType = accountCreation?.type
     private var walletId: Int? = null
 
     val predefinedAccountName: String
@@ -61,7 +64,7 @@ class NameRegistrationViewModel @Inject constructor(
         }
     }
 
-    fun updatePreviewWithHdWalletData() {
+    private fun updatePreviewWithHdWalletData() {
         viewModelScope.launch(Dispatchers.IO) {
             walletId = (getMaxHdSeedId.invoke() ?: 0) + 1
             walletId?.let {
@@ -74,7 +77,7 @@ class NameRegistrationViewModel @Inject constructor(
         }
     }
 
-    fun updatePreviewWithAccountCreation(accountCreation: AccountCreation?, inputName: String) {
+    private fun updatePreviewWithAccountCreation(accountCreation: AccountCreation?, inputName: String) {
         viewModelScope.launch {
             nameRegistrationPreviewUseCase.getPreviewWithAccountCreation(
                 accountCreation = accountCreation,
@@ -107,10 +110,6 @@ class NameRegistrationViewModel @Inject constructor(
         return nameRegistrationPreviewUseCase.getInitialPreview()
     }
 
-    fun isAccountLimitExceed(): Boolean {
-        return isAccountLimitExceedUseCase.isAccountLimitExceed()
-    }
-
     fun isOnHdWallet(): Boolean {
         return isOnHdWalletUseCase.invoke()
     }
@@ -119,7 +118,21 @@ class NameRegistrationViewModel @Inject constructor(
         return accountType is AccountCreation.Type.HdKey
     }
 
+    fun onNextButtonClick(inputName: String) {
+        viewModelScope.launchIO {
+            if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {
+                eventDelegate.sendEvent(ViewEvent.ShowMaxAccountLimitExceededError)
+            } else {
+                updatePreviewWithAccountCreation(accountCreation, inputName)
+            }
+        }
+    }
+
     companion object {
         private const val ACCOUNT_CREATION_KEY = "accountCreation"
+    }
+
+    sealed interface ViewEvent {
+        data object ShowMaxAccountLimitExceededError : ViewEvent
     }
 }

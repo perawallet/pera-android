@@ -60,7 +60,6 @@ import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
-import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
 import com.algorand.android.modules.qrscanning.QrScannerViewModel
 import com.algorand.android.modules.tracking.core.PeraClickEvent
@@ -90,7 +89,6 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 @Suppress("LargeClass")
 @AndroidEntryPoint
@@ -125,7 +123,28 @@ class MainActivity :
             )
 
             is MainViewModel.ViewEvent.ShowGlobalNotificationError -> showGlobalNotificationError()
+
+            is MainViewModel.ViewEvent.NavToWalletConnectArbitraryDataRequestNavigation ->
+                navToWalletConnectArbitraryDataRequestNavigation(event.wcRequestId)
+
+            is MainViewModel.ViewEvent.NavToWalletConnectTransactionRequestNavigation ->
+                navToWalletConnectTransactionRequestNavigation(event.wcRequestId)
+
+            is MainViewModel.ViewEvent.StartAutoLockSuggestion -> startAutoLockSuggestion()
+
+            is MainViewModel.ViewEvent.StartInAppReview -> startInAppReview()
         }
+    }
+
+    private fun startInAppReview() {
+        val isStarted = inAppReviewManager.start(this@MainActivity)
+        if (!isStarted) {
+            mainViewModel.startAutoLockSuggestion()
+        }
+    }
+
+    private fun startAutoLockSuggestion() {
+        autoLockSuggestionManager.start(this@MainActivity)
     }
 
     private val qrScannerViewEventCollector: suspend (QrScannerViewModel.ViewEvent) -> Unit = { event ->
@@ -155,22 +174,13 @@ class MainActivity :
     lateinit var firebaseAnalytics: FirebaseAnalytics
 
     @Inject
-    lateinit var inAppReviewManager: InAppReviewManager
+    lateinit var firebaseTokenManager: FirebaseTokenManager
 
     @Inject
     lateinit var autoLockSuggestionManager: AutoLockSuggestionManager
 
     @Inject
-    lateinit var firebaseTokenManager: FirebaseTokenManager
-
-    @Inject
-    lateinit var autoLockManager: AutoLockManager
-
-    @Inject
-    lateinit var pendingIntentKeeper: PendingIntentKeeper
-
-    private val isAppUnlocked: Boolean
-        get() = autoLockManager.isAppUnlocked
+    lateinit var inAppReviewManager: InAppReviewManager
 
     private val autoLockManagerListener = object : AutoLockManager.AutoLockManagerListener {
         override fun onLock() {
@@ -179,13 +189,7 @@ class MainActivity :
 
         override fun onUnlock() {
             nav(MainNavigationDirections.actionGlobalLockFragmentPop())
-            handleRedirection()
-        }
-    }
-
-    private var isAssetSetupCompleted: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
-        if (oldValue != newValue && newValue && isAppUnlocked) {
-            handleRedirection()
+            mainViewModel.handlePendingIntent(true)
         }
     }
 
@@ -203,13 +207,13 @@ class MainActivity :
     }
 
     private val appCacheStatusCollector: suspend (AppCacheStatus) -> Unit = {
-        isAssetSetupCompleted = it == AppCacheStatus.INITIALIZED
+        mainViewModel.isAssetSetupCompleted = it == AppCacheStatus.INITIALIZED
         binding.coreActionsTabBarView.setCoreActionButtonEnabled(it == AppCacheStatus.INITIALIZED)
     }
 
     private val newNotificationObserver = Observer<Event<NotificationMetadata>> {
         it.consume()?.let { newNotificationData ->
-            if (!isAppUnlocked) {
+            if (!mainViewModel.isAppUnlocked()) {
                 return@let
             }
             mainViewModel.handleNewNotification(newNotificationData)
@@ -413,12 +417,6 @@ class MainActivity :
         }
     }
 
-    private fun retryLatestAssetAdditionTransaction() {
-        assetOperationViewModel.getLatestAddAssetTransaction()?.let { transactionData ->
-            sendAssetOperationTransaction(transactionData)
-        }
-    }
-
     private val sessionResultFlowCollector: suspend (Event<Resource<WalletConnectSessionProposal>>) -> Unit = { event ->
         event.consume()?.use(
             onSuccess = ::onSessionConnected,
@@ -428,23 +426,13 @@ class MainActivity :
         )
     }
 
-    private fun onSessionConnected(wcSessionRequest: WalletConnectSessionProposal) {
-        nav(HomeNavigationDirections.actionGlobalWalletConnectConnectionNavigation(wcSessionRequest))
-    }
-
-    private fun onSessionFailed(error: Resource.Error) {
-        qrScannerViewModel.setQrCodeInProgress(false)
-        val errorMessage = error.parse(this)
-        showGlobalError(errorMessage = errorMessage, tag = activityTag)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         mainViewModel.initAppCache(lifecycle)
         mainViewModel.fetchInstallReferrer()
         mainViewModel.setDeepLinkHandlerListener(deepLinkHandlerListener)
-        autoLockManager.setListener(autoLockManagerListener)
+        mainViewModel.setAutoLockManagerListener(autoLockManagerListener)
         setupCoreActionsTabBarView()
 
         initObservers()
@@ -466,15 +454,93 @@ class MainActivity :
         }
     }
 
+    override fun onAccountSelected(publicKey: String) {
+        val qrCodeTitle = getString(R.string.qr_code)
+        nav(HomeNavigationDirections.actionGlobalShowQrNavigation(qrCodeTitle, publicKey))
+    }
+
+    override fun onSessionRequestResult(wCSessionRequestResult: WCSessionRequestResult) {
+        with(walletConnectViewModel) {
+            when (wCSessionRequestResult) {
+                is WCSessionRequestResult.ApproveRequest -> approveSession(wCSessionRequestResult)
+                is WCSessionRequestResult.RejectRequest -> rejectSession(wCSessionRequestResult.sessionProposal)
+                is WCSessionRequestResult.RejectScamRequest -> rejectScamSession(wCSessionRequestResult.sessionProposal)
+            }
+        }
+    }
+
+    fun handleDeepLink(uri: String) {
+        mainViewModel.handleDeepLink(uri)
+    }
+
+    fun handleWalletConnectUrl(walletConnectUrl: String) {
+        walletConnectViewModel.handleWalletConnectUrl(
+            url = walletConnectUrl,
+            listener = walletConnectUrlHandlerListener
+        )
+    }
+
+    fun isBasePeraWebViewFragmentActive(): Boolean {
+        return (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
+            .childFragmentManager.fragments.first() is BasePeraWebViewFragment
+    }
+
+    fun signAddAssetTransaction(assetActionResult: AssetActionResult) {
+        assetOperationViewModel.createAddAssetTransaction(assetActionResult)
+    }
+
+    fun signRemoveAssetTransaction(assetActionResult: AssetActionResult) {
+        assetOperationViewModel.createRemoveAssetTransaction(assetActionResult)
+    }
+
+    fun navToCardsFragment(path: String? = null) {
+        nav(HomeNavigationDirections.actionGlobalCardsFragment(path))
+    }
+
+    fun navToStakingFragment(path: String? = null) {
+        nav(HomeNavigationDirections.actionGlobalStakingFragment(path))
+    }
+
+    fun showMaxAccountLimitExceededError() {
+        showGlobalError(
+            title = getString(R.string.too_many_accounts),
+            errorMessage = getString(R.string.looks_like_already_have_accounts, MAX_NUMBER_OF_ACCOUNTS),
+            tag = activityTag
+        )
+    }
+
+    fun navToDiscoverWithPath(path: String) {
+        binding.apply {
+            coreActionsTabBarView.hideWithAnimation()
+            bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true
+            navController.navigateSafe(
+                actionGlobalDiscoverHomeNavigation(
+                    coreActionsTabBarViewModel.getDiscoverUrlWithPath(path)
+                )
+            )
+        }
+    }
+
+    private fun retryLatestAssetAdditionTransaction() {
+        assetOperationViewModel.getLatestAddAssetTransaction()?.let { transactionData ->
+            sendAssetOperationTransaction(transactionData)
+        }
+    }
+
+    private fun onSessionConnected(wcSessionRequest: WalletConnectSessionProposal) {
+        nav(HomeNavigationDirections.actionGlobalWalletConnectConnectionNavigation(wcSessionRequest))
+    }
+
+    private fun onSessionFailed(error: Resource.Error) {
+        qrScannerViewModel.setQrCodeInProgress(false)
+        val errorMessage = error.parse(this)
+        showGlobalError(errorMessage = errorMessage, tag = activityTag)
+    }
+
     private fun showAssetOperationForegroundNotification(assetOperationResult: AssetOperationResult) {
         val safeAssetName = assetOperationResult.assetName.getName(resources)
         val messageDescription = getString(assetOperationResult.resultTitleResId, safeAssetName)
         showAlertSuccess(title = messageDescription, description = null, tag = activityTag)
-    }
-
-    override fun onAccountSelected(publicKey: String) {
-        val qrCodeTitle = getString(R.string.qr_code)
-        nav(HomeNavigationDirections.actionGlobalShowQrNavigation(qrCodeTitle, publicKey))
     }
 
     private fun initObservers() {
@@ -569,24 +635,14 @@ class MainActivity :
     }
 
     private fun onNewWalletConnectRequest(wcRequest: WalletConnectRequest) {
-        if (isAppUnlocked) {
+        if (mainViewModel.isAppUnlocked()) {
             when (wcRequest) {
                 is WalletConnectTransaction -> {
-                    nav(
-                        directions = MainNavigationDirections.actionGlobalWalletConnectTransactionRequestNavigation(
-                            shouldSkipConfirmation = isBasePeraWebViewFragmentActive()
-                        ),
-                        onError = { saveWcTransactionToPendingIntent(wcRequest.requestId) }
-                    )
+                    navToWalletConnectTransactionRequestNavigation(wcRequest.requestId)
                 }
 
                 is WalletConnectArbitraryDataRequest -> {
-                    nav(
-                        directions = MainNavigationDirections.actionGlobalWalletConnectArbitraryDataRequestNavigation(
-                            shouldSkipConfirmation = isBasePeraWebViewFragmentActive()
-                        ),
-                        onError = { saveWcTransactionToPendingIntent(wcRequest.requestId) }
-                    )
+                    navToWalletConnectArbitraryDataRequestNavigation(wcRequest.requestId)
                 }
             }
         } else {
@@ -594,16 +650,34 @@ class MainActivity :
         }
     }
 
+    private fun navToWalletConnectTransactionRequestNavigation(wcRequestId: Long) {
+        nav(
+            directions = MainNavigationDirections.actionGlobalWalletConnectTransactionRequestNavigation(
+                shouldSkipConfirmation = isBasePeraWebViewFragmentActive()
+            ),
+            onError = { saveWcTransactionToPendingIntent(wcRequestId) }
+        )
+    }
+
+    private fun navToWalletConnectArbitraryDataRequestNavigation(wcRequestId: Long) {
+        nav(
+            directions = MainNavigationDirections.actionGlobalWalletConnectArbitraryDataRequestNavigation(
+                shouldSkipConfirmation = isBasePeraWebViewFragmentActive()
+            ),
+            onError = { saveWcTransactionToPendingIntent(wcRequestId) }
+        )
+    }
+
     private fun saveWcTransactionToPendingIntent(transactionRequestId: Long) {
         val pendingIntent = Intent().apply {
             putExtra(WC_TRANSACTION_ID_INTENT_KEY, transactionRequestId)
         }
-        pendingIntentKeeper.setPendingIntent(pendingIntent)
+        mainViewModel.setPendingIntent(pendingIntent)
     }
 
     private fun handleDeeplinkAndNotificationNavigation() {
         intent.getSafeParcelableExtra<Intent?>(DEEPLINK_AND_NAVIGATION_INTENT)?.apply {
-            pendingIntentKeeper.setPendingIntent(this)
+            mainViewModel.setPendingIntent(this)
             handlePendingIntent()
         }
     }
@@ -611,54 +685,12 @@ class MainActivity :
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         val pendingIntent = intent.getSafeParcelableExtra<Intent?>(DEEPLINK_AND_NAVIGATION_INTENT)
-        pendingIntentKeeper.setPendingIntent(pendingIntent)
+        mainViewModel.setPendingIntent(pendingIntent)
         handlePendingIntent()
     }
 
-    private fun handlePendingIntent(): Boolean {
-        return pendingIntentKeeper.pendingIntent?.run {
-            val canPendingIntentBeHandled = isAssetSetupCompleted && (isAppUnlocked || !mainViewModel.shouldAppLocked())
-            var isPendingIntentHandled = false
-            if (canPendingIntentBeHandled) {
-                if (dataString != null) {
-                    handleDeepLink(dataString.orEmpty())
-                    isPendingIntentHandled = true
-                } else {
-                    isPendingIntentHandled = handlePendingIntentWithExtras(this)
-                }
-                pendingIntentKeeper.clearPendingIntent()
-            }
-            isPendingIntentHandled
-        } ?: false
-    }
-
-    private fun handlePendingIntentWithExtras(pendingIntent: Intent): Boolean {
-        with(pendingIntent) {
-            if (getLongExtra(WC_TRANSACTION_ID_INTENT_KEY, -1L) != -1L) {
-                nav(HomeNavigationDirections.actionGlobalWalletConnectTransactionRequestNavigation())
-            } else if (getLongExtra(WC_ARBITRARY_DATA_ID_INTENT_KEY, -1L) != -1L) {
-                nav(HomeNavigationDirections.actionGlobalWalletConnectArbitraryDataRequestNavigation())
-            } else {
-                getStringExtra(DEEPLINK_KEY)?.let { handleDeepLink(it) } ?: return false
-            }
-            return true
-        }
-    }
-
-    fun handleDeepLink(uri: String) {
-        mainViewModel.handleDeepLink(uri)
-    }
-
-    fun handleWalletConnectUrl(walletConnectUrl: String) {
-        walletConnectViewModel.handleWalletConnectUrl(
-            url = walletConnectUrl,
-            listener = walletConnectUrlHandlerListener
-        )
-    }
-
-    fun isBasePeraWebViewFragmentActive(): Boolean {
-        return (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
-            .childFragmentManager.fragments.first() is BasePeraWebViewFragment
+    private fun handlePendingIntent() {
+        return mainViewModel.handlePendingIntent()
     }
 
     private fun setupCoreActionsTabBarView() {
@@ -715,20 +747,6 @@ class MainActivity :
         })
     }
 
-    private fun handleRedirection() {
-        val isPendingIntentHandled = handlePendingIntent()
-        if (isPendingIntentHandled) {
-            return
-        }
-        val isInAppReviewStarted = inAppReviewManager.start(this@MainActivity)
-        if (isInAppReviewStarted) {
-            return
-        }
-        if (accountManager.isThereAnyRegisteredAccount()) {
-            autoLockSuggestionManager.start(this@MainActivity)
-        }
-    }
-
     private fun onNewNodeActivated() {
         hideProgress()
         mainViewModel.onNewNodeActivated(lifecycle)
@@ -743,27 +761,9 @@ class MainActivity :
         hideProgress()
     }
 
-    override fun onSessionRequestResult(wCSessionRequestResult: WCSessionRequestResult) {
-        with(walletConnectViewModel) {
-            when (wCSessionRequestResult) {
-                is WCSessionRequestResult.ApproveRequest -> approveSession(wCSessionRequestResult)
-                is WCSessionRequestResult.RejectRequest -> rejectSession(wCSessionRequestResult.sessionProposal)
-                is WCSessionRequestResult.RejectScamRequest -> rejectScamSession(wCSessionRequestResult.sessionProposal)
-            }
-        }
-    }
-
     private fun rejectScamSession(sessionProposal: WalletConnectSessionProposal) {
         walletConnectViewModel.rejectSession(sessionProposal)
         navToWalletConnectSessionScamDialog()
-    }
-
-    fun signAddAssetTransaction(assetActionResult: AssetActionResult) {
-        assetOperationViewModel.createAddAssetTransaction(assetActionResult)
-    }
-
-    fun signRemoveAssetTransaction(assetActionResult: AssetActionResult) {
-        assetOperationViewModel.createRemoveAssetTransaction(assetActionResult)
     }
 
     private fun sendAssetOperationTransaction(transactionData: TransactionSignData) {
@@ -814,22 +814,6 @@ class MainActivity :
         nav(HomeNavigationDirections.actionGlobalDiscoverUrlViewerNavigation(webUrl))
     }
 
-    fun navToCardsFragment(path: String? = null) {
-        nav(HomeNavigationDirections.actionGlobalCardsFragment(path))
-    }
-
-    fun navToStakingFragment(path: String? = null) {
-        nav(HomeNavigationDirections.actionGlobalStakingFragment(path))
-    }
-
-    fun showMaxAccountLimitExceededError() {
-        showGlobalError(
-            title = getString(R.string.too_many_accounts),
-            errorMessage = getString(R.string.looks_like_already_have_accounts, MAX_NUMBER_OF_ACCOUNTS),
-            tag = activityTag
-        )
-    }
-
     private fun hideLedgerLoadingDialog() {
         hideProgress()
         ledgerLoadingDialog?.dismissAllowingStateLoss()
@@ -843,18 +827,6 @@ class MainActivity :
             navController.navigateSafe(
                 actionGlobalDiscoverHomeNavigation(
                     coreActionsTabBarViewModel.getDiscoverBrowseDappUrl()
-                )
-            )
-        }
-    }
-
-    fun navToDiscoverWithPath(path: String) {
-        binding.apply {
-            coreActionsTabBarView.hideWithAnimation()
-            bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true
-            navController.navigateSafe(
-                actionGlobalDiscoverHomeNavigation(
-                    coreActionsTabBarViewModel.getDiscoverUrlWithPath(path)
                 )
             )
         }

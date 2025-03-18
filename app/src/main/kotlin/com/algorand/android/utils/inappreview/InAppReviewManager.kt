@@ -41,22 +41,18 @@ class InAppReviewManager @Inject constructor(private val sharedPref: SharedPrefe
     }
 
     fun start(activity: Activity): Boolean {
-        if (isStarted) {
-            return false
-        }
+        if (isStarted) return false
         isStarted = true
 
-        if (isTriggerNeeded()) {
-            ReviewManagerFactory.create(activity).run {
-                requestReviewFlow().addOnSuccessListener { reviewInfoTask ->
-                    launchReviewFlow(activity, reviewInfoTask)
-                }
+        if (!isTriggerNeeded()) return false
+
+        ReviewManagerFactory.create(activity).apply {
+            requestReviewFlow().addOnSuccessListener { reviewInfoTask ->
+                launchReviewFlow(activity, reviewInfoTask)
             }
-            sharedPref.setAppReviewStartCount(0)
-            return true
-        } else {
-            return false
         }
+        sharedPref.setAppReviewStartCount(0)
+        return true
     }
 
     companion object {

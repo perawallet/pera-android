@@ -12,6 +12,8 @@
 
 package com.algorand.android.ui.accounts
 
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
@@ -20,10 +22,22 @@ import com.algorand.android.models.AssetTransaction
 import com.algorand.android.modules.qrscanning.BaseQrScannerFragment
 import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
+import com.algorand.android.ui.accounts.AccountsQrScannerFragmentDirections.Companion.actionAccountsQrScannerFragmentToRecoverWithPassphraseNavigation
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFragment) {
+
+    private val viewEventCollector: suspend (AccountsQrScannerViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is AccountsQrScannerViewModel.ViewEvent.NavToRecoverWithPassphraseNavigation ->
+                navToRecoverWithPassphraseNavigation(event.mnemonic)
+
+            is AccountsQrScannerViewModel.ViewEvent.ShowMaxAccountLimitExceededError ->
+                showMaxAccountLimitExceededError()
+        }
+    }
 
     private val accountsQrScannerViewModel: AccountsQrScannerViewModel by viewModels()
 
@@ -69,15 +83,7 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
 
     override fun onImportAccountDeepLink(mnemonic: String): Boolean {
         return true.also {
-            if (accountsQrScannerViewModel.isAccountLimitExceed()) {
-                showMaxAccountLimitExceededError()
-                return@also
-            }
-            nav(
-                AccountsQrScannerFragmentDirections.actionAccountsQrScannerFragmentToRecoverWithPassphraseNavigation(
-                    mnemonic = mnemonic
-                )
-            )
+            accountsQrScannerViewModel.onImportAccountDeepLink(mnemonic)
         }
     }
 
@@ -101,9 +107,26 @@ class AccountsQrScannerFragment : BaseQrScannerFragment(R.id.accountsQrScannerFr
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initObservers()
+    }
+
     override fun onWalletConnectConnectionDeeplink(wcUrl: String): Boolean {
         accountsQrScannerViewModel.logEvent(PeraEvent.HOME_SCREEN_QR_SCAN)
         handleWalletConnectUrl(wcUrl)
         return true.also { navBack() }
+    }
+
+    override fun initObservers() {
+        super.initObservers()
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            accountsQrScannerViewModel.viewEvent,
+            viewEventCollector
+        )
+    }
+
+    private fun navToRecoverWithPassphraseNavigation(mnemonic: String) {
+        nav(actionAccountsQrScannerFragmentToRecoverWithPassphraseNavigation(mnemonic))
     }
 }

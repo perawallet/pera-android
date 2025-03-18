@@ -114,7 +114,7 @@ abstract class BaseQrScannerFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
-        initObserver()
+        initObservers()
         qrScannerViewModel.setDeeplinkHandlerListener(this)
         if (isCameraPermissionGranted) {
             setupBarcodeView()
@@ -191,7 +191,7 @@ abstract class BaseQrScannerFragment(
         }
     }
 
-    private fun initObserver() {
+    open fun initObservers() {
         if (shouldShowWcSessionsButton) {
             viewLifecycleOwner.collectOnLifecycle(
                 walletConnectViewModel.localSessionsFlow,

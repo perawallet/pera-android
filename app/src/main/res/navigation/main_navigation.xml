@@ -64,15 +64,11 @@
         app:popUpToInclusive="true" />
 
     <action
-        android:id="@+id/action_newAccount"
+        android:id="@+id/action_global_loginNavigation"
         app:destination="@id/loginNavigation">
         <argument
             android:name="isShowingCloseButton"
             android:defaultValue="true"
-            app:argType="boolean" />
-        <argument
-            android:name="shouldNavToRegisterWatchAccount"
-            android:defaultValue="false"
             app:argType="boolean" />
         <argument
             android:name="mnemonic"

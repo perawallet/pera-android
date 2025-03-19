@@ -12,7 +12,7 @@
 
 package com.algorand.wallet.algosdk.transaction.sdk
 
-import com.algorand.wallet.algosdk.model.HdKeyAccount
+import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 
 interface PeraBip39Sdk {
     fun getSeedFromEntropy(entropy: ByteArray): ByteArray?

@@ -12,8 +12,8 @@
 
 package com.algorand.wallet.algosdk.transaction.sdk
 
-import com.algorand.wallet.algosdk.model.Algo25Account
-import com.algorand.wallet.algosdk.model.HdKeyAccount
+import com.algorand.wallet.algosdk.domain.model.Algo25Account
+import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 
 interface AlgoAccountSdk {
 
@@ -24,4 +24,6 @@ interface AlgoAccountSdk {
     fun createAlgo25Account(): Algo25Account?
 
     fun recoverAlgo25Account(mnemonic: String): Algo25Account?
+
+    fun getMnemonicFromSecretKey(secretKey: ByteArray): String?
 }

@@ -39,12 +39,33 @@ internal class HdSeedRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getHdSeedCountAsFlow(): Flow<Int> {
+    override fun getSeedCountAsFlow(): Flow<Int> {
         return hdSeedDao.getTableSizeAsFlow()
+    }
+
+    override suspend fun getHdSeedCount(): Int {
+        return hdSeedDao.getTableSize()
     }
 
     override suspend fun getMaxSeedId(): Int? {
         return hdSeedDao.getMaxSeedId()
+    }
+
+    override suspend fun hasAnySeed(): Boolean {
+        return hdSeedDao.hasAnySeed()
+    }
+
+    override suspend fun getSeedIdIfExistingEntropy(entropy: ByteArray): Int? {
+        val entities = hdSeedDao.getAll()
+
+        for (entity in entities) {
+            val decryptedEntropy = aesPlatformManager.decryptByteArray(entity.encryptedEntropy)
+            if (entropy.contentEquals(decryptedEntropy)) {
+                return entity.seedId
+            }
+        }
+
+        return null
     }
 
     override suspend fun getAllHdSeeds(): List<HdSeed> {
@@ -60,16 +81,12 @@ internal class HdSeedRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getEncryptedEntropy(seedId: Int): ByteArray? {
-        return withContext(coroutineDispatcher) {
-            hdSeedDao.getEncryptedEntropy(seedId)
-        }
-    }
-
     override suspend fun addHdSeed(seedId: Int, entropy: ByteArray, seed: ByteArray): Long {
-        val hdKeyEntity = hdSeedEntityMapper(seedId, entropy, seed)
-        val seedId = hdSeedDao.insert(hdKeyEntity)
-        return seedId
+        return withContext(coroutineDispatcher) {
+            val hdKeyEntity = hdSeedEntityMapper(seedId, entropy, seed)
+            val seedId = hdSeedDao.insert(hdKeyEntity)
+            seedId
+        }
     }
 
     override suspend fun deleteHdSeed(seedId: Int) {

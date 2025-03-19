@@ -13,8 +13,8 @@
 package com.algorand.wallet.algosdk.transaction.sdk
 
 import com.algorand.algosdk.sdk.Sdk
-import com.algorand.wallet.algosdk.model.Algo25Account
-import com.algorand.wallet.algosdk.model.HdKeyAccount
+import com.algorand.wallet.algosdk.domain.model.Algo25Account
+import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 import javax.inject.Inject
 
 internal class AlgoAccountSdkImpl @Inject constructor(
@@ -62,6 +62,14 @@ internal class AlgoAccountSdkImpl @Inject constructor(
             secretKey = ByteArray(0) // delete secret key from memory
             output
         } catch (e: Exception) {
+            null
+        }
+    }
+
+    override fun getMnemonicFromSecretKey(secretKey: ByteArray): String? {
+        return try {
+            Sdk.mnemonicFromPrivateKey(secretKey)
+        } catch (exception: Exception) {
             null
         }
     }

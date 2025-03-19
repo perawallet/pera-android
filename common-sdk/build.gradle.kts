@@ -57,7 +57,7 @@ dependencies {
     api(libs.algosdk)
     api(libs.algorand.go.mobile)
 
-    implementation("net.java.dev.jna:jna:5.14.0@aar")
+    implementation("net.java.dev.jna:jna:5.17.0@aar")
     implementation(libs.xhdwalletapi)
     implementation(libs.kotlin.bip39)
     implementation(libs.dagger.hilt.android)
@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.lifecycle.viewmodel.ktx)
     implementation(project.dependencies.platform(libs.firebase.bom))
 
     ksp(libs.dagger.hilt.compiler)

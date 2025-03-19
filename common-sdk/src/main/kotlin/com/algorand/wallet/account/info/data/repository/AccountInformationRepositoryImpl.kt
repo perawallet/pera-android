@@ -12,20 +12,22 @@
 
 package com.algorand.wallet.account.info.data.repository
 
+import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCache
 import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
-import com.algorand.wallet.account.info.data.service.AccountInformationApiService
-import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
 import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapper
-import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapper
+import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
+import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
+import com.algorand.wallet.account.info.data.service.AccountInformationApiService
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
-import com.algorand.wallet.account.info.data.cache.AccountInformationErrorCache
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
+import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -46,11 +48,15 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     private val accountInformationFetchHelper: AccountInformationFetchHelper,
     private val assetStatusEntityMapper: AssetStatusEntityMapper,
     private val assetHoldingEntityMapper: AssetHoldingEntityMapper,
-    private val accountInformationErrorCache: AccountInformationErrorCache
+    private val accountInformationErrorCache: AccountInformationErrorCache,
+    private val getLocalAccountsAddresses: GetLocalAccountsAddresses
 ) : AccountInformationRepository {
 
-    override suspend fun fetchAccountInformation(address: String): PeraResult<AccountInformation> {
-        return accountInformationFetchHelper.fetchAccount(address).use(
+    override suspend fun fetchAccountInformation(
+        address: String,
+        includeClosedAccount: Boolean
+    ): PeraResult<AccountInformation> {
+        return accountInformationFetchHelper.fetchAccount(address, includeClosedAccount).use(
             onSuccess = { response ->
                 val accountInformation = accountInformationMapper(response)
                 if (accountInformation == null) {
@@ -73,6 +79,11 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         return assetHoldingDao.getAssetIdsByAddresses(addresses).toSet().toList()
     }
 
+    override suspend fun isAssetOptedInByAnyLocalAccount(assetId: Long): Boolean {
+        val localAccountAddresses = getLocalAccountsAddresses()
+        return assetHoldingDao.isAssetOptedInByAnyLocalAccount(localAccountAddresses, assetId)
+    }
+
     override suspend fun fetchAndCacheAccountInformation(
         addresses: List<String>
     ): Map<String, AccountInformation?> {
@@ -80,7 +91,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
             val result = mutableMapOf<String, AccountInformation?>()
             addresses.map { address ->
                 async {
-                    result[address] = accountInformationFetchHelper.fetchAccount(address).use(
+                    result[address] = accountInformationFetchHelper.fetchAccount(
+                        address,
+                        includeClosedAccount = false
+                    ).use(
                         onSuccess = { response ->
                             accountInformationCacheHelper.cacheAccountInformation(address, response)
                         },
@@ -175,6 +189,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
 
     override suspend fun getFilteredRekeyedAccountCount(authAddress: String, algoAddresses: List<String>): Int {
         return accountInformationDao.getAuthAccountCountFilteredByAddress(authAddress, algoAddresses)
+    }
+
+    override suspend fun getAccountAlgoBalance(address: String): BigInteger? {
+        return accountInformationDao.getAccountAlgoBalance(address)
     }
 
     companion object {

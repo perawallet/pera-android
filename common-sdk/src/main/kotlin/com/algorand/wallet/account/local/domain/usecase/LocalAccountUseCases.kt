@@ -12,8 +12,10 @@
 
 package com.algorand.wallet.account.local.domain.usecase
 
+import com.algorand.wallet.account.local.domain.model.AccountMnemonic
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
 
 internal fun interface SaveHdKeyAccount {
@@ -81,6 +83,10 @@ fun interface GetLocalAccountCountFlow {
     operator fun invoke(): Flow<Int>
 }
 
+fun interface GetLocalAccountCount {
+    suspend operator fun invoke(): Int
+}
+
 fun interface GetLocalAccounts {
     suspend operator fun invoke(): List<LocalAccount>
 }
@@ -138,13 +144,26 @@ fun interface UpdateNoAuthAccountToHdKey {
     )
 }
 
+fun interface GetAccountMnemonic {
+    suspend operator fun invoke(address: String): PeraResult<AccountMnemonic>
+}
+
 fun interface UpdateNoAuthAccountToLedgerBle {
-    suspend operator fun invoke(address: String, deviceMacAddress: String, bluetoothName: String, indexInLedger: Int
+    suspend operator fun invoke(
+        address: String, deviceMacAddress: String, bluetoothName: String, indexInLedger: Int
     )
 }
 
 fun interface GetMaxHdSeedId {
     suspend operator fun invoke(): Int?
+}
+
+fun interface GetHasAnyHdSeedId {
+    suspend operator fun invoke(): Boolean
+}
+
+fun interface GetSeedIdIfExistingEntropy {
+    suspend operator fun invoke(entropy: ByteArray): Int?
 }
 
 fun interface GetAllHdSeeds {

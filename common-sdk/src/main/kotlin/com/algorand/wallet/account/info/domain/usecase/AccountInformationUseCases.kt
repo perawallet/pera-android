@@ -17,6 +17,7 @@ import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.foundation.PeraResult
+import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
 
 fun interface ClearAccountInformationCache {
@@ -76,12 +77,16 @@ interface IsAssetOwnedByAccount {
     suspend operator fun invoke(accountInfo: AccountInformation, assetId: Long): Boolean
 }
 
+fun interface IsAssetOptedInByAnyLocalAccount {
+    suspend operator fun invoke(assetId: Long): Boolean
+}
+
 fun interface DeleteAccountInformation {
     suspend operator fun invoke(address: String)
 }
 
 fun interface FetchAccountInformation {
-    suspend operator fun invoke(address: String): PeraResult<AccountInformation>
+    suspend operator fun invoke(address: String, includeDeletedAccount: Boolean): PeraResult<AccountInformation>
 }
 
 fun interface FetchRekeyedAccounts {
@@ -106,4 +111,8 @@ fun interface IsAccountCachedSuccessfully {
 
 fun interface GetAccountRekeyAdminAddress {
     suspend operator fun invoke(address: String): String?
+}
+
+fun interface GetAccountAlgoBalance {
+    suspend operator fun invoke(address: String): BigInteger?
 }

@@ -10,9 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.domain.model
+package com.algorand.wallet.asset.assetinbox.domain.model
 
-enum class Bip32DerivationType(val value: Int) {
-    Peikert(9),
-    Khovratovich(32)
-}
+data class AssetInboxRequest(
+    val address: String,
+    val requestCount: Int
+)

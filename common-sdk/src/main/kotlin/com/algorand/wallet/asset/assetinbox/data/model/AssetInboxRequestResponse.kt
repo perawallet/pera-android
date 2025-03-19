@@ -10,9 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.model
 
-enum class Bip32DerivationType(val value: Int) {
-    Peikert(9),
-    Khovratovich(32)
-}
+package com.algorand.wallet.asset.assetinbox.data.model
+
+import com.google.gson.annotations.SerializedName
+
+internal data class AssetInboxRequestResponse(
+    @SerializedName("address")
+    val address: String?,
+    @SerializedName("request_count")
+    val requestCount: Int?
+)

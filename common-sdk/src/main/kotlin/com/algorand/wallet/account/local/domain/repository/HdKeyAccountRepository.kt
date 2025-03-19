@@ -21,6 +21,8 @@ internal interface HdKeyAccountRepository {
 
     fun getAccountCountAsFlow(): Flow<Int>
 
+    suspend fun getAccountCount(): Int
+
     suspend fun getAll(): List<LocalAccount.HdKey>
 
     suspend fun getAllAddresses(): List<String>

@@ -40,6 +40,9 @@ internal interface LedgerBleDao {
     @Query("SELECT COUNT(*) FROM ledger_ble")
     fun getTableSizeAsFlow(): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM ledger_ble")
+    suspend fun getTableSize(): Int
+
     @Query("SELECT * FROM ledger_ble WHERE :algoAddress = algo_address")
     suspend fun get(algoAddress: String): LedgerBleEntity?
 

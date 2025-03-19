@@ -49,6 +49,7 @@ import com.algorand.wallet.account.info.domain.usecase.DeleteAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
@@ -63,6 +64,7 @@ import com.algorand.wallet.account.info.domain.usecase.GetCachedAccountInformati
 import com.algorand.wallet.account.info.domain.usecase.GetEarliestLastFetchedRound
 import com.algorand.wallet.account.info.domain.usecase.IsAccountCachedSuccessfully
 import com.algorand.wallet.account.info.domain.usecase.IsAccountCachedSuccessfullyUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAnyLocalAccount
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccountUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccount
@@ -76,9 +78,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
+import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -235,6 +237,13 @@ internal object AccountInformationModule {
     fun provideIsAssetOwnedByAccount(useCase: IsAssetOwnedByAccountUseCase): IsAssetOwnedByAccount = useCase
 
     @Provides
+    fun provideIsAssetOptedInByAnyLocalAccount(
+        repository: AccountInformationRepository
+    ): IsAssetOptedInByAnyLocalAccount {
+        return IsAssetOptedInByAnyLocalAccount(repository::isAssetOptedInByAnyLocalAccount)
+    }
+
+    @Provides
     fun provideDeleteAccountInformation(
         repository: AccountInformationRepository
     ): DeleteAccountInformation {
@@ -293,5 +302,10 @@ internal object AccountInformationModule {
         repository: AccountInformationRepository
     ): GetAccountAssetHoldingsFlow {
         return GetAccountAssetHoldingsFlow(repository::getAssetHoldingsFlow)
+    }
+
+    @Provides
+    fun getAccountAlgoBalance(repository: AccountInformationRepository): GetAccountAlgoBalance {
+        return GetAccountAlgoBalance(repository::getAccountAlgoBalance)
     }
 }

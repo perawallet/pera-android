@@ -36,6 +36,7 @@ import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.repository.NodeRepository
+import com.algorand.android.ui.settings.migrationviewer.MigrationViewerMigrateUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.launchIO
@@ -52,17 +53,18 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
 import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
 import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
+import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.properties.Delegates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.properties.Delegates
 
 @Suppress("LongParameterList")
 @HiltViewModel
@@ -88,6 +90,8 @@ class MainViewModel @Inject constructor(
     private var pendingIntentKeeper: PendingIntentKeeper,
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val autoLockManager: AutoLockManager,
+    private val persistentCacheProvider: PersistentCacheProvider,
+    private val migrationViewerMigrateUseCase: MigrationViewerMigrateUseCase,
     getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
 
@@ -332,6 +336,18 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun migrateTo6xCheck() {
+        viewModelScope.launchIO {
+            val migrateTo6xStorage = persistentCacheProvider
+                .getPersistentCache<Boolean>(Boolean::class.java, MIGRATE_TO_6X)
+            val migratedTo6X: Boolean = migrateTo6xStorage.get() ?: false
+            if (!migratedTo6X) {
+                migrationViewerMigrateUseCase.invoke()
+                migrateTo6xStorage.put(true)
+            }
+        }
+    }
+
     sealed interface ViewEvent {
         data class HandleAssetTransactionDeepLink(val address: String, val assetId: Long) : ViewEvent
         data class HandleAssetOptInRequestDeepLink(val address: String, val assetId: Long) : ViewEvent
@@ -343,5 +359,9 @@ class MainViewModel @Inject constructor(
         data object ShowGlobalNotificationError : ViewEvent
         data object StartInAppReview : ViewEvent
         data object StartAutoLockSuggestion : ViewEvent
+    }
+
+    companion object {
+        private const val MIGRATE_TO_6X = "migrate_to_6x"
     }
 }

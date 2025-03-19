@@ -106,6 +106,7 @@ class MigrationViewerFragment : DaggerBaseFragment(0) {
                     CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                 }
                 is ViewState.Error -> {
+                    showGlobalError(errorMessage = viewState.error)
                     navBack()
                 }
                 is ViewState.Content -> {
@@ -244,7 +245,9 @@ class MigrationViewerFragment : DaggerBaseFragment(0) {
                 items(accounts) { account ->
                     AccountListItem(
                         account.address,
-                        account.accountType.toString(),
+                        account.accountType?.toString()
+                            ?: account.accountRegistrationType?.toString()
+                            ?: "Unknown",
                         account.customAccountInfo?.orderIndex.toString()
                     )
                 }

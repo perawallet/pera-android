@@ -18,8 +18,10 @@ import com.algorand.android.models.Account
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewEvent
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewState
 import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
+import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlow
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -62,15 +64,33 @@ class MigrationViewerViewModel @Inject constructor(
     }
 
     fun migrate() {
-        viewModelScope.launch {
-            migrationViewerMigrateUseCase.invoke()
-            fetchData()
+        viewModelScope.launchIO {
+            val result = migrationViewerMigrateUseCase.invoke()
+
+            when (result) {
+                is PeraResult.Success -> {
+                    val migratedCount = result.data
+                    if (migratedCount > 0) {
+                        fetchData()
+                    } else {
+                        // No accounts were migrated
+                    }
+                }
+
+                is PeraResult.Error -> {
+                    stateDelegate.updateState {
+                        ViewState.Error(
+                            error = "Migration failed: ${result.exception.message}"
+                        )
+                    }
+                }
+            }
         }
     }
 
     sealed interface ViewState {
         data object Loading : ViewState
-        data object Error : ViewState
+        data class Error(val error: String) : ViewState
         data class Content(val oldAccounts: List<Account>, val newAccounts: List<AccountDetail>) : ViewState
     }
 

@@ -18,6 +18,7 @@ import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 
 class MigrationViewerMigrateUseCase @Inject constructor(
@@ -27,24 +28,50 @@ class MigrationViewerMigrateUseCase @Inject constructor(
 ) {
 
     @SuppressWarnings("LongMethod")
-    suspend fun invoke() {
-        val localAccounts = getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref()
-        localAccounts?.forEach { localAccount ->
-            var migrateAccount: AccountCreation? = null
-            when (localAccount.type) {
-                Type.STANDARD, Type.REKEYED, Type.REKEYED_AUTH -> {
-                    localAccount.getSecretKey()?.let {
+    suspend fun invoke(): PeraResult<Int> {
+        try {
+            val localAccounts =
+                getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref()
+            var migratedCount = 0
+            localAccounts?.forEach { localAccount ->
+                var migrateAccount: AccountCreation? = null
+                when (localAccount.type) {
+                    Type.STANDARD, Type.REKEYED, Type.REKEYED_AUTH -> {
+                        localAccount.getSecretKey()?.let {
+                            migrateAccount = AccountCreation(
+                                address = localAccount.address,
+                                customName = localAccount.name,
+                                orderIndex = localAccount.index,
+                                isBackedUp = localAccount.isBackedUp,
+                                type = AccountCreation.Type.Algo25(
+                                    aesPlatformManager.encryptByteArray(it)
+                                ),
+                                creationType = CreationType.RECOVER
+                            )
+                        } ?: run {
+                            migrateAccount = AccountCreation(
+                                address = localAccount.address,
+                                customName = localAccount.name,
+                                orderIndex = localAccount.index,
+                                isBackedUp = localAccount.isBackedUp,
+                                type = AccountCreation.Type.NoAuth,
+                                creationType = CreationType.WATCH
+                            )
+                        }
+                    }
+
+                    Type.LEDGER -> {
                         migrateAccount = AccountCreation(
                             address = localAccount.address,
                             customName = localAccount.name,
                             orderIndex = localAccount.index,
                             isBackedUp = localAccount.isBackedUp,
-                            type = AccountCreation.Type.Algo25(
-                                aesPlatformManager.encryptByteArray(it)
-                            ),
-                            creationType = CreationType.RECOVER
+                            type = AccountCreation.Type.LedgerBle("", 0, ""),
+                            creationType = CreationType.LEDGER
                         )
-                    } ?: run {
+                    }
+
+                    Type.WATCH -> {
                         migrateAccount = AccountCreation(
                             address = localAccount.address,
                             customName = localAccount.name,
@@ -54,30 +81,17 @@ class MigrationViewerMigrateUseCase @Inject constructor(
                             creationType = CreationType.WATCH
                         )
                     }
+
+                    else -> {}
                 }
-                Type.LEDGER -> {
-                    migrateAccount = AccountCreation(
-                        address = localAccount.address,
-                        customName = localAccount.name,
-                        orderIndex = localAccount.index,
-                        isBackedUp = localAccount.isBackedUp,
-                        type = AccountCreation.Type.LedgerBle("", 0, ""),
-                        creationType = CreationType.LEDGER
-                    )
+                migrateAccount?.let {
+                    accountAdditionUseCase.addNewAccount(it)
+                    migratedCount++
                 }
-                Type.WATCH -> {
-                    migrateAccount = AccountCreation(
-                        address = localAccount.address,
-                        customName = localAccount.name,
-                        orderIndex = localAccount.index,
-                        isBackedUp = localAccount.isBackedUp,
-                        type = AccountCreation.Type.NoAuth,
-                        creationType = CreationType.WATCH
-                    )
-                }
-                else -> { }
             }
-            migrateAccount?.let { accountAdditionUseCase.addNewAccount(it) }
+            return PeraResult.Success(migratedCount)
+        } catch (exception: Exception) {
+            return PeraResult.Error(exception)
         }
     }
 }

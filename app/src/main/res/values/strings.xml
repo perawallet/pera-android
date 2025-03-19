@@ -1470,6 +1470,8 @@
     <string name="select_address_to_add">Select addresses to add</string>
     <string name="already_imported">Already Imported</string>
     <string name="searching_your_accounts">"Searching your accounts"</string>
+    <string name="main_address">Main Address</string>
+    <string name="scan_new_addresses">Scan new addresses</string>
 
     <plurals name="select_accounts_to_add_desc">
         <item quantity="zero">We found that there are no address registered to this wallet</item>

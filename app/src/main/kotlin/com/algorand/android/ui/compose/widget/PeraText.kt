@@ -17,7 +17,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +35,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
@@ -71,14 +74,20 @@ fun PeraTitleText(
 }
 
 @Composable
-fun PeraBodyText(modifier: Modifier = Modifier, text: String) {
+fun PeraBodyText(
+    modifier: Modifier = Modifier,
+    text: String,
+    color: Color = MaterialTheme.colorScheme.secondary,
+    maxLines: Int = Int.MAX_VALUE
+) {
     Text(
         modifier = modifier,
         text = text,
         style = MaterialTheme.typography.bodyMedium,
         fontFamily = peraSans,
-        color = MaterialTheme.colorScheme.secondary,
+        color = color,
         fontWeight = FontWeight.Medium,
+        maxLines = maxLines,
         overflow = TextOverflow.Ellipsis
     )
 }
@@ -165,7 +174,38 @@ fun PeraHighlightedText(modifier: Modifier = Modifier, text: String) {
     }
 }
 
-@Preview
+const val ICON_HIGHLIGHTED_TEXT_RADIUS = 8
+
+@Composable
+fun PeraIconHighlightedText(modifier: Modifier = Modifier, text: String) {
+    Row(
+        modifier = modifier
+            .clip(shape = RoundedCornerShape(percent = ICON_HIGHLIGHTED_TEXT_RADIUS))
+            .background(color = MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.12F)),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_scan_address),
+            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.surfaceDim),
+            contentDescription = text,
+            modifier = Modifier
+                .padding(start = 14.dp, top = 14.dp, bottom = 14.dp)
+                .size(12.dp)
+        )
+        PeraBodyText(
+            modifier = Modifier.padding(
+                start = 7.dp,
+                end = 7.dp,
+                top = 3.dp,
+                bottom = 3.dp
+            ),
+            text = text,
+            color = MaterialTheme.colorScheme.surfaceDim
+        )
+    }
+}
+
+@PreviewLightDark
 @Composable
 fun PreviewPeraHeadlineText() {
     PeraTheme {
@@ -173,7 +213,7 @@ fun PreviewPeraHeadlineText() {
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun PreviewPeraTitleText() {
     PeraTheme {
@@ -181,7 +221,7 @@ fun PreviewPeraTitleText() {
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun PreviewPeraBodyText() {
     PeraTheme {
@@ -197,7 +237,7 @@ fun PreviewPeraLinkText() {
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun PreviewPeraScrimText() {
     PeraTheme {
@@ -205,7 +245,7 @@ fun PreviewPeraScrimText() {
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun PreviewPeraWarningText() {
     PeraTheme {
@@ -213,7 +253,7 @@ fun PreviewPeraWarningText() {
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun PreviewPeraHighlightedText() {
     PeraTheme {
@@ -221,10 +261,10 @@ fun PreviewPeraHighlightedText() {
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
-fun PreviewPeraHighlightedTextDark() {
+fun PreviewPeraIconHighlightedText() {
     PeraTheme(darkTheme = true) {
-        PeraHighlightedText(text = "Highlighted Text")
+        PeraIconHighlightedText(text = "Highlighted Text")
     }
 }

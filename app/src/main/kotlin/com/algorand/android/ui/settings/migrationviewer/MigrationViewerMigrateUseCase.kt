@@ -37,6 +37,7 @@ class MigrationViewerMigrateUseCase @Inject constructor(
                         migrateAccount = AccountCreation(
                             address = localAccount.address,
                             customName = localAccount.name,
+                            orderIndex = localAccount.index,
                             isBackedUp = localAccount.isBackedUp,
                             type = AccountCreation.Type.Algo25(
                                 aesPlatformManager.encryptByteArray(it)
@@ -47,6 +48,7 @@ class MigrationViewerMigrateUseCase @Inject constructor(
                         migrateAccount = AccountCreation(
                             address = localAccount.address,
                             customName = localAccount.name,
+                            orderIndex = localAccount.index,
                             isBackedUp = localAccount.isBackedUp,
                             type = AccountCreation.Type.NoAuth,
                             creationType = CreationType.WATCH
@@ -57,6 +59,7 @@ class MigrationViewerMigrateUseCase @Inject constructor(
                     migrateAccount = AccountCreation(
                         address = localAccount.address,
                         customName = localAccount.name,
+                        orderIndex = localAccount.index,
                         isBackedUp = localAccount.isBackedUp,
                         type = AccountCreation.Type.LedgerBle("", 0, ""),
                         creationType = CreationType.LEDGER
@@ -66,6 +69,7 @@ class MigrationViewerMigrateUseCase @Inject constructor(
                     migrateAccount = AccountCreation(
                         address = localAccount.address,
                         customName = localAccount.name,
+                        orderIndex = localAccount.index,
                         isBackedUp = localAccount.isBackedUp,
                         type = AccountCreation.Type.NoAuth,
                         creationType = CreationType.WATCH

@@ -17,6 +17,7 @@ import com.algorand.wallet.account.custom.domain.repository.CustomHdSeedInfoRepo
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.account.local.domain.usecase.GetSeedIdIfExistingEntropy
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 
@@ -24,7 +25,8 @@ internal class AddHdSeedUseCase @Inject constructor(
     private val hdSeedRepository: HdSeedRepository,
     private val customHdSeedInfoRepository: CustomHdSeedInfoRepository,
     private val peraBip39Sdk: PeraBip39Sdk,
-    private val getSeedIdIfExistingEntropy: GetSeedIdIfExistingEntropy
+    private val getSeedIdIfExistingEntropy: GetSeedIdIfExistingEntropy,
+    private val aesPlatformManager: AESPlatformManager
 ) : AddHdSeed {
 
     override suspend fun invoke(entropy: ByteArray): PeraResult<Int> {
@@ -50,7 +52,7 @@ internal class AddHdSeedUseCase @Inject constructor(
                         isBackedUp = false
                     )
                 )
-                seed = ByteArray(0)
+                seed = aesPlatformManager.deleteSecretByteArrayFromMemory()
                 return PeraResult.Success(newSeedIdInDB)
             } ?: run {
                 return PeraResult.Error(Exception("Failed to insert hd seed"))

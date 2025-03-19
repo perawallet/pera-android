@@ -28,7 +28,8 @@ internal class AddLedgerBleAccountUseCase @Inject constructor(
         deviceMacAddress: String,
         indexInLedger: Int,
         customName: String?,
-        bluetoothName: String?
+        bluetoothName: String?,
+        orderIndex: Int
     ) {
         val account = LocalAccount.LedgerBle(address, deviceMacAddress, bluetoothName, indexInLedger)
         saveLedgerBleAccount(account)

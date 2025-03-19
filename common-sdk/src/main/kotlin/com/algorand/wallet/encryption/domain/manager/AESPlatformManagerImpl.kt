@@ -14,6 +14,7 @@ package com.algorand.wallet.encryption.domain.manager
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.util.Log
 import java.security.KeyStore
 import java.util.Base64
 import javax.crypto.Cipher
@@ -25,6 +26,7 @@ import javax.inject.Inject
 internal class AESPlatformManagerImpl @Inject constructor() : AESPlatformManager {
 
     companion object {
+        private const val TAG = "AESPlatformManagerImpl"
         private const val KEY_ALIAS = "PeraAESKey"
         private const val ANDROID_KEYSTORE = "AndroidKeyStore" // this value should not change
         private const val AES_MODE = "AES/GCM/NoPadding"
@@ -40,16 +42,24 @@ internal class AESPlatformManagerImpl @Inject constructor() : AESPlatformManager
         }
         if (!keyStore.containsAlias(KEY_ALIAS)) {
             val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
-            val parameterSpec = KeyGenParameterSpec.Builder(
+            val baseBuilder = KeyGenParameterSpec.Builder(
                 KEY_ALIAS,
                 KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
             )
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setKeySize(256)
-                .build()
-            keyGenerator.init(parameterSpec)
-            keyGenerator.generateKey()
+
+            try {
+                keyGenerator.init(baseBuilder.setIsStrongBoxBacked(true).build())
+                keyGenerator.generateKey()
+                Log.d(TAG, "StrongBox key generated successfully")
+            } catch (e: java.security.ProviderException) {
+                Log.e(TAG, "StrongBox not available, falling back to software-backed key", e)
+                // Fallback to software-backed key generation
+                keyGenerator.init(baseBuilder.build())
+                keyGenerator.generateKey()
+            }
         }
     }
 

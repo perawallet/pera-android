@@ -12,7 +12,7 @@
 
 package com.algorand.android.ui.settings.migrationviewer
 
-import com.algorand.android.models.Account.Type
+import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
@@ -35,8 +35,8 @@ class MigrationViewerMigrateUseCase @Inject constructor(
             var migratedCount = 0
             localAccounts?.forEach { localAccount ->
                 var migrateAccount: AccountCreation? = null
-                when (localAccount.type) {
-                    Type.STANDARD, Type.REKEYED, Type.REKEYED_AUTH -> {
+                when (localAccount.detail) {
+                    is Account.Detail.Standard, is Account.Detail.Rekeyed, is Account.Detail.RekeyedAuth -> {
                         localAccount.getSecretKey()?.let {
                             migrateAccount = AccountCreation(
                                 address = localAccount.address,
@@ -60,18 +60,21 @@ class MigrationViewerMigrateUseCase @Inject constructor(
                         }
                     }
 
-                    Type.LEDGER -> {
+                    is Account.Detail.Ledger -> {
                         migrateAccount = AccountCreation(
                             address = localAccount.address,
                             customName = localAccount.name,
                             orderIndex = localAccount.index,
                             isBackedUp = localAccount.isBackedUp,
-                            type = AccountCreation.Type.LedgerBle("", 0, ""),
+                            type = AccountCreation.Type.LedgerBle(
+                                deviceMacAddress = localAccount.detail.bluetoothAddress,
+                                indexInLedger = localAccount.detail.positionInLedger,
+                                bluetoothName = localAccount.detail.bluetoothName),
                             creationType = CreationType.LEDGER
                         )
                     }
 
-                    Type.WATCH -> {
+                    is Account.Detail.Watch -> {
                         migrateAccount = AccountCreation(
                             address = localAccount.address,
                             customName = localAccount.name,

@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
@@ -43,27 +44,48 @@ class WatchAccountResultInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) =
+    override fun Title(modifier: Modifier) {
+        val state = watchAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value
+        val titleText = when (state) {
+            is WatchAccountResultInfoViewModel.ViewState.DefaultState -> stringResource(id = state.titleTextRes)
+            else -> ""
+        }
+
         PeraHeadlineText(
             modifier = modifier,
-            text = stringResource(id = watchAccountResultInfoViewModel.getPreviewTitle())
+            text = titleText
         )
+    }
 
     @Composable
-    override fun Description(modifier: Modifier) = PeraBodyText(
-        text = stringResource(id = watchAccountResultInfoViewModel.getPreviewDescription()),
-        modifier = modifier
-    )
+    override fun Description(modifier: Modifier) {
+        val state = watchAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value
+        val descriptionText = when (state) {
+            is WatchAccountResultInfoViewModel.ViewState.DefaultState -> stringResource(id = state.descriptionTextRes)
+            else -> ""
+        }
+
+        PeraBodyText(
+            text = descriptionText,
+            modifier = modifier
+        )
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) {
+        val state = watchAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value
+        val firstButtonText = when (state) {
+            is WatchAccountResultInfoViewModel.ViewState.DefaultState -> stringResource(id = state.firstButtonTextRes)
+            else -> ""
+        }
+
         PeraPrimaryButton(
             onClick = { onContinueClick() },
             modifier = modifier,
-            text = stringResource(id = watchAccountResultInfoViewModel.getPreviewFirstButtonText())
+            text = firstButtonText
         )
-
+    }
     private fun onContinueClick() {
         if (watchAccountResultInfoViewModel.shouldForceLockNavigation()) {
             navToForceLockNavigation()

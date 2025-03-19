@@ -7,42 +7,44 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- *  limitations under the License
+ * limitations under the License
  */
 
-package com.algorand.android.ui.register.recoveraccounttypeselection
+package com.algorand.android
 
 import android.content.SharedPreferences
-import androidx.lifecycle.ViewModel
-import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.core.BaseViewModel
 import com.algorand.android.utils.launchIO
-import com.algorand.android.utils.preference.setRegisterSkip
+import com.algorand.android.utils.preference.getRegisterSkip
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
-class AccountRecoveryTypeSelectionViewModel @Inject constructor(
-    private val sharedPref: SharedPreferences,
+class CoreMainViewModel @Inject constructor(
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val eventDelegate: EventDelegate<ViewEvent>,
-) : ViewModel(), EventViewModel<AccountRecoveryTypeSelectionViewModel.ViewEvent> by eventDelegate {
+    private val sharedPref: SharedPreferences
+) : BaseViewModel(), EventViewModel<CoreMainViewModel.ViewEvent> by eventDelegate {
 
-    fun setRegisterSkip() {
-        sharedPref.setRegisterSkip()
-    }
-
-    fun setupToolbar() {
+    fun startNavigation() {
         viewModelScope.launchIO {
-            if (isThereAnyLocalAccount()) {
-                eventDelegate.sendEvent(ViewEvent.SetupToolbar)
-            }
+            eventDelegate.sendEvent(
+                ViewEvent.StartNavigation(
+                    if (isThereAnyLocalAccount() || sharedPref.getRegisterSkip()) {
+                        R.id.homeNavigation
+                    } else {
+                        R.id.loginNavigation
+                    }
+                )
+            )
         }
     }
 
     sealed interface ViewEvent {
-        data object SetupToolbar : ViewEvent
+        data class StartNavigation(val startDestinationFragmentId: Int) : ViewEvent
     }
 }

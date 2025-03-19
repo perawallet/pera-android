@@ -20,14 +20,13 @@ import com.google.crypto.tink.Aead
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 
-// DAGGER
 class AccountManager(
     private val aead: Aead,
     private val gson: Gson,
     private val sharedPref: SharedPreferences
 ) {
 
-    val accounts = MutableStateFlow<List<Account>>(listOf())
+    private val accounts = MutableStateFlow<List<Account>>(listOf())
 
     fun getAccount(publicKey: String): Account? {
         getAccounts().forEach { iteratedAccount ->
@@ -55,22 +54,7 @@ class AccountManager(
         sharedPref.removeAll()
     }
 
-    fun isThereAnyRegisteredAccount(): Boolean {
-        return getAccounts().isEmpty().not()
-    }
-
-    fun getAccounts(): List<Account> {
+    private fun getAccounts(): List<Account> {
         return accounts.value
-    }
-
-    fun getAllAccountsExceptWatch(): List<Account> {
-        return getAccounts()
-            .filter { it.type != Account.Type.WATCH }
-    }
-
-    fun getAllAccountsAddressesExceptWatch(): List<String> {
-        return getAccounts()
-            .filter { it.type != Account.Type.WATCH }
-            .map { account -> account.address }
     }
 }

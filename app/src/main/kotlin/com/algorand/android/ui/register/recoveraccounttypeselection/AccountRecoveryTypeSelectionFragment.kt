@@ -22,11 +22,19 @@ import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentAccountRecoveryTypeSelectionBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_account_recovery_type_selection) {
+
+    private val viewEventCollector: suspend (AccountRecoveryTypeSelectionViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is AccountRecoveryTypeSelectionViewModel.ViewEvent.SetupToolbar ->
+                setupToolbar()
+        }
+    }
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
@@ -43,6 +51,7 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
+        initObservers()
     }
 
     private fun initUi() {
@@ -54,6 +63,13 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
             importFromWebSelectionItem.setOnClickListener { navToImportFromWeb() }
             algorandSecureBackupSelectionItem.setOnClickListener { navToAlgorandSecureRestoreNavigation() }
         }
+    }
+
+    private fun initObservers() {
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            accountRecoveryTypeSelectionViewModel.viewEvent,
+            viewEventCollector
+        )
     }
 
     private fun navToAlgorandSecureRestoreNavigation() {
@@ -92,9 +108,7 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
     }
 
     private fun setupToolbar() {
-        if (accountRecoveryTypeSelectionViewModel.hasAccount().not()) {
-            getAppToolbar()?.setEndButton(button = TextButton(R.string.skip, onClick = ::onSkipClick))
-        }
+        getAppToolbar()?.setEndButton(button = TextButton(R.string.skip, onClick = ::onSkipClick))
     }
 
     private fun onSkipClick() {

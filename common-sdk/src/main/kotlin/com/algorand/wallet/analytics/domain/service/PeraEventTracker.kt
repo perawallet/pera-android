@@ -17,4 +17,6 @@ interface PeraEventTracker {
     suspend fun logEvent(eventName: String)
 
     suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>)
+
+    suspend fun logException(e: Exception)
 }

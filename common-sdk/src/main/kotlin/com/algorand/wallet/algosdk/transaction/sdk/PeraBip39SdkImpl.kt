@@ -94,9 +94,9 @@ internal class PeraBip39SdkImpl @Inject constructor(
             keyIndex = keyIndex.toInt(),
             derivationType = Bip32DerivationType.Peikert.value
         )
-        privateKey = aesPlatformManager.deleteSecretByteArrayFromMemory()
-        entropy = aesPlatformManager.deleteSecretByteArrayFromMemory()
-        seed = aesPlatformManager.deleteSecretByteArrayFromMemory()
+        privateKey = aesPlatformManager.clearSecretByteArrayFromMemory()
+        entropy = aesPlatformManager.clearSecretByteArrayFromMemory()
+        seed = aesPlatformManager.clearSecretByteArrayFromMemory()
         return output
     }
 }

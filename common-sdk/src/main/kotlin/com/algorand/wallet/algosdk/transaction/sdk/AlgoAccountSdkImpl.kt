@@ -46,7 +46,7 @@ internal class AlgoAccountSdkImpl @Inject constructor(
                 address = Sdk.generateAddressFromSK(secretKey),
                 secretKey = secretKey
             )
-            secretKey = aesPlatformManager.deleteSecretByteArrayFromMemory()
+            secretKey = aesPlatformManager.clearSecretByteArrayFromMemory()
             output
         } catch (e: Exception) {
             null
@@ -61,7 +61,7 @@ internal class AlgoAccountSdkImpl @Inject constructor(
                 address = Sdk.generateAddressFromSK(secretKey),
                 secretKey = secretKey
             )
-            secretKey = aesPlatformManager.deleteSecretByteArrayFromMemory()
+            secretKey = aesPlatformManager.clearSecretByteArrayFromMemory()
             output
         } catch (e: Exception) {
             null

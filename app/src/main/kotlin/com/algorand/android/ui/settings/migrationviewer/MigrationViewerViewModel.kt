@@ -15,6 +15,7 @@ package com.algorand.android.ui.settings.migrationviewer
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.Account
+import com.algorand.android.modules.settings.ui.usecase.MigrateTo6xUseCase
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewEvent
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewState
 import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
@@ -34,7 +35,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class MigrationViewerViewModel @Inject constructor(
     private val getAccountsDetailsFlow: GetAccountsDetailsFlow,
-    private val migrationViewerMigrateUseCase: MigrationViewerMigrateUseCase,
+    private val migrateTo6xUseCase: MigrateTo6xUseCase,
     private val getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
@@ -65,7 +66,7 @@ class MigrationViewerViewModel @Inject constructor(
 
     fun migrate() {
         viewModelScope.launchIO {
-            val result = migrationViewerMigrateUseCase.invoke()
+            val result = migrateTo6xUseCase.invoke()
 
             when (result) {
                 is PeraResult.Success -> {
@@ -80,11 +81,17 @@ class MigrationViewerViewModel @Inject constructor(
                 is PeraResult.Error -> {
                     stateDelegate.updateState {
                         ViewState.Error(
-                            error = "Migration failed: ${result.exception.message}"
+                            error = "Migration failed"
                         )
                     }
                 }
             }
+        }
+    }
+
+    fun triggerEvent(event: ViewEvent) {
+        viewModelScope.launch {
+            eventDelegate.sendEvent(event)
         }
     }
 

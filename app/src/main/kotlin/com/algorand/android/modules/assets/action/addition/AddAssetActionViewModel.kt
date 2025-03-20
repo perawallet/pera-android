@@ -14,7 +14,6 @@ package com.algorand.android.modules.assets.action.addition
 
 import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.BaseAccountAddress
 import com.algorand.android.modules.assets.action.base.BaseAssetActionViewModel
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.usecase.AccountAddressUseCase
@@ -23,18 +22,22 @@ import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.viewmodel.EventDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class AddAssetActionViewModel @Inject constructor(
-    private val accountAddressUseCase: AccountAddressUseCase,
     private val getFormattedTransactionFeeAmountUseCase: GetFormattedTransactionFeeAmountUseCase,
+    accountAddressUseCase: AccountAddressUseCase,
+    eventDelegate: EventDelegate<ViewEvent>,
     verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     fetchAndCacheAssets: FetchAndCacheAssets,
     getAsset: GetAsset,
     savedStateHandle: SavedStateHandle
 ) : BaseAssetActionViewModel(
+    accountAddressUseCase,
+    eventDelegate,
     verificationTierConfigurationDecider,
     fetchAndCacheAssets,
     getAsset
@@ -51,11 +54,6 @@ class AddAssetActionViewModel @Inject constructor(
 
     init {
         fetchAssetDescription(assetId)
-    }
-
-    // TODO: Create [AssetActionUseCase] and get the whole UI related things from there
-    fun getAccountName(): BaseAccountAddress.AccountAddress {
-        return accountAddressUseCase.createAccountAddress(accountAddress)
     }
 
     fun getTransactionFee(): String {

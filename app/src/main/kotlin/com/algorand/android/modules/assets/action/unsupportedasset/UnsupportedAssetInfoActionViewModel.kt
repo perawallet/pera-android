@@ -16,19 +16,25 @@ import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.models.AssetAction
 import com.algorand.android.modules.assets.action.base.BaseAssetActionViewModel
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
+import com.algorand.android.usecase.AccountAddressUseCase
 import com.algorand.android.utils.getOrThrow
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.viewmodel.EventDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class UnsupportedAssetInfoActionViewModel @Inject constructor(
+    accountAddressUseCase: AccountAddressUseCase,
+    eventDelegate: EventDelegate<ViewEvent>,
     verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     fetchAndCacheAssets: FetchAndCacheAssets,
     getAsset: GetAsset,
     savedStateHandle: SavedStateHandle
 ) : BaseAssetActionViewModel(
+    accountAddressUseCase,
+    eventDelegate,
     verificationTierConfigurationDecider,
     fetchAndCacheAssets,
     getAsset

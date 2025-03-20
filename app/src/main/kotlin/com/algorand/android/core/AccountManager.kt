@@ -28,24 +28,14 @@ class AccountManager(
 
     private val accounts = MutableStateFlow<List<Account>>(listOf())
 
-    fun getAccount(publicKey: String): Account? {
-        getAccounts().forEach { iteratedAccount ->
-            if (iteratedAccount.address == publicKey) {
-                return iteratedAccount
-            }
-        }
-        return null
-    }
-
     fun updateAccountBackupState(accountPublicKey: String?, isBackedUp: Boolean) {
         if (accountPublicKey.isNullOrBlank()) return
 
-        val accounts = getAccounts()
-        val accountToUpdate = accounts.find { it.address == accountPublicKey }
+        val accountToUpdate = accounts.value.find { it.address == accountPublicKey }
 
         accountToUpdate?.let {
             it.isBackedUp = isBackedUp
-            sharedPref.saveAlgorandAccounts(gson, accounts, aead)
+            sharedPref.saveAlgorandAccounts(gson, accounts.value, aead)
         }
     }
 
@@ -54,7 +44,7 @@ class AccountManager(
         sharedPref.removeAll()
     }
 
-    private fun getAccounts(): List<Account> {
-        return accounts.value
+    fun isThereAnyRegisteredAccount(): Boolean {
+        return accounts.value.isEmpty().not()
     }
 }

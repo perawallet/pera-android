@@ -13,6 +13,7 @@
 package com.algorand.android.modules.backupprotocol.util
 
 import com.algorand.android.models.Account
+import com.algorand.wallet.account.detail.domain.model.AccountType
 
 // TODO: we need to add other account types as well whenever we started to support them on
 //  Algorand Secure Backup, Web import and Web Export feature
@@ -21,13 +22,14 @@ object BackupProtocolUtils {
     private const val SINGLE_ACCOUNT_TYPE_NAME = "single"
     private const val WATCH_ACCOUNT_TYPE_NAME = "watch"
 
-    fun convertAccountTypeToBackupProtocolAccountType(accountType: Account.Type): String? {
+    fun convertAccountTypeToBackupProtocolAccountType(accountType: AccountType?): String? {
         return when (accountType) {
-            Account.Type.STANDARD,
-            Account.Type.REKEYED,
-            Account.Type.REKEYED_AUTH -> SINGLE_ACCOUNT_TYPE_NAME
-            Account.Type.WATCH -> WATCH_ACCOUNT_TYPE_NAME
-            Account.Type.LEDGER -> null
+            AccountType.HdKey,
+            AccountType.Algo25,
+            AccountType.Rekeyed,
+            AccountType.RekeyedAuth -> SINGLE_ACCOUNT_TYPE_NAME
+            AccountType.NoAuth -> WATCH_ACCOUNT_TYPE_NAME
+            else -> null
         }
     }
 

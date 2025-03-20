@@ -14,8 +14,8 @@ package com.algorand.android.modules.basefoundaccount.selection.ui.model
 
 import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.models.RecyclerListItem
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
 
 sealed class BaseFoundAccountSelectionItem : RecyclerListItem {
 
@@ -69,7 +69,7 @@ sealed class BaseFoundAccountSelectionItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is DescriptionItem &&
-                descriptionPluralAnnotatedString == other.descriptionPluralAnnotatedString
+                    descriptionPluralAnnotatedString == other.descriptionPluralAnnotatedString
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
@@ -89,7 +89,7 @@ sealed class BaseFoundAccountSelectionItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountItem &&
-                accountDisplayName.getRawAccountAddress() == other.accountDisplayName.getRawAccountAddress()
+                    accountDisplayName.accountAddress == other.accountDisplayName.accountAddress
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

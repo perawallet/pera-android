@@ -22,6 +22,8 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.databinding.BottomSheetAssetActionBinding
+import com.algorand.android.models.BaseAccountAddress
+import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.addUnnamedAssetName
 import com.algorand.android.utils.copyToClipboard
@@ -35,6 +37,12 @@ import com.google.android.material.button.MaterialButton
 
 // TODO Refactor this class whenever have a time
 abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_asset_action) {
+
+    private val viewEventCollector: suspend (BaseAssetActionViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is BaseAssetActionViewModel.ViewEvent.SetAccountName -> setAccountName(event.accountAddress)
+        }
+    }
 
     protected val binding by viewBinding(BottomSheetAssetActionBinding::bind)
 
@@ -88,6 +96,11 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
             flow = assetActionViewModel.assetFlow,
             collection = assetCollector
         )
+
+        collectLatestOnLifecycle(
+            assetActionViewModel.viewEvent,
+            viewEventCollector
+        )
     }
 
     private fun setAssetDetails(asset: Asset) {
@@ -126,6 +139,22 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
             val errorMessage = error.parse(this).toString()
             showGlobalError(errorMessage = errorMessage, tag = baseActivityTag)
             navBack()
+        }
+    }
+
+    private fun setAccountName(accountAddress: BaseAccountAddress.AccountAddress) {
+        binding.accountTextView.apply {
+            with(accountAddress) {
+                text = getDisplayAddress()
+                setDrawable(
+                    start = AccountIconDrawable.create(
+                        context = context,
+                        accountIconDrawablePreview = accountIconDrawablePreview,
+                        sizeResId = R.dimen.spacing_xlarge
+                    )
+                )
+                setOnLongClickListener { onAccountAddressCopied(publicKey); true }
+            }
         }
     }
 

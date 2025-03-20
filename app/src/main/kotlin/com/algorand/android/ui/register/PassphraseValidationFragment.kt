@@ -60,7 +60,7 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
     }
 
     private fun getPassphraseWords(): List<String> {
-        return passphraseValidationViewModel.getMnemonic(args)?.split(" ") ?: listOf()
+        return passphraseValidationViewModel.getMnemonic(args).split(" ") ?: listOf()
     }
 
     private fun setupPassphraseValidationView() {

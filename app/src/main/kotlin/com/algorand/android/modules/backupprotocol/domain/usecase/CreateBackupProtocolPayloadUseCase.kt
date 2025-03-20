@@ -12,38 +12,42 @@
 
 package com.algorand.android.modules.backupprotocol.domain.usecase
 
-import com.algorand.android.core.AccountManager
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
-import com.algorand.android.models.Account
 import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
 import com.algorand.android.modules.backupprotocol.mapper.BackupProtocolElementMapper
 import com.algorand.android.modules.backupprotocol.mapper.BackupProtocolPayloadMapper
 import com.algorand.android.modules.backupprotocol.model.BackupProtocolPayload
 import com.algorand.android.modules.backupprotocol.util.BackupProtocolUtils.convertAccountTypeToBackupProtocolAccountType
 import com.algorand.android.utils.extensions.encodeBase64
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import javax.inject.Inject
 
 class CreateBackupProtocolPayloadUseCase @Inject constructor(
     private val deviceIdUseCase: DeviceIdUseCase,
-    private val accountManager: AccountManager,
+    private val getAccountDetail: GetAccountDetail,
     private val backupProtocolElementMapper: BackupProtocolElementMapper,
-    private val backupProtocolPayloadMapper: BackupProtocolPayloadMapper
+    private val backupProtocolPayloadMapper: BackupProtocolPayloadMapper,
+    private val getAlgo25SecretKey: GetAlgo25SecretKey
 ) {
 
     suspend operator fun invoke(accountList: List<String>): BackupProtocolPayload? {
         val deviceId = deviceIdUseCase.getSelectedNodeDeviceId() ?: return null
         val accountBackupProtocolElementList = accountList.mapNotNull { accountAddress ->
-            val account = accountManager.getAccount(accountAddress) ?: return@mapNotNull null
+            val account = getAccountDetail(accountAddress)
 
-            if (account.type == null || isAccountTypeEligible(account.type.name).not()) return@mapNotNull null
+            if (account.accountType == null || isAccountTypeEligible(account.accountType).not()) return@mapNotNull null
 
-            val accountType = convertAccountTypeToBackupProtocolAccountType(account.type) ?: return@mapNotNull null
+            val accountType = convertAccountTypeToBackupProtocolAccountType(
+                account.accountType
+            ) ?: return@mapNotNull null
 
             backupProtocolElementMapper.mapToBackupProtocolElement(
                 address = account.address,
-                name = account.name,
+                name = account.customAccountInfo?.customName.orEmpty(),
                 accountType = accountType,
-                privateKey = account.getSecretKey()?.encodeBase64().orEmpty(),
+                privateKey = getAlgo25SecretKey(accountAddress)?.encodeBase64().orEmpty(),
                 metadata = null
             )
         }
@@ -54,9 +58,8 @@ class CreateBackupProtocolPayloadUseCase @Inject constructor(
         )
     }
 
-    private fun isAccountTypeEligible(accountTypeName: String?): Boolean {
-        val accountType = Account.Type.valueOf(accountTypeName ?: return false)
-        return AlgorandSecureBackupUtils.eligibleAccountTypes.contains(accountType)
+    private fun isAccountTypeEligible(accountType: AccountType?): Boolean {
+        return AlgorandSecureBackupUtils.eligibleAccountTypeList.contains(accountType)
     }
 
     companion object {

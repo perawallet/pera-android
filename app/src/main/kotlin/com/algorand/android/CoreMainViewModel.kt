@@ -13,14 +13,13 @@
 package com.algorand.android
 
 import android.content.SharedPreferences
-import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.preference.getRegisterSkip
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,7 +30,7 @@ class CoreMainViewModel @Inject constructor(
 ) : BaseViewModel(), EventViewModel<CoreMainViewModel.ViewEvent> by eventDelegate {
 
     fun startNavigation() {
-        viewModelScope.launchIO {
+        runBlocking {
             eventDelegate.sendEvent(
                 ViewEvent.StartNavigation(
                     if (isThereAnyLocalAccount() || sharedPref.getRegisterSkip()) {

@@ -14,7 +14,6 @@ package com.algorand.android.modules.collectibles.action.optout
 
 import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.BaseAccountAddress
 import com.algorand.android.modules.assets.action.base.BaseAssetActionViewModel
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.usecase.AccountAddressUseCase
@@ -22,18 +21,22 @@ import com.algorand.android.usecase.GetFormattedTransactionFeeAmountUseCase
 import com.algorand.android.utils.getOrThrow
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.viewmodel.EventDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class CollectibleOptOutConfirmationViewModel @Inject constructor(
     private val getFormattedTransactionFeeAmountUseCase: GetFormattedTransactionFeeAmountUseCase,
-    private val accountAddressUseCase: AccountAddressUseCase,
+    accountAddressUseCase: AccountAddressUseCase,
+    eventDelegate: EventDelegate<ViewEvent>,
     verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     fetchAndCacheAssets: FetchAndCacheAssets,
     getAsset: GetAsset,
     savedStateHandle: SavedStateHandle
 ) : BaseAssetActionViewModel(
+    accountAddressUseCase,
+    eventDelegate,
     verificationTierConfigurationDecider,
     fetchAndCacheAssets,
     getAsset
@@ -46,11 +49,6 @@ class CollectibleOptOutConfirmationViewModel @Inject constructor(
 
     init {
         fetchAssetDescription(assetId)
-    }
-
-    // TODO: Create [CollectibleOptOutActionUseCase] and get the whole UI related things from there
-    fun getAccountName(): BaseAccountAddress.AccountAddress {
-        return accountAddressUseCase.createAccountAddress(accountAddress)
     }
 
     fun getTransactionFee(): String {

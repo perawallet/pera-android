@@ -17,7 +17,6 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
@@ -25,7 +24,6 @@ import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.FragmentNavigator
-import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.core.AccountManager
 import com.algorand.android.core.BaseActivity
@@ -40,6 +38,7 @@ import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.navigateSafe
+import com.algorand.android.utils.preference.getRegisterSkip
 import com.algorand.android.utils.setupWithNavController
 import com.algorand.android.utils.showDarkStatusBarIcons
 import com.algorand.android.utils.showLightStatusBarIcons
@@ -48,16 +47,6 @@ import javax.inject.Inject
 import kotlin.properties.Delegates
 
 abstract class CoreMainActivity : BaseActivity() {
-
-    private val coreMainViewEventCollector: suspend (CoreMainViewModel.ViewEvent) -> Unit = { event ->
-        when (event) {
-            is CoreMainViewModel.ViewEvent.StartNavigation -> startNavigation(
-                event.startDestinationFragmentId
-            )
-        }
-    }
-
-    private val coreMainViewModel: CoreMainViewModel by viewModels()
 
     @Inject
     lateinit var accountManager: AccountManager
@@ -108,10 +97,9 @@ abstract class CoreMainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        initObservers()
         navController = (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
             .navController
-        coreMainViewModel.startNavigation()
+        startNavigation()
         if (savedInstanceState != null) {
             isBottomBarNavigationVisible = savedInstanceState.getBoolean(IS_BOTTOM_BAR_VISIBLE_KEY)
         }
@@ -168,13 +156,6 @@ abstract class CoreMainActivity : BaseActivity() {
         binding.progressBar.root.hide()
     }
 
-    private fun initObservers() {
-        collectLatestOnLifecycle(
-            coreMainViewModel.viewEvent,
-            coreMainViewEventCollector
-        )
-    }
-
     private fun initializeCoreManagers() {
         with(lifecycle) {
             addObserver(parityManager)
@@ -182,12 +163,20 @@ abstract class CoreMainActivity : BaseActivity() {
         }
     }
 
-    private fun startNavigation(@IdRes startDestinationFragmentId: Int) {
+    private fun startNavigation() {
         with(navController) {
             graph = navInflater.inflate(R.navigation.main_navigation).apply {
-                setStartDestination(startDestinationFragmentId)
+                setStartDestination(getStartDestinationFragmentId())
             }
             binding.bottomNavigationView.setupWithNavController(this, ::onMenuItemClicked)
+        }
+    }
+
+    private fun getStartDestinationFragmentId(): Int {
+        return if (accountManager.isThereAnyRegisteredAccount() || sharedPref.getRegisterSkip()) {
+            R.id.homeNavigation
+        } else {
+            R.id.loginNavigation
         }
     }
 

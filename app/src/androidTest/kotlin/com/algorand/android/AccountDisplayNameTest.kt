@@ -14,14 +14,11 @@
 package com.algorand.android
 
 import android.content.Context
-import android.content.res.Resources
 import androidx.test.platform.app.InstrumentationRegistry
-import com.algorand.android.mapper.AccountDisplayNameMapper
 import com.algorand.android.models.Account
-import com.algorand.android.models.Account.Companion.defaultAccountType
 import com.algorand.android.models.AccountDetail
 import com.algorand.android.models.AccountInformation
-import com.algorand.android.utils.AccountDisplayName
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.utils.toShortenedAddress
 import java.math.BigInteger
 import org.junit.Before
@@ -32,12 +29,7 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class AccountDisplayNameTest {
 
-    private val accountDisplayNameMapper = AccountDisplayNameMapper()
-
     private lateinit var instrumentationContext: Context
-
-    private val resources: Resources
-        get() = instrumentationContext.resources
 
     @Before
     fun setupTestEnvironment() {
@@ -58,9 +50,9 @@ class AccountDisplayNameTest {
         )
         val accountDisplayName = createAccountDisplayName(accountDetail)
         val isPrimaryNameMatches =
-            accountDisplayName.getAccountPrimaryDisplayName() == account.address.toShortenedAddress()
+            accountDisplayName.primaryDisplayName == account.address.toShortenedAddress()
         val isSecondaryNameMatches =
-            accountDisplayName.getAccountSecondaryDisplayName(instrumentationContext.resources) == null
+            accountDisplayName.secondaryDisplayName == null
         assert(isPrimaryNameMatches && isSecondaryNameMatches)
     }
 
@@ -78,9 +70,9 @@ class AccountDisplayNameTest {
         )
         val accountDisplayName = createAccountDisplayName(accountDetail)
         val isPrimaryNameMatches =
-            accountDisplayName.getAccountPrimaryDisplayName() == account.address.toShortenedAddress()
+            accountDisplayName.primaryDisplayName == account.address.toShortenedAddress()
         val isSecondaryNameMatches =
-            accountDisplayName.getAccountSecondaryDisplayName(instrumentationContext.resources) == instrumentationContext.getString(
+            accountDisplayName.secondaryDisplayName == instrumentationContext.getString(
                 R.string.watch_account
             )
         assert(isPrimaryNameMatches && isSecondaryNameMatches)
@@ -100,9 +92,9 @@ class AccountDisplayNameTest {
             nameServiceName = null
         )
         val accountDisplayName = createAccountDisplayName(accountDetail)
-        val isPrimaryNameMatches = accountDisplayName.getAccountPrimaryDisplayName() == account.name
+        val isPrimaryNameMatches = accountDisplayName.primaryDisplayName == account.name
         val isSecondaryNameMatches =
-            accountDisplayName.getAccountSecondaryDisplayName(resources) == account.address.toShortenedAddress()
+            accountDisplayName.secondaryDisplayName == account.address.toShortenedAddress()
         assert(isPrimaryNameMatches && isSecondaryNameMatches)
     }
 
@@ -119,9 +111,9 @@ class AccountDisplayNameTest {
             nameServiceName = "pera.algo"
         )
         val accountDisplayName = createAccountDisplayName(accountDetail)
-        val isPrimaryNameMatches = accountDisplayName.getAccountPrimaryDisplayName() == accountDetail.nameServiceName
+        val isPrimaryNameMatches = accountDisplayName.primaryDisplayName == accountDetail.nameServiceName
         val isSecondaryNameMatches =
-            accountDisplayName.getAccountSecondaryDisplayName(resources) == account.address.toShortenedAddress()
+            accountDisplayName.secondaryDisplayName == account.address.toShortenedAddress()
         assert(isPrimaryNameMatches && isSecondaryNameMatches)
     }
 
@@ -139,9 +131,9 @@ class AccountDisplayNameTest {
             nameServiceName = "pera.algo"
         )
         val accountDisplayName = createAccountDisplayName(accountDetail)
-        val isPrimaryNameMatches = accountDisplayName.getAccountPrimaryDisplayName() == account.name
+        val isPrimaryNameMatches = accountDisplayName.primaryDisplayName == account.name
         val isSecondaryNameMatches =
-            accountDisplayName.getAccountSecondaryDisplayName(resources) == accountDetail.nameServiceName
+            accountDisplayName.secondaryDisplayName == accountDetail.nameServiceName
         assert(isPrimaryNameMatches && isSecondaryNameMatches)
     }
 
@@ -159,9 +151,9 @@ class AccountDisplayNameTest {
             nameServiceName = "pera.algo"
         )
         val accountDisplayName = createAccountDisplayName(accountDetail)
-        val isPrimaryNameMatches = accountDisplayName.getAccountPrimaryDisplayName() == account.name
+        val isPrimaryNameMatches = accountDisplayName.primaryDisplayName == account.name
         val isSecondaryNameMatches =
-            accountDisplayName.getAccountSecondaryDisplayName(resources) == accountDetail.nameServiceName
+            accountDisplayName.secondaryDisplayName == accountDetail.nameServiceName
         assert(isPrimaryNameMatches && isSecondaryNameMatches)
     }
 
@@ -179,9 +171,9 @@ class AccountDisplayNameTest {
             nameServiceName = null
         )
         val accountDisplayName = createAccountDisplayName(accountDetail)
-        val isPrimaryNameMatches = accountDisplayName.getAccountPrimaryDisplayName() == account.name
+        val isPrimaryNameMatches = accountDisplayName.primaryDisplayName == account.name
         val isSecondaryNameMatches =
-            accountDisplayName.getAccountSecondaryDisplayName(resources) == account.address.toShortenedAddress()
+            accountDisplayName.secondaryDisplayName == account.address.toShortenedAddress()
         assert(isPrimaryNameMatches && isSecondaryNameMatches)
     }
 
@@ -198,9 +190,9 @@ class AccountDisplayNameTest {
             nameServiceName = "pera.algo"
         )
         val accountDisplayName = createAccountDisplayName(accountDetail)
-        val isPrimaryNameMatches = accountDisplayName.getAccountPrimaryDisplayName() == accountDetail.nameServiceName
+        val isPrimaryNameMatches = accountDisplayName.primaryDisplayName == accountDetail.nameServiceName
         val isSecondaryNameMatches =
-            accountDisplayName.getAccountSecondaryDisplayName(resources) == account.address.toShortenedAddress()
+            accountDisplayName.secondaryDisplayName == account.address.toShortenedAddress()
         assert(isPrimaryNameMatches && isSecondaryNameMatches)
     }
 
@@ -217,16 +209,15 @@ class AccountDisplayNameTest {
             nameServiceName = "pera.algo"
         )
         val accountDisplayName = createAccountDisplayName(accountDetail)
-        assert(accountDisplayName.getRawAccountAddress() == account.address)
+        assert(accountDisplayName.accountAddress == account.address)
     }
 
     private fun createAccountDisplayName(accountDetail: AccountDetail): AccountDisplayName {
         with(accountDetail) {
-            return accountDisplayNameMapper.mapToAccountDisplayName(
+            return AccountDisplayName(
                 accountAddress = account.address,
-                accountName = account.name,
-                nfDomainName = nameServiceName,
-                type = account.type ?: defaultAccountType
+                primaryDisplayName = account.name,
+                secondaryDisplayName = nameServiceName
             )
         }
     }

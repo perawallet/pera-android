@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.ui.usecase
+package com.algorand.android.modules.settings.domain.usecase
 
 import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
 import com.algorand.android.modules.settings.ui.mapper.SettingsPreviewMapper
-import com.algorand.android.modules.settings.ui.model.SettingsPreview
+import com.algorand.android.modules.settings.domain.model.SettingsPreview
 import com.algorand.wallet.account.custom.domain.usecase.GetBackedUpAccounts
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.analytics.domain.usecase.GetFirebaseInstanceIdUseCase

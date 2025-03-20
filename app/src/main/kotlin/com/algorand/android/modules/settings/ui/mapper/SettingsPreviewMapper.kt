@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.settings.ui.mapper
 
-import com.algorand.android.modules.settings.ui.model.SettingsPreview
+import com.algorand.android.modules.settings.domain.model.SettingsPreview
 import javax.inject.Inject
 
 class SettingsPreviewMapper @Inject constructor() {

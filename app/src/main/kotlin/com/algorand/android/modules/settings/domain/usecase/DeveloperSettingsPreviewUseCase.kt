@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.ui.usecase
+package com.algorand.android.modules.settings.domain.usecase
 
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper

@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.ui.usecase
+package com.algorand.android.modules.settings.domain.usecase
 
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation

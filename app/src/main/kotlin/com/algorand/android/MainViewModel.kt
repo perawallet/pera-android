@@ -29,6 +29,9 @@ import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
+import com.algorand.android.modules.settings.domain.usecase.GetMigratedTo6xCheck
+import com.algorand.android.modules.settings.domain.usecase.MigrateTo6xUseCase
+import com.algorand.android.modules.settings.domain.usecase.SaveMigratedTo6xCheck
 import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.network.AlgodInterceptor
@@ -36,7 +39,6 @@ import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.repository.NodeRepository
-import com.algorand.android.ui.settings.migrationviewer.MigrationViewerMigrateUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.launchIO
@@ -53,7 +55,6 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
 import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
 import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
-import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -90,8 +91,9 @@ class MainViewModel @Inject constructor(
     private var pendingIntentKeeper: PendingIntentKeeper,
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val autoLockManager: AutoLockManager,
-    private val persistentCacheProvider: PersistentCacheProvider,
-    private val migrationViewerMigrateUseCase: MigrationViewerMigrateUseCase,
+    private val saveMigratedTo6xCheck: SaveMigratedTo6xCheck,
+    private val getMigratedTo6xCheck: GetMigratedTo6xCheck,
+    private val migrateTo6xUseCase: MigrateTo6xUseCase,
     getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
 
@@ -338,12 +340,10 @@ class MainViewModel @Inject constructor(
 
     fun migrateTo6xCheck() {
         viewModelScope.launchIO {
-            val migrateTo6xStorage = persistentCacheProvider
-                .getPersistentCache<Boolean>(Boolean::class.java, MIGRATE_TO_6X)
-            val migratedTo6X: Boolean = migrateTo6xStorage.get() ?: false
+            val migratedTo6X = getMigratedTo6xCheck.invoke()
             if (!migratedTo6X) {
-                migrationViewerMigrateUseCase.invoke()
-                migrateTo6xStorage.put(true)
+                migrateTo6xUseCase.invoke()
+                saveMigratedTo6xCheck.invoke(true)
             }
         }
     }
@@ -359,9 +359,5 @@ class MainViewModel @Inject constructor(
         data object ShowGlobalNotificationError : ViewEvent
         data object StartInAppReview : ViewEvent
         data object StartAutoLockSuggestion : ViewEvent
-    }
-
-    companion object {
-        private const val MIGRATE_TO_6X = "migrate_to_6x"
     }
 }

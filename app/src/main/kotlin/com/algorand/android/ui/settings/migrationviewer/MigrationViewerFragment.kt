@@ -42,6 +42,7 @@ import com.algorand.android.models.Account
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.ErrorContentWidget
 import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewEvent
@@ -102,49 +103,64 @@ class MigrationViewerFragment : DaggerBaseFragment(0) {
             Spacer(modifier = Modifier.height(20.dp))
 
             when (viewState) {
-                is ViewState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.padding(16.dp))
-                }
-                is ViewState.Error -> {
-                    showGlobalError(errorMessage = viewState.error)
-                    navBack()
-                }
-                is ViewState.Content -> {
-                    val oldAccounts = viewState.oldAccounts
-                    val newAccounts = viewState.newAccounts
-
-                    PeraBodyText(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                        text = "Pre v6 Accounts",
-                        textAlign = TextAlign.Center
-                    )
-
-                    AccountList(accounts = oldAccounts)
-
-                    Spacer(modifier = Modifier.height(40.dp))
-
-                    PeraBodyText(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                        text = "Post v6 Accounts",
-                        textAlign = TextAlign.Center
-                    )
-
-                    AccountDetailList(accounts = newAccounts)
-
-                    Spacer(modifier = Modifier.height(40.dp))
-
-                    PeraPrimaryButton(
-                        modifier = Modifier.width(300.dp),
-                        text = stringResource(id = R.string.migrate),
-                        onClick = {
-                            migrationViewerViewModel.migrate()
-                        }
-                    )
-                }
+                is ViewState.Loading -> LoadingStateContent()
+                is ViewState.Error -> ErrorStateContent(viewState.error)
+                is ViewState.Content -> ContentStateContent(viewState)
             }
 
             Spacer(modifier = Modifier.height(20.dp))
         }
+    }
+
+    @Composable
+    fun LoadingStateContent() {
+        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+    }
+
+    @Composable
+    fun ErrorStateContent(error: String) {
+        ErrorContentWidget(
+            message = stringResource(R.string.error_state_message_default),
+            showNavigateBackButton = true,
+            onClick = {
+                migrationViewerViewModel.triggerEvent(ViewEvent.NavigateBack)
+            }
+        )
+        showGlobalError(errorMessage = error)
+    }
+
+    @Composable
+    fun ContentStateContent(viewState: ViewState.Content) {
+        val oldAccounts = viewState.oldAccounts
+        val newAccounts = viewState.newAccounts
+
+        PeraBodyText(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            text = "Pre v6 Accounts",
+            textAlign = TextAlign.Center
+        )
+
+        AccountList(accounts = oldAccounts)
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        PeraBodyText(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            text = "Post v6 Accounts",
+            textAlign = TextAlign.Center
+        )
+
+        AccountDetailList(accounts = newAccounts)
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        PeraPrimaryButton(
+            modifier = Modifier.width(300.dp),
+            text = stringResource(id = R.string.migrate),
+            onClick = {
+                migrationViewerViewModel.migrate()
+            }
+        )
     }
 
     @Composable

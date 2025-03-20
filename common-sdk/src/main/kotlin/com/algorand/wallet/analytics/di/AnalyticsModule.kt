@@ -28,6 +28,7 @@ import com.algorand.wallet.analytics.domain.usecase.SaveReferrerData
 import com.algorand.wallet.analytics.domain.util.GA4
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.installations.FirebaseInstallations
 import dagger.Module
 import dagger.Provides
@@ -44,15 +45,22 @@ internal object AnalyticsModule {
     @Provides
     fun providePeraEventTracker(
         firebaseAnalytics: FirebaseAnalytics,
+        firebaseCrashlytics: FirebaseCrashlytics,
         getReferrerData: GetReferrerData
     ): PeraEventTracker {
-        return PeraEventTrackerImpl(firebaseAnalytics, getReferrerData)
+        return PeraEventTrackerImpl(firebaseAnalytics, firebaseCrashlytics, getReferrerData)
     }
 
     @Singleton
     @Provides
     fun provideFirebaseAnalytics(@ApplicationContext appContext: Context): FirebaseAnalytics {
         return FirebaseAnalytics.getInstance(appContext)
+    }
+
+    @Singleton
+    @Provides
+    fun provideFirebaseFirebaseCrashlytics(): FirebaseCrashlytics {
+        return FirebaseCrashlytics.getInstance()
     }
 
     @Provides

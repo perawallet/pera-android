@@ -26,6 +26,7 @@ import javax.inject.Inject
 
 class PeraEventTrackerImpl @Inject constructor (
     private val firebaseAnalytics: FirebaseAnalytics,
+    private val firebaseCrashlytics: FirebaseCrashlytics,
     private val getReferrerData: GetReferrerData
 ) : PeraEventTracker {
 
@@ -39,6 +40,10 @@ class PeraEventTrackerImpl @Inject constructor (
         val payloadBundle = getPayloadBundle(payloadMap)
         val combinedBundle = addReferralDataToBundle(payloadBundle) // Merge referral data
         firebaseAnalytics.logEvent(eventName, combinedBundle.takeIf { combinedBundle.size() > 0 })
+    }
+
+    override suspend fun logException(e: Exception) {
+        firebaseCrashlytics.recordException(e)
     }
 
     private fun getPayloadBundle(payloadMap: Map<String, Any>): Bundle {
@@ -86,7 +91,7 @@ class PeraEventTrackerImpl @Inject constructor (
 
     private fun recordIllegalArgumentException(value: Any) {
         val errorMessage = "$logTag: Not handled bundle payload type: ${value::class.java}"
-        FirebaseCrashlytics.getInstance().recordException(IllegalArgumentException(errorMessage))
+        firebaseCrashlytics.recordException(IllegalArgumentException(errorMessage))
     }
 
     companion object {

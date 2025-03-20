@@ -52,7 +52,7 @@ internal class AddHdSeedUseCase @Inject constructor(
                         isBackedUp = false
                     )
                 )
-                seed = aesPlatformManager.deleteSecretByteArrayFromMemory()
+                seed = aesPlatformManager.clearSecretByteArrayFromMemory()
                 return PeraResult.Success(newSeedIdInDB)
             } ?: run {
                 return PeraResult.Error(Exception("Failed to insert hd seed"))

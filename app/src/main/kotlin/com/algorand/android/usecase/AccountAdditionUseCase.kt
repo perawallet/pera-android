@@ -135,7 +135,7 @@ class AccountAdditionUseCase @Inject constructor(
                 customName,
                 createAccount.orderIndex
             )
-            secretKey = aesPlatformManager.deleteSecretByteArrayFromMemory()
+            secretKey = aesPlatformManager.clearSecretByteArrayFromMemory()
         }
     }
 

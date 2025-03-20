@@ -28,7 +28,7 @@ internal class BuildKeyRegOfflineTransactionImpl @Inject constructor(
         return try {
             createTransaction(payload)
         } catch (e: Exception) {
-            aesPlatformManager.deleteSecretByteArrayFromMemory()
+            aesPlatformManager.clearSecretByteArrayFromMemory()
         }
     }
 

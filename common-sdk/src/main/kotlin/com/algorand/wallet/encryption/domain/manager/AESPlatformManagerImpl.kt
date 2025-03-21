@@ -15,6 +15,9 @@ package com.algorand.wallet.encryption.domain.manager
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Log
+import com.algorand.wallet.encryption.domain.usecase.GetStrongBoxUsedCheck
+import com.algorand.wallet.encryption.domain.usecase.SaveStrongBoxUsedCheck
+import com.algorand.wallet.foundation.PeraResult
 import java.security.KeyStore
 import java.util.Base64
 import javax.crypto.Cipher
@@ -22,8 +25,17 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
-internal class AESPlatformManagerImpl @Inject constructor() : AESPlatformManager {
+internal class AESPlatformManagerImpl @Inject constructor(
+    private val getStrongBoxUsedCheck: GetStrongBoxUsedCheck,
+    private val saveStrongBoxUsedCheck: SaveStrongBoxUsedCheck,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+) : AESPlatformManager {
 
     companion object {
         private const val TAG = "AESPlatformManagerImpl"
@@ -32,34 +44,138 @@ internal class AESPlatformManagerImpl @Inject constructor() : AESPlatformManager
         private const val AES_MODE = "AES/GCM/NoPadding"
     }
 
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     init {
-        generateKeyIfNeeded()
+        scope.launch {
+            generateKeyIfNeeded()
+        }
     }
 
-    private fun generateKeyIfNeeded() {
+    private suspend fun generateKeyIfNeeded() {
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
             load(null)
         }
-        if (!keyStore.containsAlias(KEY_ALIAS)) {
+
+        val strongBoxAlias = "${KEY_ALIAS}_strongbox"
+
+        if (!keyStore.containsAlias(KEY_ALIAS) && !keyStore.containsAlias(strongBoxAlias)) {
             val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
-            val baseBuilder = KeyGenParameterSpec.Builder(
-                KEY_ALIAS,
+
+            try {
+                // Try to create StrongBox-backed key first
+                createKey(
+                    keyGenerator = keyGenerator,
+                    alias = strongBoxAlias,
+                    useStrongBox = true
+                )
+                saveStrongBoxUsedCheck.invoke(true)
+                Log.d(TAG, "StrongBox key generated successfully")
+            } catch (e: java.security.ProviderException) {
+                // Fall back to software-backed key
+                Log.e(TAG, "StrongBox not available, falling back to software-backed key", e)
+                createKey(
+                    keyGenerator = keyGenerator,
+                    alias = KEY_ALIAS,
+                    useStrongBox = false
+                )
+                saveStrongBoxUsedCheck.invoke(false)
+                Log.d(TAG, "Software-backed key generated successfully")
+            }
+        }
+    }
+
+    private fun createKey(keyGenerator: KeyGenerator, alias: String, useStrongBox: Boolean) {
+        val builder = KeyGenParameterSpec.Builder(
+            alias,
+            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        )
+            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+            .setKeySize(256)
+
+        if (useStrongBox) {
+            builder.setIsStrongBoxBacked(true)
+        }
+
+        keyGenerator.init(builder.build())
+        keyGenerator.generateKey()
+    }
+
+    /**
+     * Checks if the current key should be migrated to StrongBox
+     * @return true if migration is recommended
+     */
+    override suspend fun shouldMigrateToStrongBox(): Boolean {
+        if (getStrongBoxUsedCheck.invoke()) {
+            return false
+        }
+
+        try {
+            val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
+            val testBuilder = KeyGenParameterSpec.Builder(
+                "StrongBoxTest", // Temporary alias for testing
                 KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
             )
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setKeySize(256)
+                .setIsStrongBoxBacked(true)
 
+            keyGenerator.init(testBuilder.build())
+
+            return true
+        } catch (e: Exception) {
+            // StrongBox still not available
+            return false
+        } finally {
+            // Clean up the test key if it was created
             try {
-                keyGenerator.init(baseBuilder.setIsStrongBoxBacked(true).build())
-                keyGenerator.generateKey()
-                Log.d(TAG, "StrongBox key generated successfully")
-            } catch (e: java.security.ProviderException) {
-                Log.e(TAG, "StrongBox not available, falling back to software-backed key", e)
-                // Fallback to software-backed key generation
-                keyGenerator.init(baseBuilder.build())
-                keyGenerator.generateKey()
+                val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
+                if (keyStore.containsAlias("StrongBoxTest")) {
+                    keyStore.deleteEntry("StrongBoxTest")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error cleaning up test key", e)
             }
+        }
+    }
+
+    /**
+     * Migrates encryption keys to StrongBox
+     * @return true if migration was successful
+     */
+    override suspend fun migrateToStrongBox(): PeraResult<Boolean> {
+        if (!shouldMigrateToStrongBox()) {
+            return PeraResult.Success(false)
+        }
+
+        try {
+            val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
+
+            val originalKeyExists = keyStore.containsAlias(KEY_ALIAS)
+            if (!originalKeyExists) {
+                Log.d(TAG, "No key to migrate to StrongBox")
+                return PeraResult.Success(false)
+            }
+
+            val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
+            val strongBoxAlias = "${KEY_ALIAS}_strongbox"
+            createKey(
+                keyGenerator = keyGenerator,
+                alias = strongBoxAlias,
+                useStrongBox = true
+            )
+
+            saveStrongBoxUsedCheck.invoke(true)
+
+            // migrate all secret keys in db tables
+            // not completely implemented yet so return false
+
+            return PeraResult.Success(false)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to migrate to StrongBox", e)
+            return PeraResult.Error(e)
         }
     }
 
@@ -67,7 +183,12 @@ internal class AESPlatformManagerImpl @Inject constructor() : AESPlatformManager
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
             load(null)
         }
-        return keyStore.getKey(KEY_ALIAS, null) as SecretKey
+        val strongboxAlias = "${KEY_ALIAS}_strongbox"
+        if (keyStore.containsAlias(strongboxAlias)) {
+            return keyStore.getKey(strongboxAlias, null) as SecretKey
+        } else {
+            return keyStore.getKey(KEY_ALIAS, null) as SecretKey
+        }
     }
 
     override fun encryptByteArray(data: ByteArray): ByteArray {

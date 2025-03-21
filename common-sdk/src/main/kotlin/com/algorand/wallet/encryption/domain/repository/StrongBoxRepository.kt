@@ -10,15 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.domain.manager
+package com.algorand.wallet.encryption.domain.repository
 
-import com.algorand.wallet.foundation.PeraResult
-
-interface AESPlatformManager {
-    fun encryptByteArray(data: ByteArray): ByteArray
-    fun decryptByteArray(encryptedData: ByteArray): ByteArray
-    fun encryptString(data: String): String
-    fun decryptString(encryptedData: String): String
-    suspend fun shouldMigrateToStrongBox(): Boolean
-    suspend fun migrateToStrongBox(): PeraResult<Boolean>
+internal interface StrongBoxRepository {
+    suspend fun saveStrongBoxUsed(check: Boolean)
+    suspend fun getStrongBoxUsed(): Boolean
 }

@@ -26,6 +26,7 @@ import com.algorand.wallet.analytics.domain.service.PeraReferrerQueryParamParser
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
 import com.algorand.wallet.analytics.domain.usecase.SaveReferrerData
 import com.algorand.wallet.analytics.domain.util.GA4
+import com.algorand.wallet.encryption.domain.usecase.GetStrongBoxUsedCheck
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
@@ -44,9 +45,14 @@ internal object AnalyticsModule {
     @Provides
     fun providePeraEventTracker(
         firebaseAnalytics: FirebaseAnalytics,
-        getReferrerData: GetReferrerData
+        getReferrerData: GetReferrerData,
+        getStrongBoxUsedCheck: GetStrongBoxUsedCheck
     ): PeraEventTracker {
-        return PeraEventTrackerImpl(firebaseAnalytics, getReferrerData)
+        return PeraEventTrackerImpl(
+            firebaseAnalytics,
+            getReferrerData,
+            getStrongBoxUsedCheck
+        )
     }
 
     @Singleton

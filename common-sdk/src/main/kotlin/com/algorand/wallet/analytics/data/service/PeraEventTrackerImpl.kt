@@ -20,24 +20,29 @@ import com.algorand.wallet.analytics.domain.util.GA4.UTM_CONTENT
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_SOURCE
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_TERM
+import com.algorand.wallet.encryption.domain.usecase.GetStrongBoxUsedCheck
+import com.algorand.wallet.encryption.domain.utils.Constants.STRONGBOX_USED
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import javax.inject.Inject
 
 class PeraEventTrackerImpl @Inject constructor (
     private val firebaseAnalytics: FirebaseAnalytics,
-    private val getReferrerData: GetReferrerData
+    private val getReferrerData: GetReferrerData,
+    private val getStrongBoxUsedCheck: GetStrongBoxUsedCheck
 ) : PeraEventTracker {
 
     override suspend fun logEvent(eventName: String) {
         val bundle = Bundle()
-        val referralBundle = addReferralDataToBundle(bundle) // Add referral data
+        val strongBoxBundle = addStrongBoxDataToBundle(bundle)
+        val referralBundle = addReferralDataToBundle(strongBoxBundle)
         firebaseAnalytics.logEvent(eventName, referralBundle.takeIf { referralBundle.size() > 0 })
     }
 
     override suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>) {
         val payloadBundle = getPayloadBundle(payloadMap)
-        val combinedBundle = addReferralDataToBundle(payloadBundle) // Merge referral data
+        val strongBoxBundle = addStrongBoxDataToBundle(payloadBundle)
+        val combinedBundle = addReferralDataToBundle(strongBoxBundle)
         firebaseAnalytics.logEvent(eventName, combinedBundle.takeIf { combinedBundle.size() > 0 })
     }
 
@@ -81,6 +86,12 @@ class PeraEventTrackerImpl @Inject constructor (
             it.utmTerm?.let { term -> bundle.putString(UTM_TERM, term) }
             it.utmContent?.let { content -> bundle.putString(UTM_CONTENT, content) }
         }
+        return bundle
+    }
+
+    private suspend fun addStrongBoxDataToBundle(bundle: Bundle): Bundle {
+        val data = getStrongBoxUsedCheck.invoke()
+        bundle.putString(STRONGBOX_USED, data.toString())
         return bundle
     }
 

@@ -52,17 +52,18 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
 import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
 import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.properties.Delegates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.properties.Delegates
 
 @Suppress("LongParameterList")
 @HiltViewModel
@@ -88,6 +89,7 @@ class MainViewModel @Inject constructor(
     private var pendingIntentKeeper: PendingIntentKeeper,
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val autoLockManager: AutoLockManager,
+    private val aesPlatformManager: AESPlatformManager,
     getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
 

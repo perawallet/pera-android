@@ -24,12 +24,22 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.ui.register.PassphraseValidationFragmentDirections.Companion.actionPassphraseValidationFragmentToPassphraseVerifiedInfoFragment
+import com.algorand.android.ui.register.PassphraseValidationViewModel.ViewEvent.RecreatePassphraseValidationView
+import com.algorand.android.ui.register.PassphraseValidationViewModel.ViewEvent.SetupPassphraseValidationView
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.singleVibrate
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passphrase_validation) {
+
+    private val viewEventCollector: suspend (PassphraseValidationViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is RecreatePassphraseValidationView -> recreatePassphraseValidationView(event.passphrase)
+            is SetupPassphraseValidationView -> setupPassphraseValidationView(event.passphrase)
+        }
+    }
 
     private val toolbarConfiguration = ToolbarConfiguration(
         backgroundColor = R.color.primary_background,
@@ -55,16 +65,25 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupPassphraseValidationView()
+        initObservers()
+        passphraseValidationViewModel.setupPassphraseValidationView(args)
         binding.nextButton.setOnClickListener { onNextClick() }
     }
 
-    private fun getPassphraseWords(): List<String> {
-        return passphraseValidationViewModel.getMnemonic(args).split(" ") ?: listOf()
+    private fun initObservers() {
+        collectLatestOnLifecycle(
+            flow = passphraseValidationViewModel.viewEvent,
+            collection = viewEventCollector
+        )
     }
 
-    private fun setupPassphraseValidationView() {
-        binding.passphraseValidationGroupView.setupUI(getPassphraseWords(), passphraseValidationGroupListener)
+    private fun setupPassphraseValidationView(passphraseList: List<String>) {
+        binding.passphraseValidationGroupView.setupUI(passphraseList, passphraseValidationGroupListener)
+    }
+
+    private fun recreatePassphraseValidationView(passphraseList: List<String>) {
+        binding.passphraseValidationGroupView.recreateUI(passphraseList)
+        context?.singleVibrate()
     }
 
     private fun onNextClick() {
@@ -78,8 +97,7 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
             navToPassphraseVerifiedInfoFragment()
         } else {
             showGlobalError(errorMessage = getString(R.string.selected_words_are))
-            binding.passphraseValidationGroupView.recreateUI(getPassphraseWords())
-            context?.singleVibrate()
+            passphraseValidationViewModel.recreatePassphraseValidationView(args)
         }
     }
 

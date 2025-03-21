@@ -41,10 +41,12 @@ class OptInAssetActionViewModel @Inject constructor(
 ) {
 
     val assetAction: AssetAction = savedStateHandle.getOrThrow(ASSET_ACTION_KEY)
+    val accountAddress: String = assetAction.publicKey.orEmpty()
 
     override val assetId: Long = assetAction.assetId
 
     init {
         fetchAssetDescription(assetId)
+        getAccountName(accountAddress)
     }
 }

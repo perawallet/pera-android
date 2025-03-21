@@ -23,12 +23,12 @@ import com.algorand.android.modules.baseresult.ui.mapper.ResultListItemMapper
 import com.algorand.android.modules.baseresult.ui.model.ResultListItem
 import com.algorand.android.modules.baseresult.ui.usecase.BaseResultPreviewUseCase
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import javax.inject.Inject
 
 class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
     private val asbAccountRestoreResultPreviewMapper: AsbAccountRestoreResultPreviewMapper,
-    private val getAccountDetail: GetAccountDetail,
+    private val getAccountCustomName: GetAccountCustomName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     resultListItemMapper: ResultListItemMapper
 ) : BaseResultPreviewUseCase(resultListItemMapper) {
@@ -55,12 +55,12 @@ class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
             existingAccountCount = asbAccountImportResult.existingAccountList.size
         )
         val accountItems = asbAccountImportResult.importedAccountList.map { accountAddress ->
-            val account = getAccountDetail(accountAddress)
+            val customAccountName = getAccountCustomName(accountAddress)
             // Since these accounts are not cached, we have to create [AccountDisplayName] model by using
             // mapper instead of using `AccountDisplayNameUseCase`
             val accountDisplayName = AccountDisplayName(
                 accountAddress = accountAddress,
-                primaryDisplayName = account.customAccountInfo?.customName.orEmpty().ifBlank {
+                primaryDisplayName = customAccountName.orEmpty().ifBlank {
                     accountAddress.toShortenedAddress()
                 },
                 secondaryDisplayName = null

@@ -48,5 +48,6 @@ class TransferBalanceActionViewModel @Inject constructor(
 
     init {
         fetchAssetDescription(assetId)
+        getAccountName(accountAddress)
     }
 }

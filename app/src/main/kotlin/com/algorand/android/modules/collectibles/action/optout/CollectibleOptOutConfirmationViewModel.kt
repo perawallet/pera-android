@@ -49,6 +49,7 @@ class CollectibleOptOutConfirmationViewModel @Inject constructor(
 
     init {
         fetchAssetDescription(assetId)
+        getAccountName(accountAddress)
     }
 
     fun getTransactionFee(): String {

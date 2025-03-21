@@ -21,6 +21,8 @@ import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -30,8 +32,9 @@ class BackupPassphraseViewModel @Inject constructor(
     private val onboardingCopyPassphraseEventTracker: OnboardingCopyPassphraseEventTracker,
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
     private val aesPlatformManager: AESPlatformManager,
-    private val peraBip39Sdk: PeraBip39Sdk
-) : BaseViewModel() {
+    private val peraBip39Sdk: PeraBip39Sdk,
+    private val eventDelegate: EventDelegate<ViewEvent>
+) : BaseViewModel(), EventViewModel<BackupPassphraseViewModel.ViewEvent> by eventDelegate {
 
     fun logOnboardingNextClickEvent() {
         viewModelScope.launch {
@@ -42,7 +45,7 @@ class BackupPassphraseViewModel @Inject constructor(
     fun getMnemonic(args: BackupPassphraseFragmentArgs) {
         viewModelScope.launchIO {
             val encryptedEntropy = (args.accountCreation?.type as? AccountCreation.Type.HdKey)?.encryptedEntropy
-            encryptedEntropy?.let {
+            val passphrase = encryptedEntropy?.let {
                 val entropy = aesPlatformManager.decryptByteArray(it)
                 peraBip39Sdk.getMnemonicFromEntropy(entropy)
             } ?: run {
@@ -62,6 +65,13 @@ class BackupPassphraseViewModel @Inject constructor(
                     }
                 } ?: run { null }
             }
+            passphrase?.let {
+                eventDelegate.sendEvent(ViewEvent.SetupPassphrase(it))
+            }
         }
+    }
+
+    sealed interface ViewEvent {
+        data class SetupPassphrase(val passphrase: String?) : ViewEvent
     }
 }

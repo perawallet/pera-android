@@ -12,15 +12,15 @@
 
 package com.algorand.android.modules.asb.importbackup.accountselection.utils
 
-import com.algorand.android.models.Account
 import com.algorand.android.modules.algosdk.cryptoutil.domain.usecase.IsAccountAddressMatchWithSecretKeyUseCase
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.mapper.AsbAccountImportResultMapper
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult
-import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
 import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
 import com.algorand.android.utils.extensions.decodeBase64ToByteArray
 import com.algorand.android.utils.isValidAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.asb.domain.usecase.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.usecase.BackupProtocolConstants.isAccountTypeEligible
 import javax.inject.Inject
 
 class AsbAccountImportParser @Inject constructor(
@@ -55,7 +55,7 @@ class AsbAccountImportParser @Inject constructor(
     suspend fun isAccountSupported(backupProtocolElement: BackupProtocolElement): Boolean {
         val accountPrivateKey = backupProtocolElement.privateKey?.decodeBase64ToByteArray()
 
-        val isAccountTypeEligible = isAccountTypeEligible(backupProtocolElement.accountType)
+        val isAccountTypeEligible = isAccountTypeEligible(backupProtocolElement.accountType.orEmpty())
 
         if (isStandardAccount(backupProtocolElement.accountType)) {
             val isSecretKeyValid = isAccountAddressMatchWithSecretKeyUseCase.invoke(
@@ -75,12 +75,7 @@ class AsbAccountImportParser @Inject constructor(
         return isAccountTypeEligible
     }
 
-    private fun isAccountTypeEligible(accountTypeName: String?): Boolean {
-        val accountType = Account.Type.valueOf(accountTypeName ?: return false)
-        return AlgorandSecureBackupUtils.eligibleAccountTypes.contains(accountType)
-    }
-
     private fun isStandardAccount(accountTypeName: String?): Boolean {
-        return Account.Type.valueOf(accountTypeName ?: return false) == Account.Type.STANDARD
+        return accountTypeName == SINGLE_ACCOUNT_TYPE_NAME
     }
 }

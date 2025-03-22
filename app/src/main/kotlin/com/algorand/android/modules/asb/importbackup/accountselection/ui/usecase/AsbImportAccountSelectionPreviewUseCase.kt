@@ -15,6 +15,7 @@ package com.algorand.android.modules.asb.importbackup.accountselection.ui.usecas
 import com.algorand.android.R
 import com.algorand.android.customviews.TriStatesCheckBox
 import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.AccountIconResource
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
@@ -35,6 +36,8 @@ import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.extensions.decodeBase64ToByteArray
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.asb.domain.usecase.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.usecase.BackupProtocolConstants.WATCH_ACCOUNT_TYPE_NAME
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
@@ -194,13 +197,7 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
                 name = payload.name,
                 type = safeAccountType
             )
-            // Since these account are not in our local, we have to create them manually BUT
-            // do not forget that now are supporting only standard accounts in ASB
-            val accountIconDrawablePreview = AccountIconDrawablePreview(
-                iconResId = R.drawable.ic_wallet,
-                iconTintResId = R.color.wallet_4_icon,
-                backgroundColorResId = R.color.wallet_4
-            )
+            val accountIconDrawablePreview = getAccountIconDrawable(safeAccountType)
             multipleAccountSelectionListItemMapper.mapToAccountItem(
                 accountDisplayName = accountDisplayName,
                 accountIconDrawablePreview = accountIconDrawablePreview,
@@ -209,14 +206,24 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
         }
     }
 
-    // TODO Will be fixed with PERA-1540
+    private fun getAccountIconDrawable(accountType: AccountType): AccountIconDrawablePreview {
+        // Since these account are not in our local, we have to create them manually
+        val iconResource = when (accountType) {
+            AccountType.NoAuth -> AccountIconResource.WATCH
+            AccountType.Algo25 -> AccountIconResource.STANDARD
+            else -> AccountIconResource.UNDEFINED
+        }
+        return AccountIconDrawablePreview(
+            backgroundColorResId = iconResource.backgroundColorResId,
+            iconTintResId = iconResource.iconTintResId,
+            iconResId = iconResource.iconResId
+        )
+    }
+
     private fun getAccountType(type: String?): AccountType? {
-        return when (type?.lowercase()) {
-            "standard" -> AccountType.Algo25
-            "ledger" -> AccountType.LedgerBle
-            "rekeyed" -> AccountType.Rekeyed
-            "rekeyed_auth" -> AccountType.RekeyedAuth
-            "watch" -> AccountType.NoAuth
+        return when (type) {
+            SINGLE_ACCOUNT_TYPE_NAME -> AccountType.Algo25
+            WATCH_ACCOUNT_TYPE_NAME -> AccountType.NoAuth
             else -> null
         }
     }

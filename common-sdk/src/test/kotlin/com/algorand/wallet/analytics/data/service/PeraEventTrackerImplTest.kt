@@ -13,9 +13,9 @@
 package com.algorand.wallet.analytics.data.service
 
 import com.algorand.wallet.analytics.domain.model.ReferrerData
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
@@ -33,7 +33,7 @@ class PeraEventTrackerImplTest {
     private lateinit var sut: PeraEventTrackerImpl
 
     private val mockFirebaseAnalytics: FirebaseAnalytics = mockk(relaxed = true)
-    private val mockFirebaseCrashlytics: FirebaseCrashlytics = mockk(relaxed = true)
+    private val mockPeraExceptionLogger: PeraExceptionLogger = mockk(relaxed = true)
     private val mockGetReferrerData: GetReferrerData = mockk()
     private val testReferrerData = ReferrerData(
         utmSource = "test_source",
@@ -48,7 +48,7 @@ class PeraEventTrackerImplTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
         sut = PeraEventTrackerImpl(
             mockFirebaseAnalytics,
-            mockFirebaseCrashlytics,
+            mockPeraExceptionLogger,
             mockGetReferrerData
         )
     }
@@ -133,14 +133,5 @@ class PeraEventTrackerImplTest {
 
         coVerify(exactly = 1) { mockGetReferrerData.invoke() }
         verify(exactly = 1) { mockFirebaseAnalytics.logEvent(eq(eventName), any()) }
-    }
-
-    @Test
-    fun `EXPECT exception recorded WHEN logException is called`() = runTest {
-        val exception = RuntimeException("Test exception")
-
-        sut.logException(exception)
-
-        verify(exactly = 1) { mockFirebaseCrashlytics.recordException(eq(exception)) }
     }
 }

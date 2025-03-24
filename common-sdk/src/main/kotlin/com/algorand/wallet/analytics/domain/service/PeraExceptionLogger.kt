@@ -12,9 +12,6 @@
 
 package com.algorand.wallet.analytics.domain.service
 
-interface PeraEventTracker {
-
-    suspend fun logEvent(eventName: String)
-
-    suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>)
+interface PeraExceptionLogger {
+    fun logException(e: Exception)
 }

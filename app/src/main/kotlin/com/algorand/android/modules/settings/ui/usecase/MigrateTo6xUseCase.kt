@@ -17,7 +17,7 @@ import com.algorand.android.models.AccountCreation
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
 import com.algorand.android.utils.analytics.CreationType
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
@@ -26,7 +26,7 @@ class MigrateTo6xUseCase @Inject constructor(
     private val getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase,
     private val aesPlatformManager: AESPlatformManager,
     private val accountAdditionUseCase: AccountAdditionUseCase,
-    private val peraEventTracker: PeraEventTracker
+    private val peraExceptionLogger: PeraExceptionLogger
 ) {
 
     suspend fun invoke(): PeraResult<Int> {
@@ -45,7 +45,7 @@ class MigrateTo6xUseCase @Inject constructor(
 
             PeraResult.Success(migratedCount)
         } catch (e: Exception) {
-            peraEventTracker.logException(e)
+            peraExceptionLogger.logException(e)
             PeraResult.Error(e)
         }
     }

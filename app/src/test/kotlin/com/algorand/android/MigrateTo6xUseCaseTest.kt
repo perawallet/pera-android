@@ -17,7 +17,7 @@ import com.algorand.android.models.AccountCreation
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
 import com.algorand.android.utils.analytics.CreationType
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
@@ -33,13 +33,13 @@ class MigrateTo6xUseCaseTest {
             GetLocalAccountsFromSharedPrefUseCase = mockk()
     private var aesPlatformManager: AESPlatformManager = mockk()
     private var accountAdditionUseCase: AccountAdditionUseCase = mockk()
-    private var peraEventTracker: PeraEventTracker = mockk()
+    private var peraExceptionLogger: PeraExceptionLogger = mockk()
     private var sut: MigrateTo6xUseCase =
         MigrateTo6xUseCase(
             getLocalAccountsFromSharedPrefUseCase,
             aesPlatformManager,
             accountAdditionUseCase,
-            peraEventTracker
+            peraExceptionLogger
         )
 
     @Test
@@ -232,7 +232,7 @@ class MigrateTo6xUseCaseTest {
         } throws exception
 
         coEvery {
-            peraEventTracker.logException(exception)
+            peraExceptionLogger.logException(exception)
         } returns Unit
 
         val result = sut.invoke()

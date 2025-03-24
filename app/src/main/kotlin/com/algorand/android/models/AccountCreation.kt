@@ -22,6 +22,7 @@ import kotlinx.parcelize.Parcelize
 data class AccountCreation(
     val address: String,
     var customName: String?,
+    var orderIndex: Int = Int.MAX_VALUE,
     val isBackedUp: Boolean,
     val type: Type,
     val creationType: CreationType
@@ -53,6 +54,7 @@ data class AccountCreation(
         return CreateAccount(
             address = address,
             customName = customName,
+            orderIndex = orderIndex,
             isBackedUp = isBackedUp,
             type = when (type) {
                 is Type.HdKey -> CreateAccount.Type.HdKey(

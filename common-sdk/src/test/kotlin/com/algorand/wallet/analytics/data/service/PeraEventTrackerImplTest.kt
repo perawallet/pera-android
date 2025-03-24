@@ -13,6 +13,7 @@
 package com.algorand.wallet.analytics.data.service
 
 import com.algorand.wallet.analytics.domain.model.ReferrerData
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
 import com.algorand.wallet.encryption.domain.usecase.GetStrongBoxUsedCheck
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -27,6 +28,7 @@ import org.junit.Test
 @ExperimentalCoroutinesApi
 class PeraEventTrackerImplTest {
     private val mockFirebaseAnalytics: FirebaseAnalytics = mockk(relaxed = true)
+    private val mockPeraExceptionLogger: PeraExceptionLogger = mockk(relaxed = true)
     private val mockGetReferrerData: GetReferrerData = mockk()
     private val mockGetStrongBoxUsedCheck: GetStrongBoxUsedCheck = mockk()
     private val testReferrerData = ReferrerData(
@@ -39,6 +41,7 @@ class PeraEventTrackerImplTest {
 
     private var sut: PeraEventTrackerImpl = PeraEventTrackerImpl(
         mockFirebaseAnalytics,
+        mockPeraExceptionLogger,
         mockGetReferrerData,
         mockGetStrongBoxUsedCheck
     )

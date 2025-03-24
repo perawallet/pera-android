@@ -14,13 +14,19 @@ package com.algorand.android.ui.settings.developersettings
 
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.modules.settings.ui.usecase.DeveloperSettingsPreviewUseCase
+import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
+import com.algorand.wallet.remoteconfig.domain.usecase.ENABLE_ACCOUNT_DB_MIGRATION_VIEWER
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class DeveloperSettingsViewModel @Inject constructor(
-    private val developerSettingsPreviewUseCase: DeveloperSettingsPreviewUseCase
+    private val developerSettingsPreviewUseCase: DeveloperSettingsPreviewUseCase,
+    private val getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : BaseViewModel() {
 
     var firstAccountAddress: String? = null
@@ -37,5 +43,10 @@ class DeveloperSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             firstAccountAddress = developerSettingsPreviewUseCase.getFirstAccountAddress()
         }
+    }
+
+    fun showMigrationViewer(): Boolean {
+        return isFeatureToggleEnabled
+            .invoke(ENABLE_ACCOUNT_DB_MIGRATION_VIEWER)
     }
 }

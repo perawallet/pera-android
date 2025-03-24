@@ -10,8 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.domain.utils
+package com.algorand.wallet.analytics.data.service
 
-internal object Constants {
-    const val STRONGBOX_USED = "strongbox_used"
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import javax.inject.Inject
+
+class PeraExceptionLoggerImpl @Inject constructor (
+    private val firebaseCrashlytics: FirebaseCrashlytics
+) : PeraExceptionLogger {
+
+    override fun logException(e: Exception) {
+        firebaseCrashlytics.recordException(e)
+    }
 }

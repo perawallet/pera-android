@@ -12,6 +12,8 @@
 
 package com.algorand.wallet.encryption.domain.utils
 
-internal object Constants {
-    const val STRONGBOX_USED = "strongbox_used"
+fun ByteArray.clearFromMemory(): ByteArray {
+    // Overwrite the byte array contents with zeros
+    this.fill(0)
+    return ByteArray(0)
 }

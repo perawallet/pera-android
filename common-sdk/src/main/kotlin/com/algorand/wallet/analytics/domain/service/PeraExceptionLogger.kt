@@ -10,8 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.domain.utils
+package com.algorand.wallet.analytics.domain.service
 
-internal object Constants {
-    const val STRONGBOX_USED = "strongbox_used"
+interface PeraExceptionLogger {
+    fun logException(e: Exception)
 }

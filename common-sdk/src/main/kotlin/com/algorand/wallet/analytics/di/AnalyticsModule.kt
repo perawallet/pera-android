@@ -17,10 +17,12 @@ import com.algorand.wallet.analytics.PeraReferrerQueryParamParserImpl
 import com.algorand.wallet.analytics.data.repository.FirebaseAnalyticsRepositoryImpl
 import com.algorand.wallet.analytics.data.repository.ReferrerRepositoryImpl
 import com.algorand.wallet.analytics.data.service.PeraEventTrackerImpl
+import com.algorand.wallet.analytics.data.service.PeraExceptionLoggerImpl
 import com.algorand.wallet.analytics.data.service.PeraReferrerManagerImpl
 import com.algorand.wallet.analytics.domain.repository.FirebaseAnalyticsRepository
 import com.algorand.wallet.analytics.domain.repository.ReferrerRepository
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.analytics.domain.service.PeraReferrerManager
 import com.algorand.wallet.analytics.domain.service.PeraReferrerQueryParamParser
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
@@ -29,6 +31,7 @@ import com.algorand.wallet.analytics.domain.util.GA4
 import com.algorand.wallet.encryption.domain.usecase.GetStrongBoxUsedCheck
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.installations.FirebaseInstallations
 import dagger.Module
 import dagger.Provides
@@ -45,11 +48,13 @@ internal object AnalyticsModule {
     @Provides
     fun providePeraEventTracker(
         firebaseAnalytics: FirebaseAnalytics,
+        peraExceptionLogger: PeraExceptionLogger,
         getReferrerData: GetReferrerData,
         getStrongBoxUsedCheck: GetStrongBoxUsedCheck
     ): PeraEventTracker {
         return PeraEventTrackerImpl(
             firebaseAnalytics,
+            peraExceptionLogger,
             getReferrerData,
             getStrongBoxUsedCheck
         )
@@ -57,8 +62,22 @@ internal object AnalyticsModule {
 
     @Singleton
     @Provides
+    fun providePeraExceptionLogger(
+        firebaseCrashlytics: FirebaseCrashlytics
+    ): PeraExceptionLogger {
+        return PeraExceptionLoggerImpl(firebaseCrashlytics)
+    }
+
+    @Singleton
+    @Provides
     fun provideFirebaseAnalytics(@ApplicationContext appContext: Context): FirebaseAnalytics {
         return FirebaseAnalytics.getInstance(appContext)
+    }
+
+    @Singleton
+    @Provides
+    fun provideFirebaseFirebaseCrashlytics(): FirebaseCrashlytics {
+        return FirebaseCrashlytics.getInstance()
     }
 
     @Provides

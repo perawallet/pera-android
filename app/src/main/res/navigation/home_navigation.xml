@@ -792,7 +792,15 @@
         <action
             android:id="@+id/action_developerSettingsFragment_to_nodeSettingsFragment"
             app:destination="@id/nodeSettingsFragment" />
+        <action
+            android:id="@+id/action_developerSettingsFragment_to_migrationViewerFragment"
+            app:destination="@id/migrationViewerFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/migrationViewerFragment"
+        android:name="com.algorand.android.ui.settings.migrationviewer.MigrationViewerFragment"
+        android:label="MigrationViewerFragment" />
 
     <fragment
         android:id="@+id/nodeSettingsFragment"

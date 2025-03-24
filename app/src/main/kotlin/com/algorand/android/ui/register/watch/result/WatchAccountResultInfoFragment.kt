@@ -12,6 +12,8 @@
 
 package com.algorand.android.ui.register.watch.result
 
+import android.os.Bundle
+import android.view.View
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
@@ -34,6 +36,11 @@ class WatchAccountResultInfoFragment : BaseInfoFragment() {
     override val fragmentConfiguration = FragmentConfiguration()
 
     private val watchAccountResultInfoViewModel: WatchAccountResultInfoViewModel by viewModels()
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        watchAccountResultInfoViewModel.setDefaultState()
+    }
 
     @Composable
     override fun Icon(modifier: Modifier) =

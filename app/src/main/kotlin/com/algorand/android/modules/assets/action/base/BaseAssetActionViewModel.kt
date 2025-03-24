@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 abstract class BaseAssetActionViewModel(
     private val accountAddressUseCase: AccountAddressUseCase,
@@ -77,11 +78,14 @@ abstract class BaseAssetActionViewModel(
         return verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
     }
 
-    fun getAccountName(accountAddress: String) {
+    fun getAccountName(address: String) {
         viewModelScope.launchIO {
-            eventDelegate.sendEvent(
-                ViewEvent.SetAccountName(accountAddressUseCase.getAccountAddress(accountAddress))
-            )
+            val accountAddress = accountAddressUseCase.getAccountAddress(address)
+            withContext(Dispatchers.Main) {
+                eventDelegate.sendEvent(
+                    ViewEvent.SetAccountName(accountAddress)
+                )
+            }
         }
     }
 

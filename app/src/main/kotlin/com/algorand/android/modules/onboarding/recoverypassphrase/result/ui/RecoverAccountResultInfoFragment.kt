@@ -22,6 +22,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.modules.onboarding.recoverypassphrase.result.ui.RecoverAccountResultInfoViewModel.ViewState
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraHeadlineText
@@ -48,7 +49,7 @@ class RecoverAccountResultInfoFragment : BaseInfoFragment() {
     override fun Title(modifier: Modifier) {
         val state = recoverAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value
         val titleText = when (state) {
-            is RecoverAccountResultInfoViewModel.ViewState.DefaultState -> stringResource(id = state.titleTextRes)
+            is ViewState.DefaultState -> stringResource(id = state.titleTextRes)
             else -> ""
         }
 
@@ -62,7 +63,7 @@ class RecoverAccountResultInfoFragment : BaseInfoFragment() {
     override fun Description(modifier: Modifier) {
         val state = recoverAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value
         val descriptionText = when (state) {
-            is RecoverAccountResultInfoViewModel.ViewState.DefaultState -> stringResource(id = state.descriptionTextRes)
+            is ViewState.DefaultState -> stringResource(id = state.descriptionTextRes)
             else -> ""
         }
 
@@ -77,7 +78,7 @@ class RecoverAccountResultInfoFragment : BaseInfoFragment() {
     override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) {
         val state = recoverAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value
         val firstButtonText = when (state) {
-            is RecoverAccountResultInfoViewModel.ViewState.DefaultState -> stringResource(id = state.firstButtonTextRes)
+            is ViewState.DefaultState -> stringResource(id = state.firstButtonTextRes)
             else -> ""
         }
 
@@ -92,7 +93,7 @@ class RecoverAccountResultInfoFragment : BaseInfoFragment() {
     override fun SecondaryButton(modifier: Modifier) {
         val state = recoverAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value
         val secondButtonText = when (state) {
-            is RecoverAccountResultInfoViewModel.ViewState.DefaultState -> stringResource(id = state.descriptionTextRes)
+            is ViewState.DefaultState -> stringResource(id = state.secondButtonTextRes)
             else -> ""
         }
 

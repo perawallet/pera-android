@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.LoginNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.modules.onboarding.pairledger.resultinfo.VerifyLedgerInfoViewModel.ViewState
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraHeadlineText
@@ -57,7 +58,7 @@ class VerifyLedgerInfoFragment : BaseInfoFragment() {
     override fun Title(modifier: Modifier) {
         val state = verifyLedgerInfoViewModel.state.collectAsStateWithLifecycle().value
         val titleText = when (state) {
-            is VerifyLedgerInfoViewModel.ViewState.DefaultState -> stringResource(id = state.titleTextRes)
+            is ViewState.DefaultState -> stringResource(id = state.titleTextRes)
             else -> ""
         }
 
@@ -71,7 +72,7 @@ class VerifyLedgerInfoFragment : BaseInfoFragment() {
     override fun Description(modifier: Modifier) {
         val state = verifyLedgerInfoViewModel.state.collectAsStateWithLifecycle().value
         val descriptionText = when (state) {
-            is VerifyLedgerInfoViewModel.ViewState.DefaultState -> stringResource(id = state.descriptionTextRes)
+            is ViewState.DefaultState -> stringResource(id = state.descriptionTextRes)
             else -> ""
         }
 
@@ -86,7 +87,7 @@ class VerifyLedgerInfoFragment : BaseInfoFragment() {
     override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) {
         val state = verifyLedgerInfoViewModel.state.collectAsStateWithLifecycle().value
         val firstButtonText = when (state) {
-            is VerifyLedgerInfoViewModel.ViewState.DefaultState -> stringResource(id = state.firstButtonTextRes)
+            is ViewState.DefaultState -> stringResource(id = state.firstButtonTextRes)
             else -> ""
         }
 
@@ -101,7 +102,7 @@ class VerifyLedgerInfoFragment : BaseInfoFragment() {
     override fun SecondaryButton(modifier: Modifier) {
         val state = verifyLedgerInfoViewModel.state.collectAsStateWithLifecycle().value
         val secondButtonText = when (state) {
-            is VerifyLedgerInfoViewModel.ViewState.DefaultState -> stringResource(id = state.descriptionTextRes)
+            is ViewState.DefaultState -> stringResource(id = state.secondButtonTextRes)
             else -> ""
         }
 

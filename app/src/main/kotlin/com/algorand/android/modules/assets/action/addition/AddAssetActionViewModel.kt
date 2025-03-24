@@ -54,7 +54,6 @@ class AddAssetActionViewModel @Inject constructor(
 
     init {
         fetchAssetDescription(assetId)
-        getAccountName(accountAddress)
     }
 
     fun getTransactionFee(): String {

@@ -69,7 +69,6 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
 
     open fun setTransactionFeeTextView(textView: TextView) {}
     open fun setWarningIconImageView(imageView: ImageView) {}
-    open fun setAccountNameTextView(textView: TextView) {}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,7 +82,6 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
             setNegativeButton(negativeButton)
             setTransactionFeeTextView(transactionFeeTextView)
             setWarningIconImageView(warningIconImageView)
-            setAccountNameTextView(accountTextView)
         }
     }
 

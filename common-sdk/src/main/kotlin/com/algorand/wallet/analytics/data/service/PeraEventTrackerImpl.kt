@@ -15,21 +15,20 @@ package com.algorand.wallet.analytics.data.service
 import android.os.Bundle
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
+import com.algorand.wallet.analytics.domain.usecase.IsStrongBoxUsedForEncryption
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_CAMPAIGN
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_CONTENT
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_SOURCE
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_TERM
-import com.algorand.wallet.encryption.domain.usecase.GetStrongBoxUsedCheck
-import com.algorand.wallet.encryption.domain.utils.Constants.STRONGBOX_USED
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import javax.inject.Inject
 
-class PeraEventTrackerImpl @Inject constructor (
+class PeraEventTrackerImpl @Inject constructor(
     private val firebaseAnalytics: FirebaseAnalytics,
     private val getReferrerData: GetReferrerData,
-    private val getStrongBoxUsedCheck: GetStrongBoxUsedCheck
+    private val isStrongBoxUsedForEncryption: IsStrongBoxUsedForEncryption
 ) : PeraEventTracker {
 
     override suspend fun logEvent(eventName: String) {
@@ -90,8 +89,8 @@ class PeraEventTrackerImpl @Inject constructor (
     }
 
     private suspend fun addStrongBoxDataToBundle(bundle: Bundle): Bundle {
-        val data = getStrongBoxUsedCheck.invoke()
-        bundle.putString(STRONGBOX_USED, data.toString())
+        val data = isStrongBoxUsedForEncryption.invoke()
+        bundle.putString(STRONGBOX_USED_KEY, data.toString())
         return bundle
     }
 
@@ -100,7 +99,8 @@ class PeraEventTrackerImpl @Inject constructor (
         FirebaseCrashlytics.getInstance().recordException(IllegalArgumentException(errorMessage))
     }
 
-    companion object {
-        private val logTag = PeraEventTrackerImpl::class.java.simpleName
+    private companion object {
+        val logTag: String = PeraEventTrackerImpl::class.java.simpleName
+        const val STRONGBOX_USED_KEY = "strongbox_used"
     }
 }

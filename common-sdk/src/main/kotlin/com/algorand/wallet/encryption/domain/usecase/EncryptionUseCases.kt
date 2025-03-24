@@ -1,9 +1,7 @@
 package com.algorand.wallet.encryption.domain.usecase
 
-fun interface GetStrongBoxUsedCheck {
-    suspend operator fun invoke(): Boolean
-}
+import javax.crypto.SecretKey
 
-fun interface SaveStrongBoxUsedCheck {
-    suspend operator fun invoke(check: Boolean)
+fun interface GetEncryptionSecretKey {
+    operator fun invoke(): SecretKey
 }

@@ -23,6 +23,7 @@ import com.algorand.android.MainActivity.Companion.WC_TRANSACTION_ID_INTENT_KEY
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.database.NodeDao
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdMigrationUseCase
+import com.algorand.android.encryption.domain.usecase.AndroidEncryptionManager
 import com.algorand.android.models.Node
 import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeningCountUseCase
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
@@ -52,7 +53,6 @@ import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
 import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
 import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
-import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -89,7 +89,7 @@ class MainViewModel @Inject constructor(
     private var pendingIntentKeeper: PendingIntentKeeper,
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val autoLockManager: AutoLockManager,
-    private val aesPlatformManager: AESPlatformManager,
+    private val androidEncryptionManager: AndroidEncryptionManager,
     getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
 
@@ -115,8 +115,9 @@ class MainViewModel @Inject constructor(
         initializeTutorial()
     }
 
-    fun initAppCache(lifecycle: Lifecycle) {
+    fun initializeApp(lifecycle: Lifecycle) {
         viewModelScope.launch {
+            androidEncryptionManager.initializeEncryptionManager()
             initializeAppCache(lifecycle)
         }
     }

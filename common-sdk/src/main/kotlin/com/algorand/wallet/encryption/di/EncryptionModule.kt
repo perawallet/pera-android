@@ -13,15 +13,9 @@
 package com.algorand.wallet.encryption.di
 
 import com.algorand.wallet.encryption.data.manager.Base64ManagerImpl
-import com.algorand.wallet.encryption.data.repository.StrongBoxRepositoryImpl
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManagerImpl
 import com.algorand.wallet.encryption.domain.manager.Base64Manager
-import com.algorand.wallet.encryption.domain.repository.StrongBoxRepository
-import com.algorand.wallet.encryption.domain.usecase.GetStrongBoxUsedCheck
-import com.algorand.wallet.encryption.domain.usecase.SaveStrongBoxUsedCheck
-import com.algorand.wallet.encryption.domain.utils.Constants
-import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,22 +33,4 @@ internal object EncryptionModule {
     @Provides
     @Singleton
     fun provideAESPlatformManager(impl: AESPlatformManagerImpl): AESPlatformManager = impl
-
-    @Provides
-    @Singleton
-    fun provideStrongBoxRepository(
-        persistentCacheProvider: PersistentCacheProvider
-    ): StrongBoxRepository {
-        return StrongBoxRepositoryImpl(
-            persistentCacheProvider.getPersistentCache(Boolean::class.java, Constants.STRONGBOX_USED),
-        )
-    }
-
-    @Provides
-    fun provideGetStrongBoxUsedCheck(repository: StrongBoxRepository): GetStrongBoxUsedCheck =
-        GetStrongBoxUsedCheck(repository::getStrongBoxUsed)
-
-    @Provides
-    fun provideSaveStrongBoxUsedCheck(repository: StrongBoxRepository): SaveStrongBoxUsedCheck =
-        SaveStrongBoxUsedCheck(repository::saveStrongBoxUsed)
 }

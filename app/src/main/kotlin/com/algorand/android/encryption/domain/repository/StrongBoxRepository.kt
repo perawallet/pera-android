@@ -10,11 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.domain.manager
+package com.algorand.android.encryption.domain.repository
 
-interface AESPlatformManager {
-    fun encryptByteArray(data: ByteArray): ByteArray
-    fun decryptByteArray(encryptedData: ByteArray): ByteArray
-    fun encryptString(data: String): String
-    fun decryptString(encryptedData: String): String
+internal interface StrongBoxRepository {
+    suspend fun saveStrongBoxUsed(check: Boolean)
+    suspend fun getStrongBoxUsed(): Boolean
 }

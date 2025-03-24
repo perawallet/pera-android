@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.data.repository
+package com.algorand.android.encryption.data.repository
 
 import com.algorand.wallet.foundation.cache.PersistentCache
 import io.mockk.coEvery

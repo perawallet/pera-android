@@ -10,9 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.data.repository
+package com.algorand.android.encryption.data.repository
 
-import com.algorand.wallet.encryption.domain.repository.StrongBoxRepository
+import com.algorand.android.encryption.domain.repository.StrongBoxRepository
 import com.algorand.wallet.foundation.cache.PersistentCache
 import javax.inject.Inject
 

@@ -24,9 +24,9 @@ import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.wallet.analytics.domain.service.PeraReferrerManager
 import com.algorand.wallet.analytics.domain.service.PeraReferrerQueryParamParser
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
+import com.algorand.wallet.analytics.domain.usecase.IsStrongBoxUsedForEncryption
 import com.algorand.wallet.analytics.domain.usecase.SaveReferrerData
 import com.algorand.wallet.analytics.domain.util.GA4
-import com.algorand.wallet.encryption.domain.usecase.GetStrongBoxUsedCheck
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.installations.FirebaseInstallations
@@ -46,12 +46,12 @@ internal object AnalyticsModule {
     fun providePeraEventTracker(
         firebaseAnalytics: FirebaseAnalytics,
         getReferrerData: GetReferrerData,
-        getStrongBoxUsedCheck: GetStrongBoxUsedCheck
+        isStrongBoxUsedForEncryption: IsStrongBoxUsedForEncryption
     ): PeraEventTracker {
         return PeraEventTrackerImpl(
             firebaseAnalytics,
             getReferrerData,
-            getStrongBoxUsedCheck
+            isStrongBoxUsedForEncryption
         )
     }
 
@@ -83,10 +83,12 @@ internal object AnalyticsModule {
     fun provideReferrerQueryParamParser(impl: PeraReferrerQueryParamParserImpl): PeraReferrerQueryParamParser = impl
 
     @Provides
-    fun provideGetReferrerData(repository: ReferrerRepository): GetReferrerData = GetReferrerData(repository::getReferrerData)
+    fun provideGetReferrerData(repository: ReferrerRepository): GetReferrerData =
+        GetReferrerData(repository::getReferrerData)
 
     @Provides
-    fun provideSaveReferrerData(repository: ReferrerRepository): SaveReferrerData = SaveReferrerData(repository::saveReferrerData)
+    fun provideSaveReferrerData(repository: ReferrerRepository): SaveReferrerData =
+        SaveReferrerData(repository::saveReferrerData)
 
     @Provides
     @Singleton

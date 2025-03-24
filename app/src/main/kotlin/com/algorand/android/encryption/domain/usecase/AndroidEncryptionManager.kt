@@ -10,9 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.domain.repository
+package com.algorand.android.encryption.domain.usecase
 
-internal interface StrongBoxRepository {
-    suspend fun saveStrongBoxUsed(check: Boolean)
-    suspend fun getStrongBoxUsed(): Boolean
+import com.algorand.wallet.foundation.PeraResult
+import javax.crypto.SecretKey
+
+interface AndroidEncryptionManager {
+    fun getSecretKey(): SecretKey
+    suspend fun initializeEncryptionManager()
+    suspend fun shouldMigrateToStrongBox(): Boolean
+    suspend fun migrateToStrongBox(): PeraResult<Boolean>
 }

@@ -14,7 +14,7 @@ package com.algorand.wallet.analytics.data.service
 
 import com.algorand.wallet.analytics.domain.model.ReferrerData
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
-import com.algorand.wallet.encryption.domain.usecase.GetStrongBoxUsedCheck
+import com.algorand.wallet.analytics.domain.usecase.IsStrongBoxUsedForEncryption
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -28,7 +28,7 @@ import org.junit.Test
 class PeraEventTrackerImplTest {
     private val mockFirebaseAnalytics: FirebaseAnalytics = mockk(relaxed = true)
     private val mockGetReferrerData: GetReferrerData = mockk()
-    private val mockGetStrongBoxUsedCheck: GetStrongBoxUsedCheck = mockk()
+    private val mockIsStrongBoxUsedForEncryption: IsStrongBoxUsedForEncryption = mockk()
     private val testReferrerData = ReferrerData(
         utmSource = "test_source",
         utmMedium = "test_medium",
@@ -40,27 +40,27 @@ class PeraEventTrackerImplTest {
     private var sut: PeraEventTrackerImpl = PeraEventTrackerImpl(
         mockFirebaseAnalytics,
         mockGetReferrerData,
-        mockGetStrongBoxUsedCheck
+        mockIsStrongBoxUsedForEncryption
     )
 
     @Test
     fun `EXPECT event logged with referral data WHEN logEvent is called with only event name`() = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
-        coEvery { mockGetStrongBoxUsedCheck.invoke() } returns true
+        coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
 
         val eventName = "test_event"
 
         sut.logEvent(eventName)
 
         coVerify(exactly = 1) { mockGetReferrerData.invoke() }
-        coVerify(exactly = 1) { mockGetStrongBoxUsedCheck.invoke() }
+        coVerify(exactly = 1) { mockIsStrongBoxUsedForEncryption.invoke() }
         verify(exactly = 1) { mockFirebaseAnalytics.logEvent(eq(eventName), any()) }
     }
 
     @Test
     fun `EXPECT event logged with merged data WHEN logEvent is called with event name and payload`() = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
-        coEvery { mockGetStrongBoxUsedCheck.invoke() } returns true
+        coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
 
         val eventName = "test_event_with_payload"
         val payload = mapOf(
@@ -77,7 +77,7 @@ class PeraEventTrackerImplTest {
     @Test
     fun `EXPECT event logged successfully WHEN referral data has null fields`() = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
-        coEvery { mockGetStrongBoxUsedCheck.invoke() } returns true
+        coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
 
         val partialReferrerData = ReferrerData(
             utmSource = "partial_source",
@@ -99,7 +99,7 @@ class PeraEventTrackerImplTest {
     @Test
     fun `EXPECT event logged with all data types WHEN payload contains various data types`() = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
-        coEvery { mockGetStrongBoxUsedCheck.invoke() } returns true
+        coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
 
         val eventName = "test_complex_payload"
         val complexPayload = mapOf(
@@ -122,7 +122,7 @@ class PeraEventTrackerImplTest {
     @Test
     fun `EXPECT event logged with only referral data WHEN payload is empty`() = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
-        coEvery { mockGetStrongBoxUsedCheck.invoke() } returns true
+        coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
 
         val eventName = "test_empty_payload"
         val emptyPayload = emptyMap<String, Any>()
@@ -135,7 +135,7 @@ class PeraEventTrackerImplTest {
     @Test
     fun `EXPECT true strongbox value added to bundle WHEN strongbox check returns true`() = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
-        coEvery { mockGetStrongBoxUsedCheck.invoke() } returns true
+        coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns true
 
         val eventName = "test_strongbox_true"
 
@@ -147,7 +147,7 @@ class PeraEventTrackerImplTest {
     @Test
     fun `EXPECT false strongbox value added to bundle WHEN strongbox check returns false`() = runTest {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
-        coEvery { mockGetStrongBoxUsedCheck.invoke() } returns false
+        coEvery { mockIsStrongBoxUsedForEncryption.invoke() } returns false
 
         val eventName = "test_strongbox_false"
 

@@ -10,10 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.domain.utils
+package com.algorand.android.encryption.domain.repository
 
-fun ByteArray.clearFromMemory(): ByteArray {
-    // Overwrite the byte array contents with zeros
-    this.fill(0)
-    return ByteArray(0)
+internal interface StrongBoxRepository {
+    suspend fun saveStrongBoxUsed(check: Boolean)
+    suspend fun getStrongBoxUsed(): Boolean
 }

@@ -26,6 +26,7 @@ import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.analytics.domain.service.PeraReferrerManager
 import com.algorand.wallet.analytics.domain.service.PeraReferrerQueryParamParser
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
+import com.algorand.wallet.analytics.domain.usecase.IsStrongBoxUsedForEncryption
 import com.algorand.wallet.analytics.domain.usecase.SaveReferrerData
 import com.algorand.wallet.analytics.domain.util.GA4
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
@@ -48,9 +49,15 @@ internal object AnalyticsModule {
     fun providePeraEventTracker(
         firebaseAnalytics: FirebaseAnalytics,
         peraExceptionLogger: PeraExceptionLogger,
-        getReferrerData: GetReferrerData
+        getReferrerData: GetReferrerData,
+        isStrongBoxUsedForEncryption: IsStrongBoxUsedForEncryption
     ): PeraEventTracker {
-        return PeraEventTrackerImpl(firebaseAnalytics, peraExceptionLogger, getReferrerData)
+        return PeraEventTrackerImpl(
+            firebaseAnalytics,
+            peraExceptionLogger,
+            getReferrerData,
+            isStrongBoxUsedForEncryption
+        )
     }
 
     @Singleton
@@ -95,10 +102,12 @@ internal object AnalyticsModule {
     fun provideReferrerQueryParamParser(impl: PeraReferrerQueryParamParserImpl): PeraReferrerQueryParamParser = impl
 
     @Provides
-    fun provideGetReferrerData(repository: ReferrerRepository): GetReferrerData = GetReferrerData(repository::getReferrerData)
+    fun provideGetReferrerData(repository: ReferrerRepository): GetReferrerData =
+        GetReferrerData(repository::getReferrerData)
 
     @Provides
-    fun provideSaveReferrerData(repository: ReferrerRepository): SaveReferrerData = SaveReferrerData(repository::saveReferrerData)
+    fun provideSaveReferrerData(repository: ReferrerRepository): SaveReferrerData =
+        SaveReferrerData(repository::saveReferrerData)
 
     @Provides
     @Singleton

@@ -14,6 +14,7 @@ package com.algorand.wallet.analytics.data.service
 
 import android.os.Bundle
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_CAMPAIGN
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_CONTENT
@@ -21,11 +22,11 @@ import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_SOURCE
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_TERM
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import javax.inject.Inject
 
 class PeraEventTrackerImpl @Inject constructor (
     private val firebaseAnalytics: FirebaseAnalytics,
+    private val peraExceptionLogger: PeraExceptionLogger,
     private val getReferrerData: GetReferrerData
 ) : PeraEventTracker {
 
@@ -65,7 +66,10 @@ class PeraEventTrackerImpl @Inject constructor (
                         is FloatArray -> putFloatArray(key, value as FloatArray)
                         is Long -> putLong(key, value as Long)
                         is LongArray -> putLongArray(key, value as LongArray)
-                        else -> recordIllegalArgumentException(value)
+                        else -> {
+                            val errorMessage = "$logTag: Not handled bundle payload type: ${value::class.java}"
+                            peraExceptionLogger.logException(IllegalArgumentException(errorMessage))
+                        }
                     }
                 }
             }
@@ -82,11 +86,6 @@ class PeraEventTrackerImpl @Inject constructor (
             it.utmContent?.let { content -> bundle.putString(UTM_CONTENT, content) }
         }
         return bundle
-    }
-
-    private fun recordIllegalArgumentException(value: Any) {
-        val errorMessage = "$logTag: Not handled bundle payload type: ${value::class.java}"
-        FirebaseCrashlytics.getInstance().recordException(IllegalArgumentException(errorMessage))
     }
 
     companion object {

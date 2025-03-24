@@ -30,8 +30,9 @@
             app:nullable="true" />
         <argument
             android:name="onboardingAccountType"
+            android:defaultValue="@null"
             app:argType="com.algorand.android.models.OnboardingAccountType"
-            app:nullable="false" />
+            app:nullable="true" />
         <action
             android:id="@+id/action_recoverWithPassphraseFragment_to_recoverOptionsBottomSheet"
             app:destination="@id/recoverOptionsBottomSheet" />

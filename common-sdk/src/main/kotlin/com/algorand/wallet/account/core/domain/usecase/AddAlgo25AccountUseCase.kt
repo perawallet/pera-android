@@ -23,9 +23,15 @@ internal class AddAlgo25AccountUseCase @Inject constructor(
     private val setCustomInfo: SetAccountCustomInfo
 ) : AddAlgo25Account {
 
-    override suspend fun invoke(address: String, secretKey: ByteArray, isBackedUp: Boolean, customName: String?) {
+    override suspend fun invoke(
+        address: String,
+        secretKey: ByteArray,
+        isBackedUp: Boolean,
+        customName: String?,
+        orderIndex: Int
+    ) {
         val account = LocalAccount.Algo25(address)
         saveAlgo25Account(account, secretKey)
-        setCustomInfo(CustomAccountInfo(address, customName, Int.MAX_VALUE, isBackedUp))
+        setCustomInfo(CustomAccountInfo(address, customName, orderIndex, isBackedUp))
     }
 }

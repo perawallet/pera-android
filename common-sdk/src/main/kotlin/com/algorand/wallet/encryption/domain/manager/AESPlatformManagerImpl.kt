@@ -25,7 +25,6 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -33,16 +32,8 @@ import kotlinx.coroutines.launch
 
 internal class AESPlatformManagerImpl @Inject constructor(
     private val getStrongBoxUsedCheck: GetStrongBoxUsedCheck,
-    private val saveStrongBoxUsedCheck: SaveStrongBoxUsedCheck,
-    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val saveStrongBoxUsedCheck: SaveStrongBoxUsedCheck
 ) : AESPlatformManager {
-
-    companion object {
-        private const val TAG = "AESPlatformManagerImpl"
-        private const val KEY_ALIAS = "PeraAESKey"
-        private const val ANDROID_KEYSTORE = "AndroidKeyStore" // this value should not change
-        private const val AES_MODE = "AES/GCM/NoPadding"
-    }
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -53,9 +44,7 @@ internal class AESPlatformManagerImpl @Inject constructor(
     }
 
     private suspend fun generateKeyIfNeeded() {
-        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
-            load(null)
-        }
+        val keyStore = getKeyStore()
 
         val strongBoxAlias = "${KEY_ALIAS}_strongbox"
 
@@ -114,7 +103,7 @@ internal class AESPlatformManagerImpl @Inject constructor(
         try {
             val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
             val testBuilder = KeyGenParameterSpec.Builder(
-                "StrongBoxTest", // Temporary alias for testing
+                TEST_ALIAS, // Temporary alias for testing
                 KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
             )
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
@@ -131,9 +120,9 @@ internal class AESPlatformManagerImpl @Inject constructor(
         } finally {
             // Clean up the test key if it was created
             try {
-                val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
-                if (keyStore.containsAlias("StrongBoxTest")) {
-                    keyStore.deleteEntry("StrongBoxTest")
+                val keyStore = getKeyStore()
+                if (keyStore.containsAlias(TEST_ALIAS)) {
+                    keyStore.deleteEntry(TEST_ALIAS)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error cleaning up test key", e)
@@ -151,7 +140,7 @@ internal class AESPlatformManagerImpl @Inject constructor(
         }
 
         try {
-            val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
+            val keyStore = getKeyStore()
 
             val originalKeyExists = keyStore.containsAlias(KEY_ALIAS)
             if (!originalKeyExists) {
@@ -180,9 +169,7 @@ internal class AESPlatformManagerImpl @Inject constructor(
     }
 
     private fun getSecretKey(): SecretKey {
-        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
-            load(null)
-        }
+        val keyStore = getKeyStore()
         val strongboxAlias = "${KEY_ALIAS}_strongbox"
         if (keyStore.containsAlias(strongboxAlias)) {
             return keyStore.getKey(strongboxAlias, null) as SecretKey
@@ -241,5 +228,19 @@ internal class AESPlatformManagerImpl @Inject constructor(
         val plaintextBytes = cipher.doFinal(ciphertext)
 
         return String(plaintextBytes)
+    }
+
+    private fun getKeyStore(): KeyStore {
+        return KeyStore.getInstance(ANDROID_KEYSTORE).apply {
+            load(null)
+        }
+    }
+
+    companion object {
+        private const val TAG = "AESPlatformManagerImpl"
+        private const val KEY_ALIAS = "PeraAESKey"
+        private const val ANDROID_KEYSTORE = "AndroidKeyStore" // this value should not change
+        private const val AES_MODE = "AES/GCM/NoPadding"
+        private const val TEST_ALIAS = "StrongBoxTest"
     }
 }

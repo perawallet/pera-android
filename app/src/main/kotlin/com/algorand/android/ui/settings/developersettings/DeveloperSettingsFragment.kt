@@ -44,11 +44,13 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
         super.onViewCreated(view, savedInstanceState)
         binding.nodeSettingsListItem.setOnClickListener { onNodeSettingsClick() }
         binding.dispenserListItem.setOnClickListener { onDispenserClick() }
+        binding.migrationListItem.setOnClickListener { onMigrationViewerClick() }
     }
 
     override fun onResume() {
         super.onResume()
         binding.dispenserListItem.isVisible = developerSettingsViewModel.isConnectedToTestnet()
+        binding.migrationListItem.isVisible = developerSettingsViewModel.showMigrationViewer()
     }
 
     private fun onNodeSettingsClick() {
@@ -57,5 +59,9 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
 
     private fun onDispenserClick() {
         context?.openDispenserUrl(accountAddress = developerSettingsViewModel.firstAccountAddress)
+    }
+
+    private fun onMigrationViewerClick() {
+        nav(DeveloperSettingsFragmentDirections.actionDeveloperSettingsFragmentToMigrationViewerFragment())
     }
 }

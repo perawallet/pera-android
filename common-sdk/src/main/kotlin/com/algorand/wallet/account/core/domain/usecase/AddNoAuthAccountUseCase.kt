@@ -23,9 +23,13 @@ internal class AddNoAuthAccountUseCase @Inject constructor(
     private val setAccountCustomInfo: SetAccountCustomInfo
 ) : AddNoAuthAccount {
 
-    override suspend fun invoke(address: String, customName: String?) {
+    override suspend fun invoke(
+        address: String,
+        customName: String?,
+        orderIndex: Int
+    ) {
         val account = LocalAccount.NoAuth(address)
         saveNoAuthAccount(account)
-        setAccountCustomInfo(CustomAccountInfo(address, customName, Int.MAX_VALUE, isBackedUp = true))
+        setAccountCustomInfo(CustomAccountInfo(address, customName, orderIndex, isBackedUp = true))
     }
 }

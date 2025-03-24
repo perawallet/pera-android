@@ -14,6 +14,7 @@ package com.algorand.wallet.analytics.data.service
 
 import android.os.Bundle
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
 import com.algorand.wallet.analytics.domain.usecase.IsStrongBoxUsedForEncryption
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_CAMPAIGN
@@ -22,11 +23,11 @@ import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_SOURCE
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_TERM
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import javax.inject.Inject
 
 class PeraEventTrackerImpl @Inject constructor(
     private val firebaseAnalytics: FirebaseAnalytics,
+    private val peraExceptionLogger: PeraExceptionLogger,
     private val getReferrerData: GetReferrerData,
     private val isStrongBoxUsedForEncryption: IsStrongBoxUsedForEncryption
 ) : PeraEventTracker {
@@ -69,7 +70,10 @@ class PeraEventTrackerImpl @Inject constructor(
                         is FloatArray -> putFloatArray(key, value as FloatArray)
                         is Long -> putLong(key, value as Long)
                         is LongArray -> putLongArray(key, value as LongArray)
-                        else -> recordIllegalArgumentException(value)
+                        else -> {
+                            val errorMessage = "$logTag: Not handled bundle payload type: ${value::class.java}"
+                            peraExceptionLogger.logException(IllegalArgumentException(errorMessage))
+                        }
                     }
                 }
             }

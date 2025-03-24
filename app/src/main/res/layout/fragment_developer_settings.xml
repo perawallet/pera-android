@@ -32,7 +32,15 @@
         app:endViewLayoutResource="@layout/layout_right_arrow"
         app:settingIcon="@drawable/ic_algo_sign"
         app:settingTitle="@string/algorand_dispenser">
+    </com.algorand.android.customviews.SettingsListItem>
 
+    <com.algorand.android.customviews.SettingsListItem
+        android:id="@+id/migrationListItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:endViewLayoutResource="@layout/layout_right_arrow"
+        app:settingIcon="@drawable/ic_algo_sign"
+        app:settingTitle="@string/migration_troubleshooter">
     </com.algorand.android.customviews.SettingsListItem>
 
 </LinearLayout>

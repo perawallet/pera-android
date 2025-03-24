@@ -10,13 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.remoteconfig.domain.usecase
+package com.algorand.wallet.analytics.domain.service
 
-const val IMMERSVE_BUTTON_TOGGLE = "enable_immersve"
-const val STAKING_BUTTON_TOGGLE = "enable_staking"
-const val HD_WALLET_BUTTON_TOGGLE = "enable_hd_wallet"
-const val ENABLE_ACCOUNT_DB_MIGRATION_VIEWER = "enable_account_migration_viewer"
-
-fun interface IsFeatureToggleEnabled {
-    operator fun invoke(featureToggleKey: String): Boolean
+interface PeraExceptionLogger {
+    fun logException(e: Exception)
 }

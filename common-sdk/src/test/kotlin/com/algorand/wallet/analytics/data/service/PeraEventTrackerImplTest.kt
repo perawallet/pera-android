@@ -13,6 +13,7 @@
 package com.algorand.wallet.analytics.data.service
 
 import com.algorand.wallet.analytics.domain.model.ReferrerData
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.mockk.coEvery
@@ -20,11 +21,11 @@ import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 
 @ExperimentalCoroutinesApi
 class PeraEventTrackerImplTest {
@@ -32,6 +33,7 @@ class PeraEventTrackerImplTest {
     private lateinit var sut: PeraEventTrackerImpl
 
     private val mockFirebaseAnalytics: FirebaseAnalytics = mockk(relaxed = true)
+    private val mockPeraExceptionLogger: PeraExceptionLogger = mockk(relaxed = true)
     private val mockGetReferrerData: GetReferrerData = mockk()
     private val testReferrerData = ReferrerData(
         utmSource = "test_source",
@@ -44,7 +46,11 @@ class PeraEventTrackerImplTest {
     @Before
     fun setup() {
         coEvery { mockGetReferrerData.invoke() } returns testReferrerData
-        sut = PeraEventTrackerImpl(mockFirebaseAnalytics, mockGetReferrerData)
+        sut = PeraEventTrackerImpl(
+            mockFirebaseAnalytics,
+            mockPeraExceptionLogger,
+            mockGetReferrerData
+        )
     }
 
     @After

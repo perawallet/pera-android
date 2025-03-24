@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
@@ -55,7 +56,11 @@ fun PeraTitleText(modifier: Modifier = Modifier, text: String) {
 }
 
 @Composable
-fun PeraBodyText(modifier: Modifier = Modifier, text: String) {
+fun PeraBodyText(
+    modifier: Modifier = Modifier,
+    text: String,
+    textAlign: TextAlign = TextAlign.Left
+) {
     Text(
         modifier = modifier,
         text = text,
@@ -63,7 +68,8 @@ fun PeraBodyText(modifier: Modifier = Modifier, text: String) {
         fontFamily = peraSans,
         color = MaterialTheme.colorScheme.secondary,
         fontWeight = FontWeight.Medium,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
+        textAlign = textAlign
     )
 }
 

@@ -290,13 +290,13 @@ class AccountPreviewProcessor @Inject constructor(
             return null
         }
 
-        val filteredAccounts = accounts.filter { address ->
+        val hasAccountWithBalance = accounts.any { address ->
             val accountBalance = getAccountTotalValue(address, true)
             accountBalance.primaryAccountValue > BigDecimal.ZERO
         }
 
-        return if (filteredAccounts.isNotEmpty()) {
-            BaseAccountListItem.BackupBannerItem(filteredAccounts)
+        return if (hasAccountWithBalance) {
+            BaseAccountListItem.BackupBannerItem(accounts.toList())
         } else {
             null
         }

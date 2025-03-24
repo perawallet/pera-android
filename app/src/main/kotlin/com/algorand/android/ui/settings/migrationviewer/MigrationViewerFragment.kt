@@ -126,7 +126,7 @@ class MigrationViewerFragment : DaggerBaseFragment(0) {
                 migrationViewerViewModel.triggerEvent(ViewEvent.NavigateBack)
             }
         )
-        showGlobalError(errorMessage = error)
+        showGlobalError(errorMessage = error, tag = baseActivityTag)
     }
 
     @Composable

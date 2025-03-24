@@ -10,11 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.domain.service
+package com.algorand.wallet.encryption.domain.utils
 
-interface PeraEventTracker {
-
-    suspend fun logEvent(eventName: String)
-
-    suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>)
+fun ByteArray.clearFromMemory(): ByteArray {
+    // Overwrite the byte array contents with zeros
+    this.fill(0)
+    return ByteArray(0)
 }

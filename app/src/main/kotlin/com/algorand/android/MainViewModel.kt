@@ -23,6 +23,7 @@ import com.algorand.android.MainActivity.Companion.WC_TRANSACTION_ID_INTENT_KEY
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.database.NodeDao
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdMigrationUseCase
+import com.algorand.android.encryption.domain.usecase.AndroidEncryptionManager
 import com.algorand.android.models.Node
 import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeningCountUseCase
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
@@ -94,6 +95,7 @@ class MainViewModel @Inject constructor(
     private val saveMigratedTo6xCheck: SaveMigratedTo6xCheck,
     private val getMigratedTo6xCheck: GetMigratedTo6xCheck,
     private val migrateTo6xUseCase: MigrateTo6xUseCase,
+    private val androidEncryptionManager: AndroidEncryptionManager,
     getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
 
@@ -119,8 +121,9 @@ class MainViewModel @Inject constructor(
         initializeTutorial()
     }
 
-    fun initAppCache(lifecycle: Lifecycle) {
+    fun initializeApp(lifecycle: Lifecycle) {
         viewModelScope.launch {
+            androidEncryptionManager.initializeEncryptionManager()
             initializeAppCache(lifecycle)
         }
     }

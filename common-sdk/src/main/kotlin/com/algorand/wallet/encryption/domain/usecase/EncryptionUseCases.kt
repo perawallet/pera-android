@@ -10,11 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.domain.service
+package com.algorand.wallet.encryption.domain.usecase
 
-interface PeraEventTracker {
+import javax.crypto.SecretKey
 
-    suspend fun logEvent(eventName: String)
-
-    suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>)
+fun interface GetEncryptionSecretKey {
+    operator fun invoke(): SecretKey
 }

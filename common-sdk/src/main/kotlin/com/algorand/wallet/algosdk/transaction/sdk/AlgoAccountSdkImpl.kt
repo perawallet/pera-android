@@ -16,6 +16,7 @@ import com.algorand.algosdk.sdk.Sdk
 import com.algorand.wallet.algosdk.domain.model.Algo25Account
 import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import javax.inject.Inject
 
 internal class AlgoAccountSdkImpl @Inject constructor(
@@ -46,7 +47,7 @@ internal class AlgoAccountSdkImpl @Inject constructor(
                 address = Sdk.generateAddressFromSK(secretKey),
                 secretKey = secretKey
             )
-            secretKey = aesPlatformManager.clearSecretByteArrayFromMemory()
+            secretKey.clearFromMemory()
             output
         } catch (e: Exception) {
             null
@@ -61,7 +62,7 @@ internal class AlgoAccountSdkImpl @Inject constructor(
                 address = Sdk.generateAddressFromSK(secretKey),
                 secretKey = secretKey
             )
-            secretKey = aesPlatformManager.clearSecretByteArrayFromMemory()
+            secretKey.clearFromMemory()
             output
         } catch (e: Exception) {
             null

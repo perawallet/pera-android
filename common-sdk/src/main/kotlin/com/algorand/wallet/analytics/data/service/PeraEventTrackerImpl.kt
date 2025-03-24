@@ -14,36 +14,36 @@ package com.algorand.wallet.analytics.data.service
 
 import android.os.Bundle
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.analytics.domain.usecase.GetReferrerData
+import com.algorand.wallet.analytics.domain.usecase.IsStrongBoxUsedForEncryption
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_CAMPAIGN
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_CONTENT
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_MEDIUM
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_SOURCE
 import com.algorand.wallet.analytics.domain.util.GA4.UTM_TERM
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import javax.inject.Inject
 
-class PeraEventTrackerImpl @Inject constructor (
+class PeraEventTrackerImpl @Inject constructor(
     private val firebaseAnalytics: FirebaseAnalytics,
-    private val firebaseCrashlytics: FirebaseCrashlytics,
-    private val getReferrerData: GetReferrerData
+    private val peraExceptionLogger: PeraExceptionLogger,
+    private val getReferrerData: GetReferrerData,
+    private val isStrongBoxUsedForEncryption: IsStrongBoxUsedForEncryption
 ) : PeraEventTracker {
 
     override suspend fun logEvent(eventName: String) {
         val bundle = Bundle()
-        val referralBundle = addReferralDataToBundle(bundle) // Add referral data
+        val strongBoxBundle = addStrongBoxDataToBundle(bundle)
+        val referralBundle = addReferralDataToBundle(strongBoxBundle)
         firebaseAnalytics.logEvent(eventName, referralBundle.takeIf { referralBundle.size() > 0 })
     }
 
     override suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>) {
         val payloadBundle = getPayloadBundle(payloadMap)
-        val combinedBundle = addReferralDataToBundle(payloadBundle) // Merge referral data
+        val strongBoxBundle = addStrongBoxDataToBundle(payloadBundle)
+        val combinedBundle = addReferralDataToBundle(strongBoxBundle)
         firebaseAnalytics.logEvent(eventName, combinedBundle.takeIf { combinedBundle.size() > 0 })
-    }
-
-    override suspend fun logException(e: Exception) {
-        firebaseCrashlytics.recordException(e)
     }
 
     private fun getPayloadBundle(payloadMap: Map<String, Any>): Bundle {
@@ -70,7 +70,9 @@ class PeraEventTrackerImpl @Inject constructor (
                         is FloatArray -> putFloatArray(key, value as FloatArray)
                         is Long -> putLong(key, value as Long)
                         is LongArray -> putLongArray(key, value as LongArray)
-                        else -> recordIllegalArgumentException(value)
+                        else -> {
+                            recordIllegalArgumentException(value)
+                        }
                     }
                 }
             }
@@ -91,10 +93,17 @@ class PeraEventTrackerImpl @Inject constructor (
 
     private fun recordIllegalArgumentException(value: Any) {
         val errorMessage = "$logTag: Not handled bundle payload type: ${value::class.java}"
-        firebaseCrashlytics.recordException(IllegalArgumentException(errorMessage))
+        peraExceptionLogger.logException(IllegalArgumentException(errorMessage))
     }
 
-    companion object {
-        private val logTag = PeraEventTrackerImpl::class.java.simpleName
+    private suspend fun addStrongBoxDataToBundle(bundle: Bundle): Bundle {
+        val data = isStrongBoxUsedForEncryption.invoke()
+        bundle.putString(STRONGBOX_USED_KEY, data.toString())
+        return bundle
+    }
+
+    private companion object {
+        val logTag: String = PeraEventTrackerImpl::class.java.simpleName
+        const val STRONGBOX_USED_KEY = "strongbox_used"
     }
 }

@@ -46,13 +46,7 @@ class DeveloperSettingsViewModel @Inject constructor(
     }
 
     fun showMigrationViewer(): Boolean {
-        val isEnableAccountMigrationViewer = isFeatureToggleEnabled
+        return isFeatureToggleEnabled
             .invoke(ENABLE_ACCOUNT_DB_MIGRATION_VIEWER)
-        if (isEnableAccountMigrationViewer) {
-            return true
-        } else {
-            return getLocalAccountsFromSharedPrefUseCase
-                .getLocalAccountsFromSharedPref()?.isNotEmpty() ?: false
-        }
     }
 }

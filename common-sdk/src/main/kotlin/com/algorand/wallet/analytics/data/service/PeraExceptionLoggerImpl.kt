@@ -10,11 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.domain.service
+package com.algorand.wallet.analytics.data.service
 
-interface PeraEventTracker {
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import javax.inject.Inject
 
-    suspend fun logEvent(eventName: String)
+class PeraExceptionLoggerImpl @Inject constructor (
+    private val firebaseCrashlytics: FirebaseCrashlytics
+) : PeraExceptionLogger {
 
-    suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>)
+    override fun logException(e: Exception) {
+        firebaseCrashlytics.recordException(e)
+    }
 }

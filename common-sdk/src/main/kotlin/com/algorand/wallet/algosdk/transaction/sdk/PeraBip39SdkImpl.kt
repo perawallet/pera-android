@@ -16,7 +16,7 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.crypto.Address
 import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
-import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import foundation.algorand.xhdwalletapi.Bip32DerivationType
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
@@ -24,9 +24,7 @@ import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
 import javax.inject.Inject
 
-internal class PeraBip39SdkImpl @Inject constructor(
-    private val aesPlatformManager: AESPlatformManager
-) : PeraBip39Sdk {
+internal class PeraBip39SdkImpl @Inject constructor() : PeraBip39Sdk {
     override fun getSeedFromEntropy(entropy: ByteArray): ByteArray? {
         return try {
             Mnemonics.MnemonicCode(entropy).toSeed()
@@ -94,9 +92,9 @@ internal class PeraBip39SdkImpl @Inject constructor(
             keyIndex = keyIndex.toInt(),
             derivationType = Bip32DerivationType.Peikert.value
         )
-        privateKey = aesPlatformManager.clearSecretByteArrayFromMemory()
-        entropy = aesPlatformManager.clearSecretByteArrayFromMemory()
-        seed = aesPlatformManager.clearSecretByteArrayFromMemory()
+        privateKey.clearFromMemory()
+        entropy.clearFromMemory()
+        seed.clearFromMemory()
         return output
     }
 }

@@ -27,3 +27,7 @@ fun interface SaveReferrerData {
 fun interface GetFirebaseTokenStatusFlow {
     operator fun invoke(): Flow<FirebaseTokenStatus>
 }
+
+fun interface IsStrongBoxUsedForEncryption {
+    suspend operator fun invoke(): Boolean
+}

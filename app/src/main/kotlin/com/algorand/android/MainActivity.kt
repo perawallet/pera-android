@@ -429,7 +429,7 @@ class MainActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
-        mainViewModel.initAppCache(lifecycle)
+        mainViewModel.initializeApp(lifecycle)
         mainViewModel.fetchInstallReferrer()
         mainViewModel.migrateTo6xCheck()
         mainViewModel.setDeepLinkHandlerListener(deepLinkHandlerListener)

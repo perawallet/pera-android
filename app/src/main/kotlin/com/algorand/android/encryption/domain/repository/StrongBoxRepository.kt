@@ -10,11 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.domain.service
+package com.algorand.android.encryption.domain.repository
 
-interface PeraEventTracker {
-
-    suspend fun logEvent(eventName: String)
-
-    suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>)
+internal interface StrongBoxRepository {
+    suspend fun saveStrongBoxUsed(check: Boolean)
+    suspend fun getStrongBoxUsed(): Boolean
 }

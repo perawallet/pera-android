@@ -10,11 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.domain.service
+package com.algorand.android.encryption.domain.usecase
 
-interface PeraEventTracker {
+fun interface GetStrongBoxUsedCheck {
+    suspend operator fun invoke(): Boolean
+}
 
-    suspend fun logEvent(eventName: String)
-
-    suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>)
+fun interface SaveStrongBoxUsedCheck {
+    suspend operator fun invoke(check: Boolean)
 }

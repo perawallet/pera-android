@@ -10,11 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.analytics.domain.service
+package com.algorand.android.encryption.domain.usecase
 
-interface PeraEventTracker {
+import com.algorand.wallet.foundation.PeraResult
+import javax.crypto.SecretKey
 
-    suspend fun logEvent(eventName: String)
-
-    suspend fun logEvent(eventName: String, payloadMap: Map<String, Any>)
+interface AndroidEncryptionManager {
+    fun getSecretKey(): SecretKey
+    suspend fun initializeEncryptionManager()
+    suspend fun shouldMigrateToStrongBox(): Boolean
+    suspend fun migrateToStrongBox(): PeraResult<Boolean>
 }

@@ -219,6 +219,7 @@ abstract class BaseQrScannerFragment(
 
     private fun setupBarcodeView() {
         with(binding.cameraPreview) {
+            cameraSettings.isContinuousFocusEnabled = true
             view?.let {
                 decoderFactory = DefaultDecoderFactory(mutableListOf(BarcodeFormat.QR_CODE))
                 decodeContinuous(barcodeCallback)

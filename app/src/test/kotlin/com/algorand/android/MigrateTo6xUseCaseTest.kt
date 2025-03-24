@@ -18,7 +18,7 @@ import com.algorand.android.modules.settings.domain.usecase.MigrateTo6xUseCase
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
 import com.algorand.android.utils.analytics.CreationType
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.foundation.PeraResult
 import io.mockk.coEvery
@@ -34,59 +34,14 @@ class MigrateTo6xUseCaseTest {
             GetLocalAccountsFromSharedPrefUseCase = mockk()
     private var aesPlatformManager: AESPlatformManager = mockk()
     private var accountAdditionUseCase: AccountAdditionUseCase = mockk()
-    private var peraEventTracker: PeraEventTracker = mockk()
+    private var peraExceptionLogger: PeraExceptionLogger = mockk()
     private var sut: MigrateTo6xUseCase =
         MigrateTo6xUseCase(
             getLocalAccountsFromSharedPrefUseCase,
             aesPlatformManager,
             accountAdditionUseCase,
-            peraEventTracker
+            peraExceptionLogger
         )
-
-    companion object {
-        private val SECRET_KEY = byteArrayOf(1, 2, 3, 4)
-        private val ENCRYPTED_SECRET_KEY = byteArrayOf(5, 6, 7, 8)
-
-        val standardAccount = Account(
-            address = "addr1",
-            name = "Account 1",
-            index = 0,
-            isBackedUp = true,
-            detail = mockk<Account.Detail.Standard> {
-                every { secretKey } returns SECRET_KEY
-            }
-        )
-
-        val watchAccount = Account(
-            address = "addr2",
-            name = "Account 2",
-            index = 1,
-            isBackedUp = false,
-            detail = mockk<Account.Detail.Watch>()
-        )
-
-        val ledgerAccount = Account(
-            address = "addr3",
-            name = "Account 3",
-            index = 2,
-            isBackedUp = true,
-            detail = mockk<Account.Detail.Ledger>().apply {
-                every { bluetoothAddress } returns "AA:BB:CC:DD:EE:FF"
-                every { positionInLedger } returns 0
-                every { bluetoothName } returns "Ledger Nano X"
-            }
-        )
-
-        val rekeyedAccount = Account(
-            address = "addr4",
-            name = "Account 4",
-            index = 3,
-            isBackedUp = true,
-            detail = mockk<Account.Detail.Rekeyed> {
-                every { secretKey } returns null
-            }
-        )
-    }
 
     @Test
     fun `EXPECT accounts migrated successfully WHEN local accounts exist`() = runTest {
@@ -278,12 +233,57 @@ class MigrateTo6xUseCaseTest {
         } throws exception
 
         coEvery {
-            peraEventTracker.logException(exception)
+            peraExceptionLogger.logException(exception)
         } returns Unit
 
         val result = sut.invoke()
 
         assertTrue(result is PeraResult.Error)
         assertEquals(exception, (result as PeraResult.Error).exception)
+    }
+
+    private companion object {
+        val SECRET_KEY = byteArrayOf(1, 2, 3, 4)
+        val ENCRYPTED_SECRET_KEY = byteArrayOf(5, 6, 7, 8)
+
+        val standardAccount = Account(
+            address = "addr1",
+            name = "Account 1",
+            index = 0,
+            isBackedUp = true,
+            detail = mockk<Account.Detail.Standard> {
+                every { secretKey } returns SECRET_KEY
+            }
+        )
+
+        val watchAccount = Account(
+            address = "addr2",
+            name = "Account 2",
+            index = 1,
+            isBackedUp = false,
+            detail = mockk<Account.Detail.Watch>()
+        )
+
+        val ledgerAccount = Account(
+            address = "addr3",
+            name = "Account 3",
+            index = 2,
+            isBackedUp = true,
+            detail = mockk<Account.Detail.Ledger>().apply {
+                every { bluetoothAddress } returns "AA:BB:CC:DD:EE:FF"
+                every { positionInLedger } returns 0
+                every { bluetoothName } returns "Ledger Nano X"
+            }
+        )
+
+        val rekeyedAccount = Account(
+            address = "addr4",
+            name = "Account 4",
+            index = 3,
+            isBackedUp = true,
+            detail = mockk<Account.Detail.Rekeyed> {
+                every { secretKey } returns null
+            }
+        )
     }
 }

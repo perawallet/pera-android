@@ -10,8 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.domain.utils
+package com.algorand.android.encryption.domain.usecase
 
-internal object Constants {
-    const val STRONGBOX_USED = "strongbox_used"
+import com.algorand.wallet.foundation.PeraResult
+import javax.crypto.SecretKey
+
+interface AndroidEncryptionManager {
+    fun getSecretKey(): SecretKey
+    suspend fun initializeEncryptionManager()
+    suspend fun shouldMigrateToStrongBox(): Boolean
+    suspend fun migrateToStrongBox(): PeraResult<Boolean>
 }

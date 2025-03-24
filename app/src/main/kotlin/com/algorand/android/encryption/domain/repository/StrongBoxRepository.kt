@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.domain.repository
+package com.algorand.android.encryption.domain.repository
 
 internal interface StrongBoxRepository {
     suspend fun saveStrongBoxUsed(check: Boolean)

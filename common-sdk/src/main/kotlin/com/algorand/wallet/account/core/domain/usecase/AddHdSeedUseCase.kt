@@ -18,7 +18,7 @@ import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.account.local.domain.usecase.GetSeedIdIfExistingEntropy
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
-import com.algorand.wallet.encryption.domain.utils.clearSecretByteArrayFromMemory
+import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 
@@ -53,7 +53,7 @@ internal class AddHdSeedUseCase @Inject constructor(
                         isBackedUp = false
                     )
                 )
-                seed.clearSecretByteArrayFromMemory()
+                seed.clearFromMemory()
                 return PeraResult.Success(newSeedIdInDB)
             } ?: run {
                 return PeraResult.Error(Exception("Failed to insert hd seed"))

@@ -27,7 +27,7 @@ import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlg
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToHdKey
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
-import com.algorand.wallet.encryption.domain.utils.clearSecretByteArrayFromMemory
+import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
 
@@ -136,7 +136,7 @@ class AccountAdditionUseCase @Inject constructor(
                 customName,
                 createAccount.orderIndex
             )
-            secretKey.clearSecretByteArrayFromMemory()
+            secretKey.clearFromMemory()
         }
     }
 

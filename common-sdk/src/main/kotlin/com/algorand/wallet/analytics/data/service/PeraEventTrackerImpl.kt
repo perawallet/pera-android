@@ -71,8 +71,7 @@ class PeraEventTrackerImpl @Inject constructor(
                         is Long -> putLong(key, value as Long)
                         is LongArray -> putLongArray(key, value as LongArray)
                         else -> {
-                            val errorMessage = "$logTag: Not handled bundle payload type: ${value::class.java}"
-                            peraExceptionLogger.logException(IllegalArgumentException(errorMessage))
+                            recordIllegalArgumentException(value)
                         }
                     }
                 }
@@ -100,7 +99,7 @@ class PeraEventTrackerImpl @Inject constructor(
 
     private fun recordIllegalArgumentException(value: Any) {
         val errorMessage = "$logTag: Not handled bundle payload type: ${value::class.java}"
-        FirebaseCrashlytics.getInstance().recordException(IllegalArgumentException(errorMessage))
+        peraExceptionLogger.logException(IllegalArgumentException(errorMessage))
     }
 
     private companion object {

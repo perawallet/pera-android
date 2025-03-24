@@ -17,6 +17,7 @@ import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.crypto.Address
 import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.encryption.domain.utils.clearSecretByteArrayFromMemory
 import foundation.algorand.xhdwalletapi.Bip32DerivationType
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
@@ -94,9 +95,9 @@ internal class PeraBip39SdkImpl @Inject constructor(
             keyIndex = keyIndex.toInt(),
             derivationType = Bip32DerivationType.Peikert.value
         )
-        privateKey = aesPlatformManager.clearSecretByteArrayFromMemory()
-        entropy = aesPlatformManager.clearSecretByteArrayFromMemory()
-        seed = aesPlatformManager.clearSecretByteArrayFromMemory()
+        privateKey.clearSecretByteArrayFromMemory()
+        entropy.clearSecretByteArrayFromMemory()
+        seed.clearSecretByteArrayFromMemory()
         return output
     }
 }

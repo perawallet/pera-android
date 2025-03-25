@@ -10,10 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.encryption.domain.utils
+package com.algorand.android.encryption.domain.usecase
 
-fun ByteArray.clearFromMemory(): ByteArray {
-    // Overwrite the byte array contents with zeros
-    this.fill(0)
-    return ByteArray(0)
+import com.algorand.wallet.foundation.PeraResult
+import javax.crypto.SecretKey
+
+interface AndroidEncryptionManager {
+    fun getSecretKey(): SecretKey
+    suspend fun initializeEncryptionManager()
+    suspend fun shouldMigrateToStrongBox(): Boolean
+    suspend fun migrateToStrongBox(): PeraResult<Boolean>
 }

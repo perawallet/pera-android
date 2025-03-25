@@ -12,57 +12,23 @@
 
 package com.algorand.wallet.encryption.domain.manager
 
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
-import java.security.KeyStore
+import com.algorand.wallet.encryption.domain.usecase.GetEncryptionSecretKey
 import java.util.Base64
 import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 import javax.inject.Inject
 
-internal class AESPlatformManagerImpl @Inject constructor() : AESPlatformManager {
+internal class AESPlatformManagerImpl @Inject constructor(
+    private val getEncryptionSecretKey: GetEncryptionSecretKey
+) : AESPlatformManager {
 
     companion object {
-        private const val KEY_ALIAS = "PeraAESKey"
-        private const val ANDROID_KEYSTORE = "AndroidKeyStore" // this value should not change
         private const val AES_MODE = "AES/GCM/NoPadding"
-    }
-
-    init {
-        generateKeyIfNeeded()
-    }
-
-    private fun generateKeyIfNeeded() {
-        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
-            load(null)
-        }
-        if (!keyStore.containsAlias(KEY_ALIAS)) {
-            val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
-            val parameterSpec = KeyGenParameterSpec.Builder(
-                KEY_ALIAS,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-            )
-                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                .setKeySize(256)
-                .build()
-            keyGenerator.init(parameterSpec)
-            keyGenerator.generateKey()
-        }
-    }
-
-    private fun getSecretKey(): SecretKey {
-        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
-            load(null)
-        }
-        return keyStore.getKey(KEY_ALIAS, null) as SecretKey
     }
 
     override fun encryptByteArray(data: ByteArray): ByteArray {
         val cipher = Cipher.getInstance(AES_MODE)
-        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
+        cipher.init(Cipher.ENCRYPT_MODE, getEncryptionSecretKey())
         val iv = cipher.iv
         val encryptedData = cipher.doFinal(data)
         return iv + encryptedData // Append IV to the encrypted data
@@ -73,14 +39,14 @@ internal class AESPlatformManagerImpl @Inject constructor() : AESPlatformManager
         val cipherData = encryptedData.copyOfRange(12, encryptedData.size)
         val cipher = Cipher.getInstance(AES_MODE)
         val spec = GCMParameterSpec(128, iv)
-        cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), spec)
+        cipher.init(Cipher.DECRYPT_MODE, getEncryptionSecretKey(), spec)
         return cipher.doFinal(cipherData)
     }
 
     @Throws(Exception::class)
     override fun encryptString(data: String): String {
         val cipher = Cipher.getInstance(AES_MODE)
-        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
+        cipher.init(Cipher.ENCRYPT_MODE, getEncryptionSecretKey())
         val iv = cipher.iv // GCM IV
         val encryptedBytes = cipher.doFinal(data.toByteArray())
 
@@ -106,7 +72,7 @@ internal class AESPlatformManagerImpl @Inject constructor() : AESPlatformManager
         // Decrypt
         val cipher = Cipher.getInstance(AES_MODE)
         val spec = GCMParameterSpec(128, iv) // 128-bit authentication tag
-        cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), spec)
+        cipher.init(Cipher.DECRYPT_MODE, getEncryptionSecretKey(), spec)
         val plaintextBytes = cipher.doFinal(ciphertext)
 
         return String(plaintextBytes)

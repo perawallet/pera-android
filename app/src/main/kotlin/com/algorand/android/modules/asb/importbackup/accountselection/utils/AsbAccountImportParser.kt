@@ -19,8 +19,8 @@ import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
 import com.algorand.android.utils.extensions.decodeBase64ToByteArray
 import com.algorand.android.utils.isValidAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
-import com.algorand.wallet.asb.domain.usecase.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
-import com.algorand.wallet.asb.domain.usecase.BackupProtocolConstants.isAccountTypeEligible
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.isAccountTypeEligible
 import javax.inject.Inject
 
 class AsbAccountImportParser @Inject constructor(

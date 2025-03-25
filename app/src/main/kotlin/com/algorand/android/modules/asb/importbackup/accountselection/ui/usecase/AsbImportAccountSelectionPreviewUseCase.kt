@@ -36,8 +36,8 @@ import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.extensions.decodeBase64ToByteArray
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.asb.domain.usecase.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
-import com.algorand.wallet.asb.domain.usecase.BackupProtocolConstants.WATCH_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.WATCH_ACCOUNT_TYPE_NAME
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow

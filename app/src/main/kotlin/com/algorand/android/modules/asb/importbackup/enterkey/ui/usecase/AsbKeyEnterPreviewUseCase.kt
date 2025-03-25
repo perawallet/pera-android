@@ -25,8 +25,8 @@ import com.algorand.android.utils.PassphraseKeywordUtils
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.wallet.asb.domain.model.AsbBackupAccount
 import com.algorand.wallet.asb.domain.model.AsbBackupData
-import com.algorand.wallet.asb.domain.usecase.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
-import com.algorand.wallet.asb.domain.usecase.BackupProtocolConstants.WATCH_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.WATCH_ACCOUNT_TYPE_NAME
 import com.algorand.wallet.asb.domain.usecase.RestoreEncryptedBackupProtocolPayload
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow

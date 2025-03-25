@@ -31,6 +31,10 @@ import com.algorand.wallet.foundation.security.PeraSecurityManager
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @HiltAndroidApp
 open class PeraApp : Application() {
@@ -75,13 +79,18 @@ open class PeraApp : Application() {
         KoinInitializer.initKoin(this)
         initializeFirebase()
         BaseViewModel.initialize(peraEventTracker)
-        migrationManager.makeMigrations()
         peraSecurityManager.initializeSecurityManager()
         AppCompatDelegate.setDefaultNightMode(sharedPref.getSavedThemePreference().convertToSystemAbbr())
 
-        initializeWalletConnect()
-        bindApplicationLifecycleAwareComponents()
-        bindActivityLifecycleAwareComponents()
+        CoroutineScope(Dispatchers.Main).launch {
+            withContext(Dispatchers.IO) {
+                migrationManager.makeMigrations()
+            }
+
+            initializeWalletConnect()
+            bindApplicationLifecycleAwareComponents()
+            bindActivityLifecycleAwareComponents()
+        }
     }
 
     private fun initializeFirebase() {

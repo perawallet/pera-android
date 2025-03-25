@@ -57,7 +57,7 @@ class AsbAccountImportParser @Inject constructor(
 
         val isAccountTypeEligible = isAccountTypeEligible(backupProtocolElement.accountType.orEmpty())
 
-        if (isStandardAccount(backupProtocolElement.accountType)) {
+        if (isAccountTypeAlgo25(backupProtocolElement.accountType)) {
             val isSecretKeyValid = isAccountAddressMatchWithSecretKeyUseCase.invoke(
                 accountAddress = backupProtocolElement.address.orEmpty(),
                 secretKey = accountPrivateKey ?: return false
@@ -75,7 +75,7 @@ class AsbAccountImportParser @Inject constructor(
         return isAccountTypeEligible
     }
 
-    private fun isStandardAccount(accountTypeName: String?): Boolean {
+    private fun isAccountTypeAlgo25(accountTypeName: String?): Boolean {
         return accountTypeName == ALGO_25_ACCOUNT_TYPE_NAME
     }
 }

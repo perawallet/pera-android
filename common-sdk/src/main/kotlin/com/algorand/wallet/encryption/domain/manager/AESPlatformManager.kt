@@ -17,5 +17,4 @@ interface AESPlatformManager {
     fun decryptByteArray(encryptedData: ByteArray): ByteArray
     fun encryptString(data: String): String
     fun decryptString(encryptedData: String): String
-    fun clearSecretByteArrayFromMemory(): ByteArray
 }

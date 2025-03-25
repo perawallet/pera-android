@@ -77,8 +77,4 @@ internal class AESPlatformManagerImpl @Inject constructor(
 
         return String(plaintextBytes)
     }
-
-    override fun clearSecretByteArrayFromMemory(): ByteArray {
-        return ByteArray(0)
-    }
 }

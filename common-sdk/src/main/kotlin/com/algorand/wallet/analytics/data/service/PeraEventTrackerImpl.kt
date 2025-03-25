@@ -91,15 +91,15 @@ class PeraEventTrackerImpl @Inject constructor(
         return bundle
     }
 
-    private fun recordIllegalArgumentException(value: Any) {
-        val errorMessage = "$logTag: Not handled bundle payload type: ${value::class.java}"
-        peraExceptionLogger.logException(IllegalArgumentException(errorMessage))
-    }
-
     private suspend fun addStrongBoxDataToBundle(bundle: Bundle): Bundle {
         val data = isStrongBoxUsedForEncryption.invoke()
         bundle.putString(STRONGBOX_USED_KEY, data.toString())
         return bundle
+    }
+
+    private fun recordIllegalArgumentException(value: Any) {
+        val errorMessage = "$logTag: Not handled bundle payload type: ${value::class.java}"
+        peraExceptionLogger.logException(IllegalArgumentException(errorMessage))
     }
 
     private companion object {

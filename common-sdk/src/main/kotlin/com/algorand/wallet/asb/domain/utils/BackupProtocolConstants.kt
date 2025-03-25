@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asb.domain.usecase
+package com.algorand.wallet.asb.domain.utils
 
 object BackupProtocolConstants {
 

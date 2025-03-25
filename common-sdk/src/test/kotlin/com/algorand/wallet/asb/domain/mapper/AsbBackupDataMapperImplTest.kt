@@ -30,7 +30,7 @@ class AsbBackupDataMapperImplTest {
         val expected = AsbBackupData(
             deviceId = "device_id",
             providerName = "provider_name",
-            accounts = listOf(WATCH_ACCOUNT, STANDARD_ACCOUNT)
+            accounts = listOf(WATCH_ACCOUNT, ALGO_25_ACCOUNT)
         )
         assertEquals(expected, result)
     }
@@ -51,18 +51,18 @@ class AsbBackupDataMapperImplTest {
             accountType = AsbBackupAccount.AccountType.Watch
         )
 
-        val STANDARD_ACCOUNT_ELEMENT = BackupProtocolElement(
-            address = "standard_address",
-            name = "standard_name",
+        val ALGO_25_ACCOUNT_ELEMENT = BackupProtocolElement(
+            address = "algo25_address",
+            name = "algo25_name",
             accountType = "single",
             privateKey = "private_key",
-            metadata = "standard_metadata"
+            metadata = "algo25_metadata"
         )
 
-        val STANDARD_ACCOUNT = AsbBackupAccount(
-            address = "standard_address",
-            name = "standard_name",
-            metadata = "standard_metadata",
+        val ALGO_25_ACCOUNT = AsbBackupAccount(
+            address = "algo25_address",
+            name = "algo25_name",
+            metadata = "algo25_metadata",
             accountType = AsbBackupAccount.AccountType.Algo25("private_key")
         )
 
@@ -77,7 +77,7 @@ class AsbBackupDataMapperImplTest {
         val BACKUP_PROTOCOL_PAYLOAD = BackupProtocolPayload(
             deviceId = "device_id",
             providerName = "provider_name",
-            accounts = listOf(WATCH_ACCOUNT_ELEMENT, STANDARD_ACCOUNT_ELEMENT, UNKNOWN_ACCOUNT_ELEMENT)
+            accounts = listOf(WATCH_ACCOUNT_ELEMENT, ALGO_25_ACCOUNT_ELEMENT, UNKNOWN_ACCOUNT_ELEMENT)
         )
     }
 }

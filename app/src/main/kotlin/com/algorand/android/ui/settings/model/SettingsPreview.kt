@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.domain.model
+package com.algorand.android.ui.settings.model
 
 data class SettingsPreview(
     val isAlgorandSecureBackupDescriptionVisible: Boolean,

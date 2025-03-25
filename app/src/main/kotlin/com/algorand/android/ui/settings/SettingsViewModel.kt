@@ -15,8 +15,8 @@ package com.algorand.android.ui.settings
 import android.app.NotificationManager
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.settings.domain.model.SettingsPreview
-import com.algorand.android.modules.settings.domain.usecase.SettingsPreviewUseCase
+import com.algorand.android.ui.settings.model.SettingsPreview
+import com.algorand.android.ui.settings.usecase.SettingsPreviewUseCase
 import com.algorand.android.usecase.DeleteAllDataUseCase
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel

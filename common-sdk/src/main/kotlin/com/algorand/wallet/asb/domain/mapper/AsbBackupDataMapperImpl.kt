@@ -32,13 +32,8 @@ internal class AsbBackupDataMapperImpl @Inject constructor() : AsbBackupDataMapp
 
     private fun mapAccounts(backupProtocolElement: BackupProtocolElement): AsbBackupAccount? {
         val accountType = when (backupProtocolElement.accountType) {
-            SINGLE_ACCOUNT_TYPE_NAME -> {
-                if (backupProtocolElement.privateKey == null) return null
-                AsbBackupAccount.AccountType.Algo25(backupProtocolElement.privateKey)
-            }
-            WATCH_ACCOUNT_TYPE_NAME -> {
-                AsbBackupAccount.AccountType.Watch
-            }
+            SINGLE_ACCOUNT_TYPE_NAME -> getSafeSingleAccountType(backupProtocolElement)
+            WATCH_ACCOUNT_TYPE_NAME -> AsbBackupAccount.AccountType.Watch
             else -> null
         }
         if (accountType == null) return null
@@ -48,5 +43,13 @@ internal class AsbBackupDataMapperImpl @Inject constructor() : AsbBackupDataMapp
             metadata = backupProtocolElement.metadata,
             accountType = accountType
         )
+    }
+
+    private fun getSafeSingleAccountType(backupProtocolElement: BackupProtocolElement): AsbBackupAccount.AccountType {
+        return if (backupProtocolElement.privateKey.isNullOrBlank()) {
+            AsbBackupAccount.AccountType.Watch
+        } else {
+            AsbBackupAccount.AccountType.Algo25(backupProtocolElement.privateKey)
+        }
     }
 }

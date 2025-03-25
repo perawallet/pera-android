@@ -16,8 +16,8 @@ import com.algorand.android.R
 import com.algorand.android.banner.domain.model.BaseBanner
 import com.algorand.android.banner.ui.mapper.BaseBannerItemMapper
 import com.algorand.android.mapper.AccountPreviewMapper
-import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.accountcore.domain.model.AccountTotalValue
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.modules.accountcore.ui.mapper.AccountListItemMapper
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
@@ -36,14 +36,14 @@ import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRed
 import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.formatAsCurrency
-import com.algorand.wallet.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
-import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountAsbBackUpStatus
 import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccount
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
+import com.algorand.wallet.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import java.math.BigDecimal
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -285,7 +285,17 @@ class AccountPreviewProcessor @Inject constructor(
 
     private suspend fun getBackupBannerOrNull(): BaseAccountListItem.BackupBannerItem? {
         val accounts = getNotBackedUpAccounts()
-        return if (accounts.isNotEmpty()) {
+
+        if (accounts.isEmpty()) {
+            return null
+        }
+
+        val hasAccountWithBalance = accounts.any { address ->
+            val accountBalance = getAccountTotalValue(address, true)
+            accountBalance.primaryAccountValue > BigDecimal.ZERO
+        }
+
+        return if (hasAccountWithBalance) {
             BaseAccountListItem.BackupBannerItem(accounts.toList())
         } else {
             null

@@ -22,7 +22,7 @@ internal object SettingsModule {
         persistentCacheProvider: PersistentCacheProvider
     ): MigrationTo6xRepository {
         return MigrationTo6xRepositoryImpl(
-            persistentCacheProvider.getPersistentCache(String::class.java, Constants.MIGRATE_TO_6X),
+            persistentCacheProvider.getPersistentCache(Boolean::class.java, Constants.MIGRATE_TO_6X),
         )
     }
 

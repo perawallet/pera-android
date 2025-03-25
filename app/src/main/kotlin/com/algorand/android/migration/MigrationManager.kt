@@ -12,18 +12,31 @@
 
 package com.algorand.android.migration
 
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
+import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 @Singleton
 class MigrationManager @Inject constructor(
     private val accountMigrationManager: AccountMigrationManager,
     private val encryptedPinMigrationManager: EncryptedPinMigrationManager,
-    private val account6xMigrationManager: Account6xMigrationManager
+    private val account6xMigrationManager: Account6xMigrationManager,
+    private val peraExceptionLogger: PeraExceptionLogger
 ) {
-    suspend fun makeMigrations() {
-        encryptedPinMigrationManager.makeMigrationIfNeeded()
-        accountMigrationManager.makeMigrationIfNeeded()
-        account6xMigrationManager.migrateTo6xIfNeeded()
-    }
+    fun makeMigrationsAsFlow(): Flow<PeraResult<Boolean>> = flow {
+        try {
+            encryptedPinMigrationManager.makeMigrationIfNeeded()
+            accountMigrationManager.makeMigrationIfNeeded()
+            account6xMigrationManager.migrateTo6xIfNeeded()
+            emit(PeraResult.Success(true))
+        } catch (e: Exception) {
+            peraExceptionLogger.logException(e)
+            emit(PeraResult.Error(e))
+        }
+    }.flowOn(Dispatchers.IO)
 }

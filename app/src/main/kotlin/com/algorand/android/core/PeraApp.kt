@@ -35,7 +35,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @HiltAndroidApp
 open class PeraApp : Application() {
@@ -86,14 +85,18 @@ open class PeraApp : Application() {
         AppCompatDelegate.setDefaultNightMode(sharedPref.getSavedThemePreference().convertToSystemAbbr())
 
         applicationScope.launch {
-            withContext(Dispatchers.IO) {
-                migrationManager.makeMigrations()
+            migrationManager.makeMigrationsAsFlow().collect { peraResult ->
+                if (peraResult.isSuccess && peraResult.getDataOrNull() == true) {
+                    initializePostMigrationComponents()
+                }
             }
-
-            initializeWalletConnect()
-            bindApplicationLifecycleAwareComponents()
-            bindActivityLifecycleAwareComponents()
         }
+    }
+
+    private fun initializePostMigrationComponents() {
+        initializeWalletConnect()
+        bindApplicationLifecycleAwareComponents()
+        bindActivityLifecycleAwareComponents()
     }
 
     private fun initializeFirebase() {

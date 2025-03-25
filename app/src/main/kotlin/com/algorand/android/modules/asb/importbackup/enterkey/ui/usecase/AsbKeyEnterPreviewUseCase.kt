@@ -25,8 +25,8 @@ import com.algorand.android.utils.PassphraseKeywordUtils
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.wallet.asb.domain.model.AsbBackupAccount
 import com.algorand.wallet.asb.domain.model.AsbBackupData
-import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
-import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.WATCH_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.ALGO_25_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.NO_AUTH_ACCOUNT_TYPE_NAME
 import com.algorand.wallet.asb.domain.usecase.RestoreEncryptedBackupProtocolPayload
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
@@ -150,8 +150,8 @@ class AsbKeyEnterPreviewUseCase @Inject constructor(
     private fun AsbBackupData.mapToBackupProtocolElements(): List<BackupProtocolElement> {
         return accounts.orEmpty().map {
             val accountType = when (it.accountType) {
-                is AsbBackupAccount.AccountType.Algo25 -> SINGLE_ACCOUNT_TYPE_NAME
-                AsbBackupAccount.AccountType.Watch -> WATCH_ACCOUNT_TYPE_NAME
+                is AsbBackupAccount.AccountType.Algo25 -> ALGO_25_ACCOUNT_TYPE_NAME
+                AsbBackupAccount.AccountType.Watch -> NO_AUTH_ACCOUNT_TYPE_NAME
                 else -> null
             }
             BackupProtocolElement(

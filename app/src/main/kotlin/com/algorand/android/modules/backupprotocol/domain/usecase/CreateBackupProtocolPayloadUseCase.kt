@@ -22,8 +22,8 @@ import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
-import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
-import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.WATCH_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.ALGO_25_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.NO_AUTH_ACCOUNT_TYPE_NAME
 import javax.inject.Inject
 
 class CreateBackupProtocolPayloadUseCase @Inject constructor(
@@ -61,10 +61,10 @@ class CreateBackupProtocolPayloadUseCase @Inject constructor(
 
     private fun convertAccountTypeToBackupProtocolAccountType(account: LocalAccount): String? {
         return when (account) {
-            is LocalAccount.Algo25 -> SINGLE_ACCOUNT_TYPE_NAME
+            is LocalAccount.Algo25 -> ALGO_25_ACCOUNT_TYPE_NAME
             is LocalAccount.HdKey -> null // TODO
             is LocalAccount.LedgerBle -> null
-            is LocalAccount.NoAuth -> WATCH_ACCOUNT_TYPE_NAME
+            is LocalAccount.NoAuth -> NO_AUTH_ACCOUNT_TYPE_NAME
         }
     }
 

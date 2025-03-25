@@ -36,8 +36,8 @@ import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.extensions.decodeBase64ToByteArray
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
-import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.WATCH_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.ALGO_25_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.NO_AUTH_ACCOUNT_TYPE_NAME
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
@@ -224,8 +224,8 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
 
     private fun getAccountType(type: String?): AccountType? {
         return when (type) {
-            SINGLE_ACCOUNT_TYPE_NAME -> AccountType.Algo25
-            WATCH_ACCOUNT_TYPE_NAME -> AccountType.NoAuth
+            ALGO_25_ACCOUNT_TYPE_NAME -> AccountType.Algo25
+            NO_AUTH_ACCOUNT_TYPE_NAME -> AccountType.NoAuth
             else -> null
         }
     }
@@ -235,12 +235,12 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
         val safeAccountAddress = importedAccount.address ?: return
         val safeAccountName = importedAccount.name.orEmpty().ifBlank { safeAccountAddress.toShortenedAddress() }
         val accountType = when (importedAccount.accountType) {
-            SINGLE_ACCOUNT_TYPE_NAME -> {
+            ALGO_25_ACCOUNT_TYPE_NAME -> {
                 val safeAccountPrivateKey = importedAccount.privateKey?.decodeBase64ToByteArray() ?: return
                 val encryptedPrivateKey = aesPlatformManager.encryptByteArray(safeAccountPrivateKey)
                 AccountCreation.Type.Algo25(encryptedPrivateKey)
             }
-            WATCH_ACCOUNT_TYPE_NAME -> AccountCreation.Type.NoAuth
+            NO_AUTH_ACCOUNT_TYPE_NAME -> AccountCreation.Type.NoAuth
             else -> return
         }
         val recoveredAccount = AccountCreation(

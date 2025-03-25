@@ -14,10 +14,10 @@ package com.algorand.wallet.asb.domain.utils
 
 object BackupProtocolConstants {
 
-    const val SINGLE_ACCOUNT_TYPE_NAME = "single"
-    const val WATCH_ACCOUNT_TYPE_NAME = "watch"
+    const val ALGO_25_ACCOUNT_TYPE_NAME = "single"
+    const val NO_AUTH_ACCOUNT_TYPE_NAME = "watch"
 
     fun isAccountTypeEligible(accountType: String): Boolean {
-        return accountType == SINGLE_ACCOUNT_TYPE_NAME || accountType == WATCH_ACCOUNT_TYPE_NAME
+        return accountType == ALGO_25_ACCOUNT_TYPE_NAME || accountType == NO_AUTH_ACCOUNT_TYPE_NAME
     }
 }

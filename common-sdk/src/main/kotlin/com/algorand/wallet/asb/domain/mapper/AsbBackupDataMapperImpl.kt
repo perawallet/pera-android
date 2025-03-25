@@ -16,8 +16,8 @@ import com.algorand.wallet.asb.domain.model.AsbBackupAccount
 import com.algorand.wallet.asb.domain.model.AsbBackupData
 import com.algorand.wallet.asb.domain.model.BackupProtocolElement
 import com.algorand.wallet.asb.domain.model.BackupProtocolPayload
-import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
-import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.WATCH_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.ALGO_25_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.NO_AUTH_ACCOUNT_TYPE_NAME
 import javax.inject.Inject
 
 internal class AsbBackupDataMapperImpl @Inject constructor() : AsbBackupDataMapper {
@@ -32,8 +32,8 @@ internal class AsbBackupDataMapperImpl @Inject constructor() : AsbBackupDataMapp
 
     private fun mapAccounts(backupProtocolElement: BackupProtocolElement): AsbBackupAccount? {
         val accountType = when (backupProtocolElement.accountType) {
-            SINGLE_ACCOUNT_TYPE_NAME -> getSafeSingleAccountType(backupProtocolElement)
-            WATCH_ACCOUNT_TYPE_NAME -> AsbBackupAccount.AccountType.Watch
+            ALGO_25_ACCOUNT_TYPE_NAME -> getSafeSingleAccountType(backupProtocolElement)
+            NO_AUTH_ACCOUNT_TYPE_NAME -> AsbBackupAccount.AccountType.Watch
             else -> null
         }
         if (accountType == null) return null

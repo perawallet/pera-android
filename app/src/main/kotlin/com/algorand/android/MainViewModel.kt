@@ -30,9 +30,6 @@ import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
-import com.algorand.android.modules.settings.domain.usecase.GetMigratedTo6xCheck
-import com.algorand.android.modules.settings.domain.usecase.MigrateTo6xUseCase
-import com.algorand.android.modules.settings.domain.usecase.SaveMigratedTo6xCheck
 import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.network.AlgodInterceptor
@@ -92,9 +89,6 @@ class MainViewModel @Inject constructor(
     private var pendingIntentKeeper: PendingIntentKeeper,
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val autoLockManager: AutoLockManager,
-    private val saveMigratedTo6xCheck: SaveMigratedTo6xCheck,
-    private val getMigratedTo6xCheck: GetMigratedTo6xCheck,
-    private val migrateTo6xUseCase: MigrateTo6xUseCase,
     private val androidEncryptionManager: AndroidEncryptionManager,
     getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
@@ -338,16 +332,6 @@ class MainViewModel @Inject constructor(
             ViewEvent.NavToAssetInboxOneAccountNavigation(accountAddress)
         } else {
             ViewEvent.NavToAccountDetailFragment(accountAddress)
-        }
-    }
-
-    fun migrateTo6xCheck() {
-        viewModelScope.launchIO {
-            val migratedTo6X = getMigratedTo6xCheck.invoke()
-            if (!migratedTo6X) {
-                migrateTo6xUseCase.invoke()
-                saveMigratedTo6xCheck.invoke(true)
-            }
         }
     }
 

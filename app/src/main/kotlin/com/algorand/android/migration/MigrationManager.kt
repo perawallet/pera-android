@@ -18,10 +18,12 @@ import javax.inject.Singleton
 @Singleton
 class MigrationManager @Inject constructor(
     private val accountMigrationManager: AccountMigrationManager,
-    private val encryptedPinMigrationManager: EncryptedPinMigrationManager
+    private val encryptedPinMigrationManager: EncryptedPinMigrationManager,
+    private val account6xMigrationManager: Account6xMigrationManager
 ) {
     fun makeMigrations() {
         encryptedPinMigrationManager.makeMigrationIfNeeded()
         accountMigrationManager.makeMigrationIfNeeded()
+        account6xMigrationManager.migrateTo6xIfNeeded()
     }
 }

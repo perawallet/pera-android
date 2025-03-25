@@ -431,7 +431,6 @@ class MainActivity :
         super.onCreate(savedInstanceState)
         mainViewModel.initializeApp(lifecycle)
         mainViewModel.fetchInstallReferrer()
-        mainViewModel.migrateTo6xCheck()
         mainViewModel.setDeepLinkHandlerListener(deepLinkHandlerListener)
         mainViewModel.setAutoLockManagerListener(autoLockManagerListener)
         setupCoreActionsTabBarView()

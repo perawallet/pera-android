@@ -4,7 +4,7 @@ import com.algorand.android.modules.settings.data.repository.MigrationTo6xReposi
 import com.algorand.android.modules.settings.domain.repository.MigrationTo6xRepository
 import com.algorand.android.modules.settings.domain.usecase.GetMigratedTo6xCheck
 import com.algorand.android.modules.settings.domain.usecase.SaveMigratedTo6xCheck
-import com.algorand.android.modules.settings.domain.utils.Constants
+import com.algorand.android.modules.settings.domain.utils.SettingsConstants
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import dagger.Module
 import dagger.Provides
@@ -22,7 +22,7 @@ internal object SettingsModule {
         persistentCacheProvider: PersistentCacheProvider
     ): MigrationTo6xRepository {
         return MigrationTo6xRepositoryImpl(
-            persistentCacheProvider.getPersistentCache(Boolean::class.java, Constants.MIGRATE_TO_6X),
+            persistentCacheProvider.getPersistentCache(Boolean::class.java, SettingsConstants.MIGRATE_TO_6X),
         )
     }
 

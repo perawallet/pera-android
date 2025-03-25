@@ -33,6 +33,7 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -69,6 +70,8 @@ open class PeraApp : Application() {
     @Inject
     lateinit var peraEventTracker: PeraEventTracker
 
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         MultiDex.install(this)
@@ -82,7 +85,7 @@ open class PeraApp : Application() {
         peraSecurityManager.initializeSecurityManager()
         AppCompatDelegate.setDefaultNightMode(sharedPref.getSavedThemePreference().convertToSystemAbbr())
 
-        CoroutineScope(Dispatchers.Main).launch {
+        applicationScope.launch {
             withContext(Dispatchers.IO) {
                 migrationManager.makeMigrations()
             }

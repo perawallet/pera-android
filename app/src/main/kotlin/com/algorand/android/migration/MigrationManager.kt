@@ -21,7 +21,7 @@ class MigrationManager @Inject constructor(
     private val encryptedPinMigrationManager: EncryptedPinMigrationManager,
     private val account6xMigrationManager: Account6xMigrationManager
 ) {
-    fun makeMigrations() {
+    suspend fun makeMigrations() {
         encryptedPinMigrationManager.makeMigrationIfNeeded()
         accountMigrationManager.makeMigrationIfNeeded()
         account6xMigrationManager.migrateTo6xIfNeeded()

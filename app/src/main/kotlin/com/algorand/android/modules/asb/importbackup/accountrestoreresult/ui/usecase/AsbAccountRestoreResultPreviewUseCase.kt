@@ -14,7 +14,7 @@ package com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.us
 
 import com.algorand.android.R
 import com.algorand.android.models.PluralAnnotatedString
-import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.mapper.AsbAccountRestoreResultPreviewMapper
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbAccountRestoreResultPreview
@@ -22,13 +22,11 @@ import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.A
 import com.algorand.android.modules.baseresult.ui.mapper.ResultListItemMapper
 import com.algorand.android.modules.baseresult.ui.model.ResultListItem
 import com.algorand.android.modules.baseresult.ui.usecase.BaseResultPreviewUseCase
-import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import javax.inject.Inject
 
 class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
     private val asbAccountRestoreResultPreviewMapper: AsbAccountRestoreResultPreviewMapper,
-    private val getAccountCustomName: GetAccountCustomName,
+    private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     resultListItemMapper: ResultListItemMapper
 ) : BaseResultPreviewUseCase(resultListItemMapper) {
@@ -55,19 +53,8 @@ class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
             existingAccountCount = asbAccountImportResult.existingAccountList.size
         )
         val accountItems = asbAccountImportResult.importedAccountList.map { accountAddress ->
-            val customAccountName = getAccountCustomName(accountAddress)
-            // Since these accounts are not cached, we have to create [AccountDisplayName] model by using
-            // mapper instead of using `AccountDisplayNameUseCase`
-            val accountDisplayName = AccountDisplayName(
-                accountAddress = accountAddress,
-                primaryDisplayName = customAccountName.orEmpty().ifBlank {
-                    accountAddress.toShortenedAddress()
-                },
-                secondaryDisplayName = null
-            )
-
             createAccountItem(
-                accountDisplayName = accountDisplayName,
+                accountDisplayName = getAccountDisplayName(accountAddress),
                 accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             )
         }

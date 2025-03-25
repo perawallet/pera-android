@@ -29,9 +29,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_account_recovery_type_selection) {
 
-    private val viewEventCollector: suspend (AccountRecoveryTypeSelectionViewModel.ViewEvent) -> Unit = { event ->
-        when (event) {
-            is AccountRecoveryTypeSelectionViewModel.ViewEvent.SetupToolbar ->
+    private val viewStateCollector: suspend (AccountRecoveryTypeSelectionViewModel.ViewState) -> Unit = { state ->
+        when (state) {
+            is AccountRecoveryTypeSelectionViewModel.ViewState.DefaultState ->
                 setupToolbar()
         }
     }
@@ -56,6 +56,7 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
 
     private fun initUi() {
         setupToolbar()
+        accountRecoveryTypeSelectionViewModel.setupToolbar()
         with(binding) {
             recoverAnAccountSelectionItem.setOnClickListener { navToRecoverAccountInfoFragment() }
             recoverAnAccountWithQrSelectionItem.setOnClickListener { navToRecoverWithPassphraseQrScannerFragment() }
@@ -66,9 +67,9 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
     }
 
     private fun initObservers() {
-        viewLifecycleOwner.collectLatestOnLifecycle(
-            accountRecoveryTypeSelectionViewModel.viewEvent,
-            viewEventCollector
+        collectLatestOnLifecycle(
+            flow = accountRecoveryTypeSelectionViewModel.state,
+            collection = viewStateCollector
         )
     }
 

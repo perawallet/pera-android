@@ -34,15 +34,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 abstract class BaseAssetActionViewModel(
     private val accountAddressUseCase: AccountAddressUseCase,
-    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val eventDelegate: EventDelegate<ViewState>,
     private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     private val fetchAndCacheAssets: FetchAndCacheAssets,
     private val getAsset: GetAsset
-) : BaseViewModel(), EventViewModel<BaseAssetActionViewModel.ViewEvent> by eventDelegate {
+) : BaseViewModel(), EventViewModel<BaseAssetActionViewModel.ViewState> by eventDelegate {
 
     abstract val assetId: Long
 
@@ -81,11 +80,9 @@ abstract class BaseAssetActionViewModel(
     fun getAccountName(address: String) {
         viewModelScope.launchIO {
             val accountAddress = accountAddressUseCase.getAccountAddress(address)
-            withContext(Dispatchers.Main) {
-                eventDelegate.sendEvent(
-                    ViewEvent.SetAccountName(accountAddress)
-                )
-            }
+            eventDelegate.sendEvent(
+                ViewState.DefaultState(accountAddress)
+            )
         }
     }
 
@@ -95,7 +92,7 @@ abstract class BaseAssetActionViewModel(
         const val DEFAULT_WAIT_FOR_CONFIRMATION_PARAM = false
     }
 
-    interface ViewEvent {
-        data class SetAccountName(val accountAddress: BaseAccountAddress.AccountAddress) : ViewEvent
+    interface ViewState {
+        data class DefaultState(val accountAddress: BaseAccountAddress.AccountAddress) : ViewState
     }
 }

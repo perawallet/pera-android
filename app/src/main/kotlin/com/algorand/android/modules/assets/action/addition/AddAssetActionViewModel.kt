@@ -30,7 +30,7 @@ import javax.inject.Inject
 class AddAssetActionViewModel @Inject constructor(
     private val getFormattedTransactionFeeAmountUseCase: GetFormattedTransactionFeeAmountUseCase,
     accountAddressUseCase: AccountAddressUseCase,
-    eventDelegate: EventDelegate<ViewEvent>,
+    eventDelegate: EventDelegate<ViewState>,
     verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     fetchAndCacheAssets: FetchAndCacheAssets,
     getAsset: GetAsset,

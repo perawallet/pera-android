@@ -22,8 +22,8 @@ import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
-import com.algorand.wallet.viewmodel.EventDelegate
-import com.algorand.wallet.viewmodel.EventViewModel
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -35,8 +35,8 @@ class PassphraseValidationViewModel @Inject constructor(
     private val aesPlatformManager: AESPlatformManager,
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
     private val peraBip39Sdk: PeraBip39Sdk,
-    private val eventDelegate: EventDelegate<ViewEvent>
-) : BaseViewModel(), EventViewModel<PassphraseValidationViewModel.ViewEvent> by eventDelegate {
+    private val stateDelegate: StateDelegate<ViewState>
+) : BaseViewModel(), StateViewModel<PassphraseValidationViewModel.ViewState> by stateDelegate {
 
     fun logOnboardingNextClickEvent() {
         viewModelScope.launch {
@@ -50,13 +50,14 @@ class PassphraseValidationViewModel @Inject constructor(
 
     fun setupPassphraseValidationView(args: PassphraseValidationFragmentArgs) {
         viewModelScope.launchIO {
-            eventDelegate.sendEvent(ViewEvent.SetupPassphraseValidationView(getMnemonic(args)))
+            stateDelegate.setDefaultState(ViewState.DefaultState(getMnemonic(args)))
         }
     }
 
     fun recreatePassphraseValidationView(args: PassphraseValidationFragmentArgs) {
         viewModelScope.launchIO {
-            eventDelegate.sendEvent(ViewEvent.RecreatePassphraseValidationView(getMnemonic(args)))
+            val passphrase = getMnemonic(args)
+            stateDelegate.updateState { ViewState.RecreateState(passphrase) }
         }
     }
 
@@ -85,8 +86,8 @@ class PassphraseValidationViewModel @Inject constructor(
         return passphrase?.split(" ") ?: emptyList()
     }
 
-    sealed interface ViewEvent {
-        data class SetupPassphraseValidationView(val passphrase: List<String>) : ViewEvent
-        data class RecreatePassphraseValidationView(val passphrase: List<String>) : ViewEvent
+    sealed interface ViewState {
+        data class DefaultState(val passphrase: List<String>) : ViewState
+        data class RecreateState(val passphrase: List<String>) : ViewState
     }
 }

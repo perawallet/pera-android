@@ -34,6 +34,7 @@ class CollectibleOptOutConfirmationBottomSheet : BaseAssetActionBottomSheet() {
             transactionFeeGroup.show()
             accountGroup.show()
         }
+        assetActionViewModel.getAccountName(assetActionViewModel.accountAddress)
     }
 
     override fun setDescriptionTextView(textView: TextView) {

@@ -38,9 +38,9 @@ import com.google.android.material.button.MaterialButton
 // TODO Refactor this class whenever have a time
 abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_asset_action) {
 
-    private val viewEventCollector: suspend (BaseAssetActionViewModel.ViewEvent) -> Unit = { event ->
-        when (event) {
-            is BaseAssetActionViewModel.ViewEvent.SetAccountName -> setAccountName(event.accountAddress)
+    private val viewEventCollector: suspend (BaseAssetActionViewModel.ViewState) -> Unit = { state ->
+        when (state) {
+            is BaseAssetActionViewModel.ViewState.DefaultState -> setAccountName(state.accountAddress)
         }
     }
 
@@ -73,8 +73,8 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initArgs()
-        initUi()
         initObservers()
+        initUi()
         with(binding) {
             setDescriptionTextView(descriptionTextView)
             setToolbar(customToolbar)

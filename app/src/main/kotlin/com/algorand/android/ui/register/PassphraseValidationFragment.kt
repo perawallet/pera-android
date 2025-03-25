@@ -24,8 +24,7 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.ui.register.PassphraseValidationFragmentDirections.Companion.actionPassphraseValidationFragmentToPassphraseVerifiedInfoFragment
-import com.algorand.android.ui.register.PassphraseValidationViewModel.ViewEvent.RecreatePassphraseValidationView
-import com.algorand.android.ui.register.PassphraseValidationViewModel.ViewEvent.SetupPassphraseValidationView
+import com.algorand.android.ui.register.PassphraseValidationViewModel.ViewState
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.singleVibrate
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -34,10 +33,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passphrase_validation) {
 
-    private val viewEventCollector: suspend (PassphraseValidationViewModel.ViewEvent) -> Unit = { event ->
-        when (event) {
-            is RecreatePassphraseValidationView -> recreatePassphraseValidationView(event.passphrase)
-            is SetupPassphraseValidationView -> setupPassphraseValidationView(event.passphrase)
+    private val viewStateCollector: suspend (ViewState) -> Unit = { state ->
+        when (state) {
+            is ViewState.DefaultState -> setupPassphraseValidationView(state.passphrase)
+            is ViewState.RecreateState -> recreatePassphraseValidationView(state.passphrase)
         }
     }
 
@@ -72,8 +71,8 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
 
     private fun initObservers() {
         collectLatestOnLifecycle(
-            flow = passphraseValidationViewModel.viewEvent,
-            collection = viewEventCollector
+            flow = passphraseValidationViewModel.state,
+            collection = viewStateCollector
         )
     }
 

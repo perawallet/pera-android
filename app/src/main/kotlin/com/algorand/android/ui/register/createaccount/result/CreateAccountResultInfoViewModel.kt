@@ -65,7 +65,7 @@ class CreateAccountResultInfoViewModel @Inject constructor(
                 secondButtonTextRes = secondButtonTextRes
             )
 
-            stateDelegate.setDefaultState(defaultState)
+            stateDelegate.updateState { defaultState }
         }
     }
 

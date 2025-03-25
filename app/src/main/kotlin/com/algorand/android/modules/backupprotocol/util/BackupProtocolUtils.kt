@@ -24,7 +24,6 @@ object BackupProtocolUtils {
 
     fun convertAccountTypeToBackupProtocolAccountType(accountType: AccountType?): String? {
         return when (accountType) {
-            AccountType.HdKey,
             AccountType.Algo25,
             AccountType.Rekeyed,
             AccountType.RekeyedAuth -> SINGLE_ACCOUNT_TYPE_NAME

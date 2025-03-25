@@ -33,9 +33,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_passphrase) {
 
-    private val viewEventCollector: suspend (BackupPassphraseViewModel.ViewEvent) -> Unit = { event ->
-        when (event) {
-            is BackupPassphraseViewModel.ViewEvent.SetupPassphrase -> setupPassphrase(event.passphrase)
+    private val viewStateCollector: suspend (BackupPassphraseViewModel.ViewState) -> Unit = { state ->
+        when (state) {
+            is BackupPassphraseViewModel.ViewState.Idle -> {}
+            is BackupPassphraseViewModel.ViewState.DefaultState -> setupPassphrase(state.passphrase)
         }
     }
 
@@ -71,8 +72,8 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
 
     private fun initObservers() {
         collectLatestOnLifecycle(
-            flow = backupPassphraseViewModel.viewEvent,
-            collection = viewEventCollector
+            flow = backupPassphraseViewModel.state,
+            collection = viewStateCollector
         )
     }
 

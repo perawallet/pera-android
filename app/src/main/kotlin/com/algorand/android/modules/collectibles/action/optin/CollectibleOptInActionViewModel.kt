@@ -17,7 +17,7 @@ import javax.inject.Inject
 class CollectibleOptInActionViewModel @Inject constructor(
     private val getFormattedTransactionFeeAmountUseCase: GetFormattedTransactionFeeAmountUseCase,
     accountAddressUseCase: AccountAddressUseCase,
-    eventDelegate: EventDelegate<ViewEvent>,
+    eventDelegate: EventDelegate<ViewState>,
     verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     fetchAndCacheAssets: FetchAndCacheAssets,
     getAsset: GetAsset,
@@ -37,7 +37,6 @@ class CollectibleOptInActionViewModel @Inject constructor(
 
     init {
         fetchAssetDescription(assetId)
-        getAccountName(accountAddress)
     }
 
     fun getTransactionFee(): String {

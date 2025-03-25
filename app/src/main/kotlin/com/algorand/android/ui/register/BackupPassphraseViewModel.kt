@@ -21,8 +21,8 @@ import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
-import com.algorand.wallet.viewmodel.EventDelegate
-import com.algorand.wallet.viewmodel.EventViewModel
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -33,8 +33,8 @@ class BackupPassphraseViewModel @Inject constructor(
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
     private val aesPlatformManager: AESPlatformManager,
     private val peraBip39Sdk: PeraBip39Sdk,
-    private val eventDelegate: EventDelegate<ViewEvent>
-) : BaseViewModel(), EventViewModel<BackupPassphraseViewModel.ViewEvent> by eventDelegate {
+    private val stateDelegate: StateDelegate<ViewState>
+) : BaseViewModel(), StateViewModel<BackupPassphraseViewModel.ViewState> by stateDelegate {
 
     fun logOnboardingNextClickEvent() {
         viewModelScope.launch {
@@ -66,12 +66,15 @@ class BackupPassphraseViewModel @Inject constructor(
                 } ?: run { null }
             }
             passphrase?.let {
-                eventDelegate.sendEvent(ViewEvent.SetupPassphrase(it))
+                stateDelegate.setDefaultState(ViewState.DefaultState(it))
             }
         }
     }
 
-    sealed interface ViewEvent {
-        data class SetupPassphrase(val passphrase: String?) : ViewEvent
+    sealed interface ViewState {
+        data object Idle : ViewState
+        data class DefaultState(
+            val passphrase: String?
+        ) : ViewState
     }
 }

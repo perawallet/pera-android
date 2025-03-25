@@ -62,7 +62,7 @@ class WatchAccountResultInfoViewModel @Inject constructor(
                 firstButtonTextRes = firstButtonTextRes
             )
 
-            stateDelegate.setDefaultState(defaultState)
+            stateDelegate.updateState { defaultState }
         }
     }
 

@@ -36,6 +36,7 @@ class RemoveAssetActionBottomSheet : BaseAssetActionBottomSheet() {
             transactionFeeGroup.show()
             accountGroup.show()
         }
+        assetActionViewModel.getAccountName(assetActionViewModel.accountAddress)
     }
 
     override val assetActionViewModel by viewModels<RemoveAssetActionViewModel>()

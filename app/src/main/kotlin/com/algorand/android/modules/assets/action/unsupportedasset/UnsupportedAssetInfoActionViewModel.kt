@@ -27,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UnsupportedAssetInfoActionViewModel @Inject constructor(
     accountAddressUseCase: AccountAddressUseCase,
-    eventDelegate: EventDelegate<ViewEvent>,
+    eventDelegate: EventDelegate<ViewState>,
     verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     fetchAndCacheAssets: FetchAndCacheAssets,
     getAsset: GetAsset,
@@ -47,6 +47,5 @@ class UnsupportedAssetInfoActionViewModel @Inject constructor(
 
     init {
         fetchAssetDescription(assetId)
-        getAccountName(accountAddress)
     }
 }

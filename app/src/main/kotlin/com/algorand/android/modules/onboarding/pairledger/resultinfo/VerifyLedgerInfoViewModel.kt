@@ -67,7 +67,7 @@ class VerifyLedgerInfoViewModel @Inject constructor(
                 firstButtonTextRes = firstButtonTextRes,
                 secondButtonTextRes = secondButtonTextRes
             )
-            stateDelegate.setDefaultState(defaultState)
+            stateDelegate.updateState { defaultState }
         }
     }
 

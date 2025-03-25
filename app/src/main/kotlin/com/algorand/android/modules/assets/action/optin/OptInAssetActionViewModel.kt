@@ -27,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OptInAssetActionViewModel @Inject constructor(
     accountAddressUseCase: AccountAddressUseCase,
-    eventDelegate: EventDelegate<ViewEvent>,
+    eventDelegate: EventDelegate<ViewState>,
     verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     fetchAndCacheAssets: FetchAndCacheAssets,
     getAsset: GetAsset,
@@ -41,12 +41,11 @@ class OptInAssetActionViewModel @Inject constructor(
 ) {
 
     val assetAction: AssetAction = savedStateHandle.getOrThrow(ASSET_ACTION_KEY)
-    private val accountAddress: String = assetAction.publicKey.orEmpty()
+    val accountAddress: String = assetAction.publicKey.orEmpty()
 
     override val assetId: Long = assetAction.assetId
 
     init {
         fetchAssetDescription(assetId)
-        getAccountName(accountAddress)
     }
 }

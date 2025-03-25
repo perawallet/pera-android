@@ -29,7 +29,7 @@ import javax.inject.Inject
 class CollectibleOptOutConfirmationViewModel @Inject constructor(
     private val getFormattedTransactionFeeAmountUseCase: GetFormattedTransactionFeeAmountUseCase,
     accountAddressUseCase: AccountAddressUseCase,
-    eventDelegate: EventDelegate<ViewEvent>,
+    eventDelegate: EventDelegate<ViewState>,
     verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     fetchAndCacheAssets: FetchAndCacheAssets,
     getAsset: GetAsset,
@@ -49,7 +49,6 @@ class CollectibleOptOutConfirmationViewModel @Inject constructor(
 
     init {
         fetchAssetDescription(assetId)
-        getAccountName(accountAddress)
     }
 
     fun getTransactionFee(): String {

@@ -34,6 +34,15 @@ data class Account(
     var isBackedUp: Boolean
 ) : Parcelable {
 
+    fun getSecretKey(): ByteArray? {
+        return when (detail) {
+            is Detail.Standard -> detail.secretKey
+            is Detail.Rekeyed -> detail.secretKey
+            is Detail.RekeyedAuth -> detail.secretKey
+            else -> null // TODO may throw exception later.
+        }
+    }
+
     // TODO Combine Detail class with Account.Type class
     sealed class Detail : Parcelable {
         @Parcelize

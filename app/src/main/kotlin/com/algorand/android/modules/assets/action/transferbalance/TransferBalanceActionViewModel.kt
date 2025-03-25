@@ -27,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TransferBalanceActionViewModel @Inject constructor(
     accountAddressUseCase: AccountAddressUseCase,
-    eventDelegate: EventDelegate<ViewEvent>,
+    eventDelegate: EventDelegate<ViewState>,
     verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     fetchAndCacheAssets: FetchAndCacheAssets,
     getAsset: GetAsset,
@@ -48,6 +48,5 @@ class TransferBalanceActionViewModel @Inject constructor(
 
     init {
         fetchAssetDescription(assetId)
-        getAccountName(accountAddress)
     }
 }

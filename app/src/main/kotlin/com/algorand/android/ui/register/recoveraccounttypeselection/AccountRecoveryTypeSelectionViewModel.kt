@@ -19,16 +19,16 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.preference.setRegisterSkip
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
-import com.algorand.wallet.viewmodel.EventDelegate
-import com.algorand.wallet.viewmodel.EventViewModel
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 
 @HiltViewModel
 class AccountRecoveryTypeSelectionViewModel @Inject constructor(
     private val sharedPref: SharedPreferences,
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
-    private val eventDelegate: EventDelegate<ViewEvent>,
-) : ViewModel(), EventViewModel<AccountRecoveryTypeSelectionViewModel.ViewEvent> by eventDelegate {
+    private val stateDelegate: StateDelegate<ViewState>,
+) : ViewModel(), StateViewModel<AccountRecoveryTypeSelectionViewModel.ViewState> by stateDelegate {
 
     fun setRegisterSkip() {
         sharedPref.setRegisterSkip()
@@ -37,12 +37,12 @@ class AccountRecoveryTypeSelectionViewModel @Inject constructor(
     fun setupToolbar() {
         viewModelScope.launchIO {
             if (isThereAnyLocalAccount()) {
-                eventDelegate.sendEvent(ViewEvent.SetupToolbar)
+                stateDelegate.setDefaultState(ViewState.DefaultState)
             }
         }
     }
 
-    sealed interface ViewEvent {
-        data object SetupToolbar : ViewEvent
+    sealed interface ViewState {
+        data object DefaultState : ViewState
     }
 }

@@ -32,6 +32,7 @@ class TransferBalanceActionBottomSheet : BaseAssetActionBottomSheet() {
 
     override fun initUi() {
         binding.accountGroup.show()
+        assetActionViewModel.getAccountName(assetActionViewModel.accountAddress)
     }
 
     override val assetActionViewModel by viewModels<TransferBalanceActionViewModel>()

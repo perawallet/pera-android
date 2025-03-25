@@ -38,6 +38,7 @@ import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.asb.domain.usecase.BackupProtocolConstants.SINGLE_ACCOUNT_TYPE_NAME
 import com.algorand.wallet.asb.domain.usecase.BackupProtocolConstants.WATCH_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
@@ -48,6 +49,7 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
     private val asbAccountImportParser: AsbAccountImportParser,
     private val accountAdditionUseCase: AccountAdditionUseCase,
     private val getAccountDisplayName: GetAccountDisplayName,
+    private val aesPlatformManager: AESPlatformManager,
     getSortedAccountsByPreference: GetSortedAccountsByPreference,
     accountItemConfigurationMapper: AccountItemConfigurationMapper,
     getAccountIconDrawablePreview: GetAccountIconDrawablePreview
@@ -231,13 +233,21 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
     private suspend fun addImportedAccount(importedAccount: BackupProtocolElement?) {
         if (importedAccount == null) return
         val safeAccountAddress = importedAccount.address ?: return
-        val safeAccountPrivateKey = importedAccount.privateKey?.decodeBase64ToByteArray() ?: return
         val safeAccountName = importedAccount.name.orEmpty().ifBlank { safeAccountAddress.toShortenedAddress() }
+        val accountType = when (importedAccount.accountType) {
+            SINGLE_ACCOUNT_TYPE_NAME -> {
+                val safeAccountPrivateKey = importedAccount.privateKey?.decodeBase64ToByteArray() ?: return
+                val encryptedPrivateKey = aesPlatformManager.encryptByteArray(safeAccountPrivateKey)
+                AccountCreation.Type.Algo25(encryptedPrivateKey)
+            }
+            WATCH_ACCOUNT_TYPE_NAME -> AccountCreation.Type.NoAuth
+            else -> return
+        }
         val recoveredAccount = AccountCreation(
             address = safeAccountAddress,
             customName = safeAccountName,
             isBackedUp = true,
-            type = AccountCreation.Type.Algo25(safeAccountPrivateKey),
+            type = accountType,
             creationType = CreationType.RECOVER
         )
         accountAdditionUseCase.addNewAccount(recoveredAccount)

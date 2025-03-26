@@ -84,7 +84,7 @@ data class Account(
         }
 
         @Parcelize
-        object Watch : Detail()
+        data object Watch : Detail()
     }
 
     enum class Type {
@@ -101,8 +101,6 @@ data class Account(
     }
 
     companion object {
-
-        val defaultAccountType = STANDARD
 
         fun create(
             publicKey: String,

@@ -80,7 +80,7 @@ internal class PeraBip39SdkImpl @Inject constructor(
         // Produce the PK and turn it into an Algorand formatted address
         val algoAddress = Address(publicKey)
         var privateKey: ByteArray = xHDWalletAPI.deriveKey(
-            fromSeed(seed),
+            fromSeed(seed.copyOf()),
             getBIP44PathFromContext(keyContext, account, change, keyIndex),
             true
         )
@@ -88,8 +88,8 @@ internal class PeraBip39SdkImpl @Inject constructor(
         val output = HdKeyAccount(
             address = algoAddress.toString(),
             publicKey = publicKey,
-            privateKey = privateKey,
-            entropy = entropy,
+            privateKey = privateKey.copyOf(),
+            entropy = entropy.copyOf(),
             account = account.toInt(),
             change = change.toInt(),
             keyIndex = keyIndex.toInt(),

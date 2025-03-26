@@ -66,13 +66,7 @@ class AsbAccountImportParser @Inject constructor(
                 return false
             }
         }
-
-        val isAccountAddressValid = backupProtocolElement.address.isValidAddress()
-        if (!isAccountAddressValid) {
-            return false
-        }
-
-        return isAccountTypeEligible
+        return backupProtocolElement.address.isValidAddress()
     }
 
     private fun isAccountTypeAlgo25(accountTypeName: String?): Boolean {

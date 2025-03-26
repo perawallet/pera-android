@@ -19,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.modules.onboarding.recoverypassphrase.result.ui.RecoverAccountResultInfoViewModel.ViewState
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.compose.widget.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraHeadlineText
@@ -44,35 +46,63 @@ class RecoverAccountResultInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) =
+    override fun Title(modifier: Modifier) {
+        val state = recoverAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value
+        val titleText = when (state) {
+            is ViewState.DefaultState -> stringResource(id = state.titleTextRes)
+            else -> ""
+        }
+
         PeraHeadlineText(
             modifier = modifier,
-            text = stringResource(id = recoverAccountResultInfoViewModel.getPreviewTitle())
+            text = titleText
         )
+    }
 
     @Composable
-    override fun Description(modifier: Modifier) =
+    override fun Description(modifier: Modifier) {
+        val state = recoverAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value
+        val descriptionText = when (state) {
+            is ViewState.DefaultState -> stringResource(id = state.descriptionTextRes)
+            else -> ""
+        }
+
         PeraBodyText(
-            text = stringResource(id = recoverAccountResultInfoViewModel.getPreviewDescription()),
+            text = descriptionText,
             modifier = modifier
         )
+    }
 
-    @ExperimentalMaterial3Api
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) {
+        val state = recoverAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value
+        val firstButtonText = when (state) {
+            is ViewState.DefaultState -> stringResource(id = state.firstButtonTextRes)
+            else -> ""
+        }
+
         PeraPrimaryButton(
             onClick = { navToMeldNavigation() },
             modifier = modifier,
-            text = stringResource(id = recoverAccountResultInfoViewModel.getPreviewFirstButtonText())
+            text = firstButtonText
         )
+    }
 
     @Composable
-    override fun SecondaryButton(modifier: Modifier) =
+    override fun SecondaryButton(modifier: Modifier) {
+        val state = recoverAccountResultInfoViewModel.state.collectAsStateWithLifecycle().value
+        val secondButtonText = when (state) {
+            is ViewState.DefaultState -> stringResource(id = state.secondButtonTextRes)
+            else -> ""
+        }
+
         PeraSecondaryButton(
             onClick = { onStartUsingPeraClick() },
             modifier = modifier,
-            text = stringResource(id = recoverAccountResultInfoViewModel.getPreviewSecondButtonText())
+            text = secondButtonText
         )
+    }
 
     private fun onStartUsingPeraClick() {
         if (recoverAccountResultInfoViewModel.shouldForceLockNavigation()) {

@@ -131,7 +131,7 @@ class AccountAdditionUseCase @Inject constructor(
             var secretKey = aesPlatformManager.decryptByteArray(type.encryptedSecretKey)
             addAlgo25Account(
                 address,
-                secretKey,
+                secretKey.copyOf(),
                 isBackedUp,
                 customName,
                 createAccount.orderIndex

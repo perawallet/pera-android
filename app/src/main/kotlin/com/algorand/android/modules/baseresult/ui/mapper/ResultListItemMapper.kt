@@ -18,9 +18,9 @@ import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.PluralAnnotatedString
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.baseresult.ui.model.ResultListItem
-import com.algorand.android.utils.AccountDisplayName
 import javax.inject.Inject
 
 class ResultListItemMapper @Inject constructor() {

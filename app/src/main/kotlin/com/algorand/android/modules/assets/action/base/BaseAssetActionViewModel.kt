@@ -27,8 +27,8 @@ import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.VerificationTier
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.wallet.asset.domain.usecase.GetAsset
-import com.algorand.wallet.viewmodel.EventDelegate
-import com.algorand.wallet.viewmodel.EventViewModel
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,16 +37,20 @@ import kotlinx.coroutines.launch
 
 abstract class BaseAssetActionViewModel(
     private val accountAddressUseCase: AccountAddressUseCase,
-    private val eventDelegate: EventDelegate<ViewState>,
+    private val stateDelegate: StateDelegate<ViewState>,
     private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     private val fetchAndCacheAssets: FetchAndCacheAssets,
     private val getAsset: GetAsset
-) : BaseViewModel(), EventViewModel<BaseAssetActionViewModel.ViewState> by eventDelegate {
+) : BaseViewModel(), StateViewModel<BaseAssetActionViewModel.ViewState> by stateDelegate {
 
     abstract val assetId: Long
 
     private val _assetFlow = MutableStateFlow<Resource<Asset>?>(null)
     val assetFlow: StateFlow<Resource<Asset>?> = _assetFlow.asStateFlow()
+
+    init {
+        stateDelegate.setDefaultState(ViewState.Idle)
+    }
 
     // TODO: Move this into UseCase
     protected fun fetchAssetDescription(assetId: Long) {
@@ -80,9 +84,9 @@ abstract class BaseAssetActionViewModel(
     fun getAccountName(address: String) {
         viewModelScope.launchIO {
             val accountAddress = accountAddressUseCase.getAccountAddress(address)
-            eventDelegate.sendEvent(
+            stateDelegate.updateState {
                 ViewState.DefaultState(accountAddress)
-            )
+            }
         }
     }
 
@@ -92,7 +96,8 @@ abstract class BaseAssetActionViewModel(
         const val DEFAULT_WAIT_FOR_CONFIRMATION_PARAM = false
     }
 
-    interface ViewState {
+    sealed interface ViewState {
+        data object Idle : ViewState
         data class DefaultState(val accountAddress: BaseAccountAddress.AccountAddress) : ViewState
     }
 }

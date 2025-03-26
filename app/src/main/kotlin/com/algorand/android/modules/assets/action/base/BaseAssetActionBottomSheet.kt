@@ -38,8 +38,9 @@ import com.google.android.material.button.MaterialButton
 // TODO Refactor this class whenever have a time
 abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_asset_action) {
 
-    private val viewEventCollector: suspend (BaseAssetActionViewModel.ViewState) -> Unit = { state ->
+    private val viewStateCollector: suspend (BaseAssetActionViewModel.ViewState) -> Unit = { state ->
         when (state) {
+            is BaseAssetActionViewModel.ViewState.Idle -> Unit
             is BaseAssetActionViewModel.ViewState.DefaultState -> setAccountName(state.accountAddress)
         }
     }
@@ -96,8 +97,8 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
         )
 
         collectLatestOnLifecycle(
-            assetActionViewModel.viewEvent,
-            viewEventCollector
+            assetActionViewModel.state,
+            viewStateCollector
         )
     }
 

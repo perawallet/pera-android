@@ -35,7 +35,7 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
 
     private val viewStateCollector: suspend (BackupPassphraseViewModel.ViewState) -> Unit = { state ->
         when (state) {
-            is BackupPassphraseViewModel.ViewState.Idle -> {}
+            is BackupPassphraseViewModel.ViewState.Idle -> Unit
             is BackupPassphraseViewModel.ViewState.DefaultState -> setupPassphrase(state.passphrase)
         }
     }

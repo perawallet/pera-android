@@ -20,21 +20,21 @@ import com.algorand.android.usecase.AccountAddressUseCase
 import com.algorand.android.utils.getOrThrow
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.wallet.asset.domain.usecase.GetAsset
-import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class TransferBalanceActionViewModel @Inject constructor(
     accountAddressUseCase: AccountAddressUseCase,
-    eventDelegate: EventDelegate<ViewState>,
+    stateDelegate: StateDelegate<ViewState>,
     verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     fetchAndCacheAssets: FetchAndCacheAssets,
     getAsset: GetAsset,
     savedStateHandle: SavedStateHandle
 ) : BaseAssetActionViewModel(
     accountAddressUseCase,
-    eventDelegate,
+    stateDelegate,
     verificationTierConfigurationDecider,
     fetchAndCacheAssets,
     getAsset

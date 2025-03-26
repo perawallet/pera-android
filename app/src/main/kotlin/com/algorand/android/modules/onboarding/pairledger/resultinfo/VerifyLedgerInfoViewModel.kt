@@ -15,44 +15,80 @@ package com.algorand.android.modules.onboarding.pairledger.resultinfo
 import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.algorand.android.usecase.LedgerAccountAdditionResultInfoUseCase
+import androidx.lifecycle.viewModelScope
+import com.algorand.android.R
 import com.algorand.android.usecase.LockPreferencesUseCase
 import com.algorand.android.utils.getOrElse
+import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCount
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 
 @HiltViewModel
 class VerifyLedgerInfoViewModel @Inject constructor(
-    ledgerAccountAdditionResultInfoUseCase: LedgerAccountAdditionResultInfoUseCase,
+    private val getLocalAccountCount: GetLocalAccountCount,
     private val lockPreferencesUseCase: LockPreferencesUseCase,
-    private val savedStateHandle: SavedStateHandle
-) : ViewModel() {
+    private val stateDelegate: StateDelegate<ViewState>,
+    savedStateHandle: SavedStateHandle
+) : ViewModel(), StateViewModel<VerifyLedgerInfoViewModel.ViewState> by stateDelegate {
+
+    init {
+        initViewState()
+    }
+
+    private fun initViewState() {
+        stateDelegate.setDefaultState(ViewState.Idle)
+    }
+
+    fun setDefaultState() {
+        viewModelScope.launchIO {
+            val isItFirstAccountThatAdded = getLocalAccountCount() == numberOfAccountsAdded
+
+            val titleTextRes = R.string.account_has_been_added
+
+            val descriptionTextRes = if (isItFirstAccountThatAdded) {
+                R.string.welcome_to_pera_your_account
+            } else {
+                R.string.congratulations_your_account
+            }
+
+            val firstButtonTextRes = R.string.buy_algo
+
+            val secondButtonTextRes = if (isItFirstAccountThatAdded) {
+                R.string.start_using_pera
+            } else {
+                R.string.continue_text
+            }
+
+            val defaultState = ViewState.DefaultState(
+                titleTextRes = titleTextRes,
+                descriptionTextRes = descriptionTextRes,
+                firstButtonTextRes = firstButtonTextRes,
+                secondButtonTextRes = secondButtonTextRes
+            )
+            stateDelegate.updateState { defaultState }
+        }
+    }
 
     private val numberOfAccountsAdded = savedStateHandle.getOrElse(NUMBER_OF_ACCOUNTS, 0)
-
-    private val ledgerAccountAdditionResultInfoPreview =
-        ledgerAccountAdditionResultInfoUseCase.getLedgerAccountAdditionResultInfoPreview(numberOfAccountsAdded)
 
     fun shouldForceLockNavigation(): Boolean {
         return lockPreferencesUseCase.shouldNavigateLockNavigation()
     }
 
-    fun getPreviewTitle(): Int {
-        return ledgerAccountAdditionResultInfoPreview.titleTextRes
-    }
-
-    fun getPreviewDescription(): Int {
-        return ledgerAccountAdditionResultInfoPreview.descriptionTextRes
-    }
-
-    fun getPreviewFirstButtonText(): Int {
-        return ledgerAccountAdditionResultInfoPreview.firstButtonTextRes
-    }
-
-    fun getPreviewSecondButtonText(): Int {
-        return ledgerAccountAdditionResultInfoPreview.secondButtonTextRes
-    }
-
     companion object {
         private const val NUMBER_OF_ACCOUNTS = "numberOfAccounts"
+    }
+
+    sealed class ViewState {
+        data object Idle : ViewState()
+
+        data class DefaultState(
+            val titleTextRes: Int,
+            val descriptionTextRes: Int,
+            val firstButtonTextRes: Int,
+            val secondButtonTextRes: Int
+        ) : ViewState()
     }
 }

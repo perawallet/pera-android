@@ -14,35 +14,70 @@ package com.algorand.android.modules.onboarding.recoverypassphrase.result.ui
 
 import javax.inject.Inject
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.algorand.android.R
 import com.algorand.android.usecase.LockPreferencesUseCase
-import com.algorand.android.usecase.RecoverAccountResultInfoUseCase
+import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCount
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 
 @HiltViewModel
 class RecoverAccountResultInfoViewModel @Inject constructor(
-    recoverAccountResultInfoUseCase: RecoverAccountResultInfoUseCase,
-    private val lockPreferencesUseCase: LockPreferencesUseCase
-) : ViewModel() {
+    private val getLocalAccountCount: GetLocalAccountCount,
+    private val lockPreferencesUseCase: LockPreferencesUseCase,
+    private val stateDelegate: StateDelegate<ViewState>,
+) : ViewModel(), StateViewModel<RecoverAccountResultInfoViewModel.ViewState> by stateDelegate {
 
-    private val recoverAccountResultInfoPreview = recoverAccountResultInfoUseCase.getRecoverAccountResultInfoPreview()
+    init {
+        initViewState()
+    }
+
+    private fun initViewState() {
+        stateDelegate.setDefaultState(ViewState.Idle)
+    }
+
+    fun setDefaultState() {
+        viewModelScope.launchIO {
+            val isItFirstAccountThatAdded = getLocalAccountCount() == 1
+            val titleTextRes = R.string.account_has_been_added
+            val descriptionTextRes = if (isItFirstAccountThatAdded) {
+                R.string.welcome_to_pera_your_account
+            } else {
+                R.string.congratulations_your_account
+            }
+            val firstButtonTextRes = R.string.buy_algo
+
+            val secondButtonTextRes =
+                if (isItFirstAccountThatAdded) {
+                    R.string.start_using_pera
+                } else {
+                    R.string.continue_text
+                }
+
+            val defaultState = ViewState.DefaultState(
+                titleTextRes = titleTextRes,
+                descriptionTextRes = descriptionTextRes,
+                firstButtonTextRes = firstButtonTextRes,
+                secondButtonTextRes = secondButtonTextRes
+            )
+            stateDelegate.updateState { defaultState }
+        }
+    }
 
     fun shouldForceLockNavigation(): Boolean {
         return lockPreferencesUseCase.shouldNavigateLockNavigation()
     }
 
-    fun getPreviewTitle(): Int {
-        return recoverAccountResultInfoPreview.titleTextRes
-    }
+    sealed class ViewState {
+        data object Idle : ViewState()
 
-    fun getPreviewDescription(): Int {
-        return recoverAccountResultInfoPreview.descriptionTextRes
-    }
-
-    fun getPreviewFirstButtonText(): Int {
-        return recoverAccountResultInfoPreview.firstButtonTextRes
-    }
-
-    fun getPreviewSecondButtonText(): Int {
-        return recoverAccountResultInfoPreview.secondButtonTextRes
+        data class DefaultState(
+            val titleTextRes: Int,
+            val descriptionTextRes: Int,
+            val firstButtonTextRes: Int,
+            val secondButtonTextRes: Int
+        ) : ViewState()
     }
 }

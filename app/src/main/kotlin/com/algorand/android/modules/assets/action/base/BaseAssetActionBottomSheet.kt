@@ -22,6 +22,8 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.databinding.BottomSheetAssetActionBinding
+import com.algorand.android.models.BaseAccountAddress
+import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.addUnnamedAssetName
 import com.algorand.android.utils.copyToClipboard
@@ -35,6 +37,13 @@ import com.google.android.material.button.MaterialButton
 
 // TODO Refactor this class whenever have a time
 abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_asset_action) {
+
+    private val viewStateCollector: suspend (BaseAssetActionViewModel.ViewState) -> Unit = { state ->
+        when (state) {
+            is BaseAssetActionViewModel.ViewState.Idle -> Unit
+            is BaseAssetActionViewModel.ViewState.DefaultState -> setAccountName(state.accountAddress)
+        }
+    }
 
     protected val binding by viewBinding(BottomSheetAssetActionBinding::bind)
 
@@ -61,13 +70,12 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
 
     open fun setTransactionFeeTextView(textView: TextView) {}
     open fun setWarningIconImageView(imageView: ImageView) {}
-    open fun setAccountNameTextView(textView: TextView) {}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initArgs()
-        initUi()
         initObservers()
+        initUi()
         with(binding) {
             setDescriptionTextView(descriptionTextView)
             setToolbar(customToolbar)
@@ -75,7 +83,6 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
             setNegativeButton(negativeButton)
             setTransactionFeeTextView(transactionFeeTextView)
             setWarningIconImageView(warningIconImageView)
-            setAccountNameTextView(accountTextView)
         }
     }
 
@@ -87,6 +94,11 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
         collectLatestOnLifecycle(
             flow = assetActionViewModel.assetFlow,
             collection = assetCollector
+        )
+
+        collectLatestOnLifecycle(
+            assetActionViewModel.state,
+            viewStateCollector
         )
     }
 
@@ -126,6 +138,22 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
             val errorMessage = error.parse(this).toString()
             showGlobalError(errorMessage = errorMessage, tag = baseActivityTag)
             navBack()
+        }
+    }
+
+    private fun setAccountName(accountAddress: BaseAccountAddress.AccountAddress) {
+        binding.accountTextView.apply {
+            with(accountAddress) {
+                text = getDisplayAddress()
+                setDrawable(
+                    start = AccountIconDrawable.create(
+                        context = context,
+                        accountIconDrawablePreview = accountIconDrawablePreview,
+                        sizeResId = R.dimen.spacing_xlarge
+                    )
+                )
+                setOnLongClickListener { onAccountAddressCopied(publicKey); true }
+            }
         }
     }
 

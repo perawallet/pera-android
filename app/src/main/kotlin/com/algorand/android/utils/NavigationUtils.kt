@@ -18,7 +18,6 @@ import android.view.MenuItem
 import androidx.annotation.IdRes
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
@@ -104,10 +103,6 @@ fun <T> Fragment.listenToNavigationResult(
     ) { result ->
         callback.invoke(result)
     }
-}
-
-fun FragmentActivity?.getNavigationBackStackCount(): Int {
-    return this?.supportFragmentManager?.primaryNavigationFragment?.childFragmentManager?.backStackEntryCount ?: 0
 }
 
 fun NavController.navigateSafe(directions: NavDirections, onError: (() -> Unit)? = null) {

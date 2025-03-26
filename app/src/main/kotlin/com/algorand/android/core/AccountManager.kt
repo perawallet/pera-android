@@ -20,33 +20,22 @@ import com.google.crypto.tink.Aead
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 
-// DAGGER
 class AccountManager(
     private val aead: Aead,
     private val gson: Gson,
     private val sharedPref: SharedPreferences
 ) {
 
-    val accounts = MutableStateFlow<List<Account>>(listOf())
-
-    fun getAccount(publicKey: String): Account? {
-        getAccounts().forEach { iteratedAccount ->
-            if (iteratedAccount.address == publicKey) {
-                return iteratedAccount
-            }
-        }
-        return null
-    }
+    private val accounts = MutableStateFlow<List<Account>>(listOf())
 
     fun updateAccountBackupState(accountPublicKey: String?, isBackedUp: Boolean) {
         if (accountPublicKey.isNullOrBlank()) return
 
-        val accounts = getAccounts()
-        val accountToUpdate = accounts.find { it.address == accountPublicKey }
+        val accountToUpdate = accounts.value.find { it.address == accountPublicKey }
 
         accountToUpdate?.let {
             it.isBackedUp = isBackedUp
-            sharedPref.saveAlgorandAccounts(gson, accounts, aead)
+            sharedPref.saveAlgorandAccounts(gson, accounts.value, aead)
         }
     }
 
@@ -56,21 +45,6 @@ class AccountManager(
     }
 
     fun isThereAnyRegisteredAccount(): Boolean {
-        return getAccounts().isEmpty().not()
-    }
-
-    fun getAccounts(): List<Account> {
-        return accounts.value
-    }
-
-    fun getAllAccountsExceptWatch(): List<Account> {
-        return getAccounts()
-            .filter { it.type != Account.Type.WATCH }
-    }
-
-    fun getAllAccountsAddressesExceptWatch(): List<String> {
-        return getAccounts()
-            .filter { it.type != Account.Type.WATCH }
-            .map { account -> account.address }
+        return accounts.value.isEmpty().not()
     }
 }

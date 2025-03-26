@@ -37,6 +37,10 @@ class OptInAssetActionBottomSheet : BaseAssetActionBottomSheet() {
 
     override val assetActionViewModel by viewModels<OptInAssetActionViewModel>()
 
+    override fun initUi() {
+        assetActionViewModel.getAccountName(assetActionViewModel.accountAddress)
+    }
+
     override fun setDescriptionTextView(textView: TextView) {
         textView.apply {
             text = getString(R.string.your_accounts_don_t_contain_this)

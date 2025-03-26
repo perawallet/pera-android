@@ -15,12 +15,10 @@ package com.algorand.android.modules.firebase.token
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.algorand.android.banner.domain.usecase.BannersUseCase
-import com.algorand.android.core.AccountManager
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.deviceregistration.domain.usecase.DeviceRegistrationUseCase
 import com.algorand.android.deviceregistration.domain.usecase.FirebasePushTokenUseCase
 import com.algorand.android.deviceregistration.domain.usecase.UpdatePushTokenUseCase
-import com.algorand.android.models.Account
 import com.algorand.android.models.Node
 import com.algorand.android.modules.firebase.token.mapper.FirebaseTokenResultMapper
 import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
@@ -28,6 +26,8 @@ import com.algorand.android.modules.firebase.token.usecase.ApplyNodeChangesUseCa
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlow
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.google.firebase.messaging.FirebaseMessaging
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -48,15 +48,15 @@ class FirebaseTokenManager @Inject constructor(
     private val bannersUseCase: BannersUseCase,
     private val deviceIdUseCase: DeviceIdUseCase,
     private val updatePushTokenUseCase: UpdatePushTokenUseCase,
-    private val accountManager: AccountManager,
     private val applyNodeChangesUseCase: ApplyNodeChangesUseCase,
-    private val firebaseTokenResultMapper: FirebaseTokenResultMapper
+    private val firebaseTokenResultMapper: FirebaseTokenResultMapper,
+    private val getAccountsDetailsFlow: GetAccountsDetailsFlow
 ) : DefaultLifecycleObserver {
 
     private val _firebaseTokenResultEventFlow = MutableStateFlow<FirebaseTokenResult>(FirebaseTokenResult.TokenLoading)
     val firebaseTokenResultFlow: StateFlow<FirebaseTokenResult> get() = _firebaseTokenResultEventFlow
 
-    private val localAccountsCollector: suspend (value: List<Account>) -> Unit = {
+    private val localAccountsCollector: suspend (value: List<AccountDetail>) -> Unit = {
         refreshFirebasePushToken(null)
     }
 
@@ -112,7 +112,7 @@ class FirebaseTokenManager @Inject constructor(
     private fun initObservers() {
         coroutineScope?.launchIO {
             // Drop 1 added to get any list changes.
-            accountManager.accounts.drop(1).collectLatest(localAccountsCollector)
+            getAccountsDetailsFlow().drop(1).collectLatest(localAccountsCollector)
         }
         coroutineScope?.launchIO {
             firebasePushTokenUseCase.getPushTokenCacheFlow().collect(firebasePushTokenCollector)

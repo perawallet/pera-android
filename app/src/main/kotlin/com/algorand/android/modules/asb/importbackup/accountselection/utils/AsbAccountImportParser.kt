@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.asb.importbackup.accountselection.utils
 
-import com.algorand.android.models.Account
 import com.algorand.android.modules.algosdk.cryptoutil.domain.usecase.IsAccountAddressMatchWithSecretKeyUseCase
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.mapper.AsbAccountImportResultMapper
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult
@@ -20,6 +19,8 @@ import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
 import com.algorand.android.utils.extensions.decodeBase64ToByteArray
 import com.algorand.android.utils.isValidAddress
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.ALGO_25_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.isAccountTypeEligible
 import javax.inject.Inject
 
 class AsbAccountImportParser @Inject constructor(
@@ -54,7 +55,9 @@ class AsbAccountImportParser @Inject constructor(
     suspend fun isAccountSupported(backupProtocolElement: BackupProtocolElement): Boolean {
         val accountPrivateKey = backupProtocolElement.privateKey?.decodeBase64ToByteArray()
 
-        if (isStandardAccount(backupProtocolElement.accountType)) {
+        val isAccountTypeEligible = isAccountTypeEligible(backupProtocolElement.accountType.orEmpty())
+
+        if (isAccountTypeAlgo25(backupProtocolElement.accountType)) {
             val isSecretKeyValid = isAccountAddressMatchWithSecretKeyUseCase.invoke(
                 accountAddress = backupProtocolElement.address.orEmpty(),
                 secretKey = accountPrivateKey ?: return false
@@ -63,12 +66,10 @@ class AsbAccountImportParser @Inject constructor(
                 return false
             }
         }
-
-        val isAccountAddressValid = backupProtocolElement.address.isValidAddress()
-        return isAccountAddressValid
+        return backupProtocolElement.address.isValidAddress()
     }
 
-    private fun isStandardAccount(accountTypeName: String?): Boolean {
-        return Account.Type.valueOf(accountTypeName ?: return false) == Account.Type.STANDARD
+    private fun isAccountTypeAlgo25(accountTypeName: String?): Boolean {
+        return accountTypeName == ALGO_25_ACCOUNT_TYPE_NAME
     }
 }

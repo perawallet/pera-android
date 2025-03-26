@@ -10,18 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.algosdk.encryptionutil.domain.usecase
+package com.algorand.wallet.asb.domain.usecase
 
-import com.algorand.android.modules.algosdk.encryptionutil.domain.repository.AlgorandSdkEncryptionUtils
-import javax.inject.Inject
-import javax.inject.Named
+import com.algorand.wallet.asb.domain.model.AsbBackupData
 
-class DecryptContentUseCase @Inject constructor(
-    @Named(AlgorandSdkEncryptionUtils.INJECTION_NAME)
-    private val algorandSdkEncryptionUtils: AlgorandSdkEncryptionUtils
-) {
-
-    operator fun invoke(encryptedContent: String, key: ByteArray): String? {
-        return algorandSdkEncryptionUtils.decryptContent(encryptedContent, key)
-    }
+fun interface RestoreEncryptedBackupProtocolPayload {
+    operator fun invoke(cipherText: String, cipherKey: ByteArray): AsbBackupData?
 }

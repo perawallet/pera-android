@@ -31,8 +31,8 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
 
     private val viewStateCollector: suspend (AccountRecoveryTypeSelectionViewModel.ViewState) -> Unit = { state ->
         when (state) {
-            is AccountRecoveryTypeSelectionViewModel.ViewState.DefaultState ->
-                setupToolbar()
+            AccountRecoveryTypeSelectionViewModel.ViewState.Idle -> Unit
+            is AccountRecoveryTypeSelectionViewModel.ViewState.DefaultState -> setupToolbar()
         }
     }
 

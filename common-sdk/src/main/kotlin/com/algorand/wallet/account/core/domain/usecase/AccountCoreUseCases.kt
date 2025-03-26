@@ -20,7 +20,13 @@ import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
 
 fun interface AddAlgo25Account {
-    suspend operator fun invoke(address: String, secretKey: ByteArray, isBackedUp: Boolean, customName: String?)
+    suspend operator fun invoke(
+        address: String,
+        secretKey: ByteArray,
+        isBackedUp: Boolean,
+        customName: String?,
+        orderIndex: Int
+    )
 }
 
 fun interface AddHdSeed {
@@ -38,7 +44,8 @@ fun interface AddHdKeyAccount {
         keyIndex: Int,
         derivationType: Int,
         isBackedUp: Boolean,
-        customName: String?
+        customName: String?,
+        orderIndex: Int
     )
 }
 
@@ -48,14 +55,16 @@ fun interface AddLedgerBleAccount {
         deviceMacAddress: String,
         indexInLedger: Int,
         customName: String?,
-        bluetoothName: String?
+        bluetoothName: String?,
+        orderIndex: Int
     )
 }
 
 fun interface AddNoAuthAccount {
     suspend operator fun invoke(
         address: String,
-        customName: String?
+        customName: String?,
+        orderIndex: Int
     )
 }
 

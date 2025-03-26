@@ -27,6 +27,7 @@ import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlg
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToHdKey
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToLedgerBle
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
 
@@ -116,7 +117,8 @@ class AccountAdditionUseCase @Inject constructor(
                             type.keyIndex,
                             type.derivationType,
                             isBackedUp,
-                            customName
+                            customName,
+                            createAccount.orderIndex
                         )
                     }
                 }
@@ -127,18 +129,35 @@ class AccountAdditionUseCase @Inject constructor(
     private suspend fun createAlgo25Account(createAccount: CreateAccount, type: Type.Algo25) {
         with(createAccount) {
             var secretKey = aesPlatformManager.decryptByteArray(type.encryptedSecretKey)
-            addAlgo25Account(address, secretKey, isBackedUp, customName)
-            secretKey = ByteArray(0)
+            addAlgo25Account(
+                address,
+                secretKey,
+                isBackedUp,
+                customName,
+                createAccount.orderIndex
+            )
+            secretKey.clearFromMemory()
         }
     }
 
     private suspend fun createLedgerBleAccount(createAccount: CreateAccount, type: Type.LedgerBle) {
         with(createAccount) {
-            addLedgerBleAccount(address, type.deviceMacAddress, type.indexInLedger, customName, type.bluetoothName)
+            addLedgerBleAccount(
+                address,
+                type.deviceMacAddress,
+                type.indexInLedger,
+                customName,
+                type.bluetoothName,
+                createAccount.orderIndex
+            )
         }
     }
 
     private suspend fun createNoAuthAccount(createAccount: CreateAccount) {
-        addNoAuthAccount(createAccount.address, createAccount.customName)
+        addNoAuthAccount(
+            createAccount.address,
+            createAccount.customName,
+            createAccount.orderIndex
+        )
     }
 }

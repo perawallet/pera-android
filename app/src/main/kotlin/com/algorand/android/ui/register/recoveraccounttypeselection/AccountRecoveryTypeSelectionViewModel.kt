@@ -30,6 +30,10 @@ class AccountRecoveryTypeSelectionViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
 ) : ViewModel(), StateViewModel<AccountRecoveryTypeSelectionViewModel.ViewState> by stateDelegate {
 
+    init {
+        stateDelegate.setDefaultState(ViewState.Idle)
+    }
+
     fun setRegisterSkip() {
         sharedPref.setRegisterSkip()
     }
@@ -43,6 +47,7 @@ class AccountRecoveryTypeSelectionViewModel @Inject constructor(
     }
 
     sealed interface ViewState {
+        data object Idle : ViewState
         data object DefaultState : ViewState
     }
 }

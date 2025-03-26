@@ -45,7 +45,7 @@ internal class AlgoAccountSdkImpl @Inject constructor(
             var secretKey = Sdk.generateSK()
             val output = Algo25Account(
                 address = Sdk.generateAddressFromSK(secretKey),
-                secretKey = secretKey
+                secretKey = secretKey.copyOf()
             )
             secretKey.clearFromMemory()
             output
@@ -60,7 +60,7 @@ internal class AlgoAccountSdkImpl @Inject constructor(
 
             val output = Algo25Account(
                 address = Sdk.generateAddressFromSK(secretKey),
-                secretKey = secretKey
+                secretKey = secretKey.copyOf()
             )
             secretKey.clearFromMemory()
             output

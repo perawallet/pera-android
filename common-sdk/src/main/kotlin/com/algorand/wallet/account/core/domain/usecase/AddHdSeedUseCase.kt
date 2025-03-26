@@ -41,7 +41,7 @@ internal class AddHdSeedUseCase @Inject constructor(
             seed?.let {
                 val newSeedIdInDB = hdSeedRepository.addHdSeed(
                     seedId = 0, // Seed will be auto-generated, update name next step
-                    seed = it,
+                    seed = it.copyOf(),
                     entropy = entropy
                 ).toInt()
 

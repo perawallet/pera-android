@@ -13,20 +13,26 @@
 package com.algorand.android.ui.lockpreference
 
 import android.content.SharedPreferences
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.algorand.android.MainActivity
 import com.algorand.android.MainNavigationDirections.Companion.actionToLockPreferenceNavigation
-import com.algorand.android.core.AccountManager
+import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.preference.DEFAULT_LOCK_PREFERENCE_COUNT
 import com.algorand.android.utils.preference.DONT_SHOW_AGAIN_COUNT
 import com.algorand.android.utils.preference.getLockPreferenceCount
 import com.algorand.android.utils.preference.isPasswordChosen
 import com.algorand.android.utils.preference.setLockPreferenceCount
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import javax.inject.Inject
 
 class AutoLockSuggestionManager @Inject constructor(
     private val sharedPref: SharedPreferences,
-    private val accountManager: AccountManager
-) {
+    private val isThereAnyLocalAccount: IsThereAnyLocalAccount
+) : DefaultLifecycleObserver {
 
     private var isStarted = false
     private var lockPreferenceCount = DEFAULT_LOCK_PREFERENCE_COUNT
@@ -36,11 +42,13 @@ class AutoLockSuggestionManager @Inject constructor(
     }
 
     private fun initializeStartCount() {
-        if (sharedPref.isPasswordChosen().not() && accountManager.isThereAnyRegisteredAccount()) {
-            lockPreferenceCount = sharedPref.getLockPreferenceCount()
-            if (lockPreferenceCount != DONT_SHOW_AGAIN_COUNT && lockPreferenceCount < SUGGESTION_TRIGGER_COUNT) {
-                lockPreferenceCount++
-                sharedPref.setLockPreferenceCount(lockPreferenceCount)
+        coroutineScope?.launchIO {
+            if (sharedPref.isPasswordChosen().not() && isThereAnyLocalAccount()) {
+                lockPreferenceCount = sharedPref.getLockPreferenceCount()
+                if (lockPreferenceCount != DONT_SHOW_AGAIN_COUNT && lockPreferenceCount < SUGGESTION_TRIGGER_COUNT) {
+                    lockPreferenceCount++
+                    sharedPref.setLockPreferenceCount(lockPreferenceCount)
+                }
             }
         }
     }
@@ -60,6 +68,13 @@ class AutoLockSuggestionManager @Inject constructor(
             mainActivity.nav(actionToLockPreferenceNavigation())
             sharedPref.setLockPreferenceCount(DEFAULT_LOCK_PREFERENCE_COUNT)
         }
+    }
+
+    private var coroutineScope: CoroutineScope? = null
+
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+        coroutineScope = CoroutineScope(Job() + Dispatchers.IO)
     }
 
     companion object {

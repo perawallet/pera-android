@@ -13,23 +13,41 @@
 package com.algorand.android.ui.register.recoveraccounttypeselection
 
 import android.content.SharedPreferences
-import javax.inject.Inject
 import androidx.lifecycle.ViewModel
-import com.algorand.android.core.AccountManager
+import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
+import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.preference.setRegisterSkip
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 
 @HiltViewModel
 class AccountRecoveryTypeSelectionViewModel @Inject constructor(
     private val sharedPref: SharedPreferences,
-    private val accountManager: AccountManager
-) : ViewModel() {
+    private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
+    private val stateDelegate: StateDelegate<ViewState>,
+) : ViewModel(), StateViewModel<AccountRecoveryTypeSelectionViewModel.ViewState> by stateDelegate {
+
+    init {
+        stateDelegate.setDefaultState(ViewState.Idle)
+    }
 
     fun setRegisterSkip() {
         sharedPref.setRegisterSkip()
     }
 
-    fun hasAccount(): Boolean {
-        return accountManager.accounts.value.isNotEmpty()
+    fun setupToolbar() {
+        viewModelScope.launchIO {
+            if (isThereAnyLocalAccount()) {
+                stateDelegate.setDefaultState(ViewState.DefaultState)
+            }
+        }
+    }
+
+    sealed interface ViewState {
+        data object Idle : ViewState
+        data object DefaultState : ViewState
     }
 }

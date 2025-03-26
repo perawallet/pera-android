@@ -18,8 +18,12 @@ import com.algorand.android.core.AccountManager
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingVerifyPassphraseEventTracker
+import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -29,8 +33,10 @@ class PassphraseValidationViewModel @Inject constructor(
     private val onboardingVerifyPassphraseEventTracker: OnboardingVerifyPassphraseEventTracker,
     private val accountManager: AccountManager,
     private val aesPlatformManager: AESPlatformManager,
-    private val peraBip39Sdk: PeraBip39Sdk
-) : BaseViewModel() {
+    private val getAlgo25SecretKey: GetAlgo25SecretKey,
+    private val peraBip39Sdk: PeraBip39Sdk,
+    private val stateDelegate: StateDelegate<ViewState>
+) : BaseViewModel(), StateViewModel<PassphraseValidationViewModel.ViewState> by stateDelegate {
 
     fun logOnboardingNextClickEvent() {
         viewModelScope.launch {
@@ -38,25 +44,35 @@ class PassphraseValidationViewModel @Inject constructor(
         }
     }
 
-    fun getAccountSecretKey(publicKey: String): ByteArray? {
-        return accountManager.getAccount(publicKey)?.getSecretKey()
-    }
-
     fun updateAccountBackupState(publicKey: String, isBackedUp: Boolean) {
         accountManager.updateAccountBackupState(publicKey, isBackedUp)
     }
 
-    fun getMnemonic(args: PassphraseValidationFragmentArgs): String? {
+    fun setupPassphraseValidationView(args: PassphraseValidationFragmentArgs) {
+        viewModelScope.launchIO {
+            stateDelegate.setDefaultState(ViewState.DefaultState(getMnemonic(args)))
+        }
+    }
+
+    fun recreatePassphraseValidationView(args: PassphraseValidationFragmentArgs) {
+        viewModelScope.launchIO {
+            val passphrase = getMnemonic(args)
+            stateDelegate.updateState { ViewState.RecreateState(passphrase) }
+        }
+    }
+
+    private suspend fun getMnemonic(args: PassphraseValidationFragmentArgs): List<String> {
         val encryptedEntropy = (args.accountCreation?.type as? AccountCreation.Type.HdKey)?.encryptedEntropy
-        return encryptedEntropy?.let {
+        val passphrase = encryptedEntropy?.let {
             val entropy = aesPlatformManager.decryptByteArray(it)
             peraBip39Sdk.getMnemonicFromEntropy(entropy)
         } ?: run {
-            val encryptedAlgo25Key = (args.accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey
+            val encryptedAlgo25Key =
+                (args.accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey
 
             val secretKey = encryptedAlgo25Key?.let {
                 aesPlatformManager.decryptByteArray(encryptedAlgo25Key)
-            } ?: getAccountSecretKey(args.publicKeyOfAccountToBackup)
+            } ?: getAlgo25SecretKey(args.publicKeyOfAccountToBackup)
 
             secretKey?.let {
                 try {
@@ -67,5 +83,11 @@ class PassphraseValidationViewModel @Inject constructor(
                 }
             } ?: run { null }
         }
+        return passphrase?.split(" ") ?: emptyList()
+    }
+
+    sealed interface ViewState {
+        data class DefaultState(val passphrase: List<String>) : ViewState
+        data class RecreateState(val passphrase: List<String>) : ViewState
     }
 }

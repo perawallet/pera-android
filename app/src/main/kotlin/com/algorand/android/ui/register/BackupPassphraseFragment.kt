@@ -26,11 +26,19 @@ import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.register.BackupPassphraseFragmentDirections.Companion.actionBackupPassphraseFragmentToBackupPassphraseAccountNameNavigation
 import com.algorand.android.utils.disableScreenCapture
 import com.algorand.android.utils.enableScreenCapture
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_passphrase) {
+
+    private val viewStateCollector: suspend (BackupPassphraseViewModel.ViewState) -> Unit = { state ->
+        when (state) {
+            is BackupPassphraseViewModel.ViewState.Idle -> Unit
+            is BackupPassphraseViewModel.ViewState.DefaultState -> setupPassphrase(state.passphrase)
+        }
+    }
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
@@ -51,19 +59,28 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         customizeToolbar()
-        setupPassphrase()
+        initObservers()
+
+        backupPassphraseViewModel.getMnemonic(args)
         binding.nextButton.setOnClickListener { onNextClick() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activity?.disableScreenCapture()
+    }
+
+    private fun initObservers() {
+        collectLatestOnLifecycle(
+            flow = backupPassphraseViewModel.state,
+            collection = viewStateCollector
+        )
     }
 
     private fun customizeToolbar() {
         if (args.accountCreation != null) {
             getAppToolbar()?.setEndButton(button = TextButton(R.string.skip, onClick = ::onSkipClick))
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        activity?.disableScreenCapture()
     }
 
     override fun onStop() {
@@ -73,13 +90,11 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
         }
     }
 
-    private fun setupPassphrase() {
-        val mnemonic = backupPassphraseViewModel.getMnemonic(args)
-        mnemonic?.let {
-            binding.passphraseBoxView.setPassphrases(it)
-        } ?: run {
-            navBack()
+    private fun setupPassphrase(passphrase: String?) {
+        if (passphrase.isNullOrEmpty()) {
+            return navBack()
         }
+        binding.passphraseBoxView.setPassphrases(passphrase)
     }
 
     private fun onNextClick() {

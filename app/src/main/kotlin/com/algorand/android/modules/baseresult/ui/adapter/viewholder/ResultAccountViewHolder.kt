@@ -28,8 +28,8 @@ class ResultAccountViewHolder(
     override fun bind(item: ResultListItem) {
         if (item !is ResultListItem.AccountItem) return
         with(binding.accountItemView) {
-            setTitleText(item.accountDisplayName.getAccountPrimaryDisplayName())
-            setDescriptionText(item.accountDisplayName.getAccountSecondaryDisplayName(resources))
+            setTitleText(item.accountDisplayName.primaryDisplayName)
+            setDescriptionText(item.accountDisplayName.secondaryDisplayName)
             val accountIconDrawable = AccountIconDrawable.create(
                 context = context,
                 accountIconDrawablePreview = item.accountIconDrawablePreview,
@@ -37,7 +37,7 @@ class ResultAccountViewHolder(
             )
             setStartIconDrawable(accountIconDrawable)
             setOnLongClickListener {
-                listener.onAccountLongPressed(item.accountDisplayName.getRawAccountAddress())
+                listener.onAccountLongPressed(item.accountDisplayName.accountAddress)
                 true
             }
         }

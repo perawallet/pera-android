@@ -14,12 +14,6 @@ package com.algorand.android.modules.asb.util
 
 import com.algorand.android.utils.ISO_EXTENDED_DATE_FORMAT
 import com.algorand.android.utils.getCurrentTimeAsZonedDateTime
-import com.algorand.wallet.account.detail.domain.model.AccountType.Algo25
-import com.algorand.wallet.account.detail.domain.model.AccountType.LedgerBle
-import com.algorand.wallet.account.detail.domain.model.AccountType.NoAuth
-import com.algorand.wallet.account.detail.domain.model.AccountType.Rekeyed
-import com.algorand.wallet.account.detail.domain.model.AccountType.RekeyedAuth
-import com.algorand.wallet.account.local.domain.model.LocalAccount
 import java.time.format.DateTimeFormatter
 
 object AlgorandSecureBackupUtils {
@@ -29,18 +23,6 @@ object AlgorandSecureBackupUtils {
     val IMPORT_BACKUP_FILE_MIME_TYPES = arrayOf(BACKUP_FILE_MIME_TYPE, "application/json")
 
     const val BACKUP_PASSPHRASES_WORD_COUNT = 12
-
-    fun isAccountEligible(account: LocalAccount): Boolean {
-        return when (account) {
-            is LocalAccount.Algo25 -> true
-            is LocalAccount.HdKey -> false // TODO
-            is LocalAccount.LedgerBle -> false
-            is LocalAccount.NoAuth -> true
-        }
-    }
-
-    val eligibleAccountTypeList = listOf(Algo25, NoAuth, RekeyedAuth, Rekeyed)
-    val excludedAccountTypeList = listOf(LedgerBle)
 
     fun createBackupFileName(): String {
         val backupFileNameFormatter = DateTimeFormatter.ofPattern(ISO_EXTENDED_DATE_FORMAT)

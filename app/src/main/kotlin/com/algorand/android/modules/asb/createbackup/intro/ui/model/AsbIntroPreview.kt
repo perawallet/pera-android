@@ -17,5 +17,6 @@ import com.algorand.android.utils.Event
 data class AsbIntroPreview(
     val openUrlEvent: Event<String>?,
     val navToEnterPinScreenEvent: Event<Unit>?,
-    val navToAccountSelectionScreenEvent: Event<Unit>?
+    val navToAccountSelectionScreenEvent: Event<Unit>?,
+    val showNoEligibleAccountErrorEvent: Event<Unit>? = null
 )

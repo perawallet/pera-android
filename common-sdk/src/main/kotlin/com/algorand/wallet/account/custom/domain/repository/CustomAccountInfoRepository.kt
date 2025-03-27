@@ -35,6 +35,8 @@ internal interface CustomAccountInfoRepository {
 
     suspend fun getBackedUpAccounts(): Set<String>
 
+    suspend fun setAddressesBackedUp(addresses: Set<String>)
+
     suspend fun isAccountBackedUp(accountAddress: String): Boolean
 
     suspend fun getAllAccountOrderIndexes(): List<AccountOrderIndex>

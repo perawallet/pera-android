@@ -29,20 +29,10 @@
         android:label="fragment_algorand_secure_backup_intro"
         tools:layout="@layout/fragment_algorand_secure_backup_intro">
         <action
-            android:id="@+id/action_asbIntroFragment_to_asbCreationAccountSelectionFragment"
-            app:destination="@id/asbCreationAccountSelectionFragment" />
-        <action
             android:id="@+id/action_asbIntroFragment_to_inAppPinNavigation"
             app:destination="@id/inAppPinNavigation" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/asbCreationAccountSelectionFragment"
-        android:name="com.algorand.android.modules.asb.createbackup.accountselection.ui.AsbCreationAccountSelectionFragment"
-        android:label="fragment_asb_creation_account_selection"
-        tools:layout="@layout/fragment_base_multiple_account_selection">
         <action
-            android:id="@+id/action_asbCreationAccountSelectionFragment_to_asbStoreKeyFragment"
+            android:id="@+id/action_asbIntroFragment_to_asbStoreKeyFragment"
             app:destination="@id/asbStoreKeyFragment" />
     </fragment>
 
@@ -51,9 +41,6 @@
         android:name="com.algorand.android.modules.asb.createbackup.storekey.ui.AsbStoreKeyFragment"
         android:label="fragment_asb_store_key"
         tools:layout="@layout/fragment_asb_store_key">
-        <argument
-            android:name="accountList"
-            app:argType="string[]" />
         <action
             android:id="@+id/action_asbStoreKeyFragment_to_asbCreateBackupConfirmationBottomSheet"
             app:destination="@id/asbCreateBackupConfirmationBottomSheet" />
@@ -102,10 +89,10 @@
         android:label="AsbFileFailureFragment"
         tools:layout="@layout/fragment_base_result">
         <action
-            android:id="@+id/action_asbFileFailureFragment_to_asbCreationAccountSelectionFragment"
-            app:destination="@id/asbCreationAccountSelectionFragment"
+            android:id="@+id/action_asbFileFailureFragment_to_asbStoreKeyFragment"
+            app:destination="@id/asbStoreKeyFragment"
             app:launchSingleTop="true"
-            app:popUpTo="@id/asbCreationAccountSelectionFragment"
+            app:popUpTo="@id/asbStoreKeyFragment"
             app:popUpToInclusive="true" />
     </fragment>
 

@@ -16,19 +16,21 @@ import com.algorand.wallet.account.custom.data.database.dao.CustomAccountInfoDao
 import com.algorand.wallet.account.custom.data.database.model.CustomAccountInfoEntity
 import com.algorand.wallet.account.custom.data.mapper.entity.CustomAccountInfoEntityMapper
 import com.algorand.wallet.account.custom.data.mapper.model.CustomAccountInfoMapper
+import com.algorand.wallet.account.custom.data.repository.CustomAccountInfoRepositoryImpl
 import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
 import com.algorand.wallet.account.custom.domain.model.CustomAccountInfo
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 
 @ExperimentalCoroutinesApi
 class CustomAccountInfoRepositoryImplTest {
@@ -225,5 +227,14 @@ class CustomAccountInfoRepositoryImplTest {
         val result = sut.setOrderIndex(address, orderIndex)
 
         assertEquals(Unit, result)
+    }
+
+    @Test
+    fun `EXPECT addreses asb status to be set WHEN setAddressesBackedUp is invoked`() = runTest {
+        val addresses = setOf("ABCDEF123456", "GHIJKL789012", "MNOPQR345678")
+
+        sut.setAddressesBackedUp(addresses)
+
+        coVerify { customAccountInfoDao.setAddressesBackedUp(addresses.toList()) }
     }
 }

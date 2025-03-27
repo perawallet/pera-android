@@ -54,6 +54,9 @@ internal interface CustomAccountInfoDao {
     @Query("SELECT algo_address FROM custom_account_info WHERE is_backed_up = 1")
     suspend fun getBackedUpAddresses(): List<String>
 
+    @Query("UPDATE custom_account_info SET is_backed_up = 1 WHERE algo_address IN (:addresses)")
+    suspend fun setAddressesBackedUp(addresses: List<String>)
+
     @Query("SELECT is_backed_up FROM custom_account_info WHERE :encryptedAddress = algo_address")
     suspend fun isAccountBackedUp(encryptedAddress: String): Boolean
 

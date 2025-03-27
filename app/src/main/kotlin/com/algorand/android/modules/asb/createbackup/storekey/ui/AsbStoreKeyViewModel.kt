@@ -12,12 +12,10 @@
 
 package com.algorand.android.modules.asb.createbackup.storekey.ui
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.asb.createbackup.storekey.ui.model.AsbStoreKeyPreview
 import com.algorand.android.modules.asb.createbackup.storekey.ui.usecase.AsbStoreKeyPreviewUseCase
-import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -27,11 +25,8 @@ import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class AsbStoreKeyViewModel @Inject constructor(
-    private val asbStoreKeyPreviewUseCase: AsbStoreKeyPreviewUseCase,
-    savedStateHandle: SavedStateHandle
+    private val asbStoreKeyPreviewUseCase: AsbStoreKeyPreviewUseCase
 ) : BaseViewModel() {
-
-    private val accountList = savedStateHandle.getOrThrow<Array<String>>(ACCOUNT_LIST_KEY)
 
     private val _asbStoreKeyPreviewFlow = MutableStateFlow<AsbStoreKeyPreview?>(null)
     val asbStoreKeyPreviewFlow: StateFlow<AsbStoreKeyPreview?> get() = _asbStoreKeyPreviewFlow
@@ -67,10 +62,7 @@ class AsbStoreKeyViewModel @Inject constructor(
     fun onBackupFileCreationConfirmed() {
         viewModelScope.launchIO {
             with(_asbStoreKeyPreviewFlow) {
-                value = asbStoreKeyPreviewUseCase.updatePreviewAfterCreatingBackupFile(
-                    preview = value,
-                    accountList = accountList.toList()
-                )
+                value = asbStoreKeyPreviewUseCase.updatePreviewAfterCreatingBackupFile(preview = value)
             }
         }
     }
@@ -85,15 +77,5 @@ class AsbStoreKeyViewModel @Inject constructor(
         viewModelScope.launchIO {
             _asbStoreKeyPreviewFlow.emit(asbStoreKeyPreviewUseCase.getAsbStoreKeyPreview())
         }
-    }
-
-    fun saveBackedUpAccountToLocalStorage() {
-        viewModelScope.launchIO {
-            asbStoreKeyPreviewUseCase.saveBackedUpAccountToLocalStorage(accountList)
-        }
-    }
-
-    companion object {
-        private const val ACCOUNT_LIST_KEY = "accountList"
     }
 }

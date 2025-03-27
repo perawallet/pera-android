@@ -13,7 +13,6 @@
 package com.algorand.android.modules.backupprotocol.domain.usecase
 
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
-import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils.isAccountEligible
 import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
 import com.algorand.android.modules.backupprotocol.model.BackupProtocolPayload
 import com.algorand.android.utils.extensions.encodeBase64
@@ -21,22 +20,22 @@ import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
+import com.algorand.wallet.asb.domain.usecase.GetAsbEligibleAccounts
 import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.ALGO_25_ACCOUNT_TYPE_NAME
 import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.NO_AUTH_ACCOUNT_TYPE_NAME
 import javax.inject.Inject
 
 class CreateBackupProtocolPayloadUseCase @Inject constructor(
     private val deviceIdUseCase: DeviceIdUseCase,
-    private val getLocalAccount: GetLocalAccount,
     private val getAccountCustomName: GetAccountCustomName,
-    private val getAlgo25SecretKey: GetAlgo25SecretKey
+    private val getAlgo25SecretKey: GetAlgo25SecretKey,
+    private val getAsbEligibleAccounts: GetAsbEligibleAccounts
 ) {
 
-    suspend operator fun invoke(accountAddresses: List<String>): BackupProtocolPayload? {
+    suspend operator fun invoke(): BackupProtocolPayload? {
         val deviceId = deviceIdUseCase.getSelectedNodeDeviceId() ?: return null
-        val accountBackupProtocolElementList = accountAddresses.mapNotNull { accountAddress ->
-            getAccountBackupProtocolElement(accountAddress)
+        val accountBackupProtocolElementList = getAsbEligibleAccounts().mapNotNull { localAccount ->
+            getAccountBackupProtocolElement(localAccount)
         }
         return BackupProtocolPayload(
             deviceId = deviceId,
@@ -45,16 +44,14 @@ class CreateBackupProtocolPayloadUseCase @Inject constructor(
         )
     }
 
-    private suspend fun getAccountBackupProtocolElement(accountAddress: String): BackupProtocolElement? {
-        val accountDetail = getLocalAccount(accountAddress) ?: return null
-        if (!isAccountEligible(accountDetail)) return null
-        val accountType = convertAccountTypeToBackupProtocolAccountType(accountDetail) ?: return null
-
+    private suspend fun getAccountBackupProtocolElement(localAccount: LocalAccount): BackupProtocolElement? {
+        val accountType = convertAccountTypeToBackupProtocolAccountType(localAccount) ?: return null
+        val address = localAccount.algoAddress
         return BackupProtocolElement(
-            address = accountDetail.algoAddress,
-            name = getAccountCustomName(accountAddress) ?: accountAddress.toShortenedAddress(),
+            address = address,
+            name = getAccountCustomName(address) ?: address.toShortenedAddress(),
             accountType = accountType,
-            privateKey = getAlgo25SecretKey(accountAddress)?.encodeBase64().orEmpty(),
+            privateKey = getAlgo25SecretKey(address)?.encodeBase64().orEmpty(),
             metadata = null
         )
     }

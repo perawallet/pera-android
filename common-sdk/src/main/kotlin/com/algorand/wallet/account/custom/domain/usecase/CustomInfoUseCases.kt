@@ -57,6 +57,10 @@ fun interface GetAccountAsbBackUpStatus {
     suspend operator fun invoke(accountAddress: String): Boolean
 }
 
+fun interface SetAddressesBackedUp {
+    suspend operator fun invoke(accountAddresses: Set<String>)
+}
+
 fun interface GetAllAccountOrderIndexes {
     suspend operator fun invoke(): List<AccountOrderIndex>
 }

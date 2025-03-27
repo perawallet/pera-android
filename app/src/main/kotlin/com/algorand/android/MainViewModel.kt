@@ -37,6 +37,7 @@ import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.repository.NodeRepository
+import com.algorand.android.ui.lockpreference.AutoLockSuggestionManager
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.launchIO
@@ -89,6 +90,7 @@ class MainViewModel @Inject constructor(
     private var pendingIntentKeeper: PendingIntentKeeper,
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val autoLockManager: AutoLockManager,
+    private val autoLockSuggestionManager: AutoLockSuggestionManager,
     private val androidEncryptionManager: AndroidEncryptionManager,
     getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
@@ -233,9 +235,9 @@ class MainViewModel @Inject constructor(
     }
 
     fun startAutoLockSuggestion() {
-        viewModelScope.launchIO {
-            if (isThereAnyLocalAccount()) {
-                eventDelegate.sendEvent(ViewEvent.StartAutoLockSuggestion)
+        viewModelScope.launch {
+            if (autoLockSuggestionManager.shouldSuggestAutoLock()) {
+                eventDelegate.sendEvent(ViewEvent.ShowLockSuggestion)
             }
         }
     }
@@ -345,6 +347,6 @@ class MainViewModel @Inject constructor(
         data class NavToWalletConnectArbitraryDataRequestNavigation(val wcRequestId: Long) : ViewEvent
         data object ShowGlobalNotificationError : ViewEvent
         data object StartInAppReview : ViewEvent
-        data object StartAutoLockSuggestion : ViewEvent
+        data object ShowLockSuggestion : ViewEvent
     }
 }

@@ -12,31 +12,56 @@
 
 package com.algorand.android.migration
 
+import androidx.lifecycle.Lifecycle
 import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.foundation.manager.LifecycleAwareManager
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 @Singleton
 class MigrationManager @Inject constructor(
+    private val lifecycleAwareManager: LifecycleAwareManager,
     private val accountMigrationManager: AccountMigrationManager,
     private val encryptedPinMigrationManager: EncryptedPinMigrationManager,
     private val account6xMigrationManager: Account6xMigrationManager,
     private val peraExceptionLogger: PeraExceptionLogger
-) {
-    fun makeMigrationsAsFlow(): Flow<PeraResult<Boolean>> = flow {
-        try {
-            encryptedPinMigrationManager.makeMigrationIfNeeded()
-            accountMigrationManager.makeMigrationIfNeeded()
-            account6xMigrationManager.migrateTo6xIfNeeded()
-            emit(PeraResult.Success(true))
-        } catch (e: Exception) {
-            peraExceptionLogger.logException(e)
-            emit(PeraResult.Error(e))
+) : LifecycleAwareManager.LifecycleAwareManagerListener {
+
+    private val _migrationResultFlow = MutableSharedFlow<PeraResult<Boolean>>(replay = 1)
+    private val migrationResultFlow = _migrationResultFlow.asSharedFlow()
+
+    fun initialize(lifecycle: Lifecycle) {
+        lifecycleAwareManager.setListener(this)
+        lifecycle.addObserver(lifecycleAwareManager)
+    }
+
+    override suspend fun onInitializeManager(coroutineScope: CoroutineScope) {
+        lifecycleAwareManager.startJob()
+    }
+
+    override suspend fun onStartJob(coroutineScope: CoroutineScope) {
+        runManagerJob(coroutineScope)
+    }
+
+    fun getMigrationResultFlow() = migrationResultFlow
+
+    private fun runManagerJob(coroutineScope: CoroutineScope) {
+        coroutineScope.launch(Dispatchers.IO) {
+            try {
+                encryptedPinMigrationManager.makeMigrationIfNeeded()
+                accountMigrationManager.makeMigrationIfNeeded()
+                account6xMigrationManager.migrateTo6xIfNeeded()
+                _migrationResultFlow.emit(PeraResult.Success(true))
+            } catch (e: Exception) {
+                peraExceptionLogger.logException(e)
+                _migrationResultFlow.emit(PeraResult.Error(e))
+            }
         }
-    }.flowOn(Dispatchers.IO)
+    }
 }

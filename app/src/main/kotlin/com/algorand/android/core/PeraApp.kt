@@ -18,6 +18,7 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.multidex.MultiDex
 import com.algorand.android.koin.KoinInitializer
 import com.algorand.android.migration.MigrationManager
@@ -27,14 +28,13 @@ import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.utils.coremanager.ApplicationStatusObserver
 import com.algorand.android.utils.preference.getSavedThemePreference
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.security.PeraSecurityManager
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @HiltAndroidApp
 open class PeraApp : Application() {
@@ -69,8 +69,6 @@ open class PeraApp : Application() {
     @Inject
     lateinit var peraEventTracker: PeraEventTracker
 
-    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         MultiDex.install(this)
@@ -84,13 +82,14 @@ open class PeraApp : Application() {
         peraSecurityManager.initializeSecurityManager()
         AppCompatDelegate.setDefaultNightMode(sharedPref.getSavedThemePreference().convertToSystemAbbr())
 
-        applicationScope.launch {
-            migrationManager.makeMigrationsAsFlow().collect { peraResult ->
-                if (peraResult.isSuccess && peraResult.getDataOrNull() == true) {
+        migrationManager.initialize(ProcessLifecycleOwner.get().lifecycle)
+        migrationManager.getMigrationResultFlow()
+            .onEach { result ->
+                if (result is PeraResult.Success && result.data == true) {
                     initializePostMigrationComponents()
                 }
             }
-        }
+            .launchIn(ProcessLifecycleOwner.get().lifecycleScope)
     }
 
     private fun initializePostMigrationComponents() {

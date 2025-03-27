@@ -16,6 +16,7 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.crypto.Address
 import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
+import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import foundation.algorand.xhdwalletapi.Bip32DerivationType
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
@@ -76,7 +77,7 @@ internal class PeraBip39SdkImpl @Inject constructor() : PeraBip39Sdk {
         // Produce the PK and turn it into an Algorand formatted address
         val algoAddress = Address(publicKey)
         var privateKey: ByteArray = xHDWalletAPI.deriveKey(
-            fromSeed(seed),
+            fromSeed(seed.copyOf()),
             getBIP44PathFromContext(keyContext, account, change, keyIndex),
             true
         )
@@ -84,16 +85,16 @@ internal class PeraBip39SdkImpl @Inject constructor() : PeraBip39Sdk {
         val output = HdKeyAccount(
             address = algoAddress.toString(),
             publicKey = publicKey,
-            privateKey = privateKey,
-            entropy = entropy,
+            privateKey = privateKey.copyOf(),
+            entropy = entropy.copyOf(),
             account = account.toInt(),
             change = change.toInt(),
             keyIndex = keyIndex.toInt(),
             derivationType = Bip32DerivationType.Peikert.value
         )
-        privateKey = ByteArray(0) // delete secret key from memory
-        entropy = ByteArray(0) // delete secret key from memory
-        seed = ByteArray(0) // delete secret key from memory
+        privateKey.clearFromMemory()
+        entropy.clearFromMemory()
+        seed.clearFromMemory()
         return output
     }
 }

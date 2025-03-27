@@ -15,10 +15,13 @@ package com.algorand.wallet.algosdk.transaction.sdk
 import com.algorand.algosdk.sdk.Sdk
 import com.algorand.wallet.algosdk.domain.model.Algo25Account
 import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import javax.inject.Inject
 
 internal class AlgoAccountSdkImpl @Inject constructor(
-    private val bip39Sdk: PeraBip39Sdk
+    private val bip39Sdk: PeraBip39Sdk,
+    private val aesPlatformManager: AESPlatformManager
 ) : AlgoAccountSdk {
 
     override fun createHdAccount(): HdKeyAccount? {
@@ -42,9 +45,9 @@ internal class AlgoAccountSdkImpl @Inject constructor(
             var secretKey = Sdk.generateSK()
             val output = Algo25Account(
                 address = Sdk.generateAddressFromSK(secretKey),
-                secretKey = secretKey
+                secretKey = secretKey.copyOf()
             )
-            secretKey = ByteArray(0) // delete secret key from memory
+            secretKey.clearFromMemory()
             output
         } catch (e: Exception) {
             null
@@ -57,9 +60,9 @@ internal class AlgoAccountSdkImpl @Inject constructor(
 
             val output = Algo25Account(
                 address = Sdk.generateAddressFromSK(secretKey),
-                secretKey = secretKey
+                secretKey = secretKey.copyOf()
             )
-            secretKey = ByteArray(0) // delete secret key from memory
+            secretKey.clearFromMemory()
             output
         } catch (e: Exception) {
             null

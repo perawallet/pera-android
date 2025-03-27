@@ -15,6 +15,7 @@ package com.algorand.wallet.account.core.domain.model
 data class CreateAccount(
     val address: String,
     var customName: String?,
+    var orderIndex: Int,
     val isBackedUp: Boolean,
     val type: Type
 ) {

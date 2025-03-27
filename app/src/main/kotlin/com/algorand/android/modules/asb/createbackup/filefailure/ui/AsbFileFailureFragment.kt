@@ -56,6 +56,6 @@ class AsbFileFailureFragment : BaseResultFragment() {
     }
 
     private fun navBackToAccountSelection() {
-        nav(AsbFileFailureFragmentDirections.actionAsbFileFailureFragmentToAsbCreationAccountSelectionFragment())
+        nav(AsbFileFailureFragmentDirections.actionAsbFileFailureFragmentToAsbStoreKeyFragment())
     }
 }

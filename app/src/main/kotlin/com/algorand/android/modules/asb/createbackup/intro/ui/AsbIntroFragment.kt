@@ -60,6 +60,10 @@ class AsbIntroFragment : BaseFragment(R.layout.fragment_algorand_secure_backup_i
         event?.consume()?.run { openGivenUrl(this) }
     }
 
+    private val showNoEligibleAccountErrorEventCollector: suspend (Event<Unit>?) -> Unit = { event ->
+        event?.consume()?.run { showNoEligibleAccountError() }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
@@ -120,7 +124,15 @@ class AsbIntroFragment : BaseFragment(R.layout.fragment_algorand_secure_backup_i
                 flow = map { it.navToAccountSelectionScreenEvent },
                 collection = navToAccountSelectionScreenEventCollector
             )
+            collectLatestOnLifecycle(
+                flow = map { it.showNoEligibleAccountErrorEvent },
+                collection = showNoEligibleAccountErrorEventCollector
+            )
         }
+    }
+
+    private fun showNoEligibleAccountError() {
+        showGlobalError(getString(R.string.we_couldn_t_find_any_accounts))
     }
 
     private fun navToAlgorandSecureBackupPinFragment() {
@@ -128,7 +140,7 @@ class AsbIntroFragment : BaseFragment(R.layout.fragment_algorand_secure_backup_i
     }
 
     private fun navToAlgorandSecureBackupAccountSelectionFragment() {
-        nav(AsbIntroFragmentDirections.actionAsbIntroFragmentToAsbCreationAccountSelectionFragment())
+        nav(AsbIntroFragmentDirections.actionAsbIntroFragmentToAsbStoreKeyFragment())
     }
 
     private fun openGivenUrl(url: String) {

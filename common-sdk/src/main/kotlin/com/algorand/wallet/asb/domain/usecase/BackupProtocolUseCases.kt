@@ -12,8 +12,13 @@
 
 package com.algorand.wallet.asb.domain.usecase
 
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.asb.domain.model.AsbBackupData
 
 fun interface RestoreEncryptedBackupProtocolPayload {
     operator fun invoke(cipherText: String, cipherKey: ByteArray): AsbBackupData?
+}
+
+fun interface GetAsbEligibleAccounts {
+    suspend operator fun invoke(): List<LocalAccount>
 }

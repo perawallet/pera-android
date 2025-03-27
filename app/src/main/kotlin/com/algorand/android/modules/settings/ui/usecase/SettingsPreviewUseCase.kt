@@ -12,41 +12,37 @@
 
 package com.algorand.android.modules.settings.ui.usecase
 
-import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
 import com.algorand.android.modules.settings.ui.mapper.SettingsPreviewMapper
 import com.algorand.android.modules.settings.ui.model.SettingsPreview
-import com.algorand.wallet.account.custom.domain.usecase.GetBackedUpAccounts
-import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.analytics.domain.usecase.GetFirebaseInstanceIdUseCase
+import com.algorand.wallet.asb.domain.usecase.GetAsbEligibleAccounts
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class SettingsPreviewUseCase @Inject constructor(
     private val settingsPreviewMapper: SettingsPreviewMapper,
-    private val getBackedUpAccounts: GetBackedUpAccounts,
-    private val getLocalAccounts: GetLocalAccounts,
+    private val getNotBackupAccounts: GetNotBackedUpAccounts,
     private val getFirebaseInstanceIdUseCase: GetFirebaseInstanceIdUseCase,
+    private val getAsbEligibleAccounts: GetAsbEligibleAccounts
 ) {
 
     fun getSettingsPreviewFlow(): Flow<SettingsPreview> = flow {
-        val backedUpAccounts = getBackedUpAccounts()
-        emit(createSettingsPreview(backedUpAccounts))
+        val eligibleToBackUpAddresses = getEligibleToBackUpAddresses()
+        val preview = settingsPreviewMapper.mapToSettingsPreview(
+            isAlgorandSecureBackupDescriptionVisible = eligibleToBackUpAddresses.isNotEmpty(),
+            notBackedUpAccountCounts = eligibleToBackUpAddresses.size,
+            firebaseInstanceId = getFirebaseInstanceIdUseCase()
+        )
+        emit(preview)
     }
 
-    private suspend fun createSettingsPreview(backedUpAccounts: Set<String>): SettingsPreview {
-        val localAccounts = getLocalAccounts()
-        val localAccountAddresses = localAccounts.map { it.algoAddress }
-        val remainingAccounts = localAccountAddresses.filter { it !in backedUpAccounts }
-        val firebaseInstanceId = getFirebaseInstanceIdUseCase.invoke()
-        val eligibleLocalAccounts = remainingAccounts.filter { accountAddress ->
-            val account = localAccounts.first { it.algoAddress == accountAddress }
-            AlgorandSecureBackupUtils.isAccountEligible(account)
+    private suspend fun getEligibleToBackUpAddresses(): List<String> {
+        val notBackedUpAccounts = getNotBackupAccounts()
+        val asbEligibleAccounts = getAsbEligibleAccounts()
+        return notBackedUpAccounts.mapNotNull { address ->
+            asbEligibleAccounts.find { it.algoAddress == address }?.algoAddress
         }
-        return settingsPreviewMapper.mapToSettingsPreview(
-            isAlgorandSecureBackupDescriptionVisible = eligibleLocalAccounts.isNotEmpty(),
-            notBackedUpAccountCounts = eligibleLocalAccounts.size,
-            firebaseInstanceId = firebaseInstanceId
-        )
     }
 }

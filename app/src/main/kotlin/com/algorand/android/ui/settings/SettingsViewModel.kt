@@ -35,17 +35,13 @@ class SettingsViewModel @Inject constructor(
     private val _settingsPreviewFlow = MutableStateFlow<SettingsPreview?>(null)
     val settingsPreviewFlow: StateFlow<SettingsPreview?> get() = _settingsPreviewFlow
 
-    init {
-        initSettingsPreviewFlow()
-    }
-
     fun deleteAllData(notificationManager: NotificationManager?, onDeletionCompleted: () -> Unit) {
         viewModelScope.launch {
             deleteAllDataUseCase.deleteAllData(notificationManager, onDeletionCompleted)
         }
     }
 
-    private fun initSettingsPreviewFlow() {
+    fun initSettingsPreviewFlow() {
         viewModelScope.launchIO {
             settingsPreviewUseCase.getSettingsPreviewFlow().collectLatest { preview ->
                 _settingsPreviewFlow.emit(preview)

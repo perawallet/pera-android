@@ -78,6 +78,7 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings),
         initDialogSavedStateListener()
         initObservers()
         initUi()
+        settingsViewModel.initSettingsPreviewFlow()
     }
 
     private fun initUi() {

@@ -28,7 +28,7 @@ import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetA
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionItemsFromAccountAddress
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionNameServiceItems
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs
+import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryNavArgs
 import com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionFragmentDirections
 import com.algorand.android.utils.exceptions.GlobalException
 import com.algorand.android.utils.exceptions.NavigationException

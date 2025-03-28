@@ -10,10 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.ui.model
+package com.algorand.android.modules.settings.domain.repository
 
-data class SettingsPreview(
-    val isAlgorandSecureBackupDescriptionVisible: Boolean,
-    val notBackedUpAccountCounts: Int,
-    val firebaseInstanceId: String
-)
+internal interface MigrationTo6xRepository {
+    suspend fun saveMigratedTo6xCheck(check: Boolean)
+    suspend fun getMigratedTo6xCheck(): Boolean
+}

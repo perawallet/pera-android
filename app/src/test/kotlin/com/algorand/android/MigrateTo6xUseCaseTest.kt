@@ -14,6 +14,7 @@ package com.algorand.android.modules.settings.ui.usecase
 
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation
+import com.algorand.android.modules.settings.domain.usecase.MigrateTo6xUseCase
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
 import com.algorand.android.utils.analytics.CreationType

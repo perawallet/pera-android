@@ -18,6 +18,7 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingVerifyPassphraseEventTracker
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.custom.domain.usecase.SetAddressesBackedUp
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
@@ -36,7 +37,8 @@ class PassphraseValidationViewModel @Inject constructor(
     private val algoAccountSdk: AlgoAccountSdk,
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
     private val peraBip39Sdk: PeraBip39Sdk,
-    private val stateDelegate: StateDelegate<ViewState>
+    private val stateDelegate: StateDelegate<ViewState>,
+    private val setAddressesBackedUp: SetAddressesBackedUp,
 ) : BaseViewModel(), StateViewModel<PassphraseValidationViewModel.ViewState> by stateDelegate {
 
     init {
@@ -49,8 +51,11 @@ class PassphraseValidationViewModel @Inject constructor(
         }
     }
 
-    fun updateAccountBackupState(publicKey: String, isBackedUp: Boolean) {
-        accountManager.updateAccountBackupState(publicKey, isBackedUp)
+    fun updateAccountBackupState(address: String, isBackedUp: Boolean) {
+        viewModelScope.launch {
+            if (isBackedUp)
+                setAddressesBackedUp.invoke(setOf(address))
+        }
     }
 
     fun setupPassphraseValidationView(args: PassphraseValidationFragmentArgs) {

@@ -8,11 +8,11 @@
 
     <fragment
         android:id="@+id/arc59SendSummaryFragment"
-        android:name="com.algorand.android.modules.assetinbox.send.ui.Arc59SendSummaryFragment"
+        android:name="com.algorand.android.modules.assetinbox.send.summary.ui.Arc59SendSummaryFragment"
         android:label="Arc59SendSummaryFragment">
         <argument
             android:name="arc59SendSummaryNavArgs"
-            app:argType="com.algorand.android.modules.assetinbox.send.ui.model.Arc59SendSummaryNavArgs" />
+            app:argType="com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryNavArgs" />
         <action
             android:id="@+id/action_arc59SendSummaryFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"
@@ -35,7 +35,13 @@
 
     <dialog
         android:id="@+id/arc59SendWarningBottomSheet"
-        android:name="com.algorand.android.modules.assetinbox.send.ui.Arc59SendWarningBottomSheet"
-        android:label="Arc59SendWarningBottomSheet" />
+        android:name="com.algorand.android.modules.assetinbox.send.warning.ui.Arc59SendSummaryWarningBottomSheet"
+        android:label="Arc59SendWarningBottomSheet">
+        <argument
+            android:name="arc59SendSummaryWarningNavArgs"
+            android:defaultValue="@null"
+            app:argType="com.algorand.android.modules.assetinbox.send.warning.ui.model.Arc59SendSummaryWarningNavArgs"
+            app:nullable="true" />
+    </dialog>
 
 </navigation>

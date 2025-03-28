@@ -110,7 +110,7 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
         backupPassphraseViewModel.logOnboardingNextClickEvent()
         nav(
             BackupPassphraseFragmentDirections.actionBackupPassphraseFragmentToPassphraseValidationFragment(
-                args.publicKeyOfAccountToBackup,
+                args.accountToBackup,
                 args.accountCreation
             )
         )

@@ -544,8 +544,12 @@
             android:id="@+id/action_accountsFragment_to_backupPassphraseInfoNavigation"
             app:destination="@id/backupPassphraseInfoNavigation">
             <argument
-                android:name="publicKeysOfAccountsToBackup"
+                android:name="accountsToBackup"
                 app:argType="string[]" />
+            <argument
+                android:name="onboardingAccountType"
+                app:argType="com.algorand.android.models.OnboardingAccountType"
+                app:nullable="false" />
         </action>
         <action
             android:id="@+id/action_accountsFragment_to_assetInboxAllAccountsNavigation"
@@ -1013,8 +1017,12 @@
             android:id="@+id/action_accountDetailFragment_to_backupPassphraseInfoNavigation"
             app:destination="@id/backupPassphraseInfoNavigation">
             <argument
-                android:name="publicKeysOfAccountsToBackup"
+                android:name="accountsToBackup"
                 app:argType="string[]" />
+            <argument
+                android:name="onboardingAccountType"
+                app:argType="com.algorand.android.models.OnboardingAccountType"
+                app:nullable="false" />
         </action>
         <action
             android:id="@+id/action_accountDetailFragment_to_inAppPinNavigation"

@@ -40,6 +40,7 @@ import com.algorand.android.databinding.FragmentAccountDetailBinding
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.DateFilter
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
 import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragment
@@ -454,7 +455,13 @@ class AccountDetailFragment :
         nav(
             AccountDetailFragmentDirections
                 .actionAccountDetailFragmentToBackupPassphraseInfoNavigation(
-                    publicKeysOfAccountsToBackup = arrayOf(accountDetailViewModel.accountAddress)
+                    accountsToBackup = arrayOf(accountDetailViewModel.accountAddress),
+                    onboardingAccountType = if (accountDetailViewModel.accountType ==
+                        com.algorand.wallet.account.detail.domain.model.AccountType.HdKey) {
+                        OnboardingAccountType.HdKey
+                    } else {
+                        OnboardingAccountType.Algo25
+                    }
                 )
         )
     }

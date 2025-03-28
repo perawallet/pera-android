@@ -35,6 +35,7 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
 
     private val viewStateCollector: suspend (ViewState) -> Unit = { state ->
         when (state) {
+            is ViewState.Loading -> Unit
             is ViewState.DefaultState -> setupPassphraseValidationView(state.passphrase)
             is ViewState.RecreateState -> recreatePassphraseValidationView(state.passphrase)
         }
@@ -89,7 +90,7 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
         passphraseValidationViewModel.logOnboardingNextClickEvent()
         if (binding.passphraseValidationGroupView.isValidated()) {
             passphraseValidationViewModel.updateAccountBackupState(
-                args.publicKeyOfAccountToBackup,
+                args.accountToBackup,
                 isBackedUp = true
             )
             passphraseValidationViewModel.logEvent(PeraEvent.ONBOARDING_PASSPHRASE_VERIFIED_COMPLETE)

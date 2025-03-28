@@ -14,7 +14,7 @@ package com.algorand.android.ui.settings.developersettings
 
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.settings.ui.usecase.DeveloperSettingsPreviewUseCase
+import com.algorand.android.ui.settings.usecase.DeveloperSettingsPreviewUseCase
 import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
 import com.algorand.wallet.remoteconfig.domain.usecase.ENABLE_ACCOUNT_DB_MIGRATION_VIEWER
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled

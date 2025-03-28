@@ -12,6 +12,8 @@
 
 package com.algorand.wallet.foundation
 
+import com.algorand.wallet.foundation.manager.LifecycleAwareManager
+import com.algorand.wallet.foundation.manager.LifecycleAwareManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,4 +27,7 @@ internal object CommonModule {
 
     @Provides
     fun provideCoroutineDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+    @Provides
+    fun provideLifecycleAwareManager(impl: LifecycleAwareManagerImpl): LifecycleAwareManager = impl
 }

@@ -10,9 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.ui.mapper
+package com.algorand.android.ui.settings.mapper
 
-import com.algorand.android.modules.settings.ui.model.SettingsPreview
+import com.algorand.android.ui.settings.model.SettingsPreview
 import javax.inject.Inject
 
 class SettingsPreviewMapper @Inject constructor() {

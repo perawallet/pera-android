@@ -15,7 +15,7 @@ package com.algorand.android.ui.settings.migrationviewer
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.Account
-import com.algorand.android.modules.settings.ui.usecase.MigrateTo6xUseCase
+import com.algorand.android.modules.settings.domain.usecase.MigrateTo6xUseCase
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewEvent
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewState
 import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase

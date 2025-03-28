@@ -18,6 +18,7 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.multidex.MultiDex
 import com.algorand.android.koin.KoinInitializer
 import com.algorand.android.migration.MigrationManager
@@ -27,10 +28,13 @@ import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.utils.coremanager.ApplicationStatusObserver
 import com.algorand.android.utils.preference.getSavedThemePreference
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.security.PeraSecurityManager
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @HiltAndroidApp
 open class PeraApp : Application() {
@@ -65,6 +69,12 @@ open class PeraApp : Application() {
     @Inject
     lateinit var peraEventTracker: PeraEventTracker
 
+    private val migrationManagerResultCollector: suspend (PeraResult<Unit>) -> Unit = { result ->
+        if (result.isSuccess) {
+            initializePostMigrationComponents()
+        }
+    }
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         MultiDex.install(this)
@@ -75,10 +85,21 @@ open class PeraApp : Application() {
         KoinInitializer.initKoin(this)
         initializeFirebase()
         BaseViewModel.initialize(peraEventTracker)
-        migrationManager.makeMigrations()
         peraSecurityManager.initializeSecurityManager()
         AppCompatDelegate.setDefaultNightMode(sharedPref.getSavedThemePreference().convertToSystemAbbr())
+        initializeMigrationManager()
+    }
 
+    private fun initializeMigrationManager() {
+        migrationManager.apply {
+            initialize(ProcessLifecycleOwner.get().lifecycle)
+            migrationResultFlow
+                .onEach(migrationManagerResultCollector)
+                .launchIn(ProcessLifecycleOwner.get().lifecycleScope)
+        }
+    }
+
+    private fun initializePostMigrationComponents() {
         initializeWalletConnect()
         bindApplicationLifecycleAwareComponents()
         bindActivityLifecycleAwareComponents()

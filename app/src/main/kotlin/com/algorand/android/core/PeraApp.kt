@@ -69,6 +69,12 @@ open class PeraApp : Application() {
     @Inject
     lateinit var peraEventTracker: PeraEventTracker
 
+    private val migrationManagerResultCollector: suspend (PeraResult<Unit>) -> Unit = { result ->
+        if (result.isSuccess) {
+            initializePostMigrationComponents()
+        }
+    }
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         MultiDex.install(this)
@@ -81,15 +87,16 @@ open class PeraApp : Application() {
         BaseViewModel.initialize(peraEventTracker)
         peraSecurityManager.initializeSecurityManager()
         AppCompatDelegate.setDefaultNightMode(sharedPref.getSavedThemePreference().convertToSystemAbbr())
+        initializeMigrationManager()
+    }
 
-        migrationManager.initialize(ProcessLifecycleOwner.get().lifecycle)
-        migrationManager.getMigrationResultFlow()
-            .onEach { result ->
-                if (result is PeraResult.Success && result.data == true) {
-                    initializePostMigrationComponents()
-                }
-            }
-            .launchIn(ProcessLifecycleOwner.get().lifecycleScope)
+    private fun initializeMigrationManager() {
+        migrationManager.apply {
+            initialize(ProcessLifecycleOwner.get().lifecycle)
+            migrationResultFlow
+                .onEach(migrationManagerResultCollector)
+                .launchIn(ProcessLifecycleOwner.get().lifecycleScope)
+        }
     }
 
     private fun initializePostMigrationComponents() {

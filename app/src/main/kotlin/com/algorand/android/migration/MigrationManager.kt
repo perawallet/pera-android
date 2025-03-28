@@ -12,7 +12,9 @@
 
 package com.algorand.android.migration
 
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.manager.LifecycleAwareManager
@@ -20,7 +22,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
@@ -31,33 +36,32 @@ class MigrationManager @Inject constructor(
     private val encryptedPinMigrationManager: EncryptedPinMigrationManager,
     private val account6xMigrationManager: Account6xMigrationManager,
     private val peraExceptionLogger: PeraExceptionLogger
-) : LifecycleAwareManager.LifecycleAwareManagerListener {
+) : DefaultLifecycleObserver {
 
-    private val _migrationResultFlow = MutableSharedFlow<PeraResult<Boolean>>(replay = 1)
-    private val migrationResultFlow = _migrationResultFlow.asSharedFlow()
+    private val _migrationResultFlow = MutableSharedFlow<PeraResult<Unit>>()
+    val migrationResultFlow: SharedFlow<PeraResult<Unit>> = _migrationResultFlow.asSharedFlow()
+
+    private var coroutineScope: CoroutineScope? = null
 
     fun initialize(lifecycle: Lifecycle) {
-        lifecycleAwareManager.setListener(this)
         lifecycle.addObserver(lifecycleAwareManager)
+        coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        runMigration()
     }
 
-    override suspend fun onInitializeManager(coroutineScope: CoroutineScope) {
-        lifecycleAwareManager.startJob()
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+        coroutineScope?.cancel()
+        coroutineScope = null
     }
 
-    override suspend fun onStartJob(coroutineScope: CoroutineScope) {
-        runManagerJob(coroutineScope)
-    }
-
-    fun getMigrationResultFlow() = migrationResultFlow
-
-    private fun runManagerJob(coroutineScope: CoroutineScope) {
-        coroutineScope.launch(Dispatchers.IO) {
+    private fun runMigration() {
+        coroutineScope?.launch(Dispatchers.IO) {
             try {
                 encryptedPinMigrationManager.makeMigrationIfNeeded()
                 accountMigrationManager.makeMigrationIfNeeded()
                 account6xMigrationManager.migrateTo6xIfNeeded()
-                _migrationResultFlow.emit(PeraResult.Success(true))
+                _migrationResultFlow.emit(PeraResult.Success(Unit))
             } catch (e: Exception) {
                 peraExceptionLogger.logException(e)
                 _migrationResultFlow.emit(PeraResult.Error(e))

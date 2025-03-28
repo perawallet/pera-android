@@ -451,10 +451,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private fun navToBackupPassphraseInfoNavigation(event: Event<Set<String>>?) {
         event?.consume()?.let { addresses ->
-            AccountsFragmentDirections.actionAccountsFragmentToBackupPassphraseInfoNavigation(
+            nav(AccountsFragmentDirections.actionAccountsFragmentToBackupPassphraseInfoNavigation(
                 addresses.toTypedArray(),
                 OnboardingAccountType.Algo25
-            )
+            ))
         }
     }
 

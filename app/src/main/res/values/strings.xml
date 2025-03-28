@@ -1154,8 +1154,6 @@
     <string name="save_your_backup_file">Save your backup file</string>
     <string name="download_your_backup_to">Download your backup to a secure location on your device.</string>
 
-    <string name="backup_accounts">Backup account (%1$d)</string>
-    <string name="choose_accounts_n_to_backup">Choose accounts\nto backup</string>
     <string name="we_couldn_t_find_any_accounts">We couldn\'t find any accounts eligible for backup.</string>
     <string name="have_you_stored_your_key">Have you stored your key?</string>
     <string name="store_your_key_somewhere_secure">Store your key somewhere secure, like a password manager. If you lose your key, you will lose access to your backup file forever.</string>

@@ -81,6 +81,12 @@ internal class CustomAccountInfoRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun setAddressesBackedUp(addresses: Set<String>) {
+        return withContext(coroutineDispatcher) {
+            customAccountInfoDao.setAddressesBackedUp(addresses.toList())
+        }
+    }
+
     override suspend fun isAccountBackedUp(accountAddress: String): Boolean {
         return withContext(coroutineDispatcher) {
             customAccountInfoDao.isAccountBackedUp(accountAddress)

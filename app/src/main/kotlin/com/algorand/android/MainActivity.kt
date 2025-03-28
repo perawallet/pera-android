@@ -36,6 +36,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
+import com.algorand.android.MainNavigationDirections.Companion.actionToLockPreferenceNavigation
 import com.algorand.android.core.transaction.TransactionSignManager
 import com.algorand.android.customviews.CoreActionsTabBarView
 import com.algorand.android.customviews.LedgerLoadingDialog
@@ -70,7 +71,6 @@ import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionI
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
 import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.ui.accountselection.receive.ReceiveAccountSelectionFragment
-import com.algorand.android.ui.lockpreference.AutoLockSuggestionManager
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase.Companion.MAX_NUMBER_OF_ACCOUNTS
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
@@ -130,7 +130,7 @@ class MainActivity :
             is MainViewModel.ViewEvent.NavToWalletConnectTransactionRequestNavigation ->
                 navToWalletConnectTransactionRequestNavigation(event.wcRequestId)
 
-            is MainViewModel.ViewEvent.StartAutoLockSuggestion -> startAutoLockSuggestion()
+            is MainViewModel.ViewEvent.ShowLockSuggestion -> showLockSuggestion()
 
             is MainViewModel.ViewEvent.StartInAppReview -> startInAppReview()
         }
@@ -143,8 +143,8 @@ class MainActivity :
         }
     }
 
-    private fun startAutoLockSuggestion() {
-        autoLockSuggestionManager.start(this@MainActivity)
+    private fun showLockSuggestion() {
+        nav(actionToLockPreferenceNavigation())
     }
 
     private val qrScannerViewEventCollector: suspend (QrScannerViewModel.ViewEvent) -> Unit = { event ->
@@ -175,9 +175,6 @@ class MainActivity :
 
     @Inject
     lateinit var firebaseTokenManager: FirebaseTokenManager
-
-    @Inject
-    lateinit var autoLockSuggestionManager: AutoLockSuggestionManager
 
     @Inject
     lateinit var inAppReviewManager: InAppReviewManager

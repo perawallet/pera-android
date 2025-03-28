@@ -68,7 +68,6 @@ class AsbStoreKeyFragment : BaseFragment(R.layout.fragment_asb_store_key) {
 
     private val navToBackupReadyEventCollector: suspend (Event<String>?) -> Unit = { event ->
         event?.consume()?.run {
-            asbStoreKeyViewModel.saveBackedUpAccountToLocalStorage()
             navToBackupReadyFragment(this)
         }
     }

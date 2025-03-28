@@ -42,6 +42,7 @@ import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomName
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountOrderIndex
+import com.algorand.wallet.account.custom.domain.usecase.SetAddressesBackedUp
 import com.algorand.wallet.account.custom.domain.usecase.SetHdSeedCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.SetHdSeedCustomName
 import com.algorand.wallet.account.custom.domain.usecase.SetHdSeedOrderIndex
@@ -123,6 +124,11 @@ internal object CustomInfoModule {
     @Provides
     fun provideGetBackedUpAccounts(repository: CustomAccountInfoRepository): GetBackedUpAccounts {
         return GetBackedUpAccounts(repository::getBackedUpAccounts)
+    }
+
+    @Provides
+    fun provideSetAddressesBackedUp(repository: CustomAccountInfoRepository): SetAddressesBackedUp {
+        return SetAddressesBackedUp(repository::setAddressesBackedUp)
     }
 
     @Provides

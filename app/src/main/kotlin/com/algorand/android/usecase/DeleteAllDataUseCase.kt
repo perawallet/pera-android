@@ -15,8 +15,9 @@ package com.algorand.android.usecase
 import android.app.NotificationManager
 import com.algorand.android.banner.domain.usecase.BannersUseCase
 import com.algorand.android.core.AccountManager
-import com.algorand.android.repository.ContactRepository
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
+import com.algorand.android.repository.ContactRepository
+import com.algorand.wallet.account.local.domain.usecase.DeleteAllLocalAccounts
 import javax.inject.Inject
 
 class DeleteAllDataUseCase @Inject constructor(
@@ -24,15 +25,17 @@ class DeleteAllDataUseCase @Inject constructor(
     private val accountManager: AccountManager,
     private val walletConnectManager: WalletConnectManager,
     private val coreCacheUseCase: CoreCacheUseCase,
-    private val bannersUseCase: BannersUseCase
+    private val bannersUseCase: BannersUseCase,
+    private val deleteAllLocalAccounts: DeleteAllLocalAccounts,
+    private val notificationManager: NotificationManager?
 ) {
-    suspend fun deleteAllData(notificationManager: NotificationManager?, onDeletionCompleted: suspend (() -> Unit)) {
+    suspend fun deleteAllData() {
         accountManager.removeAllData()
-        contactRepository.deleteAllContacts()
         walletConnectManager.killAllSessions()
+        deleteAllLocalAccounts()
+        contactRepository.deleteAllContacts()
         coreCacheUseCase.clearAllCachedData()
         bannersUseCase.clearBannerCacheAndDismissedBannerIdList()
         notificationManager?.cancelAll()
-        onDeletionCompleted()
     }
 }

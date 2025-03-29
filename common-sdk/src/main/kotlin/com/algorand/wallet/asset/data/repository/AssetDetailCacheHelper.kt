@@ -27,5 +27,7 @@ internal interface AssetDetailCacheHelper {
 
     suspend fun getCollectibleDetail(collectibleId: Long): CollectibleDetail?
 
+    suspend fun isCollectibleExist(collectibleId: Long): Boolean
+
     suspend fun getCollectibleDetails(collectibleIds: List<Long>): List<CollectibleDetail>
 }

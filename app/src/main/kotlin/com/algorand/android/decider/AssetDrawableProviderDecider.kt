@@ -21,48 +21,54 @@ import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.assetdrawable.CollectibleDrawableProvider
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
+import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
+import com.algorand.wallet.asset.domain.usecase.IsCollectibleExist
 import com.algorand.wallet.asset.domain.util.AssetConstants
 import javax.inject.Inject
 
-class AssetDrawableProviderDecider @Inject constructor() {
+class AssetDrawableProviderDecider @Inject constructor(
+    private val isCollectibleExist: IsCollectibleExist,
+    private val getAsset: GetAsset,
+    private val getCollectibleDetail: GetCollectibleDetail
+) {
 
-    @Deprecated(message = "Source cache is always empty")
-    fun getAssetDrawableProvider(assetId: Long): BaseAssetDrawableProvider {
-//        val isAlgo = assetId == AssetConstants.ALGO_ID
-//        val isAsset = simpleAssetDetailUseCase.isAssetCached(assetId)
-//        val isCollectible = simpleCollectibleUseCase.isCollectibleCached(assetId)
-//        return when {
-//            isAlgo -> createAlgoDrawableProvider()
-//            isCollectible -> createCollectibleDrawableProvider(assetId)
-//            isAsset -> createAssetDrawableProvider(assetId)
-//            else -> createAssetDrawableProvider(assetId)
-//        }
+    suspend fun getAssetDrawableProvider(assetId: Long): BaseAssetDrawableProvider {
+        if (assetId == AssetConstants.ALGO_ID) return AlgoDrawableProvider()
+
+        val collectibleDetail = getCollectibleDetail(assetId)
+        if (collectibleDetail != null) {
+            return CollectibleDrawableProvider(
+                assetName = AssetName.create(collectibleDetail.fullName),
+                logoUri = collectibleDetail.primaryImageUrl
+            )
+        }
+
+        val asset = getAsset(assetId)
         return AssetDrawableProvider(
-            assetName = AssetName.create("Unknown"),
-            logoUri = null
+            assetName = AssetName.create(asset?.fullName),
+            logoUri = asset?.logoUri
         )
     }
 
-    @Deprecated(message = "Source cache is always empty")
-    fun getAssetDrawableProvider(assetId: Long, assetName: AssetName, logoUri: String?): BaseAssetDrawableProvider {
-//        val isAlgo = assetId == AssetConstants.ALGO_ID
-//        val isCollectible = simpleCollectibleUseCase.isCollectibleCached(assetId)
-//        return when {
-//            isAlgo -> createAlgoDrawableProvider()
-//            isCollectible -> CollectibleDrawableProvider(assetName, logoUri)
-//            else -> AssetDrawableProvider(assetName, logoUri)
-//        }
-        return AssetDrawableProvider(
-            assetName = assetName,
-            logoUri = logoUri
-        )
+    suspend fun getAssetDrawableProvider(
+        assetId: Long,
+        assetName: AssetName,
+        logoUri: String?
+    ): BaseAssetDrawableProvider {
+        val isAlgo = assetId == AssetConstants.ALGO_ID
+        val isCollectible = isCollectibleExist(assetId)
+        return when {
+            isAlgo -> AlgoDrawableProvider()
+            isCollectible -> CollectibleDrawableProvider(assetName, logoUri)
+            else -> AssetDrawableProvider(assetName, logoUri)
+        }
     }
 
     /**
      * Since the all assets are not cached in local, we should check by domain model if it's ASA or NFT in listed ASAs
      * and NFTs in searching screens
      */
-    @Deprecated(message = "Source cache is always empty")
     fun getAssetDrawableProvider(searchedAsset: BaseSearchedAsset): BaseAssetDrawableProvider {
         return when {
             searchedAsset.assetId == AssetConstants.ALGO_ID -> {
@@ -112,6 +118,7 @@ class AssetDrawableProviderDecider @Inject constructor() {
     }
 
     fun getAssetDrawableProvider(assetData: BaseAccountAssetData.BaseOwnedAssetData): BaseAssetDrawableProvider {
+        if (assetData.id == AssetConstants.ALGO_ID) return AlgoDrawableProvider()
         return AssetDrawableProvider(
             assetName = AssetName.create(assetData.name),
             logoUri = assetData.prismUrl

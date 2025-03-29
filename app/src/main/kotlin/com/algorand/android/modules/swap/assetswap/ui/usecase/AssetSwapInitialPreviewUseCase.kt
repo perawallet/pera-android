@@ -97,7 +97,7 @@ class AssetSwapInitialPreviewUseCase @Inject constructor(
         return getAssetDetail(ownedToAssetDetail)
     }
 
-    private fun getAssetDetail(ownedAssetData: OwnedAssetData): AssetSwapPreview.SelectedAssetDetail {
+    private suspend fun getAssetDetail(ownedAssetData: OwnedAssetData): AssetSwapPreview.SelectedAssetDetail {
         return selectedAssetDetailMapper.mapToSelectedAssetDetail(
             assetId = ownedAssetData.id,
             formattedBalance = ownedAssetData.formattedAmount,

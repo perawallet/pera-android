@@ -259,7 +259,7 @@ class AccountAssetsPreviewUseCase @Inject constructor(
         )
     }
 
-    private fun createAssetListItem(
+    private suspend fun createAssetListItem(
         assetData: BaseAccountAssetData
     ): AccountDetailAssetsItem.BaseAssetItem? {
         return with(accountDetailAssetItemMapper) {

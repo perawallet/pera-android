@@ -49,7 +49,7 @@ class AssetDetailPreviewMapper @Inject constructor(
                 formattedSecondaryValue = getSelectedCurrencyParityValue().getFormattedValue(),
                 accountDetailSummary = accountDetailSummary,
                 accountDisplayName = accountDisplayName,
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 assetPrismUrl = prismUrl,
                 verificationTierConfiguration = verificationTierConfigurationDecider
                     .decideVerificationTierConfiguration(verificationTier),

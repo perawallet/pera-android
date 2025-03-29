@@ -168,6 +168,10 @@ internal class AssetRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun isCollectibleExist(collectibleId: Long): Boolean {
+        return assetDetailCacheHelper.isCollectibleExist(collectibleId)
+    }
+
     private fun mapAssetDetailResponseToResult(assetResponse: AssetResponse): PeraResult<Asset> {
         val assetDetail = assetMapper(assetResponse)
         return if (assetDetail == null) {

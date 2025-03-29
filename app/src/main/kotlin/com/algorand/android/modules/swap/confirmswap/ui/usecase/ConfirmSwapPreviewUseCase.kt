@@ -208,20 +208,20 @@ class ConfirmSwapPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun createFromAssetDetail(swapQuote: SwapQuote): ConfirmSwapPreview.SwapAssetDetail {
+    private suspend fun createFromAssetDetail(swapQuote: SwapQuote): ConfirmSwapPreview.SwapAssetDetail {
         return with(swapQuote) {
             createAssetDetail(fromAssetDetail, fromAssetAmount, fromAssetAmountInUsdValue, NoWarning)
         }
     }
 
-    private fun createToAssetDetail(swapQuote: SwapQuote): ConfirmSwapPreview.SwapAssetDetail {
+    private suspend fun createToAssetDetail(swapQuote: SwapQuote): ConfirmSwapPreview.SwapAssetDetail {
         return with(swapQuote) {
             val priceImpactWarningStatus = priceImpactWarningStatusDecider.decideWarningStatus(swapQuote.priceImpact)
             createAssetDetail(toAssetDetail, toAssetAmount, toAssetAmountInUsdValue, priceImpactWarningStatus)
         }
     }
 
-    private fun createAssetDetail(
+    private suspend fun createAssetDetail(
         assetDetail: SwapQuoteAssetDetail,
         amount: BigDecimal,
         approximateValueInUsd: BigDecimal,

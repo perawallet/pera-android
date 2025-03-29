@@ -25,7 +25,7 @@ class ApplicationCallAssetsPreviewUseCase @Inject constructor(
     private val baseApplicationCallAssetInformationListItemMapper: BaseApplicationCallAssetInformationListItemMapper
 ) {
 
-    fun initApplicationCallAssetInformationPreview(
+    suspend fun initApplicationCallAssetInformationPreview(
         applicationCallAssetInformationArray: Array<ApplicationCallAssetInformation>
     ): ApplicationCallAssetInformationPreview {
         val assetInformationItemList = applicationCallAssetInformationArray.map {

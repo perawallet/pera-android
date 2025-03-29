@@ -74,7 +74,7 @@ class Arc59ReceiveDetailPreviewMapperImpl @Inject constructor(
         return "≈ ${accountValue.secondaryAccountValue.formatAsCurrency(Currency.USD.symbol, isFiat = true)}"
     }
 
-    private fun getAssetPreviewDetail(args: Arc59ReceiveDetailNavArgs): AssetPreviewDetail {
+    private suspend fun getAssetPreviewDetail(args: Arc59ReceiveDetailNavArgs): AssetPreviewDetail {
         return with(args.assetDetail) {
             val firstSender = args.senderDetails.firstOrNull()
             AssetPreviewDetail(

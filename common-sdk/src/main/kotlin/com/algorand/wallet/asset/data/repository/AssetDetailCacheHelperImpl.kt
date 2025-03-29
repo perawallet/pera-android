@@ -12,9 +12,6 @@
 
 package com.algorand.wallet.asset.data.repository
 
-import com.algorand.wallet.asset.domain.model.Asset
-import com.algorand.wallet.asset.domain.model.AssetDetail
-import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.asset.data.database.dao.AssetDetailDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleMediaDao
@@ -27,6 +24,9 @@ import com.algorand.wallet.asset.data.mapper.model.AssetDetailMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetMapper
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleDetailMapper
 import com.algorand.wallet.asset.data.model.AssetResponse
+import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.model.AssetDetail
+import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -130,6 +130,12 @@ internal class AssetDetailCacheHelperImpl @Inject constructor(
                 collectibleMediaEntities,
                 collectibleTraitEntities
             )
+        }
+    }
+
+    override suspend fun isCollectibleExist(collectibleId: Long): Boolean {
+        return withContext(coroutineDispatcher) {
+            collectibleDao.isCollectibleExist(collectibleId)
         }
     }
 

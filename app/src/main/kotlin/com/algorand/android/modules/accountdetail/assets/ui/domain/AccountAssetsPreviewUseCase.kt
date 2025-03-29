@@ -23,6 +23,7 @@ import com.algorand.android.models.BaseAccountAssetData.PendingAssetData.Deletio
 import com.algorand.android.modules.accountcore.domain.model.AccountAssetData
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountAssetDataFlow
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountCollectibleDataFlow
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.accountdetail.assets.ui.mapper.AccountAssetsPreviewMapper
 import com.algorand.android.modules.accountdetail.assets.ui.mapper.AccountDetailAssetItemMapper
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountAssetsPreview
@@ -69,7 +70,8 @@ class AccountAssetsPreviewUseCase @Inject constructor(
     private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol,
     private val getPrimaryCurrencyName: GetPrimaryCurrencyName,
     private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol,
-    private val getAccountMinBalance: GetAccountMinBalance
+    private val getAccountMinBalance: GetAccountMinBalance,
+    private val getAccountTotalValue: GetAccountTotalValue
 ) {
 
     fun fetchAccountDetail(accountAddress: String, query: String, hasInboxItem: Boolean): Flow<AccountAssetsPreview> {
@@ -107,7 +109,8 @@ class AccountAssetsPreviewUseCase @Inject constructor(
                 add(createQuickActionItemList(isWatchAccount, hasInboxItem))
                 val hasAccountAuthority = accountDetail.accountType?.canSignTransaction() == true
                 val isBackedUp = accountDetail.customAccountInfo?.isBackedUp ?: false
-                if (!isBackedUp) {
+                val totalValue = getAccountTotalValue(accountAddress, true).primaryAccountValue
+                if (!isBackedUp && totalValue > BigDecimal.ZERO) {
                     add(accountDetailAssetItemMapper.mapToBackupWarningItem(isBackedUp = false))
                 }
                 add(accountDetailAssetItemMapper.mapToTitleItem(R.string.assets, hasAccountAuthority))

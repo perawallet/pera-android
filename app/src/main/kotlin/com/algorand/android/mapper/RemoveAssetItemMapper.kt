@@ -81,7 +81,7 @@ class RemoveAssetItemMapper @Inject constructor(
                 },
                 verificationTierConfiguration =
                 verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier),
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 actionItemButtonState = getRemoveAssetItemActionButtonState(assetHoldingStatus),
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency
             )
@@ -108,7 +108,7 @@ class RemoveAssetItemMapper @Inject constructor(
                 } else {
                     null
                 },
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 actionItemButtonState = getRemoveAssetItemActionButtonState(assetHoldingStatus),
                 optedInAtRound = optedInAtRound,
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency
@@ -136,7 +136,7 @@ class RemoveAssetItemMapper @Inject constructor(
                 } else {
                     null
                 },
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 actionItemButtonState = getRemoveAssetItemActionButtonState(assetHoldingStatus),
                 optedInAtRound = optedInAtRound,
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency
@@ -160,7 +160,7 @@ class RemoveAssetItemMapper @Inject constructor(
                 formattedCompactAmount = formattedCompactAmount,
                 formattedSelectedCurrencyValue = parityValueInSelectedCurrency.getFormattedValue(),
                 formattedSelectedCurrencyCompactValue = parityValueInSelectedCurrency.getFormattedCompactValue(),
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 actionItemButtonState = getRemoveAssetItemActionButtonState(assetHoldingStatus),
                 optedInAtRound = optedInAtRound,
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency
@@ -188,7 +188,7 @@ class RemoveAssetItemMapper @Inject constructor(
                 } else {
                     null
                 },
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 actionItemButtonState = getRemoveAssetItemActionButtonState(assetHoldingStatus),
                 optedInAtRound = optedInAtRound,
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency
@@ -216,7 +216,7 @@ class RemoveAssetItemMapper @Inject constructor(
                 } else {
                     null
                 },
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 actionItemButtonState = getRemoveAssetItemActionButtonState(assetHoldingStatus),
                 optedInAtRound = optedInAtRound,
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency

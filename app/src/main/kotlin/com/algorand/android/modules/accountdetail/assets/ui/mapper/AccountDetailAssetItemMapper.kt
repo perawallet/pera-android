@@ -47,13 +47,13 @@ class AccountDetailAssetItemMapper @Inject constructor(
                 isAmountInDisplayedCurrencyVisible = isAmountInSelectedCurrencyVisible,
                 verificationTierConfiguration = verificationTierConfigurationDecider
                     .decideVerificationTierConfiguration(verificationTier),
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 amountInSelectedCurrency = parityValueInSelectedCurrency.amountAsCurrency
             )
         }
     }
 
-    fun mapToPendingAdditionAssetItem(
+    suspend fun mapToPendingAdditionAssetItem(
         accountAssetData: PendingAssetData.AdditionAssetData
     ): AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.AdditionItem {
         return AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.AdditionItem(
@@ -68,7 +68,7 @@ class AccountDetailAssetItemMapper @Inject constructor(
         )
     }
 
-    fun mapToPendingRemovalAssetItem(
+    suspend fun mapToPendingRemovalAssetItem(
         accountAssetData: PendingAssetData.DeletionAssetData
     ): AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.RemovalItem {
         return AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.RemovalItem(
@@ -132,7 +132,7 @@ class AccountDetailAssetItemMapper @Inject constructor(
                 id = id,
                 name = AssetName.create(name),
                 shortName = AssetName.createShortName(shortName),
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 formattedAmount = nftAmountFormatDecider.decideNFTAmountFormat(
                     nftAmount = amount,
                     fractionalDecimal = decimals,
@@ -159,7 +159,7 @@ class AccountDetailAssetItemMapper @Inject constructor(
             name = AssetName.create(accountAssetData.name),
             shortName = AssetName.createShortName(accountAssetData.shortName),
             actionDescriptionResId = R.string.adding_asset,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData.id),
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData),
             collectionName = accountAssetData.collectionName
         )
     }
@@ -172,7 +172,7 @@ class AccountDetailAssetItemMapper @Inject constructor(
             name = AssetName.create(accountAssetData.name),
             shortName = AssetName.createShortName(accountAssetData.shortName),
             actionDescriptionResId = R.string.removing_asset,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData.id),
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData),
             collectionName = accountAssetData.collectionName
         )
     }

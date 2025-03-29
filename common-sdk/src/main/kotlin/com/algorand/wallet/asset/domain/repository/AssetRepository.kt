@@ -33,6 +33,8 @@ internal interface AssetRepository {
 
     suspend fun getAsset(assetId: Long): Asset?
 
+    suspend fun isCollectibleExist(collectibleId: Long): Boolean
+
     suspend fun clearCache()
 
     suspend fun getCollectiblesDetail(collectibleIds: List<Long>): List<CollectibleDetail>

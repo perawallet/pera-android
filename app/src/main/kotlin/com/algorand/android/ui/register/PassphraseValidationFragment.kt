@@ -35,7 +35,7 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
 
     private val viewStateCollector: suspend (ViewState) -> Unit = { state ->
         when (state) {
-            is ViewState.Loading -> Unit
+            is ViewState.Idle -> Unit
             is ViewState.DefaultState -> setupPassphraseValidationView(state.passphrase)
             is ViewState.RecreateState -> recreatePassphraseValidationView(state.passphrase)
         }

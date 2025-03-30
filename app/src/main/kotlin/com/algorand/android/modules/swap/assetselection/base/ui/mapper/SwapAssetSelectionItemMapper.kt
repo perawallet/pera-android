@@ -25,7 +25,7 @@ class SwapAssetSelectionItemMapper @Inject constructor(
     private val drawableProviderDecider: AssetDrawableProviderDecider
 ) {
 
-    fun mapToSwapAssetSelectionItem(
+    suspend fun mapToSwapAssetSelectionItem(
         availableSwapAsset: AvailableSwapAsset,
         formattedPrimaryValue: String,
         formattedSecondaryValue: String,
@@ -46,7 +46,7 @@ class SwapAssetSelectionItemMapper @Inject constructor(
         }
     }
 
-    fun mapToSwapAssetSelectionItem(
+    suspend fun mapToSwapAssetSelectionItem(
         ownedAssetData: BaseAccountAssetData.BaseOwnedAssetData,
         formattedPrimaryValue: String,
         formattedSecondaryValue: String,

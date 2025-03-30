@@ -42,7 +42,7 @@ class PassphraseValidationViewModel @Inject constructor(
 ) : BaseViewModel(), StateViewModel<PassphraseValidationViewModel.ViewState> by stateDelegate {
 
     init {
-        stateDelegate.setDefaultState(ViewState.Loading)
+        stateDelegate.setDefaultState(ViewState.Idle)
     }
 
     fun logOnboardingNextClickEvent() {
@@ -101,7 +101,7 @@ class PassphraseValidationViewModel @Inject constructor(
     }
 
     sealed interface ViewState {
-        data object Loading : ViewState
+        data object Idle : ViewState
         data class DefaultState(val passphrase: List<String>) : ViewState
         data class RecreateState(val passphrase: List<String>) : ViewState
     }

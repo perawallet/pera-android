@@ -65,6 +65,7 @@ import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -457,7 +458,7 @@ class AccountDetailFragment :
                 .actionAccountDetailFragmentToBackupPassphraseInfoNavigation(
                     accountsToBackup = arrayOf(accountDetailViewModel.accountAddress),
                     onboardingAccountType = if (accountDetailViewModel.accountType ==
-                        com.algorand.wallet.account.detail.domain.model.AccountType.HdKey) {
+                        AccountType.HdKey) {
                         OnboardingAccountType.HdKey
                     } else {
                         OnboardingAccountType.Algo25

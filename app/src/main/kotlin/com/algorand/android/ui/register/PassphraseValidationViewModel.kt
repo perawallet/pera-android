@@ -51,11 +51,9 @@ class PassphraseValidationViewModel @Inject constructor(
         }
     }
 
-    fun updateAccountBackupState(address: String, isBackedUp: Boolean) {
-        viewModelScope.launch {
-            if (isBackedUp)
-                setAddressesBackedUp.invoke(setOf(address))
-        }
+    suspend fun updateAccountBackupState(address: String, isBackedUp: Boolean) {
+        if (isBackedUp)
+            setAddressesBackedUp.invoke(setOf(address))
     }
 
     fun setupPassphraseValidationView(args: PassphraseValidationFragmentArgs) {

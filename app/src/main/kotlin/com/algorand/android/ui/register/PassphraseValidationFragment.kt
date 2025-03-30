@@ -15,6 +15,7 @@ package com.algorand.android.ui.register
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
@@ -29,6 +30,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.singleVibrate
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passphrase_validation) {
@@ -89,12 +91,14 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
     private fun onNextClick() {
         passphraseValidationViewModel.logOnboardingNextClickEvent()
         if (binding.passphraseValidationGroupView.isValidated()) {
-            passphraseValidationViewModel.updateAccountBackupState(
-                args.accountToBackup,
-                isBackedUp = true
-            )
-            passphraseValidationViewModel.logEvent(PeraEvent.ONBOARDING_PASSPHRASE_VERIFIED_COMPLETE)
-            navToPassphraseVerifiedInfoFragment()
+            viewLifecycleOwner.lifecycleScope.launch {
+                passphraseValidationViewModel.updateAccountBackupState(
+                    args.accountToBackup,
+                    isBackedUp = true
+                )
+                passphraseValidationViewModel.logEvent(PeraEvent.ONBOARDING_PASSPHRASE_VERIFIED_COMPLETE)
+                navToPassphraseVerifiedInfoFragment()
+            }
         } else {
             showGlobalError(errorMessage = getString(R.string.selected_words_are))
             passphraseValidationViewModel.recreatePassphraseValidationView(args)

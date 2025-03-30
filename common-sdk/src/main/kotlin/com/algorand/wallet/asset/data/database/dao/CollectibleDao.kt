@@ -33,6 +33,9 @@ internal interface CollectibleDao {
     @Query("SELECT * FROM collectible WHERE collectible_asset_id = :collectibleAssetId")
     suspend fun getByCollectibleAssetId(collectibleAssetId: Long): CollectibleEntity?
 
+    @Query("SELECT EXISTS(SELECT * FROM collectible WHERE collectible_asset_id = :collectibleAssetId)")
+    suspend fun isCollectibleExist(collectibleAssetId: Long): Boolean
+
     @Query("SELECT * FROM collectible WHERE collectible_asset_id IN (:collectibleAssetIds)")
     suspend fun getByCollectibleAssetIds(collectibleAssetIds: List<Long>): List<CollectibleEntity>
 

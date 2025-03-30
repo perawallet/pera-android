@@ -59,6 +59,10 @@ fun interface GetCollectibleDetail {
     suspend operator fun invoke(collectibleId: Long): CollectibleDetail?
 }
 
+fun interface IsCollectibleExist {
+    suspend operator fun invoke(assetId: Long): Boolean
+}
+
 fun interface FetchCollectibleDetail {
     suspend operator fun invoke(collectibleId: Long): PeraResult<CollectibleDetail>
 }

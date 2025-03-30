@@ -56,7 +56,7 @@ class SwapFromAssetSelectionPreviewUseCase @Inject constructor(
         emit(preview)
     }
 
-    private fun createSwapAssetSelectionItemList(
+    private suspend fun createSwapAssetSelectionItemList(
         filteredAccountAssetList: List<OwnedAssetData>
     ): List<SwapAssetSelectionItem> {
         return filteredAccountAssetList.map { ownedAssetData ->

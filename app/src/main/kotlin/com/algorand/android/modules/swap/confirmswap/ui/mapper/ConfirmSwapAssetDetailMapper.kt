@@ -24,7 +24,7 @@ class ConfirmSwapAssetDetailMapper @Inject constructor(
     private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
 ) {
 
-    fun mapToAssetDetail(
+    suspend fun mapToAssetDetail(
         assetId: Long,
         formattedAmount: String,
         formattedApproximateValue: String,

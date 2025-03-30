@@ -56,7 +56,7 @@ class AssetSelectionMapper @Inject constructor(
             isAmountInSelectedCurrencyVisible = ownedCollectibleImageData.isAmountInSelectedCurrencyVisible,
             avatarDisplayText = AssetName.create(ownedCollectibleImageData.name),
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                assetId = ownedCollectibleImageData.id
+                ownedCollectibleImageData
             ),
             optedInAtRound = ownedCollectibleImageData.optedInAtRound,
             amountInSelectedCurrency = ownedCollectibleImageData.parityValueInSelectedCurrency.amountAsCurrency
@@ -81,7 +81,7 @@ class AssetSelectionMapper @Inject constructor(
             isAmountInSelectedCurrencyVisible = ownedCollectibleVideoData.isAmountInSelectedCurrencyVisible,
             avatarDisplayText = AssetName.create(ownedCollectibleVideoData.name),
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                assetId = ownedCollectibleVideoData.id
+                ownedCollectibleVideoData
             ),
             optedInAtRound = ownedCollectibleVideoData.optedInAtRound,
             amountInSelectedCurrency = ownedCollectibleVideoData.parityValueInSelectedCurrency.amountAsCurrency
@@ -106,7 +106,7 @@ class AssetSelectionMapper @Inject constructor(
             isAmountInSelectedCurrencyVisible = ownedCollectibleAudioData.isAmountInSelectedCurrencyVisible,
             avatarDisplayText = AssetName.create(ownedCollectibleAudioData.name),
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                assetId = ownedCollectibleAudioData.id
+                ownedCollectibleAudioData
             ),
             optedInAtRound = ownedCollectibleAudioData.optedInAtRound,
             amountInSelectedCurrency = ownedCollectibleAudioData.parityValueInSelectedCurrency.amountAsCurrency
@@ -131,7 +131,7 @@ class AssetSelectionMapper @Inject constructor(
             isAmountInSelectedCurrencyVisible = ownedCollectibleMixedData.isAmountInSelectedCurrencyVisible,
             avatarDisplayText = AssetName.create(ownedCollectibleMixedData.name),
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                assetId = ownedCollectibleMixedData.id
+                ownedCollectibleMixedData
             ),
             optedInAtRound = ownedCollectibleMixedData.optedInAtRound,
             amountInSelectedCurrency = ownedCollectibleMixedData.parityValueInSelectedCurrency.amountAsCurrency
@@ -156,7 +156,7 @@ class AssetSelectionMapper @Inject constructor(
             isAmountInSelectedCurrencyVisible = ownedUnsupportedCollectibleData.isAmountInSelectedCurrencyVisible,
             avatarDisplayText = AssetName.create(ownedUnsupportedCollectibleData.name),
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                assetId = ownedUnsupportedCollectibleData.id
+                ownedUnsupportedCollectibleData
             ),
             optedInAtRound = ownedUnsupportedCollectibleData.optedInAtRound,
             amountInSelectedCurrency = ownedUnsupportedCollectibleData.parityValueInSelectedCurrency.amountAsCurrency

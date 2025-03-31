@@ -13,12 +13,13 @@
 package com.algorand.android.ui.register
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingCopyPassphraseEventTracker
+import com.algorand.android.ui.register.BackupPassphraseViewModel.ViewState.Idle
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -32,9 +33,14 @@ class BackupPassphraseViewModel @Inject constructor(
     private val onboardingCopyPassphraseEventTracker: OnboardingCopyPassphraseEventTracker,
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
     private val aesPlatformManager: AESPlatformManager,
+    private val algoAccountSdk: AlgoAccountSdk,
     private val peraBip39Sdk: PeraBip39Sdk,
     private val stateDelegate: StateDelegate<ViewState>
 ) : BaseViewModel(), StateViewModel<BackupPassphraseViewModel.ViewState> by stateDelegate {
+
+    init {
+        stateDelegate.setDefaultState(Idle)
+    }
 
     fun logOnboardingNextClickEvent() {
         viewModelScope.launch {
@@ -54,11 +60,12 @@ class BackupPassphraseViewModel @Inject constructor(
 
                 val secretKey = encryptedAlgo25Key?.let {
                     aesPlatformManager.decryptByteArray(encryptedAlgo25Key)
-                } ?: getAlgo25SecretKey(args.publicKeyOfAccountToBackup)
+                } ?: getAlgo25SecretKey(args.accountToBackup)
 
                 secretKey?.let {
                     try {
-                        val mnemonic = Sdk.mnemonicFromPrivateKey(it) ?: throw Exception("Mnemonic cannot be null.")
+                        val mnemonic = algoAccountSdk.getMnemonicFromSecretKey(it)
+                            ?: throw Exception("Mnemonic cannot be null.")
                         mnemonic
                     } catch (exception: Exception) {
                         null
@@ -66,7 +73,9 @@ class BackupPassphraseViewModel @Inject constructor(
                 } ?: run { null }
             }
             passphrase?.let {
-                stateDelegate.setDefaultState(ViewState.DefaultState(it))
+                stateDelegate.updateState {
+                    ViewState.DefaultState(passphrase)
+                }
             }
         }
     }

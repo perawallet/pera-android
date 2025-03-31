@@ -32,6 +32,7 @@ import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentAccountsBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ScreenState
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
@@ -450,7 +451,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private fun navToBackupPassphraseInfoNavigation(event: Event<Set<String>>?) {
         event?.consume()?.let { addresses ->
-            AccountsFragmentDirections.actionAccountsFragmentToBackupPassphraseInfoNavigation(addresses.toTypedArray())
+            nav(AccountsFragmentDirections.actionAccountsFragmentToBackupPassphraseInfoNavigation(
+                addresses.toTypedArray(),
+                OnboardingAccountType.Algo25
+            ))
         }
     }
 

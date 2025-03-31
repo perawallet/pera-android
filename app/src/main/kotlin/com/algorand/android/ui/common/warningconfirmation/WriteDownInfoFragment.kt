@@ -97,7 +97,7 @@ class WriteDownInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun SecondaryButton(modifier: Modifier) {
-        if (args.publicKeysOfAccountsToBackup.isEmpty()) {
+        if (args.accountsToBackup.isEmpty()) {
             PeraSecondaryButton(
                 onClick = {
                     onSecondButtonClicked() },
@@ -108,7 +108,7 @@ class WriteDownInfoFragment : BaseInfoFragment() {
     }
 
     private fun onFirstButtonClicked() {
-        if (args.publicKeysOfAccountsToBackup.size > 1) {
+        if (args.accountsToBackup.size > 1) {
             navToBackupAccountSelectionFragment()
         } else {
             navToBackupPassphraseFragment()
@@ -121,13 +121,13 @@ class WriteDownInfoFragment : BaseInfoFragment() {
     }
 
     private fun navToBackupAccountSelectionFragment() {
-        nav(actionWriteDownInfoFragmentToBackupAccountSelectionFragment(args.publicKeysOfAccountsToBackup))
+        nav(actionWriteDownInfoFragmentToBackupAccountSelectionFragment(args.accountsToBackup))
     }
 
     private fun navToBackupPassphraseFragment() {
         nav(
             actionWriteDownInfoFragmentToBackupPassphrasesNavigation(
-                args.publicKeysOfAccountsToBackup.firstOrNull().orEmpty(),
+                args.accountsToBackup.firstOrNull().toString(),
                 accountCreation = args.accountCreation
             )
         )

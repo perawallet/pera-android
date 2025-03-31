@@ -400,7 +400,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         registerIntroViewModel.logOnboardingWelcomeAccountCreateClickEvent()
         nav(
             RegisterIntroFragmentDirections.actionRegisterIntroFragmentToBackupPassphraseInfoNavigation(
-                publicKeysOfAccountsToBackup = emptyArray(),
+                accountsToBackup = emptyArray(),
                 onboardingAccountType = onboardingAccountType
             )
         )

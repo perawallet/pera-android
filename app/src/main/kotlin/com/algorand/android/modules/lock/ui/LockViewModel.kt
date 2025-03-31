@@ -12,12 +12,14 @@
 
 package com.algorand.android.modules.lock.ui
 
-import android.app.NotificationManager
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
+import com.algorand.android.modules.lock.ui.LockViewModel.ViewEvent
 import com.algorand.android.usecase.DeleteAllDataUseCase
 import com.algorand.android.usecase.LockUseCase
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -26,12 +28,14 @@ import kotlinx.coroutines.launch
 class LockViewModel @Inject constructor(
     private val deleteAllDataUseCase: DeleteAllDataUseCase,
     private val lockUseCase: LockUseCase,
-    private val autoLockManager: AutoLockManager
-) : BaseViewModel() {
+    private val autoLockManager: AutoLockManager,
+    private val eventDelegate: EventDelegate<ViewEvent>
+) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
-    fun deleteAllData(notificationManager: NotificationManager?, onDeletionCompleted: () -> Unit) {
+    fun deleteAllData() {
         viewModelScope.launch {
-            deleteAllDataUseCase.deleteAllData(notificationManager, onDeletionCompleted)
+            deleteAllDataUseCase.deleteAllData()
+            eventDelegate.sendEvent(ViewEvent.RestartApp)
         }
     }
 
@@ -61,5 +65,9 @@ class LockViewModel @Inject constructor(
 
     fun onAuthSucceed() {
         autoLockManager.onAppUnlocked()
+    }
+
+    sealed interface ViewEvent {
+        data object RestartApp : ViewEvent
     }
 }

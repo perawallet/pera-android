@@ -92,10 +92,10 @@ open class PeraApp : Application() {
 
     private fun initializeMigrationManager() {
         migrationManager.apply {
-            initialize(ProcessLifecycleOwner.get().lifecycle)
             migrationResultFlow
                 .onEach(migrationManagerResultCollector)
                 .launchIn(ProcessLifecycleOwner.get().lifecycleScope)
+            initialize(ProcessLifecycleOwner.get().lifecycle)
         }
     }
 

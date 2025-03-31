@@ -67,6 +67,10 @@ fun interface DeleteLocalAccount {
     suspend operator fun invoke(address: String)
 }
 
+fun interface DeleteAllLocalAccounts {
+    suspend operator fun invoke()
+}
+
 fun interface GetAllLocalAccountAddressesAsFlow {
     operator fun invoke(): Flow<List<String>>
 }

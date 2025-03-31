@@ -106,4 +106,10 @@ internal class CustomAccountInfoRepositoryImpl @Inject constructor(
             customAccountInfoDao.updateOrderIndex(address, orderIndex)
         }
     }
+
+    override suspend fun clearAllInformation() {
+        withContext(coroutineDispatcher) {
+            customAccountInfoDao.clearAll()
+        }
+    }
 }

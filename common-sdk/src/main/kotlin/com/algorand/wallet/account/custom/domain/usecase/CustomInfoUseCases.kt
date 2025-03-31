@@ -65,6 +65,9 @@ fun interface GetAllAccountOrderIndexes {
     suspend operator fun invoke(): List<AccountOrderIndex>
 }
 
+fun interface ClearAllCustomInformation {
+    suspend operator fun invoke()
+}
 
 // custom_hd_seed_info
 

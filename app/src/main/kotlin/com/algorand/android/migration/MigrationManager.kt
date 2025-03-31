@@ -17,7 +17,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.foundation.manager.LifecycleAwareManager
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +30,6 @@ import kotlinx.coroutines.launch
 
 @Singleton
 class MigrationManager @Inject constructor(
-    private val lifecycleAwareManager: LifecycleAwareManager,
     private val accountMigrationManager: AccountMigrationManager,
     private val encryptedPinMigrationManager: EncryptedPinMigrationManager,
     private val account6xMigrationManager: Account6xMigrationManager,
@@ -44,7 +42,7 @@ class MigrationManager @Inject constructor(
     private var coroutineScope: CoroutineScope? = null
 
     fun initialize(lifecycle: Lifecycle) {
-        lifecycle.addObserver(lifecycleAwareManager)
+        lifecycle.addObserver(this)
         coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         runMigration()
     }

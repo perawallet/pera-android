@@ -10,18 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.transaction.sdk
+package com.algorand.wallet.account.info.data.model
 
-import com.algorand.wallet.algosdk.domain.model.Algo25Account
-import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
+import com.google.gson.annotations.SerializedName
 
-interface AlgoAccountSdk {
+internal data class AccountFastLookupResponse(
+    @SerializedName("algo_value")
+    val algoValue: String,
 
-    fun createHdAccount(): HdKeyAccount?
+    @SerializedName("usd_value")
+    val usdValue: String,
 
-    fun createAlgo25Account(): Algo25Account?
+    @SerializedName("calculation_type")
+    val calculationType: String,
 
-    fun recoverAlgo25Account(mnemonic: String): Algo25Account?
-
-    fun getMnemonicFromAlgo25SecretKey(secretKey: ByteArray): String?
-}
+    @SerializedName("account_exists")
+    val accountExists: Boolean
+)

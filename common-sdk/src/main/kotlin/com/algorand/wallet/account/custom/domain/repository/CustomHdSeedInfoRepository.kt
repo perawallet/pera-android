@@ -38,4 +38,6 @@ internal interface CustomHdSeedInfoRepository {
     suspend fun isHdSeedBackedUp(seedId: Int): Boolean
 
     suspend fun getAllHdSeedOrderIndexes(): List<HdSeedOrderIndex>
+
+    suspend fun clearAllInformation()
 }

@@ -17,6 +17,7 @@ import com.algorand.android.banner.domain.usecase.BannersUseCase
 import com.algorand.android.core.AccountManager
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.repository.ContactRepository
+import com.algorand.wallet.account.custom.domain.usecase.ClearAllCustomInformation
 import com.algorand.wallet.account.local.domain.usecase.DeleteAllLocalAccounts
 import javax.inject.Inject
 
@@ -27,12 +28,14 @@ class DeleteAllDataUseCase @Inject constructor(
     private val coreCacheUseCase: CoreCacheUseCase,
     private val bannersUseCase: BannersUseCase,
     private val deleteAllLocalAccounts: DeleteAllLocalAccounts,
-    private val notificationManager: NotificationManager?
+    private val notificationManager: NotificationManager?,
+    private val clearAllCustomInformation: ClearAllCustomInformation
 ) {
     suspend fun deleteAllData() {
         accountManager.removeAllData()
         walletConnectManager.killAllSessions()
         deleteAllLocalAccounts()
+        clearAllCustomInformation()
         contactRepository.deleteAllContacts()
         coreCacheUseCase.clearAllCachedData()
         bannersUseCase.clearBannerCacheAndDismissedBannerIdList()

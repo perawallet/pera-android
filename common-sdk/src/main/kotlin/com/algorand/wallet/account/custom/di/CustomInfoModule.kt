@@ -30,7 +30,7 @@ import com.algorand.wallet.account.custom.domain.usecase.ClearAllCustomInformati
 import com.algorand.wallet.account.custom.domain.usecase.ClearAllCustomInformationUseCase
 import com.algorand.wallet.account.custom.domain.usecase.DeleteAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.DeleteHdSeedCustomInfo
-import com.algorand.wallet.account.custom.domain.usecase.GetAccountAsbBackUpStatus
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountBackUpStatus
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
@@ -121,8 +121,8 @@ internal object CustomInfoModule {
     }
 
     @Provides
-    fun provideGetAccountAsbBackUpStatus(repository: CustomAccountInfoRepository): GetAccountAsbBackUpStatus {
-        return GetAccountAsbBackUpStatus(repository::isAccountBackedUp)
+    fun provideGetAccountBackUpStatus(repository: CustomAccountInfoRepository): GetAccountBackUpStatus {
+        return GetAccountBackUpStatus(repository::isAccountBackedUp)
     }
 
     @Provides

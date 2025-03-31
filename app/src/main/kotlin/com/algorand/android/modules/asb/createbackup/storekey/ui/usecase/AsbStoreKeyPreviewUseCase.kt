@@ -22,14 +22,12 @@ import com.algorand.android.modules.asb.mnemonics.domain.usecase.GetBackupMnemon
 import com.algorand.android.modules.asb.mnemonics.domain.usecase.StoreBackupMnemonicsUseCase
 import com.algorand.android.modules.backupprotocol.domain.usecase.CreateBackupProtocolContentUseCase
 import com.algorand.android.modules.backupprotocol.domain.usecase.CreateBackupProtocolPayloadUseCase
-import com.algorand.android.modules.backupprotocol.model.BackupProtocolPayload
 import com.algorand.android.modules.peraserializer.PeraSerializer
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.browser.ASB_SUPPORT_URL
 import com.algorand.android.utils.extensions.encodeBase64
 import com.algorand.android.utils.joinMnemonics
 import com.algorand.android.utils.splitMnemonic
-import com.algorand.wallet.account.custom.domain.usecase.SetAddressesBackedUp
 import javax.inject.Inject
 
 class AsbStoreKeyPreviewUseCase @Inject constructor(
@@ -40,8 +38,7 @@ class AsbStoreKeyPreviewUseCase @Inject constructor(
     private val createBackupProtocolContentUseCase: CreateBackupProtocolContentUseCase,
     private val storeBackupMnemonicsUseCase: StoreBackupMnemonicsUseCase,
     private val createBackupProtocolPayloadUseCase: CreateBackupProtocolPayloadUseCase,
-    private val peraSerializer: PeraSerializer,
-    private val setAddressesBackedUp: SetAddressesBackedUp
+    private val peraSerializer: PeraSerializer
 ) {
 
     suspend fun updatePreviewAfterCreatingBackupFile(preview: AsbStoreKeyPreview?): AsbStoreKeyPreview? {
@@ -55,15 +52,7 @@ class AsbStoreKeyPreviewUseCase @Inject constructor(
         val backupProtocolContent = createBackupProtocolContentUseCase.invoke(cipherText = cipherText)
         val serializedContent = peraSerializer.toJson(payload = backupProtocolContent)
         val encodedContent = serializedContent.encodeBase64().orEmpty()
-        setAccountsBackUpStatuses(backupProtocolPayload)
         return preview?.copy(navToBackupReadyEvent = Event(encodedContent))
-    }
-
-    private suspend fun setAccountsBackUpStatuses(backupProtocolPayload: BackupProtocolPayload?) {
-        val backedUpAccountAddresses = backupProtocolPayload?.accounts?.mapNotNull { it.address }.orEmpty()
-        if (backedUpAccountAddresses.isNotEmpty()) {
-            setAddressesBackedUp(backedUpAccountAddresses.toSet())
-        }
     }
 
     suspend fun updatePreviewWithNewCreatedKey(): AsbStoreKeyPreview? {

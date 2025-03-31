@@ -15,6 +15,7 @@ package com.algorand.android.ui.register
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
@@ -35,8 +36,18 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
 
     private val viewStateCollector: suspend (ViewState) -> Unit = { state ->
         when (state) {
+            is ViewState.Idle -> Unit
             is ViewState.DefaultState -> setupPassphraseValidationView(state.passphrase)
             is ViewState.RecreateState -> recreatePassphraseValidationView(state.passphrase)
+        }
+    }
+
+    private val viewEventCollector: suspend (PassphraseValidationViewModel.ViewEvent) -> Unit = {
+        when (it) {
+            PassphraseValidationViewModel.ViewEvent.PassphraseVerifiedComplete -> {
+                passphraseValidationViewModel.logEvent(PeraEvent.ONBOARDING_PASSPHRASE_VERIFIED_COMPLETE)
+                navToPassphraseVerifiedInfoFragment()
+            }
         }
     }
 
@@ -74,6 +85,11 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
             flow = passphraseValidationViewModel.state,
             collection = viewStateCollector
         )
+        collectLatestOnLifecycle(
+            passphraseValidationViewModel.viewEvent,
+            viewEventCollector,
+            Lifecycle.State.CREATED
+        )
     }
 
     private fun setupPassphraseValidationView(passphraseList: List<String>) {
@@ -88,12 +104,9 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
     private fun onNextClick() {
         passphraseValidationViewModel.logOnboardingNextClickEvent()
         if (binding.passphraseValidationGroupView.isValidated()) {
-            passphraseValidationViewModel.updateAccountBackupState(
-                args.publicKeyOfAccountToBackup,
-                isBackedUp = true
+            passphraseValidationViewModel.setAccountBackedUp(
+                args.accountToBackup
             )
-            passphraseValidationViewModel.logEvent(PeraEvent.ONBOARDING_PASSPHRASE_VERIFIED_COMPLETE)
-            navToPassphraseVerifiedInfoFragment()
         } else {
             showGlobalError(errorMessage = getString(R.string.selected_words_are))
             passphraseValidationViewModel.recreatePassphraseValidationView(args)

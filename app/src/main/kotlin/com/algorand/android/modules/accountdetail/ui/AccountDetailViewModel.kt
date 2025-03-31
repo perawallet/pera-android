@@ -26,6 +26,7 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlow
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -57,6 +58,9 @@ class AccountDetailViewModel @Inject constructor(
 
     val canAccountSignTransaction: Boolean
         get() = _accountDetailPreviewFlow.value?.accountDetailSummary?.accountDetail?.canSignTransaction() ?: false
+
+    val accountType: AccountType?
+        get() = _accountDetailPreviewFlow.value?.accountDetailSummary?.accountDetail?.accountType
 
     init {
         initAccountDetailPreview()

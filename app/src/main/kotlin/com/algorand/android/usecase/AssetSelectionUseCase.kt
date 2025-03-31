@@ -68,7 +68,7 @@ class AssetSelectionUseCase @Inject constructor(
         }.distinctUntilChanged()
     }
 
-    private fun createAssetSelectionItems(
+    private suspend fun createAssetSelectionItems(
         accountAssetData: List<BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData>
     ): List<BaseSelectAssetItem> {
         return accountAssetData.map { baseAccountAssetData ->

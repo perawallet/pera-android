@@ -84,7 +84,9 @@ class AssetSwapPreviewAssetDetailUseCase @Inject constructor(
         )
     }
 
-    private fun createSelectedAssetDetail(ownedAssetData: OwnedAssetData): AssetSwapPreview.SelectedAssetDetail {
+    private suspend fun createSelectedAssetDetail(
+        ownedAssetData: OwnedAssetData
+    ): AssetSwapPreview.SelectedAssetDetail {
         return selectedAssetDetailMapper.mapToSelectedAssetDetail(
             assetId = ownedAssetData.id,
             formattedBalance = ownedAssetData.formattedAmount,
@@ -94,7 +96,7 @@ class AssetSwapPreviewAssetDetailUseCase @Inject constructor(
         )
     }
 
-    private fun createSelectedAssetDetail(asset: Asset): AssetSwapPreview.SelectedAssetDetail {
+    private suspend fun createSelectedAssetDetail(asset: Asset): AssetSwapPreview.SelectedAssetDetail {
         return with(asset) {
             selectedAssetDetailMapper.mapToSelectedAssetDetail(
                 assetId = id,

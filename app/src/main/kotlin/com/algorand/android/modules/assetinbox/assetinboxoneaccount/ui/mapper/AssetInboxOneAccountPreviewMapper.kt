@@ -18,7 +18,7 @@ import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
 
 interface AssetInboxOneAccountPreviewMapper {
-    operator fun invoke(
+    suspend operator fun invoke(
         assetInboxOneAccountPaginated: AssetInboxOneAccountPaginated,
         isLoading: Boolean,
         isEmptyStateVisible: Boolean,

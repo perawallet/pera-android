@@ -71,7 +71,7 @@
             android:id="@+id/action_registerIntroFragment_to_backupPassphraseInfoNavigation"
             app:destination="@id/backupPassphraseInfoNavigation">
             <argument
-                android:name="publicKeysOfAccountsToBackup"
+                android:name="accountsToBackup"
                 app:argType="string[]" />
             <argument
                 android:name="onboardingAccountType"

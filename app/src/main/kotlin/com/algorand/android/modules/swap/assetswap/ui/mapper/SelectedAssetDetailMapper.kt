@@ -24,7 +24,7 @@ class SelectedAssetDetailMapper @Inject constructor(
     private val assetDrawableProviderDecider: AssetDrawableProviderDecider
 ) {
 
-    fun mapToSelectedAssetDetail(
+    suspend fun mapToSelectedAssetDetail(
         assetId: Long,
         formattedBalance: String,
         assetShortName: String?,
@@ -43,7 +43,7 @@ class SelectedAssetDetailMapper @Inject constructor(
         )
     }
 
-    fun mapToSelectedAssetDetail(
+    suspend fun mapToSelectedAssetDetail(
         assetId: Long,
         formattedBalance: String,
         assetShortName: String?,
@@ -62,7 +62,7 @@ class SelectedAssetDetailMapper @Inject constructor(
         )
     }
 
-    fun mapToSelectedAssetDetail(
+    suspend fun mapToSelectedAssetDetail(
         assetId: Long,
         formattedBalance: String,
         assetShortName: AssetName,

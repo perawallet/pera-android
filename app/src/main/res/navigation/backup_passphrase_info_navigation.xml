@@ -36,12 +36,13 @@
         android:name="com.algorand.android.ui.common.warningconfirmation.BackupInfoFragment"
         android:label="fragment_backup_info">
         <argument
-            android:name="publicKeysOfAccountsToBackup"
+            android:name="accountsToBackup"
             app:argType="string[]" />
         <argument
             android:name="onboardingAccountType"
+            android:defaultValue="@null"
             app:argType="com.algorand.android.models.OnboardingAccountType"
-            app:nullable="false" />
+            app:nullable="true" />
         <action
             android:id="@+id/action_backupInfoFragment_to_backupPassphraseAccountNameNavigation"
             app:destination="@id/backupPassphraseAccountNameNavigation">
@@ -59,7 +60,7 @@
         android:name="com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragment"
         android:label="fragment_write_down_info">
         <argument
-            android:name="publicKeysOfAccountsToBackup"
+            android:name="accountsToBackup"
             app:argType="string[]" />
         <argument
             android:name="accountCreation"
@@ -76,7 +77,7 @@
             android:id="@+id/action_writeDownInfoFragment_to_backupPassphrasesNavigation"
             app:destination="@id/backupPassphraseNavigation">
             <argument
-                android:name="publicKeyOfAccountToBackup"
+                android:name="accountToBackup"
                 app:argType="string" />
             <argument
                 android:name="accountCreation"
@@ -94,13 +95,13 @@
         android:label="BackupAccountSelectionFragment"
         tools:layout="@layout/fragment_base_account_selection">
         <argument
-            android:name="publicKeysOfAccountsToBackup"
+            android:name="accountsToBackup"
             app:argType="string[]" />
         <action
             android:id="@+id/action_backupAccountSelectionFragment_to_backupPassphraseNavigation"
             app:destination="@id/backupPassphraseNavigation">
             <argument
-                android:name="publicKeyOfAccountToBackup"
+                android:name="accountToBackup"
                 app:argType="string" />
             <argument
                 android:name="accountCreation"

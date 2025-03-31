@@ -53,7 +53,7 @@ fun interface GetNotBackedUpAccounts {
     suspend operator fun invoke(): Set<String>
 }
 
-fun interface GetAccountAsbBackUpStatus {
+fun interface GetAccountBackUpStatus {
     suspend operator fun invoke(accountAddress: String): Boolean
 }
 

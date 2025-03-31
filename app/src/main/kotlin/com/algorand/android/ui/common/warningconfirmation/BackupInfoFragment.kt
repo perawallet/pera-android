@@ -95,7 +95,7 @@ class BackupInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun SecondaryButton(modifier: Modifier) {
-        if (args.publicKeysOfAccountsToBackup.isEmpty()) {
+        if (args.accountsToBackup.isEmpty()) {
             PeraSecondaryButton(
                 onClick = {
                     backupInfoViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_CREATE_PASSPHRASE_SKIP)
@@ -108,17 +108,13 @@ class BackupInfoFragment : BaseInfoFragment() {
     }
 
     private fun navToWriteDownFragment() {
-        val accountCreation = if (args.publicKeysOfAccountsToBackup.isEmpty()) {
-            getAccountCreation()
-        } else {
-            null
-        }
+        val accountCreation = getAccountCreation()
 
         accountCreation?.let {
             backupInfoViewModel.logOnboardingIUnderstandClickEvent()
             nav(
                 actionBackupInfoFragmentToWriteDownInfoFragment(
-                    args.publicKeysOfAccountsToBackup,
+                    args.accountsToBackup,
                     accountCreation
                 )
             )

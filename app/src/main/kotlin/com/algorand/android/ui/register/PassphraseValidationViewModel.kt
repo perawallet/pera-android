@@ -54,7 +54,7 @@ class PassphraseValidationViewModel @Inject constructor(
         }
     }
 
-    fun updateAccountBackupStateToTrue(address: String) {
+    fun setAccountBackedUp(address: String) {
         viewModelScope.launchIO {
             setAddressesBackedUp.invoke(setOf(address))
             eventDelegate.sendEvent(ViewEvent.PassphraseVerifiedComplete)

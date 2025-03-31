@@ -13,15 +13,17 @@
 package com.algorand.android.ui.register
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.core.AccountManager
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingVerifyPassphraseEventTracker
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.custom.domain.usecase.SetAddressesBackedUp
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,13 +33,16 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class PassphraseValidationViewModel @Inject constructor(
     private val onboardingVerifyPassphraseEventTracker: OnboardingVerifyPassphraseEventTracker,
-    private val accountManager: AccountManager,
     private val aesPlatformManager: AESPlatformManager,
     private val algoAccountSdk: AlgoAccountSdk,
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
     private val peraBip39Sdk: PeraBip39Sdk,
-    private val stateDelegate: StateDelegate<ViewState>
-) : BaseViewModel(), StateViewModel<PassphraseValidationViewModel.ViewState> by stateDelegate {
+    private val stateDelegate: StateDelegate<ViewState>,
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val setAddressesBackedUp: SetAddressesBackedUp,
+) : BaseViewModel(),
+    EventViewModel<PassphraseValidationViewModel.ViewEvent> by eventDelegate,
+    StateViewModel<PassphraseValidationViewModel.ViewState> by stateDelegate {
 
     init {
         stateDelegate.setDefaultState(ViewState.Idle)
@@ -49,8 +54,11 @@ class PassphraseValidationViewModel @Inject constructor(
         }
     }
 
-    fun updateAccountBackupState(publicKey: String, isBackedUp: Boolean) {
-        accountManager.updateAccountBackupState(publicKey, isBackedUp)
+    fun setAccountBackedUp(address: String) {
+        viewModelScope.launchIO {
+            setAddressesBackedUp.invoke(setOf(address))
+            eventDelegate.sendEvent(ViewEvent.PassphraseVerifiedComplete)
+        }
     }
 
     fun setupPassphraseValidationView(args: PassphraseValidationFragmentArgs) {
@@ -99,5 +107,9 @@ class PassphraseValidationViewModel @Inject constructor(
         data object Idle : ViewState
         data class DefaultState(val passphrase: List<String>) : ViewState
         data class RecreateState(val passphrase: List<String>) : ViewState
+    }
+
+    sealed interface ViewEvent {
+        data object PassphraseVerifiedComplete : ViewEvent
     }
 }

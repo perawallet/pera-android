@@ -15,7 +15,6 @@ package com.algorand.android.core
 import android.content.SharedPreferences
 import com.algorand.android.models.Account
 import com.algorand.android.utils.preference.removeAll
-import com.algorand.android.utils.preference.saveAlgorandAccounts
 import com.google.crypto.tink.Aead
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,17 +26,6 @@ class AccountManager(
 ) {
 
     private val accounts = MutableStateFlow<List<Account>>(listOf())
-
-    fun updateAccountBackupState(accountPublicKey: String?, isBackedUp: Boolean) {
-        if (accountPublicKey.isNullOrBlank()) return
-
-        val accountToUpdate = accounts.value.find { it.address == accountPublicKey }
-
-        accountToUpdate?.let {
-            it.isBackedUp = isBackedUp
-            sharedPref.saveAlgorandAccounts(gson, accounts.value, aead)
-        }
-    }
 
     fun removeAllData() {
         accounts.value = listOf()

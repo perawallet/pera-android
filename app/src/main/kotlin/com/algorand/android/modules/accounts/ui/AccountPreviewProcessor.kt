@@ -36,7 +36,7 @@ import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRed
 import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.formatAsCurrency
-import com.algorand.wallet.account.custom.domain.usecase.GetAccountAsbBackUpStatus
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountBackUpStatus
 import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccount
@@ -69,7 +69,7 @@ class AccountPreviewProcessor @Inject constructor(
     private val getAccountTotalValue: GetAccountTotalValue,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getSortedAccountsByPreference: GetSortedAccountsByPreference,
-    private val getAccountAsbBackUpStatus: GetAccountAsbBackUpStatus,
+    private val getAccountAsbBackUpStatus: GetAccountBackUpStatus,
     private val isFeatureToggleEnabledUseCase: IsFeatureToggleEnabled,
 ) {
 

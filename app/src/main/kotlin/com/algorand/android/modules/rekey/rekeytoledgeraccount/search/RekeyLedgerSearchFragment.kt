@@ -16,8 +16,9 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
-import com.algorand.android.models.AccountInformation
 import com.algorand.android.modules.baseledgersearch.ledgersearch.ui.BaseLedgerSearchFragment
+import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionNavArgs
+import com.algorand.wallet.account.info.domain.model.AccountInformation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,16 +28,12 @@ class RekeyLedgerSearchFragment : BaseLedgerSearchFragment() {
 
     private val args: RekeyLedgerSearchFragmentArgs by navArgs()
 
-    @SuppressLint("MissingPermission")
     override fun onLedgerConnected(accountList: List<AccountInformation>, ledgerDevice: BluetoothDevice) {
         setLoadingVisibility(isVisible = false)
+        val navArgs = getRekeyToLedgerAccountSelectionNavArgs(accountList, ledgerDevice)
         nav(
-            RekeyLedgerSearchFragmentDirections.actionRekeyLedgerSearchFragmentToRekeyToLedgerAccountSelectionFragment(
-                bluetoothName = ledgerDevice.name,
-                bluetoothAddress = ledgerDevice.address,
-                ledgerAccountsInformation = accountList.toTypedArray(),
-                accountAddress = args.accountAddress
-            )
+            RekeyLedgerSearchFragmentDirections
+                .actionRekeyLedgerSearchFragmentToRekeyToLedgerAccountSelectionFragment(navArgs)
         )
     }
 
@@ -45,6 +42,26 @@ class RekeyLedgerSearchFragment : BaseLedgerSearchFragment() {
             RekeyLedgerSearchFragmentDirections.actionRekeyLedgerSearchFragmentToLedgerPairInstructionsBottomSheet(
                 bluetoothDevice
             )
+        )
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getRekeyToLedgerAccountSelectionNavArgs(
+        accountList: List<AccountInformation>,
+        device: BluetoothDevice
+    ): RekeyLedgerAccountSelectionNavArgs {
+        return RekeyLedgerAccountSelectionNavArgs(
+            accountAddress = args.accountAddress,
+            bluetoothAddress = device.address,
+            bluetoothName = device.name,
+            ledgerAccounts = accountList.map {
+                RekeyLedgerAccountSelectionNavArgs.LedgerAccountsNavArgs(
+                    isRekeyed = it.isRekeyed(),
+                    address = it.address,
+                    assetHoldingIds = it.getAssetHoldingIds(),
+                    authAddress = it.rekeyAdminAddress
+                )
+            }
         )
     }
 }

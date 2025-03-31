@@ -22,9 +22,10 @@ import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.requestWithHipoErrorHandler
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.exceptions.RetrofitErrorHandler
+import javax.inject.Inject
 import kotlinx.coroutines.flow.StateFlow
 
-class ParityRepositoryImpl(
+class ParityRepositoryImpl @Inject constructor(
     private val mobileAlgorandApi: MobileAlgorandApi,
     private val hipoApiErrorHandler: RetrofitErrorHandler,
     private val selectedCurrencyDetailSingleLocalCache: SelectedCurrencyDetailSingleLocalCache,

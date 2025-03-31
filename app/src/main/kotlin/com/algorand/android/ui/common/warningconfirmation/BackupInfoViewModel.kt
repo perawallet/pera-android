@@ -12,21 +12,79 @@
 
 package com.algorand.android.ui.common.warningconfirmation
 
-import javax.inject.Inject
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingPassphraseUnderstandEventTracker
+import com.algorand.android.utils.analytics.CreationType
+import com.algorand.android.utils.getOrElse
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class BackupInfoViewModel @Inject constructor(
-    private val onboardingPassphraseUnderstandEventTracker: OnboardingPassphraseUnderstandEventTracker
+    private val onboardingPassphraseUnderstandEventTracker: OnboardingPassphraseUnderstandEventTracker,
+    private val algoAccountSdk: AlgoAccountSdk,
+    private val aesPlatformManager: AESPlatformManager,
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
+
+    private val _onboardingAccountType: OnboardingAccountType = savedStateHandle.getOrElse(
+        ONBOARDING_ACCOUNT_TYPE,
+        OnboardingAccountType.Algo25
+    )
+
+    val onboardingAccountType: OnboardingAccountType
+        get() = _onboardingAccountType
 
     fun logOnboardingIUnderstandClickEvent() {
         viewModelScope.launch {
             onboardingPassphraseUnderstandEventTracker.logOnboardingPassphraseUnderstandEvent()
         }
+    }
+
+    fun createHdKeyAccount(): AccountCreation? {
+        val account = algoAccountSdk.createHdAccount()
+            ?: return null
+
+        return AccountCreation(
+            address = account.address,
+            customName = null,
+            isBackedUp = false,
+            type = AccountCreation.Type.HdKey(
+                account.publicKey,
+                aesPlatformManager.encryptByteArray(account.privateKey),
+                aesPlatformManager.encryptByteArray(account.entropy),
+                account.account,
+                account.change,
+                account.keyIndex,
+                account.derivationType,
+            ),
+            creationType = CreationType.CREATE
+        )
+    }
+
+    fun createAlgo25Account(): AccountCreation? {
+        val account = algoAccountSdk.createAlgo25Account()
+            ?: return null
+
+        return AccountCreation(
+            address = account.address,
+            customName = null,
+            isBackedUp = false,
+            type = AccountCreation.Type.Algo25(
+                aesPlatformManager.encryptByteArray(account.secretKey)
+            ),
+            creationType = CreationType.CREATE
+        )
+    }
+
+    companion object {
+        private const val ONBOARDING_ACCOUNT_TYPE = "onboardingAccountType"
     }
 }

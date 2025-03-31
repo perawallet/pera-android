@@ -14,20 +14,20 @@ package com.algorand.android.modules.collectibles.detail.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailViewModel
 import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
+import com.algorand.android.modules.collectibles.detail.ui.CollectibleDetailViewModel.ViewState
 import com.algorand.android.modules.collectibles.detail.ui.model.NFTDetailPreview
 import com.algorand.android.modules.collectibles.detail.ui.usecase.CollectibleDetailPreviewUseCase
 import com.algorand.android.modules.collectibles.download.DownloadFileUseCase
 import com.algorand.android.usecase.NetworkSlugUseCase
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.getOrThrow
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -35,34 +35,36 @@ class CollectibleDetailViewModel @Inject constructor(
     private val collectibleDetailPreviewUseCase: CollectibleDetailPreviewUseCase,
     private val downloadFileUseCase: DownloadFileUseCase,
     networkSlugUseCase: NetworkSlugUseCase,
-    savedStateHandle: SavedStateHandle
-) : BaseCollectibleDetailViewModel(networkSlugUseCase) {
+    savedStateHandle: SavedStateHandle,
+    private val stateDelegate: StateDelegate<ViewState>
+) : BaseCollectibleDetailViewModel(networkSlugUseCase), StateViewModel<ViewState> by stateDelegate {
 
     val nftId = savedStateHandle.getOrThrow<Long>(COLLECTIBLE_ASSET_ID_KEY)
     val accountAddress = savedStateHandle.getOrThrow<String>(PUBLIC_KEY_KEY)
 
-    private val _nftDetailPreviewFlow = MutableStateFlow<NFTDetailPreview?>(null)
-    val nftDetailPreviewFlow: StateFlow<NFTDetailPreview?> get() = _nftDetailPreviewFlow
-
     init {
+        stateDelegate.setDefaultState(ViewState.Loading)
         getCollectibleDetailPreview()
     }
 
     fun getAssetName(): AssetName? {
-        return nftDetailPreviewFlow.value?.nftName
+        return getPreview()?.nftName
     }
 
     fun getMediaByIndex(index: Int): BaseCollectibleMediaItem? {
-        return nftDetailPreviewFlow.value?.mediaListOfNFT?.get(index)
+        return getPreview()?.mediaListOfNFT?.get(index)
     }
 
     fun getExplorerUrl(): String? {
-        return nftDetailPreviewFlow.value?.peraExplorerUrl
+        return getPreview()?.peraExplorerUrl
     }
 
     fun onSendNFTClick() {
-        with(_nftDetailPreviewFlow) {
-            update { collectibleDetailPreviewUseCase.getSendEventPreviewAccordingToNFTType(value) }
+        stateDelegate.onState<ViewState.Content> { contentState ->
+            val updatedPreview = collectibleDetailPreviewUseCase.getSendEventPreviewAccordingToNFTType(
+                contentState.preview
+            )
+            updateContentState(updatedPreview)
         }
     }
 
@@ -70,27 +72,38 @@ class CollectibleDetailViewModel @Inject constructor(
         getMediaByIndex(mediaIndex)?.let { mediaItem ->
             mediaItem.downloadUrl?.let { downloadUrl ->
                 val collectibleId = mediaItem.collectibleId.toString()
-                val mediaExtension = mediaItem.mediaExtension
+                val mediaExtension = mediaItem.mediaExtension.orEmpty()
                 val fileName = "$collectibleId$mediaExtension"
                 downloadFileUseCase.execute(downloadUrl, fileName)
             }
         }
     }
 
-    fun onOptOutClick() {
-        with(_nftDetailPreviewFlow) {
-            update { collectibleDetailPreviewUseCase.getOptOutEventPreview(value, nftId, accountAddress) }
-        }
+    private fun getPreview(): NFTDetailPreview? {
+        return (stateDelegate.state.value as? ViewState.Content)?.preview
     }
 
     private fun getCollectibleDetailPreview() {
         viewModelScope.launch(Dispatchers.IO) {
-            val preview = collectibleDetailPreviewUseCase.getCollectibleDetailPreview(
+            val updatedPreview = collectibleDetailPreviewUseCase.getCollectibleDetailPreview(
                 nftId = nftId,
                 accountAddress = accountAddress
             )
-            _nftDetailPreviewFlow.emit(preview)
+            updateContentState(updatedPreview)
         }
+    }
+
+    private fun updateContentState(preview: NFTDetailPreview?) {
+        if (preview != null) {
+            stateDelegate.updateState {
+                ViewState.Content(preview)
+            }
+        }
+    }
+
+    sealed interface ViewState {
+        data object Loading : ViewState
+        data class Content(val preview: NFTDetailPreview) : ViewState
     }
 
     companion object {

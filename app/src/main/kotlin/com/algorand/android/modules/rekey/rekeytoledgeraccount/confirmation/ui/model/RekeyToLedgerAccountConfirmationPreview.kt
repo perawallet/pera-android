@@ -13,9 +13,10 @@
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.confirmation.ui.model
 
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.models.TransactionSignData
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRekeyConfirmationFields
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.Event
 
 data class RekeyToLedgerAccountConfirmationPreview(
@@ -33,5 +34,6 @@ data class RekeyToLedgerAccountConfirmationPreview(
     override val navToRekeyResultInfoFragmentEvent: Event<Unit>?,
     override val showGlobalErrorEvent: Event<Pair<Int, String>>?,
     override val navToRekeyedAccountConfirmationBottomSheetEvent: Event<Unit>?,
-    override val onSendTransactionEvent: Event<Unit>?
+    override val onSendTransactionEvent: Event<Unit>?,
+    override val onRekeyTransactionDataReady: Event<TransactionSignData>? = null
 ) : BaseRekeyConfirmationFields

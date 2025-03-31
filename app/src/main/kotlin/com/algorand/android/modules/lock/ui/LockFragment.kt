@@ -12,14 +12,13 @@
 
 package com.algorand.android.modules.lock.ui
 
-import android.app.NotificationManager
-import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.DialPadView
@@ -30,6 +29,7 @@ import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.WarningConfirmation
 import com.algorand.android.ui.common.warningconfirmation.WarningConfirmationBottomSheet.Companion.WARNING_CONFIRMATION_KEY
 import com.algorand.android.ui.splash.LauncherActivity
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.invisible
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.getTimeAsMinSecondPair
@@ -71,6 +71,7 @@ class LockFragment : DaggerBaseFragment(R.layout.fragment_lock) {
             binding.passwordDidNotMatchTextView.invisible()
         }
     }
+
     private val dialPadListener = object : DialPadView.DialPadListener {
         override fun onNumberClick(number: Int) {
             binding.passwordView.onNewDigit(number)
@@ -87,10 +88,25 @@ class LockFragment : DaggerBaseFragment(R.layout.fragment_lock) {
         }
     }
 
+    private val viewEventCollector: suspend (LockViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            LockViewModel.ViewEvent.RestartApp -> restartApp()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, onBackPressedCallback)
+        initObserver()
         initUi()
+    }
+
+    private fun initObserver() {
+        collectLatestOnLifecycle(
+            flow = lockViewModel.viewEvent,
+            collection = viewEventCollector,
+            state = Lifecycle.State.CREATED
+        )
     }
 
     private fun initUi() {
@@ -114,10 +130,7 @@ class LockFragment : DaggerBaseFragment(R.layout.fragment_lock) {
             useSavedStateValue<Boolean>(WARNING_CONFIRMATION_KEY) {
                 lockAttemptCount = 0
                 penaltyRemainingTime = 0L
-                lockViewModel.deleteAllData(
-                    context?.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager,
-                    ::onDeleteAllDataCompleted
-                )
+                lockViewModel.deleteAllData()
             }
         }
     }
@@ -209,7 +222,7 @@ class LockFragment : DaggerBaseFragment(R.layout.fragment_lock) {
         nav(LockFragmentDirections.actionLockFragmentToWarningConfirmationNavigation(warningConfirmation))
     }
 
-    private fun onDeleteAllDataCompleted() {
+    private fun restartApp() {
         context?.let {
             it.startActivity(LauncherActivity.newIntent(it))
             activity?.finishAffinity()

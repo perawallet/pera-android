@@ -16,7 +16,6 @@ import com.algorand.android.banner.data.model.BannerListResponse
 import com.algorand.android.deviceregistration.data.model.DeviceRegistrationRequest
 import com.algorand.android.deviceregistration.data.model.DeviceRegistrationResponse
 import com.algorand.android.deviceregistration.data.model.DeviceUpdateRequest
-import com.algorand.android.models.AssetDetailResponse
 import com.algorand.android.models.AssetSearchResponse
 import com.algorand.android.models.AssetSupportRequest
 import com.algorand.android.models.Feedback
@@ -26,12 +25,8 @@ import com.algorand.android.models.Pagination
 import com.algorand.android.models.PushTokenDeleteRequest
 import com.algorand.android.models.TrackTransactionRequest
 import com.algorand.android.models.VerifiedAssetDetail
-import com.algorand.android.modules.accountblockpolling.data.model.ShouldRefreshRequestBody
-import com.algorand.android.modules.accountblockpolling.data.model.ShouldRefreshResponse
 import com.algorand.android.modules.assets.addition.base.ui.BaseAddAssetViewModel.Companion.SEARCH_RESULT_LIMIT
 import com.algorand.android.modules.currency.data.model.CurrencyOptionResponse
-import com.algorand.android.modules.fetchnameservices.data.model.FetchNameServicesRequestBody
-import com.algorand.android.modules.fetchnameservices.data.model.FetchNameServicesResponse
 import com.algorand.android.modules.nftdomain.data.model.NftDomainSearchResponse
 import com.algorand.android.modules.notification.data.model.LastSeenNotificationRequest
 import com.algorand.android.modules.notification.data.model.LastSeenNotificationResponse
@@ -123,17 +118,6 @@ interface MobileAlgorandApi {
         @Query("available_on_discover_mobile") availableOnDiscoverMobile: Boolean? = null
     ): Response<Pagination<AssetSearchResponse>>
 
-    @GET("v1/assets/")
-    suspend fun getAssetsByIds(
-        @Query("asset_ids", encoded = true) assetIdsList: String,
-        @Query("include_deleted") includeDeleted: Boolean? = null
-    ): Response<Pagination<AssetDetailResponse>>
-
-    @GET("v1/assets/{asset_id}/")
-    suspend fun getAssetDetail(
-        @Path("asset_id") nftAssetId: Long
-    ): Response<AssetDetailResponse>
-
     @GET
     suspend fun getAssetsMore(@Url url: String): Response<Pagination<AssetSearchResponse>>
 
@@ -192,11 +176,6 @@ interface MobileAlgorandApi {
         @Body requestBody: CreateSwapQuoteTransactionsRequestBody
     ): Response<CreateSwapQuoteTransactionsResponse>
 
-    @POST("v1/algorand-indexer/should-refresh/")
-    suspend fun shouldRefresh(
-        @Body shouldRefreshAccountInformationRequestBody: ShouldRefreshRequestBody
-    ): Response<ShouldRefreshResponse>
-
     @GET("v1/discover/assets/trending/")
     suspend fun getTrendingAssets(): Response<List<AssetSearchResponse>>
 
@@ -204,11 +183,6 @@ interface MobileAlgorandApi {
     suspend fun getBackup(
         @Path("id") id: String
     ): Response<ImportBackupResponse>
-
-    @POST("v1/accounts/names/bulk-read/")
-    suspend fun readAccountsNameServices(
-        @Body fetchNameServicesRequestBody: FetchNameServicesRequestBody
-    ): Response<FetchNameServicesResponse>
 
     @PATCH("v1/dex-swap/quotes/{quote_id}/")
     suspend fun putSwapQuoteException(

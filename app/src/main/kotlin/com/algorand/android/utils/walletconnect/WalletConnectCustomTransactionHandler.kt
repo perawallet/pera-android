@@ -21,10 +21,10 @@ import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvi
 import com.algorand.android.modules.walletconnect.domain.model.WalletConnect
 import com.algorand.android.modules.walletconnect.ui.mapper.WalletConnectTransactionMapper
 import com.algorand.android.repository.TransactionsRepository
-import com.algorand.android.utils.AccountCacheManager
 import com.algorand.android.utils.groupWalletConnectTransactions
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult.Error
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult.Success
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 
@@ -32,7 +32,7 @@ class WalletConnectCustomTransactionHandler @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val walletConnectTransactionMapper: WalletConnectTransactionMapper,
     private val errorProvider: WalletConnectErrorProvider,
-    private val accountCacheManager: AccountCacheManager,
+    private val getLocalAccounts: GetLocalAccounts,
     private val walletConnectCustomTransactionAssetDetailHandler: WalletConnectCustomTransactionAssetDetailHandler
 ) {
 
@@ -219,13 +219,14 @@ class WalletConnectCustomTransactionHandler @Inject constructor(
         }
     }
 
-    private fun doAppHaveAtLeastOneSignerAccountInTxn(
+    private suspend fun doAppHaveAtLeastOneSignerAccountInTxn(
         groupedTxnList: List<List<BaseWalletConnectTransaction>>
     ): Boolean {
+        val localAccountAddresses = getLocalAccounts().map { it.algoAddress }
         return groupedTxnList.all { txnList ->
             txnList.any { txn ->
                 val signerPublicKey = txn.signer.address?.decodedAddress
-                accountCacheManager.getCacheData(signerPublicKey) != null
+                localAccountAddresses.contains(signerPublicKey)
             }
         }
     }

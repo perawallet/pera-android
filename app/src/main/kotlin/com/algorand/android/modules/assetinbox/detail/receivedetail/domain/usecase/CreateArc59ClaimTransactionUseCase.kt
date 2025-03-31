@@ -20,20 +20,24 @@ import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.assetinbox.detail.receivedetail.domain.model.Arc59ClaimTransactionPayload
 import com.algorand.android.modules.assetinbox.detail.receivedetail.domain.model.BaseArc59ClaimRejectTransaction.Arc59ClaimTransaction
 import com.algorand.android.repository.TransactionsRepository
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.IsOnTestnetUseCase
 import com.algorand.android.utils.toSuggestedParams
+import com.algorand.wallet.account.detail.domain.usecase.IsAccountRekeyedToAnotherAccount
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import javax.inject.Inject
 
 class CreateArc59ClaimTransactionUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val transactionsRepository: TransactionsRepository,
-    private val isOnTestnetUseCase: IsOnTestnetUseCase
+    private val isOnTestnetUseCase: IsOnTestnetUseCase,
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress,
+    private val isAccountRekeyedToAnotherAccount: IsAccountRekeyedToAnotherAccount,
+    private val isAssetOwnedByAccount: IsAssetOwnedByAccount
 ) : CreateArc59ClaimTransaction {
 
     override suspend fun invoke(payload: Arc59ClaimTransactionPayload): Result<List<Arc59ClaimTransaction>> {
-        val isAccountRekeyed = accountDetailUseCase.isAccountRekeyed(payload.receiverAddress)
-        val authAddress = accountDetailUseCase.getAuthAddress(payload.receiverAddress)
+        val authAddress = getAccountRekeyAdminAddress(payload.receiverAddress)
+        val isAccountRekeyed = isAccountRekeyedToAnotherAccount(payload.receiverAddress)
         return transactionsRepository.getTransactionParams().map { transactionParams ->
             createTransactions(payload, transactionParams).map { transactionByteArray ->
                 Arc59ClaimTransaction(
@@ -46,11 +50,7 @@ class CreateArc59ClaimTransactionUseCase @Inject constructor(
         }
     }
 
-    private fun isReceiverOptedInToAsset(address: String, assetId: Long): Boolean {
-        return accountDetailUseCase.getCachedAccountDetail(address)?.data?.accountInformation?.hasAsset(assetId) == true
-    }
-
-    private fun createTransactions(
+    private suspend fun createTransactions(
         payload: Arc59ClaimTransactionPayload,
         transactionParams: TransactionParams
     ): List<ByteArray> {
@@ -63,7 +63,7 @@ class CreateArc59ClaimTransactionUseCase @Inject constructor(
                 appID,
                 assetId,
                 transactionParams.toSuggestedParams(),
-                isReceiverOptedInToAsset(payload.receiverAddress, assetId),
+                isAssetOwnedByAccount(payload.receiverAddress, assetId),
                 payload.isClaimingAlgo
             )
         }

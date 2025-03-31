@@ -12,30 +12,20 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.core.AccountManager
-import com.algorand.android.mapper.AccountAddressMapper
 import com.algorand.android.models.BaseAccountAddress
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import javax.inject.Inject
 
 class AccountAddressUseCase @Inject constructor(
-    private val accountManager: AccountManager,
-    private val accountAddressMapper: AccountAddressMapper,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getAccountCustomName: GetAccountCustomName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) {
-
-    fun createAccountAddress(publicKey: String): BaseAccountAddress.AccountAddress {
-        val account = accountManager.getAccount(publicKey)
-        return if (account == null) {
-            accountAddressMapper.createAccountAddress(
-                publicKey = publicKey,
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(publicKey)
-            )
-        } else {
-            accountAddressMapper.createAccountAddress(
-                account = account,
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(publicKey)
-            )
-        }
+    suspend fun getAccountAddress(address: String): BaseAccountAddress.AccountAddress {
+        return BaseAccountAddress.AccountAddress(
+            publicKey = address,
+            accountIconDrawablePreview = getAccountIconDrawablePreview(address),
+            displayName = getAccountCustomName(address)
+        )
     }
 }

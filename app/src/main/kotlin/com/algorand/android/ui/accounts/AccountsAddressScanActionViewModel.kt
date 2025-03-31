@@ -12,33 +12,36 @@
 
 package com.algorand.android.ui.accounts
 
-import javax.inject.Inject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.decider.TransactionUserUseCase
 import com.algorand.android.models.AssetTransaction
-import com.algorand.android.models.TransactionTargetUser
 import com.algorand.android.models.User
+import com.algorand.android.modules.transaction.domain.GetTransactionTargetUserDisplayName
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
-import kotlinx.coroutines.launch
+import com.algorand.android.utils.launchIO
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AccountsAddressScanActionViewModel @Inject constructor(
-    private val transactionUserUseCase: TransactionUserUseCase,
+    private val getTransactionTargetUserDisplayName: GetTransactionTargetUserDisplayName,
     savedStateHandle: SavedStateHandle,
+    private val eventDelegate: EventDelegate<ViewEvent>,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase
-) : BaseViewModel() {
+) : BaseViewModel(), EventViewModel<AccountsAddressScanActionViewModel.ViewEvent> by eventDelegate {
 
     private val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
     private val label: String? = savedStateHandle.getOrElse<String?>(LABEL_KEY, null)
-    private var transactionTargetUser: TransactionTargetUser = getInitialTargetUser()
+    private var transactionTargetUserDisplayName: String = ""
 
     init {
-        initTransactionTargetUser()
+        initTransactionTargetUserDisplayName()
     }
 
     fun getAccountAddress(): String = accountAddress
@@ -48,29 +51,38 @@ class AccountsAddressScanActionViewModel @Inject constructor(
     fun getAssetTransactionArg(): AssetTransaction {
         return AssetTransaction(
             receiverUser = User(
-                name = transactionTargetUser.displayName,
+                name = transactionTargetUserDisplayName,
                 publicKey = accountAddress,
                 imageUriAsString = null
             )
         )
     }
 
-    fun isAccountLimitExceed(): Boolean {
-        return isAccountLimitExceedUseCase.isAccountLimitExceed()
-    }
-
-    private fun initTransactionTargetUser() {
-        viewModelScope.launch {
-            transactionTargetUser = transactionUserUseCase.getTransactionTargetUser(accountAddress)
+    fun onAddWatchAccountClick() {
+        viewModelScope.launchIO {
+            eventDelegate.sendEvent(
+                if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {
+                    ViewEvent.ShowMaxAccountLimitExceededError
+                } else {
+                    ViewEvent.NavToRegisterWatchAccountNavigation(getAccountAddress())
+                }
+            )
         }
     }
 
-    private fun getInitialTargetUser(): TransactionTargetUser {
-        return TransactionTargetUser(publicKey = accountAddress, displayName = accountAddress)
+    private fun initTransactionTargetUserDisplayName() {
+        viewModelScope.launch {
+            transactionTargetUserDisplayName = getTransactionTargetUserDisplayName(accountAddress)
+        }
     }
 
     companion object {
         private const val ACCOUNT_ADDRESS_KEY = "accountAddress"
         private const val LABEL_KEY = "label"
+    }
+
+    sealed interface ViewEvent {
+        data class NavToRegisterWatchAccountNavigation(val accountAddress: String) : ViewEvent
+        data object ShowMaxAccountLimitExceededError : ViewEvent
     }
 }

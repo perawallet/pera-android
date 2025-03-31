@@ -37,7 +37,7 @@ class AssetInboxOneAccountPreviewUseCase @Inject constructor(
         )
     }
 
-    private fun createAssetInboxOneAccountPreview(
+    private suspend fun createAssetInboxOneAccountPreview(
         assetInboxOneAccountPaginated: AssetInboxOneAccountPaginated,
     ): AssetInboxOneAccountPreview {
         return assetInboxOneAccountPreviewMapper.invoke(

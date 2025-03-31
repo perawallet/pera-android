@@ -53,7 +53,7 @@ fun interface GetNotBackedUpAccounts {
     suspend operator fun invoke(): Set<String>
 }
 
-fun interface GetAccountAsbBackUpStatus {
+fun interface GetAccountBackUpStatus {
     suspend operator fun invoke(accountAddress: String): Boolean
 }
 
@@ -65,6 +65,9 @@ fun interface GetAllAccountOrderIndexes {
     suspend operator fun invoke(): List<AccountOrderIndex>
 }
 
+fun interface ClearAllCustomInformation {
+    suspend operator fun invoke()
+}
 
 // custom_hd_seed_info
 

@@ -13,15 +13,18 @@
 package com.algorand.android.modules.collectibles.detail.base.ui.mapper
 
 import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
-import com.algorand.android.nft.domain.model.CollectibleTrait
+import com.algorand.wallet.asset.domain.model.CollectibleTrait
 import javax.inject.Inject
 
 class CollectibleTraitItemMapper @Inject constructor() {
 
-    fun mapToTraitItem(collectibleTrait: CollectibleTrait): CollectibleTraitItem {
+    fun mapToTraitItem(collectibleTrait: CollectibleTrait): CollectibleTraitItem? {
+        if (collectibleTrait.name.isNullOrBlank() && collectibleTrait.value.isNullOrBlank()) {
+            return null
+        }
         return CollectibleTraitItem(
-            title = collectibleTrait.title,
-            description = collectibleTrait.description
+            title = collectibleTrait.name.orEmpty(),
+            description = collectibleTrait.value.orEmpty()
         )
     }
 }

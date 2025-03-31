@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.inapppin.pin.ui.usecase
 
-import android.app.NotificationManager
 import com.algorand.android.modules.autolockmanager.domain.usecase.ShouldAppLockedUseCase.Companion.defaultLockPenaltyRemainingTimePreference
 import com.algorand.android.modules.inapppin.pin.ui.mapper.InAppPinPreviewMapper
 import com.algorand.android.modules.inapppin.pin.ui.model.InAppPinPreview
@@ -39,7 +38,6 @@ class InAppPinPreviewUseCase @Inject constructor(
     private val inAppPinPreviewMapper: InAppPinPreviewMapper,
     private val encryptedPinUseCase: EncryptedPinUseCase,
     private val deleteAllDataUseCase: DeleteAllDataUseCase,
-    private val notificationManager: NotificationManager?,
     private val getLockAttemptCountUseCase: GetLockAttemptCountUseCase,
     private val getLockPenaltyRemainingTimeUseCase: GetLockPenaltyRemainingTimeUseCase,
     private val isBiometricActiveUseCase: IsBiometricActiveUseCase,
@@ -49,15 +47,11 @@ class InAppPinPreviewUseCase @Inject constructor(
 
     fun updatePreviewWithDeletionOfAllData(preview: InAppPinPreview?) = flow {
         if (preview == null) return@flow
-        deleteAllDataUseCase.deleteAllData(
-            notificationManager = notificationManager,
-            onDeletionCompleted = {
-                clearLockRelatedPreferences()
-                val pinPenaltyPreview = preview.pinPenaltyPreview?.copy(restartActivityEvent = Event(Unit))
-                val inAppPreview = preview.copy(pinPenaltyPreview = pinPenaltyPreview)
-                emit(inAppPreview)
-            }
-        )
+        deleteAllDataUseCase.deleteAllData()
+        clearLockRelatedPreferences()
+        val pinPenaltyPreview = preview.pinPenaltyPreview?.copy(restartActivityEvent = Event(Unit))
+        val inAppPreview = preview.copy(pinPenaltyPreview = pinPenaltyPreview)
+        emit(inAppPreview)
     }.flowOn(Dispatchers.IO)
 
     fun updatePreviewWithDeletionOfAllDataEvent(preview: InAppPinPreview?): InAppPinPreview? {

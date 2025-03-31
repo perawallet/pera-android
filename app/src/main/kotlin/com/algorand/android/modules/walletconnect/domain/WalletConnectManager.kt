@@ -19,7 +19,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.algorand.android.R
-import com.algorand.android.models.AccountCacheStatus
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.WalletConnectRequest
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
@@ -41,7 +40,6 @@ import com.algorand.android.modules.walletconnect.ui.mapper.WalletConnectPreview
 import com.algorand.android.modules.walletconnect.ui.mapper.WalletConnectSessionIdentifierMapper
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionProposal
-import com.algorand.android.usecase.AccountCacheStatusUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.Resource.Error.Annotated
@@ -54,6 +52,8 @@ import com.algorand.android.utils.walletconnect.WalletConnectCustomArbitraryData
 import com.algorand.android.utils.walletconnect.WalletConnectCustomTransactionHandler
 import com.algorand.android.utils.walletconnect.WalletConnectEventLogger
 import com.algorand.android.utils.walletconnect.WalletConnectRequestResult
+import com.algorand.wallet.cache.domain.model.AppCacheStatus
+import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.pow
@@ -73,7 +73,7 @@ import kotlinx.coroutines.flow.filter
 @Singleton
 @SuppressWarnings("TooManyFunctions", "LongParameterList")
 class WalletConnectManager @Inject constructor(
-    accountCacheStatusUseCase: AccountCacheStatusUseCase,
+    getAppCacheStatusFlow: GetAppCacheStatusFlow,
     private val walletConnectCustomTransactionHandler: WalletConnectCustomTransactionHandler,
     private val walletConnectCustomArbitraryDataHandler: WalletConnectCustomArbitraryDataHandler,
     private val errorProvider: WalletConnectErrorProvider,
@@ -119,7 +119,7 @@ class WalletConnectManager @Inject constructor(
 
     private var coroutineScope: CoroutineScope? = null
 
-    private val accountCacheStatusFlow = accountCacheStatusUseCase.getAccountCacheStatusFlow()
+    private val appCacheStatusFlow = getAppCacheStatusFlow()
     private val sessionConnectionTimer by lazy { WalletConnectSessionTimer(onSessionTimedOut) }
 
     // TODO Find better solution for multiple transaction request
@@ -380,7 +380,7 @@ class WalletConnectManager @Inject constructor(
 
     private fun handleSessionProposal(sessionProposal: WalletConnectSessionProposal) {
         coroutineScope?.launchIO {
-            accountCacheStatusFlow.filter { it == AccountCacheStatus.DONE }.distinctUntilChanged().collectLatest {
+            appCacheStatusFlow.filter { it == AppCacheStatus.INITIALIZED }.distinctUntilChanged().collectLatest {
                 checkIfRequestedSessionIdMatchWithActiveNode(
                     sessionProposal = sessionProposal,
                     onFailed = { errorResource -> _sessionResultFlow.emit(Event(errorResource)) },
@@ -482,7 +482,7 @@ class WalletConnectManager @Inject constructor(
 
         sessionRequestHandlingJob = coroutineScope?.launchIO {
 
-            accountCacheStatusFlow.filter { it == AccountCacheStatus.DONE }.distinctUntilChanged().collectLatest {
+            appCacheStatusFlow.filter { it == AppCacheStatus.INITIALIZED }.distinctUntilChanged().collectLatest {
                 if (latestTransactionRequestIdentifier != requestIdentifier) {
                     latestTransactionRequestIdentifier = requestIdentifier
                     val session = walletConnectClientManager.getSessionDetail(sessionIdentifier)

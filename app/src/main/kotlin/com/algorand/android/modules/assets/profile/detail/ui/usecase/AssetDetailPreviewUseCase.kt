@@ -16,45 +16,44 @@ import androidx.navigation.NavDirections
 import com.algorand.android.R
 import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
-import com.algorand.android.models.Account
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.AssetTransaction
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountdetail.quickaction.genericaccount.AccountQuickActionsBottomSheetDirections
 import com.algorand.android.modules.accounts.domain.usecase.AccountDetailSummaryUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
-import com.algorand.android.modules.assets.profile.about.domain.usecase.GetAssetDetailUseCase
 import com.algorand.android.modules.assets.profile.about.domain.usecase.GetSelectedAssetExchangeValueUseCase
 import com.algorand.android.modules.assets.profile.detail.ui.AssetDetailFragmentDirections
 import com.algorand.android.modules.assets.profile.detail.ui.mapper.AssetDetailPreviewMapper
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
+import com.algorand.android.modules.swap.common.domain.usecase.GetSwapNavigationDestination
+import com.algorand.android.modules.swap.model.SwapNavigationDestination
 import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibilityUseCase
-import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
 import com.algorand.android.utils.ALGO_SHORT_NAME
-import com.algorand.android.utils.AlgoAssetInformationProvider
-import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.Event
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 
 @SuppressWarnings("LongParameterList")
 class AssetDetailPreviewUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val assetDetailPreviewMapper: AssetDetailPreviewMapper,
     private val getSwapFeatureRedDotVisibilityUseCase: GetSwapFeatureRedDotVisibilityUseCase,
-    private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
-    private val getAssetDetailUseCase: GetAssetDetailUseCase,
+    private val getAssetDetail: GetAssetDetail,
     private val getSelectedAssetExchangeValueUseCase: GetSelectedAssetExchangeValueUseCase,
-    private val algoAssetInformationProvider: AlgoAssetInformationProvider,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
-    private val getAccountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase,
-    private val accountDetailSummaryUseCase: AccountDetailSummaryUseCase
+    private val accountDetailSummaryUseCase: AccountDetailSummaryUseCase,
+    private val getAccountInformationFlow: GetAccountInformationFlow,
+    private val getAccountType: GetAccountType,
+    private val getSwapNavigationDestination: GetSwapNavigationDestination,
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
+    private val getAccountDisplayName: GetAccountDisplayName
 ) {
 
     fun updatePreviewForDiscoverMarketEvent(currentPreview: AssetDetailPreview): AssetDetailPreview {
@@ -71,20 +70,16 @@ class AssetDetailPreviewUseCase @Inject constructor(
         preview: AssetDetailPreview?,
         accountAddress: String
     ): AssetDetailPreview? {
-        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-        return if (hasAccountAuthority) {
-            var swapNavDirection: NavDirections? = null
-            swapNavigationDestinationHelper.getSwapNavigationDestination(
-                accountAddress = accountAddress,
-                onNavToSwap = { address ->
-                    swapNavDirection = AssetDetailFragmentDirections
-                        .actionAssetDetailFragmentToSwapNavigation(address, assetId)
-                },
-                onNavToIntroduction = {
-                    swapNavDirection = AssetDetailFragmentDirections
-                        .actionAssetDetailFragmentToSwapIntroductionNavigation(accountAddress)
-                }
-            )
+        val canSignTransaction = getAccountType(accountAddress)?.canSignTransaction() == true
+        return if (canSignTransaction) {
+            val navDestination = getSwapNavigationDestination(accountAddress)
+            val swapNavDirection: NavDirections? = when (navDestination) {
+                SwapNavigationDestination.AccountSelection -> null
+                SwapNavigationDestination.Introduction -> AssetDetailFragmentDirections
+                    .actionAssetDetailFragmentToSwapIntroductionNavigation(accountAddress)
+                is SwapNavigationDestination.Swap -> AssetDetailFragmentDirections
+                    .actionAssetDetailFragmentToSwapNavigation(accountAddress, assetId)
+            }
             val safeDirection = swapNavDirection ?: return preview
             preview?.copy(onNavigationEvent = Event(safeDirection))
         } else {
@@ -92,12 +87,12 @@ class AssetDetailPreviewUseCase @Inject constructor(
         }
     }
 
-    fun updatePreviewWithAssetAdditionNavigation(
+    suspend fun updatePreviewWithAssetAdditionNavigation(
         preview: AssetDetailPreview?,
         accountAddress: String
     ): AssetDetailPreview? {
-        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-        return if (hasAccountAuthority) {
+        val canSignTransaction = getAccountType(accountAddress)?.canSignTransaction() == true
+        return if (canSignTransaction) {
             preview?.copy(
                 onNavigationEvent = Event(
                     AccountQuickActionsBottomSheetDirections
@@ -109,12 +104,12 @@ class AssetDetailPreviewUseCase @Inject constructor(
         }
     }
 
-    fun updatePreviewWithOfframpNavigation(
+    suspend fun updatePreviewWithOfframpNavigation(
         preview: AssetDetailPreview?,
         accountAddress: String
     ): AssetDetailPreview? {
-        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-        return if (hasAccountAuthority) {
+        val canSignTransaction = getAccountType(accountAddress)?.canSignTransaction() == true
+        return if (canSignTransaction) {
             preview?.copy(
                 onNavigationEvent = Event(
                     AssetDetailFragmentDirections.actionAssetDetailFragmentToMeldNavigation(accountAddress)
@@ -125,13 +120,13 @@ class AssetDetailPreviewUseCase @Inject constructor(
         }
     }
 
-    fun updatePreviewWithSendNavigation(
+    suspend fun updatePreviewWithSendNavigation(
         preview: AssetDetailPreview?,
         accountAddress: String,
         assetId: Long
     ): AssetDetailPreview? {
-        val hasAccountAuthority = accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-        return if (hasAccountAuthority) {
+        val canSignTransaction = getAccountType(accountAddress)?.canSignTransaction() == true
+        return if (canSignTransaction) {
             val assetTransaction = AssetTransaction(senderAddress = accountAddress, assetId = assetId)
             preview?.copy(
                 onNavigationEvent = Event(
@@ -148,40 +143,32 @@ class AssetDetailPreviewUseCase @Inject constructor(
         assetId: Long,
         isQuickActionButtonsVisible: Boolean
     ): Flow<AssetDetailPreview?> {
-        return combine(
-            accountDetailUseCase.getAccountDetailCacheFlow(accountAddress).filterNotNull(),
-            getAssetDetailUseCase.getAssetDetail(assetId)
-        ) { cachedAccountDetail, assetDetailResult ->
-            val baseOwnedAssetDetail = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(
+        return getAccountInformationFlow(accountAddress).filterNotNull().map { accountInfo ->
+            val baseOwnedAssetDetail = getAccountBaseOwnedAssetData(
                 assetId = assetId,
-                publicKey = accountAddress
-            ) ?: return@combine null
+                address = accountAddress
+            ) ?: return@map null
             val isSwapButtonSelected = getRedDotVisibility(baseOwnedAssetDetail.isAlgo)
-            val isUserOptedInToAsa = cachedAccountDetail.data?.accountInformation?.hasAsset(assetId) ?: false
-            // TODO Check Error and Loading cases later
-            val assetDetail = if (assetId != ALGO_ID) {
-                (assetDetailResult as? DataResource.Success)?.data
-            } else {
-                algoAssetInformationProvider.getAlgoAssetInformation().data
-            }
-            val isAvailableOnDiscoverMobile = assetDetail?.isAvailableOnDiscoverMobile ?: false
+            val isUserOptedInToAsa = accountInfo.hasAsset(assetId)
+            val assetDetail = getAssetDetail(assetId)
+            val isAvailableOnDiscoverMobile = assetDetail?.assetInfo?.isAvailableOnDiscoverMobile ?: false
             val formattedAssetPrice = getSelectedAssetExchangeValueUseCase.getSelectedAssetExchangeValue(assetDetail)
                 ?.getFormattedValue(isCompact = true)
             val isMarketInformationVisible = isAvailableOnDiscoverMobile &&
                 baseOwnedAssetDetail.verificationTier != VerificationTier.SUSPICIOUS &&
                 assetDetail?.hasUsdValue() == true
-            val isWatchAccount = cachedAccountDetail.data?.account?.type == Account.Type.WATCH
+            val isWatchAccount = getAccountType(accountAddress) == AccountType.NoAuth
             val safeIsQuickActionButtonsVisible = isQuickActionButtonsVisible && !isWatchAccount
             assetDetailPreviewMapper.mapToAssetDetailPreview(
                 baseOwnedAssetDetail = baseOwnedAssetDetail,
-                accountDisplayName = getAccountDisplayNameUseCase.invoke(accountAddress),
+                accountDisplayName = getAccountDisplayName(accountAddress),
                 isQuickActionButtonsVisible = safeIsQuickActionButtonsVisible,
                 isSwapButtonSelected = isSwapButtonSelected,
                 isSwapButtonVisible = isUserOptedInToAsa && safeIsQuickActionButtonsVisible,
                 isMarketInformationVisible = isMarketInformationVisible,
-                last24HoursChange = assetDetail?.last24HoursAlgoPriceChangePercentage,
+                last24HoursChange = assetDetail?.assetInfo?.fiat?.last24HoursAlgoPriceChangePercentage,
                 formattedAssetPrice = formattedAssetPrice,
-                accountDetailSummary = accountDetailSummaryUseCase.getAccountDetailSummary(cachedAccountDetail.data)
+                accountDetailSummary = accountDetailSummaryUseCase.getAccountDetailSummary(accountAddress)
             )
         }.distinctUntilChanged()
     }

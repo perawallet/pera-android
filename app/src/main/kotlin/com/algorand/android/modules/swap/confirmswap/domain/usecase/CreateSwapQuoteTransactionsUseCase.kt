@@ -21,10 +21,10 @@ import com.algorand.android.modules.swap.confirmswap.domain.model.SignedSwapSing
 import com.algorand.android.modules.swap.confirmswap.domain.model.SwapQuoteTransaction
 import com.algorand.android.modules.swap.confirmswap.domain.model.SwapQuoteTransactionDTO
 import com.algorand.android.modules.swap.confirmswap.domain.model.UnsignedSwapSingleTransactionData
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.NetworkSlugUseCase
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.decodeBase64
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import javax.inject.Inject
 import javax.inject.Named
 import kotlinx.coroutines.flow.collectLatest
@@ -35,9 +35,9 @@ class CreateSwapQuoteTransactionsUseCase @Inject constructor(
     private val unsignedSwapQuoteTransactionMapper: UnsignedSwapSingleTransactionDataMapper,
     private val signedSwapQuoteTransactionMapper: SignedSwapSingleTransactionDataMapper,
     private val swapTransactionItemFactory: SwapTransactionItemFactory,
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val networkSlugUseCase: NetworkSlugUseCase,
-    private val parseTransactionMsgPackUseCase: ParseTransactionMsgPackUseCase
+    private val parseTransactionMsgPackUseCase: ParseTransactionMsgPackUseCase,
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) {
 
     suspend fun createQuoteTransactions(
@@ -64,7 +64,7 @@ class CreateSwapQuoteTransactionsUseCase @Inject constructor(
         return result ?: DataResource.Error.Local<List<SwapQuoteTransaction>>(IllegalArgumentException())
     }
 
-    private fun createSwapQuoteTransactionList(
+    private suspend fun createSwapQuoteTransactionList(
         accountAddress: String,
         swapQuoteTransactionDtoList: List<SwapQuoteTransactionDTO>
     ): List<SwapQuoteTransaction> {
@@ -99,7 +99,7 @@ class CreateSwapQuoteTransactionsUseCase @Inject constructor(
             }.orEmpty().toMutableList()
     }
 
-    private fun createUnsignedSingleTransactions(
+    private suspend fun createUnsignedSingleTransactions(
         swapQuoteTransactionDTO: SwapQuoteTransactionDTO,
         parentListIndex: Int,
         accountAddress: String
@@ -111,7 +111,7 @@ class CreateSwapQuoteTransactionsUseCase @Inject constructor(
                     transactionListIndex = index,
                     transactionMsgPack = unsignedTransaction,
                     accountAddress = accountAddress,
-                    accountAuthAddress = getAccountAuthAddressIfExist(accountAddress),
+                    accountAuthAddress = getAccountRekeyAdminAddress(accountAddress),
                     rawTransaction = unsignedTransaction?.decodeBase64()
                         ?.run { parseTransactionMsgPackUseCase.parse(this) }
                 )
@@ -121,9 +121,5 @@ class CreateSwapQuoteTransactionsUseCase @Inject constructor(
     // TODO For the first release, we will disable validation due to TinymanV2 transition
     private fun areAllTransactionsValid(txnList: List<SwapQuoteTransaction>): Boolean {
         return txnList.all { it.areTransactionsInQuoteValid() }
-    }
-
-    private fun getAccountAuthAddressIfExist(accountAddress: String): String? {
-        return accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data?.accountInformation?.rekeyAdminAddress
     }
 }

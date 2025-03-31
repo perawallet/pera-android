@@ -12,25 +12,27 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.models.WalletConnectTransactionAssetDetail
+import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
+import com.algorand.wallet.asset.domain.model.Asset
 import javax.inject.Inject
 
-class WalletConnectTransactionAssetDetailMapper @Inject constructor() {
+class WalletConnectTransactionAssetDetailMapper @Inject constructor(
+    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
+) {
 
-    fun mapToWalletConnectTransactionAssetDetail(
-        assetId: Long,
-        fullName: String?,
-        shortName: String?,
-        fractionDecimals: Int?,
-        verificationTier: VerificationTier
+    fun map(
+        asset: Asset
     ): WalletConnectTransactionAssetDetail {
-        return WalletConnectTransactionAssetDetail(
-            assetId = assetId,
-            fullName = fullName,
-            shortName = shortName,
-            fractionDecimals = fractionDecimals,
-            verificationTier = verificationTier
-        )
+        return with(asset) {
+            WalletConnectTransactionAssetDetail(
+                assetId = id,
+                fullName = fullName,
+                shortName = shortName,
+                fractionDecimals = getDecimalsOrZero(),
+                verificationTier = verificationTierConfigurationDecider
+                    .decideVerificationTierConfiguration(verificationTier)
+            )
+        }
     }
 }

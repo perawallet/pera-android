@@ -15,7 +15,8 @@ package com.algorand.android.modules.swap.confirmswap.ui.usecase
 import androidx.lifecycle.Lifecycle
 import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.modules.accounts.domain.usecase.AccountDetailSummaryUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.currency.domain.model.Currency.ALGO
 import com.algorand.android.modules.parity.utils.ParityUtils
 import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapType
@@ -67,13 +68,13 @@ class ConfirmSwapPreviewUseCase @Inject constructor(
     private val createSwapQuoteTransactionsUseCase: CreateSwapQuoteTransactionsUseCase,
     private val swapTransactionSignManager: SwapTransactionSignManager,
     private val swapPriceRatioProviderMapper: SwapPriceRatioProviderMapper,
-    private val accountDetailSummaryUseCase: AccountDetailSummaryUseCase,
     private val swapAppxValueParityHelper: SwapAppxValueParityHelper,
-    private val priceImpactWarningStatusDecider: ConfirmSwapPriceImpactWarningStatusDecider
+    private val priceImpactWarningStatusDecider: ConfirmSwapPriceImpactWarningStatusDecider,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) {
 
-    fun getConfirmSwapPreview(swapQuote: SwapQuote): ConfirmSwapPreview {
-        val accountDetailSummary = accountDetailSummaryUseCase.getAccountDetailSummary(swapQuote.accountAddress)
+    suspend fun getConfirmSwapPreview(swapQuote: SwapQuote): ConfirmSwapPreview {
         return with(swapQuote) {
             confirmSwapPreviewMapper.mapToConfirmSwapPreview(
                 fromAssetDetail = createFromAssetDetail(swapQuote),
@@ -89,8 +90,8 @@ class ConfirmSwapPreviewUseCase @Inject constructor(
                 priceImpact = swapQuote.priceImpact,
                 errorEvent = null,
                 slippageToleranceUpdateSuccessEvent = null,
-                accountIconDrawablePreview = accountDetailSummary.accountIconDrawablePreview,
-                accountDisplayName = accountDetailSummary.accountDisplayName
+                accountIconDrawablePreview = getAccountIconDrawablePreview(swapQuote.accountAddress),
+                accountDisplayName = getAccountDisplayName(swapQuote.accountAddress)
             )
         }
     }
@@ -207,20 +208,20 @@ class ConfirmSwapPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun createFromAssetDetail(swapQuote: SwapQuote): ConfirmSwapPreview.SwapAssetDetail {
+    private suspend fun createFromAssetDetail(swapQuote: SwapQuote): ConfirmSwapPreview.SwapAssetDetail {
         return with(swapQuote) {
             createAssetDetail(fromAssetDetail, fromAssetAmount, fromAssetAmountInUsdValue, NoWarning)
         }
     }
 
-    private fun createToAssetDetail(swapQuote: SwapQuote): ConfirmSwapPreview.SwapAssetDetail {
+    private suspend fun createToAssetDetail(swapQuote: SwapQuote): ConfirmSwapPreview.SwapAssetDetail {
         return with(swapQuote) {
             val priceImpactWarningStatus = priceImpactWarningStatusDecider.decideWarningStatus(swapQuote.priceImpact)
             createAssetDetail(toAssetDetail, toAssetAmount, toAssetAmountInUsdValue, priceImpactWarningStatus)
         }
     }
 
-    private fun createAssetDetail(
+    private suspend fun createAssetDetail(
         assetDetail: SwapQuoteAssetDetail,
         amount: BigDecimal,
         approximateValueInUsd: BigDecimal,

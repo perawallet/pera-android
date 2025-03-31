@@ -12,14 +12,13 @@
 
 package com.algorand.android.modules.collectibles.profile.ui.model
 
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaStatusPreview
 import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
 import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AssetName
 
 data class CollectibleProfilePreview(
-    val isLoadingVisible: Boolean,
     val nftName: AssetName,
     val collectionNameOfNFT: String?,
     val mediaListOfNFT: List<BaseCollectibleMediaItem>,

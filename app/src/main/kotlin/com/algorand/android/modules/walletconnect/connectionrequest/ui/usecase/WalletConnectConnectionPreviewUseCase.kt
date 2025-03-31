@@ -13,14 +13,14 @@
 package com.algorand.android.modules.walletconnect.connectionrequest.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.customviews.accountandassetitem.mapper.AccountItemConfigurationMapper
-import com.algorand.android.models.BaseAccountAndAssetListItem
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
 import com.algorand.android.models.ui.AccountAssetItemButtonState.UNCHECKED
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.AccountSortPreferenceUseCase
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.GetSortedAccountsByPreferenceUseCase
+import com.algorand.android.modules.accountcore.ui.accountselection.usecase.CreateLoadedAccountConfiguration
+import com.algorand.android.modules.accountcore.ui.accountselection.usecase.CreateNotLoadedAccountConfiguration
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem
+import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
+import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbol
 import com.algorand.android.modules.walletconnect.connectionrequest.domain.usecase.WCDomainScammerStateUseCase
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper.BaseWalletConnectConnectionItemMapper
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper.WCSessionRequestResultMapper
@@ -36,16 +36,16 @@ import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class WalletConnectConnectionPreviewUseCase @Inject constructor(
-    private val getSortedAccountsByPreferenceUseCase: GetSortedAccountsByPreferenceUseCase,
-    private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
-    private val accountSortPreferenceUseCase: AccountSortPreferenceUseCase,
     private val baseWalletConnectConnectionItemMapper: BaseWalletConnectConnectionItemMapper,
     private val walletConnectConnectionPreviewMapper: WalletConnectConnectionPreviewMapper,
     private val wcSessionRequestResultMapper: WCSessionRequestResultMapper,
-    private val getAccountDisplayNameUseCase: AccountDisplayNameUseCase,
     private val walletConnectNetworkItemMapper: WalletConnectNetworkItemMapper,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
-    private val wcDomainScammerStateUseCase: WCDomainScammerStateUseCase
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val wcDomainScammerStateUseCase: WCDomainScammerStateUseCase,
+    private val getAuthFilteredSortedAccounts: GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction,
+    private val createLoadedAccountConfiguration: CreateLoadedAccountConfiguration,
+    private val createNotLoadedAccountConfiguration: CreateNotLoadedAccountConfiguration,
+    private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol
 ) {
 
     suspend fun getWalletConnectConnectionPreview(
@@ -58,8 +58,8 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
         val accountItems = sortedAccountList.map { accountListItem ->
             baseWalletConnectConnectionItemMapper.mapToAccountItem(
                 accountAddress = accountListItem.itemConfiguration.accountAddress,
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(
-                    accountAddress = accountListItem.itemConfiguration.accountAddress
+                accountIconDrawablePreview = getAccountIconDrawablePreview(
+                    address = accountListItem.itemConfiguration.accountAddress
                 ),
                 accountDisplayName = accountListItem.itemConfiguration.accountDisplayName,
                 buttonState = preSelectedButtonState,
@@ -118,25 +118,17 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
     }
 
     private suspend fun createSortedAccountList(): List<BaseAccountAndAssetListItem.AccountListItem> {
-        return getSortedAccountsByPreferenceUseCase.getFilteredSortedAccountListItemsWhichCanSignTransaction(
-            sortingPreferences = accountSortPreferenceUseCase.getAccountSortPreference(),
+        return getAuthFilteredSortedAccounts(
+            accountFilterAssetId = null,
             onLoadedAccountConfiguration = {
-                accountItemConfigurationMapper.mapTo(
-                    accountDisplayName = getAccountDisplayNameUseCase.invoke(account.address),
-                    accountAddress = account.address,
-                    accountType = account.type,
-                    accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(account.address)
+                createLoadedAccountConfiguration(
+                    accountDetail = this,
+                    showHoldings = true,
+                    selectedCurrencySymbol = getPrimaryCurrencySymbol().orEmpty()
                 )
             },
             onFailedAccountConfiguration = {
-                this?.run {
-                    accountItemConfigurationMapper.mapTo(
-                        accountDisplayName = getAccountDisplayNameUseCase.invoke(address),
-                        accountAddress = address,
-                        accountType = type,
-                        accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(address)
-                    )
-                }
+                createNotLoadedAccountConfiguration(address = this)
             }
         )
     }

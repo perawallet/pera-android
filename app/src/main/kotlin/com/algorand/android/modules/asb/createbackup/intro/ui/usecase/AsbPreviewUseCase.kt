@@ -17,18 +17,25 @@ import com.algorand.android.modules.asb.createbackup.intro.ui.model.AsbIntroPrev
 import com.algorand.android.usecase.SecurityUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.browser.ASB_SUPPORT_URL
+import com.algorand.wallet.asb.domain.usecase.GetAsbEligibleAccounts
 import javax.inject.Inject
 
 class AsbPreviewUseCase @Inject constructor(
     private val securityUseCase: SecurityUseCase,
-    private val asbIntroPreviewMapper: AsbIntroPreviewMapper
+    private val asbIntroPreviewMapper: AsbIntroPreviewMapper,
+    private val getAsbEligibleAccounts: GetAsbEligibleAccounts
 ) {
 
     fun getInitialPreview(): AsbIntroPreview {
         return asbIntroPreviewMapper.mapToAlgorandSecureBackupIntroPreview()
     }
 
-    fun updatePreviewAfterStartClick(preview: AsbIntroPreview): AsbIntroPreview {
+    suspend fun updatePreviewAfterStartClick(preview: AsbIntroPreview): AsbIntroPreview {
+        val asbEligibleAccounts = getAsbEligibleAccounts()
+        if (asbEligibleAccounts.isEmpty()) {
+            return preview.copy(showNoEligibleAccountErrorEvent = Event(Unit))
+        }
+
         val pinEnabled = securityUseCase.isPinCodeEnabled()
         val navigateEvent = Event(Unit)
         return preview.copy(

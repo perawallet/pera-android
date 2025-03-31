@@ -19,10 +19,8 @@ import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.models.AssetActionResult
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.action.base.BaseAssetActionBottomSheet
-import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.getXmlStyledString
-import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.setFragmentNavigationResult
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +32,7 @@ class TransferBalanceActionBottomSheet : BaseAssetActionBottomSheet() {
 
     override fun initUi() {
         binding.accountGroup.show()
+        assetActionViewModel.getAccountName(assetActionViewModel.accountAddress)
     }
 
     override val assetActionViewModel by viewModels<TransferBalanceActionViewModel>()
@@ -41,7 +40,7 @@ class TransferBalanceActionBottomSheet : BaseAssetActionBottomSheet() {
     override fun setDescriptionTextView(textView: TextView) {
         textView.text = context?.getXmlStyledString(
             stringResId = R.string.to_opt_out_and_remove,
-            replacementList = listOf("asset_name" to assetActionViewModel.assetFullName.getName(resources))
+            replacementList = listOf("asset_name" to assetActionViewModel.assetFullName)
         )
     }
 
@@ -55,7 +54,7 @@ class TransferBalanceActionBottomSheet : BaseAssetActionBottomSheet() {
             setOnClickListener {
                 asset?.let { assetDescription ->
                     val assetActionResult = AssetActionResult(
-                        asset = assetDescription,
+                        assetId = assetDescription.id,
                         publicKey = assetActionViewModel.accountAddress
                     )
                     setFragmentNavigationResult(key = TRANSFER_ASSET_ACTION_RESULT, value = assetActionResult)
@@ -69,22 +68,6 @@ class TransferBalanceActionBottomSheet : BaseAssetActionBottomSheet() {
         materialButton.apply {
             setText(R.string.cancel)
             setOnClickListener { navBack() }
-        }
-    }
-
-    override fun setAccountNameTextView(textView: TextView) {
-        textView.apply {
-            with(assetActionViewModel.getAccountName()) {
-                text = getDisplayAddress()
-                setDrawable(
-                    start = AccountIconDrawable.create(
-                        context = context,
-                        accountIconDrawablePreview = accountIconDrawablePreview,
-                        sizeResId = R.dimen.spacing_xlarge
-                    )
-                )
-                setOnLongClickListener { onAccountAddressCopied(publicKey); true }
-            }
         }
     }
 

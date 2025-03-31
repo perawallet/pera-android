@@ -13,7 +13,6 @@
 package com.algorand.android.modules.accountdetail.assets.ui.domain
 
 import com.algorand.android.R
-import com.algorand.android.models.Account
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
@@ -21,27 +20,34 @@ import com.algorand.android.models.BaseAccountAssetData.PendingAssetData.Additio
 import com.algorand.android.models.BaseAccountAssetData.PendingAssetData.BasePendingCollectibleData.PendingAdditionCollectibleData
 import com.algorand.android.models.BaseAccountAssetData.PendingAssetData.BasePendingCollectibleData.PendingDeletionCollectibleData
 import com.algorand.android.models.BaseAccountAssetData.PendingAssetData.DeletionAssetData
+import com.algorand.android.modules.accountcore.domain.model.AccountAssetData
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountAssetDataFlow
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountCollectibleDataFlow
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.accountdetail.assets.ui.mapper.AccountAssetsPreviewMapper
 import com.algorand.android.modules.accountdetail.assets.ui.mapper.AccountDetailAssetItemMapper
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountAssetsPreview
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.AccountPortfolioItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.assets.filter.domain.usecase.ShouldDisplayNFTInAssetsPreferenceUseCase
 import com.algorand.android.modules.assets.filter.domain.usecase.ShouldDisplayOptedInNFTInAssetsPreferenceUseCase
 import com.algorand.android.modules.assets.filter.domain.usecase.ShouldHideZeroBalanceAssetsPreferenceUseCase
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
-import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
+import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencyName
+import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbol
+import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrencySymbol
+import com.algorand.android.modules.parity.domain.usecase.GetSelectedCurrencyDetailFlow
 import com.algorand.android.modules.sorting.assetsorting.ui.usecase.AssetItemSortUseCase
 import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibilityUseCase
-import com.algorand.android.usecase.AccountAssetDataUseCase
-import com.algorand.android.usecase.AccountCollectibleDataUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetFormattedAccountMinimumBalanceUseCase
 import com.algorand.android.utils.formatAsAlgoAmount
+import com.algorand.android.utils.formatAsAlgoDisplayString
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.isGreaterThan
+import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
@@ -50,30 +56,29 @@ import kotlinx.coroutines.flow.combine
 
 @SuppressWarnings("LongParameterList")
 class AccountAssetsPreviewUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val accountAssetDataUseCase: AccountAssetDataUseCase,
+    private val getAccountAssetDataFlow: GetAccountAssetDataFlow,
+    private val getAccountDetail: GetAccountDetail,
     private val accountDetailAssetItemMapper: AccountDetailAssetItemMapper,
-    private val parityUseCase: ParityUseCase,
+    private val getSelectedCurrencyDetailFlow: GetSelectedCurrencyDetailFlow,
     private val assetItemSortUseCase: AssetItemSortUseCase,
-    private val getSwapFeatureRedDotVisibilityUseCase: GetSwapFeatureRedDotVisibilityUseCase,
-    private val getFormattedAccountMinimumBalanceUseCase: GetFormattedAccountMinimumBalanceUseCase,
+    private val getSwapFeatureRedDotVisibility: GetSwapFeatureRedDotVisibilityUseCase,
     private val shouldHideZeroBalanceAssetsPreferenceUseCase: ShouldHideZeroBalanceAssetsPreferenceUseCase,
     private val shouldDisplayNFTInAssetsPreferenceUseCase: ShouldDisplayNFTInAssetsPreferenceUseCase,
     private val shouldDisplayOptedInNFTInAssetsPreferenceUseCase: ShouldDisplayOptedInNFTInAssetsPreferenceUseCase,
-    private val accountCollectibleDataUseCase: AccountCollectibleDataUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase,
-    private val accountAssetsPreviewMapper: AccountAssetsPreviewMapper
+    private val getAccountCollectibleDataFlow: GetAccountCollectibleDataFlow,
+    private val accountAssetsPreviewMapper: AccountAssetsPreviewMapper,
+    private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol,
+    private val getPrimaryCurrencyName: GetPrimaryCurrencyName,
+    private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol,
+    private val getAccountMinBalance: GetAccountMinBalance,
+    private val getAccountTotalValue: GetAccountTotalValue
 ) {
 
-    fun fetchAccountDetail(
-        accountAddress: String,
-        query: String,
-        hasInboxItem: Boolean
-    ): Flow<AccountAssetsPreview> {
+    fun fetchAccountDetail(accountAddress: String, query: String, hasInboxItem: Boolean): Flow<AccountAssetsPreview> {
         return combine(
-            accountAssetDataUseCase.getAccountAllAssetDataFlow(accountAddress, true),
-            accountCollectibleDataUseCase.getAccountAllCollectibleDataFlow(accountAddress),
-            parityUseCase.getSelectedCurrencyDetailCacheFlow()
+            getAccountAssetDataFlow(accountAddress, true),
+            getAccountCollectibleDataFlow(accountAddress),
+            getSelectedCurrencyDetailFlow()
         ) { accountAssetData, accountNFTData, _ ->
             var primaryAccountValue = BigDecimal.ZERO
             var secondaryAccountValue = BigDecimal.ZERO
@@ -85,36 +90,30 @@ class AccountAssetsPreviewUseCase @Inject constructor(
                     secondaryAccountValue += secondaryAssetsValue
                 }
             )
+            val accountDetail = getAccountDetail(accountAddress)
             val collectibleItemList = createNFTListItems(
-                accountAddress = accountAddress,
                 accountNFTData = accountNFTData,
                 query = query,
                 onCalculationDone = { primaryNFTsValue, secondaryNFTsValue ->
                     primaryAccountValue += primaryNFTsValue
                     secondaryAccountValue += secondaryNFTsValue
-                }
+                },
+                accountType = accountDetail.accountType
             )
-            val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
-            val isWatchAccount = accountDetail?.account?.type == Account.Type.WATCH
+            val isWatchAccount = accountDetail.accountType == AccountType.NoAuth
             val accountDetailAssetsItemList = mutableListOf<AccountDetailAssetsItem>().apply {
-                val accountPortfolioItem =
-                    createAccountPortfolioItem(primaryAccountValue, secondaryAccountValue)
+                val accountPortfolioItem = createAccountPortfolioItem(primaryAccountValue, secondaryAccountValue)
                 add(accountPortfolioItem)
                 val requiredMinimumBalanceItem = createRequiredMinimumBalanceItem(accountAddress)
                 add(requiredMinimumBalanceItem)
                 add(createQuickActionItemList(isWatchAccount, hasInboxItem))
-                val hasAccountAuthority =
-                    accountStateHelperUseCase.hasAccountAuthority(accountAddress)
-                val isBackedUp = accountDetail?.account?.isBackedUp ?: true
-                if (!isBackedUp) {
-                    add(accountDetailAssetItemMapper.mapToBackupWarningItem(isBackedUp))
+                val hasAccountAuthority = accountDetail.accountType?.canSignTransaction() == true
+                val isBackedUp = accountDetail.customAccountInfo?.isBackedUp ?: false
+                val totalValue = getAccountTotalValue(accountAddress, true).primaryAccountValue
+                if (!isBackedUp && totalValue > BigDecimal.ZERO) {
+                    add(accountDetailAssetItemMapper.mapToBackupWarningItem(isBackedUp = false))
                 }
-                add(
-                    accountDetailAssetItemMapper.mapToTitleItem(
-                        R.string.assets,
-                        hasAccountAuthority
-                    )
-                )
+                add(accountDetailAssetItemMapper.mapToTitleItem(R.string.assets, hasAccountAuthority))
                 add(accountDetailAssetItemMapper.mapToSearchViewItem(query))
                 addAll(assetItemSortUseCase.sortAssets(assetItemList + collectibleItemList))
                 if (assetItemList.isEmpty() && collectibleItemList.isEmpty()) {
@@ -137,8 +136,7 @@ class AccountAssetsPreviewUseCase @Inject constructor(
                 add(QuickActionItem.CopyAddressButton)
                 add(QuickActionItem.ShowAddressButton)
             } else {
-                val isSwapSelected =
-                    getSwapFeatureRedDotVisibilityUseCase.getSwapFeatureRedDotVisibility()
+                val isSwapSelected = getSwapFeatureRedDotVisibility.getSwapFeatureRedDotVisibility()
                 val inboxItem = if (hasInboxItem) {
                     QuickActionItem.AssetInboxActive
                 } else {
@@ -154,14 +152,13 @@ class AccountAssetsPreviewUseCase @Inject constructor(
     }
 
     private suspend fun createAssetListItems(
-        accountAssetData: List<BaseAccountAssetData>,
+        accountAssetData: AccountAssetData,
         query: String,
         onCalculationDone: (BigDecimal, BigDecimal) -> Unit
     ): List<AccountDetailAssetsItem.BaseAssetItem> {
         var primaryAssetsValue = BigDecimal.ZERO
         var secondaryAssetsValue = BigDecimal.ZERO
-        val eliminatedAssetList =
-            eliminateAssetsRegardingByFilteringPreferenceIfNeed(accountAssetData)
+        val eliminatedAssetList = accountAssetData.eliminateAssetsByFilteringPreferences()
         return mutableListOf<AccountDetailAssetsItem.BaseAssetItem>().apply {
             eliminatedAssetList.forEach { accountAssetData ->
                 (accountAssetData as? OwnedAssetData)?.let { assetData ->
@@ -175,30 +172,28 @@ class AccountAssetsPreviewUseCase @Inject constructor(
         }.also { onCalculationDone.invoke(primaryAssetsValue, secondaryAssetsValue) }
     }
 
-    private suspend fun eliminateAssetsRegardingByFilteringPreferenceIfNeed(
-        accountAssetData: List<BaseAccountAssetData>
-    ): List<BaseAccountAssetData> {
+    private suspend fun AccountAssetData.eliminateAssetsByFilteringPreferences(): List<BaseAccountAssetData> {
         return if (shouldHideZeroBalanceAssetsPreferenceUseCase()) {
-            accountAssetData.filter {
-                it.isAlgo ||
-                        it is BaseAccountAssetData.PendingAssetData ||
-                        (it is BaseAccountAssetData.BaseOwnedAssetData && it.amount > BigInteger.ZERO)
+            val visibleAssets = ownedAssetData.filter {
+                it.isAlgo || it.amount > BigInteger.ZERO
+            }
+            mutableListOf<BaseAccountAssetData>().apply {
+                addAll(pendingAdditionAssetData)
+                addAll(visibleAssets)
             }
         } else {
-            accountAssetData
+            ownedAssetData + pendingAdditionAssetData + pendingDeletionAssetData
         }
     }
 
     private suspend fun createNFTListItems(
-        accountAddress: String,
         accountNFTData: List<BaseAccountAssetData>,
         query: String,
-        onCalculationDone: (BigDecimal, BigDecimal) -> Unit
+        onCalculationDone: (BigDecimal, BigDecimal) -> Unit,
+        accountType: AccountType?
     ): MutableList<AccountDetailAssetsItem.BaseAssetItem> {
         var primaryNFTsValue = BigDecimal.ZERO
         var secondaryNFTsValue = BigDecimal.ZERO
-        val isHoldingByWatchAccount =
-            accountDetailUseCase.getAccountType(accountAddress) == Account.Type.WATCH
         val eliminatedNFTList = eliminateNFTsRegardingByFilteringPreferenceIfNeed(accountNFTData)
         return mutableListOf<AccountDetailAssetsItem.BaseAssetItem>().apply {
             eliminatedNFTList.forEach { accountNftData ->
@@ -210,7 +205,7 @@ class AccountAssetsPreviewUseCase @Inject constructor(
                     add(
                         createNFTListItem(
                             assetData = accountNftData,
-                            isHoldingByWatchAccount = isHoldingByWatchAccount,
+                            isHoldingByWatchAccount = accountType == AccountType.NoAuth,
                             nftListingViewType = NFTListingViewType.LINEAR_VERTICAL
                         ) ?: return@forEach
                     )
@@ -223,8 +218,7 @@ class AccountAssetsPreviewUseCase @Inject constructor(
         accountNFTData: List<BaseAccountAssetData>
     ): List<BaseAccountAssetData> {
         val shouldDisplayNFTInAssetsPreference = shouldDisplayNFTInAssetsPreferenceUseCase()
-        val shouldDisplayOptedInNFTInAssetsPreference =
-            shouldDisplayOptedInNFTInAssetsPreferenceUseCase()
+        val shouldDisplayOptedInNFTInAssetsPreference = shouldDisplayOptedInNFTInAssetsPreferenceUseCase()
         return when {
             shouldDisplayNFTInAssetsPreference && !shouldDisplayOptedInNFTInAssetsPreference -> {
                 accountNFTData.filter { it is BaseOwnedCollectibleData && it.isOwnedByTheUser }
@@ -239,8 +233,8 @@ class AccountAssetsPreviewUseCase @Inject constructor(
         val trimmedQuery = query.trim()
         with(asset) {
             return id.toString().contains(trimmedQuery, ignoreCase = true) ||
-                    shortName?.contains(trimmedQuery, ignoreCase = true) == true ||
-                    name?.contains(trimmedQuery, ignoreCase = true) == true
+                shortName?.contains(trimmedQuery, ignoreCase = true) == true ||
+                name?.contains(trimmedQuery, ignoreCase = true) == true
         }
     }
 
@@ -248,29 +242,24 @@ class AccountAssetsPreviewUseCase @Inject constructor(
         primaryAccountValue: BigDecimal,
         secondaryAccountValue: BigDecimal
     ): AccountPortfolioItem {
-        val selectedCurrencySymbol = parityUseCase.getPrimaryCurrencySymbolOrName()
-        val secondaryCurrencySymbol = parityUseCase.getSecondaryCurrencySymbol()
-        val formattedPrimaryAccountValue =
-            primaryAccountValue.formatAsCurrency(selectedCurrencySymbol)
-        val formattedSecondaryAccountValue =
-            secondaryAccountValue.formatAsCurrency(secondaryCurrencySymbol)
+        val selectedCurrencySymbol = getPrimaryCurrencySymbol() ?: getPrimaryCurrencyName()
+        val secondaryCurrencySymbol = getSecondaryCurrencySymbol()
+        val formattedPrimaryAccountValue = primaryAccountValue.formatAsCurrency(selectedCurrencySymbol)
+        val formattedSecondaryAccountValue = secondaryAccountValue.formatAsCurrency(secondaryCurrencySymbol)
         return AccountPortfolioItem(formattedPrimaryAccountValue, formattedSecondaryAccountValue)
     }
 
-    private fun createRequiredMinimumBalanceItem(
+    private suspend fun createRequiredMinimumBalanceItem(
         accountAddress: String
     ): AccountDetailAssetsItem.RequiredMinimumBalanceItem {
-        val accountMinimumBalance =
-            getFormattedAccountMinimumBalanceUseCase.getFormattedAccountMinimumBalance(
-                accountAddress = accountAddress
-            )
-        val formattedRequiredMinimumBalance = accountMinimumBalance.formatAsAlgoAmount()
+        val minBalance = getAccountMinBalance(accountAddress)
+        val formattedRequiredMinimumBalance = minBalance.formatAsAlgoDisplayString().formatAsAlgoAmount()
         return accountDetailAssetItemMapper.mapToRequiredMinimumBalanceItem(
             formattedRequiredMinimumBalance = formattedRequiredMinimumBalance
         )
     }
 
-    private fun createAssetListItem(
+    private suspend fun createAssetListItem(
         assetData: BaseAccountAssetData
     ): AccountDetailAssetsItem.BaseAssetItem? {
         return with(accountDetailAssetItemMapper) {

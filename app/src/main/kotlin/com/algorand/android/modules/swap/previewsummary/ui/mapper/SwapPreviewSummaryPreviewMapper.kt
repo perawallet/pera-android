@@ -13,10 +13,10 @@
 package com.algorand.android.modules.swap.previewsummary.ui.mapper
 
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.swap.previewsummary.ui.model.SwapPreviewSummaryPreview
 import com.algorand.android.modules.swap.utils.priceratioprovider.SwapPriceRatioProvider
-import com.algorand.android.utils.AccountDisplayName
 import javax.inject.Inject
 
 class SwapPreviewSummaryPreviewMapper @Inject constructor() {

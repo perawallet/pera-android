@@ -13,21 +13,6 @@
 
 package com.algorand.android.utils
 
-import com.algorand.android.R
-import com.algorand.android.models.Account
-
 fun isRekeyedToAnotherAccount(authAddress: String?, accountAddress: String?): Boolean {
     return !authAddress.isNullOrBlank() && authAddress != accountAddress
-}
-
-fun getAccountImageResource(accountType: Account.Type?, isRekeyedToAnotherAccount: Boolean): Int {
-    if (accountType != Account.Type.WATCH && isRekeyedToAnotherAccount) {
-        return R.drawable.ic_rekeyed_ledger
-    }
-    return when (accountType) {
-        Account.Type.STANDARD -> R.drawable.ic_standard_account
-        Account.Type.LEDGER -> R.drawable.ic_ledger_vectorized
-        Account.Type.WATCH -> R.drawable.ic_watch_account
-        else -> R.drawable.ic_ledger_vectorized
-    }
 }

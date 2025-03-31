@@ -16,11 +16,14 @@ package com.algorand.android.usecase
 import com.algorand.android.mapper.AssetTransferPreviewMapper
 import com.algorand.android.models.AssetTransferPreview
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.models.TransactionSignData
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.MIN_FEE
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.asset.domain.usecase.FetchAsset
+import com.algorand.wallet.asset.domain.usecase.GetAsset
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
@@ -28,31 +31,37 @@ class AssetTransferPreviewUseCase @Inject constructor(
     private val assetTransferPreviewMapper: AssetTransferPreviewMapper,
     private val parityUseCase: ParityUseCase,
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getAsset: GetAsset,
+    private val fetchAsset: FetchAsset,
+    private val getAccountDetail: GetAccountDetail
 ) {
 
-    fun getAssetTransferPreview(
-        transactionDataList: List<TransactionData>,
+    suspend fun getAssetTransferPreview(
+        transactionDataList: List<TransactionSignData>,
         receiverMinBalanceFee: Long? = null
     ): AssetTransferPreview {
         val fee = transactionDataList.sumOf {
-            it.calculatedFee ?: (it as? TransactionData.Send)?.projectedFee
+            it.calculatedFee ?: (it as? TransactionSignData.Send)?.projectedFee
             ?: MIN_FEE
         } + (receiverMinBalanceFee ?: 0)
         val sendTransactionData = transactionDataList.find {
-            it is TransactionData.Send
-        } as TransactionData.Send
+            it is TransactionSignData.Send
+        } as TransactionSignData.Send
         val exchangePrice = parityUseCase.getAlgoToPrimaryCurrencyConversionRate()
+        val asset = getAsset(sendTransactionData.assetId) ?: fetchAsset(sendTransactionData.assetId).getDataOrNull()
         return assetTransferPreviewMapper.mapToAssetTransferPreview(
             transactionData = sendTransactionData,
             exchangePrice = exchangePrice,
             currencySymbol = parityUseCase.getPrimaryCurrencySymbolOrName(),
             note = sendTransactionData.xnote ?: sendTransactionData.note,
             isNoteEditable = sendTransactionData.xnote == null,
-            accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(
-                sendTransactionData.senderAccountAddress
-            ),
-            fee = fee
+            accountIconDrawablePreview = getAccountIconDrawablePreview(sendTransactionData.senderAccountAddress),
+            assetId = sendTransactionData.assetId,
+            assetShortName = asset?.shortName ?: sendTransactionData.assetId.toString(),
+            assetDecimals = asset?.assetInfo?.decimals ?: 0,
+            fee = fee,
+            targetAccountDetail = getAccountDetail(sendTransactionData.targetUser.publicKey)
         )
     }
 

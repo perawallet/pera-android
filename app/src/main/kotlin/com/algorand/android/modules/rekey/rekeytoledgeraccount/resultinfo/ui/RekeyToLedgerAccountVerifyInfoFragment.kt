@@ -12,7 +12,10 @@
 
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.resultinfo.ui
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -21,10 +24,10 @@ import com.algorand.android.R
 import com.algorand.android.RekeyLedgerNavigationDirections
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraDescriptionText
-import com.algorand.android.ui.compose.widget.PeraIconBig
+import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.PeraIcon
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,31 +39,34 @@ class RekeyToLedgerAccountVerifyInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Icon(modifier: Modifier) =
-        PeraIconBig(
+        PeraIcon(
             painter = painterResource(id = R.drawable.ic_check),
-            contentDescription = "check",
+            contentDescription = stringResource(id = R.string.check),
             modifier = modifier
         )
 
     @Composable
     override fun Title(modifier: Modifier) =
-        PeraTitleText(
+        PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.account_successfully_rekeyed)
         )
 
     @Composable
-    override fun Description(modifier: Modifier) =
-        PeraDescriptionText(
+    override fun Description(modifier: Modifier) {
+        val state = rekeyToLedgerAccountVerifyInfoViewModel.state.collectAsState().value
+        PeraBodyText(
             text = stringResource(
                 id = R.string.the_account_name_was_successfully_rekeyed_formatted,
-                rekeyToLedgerAccountVerifyInfoViewModel.accountDisplayName.getAccountPrimaryDisplayName()
+                state.accountDisplayName
             ),
             modifier = modifier
         )
+    }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
         PeraPrimaryButton(
             onClick = { nav(RekeyLedgerNavigationDirections.actionRekeyLedgerNavigationPop()) },
             modifier = modifier,

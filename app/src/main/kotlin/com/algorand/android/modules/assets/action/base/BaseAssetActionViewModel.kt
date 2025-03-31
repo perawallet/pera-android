@@ -12,68 +12,67 @@
 
 package com.algorand.android.modules.assets.action.base
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.R
-import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.modules.assets.profile.about.domain.usecase.GetAssetDetailUseCase
+import com.algorand.android.models.BaseAccountAddress
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
+import com.algorand.android.usecase.AccountAddressUseCase
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.exception.AssetNotFoundException
+import com.algorand.android.utils.launchIO
+import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.model.VerificationTier
+import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
+import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-abstract class BaseAssetActionViewModel constructor(
-    private val assetDetailUseCase: SimpleAssetDetailUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase,
-    private val getAssetDetailUseCase: GetAssetDetailUseCase,
-    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
-) : BaseViewModel() {
+abstract class BaseAssetActionViewModel(
+    private val accountAddressUseCase: AccountAddressUseCase,
+    private val stateDelegate: StateDelegate<ViewState>,
+    private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
+    private val fetchAndCacheAssets: FetchAndCacheAssets,
+    private val getAsset: GetAsset
+) : BaseViewModel(), StateViewModel<BaseAssetActionViewModel.ViewState> by stateDelegate {
 
     abstract val assetId: Long
 
-    val assetInformationLiveData = MutableLiveData<Resource<AssetInformation>>()
+    private val _assetFlow = MutableStateFlow<Resource<Asset>?>(null)
+    val assetFlow: StateFlow<Resource<Asset>?> = _assetFlow.asStateFlow()
+
+    init {
+        stateDelegate.setDefaultState(ViewState.Idle)
+    }
 
     // TODO: Move this into UseCase
     protected fun fetchAssetDescription(assetId: Long) {
-        assetInformationLiveData.value = Resource.Loading
-        val isInAssetCache = assetDetailUseCase.isAssetCached(assetId)
-        val isInCollectibleCache = simpleCollectibleUseCase.isCollectibleCached(assetId)
+        _assetFlow.value = Resource.Loading
         viewModelScope.launch(Dispatchers.IO) {
-            when {
-                isInAssetCache -> {
-                    val assetDetail = assetDetailUseCase.getCachedAssetDetail(assetId)?.data
-                    assetInformationLiveData.postValue(Resource.Success(assetDetail?.convertToAssetInformation()))
-                }
-                isInCollectibleCache -> {
-                    val collectibleDetail = simpleCollectibleUseCase.getCachedCollectibleById(assetId)?.data
-                    assetInformationLiveData.postValue(Resource.Success(collectibleDetail?.convertToAssetInformation()))
-                }
-                else -> {
-                    getAssetDetailUseCase.getAssetDetail(assetId).collect { dataResource ->
-                        dataResource.useSuspended(
-                            onSuccess = { assetDetail ->
-                                val assetInformation = assetDetail.convertToAssetInformation()
-                                assetInformationLiveData.postValue(Resource.Success(assetInformation))
-                            },
-                            onFailed = {
-                                val errorResourceId = if (it.exception is AssetNotFoundException) {
-                                    R.string.asset_not_found_please_make
-                                } else {
-                                    R.string.an_error_occured
-                                }
-                                val annotatedErrorString = AnnotatedString(errorResourceId)
-                                assetInformationLiveData.postValue(Resource.Error.Annotated(annotatedErrorString))
-                            }
-                        )
+            val cachedAsset = getAsset(assetId)
+            if (cachedAsset != null) {
+                _assetFlow.value = Resource.Success(cachedAsset)
+            } else {
+                _assetFlow.value = fetchAndCacheAssets(listOf(assetId), includeDeleted = true).use(
+                    onSuccess = {
+                        Resource.Success(getAsset(assetId))
+                    },
+                    onFailed = { exception, _ ->
+                        val errorResourceId = if (exception is AssetNotFoundException) {
+                            R.string.asset_not_found_please_make
+                        } else {
+                            R.string.an_error_occured
+                        }
+                        Resource.Error.Annotated(AnnotatedString(errorResourceId))
                     }
-                }
+                )
             }
         }
     }
@@ -82,9 +81,23 @@ abstract class BaseAssetActionViewModel constructor(
         return verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier)
     }
 
+    fun getAccountName(address: String) {
+        viewModelScope.launchIO {
+            val accountAddress = accountAddressUseCase.getAccountAddress(address)
+            stateDelegate.updateState {
+                ViewState.DefaultState(accountAddress)
+            }
+        }
+    }
+
     protected companion object {
         const val ASSET_ACTION_KEY = "assetAction"
         const val SHOULD_WAIT_FOR_CONFIRMATION_KEY = "shouldWaitForConfirmation"
         const val DEFAULT_WAIT_FOR_CONFIRMATION_PARAM = false
+    }
+
+    sealed interface ViewState {
+        data object Idle : ViewState
+        data class DefaultState(val accountAddress: BaseAccountAddress.AccountAddress) : ViewState
     }
 }

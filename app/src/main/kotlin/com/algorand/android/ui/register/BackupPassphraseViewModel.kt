@@ -13,9 +13,17 @@
 package com.algorand.android.ui.register
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.core.AccountManager
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingCopyPassphraseEventTracker
+import com.algorand.android.ui.register.BackupPassphraseViewModel.ViewState.Idle
+import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
+import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -23,8 +31,16 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class BackupPassphraseViewModel @Inject constructor(
     private val onboardingCopyPassphraseEventTracker: OnboardingCopyPassphraseEventTracker,
-    private val accountManager: AccountManager
-) : BaseViewModel() {
+    private val getAlgo25SecretKey: GetAlgo25SecretKey,
+    private val aesPlatformManager: AESPlatformManager,
+    private val algoAccountSdk: AlgoAccountSdk,
+    private val peraBip39Sdk: PeraBip39Sdk,
+    private val stateDelegate: StateDelegate<ViewState>
+) : BaseViewModel(), StateViewModel<BackupPassphraseViewModel.ViewState> by stateDelegate {
+
+    init {
+        stateDelegate.setDefaultState(Idle)
+    }
 
     fun logOnboardingNextClickEvent() {
         viewModelScope.launch {
@@ -32,7 +48,42 @@ class BackupPassphraseViewModel @Inject constructor(
         }
     }
 
-    fun getAccountSecretKey(publicKey: String): ByteArray? {
-        return accountManager.getAccount(publicKey)?.getSecretKey()
+    fun getMnemonic(args: BackupPassphraseFragmentArgs) {
+        viewModelScope.launchIO {
+            val encryptedEntropy = (args.accountCreation?.type as? AccountCreation.Type.HdKey)?.encryptedEntropy
+            val passphrase = encryptedEntropy?.let {
+                val entropy = aesPlatformManager.decryptByteArray(it)
+                peraBip39Sdk.getMnemonicFromEntropy(entropy)
+            } ?: run {
+                val encryptedAlgo25Key =
+                    (args.accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey
+
+                val secretKey = encryptedAlgo25Key?.let {
+                    aesPlatformManager.decryptByteArray(encryptedAlgo25Key)
+                } ?: getAlgo25SecretKey(args.accountToBackup)
+
+                secretKey?.let {
+                    try {
+                        val mnemonic = algoAccountSdk.getMnemonicFromSecretKey(it)
+                            ?: throw Exception("Mnemonic cannot be null.")
+                        mnemonic
+                    } catch (exception: Exception) {
+                        null
+                    }
+                } ?: run { null }
+            }
+            passphrase?.let {
+                stateDelegate.updateState {
+                    ViewState.DefaultState(passphrase)
+                }
+            }
+        }
+    }
+
+    sealed interface ViewState {
+        data object Idle : ViewState
+        data class DefaultState(
+            val passphrase: String?
+        ) : ViewState
     }
 }

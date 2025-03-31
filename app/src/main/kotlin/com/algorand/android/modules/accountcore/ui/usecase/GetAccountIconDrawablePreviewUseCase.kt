@@ -1,0 +1,118 @@
+/*
+ * Copyright 2022 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android.modules.accountcore.ui.usecase
+
+import com.algorand.android.R
+import com.algorand.android.models.AccountIconResource
+import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
+import javax.inject.Inject
+
+internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
+    private val getAccountDetail: GetAccountDetail,
+    private val getAccountRegistrationType: GetAccountRegistrationType,
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
+) : GetAccountIconDrawablePreview {
+
+    override suspend fun invoke(address: String): AccountIconDrawablePreview {
+        val accountDetail = getAccountDetail(address)
+        return getAccountIconDrawablePreview(accountDetail)
+    }
+
+    override suspend fun invoke(accountDetail: AccountDetail): AccountIconDrawablePreview {
+        return getAccountIconDrawablePreview(accountDetail)
+    }
+
+    private suspend fun getAccountIconDrawablePreview(accountDetail: AccountDetail): AccountIconDrawablePreview {
+        return when (accountDetail.accountType) {
+            AccountType.Algo25 -> getAlgo25Drawable()
+            AccountType.HdKey -> getHdKeyDrawable()
+            AccountType.LedgerBle -> getLedgerBleDrawable()
+            AccountType.NoAuth -> getNoAuthDrawable()
+            AccountType.Rekeyed -> getRekeyedDrawable()
+            AccountType.RekeyedAuth -> getRekeyedAuthDrawable(accountDetail.address)
+            null -> getDefaultDrawable()
+        }
+    }
+
+    private fun getAlgo25Drawable(): AccountIconDrawablePreview {
+        return AccountIconDrawablePreview(
+            backgroundColorResId = AccountIconResource.STANDARD.backgroundColorResId,
+            iconTintResId = AccountIconResource.STANDARD.iconTintResId,
+            iconResId = AccountIconResource.STANDARD.iconResId
+        )
+    }
+
+    private fun getLedgerBleDrawable(): AccountIconDrawablePreview {
+        return AccountIconDrawablePreview(
+            backgroundColorResId = AccountIconResource.LEDGER.backgroundColorResId,
+            iconTintResId = AccountIconResource.LEDGER.iconTintResId,
+            iconResId = AccountIconResource.LEDGER.iconResId
+        )
+    }
+
+    private fun getNoAuthDrawable(): AccountIconDrawablePreview {
+        return AccountIconDrawablePreview(
+            backgroundColorResId = AccountIconResource.WATCH.backgroundColorResId,
+            iconTintResId = AccountIconResource.WATCH.iconTintResId,
+            iconResId = AccountIconResource.WATCH.iconResId
+        )
+    }
+
+    private fun getRekeyedDrawable(): AccountIconDrawablePreview {
+        return AccountIconDrawablePreview(
+            backgroundColorResId = R.color.negative_lighter,
+            iconTintResId = R.color.negative,
+            iconResId = R.drawable.ic_rekey_shield
+        )
+    }
+
+    private fun getHdKeyDrawable(): AccountIconDrawablePreview {
+        return AccountIconDrawablePreview(
+            backgroundColorResId = R.color.layer_gray_lighter,
+            iconTintResId = R.color.text_gray,
+            iconResId = R.drawable.ic_wallet
+        )
+    }
+
+    private suspend fun getRekeyedAuthDrawable(address: String): AccountIconDrawablePreview {
+        val rekeyAdminAddress = getAccountRekeyAdminAddress(address) ?: return getRekeyedDrawable()
+        val rekeyAdminType = getAccountRegistrationType(rekeyAdminAddress)
+        val backgroundColorResId = when (rekeyAdminType) {
+            AccountRegistrationType.Algo25 -> AccountIconResource.STANDARD.backgroundColorResId
+            else -> AccountIconResource.REKEYED_AUTH.backgroundColorResId
+        }
+        val iconTintResId = when (rekeyAdminType) {
+            AccountRegistrationType.Algo25 -> AccountIconResource.STANDARD.iconTintResId
+            else -> AccountIconResource.LEDGER.iconTintResId
+        }
+        return AccountIconDrawablePreview(
+            backgroundColorResId = backgroundColorResId,
+            iconTintResId = iconTintResId,
+            iconResId = R.drawable.ic_rekey_shield
+        )
+    }
+
+    private fun getDefaultDrawable(): AccountIconDrawablePreview {
+        return AccountIconDrawablePreview(
+            backgroundColorResId = R.color.layer_gray_lighter,
+            iconTintResId = R.color.text_gray,
+            iconResId = R.drawable.ic_wallet
+        )
+    }
+}

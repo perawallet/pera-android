@@ -25,6 +25,7 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.ui.NameRegistrationPreview
 import com.algorand.android.utils.KeyboardToggleListener
 import com.algorand.android.utils.addKeyboardToggleListener
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.hideKeyboard
 import com.algorand.android.utils.removeKeyboardToggleListener
 import com.algorand.android.utils.showAlertDialog
@@ -34,12 +35,19 @@ import kotlinx.coroutines.launch
 
 abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragment_name_registration) {
 
+    private val viewEventCollector: suspend (NameRegistrationViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is NameRegistrationViewModel.ViewEvent.ShowMaxAccountLimitExceededError ->
+                showMaxAccountLimitExceededError()
+        }
+    }
+
     abstract val accountCreation: AccountCreation?
     abstract fun navToNextFragment()
 
     protected val nameRegistrationViewModel: NameRegistrationViewModel by viewModels()
 
-    private val binding by viewBinding(FragmentNameRegistrationBinding::bind)
+    protected val binding by viewBinding(FragmentNameRegistrationBinding::bind)
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
@@ -83,6 +91,11 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
         lifecycleScope.launch {
             nameRegistrationViewModel.nameRegistrationPreviewFlow.collectLatest(nameRegistrationPreviewCollector)
         }
+
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            nameRegistrationViewModel.viewEvent,
+            viewEventCollector
+        )
     }
 
     override fun onResume() {
@@ -97,12 +110,7 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
     }
 
     private fun onNextButtonClick() {
-        if (nameRegistrationViewModel.isAccountLimitExceed()) {
-            showMaxAccountLimitExceededError()
-            return
-        }
-        val inputName = binding.nameInputLayout.text
-        nameRegistrationViewModel.updatePreviewWithAccountCreation(accountCreation, inputName)
+        nameRegistrationViewModel.onNextButtonClick(binding.nameInputLayout.text)
     }
 
     private fun updateUiWithNameRegistrationPreview(preview: NameRegistrationPreview) {
@@ -111,10 +119,23 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
                 context?.showAlertDialog(getString(R.string.error), getString(R.string.this_account_already_exists))
             }
             getCreateAccountEvent()?.consume()
-                ?.let { nameRegistrationViewModel.addNewAccount(it.tempAccount, it.creationType) }
+                ?.let { nameRegistrationViewModel.addNewAccount(it) }
             getUpdateWatchAccountEvent()?.consume()
                 ?.let { nameRegistrationViewModel.updateWatchAccount(it) }
             handleNextNavigationEvent?.consume()?.let { navToNextFragment() }
+
+            val isVisible = nameRegistrationViewModel.isOnHdWallet() &&
+                    nameRegistrationViewModel.isHdKey()
+            binding.cardviewWalletNumber.visibility = if (isVisible) View.VISIBLE else View.GONE
+
+            if (isVisible) {
+                preview.getWalletId()?.let {
+                    binding.tvWalletNumber.text = getString(
+                        R.string.wallet_number,
+                        it
+                    )
+                }
+            }
         }
     }
 }

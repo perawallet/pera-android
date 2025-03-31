@@ -13,10 +13,9 @@
 package com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model
 
 import android.os.Parcelable
-import com.algorand.android.models.Account
 import com.algorand.android.models.RecyclerListItem
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.utils.AccountDisplayName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -25,7 +24,6 @@ data class AssetInboxAllAccountsWithAccount(
     val requestCount: Int,
     val accountDisplayName: AccountDisplayName,
     val accountAddress: String,
-    val accountType: Account.Type,
     val accountIconDrawablePreview: AccountIconDrawablePreview
 ) : Parcelable, RecyclerListItem {
     override fun areItemsTheSame(other: RecyclerListItem): Boolean {

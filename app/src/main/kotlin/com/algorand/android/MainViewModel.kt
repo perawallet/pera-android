@@ -12,46 +12,53 @@
 
 package com.algorand.android
 
+import android.content.Intent
 import android.content.SharedPreferences
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
+import com.algorand.android.MainActivity.Companion.DEEPLINK_KEY
+import com.algorand.android.MainActivity.Companion.WC_ARBITRARY_DATA_ID_INTENT_KEY
+import com.algorand.android.MainActivity.Companion.WC_TRANSACTION_ID_INTENT_KEY
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.database.NodeDao
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdMigrationUseCase
-import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.AssetOperationResult
+import com.algorand.android.encryption.domain.usecase.AndroidEncryptionManager
 import com.algorand.android.models.Node
-import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
 import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeningCountUseCase
+import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
+import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.network.AlgodInterceptor
 import com.algorand.android.network.IndexerInterceptor
 import com.algorand.android.network.MobileHeaderInterceptor
+import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.repository.NodeRepository
-import com.algorand.android.usecase.AccountCacheStatusUseCase
-import com.algorand.android.usecase.SendSignedTransactionUseCase
-import com.algorand.android.utils.AccountCacheManager
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.DataResource
+import com.algorand.android.ui.lockpreference.AutoLockSuggestionManager
 import com.algorand.android.utils.Event
-import com.algorand.android.utils.Resource
-import com.algorand.android.utils.coremanager.AccountDetailCacheManager
-import com.algorand.android.utils.exception.AccountAlreadyOptedIntoAssetException
-import com.algorand.android.utils.exception.AssetAlreadyPendingForRemovalException
-import com.algorand.android.utils.exceptions.TransactionConfirmationAwaitException
-import com.algorand.android.utils.exceptions.TransactionIdNullException
 import com.algorand.android.utils.findAllNodes
-import com.algorand.android.utils.sendErrorLog
+import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.wallet.analytics.domain.service.PeraReferrerManager
+import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
+import com.algorand.wallet.cache.domain.usecase.InitializeAppCache
+import com.algorand.wallet.deeplink.model.DeepLink
+import com.algorand.wallet.deeplink.model.NotificationGroupType
+import com.algorand.wallet.deeplink.model.NotificationGroupType.ASSET_INBOX
+import com.algorand.wallet.deeplink.model.NotificationGroupType.OPT_IN
+import com.algorand.wallet.deeplink.model.NotificationGroupType.TRANSACTIONS
+import com.algorand.wallet.deeplink.parser.CreateDeepLink
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.properties.Delegates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,162 +74,72 @@ class MainViewModel @Inject constructor(
     private val indexerInterceptor: IndexerInterceptor,
     private val mobileHeaderInterceptor: MobileHeaderInterceptor,
     private val algodInterceptor: AlgodInterceptor,
-    private val accountCacheManager: AccountCacheManager,
     private val deviceIdMigrationUseCase: DeviceIdMigrationUseCase,
     private val deepLinkHandler: DeeplinkHandler,
     private val increaseAppOpeningCountUseCase: IncreaseAppOpeningCountUseCase,
     private val tutorialUseCase: TutorialUseCase,
     private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
-    private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
-    private val accountDetailCacheManager: AccountDetailCacheManager,
     private val nodeRepository: NodeRepository,
     private val peraReferrerManager: PeraReferrerManager,
-    accountCacheStatusUseCase: AccountCacheStatusUseCase,
     private val autoLockManagerUseCase: AutoLockManagerUseCase,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase
-) : BaseViewModel() {
+    private val initializeAppCache: InitializeAppCache,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
+    private val createDeepLink: CreateDeepLink,
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val getAccountType: GetAccountType,
+    private var pendingIntentKeeper: PendingIntentKeeper,
+    private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
+    private val autoLockManager: AutoLockManager,
+    private val autoLockSuggestionManager: AutoLockSuggestionManager,
+    private val androidEncryptionManager: AndroidEncryptionManager,
+    getAppCacheStatusFlow: GetAppCacheStatusFlow
+) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
 
-    // TODO: Replace this with Flow whenever have time
-    val assetOperationResultLiveData = MutableLiveData<Event<Resource<AssetOperationResult>>>()
-
-    // TODO I'll change after checking usage of flow in activity.
-    val accountBalanceSyncStatus = accountCacheStatusUseCase.getAccountCacheStatusFlow().asLiveData()
-
-    private val _swapNavigationResultFlow = MutableStateFlow<Event<NavDirections>?>(null)
+    val appCacheStatusFlow = getAppCacheStatusFlow()
+    val activeNodeFlow: StateFlow<Node?> get() = _activeNodeFlow
     val swapNavigationResultFlow: StateFlow<Event<NavDirections>?>
         get() = _swapNavigationResultFlow
 
-    private val _activeNodeFlow = MutableStateFlow<Node?>(null)
-    val activeNodeFlow: StateFlow<Node?> get() = _activeNodeFlow
-    private var sendTransactionJob: Job? = null
-    var refreshBalanceJob: Job? = null
+    var isAssetSetupCompleted: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+        if (oldValue != newValue && newValue && isAppUnlocked()) {
+            handlePendingIntent(true)
+        }
+    }
 
-    private var latestFailedAddAssetTransaction: TransactionData.AddAsset? = null
+    private val _swapNavigationResultFlow = MutableStateFlow<Event<NavDirections>?>(null)
+    private val _activeNodeFlow = MutableStateFlow<Node?>(null)
+
+    private var refreshBalanceJob: Job? = null
 
     init {
         initActiveNodeFlow()
-        initializeAccountCacheManager()
         initializeNodeInterceptor()
         initializeTutorial()
     }
 
-    fun shouldAppLocked(): Boolean {
-        return autoLockManagerUseCase.shouldAppLocked()
-    }
-
-    private fun initializeNodeInterceptor() {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (indexerInterceptor.currentActiveNode == null) {
-                val lastActivatedNode = findAllNodes(sharedPref, nodeDao).find { it.isActive }
-                lastActivatedNode?.activate(indexerInterceptor, mobileHeaderInterceptor, algodInterceptor)
-            }
-            migrateDeviceIdIfNeed()
+    fun initializeApp(lifecycle: Lifecycle) {
+        viewModelScope.launch {
+            androidEncryptionManager.initializeEncryptionManager()
+            initializeAppCache(lifecycle)
         }
     }
 
-    private suspend fun migrateDeviceIdIfNeed() {
-        deviceIdMigrationUseCase.migrateDeviceIdIfNeed()
-    }
-
-    private fun initializeAccountCacheManager() {
-        viewModelScope.launch(Dispatchers.IO) {
-            accountCacheManager.initializeAccountCacheMap()
-        }
-    }
-
-    fun onNewNodeActivated() {
-        resetBlockPolling()
-    }
-
-    /**
-     * If we are going to re-enable block polling manager again, we should enable this job here.
-     */
-    private fun resetBlockPolling() {
+    fun onNewNodeActivated(lifecycle: Lifecycle) {
         refreshBalanceJob?.cancel()
-        accountDetailCacheManager.startJob()
-        // blockPollingManager.startJob()
-    }
-
-    fun sendAssetOperationSignedTransaction(transaction: SignedTransactionDetail.AssetOperation) {
-        if (sendTransactionJob?.isActive == true) {
-            return
-        }
-
-        sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
-            sendSignedTransactionUseCase.sendSignedTransaction(transaction).collectLatest { dataResource ->
-                when (dataResource) {
-                    is DataResource.Success -> {
-                        latestFailedAddAssetTransaction = null
-                        val assetActionResult = getAssetOperationResult(transaction)
-                        assetOperationResultLiveData.postValue(Event(Resource.Success(assetActionResult)))
-                    }
-
-                    is DataResource.Error.Api -> {
-                        assetOperationResultLiveData.postValue(Event(Resource.Error.Api(dataResource.exception)))
-                    }
-
-                    is DataResource.Error.Local -> {
-                        // TODO add specific strings for exceptions
-                        val errorResourceId = when (dataResource.exception) {
-                            is AccountAlreadyOptedIntoAssetException -> {
-                                R.string.you_are_already
-                            }
-
-                            is TransactionConfirmationAwaitException -> {
-                                R.string.transaction_confirmation_timed_out
-                            }
-
-                            is TransactionIdNullException -> {
-                                R.string.an_error_occured
-                            }
-
-                            is AssetAlreadyPendingForRemovalException -> {
-                                R.string.this_asset_is
-                            }
-
-                            else -> {
-                                R.string.an_error_occured
-                            }
-                        }
-                        val assetName = transaction.assetInformation.fullName.toString()
-                        assetOperationResultLiveData.postValue(
-                            Event(
-                                Resource.Error.GlobalWarning(
-                                    titleRes = R.string.error,
-                                    annotatedString = AnnotatedString(
-                                        stringResId = errorResourceId,
-                                        replacementList = listOf("asset_name" to assetName)
-                                    )
-                                )
-                            )
-                        )
-                    }
-
-                    else -> {
-                        sendErrorLog("Unhandled else case in MainViewModel.sendSignedTransaction")
-                    }
-                }
-            }
-        }
-    }
-
-    fun getLatestAddAssetTransaction(): TransactionData.AddAsset? {
-        return latestFailedAddAssetTransaction
-    }
-
-    fun setLatestAddAssetTransaction(transactionData: TransactionData.AddAsset) {
-        latestFailedAddAssetTransaction = transactionData
+        viewModelScope.launch { initializeAppCache(lifecycle) }
     }
 
     fun handleDeepLink(uri: String) {
-        deepLinkHandler.handleDeepLink(uri)
+        viewModelScope.launchIO {
+            deepLinkHandler.handleDeepLink(uri)
+        }
     }
 
     fun setDeepLinkHandlerListener(listener: DeeplinkHandler.Listener) {
         deepLinkHandler.setListener(listener)
     }
 
-    fun increseAppOpeningCount() {
+    fun increaseAppOpeningCount() {
         viewModelScope.launch {
             increaseAppOpeningCountUseCase.increaseAppOpeningCount()
         }
@@ -248,30 +165,138 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun initializeTutorial() {
-        viewModelScope.launch {
-            tutorialUseCase.initializeTutorial()
+    fun fetchInstallReferrer() {
+        viewModelScope.launch(Dispatchers.IO) {
+            peraReferrerManager.fetchInstallReferrer()
         }
     }
 
-    private fun getAssetOperationResult(transaction: SignedTransactionDetail.AssetOperation): AssetOperationResult {
-        val assetName = transaction.assetInformation.fullName ?: transaction.assetInformation.shortName
-        return when (transaction) {
-            is SignedTransactionDetail.AssetOperation.AssetAddition -> {
-                AssetOperationResult.AssetAdditionOperationResult(
-                    resultTitleResId = R.string.asset_successfully_opted_in,
-                    assetName = AssetName.create(assetName),
-                    assetId = transaction.assetInformation.assetId
-                )
+    fun handleNewNotification(newNotificationData: NotificationMetadata) {
+        when (val baseDeepLink = createDeepLink(newNotificationData.url.orEmpty())) {
+            is DeepLink.Notification -> handleNotificationWithDeepLink(newNotificationData, baseDeepLink)
+            else -> ViewEvent.ShowForegroundNotification(notificationMetadata = newNotificationData)
+        }
+    }
+
+    fun handleNotificationDeepLink(
+        accountAddress: String,
+        assetId: Long,
+        notificationGroupType: NotificationGroupType
+    ) {
+        viewModelScope.launch {
+            if (!isThereAnyAccountWithAddress(accountAddress)) {
+                eventDelegate.sendEvent(ViewEvent.ShowGlobalNotificationError)
+                return@launch
             }
 
-            is SignedTransactionDetail.AssetOperation.AssetRemoval -> {
-                AssetOperationResult.AssetRemovalOperationResult(
-                    resultTitleResId = R.string.asset_successfully_opted_out_from_your,
-                    assetName = AssetName.create(assetName),
-                    assetId = transaction.assetInformation.assetId
-                )
+            val viewEvent = when (notificationGroupType) {
+                TRANSACTIONS -> ViewEvent.HandleAssetTransactionDeepLink(accountAddress, assetId)
+                OPT_IN -> ViewEvent.HandleAssetOptInRequestDeepLink(accountAddress, assetId)
+                ASSET_INBOX -> getAssetInboxDeepLinkEvent(accountAddress)
             }
+
+            eventDelegate.sendEvent(viewEvent)
+        }
+    }
+
+    fun handleAssetInboxDeepLink(accountAddress: String) {
+        viewModelScope.launch {
+            eventDelegate.sendEvent(getAssetInboxDeepLinkEvent(accountAddress))
+        }
+    }
+
+    fun isAppUnlocked(): Boolean {
+        return autoLockManager.isAppUnlocked
+    }
+
+    fun setAutoLockManagerListener(autoLockManagerListener: AutoLockManager.AutoLockManagerListener) {
+        autoLockManager.setListener(autoLockManagerListener)
+    }
+
+    fun handlePendingIntent(isAppStart: Boolean = false) {
+        viewModelScope.launchIO {
+            val isPendingIntentHandled = pendingIntentKeeper.pendingIntent?.let { intent ->
+                if (isAssetSetupCompleted && (isAppUnlocked() || !shouldAppLocked())) {
+                    val handled = intent.dataString?.let { data ->
+                        handleDeepLink(data)
+                        true
+                    } ?: handlePendingIntentWithExtras(intent)
+                    pendingIntentKeeper.clearPendingIntent()
+                    handled
+                } else {
+                    false
+                }
+            } ?: false
+
+            if (isAppStart && !isPendingIntentHandled) {
+                startInAppReview()
+            }
+        }
+    }
+
+    fun startAutoLockSuggestion() {
+        viewModelScope.launch {
+            if (autoLockSuggestionManager.shouldSuggestAutoLock()) {
+                eventDelegate.sendEvent(ViewEvent.ShowLockSuggestion)
+            }
+        }
+    }
+
+    fun setPendingIntent(intent: Intent?) {
+        pendingIntentKeeper.setPendingIntent(intent)
+    }
+
+    private suspend fun shouldAppLocked(): Boolean {
+        return autoLockManagerUseCase.shouldAppLocked()
+    }
+
+    private suspend fun handlePendingIntentWithExtras(pendingIntent: Intent): Boolean {
+        val transactionId = pendingIntent.getLongExtra(WC_TRANSACTION_ID_INTENT_KEY, -1L)
+        val arbitraryDataId = pendingIntent.getLongExtra(WC_ARBITRARY_DATA_ID_INTENT_KEY, -1L)
+
+        return when {
+            transactionId != -1L -> {
+                eventDelegate.sendEvent(ViewEvent.NavToWalletConnectTransactionRequestNavigation(transactionId))
+                true
+            }
+
+            arbitraryDataId != -1L -> {
+                eventDelegate.sendEvent(ViewEvent.NavToWalletConnectArbitraryDataRequestNavigation(arbitraryDataId))
+                true
+            }
+
+            else -> pendingIntent.getStringExtra(DEEPLINK_KEY)?.let {
+                handleDeepLink(it)
+                true
+            } ?: false
+        }
+    }
+
+    private suspend fun migrateDeviceIdIfNeed() {
+        deviceIdMigrationUseCase.migrateDeviceIdIfNeed()
+    }
+
+    private fun startInAppReview() {
+        viewModelScope.launchIO {
+            if (isThereAnyLocalAccount()) {
+                eventDelegate.sendEvent(ViewEvent.StartInAppReview)
+            }
+        }
+    }
+
+    private fun initializeNodeInterceptor() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (indexerInterceptor.currentActiveNode == null) {
+                val lastActivatedNode = findAllNodes(sharedPref, nodeDao).find { it.isActive }
+                lastActivatedNode?.activate(indexerInterceptor, mobileHeaderInterceptor, algodInterceptor)
+            }
+            migrateDeviceIdIfNeed()
+        }
+    }
+
+    private fun initializeTutorial() {
+        viewModelScope.launch {
+            tutorialUseCase.initializeTutorial()
         }
     }
 
@@ -283,13 +308,45 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun hasAccountAuthority(accountAddress: String): Boolean {
-        return accountStateHelperUseCase.hasAccountAuthority(accountAddress)
+    private fun handleNotificationWithDeepLink(
+        newNotificationData: NotificationMetadata,
+        deeplink: DeepLink.Notification
+    ) {
+        viewModelScope.launch {
+            if (!isThereAnyAccountWithAddress(deeplink.address)) {
+                eventDelegate.sendEvent(ViewEvent.ShowGlobalNotificationError)
+                return@launch
+            }
+
+            val viewEvent = when (deeplink.notificationGroupType) {
+                OPT_IN -> ViewEvent.HandleAssetOptInRequestDeepLink(deeplink.address, deeplink.assetId)
+                ASSET_INBOX -> getAssetInboxDeepLinkEvent(deeplink.address)
+                else -> ViewEvent.ShowForegroundNotification(notificationMetadata = newNotificationData)
+            }
+
+            eventDelegate.sendEvent(viewEvent)
+        }
     }
 
-    fun fetchInstallReferrer() {
-        viewModelScope.launch(Dispatchers.IO) {
-            peraReferrerManager.fetchInstallReferrer()
+    private suspend fun getAssetInboxDeepLinkEvent(accountAddress: String): ViewEvent {
+        val canSignTransaction = getAccountType(accountAddress)?.canSignTransaction() == true
+        return if (canSignTransaction) {
+            ViewEvent.NavToAssetInboxOneAccountNavigation(accountAddress)
+        } else {
+            ViewEvent.NavToAccountDetailFragment(accountAddress)
         }
+    }
+
+    sealed interface ViewEvent {
+        data class HandleAssetTransactionDeepLink(val address: String, val assetId: Long) : ViewEvent
+        data class HandleAssetOptInRequestDeepLink(val address: String, val assetId: Long) : ViewEvent
+        data class NavToAssetInboxOneAccountNavigation(val address: String) : ViewEvent
+        data class NavToAccountDetailFragment(val address: String) : ViewEvent
+        data class ShowForegroundNotification(val notificationMetadata: NotificationMetadata) : ViewEvent
+        data class NavToWalletConnectTransactionRequestNavigation(val wcRequestId: Long) : ViewEvent
+        data class NavToWalletConnectArbitraryDataRequestNavigation(val wcRequestId: Long) : ViewEvent
+        data object ShowGlobalNotificationError : ViewEvent
+        data object StartInAppReview : ViewEvent
+        data object ShowLockSuggestion : ViewEvent
     }
 }

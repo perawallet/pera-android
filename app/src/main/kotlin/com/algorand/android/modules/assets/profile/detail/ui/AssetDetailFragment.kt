@@ -30,13 +30,13 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.DateFilter
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.assets.profile.about.ui.AssetAboutFragment
 import com.algorand.android.modules.assets.profile.activity.ui.AssetActivityFragment
 import com.algorand.android.modules.assets.profile.detail.ui.adapter.AssetDetailPagerAdapter
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.PERA_VERIFICATION_MAIL_ADDRESS
@@ -243,9 +243,9 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
 
     private fun setToolbarTitle(accountDisplayName: AccountDisplayName) {
         with(binding.toolbar) {
-            changeTitle(accountDisplayName.getAccountPrimaryDisplayName())
-            setOnTitleLongClickListener { onAccountAddressCopied(accountDisplayName.getRawAccountAddress()) }
-            accountDisplayName.getAccountSecondaryDisplayName(resources)?.let { changeSubtitle(it) }
+            changeTitle(accountDisplayName.primaryDisplayName)
+            setOnTitleLongClickListener { onAccountAddressCopied(accountDisplayName.accountAddress) }
+            accountDisplayName.secondaryDisplayName?.let { changeSubtitle(it) }
         }
     }
 

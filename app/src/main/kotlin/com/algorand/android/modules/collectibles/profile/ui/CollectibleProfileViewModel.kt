@@ -15,57 +15,65 @@ package com.algorand.android.modules.collectibles.profile.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.AssetAction
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.collectibles.detail.base.ui.BaseCollectibleDetailViewModel
+import com.algorand.android.modules.collectibles.profile.ui.CollectibleProfileViewModel.ViewState
 import com.algorand.android.modules.collectibles.profile.ui.model.CollectibleProfilePreview
 import com.algorand.android.modules.collectibles.profile.ui.usecase.CollectibleProfilePreviewUseCase
 import com.algorand.android.usecase.NetworkSlugUseCase
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.getOrThrow
+import com.algorand.wallet.viewmodel.StateDelegate
+import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CollectibleProfileViewModel @Inject constructor(
     private val collectibleProfilePreviewUseCase: CollectibleProfilePreviewUseCase,
+    private val stateDelegate: StateDelegate<ViewState>,
     networkSlugUseCase: NetworkSlugUseCase,
     savedStateHandle: SavedStateHandle
-) : BaseCollectibleDetailViewModel(networkSlugUseCase) {
+) : BaseCollectibleDetailViewModel(networkSlugUseCase), StateViewModel<ViewState> by stateDelegate {
 
     val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
     val collectibleId = savedStateHandle.getOrThrow<Long>(COLLECTIBLE_ID_KEY)
 
-    private val _collectibleProfilePreviewFlow = MutableStateFlow<CollectibleProfilePreview?>(null)
-    val collectibleProfilePreviewFlow: StateFlow<CollectibleProfilePreview?> get() = _collectibleProfilePreviewFlow
-
     init {
+        stateDelegate.setDefaultState(ViewState.Loading)
         initCollectibleProfilePreviewFlow()
     }
 
     fun getAssetAction(): AssetAction {
         return collectibleProfilePreviewUseCase.createAssetAction(
             assetId = collectibleId,
-            accountAddress = accountAddress
+            accountAddress = accountAddress,
+            collectibleFullName = getPreview()?.nftName?.assetName
         )
     }
 
-    fun getNFTExplorerUrl(): String? {
-        return collectibleProfilePreviewFlow.value?.peraExplorerUrl
-    }
+    fun getNFTExplorerUrl(): String? = getPreview()?.peraExplorerUrl
 
-    fun getNFTName(): AssetName? {
-        return collectibleProfilePreviewFlow.value?.nftName
-    }
+    fun getNFTName(): AssetName? = getPreview()?.nftName
+
+    private fun getPreview(): CollectibleProfilePreview? = (stateDelegate.state.value as? ViewState.Content)?.preview
 
     private fun initCollectibleProfilePreviewFlow() {
         viewModelScope.launch {
             collectibleProfilePreviewUseCase.getCollectibleProfilePreviewFlow(
                 nftId = collectibleId,
                 accountAddress = accountAddress
-            ).collect { preview -> _collectibleProfilePreviewFlow.emit(preview) }
+            ).collect { preview ->
+                if (preview != null) {
+                    stateDelegate.updateState { ViewState.Content(preview) }
+                }
+            }
         }
+    }
+
+    sealed interface ViewState {
+        data object Loading : ViewState
+        data class Content(val preview: CollectibleProfilePreview) : ViewState
     }
 
     companion object {

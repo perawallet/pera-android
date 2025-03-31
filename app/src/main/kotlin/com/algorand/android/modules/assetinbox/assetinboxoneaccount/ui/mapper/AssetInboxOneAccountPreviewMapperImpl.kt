@@ -35,7 +35,7 @@ class AssetInboxOneAccountPreviewMapperImpl @Inject constructor(
     private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
 ) : AssetInboxOneAccountPreviewMapper {
 
-    override fun invoke(
+    override suspend fun invoke(
         assetInboxOneAccountPaginated: AssetInboxOneAccountPaginated,
         isLoading: Boolean,
         isEmptyStateVisible: Boolean,
@@ -51,7 +51,7 @@ class AssetInboxOneAccountPreviewMapperImpl @Inject constructor(
         )
     }
 
-    private fun getAsaPreviewList(
+    private suspend fun getAsaPreviewList(
         assetInboxOneAccountPaginated: AssetInboxOneAccountPaginated
     ): List<AsaPreview> {
         return assetInboxOneAccountPaginated.results.map { result ->

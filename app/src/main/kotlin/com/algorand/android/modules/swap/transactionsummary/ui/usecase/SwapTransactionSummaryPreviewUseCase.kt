@@ -13,8 +13,8 @@
 package com.algorand.android.modules.swap.transactionsummary.ui.usecase
 
 import android.content.res.Resources
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
 import com.algorand.android.modules.swap.transactionsummary.ui.mapper.BaseSwapTransactionSummaryItemMapper
@@ -25,7 +25,6 @@ import com.algorand.android.modules.swap.transactionsummary.ui.model.BaseSwapTra
 import com.algorand.android.modules.swap.transactionsummary.ui.model.BaseSwapTransactionSummaryItem.SwapFeesItemTransaction
 import com.algorand.android.modules.swap.transactionsummary.ui.model.BaseSwapTransactionSummaryItem.SwapPriceImpactItemTransaction
 import com.algorand.android.modules.transaction.detail.domain.model.TransactionSign
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.formatAmount
@@ -40,9 +39,8 @@ import kotlinx.coroutines.flow.flow
 class SwapTransactionSummaryPreviewUseCase @Inject constructor(
     private val swapTransactionSummaryPreviewMapper: SwapTransactionSummaryPreviewMapper,
     private val baseSwapTransactionSummaryItemMapper: BaseSwapTransactionSummaryItemMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val getAccountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) {
 
     fun getSwapSummaryPreview(
@@ -94,13 +92,10 @@ class SwapTransactionSummaryPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun createSwapAccountItem(swapQuote: SwapQuote): SwapAccountItemTransaction {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(swapQuote.accountAddress)?.data
-        val safeAccountAddress = accountDetail?.account?.address ?: swapQuote.accountAddress
-        val accountDisplayName = getAccountDisplayNameUseCase.invoke(safeAccountAddress)
+    private suspend fun createSwapAccountItem(swapQuote: SwapQuote): SwapAccountItemTransaction {
         return baseSwapTransactionSummaryItemMapper.mapToSwapAccountItem(
-            accountDisplayName = accountDisplayName,
-            accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(swapQuote.accountAddress)
+            accountDisplayName = getAccountDisplayName(swapQuote.accountAddress),
+            accountIconDrawablePreview = getAccountIconDrawablePreview(swapQuote.accountAddress)
         )
     }
 

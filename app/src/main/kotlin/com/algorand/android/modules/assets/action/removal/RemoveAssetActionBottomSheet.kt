@@ -20,10 +20,8 @@ import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.models.AssetActionResult
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.action.base.BaseAssetActionBottomSheet
-import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.getXmlStyledString
-import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.setFragmentNavigationResult
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +36,7 @@ class RemoveAssetActionBottomSheet : BaseAssetActionBottomSheet() {
             transactionFeeGroup.show()
             accountGroup.show()
         }
+        assetActionViewModel.getAccountName(assetActionViewModel.accountAddress)
     }
 
     override val assetActionViewModel by viewModels<RemoveAssetActionViewModel>()
@@ -47,7 +46,7 @@ class RemoveAssetActionBottomSheet : BaseAssetActionBottomSheet() {
             stringResId = R.string.you_are_about_to,
             replacementList = listOf(
                 "account_name" to assetActionViewModel.accountAddress,
-                "asset_name" to assetActionViewModel.assetFullName.getName(resources)
+                "asset_name" to assetActionViewModel.assetFullName
             )
         )
     }
@@ -62,7 +61,7 @@ class RemoveAssetActionBottomSheet : BaseAssetActionBottomSheet() {
             setOnClickListener {
                 asset?.let { assetDescription ->
                     val assetActionResult = AssetActionResult(
-                        asset = assetDescription,
+                        assetId = assetDescription.id,
                         publicKey = assetActionViewModel.accountAddress
                     )
                     (activity as? MainActivity)?.signRemoveAssetTransaction(assetActionResult)
@@ -82,22 +81,6 @@ class RemoveAssetActionBottomSheet : BaseAssetActionBottomSheet() {
 
     override fun setTransactionFeeTextView(textView: TextView) {
         textView.text = assetActionViewModel.getTransactionFee()
-    }
-
-    override fun setAccountNameTextView(textView: TextView) {
-        textView.apply {
-            with(assetActionViewModel.getAccountName()) {
-                text = getDisplayAddress()
-                setDrawable(
-                    start = AccountIconDrawable.create(
-                        context = context,
-                        accountIconDrawablePreview = accountIconDrawablePreview,
-                        sizeResId = R.dimen.spacing_xlarge
-                    )
-                )
-                setOnLongClickListener { onAccountAddressCopied(publicKey); true }
-            }
-        }
     }
 
     companion object {

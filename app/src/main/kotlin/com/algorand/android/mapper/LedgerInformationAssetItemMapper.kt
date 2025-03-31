@@ -26,7 +26,7 @@ class LedgerInformationAssetItemMapper @Inject constructor(
 ) {
 
     fun mapTo(
-        accountAssetData: BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
+        accountAssetData: BaseAccountAssetData.BaseOwnedAssetData
     ): LedgerInformationListItem.AssetInformationItem {
         return LedgerInformationListItem.AssetInformationItem(
             id = accountAssetData.id,
@@ -36,7 +36,7 @@ class LedgerInformationAssetItemMapper @Inject constructor(
             verificationTierConfiguration = verificationTierConfigurationDecider.decideVerificationTierConfiguration(
                 accountAssetData.verificationTier
             ),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData.id),
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData),
             formattedDisplayedCurrencyValue = accountAssetData.getSelectedCurrencyParityValue().getFormattedValue(),
             formattedAmount = accountAssetData.formattedAmount
         )

@@ -12,22 +12,23 @@
 
 package com.algorand.android.nft.domain.usecase
 
-import com.algorand.android.models.Account
 import com.algorand.android.nft.mapper.CollectibleTransactionApprovePreviewMapper
-import com.algorand.android.nft.utils.CollectibleUtils
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.AccountNameIconUseCase
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
 class CollectibleTransactionApprovePreviewUseCase @Inject constructor(
     private val collectibleTransactionApprovePreviewMapper: CollectibleTransactionApprovePreviewMapper,
     private val accountNameIconUseCase: AccountNameIconUseCase,
-    private val collectibleUtils: CollectibleUtils,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase
+    private val isAssetOwnedByAccount: IsAssetOwnedByAccount,
+    private val getCollectibleDetail: GetCollectibleDetail,
+    private val getAccountType: GetAccountType
 ) {
 
     fun getCollectibleTransactionApprovePreviewFlow(
@@ -44,13 +45,12 @@ class CollectibleTransactionApprovePreviewUseCase @Inject constructor(
         val (receiverDisplayText, receiverAccountIcon) = accountNameIconUseCase.getAccountOrContactDisplayTextAndIcon(
             receiverPublicKey
         )
-        val ownerAccountDetail = accountDetailUseCase.getCachedAccountDetail(senderPublicKey)?.data
-        val isHoldingByWatchAccount = ownerAccountDetail?.account?.type == Account.Type.WATCH
-        val isOwnedByTheUser = collectibleUtils.isCollectibleOwnedByTheUser(ownerAccountDetail, nftId)
-        val nftDetail = simpleCollectibleUseCase.getCachedCollectibleById(nftId)?.data
+        val isHoldingByWatchAccount = getAccountType(senderPublicKey) == AccountType.NoAuth
+        val isOwnedByTheUser = isAssetOwnedByAccount(senderPublicKey, nftId)
+        val nftDetail = getCollectibleDetail(nftId)
         val isOptOutGroupVisible = isOwnedByTheUser &&
             !isHoldingByWatchAccount &&
-            nftDetail?.assetCreator?.publicKey != ownerAccountDetail?.account?.address &&
+            nftDetail?.assetInfo?.creator?.publicKey != senderPublicKey &&
             senderPublicKey != receiverPublicKey
 
         val collectibleTransactionApprovePreview = collectibleTransactionApprovePreviewMapper.mapToPreview(

@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.onboarding.pairledger.accountselection.ui.model
 
-import com.algorand.android.models.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 
 data class RegisterLedgerAccountSelectionPreview(
     val isLoading: Boolean,

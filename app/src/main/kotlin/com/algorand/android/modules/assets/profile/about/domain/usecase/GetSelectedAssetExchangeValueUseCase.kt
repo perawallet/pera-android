@@ -13,14 +13,14 @@
 package com.algorand.android.modules.assets.profile.about.domain.usecase
 
 import com.algorand.android.mapper.AssetHoldingsMapper
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
-import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.parity.domain.usecase.PrimaryCurrencyParityCalculationUseCase
 import com.algorand.android.modules.parity.domain.usecase.SecondaryCurrencyParityCalculationUseCase
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
+import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
@@ -32,10 +32,10 @@ class GetSelectedAssetExchangeValueUseCase @Inject constructor(
     private val currencyUseCase: CurrencyUseCase
 ) {
 
-    fun getSelectedAssetExchangeValue(assetDetail: BaseAssetDetail?): ParityValue? {
+    fun getSelectedAssetExchangeValue(assetDetail: Asset?): ParityValue? {
         return when {
             assetDetail == null -> null
-            assetDetail.assetId == ALGO_ID -> getAlgoExchangeParityValue()
+            assetDetail.id == ALGO_ID -> getAlgoExchangeParityValue()
             else -> getAssetExchangeParityValue(assetDetail)
         }
     }
@@ -50,16 +50,17 @@ class GetSelectedAssetExchangeValueUseCase @Inject constructor(
         }
     }
 
-    private fun getAssetExchangeParityValue(assetDetail: BaseAssetDetail): ParityValue? {
+    private fun getAssetExchangeParityValue(assetDetail: Asset): ParityValue? {
         if (assetDetail.usdValue == null) return null
         val assetHolding = assetHoldingsMapper.mapToAssetHoldings(
-            assetId = assetDetail.assetId,
-            amount = createOneSelectedAssetInBigInteger(assetDetail.fractionDecimals),
+            assetId = assetDetail.id,
+            amount = createOneSelectedAssetInBigInteger(assetDetail.getDecimalsOrZero()),
             isDeleted = false
         )
         return primaryCurrencyParityCalculationUseCase.getAssetParityValue(
-            assetItem = assetDetail,
-            assetHolding = assetHolding
+            assetAmount = assetHolding.amount,
+            assetUsdValue = assetDetail.usdValue ?: BigDecimal.ZERO,
+            assetDecimal = assetDetail.getDecimalsOrZero()
         )
     }
 

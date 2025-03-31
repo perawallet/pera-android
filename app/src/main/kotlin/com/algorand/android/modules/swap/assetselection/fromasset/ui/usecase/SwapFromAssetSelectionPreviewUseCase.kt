@@ -13,11 +13,11 @@
 package com.algorand.android.modules.swap.assetselection.fromasset.ui.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.modules.swap.assetselection.base.ui.mapper.SwapAssetSelectionItemMapper
 import com.algorand.android.modules.swap.assetselection.base.ui.mapper.SwapAssetSelectionPreviewMapper
 import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapAssetSelectionItem
 import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapAssetSelectionPreview
-import com.algorand.android.usecase.AccountAssetDataUseCase
 import com.algorand.android.utils.doesAssetPassSearchFilter
 import com.algorand.android.utils.isGreaterThan
 import java.math.BigInteger
@@ -26,16 +26,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class SwapFromAssetSelectionPreviewUseCase @Inject constructor(
-    private val accountAssetDataUseCase: AccountAssetDataUseCase,
     private val swapAssetSelectionItemMapper: SwapAssetSelectionItemMapper,
-    private val swapAssetSelectionPreviewMapper: SwapAssetSelectionPreviewMapper
+    private val swapAssetSelectionPreviewMapper: SwapAssetSelectionPreviewMapper,
+    private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData
 ) {
 
-    suspend fun getSwapAssetSelectionPreview(
+    fun getSwapAssetSelectionPreview(
         accountAddress: String,
         query: String?
     ): Flow<SwapAssetSelectionPreview> = flow {
-        val accountAssets = accountAssetDataUseCase.getAccountOwnedAssetData(accountAddress, includeAlgo = true)
+        val accountAssets = getAccountOwnedAssetsData(accountAddress, includeAlgo = true)
         val balanceFilteredAccountAssetList = accountAssets.filter { ownedAssetData ->
             if (ownedAssetData.isAlgo && query.isNullOrBlank()) return@filter true
 
@@ -56,7 +56,7 @@ class SwapFromAssetSelectionPreviewUseCase @Inject constructor(
         emit(preview)
     }
 
-    private fun createSwapAssetSelectionItemList(
+    private suspend fun createSwapAssetSelectionItemList(
         filteredAccountAssetList: List<OwnedAssetData>
     ): List<SwapAssetSelectionItem> {
         return filteredAccountAssetList.map { ownedAssetData ->

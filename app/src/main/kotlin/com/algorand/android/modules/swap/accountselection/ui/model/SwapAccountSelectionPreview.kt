@@ -12,17 +12,16 @@
 
 package com.algorand.android.modules.swap.accountselection.ui.model
 
-import androidx.navigation.NavDirections
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.AssetAction
 import com.algorand.android.models.BaseAccountSelectionListItem
+import com.algorand.android.modules.assets.addition.ui.model.AssetAdditionPayload
 import com.algorand.android.utils.Event
 
 data class SwapAccountSelectionPreview(
     val accountListItems: List<BaseAccountSelectionListItem.BaseAccountItem>,
     val isLoading: Boolean,
-    val navToSwapNavigationEvent: Event<NavDirections>?,
+    val navToSwapNavigationEvent: Event<SwapAccountSelectionNavDirection>?,
     val isEmptyStateVisible: Boolean,
     val errorEvent: Event<AnnotatedString>?,
-    val optInToAssetEvent: Event<AssetAction>?
+    val optInToAssetEvent: Event<AssetAdditionPayload>?
 )

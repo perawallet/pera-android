@@ -14,6 +14,7 @@ package com.algorand.android.mapper
 
 import androidx.annotation.StringRes
 import com.algorand.android.decider.AssetDrawableProviderDecider
+import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleAudioData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
@@ -32,24 +33,41 @@ import com.algorand.android.models.BaseRemoveAssetItem.SearchViewItem
 import com.algorand.android.models.BaseRemoveAssetItem.TitleViewItem
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.modules.assets.core.ui.domain.usecase.GetAssetName
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.utils.AssetName
+import com.algorand.wallet.account.info.domain.model.AssetStatus
+import com.algorand.wallet.account.info.domain.model.AssetStatus.PENDING_FOR_ADDITION
+import com.algorand.wallet.account.info.domain.model.AssetStatus.PENDING_FOR_REMOVAL
 import javax.inject.Inject
 
 class RemoveAssetItemMapper @Inject constructor(
     private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider
+    private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
+    private val getAssetName: GetAssetName
 ) {
+
+    fun mapToRemovableItem(
+        ownedCollectible: BaseOwnedCollectibleData,
+        assetHoldingStatus: AssetStatus?
+    ): BaseRemoveAssetItem.BaseRemovableItem {
+        return when (ownedCollectible) {
+            is OwnedCollectibleImageData -> mapToCollectibleImageItem(ownedCollectible, assetHoldingStatus)
+            is OwnedUnsupportedCollectibleData -> mapToNotSupportedCollectibleItem(ownedCollectible, assetHoldingStatus)
+            is OwnedCollectibleVideoData -> mapToCollectibleVideoItem(ownedCollectible, assetHoldingStatus)
+            is OwnedCollectibleMixedData -> mapToCollectibleMixedItem(ownedCollectible, assetHoldingStatus)
+            is OwnedCollectibleAudioData -> mapToCollectibleAudioItem(ownedCollectible, assetHoldingStatus)
+        }
+    }
 
     fun mapToRemoveAssetItem(
         ownedAssetData: OwnedAssetData,
-        actionItemButtonState: AccountAssetItemButtonState
+        assetHoldingStatus: AssetStatus?
     ): RemoveAssetItem {
         return with(ownedAssetData) {
             RemoveAssetItem(
                 id = id,
-                name = AssetName.create(name),
-                shortName = AssetName.create(shortName),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
                 amount = amount,
                 creatorPublicKey = creatorPublicKey,
                 decimals = decimals,
@@ -63,22 +81,22 @@ class RemoveAssetItemMapper @Inject constructor(
                 },
                 verificationTierConfiguration =
                 verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier),
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
-                actionItemButtonState = actionItemButtonState,
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
+                actionItemButtonState = getRemoveAssetItemActionButtonState(assetHoldingStatus),
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency
             )
         }
     }
 
-    fun mapToRemoveCollectibleImageItem(
+    private fun mapToCollectibleImageItem(
         ownedCollectibleImageData: OwnedCollectibleImageData,
-        actionItemButtonState: AccountAssetItemButtonState
+        assetHoldingStatus: AssetStatus?
     ): RemoveCollectibleImageItem {
         return with(ownedCollectibleImageData) {
             RemoveCollectibleImageItem(
                 id = id,
-                name = AssetName.create(name),
-                shortName = AssetName.create(shortName),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
                 amount = amount,
                 creatorPublicKey = creatorPublicKey,
                 decimals = decimals,
@@ -90,23 +108,23 @@ class RemoveAssetItemMapper @Inject constructor(
                 } else {
                     null
                 },
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
-                actionItemButtonState = actionItemButtonState,
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
+                actionItemButtonState = getRemoveAssetItemActionButtonState(assetHoldingStatus),
                 optedInAtRound = optedInAtRound,
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency
             )
         }
     }
 
-    fun mapToRemoveCollectibleVideoItem(
+    private fun mapToCollectibleVideoItem(
         ownedCollectibleImageData: OwnedCollectibleVideoData,
-        actionItemButtonState: AccountAssetItemButtonState
+        assetHoldingStatus: AssetStatus?
     ): RemoveCollectibleVideoItem {
         return with(ownedCollectibleImageData) {
             RemoveCollectibleVideoItem(
                 id = id,
-                name = AssetName.create(name),
-                shortName = AssetName.create(shortName),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
                 amount = amount,
                 creatorPublicKey = creatorPublicKey,
                 decimals = decimals,
@@ -118,23 +136,23 @@ class RemoveAssetItemMapper @Inject constructor(
                 } else {
                     null
                 },
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
-                actionItemButtonState = actionItemButtonState,
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
+                actionItemButtonState = getRemoveAssetItemActionButtonState(assetHoldingStatus),
                 optedInAtRound = optedInAtRound,
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency
             )
         }
     }
 
-    fun mapTo(
+    private fun mapToCollectibleAudioItem(
         ownedCollectibleAudioData: OwnedCollectibleAudioData,
-        actionItemButtonState: AccountAssetItemButtonState
+        assetHoldingStatus: AssetStatus?
     ): RemoveCollectibleAudioItem {
         return with(ownedCollectibleAudioData) {
             RemoveCollectibleAudioItem(
                 id = id,
-                name = AssetName.create(name),
-                shortName = AssetName.create(shortName),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
                 amount = amount,
                 creatorPublicKey = creatorPublicKey,
                 decimals = decimals,
@@ -142,23 +160,23 @@ class RemoveAssetItemMapper @Inject constructor(
                 formattedCompactAmount = formattedCompactAmount,
                 formattedSelectedCurrencyValue = parityValueInSelectedCurrency.getFormattedValue(),
                 formattedSelectedCurrencyCompactValue = parityValueInSelectedCurrency.getFormattedCompactValue(),
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
-                actionItemButtonState = actionItemButtonState,
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
+                actionItemButtonState = getRemoveAssetItemActionButtonState(assetHoldingStatus),
                 optedInAtRound = optedInAtRound,
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency
             )
         }
     }
 
-    fun mapToRemoveCollectibleMixedItem(
+    private fun mapToCollectibleMixedItem(
         ownedCollectibleMixedData: OwnedCollectibleMixedData,
-        actionItemButtonState: AccountAssetItemButtonState
+        assetHoldingStatus: AssetStatus?
     ): RemoveCollectibleMixedItem {
         return with(ownedCollectibleMixedData) {
             RemoveCollectibleMixedItem(
                 id = id,
-                name = AssetName.create(name),
-                shortName = AssetName.create(shortName),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
                 amount = amount,
                 creatorPublicKey = creatorPublicKey,
                 decimals = decimals,
@@ -170,23 +188,23 @@ class RemoveAssetItemMapper @Inject constructor(
                 } else {
                     null
                 },
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
-                actionItemButtonState = actionItemButtonState,
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
+                actionItemButtonState = getRemoveAssetItemActionButtonState(assetHoldingStatus),
                 optedInAtRound = optedInAtRound,
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency
             )
         }
     }
 
-    fun mapToRemoveNotSupportedCollectibleItem(
+    private fun mapToNotSupportedCollectibleItem(
         ownedUnsupportedCollectibleData: OwnedUnsupportedCollectibleData,
-        actionItemButtonState: AccountAssetItemButtonState
+        assetHoldingStatus: AssetStatus?
     ): RemoveNotSupportedCollectibleItem {
         return with(ownedUnsupportedCollectibleData) {
             RemoveNotSupportedCollectibleItem(
                 id = id,
-                name = AssetName.create(name),
-                shortName = AssetName.create(shortName),
+                name = getAssetName(name),
+                shortName = getAssetName(shortName),
                 amount = amount,
                 creatorPublicKey = creatorPublicKey,
                 decimals = decimals,
@@ -198,8 +216,8 @@ class RemoveAssetItemMapper @Inject constructor(
                 } else {
                     null
                 },
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
-                actionItemButtonState = actionItemButtonState,
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
+                actionItemButtonState = getRemoveAssetItemActionButtonState(assetHoldingStatus),
                 optedInAtRound = optedInAtRound,
                 amountInPrimaryCurrency = parityValueInSelectedCurrency.amountAsCurrency
             )
@@ -220,5 +238,12 @@ class RemoveAssetItemMapper @Inject constructor(
 
     fun mapToScreenStateItem(screenState: ScreenState): BaseRemoveAssetItem.ScreenStateItem {
         return BaseRemoveAssetItem.ScreenStateItem(screenState)
+    }
+
+    private fun getRemoveAssetItemActionButtonState(assetHoldingStatus: AssetStatus?): AccountAssetItemButtonState {
+        return when (assetHoldingStatus) {
+            PENDING_FOR_REMOVAL, PENDING_FOR_ADDITION -> AccountAssetItemButtonState.PROGRESS
+            else -> AccountAssetItemButtonState.REMOVAL
+        }
     }
 }

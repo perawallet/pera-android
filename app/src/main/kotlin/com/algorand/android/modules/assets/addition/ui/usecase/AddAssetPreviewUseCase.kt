@@ -22,7 +22,7 @@ import com.algorand.android.assetsearch.ui.mapper.BaseAssetSearchItemMapper
 import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.assets.addition.domain.usecase.AddAssetItemActionButtonStateDecider
-import com.algorand.android.usecase.AccountDetailUseCase
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -33,8 +33,8 @@ class AddAssetPreviewUseCase @Inject constructor(
     private val searchAssetUseCase: SearchAssetUseCase,
     private val assetSearchQueryMapper: AssetSearchQueryMapper,
     private val assetSearchItemMapper: BaseAssetSearchItemMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val addAssetItemActionButtonStateDecider: AddAssetItemActionButtonStateDecider
+    private val addAssetItemActionButtonStateDecider: AddAssetItemActionButtonStateDecider,
+    private val getAccountInformationFlow: GetAccountInformationFlow
 ) {
 
     fun getSearchPaginationFlow(
@@ -54,14 +54,11 @@ class AddAssetPreviewUseCase @Inject constructor(
             defaultQuery = assetSearchQuery
         )
 
-        val accountDetailFlow = accountDetailUseCase.getAccountDetailCacheFlow(
-            publicKey = accountAddress
-        )
+        val accountInformationFlow = getAccountInformationFlow(accountAddress)
 
-        return combine(searchedAssetFlow, accountDetailFlow) { searchedAsset, accountDetail ->
+        return combine(searchedAssetFlow, accountInformationFlow) { searchedAsset, accountInfo ->
             searchedAsset.map { baseSearchedAsset ->
-                val accountInformation = accountDetail?.data?.accountInformation
-                val assetHolding = accountInformation?.getAssetHoldingOrNull(baseSearchedAsset.assetId)
+                val assetHolding = accountInfo?.assetHoldings?.find { it.assetId == baseSearchedAsset.assetId }
                 val assetActionButtonState = addAssetItemActionButtonStateDecider.decideAddAssetItemActionButtonState(
                     assetHolding = assetHolding
                 )

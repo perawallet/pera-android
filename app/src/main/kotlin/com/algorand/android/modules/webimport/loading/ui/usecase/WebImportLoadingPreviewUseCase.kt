@@ -16,17 +16,15 @@ import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
 import com.algorand.android.modules.webimport.loading.domain.model.ImportedAccountResult
 import com.algorand.android.modules.webimport.loading.domain.usecase.WebImportAccountDecryptionUseCase
 import com.algorand.android.modules.webimport.loading.ui.model.WebImportLoadingPreview
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.Event
-import kotlinx.coroutines.flow.flow
+import com.algorand.wallet.account.core.domain.usecase.CacheAccountDetail
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 
 class WebImportLoadingPreviewUseCase @Inject constructor(
     private val webImportAccountDecryptionUseCase: WebImportAccountDecryptionUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase
+    private val cacheAccountDetail: CacheAccountDetail
 ) {
 
     fun getInitialPreview(): WebImportLoadingPreview {
@@ -35,8 +33,7 @@ class WebImportLoadingPreviewUseCase @Inject constructor(
 
     fun importEncryptedBackup(
         previousState: WebImportLoadingPreview,
-        webImportQrCode: WebImportQrCode,
-        coroutineScope: CoroutineScope
+        webImportQrCode: WebImportQrCode
     ) = flow {
         emit(previousState.copy(isLoadingVisible = true))
         webImportAccountDecryptionUseCase.importEncryptedBackup(
@@ -45,7 +42,7 @@ class WebImportLoadingPreviewUseCase @Inject constructor(
         ).collect {
             when (it) {
                 is DataResource.Success -> {
-                    cacheAccounts(it.data.importedAccountList, coroutineScope)
+                    cacheAccounts(it.data.importedAccountList)
                     emit(getSuccessStateOfImportRequest(previousState, it.data))
                 }
                 is DataResource.Error -> emit(getErrorStateOfImportRequest(previousState, it.exception))
@@ -54,9 +51,9 @@ class WebImportLoadingPreviewUseCase @Inject constructor(
         }
     }
 
-    private suspend fun cacheAccounts(importedAccountList: List<String>, coroutineScope: CoroutineScope) {
+    private suspend fun cacheAccounts(importedAccountList: List<String>) {
         importedAccountList.forEach {
-            accountDetailUseCase.fetchAndCacheAccountDetail(it, coroutineScope).collect()
+            cacheAccountDetail(it)
         }
     }
 

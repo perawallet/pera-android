@@ -12,65 +12,107 @@
 
 package com.algorand.android.modules.collectibles.detail.ui.mapper
 
-import com.algorand.android.models.AssetInformation
+import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
+import com.algorand.android.modules.collectibles.detail.base.domain.decider.CollectibleDetailDecider
+import com.algorand.android.modules.collectibles.detail.base.ui.mapper.CollectibleMediaItemMapper
+import com.algorand.android.modules.collectibles.detail.base.ui.mapper.CollectibleTraitItemMapper
 import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
 import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
 import com.algorand.android.modules.collectibles.detail.ui.model.NFTDetailPreview
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.Event
+import com.algorand.android.modules.collectibles.util.deciders.NFTAmountFormatDecider
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import javax.inject.Inject
 
-class NFTDetailPreviewMapper @Inject constructor() {
+class NFTDetailPreviewMapper @Inject constructor(
+    private val collectibleMediaItemMapper: CollectibleMediaItemMapper,
+    private val collectibleTraitItemMapper: CollectibleTraitItemMapper,
+    private val collectibleDetailDecider: CollectibleDetailDecider,
+    private val nftAmountFormatDecider: NFTAmountFormatDecider,
+) {
 
-    @SuppressWarnings("LongParameterList")
     fun mapToNFTDetailPreview(
-        isLoadingVisible: Boolean,
+        ownedCollectibleData: BaseOwnedCollectibleData?,
+        collectibleDetail: CollectibleDetail,
         nftName: AssetName,
-        collectionNameOfNFT: String?,
         optedInAccountTypeDrawableResId: Int,
         optedInAccountDisplayName: AccountDisplayName,
-        formattedNFTAmount: String,
-        mediaListOfNFT: List<BaseCollectibleMediaItem>,
-        traitListOfNFT: List<CollectibleTraitItem>?,
-        nftDescription: String?,
         creatorAccountOfNFT: AccountDisplayName,
-        nftId: Long,
-        formattedTotalSupply: String,
-        peraExplorerUrl: String,
-        isPureNFT: Boolean,
-        primaryWarningResId: Int?,
-        secondaryWarningResId: Int?,
+        accountType: AccountType?,
         isOwnerActionsGroupVisible: Boolean,
         isOptOutButtonVisible: Boolean,
-        isCopyEnabled: Boolean,
-        globalErrorEvent: Event<String>? = null,
-        nftSendEvent: Event<Unit>? = null,
-        optOutNFTEvent: Event<AssetInformation>? = null
     ): NFTDetailPreview {
+        val mediaList = mapToMediaList(collectibleDetail)
         return NFTDetailPreview(
-            isLoadingVisible = isLoadingVisible,
             nftName = nftName,
-            collectionNameOfNFT = collectionNameOfNFT,
+            collectionNameOfNFT = collectibleDetail.collectionName,
             optedInAccountTypeDrawableResId = optedInAccountTypeDrawableResId,
             optedInAccountDisplayName = optedInAccountDisplayName,
-            formattedNFTAmount = formattedNFTAmount,
-            mediaListOfNFT = mediaListOfNFT,
-            traitListOfNFT = traitListOfNFT,
-            nftDescription = nftDescription,
+            formattedNFTAmount = mapToFormattedCollectibleAmount(ownedCollectibleData),
+            mediaListOfNFT = mediaList,
+            traitListOfNFT = mapToTraitList(collectibleDetail),
+            nftDescription = collectibleDetail.collectibleInfo.collectibleDescription,
             creatorAccountAddressOfNFT = creatorAccountOfNFT,
-            nftId = nftId,
-            formattedTotalSupply = formattedTotalSupply,
-            peraExplorerUrl = peraExplorerUrl,
-            isPureNFT = isPureNFT,
-            primaryWarningResId = primaryWarningResId,
-            secondaryWarningResId = secondaryWarningResId,
-            globalErrorEvent = globalErrorEvent,
-            nftSendEvent = nftSendEvent,
+            nftId = collectibleDetail.id,
+            formattedTotalSupply = mapToFormattedTotalSupply(collectibleDetail),
+            peraExplorerUrl = collectibleDetail.assetInfo?.explorerUrl.orEmpty(),
+            isPureNFT = collectibleDetail.isPure,
+            primaryWarningResId = collectibleDetailDecider.decideWarningTextRes(collectibleDetail.prismUrl),
+            secondaryWarningResId = getSecondaryWarningResId(ownedCollectibleData, accountType),
+            globalErrorEvent = null,
+            nftSendEvent = null,
             isOptOutButtonVisible = isOptOutButtonVisible,
             isOwnerActionsGroupVisible = isOwnerActionsGroupVisible,
-            isCopyEnabled = isCopyEnabled && isOwnerActionsGroupVisible,
-            optOutNFTEvent = optOutNFTEvent
+            isCopyEnabled = isMediaCopiable(mediaList.firstOrNull()?.itemType) && isOwnerActionsGroupVisible,
         )
+    }
+
+    private fun getSecondaryWarningResId(
+        ownedCollectibleData: BaseOwnedCollectibleData?,
+        accountType: AccountType?
+    ): Int? {
+        return collectibleDetailDecider.decideOptedInWarningTextRes(
+            isOwnedByTheUser = ownedCollectibleData?.isOwnedByTheUser ?: false,
+            accountType = accountType
+        )
+    }
+
+    private fun mapToFormattedTotalSupply(collectibleDetail: CollectibleDetail): String {
+        return nftAmountFormatDecider.decideNFTAmountFormat(
+            nftAmount = collectibleDetail.assetInfo?.supply?.total,
+            fractionalDecimal = collectibleDetail.assetInfo?.decimals
+        )
+    }
+
+    private fun mapToFormattedCollectibleAmount(ownedCollectibleData: BaseOwnedCollectibleData?): String {
+        return nftAmountFormatDecider.decideNFTAmountFormat(
+            nftAmount = ownedCollectibleData?.amount,
+            fractionalDecimal = ownedCollectibleData?.decimals,
+            formattedAmount = ownedCollectibleData?.formattedAmount,
+            formattedCompactAmount = ownedCollectibleData?.formattedCompactAmount
+        )
+    }
+
+    private fun mapToTraitList(collectibleDetail: CollectibleDetail): List<CollectibleTraitItem> {
+        return collectibleDetail.collectibleInfo.traits?.mapNotNull {
+            collectibleTraitItemMapper.mapToTraitItem(it)
+        }.orEmpty()
+    }
+
+    private fun isMediaCopiable(mediaType: BaseCollectibleMediaItem.ItemType?): Boolean {
+        return mediaType == BaseCollectibleMediaItem.ItemType.IMAGE
+    }
+
+    private fun mapToMediaList(collectibleDetail: CollectibleDetail): List<BaseCollectibleMediaItem> {
+        return collectibleDetail.collectibleMedias.map {
+            collectibleMediaItemMapper.mapToCollectibleMediaItem(
+                baseCollectibleMedia = it,
+                shouldDecreaseOpacity = false,
+                collectibleDetail = collectibleDetail,
+                showMediaButtons = true
+            )
+        }
     }
 }

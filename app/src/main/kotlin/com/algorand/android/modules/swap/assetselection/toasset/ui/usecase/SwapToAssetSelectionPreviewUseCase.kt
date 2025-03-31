@@ -15,8 +15,8 @@ package com.algorand.android.modules.swap.assetselection.toasset.ui.usecase
 import com.algorand.android.R
 import com.algorand.android.mapper.ScreenStateMapper
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.BaseAccountAssetData
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.modules.parity.domain.mapper.ParityValueMapper
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.modules.swap.assetselection.base.ui.mapper.SwapAssetSelectionItemMapper
@@ -25,8 +25,8 @@ import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapAssetS
 import com.algorand.android.modules.swap.assetselection.base.ui.model.SwapAssetSelectionPreview
 import com.algorand.android.modules.swap.assetselection.toasset.domain.GetAvailableTargetSwapAssetListUseCase
 import com.algorand.android.modules.swap.assetselection.toasset.domain.model.AvailableSwapAsset
-import com.algorand.android.usecase.AccountAssetDataUseCase
 import com.algorand.android.utils.Event
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -38,10 +38,10 @@ class SwapToAssetSelectionPreviewUseCase @Inject constructor(
     private val getAvailableTargetSwapAssetListUseCase: GetAvailableTargetSwapAssetListUseCase,
     private val swapAssetSelectionPreviewMapper: SwapAssetSelectionPreviewMapper,
     private val swapAssetSelectionItemMapper: SwapAssetSelectionItemMapper,
-    private val accountAssetDataUseCase: AccountAssetDataUseCase,
     private val parityUseCase: ParityUseCase,
     private val parityValueMapper: ParityValueMapper,
-    private val screenStateMapper: ScreenStateMapper
+    private val screenStateMapper: ScreenStateMapper,
+    private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData
 ) {
 
     suspend fun getSwapAssetSelectionPreview(
@@ -76,7 +76,7 @@ class SwapToAssetSelectionPreviewUseCase @Inject constructor(
         swapAssetSelectionItem: SwapAssetSelectionItem,
         previousState: SwapAssetSelectionPreview
     ): Flow<SwapAssetSelectionPreview> = flow {
-        val accountAssetData = accountAssetDataUseCase.getAccountOwnedAssetData(accountAddress, includeAlgo = true)
+        val accountAssetData = getAccountOwnedAssetsData(accountAddress, includeAlgo = true)
         val isAccountOptedInToSelectedAsset = accountAssetData.any { it.id == swapAssetSelectionItem.assetId }
         val newState = with(previousState) {
             if (isAccountOptedInToSelectedAsset) {
@@ -89,13 +89,13 @@ class SwapToAssetSelectionPreviewUseCase @Inject constructor(
         emit(newState)
     }
 
-    private fun createSwapAssetSelectionItemList(
+    private suspend fun createSwapAssetSelectionItemList(
         queriedAssetId: Long,
         accountAddress: String,
         availableAssetList: List<AvailableSwapAsset>
     ): List<SwapAssetSelectionItem> {
-        val accountOwnedAssetList = accountAssetDataUseCase.getAccountOwnedAssetData(
-            publicKey = accountAddress,
+        val accountOwnedAssetList = getAccountOwnedAssetsData(
+            address = accountAddress,
             includeAlgo = queriedAssetId != ALGO_ID
         )
         val (formattedZeroPrimaryValue, formattedZeroSecondaryValue) = getFormattedZeroPrimaryAndSecondaryValues()
@@ -136,7 +136,7 @@ class SwapToAssetSelectionPreviewUseCase @Inject constructor(
         return formattedZeroPrimaryValue to formattedZeroSecondaryValue
     }
 
-    private fun createSuccessStatePreview(
+    private suspend fun createSuccessStatePreview(
         assetId: Long,
         accountAddress: String,
         availableSwapAssetList: List<AvailableSwapAsset>

@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.asb.createbackup.intro.ui
 
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.asb.createbackup.intro.ui.model.AsbIntroPreview
 import com.algorand.android.modules.asb.createbackup.intro.ui.usecase.AsbPreviewUseCase
@@ -20,6 +21,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AsbIntroViewModel @Inject constructor(
@@ -31,8 +33,10 @@ class AsbIntroViewModel @Inject constructor(
         get() = _algorandSecureBackupIntroPreviewFlow
 
     fun onStartClick() {
-        _algorandSecureBackupIntroPreviewFlow.update { preview ->
-            asbPreviewUseCase.updatePreviewAfterStartClick(preview)
+        viewModelScope.launch {
+            _algorandSecureBackupIntroPreviewFlow.update { preview ->
+                asbPreviewUseCase.updatePreviewAfterStartClick(preview)
+            }
         }
     }
 

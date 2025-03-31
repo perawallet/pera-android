@@ -12,19 +12,19 @@
 
 package com.algorand.android.modules.assetinbox.send.summary.ui.mapper
 
-import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.assetinbox.send.summary.domain.model.Arc59SendSummary
 import com.algorand.android.modules.assetinbox.send.summary.domain.model.Arc59SendTransaction
 import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryPreview
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
+import com.algorand.wallet.asset.domain.model.Asset
 import java.math.BigInteger
 
 interface Arc59SendSummaryPreviewMapper {
     operator fun invoke(
         summary: Arc59SendSummary,
         amount: BigInteger,
-        assetDetail: BaseAssetDetail,
+        assetDetail: Asset,
         isLoading: Boolean,
         showError: Event<ErrorResource>?,
         onNavBack: Event<Unit>?,

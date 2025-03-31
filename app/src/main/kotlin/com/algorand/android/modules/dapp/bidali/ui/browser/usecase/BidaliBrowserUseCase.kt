@@ -12,43 +12,44 @@
 
 package com.algorand.android.modules.dapp.bidali.ui.browser.usecase
 
-import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.models.AccountCacheData
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.TargetUser
-import com.algorand.android.models.TransactionData
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.models.TransactionSignData
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.dapp.bidali.domain.mapper.BidaliAssetMapper
 import com.algorand.android.modules.dapp.bidali.domain.model.BidaliPaymentRequestDTO
 import com.algorand.android.modules.dapp.bidali.domain.model.MainnetBidaliSupportedCurrency
 import com.algorand.android.modules.dapp.bidali.domain.model.TestnetBidaliSupportedCurrency
 import com.algorand.android.modules.dapp.bidali.getCompiledBidaliJavascript
-import com.algorand.android.usecase.AccountAssetDataUseCase
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
 import com.algorand.android.usecase.IsOnMainnetUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
-import com.algorand.android.utils.AccountCacheManager
 import com.algorand.android.utils.formatAmountAsBigInteger
 import com.algorand.android.utils.toBigDecimalOrZero
+import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
+import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.asset.domain.usecase.GetAsset
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 class BidaliBrowserUseCase @Inject constructor(
-    private val accountCacheManager: AccountCacheManager,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
-    private val accountAssetDataUseCase: AccountAssetDataUseCase,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
+    private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData,
     private val bidaliAssetMapper: BidaliAssetMapper,
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
     private val isOnMainnetUseCase: IsOnMainnetUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getAccountInformation: GetAccountInformation,
+    private val getAccountMinBalance: GetAccountMinBalance,
+    private val getAccountCustomName: GetAccountCustomName,
+    private val getTransactionSigner: GetTransactionSigner,
+    private val getAsset: GetAsset
 ) {
 
-    fun generateBidaliJavascript(accountAddress: String): String {
+    suspend fun generateBidaliJavascript(accountAddress: String): String {
         return getCompiledBidaliJavascript(
             currencies = bidaliAssetMapper.mapFromOwnedAssetData(
-                ownedAssetDataList = accountAssetDataUseCase.getAccountOwnedAssetData(accountAddress, true),
+                ownedAssetDataList = getAccountOwnedAssetsData(accountAddress, true),
                 isMainnet = isOnMainnetUseCase.invoke()
             ),
             isMainnet = isOnMainnetUseCase.invoke()
@@ -56,70 +57,52 @@ class BidaliBrowserUseCase @Inject constructor(
     }
 
     @Suppress("ReturnCount")
-    fun getTransactionDataFromPaymentRequest(
+    suspend fun getTransactionDataFromPaymentRequest(
         paymentRequest: BidaliPaymentRequestDTO,
         accountAddress: String
-    ): TransactionData.Send? {
+    ): TransactionSignData.Send? {
         // TODO handle cases when we can't find address or assets
-        val selectedAccountCacheData = getAccountInformation(accountAddress) ?: return null
-        val receiverAccountCacheData = getAccountInformation(paymentRequest.address) ?: return null
+        val selectedAccount = getAccountInformation(accountAddress) ?: return null
+        val receiverAccount = getAccountInformation(paymentRequest.address) ?: return null
+
         val selectedAssetId = getAssetIdFromBidaliIdentifier(
             bidaliId = paymentRequest.protocol,
             isMainnet = isOnMainnetUseCase.invoke()
-        ) ?: return null
-        val selectedAsset = getAssetInformation(
-            accountAddress,
-            selectedAssetId
         ) ?: return null
         val amountAsBigInteger = getAmountAsBigInteger(
             paymentRequest.amount.toBigDecimalOrZero(),
             selectedAssetId
         ) ?: return null
-        return TransactionData.Send(
-            senderAccountAddress = selectedAccountCacheData.account.address,
-            senderAccountDetail = selectedAccountCacheData.account.detail,
-            senderAccountType = selectedAccountCacheData.account.type,
-            senderAuthAddress = selectedAccountCacheData.authAddress,
-            senderAccountName = selectedAccountCacheData.account.name,
-            senderAlgoAmount = selectedAccountCacheData.accountInformation.amount,
-            isSenderRekeyedToAnotherAccount = selectedAccountCacheData.isRekeyedToAnotherAccount(),
-            minimumBalance = selectedAccountCacheData.getMinBalance(),
+        return TransactionSignData.Send(
+            senderAccountAddress = selectedAccount.address,
+            senderAuthAddress = selectedAccount.rekeyAdminAddress,
+            senderAccountName = getAccountCustomName(selectedAccount.address).orEmpty(),
+            senderAlgoAmount = selectedAccount.amount,
+            minimumBalance = getAccountMinBalance(selectedAccount.address).toLong(),
             amount = amountAsBigInteger,
-            assetInformation = selectedAsset,
+            assetId = selectedAssetId,
             xnote = paymentRequest.extraId,
             targetUser = TargetUser(
                 publicKey = paymentRequest.address,
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress)
+                accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             ),
-            isArc59Transaction = !receiverAccountCacheData.accountInformation.hasAsset(selectedAsset.assetId)
+            isArc59Transaction = !receiverAccount.hasAsset(selectedAssetId),
+            signer = getTransactionSigner(selectedAccount.address)
         )
     }
 
-    private fun getAmountAsBigInteger(amount: BigDecimal, assetId: Long): BigInteger? {
-        val assetDetail = simpleAssetDetailUseCase.getCachedAssetDetail(assetId)
-            ?: return null
-        return amount.formatAmountAsBigInteger(assetDetail.data?.fractionDecimals ?: return null)
-    }
-
-    private fun getAccountInformation(publicKey: String): AccountCacheData? {
-        return accountCacheManager.getCacheData(publicKey)
-    }
-
-    private fun getAssetInformation(publicKey: String, assetId: Long): AssetInformation? {
-        val ownedAssetData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, publicKey)
-        return AssetInformation.createAssetInformation(
-            baseOwnedAssetData = ownedAssetData ?: return null,
-            assetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetId)
-        )
+    private suspend fun getAmountAsBigInteger(amount: BigDecimal, assetId: Long): BigInteger? {
+        val assetDecimals = getAsset(assetId)?.assetInfo?.decimals ?: return null
+        return amount.formatAmountAsBigInteger(assetDecimals)
     }
 
     private fun getAssetIdFromBidaliIdentifier(bidaliId: String, isMainnet: Boolean): Long? {
         return if (isMainnet) {
-            MainnetBidaliSupportedCurrency.values().firstOrNull {
+            MainnetBidaliSupportedCurrency.entries.firstOrNull {
                 it.key == bidaliId
             }?.assetId
         } else {
-            TestnetBidaliSupportedCurrency.values().firstOrNull {
+            TestnetBidaliSupportedCurrency.entries.firstOrNull {
                 it.key == bidaliId
             }?.assetId
         }

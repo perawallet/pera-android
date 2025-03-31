@@ -23,7 +23,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.algorand.android.R
 import com.algorand.android.databinding.CustomUserViewBinding
-import com.algorand.android.models.AccountCacheData
 import com.algorand.android.models.TooltipConfig
 import com.algorand.android.models.User
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
@@ -34,7 +33,9 @@ import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.setContactIconDrawable
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.loadImage
+import com.algorand.android.utils.toShortenedAddress
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
 
 class AlgorandUserView @JvmOverloads constructor(
     context: Context,
@@ -140,17 +141,17 @@ class AlgorandUserView @JvmOverloads constructor(
     }
 
     fun setAccount(
-        accountCacheData: AccountCacheData?,
+        accountDetail: AccountDetail,
         accountIconDrawablePreview: AccountIconDrawablePreview?,
         enableAddressCopy: Boolean = true
     ) {
         with(binding) {
             mainTextView.apply {
                 maxLines = MAX_LINES_FOR_ACCOUNT
-                text = accountCacheData?.account?.name
+                text = accountDetail.customAccountInfo?.customName ?: accountDetail.address.toShortenedAddress()
                 changeTextAppearance(R.style.TextAppearance_Body_Sans)
             }
-            if (accountCacheData?.account != null) {
+            if (accountDetail.accountType != null) {
                 if (accountIconDrawablePreview != null) {
                     val accountIconDrawable = AccountIconDrawable.create(
                         context,
@@ -162,7 +163,7 @@ class AlgorandUserView @JvmOverloads constructor(
                         show()
                     }
                 }
-                if (enableAddressCopy) enableLongPressToCopyText(accountCacheData.account.address)
+                if (enableAddressCopy) enableLongPressToCopyText(accountDetail.address)
             }
             addContactButton.hide()
         }

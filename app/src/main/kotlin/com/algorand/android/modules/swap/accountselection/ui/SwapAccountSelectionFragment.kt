@@ -16,7 +16,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
@@ -25,6 +24,8 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.action.addition.AddAssetActionBottomSheet
+import com.algorand.android.modules.assets.addition.ui.model.AssetAdditionPayload
+import com.algorand.android.modules.swap.accountselection.ui.model.SwapAccountSelectionNavDirection
 import com.algorand.android.modules.swap.accountselection.ui.model.SwapAccountSelectionPreview
 import com.algorand.android.ui.accountselection.BaseAccountSelectionFragment
 import com.algorand.android.utils.Event
@@ -52,9 +53,9 @@ class SwapAccountSelectionFragment : BaseAccountSelectionFragment() {
         updateSwapAccountSelectionPreview(preview)
     }
 
-    private val navToSwapNavigationEventCollector: suspend (Event<NavDirections>?) -> Unit = { navigationEvent ->
-        navigationEvent?.consume()?.run {
-            nav(this)
+    private val navToSwapNavigationEventCollector: suspend (Event<SwapAccountSelectionNavDirection>?) -> Unit = {
+        it?.consume()?.run {
+            handleNavigation(this)
         }
     }
 
@@ -65,7 +66,7 @@ class SwapAccountSelectionFragment : BaseAccountSelectionFragment() {
         }
     }
 
-    private val optIntoAssetEventCollector: suspend (Event<AssetAction>?) -> Unit = { assetActionEvent ->
+    private val optIntoAssetEventCollector: suspend (Event<AssetAdditionPayload>?) -> Unit = { assetActionEvent ->
         assetActionEvent?.consume()?.run { handleAssetAddition(this) }
     }
 
@@ -133,23 +134,40 @@ class SwapAccountSelectionFragment : BaseAccountSelectionFragment() {
         }
     }
 
-    private fun handleAssetAddition(assetAction: AssetAction) {
+    private fun handleNavigation(navigation: SwapAccountSelectionNavDirection) {
+        when (navigation) {
+            is SwapAccountSelectionNavDirection.SwapNavigation -> {
+                val dest = SwapAccountSelectionFragmentDirections.actionSwapAccountSelectionFragmentToSwapNavigation(
+                    accountAddress = navigation.accountAddress,
+                    fromAssetId = navigation.fromAssetId,
+                    toAssetId = navigation.toAssetId
+                )
+                nav(dest)
+            }
+        }
+    }
+
+    private fun handleAssetAddition(payload: AssetAdditionPayload) {
+        val assetAction = AssetAction(assetId = payload.assetId, publicKey = payload.address)
         nav(
             SwapAccountSelectionFragmentDirections.actionSwapAccountSelectionFragmentToAssetAdditionActionNavigation(
                 assetAction = assetAction,
                 shouldWaitForConfirmation = true
             )
         )
-        (activity as? MainActivity)?.mainViewModel?.assetOperationResultLiveData?.observe(viewLifecycleOwner) {
-            it.peek().use(
-                onSuccess = {
-                    if (it.assetId == assetAction.assetId) {
-                        assetAction.publicKey?.run {
-                            swapAccountSelectionViewModel.onAssetAdded(accountAddress = this, assetAction.assetId)
+        collectLatestOnLifecycle(
+            flow = (activity as? MainActivity)?.assetOperationViewModel?.assetOperationResultFlow,
+            collection = {
+                it?.peek()?.use(
+                    onSuccess = { operation ->
+                        if (operation.assetId == assetAction.assetId) {
+                            assetAction.publicKey?.run {
+                                swapAccountSelectionViewModel.onAssetAdded(accountAddress = this, assetAction.assetId)
+                            }
                         }
                     }
-                }
-            )
-        }
+                )
+            }
+        )
     }
 }

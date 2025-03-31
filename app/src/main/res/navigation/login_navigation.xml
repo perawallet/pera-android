@@ -49,8 +49,7 @@
     <fragment
         android:id="@+id/registerIntroFragment"
         android:name="com.algorand.android.ui.register.registerintro.RegisterIntroFragment"
-        android:label="RegisterIntroFragment"
-        tools:layout="@layout/fragment_register_type_selection">
+        android:label="RegisterIntroFragment">
         <argument
             android:name="isShowingCloseButton"
             app:argType="boolean" />
@@ -72,8 +71,12 @@
             android:id="@+id/action_registerIntroFragment_to_backupPassphraseInfoNavigation"
             app:destination="@id/backupPassphraseInfoNavigation">
             <argument
-                android:name="publicKeysOfAccountsToBackup"
+                android:name="accountsToBackup"
                 app:argType="string[]" />
+            <argument
+                android:name="onboardingAccountType"
+                app:argType="com.algorand.android.models.OnboardingAccountType"
+                app:nullable="false" />
         </action>
     </fragment>
 
@@ -111,6 +114,10 @@
                 android:defaultValue="@null"
                 app:argType="string"
                 app:nullable="true" />
+            <argument
+                android:name="onboardingAccountType"
+                app:argType="com.algorand.android.models.OnboardingAccountType"
+                app:nullable="false" />
         </action>
     </fragment>
 

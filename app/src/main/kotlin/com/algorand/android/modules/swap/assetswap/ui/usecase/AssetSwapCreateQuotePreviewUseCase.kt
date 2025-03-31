@@ -12,8 +12,8 @@
 
 package com.algorand.android.modules.swap.assetswap.ui.usecase
 
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDetailSummaryUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
 import com.algorand.android.modules.swap.assetswap.domain.usecase.GetSwapQuoteUseCase
 import com.algorand.android.modules.swap.assetswap.ui.mapper.AssetSwapPreviewMapper
@@ -33,9 +33,9 @@ class AssetSwapCreateQuotePreviewUseCase @Inject constructor(
     private val assetSwapPreviewMapper: AssetSwapPreviewMapper,
     private val assetSwapPreviewAssetDetailUseCase: AssetSwapPreviewAssetDetailUseCase,
     private val selectedAssetAmountDetailMapper: SelectedAssetAmountDetailMapper,
-    private val accountDetailSummaryUseCase: AccountDetailSummaryUseCase,
     private val assetSwapSwitchButtonStatusUseCase: AssetSwapSwitchButtonStatusUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getAccountDisplayName: GetAccountDisplayName
 ) {
 
     @Suppress("LongParameterList", "LongMethod")
@@ -61,10 +61,9 @@ class AssetSwapCreateQuotePreviewUseCase @Inject constructor(
             it.useSuspended(
                 onSuccess = { swapQuote ->
                     val errorEvent = swapBalanceErrorProvider.checkIfSwapHasError(swapQuote, accountAddress)
-                    val accountDetailSummary = accountDetailSummaryUseCase.getAccountDetailSummary(accountAddress)
                     assetSwapPreview = assetSwapPreviewMapper.mapToAssetSwapPreview(
-                        accountDisplayName = accountDetailSummary.accountDisplayName,
-                        accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress),
+                        accountDisplayName = getAccountDisplayName(accountAddress),
+                        accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress),
                         fromSelectedAssetDetail = assetSwapPreviewAssetDetailUseCase
                             .createSelectedAssetDetailFromSwapQuoteAssetDetail(
                                 accountAddress = accountAddress,

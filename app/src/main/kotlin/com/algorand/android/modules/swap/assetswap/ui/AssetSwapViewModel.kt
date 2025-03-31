@@ -15,7 +15,6 @@ package com.algorand.android.modules.swap.assetswap.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
 import com.algorand.android.modules.swap.assetswap.ui.usecase.AssetSwapPreviewUseCase
 import com.algorand.android.modules.tracking.core.PeraClickEvent
@@ -23,6 +22,8 @@ import com.algorand.android.modules.tracking.swap.assetswap.AssetSwapSwapButtonC
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
+import com.algorand.wallet.account.info.domain.usecase.IsAccountCachedSuccessfully
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +38,7 @@ import kotlinx.coroutines.launch
 class AssetSwapViewModel @Inject constructor(
     private val assetSwapPreviewUseCase: AssetSwapPreviewUseCase,
     private val assetSwapButtonClickEventTracker: AssetSwapSwapButtonClickEventTracker,
+    private val isAccountCachedSuccessfully: IsAccountCachedSuccessfully,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -51,18 +53,10 @@ class AssetSwapViewModel @Inject constructor(
     private var percentageCacheEvent: Event<Float>? = null
     private var previewUpdateJob: Job? = null
 
-    private val _assetSwapPreviewFlow = MutableStateFlow(
-        assetSwapPreviewUseCase.getAssetSwapPreviewInitializationState(
-            accountAddress = accountAddress,
-            fromAssetId = fromAssetId,
-            toAssetId = toAssetId
-        )
-    )
+    private val _assetSwapPreviewFlow = MutableStateFlow<AssetSwapPreview?>(null)
 
-    private val _isAccountCachedResultFlow = MutableStateFlow<Boolean>(
-        assetSwapPreviewUseCase.isAccountCachedSuccessfully(accountAddress)
-    )
-    val isAccountCachedResultFlow: StateFlow<Boolean>
+    private val _isAccountCachedResultFlow = MutableStateFlow<Boolean?>(null)
+    val isAccountCachedResultFlow: StateFlow<Boolean?>
         get() = _isAccountCachedResultFlow
 
     val assetSwapPreviewFlow: StateFlow<AssetSwapPreview?>
@@ -70,6 +64,24 @@ class AssetSwapViewModel @Inject constructor(
 
     private val latestFromAmount: String?
         get() = _assetSwapPreviewFlow.value?.fromSelectedAssetAmountDetail?.amount
+
+    init {
+        initPreview()
+    }
+
+    private fun initPreview() {
+        viewModelScope.launch {
+            if (isAccountCachedSuccessfully(accountAddress)) {
+                _assetSwapPreviewFlow.value = assetSwapPreviewUseCase.getAssetSwapPreviewInitializationState(
+                    accountAddress = accountAddress,
+                    fromAssetId = fromAssetId,
+                    toAssetId = toAssetId
+                )
+            } else {
+                _isAccountCachedResultFlow.value = false
+            }
+        }
+    }
 
     fun onFromAmountChanged(rawAmount: String) {
         updateSwapQuote(amount = rawAmount, shouldInterruptActiveJob = true)

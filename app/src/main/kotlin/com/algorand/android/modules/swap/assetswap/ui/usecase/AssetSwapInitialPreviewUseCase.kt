@@ -13,32 +13,33 @@
 package com.algorand.android.modules.swap.assetswap.ui.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDetailSummaryUseCase
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetData
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.currency.domain.usecase.DisplayedCurrencyUseCase
 import com.algorand.android.modules.swap.assetswap.ui.mapper.AssetSwapPreviewMapper
 import com.algorand.android.modules.swap.assetswap.ui.mapper.SelectedAssetAmountDetailMapper
 import com.algorand.android.modules.swap.assetswap.ui.mapper.SelectedAssetDetailMapper
 import com.algorand.android.modules.swap.assetswap.ui.model.AssetSwapPreview
 import com.algorand.android.modules.swap.common.SwapAppxValueParityHelper
-import com.algorand.android.usecase.AccountAssetDataUseCase
-import com.algorand.android.usecase.CheckUserHasAssetBalanceUseCase
 import com.algorand.android.utils.emptyString
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 
 class AssetSwapInitialPreviewUseCase @Inject constructor(
-    private val accountAssetDataUseCase: AccountAssetDataUseCase,
     private val selectedAssetDetailMapper: SelectedAssetDetailMapper,
     private val selectedAssetAmountDetailMapper: SelectedAssetAmountDetailMapper,
-    private val accountDetailSummaryUseCase: AccountDetailSummaryUseCase,
     private val assetSwapPreviewMapper: AssetSwapPreviewMapper,
-    private val checkUserHasAssetBalanceUseCase: CheckUserHasAssetBalanceUseCase,
+    private val isAssetOwnedByAccount: IsAssetOwnedByAccount,
     private val swapAppxValueParityHelper: SwapAppxValueParityHelper,
     private val displayedCurrencyUseCase: DisplayedCurrencyUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getAccountOwnedAssetData: GetAccountOwnedAssetData,
+    private val getAccountDisplayName: GetAccountDisplayName
 ) {
 
-    fun getAssetSwapPreviewInitializationState(
+    suspend fun getAssetSwapPreviewInitializationState(
         accountAddress: String,
         fromAssetId: Long,
         toAssetId: Long?
@@ -52,11 +53,11 @@ class AssetSwapInitialPreviewUseCase @Inject constructor(
         val toSelectedAssetAmountDetail = selectedAssetAmountDetailMapper.mapToDefaultSelectedAssetAmountDetail(
             primaryCurrencySymbol = displayedCurrencyUseCase.getDisplayedCurrencySymbol()
         )
-        val accountDetailSummary = accountDetailSummaryUseCase.getAccountDetailSummary(accountAddress)
+
         // TODO update isSwitchAssetsButtonEnabled when we merge tinyman-swap-2
         return assetSwapPreviewMapper.mapToAssetSwapPreview(
-            accountDisplayName = accountDetailSummary.accountDisplayName,
-            accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress),
+            accountDisplayName = getAccountDisplayName(accountAddress),
+            accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress),
             fromSelectedAssetDetail = fromAssetDetail,
             toSelectedAssetDetail = toAssetDetail,
             isSwapButtonEnabled = false,
@@ -66,7 +67,7 @@ class AssetSwapInitialPreviewUseCase @Inject constructor(
             isSwitchAssetsButtonEnabled = if (toAssetId == null) {
                 false
             } else {
-                checkUserHasAssetBalanceUseCase.hasUserAssetBalance(accountAddress, toAssetId)
+                isAssetOwnedByAccount(accountAddress, toAssetId)
             },
             isMaxAndPercentageButtonEnabled = toAssetDetail != null,
             errorEvent = null,
@@ -77,21 +78,26 @@ class AssetSwapInitialPreviewUseCase @Inject constructor(
         )
     }
 
-    private fun getFromAssetDetail(accountAddress: String, assetId: Long): AssetSwapPreview.SelectedAssetDetail? {
-        val ownedFromAssetDetail = accountAssetDataUseCase.getAccountOwnedAssetData(accountAddress, true).run {
-            firstOrNull { assetId == it.id } ?: firstOrNull { it.isAlgo } ?: return null
-        }
+    private suspend fun getFromAssetDetail(
+        accountAddress: String,
+        assetId: Long
+    ): AssetSwapPreview.SelectedAssetDetail? {
+        val ownedFromAssetDetail = getAccountOwnedAssetData(accountAddress, assetId)
+            ?: getAccountOwnedAssetData(accountAddress, ALGO_ID)
+            ?: return null
         return getAssetDetail(ownedFromAssetDetail)
     }
 
-    private fun getToAssetDetail(accountAddress: String, assetId: Long?): AssetSwapPreview.SelectedAssetDetail? {
-        val ownedToAssetDetail = accountAssetDataUseCase.getAccountOwnedAssetData(accountAddress, true).run {
-            firstOrNull { assetId == it.id } ?: return null
-        }
+    private suspend fun getToAssetDetail(
+        accountAddress: String,
+        assetId: Long?
+    ): AssetSwapPreview.SelectedAssetDetail? {
+        if (assetId == null) return null
+        val ownedToAssetDetail = getAccountOwnedAssetData(accountAddress, assetId) ?: return null
         return getAssetDetail(ownedToAssetDetail)
     }
 
-    private fun getAssetDetail(ownedAssetData: OwnedAssetData): AssetSwapPreview.SelectedAssetDetail {
+    private suspend fun getAssetDetail(ownedAssetData: OwnedAssetData): AssetSwapPreview.SelectedAssetDetail {
         return selectedAssetDetailMapper.mapToSelectedAssetDetail(
             assetId = ownedAssetData.id,
             formattedBalance = ownedAssetData.formattedAmount,

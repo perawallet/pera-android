@@ -1,20 +1,20 @@
 package com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.usecase
 
-import com.algorand.android.core.AccountManager
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccounts
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.GetAssetInboxAllAccounts
+import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.mapper.AssetInboxAllAccountsPreviewMapper
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.model.AssetInboxAllAccountsPreview
-import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.mapper.AssetInboxAllAccountsPreviewMapper
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
+import com.algorand.wallet.asset.assetinbox.domain.model.AssetInboxRequest
+import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequests
+import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxValidAddresses
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class AssetInboxAllAccountsPreviewUseCase @Inject constructor(
-    private val getAssetInboxAllAccounts: GetAssetInboxAllAccounts,
+    private val getAssetInboxRequests: GetAssetInboxRequests,
     private val assetInboxAllAccountsPreviewMapper: AssetInboxAllAccountsPreviewMapper,
-    private val accountManager: AccountManager
+    private val getAssetInboxValidAddresses: GetAssetInboxValidAddresses
 ) {
 
     fun getInitialPreview(): AssetInboxAllAccountsPreview {
@@ -24,14 +24,14 @@ class AssetInboxAllAccountsPreviewUseCase @Inject constructor(
     fun getAssetInboxAllAccountsPreview(
         preview: AssetInboxAllAccountsPreview
     ): Flow<AssetInboxAllAccountsPreview> = flow {
-        val allAccountAddresses = accountManager.getAllAccountsAddressesExceptWatch()
-        if (allAccountAddresses.isEmpty()) {
-            emit(createAssetInboxAllAccountsPreview(emptyList()))
+        val accountAddresses = getAssetInboxValidAddresses()
+        if (accountAddresses.isEmpty()) {
+            emit(createAssetInboxAllAccountsPreview(emptyList(), accountAddresses))
             return@flow
         }
-        getAssetInboxAllAccounts(allAccountAddresses).use(
+        getAssetInboxRequests(accountAddresses).use(
             onSuccess = {
-                emit(createAssetInboxAllAccountsPreview(it))
+                emit(createAssetInboxAllAccountsPreview(it, accountAddresses))
             },
             onFailed = { exception, _ ->
                 val errorEvent = Event(ErrorResource.Api(exception.message.orEmpty()))
@@ -41,12 +41,13 @@ class AssetInboxAllAccountsPreviewUseCase @Inject constructor(
         )
     }
 
-    private fun createAssetInboxAllAccountsPreview(
-        assetInboxAllAccountsList: List<AssetInboxAllAccounts>,
+    private suspend fun createAssetInboxAllAccountsPreview(
+        assetInboxAllAccountsList: List<AssetInboxRequest>,
+        addresses: List<String>,
     ): AssetInboxAllAccountsPreview {
         return assetInboxAllAccountsPreviewMapper.invoke(
             assetInboxAllAccountsList,
-            accountManager.getAllAccountsExceptWatch(),
+            addresses,
             isEmptyStateVisible = assetInboxAllAccountsList.none { it.requestCount > 0 },
             isLoading = false,
             showError = null,

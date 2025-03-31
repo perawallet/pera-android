@@ -13,6 +13,7 @@
 package com.algorand.android.modules.dapp.bidali.ui.browser.usecase
 
 import com.algorand.android.discover.common.ui.model.WebViewError
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.modules.dapp.bidali.data.mapper.BidaliOpenUrlRequestMapper
 import com.algorand.android.modules.dapp.bidali.data.mapper.BidaliPaymentRequestMapper
 import com.algorand.android.modules.dapp.bidali.data.model.BidaliOpenUrlRequest
@@ -20,24 +21,22 @@ import com.algorand.android.modules.dapp.bidali.data.model.BidaliPaymentRequest
 import com.algorand.android.modules.dapp.bidali.domain.mapper.BidaliAssetMapper
 import com.algorand.android.modules.dapp.bidali.getCompiledUpdatedBalancesJavascript
 import com.algorand.android.modules.dapp.bidali.ui.browser.model.BidaliBrowserPreview
-import com.algorand.android.usecase.AccountAssetDataUseCase
 import com.algorand.android.usecase.IsOnMainnetUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.getBaseUrlOrNull
+import com.algorand.wallet.account.core.domain.usecase.CacheAccountDetail
 import com.google.gson.Gson
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collectLatest
 
 class BidaliBrowserPreviewUseCase @Inject constructor(
-    private val accountAssetDataUseCase: AccountAssetDataUseCase,
     private val bidaliAssetMapper: BidaliAssetMapper,
     private val isOnMainnetUseCase: IsOnMainnetUseCase,
     private val gson: Gson,
     private val bidaliPaymentRequestMapper: BidaliPaymentRequestMapper,
-    private val bidaliOpenUrlRequestMapper: BidaliOpenUrlRequestMapper
+    private val bidaliOpenUrlRequestMapper: BidaliOpenUrlRequestMapper,
+    private val cacheAccountDetail: CacheAccountDetail,
+    private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData
 ) {
 
     fun getInitialStatePreview(
@@ -135,26 +134,19 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
         }
     }
 
-    fun generateUpdatedBalancesJavascript(
+    suspend fun generateUpdatedBalancesJavascript(
         previousState: BidaliBrowserPreview,
-        accountAddress: String,
-        scope: CoroutineScope
-    ) = channelFlow {
-        accountAssetDataUseCase.fetchAccountOwnedAssetData(
-            publicKey = accountAddress,
-            includeAlgo = true,
-            coroutineScope = scope
-        ).collectLatest {
-            send(
-                previousState.copy(
-                    updatedBalancesJavascript = getCompiledUpdatedBalancesJavascript(
-                        bidaliAssetMapper.mapFromOwnedAssetData(
-                            ownedAssetDataList = it,
-                            isMainnet = isOnMainnetUseCase.invoke()
-                        )
-                    )
+        accountAddress: String
+    ): BidaliBrowserPreview? {
+        val accountDetail = cacheAccountDetail(accountAddress).getDataOrNull() ?: return null
+        val accountOwnedAssetDataList = getAccountOwnedAssetsData(accountDetail, includeAlgo = true)
+        return previousState.copy(
+            updatedBalancesJavascript = getCompiledUpdatedBalancesJavascript(
+                bidaliAssetMapper.mapFromOwnedAssetData(
+                    ownedAssetDataList = accountOwnedAssetDataList,
+                    isMainnet = isOnMainnetUseCase.invoke()
                 )
             )
-        }
+        )
     }
 }

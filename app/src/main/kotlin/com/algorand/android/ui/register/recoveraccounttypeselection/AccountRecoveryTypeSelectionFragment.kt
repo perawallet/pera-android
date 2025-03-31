@@ -22,11 +22,19 @@ import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentAccountRecoveryTypeSelectionBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_account_recovery_type_selection) {
+
+    private val viewStateCollector: suspend (AccountRecoveryTypeSelectionViewModel.ViewState) -> Unit = { state ->
+        when (state) {
+            AccountRecoveryTypeSelectionViewModel.ViewState.Idle -> Unit
+            is AccountRecoveryTypeSelectionViewModel.ViewState.DefaultState -> setupToolbar()
+        }
+    }
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
@@ -43,10 +51,12 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
+        initObservers()
     }
 
     private fun initUi() {
         setupToolbar()
+        accountRecoveryTypeSelectionViewModel.setupToolbar()
         with(binding) {
             recoverAnAccountSelectionItem.setOnClickListener { navToRecoverAccountInfoFragment() }
             recoverAnAccountWithQrSelectionItem.setOnClickListener { navToRecoverWithPassphraseQrScannerFragment() }
@@ -54,6 +64,13 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
             importFromWebSelectionItem.setOnClickListener { navToImportFromWeb() }
             algorandSecureBackupSelectionItem.setOnClickListener { navToAlgorandSecureRestoreNavigation() }
         }
+    }
+
+    private fun initObservers() {
+        collectLatestOnLifecycle(
+            flow = accountRecoveryTypeSelectionViewModel.state,
+            collection = viewStateCollector
+        )
     }
 
     private fun navToAlgorandSecureRestoreNavigation() {
@@ -92,9 +109,7 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
     }
 
     private fun setupToolbar() {
-        if (accountRecoveryTypeSelectionViewModel.hasAccount().not()) {
-            getAppToolbar()?.setEndButton(button = TextButton(R.string.skip, onClick = ::onSkipClick))
-        }
+        getAppToolbar()?.setEndButton(button = TextButton(R.string.skip, onClick = ::onSkipClick))
     }
 
     private fun onSkipClick() {

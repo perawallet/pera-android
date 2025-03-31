@@ -13,7 +13,6 @@
 package com.algorand.android.modules.assetinbox.send.summary.ui.mapper
 
 import android.content.res.Resources
-import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.assetinbox.send.summary.domain.model.Arc59SendSummary
 import com.algorand.android.modules.assetinbox.send.summary.domain.model.Arc59SendTransaction
 import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryPreview
@@ -24,6 +23,7 @@ import com.algorand.android.utils.Event
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.toAlgoDisplayValue
+import com.algorand.wallet.asset.domain.model.Asset
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -34,7 +34,7 @@ class Arc59SendSummaryPreviewMapperImpl @Inject constructor(
     override fun invoke(
         summary: Arc59SendSummary,
         amount: BigInteger,
-        assetDetail: BaseAssetDetail,
+        assetDetail: Asset,
         isLoading: Boolean,
         showError: Event<ErrorResource>?,
         onNavBack: Event<Unit>?,
@@ -67,8 +67,8 @@ class Arc59SendSummaryPreviewMapperImpl @Inject constructor(
         )
     }
 
-    private fun getFormattedAssetAmount(amount: BigInteger, assetDetail: BaseAssetDetail): String {
-        val safeDecimals = assetDetail.fractionDecimals ?: 0
+    private fun getFormattedAssetAmount(amount: BigInteger, assetDetail: Asset): String {
+        val safeDecimals = assetDetail.getDecimalsOrZero()
         val safeShortName = AssetName.createShortName(assetDetail.shortName).getName(resources)
         val formattedAmount = amount.formatAmount(safeDecimals)
         return "$formattedAmount $safeShortName"

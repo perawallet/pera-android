@@ -12,51 +12,17 @@
 
 package com.algorand.android.modules.assetinbox.assetinboxallaccounts.di
 
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.data.mapper.AssetInboxAllAccountsMapper
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.data.mapper.AssetInboxAllAccountsMapperImpl
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.data.repository.AssetInboxAllAccountsRepositoryImpl
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.data.service.AssetInboxAllAccountsApiService
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.repository.AssetInboxAllAccountsRepository
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.usecase.GetAssetInboxAllAccounts
-import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.mapper.AssetInboxAllAccountsPreviewMapper
-import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.mapper.AssetInboxAllAccountsPreviewMapperImpl
+import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.mapper.AssetInboxAllAccountsPreviewMapper
+import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.mapper.AssetInboxAllAccountsPreviewMapperImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 import javax.inject.Singleton
-import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AssetInboxAllAccountsRepositoryModule {
-
-    @Provides
-    @Singleton
-    fun provideAssetInboxAllAccountsRepository(
-        repository: AssetInboxAllAccountsRepositoryImpl
-    ): AssetInboxAllAccountsRepository = repository
-
-    @Provides
-    @Singleton
-    fun provideAssetInboxAllAccountsApiService(
-        @Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit
-    ): AssetInboxAllAccountsApiService {
-        return retrofit.create(AssetInboxAllAccountsApiService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideGetAssetInboxAllAccounts(
-        repository: AssetInboxAllAccountsRepository
-    ): GetAssetInboxAllAccounts = GetAssetInboxAllAccounts(repository::getAssetInboxAllAccounts)
-
-    @Provides
-    @Singleton
-    fun provideAssetInboxAllAccountsMapper(
-        assetInboxAllAccountsMapperImpl: AssetInboxAllAccountsMapperImpl
-    ): AssetInboxAllAccountsMapper = assetInboxAllAccountsMapperImpl
 
     @Provides
     @Singleton

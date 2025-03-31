@@ -23,13 +23,15 @@ class RegisterIntroPreviewMapper @Inject constructor(
     fun mapTo(
         isSkipButtonVisible: Boolean,
         isCloseButtonVisible: Boolean,
-        hasAccount: Boolean
+        hasAccount: Boolean,
+        hasHdWallet: Boolean
     ): RegisterIntroPreview {
         val titleRes = registerIntroPreviewDecider.decideTitleRes(hasAccount)
         return RegisterIntroPreview(
             titleRes = titleRes,
             isSkipButtonVisible = isSkipButtonVisible,
-            isCloseButtonVisible = isCloseButtonVisible
+            isCloseButtonVisible = isCloseButtonVisible,
+            hasHdWallet = hasHdWallet
         )
     }
 }

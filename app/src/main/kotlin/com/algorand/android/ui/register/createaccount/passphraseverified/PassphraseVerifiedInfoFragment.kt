@@ -12,6 +12,8 @@
 
 package com.algorand.android.ui.register.createaccount.passphraseverified
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -20,10 +22,10 @@ import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraDescriptionText
-import com.algorand.android.ui.compose.widget.PeraIconBig
+import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.PeraIcon
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,28 +36,29 @@ class PassphraseVerifiedInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Icon(modifier: Modifier) =
-        PeraIconBig(
+        PeraIcon(
             painter = painterResource(id = R.drawable.ic_shield_check_large),
-            contentDescription = "check large",
+            contentDescription = stringResource(id = R.string.check),
             modifier = modifier
         )
 
     @Composable
     override fun Title(modifier: Modifier) =
-        PeraTitleText(
+        PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.passphrase_verified)
         )
 
     @Composable
     override fun Description(modifier: Modifier) =
-        PeraDescriptionText(
+        PeraBodyText(
             text = stringResource(id = R.string.keep_this_recovery),
             modifier = modifier
         )
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
         PeraPrimaryButton(
             onClick = { handleNextNavigation() },
             modifier = modifier,
@@ -73,9 +76,7 @@ class PassphraseVerifiedInfoFragment : BaseInfoFragment() {
             nav(
                 PassphraseVerifiedInfoFragmentDirections
                     .actionPassphraseVerifiedInfoFragmentToBackupPassphraseAccountNameNavigation(
-                        accountCreation.copy(
-                            tempAccount = accountCreation.tempAccount.copy(isBackedUp = true)
-                        )
+                        accountCreation.copy(isBackedUp = true)
                     )
             )
         } ?: navToHomeNavigation()

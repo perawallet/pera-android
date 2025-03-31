@@ -12,9 +12,10 @@
 
 package com.algorand.android.models
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.walletconnect.WalletConnectAssetDetail
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import java.math.BigInteger
 import kotlinx.parcelize.Parcelize
 
@@ -29,7 +30,7 @@ sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), Wall
 
     open val assetBalance: BigInteger? = null
 
-    open val verificationTier: VerificationTier?
+    open val verificationTierConfiguration: VerificationTierConfiguration?
         get() = walletConnectTransactionAssetDetail?.verificationTier
 
     @Parcelize
@@ -42,11 +43,11 @@ sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), Wall
         override val assetId: Long,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val assetInformation: WalletConnectAssetInformation?,
         override val fromAccount: WalletConnectAccount?,
         override val toAccount: WalletConnectAccount?,
         override val groupId: String?,
+        override val transactionSigner: TransactionSigner?,
         val assetAmount: BigInteger
     ) : BaseAssetTransferTransaction() {
 
@@ -74,11 +75,11 @@ sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), Wall
         override val assetId: Long,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val assetInformation: WalletConnectAssetInformation?,
         override val fromAccount: WalletConnectAccount?,
         override val groupId: String?,
         override val warningCount: Int?,
+        override val transactionSigner: TransactionSigner?,
         val assetCloseToAddress: WalletConnectAddress,
         val assetAmount: BigInteger
     ) : BaseAssetTransferTransaction() {
@@ -109,11 +110,11 @@ sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), Wall
         override val assetId: Long,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val assetInformation: WalletConnectAssetInformation?,
         override val fromAccount: WalletConnectAccount?,
         override val groupId: String?,
         override val warningCount: Int?,
+        override val transactionSigner: TransactionSigner?,
         val rekeyAddress: WalletConnectAddress,
         val assetAmount: BigInteger
     ) : BaseAssetTransferTransaction() {
@@ -144,11 +145,11 @@ sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), Wall
         override val assetId: Long,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val assetInformation: WalletConnectAssetInformation?,
         override val fromAccount: WalletConnectAccount?,
         override val groupId: String?,
         override val warningCount: Int?,
+        override val transactionSigner: TransactionSigner?,
         val rekeyAddress: WalletConnectAddress,
         val assetAmount: BigInteger,
         val closeAddress: WalletConnectAddress
@@ -183,9 +184,9 @@ sealed class BaseAssetTransferTransaction : BaseWalletConnectTransaction(), Wall
         override val assetId: Long,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val assetInformation: WalletConnectAssetInformation?,
         override val fromAccount: WalletConnectAccount?,
+        override val transactionSigner: TransactionSigner?,
         override val groupId: String?
     ) : BaseAssetTransferTransaction() {
 

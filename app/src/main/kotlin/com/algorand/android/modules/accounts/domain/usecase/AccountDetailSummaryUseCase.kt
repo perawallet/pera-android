@@ -12,52 +12,50 @@
 
 package com.algorand.android.modules.accounts.domain.usecase
 
+import com.algorand.android.R
 import com.algorand.android.mapper.AccountSummaryMapper
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountDetail
 import com.algorand.android.models.AccountDetailSummary
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.decider.AccountDetailDecider
-import com.algorand.android.modules.accountstatehelper.domain.usecase.AccountStateHelperUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
 import javax.inject.Inject
 
 class AccountDetailSummaryUseCase @Inject constructor(
     private val accountSummaryMapper: AccountSummaryMapper,
-    private val getAccountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val accountDetailDecider: AccountDetailDecider,
-    private val accountStateHelperUseCase: AccountStateHelperUseCase
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawable: GetAccountIconDrawablePreview,
+    private val getAccountType: GetAccountType
 ) {
 
-    fun getAccountDetailSummary(accountAddress: String): AccountDetailSummary {
-        val account = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data?.account
+    suspend fun getAccountDetailSummary(address: String): AccountDetailSummary? {
+        val accountType = getAccountType(address) ?: return null
         return accountSummaryMapper.mapToAccountDetailSummary(
-            accountDisplayName = getAccountDisplayNameUseCase.invoke(accountAddress),
-            accountAddress = accountAddress,
-            accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountAddress),
-            accountTypeResId = accountDetailDecider.decideAccountTypeResId(account),
-            shouldDisplayAccountType = when (account?.type) {
-                Account.Type.LEDGER, Account.Type.WATCH -> false
-                Account.Type.STANDARD -> !accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                Account.Type.REKEYED, Account.Type.REKEYED_AUTH, null -> true
-            }
+            accountDisplayName = getAccountDisplayName(address),
+            accountAddress = address,
+            accountIconDrawablePreview = getAccountIconDrawable(address),
+            accountTypeResId = getAccountTypeResId(accountType),
+            shouldDisplayAccountType = shouldDisplayAccountType(accountType)
         )
     }
 
-    fun getAccountDetailSummary(accountDetail: AccountDetail?): AccountDetailSummary? {
-        val account = accountDetail?.account ?: return null
-        return accountSummaryMapper.mapToAccountDetailSummary(
-            accountDisplayName = getAccountDisplayNameUseCase.invoke(account.address),
-            accountAddress = account.address,
-            accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(account.address),
-            accountTypeResId = accountDetailDecider.decideAccountTypeResId(account),
-            shouldDisplayAccountType = when (account.type) {
-                Account.Type.LEDGER, Account.Type.WATCH -> false
-                Account.Type.STANDARD -> !accountStateHelperUseCase.hasAccountValidSecretKey(account)
-                Account.Type.REKEYED, Account.Type.REKEYED_AUTH, null -> true
-            }
-        )
+    private fun getAccountTypeResId(type: AccountType): Int {
+        return when (type) {
+            AccountType.Algo25 -> R.string.standard
+            AccountType.LedgerBle -> R.string.ledger
+            AccountType.NoAuth -> R.string.watch
+            AccountType.Rekeyed -> R.string.rekeyed
+            AccountType.RekeyedAuth -> R.string.rekeyed
+            AccountType.HdKey -> R.string.bip_39 // TODO
+        }
+    }
+
+    private fun shouldDisplayAccountType(type: AccountType): Boolean {
+        return when (type) {
+            AccountType.LedgerBle, AccountType.NoAuth -> false
+            AccountType.Algo25 -> false
+            AccountType.Rekeyed, AccountType.RekeyedAuth -> true
+            AccountType.HdKey -> false // TODO
+        }
     }
 }

@@ -16,7 +16,6 @@ import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.modules.algosdk.backuputils.domain.usecase.CreateBackupCipherTextUseCase
 import com.algorand.android.modules.algosdk.backuputils.domain.usecase.CreateBackupMnemonicUseCase
-import com.algorand.android.modules.asb.backedupaccountssource.domain.usecase.AddBackedUpAccountsUseCase
 import com.algorand.android.modules.asb.createbackup.storekey.ui.mapper.AsbStoreKeyPreviewMapper
 import com.algorand.android.modules.asb.createbackup.storekey.ui.model.AsbStoreKeyPreview
 import com.algorand.android.modules.asb.mnemonics.domain.usecase.GetBackupMnemonicsUseCase
@@ -37,21 +36,13 @@ class AsbStoreKeyPreviewUseCase @Inject constructor(
     private val asbStoreKeyPreviewMapper: AsbStoreKeyPreviewMapper,
     private val createBackupCipherTextUseCase: CreateBackupCipherTextUseCase,
     private val createBackupProtocolContentUseCase: CreateBackupProtocolContentUseCase,
-    private val addBackedUpAccountsUseCase: AddBackedUpAccountsUseCase,
     private val storeBackupMnemonicsUseCase: StoreBackupMnemonicsUseCase,
     private val createBackupProtocolPayloadUseCase: CreateBackupProtocolPayloadUseCase,
     private val peraSerializer: PeraSerializer
 ) {
 
-    suspend fun saveBackedUpAccountToLocalStorage(accountList: Array<String>) {
-        addBackedUpAccountsUseCase.invoke(accountList.toSet())
-    }
-
-    suspend fun updatePreviewAfterCreatingBackupFile(
-        preview: AsbStoreKeyPreview?,
-        accountList: List<String>
-    ): AsbStoreKeyPreview? {
-        val backupProtocolPayload = createBackupProtocolPayloadUseCase.invoke(accountList)
+    suspend fun updatePreviewAfterCreatingBackupFile(preview: AsbStoreKeyPreview?): AsbStoreKeyPreview? {
+        val backupProtocolPayload = createBackupProtocolPayloadUseCase()
         val serializedPayload = peraSerializer.toJson(backupProtocolPayload)
         val cipherText = createBackupCipherTextUseCase.invoke(
             payload = serializedPayload,

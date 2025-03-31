@@ -16,23 +16,29 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.databinding.FragmentBackupPassphraseBinding
-import com.algorand.android.models.Account
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.register.BackupPassphraseFragmentDirections.Companion.actionBackupPassphraseFragmentToBackupPassphraseAccountNameNavigation
 import com.algorand.android.utils.disableScreenCapture
 import com.algorand.android.utils.enableScreenCapture
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_passphrase) {
+
+    private val viewStateCollector: suspend (BackupPassphraseViewModel.ViewState) -> Unit = { state ->
+        when (state) {
+            is BackupPassphraseViewModel.ViewState.Idle -> Unit
+            is BackupPassphraseViewModel.ViewState.DefaultState -> setupPassphrase(state.passphrase)
+        }
+    }
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
@@ -53,19 +59,28 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         customizeToolbar()
-        setupPassphrase()
+        initObservers()
+
+        backupPassphraseViewModel.getMnemonic(args)
         binding.nextButton.setOnClickListener { onNextClick() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activity?.disableScreenCapture()
+    }
+
+    private fun initObservers() {
+        collectLatestOnLifecycle(
+            flow = backupPassphraseViewModel.state,
+            collection = viewStateCollector
+        )
     }
 
     private fun customizeToolbar() {
         if (args.accountCreation != null) {
             getAppToolbar()?.setEndButton(button = TextButton(R.string.skip, onClick = ::onSkipClick))
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        activity?.disableScreenCapture()
     }
 
     override fun onStop() {
@@ -75,17 +90,11 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
         }
     }
 
-    private fun setupPassphrase() {
-        val secretKey = (args.accountCreation?.tempAccount?.detail as? Account.Detail.Standard)?.secretKey
-            ?: backupPassphraseViewModel.getAccountSecretKey(args.publicKeyOfAccountToBackup)
-        secretKey?.let {
-            try {
-                val mnemonic = Sdk.mnemonicFromPrivateKey(it) ?: throw Exception("Mnemonic cannot be null.")
-                binding.passphraseBoxView.setPassphrases(mnemonic)
-            } catch (exception: Exception) {
-                navBack()
-            }
-        } ?: run { navBack() }
+    private fun setupPassphrase(passphrase: String?) {
+        if (passphrase.isNullOrEmpty()) {
+            return navBack()
+        }
+        binding.passphraseBoxView.setPassphrases(passphrase)
     }
 
     private fun onNextClick() {
@@ -101,7 +110,7 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
         backupPassphraseViewModel.logOnboardingNextClickEvent()
         nav(
             BackupPassphraseFragmentDirections.actionBackupPassphraseFragmentToPassphraseValidationFragment(
-                args.publicKeyOfAccountToBackup,
+                args.accountToBackup,
                 args.accountCreation
             )
         )

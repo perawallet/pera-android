@@ -21,9 +21,9 @@ import com.algorand.algosdk.sdk.Sdk
 import com.algorand.algosdk.sdk.SuggestedParams
 import com.algorand.algosdk.sdk.TransactionSignerArray
 import com.algorand.algosdk.sdk.Uint64
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.BaseWalletConnectTransaction
 import com.algorand.android.models.TransactionParams
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 
@@ -138,7 +138,7 @@ fun TransactionParams.makeTx(
 ): ByteArray {
     val noteInByteArray = note?.toByteArray(charset = Charsets.UTF_8)
 
-    return if (assetId == AssetInformation.ALGO_ID) {
+    return if (assetId == ALGO_ID) {
         makeAlgoTx(senderAddress, receiverAddress, amount, isMax, noteInByteArray)
     } else {
         makeAssetTx(senderAddress, receiverAddress, amount, assetId, noteInByteArray)

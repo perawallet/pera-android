@@ -12,11 +12,10 @@
 
 package com.algorand.android.ui.settings
 
-import android.app.NotificationManager
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle.State
 import com.algorand.android.BuildConfig
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
@@ -26,6 +25,7 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.WarningConfirmation
 import com.algorand.android.ui.common.warningconfirmation.WarningConfirmationBottomSheet.Companion.WARNING_CONFIRMATION_KEY
+import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent
 import com.algorand.android.utils.browser.openPrivacyPolicyUrl
 import com.algorand.android.utils.browser.openSupportCenterUrl
 import com.algorand.android.utils.browser.openTermsAndServicesUrl
@@ -72,12 +72,19 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings),
         )
     }
 
+    private val viewEventCollector: suspend (ViewEvent) -> Unit = { event ->
+        when (event) {
+            ViewEvent.ShowDataClearedBottomSheet -> navigateToDataClearedBottomSheet()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         registerBottomNavBarFragmentDelegation(this)
         initDialogSavedStateListener()
         initObservers()
         initUi()
+        settingsViewModel.initSettingsPreviewFlow()
     }
 
     private fun initUi() {
@@ -127,6 +134,11 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings),
                 flow = map { it?.firebaseInstanceId },
                 collection = firebaseInstanceIdCollector
             )
+            collectLatestOnLifecycle(
+                flow = settingsViewModel.viewEvent,
+                collection = viewEventCollector,
+                state = State.CREATED
+            )
         }
     }
 
@@ -151,16 +163,13 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings),
         startSavedStateListener(R.id.settingsFragment) {
             useSavedStateValue<Boolean>(WARNING_CONFIRMATION_KEY) { isConfirmed ->
                 if (isConfirmed) {
-                    settingsViewModel.deleteAllData(
-                        context?.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager,
-                        ::onDeleteAllDataCompleted
-                    )
+                    settingsViewModel.deleteAllData()
                 }
             }
         }
     }
 
-    private fun onDeleteAllDataCompleted() {
+    private fun navigateToDataClearedBottomSheet() {
         nav(
             MainNavigationDirections.actionGlobalSingleButtonBottomSheet(
                 titleAnnotatedString = AnnotatedString(R.string.your_data_has_been),

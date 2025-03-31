@@ -28,7 +28,7 @@ class InboxAccountSelectionViewHolder(
     fun bind(assetInboxAllAccountsWithAccount: AssetInboxAllAccountsWithAccount) {
         with(binding) {
             with(assetInboxAllAccountsWithAccount) {
-                accountNameTextView.text = accountDisplayName.getAccountPrimaryDisplayName()
+                accountNameTextView.text = accountDisplayName.primaryDisplayName
                 incomingAssetCountTextView.text = incomingAssetCountTextView.resources.getQuantityString(
                     R.plurals.incoming_assets,
                     requestCount,

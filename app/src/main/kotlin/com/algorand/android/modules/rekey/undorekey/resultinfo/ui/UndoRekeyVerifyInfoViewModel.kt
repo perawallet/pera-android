@@ -13,21 +13,30 @@
 package com.algorand.android.modules.rekey.undorekey.resultinfo.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.rekey.undorekey.resultinfo.ui.usecase.UndoRekeyVerifyInfoPreviewUseCase
-import com.algorand.android.utils.AccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class UndoRekeyVerifyInfoViewModel @Inject constructor(
-    private val undoRekeyVerifyInfoPreviewUseCase: UndoRekeyVerifyInfoPreviewUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
     private val navArgs = UndoRekeyVerifyInfoFragmentArgs.fromSavedStateHandle(savedStateHandle)
     private val accountAddress = navArgs.accountAddress
 
-    val accountDisplayName: AccountDisplayName
-        get() = undoRekeyVerifyInfoPreviewUseCase.getAccountDisplayName(accountAddress)
+    private val _accountDisplayName = MutableStateFlow("")
+    val accountDisplayName: StateFlow<String> = _accountDisplayName
+
+    init {
+        viewModelScope.launchIO {
+            _accountDisplayName.value = getAccountDisplayName(accountAddress).primaryDisplayName
+        }
+    }
 }

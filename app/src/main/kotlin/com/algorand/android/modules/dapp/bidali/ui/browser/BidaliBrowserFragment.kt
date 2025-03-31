@@ -18,11 +18,11 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentBidaliBrowserBinding
 import com.algorand.android.discover.common.ui.model.PeraWebViewClient
 import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.dapp.bidali.domain.BidaliWebInterface
 import com.algorand.android.modules.dapp.bidali.ui.browser.model.BidaliBrowserPreview
@@ -72,7 +72,7 @@ class BidaliBrowserFragment :
                 loadUrl(preview)
             }
             pageStartedEvent?.consume()?.run {
-                handleBidaliJavascript()
+                basePeraWebViewViewModel.generateBidaliJavascript()
             }
             webViewGoBackEvent?.consume()?.run {
                 with(binding) {
@@ -90,18 +90,16 @@ class BidaliBrowserFragment :
             }
             onPaymentRequestEvent?.consume()?.run {
                 // TODO handle transaction not created successfully
-                val transaction = basePeraWebViewViewModel.getTransactionDataFromPaymentRequest(this)
-                transaction?.let {
-                    nav(
-                        BidaliBrowserFragmentDirections.actionBidaliBrowserFragmentToSendAlgoNavigation(it),
-                    )
-                }
+                basePeraWebViewViewModel.handlePaymentRequest(this)
             }
             openUrlRequestEvent?.consume()?.run {
                 binding.webView.loadUrl(this.url)
             }
             updatedBalancesJavascript?.run {
                 binding.webView.evaluateJavascript(this, null)
+            }
+            navigateToSendAlgo?.consume()?.let {
+                nav(BidaliBrowserFragmentDirections.actionBidaliBrowserFragmentToSendAlgoNavigation(it))
             }
         }
     }
@@ -186,6 +184,10 @@ class BidaliBrowserFragment :
             basePeraWebViewViewModel.bidaliBrowserPreviewFlow.map { it.pageUrlChangedEvent },
             bidaliBrowserControlsCollector,
         )
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            basePeraWebViewViewModel.bidaliBrowserPreviewFlow.map { it.onBidaliJsReady },
+            { handleBidaliJavascript(it) }
+        )
     }
 
     private fun updateUi(preview: BidaliBrowserPreview) {
@@ -229,8 +231,10 @@ class BidaliBrowserFragment :
         }
     }
 
-    private fun handleBidaliJavascript() {
-        binding.webView.evaluateJavascript(basePeraWebViewViewModel.generateBidaliJavascript(), null)
+    private fun handleBidaliJavascript(event: Event<String>?) {
+        event?.consume()?.let { bidaliJs ->
+            binding.webView.evaluateJavascript(bidaliJs, null)
+        }
     }
 
     private fun sendTransactionSuccessfulResultToWebView() {

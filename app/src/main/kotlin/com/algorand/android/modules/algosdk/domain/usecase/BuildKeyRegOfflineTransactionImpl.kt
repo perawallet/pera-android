@@ -16,15 +16,19 @@ import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.modules.algosdk.domain.model.OfflineKeyRegTransactionPayload
 import com.algorand.android.utils.toSuggestedParams
 import com.algorand.android.utils.toUint64
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import java.math.BigInteger
 import javax.inject.Inject
 
-internal class BuildKeyRegOfflineTransactionImpl @Inject constructor() : BuildKeyRegOfflineTransaction {
+internal class BuildKeyRegOfflineTransactionImpl @Inject constructor(
+    private val peraExceptionLogger: PeraExceptionLogger
+) : BuildKeyRegOfflineTransaction {
 
     override fun invoke(payload: OfflineKeyRegTransactionPayload): ByteArray {
         return try {
             createTransaction(payload)
         } catch (e: Exception) {
+            peraExceptionLogger.logException(e)
             ByteArray(0)
         }
     }

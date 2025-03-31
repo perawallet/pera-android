@@ -17,20 +17,25 @@ import com.algorand.android.BuildConfig
 import com.algorand.android.models.TransactionParams
 import com.algorand.android.modules.assetinbox.send.summary.domain.model.Arc59SendTransaction
 import com.algorand.android.modules.assetinbox.send.summary.domain.model.Arc59TransactionPayload
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.IsOnTestnetUseCase
 import com.algorand.android.utils.toSuggestedParams
 import com.algorand.android.utils.toUint64
+import com.algorand.wallet.account.detail.domain.usecase.IsAccountRekeyedToAnotherAccount
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import javax.inject.Inject
 
 class CreateArc59SendTransactionUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val isOnTestnetUseCase: IsOnTestnetUseCase
+    private val isOnTestnetUseCase: IsOnTestnetUseCase,
+    private val isAccountRekeyedToAnotherAccount: IsAccountRekeyedToAnotherAccount,
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) : CreateArc59SendTransaction {
 
-    override fun invoke(txnParams: TransactionParams, payload: Arc59TransactionPayload): List<Arc59SendTransaction> {
-        val senderAuthAddress = accountDetailUseCase.getAuthAddress(payload.senderAddress)
-        val isSenderRekeyedToAnotherAccount = accountDetailUseCase.isAccountRekeyed(payload.senderAddress)
+    override suspend fun invoke(
+        txnParams: TransactionParams,
+        payload: Arc59TransactionPayload
+    ): List<Arc59SendTransaction> {
+        val senderAuthAddress = getAccountRekeyAdminAddress(payload.senderAddress)
+        val isSenderRekeyedToAnotherAccount = isAccountRekeyedToAnotherAccount(payload.senderAddress)
         val transactions = txnParams.createTransactions(payload)
         return transactions.map { transactionByteArray ->
             Arc59SendTransaction(

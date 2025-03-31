@@ -100,4 +100,10 @@ internal class CustomHdSeedInfoRepositoryImpl @Inject constructor(
             customHdSeedInfoDao.updateOrderIndex(seedId, orderIndex)
         }
     }
+
+    override suspend fun clearAllInformation() {
+        withContext(coroutineDispatcher) {
+            customHdSeedInfoDao.clearAll()
+        }
+    }
 }

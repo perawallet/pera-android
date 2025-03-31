@@ -16,18 +16,22 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.accounts.domain.model.AccountPreview
-import com.algorand.android.modules.accounts.domain.usecase.AccountsPreviewUseCase
 import com.algorand.android.modules.tracking.accounts.AccountsEventTracker
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -35,8 +39,10 @@ class AccountsViewModel @Inject constructor(
     private val accountsPreviewUseCase: AccountsPreviewUseCase,
     private val accountsEventTracker: AccountsEventTracker,
     private val parityManager: ParityManager,
-    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase
-) : BaseViewModel() {
+    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
+    private val getNotBackedUpAccounts: GetNotBackedUpAccounts,
+    private val eventDelegate: EventDelegate<ViewEvent>
+) : BaseViewModel(), EventViewModel<AccountsViewModel.ViewEvent> by eventDelegate {
 
     private val _accountPreviewFlow = MutableStateFlow<AccountPreview?>(null)
     val accountPreviewFlow: Flow<AccountPreview?>
@@ -58,16 +64,6 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    private fun initializeAccountPreviewFlow() {
-        viewModelScope.launchIO {
-            val initialAccountPreview = accountsPreviewUseCase.getInitialAccountPreview()
-            _accountPreviewFlow.emit(initialAccountPreview)
-            accountsPreviewUseCase.getAccountsPreview(initialAccountPreview).collectLatest {
-                _accountPreviewFlow.emit(it)
-            }
-        }
-    }
-
     fun onNotificationTapEvent() {
         viewModelScope.launch {
             logEvent(PeraClickEvent.TAP_HOME_SCREEN_NOTIFICATION)
@@ -86,12 +82,6 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    fun logAddAccountTapEvent() {
-        viewModelScope.launch {
-            accountsEventTracker.logAddAccountTapEvent()
-        }
-    }
-
     fun onAccountsFragmentAlgoBuyTapEvent() {
         viewModelScope.launch {
             accountsEventTracker.logAccountsFragmentAlgoBuyTapEvent()
@@ -106,10 +96,6 @@ class AccountsViewModel @Inject constructor(
                 BannerType.GENERIC -> {}
             }
         }
-    }
-
-    fun isAccountLimitExceed(): Boolean {
-        return isAccountLimitExceedUseCase.isAccountLimitExceed()
     }
 
     fun dismissTutorial(tutorialId: Int) {
@@ -155,8 +141,44 @@ class AccountsViewModel @Inject constructor(
         // TODO add logging?
     }
 
-    fun getNotBackedUpAccounts(): List<String> {
-        return accountsPreviewUseCase.getNotBackedUpAccounts()
+    fun navigateToBackUpPassphraseInfo() {
+        viewModelScope.launch {
+            val notBackedUpAccounts = getNotBackedUpAccounts()
+            _accountPreviewFlow.update {
+                it?.copy(
+                    onNavToBackUpPassphraseInfo = Event(notBackedUpAccounts)
+                )
+            }
+        }
+    }
+
+    fun onAddAccountClick() {
+        viewModelScope.launchIO {
+            logAddAccountTapEvent()
+            eventDelegate.sendEvent(
+                if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {
+                    ViewEvent.ShowMaxAccountLimitExceededError
+                } else {
+                    ViewEvent.NavToLoginNavigation
+                }
+            )
+        }
+    }
+
+    private fun initializeAccountPreviewFlow() {
+        viewModelScope.launchIO {
+            val initialAccountPreview = accountsPreviewUseCase.getInitialAccountPreview()
+            _accountPreviewFlow.emit(initialAccountPreview)
+            accountsPreviewUseCase.getAccountsPreview(initialAccountPreview).collectLatest {
+                _accountPreviewFlow.emit(it)
+            }
+        }
+    }
+
+    private fun logAddAccountTapEvent() {
+        viewModelScope.launch {
+            accountsEventTracker.logAddAccountTapEvent()
+        }
     }
 
     private suspend fun updatePreviewForSwapNavigation() {
@@ -171,5 +193,10 @@ class AccountsViewModel @Inject constructor(
             val newState = accountsPreviewUseCase.getGiftCardsNavigationUpdatedPreview(value ?: return@with)
             emit(newState)
         }
+    }
+
+    sealed interface ViewEvent {
+        data object NavToLoginNavigation : ViewEvent
+        data object ShowMaxAccountLimitExceededError : ViewEvent
     }
 }

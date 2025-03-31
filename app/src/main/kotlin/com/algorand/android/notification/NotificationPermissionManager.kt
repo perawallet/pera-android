@@ -17,12 +17,11 @@ import android.content.Context
 import android.os.Build
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.algorand.android.models.Account
 import com.algorand.android.notification.domain.usecase.CacheAskNotificationPermissionEventUseCase
 import com.algorand.android.notification.domain.usecase.GetAskNotificationPermissionEventFlowUseCase
-import com.algorand.android.usecase.GetLocalAccountsUseCase
 import com.algorand.android.utils.isPermissionGranted
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlow
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -35,15 +34,15 @@ import kotlinx.coroutines.flow.collectLatest
 @Singleton
 class NotificationPermissionManager @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val getLocalAccountsUseCase: GetLocalAccountsUseCase,
     private val cacheAskNotificationPermissionEventUseCase: CacheAskNotificationPermissionEventUseCase,
-    private val getAskNotificationPermissionEventFlowUseCase: GetAskNotificationPermissionEventFlowUseCase
+    private val getAskNotificationPermissionEventFlowUseCase: GetAskNotificationPermissionEventFlowUseCase,
+    private val getLocalAccountCountFlow: GetLocalAccountCountFlow
 ) : DefaultLifecycleObserver {
 
     private var coroutineScope: CoroutineScope? = null
 
-    private val localAccountCollector: suspend (value: List<Account>) -> Unit = {
-        cacheAskNotificationPermissionIfPossible()
+    private val localAccountCountCollector: suspend (Int) -> Unit = { accountCount ->
+        cacheAskNotificationPermissionIfPossible(accountCount)
     }
 
     override fun onCreate(owner: LifecycleOwner) {
@@ -59,11 +58,11 @@ class NotificationPermissionManager @Inject constructor(
 
     private fun initObservers() {
         coroutineScope?.launchIO {
-            getLocalAccountsUseCase.getLocalAccountsFromAccountManagerCacheAsFlow().collectLatest(localAccountCollector)
+            getLocalAccountCountFlow().collectLatest(localAccountCountCollector)
         }
     }
 
-    private fun cacheAskNotificationPermissionIfPossible() {
+    private fun cacheAskNotificationPermissionIfPossible(accountCount: Int) {
         if (isAskPermissionEventCachedBefore()) {
             cancelJob()
             return
@@ -71,16 +70,15 @@ class NotificationPermissionManager @Inject constructor(
         if (!isBuildVersionValid()) return
         if (context.isPermissionGranted(POST_NOTIFICATIONS)) return
 
-        if (canAskPermission()) {
+        if (canAskPermission(accountCount)) {
             coroutineScope?.launchIO {
                 cacheAskNotificationPermissionEventUseCase.invoke()
             }
         }
     }
 
-    private fun canAskPermission(): Boolean {
-        val localAccountCount = getLocalAccountsUseCase.getLocalAccountsFromAccountManagerCache().size
-        return localAccountCount >= MIN_ACCOUNT_COUNT_TO_ASK_NOTIFICATION_PERMISSION
+    private fun canAskPermission(accountCount: Int): Boolean {
+        return accountCount >= MIN_ACCOUNT_COUNT_TO_ASK_NOTIFICATION_PERMISSION
     }
 
     private fun isBuildVersionValid(): Boolean {

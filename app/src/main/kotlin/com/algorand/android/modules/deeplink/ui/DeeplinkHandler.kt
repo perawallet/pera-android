@@ -13,20 +13,22 @@
 package com.algorand.android.modules.deeplink.ui
 
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.User
 import com.algorand.android.modules.webimport.common.data.model.WebImportQrCode
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.toBigIntegerOrZero
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAnyLocalAccount
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import com.algorand.wallet.deeplink.model.DeepLink
 import com.algorand.wallet.deeplink.model.NotificationGroupType
 import com.algorand.wallet.deeplink.parser.CreateDeepLink
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class DeeplinkHandler @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
+    private val isAssetOptedInByAnyLocalAccount: IsAssetOptedInByAnyLocalAccount,
     private val createDeepLink: CreateDeepLink
 ) {
 
@@ -36,12 +38,14 @@ class DeeplinkHandler @Inject constructor(
         this.listener = listener
     }
 
-    fun handleDeepLink(uri: String) {
-        val parsedDeepLink = createDeepLink(uri)
-        handleDeeplink(parsedDeepLink)
+    suspend fun handleDeepLink(uri: String) {
+        withContext(Dispatchers.Main) {
+            val parsedDeepLink = createDeepLink(uri)
+            handleDeepLink(parsedDeepLink)
+        }
     }
 
-    private fun handleDeeplink(deepLink: DeepLink) {
+    private suspend fun handleDeepLink(deepLink: DeepLink) {
         val isDeeplinkHandled: Boolean = when (deepLink) {
             is DeepLink.AccountAddress -> handleAccountAddressDeepLink(deepLink)
             is DeepLink.AssetOptIn -> handleAssetOptInDeepLink(deepLink.assetId)
@@ -110,14 +114,16 @@ class DeeplinkHandler @Inject constructor(
         }
     }
 
-    private fun handleAssetTransferDeepLink(deepLink: DeepLink.AssetTransfer): Boolean {
+    private suspend fun handleAssetTransferDeepLink(deepLink: DeepLink.AssetTransfer): Boolean {
         val assetId = deepLink.assetId
-        val isAssetOwnedByAnyAccount = if (assetId == AssetInformation.ALGO_ID) {
+        val isAssetOptedInByAnyLocalAccount = if (assetId == AssetConstants.ALGO_ID) {
             true
         } else {
-            accountDetailUseCase.isAssetOwnedByAnyAccount(deepLink.assetId)
+            withContext(Dispatchers.IO) {
+                isAssetOptedInByAnyLocalAccount(deepLink.assetId)
+            }
         }
-        return if (isAssetOwnedByAnyAccount) {
+        return if (isAssetOptedInByAnyLocalAccount) {
             with(deepLink) {
                 val assetTransaction = AssetTransaction(
                     assetId = assetId,

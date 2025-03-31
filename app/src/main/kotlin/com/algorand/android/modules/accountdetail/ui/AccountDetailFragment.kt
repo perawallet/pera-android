@@ -30,17 +30,19 @@ package com.algorand.android.modules.accountdetail.ui
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.BaseAccountIconButton
 import com.algorand.android.databinding.FragmentAccountDetailBinding
-import com.algorand.android.models.AccountDetailSummary
+import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.DateFilter
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
 import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragment
 import com.algorand.android.modules.accountdetail.collectibles.ui.AccountCollectiblesFragment
 import com.algorand.android.modules.accountdetail.haveyoubackedupconfirmation.ui.HaveYouBackedUpAccountConfirmationBottomSheet.Companion.HAVE_YOU_BACKED_UP_ACCOUNT_CONFIRMATION_KEY
@@ -48,6 +50,9 @@ import com.algorand.android.modules.accountdetail.history.ui.AccountHistoryFragm
 import com.algorand.android.modules.accountdetail.removeaccount.ui.RemoveAccountConfirmationBottomSheet.Companion.ACCOUNT_REMOVE_CONFIRMATION_KEY
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.inapppin.pin.ui.InAppPinFragment
+import com.algorand.android.modules.swap.model.SwapNavigationDestination
+import com.algorand.android.modules.swap.model.SwapNavigationDestination.Introduction
+import com.algorand.android.modules.swap.model.SwapNavigationDestination.Swap
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
@@ -55,12 +60,13 @@ import com.algorand.android.ui.accountoptions.AccountOptionsBottomSheet.Companio
 import com.algorand.android.ui.accounts.RenameAccountBottomSheet
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.emptyString
-import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.map
@@ -100,20 +106,12 @@ class AccountDetailFragment :
         it?.consume()?.run { updateViewPagerBySelectedTab(this) }
     }
 
-    private val onNavigationEventCollector: suspend (Event<NavDirections>?) -> Unit = {
-        it?.consume()?.run { nav(this) }
+    private val swapNavigationDestinationCollector: suspend (Event<SwapNavigationDestination>?) -> Unit = {
+        it?.consume()?.run { handleSwapNavigationDestination(this) }
     }
 
-    private val copyAssetIDToClipboardEventCollector: suspend (Event<Long>?) -> Unit = {
-        it?.consume()?.let { assetId ->
-            onAssetIdCopied(assetId)
-        }
-    }
-
-    private val showGlobalErrorEventCollector: suspend (Event<Int>?) -> Unit = { event ->
-        event?.consume()?.let { safeTextResId ->
-            showGlobalError(errorMessage = emptyString(), title = context?.getString(safeTextResId))
-        }
+    private val navBackEventCollector: suspend (Event<Unit>?) -> Unit = {
+        it?.consume()?.run { navBack() }
     }
 
     private lateinit var accountDetailPagerAdapter: AccountDetailPagerAdapter
@@ -122,7 +120,7 @@ class AccountDetailFragment :
         nav(
             AccountDetailFragmentDirections.actionAccountDetailFragmentToTransactionDetailNavigation(
                 transactionId = transaction.id ?: return,
-                accountAddress = accountDetailViewModel.accountPublicKey,
+                accountAddress = accountDetailViewModel.accountAddress,
                 entryPoint = TransactionDetailEntryPoint.STANDARD_TRANSACTION
             )
         )
@@ -134,7 +132,7 @@ class AccountDetailFragment :
         nav(
             AccountDetailFragmentDirections.actionAccountDetailFragmentToTransactionDetailNavigation(
                 transactionId = transaction.id ?: return,
-                accountAddress = accountDetailViewModel.accountPublicKey,
+                accountAddress = accountDetailViewModel.accountAddress,
                 entryPoint = TransactionDetailEntryPoint.APPLICATION_CALL_TRANSACTION
             )
         )
@@ -145,21 +143,20 @@ class AccountDetailFragment :
     }
 
     override fun onAddAssetClick() {
-        accountDetailViewModel.onAddAssetClick()
+        handleAddAssetClick()
     }
 
     override fun onAssetClick(assetId: Long) {
-        val publicKey = accountDetailViewModel.accountPublicKey
         nav(
             AccountDetailFragmentDirections.actionAccountDetailFragmentToAssetProfileNavigation(
                 assetId = assetId,
-                accountAddress = publicKey
+                accountAddress = accountDetailViewModel.accountAddress
             )
         )
     }
 
     override fun onAssetLongClick(assetId: Long) {
-        accountDetailViewModel.onAssetLongClick(assetId)
+        onAssetIdLongClick(assetId)
     }
 
     override fun onNFTClick(nftId: Long) {
@@ -167,7 +164,7 @@ class AccountDetailFragment :
     }
 
     override fun onNFTLongClick(nftId: Long) {
-        accountDetailViewModel.onAssetLongClick(nftId)
+        onAssetIdLongClick(nftId)
     }
 
     override fun onAssetInboxClick() {
@@ -177,17 +174,17 @@ class AccountDetailFragment :
 
     override fun onSendClick() {
         accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SEND)
-        accountDetailViewModel.onSendClick()
+        handleSendClick()
     }
 
     override fun onSwapClick() {
         accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SWAP)
-        accountDetailViewModel.onSwapClick()
+        handleSwapClick()
     }
 
     override fun onBuySellClick() {
         accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_BUY_ALGO)
-        accountDetailViewModel.onBuySellClick()
+        navToBuySellActionsBottomSheet()
     }
 
     override fun onMoreClick() {
@@ -202,9 +199,13 @@ class AccountDetailFragment :
     override fun onAccountQuickActionsFloatingActionButtonClicked(isWatchAccount: Boolean) {
         val navigationDestination = with(AccountDetailFragmentDirections) {
             if (isWatchAccount) {
-                actionAccountDetailFragmentToWatchAccountQuickActionsBottomSheet(args.publicKey)
+                actionAccountDetailFragmentToWatchAccountQuickActionsBottomSheet(
+                    accountDetailViewModel.accountAddress
+                )
             } else {
-                actionAccountDetailFragmentToAccountQuickActionsBottomSheet(args.publicKey)
+                actionAccountDetailFragmentToAccountQuickActionsBottomSheet(
+                    accountDetailViewModel.accountAddress
+                )
             }
         }
         nav(navigationDestination)
@@ -215,7 +216,7 @@ class AccountDetailFragment :
     }
 
     override fun onCopyAddressClick() {
-        onAccountAddressCopied(args.publicKey)
+        onAccountAddressCopied(accountDetailViewModel.accountAddress)
     }
 
     override fun onShowAddressClick() {
@@ -254,13 +255,14 @@ class AccountDetailFragment :
         nav(
             AccountDetailFragmentDirections.actionAccountDetailFragmentToCollectibleDetailFragment(
                 collectibleId,
-                args.publicKey
+                accountDetailViewModel.accountAddress
             )
         )
     }
 
     override fun onReceiveCollectibleClick() {
-        nav(AccountDetailFragmentDirections.actionAccountDetailFragmentToReceiveCollectibleFragment(args.publicKey))
+        nav(AccountDetailFragmentDirections
+            .actionAccountDetailFragmentToReceiveCollectibleFragment(accountDetailViewModel.accountAddress))
     }
 
     override fun onManageCollectiblesClick() {
@@ -291,20 +293,21 @@ class AccountDetailFragment :
         }
         useFragmentResultListenerValue<Boolean>(ACCOUNT_REMOVE_CONFIRMATION_KEY) { isConfirmed ->
             if (isConfirmed) {
-                accountDetailViewModel.removeAccount(args.publicKey)
-                navBack()
+                accountDetailViewModel.removeAccount(
+                    accountDetailViewModel.accountAddress
+                )
             }
         }
         useFragmentResultListenerValue<Boolean>(InAppPinFragment.IN_APP_PIN_CONFIRMATION_KEY) { isConfirmed ->
             if (isConfirmed) {
-                navToViewPassphraseNavigation(accountDetailViewModel.accountPublicKey)
+                navToViewPassphraseNavigation(accountDetailViewModel.accountAddress)
             }
         }
 
         startSavedStateListener(R.id.accountDetailFragment) {
             useSavedStateValue<Boolean>(RenameAccountBottomSheet.RENAME_ACCOUNT_KEY) { isNameChanged ->
                 if (isNameChanged) {
-                    accountDetailViewModel.initAccountDetailSummary()
+                    accountDetailViewModel.initAccountDetailPreview()
                 }
             }
         }
@@ -317,27 +320,21 @@ class AccountDetailFragment :
 
     private fun initObservers() {
         viewLifecycleOwner.collectOnLifecycle(
-            flow = accountDetailViewModel.accountDetailSummaryFlow,
+            flow = accountDetailViewModel.accountDetailPreviewFlow.map { it?.accountDetailSummary },
             collection = accountDetailSummaryCollector
         )
         viewLifecycleOwner.collectOnLifecycle(
             flow = accountDetailViewModel.accountDetailTabArgFlow,
             collection = accountDetailTabArgCollector
         )
-        with(accountDetailViewModel.accountDetailPreviewFlow) {
-            collectLatestOnLifecycle(
-                flow = map { it?.onNavigationEvent },
-                collection = onNavigationEventCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.copyAssetIDToClipboardEvent },
-                collection = copyAssetIDToClipboardEventCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.showGlobalErrorEvent },
-                collection = showGlobalErrorEventCollector
-            )
-        }
+        viewLifecycleOwner.collectOnLifecycle(
+            flow = accountDetailViewModel.accountDetailPreviewFlow.map { it?.swapNavigationDestinationEvent },
+            collection = swapNavigationDestinationCollector
+        )
+        viewLifecycleOwner.collectOnLifecycle(
+            flow = accountDetailViewModel.accountDetailPreviewFlow.map { it?.navBackEvent },
+            collection = navBackEventCollector
+        )
     }
 
     private fun setupTabLayout() {
@@ -356,17 +353,17 @@ class AccountDetailFragment :
         binding.toolbar.apply {
             configure(toolbarConfiguration)
             configureToolbarName(accountDetailSummary)
-            setOnTitleLongClickListener { onAccountAddressCopied(accountDetailSummary.publicKey) }
+            setOnTitleLongClickListener { onAccountAddressCopied(accountDetailSummary.address) }
             // TODO: find a proper way to inflate button model in preview class
             val endButton = if (accountDetailSummary.shouldDisplayAccountType) {
                 BaseAccountIconButton.ExtendedAccountButton(
-                    accountIconDrawablePreview = accountDetailSummary.accountIconDrawablePreview,
+                    accountIconDrawablePreview = accountDetailSummary.accountIconDrawable,
                     accountTypeResId = accountDetailSummary.accountTypeResId,
                     onClick = ::navToAccountStatusDetailBottomSheet
                 )
             } else {
                 BaseAccountIconButton.AccountButton(
-                    accountIconDrawablePreview = accountDetailSummary.accountIconDrawablePreview,
+                    accountIconDrawablePreview = accountDetailSummary.accountIconDrawable,
                     onClick = ::navToAccountStatusDetailBottomSheet
                 )
             }
@@ -376,25 +373,25 @@ class AccountDetailFragment :
 
     private fun configureToolbarName(accountDetailSummary: AccountDetailSummary) {
         with(binding.toolbar) {
-            changeTitle(accountDetailSummary.accountDisplayName.getAccountPrimaryDisplayName())
-            accountDetailSummary.accountDisplayName.getAccountSecondaryDisplayName(resources)?.let {
+            changeTitle(accountDetailSummary.accountDisplayName.primaryDisplayName)
+            accountDetailSummary.accountDisplayName.secondaryDisplayName?.let {
                 changeSubtitle(it)
             }
         }
     }
 
     private fun navToAccountOptionsBottomSheet() {
-        val publicKey = accountDetailViewModel.accountPublicKey
-        nav(AccountDetailFragmentDirections.actionAccountDetailFragmentToAccountOptionsNavigation(publicKey))
+        nav(AccountDetailFragmentDirections
+            .actionAccountDetailFragmentToAccountOptionsNavigation(accountDetailViewModel.accountAddress))
     }
 
     private fun navToAccountStatusDetailBottomSheet() {
-        val publicKey = accountDetailViewModel.accountPublicKey
-        nav(AccountDetailFragmentDirections.actionAccountDetailFragmentToAccountStatusDetailNavigation(publicKey))
+        nav(AccountDetailFragmentDirections
+            .actionAccountDetailFragmentToAccountStatusDetailNavigation(accountDetailViewModel.accountAddress))
     }
 
     private fun initAccountDetailPager() {
-        accountDetailPagerAdapter = AccountDetailPagerAdapter(this, args.publicKey)
+        accountDetailPagerAdapter = AccountDetailPagerAdapter(this, accountDetailViewModel.accountAddress)
         binding.accountDetailViewPager.adapter = accountDetailPagerAdapter
     }
 
@@ -405,16 +402,8 @@ class AccountDetailFragment :
     }
 
     private fun navToManageAssetsFragment() {
-        nav(AccountDetailFragmentDirections.actionAccountDetailFragmentToManageAssetsBottomSheet(args.publicKey))
-    }
-
-    private fun navToAssetInboxOneAccountNavigation() {
-        nav(
-            AccountDetailFragmentDirections
-                .actionAccountDetailFragmentToAssetInboxOneAccountNavigation(
-                    AssetInboxOneAccountNavArgs(args.publicKey)
-                )
-        )
+        nav(AccountDetailFragmentDirections
+            .actionAccountDetailFragmentToManageAssetsBottomSheet(accountDetailViewModel.accountAddress))
     }
 
     private fun onSelectedPageChange(position: Int) {
@@ -434,7 +423,7 @@ class AccountDetailFragment :
     private fun navToRemoveAccountConfirmationNavigation() {
         nav(
             AccountDetailFragmentDirections.actionAccountDetailFragmentToRemoveAccountConfirmationNavigation(
-                accountAddress = accountDetailViewModel.accountPublicKey
+                accountAddress = accountDetailViewModel.accountAddress
             )
         )
     }
@@ -446,10 +435,10 @@ class AccountDetailFragment :
         )
     }
 
-    private fun navToViewPassphraseNavigation(publicKey: String) {
+    private fun navToViewPassphraseNavigation(accountAddress: String) {
         nav(
             AccountDetailFragmentDirections
-                .actionAccountDetailFragmentToViewPassphraseNavigation(publicKey)
+                .actionAccountDetailFragmentToViewPassphraseNavigation(accountAddress)
         )
     }
 
@@ -458,7 +447,7 @@ class AccountDetailFragment :
             AccountDetailFragmentDirections
                 .actionGlobalShowQrNavigation(
                     title = getString(R.string.qr_code),
-                    qrText = accountDetailViewModel.accountPublicKey
+                    qrText = accountDetailViewModel.accountAddress
                 )
         )
     }
@@ -467,8 +456,81 @@ class AccountDetailFragment :
         nav(
             AccountDetailFragmentDirections
                 .actionAccountDetailFragmentToBackupPassphraseInfoNavigation(
-                    publicKeysOfAccountsToBackup = arrayOf(args.publicKey)
+                    accountsToBackup = arrayOf(accountDetailViewModel.accountAddress),
+                    onboardingAccountType = if (accountDetailViewModel.accountType ==
+                        AccountType.HdKey) {
+                        OnboardingAccountType.HdKey
+                    } else {
+                        OnboardingAccountType.Algo25
+                    }
                 )
         )
+    }
+
+    private fun onAssetIdLongClick(assetId: Long) {
+        if (assetId != ALGO_ID) onAssetIdCopied(assetId)
+    }
+
+    private fun handleSendClick() {
+        if (accountDetailViewModel.canAccountSignTransaction) {
+            val assetTransaction = AssetTransaction(senderAddress = accountDetailViewModel.accountAddress)
+            nav(AccountDetailFragmentDirections.actionGlobalSendAlgoNavigation(assetTransaction))
+        } else {
+            showActionNotAvailableError()
+        }
+    }
+
+    private fun handleAddAssetClick() {
+        if (accountDetailViewModel.canAccountSignTransaction) {
+            val direction = AccountDetailFragmentDirections
+                .actionAccountDetailFragmentToAssetAdditionNavigation(accountDetailViewModel.accountAddress)
+            nav(direction)
+        } else {
+            showActionNotAvailableError()
+        }
+    }
+
+    private fun handleSwapNavigationDestination(swapNavigationDestination: SwapNavigationDestination) {
+        with(accountDetailViewModel) {
+            if (canAccountSignTransaction) {
+                with(AccountDetailFragmentDirections) {
+                    val destination = when (swapNavigationDestination) {
+                        is Introduction -> actionAccountDetailFragmentToSwapIntroductionNavigation(accountAddress)
+                        is Swap -> actionAccountDetailFragmentToSwapNavigation(accountAddress)
+                        else -> null
+                    }
+                    if (destination != null) nav(destination)
+                }
+            } else {
+                showActionNotAvailableError()
+            }
+        }
+    }
+
+    private fun handleSwapClick() {
+        if (accountDetailViewModel.canAccountSignTransaction) {
+            accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SWAP)
+            accountDetailViewModel.onSwapClick()
+        } else {
+            showActionNotAvailableError()
+        }
+    }
+
+    private fun showActionNotAvailableError() {
+        val message = context?.getString(R.string.this_action_is_not_available)
+        showGlobalError(errorMessage = emptyString(), title = message)
+    }
+
+    private fun navToAssetInboxOneAccountNavigation() {
+        nav(
+            AccountDetailFragmentDirections
+                .actionAccountDetailFragmentToAssetInboxOneAccountNavigation(
+                    AssetInboxOneAccountNavArgs(accountDetailViewModel.accountAddress)
+                )
+        )
+    }
+
+    private fun navToBuySellActionsBottomSheet() {
+        nav(HomeNavigationDirections.actionGlobalBuySellActionsBottomSheet())
     }
 }

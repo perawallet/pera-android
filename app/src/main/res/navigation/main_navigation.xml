@@ -64,15 +64,11 @@
         app:popUpToInclusive="true" />
 
     <action
-        android:id="@+id/action_newAccount"
+        android:id="@+id/action_global_loginNavigation"
         app:destination="@id/loginNavigation">
         <argument
             android:name="isShowingCloseButton"
             android:defaultValue="true"
-            app:argType="boolean" />
-        <argument
-            android:name="shouldNavToRegisterWatchAccount"
-            android:defaultValue="false"
             app:argType="boolean" />
         <argument
             android:name="mnemonic"
@@ -202,14 +198,14 @@
         tools:layout="@layout/bottom_sheet_ledger_information">
         <argument
             android:name="selectedLedgerAccountSelectionListItem"
-            app:argType="com.algorand.android.models.AccountSelectionListItem$AccountItem" />
+            app:argType="com.algorand.android.modules.rekey.model.AccountSelectionListItem$AccountItem" />
         <argument
             android:name="authLedgerAccountSelectionListItem"
-            app:argType="com.algorand.android.models.AccountSelectionListItem$AccountItem"
+            app:argType="com.algorand.android.modules.rekey.model.AccountSelectionListItem$AccountItem"
             app:nullable="true" />
         <argument
             android:name="rekeyedAccountSelectionListItem"
-            app:argType="com.algorand.android.models.AccountSelectionListItem$AccountItem[]"
+            app:argType="com.algorand.android.modules.rekey.model.AccountSelectionListItem$AccountItem[]"
             app:nullable="true" />
     </fragment>
 

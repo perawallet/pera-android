@@ -14,9 +14,9 @@ package com.algorand.android.modules.swap.previewsummary.ui.model
 
 import android.content.res.Resources
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.swap.utils.priceratioprovider.SwapPriceRatioProvider
-import com.algorand.android.utils.AccountDisplayName
 
 data class SwapPreviewSummaryPreview(
     val slippageTolerance: String,

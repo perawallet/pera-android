@@ -26,9 +26,11 @@ import com.algorand.wallet.account.custom.data.repository.CustomAccountInfoRepos
 import com.algorand.wallet.account.custom.data.repository.CustomHdSeedInfoRepositoryImpl
 import com.algorand.wallet.account.custom.domain.repository.CustomAccountInfoRepository
 import com.algorand.wallet.account.custom.domain.repository.CustomHdSeedInfoRepository
+import com.algorand.wallet.account.custom.domain.usecase.ClearAllCustomInformation
+import com.algorand.wallet.account.custom.domain.usecase.ClearAllCustomInformationUseCase
 import com.algorand.wallet.account.custom.domain.usecase.DeleteAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.DeleteHdSeedCustomInfo
-import com.algorand.wallet.account.custom.domain.usecase.GetAccountAsbBackUpStatus
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountBackUpStatus
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
@@ -74,7 +76,9 @@ internal object CustomInfoModule {
 
     @Provides
     @Singleton
-    fun provideCustomAccountInfoRepository(repository: CustomAccountInfoRepositoryImpl): CustomAccountInfoRepository = repository
+    fun provideCustomAccountInfoRepository(
+        repository: CustomAccountInfoRepositoryImpl
+    ): CustomAccountInfoRepository = repository
 
     @Provides
     fun provideSetAccountCustomName(repository: CustomAccountInfoRepository): SetAccountCustomName {
@@ -117,8 +121,8 @@ internal object CustomInfoModule {
     }
 
     @Provides
-    fun provideGetAccountAsbBackUpStatus(repository: CustomAccountInfoRepository): GetAccountAsbBackUpStatus {
-        return GetAccountAsbBackUpStatus(repository::isAccountBackedUp)
+    fun provideGetAccountBackUpStatus(repository: CustomAccountInfoRepository): GetAccountBackUpStatus {
+        return GetAccountBackUpStatus(repository::isAccountBackedUp)
     }
 
     @Provides
@@ -148,7 +152,9 @@ internal object CustomInfoModule {
 
     @Provides
     @Singleton
-    fun provideCustomHdSeedInfoRepository(repository: CustomHdSeedInfoRepositoryImpl): CustomHdSeedInfoRepository = repository
+    fun provideCustomHdSeedInfoRepository(
+        repository: CustomHdSeedInfoRepositoryImpl
+    ): CustomHdSeedInfoRepository = repository
 
     @Provides
     fun provideSetHdSeedCustomName(repository: CustomHdSeedInfoRepository): SetHdSeedCustomName {
@@ -184,4 +190,7 @@ internal object CustomInfoModule {
     fun provideGetHdSeedAsbBackUpStatus(repository: CustomHdSeedInfoRepository): GetHdSeedAsbBackUpStatus {
         return GetHdSeedAsbBackUpStatus(repository::isHdSeedBackedUp)
     }
+
+    @Provides
+    fun provideClearAllCustomInformation(useCase: ClearAllCustomInformationUseCase): ClearAllCustomInformation = useCase
 }

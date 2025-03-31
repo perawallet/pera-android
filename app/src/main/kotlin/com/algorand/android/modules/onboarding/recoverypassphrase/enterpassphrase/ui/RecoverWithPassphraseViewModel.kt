@@ -16,9 +16,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.customviews.passphraseinput.model.PassphraseInputGroupConfiguration
+import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.model.RecoverWithPassphrasePreview
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.usecase.RecoverWithPassphrasePreviewUseCase
 import com.algorand.android.utils.getOrElse
+import com.algorand.android.utils.splitMnemonic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +38,10 @@ class RecoverWithPassphraseViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val mnemonic: String? = savedStateHandle.getOrElse(MNEMONIC_KEY, null)
+    private val onboardingAccountType: OnboardingAccountType = savedStateHandle.getOrElse(
+        ONBOARDING_ACCOUNT_TYPE,
+        OnboardingAccountType.Algo25
+    )
 
     private val _recoverWithPassphrasePreviewFlow = MutableStateFlow(createInitialPreview())
     val recoverWithPassphrasePreviewFlow: StateFlow<RecoverWithPassphrasePreview>
@@ -99,10 +105,12 @@ class RecoverWithPassphraseViewModel @Inject constructor(
     }
 
     private fun createInitialPreview(): RecoverWithPassphrasePreview {
-        return recoverWithPassphrasePreviewUseCase.getRecoverWithPassphraseInitialPreview()
+        val wordCount = mnemonic?.splitMnemonic()?.size ?: onboardingAccountType.wordCount
+        return recoverWithPassphrasePreviewUseCase.getRecoverWithPassphraseInitialPreview(wordCount)
     }
 
     companion object {
         private const val MNEMONIC_KEY = "mnemonic"
+        private const val ONBOARDING_ACCOUNT_TYPE = "onboardingAccountType"
     }
 }

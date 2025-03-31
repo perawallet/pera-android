@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.transaction.detail.domain.mapper
 
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.transaction.common.domain.model.TransactionDTO
 import com.algorand.android.modules.transaction.common.domain.model.getReceiverAddress
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
@@ -20,6 +19,7 @@ import com.algorand.android.modules.transaction.detail.domain.model.BaseTransact
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail.BaseKeyRegTransaction.OnlineKeyRegTransaction
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.android.utils.getAllNestedTransactions
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import javax.inject.Inject
 

@@ -15,18 +15,17 @@ package com.algorand.android.modules.rekey.undorekey.confirmation.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.SignedTransactionDetail
-import com.algorand.android.models.TransactionData
 import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.BaseRekeyConfirmationViewModel
-import com.algorand.android.modules.rekey.baserekeyconfirmation.ui.model.BaseRekeyConfirmationFields
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.model.UndoRekeyConfirmationPreview
 import com.algorand.android.modules.rekey.undorekey.confirmation.ui.usecase.UndoRekeyConfirmationPreviewUseCase
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -40,31 +39,43 @@ class UndoRekeyConfirmationViewModel @Inject constructor(
     private val navArgs = UndoRekeyConfirmationFragmentArgs.fromSavedStateHandle(savedStateHandle)
     val accountAddress = navArgs.accountAddress
 
-    private val _undoRekeyConfirmationPreviewFlow = MutableStateFlow(getInitialPreview())
-    override val baseRekeyConfirmationFieldsFlow: StateFlow<BaseRekeyConfirmationFields>
-        get() = _undoRekeyConfirmationPreviewFlow
+    private val _undoRekeyConfirmationPreviewFlow = MutableStateFlow<UndoRekeyConfirmationPreview?>(null)
+    override val baseRekeyConfirmationFieldsFlow = _undoRekeyConfirmationPreviewFlow.asStateFlow()
 
     private var sendTransactionJob: Job? = null
 
     init {
-        updatePreviewWithCalculatedTransactionFee()
+        viewModelScope.launchIO {
+            getInitialPreview()
+            updatePreviewWithCalculatedTransactionFee()
+            updatePreviewWithAccountIcon()
+        }
     }
 
-    fun createRekeyToStandardAccountTransaction(): TransactionData? {
-        return undoRekeyConfirmationPreviewUseCase.createUndoRekeyTransaction(
-            accountAddress = accountAddress
-        )
+    fun createRekeyToStandardAccountTransaction() {
+        viewModelScope.launch {
+            val transactionData = undoRekeyConfirmationPreviewUseCase.createUndoRekeyTransaction(accountAddress)
+            if (transactionData != null) {
+                _undoRekeyConfirmationPreviewFlow.update {
+                    it?.copy(onRekeyTransactionDataReady = Event(transactionData))
+                }
+            }
+        }
     }
 
     fun onTransactionSigningFailed() {
         _undoRekeyConfirmationPreviewFlow.update { preview ->
-            undoRekeyConfirmationPreviewUseCase.updatePreviewWithClearLoadingState(preview)
+            preview?.let {
+                undoRekeyConfirmationPreviewUseCase.updatePreviewWithClearLoadingState(preview)
+            }
         }
     }
 
     fun onTransactionSigningStarted() {
         _undoRekeyConfirmationPreviewFlow.update { preview ->
-            undoRekeyConfirmationPreviewUseCase.updatePreviewWithLoadingState(preview)
+            preview?.let {
+                undoRekeyConfirmationPreviewUseCase.updatePreviewWithLoadingState(preview)
+            }
         }
     }
 
@@ -73,38 +84,53 @@ class UndoRekeyConfirmationViewModel @Inject constructor(
             return
         }
         sendTransactionJob = viewModelScope.launch(Dispatchers.IO) {
-            undoRekeyConfirmationPreviewUseCase.sendUndoRekeyTransaction(
-                transactionDetail = transactionDetail,
-                preview = _undoRekeyConfirmationPreviewFlow.value
+            _undoRekeyConfirmationPreviewFlow.value?.let {
+                undoRekeyConfirmationPreviewUseCase.sendUndoRekeyTransaction(
+                    transactionDetail = transactionDetail,
+                    preview = it
+                ).collectLatest { preview ->
+                    _undoRekeyConfirmationPreviewFlow.emit(preview)
+                }
+            }
+        }
+    }
+
+    fun onConfirmRekeyClick() {
+        viewModelScope.launchIO {
+            _undoRekeyConfirmationPreviewFlow.update { preview ->
+                preview?.let {
+                    undoRekeyConfirmationPreviewUseCase.updatePreviewWithRekeyConfirmationClick(
+                        accountAddress = accountAddress,
+                        preview = it
+                    )
+                }
+            }
+        }
+    }
+
+    private suspend fun getInitialPreview() {
+        _undoRekeyConfirmationPreviewFlow.update {
+            undoRekeyConfirmationPreviewUseCase.getInitialUndoRekeyConfirmationPreview(accountAddress)
+        }
+    }
+
+    private suspend fun updatePreviewWithCalculatedTransactionFee() {
+        _undoRekeyConfirmationPreviewFlow.value?.let {
+            undoRekeyConfirmationPreviewUseCase.updatePreviewWithTransactionFee(
+                preview = it
             ).collectLatest { preview ->
                 _undoRekeyConfirmationPreviewFlow.emit(preview)
             }
         }
     }
 
-    fun onConfirmRekeyClick() {
+    private suspend fun updatePreviewWithAccountIcon() {
         _undoRekeyConfirmationPreviewFlow.update { preview ->
-            undoRekeyConfirmationPreviewUseCase.updatePreviewWithRekeyConfirmationClick(
-                accountAddress = accountAddress,
-                preview = preview
-            )
-        }
-    }
-
-    fun getAccountAuthAddress(): String {
-        return undoRekeyConfirmationPreviewUseCase.getAccountAuthAddress(accountAddress)
-    }
-
-    private fun getInitialPreview(): UndoRekeyConfirmationPreview {
-        return undoRekeyConfirmationPreviewUseCase.getInitialUndoRekeyConfirmationPreview(accountAddress)
-    }
-
-    private fun updatePreviewWithCalculatedTransactionFee() {
-        viewModelScope.launchIO {
-            undoRekeyConfirmationPreviewUseCase.updatePreviewWithTransactionFee(
-                preview = _undoRekeyConfirmationPreviewFlow.value
-            ).collectLatest { preview ->
-                _undoRekeyConfirmationPreviewFlow.emit(preview)
+            preview?.let {
+                undoRekeyConfirmationPreviewUseCase.updatePreviewWithAccountIcon(
+                    accountAddress = accountAddress,
+                    preview = preview
+                )
             }
         }
     }

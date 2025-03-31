@@ -13,7 +13,7 @@
 package com.algorand.android.modules.assets.profile.asaprofile.ui.model
 
 import com.algorand.android.models.BaseAccountAddress
-import com.algorand.android.utils.AssetName
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 
 sealed class AsaStatusPreview {
 

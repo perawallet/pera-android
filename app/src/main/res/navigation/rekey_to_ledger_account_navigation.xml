@@ -58,18 +58,8 @@
         android:label="RekeyLedgerAccountSelectionFragment"
         tools:layout="@layout/fragment_ledger_account_selection">
         <argument
-            android:name="bluetoothName"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="bluetoothAddress"
-            app:argType="string" />
-        <argument
-            android:name="ledgerAccountsInformation"
-            app:argType="com.algorand.android.models.AccountInformation[]" />
-        <argument
-            android:name="accountAddress"
-            app:argType="string" />
+            android:name="rekeyLedgerAccountSelectionNavArgs"
+            app:argType="com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionNavArgs" />
         <action
             android:id="@+id/rekeyLedgerAccountSelectionFragment_to_rekeyToLedgerAccountConfirmationFragment"
             app:destination="@id/rekeyToLedgerAccountConfirmationFragment" />
@@ -98,7 +88,8 @@
             app:argType="string" />
         <argument
             android:name="ledgerDetail"
-            app:argType="com.algorand.android.models.Account$Detail$Ledger" />
+            app:argType="com.algorand.android.modules.rekey.model.SelectedLedgerAccount$LedgerAccount"
+            app:nullable="true"/>
         <action
             android:id="@+id/action_rekeyConfirmationFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"

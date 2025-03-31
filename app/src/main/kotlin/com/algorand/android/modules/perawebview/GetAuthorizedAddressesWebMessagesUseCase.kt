@@ -13,16 +13,17 @@
 package com.algorand.android.modules.perawebview
 
 import com.algorand.android.modules.peraserializer.PeraSerializer
-import com.algorand.android.usecase.AccountAlgoAmountUseCase
-import com.algorand.android.usecase.GetLocalAccountsUseCase
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import com.google.crypto.tink.subtle.Base64
 import javax.inject.Inject
 
 class GetAuthorizedAddressesWebMessagesUseCase @Inject constructor(
-    private val localAccountsUseCase: GetLocalAccountsUseCase,
+    private val getAccountsDetails: GetAccountsDetails,
     private val peraSerializer: PeraSerializer,
     private val peraWebMessageBuilder: PeraWebMessageBuilder,
-    private val accountAlgoAmountUseCase: AccountAlgoAmountUseCase
+    private val getAccountAlgoBalance: GetAccountAlgoBalance
 ) : GetAuthorizedAddressesWebMessage {
 
     override suspend fun invoke(): String {
@@ -31,13 +32,13 @@ class GetAuthorizedAddressesWebMessagesUseCase @Inject constructor(
         return peraWebMessageBuilder.buildMessage(PeraWebMessageAction.GET_AUTHORIZED_ADDRESSES, messagePayload)
     }
 
-    private fun getAddressNameMap(): List<Map<String, String>> {
-        val localAccounts = localAccountsUseCase.getLocalAccountsThatCanSignTransaction()
+    private suspend fun getAddressNameMap(): List<Map<String, String>> {
+        val localAccounts = getAccountsDetails().filter { it.accountType?.canSignTransaction() == true }
         val sortedAddressAlgoBalanceMap = localAccounts.map {
-            it to accountAlgoAmountUseCase.getAccountAlgoAmount(it.address).amount
+            it to getAccountAlgoBalance(it.address)
         }.sortedByDescending { (_, algoBalance) -> algoBalance }
         return sortedAddressAlgoBalanceMap.map { (account, _) ->
-            mapOf(account.address to account.name)
+            mapOf(account.address to account.customAccountInfo?.customName.orEmpty())
         }
     }
 

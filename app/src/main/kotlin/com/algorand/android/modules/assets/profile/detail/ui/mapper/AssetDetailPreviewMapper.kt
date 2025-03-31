@@ -15,9 +15,9 @@ package com.algorand.android.modules.assets.profile.detail.ui.mapper
 import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.models.AccountDetailSummary
 import com.algorand.android.models.BaseAccountAssetData
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AssetName
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -49,7 +49,7 @@ class AssetDetailPreviewMapper @Inject constructor(
                 formattedSecondaryValue = getSelectedCurrencyParityValue().getFormattedValue(),
                 accountDetailSummary = accountDetailSummary,
                 accountDisplayName = accountDisplayName,
-                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(id),
+                baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 assetPrismUrl = prismUrl,
                 verificationTierConfiguration = verificationTierConfigurationDecider
                     .decideVerificationTierConfiguration(verificationTier),

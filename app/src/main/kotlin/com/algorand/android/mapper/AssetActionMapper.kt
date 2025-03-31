@@ -12,38 +12,20 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetInformation
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import javax.inject.Inject
 
 class AssetActionMapper @Inject constructor() {
 
-    fun mapTo(assetId: Long, publicKey: String?, asset: AssetInformation?): AssetAction {
-        return AssetAction(
-            assetId = assetId,
-            publicKey = publicKey,
-            asset = asset,
-        )
-    }
-
     fun mapTo(
         assetId: Long,
-        fullName: String?,
-        shortName: String?,
-        verificationTier: VerificationTier?,
+        assetName: AssetName?,
         accountAddress: String?,
-        creatorPublicKey: String?
     ): AssetAction {
         return AssetAction(
             assetId = assetId,
-            asset = AssetInformation(
-                assetId = assetId,
-                fullName = fullName,
-                shortName = shortName,
-                verificationTier = verificationTier,
-                creatorPublicKey = creatorPublicKey
-            ),
+            assetFullName = assetName,
             publicKey = accountAddress
         )
     }

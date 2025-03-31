@@ -40,4 +40,6 @@ internal interface CustomAccountInfoRepository {
     suspend fun isAccountBackedUp(accountAddress: String): Boolean
 
     suspend fun getAllAccountOrderIndexes(): List<AccountOrderIndex>
+
+    suspend fun clearAllInformation()
 }

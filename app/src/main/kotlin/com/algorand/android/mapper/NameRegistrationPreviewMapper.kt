@@ -19,21 +19,26 @@ import javax.inject.Inject
 
 class NameRegistrationPreviewMapper @Inject constructor() {
 
-    fun mapToInitialPreview(): NameRegistrationPreview {
+    fun mapToInitialPreview(walletId: Int? = null): NameRegistrationPreview {
         return NameRegistrationPreview(
             accountAlreadyExistsEvent = null,
             updateWatchAccountEvent = null,
             createAccountEvent = null,
-            handleNextNavigationEvent = null
+            handleNextNavigationEvent = null,
+            walletId = walletId
         )
     }
 
-    fun mapToCreateAccountPreview(accountCreation: AccountCreation): NameRegistrationPreview {
+    fun mapToCreateAccountPreview(
+        accountCreation: AccountCreation,
+        walletId: Int?
+    ): NameRegistrationPreview {
         return NameRegistrationPreview(
             accountAlreadyExistsEvent = null,
             updateWatchAccountEvent = null,
             createAccountEvent = Event(accountCreation),
-            handleNextNavigationEvent = Event(Unit)
+            handleNextNavigationEvent = null,
+            walletId = walletId
         )
     }
 
@@ -51,7 +56,8 @@ class NameRegistrationPreviewMapper @Inject constructor() {
             accountAlreadyExistsEvent = Event(Unit),
             updateWatchAccountEvent = null,
             createAccountEvent = null,
-            handleNextNavigationEvent = null
+            handleNextNavigationEvent = null,
+            walletId = null
         )
     }
 
@@ -60,7 +66,8 @@ class NameRegistrationPreviewMapper @Inject constructor() {
             accountAlreadyExistsEvent = null,
             updateWatchAccountEvent = null,
             createAccountEvent = null,
-            handleNextNavigationEvent = Event(Unit)
+            handleNextNavigationEvent = Event(Unit),
+            walletId = null
         )
     }
 }

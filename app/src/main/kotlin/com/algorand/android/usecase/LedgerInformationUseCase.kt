@@ -19,35 +19,37 @@ import com.algorand.android.mapper.LedgerInformationAccountItemMapper
 import com.algorand.android.mapper.LedgerInformationAssetItemMapper
 import com.algorand.android.mapper.LedgerInformationCanSignByItemMapper
 import com.algorand.android.mapper.LedgerInformationTitleItemMapper
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountBalance
-import com.algorand.android.models.AccountDetail
-import com.algorand.android.models.AccountSelectionListItem
 import com.algorand.android.models.LedgerInformationListItem
+import com.algorand.android.modules.accountcore.domain.model.AccountTotalValue
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
-import com.algorand.android.utils.extensions.getAssetHoldingList
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import com.algorand.android.utils.formatAsCurrency
+import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Suppress("LongParameterList")
 class LedgerInformationUseCase @Inject constructor(
-    private val accountTotalBalanceUseCase: AccountTotalBalanceUseCase,
     private val parityUseCase: ParityUseCase,
-    private val accountAssetAmountUseCase: AccountAssetAmountUseCase,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val accountAlgoAmountUseCase: AccountAlgoAmountUseCase,
     private val ledgerInformationTitleItemMapper: LedgerInformationTitleItemMapper,
     private val ledgerInformationAccountItemMapper: LedgerInformationAccountItemMapper,
     private val ledgerInformationAssetItemMapper: LedgerInformationAssetItemMapper,
     private val ledgerInformationCanSignByItemMapper: LedgerInformationCanSignByItemMapper,
     private val currencyUseCase: CurrencyUseCase,
-    private val getAccountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
+    private val getAccountTotalValue: GetAccountTotalValue,
+    private val getAccountInformation: GetAccountInformation
 ) : BaseUseCase() {
 
     suspend fun getLedgerInformationListItem(
@@ -55,9 +57,9 @@ class LedgerInformationUseCase @Inject constructor(
         rekeyedAccountSelectionListItem: List<AccountSelectionListItem.AccountItem>?,
         authLedgerAccount: AccountSelectionListItem.AccountItem?
     ): List<LedgerInformationListItem> {
-        val accountDetail = AccountDetail(selectedLedgerAccount.account, selectedLedgerAccount.accountInformation)
+        val accountInformation = getAccountInformation(selectedLedgerAccount.address) ?: return emptyList()
         return prepareLedgerInformationListItem(
-            accountDetail = accountDetail,
+            accountInformation = accountInformation,
             selectedLedgerAccount = selectedLedgerAccount,
             rekeyedAccountSelectionListItem = rekeyedAccountSelectionListItem,
             authLedgerAccount = authLedgerAccount
@@ -65,7 +67,7 @@ class LedgerInformationUseCase @Inject constructor(
     }
 
     private suspend fun prepareLedgerInformationListItem(
-        accountDetail: AccountDetail,
+        accountInformation: AccountInformation,
         selectedLedgerAccount: AccountSelectionListItem.AccountItem,
         rekeyedAccountSelectionListItem: List<AccountSelectionListItem.AccountItem>?,
         authLedgerAccount: AccountSelectionListItem.AccountItem?
@@ -73,28 +75,28 @@ class LedgerInformationUseCase @Inject constructor(
         return withContext(Dispatchers.Default) {
             return@withContext mutableListOf<LedgerInformationListItem>().apply {
                 val selectedCurrencySymbol = parityUseCase.getPrimaryCurrencySymbolOrName()
-                val accountBalance = accountTotalBalanceUseCase.getAccountBalance(accountDetail)
+                val accountBalance = getAccountTotalValue(accountInformation, includeAlgo = true)
                 val portfolioValue = getPortfolioValue(accountBalance, selectedCurrencySymbol)
-                addAll(createLedgerAccountItem(accountDetail, portfolioValue))
-                addAll(createAssetItems(accountDetail))
+                addAll(createLedgerAccountItem(accountInformation, portfolioValue))
+                addAll(createAssetItems(accountInformation))
                 addAll(createCanSignByItems(authLedgerAccount))
                 addAll(createCanSignableAccounts(selectedLedgerAccount, rekeyedAccountSelectionListItem))
             }
         }
     }
 
-    private fun createLedgerAccountItem(
-        accountDetail: AccountDetail,
+    private suspend fun createLedgerAccountItem(
+        accountInformation: AccountInformation,
         portfolioValue: String
     ): List<LedgerInformationListItem> {
-        val isAccountRekeyed = accountDetail.accountInformation.isRekeyed()
+        val isAccountRekeyed = accountInformation.isRekeyed()
         return mutableListOf<LedgerInformationListItem>().apply {
             add(ledgerInformationTitleItemMapper.mapTo(R.string.account_details))
             add(
                 ledgerInformationAccountItemMapper.mapTo(
-                    accountAddress = accountDetail.account.address,
+                    accountAddress = accountInformation.address,
                     portfolioValue = portfolioValue,
-                    accountDisplayName = getAccountDisplayNameUseCase.invoke(accountDetail.account.address),
+                    accountDisplayName = getAccountDisplayName(accountInformation.address),
                     accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
                         iconTintResId = R.color.wallet_3_icon,
                         iconResId = if (isAccountRekeyed) R.drawable.ic_rekey_shield else R.drawable.ic_ledger,
@@ -105,16 +107,17 @@ class LedgerInformationUseCase @Inject constructor(
         }
     }
 
-    private fun createAssetItems(accountDetail: AccountDetail): List<LedgerInformationListItem> {
+    private suspend fun createAssetItems(accountInformation: AccountInformation): List<LedgerInformationListItem> {
         return mutableListOf<LedgerInformationListItem>().apply {
-            val algoAssetData = accountAlgoAmountUseCase.getAccountAlgoAmount(accountDetail)
             add(ledgerInformationTitleItemMapper.mapTo(R.string.assets))
-            add(ledgerInformationAssetItemMapper.mapTo(algoAssetData))
-            if (accountDetail.getAssetHoldingList().isNotEmpty()) {
-                accountDetail.getAssetHoldingList().forEach {
-                    val assetQueryItem = simpleAssetDetailUseCase.getCachedAssetDetail(it.assetId)?.data
+            val algoAssetData = getAccountBaseOwnedAssetData(accountInformation.address, ALGO_ID)
+            if (algoAssetData != null) {
+                add(ledgerInformationAssetItemMapper.mapTo(algoAssetData))
+            }
+            if (accountInformation.getAssetHoldingIds().isNotEmpty()) {
+                accountInformation.getAssetHoldingIds().forEach {
+                    val accountAssetData = getAccountBaseOwnedAssetData(accountInformation.address, it)
                         ?: return@forEach
-                    val accountAssetData = accountAssetAmountUseCase.getAssetAmount(it, assetQueryItem)
                     add(ledgerInformationAssetItemMapper.mapTo(accountAssetData))
                 }
             }
@@ -124,15 +127,14 @@ class LedgerInformationUseCase @Inject constructor(
     private fun createCanSignByItems(
         authLedgerAccount: AccountSelectionListItem.AccountItem?
     ): List<LedgerInformationListItem> {
-        val isAccountRekeyed = authLedgerAccount?.accountInformation?.isRekeyed() == true
         return mutableListOf<LedgerInformationListItem>().apply {
             authLedgerAccount?.run {
                 add(ledgerInformationTitleItemMapper.mapTo(R.string.can_be_signed_by))
                 val ledgerInformationCanSignByItem = ledgerInformationCanSignByItemMapper.mapTo(
-                    accountAddress = account.address,
+                    accountAddress = address,
                     accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
                         iconTintResId = R.color.wallet_3_icon,
-                        iconResId = if (isAccountRekeyed) R.drawable.ic_rekey_shield else R.drawable.ic_ledger,
+                        iconResId = R.drawable.ic_ledger,
                         backgroundColorResId = R.color.wallet_3
                     )
                 )
@@ -146,18 +148,17 @@ class LedgerInformationUseCase @Inject constructor(
         rekeyedAccountSelectionListItem: List<AccountSelectionListItem.AccountItem>?
     ): List<LedgerInformationListItem> {
         return mutableListOf<LedgerInformationListItem>().apply {
-            if (selectedLedgerAccount.account.type != Account.Type.REKEYED_AUTH) {
+            if (selectedLedgerAccount.selectedLedgerAccount !is SelectedLedgerAccount.LedgerAccount) {
                 if (rekeyedAccountSelectionListItem.isNullOrEmpty()) {
                     return emptyList()
                 }
                 add(ledgerInformationTitleItemMapper.mapTo(R.string.can_sign_for_these))
                 rekeyedAccountSelectionListItem.forEach {
-                    val isAccountRekeyed = it.accountInformation.isRekeyed()
                     val ledgerInformationCanSignByItem = ledgerInformationCanSignByItemMapper.mapTo(
-                        accountAddress = it.account.address,
+                        accountAddress = it.address,
                         accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
                             iconTintResId = R.color.wallet_3_icon,
-                            iconResId = if (isAccountRekeyed) R.drawable.ic_rekey_shield else R.drawable.ic_ledger,
+                            iconResId = R.drawable.ic_rekey_shield,
                             backgroundColorResId = R.color.wallet_3
                         )
                     )
@@ -167,11 +168,8 @@ class LedgerInformationUseCase @Inject constructor(
         }
     }
 
-    private fun getPortfolioValue(
-        accountBalance: AccountBalance,
-        symbol: String
-    ): String {
-        val totalHoldings = with(accountBalance) { algoHoldingsInSelectedCurrency.add(assetHoldingsInSelectedCurrency) }
+    private fun getPortfolioValue(totalValue: AccountTotalValue, symbol: String): String {
+        val totalHoldings = totalValue.primaryAccountValue
         val isSelectedPrimaryCurrencyFiat = !currencyUseCase.isPrimaryCurrencyAlgo()
         return totalHoldings.formatAsCurrency(symbol, isFiat = isSelectedPrimaryCurrencyFiat)
     }

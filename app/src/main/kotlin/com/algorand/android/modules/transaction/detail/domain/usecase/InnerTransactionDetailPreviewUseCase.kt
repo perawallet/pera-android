@@ -13,25 +13,24 @@
 package com.algorand.android.modules.transaction.detail.domain.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.model.TransactionSign
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailPreviewMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.tooltip.domain.usecase.TransactionDetailTooltipDisplayPreferenceUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.GetActiveNodeUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.appendAssetName
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.toShortenedAddress
-import kotlinx.coroutines.flow.flow
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 @SuppressWarnings("LongParameterList")
 class InnerTransactionDetailPreviewUseCase @Inject constructor(
@@ -39,15 +38,12 @@ class InnerTransactionDetailPreviewUseCase @Inject constructor(
     private val transactionDetailItemMapper: TransactionDetailItemMapper,
     private val peekInnerTransactionFromCacheUseCase: PeekInnerTransactionFromCacheUseCase,
     private val popInnerTransactionFromStackCacheUseCase: PopInnerTransactionFromStackCacheUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    assetDetailUseCase: SimpleAssetDetailUseCase,
-    collectibleUseCase: SimpleCollectibleUseCase,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
+    private val getAssetDetail: GetAssetDetail,
     getActiveNodeUseCase: GetActiveNodeUseCase,
     transactionDetailTooltipDisplayPreferenceUseCase: TransactionDetailTooltipDisplayPreferenceUseCase,
     clearInnerTransactionStackCacheUseCase: ClearInnerTransactionStackCacheUseCase
 ) : BaseTransactionDetailPreviewUseCase(
-    assetDetailUseCase = assetDetailUseCase,
-    collectibleUseCase = collectibleUseCase,
     transactionDetailItemMapper = transactionDetailItemMapper,
     getActiveNodeUseCase = getActiveNodeUseCase,
     transactionDetailTooltipDisplayPreferenceUseCase = transactionDetailTooltipDisplayPreferenceUseCase,
@@ -62,7 +58,7 @@ class InnerTransactionDetailPreviewUseCase @Inject constructor(
         popInnerTransactionFromStackCacheUseCase.popInnerTransactionFromStackCache()
     }
 
-    suspend fun getTransactionDetailPreview(publicKey: String, transactions: List<BaseTransactionDetail>) = flow {
+    fun getTransactionDetailPreview(publicKey: String, transactions: List<BaseTransactionDetail>) = flow {
         val transactionDetailItemList = mutableListOf<TransactionDetailItem>().apply {
             transactions.forEach { baseTransactionDetail ->
                 when (baseTransactionDetail) {
@@ -104,16 +100,16 @@ class InnerTransactionDetailPreviewUseCase @Inject constructor(
         )
     }
 
-    private fun createStandardTransactionItem(
+    private suspend fun createStandardTransactionItem(
         transaction: BaseTransactionDetail,
         publicKey: String
     ): TransactionDetailItem.InnerTransactionItem.StandardInnerTransactionItem {
         val transactionAmount = getTransactionDetailAmount(transaction, true)
         val assetId = getTransactionAssetId(transaction)
         val assetDetail = getAssetDetail(assetId)
-        val assetDecimal = assetDetail?.fractionDecimals ?: DEFAULT_ASSET_DECIMAL
+        val assetDecimal = assetDetail?.getDecimalsOrZero() ?: DEFAULT_ASSET_DECIMAL
         val assetName = AssetName.createShortName(assetDetail?.shortName)
-        val isAlgo = assetId == AssetInformation.ALGO_ID
+        val isAlgo = assetId == AssetConstants.ALGO_ID
         val formattedTransactionAmount = with(transactionAmount.formatAmount(assetDecimal)) {
             if (isAlgo) formatAsAlgoAmount() else appendAssetName(assetName)
         }
@@ -121,8 +117,8 @@ class InnerTransactionDetailPreviewUseCase @Inject constructor(
         val receiverAccountPublicKey = transaction.receiverAccountAddress.orEmpty()
         val senderAccountPublicKey = transaction.senderAccountAddress.orEmpty()
 
-        val areAccountsInCache = accountDetailUseCase.isThereAnyAccountWithPublicKey(senderAccountPublicKey) ||
-            accountDetailUseCase.isThereAnyAccountWithPublicKey(receiverAccountPublicKey)
+        val areAccountsInCache = isThereAnyAccountWithAddress(senderAccountPublicKey) ||
+            isThereAnyAccountWithAddress(receiverAccountPublicKey)
 
         return transactionDetailItemMapper.mapToStandardInnerTransactionItem(
             accountAddress = transaction.senderAccountAddress.toShortenedAddress(),

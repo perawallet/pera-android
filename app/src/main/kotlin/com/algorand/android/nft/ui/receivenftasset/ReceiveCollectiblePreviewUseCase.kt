@@ -23,10 +23,10 @@ import com.algorand.android.assetsearch.domain.usecase.SearchAssetUseCase
 import com.algorand.android.assetsearch.ui.mapper.BaseAssetSearchItemMapper
 import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem
 import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.assets.addition.domain.usecase.AddAssetItemActionButtonStateDecider
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.AccountNameIconUseCase
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -37,9 +37,10 @@ class ReceiveCollectiblePreviewUseCase @Inject constructor(
     private val searchAssetUseCase: SearchAssetUseCase,
     private val assetSearchQueryMapper: AssetSearchQueryMapper,
     private val assetSearchItemMapper: BaseAssetSearchItemMapper,
-    private val accountNameIconUseCase: AccountNameIconUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val addAssetItemActionButtonStateDecider: AddAssetItemActionButtonStateDecider
+    private val addAssetItemActionButtonStateDecider: AddAssetItemActionButtonStateDecider,
+    private val getAccountInformationFlow: GetAccountInformationFlow,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getAccountDisplayName: GetAccountDisplayName
 ) {
 
     fun getSearchPaginationFlow(
@@ -59,9 +60,7 @@ class ReceiveCollectiblePreviewUseCase @Inject constructor(
             defaultQuery = assetSearchQuery
         )
 
-        val accountCollectiblesFlow = accountDetailUseCase.getAccountDetailCacheFlow(
-            publicKey = accountAddress
-        )
+        val accountInformationFlow = getAccountInformationFlow(accountAddress)
 
         val searchViewItem = assetSearchItemMapper.mapToSearchViewItem(
             searchViewHintResId = R.string.search_asset_id_or_nft
@@ -69,10 +68,9 @@ class ReceiveCollectiblePreviewUseCase @Inject constructor(
 
         val infoViewItem = assetSearchItemMapper.mapToInfoViewItem()
 
-        return combine(searchedAssetsFlow, accountCollectiblesFlow) { searchedAssets, accountDetail ->
+        return combine(searchedAssetsFlow, accountInformationFlow) { searchedAssets, accountInfo ->
             searchedAssets.map { baseSearchedAsset ->
-                val accountInformation = accountDetail?.data?.accountInformation
-                val assetHolding = accountInformation?.getAssetHoldingOrNull(baseSearchedAsset.assetId)
+                val assetHolding = accountInfo?.assetHoldings?.find { it.assetId == baseSearchedAsset.assetId }
                 val assetActionButtonState = addAssetItemActionButtonStateDecider.decideAddAssetItemActionButtonState(
                     assetHolding = assetHolding
                 )
@@ -117,7 +115,10 @@ class ReceiveCollectiblePreviewUseCase @Inject constructor(
         }
     }
 
-    fun getReceiverAccountDisplayTextAndIcon(publicKey: String): Pair<String, AccountIconDrawablePreview> {
-        return accountNameIconUseCase.getAccountDisplayTextAndIcon(publicKey)
+    suspend fun getReceiveCollectiblePreview(publicKey: String): ReceiveCollectibleFragmentPreview {
+        return ReceiveCollectibleFragmentPreview(
+            accountDisplayName = getAccountDisplayName(publicKey).primaryDisplayName,
+            accountIconDrawablePreview = getAccountIconDrawablePreview(publicKey)
+        )
     }
 }

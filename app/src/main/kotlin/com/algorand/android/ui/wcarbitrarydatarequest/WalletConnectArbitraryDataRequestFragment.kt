@@ -57,7 +57,6 @@ import com.algorand.android.utils.Resource
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
-import com.algorand.android.utils.isBluetoothEnabled
 import com.algorand.android.utils.navigateSafe
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.showWithStateCheck
@@ -154,8 +153,8 @@ class WalletConnectArbitraryDataRequestFragment :
 
     private fun initNavController() {
         walletConnectNavController = (
-                childFragmentManager.findFragmentById(binding.walletConnectNavigationHostFragment.id) as NavHostFragment
-                ).navController
+            childFragmentManager.findFragmentById(binding.walletConnectNavigationHostFragment.id) as NavHostFragment
+            ).navController
     }
 
     private fun handleNextNavigation() {
@@ -228,7 +227,6 @@ class WalletConnectArbitraryDataRequestFragment :
                 text = resources.getQuantityString(R.plurals.confirm_transactions, arbitraryDataCount)
             }
         }
-        this.arbitraryData = arbitraryData
         initAppPreview()
         rejectRequestOnBackPressed()
         checkIfShouldShowFirstRequestBottomSheet()
@@ -239,7 +237,7 @@ class WalletConnectArbitraryDataRequestFragment :
         with(arbitraryDataRequestViewModel) {
             arbitraryData?.let { arbitraryData ->
                 val isBluetoothNeeded = arbitraryDataRequestViewModel.isBluetoothNeededToSignTxns(arbitraryData)
-                if (!isBluetoothNeeded || isBluetoothEnabled(bleRequestLauncher)) {
+                if (!isBluetoothNeeded) {
                     signArbitraryDataRequest(arbitraryData)
                 }
             }

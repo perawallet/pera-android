@@ -16,10 +16,8 @@ package com.algorand.android.ui.send.transferamount
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.AssetTransferAmountPreview
-import com.algorand.android.models.TransactionData
 import com.algorand.android.usecase.AssetTransferAmountPreviewUseCase
 import com.algorand.android.usecase.AssetTransferAmountUseCase
 import com.algorand.android.utils.Event
@@ -32,6 +30,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -88,19 +87,21 @@ class AssetTransferAmountViewModel @Inject constructor(
         return with(assetTransaction) { assetTransferAmountUseCase.getMaximumAmountOfAsset(assetId, senderAddress) }
     }
 
-    private fun getAssetInformation(): AssetInformation? {
-        return with(assetTransaction) { assetTransferAmountUseCase.getAssetInformation(senderAddress, assetId) }
-    }
-
     fun shouldShowTransactionTips(): Boolean {
         return assetTransferAmountUseCase.shouldShowTransactionTips()
     }
 
-    fun getCalculatedSendableAmount(): BigInteger? {
-        val address = _assetTransferAmountPreviewFlow.value?.senderAddress ?: return null
-        val assetId = _assetTransferAmountPreviewFlow.value?.assetPreview?.assetId ?: return null
-        val selectedAmount = _assetTransferAmountPreviewFlow.value?.selectedAmount ?: return null
-        return assetTransferAmountPreviewUseCase.getCalculatedSendableAmount(address, assetId, selectedAmount)
+    fun getCalculatedSendableAmount() {
+        viewModelScope.launch {
+            val address = _assetTransferAmountPreviewFlow.value?.senderAddress ?: return@launch
+            val assetId = _assetTransferAmountPreviewFlow.value?.assetPreview?.assetId ?: return@launch
+            val selectedAmount = _assetTransferAmountPreviewFlow.value?.selectedAmount ?: return@launch
+            val amount = assetTransferAmountPreviewUseCase
+                .getCalculatedSendableAmount(address, assetId, selectedAmount) ?: return@launch
+            _assetTransferAmountPreviewFlow.update {
+                it?.copy(onNavigateToNextFragment = Event(amount))
+            }
+        }
     }
 
     fun updateTransactionNotes(lockedNote: String?, transactionNote: String?) {
@@ -110,16 +111,19 @@ class AssetTransferAmountViewModel @Inject constructor(
         )
     }
 
-    fun createSendTransactionData(
-        amount: BigInteger
-    ): TransactionData.Send? {
-        return assetTransferAmountPreviewUseCase.createSendTransactionData(
-            accountAddress = assetTransaction.senderAddress,
-            note = assetTransaction.xnote ?: assetTransaction.note,
-            selectedAsset = getAssetInformation(),
-            amount = amount,
-            assetTransaction = assetTransaction
-        )
+    fun createSendTransactionData(amount: BigInteger) {
+        viewModelScope.launch {
+            val txn = assetTransferAmountPreviewUseCase.createSendTransactionData(
+                accountAddress = assetTransaction.senderAddress,
+                note = assetTransaction.xnote ?: assetTransaction.note,
+                assetId = assetTransaction.assetId,
+                amount = amount,
+                assetTransaction = assetTransaction
+            ) ?: return@launch
+            _assetTransferAmountPreviewFlow.update {
+                it?.copy(onTransactionCreated = Event(txn))
+            }
+        }
     }
 
     fun isExpressSendWarningEnabled(isArc59Transaction: Boolean): Boolean {

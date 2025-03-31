@@ -15,29 +15,33 @@ package com.algorand.android.modules.assets.action.optin
 import androidx.lifecycle.SavedStateHandle
 import com.algorand.android.models.AssetAction
 import com.algorand.android.modules.assets.action.base.BaseAssetActionViewModel
-import com.algorand.android.modules.assets.profile.about.domain.usecase.GetAssetDetailUseCase
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
+import com.algorand.android.usecase.AccountAddressUseCase
 import com.algorand.android.utils.getOrThrow
+import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
+import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class OptInAssetActionViewModel @Inject constructor(
-    assetDetailUseCase: SimpleAssetDetailUseCase,
-    simpleCollectibleUseCase: SimpleCollectibleUseCase,
-    getAssetDetailUseCase: GetAssetDetailUseCase,
+    accountAddressUseCase: AccountAddressUseCase,
+    stateDelegate: StateDelegate<ViewState>,
     verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
+    fetchAndCacheAssets: FetchAndCacheAssets,
+    getAsset: GetAsset,
     savedStateHandle: SavedStateHandle
 ) : BaseAssetActionViewModel(
-    assetDetailUseCase,
-    simpleCollectibleUseCase,
-    getAssetDetailUseCase,
-    verificationTierConfigurationDecider
+    accountAddressUseCase,
+    stateDelegate,
+    verificationTierConfigurationDecider,
+    fetchAndCacheAssets,
+    getAsset
 ) {
 
     val assetAction: AssetAction = savedStateHandle.getOrThrow(ASSET_ACTION_KEY)
+    val accountAddress: String = assetAction.publicKey.orEmpty()
 
     override val assetId: Long = assetAction.assetId
 

@@ -13,16 +13,12 @@
 package com.algorand.android.modules.transaction.detail.domain.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
-import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.model.TransactionSign
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.tooltip.domain.usecase.TransactionDetailTooltipDisplayPreferenceUseCase
 import com.algorand.android.usecase.GetActiveNodeUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.AssetName
@@ -34,15 +30,14 @@ import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsDateAndTime
 import com.algorand.android.utils.getZonedDateTimeFromTimeStamp
 import com.algorand.android.utils.isNotEqualTo
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 
-open class BaseTransactionDetailPreviewUseCase constructor(
-    private val assetDetailUseCase: SimpleAssetDetailUseCase,
-    private val collectibleUseCase: SimpleCollectibleUseCase,
+open class BaseTransactionDetailPreviewUseCase(
     private val transactionDetailItemMapper: TransactionDetailItemMapper,
     private val getActiveNodeUseCase: GetActiveNodeUseCase,
     private val transactionDetailTooltipDisplayPreferenceUseCase: TransactionDetailTooltipDisplayPreferenceUseCase,
-    private val clearInnerTransactionStackCacheUseCase: ClearInnerTransactionStackCacheUseCase
+    private val clearInnerTransactionStackCacheUseCase: ClearInnerTransactionStackCacheUseCase,
 ) {
 
     fun setCopyAddressTipShown() {
@@ -142,11 +137,6 @@ open class BaseTransactionDetailPreviewUseCase constructor(
             is BaseTransactionDetail.BaseKeyRegTransaction,
             is BaseTransactionDetail.HeartbeatTransaction -> null
         } ?: ALGO_ID
-    }
-
-    protected fun getAssetDetail(assetId: Long): BaseAssetDetail? {
-        return assetDetailUseCase.getCachedAssetDetail(assetId)?.data
-            ?: collectibleUseCase.getCachedCollectibleById(assetId)?.data
     }
 
     protected fun getTransactionDetailAmount(

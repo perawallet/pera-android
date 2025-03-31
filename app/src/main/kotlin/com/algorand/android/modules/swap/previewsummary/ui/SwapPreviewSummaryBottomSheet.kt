@@ -19,15 +19,16 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.databinding.BottomSheetSwapPreviewSummaryBinding
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.swap.previewsummary.ui.model.SwapPreviewSummaryPreview
-import com.algorand.android.utils.AccountDisplayName
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.filterNotNull
 
 @AndroidEntryPoint
 class SwapPreviewSummaryBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_swap_preview_summary) {
@@ -50,6 +51,7 @@ class SwapPreviewSummaryBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_swap
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObservers()
+        swapPreviewSummaryViewModel.initializePreview()
     }
 
     private fun initUi() {
@@ -61,7 +63,7 @@ class SwapPreviewSummaryBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_swap
 
     private fun initObservers() {
         viewLifecycleOwner.collectLatestOnLifecycle(
-            swapPreviewSummaryViewModel.swapPreviewSummaryPreviewFlow,
+            swapPreviewSummaryViewModel.swapPreviewSummaryPreviewFlow.filterNotNull(),
             swapPreviewSummaryPreviewCollector
         )
     }
@@ -91,16 +93,15 @@ class SwapPreviewSummaryBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_swap
                 accountIconDrawablePreview = accountIconDrawablePreview,
                 sizeResId = R.dimen.spacing_xlarge
             )
-            val accountName = accountDisplayName.getAccountPrimaryDisplayName()
             accountTextView.apply {
                 setDrawable(start = accountIconDrawable)
-                text = accountName
+                text = accountDisplayName.primaryDisplayName
             }
         }
     }
 
     private fun onSwitchPriceRatioClick() {
-        val newPriceRatio = swapPreviewSummaryViewModel.getUpdatedPriceRatio(resources)
+        val newPriceRatio = swapPreviewSummaryViewModel.getUpdatedPriceRatio(resources) ?: return
         binding.priceRatioTextView.text = context?.getXmlStyledString(newPriceRatio)
     }
 }

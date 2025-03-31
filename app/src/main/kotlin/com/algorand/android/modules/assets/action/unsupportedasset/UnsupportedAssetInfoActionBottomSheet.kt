@@ -29,6 +29,10 @@ class UnsupportedAssetInfoActionBottomSheet : BaseAssetActionBottomSheet() {
 
     override val assetActionViewModel by viewModels<UnsupportedAssetInfoActionViewModel>()
 
+    override fun initUi() {
+        assetActionViewModel.getAccountName(assetActionViewModel.accountAddress)
+    }
+
     override fun setDescriptionTextView(textView: TextView) {
         textView.setText(R.string.unfortunately_this_account)
     }

@@ -12,17 +12,35 @@
 
 package com.algorand.android.modules.onboarding.recoverypassphrase.qrscanner.ui
 
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
+import com.algorand.android.utils.launchIO
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class RecoverWithPassphraseQrScannerViewModel @Inject constructor(
-    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase
-) : BaseViewModel() {
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
+) : BaseViewModel(), EventViewModel<RecoverWithPassphraseQrScannerViewModel.ViewEvent> by eventDelegate {
 
-    fun isAccountLimitExceed(): Boolean {
-        return isAccountLimitExceedUseCase.isAccountLimitExceed()
+    fun onImportAccountDeepLink(mnemonic: String) {
+        viewModelScope.launchIO {
+            eventDelegate.sendEvent(
+                if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {
+                    ViewEvent.ShowMaxAccountLimitExceededError
+                } else {
+                    ViewEvent.NavToRecoverWithPassphraseNavigation(mnemonic)
+                }
+            )
+        }
+    }
+
+    sealed interface ViewEvent {
+        data class NavToRecoverWithPassphraseNavigation(val mnemonic: String) : ViewEvent
+        data object ShowMaxAccountLimitExceededError : ViewEvent
     }
 }

@@ -12,13 +12,16 @@
 
 package com.algorand.android.ui.settings
 
-import android.app.NotificationManager
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.settings.ui.model.SettingsPreview
-import com.algorand.android.modules.settings.ui.usecase.SettingsPreviewUseCase
+import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent
+import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent.ShowDataClearedBottomSheet
+import com.algorand.android.ui.settings.model.SettingsPreview
+import com.algorand.android.ui.settings.usecase.SettingsPreviewUseCase
 import com.algorand.android.usecase.DeleteAllDataUseCase
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,27 +32,29 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val deleteAllDataUseCase: DeleteAllDataUseCase,
-    private val settingsPreviewUseCase: SettingsPreviewUseCase
-) : BaseViewModel() {
+    private val settingsPreviewUseCase: SettingsPreviewUseCase,
+    private val eventDelegate: EventDelegate<ViewEvent>
+) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
     private val _settingsPreviewFlow = MutableStateFlow<SettingsPreview?>(null)
     val settingsPreviewFlow: StateFlow<SettingsPreview?> get() = _settingsPreviewFlow
 
-    init {
-        initSettingsPreviewFlow()
-    }
-
-    fun deleteAllData(notificationManager: NotificationManager?, onDeletionCompleted: () -> Unit) {
+    fun deleteAllData() {
         viewModelScope.launch {
-            deleteAllDataUseCase.deleteAllData(notificationManager, onDeletionCompleted)
+            deleteAllDataUseCase.deleteAllData()
+            eventDelegate.sendEvent(ShowDataClearedBottomSheet)
         }
     }
 
-    private fun initSettingsPreviewFlow() {
+    fun initSettingsPreviewFlow() {
         viewModelScope.launchIO {
             settingsPreviewUseCase.getSettingsPreviewFlow().collectLatest { preview ->
                 _settingsPreviewFlow.emit(preview)
             }
         }
+    }
+
+    sealed interface ViewEvent {
+        data object ShowDataClearedBottomSheet : ViewEvent
     }
 }

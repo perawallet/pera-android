@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.asb.util
 
-import com.algorand.android.models.Account.Type
 import com.algorand.android.utils.ISO_EXTENDED_DATE_FORMAT
 import com.algorand.android.utils.getCurrentTimeAsZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -24,9 +23,6 @@ object AlgorandSecureBackupUtils {
     val IMPORT_BACKUP_FILE_MIME_TYPES = arrayOf(BACKUP_FILE_MIME_TYPE, "application/json")
 
     const val BACKUP_PASSPHRASES_WORD_COUNT = 12
-
-    val eligibleAccountTypes = listOf(Type.STANDARD, Type.WATCH, Type.REKEYED, Type.REKEYED_AUTH)
-    val excludedAccountTypes = listOf(Type.LEDGER)
 
     fun createBackupFileName(): String {
         val backupFileNameFormatter = DateTimeFormatter.ofPattern(ISO_EXTENDED_DATE_FORMAT)

@@ -10,26 +10,25 @@
  *  limitations under the License
  */
 
-package com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.mapper
+package com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.mapper
 
-import com.algorand.android.models.Account
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccounts
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.domain.model.AssetInboxAllAccountsWithAccount
 import com.algorand.android.modules.assetinbox.assetinboxallaccounts.ui.model.AssetInboxAllAccountsPreview
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
+import com.algorand.wallet.asset.assetinbox.domain.model.AssetInboxRequest
 import javax.inject.Inject
 
 class AssetInboxAllAccountsPreviewMapperImpl @Inject constructor(
-    private val getAccountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
 ) : AssetInboxAllAccountsPreviewMapper {
 
-    override fun invoke(
-        assetInboxAllAccountsList: List<AssetInboxAllAccounts>,
-        accounts: List<Account>,
+    override suspend fun invoke(
+        assetInboxAllAccountsList: List<AssetInboxRequest>,
+        addresses: List<String>,
         isLoading: Boolean,
         isEmptyStateVisible: Boolean,
         showError: Event<ErrorResource>?,
@@ -41,7 +40,7 @@ class AssetInboxAllAccountsPreviewMapperImpl @Inject constructor(
             showError = showError,
             assetInboxAllAccountsWithAccountList = mapToAssetInboxAllAccountsWithAccount(
                 assetInboxAllAccountsList,
-                accounts
+                addresses
             )
         )
     }
@@ -55,22 +54,21 @@ class AssetInboxAllAccountsPreviewMapperImpl @Inject constructor(
         )
     }
 
-    override fun mapToAssetInboxAllAccountsWithAccount(
-        assetInboxAllAccountsList: List<AssetInboxAllAccounts>,
-        accounts: List<Account>
+    private suspend fun mapToAssetInboxAllAccountsWithAccount(
+        assetInboxAllAccountsList: List<AssetInboxRequest>,
+        addresses: List<String>
     ): List<AssetInboxAllAccountsWithAccount> {
         return assetInboxAllAccountsList.mapNotNull { assetInboxAllAccounts ->
             if (assetInboxAllAccounts.requestCount <= 0) {
                 null
             } else {
-                accounts.firstOrNull { it.address == assetInboxAllAccounts.address }?.let { account ->
+                addresses.firstOrNull { it == assetInboxAllAccounts.address }?.let { address ->
                     AssetInboxAllAccountsWithAccount(
                         address = assetInboxAllAccounts.address,
                         requestCount = assetInboxAllAccounts.requestCount,
-                        accountAddress = account.address,
-                        accountType = account.type ?: Account.Type.STANDARD,
-                        accountDisplayName = getAccountDisplayNameUseCase.invoke(account.address),
-                        accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(account.address)
+                        accountAddress = address,
+                        accountDisplayName = getAccountDisplayName(address),
+                        accountIconDrawablePreview = getAccountIconDrawablePreview(address)
                     )
                 }
             }

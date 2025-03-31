@@ -15,26 +15,23 @@ package com.algorand.android.utils.walletconnect
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.algorand.android.models.Account
-import com.algorand.android.models.Account.Detail.Rekeyed
-import com.algorand.android.models.Account.Detail.RekeyedAuth
-import com.algorand.android.models.Account.Detail.Standard
 import com.algorand.android.models.WalletConnectArbitraryData
 import com.algorand.android.models.WalletConnectRequest.WalletConnectArbitraryDataRequest
 import com.algorand.android.models.WalletConnectSignResult
 import com.algorand.android.models.WalletConnectSignResult.Success
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.LifecycleScopedCoroutineOwner
 import com.algorand.android.utils.ListQueuingHelper
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.signArbitraryData
+import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import javax.inject.Inject
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.launch
 
 class WalletConnectArbitraryDataSignManager @Inject constructor(
     private val walletConnectSignValidator: WalletConnectSignValidator,
     private val signHelper: WalletConnectArbitraryDataSignHelper,
-    private val accountDetailUseCase: AccountDetailUseCase
+    private val getAlgo25SecretKey: GetAlgo25SecretKey
 ) : LifecycleScopedCoroutineOwner() {
 
     val signResultLiveData: LiveData<WalletConnectSignResult>
@@ -55,13 +52,14 @@ class WalletConnectArbitraryDataSignManager @Inject constructor(
             currentItemIndex: Int,
             totalItemCount: Int
         ) {
-            val accountType = getSignerAccountType(arbitraryData.signerAccount?.address)
-            if (accountType == null) {
-                signHelper.cacheDequeuedItem(null)
-            } else {
-                arbitraryData.signArbitraryData(
-                    accountDetail = accountType
-                )
+            currentScope.launch {
+                val signerAddress = arbitraryData.signerAccount?.address
+                if (signerAddress.isNullOrBlank()) {
+                    signHelper.cacheDequeuedItem(null)
+                } else {
+                    val secretKey = getAlgo25SecretKey(signerAddress)
+                    arbitraryData.signArbitraryData(secretKey)
+                }
             }
         }
     }
@@ -88,28 +86,12 @@ class WalletConnectArbitraryDataSignManager @Inject constructor(
         }
     }
 
-    private fun WalletConnectArbitraryData.signArbitraryData(
-        accountDetail: Account.Detail
-    ) {
-        val secretKey = when (accountDetail) {
-            is Standard -> accountDetail.secretKey
-            is Rekeyed -> accountDetail.secretKey
-            is RekeyedAuth -> accountDetail.secretKey
-            else -> {
-                null
-            }
-        }
-
+    private fun WalletConnectArbitraryData.signArbitraryData(secretKey: ByteArray?) {
         if (secretKey != null) {
             signHelper.cacheDequeuedItem(decodedTransaction?.signArbitraryData(secretKey))
         } else {
             signHelper.cacheDequeuedItem(null)
         }
-    }
-
-    private fun getSignerAccountType(signerAccountAddress: String?): Account.Detail? {
-        if (signerAccountAddress.isNullOrBlank()) return null
-        return accountDetailUseCase.getCachedAccountDetail(signerAccountAddress)?.data?.account?.detail
     }
 
     private fun postResult(walletConnectSignResult: WalletConnectSignResult) {

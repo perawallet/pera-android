@@ -13,10 +13,9 @@
 package com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.selection.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.mapper.AccountDisplayNameMapper
-import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.PluralAnnotatedString
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accounticon.ui.mapper.AccountIconDrawablePreviewMapper
 import com.algorand.android.modules.basefoundaccount.selection.ui.mapper.BaseFoundAccountSelectionItemMapper
 import com.algorand.android.modules.basefoundaccount.selection.ui.model.BaseFoundAccountSelectionItem
@@ -35,7 +34,6 @@ class RekeyedAccountSelectionPreviewUseCase @Inject constructor(
     private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
     private val accountAdditionUseCase: AccountAdditionUseCase,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
-    private val accountDisplayNameMapper: AccountDisplayNameMapper,
     baseFoundAccountSelectionItemMapper: BaseFoundAccountSelectionItemMapper
 ) : BaseFoundAccountSelectionItemUseCase(baseFoundAccountSelectionItemMapper) {
 
@@ -58,11 +56,10 @@ class RekeyedAccountSelectionPreviewUseCase @Inject constructor(
         baseFoundAccountSelectionItemList.add(titleItem)
         baseFoundAccountSelectionItemList.add(descriptionItem)
         rekeyedAccountAddresses.forEach { rekeyedAccountAddress ->
-            val accountDisplayName = accountDisplayNameMapper.mapToAccountDisplayName(
+            val accountDisplayName = AccountDisplayName(
                 accountAddress = rekeyedAccountAddress,
-                accountName = rekeyedAccountAddress.toShortenedAddress(),
-                nfDomainName = null,
-                type = Account.Type.REKEYED
+                primaryDisplayName = rekeyedAccountAddress.toShortenedAddress(),
+                secondaryDisplayName = null
             )
             val accountIconDrawablePreview = accountIconDrawablePreviewMapper.mapToAccountIconDrawablePreview(
                 backgroundColorResId = R.color.wallet_4,
@@ -92,7 +89,7 @@ class RekeyedAccountSelectionPreviewUseCase @Inject constructor(
     ): RekeyedAccountSelectionPreview {
         val updatedFoundAccountSelectionListItem = preview.foundAccountSelectionListItem.map { item ->
             if (item is BaseFoundAccountSelectionItem.AccountItem &&
-                item.accountDisplayName.getRawAccountAddress() == selectedAccountAddress
+                item.accountDisplayName.accountAddress == selectedAccountAddress
             ) {
                 item.copy(isSelected = !item.isSelected)
             } else {
@@ -114,7 +111,7 @@ class RekeyedAccountSelectionPreviewUseCase @Inject constructor(
         )
     }
 
-    fun updatePreviewWithChosenAccount(
+    suspend fun updatePreviewWithChosenAccount(
         preview: RekeyedAccountSelectionPreview,
         accountCreation: AccountCreation
     ): RekeyedAccountSelectionPreview {
@@ -124,12 +121,14 @@ class RekeyedAccountSelectionPreviewUseCase @Inject constructor(
                 if (isAccountLimitExceed) {
                     return preview.copy(showAccountCountExceedErrorEvent = Event(Unit))
                 }
-                val rekeyedAccount = Account.create(
-                    publicKey = item.accountDisplayName.getRawAccountAddress(),
-                    detail = Account.Detail.Rekeyed(null),
-                    accountName = item.accountDisplayName.getAccountPrimaryDisplayName()
+                val rekeyedAccount = AccountCreation(
+                    address = item.accountDisplayName.accountAddress,
+                    customName = item.accountDisplayName.primaryDisplayName,
+                    isBackedUp = true,
+                    type = AccountCreation.Type.NoAuth,
+                    creationType = CreationType.REKEYED
                 )
-                accountAdditionUseCase.addNewAccount(rekeyedAccount, CreationType.REKEYED)
+                accountAdditionUseCase.addNewAccount(rekeyedAccount)
             }
         }
         return preview.copy(navToNameRegistrationEvent = Event(accountCreation))

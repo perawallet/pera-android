@@ -19,11 +19,15 @@ import com.algorand.android.modules.algosdk.backuputils.domain.usecase.CreateBac
 import com.algorand.android.modules.asb.importbackup.enterkey.ui.mapper.AsbKeyEnterPreviewMapper
 import com.algorand.android.modules.asb.importbackup.enterkey.ui.model.AsbKeyEnterPreview
 import com.algorand.android.modules.asb.util.AlgorandSecureBackupUtils
-import com.algorand.android.modules.backupprotocol.domain.usecase.RestoreEncryptedBackupProtocolPayloadUseCase
-import com.algorand.android.modules.backupprotocol.model.BackupProtocolPayload
+import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.PassphraseKeywordUtils
 import com.algorand.android.utils.splitMnemonic
+import com.algorand.wallet.asb.domain.model.AsbBackupAccount
+import com.algorand.wallet.asb.domain.model.AsbBackupData
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.ALGO_25_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.NO_AUTH_ACCOUNT_TYPE_NAME
+import com.algorand.wallet.asb.domain.usecase.RestoreEncryptedBackupProtocolPayload
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
@@ -32,7 +36,7 @@ class AsbKeyEnterPreviewUseCase @Inject constructor(
     private val passphraseInputGroupUseCase: PassphraseInputGroupUseCase,
     private val passphraseInputConfigurationUtil: PassphraseInputConfigurationUtil,
     private val createBackupCipherKeyUseCase: CreateBackupCipherKeyUseCase,
-    private val restoreEncryptedBackupProtocolPayloadUseCase: RestoreEncryptedBackupProtocolPayloadUseCase
+    private val restoreEncryptedBackupProtocolPayload: RestoreEncryptedBackupProtocolPayload
 ) {
 
     fun getRecoverWithPassphraseInitialPreview(): AsbKeyEnterPreview {
@@ -117,7 +121,7 @@ class AsbKeyEnterPreviewUseCase @Inject constructor(
         )
         createBackupCipherKeyUseCase.invoke(enteredKey).useSuspended(
             onSuccess = { cipherKey ->
-                val decryptedContent = restoreEncryptedBackupProtocolPayloadUseCase.invoke(
+                val decryptedContent = restoreEncryptedBackupProtocolPayload(
                     cipherText = cipherText,
                     cipherKey = cipherKey
                 )
@@ -132,12 +136,31 @@ class AsbKeyEnterPreviewUseCase @Inject constructor(
 
     private fun validateDecryptedPayload(
         preview: AsbKeyEnterPreview,
-        backupProtocolPayload: BackupProtocolPayload?
+        asbBackupData: AsbBackupData?
     ): AsbKeyEnterPreview {
-        if (backupProtocolPayload?.accounts == null) {
+        if (asbBackupData?.accounts == null) {
             val globalErrorPair = R.string.wrong_12_word_key to R.string.please_try_again_by_entering
             return preview.copy(onGlobalErrorEvent = Event(globalErrorPair))
         }
-        return preview.copy(navToAccountSelectionFragmentEvent = Event(backupProtocolPayload.accounts))
+        val backupProtocolElements = asbBackupData.mapToBackupProtocolElements()
+        return preview.copy(navToAccountSelectionFragmentEvent = Event(backupProtocolElements))
+    }
+
+    // TODO Remove this method after the backup protocol is migrated to common-sdk
+    private fun AsbBackupData.mapToBackupProtocolElements(): List<BackupProtocolElement> {
+        return accounts.orEmpty().map {
+            val accountType = when (it.accountType) {
+                is AsbBackupAccount.AccountType.Algo25 -> ALGO_25_ACCOUNT_TYPE_NAME
+                AsbBackupAccount.AccountType.Watch -> NO_AUTH_ACCOUNT_TYPE_NAME
+                else -> null
+            }
+            BackupProtocolElement(
+                address = it.address,
+                name = it.name,
+                accountType = accountType,
+                privateKey = (it.accountType as? AsbBackupAccount.AccountType.Algo25)?.privateKey,
+                metadata = it.metadata
+            )
+        }
     }
 }

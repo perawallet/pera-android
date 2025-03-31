@@ -20,9 +20,10 @@ import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.AssetOperationResult
+import com.algorand.android.models.AssetOperationResult.AssetAdditionOperationResult
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.action.base.BaseAssetActionBottomSheet
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.setNavigationResult
@@ -35,6 +36,10 @@ class OptInAssetActionBottomSheet : BaseAssetActionBottomSheet() {
     private val toolbarConfiguration = ToolbarConfiguration(titleResId = R.string.your_accounts_don_t)
 
     override val assetActionViewModel by viewModels<OptInAssetActionViewModel>()
+
+    override fun initUi() {
+        assetActionViewModel.getAccountName(assetActionViewModel.accountAddress)
+    }
 
     override fun setDescriptionTextView(textView: TextView) {
         textView.apply {
@@ -70,18 +75,21 @@ class OptInAssetActionBottomSheet : BaseAssetActionBottomSheet() {
                     shouldWaitForConfirmation = true
                 )
         )
-        (activity as? MainActivity)?.mainViewModel?.assetOperationResultLiveData?.observe(viewLifecycleOwner) {
-            it.peek().use(
-                onSuccess = {
-                    if (it is AssetOperationResult.AssetAdditionOperationResult && it.assetId == assetAction.assetId) {
-                        assetAction.publicKey?.run {
-                            setNavigationResult(OPT_IN_RESULT_SUCCESSFUL_KEY, Pair(true, this))
-                            navBack()
+        collectLatestOnLifecycle(
+            flow = (activity as? MainActivity)?.assetOperationViewModel?.assetOperationResultFlow,
+            collection = {
+                it?.peek()?.use(
+                    onSuccess = { operation ->
+                        if (operation is AssetAdditionOperationResult && operation.assetId == assetAction.assetId) {
+                            assetAction.publicKey?.run {
+                                setNavigationResult(OPT_IN_RESULT_SUCCESSFUL_KEY, Pair(true, this))
+                                navBack()
+                            }
                         }
                     }
-                }
-            )
-        }
+                )
+            }
+        )
     }
 
     companion object {

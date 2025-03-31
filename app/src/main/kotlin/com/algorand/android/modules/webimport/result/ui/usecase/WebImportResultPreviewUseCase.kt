@@ -14,24 +14,24 @@ package com.algorand.android.modules.webimport.result.ui.usecase
 
 import com.algorand.android.R
 import com.algorand.android.customviews.accountasseticonnameitem.mapper.AccountAssetIconNameConfigurationMapper
-import com.algorand.android.models.AccountDetail
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.webimport.result.ui.mapper.BaseImportResultListItemMapper
 import com.algorand.android.modules.webimport.result.ui.mapper.WebImportResultPreviewMapper
 import com.algorand.android.modules.webimport.result.ui.model.BaseAccountResultListItem
 import com.algorand.android.modules.webimport.result.ui.model.WebImportResultPreview
-import com.algorand.android.usecase.AccountDetailUseCase
+import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import javax.inject.Inject
 
 class WebImportResultPreviewUseCase @Inject constructor(
     private val webImportResultPreviewMapper: WebImportResultPreviewMapper,
     private val baseImportResultListItemMapper: BaseImportResultListItemMapper,
     private val accountAssetIconNameConfigurationMapper: AccountAssetIconNameConfigurationMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getAccountDetail: GetAccountDetail
 ) {
 
-    fun getInitialPreview(
+    suspend fun getInitialPreview(
         importedAccountList: List<String>,
         unimportedAccountList: List<String>
     ): WebImportResultPreview {
@@ -43,12 +43,10 @@ class WebImportResultPreviewUseCase @Inject constructor(
             if (isImportSuccessful && unimportedAccountList.isNotEmpty()) {
                 add(getWarningBoxItem(unimportedAccountList.size))
             }
-            importedAccountList.mapNotNull { key ->
-                accountDetailUseCase.getCachedAccountDetail(key)
-            }.forEach { cacheResult ->
-                cacheResult.data?.let { accountDetail ->
-                    add(getAccountItem(accountDetail = accountDetail))
-                }
+            importedAccountList.forEach {
+                val accountDetail = getAccountDetail(it)
+                val accountItem = getAccountItem(accountDetail = accountDetail)
+                add(accountItem)
             }
         }
         return webImportResultPreviewMapper.mapToWebImportResultPreview(
@@ -106,16 +104,16 @@ class WebImportResultPreviewUseCase @Inject constructor(
         )
     }
 
-    private fun getAccountItem(
+    private suspend fun getAccountItem(
         accountDetail: AccountDetail
     ): BaseAccountResultListItem.AccountItem {
         return baseImportResultListItemMapper.mapToAccountItem(
             accountAssetIconNameConfiguration = accountAssetIconNameConfigurationMapper.mapTo(
-                accountAddress = accountDetail.account.address,
-                accountName = accountDetail.account.name,
-                accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(accountDetail.account.address)
+                accountAddress = accountDetail.address,
+                accountName = accountDetail.customAccountInfo?.customName.orEmpty(),
+                accountIconDrawablePreview = getAccountIconDrawablePreview(accountDetail.address)
             ),
-            accountAddress = accountDetail.account.address
+            accountAddress = accountDetail.address
         )
     }
 }

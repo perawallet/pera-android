@@ -12,12 +12,15 @@
 
 package com.algorand.android.usecase
 
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCount
 import javax.inject.Inject
 
-class IsAccountLimitExceedUseCase @Inject constructor(private val getLocalAccountsUseCase: GetLocalAccountsUseCase) {
+class IsAccountLimitExceedUseCase @Inject constructor(
+    private val getLocalAccountCount: GetLocalAccountCount
+) {
 
-    fun isAccountLimitExceed(): Boolean {
-        return getLocalAccountsUseCase.getLocalAccountsFromAccountManagerCache().size >= MAX_NUMBER_OF_ACCOUNTS
+    suspend fun isAccountLimitExceed(): Boolean {
+        return getLocalAccountCount() >= MAX_NUMBER_OF_ACCOUNTS
     }
 
     companion object {

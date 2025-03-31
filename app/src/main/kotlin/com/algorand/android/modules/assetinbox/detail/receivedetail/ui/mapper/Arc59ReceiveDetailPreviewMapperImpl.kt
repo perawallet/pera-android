@@ -14,10 +14,10 @@
 package com.algorand.android.modules.assetinbox.detail.receivedetail.ui.mapper
 
 import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.model.AccountValue
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.modules.accounts.domain.usecase.GetAccountValueUseCase
+import com.algorand.android.modules.accountcore.domain.model.AccountTotalValue
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailNavArgs
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailPreview
 import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Arc59ReceiveDetailPreview.AssetPreviewDetail
@@ -25,24 +25,24 @@ import com.algorand.android.modules.assetinbox.detail.receivedetail.ui.model.Rec
 import com.algorand.android.modules.assetinbox.detail.transactiondetail.model.Arc59TransactionDetailArgs
 import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.toShortenedAddress
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import java.math.BigDecimal.ZERO
 import javax.inject.Inject
 
 class Arc59ReceiveDetailPreviewMapperImpl @Inject constructor(
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
-    private val accountValueUseCase: GetAccountValueUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val accountIconDrawableUseCase: CreateAccountIconDrawableUseCase,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val verificationTierConfigDecider: VerificationTierConfigurationDecider,
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider
+    private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
+    private val getAccountTotalValue: GetAccountTotalValue,
+    private val getAccountInformation: GetAccountInformation
 ) : Arc59ReceiveDetailPreviewMapper {
 
-    override fun getInitialPreview(args: Arc59ReceiveDetailNavArgs): Arc59ReceiveDetailPreview {
+    override suspend fun getInitialPreview(args: Arc59ReceiveDetailNavArgs): Arc59ReceiveDetailPreview {
         return Arc59ReceiveDetailPreview(
             receiverAccountDetailPreview = getReceiverAccountDetail(args),
             assetPreviewDetail = getAssetPreviewDetail(args),
@@ -55,26 +55,26 @@ class Arc59ReceiveDetailPreviewMapperImpl @Inject constructor(
         )
     }
 
-    private fun getReceiverAccountDetail(args: Arc59ReceiveDetailNavArgs): ReceiverAccountDetailPreview {
-        val accountDetail = accountDetailUseCase.getCachedAccountDetail(args.receiverAddress)?.data
-        val accountValue = if (accountDetail != null) {
-            accountValueUseCase.getAccountValue(accountDetail)
+    private suspend fun getReceiverAccountDetail(args: Arc59ReceiveDetailNavArgs): ReceiverAccountDetailPreview {
+        val receiverAccountInfo = getAccountInformation(args.receiverAddress)
+        val accountValue = if (receiverAccountInfo != null) {
+            getAccountTotalValue(receiverAccountInfo, includeAlgo = true)
         } else {
-            AccountValue(ZERO, ZERO, 0)
+            AccountTotalValue(ZERO, ZERO, 0)
         }
         return ReceiverAccountDetailPreview(
-            displayName = accountDisplayNameUseCase(args.receiverAddress),
+            displayName = getAccountDisplayName(args.receiverAddress),
             formattedPrimaryValue = accountValue.primaryAccountValue.formatAsCurrency(Currency.ALGO.symbol),
             formattedSecondaryValue = getFormattedFiatValue(accountValue),
-            accountIconDrawable = accountIconDrawableUseCase(args.receiverAddress)
+            accountIconDrawable = getAccountIconDrawablePreview(args.receiverAddress)
         )
     }
 
-    private fun getFormattedFiatValue(accountValue: AccountValue): String {
+    private fun getFormattedFiatValue(accountValue: AccountTotalValue): String {
         return "≈ ${accountValue.secondaryAccountValue.formatAsCurrency(Currency.USD.symbol, isFiat = true)}"
     }
 
-    private fun getAssetPreviewDetail(args: Arc59ReceiveDetailNavArgs): AssetPreviewDetail {
+    private suspend fun getAssetPreviewDetail(args: Arc59ReceiveDetailNavArgs): AssetPreviewDetail {
         return with(args.assetDetail) {
             val firstSender = args.senderDetails.firstOrNull()
             AssetPreviewDetail(
@@ -89,7 +89,7 @@ class Arc59ReceiveDetailPreviewMapperImpl @Inject constructor(
         }
     }
 
-    private fun getArc59TransactionDetailNavArgs(args: Arc59ReceiveDetailNavArgs): Arc59TransactionDetailArgs {
+    private suspend fun getArc59TransactionDetailNavArgs(args: Arc59ReceiveDetailNavArgs): Arc59TransactionDetailArgs {
         return with(args.assetDetail) {
             val assetDetail = when (this) {
                 is Arc59ReceiveDetailNavArgs.BaseAssetDetail.AssetDetail -> {

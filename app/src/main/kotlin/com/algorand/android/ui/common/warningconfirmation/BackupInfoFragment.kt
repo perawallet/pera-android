@@ -14,29 +14,29 @@ package com.algorand.android.ui.common.warningconfirmation
 
 import android.os.Bundle
 import android.view.View
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.R
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
-import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToBackupPassphraseAccountNameNavigation
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToWriteDownInfoFragment
-import com.algorand.android.ui.compose.widget.PeraDescriptionText
-import com.algorand.android.ui.compose.widget.PeraIconBig
+import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.PeraIcon
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraSecondaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
-import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.browser.openRecoveryPassphraseSupportUrl
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -62,30 +62,31 @@ class BackupInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun Icon(modifier: Modifier) =
-        PeraIconBig(
+        PeraIcon(
             painter = painterResource(id = R.drawable.ic_shield),
-            contentDescription = "shield",
+            contentDescription = stringResource(R.string.shield),
             modifier = modifier
         )
 
     @Composable
     override fun Title(modifier: Modifier) =
-        PeraTitleText(
+        PeraHeadlineText(
             modifier = modifier,
             text = stringResource(id = R.string.create_a_passphrase_backup)
         )
 
     @Composable
     override fun Description(modifier: Modifier) =
-        PeraDescriptionText(
+        PeraBodyText(
             text = stringResource(
                 id = R.string.creating_a_passphrase_backup
             ),
             modifier = modifier
         )
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun PrimaryButton(modifier: Modifier) =
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
         PeraPrimaryButton(
             onClick = { navToWriteDownFragment() },
             modifier = modifier,
@@ -94,7 +95,7 @@ class BackupInfoFragment : BaseInfoFragment() {
 
     @Composable
     override fun SecondaryButton(modifier: Modifier) {
-        if (args.publicKeysOfAccountsToBackup.isEmpty()) {
+        if (args.accountsToBackup.isEmpty()) {
             PeraSecondaryButton(
                 onClick = {
                     backupInfoViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_CREATE_PASSPHRASE_SKIP)
@@ -107,25 +108,27 @@ class BackupInfoFragment : BaseInfoFragment() {
     }
 
     private fun navToWriteDownFragment() {
-        val accountCreation = if (args.publicKeysOfAccountsToBackup.isEmpty()) {
-            getAccountCreation()
-        } else {
-            null
-        }
+        val accountCreation = getAccountCreation()
 
-        backupInfoViewModel.logOnboardingIUnderstandClickEvent()
-        nav(
-            actionBackupInfoFragmentToWriteDownInfoFragment(
-                args.publicKeysOfAccountsToBackup,
-                accountCreation
+        accountCreation?.let {
+            backupInfoViewModel.logOnboardingIUnderstandClickEvent()
+            nav(
+                actionBackupInfoFragmentToWriteDownInfoFragment(
+                    args.accountsToBackup,
+                    accountCreation
+                )
             )
-        )
+        } ?: run {
+            navBack()
+        }
     }
 
     private fun navToBackupPassphraseAccountNameNavigation() {
         val accountCreation = getAccountCreation()
         accountCreation?.let {
             nav(actionBackupInfoFragmentToBackupPassphraseAccountNameNavigation(it))
+        } ?: run {
+            navBack()
         }
     }
 
@@ -142,22 +145,20 @@ class BackupInfoFragment : BaseInfoFragment() {
         context?.openRecoveryPassphraseSupportUrl()
     }
 
-    // TODO move this into util class
     private fun getAccountCreation(): AccountCreation? {
-        try {
-            val secretKeyByteArray: ByteArray?
-            secretKeyByteArray = Sdk.generateSK()
-            val publicKey = Sdk.generateAddressFromSK(secretKeyByteArray)
-            val tempAccount = Account.create(
-                publicKey = publicKey,
-                detail = Account.Detail.Standard(secretKeyByteArray),
-                isBackedUp = false
-            )
-            return AccountCreation(tempAccount, CreationType.CREATE)
+        return try {
+            when (backupInfoViewModel.onboardingAccountType) {
+                is OnboardingAccountType.HdKey -> {
+                    backupInfoViewModel.createHdKeyAccount()
+                }
+                is OnboardingAccountType.Algo25 -> {
+                    backupInfoViewModel.createAlgo25Account()
+                }
+            }
         } catch (exception: Exception) {
             navBack()
+            null
         }
-        return null
     }
 
     companion object {

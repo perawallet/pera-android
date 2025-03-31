@@ -13,9 +13,9 @@
 package com.algorand.android.ledger.operations
 
 import android.bluetooth.BluetoothDevice
-import com.algorand.android.models.AccountInformation
 import com.algorand.android.models.BaseWalletConnectTransaction
-import com.algorand.android.models.TransactionData
+import com.algorand.android.models.TransactionSignData
+import com.algorand.wallet.account.info.domain.model.AccountInformation
 
 sealed class BaseOperation {
     abstract val bluetoothDevice: BluetoothDevice
@@ -46,9 +46,9 @@ sealed class BaseTransactionOperation(override val bluetoothDevice: BluetoothDev
     var isAddressVerified: Boolean = false
 }
 
-data class TransactionOperation(
+data class TransactionSignOperation(
     override val bluetoothDevice: BluetoothDevice,
-    val transactionData: TransactionData
+    val transactionData: TransactionSignData
 ) : BaseTransactionOperation(bluetoothDevice) {
 
     override val transactionByteArray: ByteArray?
@@ -61,7 +61,7 @@ data class TransactionOperation(
         get() = transactionData.senderAuthAddress
 
     override val isRekeyedToAnotherAccount: Boolean
-        get() = transactionData.isSenderRekeyedToAnotherAccount
+        get() = transactionData.isSenderRekeyed()
 }
 
 data class ExternalTransactionOperation(
@@ -91,7 +91,7 @@ data class WalletConnectTransactionOperation(
         get() = transaction.signer.address?.decodedAddress.orEmpty()
 
     override val accountAuthAddress: String?
-        get() = transaction.authAddress
+        get() = transaction.transactionSigner?.address
 
     override val isRekeyedToAnotherAccount: Boolean
         get() = transaction.isRekeyedToAnotherAccount()

@@ -17,7 +17,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.core.TransactionBaseFragment
+import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentAssetInboxOneAccountBinding
 import com.algorand.android.models.FragmentConfiguration
@@ -35,7 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AssetInboxOneAccountFragment :
-    TransactionBaseFragment(R.layout.fragment_asset_inbox_one_account) {
+    TransactionSignBaseFragment(R.layout.fragment_asset_inbox_one_account) {
 
     private val infoButton by lazy { IconButton(R.drawable.ic_info, onClick = ::onInfoButtonClick) }
 

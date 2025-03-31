@@ -15,16 +15,14 @@ package com.algorand.android.modules.assets.profile.detail.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
 import com.algorand.android.modules.assets.profile.detail.ui.usecase.AssetDetailPreviewUseCase
 import com.algorand.android.modules.tracking.swap.assetdetail.AssetDetailAlgoSwapClickEventTracker
-import com.algorand.android.usecase.AccountDeletionUseCase
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -33,7 +31,6 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class AssetDetailViewModel @Inject constructor(
     private val assetDetailPreviewUseCase: AssetDetailPreviewUseCase,
-    private val accountDeletionUseCase: AccountDeletionUseCase,
     private val algoSwapClickEventTracker: AssetDetailAlgoSwapClickEventTracker,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
@@ -63,36 +60,36 @@ class AssetDetailViewModel @Inject constructor(
     }
 
     fun onAddAssetClick() {
-        _assetDetailPreviewFlow.update { preview ->
-            assetDetailPreviewUseCase.updatePreviewWithAssetAdditionNavigation(
-                preview = preview,
-                accountAddress = accountAddress
-            )
+        viewModelScope.launch {
+            _assetDetailPreviewFlow.update { preview ->
+                assetDetailPreviewUseCase.updatePreviewWithAssetAdditionNavigation(
+                    preview = preview,
+                    accountAddress = accountAddress
+                )
+            }
         }
     }
 
     fun onBuySellClick() {
-        _assetDetailPreviewFlow.update { preview ->
-            assetDetailPreviewUseCase.updatePreviewWithOfframpNavigation(
-                preview = preview,
-                accountAddress = accountAddress
-            )
+        viewModelScope.launch {
+            _assetDetailPreviewFlow.update { preview ->
+                assetDetailPreviewUseCase.updatePreviewWithOfframpNavigation(
+                    preview = preview,
+                    accountAddress = accountAddress
+                )
+            }
         }
     }
 
     fun onSendClick() {
-        _assetDetailPreviewFlow.update { preview ->
-            assetDetailPreviewUseCase.updatePreviewWithSendNavigation(
-                preview = preview,
-                accountAddress = accountAddress,
-                assetId = assetId
-            )
-        }
-    }
-
-    fun removeAccount() {
-        viewModelScope.launch(Dispatchers.IO) {
-            accountDeletionUseCase.removeAccount(accountAddress)
+        viewModelScope.launch {
+            _assetDetailPreviewFlow.update { preview ->
+                assetDetailPreviewUseCase.updatePreviewWithSendNavigation(
+                    preview = preview,
+                    accountAddress = accountAddress,
+                    assetId = assetId
+                )
+            }
         }
     }
 

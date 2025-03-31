@@ -14,24 +14,11 @@ package com.algorand.android.utils.extensions
 
 import com.algorand.android.models.AccountDetail
 import com.algorand.android.models.AssetHolding
-import com.algorand.android.models.AssetStatus
 
 fun AccountDetail.getAssetHoldingOrNull(assetId: Long): AssetHolding? {
     return accountInformation.getAssetHoldingOrNull(assetId)
 }
 
-fun AccountDetail.getAssetStatusOrNull(assetId: Long): AssetStatus? {
-    return accountInformation.getAssetStatusOrNull(assetId)
-}
-
-fun AccountDetail.hasAsset(assetId: Long): Boolean {
-    return accountInformation.hasAsset(assetId)
-}
-
 fun AccountDetail.getAssetHoldingList(): List<AssetHolding> {
     return accountInformation.getAssetHoldingList()
-}
-
-fun AccountDetail.getAssetIdList(): List<Long> {
-    return accountInformation.getAssetIdList().toList()
 }

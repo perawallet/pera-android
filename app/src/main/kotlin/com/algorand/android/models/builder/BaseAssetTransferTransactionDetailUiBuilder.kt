@@ -13,6 +13,7 @@
 
 package com.algorand.android.models.builder
 
+import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration.UNVERIFIED
 import com.algorand.android.models.BaseAssetTransferTransaction
 import com.algorand.android.models.TransactionRequestAmountInfo
 import com.algorand.android.models.TransactionRequestAssetInformation
@@ -77,8 +78,7 @@ class BaseAssetTransferTransactionDetailUiBuilder @Inject constructor(
                 rekeyToAccountAddress = getRekeyToAccountAddress()?.decodedAddress,
                 assetInformation = TransactionRequestAssetInformation(
                     assetId = assetId,
-                    verificationTierConfiguration =
-                    verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier),
+                    verificationTierConfiguration = verificationTierConfiguration ?: UNVERIFIED,
                     fullName = walletConnectTransactionAssetDetail?.fullName,
                     shortName = walletConnectTransactionAssetDetail?.shortName
                 )
@@ -96,8 +96,7 @@ class BaseAssetTransferTransactionDetailUiBuilder @Inject constructor(
                 accountBalance = assetInformation?.amount,
                 assetInformation = TransactionRequestAssetInformation(
                     assetId = assetId,
-                    verificationTierConfiguration =
-                    verificationTierConfigurationDecider.decideVerificationTierConfiguration(verificationTier),
+                    verificationTierConfiguration = verificationTierConfiguration ?: UNVERIFIED,
                     shortName = walletConnectTransactionAssetDetail?.shortName,
                     fullName = walletConnectTransactionAssetDetail?.fullName,
                     decimals = assetDecimal

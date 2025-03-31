@@ -12,15 +12,15 @@
 
 package com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.usecase
 
+import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.mapper.AsaProfileAccountSelectionPreviewMapper
 import com.algorand.android.modules.assets.profile.asaprofileaccountselection.ui.model.AsaProfileAccountSelectionPreview
-import com.algorand.android.usecase.AccountSelectionListUseCase
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class AsaProfileAccountSelectionPreviewUseCase @Inject constructor(
-    private val accountSelectionListUseCase: AccountSelectionListUseCase,
+    private val getAccountSelectionAccountsWhichCanSignTransaction: GetAccountSelectionAccountsWhichCanSignTransaction,
     private val asaProfileAccountSelectionPreviewMapper: AsaProfileAccountSelectionPreviewMapper
 ) {
 
@@ -31,12 +31,11 @@ class AsaProfileAccountSelectionPreviewUseCase @Inject constructor(
         )
     }
 
-    suspend fun getAccountSelectionPreviewFlow(): Flow<AsaProfileAccountSelectionPreview> = flow {
-        val accountSelectionList = accountSelectionListUseCase
-            .createAccountSelectionListAccountItemsWhichCanSignTransaction(
-                showFailedAccounts = true,
-                showHoldings = false
-            )
+    fun getAccountSelectionPreviewFlow(): Flow<AsaProfileAccountSelectionPreview> = flow {
+        val accountSelectionList = getAccountSelectionAccountsWhichCanSignTransaction(
+            showFailedAccounts = true,
+            showHoldings = false
+        )
         emit(
             asaProfileAccountSelectionPreviewMapper.mapToAsaProfileAccountSelectionPreview(
                 accountListItems = accountSelectionList,

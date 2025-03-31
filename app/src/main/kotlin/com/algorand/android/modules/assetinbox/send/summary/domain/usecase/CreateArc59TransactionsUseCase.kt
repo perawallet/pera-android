@@ -38,7 +38,7 @@ class CreateArc59TransactionsUseCase @Inject constructor(
         )
     }
 
-    private fun TransactionParams.createArc59Transactions(
+    private suspend fun TransactionParams.createArc59Transactions(
         payload: Arc59TransactionPayload
     ): Result<List<Arc59SendTransaction>> {
         val sendTransactions = createArc59SendTransaction(this, payload) ?: emptyList()

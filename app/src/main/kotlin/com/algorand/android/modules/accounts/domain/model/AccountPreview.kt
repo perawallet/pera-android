@@ -35,5 +35,6 @@ data class AccountPreview(
     val swapNavigationDestinationEvent: Event<NavDirections>? = null,
     val giftCardsNavigationDestinationEvent: Event<NavDirections>? = null,
     val notificationPermissionEvent: Event<Unit>? = null,
-    val assetInboxCount: Int = 0
+    val assetInboxCount: Int = 0,
+    val onNavToBackUpPassphraseInfo: Event<Set<String>>? = null
 )

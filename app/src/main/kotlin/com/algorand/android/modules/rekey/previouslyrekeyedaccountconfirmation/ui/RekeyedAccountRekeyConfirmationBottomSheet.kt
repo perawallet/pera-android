@@ -12,7 +12,9 @@
 
 package com.algorand.android.modules.rekey.previouslyrekeyedaccountconfirmation.ui
 
+import android.os.Bundle
 import android.text.method.LinkMovementMethod
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -22,6 +24,7 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.utils.BaseDoubleButtonBottomSheet
 import com.algorand.android.utils.browser.REKEY_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.getCustomClickableSpan
 import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.setFragmentNavigationResult
@@ -33,34 +36,20 @@ class RekeyedAccountRekeyConfirmationBottomSheet : BaseDoubleButtonBottomSheet()
 
     private val rekeyedAccountRekeyConfirmationViewModel by viewModels<RekeyedAccountRekeyConfirmationViewModel>()
 
+    private val viewStateObserver: suspend (RekeyedAccountRekeyConfirmationViewModel.ViewState) -> Unit = {
+        updateDescriptionText(it.accountDisplayName, it.authAccountDisplayName)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        collectLatestOnLifecycle(rekeyedAccountRekeyConfirmationViewModel.state, viewStateObserver)
+    }
+
     override fun setTitleText(textView: TextView) {
         textView.setText(R.string.your_previous_rekey_will)
     }
 
-    override fun setDescriptionText(textView: TextView) {
-        val accountDisplayName = rekeyedAccountRekeyConfirmationViewModel.accountDisplayName
-            .getAccountPrimaryDisplayName()
-        val authAccountDisplayName = rekeyedAccountRekeyConfirmationViewModel.authAccountDisplayName
-            .getAccountPrimaryDisplayName()
-        textView.apply {
-            val linkTextColor = ContextCompat.getColor(context, R.color.link_primary)
-            val clickSpannable = getCustomClickableSpan(
-                clickableColor = linkTextColor,
-                onClick = { context?.openUrl(REKEY_SUPPORT_URL) }
-            )
-            val annotatedString = AnnotatedString(
-                stringResId = R.string.account_address_will_no_longer_be_auth,
-                replacementList = listOf(
-                    "account_address" to accountDisplayName,
-                    "auth_account_address" to authAccountDisplayName
-                ),
-                customAnnotationList = listOf("learn_more" to clickSpannable)
-            )
-            highlightColor = ContextCompat.getColor(context, R.color.transparent)
-            movementMethod = LinkMovementMethod.getInstance()
-            text = context?.getXmlStyledString(annotatedString)
-        }
-    }
+    override fun setDescriptionText(textView: TextView) = Unit
 
     override fun setAcceptButton(materialButton: MaterialButton) {
         materialButton.apply {
@@ -83,6 +72,27 @@ class RekeyedAccountRekeyConfirmationBottomSheet : BaseDoubleButtonBottomSheet()
         imageView.apply {
             setImageResource(R.drawable.ic_error)
             imageTintList = ContextCompat.getColorStateList(context, R.color.negative)
+        }
+    }
+
+    private fun updateDescriptionText(accountDisplayName: String, authAccountDisplayName: String) {
+        getDescriptionTextView().apply {
+            val linkTextColor = ContextCompat.getColor(context, R.color.link_primary)
+            val clickSpannable = getCustomClickableSpan(
+                clickableColor = linkTextColor,
+                onClick = { context?.openUrl(REKEY_SUPPORT_URL) }
+            )
+            val annotatedString = AnnotatedString(
+                stringResId = R.string.account_address_will_no_longer_be_auth,
+                replacementList = listOf(
+                    "account_address" to accountDisplayName,
+                    "auth_account_address" to authAccountDisplayName
+                ),
+                customAnnotationList = listOf("learn_more" to clickSpannable)
+            )
+            highlightColor = ContextCompat.getColor(context, R.color.transparent)
+            movementMethod = LinkMovementMethod.getInstance()
+            text = context?.getXmlStyledString(annotatedString)
         }
     }
 

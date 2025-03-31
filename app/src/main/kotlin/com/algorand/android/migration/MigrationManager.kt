@@ -12,16 +12,58 @@
 
 package com.algorand.android.migration
 
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
+import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 @Singleton
 class MigrationManager @Inject constructor(
     private val accountMigrationManager: AccountMigrationManager,
-    private val encryptedPinMigrationManager: EncryptedPinMigrationManager
-) {
-    fun makeMigrations() {
-        encryptedPinMigrationManager.makeMigrationIfNeeded()
-        accountMigrationManager.makeMigrationIfNeeded()
+    private val encryptedPinMigrationManager: EncryptedPinMigrationManager,
+    private val account6xMigrationManager: Account6xMigrationManager,
+    private val peraExceptionLogger: PeraExceptionLogger
+) : DefaultLifecycleObserver {
+
+    private val _migrationResultFlow = MutableSharedFlow<PeraResult<Unit>>()
+    val migrationResultFlow: SharedFlow<PeraResult<Unit>> = _migrationResultFlow.asSharedFlow()
+
+    private var coroutineScope: CoroutineScope? = null
+
+    fun initialize(lifecycle: Lifecycle) {
+        lifecycle.addObserver(this)
+        coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        runMigration()
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+        coroutineScope?.cancel()
+        coroutineScope = null
+    }
+
+    private fun runMigration() {
+        coroutineScope?.launch(Dispatchers.IO) {
+            try {
+                encryptedPinMigrationManager.makeMigrationIfNeeded()
+                accountMigrationManager.makeMigrationIfNeeded()
+                account6xMigrationManager.migrateTo6xIfNeeded()
+                _migrationResultFlow.emit(PeraResult.Success(Unit))
+            } catch (e: Exception) {
+                peraExceptionLogger.logException(e)
+                _migrationResultFlow.emit(PeraResult.Error(e))
+            }
+        }
     }
 }

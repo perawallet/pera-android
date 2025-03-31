@@ -13,7 +13,6 @@
 package com.algorand.android.modules.transaction.detail.domain.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail.BaseKeyRegTransaction.OfflineKeyRegTransaction
 import com.algorand.android.modules.transaction.detail.domain.model.BaseTransactionDetail.BaseKeyRegTransaction.OnlineKeyRegTransaction
@@ -21,16 +20,16 @@ import com.algorand.android.modules.transaction.detail.domain.model.TransactionD
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailPreviewMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
 import com.algorand.android.tooltip.domain.usecase.TransactionDetailTooltipDisplayPreferenceUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.usecase.GetActiveNodeUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.formatNumberWithDecimalSeparators
-import kotlinx.coroutines.flow.flow
+import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
+import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
+import kotlinx.coroutines.flow.flow
 
 @SuppressWarnings("LongParameterList")
 class StandardTransactionDetailPreviewUseCase @Inject constructor(
@@ -39,21 +38,18 @@ class StandardTransactionDetailPreviewUseCase @Inject constructor(
     private val transactionDetailItemMapper: TransactionDetailItemMapper,
     private val transactionDetailTooltipDisplayPreferenceUseCase: TransactionDetailTooltipDisplayPreferenceUseCase,
     private val transactionDetailPreviewMapper: TransactionDetailPreviewMapper,
-    private val accountDetailUseCase: AccountDetailUseCase,
+    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress,
+    private val getAssetDetail: GetAssetDetail,
     getActiveNodeUseCase: GetActiveNodeUseCase,
-    assetDetailUseCase: SimpleAssetDetailUseCase,
-    collectibleUseCase: SimpleCollectibleUseCase,
     clearInnerTransactionStackCacheUseCase: ClearInnerTransactionStackCacheUseCase
 ) : BaseTransactionDetailPreviewUseCase(
-    assetDetailUseCase = assetDetailUseCase,
-    collectibleUseCase = collectibleUseCase,
     transactionDetailItemMapper = transactionDetailItemMapper,
     getActiveNodeUseCase = getActiveNodeUseCase,
     transactionDetailTooltipDisplayPreferenceUseCase = transactionDetailTooltipDisplayPreferenceUseCase,
     clearInnerTransactionStackCacheUseCase = clearInnerTransactionStackCacheUseCase
 ) {
 
-    suspend fun getTransactionDetailPreview(
+    fun getTransactionDetailPreview(
         transactionId: String,
         publicKey: String,
         isInnerTransaction: Boolean
@@ -87,17 +83,17 @@ class StandardTransactionDetailPreviewUseCase @Inject constructor(
     ): TransactionDetailPreview {
         val assetId = getTransactionAssetId(baseTransactionDetail)
         val assetDetail = getAssetDetail(assetId)
-        val assetDecimal = assetDetail?.fractionDecimals ?: DEFAULT_ASSET_DECIMAL
+        val assetDecimal = assetDetail?.getDecimalsOrZero() ?: DEFAULT_ASSET_DECIMAL
         val assetName = AssetName.createShortName(assetDetail?.shortName)
-        val isAlgo = assetId == AssetInformation.ALGO_ID
+        val isAlgo = assetId == ALGO_ID
 
         val transactionAmount = getTransactionDetailAmount(baseTransactionDetail, false)
 
         val receiverAccountPublicKey = baseTransactionDetail.receiverAccountAddress.orEmpty()
         val senderAccountPublicKey = baseTransactionDetail.senderAccountAddress.orEmpty()
 
-        val areAccountsInCache = accountDetailUseCase.isThereAnyAccountWithPublicKey(senderAccountPublicKey) ||
-            accountDetailUseCase.isThereAnyAccountWithPublicKey(receiverAccountPublicKey)
+        val areAccountsInCache = isThereAnyAccountWithAddress(senderAccountPublicKey) ||
+            isThereAnyAccountWithAddress(receiverAccountPublicKey)
 
         val transactionSign = getTransactionSign(
             receiverAccountPublicKey = receiverAccountPublicKey,

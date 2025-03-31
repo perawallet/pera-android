@@ -37,10 +37,10 @@ class WalletConnectArbitraryDataMapper @Inject constructor(
         }
     }
 
-    fun createWalletConnectArbitraryData(
+    suspend fun createWalletConnectArbitraryData(
         peerMeta: WalletConnect.PeerMeta,
         arbitraryData: WCArbitraryData
-    ): WalletConnectArbitraryData? {
+    ): WalletConnectArbitraryData {
         val walletConnectPeerMeta = peerMetaMapper.mapToPeerMeta(peerMeta)
         return arbitraryDataMapper.createWalletConnectArbitraryData(walletConnectPeerMeta, arbitraryData)
     }

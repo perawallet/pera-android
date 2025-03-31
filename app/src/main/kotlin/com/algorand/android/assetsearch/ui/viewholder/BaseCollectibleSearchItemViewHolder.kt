@@ -41,9 +41,9 @@ abstract class BaseCollectibleSearchItemViewHolder(
         if (item !is BaseAssetSearchListItem.AssetListItem.BaseCollectibleSearchListItem) return
         with(binding.collectibleItemView) {
             with(item) {
-                setTitleText(fullName.getName(resources))
+                setTitleText(fullName.assetName)
                 bindImage(baseAssetDrawableProvider)
-                setAssetDescriptionText(shortName.getName(resources), assetId)
+                setAssetDescriptionText(shortName.assetName, assetId)
                 setButtonState(accountAssetItemButtonState)
                 setAssetItemViewClickListeners(this)
             }

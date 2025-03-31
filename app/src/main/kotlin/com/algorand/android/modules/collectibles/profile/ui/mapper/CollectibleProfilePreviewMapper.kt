@@ -12,50 +12,76 @@
 
 package com.algorand.android.modules.collectibles.profile.ui.mapper
 
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaStatusPreview
+import com.algorand.android.modules.collectibles.detail.base.domain.decider.CollectibleDetailDecider
+import com.algorand.android.modules.collectibles.detail.base.ui.mapper.CollectibleMediaItemMapper
+import com.algorand.android.modules.collectibles.detail.base.ui.mapper.CollectibleTraitItemMapper
 import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
 import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
 import com.algorand.android.modules.collectibles.profile.ui.model.CollectibleProfilePreview
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AssetName
+import com.algorand.android.modules.collectibles.util.deciders.NFTAmountFormatDecider
+import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import javax.inject.Inject
 
-class CollectibleProfilePreviewMapper @Inject constructor() {
+class CollectibleProfilePreviewMapper @Inject constructor(
+    private val collectibleMediaItemMapper: CollectibleMediaItemMapper,
+    private val nftAmountFormatDecider: NFTAmountFormatDecider,
+    private val collectibleTraitItemMapper: CollectibleTraitItemMapper,
+    private val collectibleDetailDecider: CollectibleDetailDecider,
+) {
 
-    @SuppressWarnings("LongParameterList")
     fun mapToCollectibleProfilePreview(
-        isLoadingVisible: Boolean,
+        collectibleDetail: CollectibleDetail,
         asaStatusPreview: AsaStatusPreview?,
         nftName: AssetName,
-        collectionNameOfNFT: String?,
-        mediaListOfNFT: List<BaseCollectibleMediaItem>,
-        traitListOfNFT: List<CollectibleTraitItem>?,
-        nftDescription: String?,
         creatorAccountAddressOfNFT: AccountDisplayName,
-        nftId: Long,
-        formattedTotalSupply: String,
-        peraExplorerUrl: String,
-        isPureNFT: Boolean,
-        primaryWarningResId: Int?,
-        secondaryWarningResId: Int?,
-        accountAddress: String
+        accountAddress: String,
+        isOptedInByAccount: Boolean
     ): CollectibleProfilePreview {
         return CollectibleProfilePreview(
-            isLoadingVisible = isLoadingVisible,
             nftName = nftName,
-            collectionNameOfNFT = collectionNameOfNFT,
-            mediaListOfNFT = mediaListOfNFT,
-            traitListOfNFT = traitListOfNFT,
-            nftDescription = nftDescription,
+            collectionNameOfNFT = collectibleDetail.collectionName,
+            mediaListOfNFT = mapToMediaList(collectibleDetail, isOptedInByAccount),
+            traitListOfNFT = mapToTraitList(collectibleDetail),
+            nftDescription = collectibleDetail.collectibleInfo.collectibleDescription,
             creatorAccountAddressOfNFT = creatorAccountAddressOfNFT,
-            nftId = nftId,
-            formattedTotalSupply = formattedTotalSupply,
-            peraExplorerUrl = peraExplorerUrl,
-            isPureNFT = isPureNFT,
-            primaryWarningResId = primaryWarningResId,
-            secondaryWarningResId = secondaryWarningResId,
+            nftId = collectibleDetail.id,
+            formattedTotalSupply = mapToFormattedTotalSupply(collectibleDetail),
+            peraExplorerUrl = collectibleDetail.assetInfo?.explorerUrl.orEmpty(),
+            isPureNFT = collectibleDetail.isPure,
+            primaryWarningResId = collectibleDetailDecider.decideWarningTextRes(collectibleDetail.prismUrl),
+            secondaryWarningResId = null,
             collectibleStatusPreview = asaStatusPreview,
             accountAddress = accountAddress
+        )
+    }
+
+    private fun mapToMediaList(
+        collectibleDetail: CollectibleDetail,
+        isOptedInByAccount: Boolean
+    ): List<BaseCollectibleMediaItem> {
+        return collectibleDetail.collectibleMedias.map { nftMedia ->
+            collectibleMediaItemMapper.mapToCollectibleMediaItem(
+                baseCollectibleMedia = nftMedia,
+                shouldDecreaseOpacity = !isOptedInByAccount,
+                collectibleDetail = collectibleDetail,
+                showMediaButtons = true
+            )
+        }
+    }
+
+    private fun mapToTraitList(collectibleDetail: CollectibleDetail): List<CollectibleTraitItem>? {
+        return collectibleDetail.collectibleInfo.traits?.mapNotNull {
+            collectibleTraitItemMapper.mapToTraitItem(it)
+        }
+    }
+
+    private fun mapToFormattedTotalSupply(collectibleDetail: CollectibleDetail): String {
+        return nftAmountFormatDecider.decideNFTAmountFormat(
+            nftAmount = collectibleDetail.assetInfo?.supply?.total,
+            fractionalDecimal = collectibleDetail.assetInfo?.decimals
         )
     }
 }

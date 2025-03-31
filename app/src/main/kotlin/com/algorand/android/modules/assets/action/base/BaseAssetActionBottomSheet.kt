@@ -18,36 +18,41 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.text.buildSpannedString
-import androidx.lifecycle.Observer
 import com.algorand.android.R
-import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.databinding.BottomSheetAssetActionBinding
-import com.algorand.android.models.AssetInformation
+import com.algorand.android.models.BaseAccountAddress
+import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.addUnnamedAssetName
 import com.algorand.android.utils.copyToClipboard
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.setAssetNameTextColorByVerificationTier
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.model.VerificationTier
 import com.google.android.material.button.MaterialButton
 
 // TODO Refactor this class whenever have a time
 abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_asset_action) {
 
+    private val viewStateCollector: suspend (BaseAssetActionViewModel.ViewState) -> Unit = { state ->
+        when (state) {
+            is BaseAssetActionViewModel.ViewState.Idle -> Unit
+            is BaseAssetActionViewModel.ViewState.DefaultState -> setAccountName(state.accountAddress)
+        }
+    }
+
     protected val binding by viewBinding(BottomSheetAssetActionBinding::bind)
 
     abstract val assetActionViewModel: BaseAssetActionViewModel
 
-    protected var asset: AssetInformation? = null
+    protected var asset: Asset? = null
 
-    // region Observers
-
-    // TODO: Replace this with flow
-    // TODO: We shouldn't use [Resource] in UI layer anymore
-    private val assetDescriptionObserver = Observer<Resource<AssetInformation>> { resource ->
-        resource.use(
+    private val assetCollector: suspend (Resource<Asset>?) -> Unit = { resource ->
+        resource?.use(
             onSuccess = { assetDescription ->
                 asset = assetDescription
                 setAssetDetails(assetDescription)
@@ -58,8 +63,6 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
         )
     }
 
-    //endregion
-
     abstract fun setDescriptionTextView(textView: TextView)
     abstract fun setToolbar(customToolbar: CustomToolbar)
     abstract fun setPositiveButton(materialButton: MaterialButton)
@@ -67,13 +70,12 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
 
     open fun setTransactionFeeTextView(textView: TextView) {}
     open fun setWarningIconImageView(imageView: ImageView) {}
-    open fun setAccountNameTextView(textView: TextView) {}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initArgs()
-        initUi()
         initObservers()
+        initUi()
         with(binding) {
             setDescriptionTextView(descriptionTextView)
             setToolbar(customToolbar)
@@ -81,7 +83,6 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
             setNegativeButton(negativeButton)
             setTransactionFeeTextView(transactionFeeTextView)
             setWarningIconImageView(warningIconImageView)
-            setAccountNameTextView(accountTextView)
         }
     }
 
@@ -90,15 +91,23 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
     open fun initArgs() {}
 
     open fun initObservers() {
-        assetActionViewModel.assetInformationLiveData.observe(viewLifecycleOwner, assetDescriptionObserver)
+        collectLatestOnLifecycle(
+            flow = assetActionViewModel.assetFlow,
+            collection = assetCollector
+        )
+
+        collectLatestOnLifecycle(
+            assetActionViewModel.state,
+            viewStateCollector
+        )
     }
 
-    private fun setAssetDetails(asset: AssetInformation) {
+    private fun setAssetDetails(asset: Asset) {
         with(binding) {
             with(asset) {
                 assetFullNameTextView.text = fullName
                 updateAssetShortNameTextView(shortName, verificationTier)
-                assetIdTextView.text = assetId.toString()
+                assetIdTextView.text = id.toString()
                 copyIDButton.setOnClickListener { onCopyClick() }
             }
         }
@@ -129,6 +138,22 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
             val errorMessage = error.parse(this).toString()
             showGlobalError(errorMessage = errorMessage, tag = baseActivityTag)
             navBack()
+        }
+    }
+
+    private fun setAccountName(accountAddress: BaseAccountAddress.AccountAddress) {
+        binding.accountTextView.apply {
+            with(accountAddress) {
+                text = getDisplayAddress()
+                setDrawable(
+                    start = AccountIconDrawable.create(
+                        context = context,
+                        accountIconDrawablePreview = accountIconDrawablePreview,
+                        sizeResId = R.dimen.spacing_xlarge
+                    )
+                )
+                setOnLongClickListener { onAccountAddressCopied(publicKey); true }
+            }
         }
     }
 

@@ -12,7 +12,7 @@
 
 package com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.mapper
 
-import com.algorand.android.models.AccountSelectionListItem
+import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionPreview
 import javax.inject.Inject
 

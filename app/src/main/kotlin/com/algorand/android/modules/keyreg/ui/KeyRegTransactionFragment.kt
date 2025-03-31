@@ -21,7 +21,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.core.TransactionBaseFragment
+import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.databinding.FragmentKeyRegTransactionBinding
 import com.algorand.android.models.AnnotatedString
@@ -52,7 +52,7 @@ import javax.inject.Inject
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
-class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_reg_transaction) {
+class KeyRegTransactionFragment : TransactionSignBaseFragment(R.layout.fragment_key_reg_transaction) {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
@@ -79,23 +79,23 @@ class KeyRegTransactionFragment : TransactionBaseFragment(R.layout.fragment_key_
     }
 
     private var transactionNote: Pair<String?, Boolean>
-            by Delegates.observable(Pair(null, false)) { _, _, (note, isNoteEnabled) ->
-                with(binding) {
-                    if (isNoteEnabled) {
-                        addEditNoteButton.show()
-                        addEditNoteButton.setOnClickListener {
-                            onAddEditNoteClicked()
-                        }
-                        if (note.isNullOrBlank()) {
-                            setLayoutForAddNote()
-                        } else {
-                            setLayoutForEditNote(note)
-                        }
-                    } else {
-                        setLayoutForBlockedNote(note)
+        by Delegates.observable(Pair(null, false)) { _, _, (note, isNoteEnabled) ->
+            with(binding) {
+                if (isNoteEnabled) {
+                    addEditNoteButton.show()
+                    addEditNoteButton.setOnClickListener {
+                        onAddEditNoteClicked()
                     }
+                    if (note.isNullOrBlank()) {
+                        setLayoutForAddNote()
+                    } else {
+                        setLayoutForEditNote(note)
+                    }
+                } else {
+                    setLayoutForBlockedNote(note)
                 }
             }
+        }
 
     private val isTransactionConfirmedCollector: suspend (String?) -> Unit = { transactionId ->
         if (transactionId == KeyRegTransactionViewModel.TRANSACTION_ERROR) {

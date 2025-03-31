@@ -13,9 +13,8 @@
 package com.algorand.android.modules.assetinbox.send.summary.ui.usecase
 
 import com.algorand.android.R
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
-import com.algorand.android.models.BaseAssetDetail
 import com.algorand.android.models.SignedTransactionDetail
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.modules.assetinbox.send.summary.domain.mapper.Arc59TransactionPayloadMapper
 import com.algorand.android.modules.assetinbox.send.summary.domain.model.Arc59SendSummary
 import com.algorand.android.modules.assetinbox.send.summary.domain.model.Arc59SendTransaction
@@ -24,12 +23,12 @@ import com.algorand.android.modules.assetinbox.send.summary.domain.usecase.GetAr
 import com.algorand.android.modules.assetinbox.send.summary.ui.mapper.Arc59SendSummaryPreviewMapper
 import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryNavArgs
 import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryPreview
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.isGreaterThan
+import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -41,12 +40,11 @@ import kotlinx.coroutines.flow.map
 class Arc59SendSummaryPreviewUseCase @Inject constructor(
     private val getArc59SendSummary: GetArc59SendSummary,
     private val arc59SendSummaryPreviewMapper: Arc59SendSummaryPreviewMapper,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase,
     private val arc59TransactionSendProcessor: Arc59TransactionSendProcessor,
     private val createArc59Transactions: CreateArc59Transactions,
     private val arc59TransactionPayloadMapper: Arc59TransactionPayloadMapper,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
+    private val getAsset: GetAsset
 ) {
 
     fun getInitialPreview(): Arc59SendSummaryPreview {
@@ -59,7 +57,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
         assetId: Long,
         amount: BigInteger
     ): Flow<Arc59SendSummaryPreview> = flow {
-        val assetDetail = getAssetOrCollectibleDetailOrNull(assetId)
+        val assetDetail = getAsset(assetId)
         if (assetDetail == null) {
             val errorEvent = Event(ErrorResource.LocalErrorResource.Local(R.string.an_error_occured))
             val newPreview = preview.copy(isLoading = false, showError = errorEvent)
@@ -100,8 +98,8 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun hasAccountEnoughAlgo(address: String, minimumBalance: BigInteger): Boolean {
-        val accountAlgoAssetData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(ALGO_ID, address)
+    private suspend fun hasAccountEnoughAlgo(address: String, minimumBalance: BigInteger): Boolean {
+        val accountAlgoAssetData = getAccountBaseOwnedAssetData(address, ALGO_ID)
         val safeAlgoAsset = accountAlgoAssetData?.amount ?: BigInteger.ZERO
         return safeAlgoAsset isGreaterThan minimumBalance
     }
@@ -144,7 +142,7 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
     private fun createArc59SendSummaryPreview(
         arc59SendSummary: Arc59SendSummary,
         amount: BigInteger,
-        assetDetail: BaseAssetDetail
+        assetDetail: Asset
     ): Arc59SendSummaryPreview {
         return arc59SendSummaryPreviewMapper(
             arc59SendSummary,
@@ -155,10 +153,5 @@ class Arc59SendSummaryPreviewUseCase @Inject constructor(
             onNavBack = null,
             arc59Transactions = null
         )
-    }
-
-    private fun getAssetOrCollectibleDetailOrNull(assetId: Long): BaseAssetDetail? {
-        return simpleAssetDetailUseCase.getCachedAssetDetail(assetId)?.data
-            ?: simpleCollectibleUseCase.getCachedCollectibleById(assetId)?.data
     }
 }

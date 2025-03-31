@@ -14,8 +14,6 @@ package com.algorand.android.modules.keyreg.domain.usecase
 
 import com.algorand.android.models.Result
 import com.algorand.android.models.TransactionParams
-import com.algorand.android.modules.accounts.domain.usecase.GetAuthAddressOfAnAccount
-import com.algorand.android.modules.accounts.domain.usecase.IsSenderRekeyedToAnotherAccount
 import com.algorand.android.modules.algosdk.domain.model.OfflineKeyRegTransactionPayload
 import com.algorand.android.modules.algosdk.domain.model.OnlineKeyRegTransactionPayload
 import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOfflineTransaction
@@ -23,20 +21,21 @@ import com.algorand.android.modules.algosdk.domain.usecase.BuildKeyRegOnlineTran
 import com.algorand.android.modules.keyreg.domain.model.KeyRegTransaction
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.transaction.domain.GetTransactionParams
-import com.algorand.test.peraFixture
+import com.algorand.wallet.account.detail.domain.usecase.IsAccountRekeyedToAnotherAccount
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class CreateKeyRegTransactionUseCaseTest {
 
-    private val isSenderRekeyedToAnotherAccount: IsSenderRekeyedToAnotherAccount = mockk {
+    private val isAccountRekeyedToAnotherAccount: IsAccountRekeyedToAnotherAccount = mockk {
         coEvery { this@mockk(ACCOUNT_ADDRESS) } returns false
     }
-    private val getAuthAddressOfAnAccount: GetAuthAddressOfAnAccount = mockk {
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress = mockk {
         coEvery { this@mockk(ACCOUNT_ADDRESS) } returns null
     }
     private val getTransactionParams: GetTransactionParams = mockk()
@@ -44,11 +43,11 @@ class CreateKeyRegTransactionUseCaseTest {
     private val buildKeyRegOfflineTransaction: BuildKeyRegOfflineTransaction = mockk()
 
     private val sut = CreateKeyRegTransactionUseCase(
-        isSenderRekeyedToAnotherAccount,
-        getAuthAddressOfAnAccount,
+        isAccountRekeyedToAnotherAccount,
         getTransactionParams,
         buildKeyRegOfflineTransaction,
-        buildKeyRegOnlineTransaction
+        buildKeyRegOnlineTransaction,
+        getAccountRekeyAdminAddress
     )
 
     @Test
@@ -122,7 +121,14 @@ class CreateKeyRegTransactionUseCaseTest {
             note = "note",
             xnote = null
         )
-        val TRANSACTION_PARAMS = peraFixture<TransactionParams>()
+        val TRANSACTION_PARAMS = TransactionParams(
+            minFee = 1000,
+            fee = 0,
+            genesisId = "testnet-v1.0",
+            genesisHash = "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=",
+            lastRound = 14954213L
+        )
+
         val ONLINE_TXN_PAYLOAD = OnlineKeyRegTransactionPayload(
             senderAddress = ONLINE_KEY_REG_TXN_DETAIL.address,
             selectionPublicKey = ONLINE_KEY_REG_TXN_DETAIL.selectionPublicKey.orEmpty(),

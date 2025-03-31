@@ -15,24 +15,22 @@ package com.algorand.android.modules.basemultipleaccountselection.ui.usecase
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import com.algorand.android.customviews.TriStatesCheckBox
-import com.algorand.android.customviews.accountandassetitem.mapper.AccountItemConfigurationMapper
-import com.algorand.android.models.Account
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
 import com.algorand.android.models.ui.AccountAssetItemButtonState.UNCHECKED
-import com.algorand.android.modules.accounticon.ui.usecase.CreateAccountIconDrawableUseCase
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
+import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetSortedAccountsByPreference
 import com.algorand.android.modules.basemultipleaccountselection.ui.mapper.MultipleAccountSelectionListItemMapper
 import com.algorand.android.modules.basemultipleaccountselection.ui.model.MultipleAccountSelectionListItem
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.AccountSortPreferenceUseCase
-import com.algorand.android.modules.sorting.accountsorting.domain.usecase.GetSortedAccountsByPreferenceUseCase
+import com.algorand.wallet.account.detail.domain.model.AccountType
 
 open class BaseMultipleAccountSelectionPreviewUseCase(
     private val multipleAccountSelectionListItemMapper: MultipleAccountSelectionListItemMapper,
-    private val getSortedAccountsByPreferenceUseCase: GetSortedAccountsByPreferenceUseCase,
-    private val accountSortPreferenceUseCase: AccountSortPreferenceUseCase,
+    private val getSortedAccountsByPreference: GetSortedAccountsByPreference,
     private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase,
-    protected val createAccountIconDrawableUseCase: CreateAccountIconDrawableUseCase
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) {
 
     protected fun getSelectedAccountAddressList(
@@ -40,7 +38,7 @@ open class BaseMultipleAccountSelectionPreviewUseCase(
     ): List<String> {
         return multipleAccountSelectionList.mapNotNull {
             if (it is MultipleAccountSelectionListItem.AccountItem && it.accountViewButtonState == CHECKED) {
-                it.accountDisplayName.getRawAccountAddress()
+                it.accountDisplayName.accountAddress
             } else {
                 null
             }
@@ -67,11 +65,9 @@ open class BaseMultipleAccountSelectionPreviewUseCase(
                 is MultipleAccountSelectionListItem.AccountItem -> {
                     item.copy(accountViewButtonState = accountItemCheckBoxState)
                 }
-
                 is MultipleAccountSelectionListItem.AccountHeaderItem -> {
                     item.copy(checkboxState = headerCheckBoxState)
                 }
-
                 else -> item
             }
         }
@@ -84,14 +80,13 @@ open class BaseMultipleAccountSelectionPreviewUseCase(
         val updateAccountList = multipleAccountSelectionList.map { item ->
             when (item) {
                 is MultipleAccountSelectionListItem.AccountItem -> {
-                    if (item.accountDisplayName.getRawAccountAddress() == accountAddress) {
+                    if (item.accountDisplayName.accountAddress == accountAddress) {
                         val checkBoxState = if (item.accountViewButtonState == CHECKED) UNCHECKED else CHECKED
                         item.copy(accountViewButtonState = checkBoxState)
                     } else {
                         item
                     }
                 }
-
                 else -> item
             }
         }
@@ -131,27 +126,25 @@ open class BaseMultipleAccountSelectionPreviewUseCase(
     }
 
     protected suspend fun createAccountItemList(
-        excludedAccountTypes: List<Account.Type>
+        excludedAccountTypes: List<AccountType>
     ): List<MultipleAccountSelectionListItem.AccountItem> {
-        return getSortedAccountsByPreferenceUseCase.getSortedAccountListItems(
-            sortingPreferences = accountSortPreferenceUseCase.getAccountSortPreference(),
+        return getSortedAccountsByPreference(
             excludedAccountTypes = excludedAccountTypes,
             onLoadedAccountConfiguration = {
-                accountItemConfigurationMapper.mapTo(
-                    accountAddress = account.address,
-                    accountDisplayName = accountDisplayNameUseCase.invoke(account.address),
-                    accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(account.address),
-                    accountType = account.type,
+                accountItemConfigurationMapper(
+                    accountAddress = address,
+                    accountDisplayName = getAccountDisplayName(address),
+                    accountIconDrawablePreview = getAccountIconDrawablePreview(address),
+                    accountType = accountType,
                     showWarningIcon = true
                 )
             },
             onFailedAccountConfiguration = {
-                if (this == null) return@getSortedAccountListItems null
-                accountItemConfigurationMapper.mapTo(
-                    accountDisplayName = accountDisplayNameUseCase.invoke(address),
-                    accountAddress = address,
-                    accountType = type,
-                    accountIconDrawablePreview = createAccountIconDrawableUseCase.invoke(address),
+                accountItemConfigurationMapper(
+                    accountDisplayName = getAccountDisplayName(this),
+                    accountAddress = this,
+                    accountType = null,
+                    accountIconDrawablePreview = getAccountIconDrawablePreview(this),
                 )
             }
         ).mapNotNull { accountListItem ->

@@ -14,7 +14,6 @@ package com.algorand.android.nft.domain.usecase
 
 import androidx.annotation.StringRes
 import com.algorand.android.R
-import com.algorand.android.models.AccountDetail
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.models.BaseAccountAssetData.PendingAssetData.BasePendingCollectibleData
@@ -29,9 +28,9 @@ import com.algorand.android.modules.collectibles.listingviewtype.domain.usecase.
 import com.algorand.android.nft.mapper.CollectibleListingItemMapper
 import com.algorand.android.nft.ui.model.BaseCollectibleListData
 import com.algorand.android.nft.ui.model.BaseCollectibleListItem
-import com.algorand.android.nft.utils.CollectibleUtils
 import com.algorand.android.sharedpref.SharedPrefLocalSource
 import com.algorand.android.utils.Event
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import java.math.BigInteger
 
 open class BaseCollectiblesListingPreviewUseCase(
@@ -40,8 +39,8 @@ open class BaseCollectiblesListingPreviewUseCase(
     private val addOnListingViewTypeChangeListenerUseCase: AddOnListingViewTypeChangeListenerUseCase,
     private val removeOnListingViewTypeChangeListenerUseCase: RemoveOnListingViewTypeChangeListenerUseCase,
     private val shouldDisplayOptedInNFTPreferenceUseCase: ShouldDisplayOptedInNFTPreferenceUseCase,
-    private val collectibleUtils: CollectibleUtils,
-    private val clearCollectibleFiltersPreferencesUseCase: ClearCollectibleFiltersPreferencesUseCase
+    private val clearCollectibleFiltersPreferencesUseCase: ClearCollectibleFiltersPreferencesUseCase,
+    private val isAssetOwnedByAccount: IsAssetOwnedByAccount
 ) {
 
     fun addOnListingViewTypeChangeListener(listener: SharedPrefLocalSource.OnChangeListener<Int>) {
@@ -103,12 +102,8 @@ open class BaseCollectiblesListingPreviewUseCase(
         }
     }
 
-    protected suspend fun filterOptedInNFTIfNeed(
-        accountDetail: AccountDetail?,
-        nftData: BaseAccountAssetData
-    ): Boolean {
-        return shouldDisplayOptedInNFTPreferenceUseCase() ||
-            collectibleUtils.isCollectibleOwnedByTheUser(accountDetail, nftData.id)
+    protected suspend fun filterOptedInNFTIfNeed(address: String, nftId: Long): Boolean {
+        return shouldDisplayOptedInNFTPreferenceUseCase() || isAssetOwnedByAccount(address, nftId)
     }
 
     private fun createOwnedCollectibleListItem(

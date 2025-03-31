@@ -27,13 +27,13 @@ import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.databinding.FragmentCollectibleDetailBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.modules.assets.core.ui.domain.model.AssetName
 import com.algorand.android.modules.collectibles.action.optin.CollectibleOptInActionBottomSheet.Companion.OPT_IN_COLLECTIBLE_ACTION_RESULT_KEY
 import com.algorand.android.modules.collectibles.action.optout.CollectibleOptOutConfirmationBottomSheet.Companion.COLLECTIBLE_OPT_OUT_KEY
 import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
 import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
 import com.algorand.android.ui.send.confirmation.ui.TransactionConfirmationFragment.Companion.TRANSACTION_CONFIRMATION_KEY
-import com.algorand.android.utils.AccountDisplayName
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.PrismUrlBuilder
 import com.algorand.android.utils.browser.openAccountAddressInPeraExplorer
 import com.algorand.android.utils.browser.openUrl
@@ -158,7 +158,7 @@ abstract class BaseCollectibleDetailFragment : BaseFragment(R.layout.fragment_co
 
     protected fun setNFTName(collectibleName: AssetName) {
         binding.nftNameTextView.apply {
-            text = collectibleName.getName(resources)
+            text = collectibleName.assetName
             isVisible = !text.isNullOrBlank()
         }
     }
@@ -171,9 +171,11 @@ abstract class BaseCollectibleDetailFragment : BaseFragment(R.layout.fragment_co
     }
 
     protected fun setNFTDescription(collectibleDescription: String?) {
+        val isDescriptionVisible = !collectibleDescription.isNullOrBlank()
         with(binding) {
+            collectibleDescriptionLabelTextView.isVisible = isDescriptionVisible
             with(collectibleDescriptionTextView) {
-                isVisible = !collectibleDescription.isNullOrBlank()
+                isVisible = isDescriptionVisible
                 text = collectibleDescription
                 post {
                     maxLines = nftDescriptionDefaultLineCount.takeIf { lineCount > it } ?: Int.MAX_VALUE
@@ -207,8 +209,8 @@ abstract class BaseCollectibleDetailFragment : BaseFragment(R.layout.fragment_co
     ) {
         with(binding) {
             with(nftOwnerAccountTextView) {
-                text = ownerAddress.getAccountPrimaryDisplayName()
-                setOnLongClickListener { onAccountAddressCopied(ownerAddress.getRawAccountAddress()); true }
+                text = ownerAddress.primaryDisplayName
+                setOnLongClickListener { onAccountAddressCopied(ownerAddress.accountAddress); true }
             }
             nftOwnerAccountIconImageView.setImageResource(optedInAccountTypeDrawableResId)
             accountOwnedNFTCountTextView.text = getString(R.string.asset_amount_with_x, formattedNFTAmount)
@@ -225,16 +227,16 @@ abstract class BaseCollectibleDetailFragment : BaseFragment(R.layout.fragment_co
 
     protected fun setNFTCreatorAccount(creatorAccountAddressOfNFT: AccountDisplayName) {
         with(binding) {
-            creatorAccountGroup.isVisible = creatorAccountAddressOfNFT.getRawAccountAddress().isNotBlank()
+            creatorAccountGroup.isVisible = creatorAccountAddressOfNFT.accountAddress.isNotBlank()
             creatorAccountTextView.apply {
-                text = creatorAccountAddressOfNFT.getAccountPrimaryDisplayName()
+                text = creatorAccountAddressOfNFT.primaryDisplayName
                 setOnLongClickListener {
-                    onAccountAddressCopied(creatorAccountAddressOfNFT.getRawAccountAddress()); true
+                    onAccountAddressCopied(creatorAccountAddressOfNFT.accountAddress); true
                 }
                 setOnClickListener {
                     val activeNodeSlug = baseCollectibleDetailViewModel.getActiveNodeSlug()
                     context.openAccountAddressInPeraExplorer(
-                        accountAddress = creatorAccountAddressOfNFT.getRawAccountAddress(),
+                        accountAddress = creatorAccountAddressOfNFT.accountAddress,
                         networkSlug = activeNodeSlug
                     )
                 }

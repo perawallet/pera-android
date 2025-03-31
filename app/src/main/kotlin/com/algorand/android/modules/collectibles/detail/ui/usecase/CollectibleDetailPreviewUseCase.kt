@@ -12,146 +12,50 @@
 
 package com.algorand.android.modules.collectibles.detail.ui.usecase
 
-import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.models.Account
-import com.algorand.android.models.AccountIconResource
-import com.algorand.android.models.AssetInformation
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
-import com.algorand.android.modules.collectibles.detail.base.domain.decider.CollectibleDetailDecider
-import com.algorand.android.modules.collectibles.detail.base.domain.usecase.GetCollectibleDetailUseCase
-import com.algorand.android.modules.collectibles.detail.base.ui.mapper.CollectibleMediaItemMapper
-import com.algorand.android.modules.collectibles.detail.base.ui.mapper.CollectibleTraitItemMapper
-import com.algorand.android.modules.collectibles.detail.base.ui.model.BaseCollectibleMediaItem
-import com.algorand.android.modules.collectibles.detail.base.ui.model.CollectibleTraitItem
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedCollectibleData
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.assets.core.ui.domain.usecase.GetAssetName
 import com.algorand.android.modules.collectibles.detail.ui.mapper.NFTDetailPreviewMapper
 import com.algorand.android.modules.collectibles.detail.ui.model.NFTDetailPreview
-import com.algorand.android.modules.collectibles.util.deciders.NFTAmountFormatDecider
-import com.algorand.android.nft.domain.model.BaseCollectibleDetail
-import com.algorand.android.usecase.AccountCollectibleDataUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
-import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.Event
+import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.asset.domain.usecase.FetchCollectibleDetail
 import javax.inject.Inject
 
-@SuppressWarnings("LongParameterList")
-open class CollectibleDetailPreviewUseCase @Inject constructor(
+class CollectibleDetailPreviewUseCase @Inject constructor(
     private val nftDetailPreviewMapper: NFTDetailPreviewMapper,
-    private val getCollectibleDetailUseCase: GetCollectibleDetailUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val accountCollectibleDataUseCase: AccountCollectibleDataUseCase,
-    private val collectibleMediaItemMapper: CollectibleMediaItemMapper,
-    private val collectibleTraitItemMapper: CollectibleTraitItemMapper,
-    private val collectibleDetailDecider: CollectibleDetailDecider,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
-    private val baseAssetDrawableProviderDecider: AssetDrawableProviderDecider,
-    private val nftAmountFormatDecider: NFTAmountFormatDecider,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase
+    private val fetchCollectibleDetail: FetchCollectibleDetail,
+    private val getAssetName: GetAssetName,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
+    private val getAccountType: GetAccountType,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountOwnedCollectibleData: GetAccountOwnedCollectibleData
 ) {
-
-    fun getOptOutEventPreview(preview: NFTDetailPreview?, nftId: Long, accountAddress: String): NFTDetailPreview? {
-        val assetInformation = getAssetInformationOfGivenNFT(
-            nftId = nftId,
-            accountAddress = accountAddress
-        ) ?: return null
-        return preview?.copy(optOutNFTEvent = Event(assetInformation))
-    }
 
     fun getSendEventPreviewAccordingToNFTType(preview: NFTDetailPreview?): NFTDetailPreview? {
         return preview?.copy(nftSendEvent = Event(Unit))
     }
 
-    private fun getAssetInformationOfGivenNFT(nftId: Long, accountAddress: String): AssetInformation? {
-        val ownedNFTData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(nftId, accountAddress) ?: return null
-        return AssetInformation.createAssetInformation(
-            baseOwnedAssetData = ownedNFTData,
-            assetDrawableProvider = baseAssetDrawableProviderDecider.getAssetDrawableProvider(nftId)
-        )
-    }
-
-    @SuppressWarnings("LongMethod")
     suspend fun getCollectibleDetailPreview(nftId: Long, accountAddress: String): NFTDetailPreview? {
-        var nftDetailPreview: NFTDetailPreview? = null
-        getCollectibleDetailUseCase.getCollectibleDetail(nftId).use(
-            onSuccess = { baseNFTDetail ->
-                val accountDetail = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
-                val collectibleDetail = accountCollectibleDataUseCase.getAccountCollectibleDetail(
-                    accountAddress = accountAddress,
-                    collectibleId = nftId
-                )
-                val isOwnedByTheUser = collectibleDetail?.isOwnedByTheUser ?: false
-                val isCreatedByOwnerAccount = baseNFTDetail.assetCreator?.publicKey == accountDetail?.account?.address
-                val isOwnedByWatchAccount = accountDetail?.account?.type == Account.Type.WATCH
-                val mediaList = createNFTMediaList(
-                    baseCollectibleDetail = baseNFTDetail,
-                    shouldDecreaseOpacity = false
-                )
-                nftDetailPreview = nftDetailPreviewMapper.mapToNFTDetailPreview(
-                    isLoadingVisible = false,
-                    nftName = AssetName.create(baseNFTDetail.title ?: baseNFTDetail.fullName),
-                    collectionNameOfNFT = baseNFTDetail.collectionName,
-                    optedInAccountTypeDrawableResId = AccountIconResource.getAccountIconResourceByAccountType(
-                        accountType = accountDetail?.account?.type
-                    ).iconResId,
-                    optedInAccountDisplayName = accountDisplayNameUseCase.invoke(
-                        accountAddress = accountDetail?.account?.address.orEmpty()
-                    ),
-                    formattedNFTAmount = nftAmountFormatDecider.decideNFTAmountFormat(
-                        nftAmount = collectibleDetail?.amount,
-                        fractionalDecimal = collectibleDetail?.decimals,
-                        formattedAmount = collectibleDetail?.formattedAmount,
-                        formattedCompactAmount = collectibleDetail?.formattedCompactAmount
-                    ),
-                    mediaListOfNFT = mediaList,
-                    traitListOfNFT = createNFTTraitList(
-                        baseCollectibleDetail = baseNFTDetail
-                    ),
-                    nftDescription = baseNFTDetail.description,
-                    creatorAccountOfNFT = accountDisplayNameUseCase.invoke(
-                        accountAddress = baseNFTDetail.assetCreator?.publicKey.orEmpty(),
-                    ),
-                    nftId = baseNFTDetail.assetId,
-                    formattedTotalSupply = nftAmountFormatDecider.decideNFTAmountFormat(
-                        nftAmount = baseNFTDetail.totalSupply,
-                        fractionalDecimal = baseNFTDetail.fractionDecimals
-                    ),
-                    peraExplorerUrl = baseNFTDetail.explorerUrl.orEmpty(),
-                    isPureNFT = baseNFTDetail.isPure(),
-                    primaryWarningResId = collectibleDetailDecider.decideWarningTextRes(
-                        prismUrl = baseNFTDetail.prismUrl
-                    ),
-                    secondaryWarningResId = collectibleDetailDecider.decideOptedInWarningTextRes(
-                        isOwnedByTheUser = isOwnedByTheUser,
-                        accountType = accountDetail?.account?.type
-                    ),
-                    isCopyEnabled = isMediaCopiable(mediaList.firstOrNull()?.itemType),
-                    isOwnerActionsGroupVisible = isOwnedByTheUser && !isOwnedByWatchAccount,
-                    isOptOutButtonVisible = !isOwnedByTheUser && !isCreatedByOwnerAccount && !isOwnedByWatchAccount
-                )
-            }
-        )
-        return nftDetailPreview
-    }
-
-    private fun isMediaCopiable(mediaType: BaseCollectibleMediaItem.ItemType?): Boolean {
-        return mediaType == BaseCollectibleMediaItem.ItemType.IMAGE
-    }
-
-    private fun createNFTMediaList(
-        baseCollectibleDetail: BaseCollectibleDetail,
-        shouldDecreaseOpacity: Boolean
-    ): List<BaseCollectibleMediaItem> {
-        return baseCollectibleDetail.collectibleMedias?.map {
-            collectibleMediaItemMapper.mapToCollectibleMediaItem(
-                baseCollectibleMedia = it,
-                shouldDecreaseOpacity = shouldDecreaseOpacity,
-                baseCollectibleDetail = baseCollectibleDetail,
-                showMediaButtons = true
+        return fetchCollectibleDetail(nftId).map { collectibleDetail ->
+            val accountType = getAccountType(accountAddress)
+            val ownedCollectibleData = getAccountOwnedCollectibleData(accountAddress, nftId)
+            val isOwnedByTheUser = ownedCollectibleData?.isOwnedByTheUser ?: false
+            val isCreatedByOwnerAccount = collectibleDetail.creatorAddress == accountAddress
+            val isOwnedByWatchAccount = accountType is AccountType.NoAuth
+            nftDetailPreviewMapper.mapToNFTDetailPreview(
+                ownedCollectibleData = ownedCollectibleData,
+                collectibleDetail = collectibleDetail,
+                nftName = getAssetName(collectibleDetail.title ?: collectibleDetail.fullName.orEmpty()),
+                optedInAccountTypeDrawableResId = getAccountIconDrawablePreview(accountAddress).iconResId,
+                optedInAccountDisplayName = getAccountDisplayName(accountAddress),
+                creatorAccountOfNFT = getAccountDisplayName(collectibleDetail.creatorAddress.orEmpty()),
+                isOwnerActionsGroupVisible = isOwnedByTheUser && !isOwnedByWatchAccount,
+                isOptOutButtonVisible = !isOwnedByTheUser && !isCreatedByOwnerAccount && !isOwnedByWatchAccount,
+                accountType = accountType
             )
-        }.orEmpty()
-    }
-
-    private fun createNFTTraitList(baseCollectibleDetail: BaseCollectibleDetail): List<CollectibleTraitItem> {
-        return baseCollectibleDetail.traits?.map { collectibleTraitItemMapper.mapToTraitItem(it) }.orEmpty()
+        }.getDataOrNull()
     }
 }

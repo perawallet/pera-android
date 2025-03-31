@@ -45,6 +45,8 @@ import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepositor
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
+import com.algorand.wallet.account.local.domain.usecase.DeleteAllLocalAccounts
+import com.algorand.wallet.account.local.domain.usecase.DeleteAllLocalAccountsUseCase
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.DeleteLocalAccountUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetAccountMnemonic
@@ -202,6 +204,9 @@ internal object LocalAccountsModule {
     fun provideDeleteLocalAccount(
         useCase: DeleteLocalAccountUseCase
     ): DeleteLocalAccount = useCase
+
+    @Provides
+    fun provideDeleteAllLocalAccounts(useCase: DeleteAllLocalAccountsUseCase): DeleteAllLocalAccounts = useCase
 
     @Provides
     fun provideGetLocalAccounts(

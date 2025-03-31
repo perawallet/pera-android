@@ -27,7 +27,7 @@ class AccountSelectionNftDomainAccountItemViewHolder(
 
     fun bind(item: BaseAccountSelectionListItem.BaseAccountItem.NftDomainAccountItem) {
         with(binding) {
-            accountAddressTextView.text = item.publicKey.toShortenedAddress()
+            accountAddressTextView.text = item.address.toShortenedAddress()
             nftDomainTextview.text = item.displayName
             serviceLogoImageView.context.loadImage(
                 uri = item.serviceLogoUrl.orEmpty(),

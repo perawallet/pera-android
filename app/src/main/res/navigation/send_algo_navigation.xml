@@ -76,7 +76,7 @@
         <argument
             android:name="transactionData"
             android:defaultValue="@null"
-            app:argType="com.algorand.android.models.TransactionData$Send"
+            app:argType="com.algorand.android.models.TransactionSignData$Send"
             app:nullable="true" />
         <argument
             android:name="shouldPopulateAmountWithMax"
@@ -240,7 +240,7 @@
     <fragment
         android:id="@+id/receiverAccountSelectionQrScannerFragment"
         android:name="com.algorand.android.ui.send.receiveraccount.ReceiverAccountSelectionQrScannerFragment"
-        android:label="AssetTransferPreviewFragment"
+        android:label="ReceiverAccountSelectionQrScannerFragment"
         tools:layout="@layout/fragment_qr_code_scanner" />
 
     <fragment
@@ -250,13 +250,13 @@
         tools:layout="@layout/fragment_arc59_express_send">
         <argument
             android:name="transactionData"
-            app:argType="com.algorand.android.models.TransactionData$Send" />
+            app:argType="com.algorand.android.models.TransactionSignData$Send" />
         <action
             android:id="@+id/action_Arc59ExpressSendFragment_to_assetTransferPreviewFragment"
             app:destination="@id/assetTransferPreviewFragment">
             <argument
                 android:name="transactionData"
-                app:argType="com.algorand.android.models.TransactionData$Send" />
+                app:argType="com.algorand.android.models.TransactionSignData$Send" />
         </action>
     </fragment>
 
@@ -266,7 +266,7 @@
         android:label="AssetTransferPreviewFragment">
         <argument
             android:name="transactionData"
-            app:argType="com.algorand.android.models.TransactionData$Send" />
+            app:argType="com.algorand.android.models.TransactionSignData$Send" />
         <action
             android:id="@+id/action_assetTransferPreviewFragment_to_addNoteNavigation"
             app:destination="@id/addNoteNavigation">

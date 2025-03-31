@@ -14,27 +14,27 @@ package com.algorand.android.modules.swap.assetswap.ui.utils
 
 import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.modules.swap.assetswap.domain.model.SwapQuote
 import com.algorand.android.modules.swap.utils.swapFeePadding
-import com.algorand.android.usecase.AccountAssetDataUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.ErrorResource
 import com.algorand.android.utils.ErrorResource.LocalErrorResource.Local
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.isEqualTo
 import com.algorand.android.utils.isLesserThan
+import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import javax.inject.Inject
 
 class SwapBalanceErrorProvider @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val accountAssetDataUseCase: AccountAssetDataUseCase
+    private val getAccountMinBalance: GetAccountMinBalance,
+    private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData
 ) {
 
-    fun checkIfSwapHasError(swapQuote: SwapQuote, accountAddress: String): Event<ErrorResource>? {
+    suspend fun checkIfSwapHasError(swapQuote: SwapQuote, accountAddress: String): Event<ErrorResource>? {
         return when {
             !hasAccountEnoughBalanceToCompleteSwap(swapQuote, accountAddress) -> {
                 val errorResource = if (swapQuote.isFromAssetAlgo) {
@@ -61,13 +61,13 @@ class SwapBalanceErrorProvider @Inject constructor(
         }
     }
 
-    private fun hasAccountEnoughBalanceToCompleteSwap(swapQuote: SwapQuote, accountAddress: String): Boolean {
+    private suspend fun hasAccountEnoughBalanceToCompleteSwap(swapQuote: SwapQuote, accountAddress: String): Boolean {
         val fromAssetAmount = swapQuote.fromAssetAmount.movePointLeft(swapQuote.fromAssetDetail.fractionDecimals)
         val userBalance = getUserBalance(swapQuote.fromAssetDetail.assetId, accountAddress)
         return fromAssetAmount isLesserThan userBalance || fromAssetAmount isEqualTo userBalance
     }
 
-    private fun hasAccountEnoughBalanceToPayFees(swapQuote: SwapQuote, accountAddress: String): Boolean {
+    private suspend fun hasAccountEnoughBalanceToPayFees(swapQuote: SwapQuote, accountAddress: String): Boolean {
         with(swapQuote) {
             val userAlgoBalance = getUserBalance(ALGO_ID, accountAddress)
             val minBalanceUserNeedsToKeep = getUserMinRequiredBalance(accountAddress)
@@ -90,14 +90,12 @@ class SwapBalanceErrorProvider @Inject constructor(
         }
     }
 
-    private fun getUserMinRequiredBalance(accountAddress: String): BigDecimal {
-        val accountInfo = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data
-        return accountInfo?.accountInformation?.getMinAlgoBalance()?.toBigDecimal()?.movePointLeft(ALGO_DECIMALS)
-            ?: BigDecimal.ZERO
+    private suspend fun getUserMinRequiredBalance(accountAddress: String): BigDecimal {
+        return getAccountMinBalance(accountAddress).toBigDecimal().movePointLeft(ALGO_DECIMALS)
     }
 
-    private fun getUserBalance(assetId: Long, accountAddress: String): BigDecimal {
-        val ownedAssetData = accountAssetDataUseCase.getAccountOwnedAssetData(accountAddress, includeAlgo = true)
+    private suspend fun getUserBalance(assetId: Long, accountAddress: String): BigDecimal {
+        val ownedAssetData = getAccountOwnedAssetsData(accountAddress, includeAlgo = true)
             .firstOrNull { it.id == assetId }
         return ownedAssetData?.amount?.toBigDecimal()?.movePointLeft(ownedAssetData.decimals) ?: BigDecimal.ZERO
     }

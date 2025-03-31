@@ -13,6 +13,7 @@
 package com.algorand.android.models
 
 import com.algorand.android.R
+import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import kotlinx.parcelize.Parcelize
 
 sealed class BaseAppCallTransaction : BaseWalletConnectTransaction() {
@@ -33,12 +34,12 @@ sealed class BaseAppCallTransaction : BaseWalletConnectTransaction() {
         override val appId: Long,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val fromAccount: WalletConnectAccount?,
         override val appOnComplete: AppOnComplete,
         override val approvalHash: String?,
         override val stateHash: String?,
-        override val groupId: String?
+        override val groupId: String?,
+        override val transactionSigner: TransactionSigner?
     ) : BaseAppCallTransaction() {
 
         override val fee: Long
@@ -59,12 +60,12 @@ sealed class BaseAppCallTransaction : BaseWalletConnectTransaction() {
         override val appId: Long,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val fromAccount: WalletConnectAccount?,
         override val appOnComplete: AppOnComplete,
         override val approvalHash: String?,
         override val stateHash: String?,
-        override val groupId: String?
+        override val groupId: String?,
+        override val transactionSigner: TransactionSigner?
     ) : BaseAppCallTransaction() {
 
         override val fee: Long
@@ -85,12 +86,12 @@ sealed class BaseAppCallTransaction : BaseWalletConnectTransaction() {
         override val appId: Long?,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val fromAccount: WalletConnectAccount?,
         override val appOnComplete: AppOnComplete,
         override val approvalHash: String?,
         override val stateHash: String?,
         override val groupId: String?,
+        override val transactionSigner: TransactionSigner?,
         val appGlobalSchema: ApplicationCallStateSchema?,
         val appLocalSchema: ApplicationCallStateSchema?,
         val appExtraPages: Int?
@@ -114,13 +115,13 @@ sealed class BaseAppCallTransaction : BaseWalletConnectTransaction() {
         override val appId: Long,
         override val peerMeta: WalletConnectPeerMeta,
         override val signer: WalletConnectTransactionSigner,
-        override val authAddress: String?,
         override val fromAccount: WalletConnectAccount?,
         override val appOnComplete: AppOnComplete,
         override val approvalHash: String?,
         override val stateHash: String?,
         override val groupId: String?,
         override val warningCount: Int?,
+        override val transactionSigner: TransactionSigner?,
         val rekeyToAddress: WalletConnectAddress
     ) : BaseAppCallTransaction() {
 

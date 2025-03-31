@@ -18,9 +18,8 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
-import com.algorand.android.core.TransactionBaseFragment
+import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.databinding.FragmentSenderAccountSelectionBinding
-import com.algorand.android.models.AccountInformation
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.SenderAccountSelectionPreview
 import com.algorand.android.models.ToolbarConfiguration
@@ -28,10 +27,9 @@ import com.algorand.android.ui.accountselection.AccountSelectionAdapter
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import java.math.BigInteger
 
 @AndroidEntryPoint
-class SenderAccountSelectionFragment : TransactionBaseFragment(R.layout.fragment_sender_account_selection) {
+class SenderAccountSelectionFragment : TransactionSignBaseFragment(R.layout.fragment_sender_account_selection) {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         titleResId = R.string.select_account,
@@ -71,56 +69,17 @@ class SenderAccountSelectionFragment : TransactionBaseFragment(R.layout.fragment
         )
     }
 
-    // If user enter Send Algo flow via deeplink or qr code, then we have to check asset transaction params then
-    // we should navigate user to proper screen
-    private fun handleNextNavigation(accountInformation: AccountInformation) {
-        val assetTransaction = senderAccountSelectionViewModel.assetTransaction.copy(
-            senderAddress = accountInformation.address
-        )
-        // TODO: 26.08.2022 Remove all those checks from Fragment, and handle them in usecase, only call events here
-        when {
-            assetTransaction.assetId == -1L -> {
-                SenderAccountSelectionFragmentDirections
-                    .actionSenderAccountSelectionFragmentToAssetSelectionFragment(assetTransaction)
-            }
-
-            assetTransaction.amount == BigInteger.ZERO -> {
-                SenderAccountSelectionFragmentDirections
-                    .actionSenderAccountSelectionFragmentToAssetTransferAmountFragment(assetTransaction)
-            }
-
-            assetTransaction.receiverUser == null -> {
-                SenderAccountSelectionFragmentDirections
-                    .actionSenderAccountSelectionFragmentToReceiverAccountSelectionFragment(assetTransaction)
-            }
-
-            else -> {
-                val transactionData =
-                    senderAccountSelectionViewModel.createSendTransactionData(assetTransaction) ?: return
-
-                if (senderAccountSelectionViewModel.isExpressSendWarningEnabled(transactionData.isArc59Transaction)) {
-                    SenderAccountSelectionFragmentDirections
-                        .actionSenderAccountSelectionFragmentToArc59ExpressSendFragment(
-                            transactionData
-                        )
-                } else {
-                    SenderAccountSelectionFragmentDirections
-                        .actionSenderAccountSelectionFragmentToAssetTransferPreviewFragment(
-                            transactionData
-                        )
-                }
-            }
-        }.apply { nav(this) }
-    }
-
     private fun updateUiWithPreview(preview: SenderAccountSelectionPreview) {
         with(preview) {
             binding.progressBar.root.isVisible = isLoading
             senderAccountSelectionAdapter.submitList(accountList)
             binding.screenStateView.isVisible = isEmptyStateVisible
 
-            senderAccountInformationSuccessEvent?.consume()?.let { handleNextNavigation(it) }
+            senderAccountInformationSuccessEvent?.consume()?.let {
+                senderAccountSelectionViewModel.handleNextNavigation(it)
+            }
             senderAccountInformationErrorEvent?.consume()?.let { handleError(it.getAsResourceError(), binding.root) }
+            navigateToDestination?.consume()?.let { nav(it) }
         }
     }
 

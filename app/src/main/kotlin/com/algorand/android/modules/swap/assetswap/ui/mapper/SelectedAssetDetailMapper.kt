@@ -24,7 +24,7 @@ class SelectedAssetDetailMapper @Inject constructor(
     private val assetDrawableProviderDecider: AssetDrawableProviderDecider
 ) {
 
-    fun mapToSelectedAssetDetail(
+    suspend fun mapToSelectedAssetDetail(
         assetId: Long,
         formattedBalance: String,
         assetShortName: String?,
@@ -43,7 +43,26 @@ class SelectedAssetDetailMapper @Inject constructor(
         )
     }
 
-    fun mapToSelectedAssetDetail(
+    suspend fun mapToSelectedAssetDetail(
+        assetId: Long,
+        formattedBalance: String,
+        assetShortName: String?,
+        verificationTier: com.algorand.wallet.asset.domain.model.VerificationTier?,
+        assetDecimal: Int
+    ): AssetSwapPreview.SelectedAssetDetail {
+        return AssetSwapPreview.SelectedAssetDetail(
+            assetId = assetId,
+            formattedBalance = formattedBalance,
+            assetShortName = AssetName.createShortName(assetShortName),
+            verificationTierConfiguration = verificationTierConfigurationDecider.decideVerificationTierConfiguration(
+                verificationTier
+            ),
+            assetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetId),
+            assetDecimal = assetDecimal
+        )
+    }
+
+    suspend fun mapToSelectedAssetDetail(
         assetId: Long,
         formattedBalance: String,
         assetShortName: AssetName,

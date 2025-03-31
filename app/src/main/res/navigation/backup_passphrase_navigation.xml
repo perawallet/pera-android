@@ -26,7 +26,7 @@
         android:label="fragment_backup_passphrase"
         tools:layout="@layout/fragment_backup_passphrase">
         <argument
-            android:name="publicKeyOfAccountToBackup"
+            android:name="accountToBackup"
             app:argType="string" />
         <argument
             android:name="accountCreation"
@@ -50,7 +50,7 @@
         android:label="fragment_passphrase_validation"
         tools:layout="@layout/fragment_passphrase_validation">
         <argument
-            android:name="publicKeyOfAccountToBackup"
+            android:name="accountToBackup"
             app:argType="string" />
         <argument
             android:name="accountCreation"

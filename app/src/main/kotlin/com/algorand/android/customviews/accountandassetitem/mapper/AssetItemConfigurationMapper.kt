@@ -26,7 +26,7 @@ class AssetItemConfigurationMapper @Inject constructor(
     private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider
 ) {
 
-    fun mapTo(
+    suspend fun mapTo(
         isAmountInSelectedCurrencyVisible: Boolean,
         secondaryValueText: String,
         assetId: Long,
@@ -50,7 +50,7 @@ class AssetItemConfigurationMapper @Inject constructor(
         )
     }
 
-    fun mapTo(
+    suspend fun mapTo(
         assetId: Long,
         assetFullName: AssetName,
         assetShortName: AssetName,

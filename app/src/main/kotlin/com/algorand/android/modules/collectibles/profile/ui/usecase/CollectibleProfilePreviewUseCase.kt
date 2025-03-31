@@ -15,121 +15,75 @@ package com.algorand.android.modules.collectibles.profile.ui.usecase
 import com.algorand.android.R
 import com.algorand.android.mapper.AssetActionMapper
 import com.algorand.android.models.AssetAction
-import com.algorand.android.models.BaseAccountAddress
-import com.algorand.android.modules.accounts.domain.usecase.AccountDisplayNameUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.assets.core.ui.domain.usecase.GetAssetName
 import com.algorand.android.modules.assets.profile.asaprofile.ui.mapper.AsaStatusPreviewMapper
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.AsaStatusPreview
 import com.algorand.android.modules.assets.profile.asaprofile.ui.model.PeraButtonState
-import com.algorand.android.modules.collectibles.detail.base.domain.decider.CollectibleDetailDecider
-import com.algorand.android.modules.collectibles.detail.base.domain.usecase.GetCollectibleDetailUseCase
-import com.algorand.android.modules.collectibles.detail.base.ui.mapper.CollectibleMediaItemMapper
-import com.algorand.android.modules.collectibles.detail.base.ui.mapper.CollectibleTraitItemMapper
 import com.algorand.android.modules.collectibles.profile.ui.mapper.CollectibleProfilePreviewMapper
 import com.algorand.android.modules.collectibles.profile.ui.model.CollectibleProfilePreview
-import com.algorand.android.modules.collectibles.util.deciders.NFTAmountFormatDecider
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.nft.utils.CollectibleUtils
 import com.algorand.android.usecase.AccountAddressUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.utils.AssetName
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.wallet.asset.domain.usecase.FetchCollectibleDetail
 import javax.inject.Inject
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @SuppressWarnings("LongParameterList")
 class CollectibleProfilePreviewUseCase @Inject constructor(
-    private val getCollectibleDetailUseCase: GetCollectibleDetailUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase,
     private val accountAddressUseCase: AccountAddressUseCase,
     private val asaStatusPreviewMapper: AsaStatusPreviewMapper,
     private val collectibleProfilePreviewMapper: CollectibleProfilePreviewMapper,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase,
     private val assetActionMapper: AssetActionMapper,
-    private val collectibleUtils: CollectibleUtils,
-    private val collectibleMediaItemMapper: CollectibleMediaItemMapper,
-    private val collectibleTraitItemMapper: CollectibleTraitItemMapper,
-    private val collectibleDetailDecider: CollectibleDetailDecider,
-    private val nftAmountFormatDecider: NFTAmountFormatDecider,
-    private val accountDisplayNameUseCase: AccountDisplayNameUseCase
+    private val getAssetName: GetAssetName,
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val fetchCollectibleDetail: FetchCollectibleDetail,
+    private val getAccountInformationFlow: GetAccountInformationFlow,
+    private val isAssetOwnedByAccount: IsAssetOwnedByAccount
 ) {
 
-    fun createAssetAction(assetId: Long, accountAddress: String?): AssetAction {
-        val collectibleDetail = simpleCollectibleUseCase.getCachedCollectibleById(assetId)?.data
+    fun createAssetAction(assetId: Long, collectibleFullName: String?, accountAddress: String?): AssetAction {
         return assetActionMapper.mapTo(
             assetId = assetId,
-            fullName = collectibleDetail?.fullName,
-            shortName = collectibleDetail?.shortName,
-            verificationTier = collectibleDetail?.verificationTier,
-            accountAddress = accountAddress,
-            creatorPublicKey = collectibleDetail?.assetCreator?.publicKey
+            assetName = getAssetName(collectibleFullName),
+            accountAddress = accountAddress
         )
     }
 
-    fun getCollectibleProfilePreviewFlow(nftId: Long, accountAddress: String) = flow<CollectibleProfilePreview?> {
-        accountDetailUseCase.getAccountDetailCacheFlow(accountAddress).collect { cachedAccountDetail ->
-            val accountDetail = cachedAccountDetail?.data ?: return@collect
-            getCollectibleDetailUseCase.getCollectibleDetail(nftId).use(
-                onSuccess = { nftDetail ->
-                    val isOptedInByAccount = accountDetailUseCase.isAssetOwnedByAccount(
-                        publicKey = accountAddress,
-                        assetId = nftId
-                    )
-                    val isOwnedByTheUser = collectibleUtils.isCollectibleOwnedByTheUser(
-                        accountDetail = accountDetail,
-                        collectibleAssetId = nftId
-                    )
-                    val asaStatusPreview = createAsaStatusPreview(
-                        isUserHasCollectibleBalance = isOwnedByTheUser,
-                        isCollectibleOwnedByAccount = isOptedInByAccount,
-                        accountAddress = accountAddress,
-                        creatorWalletAddress = nftDetail.assetCreator?.publicKey
-                    )
-                    val preview = collectibleProfilePreviewMapper.mapToCollectibleProfilePreview(
-                        isLoadingVisible = false,
-                        asaStatusPreview = asaStatusPreview,
-                        accountAddress = accountAddress,
-                        nftName = AssetName.create(nftDetail.title ?: nftDetail.fullName),
-                        collectionNameOfNFT = nftDetail.collectionName,
-                        mediaListOfNFT = nftDetail.collectibleMedias?.map { nftMedia ->
-                            collectibleMediaItemMapper.mapToCollectibleMediaItem(
-                                baseCollectibleMedia = nftMedia,
-                                shouldDecreaseOpacity = !isOptedInByAccount,
-                                baseCollectibleDetail = nftDetail,
-                                showMediaButtons = true
-                            )
-                        }.orEmpty(),
-                        traitListOfNFT = nftDetail.traits?.map { collectibleTraitItemMapper.mapToTraitItem(it) },
-                        nftId = nftDetail.assetId,
-                        nftDescription = nftDetail.description,
-                        creatorAccountAddressOfNFT = accountDisplayNameUseCase.invoke(
-                            accountAddress = nftDetail.assetCreator?.publicKey.orEmpty()
-                        ),
-                        formattedTotalSupply = nftAmountFormatDecider.decideNFTAmountFormat(
-                            nftAmount = nftDetail.totalSupply,
-                            fractionalDecimal = nftDetail.fractionDecimals
-                        ),
-                        peraExplorerUrl = nftDetail.explorerUrl.orEmpty(),
-                        isPureNFT = nftDetail.isPure(),
-                        primaryWarningResId = collectibleDetailDecider.decideWarningTextRes(
-                            prismUrl = nftDetail.prismUrl
-                        ),
-                        secondaryWarningResId = null
-                    )
-                    emit(preview)
-                }
-            )
+    fun getCollectibleProfilePreviewFlow(nftId: Long, accountAddress: String): Flow<CollectibleProfilePreview?> {
+        return getAccountInformationFlow(accountAddress).map { accountInfo ->
+            if (accountInfo == null) return@map null
+            fetchCollectibleDetail(nftId).map { nftDetail ->
+                val isOptedInByAccount = accountInfo.hasAsset(nftId)
+                val asaStatusPreview = createAsaStatusPreview(
+                    isUserHasCollectibleBalance = isAssetOwnedByAccount(accountInfo, nftId),
+                    isCollectibleOptedInByAccount = isOptedInByAccount,
+                    accountAddress = accountAddress,
+                    creatorWalletAddress = nftDetail.creatorAddress
+                )
+                collectibleProfilePreviewMapper.mapToCollectibleProfilePreview(
+                    collectibleDetail = nftDetail,
+                    isOptedInByAccount = isOptedInByAccount,
+                    asaStatusPreview = asaStatusPreview,
+                    accountAddress = accountAddress,
+                    nftName = getAssetName(nftDetail.title ?: nftDetail.fullName.orEmpty()),
+                    creatorAccountAddressOfNFT = getAccountDisplayName(nftDetail.creatorAddress.orEmpty())
+                )
+            }.getDataOrNull()
         }
     }
 
-    private fun createAsaStatusPreview(
+    private suspend fun createAsaStatusPreview(
         isUserHasCollectibleBalance: Boolean,
         accountAddress: String,
-        isCollectibleOwnedByAccount: Boolean,
+        isCollectibleOptedInByAccount: Boolean,
         creatorWalletAddress: String?
     ): AsaStatusPreview? {
         return when {
-            !isCollectibleOwnedByAccount -> {
+            !isCollectibleOptedInByAccount -> {
                 asaStatusPreviewMapper.mapToAsaAdditionStatusPreview(
-                    accountAddress = accountAddressUseCase.createAccountAddress(accountAddress),
+                    accountAddress = accountAddressUseCase.getAccountAddress(accountAddress),
                     statusLabelTextResId = R.string.you_can_opt_in_to_this_nft,
                     peraButtonState = PeraButtonState.ADDITION,
                     actionButtonTextResId = R.string.opt_dash_in
@@ -140,15 +94,10 @@ class CollectibleProfilePreviewUseCase @Inject constructor(
                     statusLabelTextResId = R.string.opted_in_to,
                     peraButtonState = PeraButtonState.REMOVAL,
                     actionButtonTextResId = R.string.remove,
-                    accountAddress = accountAddressUseCase.createAccountAddress(accountAddress)
+                    accountAddress = accountAddressUseCase.getAccountAddress(accountAddress)
                 )
             }
             else -> null
         }
-    }
-
-    private fun getCreatorAccountAddress(publicKey: String?): BaseAccountAddress.AccountAddress? {
-        if (publicKey == null) return null
-        return accountAddressUseCase.createAccountAddress(publicKey)
     }
 }

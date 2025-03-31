@@ -15,25 +15,13 @@ package com.algorand.android.usecase
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import com.algorand.android.mapper.AssetAdditionLoadStatePreviewMapper
-import com.algorand.android.mapper.AssetHoldingsMapper
-import com.algorand.android.models.AssetInformation
 import com.algorand.android.models.ui.AssetAdditionLoadStatePreview
 import com.algorand.android.modules.assets.addition.ui.model.AssetAdditionType
-import com.algorand.android.utils.CacheResult
 import javax.inject.Inject
 
 class AssetAdditionUseCase @Inject constructor(
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val assetHoldingsMapper: AssetHoldingsMapper,
     private val assetAdditionLoadStatePreviewMapper: AssetAdditionLoadStatePreviewMapper
 ) {
-
-    suspend fun addAssetAdditionToAccountCache(publicKey: String, assetInformation: AssetInformation) {
-        val cachedAccount = accountDetailUseCase.getCachedAccountDetail(publicKey)?.data ?: return
-        val pendingAssetHolding = assetHoldingsMapper.mapToPendingAdditionAssetHoldings(assetInformation)
-        cachedAccount.accountInformation.addPendingAssetHolding(pendingAssetHolding)
-        accountDetailUseCase.cacheAccountDetail(CacheResult.Success.create(cachedAccount))
-    }
 
     fun createAssetAdditionLoadStatePreview(
         combinedLoadStates: CombinedLoadStates,

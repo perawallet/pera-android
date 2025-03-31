@@ -13,33 +13,25 @@
 package com.algorand.android.usecase
 
 import com.algorand.android.banner.domain.usecase.BannersUseCase
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.utils.AccountCacheManager
+import com.algorand.wallet.account.info.domain.usecase.ClearAccountInformationCache
+import com.algorand.wallet.asset.domain.usecase.ClearAssetCache
 import javax.inject.Inject
 
 class CoreCacheUseCase @Inject constructor(
-    private val accountCacheManager: AccountCacheManager,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val assetDetailUseCase: SimpleAssetDetailUseCase,
-    private val blockPollingUseCase: BlockPollingUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase,
-    private val bannersUseCase: BannersUseCase
+    private val bannersUseCase: BannersUseCase,
+    private val clearAssetCache: ClearAssetCache,
+    private val clearAccountInformationCache: ClearAccountInformationCache
 ) {
 
     suspend fun handleNodeChange() {
-        accountCacheManager.removeCachedData()
-        blockPollingUseCase.clearBlockCache()
-        accountDetailUseCase.clearAccountDetailCache()
-        assetDetailUseCase.clearAssetDetailCache()
-        simpleCollectibleUseCase.clearCollectibleCache()
+        clearAccountInformationCache()
+        clearAssetCache()
         bannersUseCase.clearBannerCache()
     }
 
     suspend fun clearAllCachedData() {
-        accountCacheManager.removeCachedData()
-        accountDetailUseCase.clearAccountDetailCache()
-        assetDetailUseCase.clearAssetDetailCache()
-        simpleCollectibleUseCase.clearCollectibleCache()
+        clearAccountInformationCache()
+        clearAssetCache()
         bannersUseCase.clearBannerCache()
     }
 }

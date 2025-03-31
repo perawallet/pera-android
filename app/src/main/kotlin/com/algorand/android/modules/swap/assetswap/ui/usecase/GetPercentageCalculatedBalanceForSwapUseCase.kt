@@ -12,27 +12,29 @@
 
 package com.algorand.android.modules.swap.assetswap.ui.usecase
 
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetData
 import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForRequest
 import com.algorand.android.modules.swap.assetswap.domain.usecase.GetPeraFeeUseCase
 import com.algorand.android.modules.swap.utils.swapFeePadding
-import com.algorand.android.usecase.AccountAssetDataUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.exceptions.InsufficientAlgoBalance
 import com.algorand.android.utils.isLesserThan
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class GetPercentageCalculatedBalanceForSwapUseCase @Inject constructor(
-    private val accountAssetDataUseCase: AccountAssetDataUseCase,
     private val getPeraFeeUseCase: GetPeraFeeUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase
+    private val getAccountOwnedAssetData: GetAccountOwnedAssetData,
+    private val getAccountInformation: GetAccountInformation,
+    private val getAccountMinBalance: GetAccountMinBalance
 ) {
 
     suspend fun getBalanceForSelectedPercentage(
@@ -95,7 +97,7 @@ class GetPercentageCalculatedBalanceForSwapUseCase @Inject constructor(
         )
     }
 
-    private suspend fun getBalancePercentageForAsset(
+    private fun getBalancePercentageForAsset(
         accountAlgoBalance: BigInteger,
         minRequiredBalance: BigInteger,
         accountAddress: String,
@@ -113,8 +115,7 @@ class GetPercentageCalculatedBalanceForSwapUseCase @Inject constructor(
         if (calculatedAlgoBalance isLesserThan BigDecimal.ZERO) {
             emit(DataResource.Error.Local<BigDecimal>(InsufficientAlgoBalance()))
         } else {
-            val accountAssetData = accountAssetDataUseCase.getAccountOwnedAssetData(accountAddress, includeAlgo = false)
-                .firstOrNull { it.id == fromAssetId }
+            val accountAssetData = getAccountOwnedAssetData(accountAddress, fromAssetId)
 
             accountAssetData?.let {
                 val assetDecimal = accountAssetData.decimals
@@ -161,11 +162,10 @@ class GetPercentageCalculatedBalanceForSwapUseCase @Inject constructor(
         return result ?: DataResource.Error.Local(NullPointerException())
     }
 
-    private fun getMinBalanceAndAccountAlgoBalancePair(accountAddress: String): Pair<BigInteger, BigInteger> {
-        val cachedAccountData = accountDetailUseCase.getCachedAccountDetail(accountAddress)?.data?.accountInformation
-        val minRequiredAlgoBalance = cachedAccountData?.getMinAlgoBalance() ?: BigInteger.ZERO
-        val accountAlgoBalance = cachedAccountData?.getBalance(ALGO_ID) ?: BigInteger.ZERO
-        return minRequiredAlgoBalance to accountAlgoBalance
+    private suspend fun getMinBalanceAndAccountAlgoBalancePair(accountAddress: String): Pair<BigInteger, BigInteger> {
+        val accountInfo = getAccountInformation(accountAddress) ?: return BigInteger.ZERO to BigInteger.ZERO
+        val minRequiredAlgoBalance = getAccountMinBalance(accountInfo)
+        return minRequiredAlgoBalance to accountInfo.amount
     }
 
     companion object {

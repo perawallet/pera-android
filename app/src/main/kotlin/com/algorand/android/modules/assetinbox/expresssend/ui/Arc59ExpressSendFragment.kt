@@ -20,7 +20,7 @@ import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentArc59ExpressSendBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.models.TransactionData
+import com.algorand.android.models.TransactionSignData
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -58,7 +58,7 @@ class Arc59ExpressSendFragment : BaseFragment(R.layout.fragment_arc59_express_se
         navToAssetTransferPreviewFragment(viewModel.transactionData)
     }
 
-    private fun navToAssetTransferPreviewFragment(transactionData: TransactionData.Send) {
+    private fun navToAssetTransferPreviewFragment(transactionData: TransactionSignData.Send) {
         nav(
             Arc59ExpressSendFragmentDirections
                 .actionArc59ExpressSendFragmentToAssetTransferPreviewFragment(transactionData)

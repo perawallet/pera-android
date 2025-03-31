@@ -14,93 +14,78 @@ package com.algorand.android.modules.assets.profile.about.ui.usecase
 
 import androidx.annotation.StringRes
 import com.algorand.android.R
-import com.algorand.android.assetsearch.domain.model.VerificationTier
-import com.algorand.android.assetsearch.domain.model.VerificationTier.SUSPICIOUS
-import com.algorand.android.assetsearch.domain.model.VerificationTier.TRUSTED
-import com.algorand.android.assetsearch.domain.model.VerificationTier.UNVERIFIED
-import com.algorand.android.assetsearch.domain.model.VerificationTier.VERIFIED
-import com.algorand.android.models.AssetCreator
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
-import com.algorand.android.models.BaseAssetDetail
-import com.algorand.android.modules.assets.profile.about.domain.usecase.CacheAssetDetailToAsaProfileLocalCacheUseCase
-import com.algorand.android.modules.assets.profile.about.domain.usecase.ClearAsaProfileLocalCacheUseCase
-import com.algorand.android.modules.assets.profile.about.domain.usecase.GetAssetDetailFlowFromAsaProfileLocalCache
 import com.algorand.android.modules.assets.profile.about.domain.usecase.GetSelectedAssetExchangeValueUseCase
 import com.algorand.android.modules.assets.profile.about.ui.mapper.AssetAboutPreviewMapper
 import com.algorand.android.modules.assets.profile.about.ui.mapper.BaseAssetAboutListItemMapper
 import com.algorand.android.modules.assets.profile.about.ui.model.AssetAboutPreview
 import com.algorand.android.modules.assets.profile.about.ui.model.BaseAssetAboutListItem
 import com.algorand.android.modules.assets.profile.asaprofile.ui.usecase.AsaProfilePreviewUseCase.Companion.MINIMUM_CURRENCY_VALUE_TO_DISPLAY_EXACT_AMOUNT
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.DEFAULT_ASSET_DECIMAL
 import com.algorand.android.utils.browser.addProtocolIfNeed
 import com.algorand.android.utils.browser.removeProtocolIfNeed
 import com.algorand.android.utils.formatAmount
+import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.model.VerificationTier
+import com.algorand.wallet.asset.domain.model.VerificationTier.SUSPICIOUS
+import com.algorand.wallet.asset.domain.model.VerificationTier.TRUSTED
+import com.algorand.wallet.asset.domain.model.VerificationTier.UNKNOWN
+import com.algorand.wallet.asset.domain.model.VerificationTier.UNVERIFIED
+import com.algorand.wallet.asset.domain.model.VerificationTier.VERIFIED
+import com.algorand.wallet.asset.domain.usecase.CacheSingleAssetDetail
+import com.algorand.wallet.asset.domain.usecase.ClearSingleAssetCache
+import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.asset.domain.usecase.GetSingleAssetDetailFlow
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
 class AssetAboutPreviewUseCase @Inject constructor(
-    private val cacheAssetDetailToAsaProfileLocalCacheUseCase: CacheAssetDetailToAsaProfileLocalCacheUseCase,
-    private val getAssetDetailFlowFromAsaProfileLocalCache: GetAssetDetailFlowFromAsaProfileLocalCache,
-    private val clearAsaProfileLocalCacheUseCase: ClearAsaProfileLocalCacheUseCase,
+    private val cacheSingleAssetDetail: CacheSingleAssetDetail,
     private val assetAboutPreviewMapper: AssetAboutPreviewMapper,
     private val baseAssetAboutListItemMapper: BaseAssetAboutListItemMapper,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val getSelectedAssetExchangeValueUseCase: GetSelectedAssetExchangeValueUseCase
+    private val getSelectedAssetExchangeValueUseCase: GetSelectedAssetExchangeValueUseCase,
+    private val clearSingleAssetCache: ClearSingleAssetCache,
+    private val getSingleAssetDetailFlow: GetSingleAssetDetailFlow,
+    private val getAsset: GetAsset
 ) {
 
-    fun clearAsaProfileLocalCache() {
-        clearAsaProfileLocalCacheUseCase.clearAsaProfileLocalCache()
+    suspend fun clearAsaProfileLocalCache() {
+        clearSingleAssetCache()
     }
 
     suspend fun cacheAssetDetailToAsaProfileLocalCache(assetId: Long) {
-        cacheAssetDetailToAsaProfileLocalCacheUseCase.cacheAssetDetailToAsaProfileLocalCache(assetId)
+        cacheSingleAssetDetail(assetId)
     }
 
     fun getAssetAboutPreview(assetId: Long) = flow {
         emit(assetAboutPreviewMapper.mapToAssetAboutPreviewInitialState())
         if (assetId == ALGO_ID) {
-            val cachedAlgoAssetDetail = simpleAssetDetailUseCase.getCachedAssetDetail(assetId)
-            cachedAlgoAssetDetail?.useSuspended(
-                onSuccess = { cachedAlgoDetail ->
-                    val algoAboutPreview = cachedAlgoDetail.data?.run { createAlgoAboutPreview(this) }
-                    emit(algoAboutPreview)
-                }
-            )
+            val algoAssetDetail = getAsset(ALGO_ID) ?: return@flow
+            val algoAboutPreview = createAlgoAboutPreview(algoAssetDetail)
+            emit(algoAboutPreview)
         } else {
-            getAssetDetailFlowFromAsaProfileLocalCache.getAssetDetailFlowFromAsaProfileLocalCache()
-                .collect { cacheResult ->
-                    cacheResult?.useSuspended(
-                        onSuccess = { cachedAssetDetail ->
-                            cachedAssetDetail.data?.let { assetDetail ->
-                                emit(createAssetAboutPreview(assetDetail))
-                            }
-                        }
-                    )
-                }
+            getSingleAssetDetailFlow().collect { assetDetail ->
+                emit(createAssetAboutPreview(assetDetail))
+            }
         }
     }
 
-    private fun createAlgoAboutPreview(assetDetail: BaseAssetDetail): AssetAboutPreview {
+    private fun createAlgoAboutPreview(assetDetail: Asset): AssetAboutPreview {
         val algorandAboutList = mutableListOf<BaseAssetAboutListItem>().apply {
             with(assetDetail) {
                 add(createStatisticsItem(this))
                 add(BaseAssetAboutListItem.DividerItem)
                 add(
-                    createAboutAssetItem(
+                    createAlgoAboutAssetItem(
                         fullName = fullName,
-                        assetId = null,
-                        assetCreator = null,
-                        explorerUrl = null,
-                        projectUrl = null,
-                        asaUrl = url
+                        asaUrl = assetInfo?.url
                     )
                 )
                 add(BaseAssetAboutListItem.DividerItem)
                 add(createAlgoDescriptionItem(R.string.the_algo_is_the_official_cryptocurrency))
-                createSocialMediaItem(discordUrl, telegramUrl, twitterUsername)?.run {
+                createSocialMediaItem(assetInfo?.social)?.run {
                     add(BaseAssetAboutListItem.DividerItem)
                     add(this)
                 }
@@ -110,25 +95,25 @@ class AssetAboutPreviewUseCase @Inject constructor(
         return assetAboutPreviewMapper.mapToAssetAboutPreview(assetAboutListItems = algorandAboutList)
     }
 
-    private fun createAssetAboutPreview(assetDetail: BaseAssetDetail): AssetAboutPreview {
+    private fun createAssetAboutPreview(assetDetail: Asset): AssetAboutPreview {
         val assetAboutList = mutableListOf<BaseAssetAboutListItem>().apply {
             with(assetDetail) {
 
                 add(createStatisticsItem(this))
                 add(BaseAssetAboutListItem.DividerItem)
 
-                add(createAboutAssetItem(fullName, assetId, assetCreator, explorerUrl, projectUrl, url))
+                add(createAboutAssetItem(assetDetail.id, assetInfo))
 
-                createAssetDescriptionItem(assetDescription)?.run {
+                createAssetDescriptionItem(assetInfo?.description)?.run {
                     add(BaseAssetAboutListItem.DividerItem)
                     add(this)
                 }
 
-                createSocialMediaItem(discordUrl, telegramUrl, twitterUsername)?.run {
+                createSocialMediaItem(assetInfo?.social)?.run {
                     add(BaseAssetAboutListItem.DividerItem)
                     add(this)
                 }
-                addReportItemIfNeed(this@apply, verificationTier, assetId, shortName)
+                addReportItemIfNeed(this@apply, verificationTier, assetDetail.id, shortName)
                 addVerificationTierDescriptionIfNeed(this@apply, verificationTier)
             }
         }
@@ -142,13 +127,13 @@ class AssetAboutPreviewUseCase @Inject constructor(
         val position = when (verificationTier) {
             TRUSTED, VERIFIED -> assetAboutList.indexOfFirst { it is BaseAssetAboutListItem.AboutAssetItem } + 1
             SUSPICIOUS -> assetAboutList.indexOfFirst { it is BaseAssetAboutListItem.StatisticsItem }
-            UNVERIFIED -> null
+            UNVERIFIED, UNKNOWN -> null
         }
         val item = when (verificationTier) {
             VERIFIED -> BaseAssetAboutListItem.BadgeDescriptionItem.VerifiedBadgeItem
             TRUSTED -> BaseAssetAboutListItem.BadgeDescriptionItem.TrustedBadgeItem
             SUSPICIOUS -> BaseAssetAboutListItem.BadgeDescriptionItem.SuspiciousBadgeItem
-            UNVERIFIED -> null
+            UNVERIFIED, UNKNOWN -> null
         }
         if (item != null && position != null) {
             assetAboutList.add(position, item)
@@ -167,39 +152,51 @@ class AssetAboutPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun createStatisticsItem(assetDetail: BaseAssetDetail): BaseAssetAboutListItem.StatisticsItem {
+    private fun createStatisticsItem(assetDetail: Asset): BaseAssetAboutListItem.StatisticsItem {
         with(assetDetail) {
             val minAmountToDisplay = BigDecimal.valueOf(MINIMUM_CURRENCY_VALUE_TO_DISPLAY_EXACT_AMOUNT)
             val formattedAssetPrice = getSelectedAssetExchangeValueUseCase
                 .getSelectedAssetExchangeValue(assetDetail = this)
                 ?.getFormattedValue(minValueToDisplayExactAmount = minAmountToDisplay)
+            val formattedTotalSupply = assetDetail.assetInfo?.supply?.total?.formatAmount(
+                decimals = assetDetail.assetInfo?.decimals ?: DEFAULT_ASSET_DECIMAL,
+                isCompact = true,
+                isDecimalFixed = false
+            )
             return baseAssetAboutListItemMapper.mapToStatisticsItem(
                 formattedPriceText = formattedAssetPrice,
-                formattedCompactTotalSupplyText = totalSupply?.formatAmount(
-                    decimals = fractionDecimals ?: DEFAULT_ASSET_DECIMAL,
-                    isCompact = true,
-                    isDecimalFixed = false
-                )
+                formattedCompactTotalSupplyText = formattedTotalSupply
             )
         }
     }
 
-    private fun createAboutAssetItem(
+    private fun createAlgoAboutAssetItem(
         fullName: String?,
-        assetId: Long?,
-        assetCreator: AssetCreator?,
-        explorerUrl: String?,
-        projectUrl: String?,
         asaUrl: String?
     ): BaseAssetAboutListItem.AboutAssetItem {
         return baseAssetAboutListItemMapper.mapToAboutAssetItem(
             assetName = AssetName.create(fullName),
-            assetId = assetId,
-            assetCreatorAddress = assetCreator?.publicKey,
+            assetId = ALGO_ID,
+            assetCreatorAddress = null,
             asaUrl = asaUrl.addProtocolIfNeed(),
             displayAsaUrl = asaUrl.removeProtocolIfNeed(),
-            peraExplorerUrl = explorerUrl,
-            projectWebsiteUrl = projectUrl
+            peraExplorerUrl = null,
+            projectWebsiteUrl = null
+        )
+    }
+
+    private fun createAboutAssetItem(
+        assetId: Long?,
+        assetInfo: Asset.AssetInfo?
+    ): BaseAssetAboutListItem.AboutAssetItem {
+        return baseAssetAboutListItemMapper.mapToAboutAssetItem(
+            assetName = AssetName.create(assetInfo?.name?.fullName),
+            assetId = assetId,
+            assetCreatorAddress = assetInfo?.creator?.publicKey,
+            asaUrl = assetInfo?.url?.addProtocolIfNeed(),
+            displayAsaUrl = assetInfo?.url.removeProtocolIfNeed(),
+            peraExplorerUrl = assetInfo?.explorerUrl,
+            projectWebsiteUrl = assetInfo?.project?.url
         )
     }
 
@@ -216,17 +213,17 @@ class AssetAboutPreviewUseCase @Inject constructor(
         return baseAssetAboutListItemMapper.mapToAlgoDescriptionItem(descriptionTextResId = descriptionTextResId)
     }
 
-    private fun createSocialMediaItem(
-        discordUrl: String?,
-        telegramUrl: String?,
-        twitterUsername: String?
-    ): BaseAssetAboutListItem.SocialMediaItem? {
-        if (discordUrl.isNullOrBlank() && telegramUrl.isNullOrBlank() && twitterUsername.isNullOrBlank()) return null
-        return baseAssetAboutListItemMapper.mapToSocialMediaItem(
-            discordUrl = discordUrl,
-            telegramUrl = telegramUrl,
-            twitterUsername = twitterUsername
-        )
+    private fun createSocialMediaItem(social: Asset.Social?): BaseAssetAboutListItem.SocialMediaItem? {
+        return social?.run {
+            if (discordUrl.isNullOrBlank() && telegramUrl.isNullOrBlank() && twitterUsername.isNullOrBlank()) {
+                return null
+            }
+            return baseAssetAboutListItemMapper.mapToSocialMediaItem(
+                discordUrl = discordUrl,
+                telegramUrl = telegramUrl,
+                twitterUsername = twitterUsername
+            )
+        }
     }
 
     private fun createReportItem(assetId: Long, shortName: String?): BaseAssetAboutListItem.ReportItem {

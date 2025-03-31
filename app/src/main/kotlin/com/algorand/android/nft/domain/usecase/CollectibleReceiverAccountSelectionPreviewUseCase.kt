@@ -16,21 +16,21 @@ import com.algorand.android.R
 import com.algorand.android.mapper.ScreenStateMapper
 import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.models.ScreenState
+import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.nft.mapper.CollectibleReceiverAccountSelectionPreviewMapper
 import com.algorand.android.nft.ui.model.CollectibleReceiverAccountSelectionPreview
-import com.algorand.android.usecase.AccountSelectionListUseCase
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
 class CollectibleReceiverAccountSelectionPreviewUseCase @Inject constructor(
-    private val accountSelectionUseCase: AccountSelectionListUseCase,
+    private val getAccountSelectionAccountsWhichCanSignTransaction: GetAccountSelectionAccountsWhichCanSignTransaction,
     private val previewMapper: CollectibleReceiverAccountSelectionPreviewMapper,
     private val screenStateMapper: ScreenStateMapper
 ) {
 
     fun getAccountListItems() = flow<CollectibleReceiverAccountSelectionPreview> {
         emit(previewMapper.mapToLoadingPreview())
-        val accountListItems = accountSelectionUseCase.createAccountSelectionListAccountItemsWhichCanSignTransaction(
+        val accountListItems = getAccountSelectionAccountsWhichCanSignTransaction(
             showHoldings = false,
             showFailedAccounts = true
         )

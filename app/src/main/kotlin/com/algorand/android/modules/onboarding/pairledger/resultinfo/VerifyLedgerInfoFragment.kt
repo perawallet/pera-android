@@ -12,21 +12,26 @@
 
 package com.algorand.android.modules.onboarding.pairledger.resultinfo
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import android.os.Bundle
+import android.view.View
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.LoginNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.modules.onboarding.pairledger.resultinfo.VerifyLedgerInfoViewModel.ViewState
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraIconBig
+import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.PeraIcon
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraSecondaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,44 +41,77 @@ class VerifyLedgerInfoFragment : BaseInfoFragment() {
 
     private val verifyLedgerInfoViewModel: VerifyLedgerInfoViewModel by viewModels()
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        verifyLedgerInfoViewModel.setDefaultState()
+    }
+
     @Composable
     override fun Icon(modifier: Modifier) =
-        PeraIconBig(
+        PeraIcon(
             painter = painterResource(id = R.drawable.ic_check),
-            contentDescription = "check",
+            contentDescription = stringResource(id = R.string.check),
             modifier = modifier
         )
 
     @Composable
-    override fun Title(modifier: Modifier) = PeraTitleText(
-        modifier = modifier,
-        text = stringResource(id = verifyLedgerInfoViewModel.getPreviewTitle())
-    )
+    override fun Title(modifier: Modifier) {
+        val state = verifyLedgerInfoViewModel.state.collectAsStateWithLifecycle().value
+        val titleText = when (state) {
+            is ViewState.DefaultState -> stringResource(id = state.titleTextRes)
+            else -> ""
+        }
 
-    @Composable
-    override fun Description(modifier: Modifier) {
-        Text(
-            text = stringResource(id = verifyLedgerInfoViewModel.getPreviewDescription()),
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = modifier
+        PeraHeadlineText(
+            modifier = modifier,
+            text = titleText
         )
     }
 
     @Composable
-    override fun PrimaryButton(modifier: Modifier) =
+    override fun Description(modifier: Modifier) {
+        val state = verifyLedgerInfoViewModel.state.collectAsStateWithLifecycle().value
+        val descriptionText = when (state) {
+            is ViewState.DefaultState -> stringResource(id = state.descriptionTextRes)
+            else -> ""
+        }
+
+        PeraBodyText(
+            text = descriptionText,
+            modifier = modifier
+        )
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) {
+        val state = verifyLedgerInfoViewModel.state.collectAsStateWithLifecycle().value
+        val firstButtonText = when (state) {
+            is ViewState.DefaultState -> stringResource(id = state.firstButtonTextRes)
+            else -> ""
+        }
+
         PeraPrimaryButton(
             onClick = { navToMeldNavigation() },
             modifier = modifier,
-            text = stringResource(id = verifyLedgerInfoViewModel.getPreviewFirstButtonText())
+            text = firstButtonText
         )
+    }
 
     @Composable
-    override fun SecondaryButton(modifier: Modifier) =
+    override fun SecondaryButton(modifier: Modifier) {
+        val state = verifyLedgerInfoViewModel.state.collectAsStateWithLifecycle().value
+        val secondButtonText = when (state) {
+            is ViewState.DefaultState -> stringResource(id = state.secondButtonTextRes)
+            else -> ""
+        }
+
         PeraSecondaryButton(
             onClick = { onStartUsingPeraClick() },
             modifier = modifier,
-            text = stringResource(id = verifyLedgerInfoViewModel.getPreviewSecondButtonText())
+            text = secondButtonText
         )
+    }
 
     private fun navToMeldNavigation() {
         nav(VerifyLedgerInfoFragmentDirections.actionVerifyLedgerInfoFragmentToMeldNavigation())

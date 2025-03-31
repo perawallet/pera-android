@@ -13,28 +13,28 @@
 
 package com.algorand.android.utils.validator
 
-import com.algorand.android.models.AssetInformation.Companion.ALGO_ID
 import com.algorand.android.models.AssetTransferAmountValidationResult
-import com.algorand.android.nft.domain.usecase.SimpleCollectibleUseCase
-import com.algorand.android.usecase.AccountDetailUseCase
-import com.algorand.android.usecase.GetBaseOwnedAssetDataUseCase
-import com.algorand.android.usecase.SimpleAssetDetailUseCase
+import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.android.utils.formatAmountAsBigInteger
 import com.algorand.android.utils.isGreaterThan
 import com.algorand.android.utils.isLesserThan
+import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
 class AmountTransactionValidationUseCase @Inject constructor(
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
-    private val accountDetailUseCase: AccountDetailUseCase,
-    private val simpleAssetDetailUseCase: SimpleAssetDetailUseCase,
-    private val simpleCollectibleUseCase: SimpleCollectibleUseCase
+    private val getAccountMinBalance: GetAccountMinBalance,
+    private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
+    private val getAccountInformation: GetAccountInformation,
+    private val getAsset: GetAsset
 ) {
 
-    fun validateAssetAmount(
+    suspend fun validateAssetAmount(
         amountInBigDecimal: BigDecimal,
         senderAddress: String,
         assetId: Long
@@ -59,55 +59,43 @@ class AmountTransactionValidationUseCase @Inject constructor(
         )
     }
 
-    fun getMaximumSendableAmount(address: String, assetId: Long): BigInteger? {
-        val accountInformation =
-            accountDetailUseCase.getCachedAccountDetail(address)?.data?.accountInformation ?: return null
-        val ownedAssetData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, address) ?: return null
-        return if (assetId == ALGO_ID) {
-            ownedAssetData.amount - accountInformation.getMinAlgoBalance() - MIN_FEE.toBigInteger()
+    suspend fun getMaximumSendableAmount(address: String, assetId: Long): BigInteger? {
+        val accountMinRequiredBalance = getAccountMinBalance(address)
+        val ownedAssetData = getAccountBaseOwnedAssetData(address, assetId) ?: return null
+        return if (assetId == AssetConstants.ALGO_ID) {
+            ownedAssetData.amount - accountMinRequiredBalance - MIN_FEE.toBigInteger()
         } else {
             ownedAssetData.amount
         }
     }
 
-    private fun isAmountBiggerThanBalance(address: String, assetId: Long, amount: BigDecimal): Boolean? {
-        val ownedAssetData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, address) ?: return null
+    private suspend fun isAmountBiggerThanBalance(address: String, assetId: Long, amount: BigDecimal): Boolean? {
+        val ownedAssetData = getAccountBaseOwnedAssetData(address, assetId) ?: return null
         val amountAsBigInteger = amount.formatAmountAsBigInteger(ownedAssetData.decimals)
         return amountAsBigInteger.isGreaterThan(ownedAssetData.amount)
     }
 
-    fun isAmountBiggerThanBalance(address: String, assetId: Long, amount: BigInteger): Boolean? {
-        val ownedAssetData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, address) ?: return null
-        return amount.isGreaterThan(ownedAssetData.amount)
+    private suspend fun isBalanceInsufficientForPayingFee(address: String): Boolean? {
+        val accountInformation = getAccountInformation(address) ?: return null
+        val requiredMinBalance = getAccountMinBalance(accountInformation)
+        return accountInformation.amount.isLesserThan(requiredMinBalance + MIN_FEE.toBigInteger())
     }
 
-    private fun isBalanceInsufficientForPayingFee(address: String): Boolean? {
-        val accountInformation =
-            accountDetailUseCase.getCachedAccountDetail(address)?.data?.accountInformation ?: return null
-        return accountInformation.amount.isLesserThan(accountInformation.getMinAlgoBalance() + MIN_FEE.toBigInteger())
-    }
-
-    private fun isMinimumBalanceViolated(
-        address: String,
-        assetId: Long,
-        amount: BigDecimal
-    ): Boolean? {
-        val accountInformation =
-            accountDetailUseCase.getCachedAccountDetail(address)?.data?.accountInformation ?: return null
-        val ownedAssetData = getBaseOwnedAssetDataUseCase.getBaseOwnedAssetData(assetId, address) ?: return null
-        val isThereAnotherAsset = accountInformation.isThereAnyDifferentAsset()
+    private suspend fun isMinimumBalanceViolated(address: String, assetId: Long, amount: BigDecimal): Boolean? {
+        val accountInformation = getAccountInformation(address) ?: return null
+        val requiredMinBalance = getAccountMinBalance(accountInformation)
+        val ownedAssetData = getAccountBaseOwnedAssetData(address, assetId) ?: return null
+        val isThereAnotherAsset = accountInformation.isThereAnOptedInAsset()
         val isThereAppOptedIn = accountInformation.isThereAnOptedInApp()
-        val minimumBalance = accountInformation.getMinAlgoBalance()
         val amountAsBigInteger = amount.formatAmountAsBigInteger(ownedAssetData.decimals)
         return ownedAssetData.isAlgo &&
-            (ownedAssetData.amount - amountAsBigInteger - MIN_FEE.toBigInteger()) isLesserThan minimumBalance &&
+            (ownedAssetData.amount - amountAsBigInteger - MIN_FEE.toBigInteger()) isLesserThan requiredMinBalance &&
             (isThereAnotherAsset || isThereAppOptedIn)
     }
 
-    fun getAmountAsBigInteger(amount: BigDecimal, assetId: Long): BigInteger? {
-        val assetDetail = simpleAssetDetailUseCase.getCachedAssetDetail(assetId)
-            ?: simpleCollectibleUseCase.getCachedCollectibleById(assetId)
-            ?: return null
-        return amount.formatAmountAsBigInteger(assetDetail.data?.fractionDecimals ?: return null)
+    suspend fun getAmountAsBigInteger(amount: BigDecimal, assetId: Long): BigInteger? {
+        val assetDetail = getAsset(assetId) ?: return null
+        val assetDecimal = assetDetail.assetInfo?.decimals ?: return null
+        return amount.formatAmountAsBigInteger(assetDecimal)
     }
 }

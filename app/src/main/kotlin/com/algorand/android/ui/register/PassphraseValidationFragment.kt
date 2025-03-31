@@ -104,9 +104,8 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
     private fun onNextClick() {
         passphraseValidationViewModel.logOnboardingNextClickEvent()
         if (binding.passphraseValidationGroupView.isValidated()) {
-            passphraseValidationViewModel.updateAccountBackupState(
-                args.accountToBackup,
-                isBackedUp = true
+            passphraseValidationViewModel.updateAccountBackupStateToTrue(
+                args.accountToBackup
             )
         } else {
             showGlobalError(errorMessage = getString(R.string.selected_words_are))

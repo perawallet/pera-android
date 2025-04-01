@@ -15,6 +15,7 @@ package com.algorand.android.modules.accounts.domain.usecase
 import androidx.navigation.NavDirections
 import com.algorand.android.R
 import com.algorand.android.banner.domain.model.BaseBanner
+import com.algorand.android.banner.domain.model.BaseBanner.CardsBanner
 import com.algorand.android.banner.domain.model.BaseBanner.GenericBanner
 import com.algorand.android.banner.domain.model.BaseBanner.GovernanceBanner
 import com.algorand.android.banner.domain.model.BaseBanner.StakingBanner
@@ -61,11 +62,11 @@ import com.algorand.android.utils.formatAsCurrency
 import com.algorand.wallet.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
+import java.math.BigDecimal
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import java.math.BigDecimal
-import javax.inject.Inject
 
 // TODO Refactor this class for performance and code quality
 @Suppress("LongParameterList")
@@ -350,6 +351,10 @@ class AccountsPreviewUseCase @Inject constructor(
 
                     is StakingBanner -> {
                         mapToStakingBannerItem(banner, isButtonVisible, isTitleVisible, isDescriptionVisible)
+                    }
+
+                    is CardsBanner -> {
+                        mapToCardsBannerItem(banner, isButtonVisible, isTitleVisible, isDescriptionVisible)
                     }
 
                     is GenericBanner -> {

@@ -28,6 +28,14 @@ sealed class BaseBanner {
         override val buttonUrl: String?
     ) : BaseBanner()
 
+    data class CardsBanner(
+        override val bannerId: Long,
+        override val title: String?,
+        override val description: String?,
+        override val buttonTitle: String?,
+        override val buttonUrl: String?
+    ) : BaseBanner()
+
     data class GovernanceBanner(
         override val bannerId: Long,
         override val title: String?,

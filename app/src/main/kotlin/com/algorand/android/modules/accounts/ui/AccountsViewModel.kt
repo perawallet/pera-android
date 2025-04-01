@@ -23,6 +23,7 @@ import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -35,7 +36,8 @@ class AccountsViewModel @Inject constructor(
     private val accountsPreviewUseCase: AccountsPreviewUseCase,
     private val accountsEventTracker: AccountsEventTracker,
     private val parityManager: ParityManager,
-    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase
+    private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
+    private val peraEventTracker: PeraEventTracker
 ) : BaseViewModel() {
 
     private val _accountPreviewFlow = MutableStateFlow<AccountPreview?>(null)
@@ -101,9 +103,18 @@ class AccountsViewModel @Inject constructor(
     fun onBannerActionButtonClick(bannerType: BannerType) {
         viewModelScope.launch {
             when (bannerType) {
-                BannerType.GOVERNANCE -> accountsEventTracker.logVisitGovernanceEvent()
-                BannerType.STAKING -> accountsEventTracker.logVisitStakingEvent()
-                BannerType.GENERIC -> {}
+                BannerType.GOVERNANCE -> peraEventTracker.logEvent(
+                    PeraClickEvent.TAP_HOME_BANNER_GOVERNANCE
+                )
+                BannerType.STAKING -> peraEventTracker.logEvent(
+                    PeraClickEvent.TAP_HOME_BANNER_STAKING
+                )
+                BannerType.CARDS -> peraEventTracker.logEvent(
+                    PeraClickEvent.TAP_HOME_BANNER_CARDS
+                )
+                BannerType.GENERIC -> peraEventTracker.logEvent(
+                    PeraClickEvent.TAP_HOME_BANNER_GENERIC
+                )
             }
         }
     }

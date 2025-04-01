@@ -19,8 +19,6 @@ import javax.inject.Inject
 
 class AccountsEventTracker @Inject constructor(
     private val accountsAddAccountEventTracker: AccountsAddAccountEventTracker,
-    private val visitGovernanceEventTracker: VisitGovernanceEventTracker,
-    private val visitStakingEventTracker: VisitStakingEventTracker,
     private val trySwapClickEventTracker: SwapTutorialTrySwapClickEventTracker,
     private val laterClickEventTracker: SwapTutorialLaterClickEventTracker,
     private val accountsFragmentAlgoBuyTapEventTracker: AccountsFragmentAlgoBuyTapEventTracker,
@@ -28,14 +26,6 @@ class AccountsEventTracker @Inject constructor(
 
     suspend fun logAddAccountTapEvent() {
         accountsAddAccountEventTracker.logAddAccountTapEvent()
-    }
-
-    suspend fun logVisitGovernanceEvent() {
-        visitGovernanceEventTracker.logVisitGovernanceEvent()
-    }
-
-    suspend fun logVisitStakingEvent() {
-        visitStakingEventTracker.logVisitStakingEvent()
     }
 
     suspend fun logSwapTutorialTrySwapClickEvent() {

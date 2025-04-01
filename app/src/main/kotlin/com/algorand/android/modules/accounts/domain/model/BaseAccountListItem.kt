@@ -229,6 +229,7 @@ sealed class BaseAccountListItem : RecyclerListItem {
         val bannerItemTypes = listOf(
             ItemType.GOVERNANCE_BANNER.ordinal,
             ItemType.STAKING_BANNER.ordinal,
+            ItemType.CARDS_BANNER.ordinal,
             ItemType.GENERIC_BANNER.ordinal,
             ItemType.BACKUP_BANNER.ordinal
         )

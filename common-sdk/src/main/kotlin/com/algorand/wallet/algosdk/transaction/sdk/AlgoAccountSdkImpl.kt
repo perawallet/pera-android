@@ -15,13 +15,11 @@ package com.algorand.wallet.algosdk.transaction.sdk
 import com.algorand.algosdk.sdk.Sdk
 import com.algorand.wallet.algosdk.domain.model.Algo25Account
 import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
-import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import javax.inject.Inject
 
 internal class AlgoAccountSdkImpl @Inject constructor(
-    private val bip39Sdk: PeraBip39Sdk,
-    private val aesPlatformManager: AESPlatformManager
+    private val bip39Sdk: PeraBip39Sdk
 ) : AlgoAccountSdk {
 
     override fun createHdAccount(): HdKeyAccount? {

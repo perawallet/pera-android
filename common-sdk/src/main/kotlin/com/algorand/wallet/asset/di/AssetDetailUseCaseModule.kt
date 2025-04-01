@@ -27,6 +27,7 @@ import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
 import com.algorand.wallet.asset.domain.usecase.GetCollectiblesDetail
 import com.algorand.wallet.asset.domain.usecase.InitializeAssets
 import com.algorand.wallet.asset.domain.usecase.InitializeAssetsUseCase
+import com.algorand.wallet.asset.domain.usecase.IsCollectibleExist
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -93,4 +94,11 @@ internal object AssetDetailUseCaseModule {
     fun provideFetchAndCacheMissingAssets(
         useCase: FetchAndCacheMissingAssetsUseCase
     ): FetchAndCacheMissingAssets = useCase
+
+    @Provides
+    fun provideIsCollectibleExist(
+        repository: AssetRepository
+    ): IsCollectibleExist {
+        return IsCollectibleExist(repository::isCollectibleExist)
+    }
 }

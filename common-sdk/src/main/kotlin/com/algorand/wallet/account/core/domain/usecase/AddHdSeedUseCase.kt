@@ -38,16 +38,12 @@ internal class AddHdSeedUseCase @Inject constructor(
     }
 
     private suspend fun createNewSeed(entropy: ByteArray): PeraResult<Int> {
-        try {
-            val seed = peraBip39Sdk.getSeedFromEntropy(entropy)
-                ?: return PeraResult.Error(Exception("Failed to generate seed from entropy"))
-            val newSeedId = addHdSeed(seed.copyOf(), entropy)
-            setCustomInfo(newSeedId)
-            seed.clearFromMemory()
-            return PeraResult.Success(newSeedId)
-        } catch (e: Exception) {
-            return PeraResult.Error(e)
-        }
+        val seed = peraBip39Sdk.getSeedFromEntropy(entropy)
+            ?: return PeraResult.Error(Exception("Failed to generate seed from entropy"))
+        val newSeedId = addHdSeed(seed.copyOf(), entropy)
+        setCustomInfo(newSeedId)
+        seed.clearFromMemory()
+        return PeraResult.Success(newSeedId)
     }
 
     private suspend fun addHdSeed(seed: ByteArray, entropy: ByteArray): Int {

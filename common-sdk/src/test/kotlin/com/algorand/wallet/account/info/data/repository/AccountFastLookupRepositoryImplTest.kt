@@ -46,7 +46,6 @@ class AccountFastLookupRepositoryImplTest {
         val account = AccountFastLookup(
             algoValue = BigDecimal("1000000.00"),
             usdValue = BigDecimal("150.25"),
-            calculationType = "estimated",
             accountExists = true
         )
         coEvery { mockApi.getAccountFastLookup(address) } returns Response.success(mockResponseData)

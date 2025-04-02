@@ -34,7 +34,6 @@ class AccountFastLookupMapperImplTest {
         val expected = AccountFastLookup(
             algoValue = BigDecimal("1000000"),
             usdValue = BigDecimal("150.25"),
-            calculationType = "estimated",
             accountExists = true
         )
 
@@ -55,7 +54,6 @@ class AccountFastLookupMapperImplTest {
         val expected = AccountFastLookup(
             algoValue = BigDecimal.ZERO.setScale(2),
             usdValue = BigDecimal.ZERO.setScale(2),
-            calculationType = "estimated",
             accountExists = false
         )
 

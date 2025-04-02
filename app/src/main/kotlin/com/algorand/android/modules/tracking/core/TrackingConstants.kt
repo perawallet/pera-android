@@ -45,6 +45,8 @@ internal object PeraClickEvent {
     const val TAP_ONBOARDING_CREATE_PASSPHRASE_SKIP = "onb_create_pass_skip_tap"
     const val TAP_ONBOARDING_WRITE_PASSPHRASE_SKIP = "onb_write_pass_skip_tap"
     const val TAP_ONBOARDING_RECOVER_PASSPHRASE_SKIP = "onb_rev_pass_skip_tap"
+    const val TAP_ONBOARDING_RECOVER_ONEKEY = "onb_createacc_recover_24"
+    const val TAP_ONBOARDING_RECOVER_ALGO25 = "onb_createacc_recover_25"
 }
 
 internal object PeraEvent {

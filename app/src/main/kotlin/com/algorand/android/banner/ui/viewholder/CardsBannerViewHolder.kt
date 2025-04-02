@@ -16,12 +16,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import com.algorand.android.banner.domain.model.BannerType
-import com.algorand.android.databinding.ItemCardsBannerBinding
+import com.algorand.android.databinding.ItemCardBannerBinding
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import com.google.android.material.button.MaterialButton
 
 class CardsBannerViewHolder(
-    private val binding: ItemCardsBannerBinding,
+    private val binding: ItemCardBannerBinding,
     listener: BannerListener
 ) : BaseBannerViewHolder(listener, binding.root) {
 
@@ -41,7 +41,7 @@ class CardsBannerViewHolder(
     companion object : BannerViewHolderCreator {
         override fun create(listener: BannerListener, parent: ViewGroup): BaseBannerViewHolder {
             val binding =
-                ItemCardsBannerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemCardBannerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             return CardsBannerViewHolder(binding, listener)
         }
     }

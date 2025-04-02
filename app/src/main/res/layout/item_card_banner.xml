@@ -16,7 +16,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/spacing_xlarge"
-    android:background="@drawable/bg_cards_banner">
+    android:background="@drawable/bg_card_banner">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/bannerCloseButton"

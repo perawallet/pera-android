@@ -28,7 +28,8 @@ sealed class BaseAccountListItem : RecyclerListItem {
         GOVERNANCE_BANNER,
         STAKING_BANNER,
         GENERIC_BANNER,
-        BACKUP_BANNER
+        BACKUP_BANNER,
+        CARD_BANNER
     }
 
     data class QuickActionsItem(
@@ -104,6 +105,28 @@ sealed class BaseAccountListItem : RecyclerListItem {
 
             override fun areContentsTheSame(other: RecyclerListItem): Boolean {
                 return other is StakingBannerItem && other == this
+            }
+        }
+
+        data class CardBannerItem(
+            override val bannerId: Long,
+            override val buttonText: String?,
+            override val buttonUrl: String?,
+            override val isButtonVisible: Boolean,
+            override val title: String?,
+            override val isTitleVisible: Boolean,
+            override val description: String?,
+            override val isDescriptionVisible: Boolean
+        ) : BaseBannerItem() {
+
+            override val itemType: ItemType = ItemType.CARD_BANNER
+
+            override fun areItemsTheSame(other: RecyclerListItem): Boolean {
+                return other is CardBannerItem && other.bannerId == bannerId
+            }
+
+            override fun areContentsTheSame(other: RecyclerListItem): Boolean {
+                return other is CardBannerItem && other == this
             }
         }
 
@@ -206,6 +229,7 @@ sealed class BaseAccountListItem : RecyclerListItem {
         val bannerItemTypes = listOf(
             ItemType.GOVERNANCE_BANNER.ordinal,
             ItemType.STAKING_BANNER.ordinal,
+            ItemType.CARD_BANNER.ordinal,
             ItemType.GENERIC_BANNER.ordinal,
             ItemType.BACKUP_BANNER.ordinal
         )

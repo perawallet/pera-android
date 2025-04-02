@@ -272,11 +272,16 @@ class AccountPreviewProcessor @Inject constructor(
                         mapToGovernanceBannerItem(banner, isButtonVisible, isTitleVisible, isDescriptionVisible)
                     }
 
-                    is BaseBanner.GenericBanner -> {
-                        mapToGenericBannerItem(banner, isButtonVisible, isTitleVisible, isDescriptionVisible)
-                    }
                     is BaseBanner.StakingBanner -> {
                         mapToStakingBannerItem(banner, isButtonVisible, isTitleVisible, isDescriptionVisible)
+                    }
+
+                    is BaseBanner.CardBanner -> {
+                        mapToCardBannerItem(banner, isButtonVisible, isTitleVisible, isDescriptionVisible)
+                    }
+
+                    is BaseBanner.GenericBanner -> {
+                        mapToGenericBannerItem(banner, isButtonVisible, isTitleVisible, isDescriptionVisible)
                     }
                 }
             }

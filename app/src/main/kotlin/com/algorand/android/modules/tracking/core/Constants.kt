@@ -16,6 +16,11 @@ internal object PeraClickEvent {
     const val TAP_LOWERMENU_NFTS = "lowermenu_nfts_tap"
     const val TAP_LOWERMENU_SETTINGS = "lowermenu_settings_tap"
 
+    const val TAP_HOME_BANNER_STAKING = "homescr_visitstaking"
+    const val TAP_HOME_BANNER_GOVERNANCE = "homescr_visitgovernance"
+    const val TAP_HOME_BANNER_CARD = "homescr_visitcard"
+    const val TAP_HOME_BANNER_GENERIC = "homescr_visitgeneric"
+
     const val TAP_BOTTOM_NAVIGATION_BROWSE_DAPPS = "bottommenu_browse_dapps_tap"
     const val TAP_BOTTOM_NAVIGATION_BUY_ALGO = "bottommenu_algo_buy_tap"
     const val TAP_BOTTOM_NAVIGATION_CARDS = "bottommenu_cards_tap"

@@ -15,5 +15,6 @@ package com.algorand.android.banner.domain.model
 enum class BannerType {
     GENERIC,
     GOVERNANCE,
-    STAKING
+    STAKING,
+    CARD
 }

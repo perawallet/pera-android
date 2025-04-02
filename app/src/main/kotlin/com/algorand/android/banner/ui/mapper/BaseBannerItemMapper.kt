@@ -55,6 +55,24 @@ class BaseBannerItemMapper @Inject constructor() {
         )
     }
 
+    fun mapToCardBannerItem(
+        cardBanner: BaseBanner.CardBanner,
+        isButtonVisible: Boolean,
+        isTitleVisible: Boolean,
+        isDescriptionVisible: Boolean
+    ): BaseAccountListItem.BaseBannerItem.CardBannerItem {
+        return BaseAccountListItem.BaseBannerItem.CardBannerItem(
+            bannerId = cardBanner.bannerId,
+            title = cardBanner.title,
+            description = cardBanner.description,
+            buttonText = cardBanner.buttonTitle,
+            buttonUrl = cardBanner.buttonUrl,
+            isButtonVisible = isButtonVisible,
+            isTitleVisible = isTitleVisible,
+            isDescriptionVisible = isDescriptionVisible
+        )
+    }
+
     fun mapToGenericBannerItem(
         genericBanner: BaseBanner.GenericBanner,
         isButtonVisible: Boolean,

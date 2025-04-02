@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.banner.ui.viewholder.BackupBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.BaseBannerViewHolder
+import com.algorand.android.banner.ui.viewholder.CardsBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.GenericBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.GovernanceBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.StakingBannerViewHolder
@@ -26,6 +27,7 @@ import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.ACCOUNT_ERROR
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.ACCOUNT_SUCCESS
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.BACKUP_BANNER
+import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.CARD_BANNER
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.GENERIC_BANNER
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.GOVERNANCE_BANNER
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.HEADER
@@ -100,6 +102,16 @@ class AccountAdapter(
         }
     }
 
+    private val cardBaseBannerListener = object : BaseBannerViewHolder.BannerListener {
+        override fun onActionButtonClick(url: String, bannerType: BannerType) {
+            accountAdapterListener.onBannerActionButtonClick(url = url, bannerType = bannerType)
+        }
+
+        override fun onCloseBannerClick(bannerId: Long) {
+            accountAdapterListener.onBannerCloseButtonClick(bannerId)
+        }
+    }
+
     private val backupBannerListener = object : BackupBannerViewHolder.Listener {
         override fun onActionButtonClick() {
             accountAdapterListener.onBackupBannerActionButtonClick()
@@ -139,6 +151,7 @@ class AccountAdapter(
             ACCOUNT_ERROR.ordinal -> AccountErrorItemViewHolder.create(parent, accountErrorClickListener)
             GOVERNANCE_BANNER.ordinal -> GovernanceBannerViewHolder.create(governanceBaseBannerListener, parent)
             STAKING_BANNER.ordinal -> StakingBannerViewHolder.create(stakingBaseBannerListener, parent)
+            CARD_BANNER.ordinal -> CardsBannerViewHolder.create(cardBaseBannerListener, parent)
             GENERIC_BANNER.ordinal -> GenericBannerViewHolder.create(baseBannerListener, parent)
             BACKUP_BANNER.ordinal -> BackupBannerViewHolder.create(parent, backupBannerListener)
             QUICK_ACTIONS.ordinal -> AccountsQuickActionsViewHolder.create(parent, accountsQuickActionsListener)

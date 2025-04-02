@@ -22,6 +22,7 @@ class BannerTypeDecider @Inject constructor() {
         return when (bannerTypeResponse) {
             BannerTypeResponse.GOVERNANCE -> BannerType.GOVERNANCE
             BannerTypeResponse.STAKING -> BannerType.STAKING
+            BannerTypeResponse.CARD -> BannerType.CARD
             BannerTypeResponse.GENERIC -> BannerType.GENERIC
             BannerTypeResponse.OTHER -> BannerType.GENERIC
             else -> BannerType.GENERIC

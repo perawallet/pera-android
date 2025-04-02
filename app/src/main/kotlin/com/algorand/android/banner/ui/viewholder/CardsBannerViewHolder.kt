@@ -35,7 +35,7 @@ class CardsBannerViewHolder(
         get() = binding.bannerDescriptionTextView
 
     override fun initActionButton(item: BaseAccountListItem.BaseBannerItem) {
-        initActionButton(item, BannerType.CARDS)
+        initActionButton(item, BannerType.CARD)
     }
 
     companion object : BannerViewHolderCreator {

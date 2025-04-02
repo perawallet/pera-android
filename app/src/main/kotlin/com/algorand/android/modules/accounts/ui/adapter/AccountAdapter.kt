@@ -27,7 +27,7 @@ import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.ACCOUNT_ERROR
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.ACCOUNT_SUCCESS
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.BACKUP_BANNER
-import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.CARDS_BANNER
+import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.CARD_BANNER
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.GENERIC_BANNER
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.GOVERNANCE_BANNER
 import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem.ItemType.HEADER
@@ -102,7 +102,7 @@ class AccountAdapter(
         }
     }
 
-    private val cardsBaseBannerListener = object : BaseBannerViewHolder.BannerListener {
+    private val cardBaseBannerListener = object : BaseBannerViewHolder.BannerListener {
         override fun onActionButtonClick(url: String, bannerType: BannerType) {
             accountAdapterListener.onBannerActionButtonClick(url = url, bannerType = bannerType)
         }
@@ -151,7 +151,7 @@ class AccountAdapter(
             ACCOUNT_ERROR.ordinal -> AccountErrorItemViewHolder.create(parent, accountErrorClickListener)
             GOVERNANCE_BANNER.ordinal -> GovernanceBannerViewHolder.create(governanceBaseBannerListener, parent)
             STAKING_BANNER.ordinal -> StakingBannerViewHolder.create(stakingBaseBannerListener, parent)
-            CARDS_BANNER.ordinal -> CardsBannerViewHolder.create(cardsBaseBannerListener, parent)
+            CARD_BANNER.ordinal -> CardsBannerViewHolder.create(cardBaseBannerListener, parent)
             GENERIC_BANNER.ordinal -> GenericBannerViewHolder.create(baseBannerListener, parent)
             BACKUP_BANNER.ordinal -> BackupBannerViewHolder.create(parent, backupBannerListener)
             QUICK_ACTIONS.ordinal -> AccountsQuickActionsViewHolder.create(parent, accountsQuickActionsListener)

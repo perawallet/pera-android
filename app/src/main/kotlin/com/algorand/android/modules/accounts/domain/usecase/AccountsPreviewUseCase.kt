@@ -15,7 +15,7 @@ package com.algorand.android.modules.accounts.domain.usecase
 import androidx.navigation.NavDirections
 import com.algorand.android.R
 import com.algorand.android.banner.domain.model.BaseBanner
-import com.algorand.android.banner.domain.model.BaseBanner.CardsBanner
+import com.algorand.android.banner.domain.model.BaseBanner.CardBanner
 import com.algorand.android.banner.domain.model.BaseBanner.GenericBanner
 import com.algorand.android.banner.domain.model.BaseBanner.GovernanceBanner
 import com.algorand.android.banner.domain.model.BaseBanner.StakingBanner
@@ -353,8 +353,8 @@ class AccountsPreviewUseCase @Inject constructor(
                         mapToStakingBannerItem(banner, isButtonVisible, isTitleVisible, isDescriptionVisible)
                     }
 
-                    is CardsBanner -> {
-                        mapToCardsBannerItem(banner, isButtonVisible, isTitleVisible, isDescriptionVisible)
+                    is CardBanner -> {
+                        mapToCardBannerItem(banner, isButtonVisible, isTitleVisible, isDescriptionVisible)
                     }
 
                     is GenericBanner -> {

@@ -38,6 +38,16 @@ class BannerMapper @Inject constructor() {
         )
     }
 
+    fun mapToCardBanner(bannerDetailDTO: BannerDetailDTO): BaseBanner.CardBanner {
+        return BaseBanner.CardBanner(
+            bannerId = bannerDetailDTO.bannerId,
+            title = bannerDetailDTO.title,
+            description = bannerDetailDTO.description,
+            buttonTitle = bannerDetailDTO.buttonText,
+            buttonUrl = bannerDetailDTO.buttonUrl
+        )
+    }
+
     fun mapToGenericBanner(bannerDetailDTO: BannerDetailDTO): BaseBanner.GenericBanner {
         return BaseBanner.GenericBanner(
             bannerId = bannerDetailDTO.bannerId,

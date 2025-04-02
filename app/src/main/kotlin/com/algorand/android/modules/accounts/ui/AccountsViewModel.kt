@@ -109,8 +109,8 @@ class AccountsViewModel @Inject constructor(
                 BannerType.STAKING -> peraEventTracker.logEvent(
                     PeraClickEvent.TAP_HOME_BANNER_STAKING
                 )
-                BannerType.CARDS -> peraEventTracker.logEvent(
-                    PeraClickEvent.TAP_HOME_BANNER_CARDS
+                BannerType.CARD -> peraEventTracker.logEvent(
+                    PeraClickEvent.TAP_HOME_BANNER_CARD
                 )
                 BannerType.GENERIC -> peraEventTracker.logEvent(
                     PeraClickEvent.TAP_HOME_BANNER_GENERIC

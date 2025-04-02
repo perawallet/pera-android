@@ -16,5 +16,5 @@ enum class BannerType {
     GENERIC,
     GOVERNANCE,
     STAKING,
-    CARDS
+    CARD
 }

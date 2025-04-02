@@ -27,6 +27,6 @@ internal class AccountFastLookupRepositoryImpl @Inject constructor(
 
     override suspend fun fetchAccountFastLookup(accountAddress: String): PeraResult<AccountFastLookup> {
         return request { api.getAccountFastLookup(accountAddress) }
-            .map(accountFastLookupMapper::invoke)
+            .map { accountFastLookupMapper(it) }
     }
 }

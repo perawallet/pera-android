@@ -26,20 +26,7 @@ internal class AccountFastLookupRepositoryImpl @Inject constructor(
 ) : AccountFastLookupRepository {
 
     override suspend fun fetchAccountFastLookup(accountAddress: String): PeraResult<AccountFastLookup> {
-        return fetch(accountAddress)
-    }
-
-    private suspend fun fetch(
-        address: String
-    ): PeraResult<AccountFastLookup> {
-        return request { api.getAccountFastLookup(address) }.use(
-            onSuccess = { response ->
-                val accountFastLookup = accountFastLookupMapper.invoke(response = response)
-                PeraResult.Success(accountFastLookup)
-            },
-            onFailed = { exception, code ->
-                PeraResult.Error(exception, code)
-            }
-        )
+        return request { api.getAccountFastLookup(accountAddress) }
+            .map(accountFastLookupMapper::invoke)
     }
 }

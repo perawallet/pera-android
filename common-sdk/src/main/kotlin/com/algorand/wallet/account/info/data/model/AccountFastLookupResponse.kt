@@ -16,14 +16,14 @@ import com.google.gson.annotations.SerializedName
 
 internal data class AccountFastLookupResponse(
     @SerializedName("algo_value")
-    val algoValue: String,
+    val algoValue: String?,
 
     @SerializedName("usd_value")
-    val usdValue: String,
+    val usdValue: String?,
 
     @SerializedName("calculation_type")
-    val calculationType: String,
+    val calculationType: String?,
 
     @SerializedName("account_exists")
-    val accountExists: Boolean
+    val accountExists: Boolean?
 )

@@ -22,10 +22,9 @@ internal class AccountFastLookupMapperImpl @Inject constructor() : AccountFastLo
         response: AccountFastLookupResponse
     ): AccountFastLookup {
         return AccountFastLookup(
-            algoValue = response.algoValue.toBigDecimalOrNull() ?: BigDecimal.ZERO,
-            usdValue = response.usdValue.toBigDecimalOrNull() ?: BigDecimal.ZERO,
-            calculationType = response.calculationType,
-            accountExists = response.accountExists,
+            algoValue = response.algoValue?.toBigDecimalOrNull() ?: BigDecimal.ZERO,
+            usdValue = response.usdValue?.toBigDecimalOrNull() ?: BigDecimal.ZERO,
+            accountExists = response.accountExists ?: false,
         )
     }
 }

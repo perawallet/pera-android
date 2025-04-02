@@ -5,6 +5,5 @@ import java.math.BigDecimal
 data class AccountFastLookup(
     val algoValue: BigDecimal,
     val usdValue: BigDecimal,
-    val calculationType: String,
     val accountExists: Boolean
 )

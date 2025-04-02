@@ -14,9 +14,9 @@ package com.algorand.android.modules.firebase.token.model
 
 sealed class FirebaseTokenResult {
 
-    object TokenLoading : FirebaseTokenResult()
+    data object TokenLoading : FirebaseTokenResult()
 
-    object TokenLoaded : FirebaseTokenResult()
+    data object TokenLoaded : FirebaseTokenResult()
 
-    object TokenFailed : FirebaseTokenResult()
+    data object TokenFailed : FirebaseTokenResult()
 }

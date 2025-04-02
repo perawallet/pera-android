@@ -58,7 +58,6 @@ import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
-import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
@@ -172,9 +171,6 @@ class MainActivity :
 
     @Inject
     lateinit var firebaseAnalytics: FirebaseAnalytics
-
-    @Inject
-    lateinit var firebaseTokenManager: FirebaseTokenManager
 
     @Inject
     lateinit var inAppReviewManager: InAppReviewManager
@@ -587,7 +583,7 @@ class MainActivity :
         )
 
         collectLatestOnLifecycle(
-            flow = firebaseTokenManager.firebaseTokenResultFlow,
+            flow = mainViewModel.firebaseTokenResultFlow,
             collection = firebaseTokenResultCollector
         )
 

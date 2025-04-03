@@ -119,11 +119,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                     nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
                 }
             }
-            if (bannerType == BannerType.STAKING) {
-
-            } else {
-
-            }
         }
 
         override fun onBuySellClick() {

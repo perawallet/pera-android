@@ -36,8 +36,12 @@ import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.signTx
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
+import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
+import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import javax.inject.Inject
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,7 +54,9 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
     private val externalTransactionQueuingHelper: ExternalTransactionQueuingHelper,
     private val getTransactionSigner: GetTransactionSigner,
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
-    private val getHdKeyPrivateKey: GetHdKeyPrivateKey
+    private val getHdSeed: GetHdSeed,
+    private val getLocalAccount: GetLocalAccount,
+    private val signHdKeyTransaction: SignHdKeyTransaction
 ) : LifecycleScopedCoroutineOwner() {
 
     private val _signResultFlow = MutableStateFlow<ExternalTransactionSignResult>(NotInitialized)
@@ -164,7 +170,7 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
                     signTransactionWithSecretKey(this@signTransaction, getAlgo25SecretKey(transactionSigner.address)!!)
                 }
                 is TransactionSigner.HdKey -> {
-                    signTransactionWithSecretKey(this@signTransaction, getHdKeyPrivateKey(transactionSigner.address)!!)
+                    signHdTransaction(this@signTransaction, transactionSigner.address)
                 }
                 is TransactionSigner.LedgerBle -> {
                     sendTransactionWithLedger(transactionSigner, currentTransactionIndex, totalTransactionCount)
@@ -227,6 +233,23 @@ open class ExternalTransactionSignManager<TRANSACTION : ExternalTransaction> @In
     private fun signTransactionWithSecretKey(transaction: ExternalTransaction, secretKey: ByteArray) {
         val signedTransaction = transaction.transactionByteArray?.signTx(secretKey)
         onTransactionSigned(transaction, signedTransaction)
+    }
+
+    private suspend fun signHdTransaction(transaction: ExternalTransaction, accountAddress: String) {
+        val transactionBytes = transaction.transactionByteArray ?: return handleSignError(transaction)
+        val hdKey = getLocalAccount(accountAddress) as? LocalAccount.HdKey ?: return handleSignError(transaction)
+        val seed = getHdSeed(seedId = hdKey.seedId) ?: return handleSignError(transaction)
+
+        val transactionSignedByteArray = signHdKeyTransaction.signTransaction(
+            transactionBytes, seed.copyOf(), hdKey.account, hdKey.change, hdKey.keyIndex
+        ) ?: return handleSignError(transaction)
+
+        seed.clearFromMemory()
+        onTransactionSigned(transaction, transactionSignedByteArray)
+    }
+
+    private fun handleSignError(transaction: ExternalTransaction) {
+        onTransactionSigned(transaction, null)
     }
 
     protected open fun onTransactionSigned(transaction: ExternalTransaction, signedTransaction: ByteArray?) {

@@ -41,7 +41,12 @@ import com.algorand.android.utils.ListQueuingHelper
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.signTx
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
+import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
+import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import javax.inject.Inject
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
@@ -51,7 +56,10 @@ class WalletConnectTransactionSignManager @Inject constructor(
     private val ledgerBleSearchManager: LedgerBleSearchManager,
     private val ledgerBleOperationManager: LedgerBleOperationManager,
     private val signHelper: WalletConnectTransactionSignHelper,
-    private val getAlgo25SecretKey: GetAlgo25SecretKey
+    private val getAlgo25SecretKey: GetAlgo25SecretKey,
+    private val getHdSeed: GetHdSeed,
+    private val getLocalAccount: GetLocalAccount,
+    private val signHdKeyTransaction: SignHdKeyTransaction
 ) : LifecycleScopedCoroutineOwner() {
 
     val signResultLiveData: LiveData<WalletConnectSignResult>
@@ -158,20 +166,59 @@ class WalletConnectTransactionSignManager @Inject constructor(
         totalTransactionCount: Int?
     ) {
         when (transactionSigner) {
-            is TransactionSigner.Algo25 -> {
-                val secretKey = getAlgo25SecretKey(transactionSigner?.address.orEmpty()) ?: run {
-                    signHelper.cacheDequeuedItem(null)
-                    return
-                }
-                signHelper.cacheDequeuedItem(decodedTransaction?.signTx(secretKey))
-            }
+            is TransactionSigner.Algo25 -> handleAlgo25TransactionSigning()
+            is TransactionSigner.HdKey -> handleHdKeyTransactionSigning()
             is TransactionSigner.LedgerBle -> sendTransactionWithLedger(
                 ledgerDetail = transactionSigner as TransactionSigner.LedgerBle,
                 currentTransactionIndex = currentTransactionIndex,
                 totalTransactionCount = totalTransactionCount
             )
-            else -> signHelper.cacheDequeuedItem(null)
+            else -> cacheNullDequeuedItem()
         }
+    }
+
+    private suspend fun BaseWalletConnectTransaction.handleAlgo25TransactionSigning() {
+        val signerAddress = transactionSigner?.address.orEmpty()
+        val secretKey = getAlgo25SecretKey(signerAddress) ?: return cacheNullDequeuedItem()
+        val signedTransaction = decodedTransaction?.signTx(secretKey)
+        signHelper.cacheDequeuedItem(signedTransaction)
+    }
+
+    private suspend fun BaseWalletConnectTransaction.handleHdKeyTransactionSigning() {
+        val signerAddress = transactionSigner?.address
+        if (signerAddress.isNullOrBlank()) {
+            return cacheNullDequeuedItem()
+        }
+
+        val transactionBytes = decodedTransaction ?: return cacheNullDequeuedItem()
+
+        getLocalAccount(signerAddress).let { localAccount ->
+            when (localAccount) {
+                is LocalAccount.HdKey -> signHdKeyTransaction(transactionBytes, localAccount)
+                else -> return cacheNullDequeuedItem()
+            }
+        }
+    }
+
+    private suspend fun signHdKeyTransaction(
+        transactionBytes: ByteArray,
+        localAccount: LocalAccount.HdKey
+    ) {
+        val seed = this.getHdSeed(seedId = localAccount.seedId) ?: return cacheNullDequeuedItem()
+
+        val transactionSignedByteArray = signHdKeyTransaction.signTransaction(
+            transactionBytes,
+            seed.copyOf(),
+            localAccount.account,
+            localAccount.change,
+            localAccount.keyIndex
+        ) ?: return cacheNullDequeuedItem()
+        seed.clearFromMemory()
+        signHelper.cacheDequeuedItem(transactionSignedByteArray)
+    }
+
+    private fun cacheNullDequeuedItem() {
+        signHelper.cacheDequeuedItem(null)
     }
 
     private fun sendTransactionWithLedger(

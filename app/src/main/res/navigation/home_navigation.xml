@@ -553,6 +553,9 @@
         <action
             android:id="@+id/action_accountsFragment_to_StakingFragment"
             app:destination="@id/stakingFragment" />
+        <action
+            android:id="@+id/action_accountsFragment_to_CardsFragment"
+            app:destination="@id/cardsFragment" />
     </fragment>
 
     <fragment

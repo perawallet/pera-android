@@ -214,6 +214,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
     }
 
     private fun navigateToRecoverWithPassphraseFragment(onboardingAccountType: OnboardingAccountType) {
+        recoveryAccountInfoViewModel.logRecoverAccountTypeClickEvent(onboardingAccountType)
         nav(RecoverAccountInfoFragmentDirections
             .actionRecoverAccountInfoFragmentToRecoverWithPassphraseNavigation(
                 mnemonic = null,

@@ -108,7 +108,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
         override fun onBannerActionButtonClick(url: String, bannerType: BannerType) {
             accountsViewModel.onBannerActionButtonClick(bannerType)
-            when(bannerType) {
+            when (bannerType) {
                 BannerType.STAKING -> {
                     nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
                 }

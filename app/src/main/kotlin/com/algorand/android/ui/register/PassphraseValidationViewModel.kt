@@ -86,6 +86,7 @@ class PassphraseValidationViewModel @Inject constructor(
     }
 
     private suspend fun getMnemonic(args: PassphraseValidationFragmentArgs): List<String> {
+
         args.accountToBackup?.let { accountAddress ->
             getLocalAccount(accountAddress)?.let { return handleLocalAccountMnemonic(it) }
         }
@@ -107,7 +108,7 @@ class PassphraseValidationViewModel @Inject constructor(
             is LocalAccount.Algo25 -> {
                 getAlgo25SecretKey(address = localAccount.algoAddress)?.let { secretKey ->
                     try {
-                        algoAccountSdk.getMnemonicFromSecretKey(secretKey)?.split(" ") ?: emptyList()
+                        algoAccountSdk.getMnemonicFromAlgo25SecretKey(secretKey)?.split(" ") ?: emptyList()
                     } catch (e: Exception) {
                         peraExceptionLogger.logException(e)
                         emptyList()
@@ -133,7 +134,7 @@ class PassphraseValidationViewModel @Inject constructor(
                 (accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey?.let { encryptedAlgo25Key ->
                     aesPlatformManager.decryptByteArray(encryptedAlgo25Key).let { secretKey ->
                         try {
-                            algoAccountSdk.getMnemonicFromSecretKey(secretKey)?.split(" ") ?: emptyList()
+                            algoAccountSdk.getMnemonicFromAlgo25SecretKey(secretKey)?.split(" ") ?: emptyList()
                         } catch (e: Exception) {
                             peraExceptionLogger.logException(e)
                             emptyList()

@@ -12,10 +12,12 @@
 
 package com.algorand.wallet.algosdk.transaction.sdk
 
+import com.algorand.algosdk.account.Account
 import com.algorand.algosdk.sdk.Sdk
 import com.algorand.wallet.algosdk.domain.model.Algo25Account
 import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
+import java.security.NoSuchAlgorithmException
 import javax.inject.Inject
 
 internal class AlgoAccountSdkImpl @Inject constructor(
@@ -25,14 +27,6 @@ internal class AlgoAccountSdkImpl @Inject constructor(
     override fun createHdAccount(): HdKeyAccount? {
         return try {
             bip39Sdk.createHdKeyAccount()
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    override fun recoverHdAccount(mnemonic: String): HdKeyAccount? {
-        return try {
-            bip39Sdk.getHdKeyAccountFromMnemonic(mnemonic)
         } catch (e: Exception) {
             null
         }
@@ -52,6 +46,14 @@ internal class AlgoAccountSdkImpl @Inject constructor(
         }
     }
 
+    override fun getMnemonicFromAlgo25SecretKey(secretKey: ByteArray): String? {
+        return try {
+            Account(secretKey).toMnemonic()
+        } catch (e: NoSuchAlgorithmException) {
+            null
+        }
+    }
+
     override fun recoverAlgo25Account(mnemonic: String): Algo25Account? {
         return try {
             var secretKey = Sdk.mnemonicToPrivateKey(mnemonic)
@@ -63,14 +65,6 @@ internal class AlgoAccountSdkImpl @Inject constructor(
             secretKey.clearFromMemory()
             output
         } catch (e: Exception) {
-            null
-        }
-    }
-
-    override fun getMnemonicFromSecretKey(secretKey: ByteArray): String? {
-        return try {
-            Sdk.mnemonicFromPrivateKey(secretKey)
-        } catch (exception: Exception) {
             null
         }
     }

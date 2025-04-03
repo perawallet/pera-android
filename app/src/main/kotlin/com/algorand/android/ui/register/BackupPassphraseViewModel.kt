@@ -60,7 +60,6 @@ class BackupPassphraseViewModel @Inject constructor(
         args.accountCreation?.let {
             passphrase = handleAccountCreationMnemonic(it.type, it)
         }
-
         if (passphrase.isEmpty()) {
             args.accountToBackup?.let { accountAddress ->
                 getLocalAccount(accountAddress)?.let {
@@ -86,7 +85,7 @@ class BackupPassphraseViewModel @Inject constructor(
             is LocalAccount.Algo25 -> {
                 getAlgo25SecretKey(address = localAccount.algoAddress)?.let { secretKey ->
                     try {
-                        algoAccountSdk.getMnemonicFromSecretKey(secretKey)?.split(" ") ?: emptyList()
+                        algoAccountSdk.getMnemonicFromAlgo25SecretKey(secretKey)?.split(" ") ?: emptyList()
                     } catch (e: Exception) {
                         peraExceptionLogger.logException(e)
                         emptyList()
@@ -112,7 +111,7 @@ class BackupPassphraseViewModel @Inject constructor(
                 (accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey?.let { encryptedAlgo25Key ->
                     aesPlatformManager.decryptByteArray(encryptedAlgo25Key).let { secretKey ->
                         try {
-                            algoAccountSdk.getMnemonicFromSecretKey(secretKey)?.split(" ") ?: emptyList()
+                            algoAccountSdk.getMnemonicFromAlgo25SecretKey(secretKey)?.split(" ") ?: emptyList()
                         } catch (e: Exception) {
                             peraExceptionLogger.logException(e)
                             emptyList()

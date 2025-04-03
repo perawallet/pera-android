@@ -64,7 +64,7 @@ class BackupPassphraseViewModel @Inject constructor(
 
                 secretKey?.let {
                     try {
-                        val mnemonic = algoAccountSdk.getMnemonicFromSecretKey(it)
+                        val mnemonic = algoAccountSdk.getMnemonicFromAlgo25SecretKey(it)
                             ?: throw Exception("Mnemonic cannot be null.")
                         mnemonic
                     } catch (exception: Exception) {

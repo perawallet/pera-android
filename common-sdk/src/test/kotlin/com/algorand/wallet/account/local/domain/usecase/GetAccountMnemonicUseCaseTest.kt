@@ -64,7 +64,7 @@ class GetAccountMnemonicUseCaseTest {
     fun `EXPECT error WHEN account type is Algo25 and mnemonic is blank`() = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns ALGO_25
         coEvery { getAlgo25SecretKey(ADDRESS) } returns SECRET_KEY
-        coEvery { algoAccountSdk.getMnemonicFromSecretKey(SECRET_KEY) } returns ""
+        coEvery { algoAccountSdk.getMnemonicFromAlgo25SecretKey(SECRET_KEY) } returns ""
 
         val result = sut(ADDRESS)
 
@@ -75,7 +75,7 @@ class GetAccountMnemonicUseCaseTest {
     fun `EXPECT error WHEN account type is Algo25 and mnemonic is null`() = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns ALGO_25
         coEvery { getAlgo25SecretKey(ADDRESS) } returns SECRET_KEY
-        coEvery { algoAccountSdk.getMnemonicFromSecretKey(SECRET_KEY) } returns null
+        coEvery { algoAccountSdk.getMnemonicFromAlgo25SecretKey(SECRET_KEY) } returns null
 
         val result = sut(ADDRESS)
 
@@ -86,7 +86,7 @@ class GetAccountMnemonicUseCaseTest {
     fun `EXPECT mnemonic WHEN account type is Algo25 and mnemonic is valid`() = runTest {
         coEvery { getLocalAccount(ADDRESS) } returns ALGO_25
         coEvery { getAlgo25SecretKey(ADDRESS) } returns SECRET_KEY
-        coEvery { algoAccountSdk.getMnemonicFromSecretKey(SECRET_KEY) } returns MNEMONIC
+        coEvery { algoAccountSdk.getMnemonicFromAlgo25SecretKey(SECRET_KEY) } returns MNEMONIC
 
         val result = sut(ADDRESS)
 

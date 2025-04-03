@@ -18,9 +18,13 @@ import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingVerifyPassphraseEventTracker
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.custom.domain.usecase.SetAddressesBackedUp
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
@@ -30,6 +34,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
+@Suppress("LongParameterList")
 @HiltViewModel
 class PassphraseValidationViewModel @Inject constructor(
     private val onboardingVerifyPassphraseEventTracker: OnboardingVerifyPassphraseEventTracker,
@@ -40,6 +45,9 @@ class PassphraseValidationViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val setAddressesBackedUp: SetAddressesBackedUp,
+    private val getLocalAccount: GetLocalAccount,
+    private val getHdEntropy: GetHdEntropy,
+    private val peraExceptionLogger: PeraExceptionLogger
 ) : BaseViewModel(),
     EventViewModel<PassphraseValidationViewModel.ViewEvent> by eventDelegate,
     StateViewModel<PassphraseValidationViewModel.ViewState> by stateDelegate {
@@ -78,30 +86,63 @@ class PassphraseValidationViewModel @Inject constructor(
     }
 
     private suspend fun getMnemonic(args: PassphraseValidationFragmentArgs): List<String> {
-        val encryptedEntropy = (args.accountCreation?.type as? AccountCreation.Type.HdKey)?.encryptedEntropy
-        val passphrase = encryptedEntropy?.let {
-            val entropy = aesPlatformManager.decryptByteArray(it)
-            peraBip39Sdk.getMnemonicFromEntropy(entropy)
-        } ?: run {
-            val encryptedAlgo25Key =
-                (args.accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey
-
-            val secretKey = encryptedAlgo25Key?.let {
-                aesPlatformManager.decryptByteArray(encryptedAlgo25Key)
-            } ?: getAlgo25SecretKey(args.accountToBackup)
-
-            secretKey?.let {
-                try {
-                    val mnemonic = algoAccountSdk.getMnemonicFromSecretKey(it)
-                        ?: throw Exception("Mnemonic cannot be null.")
-                    mnemonic
-                } catch (exception: Exception) {
-                    null
-                }
-            } ?: run { null }
+        args.accountToBackup?.let { accountAddress ->
+            getLocalAccount(accountAddress)?.let { return handleLocalAccountMnemonic(it) }
         }
-        return passphrase?.split(" ") ?: emptyList()
+
+        args.accountCreation?.type?.let { accountType ->
+            return handleAccountCreationMnemonic(accountType, args.accountCreation)
+        }
+
+        return emptyList()
     }
+
+    private suspend fun handleLocalAccountMnemonic(localAccount: LocalAccount): List<String> =
+        when (localAccount) {
+            is LocalAccount.HdKey -> {
+                getHdEntropy(seedId = localAccount.seedId)?.let { entropy ->
+                    peraBip39Sdk.getMnemonicFromEntropy(entropy)?.split(" ") ?: emptyList()
+                } ?: emptyList()
+            }
+            is LocalAccount.Algo25 -> {
+                getAlgo25SecretKey(address = localAccount.algoAddress)?.let { secretKey ->
+                    try {
+                        algoAccountSdk.getMnemonicFromSecretKey(secretKey)?.split(" ") ?: emptyList()
+                    } catch (e: Exception) {
+                        peraExceptionLogger.logException(e)
+                        emptyList()
+                    }
+                } ?: emptyList()
+            }
+            else -> emptyList()
+        }
+
+    private fun handleAccountCreationMnemonic(
+        accountType: AccountCreation.Type,
+        accountCreation: AccountCreation?
+    ): List<String> =
+        when (accountType) {
+            is AccountCreation.Type.HdKey -> {
+                accountType.encryptedEntropy.let { encryptedEntropy ->
+                    aesPlatformManager.decryptByteArray(encryptedEntropy).let { entropy ->
+                        peraBip39Sdk.getMnemonicFromEntropy(entropy)?.split(" ") ?: emptyList()
+                    }
+                }
+            }
+            is AccountCreation.Type.Algo25 -> {
+                (accountCreation?.type as? AccountCreation.Type.Algo25)?.encryptedSecretKey?.let { encryptedAlgo25Key ->
+                    aesPlatformManager.decryptByteArray(encryptedAlgo25Key).let { secretKey ->
+                        try {
+                            algoAccountSdk.getMnemonicFromSecretKey(secretKey)?.split(" ") ?: emptyList()
+                        } catch (e: Exception) {
+                            peraExceptionLogger.logException(e)
+                            emptyList()
+                        }
+                    }
+                } ?: emptyList()
+            }
+            else -> emptyList()
+        }
 
     sealed interface ViewState {
         data object Idle : ViewState

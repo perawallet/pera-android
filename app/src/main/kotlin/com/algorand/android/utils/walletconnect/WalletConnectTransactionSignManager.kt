@@ -178,18 +178,14 @@ class WalletConnectTransactionSignManager @Inject constructor(
     }
 
     private suspend fun BaseWalletConnectTransaction.handleAlgo25TransactionSigning() {
-        val signerAddress = transactionSigner?.address.orEmpty()
+        val signerAddress = transactionSigner?.address ?: return cacheNullDequeuedItem()
         val secretKey = getAlgo25SecretKey(signerAddress) ?: return cacheNullDequeuedItem()
-        val signedTransaction = decodedTransaction?.signTx(secretKey)
+        val signedTransaction = decodedTransaction?.signTx(secretKey) ?: return cacheNullDequeuedItem()
         signHelper.cacheDequeuedItem(signedTransaction)
     }
 
     private suspend fun BaseWalletConnectTransaction.handleHdKeyTransactionSigning() {
-        val signerAddress = transactionSigner?.address
-        if (signerAddress.isNullOrBlank()) {
-            return cacheNullDequeuedItem()
-        }
-
+        val signerAddress = transactionSigner?.address ?: return cacheNullDequeuedItem()
         val transactionBytes = decodedTransaction ?: return cacheNullDequeuedItem()
 
         getLocalAccount(signerAddress).let { localAccount ->

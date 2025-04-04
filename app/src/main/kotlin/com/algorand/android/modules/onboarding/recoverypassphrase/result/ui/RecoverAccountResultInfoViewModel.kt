@@ -12,9 +12,8 @@
 
 package com.algorand.android.modules.onboarding.recoverypassphrase.result.ui
 
-import javax.inject.Inject
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.core.BaseViewModel
 import com.algorand.android.R
 import com.algorand.android.usecase.LockPreferencesUseCase
 import com.algorand.android.utils.launchIO
@@ -22,13 +21,14 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCount
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class RecoverAccountResultInfoViewModel @Inject constructor(
     private val getLocalAccountCount: GetLocalAccountCount,
     private val lockPreferencesUseCase: LockPreferencesUseCase,
-    private val stateDelegate: StateDelegate<ViewState>,
-) : ViewModel(), StateViewModel<RecoverAccountResultInfoViewModel.ViewState> by stateDelegate {
+    private val stateDelegate: StateDelegate<ViewState>
+) : BaseViewModel(), StateViewModel<RecoverAccountResultInfoViewModel.ViewState> by stateDelegate {
 
     init {
         initViewState()

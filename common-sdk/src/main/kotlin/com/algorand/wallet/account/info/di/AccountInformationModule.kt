@@ -68,6 +68,8 @@ import com.algorand.wallet.account.info.domain.usecase.GetAllFailedCachedAccount
 import com.algorand.wallet.account.info.domain.usecase.GetAllSuccessfullyCachedAccountAddresses
 import com.algorand.wallet.account.info.domain.usecase.GetCachedAccountInformationCountFlow
 import com.algorand.wallet.account.info.domain.usecase.GetEarliestLastFetchedRound
+import com.algorand.wallet.account.info.domain.usecase.GetRegisteredHdKeys
+import com.algorand.wallet.account.info.domain.usecase.GetRegisteredHdKeysUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsAccountCachedSuccessfully
 import com.algorand.wallet.account.info.domain.usecase.IsAccountCachedSuccessfullyUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAnyLocalAccount
@@ -99,7 +101,7 @@ internal object AccountInformationModule {
     @Provides
     @Singleton
     fun provideAccountFastLookupApiService(
-        @Named("mobileAlgorandRetrofitInterface") retrofit: Retrofit
+        @Named("mobileAlgorandFastLookupRetrofitInterface") retrofit: Retrofit
     ): AccountFastLookupApiService {
         return retrofit.create(AccountFastLookupApiService::class.java)
     }
@@ -338,4 +340,7 @@ internal object AccountInformationModule {
     fun getAccountAlgoBalance(repository: AccountInformationRepository): GetAccountAlgoBalance {
         return GetAccountAlgoBalance(repository::getAccountAlgoBalance)
     }
+
+    @Provides
+    fun provideGetRegisteredHdKeys(useCase: GetRegisteredHdKeysUseCase): GetRegisteredHdKeys = useCase
 }

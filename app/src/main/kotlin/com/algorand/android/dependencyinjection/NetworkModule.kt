@@ -13,6 +13,7 @@
 package com.algorand.android.dependencyinjection
 
 import com.algorand.android.BuildConfig
+import com.algorand.android.exceptions.RetrofitErrorHandler
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountDeserializer
 import com.algorand.android.network.AlgodApi
@@ -23,7 +24,6 @@ import com.algorand.android.network.MobileAlgorandApi
 import com.algorand.android.network.MobileHeaderInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.algorand.android.exceptions.RetrofitErrorHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,6 +31,8 @@ import dagger.hilt.components.SingletonComponent
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
+import okhttp3.ConnectionPool
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -107,6 +109,34 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .addInterceptor(mobileHeaderInterceptor)
             .addInterceptor(loggingInterceptor)
+            .connectTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @Named("mobileAlgorandFastLookupHttpClient")
+    @Suppress("MagicNumber")
+    fun provideMobileAlgorandFastLookupHttpClient(
+        mobileHeaderInterceptor: MobileHeaderInterceptor,
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient {
+        /**
+         * This client is being used for fast lookup API which is used to fetch 125 items at once.
+         * Make sure to update the number of items in the loop if you change the number of items
+        **/
+        val dispatcher = Dispatcher().apply {
+            maxRequestsPerHost = 125
+            maxRequests = 125
+        }
+        val connectionPool = ConnectionPool(125, 20, TimeUnit.SECONDS)
+        return OkHttpClient.Builder()
+            .addInterceptor(mobileHeaderInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .dispatcher(dispatcher)
+            .connectionPool(connectionPool)
             .connectTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
@@ -198,6 +228,20 @@ object NetworkModule {
     @Named("mobileAlgorandRetrofitInterface")
     internal fun provideMobileAlgorandRetrofitInterface(
         @Named("mobileAlgorandHttpClient") mobileAlgorandHttpClient: OkHttpClient,
+        gson: Gson
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.MOBILE_ALGORAND_MAINNET_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(mobileAlgorandHttpClient)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @Named("mobileAlgorandFastLookupRetrofitInterface")
+    internal fun provideMobileAlgorandFastLookupRetrofitInterface(
+        @Named("mobileAlgorandFastLookupHttpClient") mobileAlgorandHttpClient: OkHttpClient,
         gson: Gson
     ): Retrofit {
         return Retrofit.Builder()

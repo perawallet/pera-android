@@ -311,12 +311,26 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
     }
 
     private fun navigateToSuccess(accountCreation: AccountCreation) {
-        nav(
-            RecoverWithPassphraseFragmentDirections
-                .actionRecoverWithPassphraseFragmentToRecoverAccountNameRegistrationFragment(
-                    accountCreation
+        when (accountCreation.type) {
+            is AccountCreation.Type.Algo25 -> {
+                nav(
+                    RecoverWithPassphraseFragmentDirections
+                        .actionRecoverWithPassphraseFragmentToRecoverAccountNameRegistrationFragment(
+                            accountCreation = accountCreation
+                        )
                 )
-        )
+            }
+
+            is AccountCreation.Type.HdKey -> {
+                nav(
+                    RecoverWithPassphraseFragmentDirections
+                        .actionRecoverWithPassphraseFragmentToRecoverImportHdAddressesFragment(
+                            accountCreation = accountCreation
+                        )
+                )
+            }
+            else -> {}
+        }
     }
 
     private fun showErrorBottomSheet(descriptionString: AnnotatedString) {

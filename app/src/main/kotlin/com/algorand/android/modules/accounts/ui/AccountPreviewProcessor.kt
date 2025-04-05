@@ -69,7 +69,7 @@ class AccountPreviewProcessor @Inject constructor(
     private val getAccountTotalValue: GetAccountTotalValue,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getSortedAccountsByPreference: GetSortedAccountsByPreference,
-    private val getAccountAsbBackUpStatus: GetAccountBackUpStatus,
+    private val getAccountBackUpStatus: GetAccountBackUpStatus,
     private val isFeatureToggleEnabledUseCase: IsFeatureToggleEnabled,
 ) {
 
@@ -200,7 +200,7 @@ class AccountPreviewProcessor @Inject constructor(
                         onAccountValueCalculated.invoke(accountValue)
                     }
                 }
-                val isAccountBackedUp = getAccountAsbBackUpStatus(address)
+                val isAccountBackedUp = getAccountBackUpStatus(address)
                 accountItemConfigMapper(
                     accountAddress = address,
                     accountDisplayName = getAccountDisplayName(address),

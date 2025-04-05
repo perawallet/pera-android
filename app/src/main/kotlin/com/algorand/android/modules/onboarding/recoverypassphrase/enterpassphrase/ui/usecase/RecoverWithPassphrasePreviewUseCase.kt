@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.usecase
 
-import com.algorand.algosdk.sdk.Sdk
 import com.algorand.android.R
 import com.algorand.android.customviews.passphraseinput.usecase.PassphraseInputGroupUseCase
 import com.algorand.android.customviews.passphraseinput.util.PassphraseInputConfigurationUtil
@@ -26,19 +25,24 @@ import com.algorand.android.utils.PassphraseKeywordUtils
 import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
+import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
+@Suppress("LongParameterList")
 class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val recoverWithPassphrasePreviewMapper: RecoverWithPassphrasePreviewMapper,
     private val passphraseInputGroupUseCase: PassphraseInputGroupUseCase,
     private val passphraseInputConfigurationUtil: PassphraseInputConfigurationUtil,
     private val fetchRekeyedAccounts: FetchRekeyedAccounts,
+    private val peraBip39Sdk: PeraBip39Sdk,
+    private val algoAccountSdk: AlgoAccountSdk,
     private val getAccountRegistrationType: GetAccountRegistrationType,
     private val aesPlatformManager: AESPlatformManager
 ) {
@@ -125,62 +129,106 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     }
 
     @SuppressWarnings("LongMethod")
-    fun validateEnteredMnemonics(preview: RecoverWithPassphrasePreview) = flow {
+    fun validateEnteredMnemonics(
+        preview: RecoverWithPassphrasePreview,
+        onboardingAccountType: OnboardingAccountType
+    ) = flow {
         try {
             emit(preview.copy(showLoadingDialogEvent = Event(Unit)))
-            val mnemonics = passphraseInputConfigurationUtil.getOrderedInput(preview.passphraseInputGroupConfiguration)
-            val privateKey = Sdk.mnemonicToPrivateKey(mnemonics.lowercase(Locale.ENGLISH))
-            if (privateKey == null) {
+            var accountAddress = ""
+            var mnemonics = passphraseInputConfigurationUtil.getOrderedInput(preview.passphraseInputGroupConfiguration)
+            val recoveredAccount = getAccount(onboardingAccountType, mnemonics, accountAddress) ?: run {
+                // Handle the case where account creation fails (e.g., invalid mnemonic)
                 val copiedPreview = preview.copy(
                     onAccountNotFoundEvent = Event(AnnotatedString(R.string.account_not_found_please_try))
                 )
                 emit(copiedPreview)
                 return@flow
             }
-            val accountAddress = Sdk.generateAddressFromSK(privateKey)
-            val accountRegistrationType = getAccountRegistrationType(accountAddress)
-            if (accountRegistrationType != null) {
-                val isLocalAccountReplaceable = when (accountRegistrationType) {
-                    AccountRegistrationType.NoAuth -> true
-                    else -> false
-                }
-                if (!isLocalAccountReplaceable) {
-                    emit(preview.copy(onGlobalErrorEvent = Event(R.string.this_account_already_exists)))
-                    return@flow
-                }
-            }
-            val recoveredAccount = AccountCreation(
-                address = accountAddress,
-                customName = accountAddress.toShortenedAddress(),
-                isBackedUp = true,
-                type = AccountCreation.Type.Algo25(
-                    aesPlatformManager.encryptByteArray(
-                        privateKey
-                    )
-                ),
-                creationType = RECOVER
-            )
-            fetchRekeyedAccounts(accountAddress).use(
-                onSuccess = {
-                    val updatedPreview = if (it.isEmpty()) {
-                        preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
-                    } else {
-                        val rekeyedAccountAddresses = it.map { it.address }
-                        val event = Event(recoveredAccount to rekeyedAccountAddresses)
-                        preview.copy(navToImportRekeyedAccountEvent = event)
+
+            if (onboardingAccountType == OnboardingAccountType.Algo25) {
+                accountAddress = recoveredAccount.address
+
+                val accountRegistrationType = getAccountRegistrationType(accountAddress)
+                if (accountRegistrationType != null) {
+                    val isLocalAccountReplaceable = when (accountRegistrationType) {
+                        AccountRegistrationType.NoAuth -> true
+                        else -> false
                     }
-                    emit(updatedPreview)
-                },
-                onFailed = { _, _ ->
-                    val updatedPreview = preview.copy(
-                        navToNameRegistrationEvent = Event(recoveredAccount),
-                        showErrorEvent = Event(AnnotatedString(R.string.failed_to_fetch_rekeyed))
-                    )
-                    emit(updatedPreview)
+                    if (!isLocalAccountReplaceable) {
+                        emit(preview.copy(onGlobalErrorEvent = Event(R.string.this_account_already_exists)))
+                        return@flow
+                    }
                 }
-            )
+
+                fetchRekeyedAccounts(accountAddress).use(
+                    onSuccess = {
+                        val updatedPreview = if (it.isEmpty()) {
+                            preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
+                        } else {
+                            val rekeyedAccountAddresses = it.map { it.address }
+                            val event = Event(recoveredAccount to rekeyedAccountAddresses)
+                            preview.copy(navToImportRekeyedAccountEvent = event)
+                        }
+                        emit(updatedPreview)
+                    },
+                    onFailed = { _, _ ->
+                        val updatedPreview = preview.copy(
+                            navToNameRegistrationEvent = Event(recoveredAccount),
+                            showErrorEvent = Event(AnnotatedString(R.string.failed_to_fetch_rekeyed))
+                        )
+                        emit(updatedPreview)
+                    }
+                )
+            } else {
+                val updatedPreview = preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
+                emit(updatedPreview)
+            }
         } catch (exception: Exception) {
             emit(preview.copy(onAccountNotFoundEvent = Event(AnnotatedString(R.string.account_not_found_please_try))))
+        }
+    }
+
+    private fun getAccount(
+        accountType: OnboardingAccountType,
+        mnemonics: String,
+        accountAddress: String
+    ): AccountCreation? {
+        return when (accountType) {
+            OnboardingAccountType.Algo25 -> {
+                val algo25account = algoAccountSdk.recoverAlgo25Account(
+                    mnemonics.lowercase(Locale.ENGLISH)
+                ) ?: return null
+                AccountCreation(
+                    address = algo25account.address,
+                    customName = algo25account.address.toShortenedAddress(),
+                    isBackedUp = true,
+                    type = AccountCreation.Type.Algo25(
+                        aesPlatformManager.encryptByteArray(
+                        algo25account.secretKey)
+                    ),
+                    creationType = RECOVER
+                )
+            }
+            OnboardingAccountType.HdKey -> {
+                // only entropy is needed for next screen (importing registered addresses)
+                val entropy = peraBip39Sdk.getEntropyFromMnemonic(mnemonics) ?: return null
+                AccountCreation(
+                    address = accountAddress,
+                    customName = accountAddress.toShortenedAddress(),
+                    isBackedUp = true,
+                    type = AccountCreation.Type.HdKey(
+                        publicKey = ByteArray(0),
+                        encryptedPrivateKey = ByteArray(0),
+                        encryptedEntropy = aesPlatformManager.encryptByteArray(entropy),
+                        account = 0,
+                        change = 0,
+                        keyIndex = 0,
+                        derivationType = 0
+                    ),
+                    creationType = RECOVER
+                )
+            }
         }
     }
 }

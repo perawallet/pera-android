@@ -13,7 +13,6 @@
 package com.algorand.wallet.algosdk.transaction.sdk
 
 import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
-import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
 
 interface PeraBip39Sdk {
     fun getSeedFromEntropy(entropy: ByteArray): ByteArray?
@@ -21,5 +20,5 @@ interface PeraBip39Sdk {
     fun getMnemonicFromEntropy(entropy: ByteArray): String?
     fun createHdKeyAccount(): HdKeyAccount?
     fun getHdKeyAccount(entropy: ByteArray, accountIndex: Int, changeIndex: Int, keyIndex: Int): HdKeyAccount?
-    suspend fun fetchRegisteredAccounts(entropy: ByteArray): List<RegisteredAlgorandAccount>
+    fun generateHdKeyAddress(entropy: ByteArray, accountIndex: Int, changeIndex: Int, keyIndex: Int): String
 }

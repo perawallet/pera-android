@@ -15,10 +15,7 @@ package com.algorand.wallet.algosdk.transaction.sdk
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.algorand.algosdk.crypto.Address
-import com.algorand.wallet.account.info.domain.usecase.GetAccountFastLookup
-import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddressUseCase
 import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
-import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
 import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import foundation.algorand.xhdwalletapi.Bip32DerivationType
@@ -26,12 +23,9 @@ import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.fromSeed
 import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
-import java.math.BigDecimal
 import javax.inject.Inject
 
 internal class PeraBip39SdkImpl @Inject constructor(
-    private val getAccountFastLookup: GetAccountFastLookup,
-    private val isThereAnyAccountWithAddressUseCase: IsThereAnyAccountWithAddressUseCase,
     private val peraExceptionLogger: PeraExceptionLogger
 ) : PeraBip39Sdk {
     override fun getSeedFromEntropy(entropy: ByteArray): ByteArray? {
@@ -68,7 +62,7 @@ internal class PeraBip39SdkImpl @Inject constructor(
             }
         val mnemonicCode = Mnemonics.MnemonicCode(mnemonic)
         var entropy = mnemonicCode.toEntropy()
-        val output = getHdKeyAccount(entropy.copyOf(),0,0, 0)
+        val output = getHdKeyAccount(entropy.copyOf(), 0, 0, 0)
         entropy.clearFromMemory()
         return output
     }
@@ -123,55 +117,18 @@ internal class PeraBip39SdkImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchRegisteredAccounts(entropy: ByteArray): List<RegisteredAlgorandAccount> {
-        try {
-            val registeredAccountsList = mutableListOf<RegisteredAlgorandAccount>()
-            val mnemonicCode = Mnemonics.MnemonicCode(entropy)
-            var seed = mnemonicCode.toSeed()
-            val xHDWalletAPI = XHDWalletAPIAndroid(seed)
-
-            for (accountIndex in 0 until 5) {
-                for (changeIndex in 0 until 5) {
-                    for (keyIndex in 0 until 5) {
-                        val algoAddress = Address(
-                            xHDWalletAPI.keyGen(
-                                context = KeyContext.Address,
-                                account = accountIndex.toUInt(),
-                                change = changeIndex.toUInt(),
-                                keyIndex = keyIndex.toUInt(),
-                                derivationType = Bip32DerivationType.Peikert
-                            )
-                        ).toString()
-
-                        val fastLookupAccountResponse = getAccountFastLookup(algoAddress)
-                        if (fastLookupAccountResponse.isSuccess) {
-                            val fastLookupAccount = fastLookupAccountResponse.getDataOrNull()
-
-                            val tempAccount = RegisteredAlgorandAccount(
-                                address = algoAddress,
-                                algoValue = fastLookupAccount?.algoValue ?: BigDecimal.ZERO,
-                                usdValue = fastLookupAccount?.algoValue ?: BigDecimal.ZERO,
-                                accountExists = fastLookupAccount?.accountExists ?: false,
-                                account = accountIndex,
-                                change = changeIndex,
-                                keyIndex = keyIndex,
-                                isImportedToDB = isThereAnyAccountWithAddressUseCase(algoAddress),
-                                derivationType = Bip32DerivationType.Peikert.value
-                            )
-
-                            if (fastLookupAccount?.accountExists == true) {
-                                registeredAccountsList.add(tempAccount)
-                            }
-                        }
-                    }
-                }
-            }
-
-            seed.clearFromMemory()
-            return registeredAccountsList
-        } catch (e: Exception) {
-            peraExceptionLogger.logException(e)
-            return emptyList()
-        }
+    override fun generateHdKeyAddress(entropy: ByteArray, accountIndex: Int, changeIndex: Int, keyIndex: Int): String {
+        val mnemonicCode = Mnemonics.MnemonicCode(entropy)
+        val seed = mnemonicCode.toSeed()
+        val xHDWalletAPI = XHDWalletAPIAndroid(seed)
+        val key = xHDWalletAPI.keyGen(
+            context = KeyContext.Address,
+            account = accountIndex.toUInt(),
+            change = changeIndex.toUInt(),
+            keyIndex = keyIndex.toUInt(),
+            derivationType = Bip32DerivationType.Peikert
+        )
+        seed.clearFromMemory()
+        return Address(key).toString()
     }
 }

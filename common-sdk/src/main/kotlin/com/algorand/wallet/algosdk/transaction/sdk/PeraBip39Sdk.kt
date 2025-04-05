@@ -16,7 +16,9 @@ import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 
 interface PeraBip39Sdk {
     fun getSeedFromEntropy(entropy: ByteArray): ByteArray?
+    fun getEntropyFromMnemonic(mnemonic: String): ByteArray?
     fun getMnemonicFromEntropy(entropy: ByteArray): String?
     fun createHdKeyAccount(): HdKeyAccount?
-    fun getHdKeyAccountFromMnemonic(mnemonic: String): HdKeyAccount?
+    fun getHdKeyAccount(entropy: ByteArray, accountIndex: Int, changeIndex: Int, keyIndex: Int): HdKeyAccount?
+    fun generateHdKeyAddress(entropy: ByteArray, accountIndex: Int, changeIndex: Int, keyIndex: Int): String
 }

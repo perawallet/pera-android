@@ -59,9 +59,7 @@ class NameRegistrationViewModel @Inject constructor(
         get() = accountName.takeUnless { it.isNullOrBlank() } ?: accountAddress.toShortenedAddress()
 
     init {
-        viewModelScope.launch {
-            updatePreviewWithHdWalletData()
-        }
+        updatePreviewWithHdWalletData()
     }
 
     private fun updatePreviewWithHdWalletData() {

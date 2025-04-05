@@ -25,7 +25,9 @@ import com.algorand.android.modules.transaction.signmanager.ExternalTransactionS
 import com.algorand.android.utils.flatten
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
-import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
+import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
+import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import javax.inject.Inject
 import kotlinx.coroutines.flow.map
 
@@ -35,14 +37,18 @@ class Arc59ClaimRejectTransactionSignManager @Inject constructor(
     externalTransactionQueuingHelper: ExternalTransactionQueuingHelper,
     getTransactionSigner: GetTransactionSigner,
     getAlgo25SecretKey: GetAlgo25SecretKey,
-    getHdKeyPrivateKey: GetHdKeyPrivateKey
+    getHdSeed: GetHdSeed,
+    getLocalAccount: GetLocalAccount,
+    signHdKeyTransaction: SignHdKeyTransaction
 ) : ExternalTransactionSignManager<BaseArc59ClaimRejectTransaction>(
     ledgerBleSearchManager,
     ledgerBleOperationManager,
     externalTransactionQueuingHelper,
     getTransactionSigner,
     getAlgo25SecretKey,
-    getHdKeyPrivateKey
+    getHdSeed,
+    getLocalAccount,
+    signHdKeyTransaction
 ) {
 
     val arc59ClaimRejectTransactionSignResultFlow = signResultFlow.map { externalTransactionSignResult ->

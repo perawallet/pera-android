@@ -46,7 +46,7 @@ class AccountDetailSummaryUseCase @Inject constructor(
             AccountType.NoAuth -> R.string.watch
             AccountType.Rekeyed -> R.string.rekeyed
             AccountType.RekeyedAuth -> R.string.rekeyed
-            AccountType.HdKey -> R.string.bip_39 // TODO
+            AccountType.HdKey -> R.string.hd_wallet_address
         }
     }
 
@@ -55,7 +55,7 @@ class AccountDetailSummaryUseCase @Inject constructor(
             AccountType.LedgerBle, AccountType.NoAuth -> false
             AccountType.Algo25 -> false
             AccountType.Rekeyed, AccountType.RekeyedAuth -> true
-            AccountType.HdKey -> false // TODO
+            AccountType.HdKey -> false
         }
     }
 }

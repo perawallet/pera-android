@@ -15,7 +15,6 @@ package com.algorand.android.modules.accountcore.ui.usecase
 import com.algorand.android.R
 import com.algorand.android.models.AccountIconResource.LEDGER
 import com.algorand.android.models.AccountIconResource.STANDARD
-import com.algorand.android.models.AccountIconResource.UNDEFINED
 import com.algorand.android.models.AccountIconResource.WATCH
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
@@ -50,7 +49,7 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
                     R.color.layer_gray_lighter
                 }
             }
-            AccountType.HdKey -> UNDEFINED.backgroundColorResId // TODO Bip39
+            AccountType.HdKey -> STANDARD.backgroundColorResId // TODO Bip39
         }
     }
 
@@ -62,7 +61,7 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountDetail?.canSignTransaction() == true) STANDARD.iconTintResId else R.color.text_gray_lighter
             }
-            AccountType.HdKey -> UNDEFINED.iconTintResId // TODO Bip39
+            AccountType.HdKey -> STANDARD.iconTintResId // TODO Bip39
         }
     }
 
@@ -74,7 +73,7 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountDetail?.canSignTransaction() == true) STANDARD.iconResId else R.drawable.ic_question
             }
-            AccountType.HdKey -> UNDEFINED.iconResId // TODO Bip39
+            AccountType.HdKey -> STANDARD.iconResId // TODO Bip39
         }
     }
 }

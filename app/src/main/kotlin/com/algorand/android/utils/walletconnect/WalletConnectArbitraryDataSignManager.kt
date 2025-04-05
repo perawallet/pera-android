@@ -23,7 +23,11 @@ import com.algorand.android.utils.LifecycleScopedCoroutineOwner
 import com.algorand.android.utils.ListQueuingHelper
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.signArbitraryData
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
+import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
+import com.algorand.wallet.algosdk.transaction.sdk.SignHdKeyTransaction
 import javax.inject.Inject
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
@@ -31,7 +35,10 @@ import kotlinx.coroutines.launch
 class WalletConnectArbitraryDataSignManager @Inject constructor(
     private val walletConnectSignValidator: WalletConnectSignValidator,
     private val signHelper: WalletConnectArbitraryDataSignHelper,
-    private val getAlgo25SecretKey: GetAlgo25SecretKey
+    private val getAlgo25SecretKey: GetAlgo25SecretKey,
+    private val getHdSeed: GetHdSeed,
+    private val getLocalAccount: GetLocalAccount,
+    private val signHdKeyTransaction: SignHdKeyTransaction
 ) : LifecycleScopedCoroutineOwner() {
 
     val signResultLiveData: LiveData<WalletConnectSignResult>
@@ -43,24 +50,68 @@ class WalletConnectArbitraryDataSignManager @Inject constructor(
     private val signHelperListener = object : ListQueuingHelper.Listener<WalletConnectArbitraryData, ByteArray> {
         override fun onAllItemsDequeued(signedTransactions: List<ByteArray?>) {
             arbitraryData?.run {
-                _signResultLiveData.postValue(Success(session.sessionIdentifier, requestId, signedTransactions))
+                _signResultLiveData.postValue(
+                    Success(
+                        session.sessionIdentifier,
+                        requestId,
+                        signedTransactions
+                    )
+                )
             }
         }
 
         override fun onNextItemToBeDequeued(
-            arbitraryData: WalletConnectArbitraryData,
+            item: WalletConnectArbitraryData,
             currentItemIndex: Int,
             totalItemCount: Int
         ) {
             currentScope.launch {
-                val signerAddress = arbitraryData.signerAccount?.address
+                val signerAddress = item.signerAccount?.address
+
                 if (signerAddress.isNullOrBlank()) {
-                    signHelper.cacheDequeuedItem(null)
-                } else {
-                    val secretKey = getAlgo25SecretKey(signerAddress)
-                    arbitraryData.signArbitraryData(secretKey)
+                    cacheNullDequeuedItem()
+                    return@launch
+                }
+
+                getLocalAccount(signerAddress).let { localAccount ->
+                    when (localAccount) {
+                        is LocalAccount.Algo25 -> handleAlgo25Signing(item, signerAddress)
+                        is LocalAccount.HdKey -> handleHdKeySigning(item, localAccount)
+                        else -> cacheNullDequeuedItem()
+                    }
                 }
             }
+        }
+
+        private suspend fun handleAlgo25Signing(
+            item: WalletConnectArbitraryData,
+            signerAddress: String
+        ) {
+            val secretKey = getAlgo25SecretKey(signerAddress)
+            item.signArbitraryData(secretKey)
+        }
+
+        private suspend fun handleHdKeySigning(
+            item: WalletConnectArbitraryData,
+            localAccount: LocalAccount.HdKey
+        ) {
+            val transactionBytes = item.decodedTransaction ?: return cacheNullDequeuedItem()
+
+            val seed = getHdSeed(seedId = localAccount.seedId) ?: return cacheNullDequeuedItem()
+
+            val transactionSignedByteArray = signHdKeyTransaction.signTransaction(
+                transactionBytes,
+                seed,
+                localAccount.account,
+                localAccount.change,
+                localAccount.keyIndex
+            ) ?: return cacheNullDequeuedItem()
+
+            signHelper.cacheDequeuedItem(transactionSignedByteArray)
+        }
+
+        private fun cacheNullDequeuedItem() {
+            signHelper.cacheDequeuedItem(null)
         }
     }
 

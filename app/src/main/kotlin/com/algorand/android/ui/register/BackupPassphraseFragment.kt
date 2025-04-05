@@ -15,7 +15,6 @@ package com.algorand.android.ui.register
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
@@ -30,7 +29,6 @@ import com.algorand.android.utils.enableScreenCapture
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_passphrase) {
@@ -63,9 +61,7 @@ class BackupPassphraseFragment : DaggerBaseFragment(R.layout.fragment_backup_pas
         customizeToolbar()
         initObservers()
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            backupPassphraseViewModel.getMnemonic(args)
-        }
+        backupPassphraseViewModel.getMnemonic(args)
         binding.nextButton.setOnClickListener { onNextClick() }
     }
 

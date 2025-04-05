@@ -17,6 +17,7 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingCopyPassphraseEventTracker
 import com.algorand.android.ui.register.BackupPassphraseViewModel.ViewState.Idle
+import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
@@ -54,25 +55,25 @@ class BackupPassphraseViewModel @Inject constructor(
         }
     }
 
-    suspend fun getMnemonic(args: BackupPassphraseFragmentArgs): List<String> {
-        var passphrase: List<String> = emptyList()
+    fun getMnemonic(args: BackupPassphraseFragmentArgs) {
+        viewModelScope.launchIO {
+            var passphrase: List<String> = emptyList()
 
-        args.accountCreation?.let {
-            passphrase = handleAccountCreationMnemonic(it.type, it)
-        }
-        if (passphrase.isEmpty()) {
-            args.accountToBackup?.let { accountAddress ->
-                getLocalAccount(accountAddress)?.let {
-                    passphrase = handleLocalAccountMnemonic(it)
+            args.accountCreation?.let {
+                passphrase = handleAccountCreationMnemonic(it.type, it)
+            }
+            if (passphrase.isEmpty()) {
+                args.accountToBackup?.let { accountAddress ->
+                    getLocalAccount(accountAddress)?.let {
+                        passphrase = handleLocalAccountMnemonic(it)
+                    }
                 }
             }
-        }
 
-        stateDelegate.updateState {
-            ViewState.DefaultState(passphrase.joinToString(" "))
+            stateDelegate.updateState {
+                ViewState.DefaultState(passphrase.joinToString(" "))
+            }
         }
-
-        return passphrase
     }
 
     private suspend fun handleLocalAccountMnemonic(localAccount: LocalAccount): List<String> =

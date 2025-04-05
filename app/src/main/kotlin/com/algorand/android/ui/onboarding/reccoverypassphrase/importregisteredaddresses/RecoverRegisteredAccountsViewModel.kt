@@ -22,7 +22,8 @@ import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.core.domain.model.CreateAccount.Type
-import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
+import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
+import com.algorand.wallet.account.info.domain.usecase.GetRegisteredHdKeys
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
@@ -41,6 +42,7 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
     private val aesPlatformManager: AESPlatformManager,
     private val bip39Sdk: PeraBip39Sdk,
     private val accountAdditionUseCase: AccountAdditionUseCase,
+    private val getRegisteredHdKeys: GetRegisteredHdKeys,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
@@ -50,44 +52,28 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
 
     init {
         stateDelegate.setDefaultState(ViewState.Idle)
-        loadRegisteredAccounts()
     }
 
-    private fun loadRegisteredAccounts() {
+    fun loadRegisteredAccounts() {
         stateDelegate.updateState { ViewState.Loading }
         viewModelScope.launch {
-            try {
-                with(accountCreation.toCreateAccount().type) {
-                    when (this) {
-                        is Type.HdKey -> {
-                            var entropy = aesPlatformManager.decryptByteArray(this.encryptedEntropy)
-                            val registeredAccounts = bip39Sdk.fetchRegisteredAccounts(entropy.copyOf())
-                            entropy.clearFromMemory()
-                            val notImportedAddresses = registeredAccounts
-                                .filter { !it.isImportedToDB }
-                                .map { it.address }
-                                .toSet()
+            val hdKey = accountCreation.toCreateAccount().type as? Type.HdKey
+            if (hdKey == null) {
+                stateDelegate.updateState { ViewState.Content(registeredAccounts = emptyList()) }
+                return@launch
+            }
 
-                            stateDelegate.updateState {
-                                ViewState.Content(
-                                    registeredAccounts = registeredAccounts,
-                                    registeredAddressesNotImported = notImportedAddresses
-                                )
-                            }
-                        }
-                        else -> {
-                            stateDelegate.updateState {
-                                ViewState.Content(
-                                    registeredAccounts = emptyList()
-                                )
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                stateDelegate.updateState {
-                    ViewState.Error(e.message ?: "Unknown error")
-                }
+            val entropy = aesPlatformManager.decryptByteArray(hdKey.encryptedEntropy)
+            val registeredAccounts = getRegisteredHdKeys(entropy.copyOf())
+            entropy.clearFromMemory()
+            val notImportedAddresses = registeredAccounts.mapNotNull {
+                it.takeIf { !it.isImportedToDB }?.address
+            }.toSet()
+            stateDelegate.updateState {
+                ViewState.Content(
+                    registeredAccounts = registeredAccounts,
+                    registeredAddressesNotImported = notImportedAddresses
+                )
             }
         }
     }
@@ -182,13 +168,11 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
         data object Idle : ViewState
         data object Loading : ViewState
         data class Content(
-            val registeredAccounts: List<RegisteredAlgorandAccount> = emptyList(),
+            val registeredAccounts: List<RegisteredHdKey> = emptyList(),
             val registeredAddressesNotImported: Set<String> = emptySet(),
             val selectedAddresses: Set<String> = emptySet()
-        ) : ViewState {
-            val canImport: Boolean
-                get() = selectedAddresses.isNotEmpty()
-        }
+        ) : ViewState
+
         data class Error(val message: String) : ViewState
     }
 

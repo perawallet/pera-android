@@ -65,7 +65,7 @@ import com.algorand.android.ui.compose.widget.PeraTitleText
 import com.algorand.android.ui.onboarding.reccoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewEvent
 import com.algorand.android.ui.onboarding.reccoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.algosdk.model.RegisteredAlgorandAccount
+import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -106,6 +106,7 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
         super.onViewCreated(view, savedInstanceState)
         configureToolbar(true)
         observeEvents()
+        viewModel.loadRegisteredAccounts()
     }
 
     private fun observeEvents() {
@@ -250,7 +251,7 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.continue_text),
                     enabled = {
-                        state.canImport
+                        state.selectedAddresses.isNotEmpty()
                     }
                 )
             }
@@ -261,7 +262,7 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
     @Composable
     fun AddressItem(
         selectedAddresses: Set<String>,
-        account: RegisteredAlgorandAccount,
+        account: RegisteredHdKey,
         onCheckedChange: (Boolean) -> Unit
     ) {
         Row(

@@ -127,7 +127,7 @@ class WriteDownInfoFragment : BaseInfoFragment() {
     private fun navToBackupPassphraseFragment() {
         nav(
             actionWriteDownInfoFragmentToBackupPassphrasesNavigation(
-                args.accountsToBackup.firstOrNull().toString(),
+                args.accountsToBackup.firstOrNull(),
                 accountCreation = args.accountCreation
             )
         )

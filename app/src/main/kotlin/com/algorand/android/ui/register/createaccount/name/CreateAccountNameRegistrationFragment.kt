@@ -30,7 +30,9 @@ class CreateAccountNameRegistrationFragment : BaseNameRegistrationFragment() {
         nameRegistrationViewModel.logEvent(PeraEvent.ONBOARDING_NAME_WALLET_COMPLETE)
         nav(
             CreateAccountNameRegistrationFragmentDirections
-                .actionCreateAccountNameRegistrationFragmentToCreateAccountResultInfoFragment()
+                .actionCreateAccountNameRegistrationFragmentToHomeNavigation(
+                    showConfetti = true
+                )
         )
     }
 }

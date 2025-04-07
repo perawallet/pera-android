@@ -78,6 +78,7 @@
             app:destination="@id/backupPassphraseNavigation">
             <argument
                 android:name="accountToBackup"
+                app:nullable="true"
                 app:argType="string" />
             <argument
                 android:name="accountCreation"

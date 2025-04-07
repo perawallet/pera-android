@@ -27,6 +27,7 @@
         tools:layout="@layout/fragment_backup_passphrase">
         <argument
             android:name="accountToBackup"
+            app:nullable="true"
             app:argType="string" />
         <argument
             android:name="accountCreation"
@@ -51,6 +52,7 @@
         tools:layout="@layout/fragment_passphrase_validation">
         <argument
             android:name="accountToBackup"
+            app:nullable="true"
             app:argType="string" />
         <argument
             android:name="accountCreation"

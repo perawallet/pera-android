@@ -14,16 +14,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PeraIcon(modifier: Modifier, painter: Painter, contentDescription: String) {
+fun PeraIcon(
+    modifier: Modifier,
+    painter: Painter,
+    colorFilter: ColorFilter? = null,
+    contentDescription: String
+) {
     Image(
         painter = painter,
-        colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.surfaceDim),
+        colorFilter = colorFilter
+            ?: run {
+                ColorFilter.tint(color = MaterialTheme.colorScheme.surfaceDim)
+            },
         contentDescription = contentDescription,
         modifier = modifier
     )
@@ -33,19 +42,20 @@ fun PeraIcon(modifier: Modifier, painter: Painter, contentDescription: String) {
 fun PeraIconRoundShape(
     modifier: Modifier = Modifier,
     imageVector: ImageVector,
+    color: Color = MaterialTheme.colorScheme.primary,
+    backgroundColor: Color = MaterialTheme.colorScheme.tertiary,
     contentDescription: String
 ) {
     Box(
         modifier = modifier
-            .padding(start = 10.dp)
             .size(40.dp)
             .clip(shape = CircleShape)
-            .background(color = MaterialTheme.colorScheme.tertiary)
+            .background(color = backgroundColor)
     ) {
         Icon(
             modifier = Modifier.align(Alignment.Center),
             imageVector = imageVector,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = color,
             contentDescription = contentDescription
         )
     }

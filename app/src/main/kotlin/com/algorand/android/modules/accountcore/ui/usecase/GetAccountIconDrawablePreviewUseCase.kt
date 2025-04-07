@@ -84,9 +84,9 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
 
     private fun getHdKeyDrawable(): AccountIconDrawablePreview {
         return AccountIconDrawablePreview(
-            backgroundColorResId = R.color.layer_gray_lighter,
-            iconTintResId = R.color.text_gray,
-            iconResId = R.drawable.ic_wallet
+            backgroundColorResId = AccountIconResource.HD.backgroundColorResId,
+            iconTintResId = AccountIconResource.HD.iconTintResId,
+            iconResId = AccountIconResource.HD.iconResId
         )
     }
 

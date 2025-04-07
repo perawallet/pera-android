@@ -13,26 +13,12 @@
 package com.algorand.android.core
 
 import android.content.SharedPreferences
-import com.algorand.android.models.Account
 import com.algorand.android.utils.preference.removeAll
-import com.google.crypto.tink.Aead
-import com.google.gson.Gson
-import kotlinx.coroutines.flow.MutableStateFlow
+import javax.inject.Inject
 
-class AccountManager(
-    private val aead: Aead,
-    private val gson: Gson,
-    private val sharedPref: SharedPreferences
-) {
-
-    private val accounts = MutableStateFlow<List<Account>>(listOf())
+class LegacyAccountManager @Inject constructor(private val sharedPref: SharedPreferences) {
 
     fun removeAllData() {
-        accounts.value = listOf()
         sharedPref.removeAll()
-    }
-
-    fun isThereAnyRegisteredAccount(): Boolean {
-        return accounts.value.isEmpty().not()
     }
 }

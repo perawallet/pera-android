@@ -18,7 +18,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.ContextCompat
 import androidx.room.Room
-import com.algorand.android.core.AccountManager
 import com.algorand.android.database.AlgorandDatabase
 import com.algorand.android.database.AlgorandDatabase.Companion.MIGRATION_10_11
 import com.algorand.android.database.AlgorandDatabase.Companion.MIGRATION_11_12
@@ -49,7 +48,6 @@ import com.google.crypto.tink.KeyTemplates
 import com.google.crypto.tink.KeysetHandle
 import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
-import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -135,16 +133,6 @@ object AppModule {
     @Provides
     fun provideAlgorandNotificationManager(): PeraNotificationManager {
         return PeraNotificationManager()
-    }
-
-    @Singleton
-    @Provides
-    fun provideAccountManager(
-        aead: Aead,
-        gson: Gson,
-        sharedPref: SharedPreferences
-    ): AccountManager {
-        return AccountManager(aead, gson, sharedPref)
     }
 
     @Singleton

@@ -12,20 +12,23 @@
 
 package com.algorand.android
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
-import com.algorand.android.core.AccountManager
+import com.algorand.android.CoreMainViewModel.ViewEvent.InitializeCoreManagers
+import com.algorand.android.CoreMainViewModel.ViewEvent.InitializeHomeNavigation
+import com.algorand.android.CoreMainViewModel.ViewEvent.InitializeLoginNavigation
 import com.algorand.android.core.BaseActivity
 import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.databinding.ActivityMainBinding
@@ -35,10 +38,10 @@ import com.algorand.android.notification.NotificationPermissionManager
 import com.algorand.android.notification.PeraNotificationManager
 import com.algorand.android.utils.TESTNET_NETWORK_SLUG
 import com.algorand.android.utils.coremanager.ParityManager
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.navigateSafe
-import com.algorand.android.utils.preference.getRegisterSkip
 import com.algorand.android.utils.setupWithNavController
 import com.algorand.android.utils.showDarkStatusBarIcons
 import com.algorand.android.utils.showLightStatusBarIcons
@@ -49,13 +52,7 @@ import kotlin.properties.Delegates
 abstract class CoreMainActivity : BaseActivity() {
 
     @Inject
-    lateinit var accountManager: AccountManager
-
-    @Inject
     lateinit var peraNotificationManager: PeraNotificationManager
-
-    @Inject
-    lateinit var sharedPref: SharedPreferences
 
     @Inject
     lateinit var parityManager: ParityManager
@@ -64,6 +61,8 @@ abstract class CoreMainActivity : BaseActivity() {
     lateinit var notificationPermissionManager: NotificationPermissionManager
 
     lateinit var navController: NavController
+
+    private val coreMainViewModel: CoreMainViewModel by viewModels()
 
     var isBottomBarNavigationVisible by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
@@ -83,6 +82,14 @@ abstract class CoreMainActivity : BaseActivity() {
         }
     }
 
+    private val viewEventCollector: suspend (CoreMainViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            InitializeCoreManagers -> initializeCoreManagers()
+            InitializeHomeNavigation -> startNavigation(R.id.homeNavigation)
+            InitializeLoginNavigation -> startNavigation(R.id.loginNavigation)
+        }
+    }
+
     protected val binding by viewBinding(ActivityMainBinding::inflate)
 
     private var isConnectedToTestNet: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
@@ -97,13 +104,21 @@ abstract class CoreMainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        initObservers()
         navController = (supportFragmentManager.findFragmentById(binding.navigationHostFragment.id) as NavHostFragment)
             .navController
-        startNavigation()
         if (savedInstanceState != null) {
             isBottomBarNavigationVisible = savedInstanceState.getBoolean(IS_BOTTOM_BAR_VISIBLE_KEY)
         }
-        initializeCoreManagers()
+        coreMainViewModel.initialize()
+    }
+
+    private fun initObservers() {
+        collectLatestOnLifecycle(
+            flow = coreMainViewModel.viewEvent,
+            collection = viewEventCollector,
+            state = Lifecycle.State.CREATED
+        )
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
@@ -163,20 +178,12 @@ abstract class CoreMainActivity : BaseActivity() {
         }
     }
 
-    private fun startNavigation() {
+    private fun startNavigation(startDestinationFragmentId: Int) {
         with(navController) {
             graph = navInflater.inflate(R.navigation.main_navigation).apply {
-                setStartDestination(getStartDestinationFragmentId())
+                setStartDestination(startDestinationFragmentId)
             }
             binding.bottomNavigationView.setupWithNavController(this, ::onMenuItemClicked)
-        }
-    }
-
-    private fun getStartDestinationFragmentId(): Int {
-        return if (accountManager.isThereAnyRegisteredAccount() || sharedPref.getRegisterSkip()) {
-            R.id.homeNavigation
-        } else {
-            R.id.loginNavigation
         }
     }
 

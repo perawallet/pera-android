@@ -40,9 +40,6 @@ import kotlinx.coroutines.flow.onEach
 open class PeraApp : Application() {
 
     @Inject
-    lateinit var accountManager: AccountManager
-
-    @Inject
     lateinit var sharedPref: SharedPreferences
 
     @Inject

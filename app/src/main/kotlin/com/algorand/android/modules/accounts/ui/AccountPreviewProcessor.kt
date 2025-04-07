@@ -72,7 +72,6 @@ class AccountPreviewProcessor @Inject constructor(
     private val getAccountBackUpStatus: GetAccountBackUpStatus,
     private val isFeatureToggleEnabledUseCase: IsFeatureToggleEnabled,
 ) {
-
     suspend fun prepareAccountPreview(
         banner: BaseBanner?,
         isTestnetBadgeVisible: Boolean,
@@ -188,6 +187,7 @@ class AccountPreviewProcessor @Inject constructor(
         )
     }
 
+    @Suppress("LongMethod")
     private suspend fun getBaseAccountListItems(
         onAccountValueCalculated: (AccountTotalValue) -> Unit
     ): MutableList<BaseAccountListItem> {
@@ -218,7 +218,12 @@ class AccountPreviewProcessor @Inject constructor(
                     ),
                     accountPrimaryValue = accountBalance.primaryAccountValue,
                     accountSecondaryValue = accountBalance.secondaryAccountValue,
-                    startSmallIconResource = if (isAccountBackedUp) null else R.drawable.ic_error_negative
+                    startSmallIconResource = if (!isAccountBackedUp &&
+                        accountBalance.primaryAccountValue > BigDecimal.ZERO) {
+                        R.drawable.ic_error_negative
+                    } else {
+                        null
+                    }
                 )
             }, onFailedAccountConfiguration = {
                 accountItemConfigMapper(

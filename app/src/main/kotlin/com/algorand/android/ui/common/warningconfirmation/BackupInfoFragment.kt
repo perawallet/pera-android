@@ -110,16 +110,22 @@ class BackupInfoFragment : BaseInfoFragment() {
     private fun navToWriteDownFragment() {
         val accountCreation = getAccountCreation()
 
-        accountCreation?.let {
-            backupInfoViewModel.logOnboardingIUnderstandClickEvent()
-            nav(
-                actionBackupInfoFragmentToWriteDownInfoFragment(
+        when {
+            args.accountsToBackup.isNotEmpty() -> {
+                backupInfoViewModel.logOnboardingIUnderstandClickEvent()
+                nav(actionBackupInfoFragmentToWriteDownInfoFragment(
                     args.accountsToBackup,
+                    null
+                ))
+            }
+            accountCreation != null -> {
+                backupInfoViewModel.logOnboardingIUnderstandClickEvent()
+                nav(actionBackupInfoFragmentToWriteDownInfoFragment(
+                    arrayOf(),
                     accountCreation
-                )
-            )
-        } ?: run {
-            navBack()
+                ))
+            }
+            else -> navBack()
         }
     }
 

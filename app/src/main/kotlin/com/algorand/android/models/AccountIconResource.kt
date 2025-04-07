@@ -31,5 +31,7 @@ enum class AccountIconResource(
 
     STANDARD(R.drawable.ic_wallet, R.color.wallet_4, R.color.wallet_4_icon),
 
+    HD(R.drawable.ic_hd_wallet, R.color.wallet_4, R.color.wallet_4_icon),
+
     UNDEFINED(R.drawable.ic_wallet, R.color.transparent, R.color.transparent);
 }

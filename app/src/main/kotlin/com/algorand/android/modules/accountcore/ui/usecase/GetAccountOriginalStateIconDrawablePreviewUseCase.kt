@@ -16,6 +16,7 @@ import com.algorand.android.R
 import com.algorand.android.models.AccountIconResource.LEDGER
 import com.algorand.android.models.AccountIconResource.STANDARD
 import com.algorand.android.models.AccountIconResource.WATCH
+import com.algorand.android.models.AccountIconResource.HD
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountType
@@ -42,6 +43,7 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.LedgerBle -> LEDGER.backgroundColorResId
             AccountType.NoAuth -> WATCH.backgroundColorResId
             AccountType.Algo25 -> STANDARD.backgroundColorResId
+            AccountType.HdKey -> HD.backgroundColorResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountDetail?.canSignTransaction() == true) {
                     STANDARD.backgroundColorResId
@@ -49,7 +51,6 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
                     R.color.layer_gray_lighter
                 }
             }
-            AccountType.HdKey -> STANDARD.backgroundColorResId // TODO Bip39
         }
     }
 
@@ -58,10 +59,10 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.LedgerBle -> LEDGER.iconTintResId
             AccountType.NoAuth -> WATCH.iconTintResId
             AccountType.Algo25 -> STANDARD.iconTintResId
+            AccountType.HdKey -> HD.iconTintResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountDetail?.canSignTransaction() == true) STANDARD.iconTintResId else R.color.text_gray_lighter
             }
-            AccountType.HdKey -> STANDARD.iconTintResId // TODO Bip39
         }
     }
 
@@ -70,10 +71,10 @@ internal class GetAccountOriginalStateIconDrawablePreviewUseCase @Inject constru
             AccountType.LedgerBle -> LEDGER.iconResId
             AccountType.NoAuth -> WATCH.iconResId
             AccountType.Algo25 -> STANDARD.iconResId
+            AccountType.HdKey -> HD.iconResId
             AccountType.RekeyedAuth, AccountType.Rekeyed, null -> {
                 if (accountDetail?.canSignTransaction() == true) STANDARD.iconResId else R.drawable.ic_question
             }
-            AccountType.HdKey -> STANDARD.iconResId // TODO Bip39
         }
     }
 }

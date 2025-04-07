@@ -33,6 +33,16 @@
             app:destination="@id/createAccountResultInfoFragment"
             app:popUpTo="@id/loginNavigation"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_createAccountNameRegistrationFragment_to_homeNavigation"
+            app:destination="@id/homeNavigation"
+            app:popUpTo="@id/loginNavigation"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="showConfetti"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
     </fragment>
 
     <fragment

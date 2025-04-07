@@ -493,6 +493,10 @@
         android:name="com.algorand.android.modules.accounts.ui.AccountsFragment"
         android:label="fragment_accounts"
         tools:layout="@layout/fragment_accounts">
+        <argument
+            android:name="showConfetti"
+            android:defaultValue="false"
+            app:argType="boolean" />
         <action
             android:id="@+id/action_accountsFragment_to_removeAssetsFragment"
             app:destination="@id/removeAssetsFragment" />

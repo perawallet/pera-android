@@ -213,6 +213,7 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
         val iconResource = when (accountType) {
             AccountType.NoAuth -> AccountIconResource.WATCH
             AccountType.Algo25 -> AccountIconResource.STANDARD
+            AccountType.HdKey -> AccountIconResource.HD
             else -> AccountIconResource.UNDEFINED
         }
         return AccountIconDrawablePreview(

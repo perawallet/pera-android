@@ -57,8 +57,11 @@ const val ASA_VERIFICATION_URL = "https://explorer.perawallet.app/asa-verificati
 const val BASE_TWITTER_URL = "https://twitter.com/"
 const val BLANK_URL = "about:blank"
 const val ASB_SUPPORT_URL = "https://perawallet.app/support/asb"
-const val REKEY_SUPPORT_URL = "https://perawallet.app/support/rekey/"
+const val REKEY_SUPPORT_URL = "https://perawallet.app/support/rekey"
 const val ASSET_INBOX_SUPPORT_URL = "https://perawallet.app/support/asset-inbox/"
+const val WATCH_SUPPORT_URL = "https://support.perawallet.app/en/article/adding-a-watch-account-1fm3b9a/"
+const val ACCOUNT_SUPPORT_URL = "https://support.perawallet.app/en/" + "" +
+        "article/create-a-new-algorand-account-on-pera-wallet-1ehbj11/"
 
 const val HTTPS_PROTOCOL = "https://"
 const val HTTP_PROTOCOL = "http://"

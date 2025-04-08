@@ -18,141 +18,34 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.databinding.BottomSheetAccountStatusDetailBinding
-import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewEvent
+import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewState
 import com.algorand.android.utils.AccountIconDrawable
-import com.algorand.android.utils.Event
+import com.algorand.android.utils.browser.ACCOUNT_SUPPORT_URL
+import com.algorand.android.utils.browser.LEDGER_HELP_WEB_URL
 import com.algorand.android.utils.browser.REKEY_SUPPORT_URL
+import com.algorand.android.utils.browser.WATCH_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
-import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.getCustomClickableSpan
 import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_account_status_detail) {
 
-    private val accountStatusDetailViewModel by viewModels<AccountStatusDetailViewModel>()
-
+    private val viewModel by viewModels<AccountStatusDetailViewModel>()
     private val binding by viewBinding(BottomSheetAccountStatusDetailBinding::bind)
-
-    private val rekeyToStandardAccountVisibilityCollector: suspend (Boolean?) -> Unit = { isVisible ->
-        binding.rekeyToStandardAccountButton.isVisible = isVisible == true
-    }
-
-    private val rekeyToLedgerAccountVisibilityCollector: suspend (Boolean?) -> Unit = { isVisible ->
-        binding.rekeyToLedgerAccountButton.isVisible = isVisible == true
-    }
-
-    private val rekeyGroupVisiblityCollector: suspend (Boolean?) -> Unit = { isVisible ->
-        binding.rekeyGroup.isVisible = isVisible == true
-    }
-
-    private val authAccountIconDrawablePreviewCollector: suspend (
-        AccountIconDrawablePreview?
-    ) -> Unit = { drawablePreview ->
-        binding.authAccountItemView.apply {
-            if (drawablePreview != null) {
-                val drawable = AccountIconDrawable.create(context, R.dimen.spacing_xxxxlarge, drawablePreview)
-                setStartIconDrawable(drawable)
-            }
-        }
-    }
-
-    private val accountTypeDrawablePreviewCollector: suspend (
-        AccountIconDrawablePreview?
-    ) -> Unit = { drawablePreview ->
-        if (drawablePreview != null) {
-            binding.accountStateTextView.apply {
-                val drawable = AccountIconDrawable.create(context, R.dimen.spacing_xxxxlarge, drawablePreview)
-                setDrawable(start = drawable)
-            }
-        }
-    }
-
-    private val accountOriginalTypeIconDrawablePreviewCollector: suspend (
-        AccountIconDrawablePreview?
-    ) -> Unit = { drawablePreview ->
-        if (drawablePreview != null) {
-            binding.accountItemView.apply {
-                val drawable = AccountIconDrawable.create(context, R.dimen.spacing_xxxxlarge, drawablePreview)
-                setStartIconDrawable(drawable)
-            }
-        }
-    }
-
-    private val titleStringCollector: suspend (String?) -> Unit = { titleString ->
-        binding.accountTypeTextView.text = titleString
-    }
-
-    private val accountTypeStringCollector: suspend (String?) -> Unit = { accountTypeString ->
-        binding.accountStateTextView.text = accountTypeString
-    }
-
-    private val descriptionAnnotatedStringCollector: suspend (AnnotatedString?) -> Unit = { annotatedString ->
-        if (annotatedString != null) {
-            val linkTextColor = ContextCompat.getColor(binding.root.context, R.color.link_primary)
-            val clickSpannable = getCustomClickableSpan(
-                clickableColor = linkTextColor,
-                onClick = { context?.openUrl(REKEY_SUPPORT_URL) }
-            )
-            val clickableAnnotatedString = annotatedString.copy(
-                customAnnotationList = listOf("learn_more" to clickSpannable)
-            )
-            binding.accountStateDescriptionTextView.text = context?.getXmlStyledString(clickableAnnotatedString)
-        }
-    }
-
-    private val authAccountDisplayNameCollector: suspend (AccountDisplayName?) -> Unit = { displayName ->
-        binding.authAccountItemView.apply {
-            setTitleText(displayName?.primaryDisplayName)
-            setDescriptionText(displayName?.secondaryDisplayName)
-            setOnLongClickListener { onAccountAddressCopied(displayName?.accountAddress.orEmpty()); true }
-        }
-    }
-
-    private val accountDisplayNameCollector: suspend (AccountDisplayName?) -> Unit = { displayName ->
-        binding.accountItemView.apply {
-            setTitleText(displayName?.primaryDisplayName)
-            setDescriptionText(displayName?.secondaryDisplayName)
-            setOnLongClickListener { onAccountAddressCopied(displayName?.accountAddress.orEmpty()); true }
-        }
-    }
-
-    private val copyAccountAddressToClipboardEventCollector: suspend (Event<Unit>?) -> Unit = { event ->
-        event?.consume()?.run { onAccountAddressCopied(accountStatusDetailViewModel.accountAddress) }
-    }
-
-    private val navToUndoRekeyNavigationEventCollector: suspend (Event<Unit>?) -> Unit = { event ->
-        event?.consume()?.run { navToUndoRekeyNavigation() }
-    }
-
-    private val authAccountActionButtonCollector: suspend (AccountAssetItemButtonState?) -> Unit = { buttonState ->
-        if (buttonState != null) {
-            binding.authAccountItemView.apply {
-                setButtonState(buttonState)
-                setActionTextButtonClickListener { accountStatusDetailViewModel.onAuthAccountActionButtonClicked() }
-            }
-        }
-    }
-
-    private val accountOriginalActionButtonCollector: suspend (AccountAssetItemButtonState?) -> Unit = { buttonState ->
-        if (buttonState != null) {
-            binding.accountItemView.apply {
-                setButtonState(buttonState)
-                setActionButtonClickListener { accountStatusDetailViewModel.onAccountActionButtonClicked() }
-            }
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -166,98 +59,166 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
                 highlightColor = ContextCompat.getColor(context, R.color.transparent)
                 movementMethod = LinkMovementMethod.getInstance()
             }
-            rekeyToStandardAccountButton.setOnClickListener { navToRekeyToStandardAccountNavigation() }
-            rekeyToLedgerAccountButton.setOnClickListener { navToRekeyToLedgerAccountNavigation() }
+            rekeyToStandardAccountButton.setOnClickListener { viewModel.onRekeyToStandardAccountClicked() }
+            rekeyToLedgerAccountButton.setOnClickListener { viewModel.onRekeyToLedgerAccountClicked() }
         }
     }
 
-    @SuppressWarnings("LongMethod")
     private fun initObservers() {
-        with(accountStatusDetailViewModel.accountStatusDetailPreviewFlow) {
-            collectLatestOnLifecycle(
-                flow = map { it?.accountOriginalTypeDisplayName }.distinctUntilChanged(),
-                collection = accountDisplayNameCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.accountOriginalTypeIconDrawablePreview }.distinctUntilChanged(),
-                collection = accountOriginalTypeIconDrawablePreviewCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.accountTypeString }.distinctUntilChanged(),
-                collection = accountTypeStringCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.accountTypeDrawablePreview }.distinctUntilChanged(),
-                collection = accountTypeDrawablePreviewCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.authAccountDisplayName }.distinctUntilChanged(),
-                collection = authAccountDisplayNameCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.descriptionAnnotatedString }.distinctUntilChanged(),
-                collection = descriptionAnnotatedStringCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.titleString }.distinctUntilChanged(),
-                collection = titleStringCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.authAccountIconDrawablePreview }.distinctUntilChanged(),
-                collection = authAccountIconDrawablePreviewCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.isRekeyGroupVisible }.distinctUntilChanged(),
-                collection = rekeyGroupVisiblityCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.isRekeyToLedgerAccountVisible }.distinctUntilChanged(),
-                collection = rekeyToLedgerAccountVisibilityCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.isRekeyToStandardAccountVisible }.distinctUntilChanged(),
-                collection = rekeyToStandardAccountVisibilityCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.accountOriginalActionButton }.distinctUntilChanged(),
-                collection = accountOriginalActionButtonCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.authAccountActionButton }.distinctUntilChanged(),
-                collection = authAccountActionButtonCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.navToUndoRekeyNavigationEvent }.distinctUntilChanged(),
-                collection = navToUndoRekeyNavigationEventCollector
-            )
-            collectLatestOnLifecycle(
-                flow = map { it?.copyAccountAddressToClipboardEvent }.distinctUntilChanged(),
-                collection = copyAccountAddressToClipboardEventCollector
-            )
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collectLatest { state ->
+                    renderState(state)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.viewEvent.collectLatest { event ->
+                    handleEvent(event)
+                }
+            }
+        }
+    }
+
+    private fun renderState(state: ViewState) {
+        when (state) {
+            is ViewState.Idle, is ViewState.Loading, is ViewState.Error -> {
+                // Handle these states later when scren is in compose
+            }
+            is ViewState.Content -> {
+                renderContentState(state)
+            }
+        }
+    }
+
+    @Suppress("LongMethod")
+    private fun renderContentState(state: ViewState.Content) {
+        with(binding) {
+            state.accountOriginalTypeDisplayName?.let { displayName ->
+                accountItemView.apply {
+                    setTitleText(displayName.primaryDisplayName)
+                    setDescriptionText(displayName.secondaryDisplayName)
+                    setOnLongClickListener {
+                        onAccountAddressCopied(displayName.accountAddress)
+                        true
+                    }
+                }
+            }
+
+            state.accountOriginalTypeIconDrawablePreview?.let { drawablePreview ->
+                accountItemView.apply {
+                    val drawable = AccountIconDrawable.create(context, R.dimen.spacing_xxxxlarge, drawablePreview)
+                    setStartIconDrawable(drawable)
+                }
+            }
+
+            accountTypeTextView.text = state.titleString
+            accountStateTextView.text = state.accountTypeString
+
+            state.accountTypeDrawablePreview?.let { drawablePreview ->
+                accountStateTextView.apply {
+                    val drawable = AccountIconDrawable.create(context, R.dimen.spacing_xxxxlarge, drawablePreview)
+                    setDrawable(start = drawable)
+                }
+            }
+
+            state.authAccountDisplayName?.let { displayName ->
+                authAccountItemView.apply {
+                    setTitleText(displayName.primaryDisplayName)
+                    setDescriptionText(displayName.secondaryDisplayName)
+                    setOnLongClickListener {
+                        onAccountAddressCopied(displayName.accountAddress)
+                        true
+                    }
+                }
+            }
+
+            state.authAccountIconDrawablePreview?.let { drawablePreview ->
+                authAccountItemView.apply {
+                    val drawable = AccountIconDrawable.create(context, R.dimen.spacing_xxxxlarge, drawablePreview)
+                    setStartIconDrawable(drawable)
+                }
+            }
+
+            state.descriptionAnnotatedString?.let { annotatedString ->
+                val linkTextColor = ContextCompat.getColor(binding.root.context, R.color.link_primary)
+                val clickSpannable = getCustomClickableSpan(
+                    clickableColor = linkTextColor,
+                    onClick = {
+                        when (state.accountDetail?.accountType) {
+                            AccountType.Algo25 -> context?.openUrl(ACCOUNT_SUPPORT_URL)
+                            AccountType.HdKey -> context?.openUrl(ACCOUNT_SUPPORT_URL)
+                            AccountType.LedgerBle -> context?.openUrl(LEDGER_HELP_WEB_URL)
+                            AccountType.NoAuth -> context?.openUrl(WATCH_SUPPORT_URL)
+                            AccountType.Rekeyed -> context?.openUrl(REKEY_SUPPORT_URL)
+                            AccountType.RekeyedAuth -> context?.openUrl(REKEY_SUPPORT_URL)
+                            null -> context?.openUrl(ACCOUNT_SUPPORT_URL)
+                        }
+                    }
+                )
+                val clickableAnnotatedString = annotatedString.copy(
+                    customAnnotationList = listOf("learn_more" to clickSpannable)
+                )
+                accountStateDescriptionTextView.text = context?.getXmlStyledString(clickableAnnotatedString)
+            }
+
+            rekeyGroup.isVisible = state.isRekeyGroupVisible == true
+            rekeyToLedgerAccountButton.isVisible = state.isRekeyToLedgerAccountVisible == true
+            rekeyToStandardAccountButton.isVisible = state.isRekeyToStandardAccountVisible == true
+
+            state.accountOriginalActionButton?.let { buttonState ->
+                accountItemView.apply {
+                    setButtonState(buttonState)
+                    setActionButtonClickListener { viewModel.onAccountActionButtonClicked() }
+                }
+            }
+
+            state.authAccountActionButton?.let { buttonState ->
+                authAccountItemView.apply {
+                    setButtonState(buttonState)
+                    setActionTextButtonClickListener { viewModel.onAuthAccountActionButtonClicked() }
+                }
+            }
+        }
+    }
+
+    private fun handleEvent(event: ViewEvent) {
+        when (event) {
+            is ViewEvent.CopyAccountAddressToClipboard -> {
+                onAccountAddressCopied(event.address)
+            }
+            is ViewEvent.NavigateToUndoRekey -> {
+                navToUndoRekeyNavigation()
+            }
+            is ViewEvent.NavigateToRekeyToStandardAccount -> {
+                navToRekeyToStandardAccountNavigation()
+            }
+            is ViewEvent.NavigateToRekeyToLedgerAccount -> {
+                navToRekeyToLedgerAccountNavigation()
+            }
         }
     }
 
     private fun navToRekeyToLedgerAccountNavigation() {
-        val accountAddress = accountStatusDetailViewModel.accountAddress
         nav(
             AccountStatusDetailBottomSheetDirections
-                .actionAccountStatusDetailBottomSheetToRekeyLedgerNavigation(accountAddress)
+                .actionAccountStatusDetailBottomSheetToRekeyLedgerNavigation(viewModel.accountAddress)
         )
     }
 
     private fun navToRekeyToStandardAccountNavigation() {
-        val accountAddress = accountStatusDetailViewModel.accountAddress
         nav(
             AccountStatusDetailBottomSheetDirections
-                .actionAccountStatusDetailBottomSheetToRekeyToStandardAccountNavigation(accountAddress)
+                .actionAccountStatusDetailBottomSheetToRekeyToStandardAccountNavigation(viewModel.accountAddress)
         )
     }
 
     private fun navToUndoRekeyNavigation() {
-        val accountAddress = accountStatusDetailViewModel.accountAddress
         nav(
             AccountStatusDetailBottomSheetDirections
-                .actionAccountStatusDetailBottomSheetToRekeyUndoNavigation(accountAddress)
+                .actionAccountStatusDetailBottomSheetToRekeyUndoNavigation(viewModel.accountAddress)
         )
     }
 }

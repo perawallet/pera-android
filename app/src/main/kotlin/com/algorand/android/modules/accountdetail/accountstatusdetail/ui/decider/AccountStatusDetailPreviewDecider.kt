@@ -33,7 +33,7 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             AccountType.Algo25 -> R.string.standard
             AccountType.RekeyedAuth -> R.string.rekeyed
             AccountType.Rekeyed, null -> R.string.no_auth
-            AccountType.HdKey -> R.string.hd_wallet_address
+            AccountType.HdKey -> R.string.wallet_address
         }
         var accountTypeString = context.getString(typeResId)
         if (accountType != AccountType.HdKey) {
@@ -62,7 +62,7 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                     authAccountState
                 )
             }
-            AccountType.HdKey -> context.getString(R.string.hd_wallet_address)
+            AccountType.HdKey -> context.getString(R.string.one_key_wallet)
             null -> context.getString(R.string.no_auth)
         }
         return accountTypeString

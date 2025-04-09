@@ -124,7 +124,7 @@ internal class AndroidEncryptionManagerImpl @Inject constructor(
                 Log.d(TAG, "StrongBox key generated successfully")
             } catch (e: java.security.ProviderException) {
                 // Fall back to software-backed key
-                Log.e(TAG, "StrongBox not available, falling back to software-backed key", e)
+                Log.d(TAG, "StrongBox not available, falling back to software-backed key", e)
                 createKey(keyGenerator, KEY_ALIAS, useStrongBox = false)
                 saveStrongBoxUsedCheck.invoke(false)
                 Log.d(TAG, "Software-backed key generated successfully")

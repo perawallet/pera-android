@@ -12,6 +12,7 @@
 
 package com.algorand.android.modules.settings.domain.usecase
 
+import com.algorand.android.encryption.domain.usecase.AndroidEncryptionManager
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.usecase.AccountAdditionUseCase
@@ -24,6 +25,7 @@ import javax.inject.Inject
 
 class MigrateTo6xUseCase @Inject constructor(
     private val getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase,
+    private val androidEncryptionManager: AndroidEncryptionManager,
     private val aesPlatformManager: AESPlatformManager,
     private val accountAdditionUseCase: AccountAdditionUseCase,
     private val peraExceptionLogger: PeraExceptionLogger
@@ -31,12 +33,12 @@ class MigrateTo6xUseCase @Inject constructor(
 
     suspend fun invoke(): PeraResult<Int> {
         return try {
+            androidEncryptionManager.initializeEncryptionManager()
+
             val localAccounts = getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref()
             var migratedCount = 0
-
             localAccounts?.forEach { localAccount ->
                 val migrateAccount = createMigrationAccount(localAccount)
-
                 migrateAccount?.let {
                     accountAdditionUseCase.addNewAccount(it)
                     migratedCount++

@@ -76,7 +76,7 @@ fun AnimationLoaderLightPreview() {
 @Preview(name = "Dark Mode")
 @Composable
 fun AnimationLoaderDarkPreview() {
-    PeraTheme(darkTheme = true) {
+    PeraTheme(isDarkTheme = true) {
         AnimationLoader(
             start = ImageVector.vectorResource(R.drawable.ic_ledger_old_export),
             end = ImageVector.vectorResource(R.drawable.ic_phone_new),

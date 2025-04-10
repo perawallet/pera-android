@@ -73,7 +73,7 @@ fun PeraPrimaryButtonPreview() {
 @Preview
 @Composable
 fun PeraPrimaryButtonDarkPreview() {
-    PeraTheme(darkTheme = true) {
+    PeraTheme(isDarkTheme = true) {
         PeraPrimaryButton(
             modifier = Modifier,
             onClick = { },
@@ -98,7 +98,7 @@ fun PeraPrimaryButtonDisabledPreview() {
 @Preview
 @Composable
 fun PeraPrimaryButtonDarkDisabledPreview() {
-    PeraTheme(darkTheme = true) {
+    PeraTheme(isDarkTheme = true) {
         PeraPrimaryButton(
             modifier = Modifier,
             onClick = { },

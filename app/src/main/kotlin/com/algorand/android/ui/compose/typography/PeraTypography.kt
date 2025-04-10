@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.common.ui.typography
+package com.algorand.android.ui.compose.typography
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
@@ -83,7 +83,7 @@ data class PeraTypography(
 }
 
 @Composable
-fun PeraTypography() = PeraTypography(
+fun peraTypography() = PeraTypography(
     title = getPeraTypographyTitle(),
     body = getPeraTypographyBody(),
     footnote = getPeraTypographyFootnote(),

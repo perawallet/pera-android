@@ -10,20 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.common.ui.typography
+package com.algorand.android.ui.compose.typography
 
-import algorand_android.wallet_sdk.generated.resources.Res
-import algorand_android.wallet_sdk.generated.resources.dmmono_medium
-import algorand_android.wallet_sdk.generated.resources.dmmono_regular
-import algorand_android.wallet_sdk.generated.resources.dmsans_bold
-import algorand_android.wallet_sdk.generated.resources.dmsans_medium
-import algorand_android.wallet_sdk.generated.resources.dmsans_regular
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.Font
+import com.algorand.android.R
 
 @Composable
 internal fun getPeraTypographyTitle(): PeraTypography.Title {
@@ -42,13 +37,13 @@ private fun getPeraTypographyTitleRegular(): PeraTypography.Title.TitleRegular {
     )
     return PeraTypography.Title.TitleRegular(
         sans = titleStyle.copy(
-            fontFamily = FontFamily(Font(Res.font.dmsans_regular, FontWeight.Normal))
+            fontFamily = FontFamily(Font(R.font.dmsans_regular, FontWeight.Normal))
         ),
         sansMedium = titleStyle.copy(
-            fontFamily = FontFamily(Font(Res.font.dmsans_medium, FontWeight.Medium))
+            fontFamily = FontFamily(Font(R.font.dmsans_medium, FontWeight.Medium))
         ),
         sansBold = titleStyle.copy(
-            fontFamily = FontFamily(Font(Res.font.dmsans_bold, FontWeight.Bold))
+            fontFamily = FontFamily(Font(R.font.dmsans_bold, FontWeight.Bold))
         )
     )
 }
@@ -61,16 +56,16 @@ private fun getPeraTypographyTitleLarge(): PeraTypography.Title.TitleLarge {
     )
     return PeraTypography.Title.TitleLarge(
         sans = titleStyle.copy(
-            fontFamily = FontFamily(Font(Res.font.dmsans_regular, FontWeight.Normal))
+            fontFamily = FontFamily(Font(R.font.dmsans_regular, FontWeight.Normal))
         ),
         sansMedium = titleStyle.copy(
-            fontFamily = FontFamily(Font(Res.font.dmsans_medium, FontWeight.Medium))
+            fontFamily = FontFamily(Font(R.font.dmsans_medium, FontWeight.Medium))
         ),
         mono = titleStyle.copy(
-            fontFamily = FontFamily(Font(Res.font.dmmono_regular, FontWeight.Normal))
+            fontFamily = FontFamily(Font(R.font.dmmono_regular, FontWeight.Normal))
         ),
         monoMedium = titleStyle.copy(
-            fontFamily = FontFamily(Font(Res.font.dmmono_medium, FontWeight.Medium))
+            fontFamily = FontFamily(Font(R.font.dmmono_medium, FontWeight.Medium))
         )
     )
 }
@@ -83,10 +78,10 @@ private fun getPeraTypographyTitleSmall(): PeraTypography.Title.TitleSmall {
     )
     return PeraTypography.Title.TitleSmall(
         sans = titleStyle.copy(
-            fontFamily = FontFamily(Font(Res.font.dmsans_regular, FontWeight.Normal))
+            fontFamily = FontFamily(Font(R.font.dmsans_regular, FontWeight.Normal))
         ),
         sansMedium = titleStyle.copy(
-            fontFamily = FontFamily(Font(Res.font.dmsans_medium, FontWeight.Medium))
+            fontFamily = FontFamily(Font(R.font.dmsans_medium, FontWeight.Medium))
         )
     )
 }

@@ -230,7 +230,7 @@ fun PreviewPeraHighlightedText() {
 @Preview
 @Composable
 fun PreviewPeraHighlightedTextDark() {
-    PeraTheme(darkTheme = true) {
+    PeraTheme(isDarkTheme = true) {
         PeraHighlightedText(text = "Highlighted Text")
     }
 }

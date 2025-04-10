@@ -15,7 +15,6 @@ package com.algorand.android.ui.settings.developersettings
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.ui.settings.usecase.DeveloperSettingsPreviewUseCase
-import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
 import com.algorand.wallet.remoteconfig.domain.usecase.ENABLE_ACCOUNT_DB_MIGRATION_VIEWER
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +24,6 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class DeveloperSettingsViewModel @Inject constructor(
     private val developerSettingsPreviewUseCase: DeveloperSettingsPreviewUseCase,
-    private val getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : BaseViewModel() {
 

@@ -19,8 +19,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.databinding.BottomSheetAccountStatusDetailBinding
@@ -28,13 +26,12 @@ import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.Account
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewState
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.browser.openUrl
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.getCustomClickableSpan
 import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_account_status_detail) {
@@ -60,25 +57,7 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
         }
     }
 
-    private fun initObservers() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collectLatest { state ->
-                    renderState(state)
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.viewEvent.collectLatest { event ->
-                    handleEvent(event)
-                }
-            }
-        }
-    }
-
-    private fun renderState(state: ViewState) {
+    private val viewStateCollector: suspend (ViewState) -> Unit = { state ->
         when (state) {
             is ViewState.Idle, is ViewState.Loading, is ViewState.Error -> {
                 // Handle these states later when scren is in compose
@@ -87,6 +66,28 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
                 renderContentState(state)
             }
         }
+    }
+
+    private val viewEventCollector: suspend (ViewEvent) -> Unit = { event ->
+        when (event) {
+            is ViewEvent.CopyAccountAddressToClipboard -> {
+                onAccountAddressCopied(event.address)
+            }
+            is ViewEvent.NavigateToUndoRekey -> {
+                navToUndoRekeyNavigation()
+            }
+            is ViewEvent.NavigateToRekeyToStandardAccount -> {
+                navToRekeyToStandardAccountNavigation()
+            }
+            is ViewEvent.NavigateToRekeyToLedgerAccount -> {
+                navToRekeyToLedgerAccountNavigation()
+            }
+        }
+    }
+
+    private fun initObservers() {
+        collectLatestOnLifecycle(viewModel.viewEvent, viewEventCollector, Lifecycle.State.CREATED)
+        collectLatestOnLifecycle(viewModel.state, viewStateCollector)
     }
 
     private fun renderContentState(state: ViewState.Content) {
@@ -188,23 +189,6 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
             state.authAccountActionButton?.let { buttonState ->
                 authAccountItemView.setButtonState(buttonState)
                 authAccountItemView.setActionTextButtonClickListener { viewModel.onAuthAccountActionButtonClicked() }
-            }
-        }
-    }
-
-    private fun handleEvent(event: ViewEvent) {
-        when (event) {
-            is ViewEvent.CopyAccountAddressToClipboard -> {
-                onAccountAddressCopied(event.address)
-            }
-            is ViewEvent.NavigateToUndoRekey -> {
-                navToUndoRekeyNavigation()
-            }
-            is ViewEvent.NavigateToRekeyToStandardAccount -> {
-                navToRekeyToStandardAccountNavigation()
-            }
-            is ViewEvent.NavigateToRekeyToLedgerAccount -> {
-                navToRekeyToLedgerAccountNavigation()
             }
         }
     }

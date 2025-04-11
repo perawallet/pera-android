@@ -18,14 +18,18 @@ import com.algorand.android.customviews.passphraseinput.util.PassphraseInputConf
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.OnboardingAccountType
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewByType
+import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.mapper.RecoverWithPassphrasePreviewMapper
 import com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.model.RecoverWithPassphrasePreview
+import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.PassphraseKeywordUtils
 import com.algorand.android.utils.analytics.CreationType.RECOVER
 import com.algorand.android.utils.splitMnemonic
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
@@ -44,7 +48,8 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val peraBip39Sdk: PeraBip39Sdk,
     private val algoAccountSdk: AlgoAccountSdk,
     private val getAccountRegistrationType: GetAccountRegistrationType,
-    private val aesPlatformManager: AESPlatformManager
+    private val aesPlatformManager: AESPlatformManager,
+    private val getAccountIconDrawablePreviewByType: GetAccountIconDrawablePreviewByType
 ) {
 
     fun getRecoverWithPassphraseInitialPreview(
@@ -166,8 +171,12 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                         val updatedPreview = if (it.isEmpty()) {
                             preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
                         } else {
-                            val rekeyedAccountAddresses = it.map { it.address }
-                            val event = Event(recoveredAccount to rekeyedAccountAddresses)
+                            val rekeyedAccountSelectionNavArg = RekeyedAccountSelectionNavArg(
+                                authAddress = accountAddress,
+                                authAddressIconDrawablePreview = getAccountIconDrawablePreview(recoveredAccount.type),
+                                rekeyedAccountAddresses = it.map { it.address }
+                            )
+                            val event = Event(recoveredAccount to rekeyedAccountSelectionNavArg)
                             preview.copy(navToImportRekeyedAccountEvent = event)
                         }
                         emit(updatedPreview)
@@ -189,6 +198,15 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         }
     }
 
+    private fun getAccountIconDrawablePreview(accountType: AccountCreation.Type): AccountIconDrawablePreview {
+        return when (accountType) {
+            is AccountCreation.Type.Algo25 -> getAccountIconDrawablePreviewByType(AccountType.Algo25)
+            is AccountCreation.Type.HdKey -> getAccountIconDrawablePreviewByType(AccountType.HdKey)
+            is AccountCreation.Type.LedgerBle -> getAccountIconDrawablePreviewByType(AccountType.LedgerBle)
+            AccountCreation.Type.NoAuth -> getAccountIconDrawablePreviewByType(AccountType.NoAuth)
+        }
+    }
+
     private fun getAccount(
         accountType: OnboardingAccountType,
         mnemonics: String,
@@ -203,10 +221,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                     address = algo25account.address,
                     customName = algo25account.address.toShortenedAddress(),
                     isBackedUp = true,
-                    type = AccountCreation.Type.Algo25(
-                        aesPlatformManager.encryptByteArray(
-                        algo25account.secretKey)
-                    ),
+                    type = AccountCreation.Type.Algo25(aesPlatformManager.encryptByteArray(algo25account.secretKey)),
                     creationType = RECOVER
                 )
             }

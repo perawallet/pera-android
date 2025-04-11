@@ -27,8 +27,9 @@ import com.algorand.android.databinding.BottomSheetAccountStatusDetailBinding
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewEvent
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewState
 import com.algorand.android.utils.AccountIconDrawable
-import com.algorand.android.utils.browser.ACCOUNT_SUPPORT_URL
-import com.algorand.android.utils.browser.LEDGER_HELP_WEB_URL
+import com.algorand.android.utils.browser.ALGO25_ACCOUNT_SUPPORT_URL
+import com.algorand.android.utils.browser.HD_ACCOUNT_SUPPORT_URL
+import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
 import com.algorand.android.utils.browser.REKEY_SUPPORT_URL
 import com.algorand.android.utils.browser.WATCH_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
@@ -148,13 +149,13 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
                     clickableColor = linkTextColor,
                     onClick = {
                         when (state.accountDetail?.accountType) {
-                            AccountType.Algo25 -> context?.openUrl(ACCOUNT_SUPPORT_URL)
-                            AccountType.HdKey -> context?.openUrl(ACCOUNT_SUPPORT_URL)
-                            AccountType.LedgerBle -> context?.openUrl(LEDGER_HELP_WEB_URL)
+                            AccountType.Algo25 -> context?.openUrl(ALGO25_ACCOUNT_SUPPORT_URL)
+                            AccountType.HdKey -> context?.openUrl(HD_ACCOUNT_SUPPORT_URL)
+                            AccountType.LedgerBle -> context?.openUrl(LEDGER_SUPPORT_URL)
                             AccountType.NoAuth -> context?.openUrl(WATCH_SUPPORT_URL)
                             AccountType.Rekeyed -> context?.openUrl(REKEY_SUPPORT_URL)
                             AccountType.RekeyedAuth -> context?.openUrl(REKEY_SUPPORT_URL)
-                            null -> context?.openUrl(ACCOUNT_SUPPORT_URL)
+                            null -> context?.openUrl(WATCH_SUPPORT_URL)
                         }
                     }
                 )

@@ -21,7 +21,7 @@ import com.algorand.android.databinding.FragmentLedgerInstructionBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.utils.browser.LEDGER_HELP_WEB_URL
+import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,6 +60,6 @@ class LedgerInstructionFragment : DaggerBaseFragment(R.layout.fragment_ledger_in
     }
 
     private fun onInfoClick() {
-        context?.openUrl(LEDGER_HELP_WEB_URL)
+        context?.openUrl(LEDGER_SUPPORT_URL)
     }
 }

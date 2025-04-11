@@ -15,6 +15,7 @@ package com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphra
 import com.algorand.android.customviews.passphraseinput.model.PassphraseInputGroupConfiguration
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AnnotatedString
+import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
 import com.algorand.android.utils.Event
 
 data class RecoverWithPassphrasePreview(
@@ -27,6 +28,6 @@ data class RecoverWithPassphrasePreview(
     val onDisplayWrongMnemonicEvent: Event<AnnotatedString>?,
     val navToNameRegistrationEvent: Event<AccountCreation>?,
     val onAccountNotFoundEvent: Event<AnnotatedString>?,
-    val navToImportRekeyedAccountEvent: Event<Pair<AccountCreation, List<String>>>?,
+    val navToImportRekeyedAccountEvent: Event<Pair<AccountCreation, RekeyedAccountSelectionNavArg>>?,
     val showErrorEvent: Event<AnnotatedString>?
 )

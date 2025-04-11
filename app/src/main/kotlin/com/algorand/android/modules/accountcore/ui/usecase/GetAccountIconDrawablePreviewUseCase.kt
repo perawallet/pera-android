@@ -14,6 +14,7 @@ package com.algorand.android.modules.accountcore.ui.usecase
 
 import com.algorand.android.R
 import com.algorand.android.models.AccountIconResource
+import com.algorand.android.modules.accountcore.ui.usecase.AccountIconDrawablePreviews.getRekeyedDrawable
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
@@ -40,54 +41,14 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
 
     private suspend fun getAccountIconDrawablePreview(accountDetail: AccountDetail): AccountIconDrawablePreview {
         return when (accountDetail.accountType) {
-            AccountType.Algo25 -> getAlgo25Drawable()
-            AccountType.HdKey -> getHdKeyDrawable()
-            AccountType.LedgerBle -> getLedgerBleDrawable()
-            AccountType.NoAuth -> getNoAuthDrawable()
+            AccountType.Algo25 -> AccountIconDrawablePreviews.getAlgo25Drawable()
+            AccountType.HdKey -> AccountIconDrawablePreviews.getHdKeyDrawable()
+            AccountType.LedgerBle -> AccountIconDrawablePreviews.getLedgerBleDrawable()
+            AccountType.NoAuth -> AccountIconDrawablePreviews.getNoAuthDrawable()
             AccountType.Rekeyed -> getRekeyedDrawable()
             AccountType.RekeyedAuth -> getRekeyedAuthDrawable(accountDetail.address)
-            null -> getDefaultDrawable()
+            null -> AccountIconDrawablePreviews.getDefaultIconDrawablePreview()
         }
-    }
-
-    private fun getAlgo25Drawable(): AccountIconDrawablePreview {
-        return AccountIconDrawablePreview(
-            backgroundColorResId = AccountIconResource.STANDARD.backgroundColorResId,
-            iconTintResId = AccountIconResource.STANDARD.iconTintResId,
-            iconResId = AccountIconResource.STANDARD.iconResId
-        )
-    }
-
-    private fun getLedgerBleDrawable(): AccountIconDrawablePreview {
-        return AccountIconDrawablePreview(
-            backgroundColorResId = AccountIconResource.LEDGER.backgroundColorResId,
-            iconTintResId = AccountIconResource.LEDGER.iconTintResId,
-            iconResId = AccountIconResource.LEDGER.iconResId
-        )
-    }
-
-    private fun getNoAuthDrawable(): AccountIconDrawablePreview {
-        return AccountIconDrawablePreview(
-            backgroundColorResId = AccountIconResource.WATCH.backgroundColorResId,
-            iconTintResId = AccountIconResource.WATCH.iconTintResId,
-            iconResId = AccountIconResource.WATCH.iconResId
-        )
-    }
-
-    private fun getRekeyedDrawable(): AccountIconDrawablePreview {
-        return AccountIconDrawablePreview(
-            backgroundColorResId = R.color.negative_lighter,
-            iconTintResId = R.color.negative,
-            iconResId = R.drawable.ic_rekey_shield
-        )
-    }
-
-    private fun getHdKeyDrawable(): AccountIconDrawablePreview {
-        return AccountIconDrawablePreview(
-            backgroundColorResId = AccountIconResource.HD.backgroundColorResId,
-            iconTintResId = AccountIconResource.HD.iconTintResId,
-            iconResId = AccountIconResource.HD.iconResId
-        )
     }
 
     private suspend fun getRekeyedAuthDrawable(address: String): AccountIconDrawablePreview {
@@ -105,14 +66,6 @@ internal class GetAccountIconDrawablePreviewUseCase @Inject constructor(
             backgroundColorResId = backgroundColorResId,
             iconTintResId = iconTintResId,
             iconResId = R.drawable.ic_rekey_shield
-        )
-    }
-
-    private fun getDefaultDrawable(): AccountIconDrawablePreview {
-        return AccountIconDrawablePreview(
-            backgroundColorResId = R.color.layer_gray_lighter,
-            iconTintResId = R.color.text_gray,
-            iconResId = R.drawable.ic_wallet
         )
     }
 }

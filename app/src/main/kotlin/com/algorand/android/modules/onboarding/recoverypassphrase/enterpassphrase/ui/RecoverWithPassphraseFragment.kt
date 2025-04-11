@@ -40,6 +40,7 @@ import com.algorand.android.modules.onboarding.recoverypassphrase.options.ui.Rec
 import com.algorand.android.modules.onboarding.recoverypassphrase.options.ui.RecoverOptionsBottomSheet.Companion.RESULT_KEY
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AnimationLoader
+import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.delegation.keyboardvisibility.KeyboardHandlerDelegation
 import com.algorand.android.utils.delegation.keyboardvisibility.KeyboardHandlerDelegationImpl
@@ -171,10 +172,10 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         }
 
     private val navToImportRekeyedAccountEventCollector: suspend (
-        Event<Pair<AccountCreation, List<String>>>?
+        Event<Pair<AccountCreation, RekeyedAccountSelectionNavArg>>?
     ) -> Unit = { event ->
-        event?.consume()?.let { (accountCreation, rekeyedAccountAddresses) ->
-            navToImportRekeyedAccount(accountCreation, rekeyedAccountAddresses)
+        event?.consume()?.let { (accountCreation, rekeyedAccountSelectionNavArg) ->
+            navToImportRekeyedAccount(accountCreation, rekeyedAccountSelectionNavArg)
         }
     }
 
@@ -385,15 +386,12 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         hideComposeAnimationLoader()
     }
 
-    private fun navToImportRekeyedAccount(
-        accountCreation: AccountCreation,
-        rekeyedAccountAddresses: List<String>
-    ) {
+    private fun navToImportRekeyedAccount(accountCreation: AccountCreation, navArg: RekeyedAccountSelectionNavArg) {
         nav(
             RecoverWithPassphraseFragmentDirections
-                .actionRecoverWithPassphraseFragmentToRekeyedAccountSelectionFragment(
+                .actionRecoverWithPassphraseFragmentToRecoverSingleAddressRekeyedAccountSelectionFragment(
                     accountCreation = accountCreation,
-                    rekeyedAccountAddresses = rekeyedAccountAddresses.toTypedArray()
+                    rekeyedAccountSelectionNavArg = navArg
                 )
         )
     }

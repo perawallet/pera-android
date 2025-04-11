@@ -1489,4 +1489,6 @@
         <item quantity="one">1 address</item>
         <item quantity="other">%1$d addresses</item>
     </plurals>
+
+    <string name="select_the_rekeyed_accounts_you">Select the rekeyed accounts you want to add to your wallet:</string>
 </resources>

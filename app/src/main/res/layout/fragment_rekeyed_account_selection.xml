@@ -69,8 +69,4 @@
         app:barrierDirection="top"
         app:constraint_referenced_ids="primaryActionButton, secondaryActionButton" />
 
-    <include
-        android:id="@+id/progressbar"
-        layout="@layout/layout_full_screen_progress" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -58,6 +58,9 @@
             app:destination="@id/homeNavigation"
             app:popUpTo="@id/recoverWithPassphraseNavigation"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_recoverRegisteredAccountsFragment_to_recoverHdKeyRekeyedAccountSelectionFragment"
+            app:destination="@id/recoverHdKeyRekeyedAccountSelectionFragment" />
     </fragment>
     <fragment
         android:id="@+id/recoverAccountNameRegistrationFragment"

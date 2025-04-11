@@ -403,10 +403,8 @@ class MainActivity :
     private val firebaseTokenResultCollector: suspend (FirebaseTokenResult) -> Unit = { firebaseTokenResult ->
         when (firebaseTokenResult) {
             FirebaseTokenResult.TokenLoaded -> onNewNodeActivated()
-            // TODO: do not show activity loading while token is loading
-            FirebaseTokenResult.TokenLoading -> onNewNodeLoading()
-
-            FirebaseTokenResult.TokenFailed -> onNewTokenFailed()
+            FirebaseTokenResult.TokenLoading -> Unit
+            FirebaseTokenResult.TokenFailed -> Unit
         }
     }
 
@@ -744,14 +742,6 @@ class MainActivity :
         hideProgress()
         mainViewModel.onNewNodeActivated(lifecycle)
         coreActionsTabBarViewModel.changeViewStateForFeatureFlag()
-    }
-
-    private fun onNewNodeLoading() {
-        showProgress()
-    }
-
-    private fun onNewTokenFailed() {
-        hideProgress()
     }
 
     private fun rejectScamSession(sessionProposal: WalletConnectSessionProposal) {

@@ -27,17 +27,11 @@ import com.algorand.android.databinding.BottomSheetAccountStatusDetailBinding
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewEvent
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewState
 import com.algorand.android.utils.AccountIconDrawable
-import com.algorand.android.utils.browser.ALGO25_ACCOUNT_SUPPORT_URL
-import com.algorand.android.utils.browser.HD_ACCOUNT_SUPPORT_URL
-import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
-import com.algorand.android.utils.browser.REKEY_SUPPORT_URL
-import com.algorand.android.utils.browser.WATCH_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.getCustomClickableSpan
 import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
-import com.algorand.wallet.account.detail.domain.model.AccountType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -52,6 +46,7 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObservers()
+        viewModel.loadAccountStatusDetail()
     }
 
     private fun initUi() {
@@ -94,8 +89,16 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
         }
     }
 
-    @Suppress("LongMethod")
     private fun renderContentState(state: ViewState.Content) {
+        setupOriginalAccountDetails(state)
+        setupAccountTypeInfo(state)
+        setupAuthAccountDetails(state)
+        setupDescriptionText(state)
+        setupVisibility(state)
+        setupButtons(state)
+    }
+
+    private fun setupOriginalAccountDetails(state: ViewState.Content) {
         with(binding) {
             state.accountOriginalTypeDisplayName?.let { displayName ->
                 accountItemView.apply {
@@ -109,22 +112,26 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
             }
 
             state.accountOriginalTypeIconDrawablePreview?.let { drawablePreview ->
-                accountItemView.apply {
-                    val drawable = AccountIconDrawable.create(context, R.dimen.spacing_xxxxlarge, drawablePreview)
-                    setStartIconDrawable(drawable)
-                }
+                val drawable = AccountIconDrawable.create(requireContext(), R.dimen.spacing_xxxxlarge, drawablePreview)
+                accountItemView.setStartIconDrawable(drawable)
             }
+        }
+    }
 
+    private fun setupAccountTypeInfo(state: ViewState.Content) {
+        with(binding) {
             accountTypeTextView.text = state.titleString
             accountStateTextView.text = state.accountTypeString
 
             state.accountTypeDrawablePreview?.let { drawablePreview ->
-                accountStateTextView.apply {
-                    val drawable = AccountIconDrawable.create(context, R.dimen.spacing_xxxxlarge, drawablePreview)
-                    setDrawable(start = drawable)
-                }
+                val drawable = AccountIconDrawable.create(requireContext(), R.dimen.spacing_xxxxlarge, drawablePreview)
+                accountStateTextView.setDrawable(start = drawable)
             }
+        }
+    }
 
+    private fun setupAuthAccountDetails(state: ViewState.Content) {
+        with(binding) {
             state.authAccountDisplayName?.let { displayName ->
                 authAccountItemView.apply {
                     setTitleText(displayName.primaryDisplayName)
@@ -137,50 +144,50 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
             }
 
             state.authAccountIconDrawablePreview?.let { drawablePreview ->
-                authAccountItemView.apply {
-                    val drawable = AccountIconDrawable.create(context, R.dimen.spacing_xxxxlarge, drawablePreview)
-                    setStartIconDrawable(drawable)
+                val drawable = AccountIconDrawable.create(requireContext(), R.dimen.spacing_xxxxlarge, drawablePreview)
+                authAccountItemView.setStartIconDrawable(drawable)
+            }
+        }
+    }
+
+    private fun setupDescriptionText(state: ViewState.Content) {
+        with(binding) {
+            state.descriptionDetail.let { descriptionDetail ->
+                descriptionDetail.annotatedString.let { annotatedString ->
+                    val linkTextColor = ContextCompat.getColor(root.context, R.color.link_primary)
+                    val clickSpannable = getCustomClickableSpan(
+                        clickableColor = linkTextColor,
+                        onClick = {
+                            context?.openUrl(descriptionDetail.hyperlinkUrl)
+                        }
+                    )
+                    val clickableAnnotatedString = annotatedString.copy(
+                        customAnnotationList = listOf("learn_more" to clickSpannable)
+                    )
+                    accountStateDescriptionTextView.text = context?.getXmlStyledString(clickableAnnotatedString)
                 }
             }
+        }
+    }
 
-            state.descriptionAnnotatedString?.let { annotatedString ->
-                val linkTextColor = ContextCompat.getColor(binding.root.context, R.color.link_primary)
-                val clickSpannable = getCustomClickableSpan(
-                    clickableColor = linkTextColor,
-                    onClick = {
-                        when (state.accountDetail?.accountType) {
-                            AccountType.Algo25 -> context?.openUrl(ALGO25_ACCOUNT_SUPPORT_URL)
-                            AccountType.HdKey -> context?.openUrl(HD_ACCOUNT_SUPPORT_URL)
-                            AccountType.LedgerBle -> context?.openUrl(LEDGER_SUPPORT_URL)
-                            AccountType.NoAuth -> context?.openUrl(WATCH_SUPPORT_URL)
-                            AccountType.Rekeyed -> context?.openUrl(REKEY_SUPPORT_URL)
-                            AccountType.RekeyedAuth -> context?.openUrl(REKEY_SUPPORT_URL)
-                            null -> context?.openUrl(WATCH_SUPPORT_URL)
-                        }
-                    }
-                )
-                val clickableAnnotatedString = annotatedString.copy(
-                    customAnnotationList = listOf("learn_more" to clickSpannable)
-                )
-                accountStateDescriptionTextView.text = context?.getXmlStyledString(clickableAnnotatedString)
-            }
-
+    private fun setupVisibility(state: ViewState.Content) {
+        with(binding) {
             rekeyGroup.isVisible = state.isRekeyGroupVisible == true
             rekeyToLedgerAccountButton.isVisible = state.isRekeyToLedgerAccountVisible == true
             rekeyToStandardAccountButton.isVisible = state.isRekeyToStandardAccountVisible == true
+        }
+    }
 
+    private fun setupButtons(state: ViewState.Content) {
+        with(binding) {
             state.accountOriginalActionButton?.let { buttonState ->
-                accountItemView.apply {
-                    setButtonState(buttonState)
-                    setActionButtonClickListener { viewModel.onAccountActionButtonClicked() }
-                }
+                accountItemView.setButtonState(buttonState)
+                accountItemView.setActionButtonClickListener { viewModel.onAccountActionButtonClicked() }
             }
 
             state.authAccountActionButton?.let { buttonState ->
-                authAccountItemView.apply {
-                    setButtonState(buttonState)
-                    setActionTextButtonClickListener { viewModel.onAuthAccountActionButtonClicked() }
-                }
+                authAccountItemView.setButtonState(buttonState)
+                authAccountItemView.setActionTextButtonClickListener { viewModel.onAuthAccountActionButtonClicked() }
             }
         }
     }

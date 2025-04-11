@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.onboarding.reccoverypassphrase.importregisteredaddresses
+package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses
 
 import android.os.Bundle
 import android.view.LayoutInflater

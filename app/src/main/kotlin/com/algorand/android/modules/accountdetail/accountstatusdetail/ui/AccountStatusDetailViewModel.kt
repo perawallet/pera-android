@@ -26,7 +26,6 @@ import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.Account
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.decider.AccountStatusDetailPreviewDecider
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlow
-import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.viewmodel.EventDelegate
@@ -54,25 +53,13 @@ class AccountStatusDetailViewModel @Inject constructor(
     private val navArgs = AccountStatusDetailBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
     val accountAddress = navArgs.accountAddress
 
-    val authAccountAddress: String
-        get() {
-            val currentState = state.value
-            return if (currentState is ViewState.Content) {
-                currentState.authAccountDisplayName?.accountAddress.orEmpty()
-            } else {
-                ""
-            }
-        }
-
     init {
         stateDelegate.setDefaultState(ViewState.Idle)
-        loadAccountStatusDetail()
     }
 
-    private fun loadAccountStatusDetail() {
+    fun loadAccountStatusDetail() {
+        stateDelegate.updateState { ViewState.Loading }
         viewModelScope.launch {
-            stateDelegate.updateState { ViewState.Loading }
-
             getAccountDetailFlow(accountAddress).collectLatest { accountDetail ->
                 if (accountDetail == null) return@collectLatest
 
@@ -85,7 +72,7 @@ class AccountStatusDetailViewModel @Inject constructor(
                 val accountOriginalTypeIconDrawablePreview = getAccountOriginalStateIconDrawablePreview(accountAddress)
                 val accountTypeDrawablePreview = getAccountIconDrawablePreview(accountAddress)
                 val accountTypeString = accountStatusDetailPreviewDecider.decideAccountTypeString(accountDetail)
-                val descriptionAnnotatedString = accountStatusDetailPreviewDecider.decideDescriptionAnnotatedString(
+                val descriptionDetail = accountStatusDetailPreviewDecider.decideDescriptionDetail(
                     accountDetail = accountDetail
                 )
                 val authAccountDisplayName = authAccountAddress?.let { safeAuthAddress ->
@@ -108,9 +95,8 @@ class AccountStatusDetailViewModel @Inject constructor(
                         authAccountIconDrawablePreview = authAccountIconDrawablePreview,
                         authAccountActionButton = authAccountActionButton,
                         accountTypeDrawablePreview = accountTypeDrawablePreview,
-                        accountDetail = accountDetail,
+                        descriptionDetail = descriptionDetail,
                         accountTypeString = accountTypeString,
-                        descriptionAnnotatedString = descriptionAnnotatedString,
                         isRekeyGroupVisible = authAccountAddress != null,
                         isRekeyToLedgerAccountVisible = hasAccountAuthority,
                         isRekeyToStandardAccountVisible = hasAccountAuthority
@@ -149,13 +135,17 @@ class AccountStatusDetailViewModel @Inject constructor(
             val authAccountIconDrawablePreview: AccountIconDrawablePreview? = null,
             val authAccountActionButton: AccountAssetItemButtonState? = null,
             val accountTypeDrawablePreview: AccountIconDrawablePreview? = null,
-            val accountDetail: AccountDetail? = null,
+            val descriptionDetail: DescriptionDetail,
             val accountTypeString: String? = null,
-            val descriptionAnnotatedString: AnnotatedString? = null,
             val isRekeyGroupVisible: Boolean? = null,
             val isRekeyToLedgerAccountVisible: Boolean? = null,
             val isRekeyToStandardAccountVisible: Boolean? = null
-        ) : ViewState
+        ) : ViewState {
+            data class DescriptionDetail(
+                val annotatedString: AnnotatedString,
+                val hyperlinkUrl: String
+            )
+        }
 
         data class Error(val message: String) : ViewState
     }

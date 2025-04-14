@@ -19,7 +19,7 @@ import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePrev
 data class AccountDetailSummary(
     val accountIconDrawablePreview: AccountIconDrawablePreview,
     val accountDisplayName: AccountDisplayName,
-    val publicKey: String,
+    val accountAddress: String,
     val accountTypeResId: Int,
     val shouldDisplayAccountType: Boolean
 )

@@ -144,6 +144,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
             PeraCard(
                 title = stringResource(R.string.mnemonic_type_bip39_title),
+                highlighted = stringResource(R.string.new_text),
                 description = stringResource(R.string.mnemonic_type_bip39_description),
                 footer = stringResource(R.string.mnemonic_type_bip39_footer),
                 onClick = {
@@ -158,6 +159,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
             PeraCard(
                 title = stringResource(R.string.mnemonic_type_algo25_title),
+                highlighted = stringResource(R.string.legacy_text),
                 description = stringResource(R.string.mnemonic_type_algo25_description),
                 footer = stringResource(R.string.mnemonic_type_algo25_footer),
                 onClick = {

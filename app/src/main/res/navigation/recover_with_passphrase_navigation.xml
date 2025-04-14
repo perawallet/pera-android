@@ -40,7 +40,7 @@
             android:id="@+id/action_recoverWithPassphraseFragment_to_recoverAccountNameRegistrationFragment"
             app:destination="@id/recoverAccountNameRegistrationFragment" />
         <action
-            android:id="@+id/action_recoverWithPassphraseFragment_to_recoverImportHdAddressesFragment"
+            android:id="@+id/action_recoverWithPassphraseFragment_to_recoverRegisteredAccountsFragment"
             app:destination="@id/recoverRegisteredAccountsFragment" />
         <action
             android:id="@+id/action_recoverWithPassphraseFragment_to_recoverSingleAddressRekeyedAccountSelectionFragment"
@@ -48,7 +48,7 @@
     </fragment>
     <fragment
         android:id="@+id/recoverRegisteredAccountsFragment"
-        android:name="com.algorand.android.ui.onboarding.reccoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsFragment"
+        android:name="com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsFragment"
         android:label="RecoveryRegisteredAccountsFragment">
         <argument
             android:name="accountCreation"

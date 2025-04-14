@@ -46,7 +46,7 @@ class AccountDetailSummaryUseCase @Inject constructor(
             AccountType.NoAuth -> R.string.watch
             AccountType.Rekeyed -> R.string.rekeyed
             AccountType.RekeyedAuth -> R.string.rekeyed
-            AccountType.HdKey -> R.string.hd_wallet_address
+            AccountType.HdKey -> R.string.hd_account
         }
     }
 

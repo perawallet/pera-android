@@ -145,12 +145,6 @@ class PassphraseValidationViewModel @Inject constructor(
             else -> emptyList()
         }
 
-    fun sendEvent(event: ViewEvent) {
-        viewModelScope.launchIO {
-            eventDelegate.sendEvent(event)
-        }
-    }
-
     sealed interface ViewState {
         data object Idle : ViewState
         data class DefaultState(val passphrase: List<String>) : ViewState

@@ -46,8 +46,7 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
     private val viewEventCollector: suspend (ViewEvent) -> Unit = {
         when (it) {
             ViewEvent.PassphraseVerifiedComplete -> {
-                passphraseValidationViewModel.logEvent(PeraEvent.ONBOARDING_PASSPHRASE_VERIFIED_COMPLETE)
-                navToPassphraseVerifiedInfoFragment()
+                onPassphraseVerifiedComplete()
             }
         }
     }
@@ -110,7 +109,7 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
                     it
                 )
             } ?: run {
-                passphraseValidationViewModel.sendEvent(ViewEvent.PassphraseVerifiedComplete)
+                onPassphraseVerifiedComplete()
             }
         } else {
             showGlobalError(errorMessage = getString(R.string.selected_words_are))
@@ -120,5 +119,10 @@ class PassphraseValidationFragment : DaggerBaseFragment(R.layout.fragment_passph
 
     private fun navToPassphraseVerifiedInfoFragment() {
         nav(actionPassphraseValidationFragmentToPassphraseVerifiedInfoFragment(args.accountCreation))
+    }
+
+    private fun onPassphraseVerifiedComplete() {
+        passphraseValidationViewModel.logEvent(PeraEvent.ONBOARDING_PASSPHRASE_VERIFIED_COMPLETE)
+        navToPassphraseVerifiedInfoFragment()
     }
 }

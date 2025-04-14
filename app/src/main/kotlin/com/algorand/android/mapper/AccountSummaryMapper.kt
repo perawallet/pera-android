@@ -30,7 +30,7 @@ class AccountSummaryMapper @Inject constructor() {
         return AccountDetailSummary(
             accountIconDrawablePreview = accountIconDrawablePreview,
             accountDisplayName = accountDisplayName,
-            publicKey = accountAddress,
+            accountAddress = accountAddress,
             accountTypeResId = accountTypeResId,
             shouldDisplayAccountType = shouldDisplayAccountType
         )

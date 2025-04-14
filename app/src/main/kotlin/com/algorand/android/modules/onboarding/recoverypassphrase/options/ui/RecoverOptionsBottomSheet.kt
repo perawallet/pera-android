@@ -17,7 +17,7 @@ import android.view.View
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseBottomSheet
 import com.algorand.android.databinding.BottomSheetRecoverOptionsBinding
-import com.algorand.android.utils.browser.RECOVER_INFO_URL
+import com.algorand.android.utils.browser.RECOVER_ACCOUNT_SUPPORT_URL
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.setNavigationResult
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -33,7 +33,7 @@ class RecoverOptionsBottomSheet : DaggerBaseBottomSheet(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.pasteButton.setOnClickListener { onOptionClick(OptionResult.PASTE) }
-        binding.learnMoreButton.setOnClickListener { context?.openUrl(RECOVER_INFO_URL) }
+        binding.learnMoreButton.setOnClickListener { context?.openUrl(RECOVER_ACCOUNT_SUPPORT_URL) }
     }
 
     private fun onOptionClick(optionResult: OptionResult) {

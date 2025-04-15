@@ -1,4 +1,4 @@
-package com.algorand.android.ui.compose.widget
+package com.algorand.android.ui.compose.widget.icon
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,12 +20,29 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PeraIcon(modifier: Modifier, painter: Painter, contentDescription: String) {
+private fun PeraCoreIcon(
+    modifier: Modifier = Modifier,
+    painter: Painter,
+    contentDescription: String
+) {
     Image(
         painter = painter,
         colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.surfaceDim),
         contentDescription = contentDescription,
         modifier = modifier
+    )
+}
+
+@Composable
+fun PeraIcon(
+    modifier: Modifier = Modifier,
+    painter: Painter,
+    contentDescription: String
+) {
+    PeraCoreIcon(
+        modifier = modifier,
+        painter = painter,
+        contentDescription = contentDescription
     )
 }
 

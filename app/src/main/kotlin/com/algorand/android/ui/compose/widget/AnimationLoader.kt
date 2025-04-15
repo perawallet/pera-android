@@ -18,6 +18,8 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.icon.PeraIconRoundShapeBig
+import com.algorand.android.ui.compose.widget.text.PeraTitleText
 
 @Composable
 fun AnimationLoader(

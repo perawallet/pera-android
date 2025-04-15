@@ -43,8 +43,8 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.ErrorContentWidget
-import com.algorand.android.ui.compose.widget.PeraBodyText
-import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewEvent
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewState
 import com.algorand.android.utils.toShortenedAddress

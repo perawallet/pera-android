@@ -33,8 +33,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
-import com.algorand.android.ui.compose.widget.PeraBodyText
-import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraTitleText
 
 @SuppressWarnings("LongMethod")
 @Composable
@@ -81,7 +81,7 @@ fun ItemChoiceWidget(
 @Composable
 fun GroupChoiceWidgetPreview() {
     ItemChoiceWidget(
-        title = stringResource(id = R.string.import_an_account),
+        title = stringResource(id = R.string.import_a_wallet),
         description = stringResource(id = R.string.import_an_existing),
         iconContentDescription = stringResource(id = R.string.import_an_existing),
         icon = ImageVector.vectorResource(R.drawable.ic_key),

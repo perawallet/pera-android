@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/spacing_xlarge"
             android:layout_marginTop="@dimen/spacing_xxxsmall"
-            android:text="@string/import_an_account"
+            android:text="@string/import_a_wallet"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

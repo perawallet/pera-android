@@ -46,7 +46,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.navArgs
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
@@ -55,13 +54,14 @@ import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AnimationLoader
+import com.algorand.android.ui.compose.widget.button.PeraButtonState
 import com.algorand.android.ui.compose.widget.ErrorContentWidget
-import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraCheckbox
-import com.algorand.android.ui.compose.widget.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.PeraHighlightedText
-import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.text.PeraHighlightedText
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.text.PeraTitleText
 import com.algorand.android.ui.onboarding.reccoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewEvent
 import com.algorand.android.ui.onboarding.reccoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState
 import com.algorand.android.utils.toShortenedAddress
@@ -72,8 +72,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
-
-    private val args: RecoverRegisteredAccountsFragmentArgs by navArgs()
 
     private val viewModel: RecoverRegisteredAccountsViewModel by viewModels()
 
@@ -229,6 +227,7 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                         }
                     )
                 }
+
                 LazyColumn(modifier = Modifier.weight(1f)) {
                     items(state.registeredAccounts) { account ->
                         AddressItem(
@@ -250,8 +249,10 @@ class RecoverRegisteredAccountsFragment : DaggerBaseFragment(0) {
                     },
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.continue_text),
-                    enabled = {
-                        state.selectedAddresses.isNotEmpty()
+                    state = if (state.selectedAddresses.isNotEmpty()) {
+                        PeraButtonState.ENABLED
+                    } else {
+                        PeraButtonState.DISABLED
                     }
                 )
             }

@@ -52,8 +52,6 @@
             app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.cardview.widget.CardView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/cardviewWalletNumber"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/descriptionTextView"

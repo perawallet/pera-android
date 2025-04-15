@@ -27,11 +27,11 @@ import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.onboarding.pairledger.resultinfo.VerifyLedgerInfoViewModel.ViewState
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraBodyText
-import com.algorand.android.ui.compose.widget.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.PeraIcon
-import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraSecondaryButton
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.button.PeraSecondaryButton
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

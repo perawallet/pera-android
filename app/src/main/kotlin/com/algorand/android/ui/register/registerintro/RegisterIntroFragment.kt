@@ -149,7 +149,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
             verticalArrangement = Arrangement.Top
         ) {
             PeraHeadlineText(
-                text = stringResource(id = R.string.welcome_to_pera),
+                text = stringResource(id = R.string.add_a_wallet_or_account),
                 modifier = Modifier
                     .padding(start = 24.dp)
                     .align(alignment = Alignment.Start)
@@ -194,7 +194,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
             Spacer(modifier = Modifier.height(40.dp))
             ItemChoiceWidget(
                 modifier = Modifier,
-                title = stringResource(id = R.string.import_an_account),
+                title = stringResource(id = R.string.import_a_wallet),
                 description = stringResource(id = R.string.import_an_existing),
                 iconContentDescription = stringResource(id = R.string.import_an_existing),
                 icon = ImageVector.vectorResource(R.drawable.ic_key),
@@ -204,8 +204,8 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
             ItemChoiceWidget(
                 modifier = Modifier,
                 title = stringResource(id = R.string.watch_an_account),
-                description = stringResource(id = R.string.monitor_an_algorand_account),
-                iconContentDescription = stringResource(id = R.string.monitor_an_algorand_account),
+                description = stringResource(id = R.string.monitor_an_algorand_address),
+                iconContentDescription = stringResource(id = R.string.monitor_an_algorand_address),
                 icon = ImageVector.vectorResource(R.drawable.ic_eye),
                 onClick = ::navToWatchAccountInfoFragment
             )
@@ -255,13 +255,12 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
 
     @Composable
     private fun createAnnotatedString() = buildAnnotatedString {
-        val fullText = stringResource(id = R.string.by_creating_account)
+        val fullText = stringResource(id = R.string.by_adding_a_wallet)
         val termsAndConditionsText = stringResource(id = R.string.terms_and_conditions)
         val privacyPolicyText = stringResource(id = R.string.privacy_policy)
 
         val termsAndConditionsStartIndex = fullText.indexOf(termsAndConditionsText)
-        val termsAndConditionsEndIndex =
-            termsAndConditionsStartIndex + termsAndConditionsText.length
+        val termsAndConditionsEndIndex = termsAndConditionsStartIndex + termsAndConditionsText.length
         val privacyPolicyStartIndex = fullText.indexOf(privacyPolicyText)
         val privacyPolicyEndIndex = privacyPolicyStartIndex + privacyPolicyText.length
 

@@ -28,6 +28,10 @@ class CreateAccountNameRegistrationFragment : BaseNameRegistrationFragment() {
 
     override fun navToNextFragment() {
         nameRegistrationViewModel.logEvent(PeraEvent.ONBOARDING_NAME_WALLET_COMPLETE)
+        navToHomeNavigation()
+    }
+
+    private fun navToHomeNavigation() {
         nav(
             CreateAccountNameRegistrationFragmentDirections
                 .actionCreateAccountNameRegistrationFragmentToHomeNavigation(

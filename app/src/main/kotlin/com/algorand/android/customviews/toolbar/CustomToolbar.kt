@@ -55,16 +55,9 @@ class CustomToolbar @JvmOverloads constructor(
             initTitle(titleColor = titleColor, titleResId = titleResId)
             initSubtitle(subtitleResId)
             configureStartButton(resId = startIconResId, clickAction = startIconClick, iconColor = startIconColor)
-            initTitleDrawables(leftDrawable = textStartDrawable, rightDrawable = textEndDrawable)
-            initCenterDrawable(centerDrawable)
             clearSubtitleStartDrawable()
         }
         show()
-    }
-
-    private fun initTitleDrawables(leftDrawable: Drawable?, rightDrawable: Drawable?) {
-        setStartDrawable(leftDrawable)
-        setEndDrawable(rightDrawable)
     }
 
     private fun initTitle(titleColor: Int, titleResId: Int?) {
@@ -73,10 +66,6 @@ class CustomToolbar @JvmOverloads constructor(
             if (titleResId != null) setText(titleResId)
             setTextColor(ContextCompat.getColor(context, titleColor))
         }
-    }
-
-    private fun hideTitle() {
-        binding.toolbarTitleTextView.isVisible = false
     }
 
     private fun initSubtitle(subtitleResId: Int?) {
@@ -92,15 +81,6 @@ class CustomToolbar @JvmOverloads constructor(
         } else {
             background = null
         }
-    }
-
-    private fun initCenterDrawable(drawable: Drawable?) {
-        if (drawable != null) {
-            hideTitle()
-            initSubtitle(null)
-            initTitleDrawables(null, null)
-        }
-        setCenterDrawable(drawable)
     }
 
     fun configureStartButton(resId: Int?, clickAction: (() -> Unit)?, iconColor: Int? = null) {
@@ -145,18 +125,11 @@ class CustomToolbar @JvmOverloads constructor(
         }
     }
 
-    fun changeSubtitle(@StringRes subtitleResId: Int) {
-        binding.toolbarSubtitleTextView.apply {
-            setText(subtitleResId)
-            show()
-        }
-    }
-
     fun setSubtitleStartDrawable(drawable: Drawable) {
         binding.toolbarSubtitleTextView.setDrawable(start = drawable)
     }
 
-    fun clearSubtitleStartDrawable() {
+    private fun clearSubtitleStartDrawable() {
         binding.toolbarSubtitleTextView.setDrawable(start = null)
     }
 
@@ -183,29 +156,6 @@ class CustomToolbar @JvmOverloads constructor(
 
     fun setButtonVisibilityById(@IdRes buttonId: Int, isVisible: Boolean) {
         binding.buttonContainerView.findViewById<View>(buttonId)?.isVisible = isVisible
-    }
-
-    fun setEndDrawable(drawable: Drawable?) {
-        binding.textEndImageView.apply {
-            isVisible = drawable != null
-            setImageDrawable(drawable ?: return)
-        }
-        setGuidelinePosition()
-    }
-
-    fun setStartDrawable(drawable: Drawable?) {
-        binding.textStartImageView.apply {
-            isVisible = drawable != null
-            setImageDrawable(drawable ?: return)
-        }
-        setGuidelinePosition()
-    }
-
-    fun setCenterDrawable(drawable: Drawable?) {
-        binding.centerImageView.apply {
-            isVisible = drawable != null
-            setImageDrawable(drawable ?: return)
-        }
     }
 
     fun removeClickListeners() {

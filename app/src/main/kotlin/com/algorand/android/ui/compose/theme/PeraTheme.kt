@@ -23,10 +23,6 @@ val localPeraColors = staticCompositionLocalOf {
     ThemedColors.defaultColor
 }
 
-val localPeraTypography = staticCompositionLocalOf<PeraTypography> {
-    error("No PeraTypography provided")
-}
-
 @Composable
 fun PeraTheme(
     content: @Composable () -> Unit
@@ -40,10 +36,8 @@ fun PeraTheme(
     content: @Composable () -> Unit
 ) {
     val peraColors = ThemedColors.getColorsByMode(isDarkTheme)
-    val peraTypography = peraTypography()
     CompositionLocalProvider(
         localPeraColors provides peraColors,
-        localPeraTypography provides peraTypography,
         content = content
     )
 }
@@ -52,4 +46,8 @@ object PeraTheme {
     val colors: PeraColor
         @Composable
         get() = localPeraColors.current
+
+    val typography: PeraTypography
+        @Composable
+        get() = peraTypography()
 }

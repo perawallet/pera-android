@@ -10,15 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.data.repository
+package com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.usecase
 
-import com.algorand.wallet.account.info.data.model.AccountInformationResponse
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.android.models.AccountCreation
+import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbImportedAddress
 
-internal interface AccountInformationFetchHelper {
-    suspend fun fetchAccount(address: String, includeClosedAccount: Boolean): PeraResult<AccountInformationResponse>
-    suspend fun fetchAccountWithoutAssets(
-        address: String,
-        includeClosedAccount: Boolean
-    ): PeraResult<AccountInformationResponse>
+fun interface CreateAsbImportedAddresses {
+
+    suspend operator fun invoke(accountCreations: List<AccountCreation>): List<AsbImportedAddress>
 }

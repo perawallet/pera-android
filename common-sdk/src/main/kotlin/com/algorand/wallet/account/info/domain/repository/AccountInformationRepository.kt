@@ -23,6 +23,11 @@ internal interface AccountInformationRepository {
 
     suspend fun fetchAccountInformation(address: String, includeClosedAccount: Boolean): PeraResult<AccountInformation>
 
+    suspend fun fetchAccountInformationWithoutAssets(
+        address: String,
+        includeClosedAccount: Boolean
+    ): PeraResult<AccountInformation>
+
     suspend fun getAccountInformation(address: String): AccountInformation?
 
     fun getCachedAccountInformationCountFlow(): Flow<Int>

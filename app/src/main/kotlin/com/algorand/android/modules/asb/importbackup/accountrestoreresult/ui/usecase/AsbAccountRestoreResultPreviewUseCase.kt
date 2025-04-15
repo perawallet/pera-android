@@ -15,10 +15,9 @@ package com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.us
 import com.algorand.android.R
 import com.algorand.android.models.PluralAnnotatedString
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.mapper.AsbAccountRestoreResultPreviewMapper
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbAccountRestoreResultPreview
-import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult
+import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbImportRestoreResultNavArg
 import com.algorand.android.modules.baseresult.ui.mapper.ResultListItemMapper
 import com.algorand.android.modules.baseresult.ui.model.ResultListItem
 import com.algorand.android.modules.baseresult.ui.usecase.BaseResultPreviewUseCase
@@ -27,14 +26,13 @@ import javax.inject.Inject
 class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
     private val asbAccountRestoreResultPreviewMapper: AsbAccountRestoreResultPreviewMapper,
     private val getAccountDisplayName: GetAccountDisplayName,
-    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     resultListItemMapper: ResultListItemMapper
 ) : BaseResultPreviewUseCase(resultListItemMapper) {
 
     suspend fun getAsbAccountRestoreResultPreview(
-        asbAccountImportResult: AsbAccountImportResult
+        navArg: AsbImportRestoreResultNavArg
     ): AsbAccountRestoreResultPreview {
-        val importedAccountSize = asbAccountImportResult.importedAccountList.size
+        val importedAccountSize = navArg.importedAddresses.size
 
         val iconItem = createIconItem(
             iconTintColorResId = R.color.link_icon,
@@ -49,13 +47,13 @@ class AsbAccountRestoreResultPreviewUseCase @Inject constructor(
             isClickable = false
         )
         val infoItem = createInfoBoxItemIfNeeded(
-            unsupportedAccountCount = asbAccountImportResult.unsupportedAccountList.size,
-            existingAccountCount = asbAccountImportResult.existingAccountList.size
+            unsupportedAccountCount = navArg.unsupportedAccountList.size,
+            existingAccountCount = navArg.existingAccountList.size
         )
-        val accountItems = asbAccountImportResult.importedAccountList.map { accountAddress ->
+        val accountItems = navArg.importedAddresses.map { importedAddress ->
             createAccountItem(
-                accountDisplayName = getAccountDisplayName(accountAddress),
-                accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
+                accountDisplayName = getAccountDisplayName(importedAddress.address),
+                accountIconDrawablePreview = importedAddress.accountIconDrawablePreview
             )
         }
         val resultItemList = mutableListOf<ResultListItem>().apply {

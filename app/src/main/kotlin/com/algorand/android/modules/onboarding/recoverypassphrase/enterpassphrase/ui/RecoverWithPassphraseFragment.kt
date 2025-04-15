@@ -325,7 +325,7 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
             is AccountCreation.Type.HdKey -> {
                 nav(
                     RecoverWithPassphraseFragmentDirections
-                        .actionRecoverWithPassphraseFragmentToRecoverImportHdAddressesFragment(
+                        .actionRecoverWithPassphraseFragmentToRecoverRegisteredAccountsFragment(
                             accountCreation = accountCreation
                         )
                 )

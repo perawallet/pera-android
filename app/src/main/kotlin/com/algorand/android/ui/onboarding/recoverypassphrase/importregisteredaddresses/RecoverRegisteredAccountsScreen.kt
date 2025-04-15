@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.onboarding.reccoverypassphrase.importregisteredaddresses
+package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -48,8 +48,8 @@ import com.algorand.android.ui.compose.widget.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.PeraHighlightedText
 import com.algorand.android.ui.compose.widget.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.PeraTitleText
-import com.algorand.android.ui.onboarding.reccoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewEvent
-import com.algorand.android.ui.onboarding.reccoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewEvent
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState
 import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
 import com.algorand.android.ui.rekeyedaccounts.view.FetchingRekeyedAccountsLoadingDialog
 import com.algorand.android.utils.toShortenedAddress

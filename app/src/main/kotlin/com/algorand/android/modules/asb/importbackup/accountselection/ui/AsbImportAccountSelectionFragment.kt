@@ -16,7 +16,7 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
-import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult
+import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbImportRestoreResultNavArg
 import com.algorand.android.modules.basemultipleaccountselection.ui.BaseMultipleAccountSelectionFragment
 import com.algorand.android.modules.basemultipleaccountselection.ui.BaseMultipleAccountSelectionViewModel
 import com.algorand.android.modules.basemultipleaccountselection.ui.adapter.MultipleAccountSelectionAdapter
@@ -39,7 +39,7 @@ class AsbImportAccountSelectionFragment : BaseMultipleAccountSelectionFragment()
 
     private val asbImportAccountSelectionViewModel by viewModels<AsbImportAccountSelectionViewModel>()
 
-    private val navToRestoreCompleteEventCollector: suspend (Event<AsbAccountImportResult>?) -> Unit = { event ->
+    private val navToRestoreCompleteEventCollector: suspend (Event<AsbImportRestoreResultNavArg>?) -> Unit = { event ->
         event?.consume()?.run { navToRestoreCompleteFragment(this) }
     }
 
@@ -69,10 +69,10 @@ class AsbImportAccountSelectionFragment : BaseMultipleAccountSelectionFragment()
         }
     }
 
-    private fun navToRestoreCompleteFragment(asbAccountImportResult: AsbAccountImportResult) {
+    private fun navToRestoreCompleteFragment(navArg: AsbImportRestoreResultNavArg) {
         nav(
             AsbImportAccountSelectionFragmentDirections
-                .actionAsbImportAccountSelectionFragmentToAsbAccountRestoreResultFragment(asbAccountImportResult)
+                .actionAsbImportAccountSelectionFragmentToAsbAccountRestoreResultFragment(navArg)
         )
     }
 }

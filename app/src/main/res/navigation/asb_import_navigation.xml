@@ -58,8 +58,8 @@
         android:label="AsbAccountRestoreResultFragment"
         tools:layout="@layout/fragment_base_result">
         <argument
-            android:name="asbAccountImportResult"
-            app:argType="com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult" />
+            android:name="asbImportRestoreResultNavArg"
+            app:argType="com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbImportRestoreResultNavArg" />
         <action
             android:id="@+id/action_asbAccountRestoreResultFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"

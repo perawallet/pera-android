@@ -10,15 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.data.repository
+package com.algorand.android.modules.asb.importbackup.accountselection.ui.model
 
-import com.algorand.wallet.account.info.data.model.AccountInformationResponse
-import com.algorand.wallet.foundation.PeraResult
+import android.os.Parcelable
+import com.algorand.android.models.AccountCreation
+import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import kotlinx.parcelize.Parcelize
 
-internal interface AccountInformationFetchHelper {
-    suspend fun fetchAccount(address: String, includeClosedAccount: Boolean): PeraResult<AccountInformationResponse>
-    suspend fun fetchAccountWithoutAssets(
-        address: String,
-        includeClosedAccount: Boolean
-    ): PeraResult<AccountInformationResponse>
-}
+@Parcelize
+data class AsbImportedAddress(
+    val address: String,
+    val creationType: AccountCreation.Type,
+    val accountIconDrawablePreview: AccountIconDrawablePreview
+) : Parcelable

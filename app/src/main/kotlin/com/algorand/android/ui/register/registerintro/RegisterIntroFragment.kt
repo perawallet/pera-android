@@ -313,9 +313,9 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
             BottomSheetHeader(sheetState, onDismiss)
 
             PeraCard(
-                title = stringResource(R.string.mnemonic_type_bip39_title),
-                description = stringResource(R.string.mnemonic_type_bip39_description),
-                footer = stringResource(R.string.mnemonic_type_bip39_footer),
+                title = stringResource(R.string.mnemonic_type_universal_title),
+                description = stringResource(R.string.mnemonic_type_universal_description),
+                footer = stringResource(R.string.mnemonic_type_universal_footer),
                 highlighted = stringResource(R.string.recommended),
                 onClick = {
                     navToBackupPassphraseInfoNavigation(

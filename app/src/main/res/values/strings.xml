@@ -220,9 +220,8 @@
     <string name="by_creating_account">By creating an account, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
     <string name="create_new_account">Create new Account</string>
     <string name="watch_account">Watch Account</string>
-    <string name="bip_39">BIP 39</string>
     <string name="wallet_address">Wallet address</string>
-    <string name="one_key_wallet">One Key Wallet</string>
+    <string name="universal_wallet">Universal Wallet</string>
     <string name="hd_account">HD Account</string>
     <string name="receive">Receive</string>
     <string name="system_default">System Default</string>
@@ -1454,9 +1453,9 @@
 
     <string name="you_dont_have_any">You don\'t have any authorized account matching with %1$s</string>
 
-    <string name="mnemonic_type_bip39_title">ONE Key</string>
-    <string name="mnemonic_type_bip39_description">New inter-operable format that enables important features like HD Wallet</string>
-    <string name="mnemonic_type_bip39_footer">24 Key mnemonic keys</string>
+    <string name="mnemonic_type_universal_title">Universal</string>
+    <string name="mnemonic_type_universal_description">New inter-operable format that enables important features like HD Wallet</string>
+    <string name="mnemonic_type_universal_footer">24 Key mnemonic keys</string>
     <string name="mnemonic_type_algo25_title">Algo25</string>
     <string name="mnemonic_type_algo25_description">Legacy format that is specific to Algorand ecosystem</string>
     <string name="mnemonic_type_algo25_footer">25 Key mnemonic keys</string>

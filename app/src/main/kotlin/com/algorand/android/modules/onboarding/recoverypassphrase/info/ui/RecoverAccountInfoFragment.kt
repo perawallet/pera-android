@@ -143,10 +143,10 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             BottomSheetHeader(sheetState, onDismiss)
 
             PeraCard(
-                title = stringResource(R.string.mnemonic_type_bip39_title),
+                title = stringResource(R.string.mnemonic_type_universal_title),
                 highlighted = stringResource(R.string.new_text),
-                description = stringResource(R.string.mnemonic_type_bip39_description),
-                footer = stringResource(R.string.mnemonic_type_bip39_footer),
+                description = stringResource(R.string.mnemonic_type_universal_description),
+                footer = stringResource(R.string.mnemonic_type_universal_footer),
                 onClick = {
                     navigateToRecoverWithPassphraseFragment(
                         OnboardingAccountType.HdKey

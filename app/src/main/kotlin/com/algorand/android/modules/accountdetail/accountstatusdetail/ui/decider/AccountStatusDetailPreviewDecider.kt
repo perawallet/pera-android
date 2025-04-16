@@ -68,7 +68,7 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                     authAccountState
                 )
             }
-            AccountType.HdKey -> context.getString(R.string.one_key_wallet)
+            AccountType.HdKey -> context.getString(R.string.universal_wallet)
             null -> context.getString(R.string.no_auth)
         }
         return accountTypeString

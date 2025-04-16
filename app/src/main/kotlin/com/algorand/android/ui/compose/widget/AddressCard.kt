@@ -1,6 +1,8 @@
 package com.algorand.android.ui.compose.widget
 
+import RekeyDividerSection
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,9 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,75 +28,70 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 @SuppressWarnings("LongMethod")
 @Composable
 fun AddressCard(
-    name: String,
-    address: String,
+    name: String?,
+    address: String?,
     hdWallet: Boolean = false,
+    rekey: Boolean = false,
     onClick: () -> Unit
 ) {
-    OutlinedCard(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                start = 24.dp,
-                end = 24.dp,
-                bottom = 24.dp
-            ),
-        onClick = onClick,
-        shape = CardDefaults.outlinedShape,
-        border = CardDefaults.outlinedCardBorder(enabled = true),
-        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+            .clickable { onClick() }
     ) {
-        Column {
-            Row(
-                modifier = Modifier
-                    .padding(top = 16.dp, bottom = 16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                PeraIconRoundShape(
-                    modifier = Modifier.padding(start = 16.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_wallet),
-                    contentDescription = stringResource(R.string.algo_wallet)
-                )
-                val nameText = hdWallet.let {
-                    when (it) {
-                        true -> name
-                        false -> address
-                    }
+        Row(
+            modifier = Modifier
+                .padding(top = 16.dp, bottom = 16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            PeraIconRoundShape(
+                modifier = Modifier.padding(start = 16.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_wallet),
+                contentDescription = stringResource(R.string.algo_wallet)
+            )
+            val nameText = hdWallet.let {
+                when (it) {
+                    true -> name
+                    false -> address
                 }
+            }
+            nameText?.let {
                 Box(modifier = Modifier.weight(1F)) {
                     PeraTitleText(
                         modifier = Modifier
                             .widthIn(max = 140.dp, min = 20.dp)
                             .padding(start = 16.dp, end = 16.dp),
-                        text = nameText
-                    )
-                }
-                if (hdWallet.not()) {
-                    PeraIcon(
-                        modifier = Modifier.padding(end = 30.dp),
-                        painter = painterResource(id = R.drawable.ic_copy),
-                        colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onTertiaryContainer),
-                        contentDescription = ""
+                        text = it
                     )
                 }
             }
-            if (hdWallet) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 36.dp)
-                            .height(65.dp)
-                            .width(1.dp)
-                            .background(color = MaterialTheme.colorScheme.onTertiaryContainer)
-                    ) {
-                        // just empty
-                    }
-                    PeraIconHighlightedText(
-                        modifier = Modifier.padding(start = 37.dp),
-                        text = stringResource(R.string.scan_new_addresses)
-                    )
+            if (hdWallet.not()) {
+                PeraIcon(
+                    modifier = Modifier.padding(end = 16.dp),
+                    painter = painterResource(id = R.drawable.ic_copy),
+                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onTertiaryContainer),
+                    contentDescription = ""
+                )
+            }
+        }
+        if (hdWallet) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .padding(start = 36.dp)
+                        .height(65.dp)
+                        .width(1.dp)
+                        .background(color = MaterialTheme.colorScheme.onTertiaryContainer)
+                ) {
+                    // just empty
                 }
+                PeraIconHighlightedText(
+                    modifier = Modifier.padding(start = 37.dp),
+                    text = stringResource(R.string.scan_new_addresses)
+                )
+            }
+            address?.let {
                 Row(
                     modifier = Modifier
                         .padding(top = 16.dp, bottom = 16.dp)
@@ -121,19 +116,28 @@ fun AddressCard(
                             modifier = Modifier
                                 .widthIn(max = 140.dp, min = 20.dp)
                                 .padding(start = 16.dp, end = 16.dp),
-                            text = address,
+                            text = it,
                             maxLines = 1
                         )
                     }
+                    PeraIcon(
+                        modifier = Modifier.padding(end = 16.dp),
+                        painter = painterResource(id = R.drawable.ic_copy),
+                        colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onTertiaryContainer),
+                        contentDescription = ""
+                    )
                 }
             }
+        }
+        if (rekey) {
+            RekeyDividerSection()
         }
     }
 }
 
 @PreviewLightDark
 @Composable
-fun StandardAccountPreview() {
+fun HDAccountPreview() {
     PeraTheme {
         AddressCard(
             name = "HD Wallet #1",
@@ -146,11 +150,38 @@ fun StandardAccountPreview() {
 
 @PreviewLightDark
 @Composable
-fun HDAccountPreview() {
+fun HDAccountRekeyPreview() {
     PeraTheme {
         AddressCard(
             name = "HD Wallet #1",
             address = "CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5",
+            hdWallet = true,
+            rekey = true,
+            onClick = { }
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun StandardPreview() {
+    PeraTheme {
+        AddressCard(
+            name = "HD Wallet #1",
+            address = "CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5",
+            onClick = { }
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun StandardRekeyPreview() {
+    PeraTheme {
+        AddressCard(
+            name = "HD Wallet #1",
+            address = "CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5CJR5",
+            rekey = true,
             onClick = { }
         )
     }

@@ -24,6 +24,8 @@ import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.databinding.BottomSheetAccountStatusDetailBinding
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewEvent
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewState
+import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.AddressCard
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -34,7 +36,8 @@ import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_account_status_detail) {
+class AccountStatusDetailBottomSheet :
+    BaseBottomSheet(R.layout.bottom_sheet_account_status_detail) {
 
     private val viewModel by viewModels<AccountStatusDetailViewModel>()
     private val binding by viewBinding(BottomSheetAccountStatusDetailBinding::bind)
@@ -62,6 +65,7 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
             is ViewState.Idle, is ViewState.Loading, is ViewState.Error -> {
                 // Handle these states later when scren is in compose
             }
+
             is ViewState.Content -> {
                 renderContentState(state)
             }
@@ -73,12 +77,15 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
             is ViewEvent.CopyAccountAddressToClipboard -> {
                 onAccountAddressCopied(event.address)
             }
+
             is ViewEvent.NavigateToUndoRekey -> {
                 navToUndoRekeyNavigation()
             }
+
             is ViewEvent.NavigateToRekeyToStandardAccount -> {
                 navToRekeyToStandardAccountNavigation()
             }
+
             is ViewEvent.NavigateToRekeyToLedgerAccount -> {
                 navToRekeyToLedgerAccountNavigation()
             }
@@ -102,9 +109,19 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
     private fun setupOriginalAccountDetails(state: ViewState.Content) {
         with(binding) {
             state.accountOriginalTypeDisplayName?.let { displayName ->
+                accountItemView.setContent {
+                    PeraTheme {
+                        AddressCard(
+                            name = displayName.primaryDisplayName,
+                            address = displayName.accountAddress,
+                            hdWallet = false,
+                            rekey = state.isRekeyGroupVisible == true
+                        ) {
+                            viewModel.onAccountActionButtonClicked()
+                        }
+                    }
+                }
                 accountItemView.apply {
-                    setTitleText(displayName.primaryDisplayName)
-                    setDescriptionText(displayName.secondaryDisplayName)
                     setOnLongClickListener {
                         onAccountAddressCopied(displayName.accountAddress)
                         true
@@ -113,8 +130,12 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
             }
 
             state.accountOriginalTypeIconDrawablePreview?.let { drawablePreview ->
-                val drawable = AccountIconDrawable.create(requireContext(), R.dimen.spacing_xxxxlarge, drawablePreview)
-                accountItemView.setStartIconDrawable(drawable)
+//                val drawable = AccountIconDrawable.create(
+//                    requireContext(),
+//                    R.dimen.spacing_xxxxlarge,
+//                    drawablePreview
+//                )
+//                accountItemView.setStartIconDrawable(drawable)
             }
         }
     }
@@ -125,7 +146,11 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
             accountStateTextView.text = state.accountTypeString
 
             state.accountTypeDrawablePreview?.let { drawablePreview ->
-                val drawable = AccountIconDrawable.create(requireContext(), R.dimen.spacing_xxxxlarge, drawablePreview)
+                val drawable = AccountIconDrawable.create(
+                    requireContext(),
+                    R.dimen.spacing_xxxxlarge,
+                    drawablePreview
+                )
                 accountStateTextView.setDrawable(start = drawable)
             }
         }
@@ -145,7 +170,11 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
             }
 
             state.authAccountIconDrawablePreview?.let { drawablePreview ->
-                val drawable = AccountIconDrawable.create(requireContext(), R.dimen.spacing_xxxxlarge, drawablePreview)
+                val drawable = AccountIconDrawable.create(
+                    requireContext(),
+                    R.dimen.spacing_xxxxlarge,
+                    drawablePreview
+                )
                 authAccountItemView.setStartIconDrawable(drawable)
             }
         }
@@ -165,7 +194,8 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
                     val clickableAnnotatedString = annotatedString.copy(
                         customAnnotationList = listOf("learn_more" to clickSpannable)
                     )
-                    accountStateDescriptionTextView.text = context?.getXmlStyledString(clickableAnnotatedString)
+                    accountStateDescriptionTextView.text =
+                        context?.getXmlStyledString(clickableAnnotatedString)
                 }
             }
         }
@@ -173,7 +203,7 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
 
     private fun setupVisibility(state: ViewState.Content) {
         with(binding) {
-            rekeyGroup.isVisible = state.isRekeyGroupVisible == true
+//            rekeyGroup.isVisible = state.isRekeyGroupVisible == true
             rekeyToLedgerAccountButton.isVisible = state.isRekeyToLedgerAccountVisible == true
             rekeyToStandardAccountButton.isVisible = state.isRekeyToStandardAccountVisible == true
         }
@@ -182,8 +212,8 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
     private fun setupButtons(state: ViewState.Content) {
         with(binding) {
             state.accountOriginalActionButton?.let { buttonState ->
-                accountItemView.setButtonState(buttonState)
-                accountItemView.setActionButtonClickListener { viewModel.onAccountActionButtonClicked() }
+//                accountItemView.setButtonState(buttonState)
+//                accountItemView.setActionButtonClickListener { viewModel.onAccountActionButtonClicked() }
             }
 
             state.authAccountActionButton?.let { buttonState ->

@@ -36,7 +36,7 @@ class RekeyToLedgerAccountPreviewDecider @Inject constructor() {
             AccountType.LedgerBle -> R.string.change_the_ledger_account_signing
             AccountType.Rekeyed, AccountType.RekeyedAuth -> R.string.rekey_your_account_to_a_different_account
             AccountType.NoAuth, null -> null
-            AccountType.HdKey -> R.string.back_your_standard_account_with // TODO HDWallet
+            AccountType.HdKey -> R.string.back_your_standard_account_with
         }
         // TODO find a way to use `click spannable` in use case
         return AnnotatedString(stringResId = stringResId ?: return null)
@@ -45,7 +45,7 @@ class RekeyToLedgerAccountPreviewDecider @Inject constructor() {
     fun decideExpectationListItems(accountType: AccountType?): List<AnnotatedString> {
         return mutableListOf<AnnotatedString>().apply {
             when (accountType) {
-                AccountType.Algo25 -> {
+                AccountType.Algo25, AccountType.HdKey -> {
                     add(AnnotatedString(stringResId = R.string.future_transactions_will_be))
                     add(AnnotatedString(stringResId = R.string.this_account_will_no_longer))
                     add(AnnotatedString(stringResId = R.string.your_account_s_public_key))
@@ -64,9 +64,6 @@ class RekeyToLedgerAccountPreviewDecider @Inject constructor() {
                     add(AnnotatedString(stringResId = R.string.make_sure_bluetooth))
                 }
                 AccountType.NoAuth, null -> Unit
-                AccountType.HdKey -> {
-                    /* TODO HDWallet */
-                }
             }
         }
     }

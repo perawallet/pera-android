@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -143,10 +143,10 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             BottomSheetHeader(sheetState, onDismiss)
 
             PeraCard(
-                title = stringResource(R.string.mnemonic_type_bip39_title),
+                title = stringResource(R.string.mnemonic_type_universal_title),
                 highlighted = stringResource(R.string.new_text),
-                description = stringResource(R.string.mnemonic_type_bip39_description),
-                footer = stringResource(R.string.mnemonic_type_bip39_footer),
+                description = stringResource(R.string.mnemonic_type_universal_description),
+                footer = stringResource(R.string.mnemonic_type_universal_footer),
                 onClick = {
                     navigateToRecoverWithPassphraseFragment(
                         OnboardingAccountType.HdKey

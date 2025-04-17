@@ -25,13 +25,6 @@ val localPeraColors = staticCompositionLocalOf {
 
 @Composable
 fun PeraTheme(
-    content: @Composable () -> Unit
-) {
-    PeraTheme(isDarkTheme = false, content = content)
-}
-
-@Composable
-fun PeraTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {

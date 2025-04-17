@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.algorand.android.R
+import com.algorand.android.ui.compose.theme.PeraTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("ComposableNaming")
@@ -39,12 +40,12 @@ fun scaffoldTopAppBar(onBackClick: () -> Unit = {}) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     contentDescription = stringResource(R.string.back),
-                    tint = Color.Black,
+                    tint = PeraTheme.colors.text.main,
                 )
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color.White,
+            containerColor = PeraTheme.colors.background.primary,
         )
     )
 }

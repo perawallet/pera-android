@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +50,7 @@ import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.text.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import com.algorand.android.ui.compose.theme.PeraTheme
 
 @AndroidEntryPoint
 class RecoverAccountInfoFragment : BaseInfoFragment() {
@@ -115,8 +115,8 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                     showBottomSheet.value = false
                 },
                 sheetState = sheetState,
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                containerColor = PeraTheme.colors.background.primary,
+                contentColor = PeraTheme.colors.text.grayLighter,
             ) {
                 BottomSheetContent(
                     sheetState = sheetState,
@@ -137,7 +137,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surface)
+                .background(PeraTheme.colors.background.primary)
                 .padding(16.dp)
         ) {
             BottomSheetHeader(sheetState, onDismiss)
@@ -200,7 +200,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 }) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = PeraTheme.colors.text.main,
                     contentDescription = stringResource(id = R.string.close)
                 )
             }
@@ -215,10 +215,12 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
     private fun navigateToRecoverWithPassphraseFragment(onboardingAccountType: OnboardingAccountType) {
         recoveryAccountInfoViewModel.logRecoverAccountTypeClickEvent(onboardingAccountType)
-        nav(RecoverAccountInfoFragmentDirections
-            .actionRecoverAccountInfoFragmentToRecoverWithPassphraseNavigation(
-                mnemonic = null,
-                onboardingAccountType = onboardingAccountType)
+        nav(
+            RecoverAccountInfoFragmentDirections
+                .actionRecoverAccountInfoFragmentToRecoverWithPassphraseNavigation(
+                    mnemonic = null,
+                    onboardingAccountType = onboardingAccountType
+                )
         )
     }
 }

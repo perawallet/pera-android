@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +32,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.text.PeraTitleText
 
@@ -58,11 +58,11 @@ fun ItemChoiceWidget(
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .background(PeraTheme.colors.layer.grayLighter)
                 .padding(8.dp),
             imageVector = icon,
             contentDescription = iconContentDescription,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
+            tint = PeraTheme.colors.text.main
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column {

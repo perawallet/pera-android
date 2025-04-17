@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -47,9 +46,9 @@ fun PeraHeadlineText(
     Text(
         modifier = modifier,
         text = text,
-        style = MaterialTheme.typography.headlineLarge,
+        style = PeraTheme.typography.title.regular.sansMedium,
         fontFamily = peraSans,
-        color = MaterialTheme.colorScheme.primary,
+        color = PeraTheme.colors.text.main,
         fontWeight = FontWeight.Medium,
     )
 }
@@ -58,14 +57,14 @@ fun PeraHeadlineText(
 fun PeraTitleText(
     modifier: Modifier = Modifier,
     text: String,
-    color: Color? = MaterialTheme.colorScheme.primary
+    color: Color? = PeraTheme.colors.text.main
 ) {
     Text(
         modifier = modifier,
         text = text,
-        style = MaterialTheme.typography.titleMedium,
+        style = PeraTheme.typography.body.large.sansMedium,
         fontFamily = peraSans,
-        color = color ?: MaterialTheme.colorScheme.primary,
+        color = color ?: PeraTheme.colors.text.main,
         fontWeight = FontWeight.Medium,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
@@ -81,9 +80,9 @@ fun PeraBodyText(
     Text(
         modifier = modifier,
         text = text,
-        style = MaterialTheme.typography.bodyMedium,
+        style = PeraTheme.typography.body.regular.sansMedium,
         fontFamily = peraSans,
-        color = MaterialTheme.colorScheme.secondary,
+        color = PeraTheme.colors.text.gray,
         fontWeight = FontWeight.Medium,
         overflow = TextOverflow.Ellipsis,
         textAlign = textAlign
@@ -99,9 +98,9 @@ fun PeraBodyText(
     Text(
         modifier = modifier,
         text = text,
-        style = MaterialTheme.typography.bodyMedium,
+        style = PeraTheme.typography.body.regular.sansMedium,
         fontFamily = peraSans,
-        color = MaterialTheme.colorScheme.secondary,
+        color = PeraTheme.colors.text.gray,
         fontWeight = FontWeight.Medium,
         overflow = TextOverflow.Ellipsis,
         onTextLayout = onTextLayout
@@ -113,9 +112,9 @@ fun PeraLinkText(modifier: Modifier = Modifier, text: String) {
     Text(
         modifier = modifier,
         text = text,
-        style = MaterialTheme.typography.titleSmall,
+        style = PeraTheme.typography.body.regular.sansMedium,
         fontFamily = peraSans,
-        color = MaterialTheme.colorScheme.surfaceDim,
+        color = PeraTheme.colors.link.primary,
         fontWeight = FontWeight.Medium
     )
 }
@@ -125,9 +124,9 @@ fun PeraScrimText(modifier: Modifier = Modifier, text: String) {
     Text(
         modifier = modifier,
         text = text,
-        style = MaterialTheme.typography.titleSmall,
+        style = PeraTheme.typography.body.regular.sansMedium,
         fontFamily = peraSans,
-        color = MaterialTheme.colorScheme.surfaceBright,
+        color = PeraTheme.colors.link.primary,
         fontWeight = FontWeight.Medium
     )
 }
@@ -138,16 +137,16 @@ fun PeraWarningText(modifier: Modifier = Modifier, text: String) {
         Image(
             modifier = Modifier.align(alignment = Alignment.CenterVertically),
             painter = painterResource(id = R.drawable.ic_error),
-            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.error),
+            colorFilter = ColorFilter.tint(color = PeraTheme.colors.status.negative),
             contentDescription = stringResource(R.string.error)
         )
         Text(
             modifier = Modifier.padding(start = 12.dp),
             text = text,
-            style = MaterialTheme.typography.bodyMedium,
+            style = PeraTheme.typography.body.regular.sansMedium,
             fontFamily = peraSans,
             fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.error,
+            color = PeraTheme.colors.status.negative,
         )
     }
 }
@@ -158,7 +157,7 @@ fun PeraHighlightedText(modifier: Modifier = Modifier, text: String) {
         modifier = modifier
             .padding(start = 10.dp)
             .clip(shape = CircleShape)
-            .background(color = MaterialTheme.colorScheme.surfaceVariant)
+            .background(color = PeraTheme.colors.layer.grayLighter)
     ) {
         PeraBodyText(
             modifier = Modifier.padding(

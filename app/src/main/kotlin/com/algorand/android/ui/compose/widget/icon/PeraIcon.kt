@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +17,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.algorand.android.ui.compose.theme.PeraTheme
 
 @Composable
 private fun PeraCoreIcon(
@@ -27,7 +27,7 @@ private fun PeraCoreIcon(
 ) {
     Image(
         painter = painter,
-        colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.surfaceDim),
+        colorFilter = ColorFilter.tint(color = PeraTheme.colors.link.primary),
         contentDescription = contentDescription,
         modifier = modifier
     )
@@ -57,12 +57,12 @@ fun PeraIconRoundShape(
             .padding(start = 10.dp)
             .size(40.dp)
             .clip(shape = CircleShape)
-            .background(color = MaterialTheme.colorScheme.tertiary)
+            .background(color = PeraTheme.colors.background.secondary)
     ) {
         Icon(
             modifier = Modifier.align(Alignment.Center),
             imageVector = imageVector,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = PeraTheme.colors.text.main,
             contentDescription = contentDescription
         )
     }
@@ -79,7 +79,7 @@ fun PeraIconRoundShapeBig(
             .padding(start = 10.dp)
             .size(64.dp)
             .clip(shape = CircleShape)
-            .background(color = MaterialTheme.colorScheme.tertiary)
+            .background(color = PeraTheme.colors.text.main)
     ) {
         Icon(
             modifier = Modifier
@@ -87,7 +87,7 @@ fun PeraIconRoundShapeBig(
                 .height(40.dp)
                 .width(40.dp),
             imageVector = imageVector,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = PeraTheme.colors.text.main,
             contentDescription = contentDescription
         )
     }

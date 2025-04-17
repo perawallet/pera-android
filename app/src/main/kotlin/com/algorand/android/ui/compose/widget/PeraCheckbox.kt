@@ -2,7 +2,6 @@ package com.algorand.android.ui.compose.widget
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -24,7 +23,7 @@ fun PeraCheckbox(
         interactionSource = interactionSource,
         modifier = modifier,
         state = checkedState(),
-        colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.outline),
+        colors = CheckboxDefaults.colors(checkedColor = PeraTheme.colors.link.primary),
         onClick = onClick,
         enabled = enabled()
     )

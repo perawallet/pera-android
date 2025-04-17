@@ -24,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.text.PeraHighlightedText
 import com.algorand.android.ui.compose.widget.text.PeraLinkText
@@ -59,7 +59,7 @@ fun PeraCard(
         onClick = onClick,
         shape = CardDefaults.outlinedShape,
         border = CardDefaults.outlinedCardBorder(enabled = true),
-        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.outlinedCardColors(containerColor = PeraTheme.colors.background.primary),
     ) {
         Column(Modifier.padding(all = 20.dp)) {
             Row {
@@ -82,12 +82,12 @@ fun PeraCard(
                         .padding(start = 10.dp)
                         .size(40.dp)
                         .clip(shape = CircleShape)
-                        .background(color = MaterialTheme.colorScheme.surfaceVariant)
+                        .background(color = PeraTheme.colors.layer.grayLighter)
                 ) {
                     Icon(
                         modifier = Modifier.align(Alignment.Center),
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = PeraTheme.colors.text.grayLighter,
                         contentDescription = "Right Arrow"
                     )
                 }

@@ -40,14 +40,14 @@ class AccountRecoveryTypeSelectionViewModel @Inject constructor(
 
     fun setupToolbar() {
         viewModelScope.launchIO {
-            if (isThereAnyLocalAccount()) {
-                stateDelegate.setDefaultState(ViewState.DefaultState)
+            if (!isThereAnyLocalAccount()) {
+                stateDelegate.setDefaultState(ViewState.NoLocalAccountState)
             }
         }
     }
 
     sealed interface ViewState {
         data object Idle : ViewState
-        data object DefaultState : ViewState
+        data object NoLocalAccountState : ViewState
     }
 }

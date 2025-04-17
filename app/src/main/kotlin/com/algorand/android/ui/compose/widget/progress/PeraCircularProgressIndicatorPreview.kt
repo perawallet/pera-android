@@ -12,27 +12,22 @@
 
 package com.algorand.android.ui.compose.widget.progress
 
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.algorand.android.ui.compose.theme.PeraTheme
 
+@Preview
 @Composable
-fun PeraCircularProgressIndicator(
-    modifier: Modifier = Modifier,
-    color: Color = PeraTheme.colors.link.primary,
-    strokeWidth: Dp = 2.dp
-) {
-    CircularProgressIndicator(
-        modifier = modifier
-            .width(24.dp)
-            .height(24.dp),
-        color = color,
-        strokeWidth = strokeWidth
-    )
+fun PeraCircularProgressIndicatorPreview() {
+    PeraTheme {
+        PeraCircularProgressIndicator()
+    }
+}
+
+@Preview
+@Composable
+fun PeraCircularProgressIndicatorDarkPreview() {
+    PeraTheme(isDarkTheme = true) {
+        PeraCircularProgressIndicator()
+    }
 }

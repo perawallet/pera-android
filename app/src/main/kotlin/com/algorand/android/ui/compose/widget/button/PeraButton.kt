@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.width
@@ -26,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
 
 @Composable
@@ -45,9 +45,9 @@ private fun PeraCoreButton(modifier: PeraButtonModifier) {
                 PeraButtonState.PROGRESS -> {
                     PeraCircularProgressIndicator(
                         color = if (modifier.state == PeraButtonState.DISABLED) {
-                            MaterialTheme.colorScheme.onTertiaryContainer
+                            PeraTheme.colors.button.primary.disabledText
                         } else {
-                            MaterialTheme.colorScheme.onPrimaryContainer
+                            PeraTheme.colors.button.primary.text
                         }
                     )
                 }
@@ -60,9 +60,9 @@ private fun PeraCoreButton(modifier: PeraButtonModifier) {
                     Text(
                         text = modifier.text,
                         color = if (modifier.state == PeraButtonState.DISABLED) {
-                            MaterialTheme.colorScheme.onTertiaryContainer
+                            PeraTheme.colors.button.primary.disabledText
                         } else {
-                            MaterialTheme.colorScheme.onPrimaryContainer
+                            PeraTheme.colors.button.primary.text
                         }
                     )
                     if (modifier.rightIcon != null) {
@@ -90,10 +90,10 @@ fun PeraPrimaryButton(
             onClick = onClick,
             text = text,
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                containerColor = PeraTheme.colors.button.primary.background,
+                disabledContainerColor = PeraTheme.colors.button.primary.disabledBackground,
+                contentColor = PeraTheme.colors.button.primary.text,
+                disabledContentColor = PeraTheme.colors.button.primary.disabledText
             ),
             state = state,
             leftIcon = leftIcon,
@@ -117,10 +117,10 @@ fun PeraSecondaryButton(
             onClick = onClick,
             text = text,
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                containerColor = PeraTheme.colors.button.secondary.background,
+                disabledContainerColor = PeraTheme.colors.button.secondary.disabledBackground,
+                contentColor = PeraTheme.colors.button.secondary.text,
+                disabledContentColor = PeraTheme.colors.button.secondary.disabledText
             ),
             state = state,
             leftIcon = leftIcon,

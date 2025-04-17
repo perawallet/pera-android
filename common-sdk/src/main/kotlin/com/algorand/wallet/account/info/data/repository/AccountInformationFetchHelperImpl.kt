@@ -47,6 +47,27 @@ internal class AccountInformationFetchHelperImpl @Inject constructor(
         )
     }
 
+    override suspend fun fetchAccountWithoutAssets(
+        address: String,
+        includeClosedAccount: Boolean
+    ): PeraResult<AccountInformationResponse> {
+        val excludesQuery = IndexerAccountFetchRequestExcludesQueryBuilder.newBuilder()
+            .addExclude(CREATED_ASSETS)
+            .addExclude(CREATED_APPS)
+            .addExclude(ASSETS)
+            .build()
+        return request { indexerApi.getAccountInformation(address, excludesQuery, includeClosedAccount) }.use(
+            onSuccess = { response -> PeraResult.Success(response) },
+            onFailed = { exception, errorCode ->
+                if (errorCode == ACCOUNT_NOT_FOUND) {
+                    PeraResult.Success(accountInformationResponseMapper.createEmptyAccount(address))
+                } else {
+                    PeraResult.Error(exception, errorCode)
+                }
+            }
+        )
+    }
+
     private suspend fun processFailedResponse(
         address: String,
         exception: Exception,

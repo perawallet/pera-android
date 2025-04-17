@@ -52,6 +52,7 @@ import com.algorand.wallet.account.info.domain.usecase.AddAssetHoldingToAccountA
 import com.algorand.wallet.account.info.domain.usecase.ClearAccountInformationCache
 import com.algorand.wallet.account.info.domain.usecase.DeleteAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformationWithoutAssets
 import com.algorand.wallet.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
@@ -343,4 +344,11 @@ internal object AccountInformationModule {
 
     @Provides
     fun provideGetRegisteredHdKeys(useCase: GetRegisteredHdKeysUseCase): GetRegisteredHdKeys = useCase
+
+    @Provides
+    fun provideFetchAccountInformationWithoutAssets(
+        repository: AccountInformationRepository
+    ): FetchAccountInformationWithoutAssets {
+        return FetchAccountInformationWithoutAssets(repository::fetchAccountInformationWithoutAssets)
+    }
 }

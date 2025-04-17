@@ -19,6 +19,7 @@ import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMap
 import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
 import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
+import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
@@ -56,19 +57,14 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         address: String,
         includeClosedAccount: Boolean
     ): PeraResult<AccountInformation> {
-        return accountInformationFetchHelper.fetchAccount(address, includeClosedAccount).use(
-            onSuccess = { response ->
-                val accountInformation = accountInformationMapper(response)
-                if (accountInformation == null) {
-                    PeraResult.Error(Exception())
-                } else {
-                    PeraResult.Success(accountInformation)
-                }
-            },
-            onFailed = { exception, _ ->
-                PeraResult.Error(exception)
-            }
-        )
+        return accountInformationFetchHelper.fetchAccount(address, includeClosedAccount).mapToAccountInfo()
+    }
+
+    override suspend fun fetchAccountInformationWithoutAssets(
+        address: String,
+        includeClosedAccount: Boolean
+    ): PeraResult<AccountInformation> {
+        return accountInformationFetchHelper.fetchAccountWithoutAssets(address, includeClosedAccount).mapToAccountInfo()
     }
 
     override fun getCachedAccountInformationCountFlow(): Flow<Int> {
@@ -193,6 +189,22 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
 
     override suspend fun getAccountAlgoBalance(address: String): BigInteger? {
         return accountInformationDao.getAccountAlgoBalance(address)
+    }
+
+    private suspend fun PeraResult<AccountInformationResponse>.mapToAccountInfo(): PeraResult<AccountInformation> {
+        return use(
+            onSuccess = { response ->
+                val accountInformation = accountInformationMapper(response)
+                if (accountInformation == null) {
+                    PeraResult.Error(Exception())
+                } else {
+                    PeraResult.Success(accountInformation)
+                }
+            },
+            onFailed = { exception, _ ->
+                PeraResult.Error(exception)
+            }
+        )
     }
 
     companion object {

@@ -30,6 +30,10 @@ fun interface FetchAndCacheAccountInformation {
     suspend operator fun invoke(addresses: List<String>): Map<String, AccountInformation?>
 }
 
+fun interface FetchAccountInformationWithoutAssets {
+    suspend operator fun invoke(address: String, includeDeletedAccount: Boolean): PeraResult<AccountInformation>
+}
+
 fun interface GetAllSuccessfullyCachedAccountAddresses {
     suspend operator fun invoke(): List<String>
 }

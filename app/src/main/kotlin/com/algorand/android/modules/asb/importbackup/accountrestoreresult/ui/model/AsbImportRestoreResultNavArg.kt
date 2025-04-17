@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,15 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.data.repository
+package com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model
 
-import com.algorand.wallet.account.info.data.model.AccountInformationResponse
-import com.algorand.wallet.foundation.PeraResult
+import android.os.Parcelable
+import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbImportedAddress
+import kotlinx.parcelize.Parcelize
 
-internal interface AccountInformationFetchHelper {
-    suspend fun fetchAccount(address: String, includeClosedAccount: Boolean): PeraResult<AccountInformationResponse>
-    suspend fun fetchAccountWithoutAssets(
-        address: String,
-        includeClosedAccount: Boolean
-    ): PeraResult<AccountInformationResponse>
-}
+@Parcelize
+data class AsbImportRestoreResultNavArg(
+    val importedAddresses: List<AsbImportedAddress>,
+    val existingAccountList: List<String>,
+    val unsupportedAccountList: List<String>
+) : Parcelable

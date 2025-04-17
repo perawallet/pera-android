@@ -63,6 +63,7 @@ import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.text.PeraTitleText
 import com.algorand.android.ui.onboarding.reccoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewEvent
 import com.algorand.android.ui.onboarding.reccoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsFragmentDirections
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
 import dagger.hilt.android.AndroidEntryPoint

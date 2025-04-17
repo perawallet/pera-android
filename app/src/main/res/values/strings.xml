@@ -220,8 +220,8 @@
     <string name="by_adding_a_wallet">By adding a wallet, you agree to Pera Wallet\’s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
     <string name="create_new_account">Create new Account</string>
     <string name="watch_account">Watch Account</string>
-    <string name="bip_39">BIP 39</string>
-    <string name="hd_wallet_address">HD Wallet address</string>
+    <string name="wallet_address">Wallet address</string>
+    <string name="universal_wallet">Universal Wallet</string>
     <string name="hd_account">HD Account</string>
     <string name="receive">Receive</string>
     <string name="system_default">System Default</string>
@@ -589,7 +589,7 @@
     <string name="add_a_new_account">Add a new account</string>
     <string name="create_a_new_account_desc">Create a new account for an existing Universal Wallet</string>
     <string name="create_a_new_wallet">Create a new wallet</string>
-    <string name="create_a_new_algorand_account_with">Create a new Algorand wallet with a new address and recovery passphrase</string>
+    <string name="create_a_new_algorand_account_with">Create a new Algorand wallet with a new wallet and recovery passphrase</string>
     <string name="recover_an_account">Recover an account</string>
     <string name="i_want_to_recover">I want to recover an Algorand account using my 25-word passphrase</string>
     <string name="pair_Ledger_device">Pair Ledger device</string>
@@ -877,6 +877,7 @@
     <string name="start_swapping">Start Swapping</string>
     <string name="powered_by">Powered by</string>
     <string name="new_text">New</string>
+    <string name="legacy_text">Legacy</string>
 
     <string name="this_account_doesn_t_have">This account doesn\'t have the required minimum balance of <annotation replacement="minimum_balance">minimumBalancePlaceholder</annotation> for a swap operation.</string>
     <string name="minimum_balance">Minimum Balance</string>
@@ -1269,10 +1270,9 @@
     <string name="watch">Watch</string>
     <string name="rekeyed">Rekeyed</string>
     <string name="no_auth">No Auth</string>
-    <string name="unknown">Unknown*</string>
-
+    <string name="unknown">Unknown</string>
     <string name="rekeyed_to">Rekeyed to</string>
-    <string name="your_account_is_a_hd_wallet_address">Your account is under a HD wallet. You can have multiple accounts under a HD wallet <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
+    <string name="your_account_is_a_hd_wallet_address">Wallet that lets you derive new accounts, all using same key\n<annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_a_standard">Your account is a standard Algorand account. It has not been rekeyed and it is not associated with a Ledger device. It was added to your wallet with its keys. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_a_Ledger">Your account is a Ledger account. It was added to your wallet directly from the hardware device. All transactions for this account must be confirmed on your Ledger. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="this_account_was_not">This account was not added to your wallet with its keys. It is read-only and cannot interact with other accounts or authorize transactions.</string>
@@ -1453,7 +1453,7 @@
 
     <string name="you_dont_have_any">You don\'t have any authorized account matching with %1$s</string>
 
-    <string name="mnemonic_type_bip39_title">Bip39</string>
+    <string name="mnemonic_type_bip39_title">Universal Wallet</string>
     <string name="mnemonic_type_bip39_description">New inter-operable format that enables important features like HD Wallet</string>
     <string name="mnemonic_type_bip39_footer">24 Key mnemonic keys</string>
     <string name="mnemonic_type_algo25_title">Algo25</string>
@@ -1478,6 +1478,8 @@
     <string name="select_address_to_add">Select addresses to add</string>
     <string name="already_imported">Already Imported</string>
     <string name="searching_your_accounts">"Searching your accounts"</string>
+    <string name="main_address">Main Address</string>
+    <string name="scan_new_addresses">Scan new addresses</string>
 
     <plurals name="select_accounts_to_add_desc">
         <item quantity="zero">We found that there are no address registered to this wallet</item>
@@ -1490,4 +1492,6 @@
         <item quantity="one">1 address</item>
         <item quantity="other">%1$d addresses</item>
     </plurals>
+
+    <string name="select_the_rekeyed_accounts_you">Select the rekeyed accounts you want to add to your wallet:</string>
 </resources>

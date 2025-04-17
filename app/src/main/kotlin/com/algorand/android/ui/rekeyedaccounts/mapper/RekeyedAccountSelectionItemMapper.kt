@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Pera Wallet, LDA
+ * Copyright 2022 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,10 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accountsorting.ui.domain.usecase
+package com.algorand.android.ui.rekeyedaccounts.mapper
 
-import com.algorand.android.modules.accountsorting.ui.domain.model.AccountSortingType
+import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionItem
+import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
 
-interface GetDefaultAccountSortingType {
-    operator fun invoke(): AccountSortingType
+fun interface RekeyedAccountSelectionItemMapper {
+    operator fun invoke(args: List<RekeyedAccountSelectionNavArg>): List<RekeyedAccountSelectionItem>
 }

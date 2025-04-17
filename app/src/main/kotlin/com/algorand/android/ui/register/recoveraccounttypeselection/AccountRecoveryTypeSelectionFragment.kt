@@ -56,6 +56,7 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
 
     private fun initUi() {
         accountRecoveryTypeSelectionViewModel.setupToolbar()
+        accountRecoveryTypeSelectionViewModel.setupToolbar()
         with(binding) {
             recoverAnAccountSelectionItem.setOnClickListener { navToRecoverAccountInfoFragment() }
             recoverAnAccountWithQrSelectionItem.setOnClickListener { navToRecoverWithPassphraseQrScannerFragment() }

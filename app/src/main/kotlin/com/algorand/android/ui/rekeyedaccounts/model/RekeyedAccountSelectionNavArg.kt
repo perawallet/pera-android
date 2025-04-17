@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Pera Wallet, LDA
+ * Copyright 2022 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,10 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accountsorting.ui.domain.usecase
+package com.algorand.android.ui.rekeyedaccounts.model
 
-import com.algorand.android.modules.accountsorting.ui.domain.model.AccountSortingType
+import android.os.Parcelable
+import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import kotlinx.parcelize.Parcelize
 
-interface GetDefaultAccountSortingType {
-    operator fun invoke(): AccountSortingType
-}
+@Parcelize
+data class RekeyedAccountSelectionNavArg(
+    val authAddress: String,
+    val authAddressIconDrawablePreview: AccountIconDrawablePreview,
+    val rekeyedAccountAddresses: List<String>
+) : Parcelable

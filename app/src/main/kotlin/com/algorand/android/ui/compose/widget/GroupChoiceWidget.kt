@@ -38,7 +38,7 @@ import com.algorand.android.ui.compose.widget.text.PeraTitleText
 
 @SuppressWarnings("LongMethod")
 @Composable
-fun ItemChoiceWidget(
+fun GroupChoiceWidget(
     modifier: Modifier = Modifier,
     title: String,
     description: String,
@@ -80,7 +80,7 @@ fun ItemChoiceWidget(
 @Preview
 @Composable
 fun GroupChoiceWidgetPreview() {
-    ItemChoiceWidget(
+    GroupChoiceWidget(
         title = stringResource(id = R.string.import_a_wallet),
         description = stringResource(id = R.string.import_an_existing),
         iconContentDescription = stringResource(id = R.string.import_an_existing),

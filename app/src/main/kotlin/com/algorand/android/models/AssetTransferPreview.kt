@@ -33,5 +33,6 @@ data class AssetTransferPreview(
     val fee: Long,
     val note: String? = null,
     val isNoteEditable: Boolean,
-    val targetAccountDetail: AccountDetail
+    val targetAccountDetail: AccountDetail,
+    val isConfirmButtonEnabled: Boolean = true
 )

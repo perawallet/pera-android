@@ -24,6 +24,7 @@ import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.databinding.FragmentTransferAssetPreviewBinding
+import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.AssetTransferPreview
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.SignedTransactionDetail
@@ -39,7 +40,9 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.setTextAndVisibility
 import com.algorand.android.utils.extensions.show
+import com.algorand.android.utils.formatAsAlgoString
 import com.algorand.android.utils.formatAsCurrency
+import com.algorand.android.utils.getXmlStyledString
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.toAlgoDisplayValue
@@ -132,6 +135,24 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
         }
     }
 
+    private val viewEventCollector: suspend (AssetTransferPreviewViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is AssetTransferPreviewViewModel.ViewEvent.ShowInsufficientBalanceError -> {
+                showInsufficientBalanceError(event.requiredMinBalance)
+            }
+        }
+    }
+
+    private fun showInsufficientBalanceError(requiredMinBalance: Long) {
+        val errorMessage = context?.getXmlStyledString(
+            AnnotatedString(
+                stringResId = R.string.the_transaction_cannot_be,
+                replacementList = listOf("min_balance" to requiredMinBalance.formatAsAlgoString())
+            )
+        )
+        showGlobalError(errorMessage)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
@@ -168,6 +189,10 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
             assetTransferPreviewViewModel.signArc59TransactionFlow,
             signArc59TransactionCollector
         )
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            assetTransferPreviewViewModel.viewEvent,
+            viewEventCollector
+        )
     }
 
     private fun onConfirmTransferClick() {
@@ -182,7 +207,7 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
 
     private fun updateUi(assetTransferPreview: AssetTransferPreview) {
         with(assetTransferPreview) {
-            setConfirmTransferButton()
+            setConfirmTransferButton(assetTransferPreview.isConfirmButtonEnabled)
             setCurrencyViews(assetId, senderAssetAmount, exchangePrice, currencySymbol, amount)
             setAssetViews(senderAssetAmount, amount, assetDecimals, assetId, assetShortName)
             setAccountViews(this, targetUser, senderAccountAddress, senderAccountName, accountIconDrawablePreview)
@@ -191,8 +216,13 @@ class AssetTransferPreviewFragment : TransactionSignBaseFragment(R.layout.fragme
         }
     }
 
-    private fun setConfirmTransferButton() {
-        binding.confirmTransferButton.setOnClickListener { onConfirmTransferClick() }
+    private fun setConfirmTransferButton(confirmButtonEnabled: Boolean) {
+        binding.confirmTransferButton.apply {
+            isEnabled = confirmButtonEnabled
+            if (confirmButtonEnabled) {
+                setOnClickListener { onConfirmTransferClick() }
+            }
+        }
     }
 
     private fun setCurrencyViews(

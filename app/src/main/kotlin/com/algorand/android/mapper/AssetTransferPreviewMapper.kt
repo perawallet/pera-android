@@ -18,6 +18,7 @@ import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import java.math.BigDecimal
+import java.math.BigInteger
 import javax.inject.Inject
 
 class AssetTransferPreviewMapper @Inject constructor() {
@@ -33,6 +34,7 @@ class AssetTransferPreviewMapper @Inject constructor() {
         note: String?,
         isNoteEditable: Boolean,
         accountIconDrawablePreview: AccountIconDrawablePreview,
+        senderAssetAmount: BigInteger,
         fee: Long,
         targetAccountDetail: AccountDetail
     ): AssetTransferPreview {
@@ -49,7 +51,7 @@ class AssetTransferPreviewMapper @Inject constructor() {
                 senderAccountName = senderAccountName,
                 senderAccountAddress = senderAccountAddress,
                 targetAccountDetail = targetAccountDetail,
-                senderAssetAmount = senderAlgoAmount,
+                senderAssetAmount = senderAssetAmount,
                 assetId = assetId,
                 assetShortName = assetShortName,
                 assetDecimals = assetDecimals

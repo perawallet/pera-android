@@ -281,27 +281,6 @@ class TransactionSignManager @Inject constructor(
         val arc59TransactionData = mutableListOf<Arc59TransactionData>()
         (this as? TransactionSignData.Send)?.let {
             projectedFee = calculatedFee ?: transactionParams.getTxFee()
-            // calculate isMax before calculating real amount because while isMax true fee will be deducted.
-            isMax = isTransactionMax(amount, senderAccountAddress, assetId)
-            amount = calculateAmount(
-                projectedAmount = amount,
-                isMax = isMax,
-                isSenderRekeyedToAnotherAccount = isSenderRekeyed(),
-                senderMinimumBalance = minimumBalance,
-                assetId = assetId,
-                fee = projectedFee
-            ) ?: return null
-
-            if (isSenderRekeyed()) {
-                // if account is rekeyed to another account, min balance should be deducted from the amount.
-                // after it'll be deducted, isMax will be false to not write closeToAddress.
-                isMax = false
-            }
-
-            if (isCloseToSameAccount()) {
-                return null
-            }
-
             val transactions = transactionParams.makeArc59Txn(
                 senderAddress = senderAccountAddress,
                 receiverAddress = targetUser.publicKey,

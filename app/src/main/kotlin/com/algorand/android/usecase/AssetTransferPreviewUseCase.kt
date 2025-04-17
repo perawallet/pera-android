@@ -22,8 +22,11 @@ import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.asset.domain.usecase.FetchAsset
 import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
@@ -34,17 +37,15 @@ class AssetTransferPreviewUseCase @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAsset: GetAsset,
     private val fetchAsset: FetchAsset,
-    private val getAccountDetail: GetAccountDetail
+    private val getAccountDetail: GetAccountDetail,
+    private val getAccountInformation: GetAccountInformation
 ) {
 
     suspend fun getAssetTransferPreview(
         transactionDataList: List<TransactionSignData>,
         receiverMinBalanceFee: Long? = null
     ): AssetTransferPreview {
-        val fee = transactionDataList.sumOf {
-            it.calculatedFee ?: (it as? TransactionSignData.Send)?.projectedFee
-            ?: MIN_FEE
-        } + (receiverMinBalanceFee ?: 0)
+        val fee = getTotalTxnFee(transactionDataList, receiverMinBalanceFee)
         val sendTransactionData = transactionDataList.find {
             it is TransactionSignData.Send
         } as TransactionSignData.Send
@@ -61,8 +62,28 @@ class AssetTransferPreviewUseCase @Inject constructor(
             assetShortName = asset?.shortName ?: sendTransactionData.assetId.toString(),
             assetDecimals = asset?.assetInfo?.decimals ?: 0,
             fee = fee,
-            targetAccountDetail = getAccountDetail(sendTransactionData.targetUser.publicKey)
+            targetAccountDetail = getAccountDetail(sendTransactionData.targetUser.publicKey),
+            senderAssetAmount = getSenderAssetBalance(
+                sendTransactionData.senderAccountAddress,
+                sendTransactionData.assetId
+            ),
         )
+    }
+
+    private suspend fun getSenderAssetBalance(senderAddress: String, assetId: Long): BigInteger {
+        val senderInfo = getAccountInformation(senderAddress)
+        val assetBalance = if (assetId == ALGO_ID) {
+            senderInfo?.amount
+        } else {
+            senderInfo?.assetHoldings?.firstOrNull { it.assetId == assetId }?.amount
+        }
+        return assetBalance ?: BigInteger.ZERO
+    }
+
+    fun getTotalTxnFee(transactionDataList: List<TransactionSignData>, receiverMinBalanceFee: Long? = null): Long {
+        return transactionDataList.sumOf {
+            it.calculatedFee ?: (it as? TransactionSignData.Send)?.projectedFee ?: MIN_FEE
+        } + (receiverMinBalanceFee ?: 0)
     }
 
     suspend fun sendSignedTransaction(

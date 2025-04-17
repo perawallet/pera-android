@@ -151,9 +151,9 @@ class AssetTransferPreviewViewModel @Inject constructor(
                     unsignedArc59Transactions = arc59Transactions
                     initPreview(unsignedArc59Transactions, receiverMinBalanceFee, isConfirmButtonEnabled = true)
                 } else {
+                    eventDelegate.sendEvent(ViewEvent.ShowInsufficientBalanceError(it.minimumBalance))
                     initPreview(listOf(transactionData), receiverMinBalanceFee, isConfirmButtonEnabled = false)
                 }
-                eventDelegate.sendEvent(ViewEvent.ShowInsufficientBalanceError(it.minimumBalance))
             }
         }
     }

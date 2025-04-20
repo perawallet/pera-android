@@ -10,17 +10,21 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.ui
+package com.algorand.android.modules.accounts.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavDirections
 import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.core.BaseViewModel
-import com.algorand.android.modules.accounts.domain.model.AccountPreview
+import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.tracking.accounts.AccountsEventTracker
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.tracking.core.PeraEvent
+import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
+import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
+import com.algorand.android.notification.domain.usecase.GetAskNotificationPermissionEventFlowUseCase
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
-import com.algorand.android.utils.Event
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
@@ -29,10 +33,12 @@ import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -43,15 +49,41 @@ class AccountsViewModel @Inject constructor(
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
     private val peraEventTracker: PeraEventTracker,
     private val getNotBackedUpAccounts: GetNotBackedUpAccounts,
+    private val tutorialUseCase: TutorialUseCase,
+    private val getAskNotificationPermissionEventFlowUseCase: GetAskNotificationPermissionEventFlowUseCase,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : BaseViewModel(), EventViewModel<AccountsViewModel.ViewEvent> by eventDelegate {
 
     private val _accountPreviewFlow = MutableStateFlow<AccountPreview?>(null)
     val accountPreviewFlow: Flow<AccountPreview?>
-        get() = _accountPreviewFlow
+        get() = _accountPreviewFlow.asStateFlow()
+
+    private var tutorialJob: Job? = null
 
     init {
         initializeAccountPreviewFlow()
+    }
+
+    private fun initializeTutorials() {
+        if (tutorialJob != null) return
+        tutorialJob = viewModelScope.launch {
+            combine(
+                tutorialUseCase.getTutorial(),
+                getAskNotificationPermissionEventFlowUseCase.invoke()
+            ) { tutorial, notificationPermission ->
+                if (notificationPermission?.data != null) {
+                    eventDelegate.sendEvent(ViewEvent.ShowNotificationPermission)
+                }
+                if (tutorial != null) {
+                    val tutorialEvent = when (tutorial) {
+                        Tutorial.GIFT_CARDS -> ViewEvent.ShowGiftCardsTutorial(tutorial.id)
+                        Tutorial.ACCOUNT_ADDRESS_COPY -> ViewEvent.ShowAccountAddressCopyTutorial(tutorial.id)
+                        Tutorial.SWAP -> ViewEvent.ShowSwapTutorial(tutorial.id)
+                    }
+                    eventDelegate.sendEvent(tutorialEvent)
+                }
+            }
+        }
     }
 
     fun refreshCachedAlgoPrice() {
@@ -60,58 +92,51 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    fun onCloseBannerClick(bannerId: Long) {
+    fun dismissBanner(bannerId: Long) {
         viewModelScope.launch {
-            accountsPreviewUseCase.onCloseBannerClick(bannerId)
+            accountsPreviewUseCase.dismissBanner(bannerId)
         }
     }
 
-    fun onNotificationTapEvent() {
+    fun logNotificationClick() {
         viewModelScope.launch {
             logEvent(PeraClickEvent.TAP_HOME_SCREEN_NOTIFICATION)
         }
     }
 
-    fun onQrScanTapEvent() {
+    fun logQrScanClick() {
         viewModelScope.launch {
             logEvent(PeraEvent.HOME_SCREEN_QR_SCAN)
         }
     }
 
-    fun onSortTapEvent() {
+    fun logSortClick() {
         viewModelScope.launch {
             logEvent(PeraClickEvent.TAP_HOME_SCREEN_SORT)
         }
     }
 
-    fun onAccountsFragmentAlgoBuyTapEvent() {
+    fun logAlgoBuyClick() {
         viewModelScope.launch {
             accountsEventTracker.logAccountsFragmentAlgoBuyTapEvent()
         }
     }
 
-    fun onBannerActionButtonClick(bannerType: BannerType) {
+    fun logBannerClick(bannerType: BannerType) {
         viewModelScope.launch {
-            when (bannerType) {
-                BannerType.GOVERNANCE -> peraEventTracker.logEvent(
-                    PeraClickEvent.TAP_HOME_BANNER_GOVERNANCE
-                )
-                BannerType.STAKING -> peraEventTracker.logEvent(
-                    PeraClickEvent.TAP_HOME_BANNER_STAKING
-                )
-                BannerType.CARD -> peraEventTracker.logEvent(
-                    PeraClickEvent.TAP_HOME_BANNER_CARD
-                )
-                BannerType.GENERIC -> peraEventTracker.logEvent(
-                    PeraClickEvent.TAP_HOME_BANNER_GENERIC
-                )
+            val eventName = when (bannerType) {
+                BannerType.GOVERNANCE -> PeraClickEvent.TAP_HOME_BANNER_GOVERNANCE
+                BannerType.STAKING -> PeraClickEvent.TAP_HOME_BANNER_STAKING
+                BannerType.CARD -> PeraClickEvent.TAP_HOME_BANNER_CARD
+                BannerType.GENERIC -> PeraClickEvent.TAP_HOME_BANNER_GENERIC
             }
+            peraEventTracker.logEvent(eventName)
         }
     }
 
     fun dismissTutorial(tutorialId: Int) {
         viewModelScope.launch {
-            accountsPreviewUseCase.dismissTutorial(tutorialId)
+            tutorialUseCase.dismissTutorial(tutorialId)
         }
     }
 
@@ -135,37 +160,24 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    fun onSwapLaterClick() {
+    fun logSwapLaterClick() {
         viewModelScope.launch {
             accountsEventTracker.logSwapLaterClickEvent()
         }
     }
 
-    fun onGiftCardsClickFromTutorialDialog() {
-        viewModelScope.launch {
-            // TODO add logging?
-            updatePreviewForGiftCardsNavigation()
-        }
-    }
-
-    fun onGiftCardsLaterClick() {
-        // TODO add logging?
-    }
-
     fun navigateToBackUpPassphraseInfo() {
         viewModelScope.launch {
             val notBackedUpAccounts = getNotBackedUpAccounts()
-            _accountPreviewFlow.update {
-                it?.copy(
-                    onNavToBackUpPassphraseInfo = Event(notBackedUpAccounts)
-                )
+            if (notBackedUpAccounts.isEmpty()) {
+                eventDelegate.sendEvent(ViewEvent.NavigateToBackupPassphraseInfo(notBackedUpAccounts))
             }
         }
     }
 
     fun onAddAccountClick() {
         viewModelScope.launchIO {
-            logAddAccountTapEvent()
+            accountsEventTracker.logAddAccountTapEvent()
             eventDelegate.sendEvent(
                 if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {
                     ViewEvent.ShowMaxAccountLimitExceededError
@@ -180,34 +192,29 @@ class AccountsViewModel @Inject constructor(
         viewModelScope.launchIO {
             val initialAccountPreview = accountsPreviewUseCase.getInitialAccountPreview()
             _accountPreviewFlow.emit(initialAccountPreview)
-            accountsPreviewUseCase.getAccountsPreview(initialAccountPreview).collectLatest {
+            accountsPreviewUseCase.getAccountPreviewFlow(initialAccountPreview).collectLatest {
+                if (it.accountListItems.any { it is BaseAccountListItem.AccountSuccessItem }) {
+                    initializeTutorials()
+                }
                 _accountPreviewFlow.emit(it)
             }
         }
     }
 
-    private fun logAddAccountTapEvent() {
-        viewModelScope.launch {
-            accountsEventTracker.logAddAccountTapEvent()
-        }
-    }
-
     private suspend fun updatePreviewForSwapNavigation() {
-        with(_accountPreviewFlow) {
-            val newState = accountsPreviewUseCase.getSwapNavigationUpdatedPreview(value ?: return@with)
-            emit(newState)
-        }
-    }
-
-    private suspend fun updatePreviewForGiftCardsNavigation() {
-        with(_accountPreviewFlow) {
-            val newState = accountsPreviewUseCase.getGiftCardsNavigationUpdatedPreview(value ?: return@with)
-            emit(newState)
+        accountsPreviewUseCase.getSwapNavigationDirection()?.let { navDirections ->
+            eventDelegate.sendEvent(ViewEvent.NavigateToSwap(navDirections))
         }
     }
 
     sealed interface ViewEvent {
         data object NavToLoginNavigation : ViewEvent
         data object ShowMaxAccountLimitExceededError : ViewEvent
+        data class NavigateToSwap(val navDirections: NavDirections) : ViewEvent
+        data class NavigateToBackupPassphraseInfo(val addresses: Set<String>) : ViewEvent
+        data class ShowGiftCardsTutorial(val tutorialId: Int) : ViewEvent
+        data class ShowAccountAddressCopyTutorial(val tutorialId: Int) : ViewEvent
+        data class ShowSwapTutorial(val tutorialId: Int) : ViewEvent
+        data object ShowNotificationPermission : ViewEvent
     }
 }

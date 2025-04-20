@@ -3,7 +3,7 @@ package com.algorand.android.utils
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.algorand.android.modules.accounts.ui.adapter.AccountAdapter
+import com.algorand.android.modules.accounts.ui.view.AccountsAdapter
 
 class BannerViewTypesDividerItemDecoration(
     private val bannerItemTypes: List<Int>,
@@ -17,7 +17,7 @@ class BannerViewTypesDividerItemDecoration(
         state: RecyclerView.State
     ) {
         val position = parent.getChildAdapterPosition(view)
-        val adapter = parent.adapter as? AccountAdapter
+        val adapter = parent.adapter as? AccountsAdapter
         if (adapter != null && position != RecyclerView.NO_POSITION && position < adapter.itemCount - 1) {
             val currentType = adapter.getItemViewType(position)
             val nextType = adapter.getItemViewType(position + 1)

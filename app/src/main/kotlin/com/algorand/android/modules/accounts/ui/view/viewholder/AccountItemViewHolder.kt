@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,35 +10,35 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.ui.viewholder
+package com.algorand.android.modules.accounts.ui.view.viewholder
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
 import com.algorand.android.R
-import com.algorand.android.databinding.ItemAccountErrorBinding
+import com.algorand.android.databinding.ItemAccountBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.utils.AccountIconDrawable
 
-class AccountErrorItemViewHolder(
-    val binding: ItemAccountErrorBinding,
+class AccountItemViewHolder(
+    val binding: ItemAccountBinding,
     val listener: AccountClickListener
 ) : BaseViewHolder<BaseAccountListItem>(binding.root) {
 
     override fun bind(item: BaseAccountListItem) {
-        if (item !is BaseAccountListItem.BaseAccountItem.AccountErrorItem) return
+        if (item !is BaseAccountListItem.AccountSuccessItem) return
         with(binding) {
-            with(item.accountListItem.itemConfiguration) {
+            with(item) {
                 setAccountStartIconDrawable(accountIconDrawablePreview)
-                setAccountTitleText(accountDisplayName?.primaryDisplayName)
-                setAccountDescriptionText(accountDisplayName?.secondaryDisplayName)
-                setAccountEndIconDrawable()
-                root.setOnClickListener { listener.onAccountClick(accountAddress) }
-                root.setOnLongClickListener(getOnLongClickListener(item.canCopyable, accountAddress))
+                setAccountTitleText(primaryDisplayName)
+                setAccountDescriptionText(secondaryDisplayName)
+                setAccountPrimaryValueText(formattedPrimaryValue)
+                setAccountSecondaryValueText(formattedSecondaryValue)
+                setStartSmallIconDrawableResource(startSmallIconResource)
+                root.setOnClickListener { listener.onAccountClick(address) }
+                root.setOnLongClickListener(getOnLongClickListener(item.canCopyable, address))
             }
         }
     }
@@ -64,14 +64,16 @@ class AccountErrorItemViewHolder(
         binding.accountItemView.setDescriptionText(accountDescriptionText)
     }
 
-    private fun setAccountEndIconDrawable() {
-        with(binding) {
-            val tintColor = ContextCompat.getColor(root.context, R.color.negative)
-            val endIconDrawable = AppCompatResources.getDrawable(root.context, R.drawable.ic_info)?.apply {
-                setTint(tintColor)
-            }
-            accountItemView.setEndIconDrawable(endIconDrawable)
-        }
+    private fun setAccountPrimaryValueText(accountPrimaryValue: String?) {
+        binding.accountItemView.setPrimaryValueText(accountPrimaryValue)
+    }
+
+    private fun setAccountSecondaryValueText(accountSecondaryValue: String?) {
+        binding.accountItemView.setSecondaryValueText(accountSecondaryValue)
+    }
+
+    private fun setStartSmallIconDrawableResource(startSmallIconDrawableResource: Int?) {
+        binding.accountItemView.setStartSmallIconDrawableResource(startSmallIconDrawableResource)
     }
 
     private fun getOnLongClickListener(canCopyable: Boolean, accountAddress: String): View.OnLongClickListener? {
@@ -83,9 +85,9 @@ class AccountErrorItemViewHolder(
     }
 
     companion object {
-        fun create(parent: ViewGroup, listener: AccountClickListener): AccountErrorItemViewHolder {
-            val binding = ItemAccountErrorBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return AccountErrorItemViewHolder(binding, listener)
+        fun create(parent: ViewGroup, listener: AccountClickListener): AccountItemViewHolder {
+            val binding = ItemAccountBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return AccountItemViewHolder(binding, listener)
         }
     }
 

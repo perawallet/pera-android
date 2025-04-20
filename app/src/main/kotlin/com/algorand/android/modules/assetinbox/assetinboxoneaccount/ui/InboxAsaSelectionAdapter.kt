@@ -16,7 +16,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.accounts.ui.adapter.AccountAdapter
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AsaPreview
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.ItemType
 
@@ -51,6 +50,6 @@ class InboxAsaSelectionAdapter(
     }
 
     companion object {
-        private val logTag = AccountAdapter::class.java.simpleName
+        private val logTag = InboxAsaSelectionAdapter::class.java.simpleName
     }
 }

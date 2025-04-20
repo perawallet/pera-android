@@ -22,7 +22,7 @@ interface BannerRepository {
 
     suspend fun getBanners(deviceId: String): Result<List<BannerDetailDTO>>
 
-    suspend fun getCachedBanner(): Flow<BannerDetailDTO?>
+    fun getCachedBanner(): Flow<BannerDetailDTO?>
 
     suspend fun setBannerDismissed(bannerId: Long)
 

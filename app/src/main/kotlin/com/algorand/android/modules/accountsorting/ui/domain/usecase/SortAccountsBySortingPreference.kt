@@ -12,9 +12,10 @@
 
 package com.algorand.android.modules.accountsorting.ui.domain.usecase
 
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.modules.accountsorting.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.modules.accountsorting.ui.domain.model.AccountAndAssetListItem
 import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem
-import com.algorand.android.modules.accountsorting.domain.model.AccountSortingTypeIdentifier
 
 interface SortAccountsBySortingPreference {
 
@@ -30,4 +31,6 @@ interface SortAccountsBySortingPreference {
         sortingIdentifier: AccountSortingTypeIdentifier,
         list: List<AccountAndAssetListItem.AccountListItem>
     ): List<AccountAndAssetListItem.AccountListItem>
+
+    suspend fun sortAccountLites(accountLites: Map<String, AccountLite>): Map<String, AccountLite>
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,14 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.ui.viewholder
+package com.algorand.android.modules.accounts.ui.view.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.algorand.android.databinding.ItemAccountsQuickActionsBinding
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 
 class AccountsQuickActionsViewHolder(
     private val binding: ItemAccountsQuickActionsBinding,

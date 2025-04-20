@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,10 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.ui
+package com.algorand.android.modules.accounts.ui.view
 
 import android.Manifest
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -22,7 +21,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavDirections
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.MainNavigationDirections
@@ -34,16 +32,21 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ScreenState
-import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
-import com.algorand.android.modules.accounts.ui.adapter.AccountAdapter
+import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel
+import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToBackupPassphraseInfo
+import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToSwap
+import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowAccountAddressCopyTutorial
+import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowGiftCardsTutorial
+import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowMaxAccountLimitExceededError
+import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowNotificationPermission
+import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowSwapTutorial
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.tutorialdialog.util.showCopyAccountAddressTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showGiftCardsTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showSwapFeatureTutorialDialog
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.utils.BannerViewTypesDividerItemDecoration
-import com.algorand.android.utils.Event
-import com.algorand.android.utils.TestnetBadgeDrawable
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -63,7 +66,13 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             is AccountsViewModel.ViewEvent.NavToLoginNavigation ->
                 navToLoginNavigation()
 
-            is AccountsViewModel.ViewEvent.ShowMaxAccountLimitExceededError -> showMaxAccountLimitExceededError()
+            is ShowMaxAccountLimitExceededError -> showMaxAccountLimitExceededError()
+            is NavigateToBackupPassphraseInfo -> navToBackupPassphraseInfo(event.addresses)
+            is NavigateToSwap -> nav(event.navDirections)
+            is ShowAccountAddressCopyTutorial -> showAccountAddressCopyTutorialDialog(event.tutorialId)
+            is ShowGiftCardsTutorial -> showGiftCardsTutorialDialog(event.tutorialId)
+            ShowNotificationPermission -> askNotificationPermission()
+            is ShowSwapTutorial -> showSwapTutorialDialog(event.tutorialId)
         }
     }
 
@@ -89,13 +98,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         )
     }
 
-    private val testnetBadgeDrawable: Drawable? by lazy {
-        context?.run {
-            TestnetBadgeDrawable.toDrawable(this)
-        }
-    }
-
-    private val accountAdapterListener = object : AccountAdapter.AccountAdapterListener {
+    private val accountAdapterListener = object : AccountsAdapter.AccountAdapterListener {
         override fun onSucceedAccountClick(publicKey: String) {
             nav(AccountsFragmentDirections.actionAccountsFragmentToAccountDetailFragment(publicKey))
         }
@@ -109,7 +112,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onBannerCloseButtonClick(bannerId: Long) {
-            accountsViewModel.onCloseBannerClick(bannerId)
+            accountsViewModel.dismissBanner(bannerId)
         }
 
         override fun onBackupBannerActionButtonClick() {
@@ -117,22 +120,16 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onBannerActionButtonClick(url: String, bannerType: BannerType) {
-            accountsViewModel.onBannerActionButtonClick(bannerType)
+            accountsViewModel.logBannerClick(bannerType)
             when (bannerType) {
-                BannerType.STAKING -> {
-                    nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
-                }
-                BannerType.CARD -> {
-                    nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
-                }
-                else -> {
-                    nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
-                }
+                BannerType.STAKING -> nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
+                BannerType.CARD -> nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
+                else -> nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
             }
         }
 
         override fun onBuySellClick() {
-            accountsViewModel.onAccountsFragmentAlgoBuyTapEvent()
+            accountsViewModel.logAlgoBuyClick()
             navToBuySellActionsBottomSheet()
         }
 
@@ -146,12 +143,12 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onScanQrClick() {
-            accountsViewModel.onQrScanTapEvent()
+            accountsViewModel.logQrScanClick()
             navToQrScanFragment()
         }
 
         override fun onSortClick() {
-            accountsViewModel.onSortTapEvent()
+            accountsViewModel.logSortClick()
             onArrangeListClick()
         }
 
@@ -165,7 +162,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
-    private val accountAdapter: AccountAdapter = AccountAdapter(accountAdapterListener = accountAdapterListener)
+    private val accountAdapter: AccountsAdapter = AccountsAdapter(accountAdapterListener = accountAdapterListener)
 
     private val accountListCollector: suspend (List<BaseAccountListItem>?) -> Unit = { accountList ->
         accountList?.let { safeList ->
@@ -184,24 +181,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         binding.loadingProgressBar.isVisible = isFullScreenLoadingVisible == true
     }
 
-    private val testnetBadgeVisibilityCollector: suspend (Boolean?) -> Unit = { isTestnetBadgeVisible ->
-        initToolbarTestnetBadge(isTestnetBadgeVisible)
-    }
-
     private val accountsPortfolioValuesCollector: suspend (BasePortfolioValueItem?) -> Unit = {
         if (it != null) setPortfolioValues(it)
-    }
-
-    private val onAccountAddressCopyTutorialDisplayEventCollector: suspend (Event<Int>?) -> Unit = { event ->
-        event?.consume()?.run(::showAccountAddressCopyTutorialDialog)
-    }
-
-    private val onSwapTutorialDisplayEventCollector: suspend (Event<Int>?) -> Unit = { event ->
-        event?.consume()?.run(::showSwapTutorialDialog)
-    }
-
-    private val onGiftCardsTutorialDisplayEventCollector: suspend (Event<Int>?) -> Unit = { event ->
-        event?.consume()?.run(::showGiftCardsTutorialDialog)
     }
 
     private val portfolioValuesBackgroundColorCollector: suspend (Int?) -> Unit = {
@@ -229,21 +210,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
-    private val swapNavigationDirectionEventCollector: suspend (Event<NavDirections>?) -> Unit = {
-        it?.consume()?.run { nav(this) }
-    }
-
-    private val giftCardsNavigationDirectionEventCollector: suspend (Event<NavDirections>?) -> Unit = {
-        it?.consume()?.run { nav(this) }
-    }
-    private val askNotificationPermissionEventCollector: suspend (Event<Unit>?) -> Unit = {
-        it?.consume()?.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
-    }
-
     private val assetInboxCountCollector: suspend (Int?) -> Unit = { assetInboxCountNullable ->
         val assetInboxCount = assetInboxCountNullable ?: 0
         binding.assetInboxAllAccountsButton.apply {
@@ -262,18 +228,22 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             accountsViewModel.dismissTutorial(tutorialId)
             binding.root.context.showSwapFeatureTutorialDialog(
                 onTrySwap = ::onSwapClickFromTutorialDialog,
-                onLater = ::onSwapLaterClick
+                onLater = ::logSwapLaterClick
             )
         }
     }
 
     private fun showGiftCardsTutorialDialog(tutorialId: Int) {
-        with(accountsViewModel) {
-            accountsViewModel.dismissTutorial(tutorialId)
-            binding.root.context.showGiftCardsTutorialDialog(
-                onBuyGiftCards = ::onGiftCardsClickFromTutorialDialog,
-                onLater = ::onGiftCardsLaterClick
-            )
+        accountsViewModel.dismissTutorial(tutorialId)
+        binding.root.context.showGiftCardsTutorialDialog(
+            onBuyGiftCards = ::navToBidali,
+            onLater = { }
+        )
+    }
+
+    private fun askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
@@ -288,14 +258,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 setDrawableTintColor(portfolioValues.titleColorResId)
                 setOnClickListener { navToPortfolioInfoBottomSheet(portfolioValues) }
             }
-        }
-    }
-
-    private fun initToolbarTestnetBadge(isTestnetBadgeVisible: Boolean?) {
-        val centerDrawable = if (isTestnetBadgeVisible == true) testnetBadgeDrawable else null
-        binding.nodeImageView.apply {
-            isVisible = centerDrawable != null
-            setImageDrawable(centerDrawable ?: return)
         }
     }
 
@@ -322,11 +284,11 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             setupUi(accountsEmptyState)
         }
         binding.qrImageButton.setOnClickListener {
-            accountsViewModel.onQrScanTapEvent()
+            accountsViewModel.logQrScanClick()
             navToQrScanFragment()
         }
         binding.notificationImageButton.setOnClickListener {
-            accountsViewModel.onNotificationTapEvent()
+            accountsViewModel.logNotificationClick()
             navigateToNotifications()
         }
         binding.assetInboxAllAccountsButton.setOnClickListener { navToAssetInboxAllAccountsNavigation() }
@@ -353,26 +315,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 emptyStateVisibilityCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.isTestnetBadgeVisible },
-                testnetBadgeVisibilityCollector
-            )
-            viewLifecycleOwner.collectLatestOnLifecycle(
                 accountPreviewFlow.map { it?.portfolioValueItem }.distinctUntilChanged(),
                 accountsPortfolioValuesCollector
-            )
-            viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.onAccountAddressCopyTutorialDisplayEvent }
-                    .distinctUntilChanged(),
-                onAccountAddressCopyTutorialDisplayEventCollector
-            )
-            viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.onSwapTutorialDisplayEvent }.distinctUntilChanged(),
-                onSwapTutorialDisplayEventCollector
-            )
-            viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.onGiftCardsTutorialDisplayEvent }
-                    .distinctUntilChanged(),
-                onGiftCardsTutorialDisplayEventCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
                 accountPreviewFlow.map { it?.portfolioValuesBackgroundRes }.distinctUntilChanged(),
@@ -387,24 +331,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 notificationStateCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.swapNavigationDestinationEvent }.distinctUntilChanged(),
-                swapNavigationDirectionEventCollector
-            )
-            viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.giftCardsNavigationDestinationEvent }.distinctUntilChanged(),
-                giftCardsNavigationDirectionEventCollector
-            )
-            viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.notificationPermissionEvent }.distinctUntilChanged(),
-                askNotificationPermissionEventCollector
-            )
-            viewLifecycleOwner.collectLatestOnLifecycle(
                 accountPreviewFlow.map { it?.assetInboxCount },
                 assetInboxCountCollector
-            )
-            viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.onNavToBackUpPassphraseInfo }.distinctUntilChanged(),
-                { navToBackupPassphraseInfoNavigation(it) }
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
                 accountsViewModel.viewEvent,
@@ -455,17 +383,21 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         nav(AccountsFragmentDirections.actionGlobalSendAlgoNavigation(null))
     }
 
-    private fun navToBackupPassphraseInfoNavigation(event: Event<Set<String>>?) {
-        event?.consume()?.let { addresses ->
-            nav(AccountsFragmentDirections.actionAccountsFragmentToBackupPassphraseInfoNavigation(
+    private fun navToBackupPassphraseInfo(addresses: Set<String>) {
+        nav(
+            AccountsFragmentDirections.actionAccountsFragmentToBackupPassphraseInfoNavigation(
                 addresses.toTypedArray(),
                 OnboardingAccountType.Algo25
-            ))
-        }
+            )
+        )
     }
 
     private fun navToLoginNavigation() {
         nav(MainNavigationDirections.actionGlobalLoginNavigation())
+    }
+
+    private fun navToBidali() {
+        nav(AccountsFragmentDirections.actionAccountsFragmentToBidaliNavigation())
     }
 
     companion object {

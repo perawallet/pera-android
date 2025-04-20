@@ -18,7 +18,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.google.android.material.button.MaterialButton
 
 abstract class BaseBannerViewHolder(
@@ -32,16 +32,16 @@ abstract class BaseBannerViewHolder(
     protected open val descriptionTextView: TextView? = null
 
     override fun bind(item: BaseAccountListItem) {
-        if (item !is BaseAccountListItem.BaseBannerItem) return
+        if (item !is BaseAccountListItem.BannerItem) return
         initActionButton(item)
         initCloseButton(item)
         initTitleTextView(item)
         initDescriptionTextView(item)
     }
 
-    abstract fun initActionButton(item: BaseAccountListItem.BaseBannerItem)
+    abstract fun initActionButton(item: BaseAccountListItem.BannerItem)
 
-    protected fun initActionButton(item: BaseAccountListItem.BaseBannerItem, bannerType: BannerType) {
+    protected fun initActionButton(item: BaseAccountListItem.BannerItem, bannerType: BannerType) {
         actionButton?.apply {
             setOnClickListener { listener.onActionButtonClick(item.buttonUrl.orEmpty(), bannerType) }
             text = item.buttonText
@@ -49,18 +49,18 @@ abstract class BaseBannerViewHolder(
         }
     }
 
-    private fun initCloseButton(item: BaseAccountListItem.BaseBannerItem) {
+    private fun initCloseButton(item: BaseAccountListItem.BannerItem) {
         closeButton?.setOnClickListener { listener.onCloseBannerClick(item.bannerId) }
     }
 
-    private fun initTitleTextView(item: BaseAccountListItem.BaseBannerItem) {
+    private fun initTitleTextView(item: BaseAccountListItem.BannerItem) {
         titleTextView?.apply {
             text = item.title.orEmpty()
             isVisible = item.isTitleVisible
         }
     }
 
-    private fun initDescriptionTextView(item: BaseAccountListItem.BaseBannerItem) {
+    private fun initDescriptionTextView(item: BaseAccountListItem.BannerItem) {
         descriptionTextView?.apply {
             text = item.description.orEmpty()
             isVisible = item.isDescriptionVisible

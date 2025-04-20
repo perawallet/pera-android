@@ -67,7 +67,7 @@ class BannerRepositoryImpl @Inject constructor(
         bannerIdsLocalSource.clear()
     }
 
-    override suspend fun getCachedBanner(): Flow<BannerDetailDTO?> {
+    override fun getCachedBanner(): Flow<BannerDetailDTO?> {
         return bannerLocalCache.cacheMapFlow.map { cacheResultHashMap ->
             cacheResultHashMap.mapNotNull { it.value.data }.firstOrNull()
         }

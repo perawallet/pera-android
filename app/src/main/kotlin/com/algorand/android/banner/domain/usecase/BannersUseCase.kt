@@ -43,7 +43,7 @@ class BannersUseCase @Inject constructor(
         }
     }
 
-    suspend fun getBanner(): Flow<BaseBanner?> = bannerRepository.getCachedBanner().map { cachedBanner ->
+    fun getBanner(): Flow<BaseBanner?> = bannerRepository.getCachedBanner().map { cachedBanner ->
         cachedBanner?.let { getMappedAndFilteredBanner(bannerDto = it) }
     }
 

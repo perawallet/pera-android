@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.domain.model
+package com.algorand.android.modules.accounts.ui.model
 
 import androidx.annotation.ColorRes
-import androidx.navigation.NavDirections
 import com.algorand.android.models.BottomGlobalError
+import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.utils.Event
 
 data class AccountPreview(
@@ -24,17 +24,10 @@ data class AccountPreview(
     val accountListItems: List<BaseAccountListItem> = emptyList(),
     val portfolioValueItem: BasePortfolioValueItem? = null,
     val bottomGlobalError: BottomGlobalError? = null,
-    val isTestnetBadgeVisible: Boolean,
     val isMotionLayoutTransitionEnabled: Boolean,
     @ColorRes val portfolioValuesBackgroundRes: Int,
     val isSuccessStateVisible: Boolean,
     val hasNewNotification: Boolean,
-    val onGiftCardsTutorialDisplayEvent: Event<Int>? = null,
-    val onAccountAddressCopyTutorialDisplayEvent: Event<Int>? = null,
-    val onSwapTutorialDisplayEvent: Event<Int>? = null,
-    val swapNavigationDestinationEvent: Event<NavDirections>? = null,
-    val giftCardsNavigationDestinationEvent: Event<NavDirections>? = null,
-    val notificationPermissionEvent: Event<Unit>? = null,
     val assetInboxCount: Int = 0,
     val onNavToBackUpPassphraseInfo: Event<Set<String>>? = null
 )

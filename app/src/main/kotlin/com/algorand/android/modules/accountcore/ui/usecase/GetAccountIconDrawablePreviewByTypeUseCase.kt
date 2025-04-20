@@ -13,6 +13,7 @@
 package com.algorand.android.modules.accountcore.ui.usecase
 
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import javax.inject.Inject
 
@@ -25,6 +26,15 @@ internal class GetAccountIconDrawablePreviewByTypeUseCase @Inject constructor() 
             AccountType.LedgerBle -> AccountIconDrawablePreviews.getLedgerBleDrawable()
             AccountType.NoAuth -> AccountIconDrawablePreviews.getNoAuthDrawable()
             AccountType.Rekeyed, AccountType.RekeyedAuth -> AccountIconDrawablePreviews.getRekeyedDrawable()
+        }
+    }
+
+    override fun invoke(type: AccountRegistrationType): AccountIconDrawablePreview {
+        return when (type) {
+            AccountRegistrationType.Algo25 -> AccountIconDrawablePreviews.getAlgo25Drawable()
+            AccountRegistrationType.HdKey -> AccountIconDrawablePreviews.getHdKeyDrawable()
+            AccountRegistrationType.LedgerBle -> AccountIconDrawablePreviews.getLedgerBleDrawable()
+            AccountRegistrationType.NoAuth -> AccountIconDrawablePreviews.getNoAuthDrawable()
         }
     }
 }

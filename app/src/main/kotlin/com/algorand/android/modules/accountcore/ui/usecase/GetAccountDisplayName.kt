@@ -7,7 +7,7 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 interface GetAccountDisplayName {
     suspend operator fun invoke(address: String): AccountDisplayName
 
-    suspend operator fun invoke(address: String, name: String?, type: AccountType): AccountDisplayName
+    suspend operator fun invoke(address: String, name: String?, type: AccountType?): AccountDisplayName
 
     suspend operator fun invoke(accountDetail: AccountDetail): AccountDisplayName
 }

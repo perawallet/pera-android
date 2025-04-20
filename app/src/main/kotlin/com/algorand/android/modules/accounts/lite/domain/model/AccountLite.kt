@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,13 +10,27 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accountcore.ui.usecase
+package com.algorand.android.modules.accounts.lite.domain.model
 
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.modules.parity.domain.model.AlgoAmountValue
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
+import java.math.BigDecimal
 
-interface GetAccountIconDrawablePreviewByType {
-    operator fun invoke(type: AccountType): AccountIconDrawablePreview
-    operator fun invoke(type: AccountRegistrationType): AccountIconDrawablePreview
+data class AccountLite(
+    val address: String,
+    val customName: String,
+    val isBackedUp: Boolean,
+    val cachedInfo: CachedInfo?,
+    val sortIndex: Int,
+    val registrationType: AccountRegistrationType
+) {
+
+    data class CachedInfo(
+        val type: AccountType,
+        val algoAmountValue: AlgoAmountValue,
+        val primaryAccountValue: BigDecimal,
+        val secondaryAccountValue: BigDecimal,
+        val assetCount: Int
+    )
 }

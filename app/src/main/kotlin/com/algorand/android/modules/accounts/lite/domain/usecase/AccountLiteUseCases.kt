@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,13 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accountcore.ui.usecase
+package com.algorand.android.modules.accounts.lite.domain.usecase
 
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
-import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+import kotlinx.coroutines.flow.Flow
 
-interface GetAccountIconDrawablePreviewByType {
-    operator fun invoke(type: AccountType): AccountIconDrawablePreview
-    operator fun invoke(type: AccountRegistrationType): AccountIconDrawablePreview
+fun interface GetAccountLitesFlow {
+    operator fun invoke(localAccounts: List<LocalAccount>, addresses: List<String>): Flow<Map<String, AccountLite>>
 }

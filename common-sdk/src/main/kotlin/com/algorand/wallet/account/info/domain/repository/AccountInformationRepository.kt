@@ -15,6 +15,8 @@ package com.algorand.wallet.account.info.domain.repository
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
+import com.algorand.wallet.account.lite.domain.model.AccountLiteInformation
+import com.algorand.wallet.account.lite.domain.model.AssetHoldingLite
 import com.algorand.wallet.foundation.PeraResult
 import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
@@ -65,4 +67,8 @@ internal interface AccountInformationRepository {
     suspend fun getFilteredRekeyedAccountCount(authAddress: String, algoAddresses: List<String>): Int
 
     suspend fun getAccountAlgoBalance(address: String): BigInteger?
+
+    fun getAccountsLiteInformationFlow(addresses: List<String>): Flow<Map<String, AccountLiteInformation?>>
+
+    fun getAssetHoldingsLiteFlow(addresses: List<String>): Flow<Map<String, AssetHoldingLite>>
 }

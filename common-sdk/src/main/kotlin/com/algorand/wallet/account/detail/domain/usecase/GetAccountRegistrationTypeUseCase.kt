@@ -30,4 +30,13 @@ internal class GetAccountRegistrationTypeUseCase @Inject constructor(
             else -> null
         }
     }
+
+    override fun invoke(account: LocalAccount): AccountRegistrationType {
+        return when (account) {
+            is LocalAccount.Algo25 -> AccountRegistrationType.Algo25
+            is LocalAccount.LedgerBle -> AccountRegistrationType.LedgerBle
+            is LocalAccount.NoAuth -> AccountRegistrationType.NoAuth
+            is LocalAccount.HdKey -> AccountRegistrationType.HdKey
+        }
+    }
 }

@@ -17,6 +17,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
+import com.algorand.wallet.asset.data.database.model.AssetLiteInformationDao
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface AssetDetailDao {
@@ -41,4 +43,7 @@ internal interface AssetDetailDao {
 
     @Query("DELETE FROM asset_detail")
     suspend fun clearAll()
+
+    @Query("SELECT asset_id, usd_value, decimals FROM asset_detail WHERE asset_id IN (:assetIds)")
+    fun getLiteInformationByAssetIds(assetIds: List<Long>): Flow<List<AssetLiteInformationDao>>
 }

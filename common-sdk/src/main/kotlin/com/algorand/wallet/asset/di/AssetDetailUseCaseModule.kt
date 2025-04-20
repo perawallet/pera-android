@@ -28,6 +28,7 @@ import com.algorand.wallet.asset.domain.usecase.GetCollectiblesDetail
 import com.algorand.wallet.asset.domain.usecase.InitializeAssets
 import com.algorand.wallet.asset.domain.usecase.InitializeAssetsUseCase
 import com.algorand.wallet.asset.domain.usecase.IsCollectibleExist
+import com.algorand.wallet.asset.lite.domain.usecase.GetAssetsLiteInformationFlow
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -100,5 +101,12 @@ internal object AssetDetailUseCaseModule {
         repository: AssetRepository
     ): IsCollectibleExist {
         return IsCollectibleExist(repository::isCollectibleExist)
+    }
+
+    @Provides
+    fun provideGetAssetsLiteInformationFlow(
+        repository: AssetRepository
+    ): GetAssetsLiteInformationFlow {
+        return GetAssetsLiteInformationFlow(repository::getAssetsLiteInformationFlow)
     }
 }

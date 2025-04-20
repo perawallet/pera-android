@@ -28,6 +28,7 @@ import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.asset.domain.repository.AssetRepository
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
 import javax.inject.Inject
@@ -35,6 +36,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 internal class AssetRepositoryImpl @Inject constructor(
@@ -170,6 +173,18 @@ internal class AssetRepositoryImpl @Inject constructor(
 
     override suspend fun isCollectibleExist(collectibleId: Long): Boolean {
         return assetDetailCacheHelper.isCollectibleExist(collectibleId)
+    }
+
+    override fun getAssetsLiteInformationFlow(assetIds: List<Long>): Flow<Map<Long, AssetLiteInformation?>> {
+        return assetDetailDao.getLiteInformationByAssetIds(assetIds).map {
+            it.associate { assetLiteInformationDao ->
+                assetLiteInformationDao.id to AssetLiteInformation(
+                    assetLiteInformationDao.id,
+                    assetLiteInformationDao.usdValue,
+                    assetLiteInformationDao.decimals
+                )
+            }
+        }
     }
 
     private fun mapAssetDetailResponseToResult(assetResponse: AssetResponse): PeraResult<Asset> {

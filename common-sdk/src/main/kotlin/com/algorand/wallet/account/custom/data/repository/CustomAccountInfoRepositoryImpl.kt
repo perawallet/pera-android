@@ -21,6 +21,8 @@ import com.algorand.wallet.account.custom.domain.repository.CustomAccountInfoRep
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 internal class CustomAccountInfoRepositoryImpl @Inject constructor(
@@ -41,6 +43,23 @@ internal class CustomAccountInfoRepositoryImpl @Inject constructor(
         return withContext(coroutineDispatcher) {
             val customInfoEntity = customAccountInfoDao.getOrNull(address) ?: return@withContext null
             customAccountInfoMapper(address, customInfoEntity)
+        }
+    }
+
+    override suspend fun getCustomInfos(addresses: List<String>): Map<String, CustomAccountInfo?> {
+        return withContext(coroutineDispatcher) {
+            val entityList = customAccountInfoDao.getAll(addresses)
+            entityList.associate {
+                it.algoAddress to customAccountInfoMapper(it.algoAddress, it)
+            }
+        }
+    }
+
+    override fun getCustomInfoFlow(addresses: List<String>): Flow<Map<String, CustomAccountInfo?>> {
+        return customAccountInfoDao.getAllAsFlow(addresses).map { entityList ->
+            entityList.associate {
+                it.algoAddress to customAccountInfoMapper(it.algoAddress, it)
+            }
         }
     }
 

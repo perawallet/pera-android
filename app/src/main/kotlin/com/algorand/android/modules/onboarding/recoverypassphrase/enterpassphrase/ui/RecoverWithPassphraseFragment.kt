@@ -332,26 +332,6 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
             }
             else -> {}
         }
-        when (accountCreation.type) {
-            is AccountCreation.Type.Algo25 -> {
-                nav(
-                    RecoverWithPassphraseFragmentDirections
-                        .actionRecoverWithPassphraseFragmentToRecoverAccountNameRegistrationFragment(
-                            accountCreation = accountCreation
-                        )
-                )
-            }
-
-            is AccountCreation.Type.HdKey -> {
-                nav(
-                    RecoverWithPassphraseFragmentDirections
-                        .actionRecoverWithPassphraseFragmentToRecoverRegisteredAccountsFragment(
-                            accountCreation = accountCreation
-                        )
-                )
-            }
-            else -> {}
-        }
     }
 
     private fun showErrorBottomSheet(descriptionString: AnnotatedString) {

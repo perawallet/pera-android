@@ -32,7 +32,6 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
@@ -168,69 +167,5 @@ fun PeraHighlightedText(modifier: Modifier = Modifier, text: String) {
             ),
             text = text
         )
-    }
-}
-
-@Preview
-@Composable
-fun PreviewPeraHeadlineText() {
-    PeraTheme {
-        PeraHeadlineText(text = "Headline Text")
-    }
-}
-
-@Preview
-@Composable
-fun PreviewPeraTitleText() {
-    PeraTheme {
-        PeraTitleText(text = "Title Text")
-    }
-}
-
-@Preview
-@Composable
-fun PreviewPeraBodyText() {
-    PeraTheme {
-        PeraBodyText(text = "Body Text")
-    }
-}
-
-@Preview
-@Composable
-fun PreviewPeraLinkText() {
-    PeraTheme {
-        PeraLinkText(text = "Link Text")
-    }
-}
-
-@Preview
-@Composable
-fun PreviewPeraScrimText() {
-    PeraTheme {
-        PeraScrimText(text = "Scrim Text")
-    }
-}
-
-@Preview
-@Composable
-fun PreviewPeraWarningText() {
-    PeraTheme {
-        PeraWarningText(text = "Warning Text")
-    }
-}
-
-@Preview
-@Composable
-fun PreviewPeraHighlightedText() {
-    PeraTheme {
-        PeraHighlightedText(text = "Highlighted Text")
-    }
-}
-
-@Preview
-@Composable
-fun PreviewPeraHighlightedTextDark() {
-    PeraTheme(isDarkTheme = true) {
-        PeraHighlightedText(text = "Highlighted Text")
     }
 }

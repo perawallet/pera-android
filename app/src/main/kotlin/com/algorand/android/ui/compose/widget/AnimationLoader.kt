@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -62,23 +62,10 @@ fun AnimationLoader(
     }
 }
 
-@Preview(name = "Light Mode", showBackground = true)
+@PreviewLightDark
 @Composable
-fun AnimationLoaderLightPreview() {
+fun AnimationLoaderPreview() {
     PeraTheme {
-        AnimationLoader(
-            start = ImageVector.vectorResource(R.drawable.ic_ledger_old_export),
-            end = ImageVector.vectorResource(R.drawable.ic_phone_new),
-            lottie = LottieCompositionSpec.RawRes(resId = R.raw.loading_dots),
-            description = "Searching your accounts"
-        )
-    }
-}
-
-@Preview(name = "Dark Mode")
-@Composable
-fun AnimationLoaderDarkPreview() {
-    PeraTheme(isDarkTheme = true) {
         AnimationLoader(
             start = ImageVector.vectorResource(R.drawable.ic_ledger_old_export),
             end = ImageVector.vectorResource(R.drawable.ic_phone_new),

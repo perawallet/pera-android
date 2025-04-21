@@ -13,21 +13,13 @@
 package com.algorand.android.ui.compose.widget.progress
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.algorand.android.ui.compose.theme.PeraTheme
 
-@Preview
+@PreviewLightDark
 @Composable
 fun PeraCircularProgressIndicatorPreview() {
     PeraTheme {
-        PeraCircularProgressIndicator()
-    }
-}
-
-@Preview
-@Composable
-fun PeraCircularProgressIndicatorDarkPreview() {
-    PeraTheme(isDarkTheme = true) {
         PeraCircularProgressIndicator()
     }
 }

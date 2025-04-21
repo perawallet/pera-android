@@ -39,11 +39,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionPreview
 import com.algorand.android.ui.compose.theme.PeraTheme
 
-@Preview
+@PreviewLightDark
 @SuppressLint("ComposableNaming")
 @Composable
 fun keyRegTable(

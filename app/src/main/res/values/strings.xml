@@ -217,7 +217,7 @@
     <string name="algorand_dispenser">Algorand Dispenser</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="privacy_click">Privacy Policy</string>
-    <string name="by_adding_a_wallet">By adding a wallet, you agree to Pera Wallet\’s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
+    <string name="by_creating_account">By creating an account, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
     <string name="create_new_account">Create new Account</string>
     <string name="watch_account">Watch Account</string>
     <string name="wallet_address">Wallet address</string>
@@ -586,10 +586,10 @@
     <string name="this_is_the_first_transaction">This is the first transaction for the selected account. The first transactions require a minimum amount of at least 0.1 Algo. Please enter a valid amount and try again.</string>
     <string name="i_want_to_create">I want to create an account</string>
     <string name="i_want_to_create_an_algorand_account">I want to create\nan Algorand account</string>
-    <string name="add_a_new_account">Add a new account</string>
-    <string name="create_a_new_account_desc">Create a new account for an existing Universal Wallet</string>
+    <string name="create_a_new_account">Create a new account</string>
+    <string name="create_a_new_account_desc">Create a new account for an existing HD Wallet</string>
     <string name="create_a_new_wallet">Create a new wallet</string>
-    <string name="create_a_new_algorand_account_with">Create a new Algorand wallet with a new wallet and recovery passphrase</string>
+    <string name="create_a_new_algorand_account_with">Create a new Algorand account with a new wallet and recovery passphrase</string>
     <string name="recover_an_account">Recover an account</string>
     <string name="i_want_to_recover">I want to recover an Algorand account using my 25-word passphrase</string>
     <string name="pair_Ledger_device">Pair Ledger device</string>
@@ -617,7 +617,6 @@
     <string name="not_available">Not available</string>
     <string name="your_walletconnect_request_failed">Your WalletConnect request failed with the following error:\n\n<annotation replacement="error_message">errorMessagePlaceholder</annotation>\n\nPlease try again by going back to the dApp where you initiated the request.</string>
     <string name="add_an_account">Add an Account</string>
-    <string name="add_a_wallet_or_account">Add a wallet\nor account</string>
     <string name="manage_assets">Manage Assets</string>
     <string name="send_asset">Send Asset</string>
     <string name="enable_pin_code">Enable PIN Code</string>
@@ -1339,10 +1338,10 @@
     <string name="online">Online</string>
     <string name="offline">Offline</string>
 
-    <string name="import_a_wallet">Import a wallet</string>
+    <string name="import_an_account">Import an account</string>
     <string name="import_an_existing">Import an existing Algorand account with various methods or pair your Ledger</string>
-    <string name="watch_an_account">Watch an address</string>
-    <string name="monitor_an_algorand_address">Monitor an Algorand address by providing its address</string>
+    <string name="watch_an_account">Watch an account</string>
+    <string name="monitor_an_algorand_account">Monitor an Algorand account by providing its address</string>
     <string name="recover_an_account_with_qr">Recover an account with QR code</string>
     <string name="i_want_to_recover_qr">I want to recover an Algorand account using my QR code</string>
 

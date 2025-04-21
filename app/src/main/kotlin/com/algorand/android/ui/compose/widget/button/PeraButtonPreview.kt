@@ -4,12 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.icon.PeraIcon
 
-@Preview
+@PreviewLightDark
 @Composable
 fun PeraPrimaryButtonPreview() {
     PeraTheme {
@@ -20,19 +20,7 @@ fun PeraPrimaryButtonPreview() {
     }
 }
 
-@Preview
-@Composable
-fun PeraPrimaryButtonDarkPreview() {
-    PeraTheme(isDarkTheme = true) {
-        PeraPrimaryButton(
-            modifier = Modifier,
-            onClick = { },
-            text = "Primary Button"
-        )
-    }
-}
-
-@Preview
+@PreviewLightDark
 @Composable
 fun PeraPrimaryButtonDisabledPreview() {
     PeraTheme {
@@ -44,20 +32,7 @@ fun PeraPrimaryButtonDisabledPreview() {
     }
 }
 
-@Preview
-@Composable
-fun PeraPrimaryButtonDarkDisabledPreview() {
-    PeraTheme(isDarkTheme = true) {
-        PeraPrimaryButton(
-            modifier = Modifier,
-            onClick = { },
-            text = "Primary Button Disabled",
-            state = PeraButtonState.DISABLED
-        )
-    }
-}
-
-@Preview
+@PreviewLightDark
 @Composable
 fun PeraSecondaryButtonPreview() {
     PeraTheme {
@@ -68,18 +43,7 @@ fun PeraSecondaryButtonPreview() {
     }
 }
 
-@Preview
-@Composable
-fun PeraSecondaryButtonDarkPreview() {
-    PeraTheme(isDarkTheme = true) {
-        PeraSecondaryButton(
-            onClick = { },
-            text = "Secondary Button"
-        )
-    }
-}
-
-@Preview
+@PreviewLightDark
 @Composable
 fun PeraSecondaryButtonDisabledPreview() {
     PeraTheme {
@@ -92,19 +56,7 @@ fun PeraSecondaryButtonDisabledPreview() {
     }
 }
 
-@Preview
-@Composable
-fun PeraSecondaryButtonDarkDisabledPreview() {
-    PeraTheme(isDarkTheme = true) {
-        PeraSecondaryButton(
-            onClick = { },
-            text = "Secondary Button Disabled",
-            state = PeraButtonState.DISABLED
-        )
-    }
-}
-
-@Preview
+@PreviewLightDark
 @Composable
 fun PeraSecondaryButtonWithIconPreview() {
     PeraTheme {
@@ -122,7 +74,7 @@ fun PeraSecondaryButtonWithIconPreview() {
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun PeraPrimaryButtonProgressPreview() {
     PeraTheme {
@@ -134,7 +86,7 @@ fun PeraPrimaryButtonProgressPreview() {
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun PeraSecondaryButtonProgressPreview() {
     PeraTheme {

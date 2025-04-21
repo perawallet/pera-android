@@ -81,7 +81,7 @@ fun GroupChoiceWidget(
 @Composable
 fun GroupChoiceWidgetPreview() {
     GroupChoiceWidget(
-        title = stringResource(id = R.string.import_a_wallet),
+        title = stringResource(id = R.string.import_an_account),
         description = stringResource(id = R.string.import_an_existing),
         iconContentDescription = stringResource(id = R.string.import_an_existing),
         icon = ImageVector.vectorResource(R.drawable.ic_key),

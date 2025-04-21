@@ -41,6 +41,8 @@ internal class AccountListItemSorterByAlphabeticallyDescending @Inject construct
     }
 
     override fun sortAccountLites(accountLites: Map<String, AccountLite>): Map<String, AccountLite> {
-        return accountLites.entries.sortedBy { it.value.customName.lowercase() }.associate { it.toPair() }
+        return accountLites.entries.sortedByDescending {
+            it.value.customName.ifBlank { it.value.address }.lowercase()
+        }.associate { it.toPair() }
     }
 }

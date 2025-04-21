@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +24,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,8 +41,9 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.ErrorContentWidget
-import com.algorand.android.ui.compose.widget.PeraBodyText
-import com.algorand.android.ui.compose.widget.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewEvent
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewState
 import com.algorand.android.utils.toShortenedAddress
@@ -114,7 +113,7 @@ class MigrationViewerFragment : DaggerBaseFragment(0) {
 
     @Composable
     fun LoadingStateContent() {
-        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+        PeraCircularProgressIndicator(modifier = Modifier.padding(16.dp))
     }
 
     @Composable
@@ -135,7 +134,9 @@ class MigrationViewerFragment : DaggerBaseFragment(0) {
         val newAccounts = viewState.newAccounts
 
         PeraBodyText(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
             text = "Pre v6 Accounts",
             textAlign = TextAlign.Center
         )
@@ -145,7 +146,9 @@ class MigrationViewerFragment : DaggerBaseFragment(0) {
         Spacer(modifier = Modifier.height(40.dp))
 
         PeraBodyText(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
             text = "Post v6 Accounts",
             textAlign = TextAlign.Center
         )

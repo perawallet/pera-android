@@ -1,6 +1,18 @@
+/*
+ * Copyright 2022 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
 package com.algorand.android.ui.register.registerintro
 
-import ItemChoiceWidget
+import GroupChoiceWidget
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,7 +35,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -61,10 +72,10 @@ import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraCard
-import com.algorand.android.ui.compose.widget.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.text.PeraTitleText
 import com.algorand.android.utils.browser.PRIVACY_POLICY_URL
 import com.algorand.android.utils.browser.TERMS_AND_SERVICES_URL
 import com.algorand.android.utils.browser.openPrivacyPolicyUrl
@@ -112,7 +123,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
 
                     Surface(
                         modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
+                        color = PeraTheme.colors.background.primary
                     ) {
                         RegisterTypeSelectionScreen(showBottomSheet)
                         if (showBottomSheet.value) {
@@ -121,8 +132,8 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                                     showBottomSheet.value = false
                                 },
                                 sheetState = sheetState,
-                                containerColor = MaterialTheme.colorScheme.surface,
-                                contentColor = MaterialTheme.colorScheme.onSurface
+                                containerColor = PeraTheme.colors.background.primary,
+                                contentColor = PeraTheme.colors.text.main
                             ) {
                                 BottomSheetContent(
                                     sheetState = sheetState,
@@ -173,7 +184,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
 //                )
 //                Spacer(modifier = Modifier.height(40.dp))
 //            }
-            ItemChoiceWidget(
+            GroupChoiceWidget(
                 modifier = Modifier,
                 title = stringResource(id = R.string.create_a_new_wallet),
                 description = stringResource(id = R.string.create_a_new_algorand_account_with),
@@ -192,7 +203,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                 }
             )
             Spacer(modifier = Modifier.height(40.dp))
-            ItemChoiceWidget(
+            GroupChoiceWidget(
                 modifier = Modifier,
                 title = stringResource(id = R.string.import_an_account),
                 description = stringResource(id = R.string.import_an_existing),
@@ -201,7 +212,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                 onClick = ::navToAccountRecoveryTypeSelectionFragment
             )
             Spacer(modifier = Modifier.height(40.dp))
-            ItemChoiceWidget(
+            GroupChoiceWidget(
                 modifier = Modifier,
                 title = stringResource(id = R.string.watch_an_account),
                 description = stringResource(id = R.string.monitor_an_algorand_account),
@@ -260,8 +271,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         val privacyPolicyText = stringResource(id = R.string.privacy_policy)
 
         val termsAndConditionsStartIndex = fullText.indexOf(termsAndConditionsText)
-        val termsAndConditionsEndIndex =
-            termsAndConditionsStartIndex + termsAndConditionsText.length
+        val termsAndConditionsEndIndex = termsAndConditionsStartIndex + termsAndConditionsText.length
         val privacyPolicyStartIndex = fullText.indexOf(privacyPolicyText)
         val privacyPolicyEndIndex = privacyPolicyStartIndex + privacyPolicyText.length
 
@@ -269,7 +279,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
 
         addStyle(
             style = SpanStyle(
-                color = MaterialTheme.colorScheme.outline
+                color = PeraTheme.colors.link.primary
             ),
             start = termsAndConditionsStartIndex,
             end = termsAndConditionsEndIndex
@@ -283,7 +293,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
 
         addStyle(
             style = SpanStyle(
-                color = MaterialTheme.colorScheme.outline
+                color = PeraTheme.colors.link.primary
             ),
             start = privacyPolicyStartIndex,
             end = privacyPolicyEndIndex
@@ -307,7 +317,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surface)
+                .background(PeraTheme.colors.background.primary)
                 .padding(16.dp)
         ) {
             BottomSheetHeader(sheetState, onDismiss)
@@ -371,7 +381,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                 }) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = PeraTheme.colors.text.main,
                     contentDescription = stringResource(id = R.string.close)
                 )
             }

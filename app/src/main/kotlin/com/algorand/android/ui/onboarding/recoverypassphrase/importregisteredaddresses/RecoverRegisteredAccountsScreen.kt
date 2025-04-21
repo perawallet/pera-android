@@ -13,6 +13,7 @@
 package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,13 +42,15 @@ import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.algorand.android.R
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AnimationLoader
-import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraCheckbox
-import com.algorand.android.ui.compose.widget.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.PeraHighlightedText
-import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.ui.compose.widget.button.PeraButtonState
+import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.text.PeraHighlightedText
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.text.PeraTitleText
 import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewEvent
 import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState
 import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
@@ -109,6 +112,7 @@ private fun ContentStateContent(
     Scaffold { innerPadding ->
         Box(
             modifier = Modifier
+                .background(color = PeraTheme.colors.background.primary)
                 .fillMaxSize()
         ) {
             Column(
@@ -141,8 +145,10 @@ private fun ContentStateContent(
                     onClick = viewModel::importSelectedAccounts,
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.continue_text),
-                    enabled = {
-                        state.selectedAddresses.isNotEmpty()
+                    state = if (state.selectedAddresses.isNotEmpty()) {
+                        PeraButtonState.ENABLED
+                    } else {
+                        PeraButtonState.DISABLED
                     }
                 )
             }

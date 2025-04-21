@@ -1270,7 +1270,6 @@
     <string name="rekeyed">Rekeyed</string>
     <string name="no_auth">No Auth</string>
     <string name="unknown">Unknown</string>
-
     <string name="rekeyed_to">Rekeyed to</string>
     <string name="your_account_is_a_hd_wallet_address">Wallet that lets you derive new accounts, all using same key\n<annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_a_standard">Your account is a standard Algorand account. It has not been rekeyed and it is not associated with a Ledger device. It was added to your wallet with its keys. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>

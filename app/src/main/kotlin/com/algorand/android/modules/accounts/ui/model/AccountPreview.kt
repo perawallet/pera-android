@@ -15,7 +15,6 @@ package com.algorand.android.modules.accounts.ui.model
 import androidx.annotation.ColorRes
 import com.algorand.android.models.BottomGlobalError
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
-import com.algorand.android.utils.Event
 
 data class AccountPreview(
     val isEmptyStateVisible: Boolean,
@@ -28,6 +27,5 @@ data class AccountPreview(
     @ColorRes val portfolioValuesBackgroundRes: Int,
     val isSuccessStateVisible: Boolean,
     val hasNewNotification: Boolean,
-    val assetInboxCount: Int = 0,
-    val onNavToBackUpPassphraseInfo: Event<Set<String>>? = null
+    val assetInboxCount: Int = 0
 )

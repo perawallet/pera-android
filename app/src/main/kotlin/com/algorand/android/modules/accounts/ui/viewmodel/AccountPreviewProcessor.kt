@@ -41,6 +41,7 @@ import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import java.math.BigDecimal
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 class AccountPreviewProcessor @Inject constructor(
     private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol,
     private val getSecondaryCurrencySymbol: GetSecondaryCurrencySymbol,

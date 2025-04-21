@@ -17,7 +17,7 @@ import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import java.math.BigDecimal
 import javax.inject.Inject
 
-class AccountsPreviewBackupBannerProcessor @Inject constructor(){
+class AccountsPreviewBackupBannerProcessor @Inject constructor() {
 
     fun getBackupBanner(accountLites: Map<String, AccountLite>): BaseAccountListItem.BackupBannerItem? {
         val notBackedUpAccounts = accountLites.filter { !it.value.isBackedUp }

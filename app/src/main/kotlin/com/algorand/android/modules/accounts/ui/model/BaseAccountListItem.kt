@@ -144,7 +144,7 @@ sealed interface BaseAccountListItem : RecyclerListItem {
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is AccountSuccessItem && address == other.address
+            return other is AccountSuccessItem && this == other
         }
     }
 
@@ -164,7 +164,7 @@ sealed interface BaseAccountListItem : RecyclerListItem {
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is AccountErrorItem && address == other.address
+            return other is AccountErrorItem && this == other
         }
     }
 

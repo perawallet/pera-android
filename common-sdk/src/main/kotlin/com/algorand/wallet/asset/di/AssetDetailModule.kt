@@ -17,10 +17,7 @@ import com.algorand.wallet.asset.data.repository.AssetDetailCacheHelperImpl
 import com.algorand.wallet.asset.data.repository.AssetRepositoryImpl
 import com.algorand.wallet.asset.data.service.AssetDetailApiService
 import com.algorand.wallet.asset.data.service.AssetDetailNodeApiService
-import com.algorand.wallet.asset.domain.manager.AssetDetailCacheManager
-import com.algorand.wallet.asset.domain.manager.AssetDetailCacheManagerImpl
 import com.algorand.wallet.asset.domain.repository.AssetRepository
-import com.algorand.wallet.asset.domain.usecase.GetAssetDetailCacheStatusFlow
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,13 +52,4 @@ internal object AssetDetailModule {
     @Provides
     @Singleton
     fun provideAssetRepository(impl: AssetRepositoryImpl): AssetRepository = impl
-
-    @Provides
-    @Singleton
-    fun provideAssetDetailCacheManager(impl: AssetDetailCacheManagerImpl): AssetDetailCacheManager = impl
-
-    @Provides
-    fun provideGetAssetDetailCacheStatusFlow(manager: AssetDetailCacheManager): GetAssetDetailCacheStatusFlow {
-        return GetAssetDetailCacheStatusFlow(manager::cacheStatusFlow)
-    }
 }

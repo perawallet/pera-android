@@ -13,7 +13,6 @@
 package com.algorand.wallet.asset.domain.usecase
 
 import com.algorand.wallet.asset.domain.model.Asset
-import com.algorand.wallet.asset.domain.model.AssetCacheStatus
 import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.foundation.PeraResult
@@ -49,10 +48,6 @@ fun interface FetchAndCacheMissingAssets {
 
 fun interface GetAssetDetail {
     suspend operator fun invoke(assetId: Long): AssetDetail?
-}
-
-fun interface GetAssetDetailCacheStatusFlow {
-    operator fun invoke(): Flow<AssetCacheStatus>
 }
 
 fun interface GetCollectibleDetail {

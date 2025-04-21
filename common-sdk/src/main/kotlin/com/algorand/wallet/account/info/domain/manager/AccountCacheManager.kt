@@ -13,7 +13,11 @@
 package com.algorand.wallet.account.info.domain.manager
 
 import androidx.lifecycle.Lifecycle
+import com.algorand.wallet.account.info.domain.model.AccountCacheManagerStatus
+import kotlinx.coroutines.flow.StateFlow
 
 interface AccountCacheManager {
+    val cacheStatusFlow: StateFlow<AccountCacheManagerStatus>
+
     fun initialize(lifecycle: Lifecycle)
 }

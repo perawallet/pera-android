@@ -10,12 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.lite.domain.usecase
+package com.algorand.android.modules.accounts.lite.domain.model
 
-import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
+import com.algorand.android.utils.CacheResult
 import com.algorand.wallet.account.local.domain.model.LocalAccount
-import kotlinx.coroutines.flow.Flow
 
-fun interface GetAccountLitesFlow {
-    operator fun invoke(localAccounts: List<LocalAccount>, addresses: List<String>): Flow<Map<String, AccountLite>>
+sealed interface AccountLiteInitializationStatus {
+
+    data object Loading : AccountLiteInitializationStatus
+    data class ReadyForInitialization(val accounts: List<LocalAccount>) : AccountLiteInitializationStatus
+    data object EmptyAccounts : AccountLiteInitializationStatus
+    data class CurrencyDetailError(
+        val error: CacheResult.Error<SelectedCurrencyDetail>?
+    ) : AccountLiteInitializationStatus
 }

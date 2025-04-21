@@ -16,18 +16,18 @@ import androidx.navigation.NavDirections
 import com.algorand.android.banner.domain.usecase.BannersUseCase
 import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.modules.accounts.domain.mapper.PortfolioValueItemMapper
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.CurrencyCachingError
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.Data
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.EmptyLocalAccounts
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.Idle
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.Loading
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.modules.accounts.ui.model.AccountPreview
-import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLitesFlow
 import com.algorand.android.modules.accounts.ui.view.AccountsFragmentDirections
-import com.algorand.android.modules.accounts.ui.model.AccountsInitializationStatus.CurrencyDetailError
-import com.algorand.android.modules.accounts.ui.model.AccountsInitializationStatus.EmptyAccounts
-import com.algorand.android.modules.accounts.ui.model.AccountsInitializationStatus.Loading
-import com.algorand.android.modules.accounts.ui.model.AccountsInitializationStatus.ReadyForInitialization
 import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.modules.peraconnectivitymanager.ui.PeraConnectivityManager
 import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.utils.CacheResult
-import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequestCountFlow
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 
 class AccountsPreviewUseCase @Inject constructor(
     private val accountPreviewMapper: AccountPreviewMapper,
@@ -44,9 +44,8 @@ class AccountsPreviewUseCase @Inject constructor(
     private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
     private val peraConnectivityManager: PeraConnectivityManager,
     private val accountPreviewProcessor: AccountPreviewProcessor,
-    private val getAccountsStateStatusFlow: GetAccountsStateStatusFlow,
-    private val getAccountLitesFlow: GetAccountLitesFlow,
-    private val getAssetInboxRequestCountFlow: GetAssetInboxRequestCountFlow
+    private val getAssetInboxRequestCountFlow: GetAssetInboxRequestCountFlow,
+    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow
 ) {
 
     suspend fun getInitialAccountPreview(): AccountPreview {
@@ -65,26 +64,24 @@ class AccountsPreviewUseCase @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getAccountPreviewFlow(initialState: AccountPreview): Flow<AccountPreview> {
         var lastState: AccountPreview = initialState
-        return getAccountsStateStatusFlow().flatMapLatest {
+        return getAccountLiteCacheFlow().flatMapLatest {
             when (it) {
-                Loading -> flowOf(accountPreviewMapper.getFullScreenLoadingState())
-                EmptyAccounts -> flowOf(accountPreviewMapper.getEmptyAccountListState())
-                is ReadyForInitialization -> getAccountPreviewInitializationFlow(it.accounts)
-                is CurrencyDetailError -> getAlgoPriceErrorState(selectedCurrencyDetailCache = it.error, lastState)
+                is CurrencyCachingError -> getAlgoPriceErrorState(selectedCurrencyDetailCache = it.error, lastState)
+                is Data -> getAccountPreviewInitializationFlow(it)
+                Loading, Idle -> flowOf(accountPreviewMapper.getFullScreenLoadingState())
+                EmptyLocalAccounts -> flowOf(accountPreviewMapper.getEmptyAccountListState())
             }
-        }.map {
+        }.mapLatest {
             lastState = it
             it
         }
     }
 
-    private suspend fun getAccountPreviewInitializationFlow(localAccounts: List<LocalAccount>): Flow<AccountPreview> {
-        return combine(
-            getAccountLitesFlow(localAccounts, localAccounts.map { it.algoAddress }),
-            bannersUseCase.getBanner(),
-            getAssetInboxRequestCountFlow()
-        ) { accountLites, banner, assetInboxCount ->
-            accountPreviewProcessor.prepareAccountPreview(localAccounts, accountLites, banner, assetInboxCount)
+    private suspend fun getAccountPreviewInitializationFlow(accountLiteCacheData: Data): Flow<AccountPreview> {
+        return combine(bannersUseCase.getBanner(), getAssetInboxRequestCountFlow()) { banner, assetInboxCount ->
+            with(accountLiteCacheData) {
+                accountPreviewProcessor.prepareAccountPreview(localAccounts, accountLites, banner, assetInboxCount)
+            }
         }
     }
 

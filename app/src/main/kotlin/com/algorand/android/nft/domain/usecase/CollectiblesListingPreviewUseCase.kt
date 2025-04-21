@@ -13,6 +13,9 @@
 package com.algorand.android.nft.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.EmptyLocalAccounts
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.modules.collectibles.filter.domain.usecase.ClearCollectibleFiltersPreferencesUseCase
 import com.algorand.android.modules.collectibles.filter.domain.usecase.ShouldDisplayOptedInNFTPreferenceUseCase
 import com.algorand.android.modules.collectibles.filter.domain.usecase.ShouldDisplayWatchAccountNFTsPreferenceUseCase
@@ -32,7 +35,6 @@ import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
-import com.algorand.wallet.cache.domain.usecase.IsAssetCacheStatusAtLeastEmpty
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -41,12 +43,12 @@ import kotlinx.coroutines.flow.combine
 class CollectiblesListingPreviewUseCase @Inject constructor(
     private val collectibleListingItemMapper: CollectibleListingItemMapper,
     private val failedAssetRepository: FailedAssetRepository,
-    private val isAssetCacheStatusAtLeastEmpty: IsAssetCacheStatusAtLeastEmpty,
     private val collectibleItemSortUseCase: CollectibleItemSortUseCase,
     private val shouldDisplayWatchAccountNFTsPreferenceUseCase: ShouldDisplayWatchAccountNFTsPreferenceUseCase,
     private val getNFTListingViewTypePreferenceUseCase: GetNFTListingViewTypePreferenceUseCase,
     private val getAccountsDetailFlow: GetAccountsDetailsFlow,
     private val getAllAccountsAllCollectibleDataFlow: GetAllAccountsAllCollectibleDataFlow,
+    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     isAssetOwnedByAccount: IsAssetOwnedByAccount,
     clearCollectibleFiltersPreferencesUseCase: ClearCollectibleFiltersPreferencesUseCase,
     shouldDisplayOptedInNFTPreferenceUseCase: ShouldDisplayOptedInNFTPreferenceUseCase,
@@ -71,7 +73,7 @@ class CollectiblesListingPreviewUseCase @Inject constructor(
             getAllAccountsAllCollectibleDataFlow()
         ) { accountDetailList, failedAssets, accountsAllCollectibles ->
             val hasAnyAccountAuthority = accountDetailList.any { it.accountType?.canSignTransaction() == true }
-            if (isAssetCacheStatusAtLeastEmpty()) {
+            if (isCacheInitialized()) {
                 val nftListingType = getNFTListingViewTypePreferenceUseCase()
                 val collectibleListData = prepareCollectiblesListItems(
                     searchKeyword = searchKeyword,
@@ -111,6 +113,11 @@ class CollectiblesListingPreviewUseCase @Inject constructor(
                 createLoadingPreview(hasAnyAccountAuthority, searchKeyword)
             }
         }
+    }
+
+    private fun isCacheInitialized(): Boolean {
+        val accountLiteCache = getAccountLiteCacheFlow().value
+        return accountLiteCache is AccountLiteCacheStatus.Data || accountLiteCache is EmptyLocalAccounts
     }
 
     private suspend fun prepareCollectiblesListItems(

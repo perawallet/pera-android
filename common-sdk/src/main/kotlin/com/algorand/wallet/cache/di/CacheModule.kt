@@ -20,8 +20,6 @@ import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlow
 import com.algorand.wallet.cache.domain.usecase.GetAppCacheStatusFlowUseCase
 import com.algorand.wallet.cache.domain.usecase.InitializeAppCache
 import com.algorand.wallet.cache.domain.usecase.InitializeAppCacheImpl
-import com.algorand.wallet.cache.domain.usecase.IsAssetCacheStatusAtLeastEmpty
-import com.algorand.wallet.cache.domain.usecase.IsAssetCacheStatusAtLeastEmptyUseCase
 import com.algorand.wallet.cache.domain.usecase.UpdateAccountCache
 import com.algorand.wallet.cache.domain.usecase.UpdateAccountCacheUseCase
 import dagger.Module
@@ -50,9 +48,4 @@ internal object CacheModule {
 
     @Provides
     fun provideUpdateAccountCache(useCase: UpdateAccountCacheUseCase): UpdateAccountCache = useCase
-
-    @Provides
-    fun provideIsAssetCacheStatusAtLeastEmpty(
-        useCase: IsAssetCacheStatusAtLeastEmptyUseCase
-    ): IsAssetCacheStatusAtLeastEmpty = useCase
 }

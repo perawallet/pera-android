@@ -17,9 +17,10 @@ import com.algorand.android.banner.domain.model.BaseBanner
 import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewByType
-import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accounts.ui.mapper.BaseAccountListItemBannerItemMapper
+import com.algorand.android.modules.accounts.ui.model.AccountPreview
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.model.PortfolioItemProcessorData
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.SortAccountsBySortingPreference
 import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbol
@@ -27,7 +28,6 @@ import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrency
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.modules.notification.domain.usecase.NotificationStatusUseCase
 import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibilityUseCase
-import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountsCustomInfo
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType

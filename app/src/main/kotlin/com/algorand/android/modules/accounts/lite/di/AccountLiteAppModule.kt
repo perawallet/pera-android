@@ -12,12 +12,16 @@
 
 package com.algorand.android.modules.accounts.lite.di
 
+import com.algorand.android.modules.accounts.lite.domain.manager.AccountLiteManager
+import com.algorand.android.modules.accounts.lite.domain.manager.AccountLiteManagerImpl
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLitesFlow
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLitesFlowUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -25,4 +29,13 @@ internal object AccountLiteAppModule {
 
     @Provides
     fun provideGetAccountLitesUseCase(useCase: GetAccountLitesFlowUseCase): GetAccountLitesFlow = useCase
+
+    @Provides
+    @Singleton
+    fun provideAccountLiteManager(impl: AccountLiteManagerImpl): AccountLiteManager = impl
+
+    @Provides
+    fun provideGetAccountLiteCacheFlow(accountLiteManager: AccountLiteManager): GetAccountLiteCacheFlow {
+        return GetAccountLiteCacheFlow(accountLiteManager::localAccountLitesFlow)
+    }
 }

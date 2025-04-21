@@ -13,6 +13,7 @@
 package com.algorand.wallet.account.info.domain.manager
 
 import androidx.lifecycle.Lifecycle
+import com.algorand.wallet.account.info.domain.model.AccountCacheManagerStatus
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCountFlow
 import com.algorand.wallet.block.domain.usecase.ClearLastKnownBlockNumber
 import com.algorand.wallet.block.domain.usecase.ShouldUpdateAccountCache
@@ -22,6 +23,8 @@ import com.algorand.wallet.cache.domain.usecase.UpdateAccountCache
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 internal class AccountCacheManagerImpl @Inject constructor(
@@ -32,6 +35,9 @@ internal class AccountCacheManagerImpl @Inject constructor(
     private val shouldUpdateAccountCache: ShouldUpdateAccountCache,
     private val getLocalAccountCountFlow: GetLocalAccountCountFlow
 ) : AccountCacheManager {
+
+    private val _cacheStatusFlow = MutableStateFlow<AccountCacheManagerStatus>(AccountCacheManagerStatus.IDLE)
+    override val cacheStatusFlow = _cacheStatusFlow.asStateFlow()
 
     private val cacheManagerListener = object : LifecycleAwareCacheManager.CacheManagerListener {
         override suspend fun onInitializeManager(coroutineScope: CoroutineScope) {
@@ -48,6 +54,7 @@ internal class AccountCacheManagerImpl @Inject constructor(
     }
 
     override fun initialize(lifecycle: Lifecycle) {
+        _cacheStatusFlow.value = AccountCacheManagerStatus.IDLE
         cacheManager.setListener(cacheManagerListener)
         lifecycle.addObserver(cacheManager)
     }
@@ -83,6 +90,9 @@ internal class AccountCacheManagerImpl @Inject constructor(
     private suspend fun updateCacheAndLastKnownBlock() {
         updateAccountCache()
         updateLastKnownBlockNumber()
+        if (_cacheStatusFlow.value != AccountCacheManagerStatus.INITIALIZED) {
+            _cacheStatusFlow.value = AccountCacheManagerStatus.INITIALIZED
+        }
     }
 
     private companion object {

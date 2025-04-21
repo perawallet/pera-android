@@ -10,14 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.domain.manager
+package com.algorand.android.modules.accounts.lite.domain.usecase
 
-import androidx.lifecycle.Lifecycle
-import com.algorand.wallet.asset.domain.model.AssetCacheStatus
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-interface AssetDetailCacheManager {
-    val cacheStatusFlow: StateFlow<AssetCacheStatus>
+fun interface GetAccountLitesFlow {
+    operator fun invoke(localAccounts: List<LocalAccount>, addresses: List<String>): Flow<Map<String, AccountLite>>
+}
 
-    fun initialize(lifecycle: Lifecycle)
+fun interface GetAccountLiteCacheFlow {
+    operator fun invoke(): StateFlow<AccountLiteCacheStatus>
 }

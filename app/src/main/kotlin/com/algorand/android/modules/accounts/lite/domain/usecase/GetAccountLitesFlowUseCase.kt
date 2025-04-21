@@ -13,6 +13,7 @@
 package com.algorand.android.modules.accounts.lite.domain.usecase
 
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.modules.parity.domain.model.AlgoAmountValue
 import com.algorand.android.modules.parity.domain.usecase.GetAlgoAmountValue
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
@@ -125,12 +126,14 @@ internal class GetAccountLitesFlowUseCase @Inject constructor(
         val accountType = getAccountType(address, rekeyAuthAddress, localAccounts) ?: return null
 
         val algoBalance = accountPayload.accountInfoLiteInformation.algoBalance
+        val algoAmountValue = getAlgoAmountValue(algoBalance)
         val (primaryAccountValue, secondaryAccountValue) = getPrimaryAndSecondaryAccountValues(
-            accountPayload.assetHoldingLiteInformation
+            accountPayload.assetHoldingLiteInformation,
+            algoAmountValue
         )
         return AccountLite.CachedInfo(
             type = accountType,
-            algoAmountValue = getAlgoAmountValue(algoBalance),
+            algoAmountValue = algoAmountValue,
             primaryAccountValue = primaryAccountValue,
             secondaryAccountValue = secondaryAccountValue,
             assetCount = accountPayload.assetHoldingLiteInformation.size
@@ -138,10 +141,11 @@ internal class GetAccountLitesFlowUseCase @Inject constructor(
     }
 
     private fun getPrimaryAndSecondaryAccountValues(
-        assetHoldingLiteInformation: Map<Long, AssetHoldingLiteInformation?>
+        assetHoldingLiteInformation: Map<Long, AssetHoldingLiteInformation?>,
+        algoAmountValue: AlgoAmountValue
     ): Pair<BigDecimal, BigDecimal> {
-        var primary = BigDecimal.ZERO
-        var secondary = BigDecimal.ZERO
+        var primary = algoAmountValue.parityValueInSelectedCurrency.amountAsCurrency
+        var secondary = algoAmountValue.parityValueInSecondaryCurrency.amountAsCurrency
         assetHoldingLiteInformation.values.forEach {
             if (it?.usdValue == null) return@forEach
             primary += getPrimaryCurrencyAssetParityValue(it.amount, it.usdValue, it.decimals).amountAsCurrency

@@ -10,15 +10,24 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.ui.model
+package com.algorand.android.modules.accounts.lite.domain.model
 
 import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.utils.CacheResult
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 
-sealed interface AccountsInitializationStatus {
-    data object Loading : AccountsInitializationStatus
-    data class ReadyForInitialization(val accounts: List<LocalAccount>) : AccountsInitializationStatus
-    data object EmptyAccounts : AccountsInitializationStatus
-    data class CurrencyDetailError(val error: CacheResult.Error<SelectedCurrencyDetail>?) : AccountsInitializationStatus
+sealed interface AccountLiteCacheStatus {
+
+    data object Idle : AccountLiteCacheStatus
+
+    data object Loading : AccountLiteCacheStatus
+
+    data object EmptyLocalAccounts : AccountLiteCacheStatus
+
+    data class Data(
+        val localAccounts: List<LocalAccount>,
+        val accountLites: Map<String, AccountLite>
+    ) : AccountLiteCacheStatus
+
+    data class CurrencyCachingError(val error: CacheResult.Error<SelectedCurrencyDetail>?) : AccountLiteCacheStatus
 }

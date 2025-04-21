@@ -10,17 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.cache.domain.usecase
+package com.algorand.wallet.account.info.domain.model
 
-import com.algorand.wallet.asset.domain.manager.AssetDetailCacheManager
-import com.algorand.wallet.asset.domain.model.AssetCacheStatus
-import javax.inject.Inject
-
-internal class IsAssetCacheStatusAtLeastEmptyUseCase @Inject constructor(
-    private val assetDetailCacheManager: AssetDetailCacheManager
-) : IsAssetCacheStatusAtLeastEmpty {
-
-    override fun invoke(): Boolean {
-        return assetDetailCacheManager.cacheStatusFlow.value isAtLeast AssetCacheStatus.EMPTY
-    }
+enum class AccountCacheManagerStatus {
+    IDLE,
+    INITIALIZED
 }

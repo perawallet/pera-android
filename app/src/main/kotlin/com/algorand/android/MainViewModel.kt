@@ -25,6 +25,7 @@ import com.algorand.android.database.NodeDao
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdMigrationUseCase
 import com.algorand.android.encryption.domain.usecase.AndroidEncryptionManager
 import com.algorand.android.models.Node
+import com.algorand.android.modules.accounts.lite.domain.manager.AccountLiteManager
 import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeningCountUseCase
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
@@ -92,6 +93,7 @@ class MainViewModel @Inject constructor(
     private val autoLockManager: AutoLockManager,
     private val autoLockSuggestionManager: AutoLockSuggestionManager,
     private val androidEncryptionManager: AndroidEncryptionManager,
+    private val accountLiteManager: AccountLiteManager,
     getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
 
@@ -121,6 +123,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             androidEncryptionManager.initializeEncryptionManager()
             initializeAppCache(lifecycle)
+            accountLiteManager.initialize(viewModelScope)
         }
     }
 

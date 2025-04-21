@@ -29,8 +29,6 @@ import com.algorand.android.modules.appopencount.domain.usecase.IncreaseAppOpeni
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
-import com.algorand.android.modules.firebase.token.FirebaseTokenManager
-import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
@@ -64,11 +62,8 @@ import kotlin.properties.Delegates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
 @Suppress("LongParameterList")
@@ -97,7 +92,6 @@ class MainViewModel @Inject constructor(
     private val autoLockManager: AutoLockManager,
     private val autoLockSuggestionManager: AutoLockSuggestionManager,
     private val androidEncryptionManager: AndroidEncryptionManager,
-    firebaseTokenManager: FirebaseTokenManager,
     getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
 
@@ -111,9 +105,6 @@ class MainViewModel @Inject constructor(
             handlePendingIntent(true)
         }
     }
-
-    val firebaseTokenResultFlow: SharedFlow<FirebaseTokenResult> = firebaseTokenManager.firebaseTokenResultFlow
-        .shareIn(viewModelScope, started = SharingStarted.Lazily)
 
     private val _swapNavigationResultFlow = MutableStateFlow<Event<NavDirections>?>(null)
     private val _activeNodeFlow = MutableStateFlow<Node?>(null)
@@ -312,6 +303,9 @@ class MainViewModel @Inject constructor(
     private fun initActiveNodeFlow() {
         viewModelScope.launch(Dispatchers.IO) {
             nodeRepository.getActiveNodeAsFlow().collectLatest {
+                if (_activeNodeFlow.value != null && _activeNodeFlow.value != it) {
+                    eventDelegate.sendEvent(ViewEvent.ProcessNodeChange)
+                }
                 _activeNodeFlow.value = it
             }
         }
@@ -357,5 +351,6 @@ class MainViewModel @Inject constructor(
         data object ShowGlobalNotificationError : ViewEvent
         data object StartInAppReview : ViewEvent
         data object ShowLockSuggestion : ViewEvent
+        data object ProcessNodeChange : ViewEvent
     }
 }

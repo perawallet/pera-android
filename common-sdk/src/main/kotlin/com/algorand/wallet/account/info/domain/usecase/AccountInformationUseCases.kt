@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -28,6 +28,10 @@ fun interface ClearAccountInformationCache {
 
 fun interface FetchAndCacheAccountInformation {
     suspend operator fun invoke(addresses: List<String>): Map<String, AccountInformation?>
+}
+
+fun interface FetchAccountInformationWithoutAssets {
+    suspend operator fun invoke(address: String, includeDeletedAccount: Boolean): PeraResult<AccountInformation>
 }
 
 fun interface GetAllSuccessfullyCachedAccountAddresses {

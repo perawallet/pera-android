@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2022 Pera Wallet, LDA
+  ~ Copyright 2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -1453,9 +1453,9 @@
 
     <string name="you_dont_have_any">You don\'t have any authorized account matching with %1$s</string>
 
-    <string name="mnemonic_type_bip39_title">Universal Wallet</string>
-    <string name="mnemonic_type_bip39_description">New inter-operable format that enables important features like HD Wallet</string>
-    <string name="mnemonic_type_bip39_footer">24 Key mnemonic keys</string>
+    <string name="mnemonic_type_universal_title">Universal</string>
+    <string name="mnemonic_type_universal_description">New inter-operable format that enables important features like HD Wallet</string>
+    <string name="mnemonic_type_universal_footer">24 Key mnemonic keys</string>
     <string name="mnemonic_type_algo25_title">Algo25</string>
     <string name="mnemonic_type_algo25_description">Legacy format that is specific to Algorand ecosystem</string>
     <string name="mnemonic_type_algo25_footer">25 Key mnemonic keys</string>

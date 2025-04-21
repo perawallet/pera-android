@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,6 +13,7 @@
 package com.algorand.android.modules.asb.importbackup.accountselection.ui.model
 
 import com.algorand.android.models.ScreenState
+import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbImportRestoreResultNavArg
 import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
 import com.algorand.android.modules.basemultipleaccountselection.ui.model.BaseMultipleAccountSelectionFields
 import com.algorand.android.modules.basemultipleaccountselection.ui.model.MultipleAccountSelectionListItem
@@ -25,6 +26,6 @@ data class AsbImportAccountSelectionPreview(
     override val checkedAccountCount: Int,
     override val isLoadingVisible: Boolean,
     override val emptyScreenState: ScreenState?,
-    val navToRestoreCompleteEvent: Event<AsbAccountImportResult>?,
+    val navToRestoreCompleteEvent: Event<AsbImportRestoreResultNavArg>?,
     val unsupportedAccounts: List<BackupProtocolElement>?
 ) : BaseMultipleAccountSelectionFields

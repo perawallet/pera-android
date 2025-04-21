@@ -386,7 +386,10 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         hideComposeAnimationLoader()
     }
 
-    private fun navToImportRekeyedAccount(accountCreation: AccountCreation, navArg: RekeyedAccountSelectionNavArg) {
+    private fun navToImportRekeyedAccount(
+        accountCreation: AccountCreation,
+        navArg: RekeyedAccountSelectionNavArg
+    ) {
         nav(
             RecoverWithPassphraseFragmentDirections
                 .actionRecoverWithPassphraseFragmentToRecoverSingleAddressRekeyedAccountSelectionFragment(

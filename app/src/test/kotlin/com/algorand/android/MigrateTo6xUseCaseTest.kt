@@ -10,8 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.ui.usecase
+package com.algorand.android
 
+import com.algorand.android.encryption.domain.usecase.AndroidEncryptionManager
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.settings.domain.usecase.MigrateTo6xUseCase
@@ -25,36 +26,40 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.junit.Before
+import org.junit.Test
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Test
 
 class MigrateTo6xUseCaseTest {
-    private var getLocalAccountsFromSharedPrefUseCase:
-            GetLocalAccountsFromSharedPrefUseCase = mockk()
-    private var aesPlatformManager: AESPlatformManager = mockk()
-    private var accountAdditionUseCase: AccountAdditionUseCase = mockk()
-    private var peraExceptionLogger: PeraExceptionLogger = mockk()
-    private var sut: MigrateTo6xUseCase =
-        MigrateTo6xUseCase(
-            getLocalAccountsFromSharedPrefUseCase,
-            aesPlatformManager,
-            accountAdditionUseCase,
-            peraExceptionLogger
-        )
+    private val getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase = mockk()
+    private val androidEncryptionManager: AndroidEncryptionManager = mockk()
+    private val aesPlatformManager: AESPlatformManager = mockk()
+    private val accountAdditionUseCase: AccountAdditionUseCase = mockk()
+    private val peraExceptionLogger: PeraExceptionLogger = mockk()
+    private val sut: MigrateTo6xUseCase = MigrateTo6xUseCase(
+        getLocalAccountsFromSharedPrefUseCase,
+        androidEncryptionManager,
+        aesPlatformManager,
+        accountAdditionUseCase,
+        peraExceptionLogger
+    )
+
+    @Before
+    fun setUp() {
+        coEvery { androidEncryptionManager.initializeEncryptionManager() } returns Unit
+        coEvery { androidEncryptionManager.shouldMigrateToStrongBox() } returns false
+        coEvery { androidEncryptionManager.migrateToStrongBox() } returns PeraResult.Success(true)
+    }
 
     @Test
     fun `EXPECT accounts migrated successfully WHEN local accounts exist`() = runTest {
         val localAccounts = listOf(standardAccount, watchAccount, ledgerAccount, rekeyedAccount)
-        coEvery {
-            getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref()
-        } returns localAccounts
+        coEvery { getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref() } returns localAccounts
         every { aesPlatformManager.encryptByteArray(SECRET_KEY) } returns ENCRYPTED_SECRET_KEY
 
         val capturedAccountCreations = mutableListOf<AccountCreation>()
-        coEvery {
-            accountAdditionUseCase.addNewAccount(capture(capturedAccountCreations))
-        } returns Unit
+        coEvery { accountAdditionUseCase.addNewAccount(capture(capturedAccountCreations)) } returns Unit
 
         val result = sut.invoke()
 
@@ -65,15 +70,11 @@ class MigrateTo6xUseCaseTest {
 
     @Test
     fun `EXPECT standard account migrated correctly`() = runTest {
-        coEvery {
-            getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref()
-        } returns listOf(standardAccount)
+        coEvery { getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref() } returns listOf(standardAccount)
         every { aesPlatformManager.encryptByteArray(SECRET_KEY) } returns ENCRYPTED_SECRET_KEY
 
         val capturedAccount = mutableListOf<AccountCreation>()
-        coEvery {
-            accountAdditionUseCase.addNewAccount(capture(capturedAccount))
-        } returns Unit
+        coEvery { accountAdditionUseCase.addNewAccount(capture(capturedAccount)) } returns Unit
 
         val result = sut.invoke()
 
@@ -101,14 +102,10 @@ class MigrateTo6xUseCaseTest {
 
     @Test
     fun `EXPECT watch account migrated correctly`() = runTest {
-        coEvery {
-            getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref()
-        } returns listOf(watchAccount)
+        coEvery { getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref() } returns listOf(watchAccount)
 
         val capturedAccount = mutableListOf<AccountCreation>()
-        coEvery {
-            accountAdditionUseCase.addNewAccount(capture(capturedAccount))
-        } returns Unit
+        coEvery { accountAdditionUseCase.addNewAccount(capture(capturedAccount)) } returns Unit
 
         val result = sut.invoke()
 
@@ -127,7 +124,7 @@ class MigrateTo6xUseCaseTest {
         with(actualAccount) {
             assertEquals(expectedAccount.address, address)
             assertEquals(expectedAccount.customName, customName)
-            assertTrue(actualAccount.type is AccountCreation.Type.NoAuth)
+            assertTrue(type is AccountCreation.Type.NoAuth)
             assertEquals(expectedAccount.creationType, creationType)
             assertEquals(expectedAccount.isBackedUp, isBackedUp)
         }
@@ -135,14 +132,10 @@ class MigrateTo6xUseCaseTest {
 
     @Test
     fun `EXPECT ledger account migrated correctly`() = runTest {
-        coEvery {
-            getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref()
-        } returns listOf(ledgerAccount)
+        coEvery { getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref() } returns listOf(ledgerAccount)
 
         val capturedAccount = mutableListOf<AccountCreation>()
-        coEvery {
-            accountAdditionUseCase.addNewAccount(capture(capturedAccount))
-        } returns Unit
+        coEvery { accountAdditionUseCase.addNewAccount(capture(capturedAccount)) } returns Unit
 
         val result = sut.invoke()
 
@@ -181,14 +174,10 @@ class MigrateTo6xUseCaseTest {
 
     @Test
     fun `EXPECT rekeyed account migrated correctly`() = runTest {
-        coEvery {
-            getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref()
-        } returns listOf(rekeyedAccount)
+        coEvery { getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref() } returns listOf(rekeyedAccount)
 
         val capturedAccount = mutableListOf<AccountCreation>()
-        coEvery {
-            accountAdditionUseCase.addNewAccount(capture(capturedAccount))
-        } returns Unit
+        coEvery { accountAdditionUseCase.addNewAccount(capture(capturedAccount)) } returns Unit
 
         val result = sut.invoke()
 
@@ -215,9 +204,7 @@ class MigrateTo6xUseCaseTest {
 
     @Test
     fun `EXPECT zero accounts migrated WHEN no local accounts exist`() = runTest {
-        coEvery {
-            getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref()
-        } returns emptyList()
+        coEvery { getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref() } returns emptyList()
 
         val result = sut.invoke()
 
@@ -228,13 +215,8 @@ class MigrateTo6xUseCaseTest {
     @Test
     fun `EXPECT error result WHEN exception is thrown`() = runTest {
         val exception = RuntimeException("Test exception")
-        coEvery {
-            getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref()
-        } throws exception
-
-        coEvery {
-            peraExceptionLogger.logException(exception)
-        } returns Unit
+        coEvery { getLocalAccountsFromSharedPrefUseCase.getLocalAccountsFromSharedPref() } throws exception
+        coEvery { peraExceptionLogger.logException(exception) } returns Unit
 
         val result = sut.invoke()
 

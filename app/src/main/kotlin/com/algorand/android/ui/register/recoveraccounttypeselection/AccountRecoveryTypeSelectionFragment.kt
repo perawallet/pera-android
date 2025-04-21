@@ -32,7 +32,7 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
     private val viewStateCollector: suspend (AccountRecoveryTypeSelectionViewModel.ViewState) -> Unit = { state ->
         when (state) {
             AccountRecoveryTypeSelectionViewModel.ViewState.Idle -> Unit
-            is AccountRecoveryTypeSelectionViewModel.ViewState.DefaultState -> setupToolbar()
+            is AccountRecoveryTypeSelectionViewModel.ViewState.NoLocalAccountState -> setupToolbar()
         }
     }
 
@@ -55,7 +55,7 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
     }
 
     private fun initUi() {
-        setupToolbar()
+        accountRecoveryTypeSelectionViewModel.setupToolbar()
         accountRecoveryTypeSelectionViewModel.setupToolbar()
         with(binding) {
             recoverAnAccountSelectionItem.setOnClickListener { navToRecoverAccountInfoFragment() }

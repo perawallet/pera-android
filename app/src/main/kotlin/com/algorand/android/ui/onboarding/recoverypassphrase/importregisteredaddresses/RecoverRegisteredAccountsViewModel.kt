@@ -24,6 +24,7 @@ import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredadd
 import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.utils.analytics.CreationType
+import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.core.domain.model.CreateAccount.Type
 import com.algorand.wallet.account.detail.domain.model.AccountType
@@ -73,11 +74,11 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
     fun loadRegisteredAccounts() {
         stateDelegate.onState<ViewState.Idle> {
             stateDelegate.updateState { ViewState.Loading }
-            viewModelScope.launch {
+            viewModelScope.launchIO {
                 val hdKey = accountCreation.toCreateAccount().type as? Type.HdKey
                 if (hdKey == null) {
                     stateDelegate.updateState { ViewState.Content(registeredAccounts = emptyList()) }
-                    return@launch
+                    return@launchIO
                 }
 
                 val entropy = aesPlatformManager.decryptByteArray(hdKey.encryptedEntropy)

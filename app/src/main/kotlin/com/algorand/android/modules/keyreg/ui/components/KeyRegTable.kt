@@ -36,14 +36,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionPreview
+import com.algorand.android.ui.compose.theme.PeraTheme
 
-@Preview
+@PreviewLightDark
 @SuppressLint("ComposableNaming")
 @Composable
 fun keyRegTable(
@@ -79,16 +79,15 @@ fun keyRegTable(
                 algorandButton("Confirm Transaction", onConfirmClick)
             },
             floatingActionButtonPosition = FabPosition.Center
-        ) {
-            contentPadding ->
+        ) { contentPadding ->
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(top = 75.dp, bottom = heightInDp + 100.dp),
                 modifier = Modifier
-                    .background(Color.White)
+                    .background(PeraTheme.colors.background.primary)
                     .fillMaxWidth()
                     .fillMaxHeight(),
-                ) {
+            ) {
                 items(itemsList) { item ->
                     keyRegTableRowItem(item.first, item.second.toString())
                 }
@@ -99,12 +98,12 @@ fun keyRegTable(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
         ) {
             Text(
-                color = Color.Black,
+                color = PeraTheme.colors.text.main,
                 fontWeight = FontWeight.Bold,
                 text = "No Key Reg Transaction"
             )
@@ -112,32 +111,32 @@ fun keyRegTable(
     }
 }
 
-@Preview
+@PreviewLightDark
 @SuppressLint("ComposableNaming")
 @Composable
 fun keyRegTableRowItem(key: String = "", value: String? = "") {
     Row(
         modifier =
-        Modifier
-            .width(327.dp)
-            .wrapContentHeight()
-            .padding(5.dp)
-            .background(color = Color.White),
+            Modifier
+                .width(327.dp)
+                .wrapContentHeight()
+                .padding(5.dp)
+                .background(color = PeraTheme.colors.background.primary),
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start,
             modifier =
-            Modifier
-                .fillMaxHeight()
-                .width(100.dp),
+                Modifier
+                    .fillMaxHeight()
+                    .width(100.dp),
         ) {
             Text(
-                color = Color.DarkGray,
+                color = PeraTheme.colors.text.main,
                 modifier =
-                Modifier
-                    .padding(end = 27.dp),
+                    Modifier
+                        .padding(end = 27.dp),
                 text = key
             )
         }
@@ -146,17 +145,17 @@ fun keyRegTableRowItem(key: String = "", value: String? = "") {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start,
             modifier =
-            Modifier
-                .fillMaxHeight()
-                .background(Color.White)
-                .width(200.dp),
+                Modifier
+                    .fillMaxHeight()
+                    .background(PeraTheme.colors.background.primary)
+                    .width(200.dp),
         ) {
             Text(
                 fontWeight = FontWeight.Bold,
-                color = Color.Black,
+                color = PeraTheme.colors.text.main,
                 modifier =
-                Modifier
-                    .padding(end = 25.dp),
+                    Modifier
+                        .padding(end = 25.dp),
                 text = value.orEmpty()
             )
         }

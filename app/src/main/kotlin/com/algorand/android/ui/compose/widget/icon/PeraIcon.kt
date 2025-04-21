@@ -57,7 +57,7 @@ fun PeraIconRoundShape(
             .padding(start = 10.dp)
             .size(40.dp)
             .clip(shape = CircleShape)
-            .background(color = PeraTheme.colors.background.secondary)
+            .background(color = PeraTheme.colors.layer.grayLighter)
     ) {
         Icon(
             modifier = Modifier.align(Alignment.Center),
@@ -79,7 +79,7 @@ fun PeraIconRoundShapeBig(
             .padding(start = 10.dp)
             .size(64.dp)
             .clip(shape = CircleShape)
-            .background(color = PeraTheme.colors.text.main)
+            .background(color = PeraTheme.colors.layer.grayLighter)
     ) {
         Icon(
             modifier = Modifier

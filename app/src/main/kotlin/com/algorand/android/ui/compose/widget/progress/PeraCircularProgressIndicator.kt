@@ -26,7 +26,7 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 fun PeraCircularProgressIndicator(
     modifier: Modifier = Modifier,
     color: Color = PeraTheme.colors.link.primary,
-    strokeWidth: Dp = 2.dp
+    strokeWidth: Dp = 3.dp
 ) {
     CircularProgressIndicator(
         modifier = modifier

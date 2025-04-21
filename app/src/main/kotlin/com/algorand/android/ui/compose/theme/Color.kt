@@ -38,6 +38,7 @@ object ColorPalette {
     object Black {
         val Default = Color(0xFF000000)
         val Alpha64 = Color(0xA3000000)
+        val Alpha86 = Color(0xDB000000)
     }
 
     object Turquoise {
@@ -252,6 +253,7 @@ interface PeraColor {
         val hero: Color
         val modality: Color
         val bottomSheetLine: Color
+        val backdropModal: Color
     }
 
     interface Text {

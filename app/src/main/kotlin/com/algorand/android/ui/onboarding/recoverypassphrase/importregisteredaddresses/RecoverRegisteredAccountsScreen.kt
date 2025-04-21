@@ -13,6 +13,7 @@
 package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.algorand.android.R
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AnimationLoader
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraCheckbox
@@ -110,6 +112,7 @@ private fun ContentStateContent(
     Scaffold { innerPadding ->
         Box(
             modifier = Modifier
+                .background(color = PeraTheme.colors.background.primary)
                 .fillMaxSize()
         ) {
             Column(

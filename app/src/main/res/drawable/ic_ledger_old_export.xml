@@ -8,18 +8,18 @@
       android:strokeLineJoin="bevel"
       android:strokeWidth="2.50001"
       android:fillColor="#00000000"
-      android:strokeColor="#18181B"
+      android:strokeColor="@color/text_main"
       android:strokeLineCap="round"/>
   <path
       android:pathData="M5.417,20.417H35.417"
       android:strokeWidth="2.50001"
       android:fillColor="#00000000"
-      android:strokeColor="#18181B"/>
+      android:strokeColor="@color/text_main"/>
   <path
       android:pathData="M13.75,20.417a6.667,15 0,1 0,13.333 0a6.667,15 0,1 0,-13.333 0z"
       android:strokeLineJoin="bevel"
       android:strokeWidth="2.50001"
       android:fillColor="#00000000"
-      android:strokeColor="#18181B"
+      android:strokeColor="@color/text_main"
       android:strokeLineCap="round"/>
 </vector>

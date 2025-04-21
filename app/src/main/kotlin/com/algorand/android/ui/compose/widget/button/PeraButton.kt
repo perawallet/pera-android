@@ -45,9 +45,9 @@ private fun PeraCoreButton(modifier: PeraButtonModifier) {
                 PeraButtonState.PROGRESS -> {
                     PeraCircularProgressIndicator(
                         color = if (modifier.state == PeraButtonState.DISABLED) {
-                            PeraTheme.colors.button.primary.disabledText
+                            modifier.colors.disabledContentColor
                         } else {
-                            PeraTheme.colors.button.primary.text
+                            modifier.colors.contentColor
                         }
                     )
                 }
@@ -60,9 +60,9 @@ private fun PeraCoreButton(modifier: PeraButtonModifier) {
                     Text(
                         text = modifier.text,
                         color = if (modifier.state == PeraButtonState.DISABLED) {
-                            PeraTheme.colors.button.primary.disabledText
+                            modifier.colors.disabledContentColor
                         } else {
-                            PeraTheme.colors.button.primary.text
+                            modifier.colors.contentColor
                         }
                     )
                     if (modifier.rightIcon != null) {

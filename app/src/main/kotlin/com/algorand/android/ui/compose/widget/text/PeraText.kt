@@ -56,14 +56,14 @@ fun PeraHeadlineText(
 fun PeraTitleText(
     modifier: Modifier = Modifier,
     text: String,
-    color: Color? = PeraTheme.colors.text.main
+    color: Color = PeraTheme.colors.text.main
 ) {
     Text(
         modifier = modifier,
         text = text,
         style = PeraTheme.typography.body.large.sansMedium,
         fontFamily = peraSans,
-        color = color ?: PeraTheme.colors.text.main,
+        color = color,
         fontWeight = FontWeight.Medium,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
@@ -74,14 +74,15 @@ fun PeraTitleText(
 fun PeraBodyText(
     modifier: Modifier = Modifier,
     text: String,
-    textAlign: TextAlign = TextAlign.Left
+    textAlign: TextAlign = TextAlign.Left,
+    color: Color = PeraTheme.colors.text.gray
 ) {
     Text(
         modifier = modifier,
         text = text,
         style = PeraTheme.typography.body.regular.sansMedium,
         fontFamily = peraSans,
-        color = PeraTheme.colors.text.gray,
+        color = color,
         fontWeight = FontWeight.Medium,
         overflow = TextOverflow.Ellipsis,
         textAlign = textAlign

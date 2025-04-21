@@ -20,6 +20,7 @@ object PeraLightColor : PeraColor {
         override val hero = ColorPalette.Gray.V50
         override val modality = ColorPalette.Black.Alpha64
         override val bottomSheetLine = ColorPalette.Gray.V100
+        override val backdropModal = ColorPalette.Black.Alpha64
     }
 
     override val text = object : PeraColor.Text {
@@ -29,7 +30,7 @@ object PeraLightColor : PeraColor {
     }
 
     override val layer = object : PeraColor.Layer {
-        override val gray = ColorPalette.Gray.V100
+        override val gray = ColorPalette.Gray.V200
         override val grayLighter = ColorPalette.Gray.V50
         override val grayLightest = ColorPalette.White.Default
     }
@@ -49,11 +50,11 @@ object PeraLightColor : PeraColor {
         }
 
         override val secondary = object : PeraColor.ButtonStyle {
-            override val background = ColorPalette.White.Default
-            override val focusBackground = ColorPalette.Gray.V50
-            override val disabledBackground = ColorPalette.White.Default
-            override val text = ColorPalette.Turquoise.V600
-            override val disabledText = ColorPalette.Gray.V400
+            override val background = ColorPalette.Gray.V100
+            override val focusBackground = ColorPalette.Gray.V200
+            override val disabledBackground = ColorPalette.Gray.V100
+            override val text = ColorPalette.Gray.V900
+            override val disabledText = ColorPalette.Gray.V500
         }
 
         override val ghost = object : PeraColor.ButtonStyle {

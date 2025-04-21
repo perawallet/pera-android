@@ -20,6 +20,7 @@ object PeraDarkColor : PeraColor {
         override val hero = ColorPalette.Gray.V900
         override val modality = ColorPalette.Black.Default
         override val bottomSheetLine = ColorPalette.Gray.V200
+        override val backdropModal = ColorPalette.Black.Alpha86
     }
 
     override val text = object : PeraColor.Text {

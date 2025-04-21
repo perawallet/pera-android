@@ -14,6 +14,8 @@ package com.algorand.wallet.account.info.data.cache
 
 import com.algorand.wallet.foundation.cache.CacheResult
 import com.algorand.wallet.foundation.cache.SingleInMemoryLocalCache
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 internal class AccountInformationErrorCacheImpl(
     private val cache: SingleInMemoryLocalCache<Set<String>>
@@ -28,6 +30,10 @@ internal class AccountInformationErrorCacheImpl(
 
     override fun getAll(): List<String> {
         return cache.getOrNull()?.getDataOrNull()?.toList() ?: emptyList()
+    }
+
+    override fun getAsFlow(): Flow<List<String>> {
+        return cache.cacheFlow.map { it?.getDataOrNull()?.toList() ?: emptyList() }
     }
 
     override fun remove(address: String) {

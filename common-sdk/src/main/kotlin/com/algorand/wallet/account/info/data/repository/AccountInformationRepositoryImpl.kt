@@ -70,7 +70,12 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     }
 
     override fun getCachedAccountInformationCountFlow(): Flow<Int> {
-        return accountInformationDao.getTableSizeAsFlow()
+        return combine(
+            accountInformationDao.getTableSizeAsFlow(),
+            accountInformationErrorCache.getAsFlow()
+        ) { cachedAccounts, errorAccounts ->
+            cachedAccounts + errorAccounts.size
+        }
     }
 
     override suspend fun getAllAssetHoldingIds(addresses: List<String>): List<Long> {

@@ -12,8 +12,11 @@
 
 package com.algorand.wallet.account.info.data.cache
 
+import kotlinx.coroutines.flow.Flow
+
 internal interface AccountInformationErrorCache {
     fun put(address: String)
     fun getAll(): List<String>
+    fun getAsFlow(): Flow<List<String>>
     fun remove(address: String)
 }

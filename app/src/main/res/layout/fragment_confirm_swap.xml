@@ -240,6 +240,7 @@
             android:id="@+id/minimumReceivedBarrier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:barrierDirection="top"
             app:constraint_referenced_ids="exchangeFeeLabelTextView, exchangeFeeTextView" />
 
@@ -252,6 +253,7 @@
             android:text="@string/exchange_fee"
             android:textAppearance="@style/TextAppearance.Footnote.Sans"
             android:textColor="@color/text_gray"
+            android:visibility="gone"
             app:drawableEndCompat="@drawable/ic_error"
             app:drawableTint="@color/text_gray_lighter"
             app:layout_constraintBottom_toBottomOf="@id/exchangeFeeTextView"
@@ -266,6 +268,7 @@
             android:layout_marginBottom="@dimen/spacing_normal"
             android:gravity="end"
             android:textAppearance="@style/TextAppearance.Footnote.Sans"
+            android:visibility="gone"
             app:layout_constrainedHeight="true"
             app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toTopOf="@id/exchangeFeeBarrier"

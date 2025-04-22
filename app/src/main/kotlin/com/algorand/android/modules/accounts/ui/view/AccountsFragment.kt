@@ -33,6 +33,7 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ScreenState
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToBackupPassphraseInfo
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToSwap
@@ -41,16 +42,17 @@ import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.View
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowMaxAccountLimitExceededError
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowNotificationPermission
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowSwapTutorial
+import com.algorand.android.modules.sorting.accountsorting.ui.AccountSortFragment.Companion.ACCOUNT_SORT_RESULT_KEY
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.tutorialdialog.util.showCopyAccountAddressTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showGiftCardsTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showSwapFeatureTutorialDialog
-import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.utils.BannerViewTypesDividerItemDecoration
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.setDrawableTintColor
+import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -297,6 +299,15 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
     override fun onResume() {
         super.onResume()
         accountsViewModel.refreshCachedAlgoPrice()
+        initSavedStateListener()
+    }
+
+    private fun initSavedStateListener() {
+        useFragmentResultListenerValue<Boolean>(ACCOUNT_SORT_RESULT_KEY) { isSortTypeChanged ->
+            if (isSortTypeChanged) {
+                accountsViewModel.initializeAccountPreviewFlow()
+            }
+        }
     }
 
     @Suppress("LongMethod")

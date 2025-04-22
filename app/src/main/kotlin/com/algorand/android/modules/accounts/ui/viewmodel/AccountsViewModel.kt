@@ -17,13 +17,13 @@ import androidx.navigation.NavDirections
 import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.accounts.ui.model.AccountPreview
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.tracking.accounts.AccountsEventTracker
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.notification.domain.usecase.GetAskNotificationPermissionEventFlowUseCase
-import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
@@ -59,6 +59,8 @@ class AccountsViewModel @Inject constructor(
         get() = _accountPreviewFlow.asStateFlow()
 
     private var tutorialJob: Job? = null
+
+    private var initializationJob: Job? = null
 
     init {
         initializeAccountPreviewFlow()
@@ -188,8 +190,11 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    private fun initializeAccountPreviewFlow() {
-        viewModelScope.launchIO {
+    fun initializeAccountPreviewFlow() {
+        if (initializationJob?.isActive == true) {
+            initializationJob?.cancel()
+        }
+        initializationJob = viewModelScope.launchIO {
             val initialAccountPreview = accountsPreviewUseCase.getInitialAccountPreview()
             _accountPreviewFlow.emit(initialAccountPreview)
             accountsPreviewUseCase.getAccountPreviewFlow(initialAccountPreview).collectLatest {

@@ -47,9 +47,11 @@ class AccountSortViewModel @Inject constructor(
 
     fun saveChanges(accountListItems: List<BaseAccountSortingListItem>) {
         viewModelScope.launch {
+            val currentSortType = accountSortingPreviewUseCase.getAccountSortingPreference()
+            val selectedSortingType = selectedSortingPreferencesFlow.value
             saveSortedAccountList(accountListItems)
             accountSortingPreviewUseCase.saveSortingPreferences(selectedSortingPreferencesFlow.value)
-            eventDelegate.sendEvent(ViewEvent.NavigateBack)
+            eventDelegate.sendEvent(ViewEvent.NavigateBack(currentSortType != selectedSortingType))
         }
     }
 
@@ -90,6 +92,6 @@ class AccountSortViewModel @Inject constructor(
     }
 
     sealed interface ViewEvent {
-        data object NavigateBack : ViewEvent
+        data class NavigateBack(val isSortTypeChanged: Boolean) : ViewEvent
     }
 }

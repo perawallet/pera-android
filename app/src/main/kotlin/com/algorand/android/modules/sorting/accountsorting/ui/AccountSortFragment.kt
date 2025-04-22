@@ -29,6 +29,7 @@ import com.algorand.android.modules.sorting.accountsorting.ui.adapter.AccountSor
 import com.algorand.android.modules.sorting.accountsorting.ui.adapter.SortTypeAdapter
 import com.algorand.android.modules.sorting.accountsorting.util.AccountSortItemTouchHelper
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.setFragmentNavigationResult
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -75,7 +76,7 @@ class AccountSortFragment : BaseFragment(R.layout.fragment_account_sort) {
 
     private val viewEventCollector: suspend (AccountSortViewModel.ViewEvent) -> Unit = { event ->
         when (event) {
-            AccountSortViewModel.ViewEvent.NavigateBack -> navBack()
+            is AccountSortViewModel.ViewEvent.NavigateBack -> navigateBackWithResult(event.isSortTypeChanged)
         }
     }
 
@@ -124,5 +125,16 @@ class AccountSortFragment : BaseFragment(R.layout.fragment_account_sort) {
 
     private fun onNewSortPreferencesSelected(accountSortingType: AccountSortingTypeIdentifier) {
         accountSortViewModel.setSelectedSortingType(accountSortingType)
+    }
+
+    private fun navigateBackWithResult(isSortTypeChanged: Boolean) {
+        if (isSortTypeChanged) {
+            setFragmentNavigationResult(ACCOUNT_SORT_RESULT_KEY, true)
+        }
+        navBack()
+    }
+
+    companion object {
+        const val ACCOUNT_SORT_RESULT_KEY = "accountSortingUpdated"
     }
 }

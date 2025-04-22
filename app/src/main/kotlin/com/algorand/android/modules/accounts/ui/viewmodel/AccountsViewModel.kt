@@ -171,7 +171,7 @@ class AccountsViewModel @Inject constructor(
     fun navigateToBackUpPassphraseInfo() {
         viewModelScope.launch {
             val notBackedUpAccounts = getNotBackedUpAccounts()
-            if (notBackedUpAccounts.isEmpty()) {
+            if (notBackedUpAccounts.isNotEmpty()) {
                 eventDelegate.sendEvent(ViewEvent.NavigateToBackupPassphraseInfo(notBackedUpAccounts))
             }
         }

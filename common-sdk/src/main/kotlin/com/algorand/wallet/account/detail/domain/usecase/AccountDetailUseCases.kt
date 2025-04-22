@@ -16,17 +16,24 @@ import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountState
 import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 
 fun interface GetAccountState {
     suspend operator fun invoke(address: String): AccountState
 }
 
-fun interface GetAccountType {
+interface GetAccountType {
     suspend operator fun invoke(address: String): AccountType?
+    operator fun invoke(
+        address: String,
+        rekeyAdminAddress: String?,
+        localAccounts: List<LocalAccount>
+    ): AccountType?
 }
 
-fun interface GetAccountRegistrationType {
+interface GetAccountRegistrationType {
     suspend operator fun invoke(address: String): AccountRegistrationType?
+    operator fun invoke(account: LocalAccount): AccountRegistrationType
 }
 
 fun interface GetAccountDetail {

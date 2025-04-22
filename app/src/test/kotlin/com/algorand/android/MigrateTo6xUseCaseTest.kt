@@ -26,10 +26,10 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
-import org.junit.Test
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
 
 class MigrateTo6xUseCaseTest {
     private val getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase = mockk()

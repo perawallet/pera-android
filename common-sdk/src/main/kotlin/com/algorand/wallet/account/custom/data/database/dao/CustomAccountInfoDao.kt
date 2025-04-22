@@ -17,6 +17,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.algorand.wallet.account.custom.data.database.model.CustomAccountInfoEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface CustomAccountInfoDao {
@@ -29,6 +30,12 @@ internal interface CustomAccountInfoDao {
 
     @Query("SELECT * FROM custom_account_info")
     suspend fun getAll(): List<CustomAccountInfoEntity>
+
+    @Query("SELECT * FROM custom_account_info WHERE algo_address IN (:addresses)")
+    suspend fun getAll(addresses: List<String>): List<CustomAccountInfoEntity>
+
+    @Query("SELECT * FROM custom_account_info WHERE  algo_address IN (:addresses)")
+    fun getAllAsFlow(addresses: List<String>): Flow<List<CustomAccountInfoEntity>>
 
     @Query("SELECT * FROM custom_account_info WHERE :address = algo_address")
     suspend fun get(address: String): CustomAccountInfoEntity

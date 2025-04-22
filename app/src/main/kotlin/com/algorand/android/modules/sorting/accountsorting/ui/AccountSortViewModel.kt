@@ -18,7 +18,10 @@ import com.algorand.android.modules.accountsorting.domain.model.AccountSortingTy
 import com.algorand.android.modules.accountsorting.domain.model.AccountSortingTypeIdentifier.MANUAL
 import com.algorand.android.modules.sorting.accountsorting.domain.model.AccountSortingPreview
 import com.algorand.android.modules.sorting.accountsorting.domain.model.BaseAccountSortingListItem
+import com.algorand.android.modules.sorting.accountsorting.ui.AccountSortViewModel.ViewEvent
 import com.algorand.android.modules.sorting.accountsorting.ui.usecase.AccountSortingPreviewUseCase
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,8 +31,9 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AccountSortViewModel @Inject constructor(
-    private val accountSortingPreviewUseCase: AccountSortingPreviewUseCase
-) : ViewModel() {
+    private val accountSortingPreviewUseCase: AccountSortingPreviewUseCase,
+    private val eventDelegate: EventDelegate<ViewEvent>
+) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
     private val selectedSortingPreferencesFlow = MutableStateFlow(MANUAL)
 
@@ -41,15 +45,23 @@ class AccountSortViewModel @Inject constructor(
         initAccountSortingPreview()
     }
 
-    fun saveSortedAccountListIfSortedManually(baseAccountSortingList: List<BaseAccountSortingListItem>) {
-        val currentSortingPreference = selectedSortingPreferencesFlow.value
-        if (currentSortingPreference != MANUAL) return
+    fun saveChanges(accountListItems: List<BaseAccountSortingListItem>) {
         viewModelScope.launch {
-            accountSortingPreviewUseCase.saveManuallySortedAccountList(baseAccountSortingList)
+            val currentSortType = accountSortingPreviewUseCase.getAccountSortingPreference()
+            val selectedSortingType = selectedSortingPreferencesFlow.value
+            saveSortedAccountList(accountListItems)
+            accountSortingPreviewUseCase.saveSortingPreferences(selectedSortingPreferencesFlow.value)
+            eventDelegate.sendEvent(ViewEvent.NavigateBack(currentSortType != selectedSortingType))
         }
     }
 
-    fun onAccountItemMoved(fromPosition: Int, toPosition: Int) {
+    private suspend fun saveSortedAccountList(baseAccountSortingList: List<BaseAccountSortingListItem>) {
+        val currentSortingPreference = selectedSortingPreferencesFlow.value
+        if (currentSortingPreference != MANUAL) return
+        accountSortingPreviewUseCase.saveManuallySortedAccountList(baseAccountSortingList)
+    }
+
+    fun updateAccountPosition(fromPosition: Int, toPosition: Int) {
         val accountSortingPreview = accountSortingPreviewUseCase.swapItemsAndUpdateList(
             currentPreview = accountSortingPreviewFlow.value,
             fromPosition = fromPosition,
@@ -59,14 +71,8 @@ class AccountSortViewModel @Inject constructor(
         _accountSortingPreviewFlow.value = accountSortingPreview
     }
 
-    fun onSortingPreferencesSelected(accountSortingType: AccountSortingTypeIdentifier) {
+    fun setSelectedSortingType(accountSortingType: AccountSortingTypeIdentifier) {
         selectedSortingPreferencesFlow.value = accountSortingType
-    }
-
-    fun saveSortingPreferences() {
-        viewModelScope.launch {
-            accountSortingPreviewUseCase.saveSortingPreferences(selectedSortingPreferencesFlow.value)
-        }
     }
 
     private fun initSelectedSortingPreferenceFlow() {
@@ -83,5 +89,9 @@ class AccountSortViewModel @Inject constructor(
                 _accountSortingPreviewFlow.value = accountSortingPreviewUseCase.createSortingPreview(accountSortingType)
             }
         }
+    }
+
+    sealed interface ViewEvent {
+        data class NavigateBack(val isSortTypeChanged: Boolean) : ViewEvent
     }
 }

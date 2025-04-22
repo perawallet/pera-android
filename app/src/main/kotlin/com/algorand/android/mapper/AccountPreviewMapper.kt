@@ -13,22 +13,20 @@
 package com.algorand.android.mapper
 
 import com.algorand.android.R
-import com.algorand.android.modules.accounts.domain.model.AccountPreview
-import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
+import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
-import com.algorand.android.utils.Event
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import javax.inject.Inject
 
 class AccountPreviewMapper @Inject constructor(
     private val bottomGlobalErrorMapper: BottomGlobalErrorMapper
 ) {
 
-    fun getEmptyAccountListState(isTestnetBadgeVisible: Boolean): AccountPreview {
+    fun getEmptyAccountListState(): AccountPreview {
         return AccountPreview(
             isEmptyStateVisible = true,
             isFullScreenAnimatedLoadingVisible = false,
             isBlockingLoadingVisible = false,
-            isTestnetBadgeVisible = isTestnetBadgeVisible,
             isMotionLayoutTransitionEnabled = false,
             portfolioValuesBackgroundRes = R.color.transparent,
             isSuccessStateVisible = false,
@@ -36,12 +34,11 @@ class AccountPreviewMapper @Inject constructor(
         )
     }
 
-    fun getFullScreenLoadingState(isTestnetBadgeVisible: Boolean): AccountPreview {
+    fun getFullScreenLoadingState(): AccountPreview {
         return AccountPreview(
             isEmptyStateVisible = false,
             isFullScreenAnimatedLoadingVisible = true,
             isBlockingLoadingVisible = false,
-            isTestnetBadgeVisible = isTestnetBadgeVisible,
             isMotionLayoutTransitionEnabled = false,
             portfolioValuesBackgroundRes = R.color.transparent,
             isSuccessStateVisible = false,
@@ -52,7 +49,6 @@ class AccountPreviewMapper @Inject constructor(
     fun getAllAccountsErrorState(
         accountListItems: List<BaseAccountListItem>,
         errorCode: Int?,
-        isTestnetBadgeVisible: Boolean,
         errorPortfolioValueItem: BasePortfolioValueItem.ErrorPortfolioValueItem
     ): AccountPreview {
         return AccountPreview(
@@ -61,7 +57,6 @@ class AccountPreviewMapper @Inject constructor(
             isBlockingLoadingVisible = false,
             accountListItems = accountListItems,
             bottomGlobalError = bottomGlobalErrorMapper.mapToBottomGlobalError(errorCode),
-            isTestnetBadgeVisible = isTestnetBadgeVisible,
             portfolioValueItem = errorPortfolioValueItem,
             isMotionLayoutTransitionEnabled = true,
             portfolioValuesBackgroundRes = R.color.hero_bg,
@@ -72,13 +67,8 @@ class AccountPreviewMapper @Inject constructor(
 
     fun getSuccessAccountPreview(
         accountListItems: List<BaseAccountListItem>,
-        isTestnetBadgeVisible: Boolean,
         portfolioValueItem: BasePortfolioValueItem?,
         hasNewNotification: Boolean,
-        onSwapTutorialDisplayEvent: Event<Int>? = null,
-        onAccountAddressCopyTutorialDisplayEvent: Event<Int>? = null,
-        onGiftCardsTutorialDisplayEvent: Event<Int>? = null,
-        notificationPermissionEvent: Event<Unit>?,
         assetInboxCount: Int
     ): AccountPreview {
         return AccountPreview(
@@ -86,16 +76,11 @@ class AccountPreviewMapper @Inject constructor(
             isFullScreenAnimatedLoadingVisible = false,
             isBlockingLoadingVisible = false,
             accountListItems = accountListItems,
-            isTestnetBadgeVisible = isTestnetBadgeVisible,
             portfolioValueItem = portfolioValueItem,
             isMotionLayoutTransitionEnabled = true,
             portfolioValuesBackgroundRes = R.color.hero_bg,
             isSuccessStateVisible = true,
             hasNewNotification = hasNewNotification,
-            onSwapTutorialDisplayEvent = onSwapTutorialDisplayEvent,
-            onAccountAddressCopyTutorialDisplayEvent = onAccountAddressCopyTutorialDisplayEvent,
-            onGiftCardsTutorialDisplayEvent = onGiftCardsTutorialDisplayEvent,
-            notificationPermissionEvent = notificationPermissionEvent,
             assetInboxCount = assetInboxCount
         )
     }

@@ -65,11 +65,11 @@ internal class GetAccountDisplayNameUseCase @Inject constructor(
         )
     }
 
-    override suspend fun invoke(address: String, name: String?, type: AccountType): AccountDisplayName {
-        val safeName = name ?: return getAccountDisplayNameWithAccountAddressOnly(address)
+    override suspend fun invoke(address: String, name: String?, type: AccountType?): AccountDisplayName {
+        if (name.isNullOrBlank() || type == null) return getAccountDisplayNameWithAccountAddressOnly(address)
         return AccountDisplayName(
             accountAddress = address,
-            primaryDisplayName = safeName,
+            primaryDisplayName = name,
             secondaryDisplayName = getAccountTypeName(type)
         )
     }

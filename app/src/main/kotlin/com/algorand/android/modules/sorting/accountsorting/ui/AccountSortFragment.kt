@@ -15,7 +15,6 @@ package com.algorand.android.modules.sorting.accountsorting.ui
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.algorand.android.R
@@ -29,9 +28,10 @@ import com.algorand.android.modules.sorting.accountsorting.domain.model.BaseAcco
 import com.algorand.android.modules.sorting.accountsorting.ui.adapter.AccountSortAdapter
 import com.algorand.android.modules.sorting.accountsorting.ui.adapter.SortTypeAdapter
 import com.algorand.android.modules.sorting.accountsorting.util.AccountSortItemTouchHelper
+import com.algorand.android.utils.extensions.collectLatestOnLifecycle
+import com.algorand.android.utils.setFragmentNavigationResult
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
@@ -74,6 +74,12 @@ class AccountSortFragment : BaseFragment(R.layout.fragment_account_sort) {
         accountSortAdapter.submitList(it)
     }
 
+    private val viewEventCollector: suspend (AccountSortViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is AccountSortViewModel.ViewEvent.NavigateBack -> navigateBackWithResult(event.isSortTypeChanged)
+        }
+    }
+
     private val accountSortAdapter = AccountSortAdapter(accountSortAdapterListener)
     private val sortTypeAdapter = SortTypeAdapter(sortTypeAdapterListener)
     private val concatAdapter = ConcatAdapter(sortTypeAdapter, accountSortAdapter)
@@ -94,40 +100,41 @@ class AccountSortFragment : BaseFragment(R.layout.fragment_account_sort) {
 
     private fun initObservers() {
         with(accountSortViewModel) {
-            with(viewLifecycleOwner.lifecycleScope) {
-                launchWhenResumed {
-                    accountSortingPreviewFlow.map { it.sortTypeListItems }
-                        .distinctUntilChanged()
-                        .collectLatest(sortTypeListItemsCollector)
-                }
-                launchWhenResumed {
-                    accountSortingPreviewFlow.map { it.accountSortingListItems }
-                        .distinctUntilChanged()
-                        .collectLatest(accountSortingListItemsCollector)
-                }
-            }
+            collectLatestOnLifecycle(
+                flow = accountSortingPreviewFlow.map { it.sortTypeListItems }.distinctUntilChanged(),
+                collection = sortTypeListItemsCollector
+            )
+            collectLatestOnLifecycle(
+                flow = accountSortingPreviewFlow.map { it.accountSortingListItems }.distinctUntilChanged(),
+                collection = accountSortingListItemsCollector
+            )
+            collectLatestOnLifecycle(
+                flow = viewEvent,
+                collection = viewEventCollector
+            )
         }
     }
 
-    private fun saveSortedList(accountListAccount: List<BaseAccountSortingListItem>) {
-        accountSortViewModel.saveSortedAccountListIfSortedManually(accountListAccount)
-    }
-
-    private fun saveSortingPreferences() {
-        accountSortViewModel.saveSortingPreferences()
-    }
-
     private fun onItemMoved(fromPosition: Int, toPosition: Int) {
-        accountSortViewModel.onAccountItemMoved(fromPosition, toPosition)
+        accountSortViewModel.updateAccountPosition(fromPosition, toPosition)
     }
 
     private fun onDoneClick() {
-        saveSortedList(accountSortAdapter.currentList)
-        saveSortingPreferences()
-        navBack()
+        accountSortViewModel.saveChanges(accountSortAdapter.currentList)
     }
 
     private fun onNewSortPreferencesSelected(accountSortingType: AccountSortingTypeIdentifier) {
-        accountSortViewModel.onSortingPreferencesSelected(accountSortingType)
+        accountSortViewModel.setSelectedSortingType(accountSortingType)
+    }
+
+    private fun navigateBackWithResult(isSortTypeChanged: Boolean) {
+        if (isSortTypeChanged) {
+            setFragmentNavigationResult(ACCOUNT_SORT_RESULT_KEY, true)
+        }
+        navBack()
+    }
+
+    companion object {
+        const val ACCOUNT_SORT_RESULT_KEY = "accountSortingUpdated"
     }
 }

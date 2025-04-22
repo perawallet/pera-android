@@ -25,6 +25,8 @@ import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
+import com.algorand.wallet.account.lite.domain.model.AccountLiteInformation
+import com.algorand.wallet.account.lite.domain.model.AssetHoldingLite
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
@@ -68,7 +70,12 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     }
 
     override fun getCachedAccountInformationCountFlow(): Flow<Int> {
-        return accountInformationDao.getTableSizeAsFlow()
+        return combine(
+            accountInformationDao.getTableSizeAsFlow(),
+            accountInformationErrorCache.getAsFlow()
+        ) { cachedAccounts, errorAccounts ->
+            cachedAccounts + errorAccounts.size
+        }
     }
 
     override suspend fun getAllAssetHoldingIds(addresses: List<String>): List<Long> {
@@ -189,6 +196,38 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
 
     override suspend fun getAccountAlgoBalance(address: String): BigInteger? {
         return accountInformationDao.getAccountAlgoBalance(address)
+    }
+
+    override fun getAccountsLiteInformationFlow(addresses: List<String>): Flow<Map<String, AccountLiteInformation?>> {
+        return accountInformationDao.getAccountLiteInformationFlow(addresses).map { accountLiteInformationList ->
+            accountLiteInformationList.associate { accountLiteInformation ->
+                accountLiteInformation.address to AccountLiteInformation(
+                    address = accountLiteInformation.address,
+                    rekeyAuthAddress = accountLiteInformation.rekeyAuthAddress,
+                    algoBalance = accountLiteInformation.algoBalance
+                )
+            }
+        }
+    }
+
+    override fun getAssetHoldingsLiteFlow(addresses: List<String>): Flow<Map<String, AssetHoldingLite>> {
+        return assetHoldingDao.getAssetHoldingsLiteInformationFlow(addresses).map { assetHoldingLiteList ->
+            val assetHoldingMap = mutableMapOf<String, AssetHoldingLite>()
+            assetHoldingLiteList.forEach { assetHoldingLite ->
+                val assetHolding = assetHoldingMap[assetHoldingLite.address]
+                assetHoldingMap[assetHoldingLite.address] = if (assetHolding == null) {
+                    AssetHoldingLite(
+                        assetHoldingLite.address,
+                        mapOf(assetHoldingLite.assetId to assetHoldingLite.amount)
+                    )
+                } else {
+                    assetHolding.copy(
+                        assetHoldingAmounts = assetHolding.assetHoldingAmounts + (assetHoldingLite.assetId to assetHoldingLite.amount)
+                    )
+                }
+            }
+            assetHoldingMap
+        }
     }
 
     private suspend fun PeraResult<AccountInformationResponse>.mapToAccountInfo(): PeraResult<AccountInformation> {

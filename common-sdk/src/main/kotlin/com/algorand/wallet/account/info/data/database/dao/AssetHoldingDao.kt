@@ -17,6 +17,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.algorand.wallet.account.info.data.database.model.AssetHoldingDao
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import kotlinx.coroutines.flow.Flow
@@ -79,4 +80,7 @@ internal interface AssetHoldingDao {
 
     @Query("DELETE FROM asset_holding_table")
     suspend fun clearAll()
+
+    @Query("SELECT algo_address, asset_id, amount FROM asset_holding_table WHERE algo_address IN (:addresses)")
+    fun getAssetHoldingsLiteInformationFlow(addresses: List<String>): Flow<List<AssetHoldingDao>>
 }

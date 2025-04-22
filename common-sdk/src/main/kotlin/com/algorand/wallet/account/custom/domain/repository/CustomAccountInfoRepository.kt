@@ -14,12 +14,17 @@ package com.algorand.wallet.account.custom.domain.repository
 
 import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
 import com.algorand.wallet.account.custom.domain.model.CustomAccountInfo
+import kotlinx.coroutines.flow.Flow
 
 internal interface CustomAccountInfoRepository {
 
     suspend fun getCustomInfo(address: String): CustomAccountInfo
 
     suspend fun getCustomInfoOrNull(address: String): CustomAccountInfo?
+
+    suspend fun getCustomInfos(addresses: List<String>): Map<String, CustomAccountInfo?>
+
+    fun getCustomInfoFlow(addresses: List<String>): Flow<Map<String, CustomAccountInfo?>>
 
     suspend fun setCustomInfo(customAccountInfo: CustomAccountInfo)
 

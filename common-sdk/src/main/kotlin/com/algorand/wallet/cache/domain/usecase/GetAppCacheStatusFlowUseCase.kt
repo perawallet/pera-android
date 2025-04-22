@@ -12,10 +12,10 @@
 
 package com.algorand.wallet.cache.domain.usecase
 
+import com.algorand.wallet.account.info.domain.manager.AccountCacheManager
+import com.algorand.wallet.account.info.domain.model.AccountCacheManagerStatus
 import com.algorand.wallet.account.info.domain.model.AccountCacheStatus
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
-import com.algorand.wallet.asset.domain.model.AssetCacheStatus
-import com.algorand.wallet.asset.domain.usecase.GetAssetDetailCacheStatusFlow
 import com.algorand.wallet.cache.domain.model.AppCacheStatus
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -23,24 +23,29 @@ import kotlinx.coroutines.flow.combine
 
 internal class GetAppCacheStatusFlowUseCase @Inject constructor(
     private val getAccountDetailCacheStatusFlow: GetAccountDetailCacheStatusFlow,
-    private val getAssetDetailCacheStatusFlow: GetAssetDetailCacheStatusFlow
+    private val accountCacheManager: AccountCacheManager
 ) : GetAppCacheStatusFlow {
 
     override fun invoke(): Flow<AppCacheStatus> {
         return combine(
             getAccountDetailCacheStatusFlow(),
-            getAssetDetailCacheStatusFlow()
-        ) { accountCacheStatus, assetCacheStatus ->
+            accountCacheManager.cacheStatusFlow
+        ) { accountCacheStatus, accountCacheManagerStatus ->
             when {
                 !isInitializationStarted(accountCacheStatus) -> AppCacheStatus.IDLE
-                isCacheInitialized(accountCacheStatus, assetCacheStatus) -> AppCacheStatus.INITIALIZED
+                isCacheInitialized(accountCacheStatus, accountCacheManagerStatus) -> AppCacheStatus.INITIALIZED
                 else -> AppCacheStatus.LOADING
             }
         }
     }
 
-    private fun isCacheInitialized(accountStatus: AccountCacheStatus, assetStatus: AssetCacheStatus): Boolean {
-        return accountStatus == AccountCacheStatus.INITIALIZED && assetStatus isAtLeast AssetCacheStatus.EMPTY
+    private fun isCacheInitialized(
+        accountStatus: AccountCacheStatus,
+        accountCacheManagerStatus: AccountCacheManagerStatus
+    ): Boolean {
+        val isAccountCacheInitialized = accountStatus == AccountCacheStatus.INITIALIZED
+        val isAccountCacheManagerInitialized = accountCacheManagerStatus == AccountCacheManagerStatus.INITIALIZED
+        return isAccountCacheInitialized && isAccountCacheManagerInitialized
     }
 
     private fun isInitializationStarted(accountStatus: AccountCacheStatus): Boolean {

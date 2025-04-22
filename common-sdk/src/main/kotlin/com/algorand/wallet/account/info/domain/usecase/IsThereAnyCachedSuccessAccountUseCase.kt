@@ -23,14 +23,25 @@ internal class IsThereAnyCachedSuccessAccountUseCase @Inject constructor(
 ) : IsThereAnyCachedSuccessAccount {
 
     override suspend fun invoke(excludeNoAuthAccounts: Boolean): Boolean {
+        return isThereAnyCachedSuccessAccount(getLocalAccounts(), excludeNoAuthAccounts)
+    }
+
+    override suspend fun invoke(localAccounts: List<LocalAccount>, excludeNoAuthAccounts: Boolean): Boolean {
+        return isThereAnyCachedSuccessAccount(localAccounts, excludeNoAuthAccounts)
+    }
+
+    private suspend fun isThereAnyCachedSuccessAccount(
+        localAccounts: List<LocalAccount>,
+        excludeNoAuthAccounts: Boolean
+    ): Boolean {
         val successAccounts = accountInformationRepository.getAllSuccessfullyCachedAccountAddresses()
-        val localAccounts = if (excludeNoAuthAccounts) {
-            getLocalAccounts().filter { it !is LocalAccount.NoAuth }
+        val filteredLocalAccounts = if (excludeNoAuthAccounts) {
+            localAccounts.filter { it !is LocalAccount.NoAuth }
         } else {
-            getLocalAccounts()
+            localAccounts
         }
 
-        return localAccounts.any { localAccount ->
+        return filteredLocalAccounts.any { localAccount ->
             successAccounts.any { address ->
                 localAccount.algoAddress == address
             }

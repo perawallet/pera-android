@@ -83,6 +83,10 @@ fun interface GetHdPublicKeyFromAlgoAddress {
     suspend operator fun invoke(address: String): ByteArray
 }
 
+fun interface GetLocalAccountsFlow {
+    operator fun invoke(): Flow<List<LocalAccount>>
+}
+
 fun interface GetLocalAccountCountFlow {
     operator fun invoke(): Flow<Int>
 }

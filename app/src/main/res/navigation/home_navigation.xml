@@ -490,7 +490,7 @@
 
     <fragment
         android:id="@+id/accountsFragment"
-        android:name="com.algorand.android.modules.accounts.ui.AccountsFragment"
+        android:name="com.algorand.android.modules.accounts.ui.view.AccountsFragment"
         android:label="fragment_accounts"
         tools:layout="@layout/fragment_accounts">
         <argument

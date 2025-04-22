@@ -12,9 +12,10 @@
 
 package com.algorand.android.modules.accountsorting.ui.domain.usecase.accountlistitemsorter
 
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accountsorting.ui.domain.model.AccountAndAssetListItem
 import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem
-import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -37,5 +38,11 @@ internal class AccountListItemSorterByAlphabeticallyAscending @Inject constructo
     ): Map<AccountDisplayName, BigDecimal> {
         val comparator = compareBy<AccountDisplayName> { accountDisplayName -> accountDisplayName.primaryDisplayName }
         return accountNameAndValueMap.toSortedMap(comparator)
+    }
+
+    override fun sortAccountLites(accountLites: Map<String, AccountLite>): Map<String, AccountLite> {
+        return accountLites.entries.sortedBy {
+            it.value.customName.ifBlank { it.value.address }.lowercase()
+        }.associate { it.toPair() }
     }
 }

@@ -17,6 +17,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
+import com.algorand.wallet.account.info.data.database.model.AccountLiteInformationDao
 import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
 
@@ -67,4 +68,7 @@ internal interface AccountInformationDao {
 
     @Query("SELECT algo_amount FROM account_information WHERE :address = algo_address")
     suspend fun getAccountAlgoBalance(address: String): BigInteger?
+
+    @Query("SELECT algo_address, auth_algo_address, algo_amount FROM account_information WHERE algo_address IN (:addresses)")
+    fun getAccountLiteInformationFlow(addresses: List<String>): Flow<List<AccountLiteInformationDao>>
 }

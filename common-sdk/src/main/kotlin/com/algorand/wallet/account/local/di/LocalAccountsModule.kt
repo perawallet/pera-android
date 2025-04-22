@@ -69,6 +69,8 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddressesUseCase
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsFlow
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsFlowUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsUseCase
 import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.GetSeedIdIfExistingEntropy
@@ -212,6 +214,9 @@ internal object LocalAccountsModule {
     fun provideGetLocalAccounts(
         useCase: GetLocalAccountsUseCase
     ): GetLocalAccounts = useCase
+
+    @Provides
+    fun provideGetLocalAccountsFlow(useCase: GetLocalAccountsFlowUseCase): GetLocalAccountsFlow = useCase
 
     @Provides
     fun provideGetLocalAccountsAddresses(

@@ -21,12 +21,12 @@ class RekeyToStandardAccountIntroductionPreviewDecider @Inject constructor() {
 
     fun decideBannerDrawableResId(accountType: AccountType?): Int {
         return when (accountType) {
-            AccountType.Algo25 -> R.drawable.ic_rekey_from_standard_banner
+            AccountType.Algo25 -> R.drawable.ic_rekey_from_algo25_banner
             AccountType.LedgerBle -> R.drawable.ic_rekey_from_ledger_banner
             AccountType.Rekeyed, AccountType.RekeyedAuth -> R.drawable.ic_rekey_from_rekeyed_banner
             // [null] and [Watch] cases are not possible
             AccountType.NoAuth, null -> R.drawable.ic_rekey_from_rekeyed_banner
-            AccountType.HdKey -> R.drawable.ic_rekey_from_standard_banner // TODO HDWallet
+            AccountType.HdKey -> R.drawable.ic_rekey_from_hdkey_banner
         }
     }
 

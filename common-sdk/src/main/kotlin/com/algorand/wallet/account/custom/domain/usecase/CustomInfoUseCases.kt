@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -16,6 +16,7 @@ import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
 import com.algorand.wallet.account.custom.domain.model.CustomAccountInfo
 import com.algorand.wallet.account.custom.domain.model.CustomHdSeedInfo
 import com.algorand.wallet.account.custom.domain.model.HdSeedOrderIndex
+import kotlinx.coroutines.flow.Flow
 
 fun interface SetAccountCustomName {
     suspend operator fun invoke(address: String, name: String)
@@ -23,6 +24,14 @@ fun interface SetAccountCustomName {
 
 fun interface GetAccountCustomName {
     suspend operator fun invoke(address: String): String?
+}
+
+fun interface GetAccountsCustomInfoFlow {
+    operator fun invoke(addresses: List<String>): Flow<Map<String, CustomAccountInfo?>>
+}
+
+fun interface GetAccountsCustomInfo {
+    suspend operator fun invoke(addresses: List<String>): Map<String, CustomAccountInfo?>
 }
 
 fun interface SetAccountCustomInfo {

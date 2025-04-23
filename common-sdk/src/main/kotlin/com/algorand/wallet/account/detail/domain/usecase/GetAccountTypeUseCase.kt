@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,7 +13,6 @@
 package com.algorand.wallet.account.detail.domain.usecase
 
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
@@ -29,7 +28,16 @@ internal class GetAccountTypeUseCase @Inject constructor(
         val cachedAccount = getAccountInformation(address) ?: return null
         val account = localAccounts.firstOrNull { it.algoAddress == address } ?: return null
         return if (cachedAccount.rekeyAdminAddress != null) {
-            getAccountTypeForRekeyedAccount(account, localAccounts, cachedAccount)
+            getAccountTypeForRekeyedAccount(account, cachedAccount.rekeyAdminAddress, localAccounts)
+        } else {
+            getAccountTypeForNonRekeyedAccount(account)
+        }
+    }
+
+    override fun invoke(address: String, rekeyAdminAddress: String?, localAccounts: List<LocalAccount>): AccountType? {
+        val account = localAccounts.firstOrNull { it.algoAddress == address } ?: return null
+        return if (rekeyAdminAddress != null) {
+            getAccountTypeForRekeyedAccount(account, rekeyAdminAddress, localAccounts)
         } else {
             getAccountTypeForNonRekeyedAccount(account)
         }
@@ -37,11 +45,11 @@ internal class GetAccountTypeUseCase @Inject constructor(
 
     private fun getAccountTypeForRekeyedAccount(
         account: LocalAccount,
-        localAccounts: List<LocalAccount>,
-        cachedAccount: AccountInformation
+        rekeyAdminAddress: String?,
+        localAccounts: List<LocalAccount>
     ): AccountType {
         val doWeHaveAuthSigner = localAccounts.any {
-            it.algoAddress == cachedAccount.rekeyAdminAddress && it !is LocalAccount.NoAuth
+            it.algoAddress == rekeyAdminAddress && it !is LocalAccount.NoAuth
         }
         return when {
             doWeHaveAuthSigner -> AccountType.RekeyedAuth

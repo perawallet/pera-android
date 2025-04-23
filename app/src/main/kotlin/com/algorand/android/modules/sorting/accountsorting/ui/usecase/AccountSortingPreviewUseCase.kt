@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,7 +14,6 @@ package com.algorand.android.modules.sorting.accountsorting.ui.usecase
 
 import com.algorand.android.R
 import com.algorand.android.models.ButtonConfiguration
-import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
@@ -36,13 +35,12 @@ open class AccountSortingPreviewUseCase @Inject constructor(
     private val sortingTypeCreator: SortingTypeCreator,
     private val sortingPreviewMapper: SortingPreviewMapper,
     private val getAccountDisplayName: GetAccountDisplayName,
-    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getSortedAccountsByPreference: GetSortedAccountsByPreference,
-    private val getAccountTotalValue: GetAccountTotalValue,
     private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
     private val setAccountOrderIndex: SetAccountOrderIndex,
     private val saveAccountSortPreference: SaveAccountSortPreference,
-    private val getAccountSortingTypeIdentifier: GetAccountSortingTypeIdentifier
+    private val getAccountSortingTypeIdentifier: GetAccountSortingTypeIdentifier,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) {
 
     fun getInitialSortingPreview(): AccountSortingPreview {
@@ -130,13 +128,12 @@ open class AccountSortingPreviewUseCase @Inject constructor(
         val accountListItems = getSortedAccountsByPreference(
             sortingIdentifier = sortingIdentifier,
             onLoadedAccountConfiguration = {
-                val accountValue = getAccountTotalValue(address, true)
                 accountItemConfigurationMapper(
                     accountAddress = address,
-                    accountDisplayName = getAccountDisplayName(address),
-                    accountIconDrawablePreview = getAccountIconDrawablePreview(address),
-                    accountType = accountType,
-                    accountPrimaryValue = accountValue.primaryAccountValue,
+                    accountDisplayName = getAccountDisplayName(this),
+                    accountIconDrawablePreview = getAccountIconDrawablePreview(this),
+                    accountType = cachedInfo?.type,
+                    accountPrimaryValue = cachedInfo?.primaryAccountValue,
                     dragButtonConfiguration = ButtonConfiguration(
                         iconDrawableResId = R.drawable.ic_reorder,
                         iconTintResId = R.color.text_gray_lighter,
@@ -146,7 +143,7 @@ open class AccountSortingPreviewUseCase @Inject constructor(
                 )
             }, onFailedAccountConfiguration = {
                 accountItemConfigurationMapper(
-                    accountAddress = this,
+                    accountAddress = address,
                     accountDisplayName = getAccountDisplayName(this),
                     accountIconDrawablePreview = getAccountIconDrawablePreview(this),
                     showWarningIcon = true

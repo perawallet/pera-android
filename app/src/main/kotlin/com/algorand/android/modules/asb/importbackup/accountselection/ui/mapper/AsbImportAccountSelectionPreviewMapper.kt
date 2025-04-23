@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,7 +13,7 @@
 package com.algorand.android.modules.asb.importbackup.accountselection.ui.mapper
 
 import com.algorand.android.models.ScreenState
-import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult
+import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbImportRestoreResultNavArg
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbImportAccountSelectionPreview
 import com.algorand.android.modules.backupprotocol.model.BackupProtocolElement
 import com.algorand.android.modules.basemultipleaccountselection.ui.model.MultipleAccountSelectionListItem
@@ -30,7 +30,7 @@ class AsbImportAccountSelectionPreviewMapper @Inject constructor() {
         isLoadingVisible: Boolean,
         unsupportedAccounts: List<BackupProtocolElement>?,
         emptyScreenState: ScreenState? = null,
-        navToRestoreCompleteEvent: Event<AsbAccountImportResult>? = null
+        navToRestoreCompleteEvent: Event<AsbImportRestoreResultNavArg>? = null
     ): AsbImportAccountSelectionPreview {
         return AsbImportAccountSelectionPreview(
             multipleAccountSelectionList = multipleAccountSelectionList,

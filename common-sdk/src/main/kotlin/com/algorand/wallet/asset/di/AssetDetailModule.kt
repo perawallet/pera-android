@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,10 +17,7 @@ import com.algorand.wallet.asset.data.repository.AssetDetailCacheHelperImpl
 import com.algorand.wallet.asset.data.repository.AssetRepositoryImpl
 import com.algorand.wallet.asset.data.service.AssetDetailApiService
 import com.algorand.wallet.asset.data.service.AssetDetailNodeApiService
-import com.algorand.wallet.asset.domain.manager.AssetDetailCacheManager
-import com.algorand.wallet.asset.domain.manager.AssetDetailCacheManagerImpl
 import com.algorand.wallet.asset.domain.repository.AssetRepository
-import com.algorand.wallet.asset.domain.usecase.GetAssetDetailCacheStatusFlow
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,13 +52,4 @@ internal object AssetDetailModule {
     @Provides
     @Singleton
     fun provideAssetRepository(impl: AssetRepositoryImpl): AssetRepository = impl
-
-    @Provides
-    @Singleton
-    fun provideAssetDetailCacheManager(impl: AssetDetailCacheManagerImpl): AssetDetailCacheManager = impl
-
-    @Provides
-    fun provideGetAssetDetailCacheStatusFlow(manager: AssetDetailCacheManager): GetAssetDetailCacheStatusFlow {
-        return GetAssetDetailCacheStatusFlow(manager::cacheStatusFlow)
-    }
 }

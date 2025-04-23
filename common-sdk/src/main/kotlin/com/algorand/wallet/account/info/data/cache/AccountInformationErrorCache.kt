@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -12,8 +12,11 @@
 
 package com.algorand.wallet.account.info.data.cache
 
+import kotlinx.coroutines.flow.Flow
+
 internal interface AccountInformationErrorCache {
     fun put(address: String)
     fun getAll(): List<String>
+    fun getAsFlow(): Flow<List<String>>
     fun remove(address: String)
 }

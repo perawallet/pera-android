@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -43,6 +43,27 @@ internal class AccountInformationFetchHelperImpl @Inject constructor(
             },
             onFailed = { exception, errorCode ->
                 processFailedResponse(address, exception, errorCode)
+            }
+        )
+    }
+
+    override suspend fun fetchAccountWithoutAssets(
+        address: String,
+        includeClosedAccount: Boolean
+    ): PeraResult<AccountInformationResponse> {
+        val excludesQuery = IndexerAccountFetchRequestExcludesQueryBuilder.newBuilder()
+            .addExclude(CREATED_ASSETS)
+            .addExclude(CREATED_APPS)
+            .addExclude(ASSETS)
+            .build()
+        return request { indexerApi.getAccountInformation(address, excludesQuery, includeClosedAccount) }.use(
+            onSuccess = { response -> PeraResult.Success(response) },
+            onFailed = { exception, errorCode ->
+                if (errorCode == ACCOUNT_NOT_FOUND) {
+                    PeraResult.Success(accountInformationResponseMapper.createEmptyAccount(address))
+                } else {
+                    PeraResult.Error(exception, errorCode)
+                }
             }
         )
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+  ~ Copyright 2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -58,8 +58,8 @@
         android:label="AsbAccountRestoreResultFragment"
         tools:layout="@layout/fragment_base_result">
         <argument
-            android:name="asbAccountImportResult"
-            app:argType="com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbAccountImportResult" />
+            android:name="asbImportRestoreResultNavArg"
+            app:argType="com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbImportRestoreResultNavArg" />
         <action
             android:id="@+id/action_asbAccountRestoreResultFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"

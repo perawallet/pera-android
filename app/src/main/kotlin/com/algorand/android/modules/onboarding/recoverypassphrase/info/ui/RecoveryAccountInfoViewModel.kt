@@ -18,7 +18,7 @@ class RecoveryAccountInfoViewModel @Inject constructor(
 
     fun logRecoverAccountTypeClickEvent(onboardingAccountType: OnboardingAccountType) {
         val clickEvent = when (onboardingAccountType) {
-            OnboardingAccountType.HdKey -> PeraClickEvent.TAP_ONBOARDING_RECOVER_ONEKEY
+            OnboardingAccountType.HdKey -> PeraClickEvent.TAP_ONBOARDING_RECOVER_UNIVERSAL
             OnboardingAccountType.Algo25 -> PeraClickEvent.TAP_ONBOARDING_RECOVER_ALGO25
         }
         logEvent(clickEvent)

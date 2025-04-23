@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -52,6 +52,7 @@ import com.algorand.wallet.account.info.domain.usecase.AddAssetHoldingToAccountA
 import com.algorand.wallet.account.info.domain.usecase.ClearAccountInformationCache
 import com.algorand.wallet.account.info.domain.usecase.DeleteAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformationWithoutAssets
 import com.algorand.wallet.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
@@ -343,4 +344,11 @@ internal object AccountInformationModule {
 
     @Provides
     fun provideGetRegisteredHdKeys(useCase: GetRegisteredHdKeysUseCase): GetRegisteredHdKeys = useCase
+
+    @Provides
+    fun provideFetchAccountInformationWithoutAssets(
+        repository: AccountInformationRepository
+    ): FetchAccountInformationWithoutAssets {
+        return FetchAccountInformationWithoutAssets(repository::fetchAccountInformationWithoutAssets)
+    }
 }

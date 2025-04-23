@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -18,11 +18,10 @@ import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AccountIconResource
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
-import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetSortedAccountsByPreference
+import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbImportRestoreResultNavArg
+import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.usecase.CreateAsbImportedAddresses
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.mapper.AsbImportAccountSelectionPreviewMapper
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.model.AsbImportAccountSelectionPreview
 import com.algorand.android.modules.asb.importbackup.accountselection.utils.AsbAccountImportParser
@@ -50,16 +49,8 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
     private val accountAdditionUseCase: AccountAdditionUseCase,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val aesPlatformManager: AESPlatformManager,
-    getSortedAccountsByPreference: GetSortedAccountsByPreference,
-    accountItemConfigurationMapper: AccountItemConfigurationMapper,
-    getAccountIconDrawablePreview: GetAccountIconDrawablePreview
-) : BaseMultipleAccountSelectionPreviewUseCase(
-    multipleAccountSelectionListItemMapper,
-    getSortedAccountsByPreference,
-    accountItemConfigurationMapper,
-    getAccountDisplayName,
-    getAccountIconDrawablePreview
-) {
+    private val createAsbImportedAddresses: CreateAsbImportedAddresses,
+) : BaseMultipleAccountSelectionPreviewUseCase(multipleAccountSelectionListItemMapper) {
     fun getInitialPreview(): AsbImportAccountSelectionPreview {
         val titleItem = createTitleItem(textResId = R.string.choose_accounts_n_to_restore)
         return asbImportAccountSelectionPreviewMapper.mapToAsbImportAccountSelectionPreview(
@@ -127,13 +118,23 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
             unsupportedAccounts = preview.unsupportedAccounts
         )
 
-        accountImportResult.importedAccountList.forEach { accountAddress ->
-            val importedAccount = backupProtocolElements.firstOrNull { it.address == accountAddress }
-            addImportedAccount(importedAccount)
+        val importedAddressesAccountCreations = getImportedAddressesAccountCreations(
+            accountImportResult.importedAccountList,
+            backupProtocolElements
+        )
+        val asbImportedAddresses = createAsbImportedAddresses(importedAddressesAccountCreations)
+
+        importedAddressesAccountCreations.forEach { accountCreation ->
+            accountAdditionUseCase.addNewAccount(accountCreation)
         }
 
+        val restoreResultNavArg = AsbImportRestoreResultNavArg(
+            importedAddresses = asbImportedAddresses,
+            existingAccountList = accountImportResult.existingAccountList,
+            unsupportedAccountList = accountImportResult.unsupportedAccountList
+        )
         val successPreview = preview.copy(
-            navToRestoreCompleteEvent = Event(accountImportResult),
+            navToRestoreCompleteEvent = Event(restoreResultNavArg),
             isLoadingVisible = false
         )
         emit(successPreview)
@@ -231,26 +232,31 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
         }
     }
 
-    private suspend fun addImportedAccount(importedAccount: BackupProtocolElement?) {
-        if (importedAccount == null) return
-        val safeAccountAddress = importedAccount.address ?: return
-        val safeAccountName = importedAccount.name.orEmpty().ifBlank { safeAccountAddress.toShortenedAddress() }
-        val accountType = when (importedAccount.accountType) {
-            ALGO_25_ACCOUNT_TYPE_NAME -> {
-                val safeAccountPrivateKey = importedAccount.privateKey?.decodeBase64ToByteArray() ?: return
-                val encryptedPrivateKey = aesPlatformManager.encryptByteArray(safeAccountPrivateKey)
-                AccountCreation.Type.Algo25(encryptedPrivateKey)
+    private fun getImportedAddressesAccountCreations(
+        importedAddresses: List<String>,
+        backupProtocolElements: Array<BackupProtocolElement>
+    ): List<AccountCreation> {
+        return importedAddresses.mapNotNull { address ->
+            val importedAddress = backupProtocolElements.firstOrNull { it.address == address } ?: return@mapNotNull null
+            val safeAccountAddress = importedAddress.address ?: return@mapNotNull null
+            val safeAccountName = importedAddress.name.orEmpty().ifBlank { safeAccountAddress.toShortenedAddress() }
+            val accountType = when (importedAddress.accountType) {
+                ALGO_25_ACCOUNT_TYPE_NAME -> {
+                    val safeAccountPrivateKey = importedAddress.privateKey?.decodeBase64ToByteArray()
+                        ?: return@mapNotNull null
+                    val encryptedPrivateKey = aesPlatformManager.encryptByteArray(safeAccountPrivateKey)
+                    AccountCreation.Type.Algo25(encryptedPrivateKey)
+                }
+                NO_AUTH_ACCOUNT_TYPE_NAME -> AccountCreation.Type.NoAuth
+                else -> return@mapNotNull null
             }
-            NO_AUTH_ACCOUNT_TYPE_NAME -> AccountCreation.Type.NoAuth
-            else -> return
+            AccountCreation(
+                address = safeAccountAddress,
+                customName = safeAccountName,
+                isBackedUp = true,
+                type = accountType,
+                creationType = CreationType.RECOVER
+            )
         }
-        val recoveredAccount = AccountCreation(
-            address = safeAccountAddress,
-            customName = safeAccountName,
-            isBackedUp = true,
-            type = accountType,
-            creationType = CreationType.RECOVER
-        )
-        accountAdditionUseCase.addNewAccount(recoveredAccount)
     }
 }

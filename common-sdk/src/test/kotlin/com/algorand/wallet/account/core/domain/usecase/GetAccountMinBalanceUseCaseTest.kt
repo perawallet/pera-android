@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,6 +14,7 @@ package com.algorand.wallet.account.core.domain.usecase
 
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AppStateScheme
+import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -25,8 +26,20 @@ import org.junit.Test
 class GetAccountMinBalanceUseCaseTest {
 
     private val getAccountInformation: GetAccountInformation = mockk()
+    private val accountInformationRepository: AccountInformationRepository = mockk {
+        coEvery { getCachedAccountMinRequiredBalance(ADDRESS) } returns null
+    }
 
-    private val sut = GetAccountMinBalanceUseCase(getAccountInformation)
+    private val sut = GetAccountMinBalanceUseCase(getAccountInformation, accountInformationRepository)
+
+    @Test
+    fun `EXPECT cache min balance WHEN exist in cache`() = runTest {
+        coEvery { accountInformationRepository.getCachedAccountMinRequiredBalance(ADDRESS) } returns MIN_BALANCE
+
+        val result = sut(ADDRESS)
+
+        assertEquals(MIN_BALANCE, result)
+    }
 
     @Test
     fun `EXPECT zero WHEN account information is null`() = runTest {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -12,7 +12,6 @@
 
 package com.algorand.android.models
 
-import android.graphics.drawable.Drawable
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -32,7 +31,4 @@ data class ToolbarConfiguration(
     val startIconColor: Int? = null,
     @ColorRes
     val titleColor: Int = R.color.primary_text_color,
-    val textStartDrawable: Drawable? = null,
-    val textEndDrawable: Drawable? = null,
-    val centerDrawable: Drawable? = null
 )

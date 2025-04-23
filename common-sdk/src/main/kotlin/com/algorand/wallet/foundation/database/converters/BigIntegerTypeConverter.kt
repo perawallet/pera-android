@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -12,7 +12,8 @@
 
 package com.algorand.wallet.foundation.database.converters
 
-import androidx.room.*
+import androidx.room.ProvidedTypeConverter
+import androidx.room.TypeConverter
 import java.math.BigInteger
 
 @ProvidedTypeConverter
@@ -24,7 +25,7 @@ internal object BigIntegerTypeConverter {
     }
 
     @TypeConverter
-    fun stringToBigInteger(value: String): BigInteger {
-        return value.toBigInteger()
+    fun stringToBigInteger(value: String): BigInteger? {
+        return value.toBigIntegerOrNull()
     }
 }

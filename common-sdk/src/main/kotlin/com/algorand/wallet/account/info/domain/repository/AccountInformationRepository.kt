@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,6 +15,8 @@ package com.algorand.wallet.account.info.domain.repository
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
+import com.algorand.wallet.account.lite.domain.model.AccountLiteInformation
+import com.algorand.wallet.account.lite.domain.model.AssetHoldingLite
 import com.algorand.wallet.foundation.PeraResult
 import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +24,11 @@ import kotlinx.coroutines.flow.Flow
 internal interface AccountInformationRepository {
 
     suspend fun fetchAccountInformation(address: String, includeClosedAccount: Boolean): PeraResult<AccountInformation>
+
+    suspend fun fetchAccountInformationWithoutAssets(
+        address: String,
+        includeClosedAccount: Boolean
+    ): PeraResult<AccountInformation>
 
     suspend fun getAccountInformation(address: String): AccountInformation?
 
@@ -56,8 +63,14 @@ internal interface AccountInformationRepository {
     suspend fun getFailedAccountInformation(): List<String>
 
     suspend fun getRekeyAuthAddress(address: String): String?
-    
+
     suspend fun getFilteredRekeyedAccountCount(authAddress: String, algoAddresses: List<String>): Int
 
     suspend fun getAccountAlgoBalance(address: String): BigInteger?
+
+    fun getAccountsLiteInformationFlow(addresses: List<String>): Flow<Map<String, AccountLiteInformation?>>
+
+    fun getAssetHoldingsLiteFlow(addresses: List<String>): Flow<Map<String, AssetHoldingLite>>
+
+    suspend fun getCachedAccountMinRequiredBalance(address: String): BigInteger?
 }

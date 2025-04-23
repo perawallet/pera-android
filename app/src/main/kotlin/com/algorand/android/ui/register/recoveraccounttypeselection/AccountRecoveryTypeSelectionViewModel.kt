@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -40,14 +40,14 @@ class AccountRecoveryTypeSelectionViewModel @Inject constructor(
 
     fun setupToolbar() {
         viewModelScope.launchIO {
-            if (isThereAnyLocalAccount()) {
-                stateDelegate.setDefaultState(ViewState.DefaultState)
+            if (!isThereAnyLocalAccount()) {
+                stateDelegate.setDefaultState(ViewState.NoLocalAccountState)
             }
         }
     }
 
     sealed interface ViewState {
         data object Idle : ViewState
-        data object DefaultState : ViewState
+        data object NoLocalAccountState : ViewState
     }
 }

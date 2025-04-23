@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -16,17 +16,24 @@ import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountState
 import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 
 fun interface GetAccountState {
     suspend operator fun invoke(address: String): AccountState
 }
 
-fun interface GetAccountType {
+interface GetAccountType {
     suspend operator fun invoke(address: String): AccountType?
+    operator fun invoke(
+        address: String,
+        rekeyAdminAddress: String?,
+        localAccounts: List<LocalAccount>
+    ): AccountType?
 }
 
-fun interface GetAccountRegistrationType {
+interface GetAccountRegistrationType {
     suspend operator fun invoke(address: String): AccountRegistrationType?
+    operator fun invoke(account: LocalAccount): AccountRegistrationType
 }
 
 fun interface GetAccountDetail {

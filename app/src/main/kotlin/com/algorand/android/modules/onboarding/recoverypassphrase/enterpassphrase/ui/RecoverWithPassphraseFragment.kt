@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -386,7 +386,10 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         hideComposeAnimationLoader()
     }
 
-    private fun navToImportRekeyedAccount(accountCreation: AccountCreation, navArg: RekeyedAccountSelectionNavArg) {
+    private fun navToImportRekeyedAccount(
+        accountCreation: AccountCreation,
+        navArg: RekeyedAccountSelectionNavArg
+    ) {
         nav(
             RecoverWithPassphraseFragmentDirections
                 .actionRecoverWithPassphraseFragmentToRecoverSingleAddressRekeyedAccountSelectionFragment(

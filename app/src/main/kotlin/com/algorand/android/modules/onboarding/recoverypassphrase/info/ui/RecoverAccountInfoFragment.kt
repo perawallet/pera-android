@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -43,14 +42,15 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.PeraCard
-import com.algorand.android.ui.compose.widget.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.PeraIcon
-import com.algorand.android.ui.compose.widget.PeraPrimaryButton
-import com.algorand.android.ui.compose.widget.PeraTitleText
+import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.text.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import com.algorand.android.ui.compose.theme.PeraTheme
 
 @AndroidEntryPoint
 class RecoverAccountInfoFragment : BaseInfoFragment() {
@@ -115,8 +115,8 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                     showBottomSheet.value = false
                 },
                 sheetState = sheetState,
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                containerColor = PeraTheme.colors.background.primary,
+                contentColor = PeraTheme.colors.text.grayLighter,
             ) {
                 BottomSheetContent(
                     sheetState = sheetState,
@@ -137,16 +137,16 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surface)
+                .background(PeraTheme.colors.background.primary)
                 .padding(16.dp)
         ) {
             BottomSheetHeader(sheetState, onDismiss)
 
             PeraCard(
-                title = stringResource(R.string.mnemonic_type_bip39_title),
+                title = stringResource(R.string.mnemonic_type_universal_title),
                 highlighted = stringResource(R.string.new_text),
-                description = stringResource(R.string.mnemonic_type_bip39_description),
-                footer = stringResource(R.string.mnemonic_type_bip39_footer),
+                description = stringResource(R.string.mnemonic_type_universal_description),
+                footer = stringResource(R.string.mnemonic_type_universal_footer),
                 onClick = {
                     navigateToRecoverWithPassphraseFragment(
                         OnboardingAccountType.HdKey
@@ -202,7 +202,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                 }) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = PeraTheme.colors.text.main,
                     contentDescription = stringResource(id = R.string.close)
                 )
             }
@@ -217,10 +217,12 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
     private fun navigateToRecoverWithPassphraseFragment(onboardingAccountType: OnboardingAccountType) {
         recoveryAccountInfoViewModel.logRecoverAccountTypeClickEvent(onboardingAccountType)
-        nav(RecoverAccountInfoFragmentDirections
-            .actionRecoverAccountInfoFragmentToRecoverWithPassphraseNavigation(
-                mnemonic = null,
-                onboardingAccountType = onboardingAccountType)
+        nav(
+            RecoverAccountInfoFragmentDirections
+                .actionRecoverAccountInfoFragmentToRecoverWithPassphraseNavigation(
+                    mnemonic = null,
+                    onboardingAccountType = onboardingAccountType
+                )
         )
     }
 }

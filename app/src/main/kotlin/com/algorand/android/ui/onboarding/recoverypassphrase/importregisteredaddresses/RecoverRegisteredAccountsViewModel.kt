@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -24,6 +24,7 @@ import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredadd
 import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.utils.analytics.CreationType
+import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.core.domain.model.CreateAccount.Type
 import com.algorand.wallet.account.detail.domain.model.AccountType
@@ -73,11 +74,11 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
     fun loadRegisteredAccounts() {
         stateDelegate.onState<ViewState.Idle> {
             stateDelegate.updateState { ViewState.Loading }
-            viewModelScope.launch {
+            viewModelScope.launchIO {
                 val hdKey = accountCreation.toCreateAccount().type as? Type.HdKey
                 if (hdKey == null) {
                     stateDelegate.updateState { ViewState.Content(registeredAccounts = emptyList()) }
-                    return@launch
+                    return@launchIO
                 }
 
                 val entropy = aesPlatformManager.decryptByteArray(hdKey.encryptedEntropy)

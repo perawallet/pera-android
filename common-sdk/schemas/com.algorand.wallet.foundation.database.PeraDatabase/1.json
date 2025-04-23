@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "958a3c215a97f2e685212d057acc3590",
+    "identityHash": "1a357e5ace97773ae5b296c2c2af3928",
     "entities": [
       {
         "tableName": "account_information",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`algo_address` TEXT NOT NULL, `algo_amount` TEXT NOT NULL, `opted_in_apps_count` INTEGER NOT NULL, `apps_total_extra_pages` INTEGER NOT NULL, `auth_algo_address` TEXT, `created_at_round` INTEGER, `last_fetched_round` INTEGER NOT NULL, `total_created_apps_count` INTEGER NOT NULL, `total_created_assets_count` INTEGER NOT NULL, `app_state_schema_num_byte_slice` INTEGER, `app_state_schema_num_uint` INTEGER, PRIMARY KEY(`algo_address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`algo_address` TEXT NOT NULL, `algo_amount` TEXT NOT NULL, `opted_in_apps_count` INTEGER NOT NULL, `apps_total_extra_pages` INTEGER NOT NULL, `auth_algo_address` TEXT, `created_at_round` INTEGER, `last_fetched_round` INTEGER NOT NULL, `total_created_apps_count` INTEGER NOT NULL, `total_created_assets_count` INTEGER NOT NULL, `app_state_schema_num_byte_slice` INTEGER, `app_state_schema_num_uint` INTEGER, `min_required_balance` TEXT NOT NULL, PRIMARY KEY(`algo_address`))",
         "fields": [
           {
             "fieldPath": "algoAddress",
@@ -69,6 +69,12 @@
             "fieldPath": "appStateSchemaUint",
             "columnName": "app_state_schema_num_uint",
             "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "minRequiredBalance",
+            "columnName": "min_required_balance",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -503,7 +509,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '958a3c215a97f2e685212d057acc3590')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1a357e5ace97773ae5b296c2c2af3928')"
     ]
   }
 }

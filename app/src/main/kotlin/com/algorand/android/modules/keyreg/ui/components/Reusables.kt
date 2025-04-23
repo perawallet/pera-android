@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -19,22 +19,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.algorand.android.ui.compose.theme.PeraTheme
 
 @SuppressLint("ComposableNaming")
 @Composable
 fun algorandDivider() {
     HorizontalDivider(
         modifier =
-        Modifier
-            .width(327.dp),
+            Modifier
+                .width(327.dp),
         thickness = 1.dp,
-        color = Color.Gray,
+        color = PeraTheme.colors.divider.dark,
     )
 }
 
@@ -49,14 +49,14 @@ fun algorandButton(
         colors = ButtonDefaults.buttonColors(Color.Black),
         shape = RoundedCornerShape(8.dp),
         modifier =
-        Modifier
-            .width(327.dp)
-            .height(52.dp),
+            Modifier
+                .width(327.dp)
+                .height(52.dp),
     ) {
         Text(
             text = buttonText,
-            style = MaterialTheme.typography.labelLarge,
-            color = Color.White,
+            style = PeraTheme.typography.body.regular.sansMedium,
+            color = PeraTheme.colors.text.main,
         )
     }
 }

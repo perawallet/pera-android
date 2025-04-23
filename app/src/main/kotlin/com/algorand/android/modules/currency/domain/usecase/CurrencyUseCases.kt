@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -26,6 +26,10 @@ fun interface GetPrimaryCurrencySymbolOrName {
 
 fun interface GetSecondaryCurrencySymbol {
     operator fun invoke(): String
+}
+
+fun interface IsPrimaryCurrencyUsd {
+    operator fun invoke(): Boolean
 }
 
 fun interface IsPrimaryCurrencyAlgo {

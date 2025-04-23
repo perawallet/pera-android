@@ -35,7 +35,7 @@ internal class GetAccountSelectionAccountItemsUseCase @Inject constructor(
         val sortedAccountListItems = getSortedAccountsByPreference(
             onLoadedAccountConfiguration = {
                 createLoadedAccountConfiguration(
-                    accountDetail = this,
+                    accountLite = this,
                     showHoldings = showHoldings,
                     selectedCurrencySymbol = selectedCurrencySymbol
                 )

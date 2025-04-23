@@ -16,6 +16,7 @@ import com.algorand.android.modules.parity.domain.model.AlgoAmountValue
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import java.math.BigDecimal
+import java.math.BigInteger
 
 data class AccountLite(
     val address: String,
@@ -31,6 +32,8 @@ data class AccountLite(
         val algoAmountValue: AlgoAmountValue,
         val primaryAccountValue: BigDecimal,
         val secondaryAccountValue: BigDecimal,
-        val assetCount: Int
+        val assetCount: Int,
+        val minRequiredBalance: BigInteger,
+        val rekeyAuthAddress: String?
     )
 }

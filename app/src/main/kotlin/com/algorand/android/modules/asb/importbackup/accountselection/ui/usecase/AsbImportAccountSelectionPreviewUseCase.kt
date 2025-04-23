@@ -18,11 +18,8 @@ import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AccountIconResource
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
-import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetSortedAccountsByPreference
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.model.AsbImportRestoreResultNavArg
 import com.algorand.android.modules.asb.importbackup.accountrestoreresult.ui.usecase.CreateAsbImportedAddresses
 import com.algorand.android.modules.asb.importbackup.accountselection.ui.mapper.AsbImportAccountSelectionPreviewMapper
@@ -53,16 +50,7 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
     private val getAccountDisplayName: GetAccountDisplayName,
     private val aesPlatformManager: AESPlatformManager,
     private val createAsbImportedAddresses: CreateAsbImportedAddresses,
-    getSortedAccountsByPreference: GetSortedAccountsByPreference,
-    accountItemConfigurationMapper: AccountItemConfigurationMapper,
-    getAccountIconDrawablePreview: GetAccountIconDrawablePreview
-) : BaseMultipleAccountSelectionPreviewUseCase(
-    multipleAccountSelectionListItemMapper,
-    getSortedAccountsByPreference,
-    accountItemConfigurationMapper,
-    getAccountDisplayName,
-    getAccountIconDrawablePreview
-) {
+) : BaseMultipleAccountSelectionPreviewUseCase(multipleAccountSelectionListItemMapper) {
     fun getInitialPreview(): AsbImportAccountSelectionPreview {
         val titleItem = createTitleItem(textResId = R.string.choose_accounts_n_to_restore)
         return asbImportAccountSelectionPreviewMapper.mapToAsbImportAccountSelectionPreview(

@@ -136,7 +136,9 @@ internal class GetAccountLitesFlowUseCase @Inject constructor(
             algoAmountValue = algoAmountValue,
             primaryAccountValue = primaryAccountValue,
             secondaryAccountValue = secondaryAccountValue,
-            assetCount = accountPayload.assetHoldingLiteInformation.size
+            assetCount = accountPayload.assetHoldingLiteInformation.size,
+            minRequiredBalance = accountPayload.accountInfoLiteInformation.minRequiredBalance,
+            rekeyAuthAddress = rekeyAuthAddress
         )
     }
 

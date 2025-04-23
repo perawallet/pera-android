@@ -37,7 +37,7 @@ class BackupAccountSelectionPreviewUseCase @Inject constructor(
         val sortedAccountListItems = getFilteredSortedAccountListWhichNotBackedUp(
             onLoadedAccountConfiguration = {
                 createLoadedAccountConfiguration(
-                    accountDetail = this,
+                    accountLite = this,
                     showHoldings = true,
                     selectedCurrencySymbol = selectedCurrencySymbol
                 )

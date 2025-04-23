@@ -12,41 +12,17 @@
 
 package com.algorand.android.ui.settings.usecase
 
-import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
-import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetSortedAccountsByPreference
+import com.algorand.android.modules.accountsorting.domain.usecase.GetSortedLocalAccounts
 import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import javax.inject.Inject
 
 class DeveloperSettingsPreviewUseCase @Inject constructor(
-    private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
-    private val getSortedAccountsByPreference: GetSortedAccountsByPreference,
-    private val getAccountDisplayName: GetAccountDisplayName,
-    private val getAccountTotalValue: GetAccountTotalValue,
-    private val isActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase
+    private val isActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
+    private val getSortedLocalAccounts: GetSortedLocalAccounts
 ) {
 
     suspend fun getFirstAccountAddress(): String? {
-        val sortedAccountListItem = getSortedAccountsByPreference(
-            onLoadedAccountConfiguration = {
-                val accountValue = getAccountTotalValue(address, includeAlgo = true)
-                accountItemConfigurationMapper(
-                    accountAddress = address,
-                    accountDisplayName = getAccountDisplayName(address),
-                    accountType = accountType,
-                    accountPrimaryValue = accountValue.primaryAccountValue
-                )
-            },
-            onFailedAccountConfiguration = {
-                accountItemConfigurationMapper(
-                    accountAddress = this,
-                    accountDisplayName = getAccountDisplayName(this),
-                    accountType = null
-                )
-            }
-        )
-        return sortedAccountListItem.firstOrNull()?.itemConfiguration?.accountAddress
+        return getSortedLocalAccounts().firstOrNull()?.address
     }
 
     fun isConnectedToTestnet(): Boolean {

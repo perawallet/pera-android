@@ -17,5 +17,6 @@ import java.math.BigInteger
 data class AccountLiteInformation(
     val address: String,
     val rekeyAuthAddress: String?,
-    val algoBalance: BigInteger
+    val algoBalance: BigInteger,
+    val minRequiredBalance: BigInteger
 )

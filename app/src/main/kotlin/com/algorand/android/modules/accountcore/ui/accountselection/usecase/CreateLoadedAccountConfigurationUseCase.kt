@@ -12,30 +12,27 @@
 
 package com.algorand.android.modules.accountcore.ui.accountselection.usecase
 
-import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.utils.formatAsCurrency
-import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import javax.inject.Inject
 
 internal class CreateLoadedAccountConfigurationUseCase @Inject constructor(
-    private val getAccountTotalValue: GetAccountTotalValue,
     private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) : CreateLoadedAccountConfiguration {
 
     override suspend fun invoke(
-        accountDetail: AccountDetail,
+        accountLite: AccountLite,
         showHoldings: Boolean,
         selectedCurrencySymbol: String
     ): BaseItemConfiguration.AccountItemConfiguration {
-        val primaryAccountValue = getAccountTotalValue(accountDetail.address, includeAlgo = true).primaryAccountValue
         val accountPrimaryValueText = if (showHoldings) {
-            primaryAccountValue.formatAsCurrency(
+            accountLite.cachedInfo?.primaryAccountValue?.formatAsCurrency(
                 symbol = selectedCurrencySymbol,
                 isCompact = true,
                 isFiat = true
@@ -43,13 +40,14 @@ internal class CreateLoadedAccountConfigurationUseCase @Inject constructor(
         } else {
             null
         }
+
         return accountItemConfigurationMapper(
-            accountAddress = accountDetail.address,
-            accountDisplayName = getAccountDisplayName(accountDetail.address),
-            accountIconDrawablePreview = getAccountIconDrawablePreview(accountDetail.address),
+            accountAddress = accountLite.address,
+            accountDisplayName = getAccountDisplayName(accountLite),
+            accountIconDrawablePreview = getAccountIconDrawablePreview(accountLite),
             accountPrimaryValueText = accountPrimaryValueText,
-            accountPrimaryValue = primaryAccountValue,
-            accountType = accountDetail.accountType
+            accountPrimaryValue = accountLite.cachedInfo?.primaryAccountValue,
+            accountType = accountLite.cachedInfo?.type
         )
     }
 }

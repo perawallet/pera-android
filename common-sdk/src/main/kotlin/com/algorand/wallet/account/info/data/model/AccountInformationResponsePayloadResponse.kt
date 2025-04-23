@@ -13,6 +13,7 @@
 package com.algorand.wallet.account.info.data.model
 
 import com.google.gson.annotations.SerializedName
+import java.math.BigInteger
 
 internal data class AccountInformationResponsePayloadResponse(
     @SerializedName("address")
@@ -38,5 +39,7 @@ internal data class AccountInformationResponsePayloadResponse(
     @SerializedName("total-created-apps")
     val totalCreatedApps: Int? = null,
     @SerializedName("total-created-assets")
-    val totalCreatedAssets: Int? = null
+    val totalCreatedAssets: Int? = null,
+    @SerializedName("min-balance")
+    val minRequiredBalance: BigInteger?
 )

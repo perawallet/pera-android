@@ -63,7 +63,7 @@ internal interface AccountInformationRepository {
     suspend fun getFailedAccountInformation(): List<String>
 
     suspend fun getRekeyAuthAddress(address: String): String?
-    
+
     suspend fun getFilteredRekeyedAccountCount(authAddress: String, algoAddresses: List<String>): Int
 
     suspend fun getAccountAlgoBalance(address: String): BigInteger?
@@ -71,4 +71,6 @@ internal interface AccountInformationRepository {
     fun getAccountsLiteInformationFlow(addresses: List<String>): Flow<Map<String, AccountLiteInformation?>>
 
     fun getAssetHoldingsLiteFlow(addresses: List<String>): Flow<Map<String, AssetHoldingLite>>
+
+    suspend fun getCachedAccountMinRequiredBalance(address: String): BigInteger?
 }

@@ -16,6 +16,7 @@ import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurati
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import javax.inject.Inject
 
 internal class CreateNotLoadedAccountConfigurationUseCase @Inject constructor(
@@ -24,13 +25,13 @@ internal class CreateNotLoadedAccountConfigurationUseCase @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) : CreateNotLoadedAccountConfiguration {
 
-    override suspend fun invoke(address: String): BaseItemConfiguration.AccountItemConfiguration {
+    override suspend fun invoke(accountLite: AccountLite): BaseItemConfiguration.AccountItemConfiguration {
         return accountItemConfigurationMapper(
-            accountAddress = address,
-            accountDisplayName = getAccountDisplayName(address),
-            accountIconDrawablePreview = getAccountIconDrawablePreview(address),
+            accountAddress = accountLite.address,
+            accountDisplayName = getAccountDisplayName(accountLite),
+            accountIconDrawablePreview = getAccountIconDrawablePreview(accountLite),
             showWarningIcon = true,
-            accountType = null
+            accountType = accountLite.cachedInfo?.type
         )
     }
 }

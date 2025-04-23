@@ -14,6 +14,8 @@ package com.algorand.android.modules.accounts.lite.di
 
 import com.algorand.android.modules.accounts.lite.domain.manager.AccountLiteManager
 import com.algorand.android.modules.accounts.lite.domain.manager.AccountLiteManagerImpl
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheData
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheDataUseCase
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLitesFlow
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLitesFlowUseCase
@@ -38,4 +40,7 @@ internal object AccountLiteAppModule {
     fun provideGetAccountLiteCacheFlow(accountLiteManager: AccountLiteManager): GetAccountLiteCacheFlow {
         return GetAccountLiteCacheFlow(accountLiteManager::localAccountLitesFlow)
     }
+
+    @Provides
+    fun provideGetAccountLiteCacheData(useCase: GetAccountLiteCacheDataUseCase): GetAccountLiteCacheData = useCase
 }

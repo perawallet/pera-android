@@ -25,3 +25,7 @@ fun interface GetAccountLitesFlow {
 fun interface GetAccountLiteCacheFlow {
     operator fun invoke(): StateFlow<AccountLiteCacheStatus>
 }
+
+fun interface GetAccountLiteCacheData {
+    operator fun invoke(): AccountLiteCacheStatus.Data?
+}

@@ -17,20 +17,11 @@ import androidx.annotation.StringRes
 import com.algorand.android.customviews.TriStatesCheckBox
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
 import com.algorand.android.models.ui.AccountAssetItemButtonState.UNCHECKED
-import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
-import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetSortedAccountsByPreference
 import com.algorand.android.modules.basemultipleaccountselection.ui.mapper.MultipleAccountSelectionListItemMapper
 import com.algorand.android.modules.basemultipleaccountselection.ui.model.MultipleAccountSelectionListItem
-import com.algorand.wallet.account.detail.domain.model.AccountType
 
 open class BaseMultipleAccountSelectionPreviewUseCase(
-    private val multipleAccountSelectionListItemMapper: MultipleAccountSelectionListItemMapper,
-    private val getSortedAccountsByPreference: GetSortedAccountsByPreference,
-    private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
-    private val getAccountDisplayName: GetAccountDisplayName,
-    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
+    private val multipleAccountSelectionListItemMapper: MultipleAccountSelectionListItemMapper
 ) {
 
     protected fun getSelectedAccountAddressList(
@@ -123,38 +114,5 @@ open class BaseMultipleAccountSelectionPreviewUseCase(
             accountCount = accountCount,
             checkboxState = checkboxState
         )
-    }
-
-    protected suspend fun createAccountItemList(
-        excludedAccountTypes: List<AccountType>
-    ): List<MultipleAccountSelectionListItem.AccountItem> {
-        return getSortedAccountsByPreference(
-            excludedAccountTypes = excludedAccountTypes,
-            onLoadedAccountConfiguration = {
-                accountItemConfigurationMapper(
-                    accountAddress = address,
-                    accountDisplayName = getAccountDisplayName(address),
-                    accountIconDrawablePreview = getAccountIconDrawablePreview(address),
-                    accountType = accountType,
-                    showWarningIcon = true
-                )
-            },
-            onFailedAccountConfiguration = {
-                accountItemConfigurationMapper(
-                    accountDisplayName = getAccountDisplayName(this),
-                    accountAddress = this,
-                    accountType = null,
-                    accountIconDrawablePreview = getAccountIconDrawablePreview(this),
-                )
-            }
-        ).mapNotNull { accountListItem ->
-            with(accountListItem.itemConfiguration) {
-                multipleAccountSelectionListItemMapper.mapToAccountItem(
-                    accountDisplayName = accountDisplayName ?: return@mapNotNull null,
-                    accountIconDrawablePreview = accountIconDrawablePreview ?: return@mapNotNull null,
-                    accountViewButtonState = CHECKED
-                )
-            }
-        }
     }
 }

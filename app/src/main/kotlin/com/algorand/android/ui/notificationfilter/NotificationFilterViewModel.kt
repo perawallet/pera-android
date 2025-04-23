@@ -16,7 +16,6 @@ import android.content.SharedPreferences
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.database.NotificationFilterDao
-import com.algorand.android.modules.accountcore.domain.usecase.GetAccountTotalValue
 import com.algorand.android.modules.accountcore.ui.mapper.AccountItemConfigurationMapper
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
@@ -37,11 +36,10 @@ class NotificationFilterViewModel @Inject constructor(
     private val sharedPref: SharedPreferences,
     private val notificationFilterDao: NotificationFilterDao,
     private val getAccountDisplayName: GetAccountDisplayName,
-    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-    private val getAccountTotalValue: GetAccountTotalValue,
     private val getSortedAccountsByPreference: GetSortedAccountsByPreference,
     private val accountItemConfigurationMapper: AccountItemConfigurationMapper,
     private val notificationRepository: NotificationRepository,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) : BaseViewModel() {
 
     val notificationFilterOperation = MutableStateFlow<Resource<Unit>?>(null)
@@ -54,15 +52,15 @@ class NotificationFilterViewModel @Inject constructor(
                     onLoadedAccountConfiguration = {
                         accountItemConfigurationMapper(
                             accountAddress = address,
-                            accountDisplayName = getAccountDisplayName(address),
-                            accountType = accountType,
-                            accountIconDrawablePreview = getAccountIconDrawablePreview(address),
-                            accountPrimaryValue = getAccountTotalValue(address, true).primaryAccountValue,
+                            accountDisplayName = getAccountDisplayName(this),
+                            accountType = cachedInfo?.type,
+                            accountIconDrawablePreview = getAccountIconDrawablePreview(this),
+                            accountPrimaryValue = cachedInfo?.primaryAccountValue,
                         )
                     },
                     onFailedAccountConfiguration = {
                         accountItemConfigurationMapper(
-                            accountAddress = this,
+                            accountAddress = address,
                             accountDisplayName = getAccountDisplayName(this),
                             accountType = null,
                             accountIconDrawablePreview = getAccountIconDrawablePreview(this),

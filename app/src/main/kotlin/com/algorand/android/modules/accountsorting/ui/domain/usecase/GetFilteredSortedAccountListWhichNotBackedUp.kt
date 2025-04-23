@@ -13,13 +13,13 @@
 package com.algorand.android.modules.accountsorting.ui.domain.usecase
 
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem
-import com.algorand.wallet.account.detail.domain.model.AccountDetail
 
 interface GetFilteredSortedAccountListWhichNotBackedUp {
 
     suspend operator fun invoke(
-        onLoadedAccountConfiguration: suspend AccountDetail.() -> BaseItemConfiguration.AccountItemConfiguration,
-        onFailedAccountConfiguration: suspend String.() -> BaseItemConfiguration.AccountItemConfiguration?
+        onLoadedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration,
+        onFailedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration?
     ): List<BaseAccountAndAssetListItem.AccountListItem>
 }

@@ -12,7 +12,8 @@
 
 package com.algorand.wallet.foundation.database.converters
 
-import androidx.room.*
+import androidx.room.ProvidedTypeConverter
+import androidx.room.TypeConverter
 import java.math.BigInteger
 
 @ProvidedTypeConverter
@@ -24,7 +25,7 @@ internal object BigIntegerTypeConverter {
     }
 
     @TypeConverter
-    fun stringToBigInteger(value: String): BigInteger {
-        return value.toBigInteger()
+    fun stringToBigInteger(value: String): BigInteger? {
+        return value.toBigIntegerOrNull()
     }
 }

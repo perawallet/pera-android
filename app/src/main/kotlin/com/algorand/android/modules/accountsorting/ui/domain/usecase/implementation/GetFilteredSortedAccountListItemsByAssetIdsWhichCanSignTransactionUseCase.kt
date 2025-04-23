@@ -13,22 +13,22 @@
 package com.algorand.android.modules.accountsorting.ui.domain.usecase.implementation
 
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheData
 import com.algorand.android.modules.accountsorting.domain.usecase.GetSortedLocalAccounts
 import com.algorand.android.modules.accountsorting.ui.domain.mapper.BaseAccountAndAssetListItemMapper
 import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
 import com.algorand.android.modules.accountsorting.ui.domain.util.ItemConfigurationHelper
-import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 
 internal class GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransactionUseCase @Inject constructor(
     private val getSortedLocalAccounts: GetSortedLocalAccounts,
-    private val getAccountsDetails: GetAccountsDetails,
+    private val getAccountLiteCacheData: GetAccountLiteCacheData,
     private val baseAccountAndAssetListItemMapper: BaseAccountAndAssetListItemMapper,
     private val isAssetOwnedByAccount: IsAssetOwnedByAccount
 ) : GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction {
@@ -36,17 +36,17 @@ internal class GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransactio
     override suspend operator fun invoke(
         accountFilterAssetId: Long?,
         excludedAccountTypes: List<AccountType>?,
-        onLoadedAccountConfiguration: suspend AccountDetail.() -> BaseItemConfiguration.AccountItemConfiguration,
-        onFailedAccountConfiguration: suspend String.() -> BaseItemConfiguration.AccountItemConfiguration?
+        onLoadedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration,
+        onFailedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration?
     ): List<BaseAccountAndAssetListItem.AccountListItem> {
-        val accountsDetails = getAccountsDetails()
+        val accountLites = getAccountLiteCacheData()?.accountLites.orEmpty()
         return getSortedLocalAccounts().mapNotNull { account ->
-            val accountDetail = accountsDetails.find { it.address == account.address } ?: return@mapNotNull null
-            val isAccountTypeValid = isAccountTypeValid(excludedAccountTypes, accountDetail.accountType)
-            if (isAccountTypeValid && accountDetail.accountType?.canSignTransaction() == true) {
-                val isAssetIdValid = isAssetIdValid(accountDetail, accountFilterAssetId)
+            val accountLite = accountLites[account.address] ?: return@mapNotNull null
+            val isAccountTypeValid = isAccountTypeValid(excludedAccountTypes, accountLite.cachedInfo?.type)
+            if (isAccountTypeValid && accountLite.cachedInfo?.type?.canSignTransaction() == true) {
+                val isAssetIdValid = isAssetIdValid(accountLite.address, accountFilterAssetId)
                 if (isAssetIdValid) {
-                    getAccountListItem(accountDetail, onLoadedAccountConfiguration, onFailedAccountConfiguration)
+                    getAccountListItem(accountLite, onLoadedAccountConfiguration, onFailedAccountConfiguration)
                 } else {
                     null
                 }
@@ -57,13 +57,12 @@ internal class GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransactio
     }
 
     private suspend fun getAccountListItem(
-        accountDetail: AccountDetail,
-        onLoadedAccountConfiguration: suspend AccountDetail.() -> BaseItemConfiguration.AccountItemConfiguration,
-        onFailedAccountConfiguration: suspend String.() -> BaseItemConfiguration.AccountItemConfiguration?
+        accountLite: AccountLite,
+        onLoadedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration,
+        onFailedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration?
     ): BaseAccountAndAssetListItem.AccountListItem? {
         val accountItemConfiguration = ItemConfigurationHelper.configureListItem(
-            accountDetail = accountDetail,
-            accountAddress = accountDetail.address,
+            accountLite = accountLite,
             onLoadedAccountConfiguration = onLoadedAccountConfiguration,
             onFailedAccountConfiguration = onFailedAccountConfiguration
         ) ?: return null
@@ -76,9 +75,8 @@ internal class GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransactio
         return accountType !in excludedAccountTypes
     }
 
-    private suspend fun isAssetIdValid(accountDetail: AccountDetail?, filteredAssetId: Long?): Boolean {
+    private suspend fun isAssetIdValid(address: String, filteredAssetId: Long?): Boolean {
         if (filteredAssetId == null || filteredAssetId == ALGO_ID) return true
-        if (accountDetail?.address == null) return false
-        return isAssetOwnedByAccount(accountDetail.address, filteredAssetId)
+        return isAssetOwnedByAccount(address, filteredAssetId)
     }
 }

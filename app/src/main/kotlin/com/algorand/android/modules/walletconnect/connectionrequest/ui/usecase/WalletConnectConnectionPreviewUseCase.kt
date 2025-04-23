@@ -16,10 +16,9 @@ import com.algorand.android.R
 import com.algorand.android.models.ui.AccountAssetItemButtonState.CHECKED
 import com.algorand.android.models.ui.AccountAssetItemButtonState.UNCHECKED
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
-import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewByType
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
-import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
-import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheData
 import com.algorand.android.modules.walletconnect.connectionrequest.domain.usecase.WCDomainScammerStateUseCase
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper.BaseWalletConnectConnectionItemMapper
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.mapper.WCSessionRequestResultMapper
@@ -41,8 +40,8 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
     private val wcSessionRequestResultMapper: WCSessionRequestResultMapper,
     private val walletConnectNetworkItemMapper: WalletConnectNetworkItemMapper,
     private val wcDomainScammerStateUseCase: WCDomainScammerStateUseCase,
-    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
-    private val getAccountIconDrawablePreviewByType: GetAccountIconDrawablePreviewByType,
+    private val getAccountLiteCacheData: GetAccountLiteCacheData,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountDisplayName: GetAccountDisplayName
 ) {
 
@@ -108,16 +107,11 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
         val preSelectedButtonState = if (isThereOnlyOneAccount) CHECKED else UNCHECKED
 
         return sortedAccountList.map { accountLite ->
-            val iconDrawablePreview = if (accountLite.cachedInfo?.type != null) {
-                getAccountIconDrawablePreviewByType(accountLite.cachedInfo.type)
-            } else {
-                getAccountIconDrawablePreviewByType(accountLite.registrationType)
-            }
             with(accountLite) {
                 baseWalletConnectConnectionItemMapper.mapToAccountItem(
                     accountAddress = address,
-                    accountIconDrawablePreview = iconDrawablePreview,
-                    accountDisplayName = getAccountDisplayName(address, customName, cachedInfo?.type),
+                    accountIconDrawablePreview = getAccountIconDrawablePreview(this),
+                    accountDisplayName = getAccountDisplayName(this),
                     buttonState = preSelectedButtonState,
                     isChecked = isThereOnlyOneAccount
                 )
@@ -126,7 +120,7 @@ class WalletConnectConnectionPreviewUseCase @Inject constructor(
     }
 
     private fun createSortedAccountList(): Collection<AccountLite> {
-        return (getAccountLiteCacheFlow().value as? AccountLiteCacheStatus.Data)?.accountLites
+        return getAccountLiteCacheData()?.accountLites
             ?.filter { it.value.cachedInfo?.type?.canSignTransaction() == true }
             ?.values
             .orEmpty()

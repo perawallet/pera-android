@@ -13,15 +13,21 @@
 package com.algorand.wallet.account.core.domain.usecase
 
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import java.math.BigInteger
 import javax.inject.Inject
 
 internal class GetAccountMinBalanceUseCase @Inject constructor(
-    private val getAccountInformation: GetAccountInformation
+    private val getAccountInformation: GetAccountInformation,
+    private val accountInformationRepository: AccountInformationRepository
 ) : GetAccountMinBalance {
 
     override suspend fun invoke(accountAddress: String): BigInteger {
+        val cachedRequiredMinBalance = accountInformationRepository.getCachedAccountMinRequiredBalance(accountAddress)
+        if (cachedRequiredMinBalance != null) {
+            return cachedRequiredMinBalance
+        }
         val accountInformation = getAccountInformation(accountAddress) ?: return BigInteger.ZERO
         return invoke(accountInformation)
     }

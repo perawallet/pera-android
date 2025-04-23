@@ -39,7 +39,7 @@ class AddAssetAccountSelectionPreviewUseCase @Inject constructor(
             excludedAccountTypes = null,
             onLoadedAccountConfiguration = {
                 createLoadedAccountConfiguration(
-                    accountDetail = this,
+                    accountLite = this,
                     showHoldings = true,
                     selectedCurrencySymbol = selectedCurrencySymbol
                 )

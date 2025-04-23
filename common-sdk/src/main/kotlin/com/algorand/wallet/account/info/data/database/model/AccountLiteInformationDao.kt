@@ -21,5 +21,7 @@ internal data class AccountLiteInformationDao(
     @ColumnInfo(name = "auth_algo_address")
     val rekeyAuthAddress: String?,
     @ColumnInfo(name = "algo_amount")
-    val algoBalance: BigInteger
+    val algoBalance: BigInteger,
+    @ColumnInfo(name = "min_required_balance")
+    val minRequiredBalance: BigInteger
 )

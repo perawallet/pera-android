@@ -204,7 +204,8 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
                 accountLiteInformation.address to AccountLiteInformation(
                     address = accountLiteInformation.address,
                     rekeyAuthAddress = accountLiteInformation.rekeyAuthAddress,
-                    algoBalance = accountLiteInformation.algoBalance
+                    algoBalance = accountLiteInformation.algoBalance,
+                    minRequiredBalance = accountLiteInformation.minRequiredBalance
                 )
             }
         }
@@ -228,6 +229,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
             }
             assetHoldingMap
         }
+    }
+
+    override suspend fun getCachedAccountMinRequiredBalance(address: String): BigInteger? {
+        return accountInformationDao.getMinRequiredBalance(address)
     }
 
     private suspend fun PeraResult<AccountInformationResponse>.mapToAccountInfo(): PeraResult<AccountInformation> {

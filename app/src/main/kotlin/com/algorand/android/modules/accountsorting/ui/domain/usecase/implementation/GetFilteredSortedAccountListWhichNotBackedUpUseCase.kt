@@ -13,38 +13,34 @@
 package com.algorand.android.modules.accountsorting.ui.domain.usecase.implementation
 
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheData
 import com.algorand.android.modules.accountsorting.domain.usecase.GetSortedLocalAccounts
 import com.algorand.android.modules.accountsorting.ui.domain.mapper.BaseAccountAndAssetListItemMapper
 import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetFilteredSortedAccountListWhichNotBackedUp
 import com.algorand.android.modules.accountsorting.ui.domain.util.ItemConfigurationHelper.configureListItem
-import com.algorand.wallet.account.custom.domain.usecase.GetBackedUpAccounts
-import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
 import javax.inject.Inject
 
 internal class GetFilteredSortedAccountListWhichNotBackedUpUseCase @Inject constructor(
     private val getSortedLocalAccounts: GetSortedLocalAccounts,
-    private val getBackedUpAccounts: GetBackedUpAccounts,
-    private val getAccountsDetails: GetAccountsDetails,
     private val baseAccountAndAssetListItemMapper: BaseAccountAndAssetListItemMapper,
+    private val getAccountLiteCacheData: GetAccountLiteCacheData
 ) : GetFilteredSortedAccountListWhichNotBackedUp {
 
     override suspend fun invoke(
-        onLoadedAccountConfiguration: suspend AccountDetail.() -> BaseItemConfiguration.AccountItemConfiguration,
-        onFailedAccountConfiguration: suspend String.() -> BaseItemConfiguration.AccountItemConfiguration?
+        onLoadedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration,
+        onFailedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration?
     ): List<BaseAccountAndAssetListItem.AccountListItem> {
-        val backedUpAccounts = getBackedUpAccounts()
-        val accountsDetail = getAccountsDetails()
+        val accountLites = getAccountLiteCacheData()?.accountLites
         return getSortedLocalAccounts().mapIndexedNotNull { _, account ->
-            val accountDetail = accountsDetail.find { it.address == account.address } ?: return@mapIndexedNotNull null
-            val isBackedUp = backedUpAccounts.contains(account.address)
-            val canSignTransaction = accountDetail.accountType?.canSignTransaction() == true
+            val accountLite = accountLites?.get(account.address) ?: return@mapIndexedNotNull null
+            val isBackedUp = accountLite.isBackedUp
+            val canSignTransaction = accountLite.cachedInfo?.type?.canSignTransaction() == true
             if (canSignTransaction && !isBackedUp) {
                 val accountItemConfiguration = configureListItem(
-                    accountDetail = accountDetail,
-                    accountAddress = account.address,
+                    accountLite = accountLite,
                     onLoadedAccountConfiguration = onLoadedAccountConfiguration,
                     onFailedAccountConfiguration = onFailedAccountConfiguration
                 ) ?: return@mapIndexedNotNull null

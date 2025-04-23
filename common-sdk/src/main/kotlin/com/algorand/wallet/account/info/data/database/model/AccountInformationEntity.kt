@@ -51,5 +51,8 @@ internal data class AccountInformationEntity(
     val appStateNumByteSlice: Long?,
 
     @ColumnInfo(name = "app_state_schema_num_uint")
-    val appStateSchemaUint: Long?
+    val appStateSchemaUint: Long?,
+
+    @ColumnInfo(name = "min_required_balance")
+    val minRequiredBalance: BigInteger
 )

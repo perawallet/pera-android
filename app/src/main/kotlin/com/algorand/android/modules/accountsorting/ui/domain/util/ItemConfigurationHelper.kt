@@ -13,20 +13,19 @@
 package com.algorand.android.modules.accountsorting.ui.domain.util
 
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
-import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 
 internal object ItemConfigurationHelper {
 
     suspend fun configureListItem(
-        accountDetail: AccountDetail,
-        accountAddress: String,
-        onLoadedAccountConfiguration: suspend AccountDetail.() -> BaseItemConfiguration.AccountItemConfiguration,
-        onFailedAccountConfiguration: suspend String.() -> BaseItemConfiguration.AccountItemConfiguration?
+        accountLite: AccountLite,
+        onLoadedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration,
+        onFailedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration?
     ): BaseItemConfiguration.AccountItemConfiguration? {
-        return if (accountDetail.accountType != null) {
-            onLoadedAccountConfiguration(accountDetail)
+        return if (accountLite.cachedInfo != null) {
+            onLoadedAccountConfiguration(accountLite)
         } else {
-            onFailedAccountConfiguration.invoke((accountAddress))
+            onFailedAccountConfiguration.invoke(accountLite)
         }
     }
 }

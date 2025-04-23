@@ -13,6 +13,8 @@
 package com.algorand.android.modules.accountsorting.ui.domain.usecase.implementation
 
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheData
 import com.algorand.android.modules.accountsorting.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.modules.accountsorting.domain.usecase.GetSortedLocalAccounts
 import com.algorand.android.modules.accountsorting.ui.domain.mapper.AccountAndAssetAccountListItemMapper
@@ -20,22 +22,20 @@ import com.algorand.android.modules.accountsorting.ui.domain.model.AccountAndAss
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetSortedAccountsByPreference
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.SortAccountsBySortingPreference
 import com.algorand.android.modules.accountsorting.ui.domain.util.ItemConfigurationHelper
-import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import javax.inject.Inject
 
 internal class GetSortedAccountsByPreferenceUseCase @Inject constructor(
     private val getSortedLocalAccounts: GetSortedLocalAccounts,
-    private val getAccountDetail: GetAccountDetail,
     private val accountAndAssetAccountListItemMapper: AccountAndAssetAccountListItemMapper,
-    private val sortAccountsBySortingPreference: SortAccountsBySortingPreference
+    private val sortAccountsBySortingPreference: SortAccountsBySortingPreference,
+    private val getAccountLiteCacheData: GetAccountLiteCacheData
 ) : GetSortedAccountsByPreference {
 
     override suspend fun invoke(
         excludedAccountTypes: List<AccountType>?,
-        onLoadedAccountConfiguration: suspend AccountDetail.() -> BaseItemConfiguration.AccountItemConfiguration,
-        onFailedAccountConfiguration: suspend String.() -> BaseItemConfiguration.AccountItemConfiguration?
+        onLoadedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration,
+        onFailedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration?
     ): List<AccountAndAssetListItem.AccountListItem> {
         val accountListItems = getAccountListItems(
             excludedAccountTypes = excludedAccountTypes,
@@ -48,8 +48,8 @@ internal class GetSortedAccountsByPreferenceUseCase @Inject constructor(
     override suspend fun invoke(
         sortingIdentifier: AccountSortingTypeIdentifier,
         excludedAccountTypes: List<AccountType>?,
-        onLoadedAccountConfiguration: suspend AccountDetail.() -> BaseItemConfiguration.AccountItemConfiguration,
-        onFailedAccountConfiguration: suspend String.() -> BaseItemConfiguration.AccountItemConfiguration?
+        onLoadedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration,
+        onFailedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration?
     ): List<AccountAndAssetListItem.AccountListItem> {
         val accountListItems = getAccountListItems(
             excludedAccountTypes = excludedAccountTypes,
@@ -61,17 +61,17 @@ internal class GetSortedAccountsByPreferenceUseCase @Inject constructor(
 
     private suspend fun getAccountListItems(
         excludedAccountTypes: List<AccountType>?,
-        onLoadedAccountConfiguration: suspend AccountDetail.() -> BaseItemConfiguration.AccountItemConfiguration,
-        onFailedAccountConfiguration: suspend String.() -> BaseItemConfiguration.AccountItemConfiguration?
+        onLoadedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration,
+        onFailedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration?
     ): List<AccountAndAssetListItem.AccountListItem> {
+        val accountLites = getAccountLiteCacheData()?.accountLites
         val localAccounts = getSortedLocalAccounts()
         return localAccounts.mapIndexedNotNull { _, account ->
-            val accountDetail = getAccountDetail(account.address)
-            val isAccountTypeValid = isAccountTypeValid(excludedAccountTypes, accountDetail.accountType)
+            val accountLite = accountLites?.get(account.address) ?: return@mapIndexedNotNull null
+            val isAccountTypeValid = isAccountTypeValid(excludedAccountTypes, accountLite.cachedInfo?.type)
             if (isAccountTypeValid) {
                 val accountItemConfiguration = ItemConfigurationHelper.configureListItem(
-                    accountDetail = accountDetail,
-                    accountAddress = account.address,
+                    accountLite = accountLite,
                     onLoadedAccountConfiguration = onLoadedAccountConfiguration,
                     onFailedAccountConfiguration = onFailedAccountConfiguration
                 ) ?: return@mapIndexedNotNull null

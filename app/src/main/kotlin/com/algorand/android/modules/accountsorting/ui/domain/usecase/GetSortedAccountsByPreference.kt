@@ -13,23 +13,23 @@
 package com.algorand.android.modules.accountsorting.ui.domain.usecase
 
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accountsorting.domain.model.AccountSortingTypeIdentifier
 import com.algorand.android.modules.accountsorting.ui.domain.model.AccountAndAssetListItem
-import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.model.AccountType
 
 interface GetSortedAccountsByPreference {
 
     suspend operator fun invoke(
         excludedAccountTypes: List<AccountType>? = null,
-        onLoadedAccountConfiguration: suspend AccountDetail.() -> BaseItemConfiguration.AccountItemConfiguration,
-        onFailedAccountConfiguration: suspend String.() -> BaseItemConfiguration.AccountItemConfiguration?
+        onLoadedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration,
+        onFailedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration?
     ): List<AccountAndAssetListItem.AccountListItem>
 
     suspend operator fun invoke(
         sortingIdentifier: AccountSortingTypeIdentifier,
         excludedAccountTypes: List<AccountType>? = null,
-        onLoadedAccountConfiguration: suspend AccountDetail.() -> BaseItemConfiguration.AccountItemConfiguration,
-        onFailedAccountConfiguration: suspend String.() -> BaseItemConfiguration.AccountItemConfiguration?
+        onLoadedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration,
+        onFailedAccountConfiguration: suspend AccountLite.() -> BaseItemConfiguration.AccountItemConfiguration?
     ): List<AccountAndAssetListItem.AccountListItem>
 }

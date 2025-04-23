@@ -14,19 +14,19 @@ package com.algorand.android.modules.accountcore.ui.accountselection.usecase
 
 import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
-import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.wallet.account.detail.domain.model.AccountType
 
 fun interface CreateLoadedAccountConfiguration {
     suspend operator fun invoke(
-        accountDetail: AccountDetail,
+        accountLite: AccountLite,
         showHoldings: Boolean,
         selectedCurrencySymbol: String
     ): BaseItemConfiguration.AccountItemConfiguration
 }
 
 fun interface CreateNotLoadedAccountConfiguration {
-    suspend operator fun invoke(address: String): BaseItemConfiguration.AccountItemConfiguration
+    suspend operator fun invoke(accountLite: AccountLite): BaseItemConfiguration.AccountItemConfiguration
 }
 
 fun interface GetAccountSelectionAccountItems {

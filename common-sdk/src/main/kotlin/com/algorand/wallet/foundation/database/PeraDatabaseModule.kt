@@ -14,6 +14,7 @@ package com.algorand.wallet.foundation.database
 
 import android.content.Context
 import androidx.room.Room
+import com.algorand.wallet.foundation.database.migration.PeraDatabaseMigration1to2
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,6 +35,8 @@ internal object PeraDatabaseModule {
             context = context,
             klass = PeraDatabase::class.java,
             name = PeraDatabase.DATABASE_NAME
-        ).build()
+        )
+            .addMigrations(PeraDatabaseMigration1to2)
+            .build()
     }
 }

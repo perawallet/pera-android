@@ -15,6 +15,7 @@ package com.algorand.android.modules.accountcore.ui.usecase
 import android.content.res.Resources
 import com.algorand.android.R
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
@@ -81,6 +82,17 @@ internal class GetAccountDisplayNameUseCase @Inject constructor(
                 accountAddress = address,
                 primaryDisplayName = getPrimaryName(address, customAccountInfo?.customName, nameService),
                 secondaryDisplayName = getSecondaryName(address, customAccountInfo?.customName, nameService)
+            )
+        }
+    }
+
+    override suspend fun invoke(accountLite: AccountLite): AccountDisplayName {
+        val nameService = getAccountNameService(accountLite.address)
+        return with(accountLite) {
+            AccountDisplayName(
+                accountAddress = address,
+                primaryDisplayName = getPrimaryName(address, customName, nameService),
+                secondaryDisplayName = getSecondaryName(address, customName, nameService)
             )
         }
     }

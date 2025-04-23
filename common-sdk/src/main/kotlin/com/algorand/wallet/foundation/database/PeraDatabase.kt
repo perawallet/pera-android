@@ -69,7 +69,7 @@ internal abstract class PeraDatabase : RoomDatabase() {
     abstract fun customHdSeedInfoDao(): CustomHdSeedInfoDao
 
     companion object {
-        const val DATABASE_VERSION = 1
+        const val DATABASE_VERSION = 2
         const val DATABASE_NAME = "pera_database"
     }
 }

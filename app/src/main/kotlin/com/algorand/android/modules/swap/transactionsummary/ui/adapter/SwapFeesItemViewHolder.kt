@@ -34,7 +34,8 @@ class SwapFeesItemViewHolder(
 
                 optInFeesGroup.isVisible = isOptInFeesVisible
                 peraFeesGroup.isVisible = isPeraFeeVisible
-                exchangeFeesGroup.isVisible = isExchangeFeesVisible
+                // hide UI element for now since FF has no exchange fees, we may show in future
+                exchangeFeesGroup.isVisible = false
             }
         }
     }

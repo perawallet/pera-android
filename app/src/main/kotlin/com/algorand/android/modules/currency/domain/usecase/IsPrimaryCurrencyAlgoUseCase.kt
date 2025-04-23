@@ -18,6 +18,5 @@ import javax.inject.Inject
 internal class IsPrimaryCurrencyAlgoUseCase @Inject constructor(
     private val getPrimaryCurrencyId: GetPrimaryCurrencyId
 ) : IsPrimaryCurrencyAlgo {
-
     override fun invoke(): Boolean = getPrimaryCurrencyId() == Currency.ALGO.id
 }

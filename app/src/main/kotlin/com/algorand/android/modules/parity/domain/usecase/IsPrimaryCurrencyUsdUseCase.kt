@@ -12,30 +12,11 @@
 
 package com.algorand.android.modules.currency.domain.usecase
 
-fun interface GetPrimaryCurrencyName {
-    operator fun invoke(): String
-}
+import com.algorand.android.modules.currency.domain.model.Currency
+import javax.inject.Inject
 
-fun interface GetPrimaryCurrencySymbol {
-    operator fun invoke(): String?
-}
-
-fun interface GetPrimaryCurrencySymbolOrName {
-    operator fun invoke(): String
-}
-
-fun interface GetSecondaryCurrencySymbol {
-    operator fun invoke(): String
-}
-
-fun interface IsPrimaryCurrencyUsd {
-    operator fun invoke(): Boolean
-}
-
-fun interface IsPrimaryCurrencyAlgo {
-    operator fun invoke(): Boolean
-}
-
-fun interface GetPrimaryCurrencyId {
-    operator fun invoke(): String
+internal class IsPrimaryCurrencyUsdUseCase @Inject constructor(
+    private val getPrimaryCurrencyId: GetPrimaryCurrencyId
+) : IsPrimaryCurrencyUsd {
+    override fun invoke(): Boolean = getPrimaryCurrencyId() == Currency.USD.id
 }

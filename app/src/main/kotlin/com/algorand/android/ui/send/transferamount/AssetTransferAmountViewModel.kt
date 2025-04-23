@@ -18,11 +18,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.AssetTransferAmountPreview
+import com.algorand.android.ui.send.transferamount.AssetTransferAmountViewModel.ViewEvent
 import com.algorand.android.usecase.AssetTransferAmountPreviewUseCase
 import com.algorand.android.usecase.AssetTransferAmountUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrElse
 import com.algorand.android.utils.getOrThrow
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -37,8 +40,9 @@ import kotlinx.coroutines.launch
 class AssetTransferAmountViewModel @Inject constructor(
     private val assetTransferAmountUseCase: AssetTransferAmountUseCase,
     private val assetTransferAmountPreviewUseCase: AssetTransferAmountPreviewUseCase,
+    private val eventDelegate: EventDelegate<ViewEvent>,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
     var assetTransaction = savedStateHandle.getOrThrow<AssetTransaction>(ASSET_TRANSACTION_KEY)
         private set
@@ -83,8 +87,13 @@ class AssetTransferAmountViewModel @Inject constructor(
         }
     }
 
-    fun getMaximumAmountOfAsset(): String {
-        return with(assetTransaction) { assetTransferAmountUseCase.getMaximumAmountOfAsset(assetId, senderAddress) }
+    fun setMaximumAmountOfAsset() {
+        viewModelScope.launch(Dispatchers.IO) {
+            with(assetTransaction) {
+                val result = assetTransferAmountUseCase.getMaximumAmountOfAsset(assetId, senderAddress)
+                eventDelegate.sendEvent(ViewEvent.GetMaximumAmountOfAsset(result))
+            }
+        }
     }
 
     fun shouldShowTransactionTips(): Boolean {
@@ -128,6 +137,12 @@ class AssetTransferAmountViewModel @Inject constructor(
 
     fun isExpressSendWarningEnabled(isArc59Transaction: Boolean): Boolean {
         return assetTransferAmountUseCase.isExpressSendWarningEnabled(isArc59Transaction)
+    }
+
+    sealed interface ViewEvent {
+        data class GetMaximumAmountOfAsset(val formattedMaximumAmount: String) : ViewEvent
+        data object ShowGenericError : ViewEvent
+        data object NavigateBack : ViewEvent
     }
 
     companion object {

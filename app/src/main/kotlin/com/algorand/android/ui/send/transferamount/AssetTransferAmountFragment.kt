@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import com.algorand.android.R
 import com.algorand.android.SendAlgoNavigationDirections
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
@@ -33,6 +34,9 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.ui.common.warningconfirmation.BaseMaximumBalanceWarningBottomSheet
 import com.algorand.android.ui.send.shared.AddNoteBottomSheet
+import com.algorand.android.ui.send.transferamount.AssetTransferAmountViewModel.ViewEvent.GetMaximumAmountOfAsset
+import com.algorand.android.ui.send.transferamount.AssetTransferAmountViewModel.ViewEvent.NavigateBack
+import com.algorand.android.ui.send.transferamount.AssetTransferAmountViewModel.ViewEvent.ShowGenericError
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.AssetName
@@ -115,6 +119,14 @@ class AssetTransferAmountFragment : TransactionSignBaseFragment(R.layout.fragmen
     private var lockedNote: String? by Delegates.observable(null) { _, _, newValue ->
         if (newValue.isNullOrEmpty()) {
             binding.addNoteButton.text = getString(R.string.show_note)
+        }
+    }
+
+    private val viewEventCollector: suspend (AssetTransferAmountViewModel.ViewEvent) -> Unit = {
+        when (it) {
+            is GetMaximumAmountOfAsset -> onGetMaximumAmountOfAsset(it.formattedMaximumAmount)
+            is ShowGenericError -> showGlobalError(getString(R.string.an_error_occured), tag = baseActivityTag)
+            is NavigateBack -> navBack()
         }
     }
 
@@ -266,6 +278,7 @@ class AssetTransferAmountFragment : TransactionSignBaseFragment(R.layout.fragmen
     }
 
     private fun initObservers() {
+        collectLatestOnLifecycle(assetTransferAmountViewModel.viewEvent, viewEventCollector, Lifecycle.State.CREATED)
         viewLifecycleOwner.collectLatestOnLifecycle(
             assetTransferAmountViewModel.assetTransferAmountPreviewFlow,
             assetTransferAmountPreview
@@ -277,8 +290,7 @@ class AssetTransferAmountFragment : TransactionSignBaseFragment(R.layout.fragmen
     }
 
     private fun onMaxButtonClick() {
-        val formattedMaximumAmount = assetTransferAmountViewModel.getMaximumAmountOfAsset()
-        binding.amountTextView.setAmount(formattedMaximumAmount)
+        assetTransferAmountViewModel.setMaximumAmountOfAsset()
     }
 
     private fun onAddButtonClick() {
@@ -389,5 +401,9 @@ class AssetTransferAmountFragment : TransactionSignBaseFragment(R.layout.fragmen
 
     private fun onAssetNotFound() {
         nav(SendAlgoNavigationDirections.actionSendAlgoNavigationPop())
+    }
+
+    private fun onGetMaximumAmountOfAsset(formattedMaximumAmount: String) {
+        binding.amountTextView.setAmount(formattedMaximumAmount)
     }
 }

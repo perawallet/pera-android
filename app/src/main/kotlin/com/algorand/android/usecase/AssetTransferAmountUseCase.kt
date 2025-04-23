@@ -22,7 +22,6 @@ import javax.inject.Inject
 
 class AssetTransferAmountUseCase @Inject constructor(
     private val transactionTipsUseCase: TransactionTipsUseCase,
-    private val getBaseOwnedAssetDataUseCase: GetBaseOwnedAssetDataUseCase,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val arc59ExpressSendUseCase: Arc59ExpressSendUseCase
 ) {

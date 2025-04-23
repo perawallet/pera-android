@@ -82,7 +82,8 @@ class AccountInformationEntityMapperImplTest {
                 totalAppsOptedIn = null,
                 totalCreatedApps = null,
                 totalCreatedAssets = null,
-                appsTotalExtraPages = null
+                appsTotalExtraPages = null,
+                minRequiredBalance = BigInteger.ZERO
             ),
             currentRound = 9
         )
@@ -116,11 +117,12 @@ class AccountInformationEntityMapperImplTest {
             totalAppsOptedIn = 9,
             totalAssetsOptedIn = 4,
             totalCreatedAssets = 0,
-            totalCreatedApps = 0
+            totalCreatedApps = 0,
+            minRequiredBalance = BigInteger.ZERO
         )
         private val ACCOUNT_INFORMATION_RESPONSE = AccountInformationResponse(
             accountInformation = ACCOUNT_INFORMATION_PAYLOAD,
-            currentRound = 9
+            currentRound = 9,
         )
 
         private val ACCOUNT_INFORMATION_ENTITY = AccountInformationEntity(

@@ -122,7 +122,7 @@ class AccountInformationEntityMapperImplTest {
         )
         private val ACCOUNT_INFORMATION_RESPONSE = AccountInformationResponse(
             accountInformation = ACCOUNT_INFORMATION_PAYLOAD,
-            currentRound = 9,
+            currentRound = 9
         )
 
         private val ACCOUNT_INFORMATION_ENTITY = AccountInformationEntity(

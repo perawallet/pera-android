@@ -160,7 +160,8 @@ class AccountInformationMapperImplTest {
                 totalAppsOptedIn = 20,
                 totalAssetsOptedIn = 30,
                 totalCreatedApps = 40,
-                totalCreatedAssets = 50
+                totalCreatedAssets = 50,
+                minRequiredBalance = null
             ),
             currentRound = 0
         )

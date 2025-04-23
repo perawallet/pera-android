@@ -134,7 +134,8 @@ class AccountInformationEntityMapperImplTest {
             totalCreatedAssetsCount = 0,
             totalCreatedAppsCount = 0,
             appStateNumByteSlice = 21,
-            appStateSchemaUint = 12
+            appStateSchemaUint = 12,
+            minRequiredBalance = BigInteger.ZERO
         )
     }
 }

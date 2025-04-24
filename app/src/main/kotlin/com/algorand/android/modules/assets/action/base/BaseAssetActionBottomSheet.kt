@@ -152,7 +152,7 @@ abstract class BaseAssetActionBottomSheet : BaseBottomSheet(R.layout.bottom_shee
                         sizeResId = R.dimen.spacing_xlarge
                     )
                 )
-                setOnLongClickListener { onAccountAddressCopied(publicKey); true }
+                setOnLongClickListener { onCopyAccountAddressToClipboard(publicKey); true }
             }
         }
     }

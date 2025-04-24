@@ -57,7 +57,7 @@ class WatchAccountQuickActionsBottomSheet : BaseBottomSheet(
     }
 
     private fun onCopyAddressClick() {
-        onAccountAddressCopied(accountAddress)
+        onCopyAccountAddressToClipboard(accountAddress)
         navBack()
     }
 

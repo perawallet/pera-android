@@ -75,7 +75,8 @@ fun PeraBodyText(
     modifier: Modifier = Modifier,
     text: String,
     textAlign: TextAlign = TextAlign.Left,
-    color: Color = PeraTheme.colors.text.gray
+    color: Color = PeraTheme.colors.text.gray,
+    maxLines: Int = Int.MAX_VALUE
 ) {
     Text(
         modifier = modifier,
@@ -85,7 +86,8 @@ fun PeraBodyText(
         color = color,
         fontWeight = FontWeight.Medium,
         overflow = TextOverflow.Ellipsis,
-        textAlign = textAlign
+        textAlign = textAlign,
+        maxLines = maxLines
     )
 }
 

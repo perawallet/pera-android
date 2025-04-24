@@ -82,7 +82,7 @@ object PeraLightColor : PeraColor {
         }
 
         override val square = object : PeraColor.SquareButton {
-            override val background = ColorPalette.White.Default
+            override val background = ColorPalette.Turquoise.V700Alpha12
             override val focusBackground = ColorPalette.Gray.V50
             override val secondaryBackground = ColorPalette.Gray.V100
             override val icon = ColorPalette.Turquoise.V600

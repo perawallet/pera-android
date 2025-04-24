@@ -132,7 +132,7 @@ abstract class BaseBottomSheet(@LayoutRes private val layoutResId: Int) : Bottom
         (activity as? MainActivity)?.showMaxAccountLimitExceededError()
     }
 
-    fun onAccountAddressCopied(accountAddress: String) {
+    fun onCopyAccountAddressToClipboard(accountAddress: String) {
         context?.copyToClipboard(textToCopy = accountAddress, showToast = false)
         showTopToast(getString(R.string.address_copied_to_clipboard), accountAddress.toShortenedAddress())
     }

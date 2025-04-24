@@ -42,6 +42,8 @@ import com.algorand.wallet.account.custom.domain.usecase.GetBackedUpAccounts
 import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedAsbBackUpStatus
 import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedCustomInfoOrNull
 import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedCustomName
+import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedIdFromAddress
+import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedIdFromAddressUseCase
 import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomName
@@ -205,4 +207,7 @@ internal object CustomInfoModule {
 
     @Provides
     fun provideClearAllCustomInformation(useCase: ClearAllCustomInformationUseCase): ClearAllCustomInformation = useCase
+
+    @Provides
+    fun provideGetHdSeedIdFromAddress(useCase: GetHdSeedIdFromAddressUseCase): GetHdSeedIdFromAddress = useCase
 }

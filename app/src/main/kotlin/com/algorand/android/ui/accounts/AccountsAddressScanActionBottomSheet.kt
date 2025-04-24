@@ -73,7 +73,7 @@ class AccountsAddressScanActionBottomSheet : BaseBottomSheet(
             addWatchAccountButton.setOnClickListener { accountsAddressScanActionViewModel.onAddWatchAccountClick() }
             addNewContactButton.setOnClickListener { onAddContactClick() }
             accountAddressTextView.text = accountAddress
-            accountAddressContainerView.setOnLongClickListener { onAccountAddressCopied(accountAddress); true }
+            accountAddressContainerView.setOnLongClickListener { onCopyAccountAddressToClipboard(accountAddress); true }
         }
     }
 

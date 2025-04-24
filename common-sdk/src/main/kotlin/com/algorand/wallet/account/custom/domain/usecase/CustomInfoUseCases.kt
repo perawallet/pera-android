@@ -38,6 +38,10 @@ fun interface SetAccountCustomInfo {
     suspend operator fun invoke(customInfo: CustomAccountInfo)
 }
 
+fun interface GetHdSeedIdFromAddress {
+    suspend operator fun invoke(address: String): Int
+}
+
 fun interface GetAccountCustomInfoOrNull {
     suspend operator fun invoke(address: String): CustomAccountInfo?
 }

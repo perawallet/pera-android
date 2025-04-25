@@ -45,6 +45,7 @@
         android:layout_marginTop="@dimen/spacing_xxxsmall"
         android:layout_marginBottom="@dimen/spacing_large"
         android:textAppearance="@style/TextAppearance.Footnote.Description"
+        android:textColor="@color/text_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/typeImageView"

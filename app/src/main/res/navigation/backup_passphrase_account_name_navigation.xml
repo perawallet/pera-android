@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~  Copyright 2022 Pera Wallet, LDA
+  ~  Copyright 2025 Pera Wallet, LDA
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
   ~  You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -33,13 +33,22 @@
             app:destination="@id/createAccountResultInfoFragment"
             app:popUpTo="@id/loginNavigation"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_createAccountNameRegistrationFragment_to_homeNavigation"
+            app:destination="@id/homeNavigation"
+            app:popUpTo="@id/loginNavigation"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="showConfetti"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
     </fragment>
 
     <fragment
         android:id="@+id/createAccountResultInfoFragment"
         android:name="com.algorand.android.ui.register.createaccount.result.CreateAccountResultInfoFragment"
-        android:label="CreateAccountResultInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="CreateAccountResultInfoFragment">
         <action
             android:id="@+id/action_createAccountResultInfoFragment_to_meldNavigation"
             app:destination="@id/meldNavigation"

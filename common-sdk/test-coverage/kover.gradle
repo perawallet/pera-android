@@ -1,0 +1,21 @@
+apply plugin: 'org.jetbrains.kotlinx.kover'
+apply from: './test-coverage/excludes.gradle.kts'
+
+kover {
+    currentProject {
+        createVariant("customDebug") {
+            add(["debug"], false)
+        }
+        createVariant("customRelease") {
+            add(["release"], false)
+        }
+    }
+    reports {
+        filters {
+            excludes {
+                classes(excludedClasses)
+                packages(excludedPackages)
+            }
+        }
+    }
+}

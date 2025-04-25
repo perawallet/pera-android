@@ -1,0 +1,92 @@
+/*
+ * Copyright 2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.wallet.asset.data.mapper.model.collectible
+
+import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleMediaEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleMediaTypeEntity
+import com.algorand.wallet.asset.data.database.model.CollectibleTraitEntity
+import com.algorand.wallet.asset.data.mapper.model.AssetInfoMapper
+import com.algorand.wallet.asset.data.mapper.model.CollectibleInfoMapper
+import com.algorand.wallet.asset.data.mapper.model.VerificationTierMapper
+import com.algorand.wallet.asset.data.model.AssetResponse
+import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaResponse
+import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaTypeResponse.AUDIO
+import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaTypeResponse.IMAGE
+import com.algorand.wallet.asset.data.model.collectible.CollectibleMediaTypeResponse.VIDEO
+import com.algorand.wallet.asset.data.model.collectible.CollectibleResponse
+import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia
+import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia.AudioCollectibleMedia
+import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia.ImageCollectibleMedia
+import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia.UnsupportedCollectibleMedia
+import com.algorand.wallet.asset.domain.model.BaseCollectibleMedia.VideoCollectibleMedia
+import com.algorand.wallet.asset.domain.model.MixedCollectibleDetail
+import javax.inject.Inject
+
+internal class MixedCollectibleDetailMapperImpl @Inject constructor(
+    private val assetInfoMapper: AssetInfoMapper,
+    private val collectibleInfoMapper: CollectibleInfoMapper,
+    private val verificationTierMapper: VerificationTierMapper
+) : MixedCollectibleDetailMapper {
+
+    override fun invoke(
+        assetResponse: AssetResponse,
+        collectibleResponse: CollectibleResponse
+    ): MixedCollectibleDetail? {
+        return MixedCollectibleDetail(
+            id = assetResponse.assetId ?: return null,
+            collectibleInfo = collectibleInfoMapper(collectibleResponse, assetResponse.explorerUrl),
+            assetInfo = assetInfoMapper(assetResponse),
+            verificationTier = verificationTierMapper(assetResponse.verificationTier),
+            collectibleMedias = collectibleResponse.collectibleMedias?.map {
+                it.mapToCollectibleMedia()
+            }.orEmpty()
+        )
+    }
+
+    override fun invoke(
+        entity: AssetDetailEntity,
+        collectibleEntity: CollectibleEntity,
+        collectibleMediaEntities: List<CollectibleMediaEntity>?,
+        collectibleTraitEntities: List<CollectibleTraitEntity>?
+    ): MixedCollectibleDetail {
+        return MixedCollectibleDetail(
+            id = entity.assetId,
+            collectibleInfo = collectibleInfoMapper(collectibleEntity, collectibleTraitEntities, entity.explorerUrl),
+            assetInfo = assetInfoMapper(entity),
+            verificationTier = verificationTierMapper(entity.verificationTier),
+            collectibleMedias = collectibleMediaEntities?.map {
+                it.mapToCollectibleMedia()
+            }.orEmpty()
+        )
+    }
+
+    private fun CollectibleMediaResponse.mapToCollectibleMedia(): BaseCollectibleMedia {
+        return when (mediaType) {
+            IMAGE -> ImageCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+            VIDEO -> VideoCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+            AUDIO -> AudioCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+            else -> UnsupportedCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+        }
+    }
+
+    private fun CollectibleMediaEntity.mapToCollectibleMedia(): BaseCollectibleMedia {
+        return when (mediaType) {
+            CollectibleMediaTypeEntity.IMAGE -> ImageCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+            CollectibleMediaTypeEntity.VIDEO -> VideoCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+            CollectibleMediaTypeEntity.AUDIO -> AudioCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+            else -> UnsupportedCollectibleMedia(downloadUrl, previewUrl, mediaTypeExtension)
+        }
+    }
+}

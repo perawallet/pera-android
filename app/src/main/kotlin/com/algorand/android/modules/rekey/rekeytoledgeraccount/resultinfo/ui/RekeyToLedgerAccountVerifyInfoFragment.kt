@@ -1,0 +1,75 @@
+/*
+ * Copyright 2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android.modules.rekey.rekeytoledgeraccount.resultinfo.ui
+
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.fragment.app.viewModels
+import com.algorand.android.R
+import com.algorand.android.RekeyLedgerNavigationDirections
+import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.ui.common.BaseInfoFragment
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class RekeyToLedgerAccountVerifyInfoFragment : BaseInfoFragment() {
+
+    override val fragmentConfiguration = FragmentConfiguration()
+
+    private val rekeyToLedgerAccountVerifyInfoViewModel: RekeyToLedgerAccountVerifyInfoViewModel by viewModels()
+
+    @Composable
+    override fun Icon(modifier: Modifier) =
+        PeraIcon(
+            painter = painterResource(id = R.drawable.ic_check),
+            contentDescription = stringResource(id = R.string.check),
+            modifier = modifier
+        )
+
+    @Composable
+    override fun Title(modifier: Modifier) =
+        PeraHeadlineText(
+            modifier = modifier,
+            text = stringResource(id = R.string.account_successfully_rekeyed)
+        )
+
+    @Composable
+    override fun Description(modifier: Modifier) {
+        val state = rekeyToLedgerAccountVerifyInfoViewModel.state.collectAsState().value
+        PeraBodyText(
+            text = stringResource(
+                id = R.string.the_account_name_was_successfully_rekeyed_formatted,
+                state.accountDisplayName
+            ),
+            modifier = modifier
+        )
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+        PeraPrimaryButton(
+            onClick = { nav(RekeyLedgerNavigationDirections.actionRekeyLedgerNavigationPop()) },
+            modifier = modifier,
+            text = stringResource(id = R.string.done)
+        )
+}

@@ -1,0 +1,141 @@
+/*
+ * Copyright 2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.android.ui.common.warningconfirmation
+
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
+import com.algorand.android.R
+import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.tracking.core.PeraClickEvent
+import com.algorand.android.ui.common.BaseInfoFragment
+import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentDirections.Companion.actionWriteDownInfoFragmentToBackupAccountSelectionFragment
+import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentDirections.Companion.actionWriteDownInfoFragmentToBackupPassphraseAccountNameNavigation
+import com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragmentDirections.Companion.actionWriteDownInfoFragmentToBackupPassphrasesNavigation
+import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.button.PeraSecondaryButton
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class WriteDownInfoFragment : BaseInfoFragment() {
+
+    private val toolbarConfiguration = ToolbarConfiguration(
+        startIconResId = R.drawable.ic_left_arrow,
+        startIconClick = ::navBack
+    )
+
+    override val fragmentConfiguration = FragmentConfiguration(
+        toolbarConfiguration = toolbarConfiguration
+    )
+
+    private val writeDownInfoViewModel: WriteDownInfoViewModel by viewModels()
+
+    private val args: WriteDownInfoFragmentArgs by navArgs()
+
+    @Composable
+    override fun Icon(modifier: Modifier) =
+        PeraIcon(
+            painter = painterResource(id = R.drawable.ic_pen),
+            contentDescription = stringResource(R.string.pen),
+            modifier = modifier
+        )
+
+    @Composable
+    override fun Title(modifier: Modifier) =
+        PeraHeadlineText(
+            modifier = modifier,
+            text = stringResource(id = R.string.prepare_to_write)
+        )
+
+    @Composable
+    override fun Description(modifier: Modifier) =
+        PeraBodyText(
+            text = stringResource(
+                id = R.string.the_only_way_to
+            ),
+            modifier = modifier
+        )
+
+    @Composable
+    override fun Warning(modifier: Modifier) =
+        Text(
+            text = stringResource(id = R.string.do_not_share),
+            style = PeraTheme.typography.body.regular.sansMedium,
+            color = PeraTheme.colors.status.negative,
+            modifier = modifier
+        )
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) =
+        PeraPrimaryButton(
+            onClick = { onFirstButtonClicked() },
+            modifier = modifier,
+            text = stringResource(id = R.string.im_ready_to_begin)
+        )
+
+    @Composable
+    override fun SecondaryButton(modifier: Modifier) {
+        if (args.accountsToBackup.isEmpty()) {
+            PeraSecondaryButton(
+                onClick = {
+                    onSecondButtonClicked() },
+                modifier = modifier,
+                text = stringResource(id = R.string.skip_for_now)
+            )
+        }
+    }
+
+    private fun onFirstButtonClicked() {
+        if (args.accountsToBackup.size > 1) {
+            navToBackupAccountSelectionFragment()
+        } else {
+            navToBackupPassphraseFragment()
+        }
+    }
+
+    private fun onSecondButtonClicked() {
+        writeDownInfoViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_WRITE_PASSPHRASE_SKIP)
+        navToBackupPassphraseAccountNameNavigation()
+    }
+
+    private fun navToBackupAccountSelectionFragment() {
+        nav(actionWriteDownInfoFragmentToBackupAccountSelectionFragment(args.accountsToBackup))
+    }
+
+    private fun navToBackupPassphraseFragment() {
+        nav(
+            actionWriteDownInfoFragmentToBackupPassphrasesNavigation(
+                args.accountsToBackup.firstOrNull(),
+                accountCreation = args.accountCreation
+            )
+        )
+    }
+
+    private fun navToBackupPassphraseAccountNameNavigation() {
+        args.accountCreation?.let { accountCreation ->
+            nav(actionWriteDownInfoFragmentToBackupPassphraseAccountNameNavigation(accountCreation))
+        }
+    }
+}

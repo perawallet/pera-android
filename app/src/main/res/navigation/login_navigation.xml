@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+  ~ Copyright 2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -49,8 +49,7 @@
     <fragment
         android:id="@+id/registerIntroFragment"
         android:name="com.algorand.android.ui.register.registerintro.RegisterIntroFragment"
-        android:label="RegisterIntroFragment"
-        tools:layout="@layout/fragment_register_type_selection">
+        android:label="RegisterIntroFragment">
         <argument
             android:name="isShowingCloseButton"
             app:argType="boolean" />
@@ -72,8 +71,12 @@
             android:id="@+id/action_registerIntroFragment_to_backupPassphraseInfoNavigation"
             app:destination="@id/backupPassphraseInfoNavigation">
             <argument
-                android:name="publicKeysOfAccountsToBackup"
+                android:name="accountsToBackup"
                 app:argType="string[]" />
+            <argument
+                android:name="onboardingAccountType"
+                app:argType="com.algorand.android.models.OnboardingAccountType"
+                app:nullable="false" />
         </action>
     </fragment>
 
@@ -102,8 +105,7 @@
     <fragment
         android:id="@+id/recoverAccountInfoFragment"
         android:name="com.algorand.android.modules.onboarding.recoverypassphrase.info.ui.RecoverAccountInfoFragment"
-        android:label="fragment_recover_account_info"
-        tools:layout="@layout/fragment_base_info">
+        android:label="fragment_recover_account_info">
         <action
             android:id="@+id/action_recoverAccountInfoFragment_to_recoverWithPassphraseNavigation"
             app:destination="@id/recoverWithPassphraseNavigation">
@@ -112,14 +114,17 @@
                 android:defaultValue="@null"
                 app:argType="string"
                 app:nullable="true" />
+            <argument
+                android:name="onboardingAccountType"
+                app:argType="com.algorand.android.models.OnboardingAccountType"
+                app:nullable="false" />
         </action>
     </fragment>
 
     <fragment
         android:id="@+id/watchAccountInfoFragment"
         android:name="com.algorand.android.ui.register.watch.WatchAccountInfoFragment"
-        android:label="WatchAccountInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="WatchAccountInfoFragment">
         <action
             android:id="@+id/action_watchAccountInfoFragment_to_registerWatchAccountNavigation"
             app:destination="@id/registerWatchAccountNavigation">

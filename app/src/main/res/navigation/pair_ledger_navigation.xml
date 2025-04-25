@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  Copyright 2022 Pera Wallet, LDA
+  Copyright 2025 Pera Wallet, LDA
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -47,15 +47,8 @@
         android:label="RegisterLedgerAccountSelectionFragment"
         tools:layout="@layout/fragment_ledger_account_selection">
         <argument
-            android:name="bluetoothName"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="bluetoothAddress"
-            app:argType="string" />
-        <argument
-            android:name="ledgerAccountsInformation"
-            app:argType="com.algorand.android.models.AccountInformation[]" />
+            android:name="registerLedgerAccountSelectionNavArgs"
+            app:argType="com.algorand.android.modules.onboarding.pairledger.accountselection.ui.model.RegisterLedgerAccountSelectionNavArgs" />
         <action
             android:id="@+id/action_registerLedgerAccountSelectionFragment_to_verifyLedgerAddressFragment"
             app:destination="@id/verifyLedgerAddressFragment" />
@@ -74,8 +67,7 @@
     <fragment
         android:id="@+id/verifyLedgerInfoFragment"
         android:name="com.algorand.android.modules.onboarding.pairledger.resultinfo.VerifyLedgerInfoFragment"
-        android:label="VerifyLedgerInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="VerifyLedgerInfoFragment">
         <argument
             android:name="numberOfAccounts"
             app:argType="integer" />

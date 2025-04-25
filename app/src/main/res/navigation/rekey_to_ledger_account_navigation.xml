@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+  ~ Copyright 2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -58,18 +58,8 @@
         android:label="RekeyLedgerAccountSelectionFragment"
         tools:layout="@layout/fragment_ledger_account_selection">
         <argument
-            android:name="bluetoothName"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="bluetoothAddress"
-            app:argType="string" />
-        <argument
-            android:name="ledgerAccountsInformation"
-            app:argType="com.algorand.android.models.AccountInformation[]" />
-        <argument
-            android:name="accountAddress"
-            app:argType="string" />
+            android:name="rekeyLedgerAccountSelectionNavArgs"
+            app:argType="com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionNavArgs" />
         <action
             android:id="@+id/rekeyLedgerAccountSelectionFragment_to_rekeyToLedgerAccountConfirmationFragment"
             app:destination="@id/rekeyToLedgerAccountConfirmationFragment" />
@@ -98,7 +88,8 @@
             app:argType="string" />
         <argument
             android:name="ledgerDetail"
-            app:argType="com.algorand.android.models.Account$Detail$Ledger" />
+            app:argType="com.algorand.android.modules.rekey.model.SelectedLedgerAccount$LedgerAccount"
+            app:nullable="true"/>
         <action
             android:id="@+id/action_rekeyConfirmationFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"
@@ -122,8 +113,7 @@
     <fragment
         android:id="@+id/verifyRekeyInfoFragment"
         android:name="com.algorand.android.modules.rekey.rekeytoledgeraccount.resultinfo.ui.RekeyToLedgerAccountVerifyInfoFragment"
-        android:label="VerifyRekeyInfoFragment"
-        tools:layout="@layout/fragment_base_info">
+        android:label="VerifyRekeyInfoFragment">
         <argument
             android:name="accountAddress"
             app:argType="string" />

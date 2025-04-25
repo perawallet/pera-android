@@ -1,0 +1,24 @@
+{
+  "accounts": [
+    {
+      "account_type": "single",
+      "address": "EGRJQ7DXMIJ577UUN6AFOIUZY6CNSFKLMGFHQNTC5US5TRC23LK6DGQRDM",
+      "name": "EGRJ...QRDM",
+      "private_key": "abcde"
+    },
+    {
+      "account_type": "watch",
+      "address": "7TTLR5VQAY5YVQ5QV4IBOVIKUULGVNPURNWM5NG7M7ELEOQPVROA4CS3FM",
+      "name": "7TTL...S3FM",
+      "private_key": ""
+    },
+    {
+      "account_type": "single",
+      "address": "PKJCHYGFJ4OLOW32THABNCYRO3IT67NS7GRCMNHHBJMZ3VQHYCAYA525LI",
+      "name": "PKJC...25LI",
+      "private_key": "abcde"
+    }
+  ],
+  "device_id": "123456",
+  "provider_name": "Pera Wallet"
+}

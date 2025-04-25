@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 Pera Wallet, LDA
+  ~ Copyright 2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -34,11 +34,15 @@
     <fragment
         android:id="@+id/backupInfoFragment"
         android:name="com.algorand.android.ui.common.warningconfirmation.BackupInfoFragment"
-        android:label="fragment_backup_info"
-        tools:layout="@layout/fragment_base_info">
+        android:label="fragment_backup_info">
         <argument
-            android:name="publicKeysOfAccountsToBackup"
+            android:name="accountsToBackup"
             app:argType="string[]" />
+        <argument
+            android:name="onboardingAccountType"
+            android:defaultValue="@null"
+            app:argType="com.algorand.android.models.OnboardingAccountType"
+            app:nullable="true" />
         <action
             android:id="@+id/action_backupInfoFragment_to_backupPassphraseAccountNameNavigation"
             app:destination="@id/backupPassphraseAccountNameNavigation">
@@ -54,10 +58,9 @@
     <fragment
         android:id="@+id/writeDownInfoFragment"
         android:name="com.algorand.android.ui.common.warningconfirmation.WriteDownInfoFragment"
-        android:label="fragment_write_down_info"
-        tools:layout="@layout/fragment_base_info">
+        android:label="fragment_write_down_info">
         <argument
-            android:name="publicKeysOfAccountsToBackup"
+            android:name="accountsToBackup"
             app:argType="string[]" />
         <argument
             android:name="accountCreation"
@@ -74,7 +77,8 @@
             android:id="@+id/action_writeDownInfoFragment_to_backupPassphrasesNavigation"
             app:destination="@id/backupPassphraseNavigation">
             <argument
-                android:name="publicKeyOfAccountToBackup"
+                android:name="accountToBackup"
+                app:nullable="true"
                 app:argType="string" />
             <argument
                 android:name="accountCreation"
@@ -92,13 +96,13 @@
         android:label="BackupAccountSelectionFragment"
         tools:layout="@layout/fragment_base_account_selection">
         <argument
-            android:name="publicKeysOfAccountsToBackup"
+            android:name="accountsToBackup"
             app:argType="string[]" />
         <action
             android:id="@+id/action_backupAccountSelectionFragment_to_backupPassphraseNavigation"
             app:destination="@id/backupPassphraseNavigation">
             <argument
-                android:name="publicKeyOfAccountToBackup"
+                android:name="accountToBackup"
                 app:argType="string" />
             <argument
                 android:name="accountCreation"

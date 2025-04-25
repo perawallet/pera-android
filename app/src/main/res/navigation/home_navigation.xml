@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2022 Pera Wallet, LDA
+  ~ Copyright 2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -490,9 +490,13 @@
 
     <fragment
         android:id="@+id/accountsFragment"
-        android:name="com.algorand.android.modules.accounts.ui.AccountsFragment"
+        android:name="com.algorand.android.modules.accounts.ui.view.AccountsFragment"
         android:label="fragment_accounts"
         tools:layout="@layout/fragment_accounts">
+        <argument
+            android:name="showConfetti"
+            android:defaultValue="false"
+            app:argType="boolean" />
         <action
             android:id="@+id/action_accountsFragment_to_removeAssetsFragment"
             app:destination="@id/removeAssetsFragment" />
@@ -544,8 +548,12 @@
             android:id="@+id/action_accountsFragment_to_backupPassphraseInfoNavigation"
             app:destination="@id/backupPassphraseInfoNavigation">
             <argument
-                android:name="publicKeysOfAccountsToBackup"
+                android:name="accountsToBackup"
                 app:argType="string[]" />
+            <argument
+                android:name="onboardingAccountType"
+                app:argType="com.algorand.android.models.OnboardingAccountType"
+                app:nullable="false" />
         </action>
         <action
             android:id="@+id/action_accountsFragment_to_assetInboxAllAccountsNavigation"
@@ -553,6 +561,9 @@
         <action
             android:id="@+id/action_accountsFragment_to_StakingFragment"
             app:destination="@id/stakingFragment" />
+        <action
+            android:id="@+id/action_accountsFragment_to_CardsFragment"
+            app:destination="@id/cardsFragment" />
     </fragment>
 
     <fragment
@@ -677,9 +688,6 @@
             app:popUpTo="@id/contactInfoFragment"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_contactInfoFragment_to_accountSelectionBottomSheet"
-            app:destination="@id/accountSelectionBottomSheet" />
-        <action
             android:id="@+id/action_contactInfoFragment_to_assetTransferAmountFragment"
             app:destination="@id/assetTransferAmountFragment" />
     </fragment>
@@ -795,7 +803,15 @@
         <action
             android:id="@+id/action_developerSettingsFragment_to_nodeSettingsFragment"
             app:destination="@id/nodeSettingsFragment" />
+        <action
+            android:id="@+id/action_developerSettingsFragment_to_migrationViewerFragment"
+            app:destination="@id/migrationViewerFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/migrationViewerFragment"
+        android:name="com.algorand.android.ui.settings.migrationviewer.MigrationViewerFragment"
+        android:label="MigrationViewerFragment" />
 
     <fragment
         android:id="@+id/nodeSettingsFragment"
@@ -951,14 +967,14 @@
             android:id="@+id/action_accountDetailFragment_to_viewPassphraseNavigation"
             app:destination="@id/viewPassphraseNavigation">
             <argument
-                android:name="publicKey"
+                android:name="accountAddress"
                 app:argType="string" />
         </action>
         <action
             android:id="@+id/action_accountDetailFragment_to_accountOptionsNavigation"
             app:destination="@id/accountOptionsNavigation">
             <argument
-                android:name="publicKey"
+                android:name="accountAddress"
                 app:argType="string" />
         </action>
         <action
@@ -1008,8 +1024,12 @@
             android:id="@+id/action_accountDetailFragment_to_backupPassphraseInfoNavigation"
             app:destination="@id/backupPassphraseInfoNavigation">
             <argument
-                android:name="publicKeysOfAccountsToBackup"
+                android:name="accountsToBackup"
                 app:argType="string[]" />
+            <argument
+                android:name="onboardingAccountType"
+                app:argType="com.algorand.android.models.OnboardingAccountType"
+                app:nullable="false" />
         </action>
         <action
             android:id="@+id/action_accountDetailFragment_to_inAppPinNavigation"
@@ -1021,6 +1041,9 @@
                 android:name="assetInboxOneAccountNavArgs"
                 app:argType="com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs" />
         </action>
+        <action
+            android:id="@+id/action_global_buySellActionsBottomSheet"
+            app:destination="@id/buySellActionsBottomSheet" />
     </fragment>
 
     <fragment
@@ -1055,32 +1078,6 @@
         tools:layout="@layout/bottom_sheet_rate_experience" />
 
     <dialog
-        android:id="@+id/accountSelectionBottomSheet"
-        android:name="com.algorand.android.ui.common.accountselector.AccountSelectionBottomSheet"
-        android:label="AccountSelectionBottomSheet"
-        tools:layout="@layout/bottom_sheet_account_selection">
-        <argument
-            android:name="assetId"
-            app:argType="long" />
-        <argument
-            android:name="titleResId"
-            app:argType="integer" />
-        <argument
-            android:name="showBalance"
-            android:defaultValue="true"
-            app:argType="boolean" />
-        <argument
-            android:name="selectedAccountAddress"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="showBackButton"
-            android:defaultValue="false"
-            app:argType="boolean" />
-    </dialog>
-
-    <dialog
         android:id="@+id/renameAccountBottomSheet"
         android:name="com.algorand.android.ui.accounts.RenameAccountBottomSheet"
         android:label="RenameAccountBottomSheet"
@@ -1089,7 +1086,7 @@
             android:name="name"
             app:argType="string" />
         <argument
-            android:name="publicKey"
+            android:name="accountAddress"
             app:argType="string" />
     </dialog>
 
@@ -1285,7 +1282,7 @@
         android:label="AccountErrorOptionsBottomSheet"
         tools:layout="@layout/bottom_sheet_accounts_options">
         <argument
-            android:name="publicKey"
+            android:name="accountAddress"
             app:argType="string" />
         <action
             android:id="@+id/action_accountErrorOptionsBottomSheet_to_viewPassphraseNavigation"
@@ -1293,7 +1290,7 @@
             app:popUpTo="@id/accountErrorOptionsBottomSheet"
             app:popUpToInclusive="true">
             <argument
-                android:name="publicKey"
+                android:name="accountAddress"
                 app:argType="string" />
         </action>
         <action

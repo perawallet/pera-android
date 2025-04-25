@@ -13,20 +13,19 @@
 package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 
 internal class GetAccountOwnedAssetsDataFlowUseCase @Inject constructor(
-    private val getAccountInformationFlow: GetAccountInformationFlow,
+    private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow,
     private val getAccountOwnedAssetsData: GetAccountOwnedAssetsData
 ) : GetAccountOwnedAssetsDataFlow {
 
     override fun invoke(address: String, includeAlgo: Boolean): Flow<List<BaseOwnedAssetData.OwnedAssetData>> {
-        return getAccountInformationFlow(address).mapNotNull { accountInformation ->
-            if (accountInformation == null) return@mapNotNull null
-            getAccountOwnedAssetsData(accountInformation, includeAlgo)
+        return getAccountAssetHoldingsFlow(address).mapNotNull { assetHoldings ->
+            getAccountOwnedAssetsData(address, assetHoldings, includeAlgo)
         }
     }
 }

@@ -18,11 +18,11 @@ import com.algorand.android.modules.assets.addition.ui.model.AssetAdditionPayloa
 import com.algorand.android.modules.swap.accountselection.ui.model.SwapAccountSelectionNavDirection
 import com.algorand.android.modules.swap.accountselection.ui.model.SwapAccountSelectionPreview
 import com.algorand.android.utils.Event
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldings
 import javax.inject.Inject
 
 internal class GetSwapAccountSelectedUpdatedPreviewUseCase @Inject constructor(
-    private val getAccountInformation: GetAccountInformation,
+    private val getAccountAssetHoldings: GetAccountAssetHoldings
 ) : GetSwapAccountSelectedUpdatedPreview {
 
     override suspend fun invoke(
@@ -34,18 +34,15 @@ internal class GetSwapAccountSelectedUpdatedPreviewUseCase @Inject constructor(
         previousState: SwapAccountSelectionPreview
     ): SwapAccountSelectionPreview {
         with(previousState) {
-            val accountInfo = getAccountInformation(accountAddress) ?: return copy(
-                errorEvent = Event(AnnotatedString(R.string.an_error_occured))
-            )
-
+            val assetHoldings = getAccountAssetHoldings(accountAddress)
             if (fromAssetId != null) {
-                val isUserOptedIntoFromAsset = accountInfo.hasAsset(fromAssetId)
+                val isUserOptedIntoFromAsset = assetHoldings.any { it.assetId == fromAssetId }
                 if (!isUserOptedIntoFromAsset) {
                     return copy(errorEvent = Event(AnnotatedString(R.string.you_are_not_opted_in)))
                 }
 
                 if (toAssetId != null) {
-                    val isUserOptedIntoToAsset = accountInfo.hasAsset(toAssetId)
+                    val isUserOptedIntoToAsset = assetHoldings.any { it.assetId == toAssetId }
                     if (!isUserOptedIntoToAsset) {
                         return getAssetAdditionPreview(previousState, toAssetId, accountAddress)
                     }
@@ -53,7 +50,7 @@ internal class GetSwapAccountSelectedUpdatedPreviewUseCase @Inject constructor(
             }
 
             if (toAssetId != null) {
-                val isUserOptedIntoToAsset = accountInfo.hasAsset(toAssetId)
+                val isUserOptedIntoToAsset = assetHoldings.any { it.assetId == toAssetId }
                 if (!isUserOptedIntoToAsset) {
                     return getAssetAdditionPreview(previousState, toAssetId, accountAddress)
                 }

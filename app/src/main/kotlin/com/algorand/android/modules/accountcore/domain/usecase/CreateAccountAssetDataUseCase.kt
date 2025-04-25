@@ -14,30 +14,39 @@ package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.accountcore.domain.model.AccountAssetData
-import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
-import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
+import com.algorand.wallet.asset.domain.usecase.GetAssetDetails
+import java.math.BigInteger
 import javax.inject.Inject
 
 internal class CreateAccountAssetDataUseCase @Inject constructor(
-    private val getAssetDetail: GetAssetDetail,
+    private val getAssetDetails: GetAssetDetails,
     private val createAlgoOwnedAssetData: CreateAlgoOwnedAssetData,
     private val createAccountOwnedAssetData: CreateAccountOwnedAssetData,
     private val createAccountPendingAdditionAssetData: CreateAccountPendingAdditionAssetData,
-    private val createAccountPendingDeletionAssetData: CreateAccountPendingDeletionAssetData
+    private val createAccountPendingDeletionAssetData: CreateAccountPendingDeletionAssetData,
+    private val getAccountAlgoBalance: GetAccountAlgoBalance
 ) : CreateAccountAssetData {
 
-    override suspend fun invoke(accountInformation: AccountInformation, includeAlgo: Boolean): AccountAssetData {
+    override suspend fun invoke(
+        address: String,
+        assetHoldings: List<AssetHolding>,
+        includeAlgo: Boolean
+    ): AccountAssetData {
         val ownedAssetDataList = mutableListOf<BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData>()
         val pendingAdditionAssetDataList = mutableListOf<BaseAccountAssetData.PendingAssetData.AdditionAssetData>()
         val pendingDeletionAssetDataList = mutableListOf<BaseAccountAssetData.PendingAssetData.DeletionAssetData>()
 
         if (includeAlgo) {
-            ownedAssetDataList.add(createAlgoOwnedAssetData(accountInformation.amount))
+            val algoBalance = getAccountAlgoBalance(address) ?: BigInteger.ZERO
+            ownedAssetDataList.add(createAlgoOwnedAssetData(algoBalance))
         }
 
-        accountInformation.assetHoldings.forEach { assetHolding ->
-            val assetDetail = getAssetDetail(assetHolding.assetId) ?: return@forEach
+        val assetDetails = getAssetDetails(assetHoldings.map { it.assetId }).associateBy { it.id }
+        assetHoldings.forEach { assetHolding ->
+            val assetDetail = assetDetails[assetHolding.assetId] ?: return@forEach
             when (assetHolding.status) {
                 AssetStatus.PENDING_FOR_REMOVAL -> {
                     val assetData = createAccountPendingDeletionAssetData(assetDetail)

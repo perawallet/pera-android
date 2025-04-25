@@ -14,30 +14,26 @@ package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.modules.collectibles.common.mapper.BaseOwnedCollectibleDataFactory
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
-import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
+import com.algorand.wallet.asset.domain.usecase.GetCollectiblesDetail
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 internal class GetAccountCollectibleDataFlowUseCase @Inject constructor(
-    private val getAccountInformationFlow: GetAccountInformationFlow,
-    private val getCollectibleDetail: GetCollectibleDetail,
-    private val baseOwnedCollectibleDataFactory: BaseOwnedCollectibleDataFactory
+    private val baseOwnedCollectibleDataFactory: BaseOwnedCollectibleDataFactory,
+    private val getCollectiblesDetail: GetCollectiblesDetail,
+    private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow
 ) : GetAccountCollectibleDataFlow {
 
     override fun invoke(address: String): Flow<List<BaseOwnedCollectibleData>> {
-        return getAccountInformationFlow(address).map {
-            val accountInformation = it ?: return@map emptyList()
-            val accountAssetDataList = mutableListOf<BaseOwnedCollectibleData>()
-            accountInformation.assetHoldings.forEach { assetHolding ->
-                val collectibleDetail = getCollectibleDetail(assetHolding.assetId)
-                if (collectibleDetail != null) {
-                    val collectibleData = baseOwnedCollectibleDataFactory(assetHolding, collectibleDetail)
-                    accountAssetDataList.add(collectibleData)
-                }
+        return getAccountAssetHoldingsFlow(address).map { assetHoldings ->
+            val assetHoldingsMap = assetHoldings.associateBy { it.assetId }
+            val collectibleDetails = getCollectiblesDetail(assetHoldingsMap.keys.toList())
+            collectibleDetails.mapNotNull { collectibleDetail ->
+                val assetHolding = assetHoldingsMap[collectibleDetail.id] ?: return@mapNotNull null
+                baseOwnedCollectibleDataFactory(assetHolding, collectibleDetail)
             }
-            accountAssetDataList
         }
     }
 }

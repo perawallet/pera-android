@@ -19,14 +19,16 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountDetailTab
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDetailSummary
 import com.algorand.android.modules.accountdetail.ui.model.AccountDetailPreview
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.modules.swap.common.domain.usecase.GetSwapNavigationDestination
 import com.algorand.android.modules.tracking.accountdetail.AccountDetailFragmentEventTracker
 import com.algorand.android.usecase.AccountDeletionUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
-import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlow
 import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +44,7 @@ class AccountDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val accountDetailFragmentEventTracker: AccountDetailFragmentEventTracker,
     private val getSwapNavigationDestination: GetSwapNavigationDestination,
-    private val getAccountDetailFlow: GetAccountDetailFlow,
+    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val getAccountDetailSummary: GetAccountDetailSummary
 ) : BaseViewModel() {
 
@@ -57,10 +59,10 @@ class AccountDetailViewModel @Inject constructor(
         get() = _accountDetailPreviewFlow
 
     val canAccountSignTransaction: Boolean
-        get() = _accountDetailPreviewFlow.value?.accountDetailSummary?.accountDetail?.canSignTransaction() ?: false
+        get() = _accountDetailPreviewFlow.value?.accountDetailSummary?.accountType?.canSignTransaction() ?: false
 
     val accountType: AccountType?
-        get() = _accountDetailPreviewFlow.value?.accountDetailSummary?.accountDetail?.accountType
+        get() = _accountDetailPreviewFlow.value?.accountDetailSummary?.accountType
 
     init {
         initAccountDetailPreview()
@@ -88,10 +90,11 @@ class AccountDetailViewModel @Inject constructor(
 
     fun initAccountDetailPreview() {
         viewModelScope.launchIO {
-            getAccountDetailFlow(accountAddress).collectLatest { accountDetail ->
-                if (accountDetail != null) {
+            getAccountLiteCacheFlow().collectLatest { cacheStatus ->
+                val accountLite = (cacheStatus as? AccountLiteCacheStatus.Data)?.accountLites?.get(accountAddress)
+                if (accountLite != null) {
                     _accountDetailPreviewFlow.update {
-                        AccountDetailPreview(getAccountDetailSummary(accountDetail), null)
+                        AccountDetailPreview(getAccountDetailSummary(accountLite), null)
                     }
                 }
             }

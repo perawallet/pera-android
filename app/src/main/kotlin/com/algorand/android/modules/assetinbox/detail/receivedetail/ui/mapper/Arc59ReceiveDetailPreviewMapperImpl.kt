@@ -29,8 +29,6 @@ import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
-import java.math.BigDecimal.ZERO
 import javax.inject.Inject
 
 class Arc59ReceiveDetailPreviewMapperImpl @Inject constructor(
@@ -39,7 +37,6 @@ class Arc59ReceiveDetailPreviewMapperImpl @Inject constructor(
     private val verificationTierConfigDecider: VerificationTierConfigurationDecider,
     private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
     private val getAccountTotalValue: GetAccountTotalValue,
-    private val getAccountInformation: GetAccountInformation
 ) : Arc59ReceiveDetailPreviewMapper {
 
     override suspend fun getInitialPreview(args: Arc59ReceiveDetailNavArgs): Arc59ReceiveDetailPreview {
@@ -56,12 +53,7 @@ class Arc59ReceiveDetailPreviewMapperImpl @Inject constructor(
     }
 
     private suspend fun getReceiverAccountDetail(args: Arc59ReceiveDetailNavArgs): ReceiverAccountDetailPreview {
-        val receiverAccountInfo = getAccountInformation(args.receiverAddress)
-        val accountValue = if (receiverAccountInfo != null) {
-            getAccountTotalValue(receiverAccountInfo.address, includeAlgo = true)
-        } else {
-            AccountTotalValue(ZERO, ZERO, 0)
-        }
+        val accountValue = getAccountTotalValue(args.receiverAddress, includeAlgo = true)
         return ReceiverAccountDetailPreview(
             displayName = getAccountDisplayName(args.receiverAddress),
             formattedPrimaryValue = accountValue.primaryAccountValue.formatAsCurrency(Currency.ALGO.symbol),

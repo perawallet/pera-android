@@ -126,6 +126,15 @@ internal class AssetRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getAssetsDetail(assetIds: List<Long>): List<AssetDetail> {
+        val assetDetails = assetDetailCacheHelper.getAssetsDetail(assetIds)
+        return if (assetIds.any { it == ALGO_ID }) {
+            assetDetails + algoAssetDetailMapper()
+        } else {
+            assetDetails
+        }
+    }
+
     override suspend fun getCollectibleDetail(collectibleId: Long): CollectibleDetail? {
         return assetDetailCacheHelper.getCollectibleDetail(collectibleId)
     }

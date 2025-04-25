@@ -54,6 +54,10 @@ fun interface GetAssetDetail {
     suspend operator fun invoke(assetId: Long): AssetDetail?
 }
 
+fun interface GetAssetDetails {
+    suspend operator fun invoke(assetIds: List<Long>): List<AssetDetail>
+}
+
 fun interface GetCollectibleDetail {
     suspend operator fun invoke(collectibleId: Long): CollectibleDetail?
 }

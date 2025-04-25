@@ -25,9 +25,9 @@ import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.Account
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewState
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.decider.AccountStatusDetailPreviewDecider
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlow
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -42,12 +42,11 @@ class AccountStatusDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
-    private val getAccountDetailFlow: GetAccountDetailFlow,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountOriginalStateIconDrawablePreview: GetAccountOriginalStateIconDrawablePreview,
     private val accountStatusDetailPreviewDecider: AccountStatusDetailPreviewDecider,
-    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
+    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow
 ) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
     private val navArgs = AccountStatusDetailBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
@@ -60,20 +59,21 @@ class AccountStatusDetailViewModel @Inject constructor(
     fun loadAccountStatusDetail() {
         stateDelegate.updateState { ViewState.Loading }
         viewModelScope.launch {
-            getAccountDetailFlow(accountAddress).collectLatest { accountDetail ->
-                if (accountDetail == null) return@collectLatest
+            getAccountLiteCacheFlow().collectLatest { cacheStatus ->
+                val accountLite = (cacheStatus as? AccountLiteCacheStatus.Data)?.accountLites?.get(accountAddress)
+                if (accountLite?.cachedInfo == null) return@collectLatest
 
-                val authAccountAddress = getAccountRekeyAdminAddress(accountAddress)
-                val hasAccountAuthority = accountDetail.accountType?.canSignTransaction() == true
+                val accountType = accountLite.cachedInfo.type
 
-                val titleString = accountStatusDetailPreviewDecider.decideTitleString(accountDetail.accountType)
+                val authAccountAddress = accountLite.cachedInfo.rekeyAuthAddress
+                val hasAccountAuthority = accountType.canSignTransaction()
+
+                val titleString = accountStatusDetailPreviewDecider.decideTitleString(accountType)
                 val accountOriginalTypeDisplayName = getAccountDisplayName(accountAddress)
                 val accountOriginalTypeIconDrawablePreview = getAccountOriginalStateIconDrawablePreview(accountAddress)
                 val accountTypeDrawablePreview = getAccountIconDrawablePreview(accountAddress)
-                val accountTypeString = accountStatusDetailPreviewDecider.decideAccountTypeString(accountDetail)
-                val descriptionDetail = accountStatusDetailPreviewDecider.decideDescriptionDetail(
-                    accountDetail = accountDetail
-                )
+                val accountTypeString = accountStatusDetailPreviewDecider.decideAccountTypeString(accountLite)
+                val descriptionDetail = accountStatusDetailPreviewDecider.decideDescriptionDetail(accountLite)
                 val authAccountDisplayName = authAccountAddress?.let { safeAuthAddress ->
                     getAccountDisplayName(safeAuthAddress)
                 }
@@ -81,7 +81,7 @@ class AccountStatusDetailViewModel @Inject constructor(
                     getAccountIconDrawablePreview(safeAuthAddress)
                 }
                 val authAccountActionButton = accountStatusDetailPreviewDecider.decideAuthAccountActionButtonState(
-                    accountType = accountDetail.accountType
+                    accountType = accountType
                 )
 
                 stateDelegate.updateState {

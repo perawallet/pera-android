@@ -23,7 +23,6 @@ import com.algorand.android.usecase.SenderAccountSelectionPreviewUseCase
 import com.algorand.android.usecase.SenderAccountSelectionUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.getOrElse
-import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.math.BigInteger
@@ -80,7 +79,7 @@ class SenderAccountSelectionViewModel @Inject constructor(
     fun fetchSenderAccountInformation(senderAccountAddress: String) {
         viewModelScope.launch {
             senderAccountSelectionPreviewUseCase.getUpdatedPreviewFlowWithAccountInformation(
-                senderAccountAddress = senderAccountAddress,
+                senderAddress = senderAccountAddress,
                 preview = _senderAccountSelectionPreviewFlow.value
             ).collectLatest {
                 _senderAccountSelectionPreviewFlow.emit(it)
@@ -94,9 +93,9 @@ class SenderAccountSelectionViewModel @Inject constructor(
 
     // If user enter Send Algo flow via deeplink or qr code, then we have to check asset transaction params then
     // we should navigate user to proper screen
-    fun handleNextNavigation(accountInformation: AccountInformation) {
+    fun handleNextNavigation(senderAddress: String) {
         viewModelScope.launch {
-            val assetTransaction = assetTransaction.copy(senderAddress = accountInformation.address)
+            val assetTransaction = assetTransaction.copy(senderAddress = senderAddress)
             val navDestination = when {
                 assetTransaction.assetId == -1L -> {
                     SenderAccountSelectionFragmentDirections

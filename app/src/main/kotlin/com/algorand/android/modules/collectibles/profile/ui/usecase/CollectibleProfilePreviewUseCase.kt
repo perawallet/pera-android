@@ -23,9 +23,9 @@ import com.algorand.android.modules.assets.profile.asaprofile.ui.model.PeraButto
 import com.algorand.android.modules.collectibles.profile.ui.mapper.CollectibleProfilePreviewMapper
 import com.algorand.android.modules.collectibles.profile.ui.model.CollectibleProfilePreview
 import com.algorand.android.usecase.AccountAddressUseCase
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
-import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingFlow
 import com.algorand.wallet.asset.domain.usecase.FetchCollectibleDetail
+import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -39,8 +39,7 @@ class CollectibleProfilePreviewUseCase @Inject constructor(
     private val getAssetName: GetAssetName,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val fetchCollectibleDetail: FetchCollectibleDetail,
-    private val getAccountInformationFlow: GetAccountInformationFlow,
-    private val isAssetOwnedByAccount: IsAssetOwnedByAccount
+    private val getAccountAssetHoldingFlow: GetAccountAssetHoldingFlow
 ) {
 
     fun createAssetAction(assetId: Long, collectibleFullName: String?, accountAddress: String?): AssetAction {
@@ -52,12 +51,12 @@ class CollectibleProfilePreviewUseCase @Inject constructor(
     }
 
     fun getCollectibleProfilePreviewFlow(nftId: Long, accountAddress: String): Flow<CollectibleProfilePreview?> {
-        return getAccountInformationFlow(accountAddress).map { accountInfo ->
-            if (accountInfo == null) return@map null
+        return getAccountAssetHoldingFlow(accountAddress, nftId).map { assetHolding ->
             fetchCollectibleDetail(nftId).map { nftDetail ->
-                val isOptedInByAccount = accountInfo.hasAsset(nftId)
+                val isOptedInByAccount = assetHolding != null
+                val isUserHasCollectibleBalance = assetHolding != null && assetHolding.amount > BigInteger.ZERO
                 val asaStatusPreview = createAsaStatusPreview(
-                    isUserHasCollectibleBalance = isAssetOwnedByAccount(accountInfo, nftId),
+                    isUserHasCollectibleBalance = isUserHasCollectibleBalance,
                     isCollectibleOptedInByAccount = isOptedInByAccount,
                     accountAddress = accountAddress,
                     creatorWalletAddress = nftDetail.creatorAddress

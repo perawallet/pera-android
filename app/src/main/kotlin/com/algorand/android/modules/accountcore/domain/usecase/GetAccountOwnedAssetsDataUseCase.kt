@@ -13,43 +13,53 @@
 package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
-import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
-import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldings
+import com.algorand.wallet.asset.domain.usecase.GetAssetDetails
+import java.math.BigInteger
 import javax.inject.Inject
 
 internal class GetAccountOwnedAssetsDataUseCase @Inject constructor(
-    private val getAccountInformation: GetAccountInformation,
     private val createAccountOwnedAssetData: CreateAccountOwnedAssetData,
     private val createAlgoOwnedAssetData: CreateAlgoOwnedAssetData,
-    private val getAssetDetail: GetAssetDetail
+    private val getAccountAlgoBalance: GetAccountAlgoBalance,
+    private val getAccountAssetHoldings: GetAccountAssetHoldings,
+    private val getAssetDetails: GetAssetDetails
 ) : GetAccountOwnedAssetsData {
 
     override suspend fun invoke(address: String, includeAlgo: Boolean): List<OwnedAssetData> {
-        val accountInformation = getAccountInformation(address) ?: return emptyList()
-        return getAssetDataList(accountInformation, includeAlgo)
+        val assetHoldings = getAccountAssetHoldings(address)
+        return getAssetDataList(address, assetHoldings, includeAlgo)
     }
 
-    override suspend fun invoke(accountInformation: AccountInformation, includeAlgo: Boolean): List<OwnedAssetData> {
-        return getAssetDataList(accountInformation, includeAlgo)
+    override suspend fun invoke(
+        address: String,
+        assetHoldings: List<AssetHolding>,
+        includeAlgo: Boolean
+    ): List<OwnedAssetData> {
+        return getAssetDataList(address, assetHoldings, includeAlgo)
     }
 
-    private suspend fun getAssetDataList(accountInfo: AccountInformation, includeAlgo: Boolean): List<OwnedAssetData> {
+    private suspend fun getAssetDataList(
+        address: String,
+        assetHoldings: List<AssetHolding>,
+        includeAlgo: Boolean
+    ): List<OwnedAssetData> {
         return mutableListOf<OwnedAssetData>().apply {
-            if (includeAlgo) add(createAlgoOwnedAssetData(accountInfo.amount))
-            addAll(getOwnedAssetDataList(accountInfo))
+            if (includeAlgo) {
+                val algoBalance = getAccountAlgoBalance(address) ?: BigInteger.ZERO
+                add(createAlgoOwnedAssetData(algoBalance))
+            }
+            addAll(getOwnedAssetDataList(assetHoldings))
         }
     }
 
-    private suspend fun getOwnedAssetDataList(accountInformation: AccountInformation): List<OwnedAssetData> {
-        return accountInformation.assetHoldings.mapNotNull { assetHolding ->
-            getOwnedAssetData(assetHolding)
-        }
-    }
-
-    private suspend fun getOwnedAssetData(assetHolding: AssetHolding): OwnedAssetData? {
-        return getAssetDetail(assetHolding.assetId)?.let { assetDetail ->
+    private suspend fun getOwnedAssetDataList(assetHoldings: List<AssetHolding>): List<OwnedAssetData> {
+        val assetHoldingsMap = assetHoldings.associateBy { it.assetId }
+        val assetDetails = getAssetDetails(assetHoldingsMap.keys.toList()).associateBy { it.id }
+        return assetHoldingsMap.mapNotNull { (id, assetHolding) ->
+            val assetDetail = assetDetails[id] ?: return@mapNotNull null
             createAccountOwnedAssetData(assetDetail, assetHolding)
         }
     }

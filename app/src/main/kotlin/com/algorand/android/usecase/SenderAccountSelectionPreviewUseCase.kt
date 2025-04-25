@@ -98,20 +98,25 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
     }
 
     fun getUpdatedPreviewFlowWithAccountInformation(
-        senderAccountAddress: String,
+        senderAddress: String,
         preview: SenderAccountSelectionPreview
     ): Flow<SenderAccountSelectionPreview> = flow {
-        emit(preview.copy(isLoading = true))
-        val loadingFinishedPreview = preview.copy(isLoading = false)
-        fetchAccountInformationAndCacheAssets(senderAccountAddress, false).use(
-            onSuccess = {
-                emit(loadingFinishedPreview.copy(senderAccountInformationSuccessEvent = Event(it)))
-            },
-            onFailed = { exception, code ->
-                val errorEvent = Event(Result.Error(exception, code))
-                emit(loadingFinishedPreview.copy(senderAccountInformationErrorEvent = errorEvent))
-            }
-        )
+        val accountLite = getAccountLite(senderAddress)
+        if (accountLite?.cachedInfo == null) {
+            emit(preview.copy(isLoading = true))
+            val loadingFinishedPreview = preview.copy(isLoading = false)
+            fetchAccountInformationAndCacheAssets(senderAddress, false).use(
+                onSuccess = {
+                    emit(loadingFinishedPreview.copy(senderAccountInformationSuccessEvent = Event(senderAddress)))
+                },
+                onFailed = { exception, code ->
+                    val errorEvent = Event(Result.Error(exception, code))
+                    emit(loadingFinishedPreview.copy(senderAccountInformationErrorEvent = errorEvent))
+                }
+            )
+        } else {
+            emit(preview.copy(senderAccountInformationSuccessEvent = Event(senderAddress)))
+        }
     }
 
     private suspend fun getBaseNormalAccountListItems(): List<BaseAccountSelectionListItem> {

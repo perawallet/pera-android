@@ -30,7 +30,7 @@ import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountState
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.usecase.AddAssetHoldingToAccountAsPending
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.wallet.account.info.domain.usecase.SetAccountAssetStatus
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -45,7 +45,7 @@ class SendSignedTransactionUseCase @Inject constructor(
     private val transactionConfirmationUseCase: TransactionConfirmationUseCase,
     private val setAccountAssetStatus: SetAccountAssetStatus,
     private val isAssetOwnedByAccount: IsAssetOwnedByAccount,
-    private val getAccountInformation: GetAccountInformation,
+    private val getAccountAssetHolding: GetAccountAssetHolding,
     private val getAccountState: GetAccountState,
     private val addAssetHoldingToAccountAsPending: AddAssetHoldingToAccountAsPending
 ) {
@@ -133,9 +133,7 @@ class SendSignedTransactionUseCase @Inject constructor(
     private suspend fun isAssetPendingForRemovalFromAccount(
         transaction: SignedTransactionDetail.AssetOperation.AssetRemoval
     ): Boolean {
-        val assetHolding = getAccountInformation(transaction.senderAccountAddress)?.assetHoldings?.find {
-            it.assetId == transaction.assetId
-        }
+        val assetHolding = getAccountAssetHolding(transaction.senderAccountAddress, transaction.assetId)
         return assetHolding != null && assetHolding.status == AssetStatus.PENDING_FOR_REMOVAL
     }
 

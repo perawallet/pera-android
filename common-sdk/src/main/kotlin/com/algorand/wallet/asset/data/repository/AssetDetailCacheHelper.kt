@@ -23,6 +23,8 @@ internal interface AssetDetailCacheHelper {
 
     suspend fun getAssetDetail(assetId: Long): AssetDetail?
 
+    suspend fun getAssetsDetail(assetIds: List<Long>): List<AssetDetail>
+
     suspend fun getAsset(assetId: Long): Asset?
 
     suspend fun getCollectibleDetail(collectibleId: Long): CollectibleDetail?

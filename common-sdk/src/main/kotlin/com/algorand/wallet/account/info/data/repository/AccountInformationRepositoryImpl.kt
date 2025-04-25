@@ -185,6 +185,13 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         return assetHoldingDao.getAssetsByAddressAsFlow(address).map { assetHoldingMapper(it) }
     }
 
+    override fun getAssetHoldingFlow(address: String, assetId: Long): Flow<AssetHolding?> {
+        return assetHoldingDao.getAssetHoldingAsFlow(address, assetId).map {
+            if (it == null) return@map null
+            assetHoldingMapper(it)
+        }.distinctUntilChanged()
+    }
+
     override suspend fun getFailedAccountInformation(): List<String> {
         return accountInformationErrorCache.getAll()
     }
@@ -254,6 +261,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
 
     override suspend fun getAssetHolding(address: String, assetId: Long): AssetHolding? {
         return assetHoldingDao.getAssetHolding(address, assetId)?.let { assetHoldingMapper(it) }
+    }
+
+    override suspend fun getAssetHoldings(address: String): List<AssetHolding> {
+        return assetHoldingDao.getAssetsByAddress(address).map { assetHoldingMapper(it) }
     }
 
     private suspend fun PeraResult<AccountInformationResponse>.mapToAccountInfo(): PeraResult<AccountInformation> {

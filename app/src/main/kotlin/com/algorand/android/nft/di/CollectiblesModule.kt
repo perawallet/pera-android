@@ -12,6 +12,8 @@
 
 package com.algorand.android.nft.di
 
+import com.algorand.android.nft.domain.usecase.GetAccountCollectibleData
+import com.algorand.android.nft.domain.usecase.GetAccountCollectibleDataUseCase
 import com.algorand.android.nft.domain.usecase.GetAccountCollectiblesData
 import com.algorand.android.nft.domain.usecase.GetAccountCollectiblesDataUseCase
 import com.algorand.android.nft.domain.usecase.GetAllAccountsAllCollectibleDataFlow
@@ -34,4 +36,9 @@ internal object CollectiblesModule {
     fun provideGetAccountCollectiblesData(
         useCase: GetAccountCollectiblesDataUseCase
     ): GetAccountCollectiblesData = useCase
+
+    @Provides
+    fun provideGetAccountCollectibleData(
+        useCase: GetAccountCollectibleDataUseCase
+    ): GetAccountCollectibleData = useCase
 }

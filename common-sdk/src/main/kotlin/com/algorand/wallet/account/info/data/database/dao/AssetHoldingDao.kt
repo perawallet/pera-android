@@ -82,6 +82,9 @@ internal interface AssetHoldingDao {
     @Query("SELECT * FROM asset_holding_table WHERE algo_address = :algoAddress")
     fun getAssetsByAddressAsFlow(algoAddress: String): Flow<List<AssetHoldingEntity>>
 
+    @Query("SELECT * FROM asset_holding_table WHERE algo_address = :algoAddress AND asset_id = :assetId")
+    fun getAssetHoldingAsFlow(algoAddress: String, assetId: Long): Flow<AssetHoldingEntity?>
+
     @Query("DELETE FROM asset_holding_table")
     suspend fun clearAll()
 

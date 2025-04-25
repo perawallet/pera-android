@@ -22,7 +22,8 @@ import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingAmount
 import com.algorand.wallet.asset.domain.usecase.FetchAsset
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
@@ -38,7 +39,8 @@ class AssetTransferPreviewUseCase @Inject constructor(
     private val getAsset: GetAsset,
     private val fetchAsset: FetchAsset,
     private val getAccountDetail: GetAccountDetail,
-    private val getAccountInformation: GetAccountInformation
+    private val getAccountAlgoBalance: GetAccountAlgoBalance,
+    private val getAccountAssetHoldingAmount: GetAccountAssetHoldingAmount
 ) {
 
     suspend fun getAssetTransferPreview(
@@ -71,11 +73,10 @@ class AssetTransferPreviewUseCase @Inject constructor(
     }
 
     private suspend fun getSenderAssetBalance(senderAddress: String, assetId: Long): BigInteger {
-        val senderInfo = getAccountInformation(senderAddress)
         val assetBalance = if (assetId == ALGO_ID) {
-            senderInfo?.amount
+            getAccountAlgoBalance(senderAddress)
         } else {
-            senderInfo?.assetHoldings?.firstOrNull { it.assetId == assetId }?.amount
+            getAccountAssetHoldingAmount(senderAddress, assetId)
         }
         return assetBalance ?: BigInteger.ZERO
     }

@@ -60,6 +60,8 @@ import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingAmount
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingFlow
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldings
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
@@ -348,6 +350,13 @@ internal object AccountInformationModule {
     }
 
     @Provides
+    fun provideGetAccountAssetHoldingFlow(
+        repository: AccountInformationRepository
+    ): GetAccountAssetHoldingFlow {
+        return GetAccountAssetHoldingFlow(repository::getAssetHoldingFlow)
+    }
+
+    @Provides
     fun getAccountAlgoBalance(repository: AccountInformationRepository): GetAccountAlgoBalance {
         return GetAccountAlgoBalance(repository::getAccountAlgoBalance)
     }
@@ -383,10 +392,13 @@ internal object AccountInformationModule {
     ): IsAccountOptedInToAnyApp = useCase
 
     @Provides
-    fun provideGetAccountAssetHolding(
-        repository: AccountInformationRepository
-    ): GetAccountAssetHolding {
+    fun provideGetAccountAssetHolding(repository: AccountInformationRepository): GetAccountAssetHolding {
         return GetAccountAssetHolding(repository::getAssetHolding)
+    }
+
+    @Provides
+    fun provideGetAccountAssetHoldings(repository: AccountInformationRepository): GetAccountAssetHoldings {
+        return GetAccountAssetHoldings(repository::getAssetHoldings)
     }
 
     @Provides

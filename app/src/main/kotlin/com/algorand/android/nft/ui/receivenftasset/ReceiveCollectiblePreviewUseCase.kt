@@ -26,21 +26,22 @@ import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.assets.addition.domain.usecase.AddAssetItemActionButtonStateDecider
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 class ReceiveCollectiblePreviewUseCase @Inject constructor(
     private val searchAssetUseCase: SearchAssetUseCase,
     private val assetSearchQueryMapper: AssetSearchQueryMapper,
     private val assetSearchItemMapper: BaseAssetSearchItemMapper,
     private val addAssetItemActionButtonStateDecider: AddAssetItemActionButtonStateDecider,
-    private val getAccountInformationFlow: GetAccountInformationFlow,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-    private val getAccountDisplayName: GetAccountDisplayName
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow
 ) {
 
     fun getSearchPaginationFlow(
@@ -60,7 +61,7 @@ class ReceiveCollectiblePreviewUseCase @Inject constructor(
             defaultQuery = assetSearchQuery
         )
 
-        val accountInformationFlow = getAccountInformationFlow(accountAddress)
+        val assetHoldingsFlow = getAccountAssetHoldingsFlow(accountAddress).map { it.associateBy { it.assetId } }
 
         val searchViewItem = assetSearchItemMapper.mapToSearchViewItem(
             searchViewHintResId = R.string.search_asset_id_or_nft
@@ -68,11 +69,10 @@ class ReceiveCollectiblePreviewUseCase @Inject constructor(
 
         val infoViewItem = assetSearchItemMapper.mapToInfoViewItem()
 
-        return combine(searchedAssetsFlow, accountInformationFlow) { searchedAssets, accountInfo ->
+        return combine(searchedAssetsFlow, assetHoldingsFlow) { searchedAssets, assetHolding ->
             searchedAssets.map { baseSearchedAsset ->
-                val assetHolding = accountInfo?.assetHoldings?.find { it.assetId == baseSearchedAsset.assetId }
                 val assetActionButtonState = addAssetItemActionButtonStateDecider.decideAddAssetItemActionButtonState(
-                    assetHolding = assetHolding
+                    assetHolding = assetHolding[baseSearchedAsset.assetId]
                 )
                 getSearchItemMappedAssetDetail(baseSearchedAsset, assetActionButtonState)
             }.insertHeaderItem(item = searchViewItem).insertHeaderItem(item = infoViewItem)

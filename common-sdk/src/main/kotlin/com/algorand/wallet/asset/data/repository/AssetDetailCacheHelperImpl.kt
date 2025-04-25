@@ -81,6 +81,16 @@ internal class AssetDetailCacheHelperImpl @Inject constructor(
         }
     }
 
+    override suspend fun getAssetsDetail(assetIds: List<Long>): List<AssetDetail> {
+        return withContext(coroutineDispatcher) {
+            val collectibleIds = collectibleDao.getCollectibleIds()
+            val nonCollectibleIds = assetIds.filter { assetId -> !collectibleIds.contains(assetId) }
+            assetDetailDao.getByAssetIds(nonCollectibleIds).map {
+                assetDetailMapper(it)
+            }
+        }
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getAsset(assetId: Long): Asset? {
         return withContext(coroutineDispatcher) {

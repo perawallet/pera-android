@@ -18,7 +18,7 @@ import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.Owned
 import com.algorand.android.modules.accountcore.domain.model.AccountAssetData
 import com.algorand.android.modules.accountcore.domain.model.AccountTotalValue
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
-import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.asset.domain.model.AssetDetail
 import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
@@ -33,7 +33,11 @@ fun interface GetAccountOwnedAssetsDataFlow {
 
 interface GetAccountOwnedAssetsData {
     suspend operator fun invoke(address: String, includeAlgo: Boolean): List<OwnedAssetData>
-    suspend operator fun invoke(accountInformation: AccountInformation, includeAlgo: Boolean): List<OwnedAssetData>
+    suspend operator fun invoke(
+        address: String,
+        assetHoldings: List<AssetHolding>,
+        includeAlgo: Boolean
+    ): List<OwnedAssetData>
 }
 
 fun interface GetAccountAssetDataFlow {
@@ -41,7 +45,11 @@ fun interface GetAccountAssetDataFlow {
 }
 
 internal interface CreateAccountAssetData {
-    suspend operator fun invoke(accountInformation: AccountInformation, includeAlgo: Boolean): AccountAssetData
+    suspend operator fun invoke(
+        address: String,
+        assetHoldings: List<AssetHolding>,
+        includeAlgo: Boolean
+    ): AccountAssetData
 }
 
 internal interface CreateAlgoOwnedAssetData {

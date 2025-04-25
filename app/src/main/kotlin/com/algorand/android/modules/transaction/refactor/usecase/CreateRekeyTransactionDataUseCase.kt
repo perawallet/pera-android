@@ -13,25 +13,24 @@
 package com.algorand.android.modules.transaction.refactor.usecase
 
 import com.algorand.android.models.TransactionSignData
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import javax.inject.Inject
 
 internal class CreateRekeyTransactionDataUseCase @Inject constructor(
-    private val getAccountInformation: GetAccountInformation,
     private val getTransactionSigner: GetTransactionSigner,
-    private val getAccountCustomName: GetAccountCustomName
+    private val getAccountLite: GetAccountLite
 ) : CreateRekeyTransactionData {
 
     override suspend fun invoke(address: String, rekeyToAddress: String): TransactionSignData.Rekey? {
-        val senderInfo = getAccountInformation(address) ?: return null
+        val senderAccountLite = getAccountLite(address) ?: return null
+        val senderInfo = senderAccountLite.cachedInfo ?: return null
         return TransactionSignData.Rekey(
             senderAccountAddress = address,
-            senderAuthAddress = senderInfo.rekeyAdminAddress,
-            signer = getTransactionSigner(senderInfo.address),
-            senderAccountName = getAccountCustomName(address).orEmpty(),
-            rekeyAdminAddress = rekeyToAddress,
+            senderAuthAddress = senderInfo.rekeyAuthAddress,
+            signer = getTransactionSigner(address),
+            senderAccountName = senderAccountLite.customName,
+            rekeyAdminAddress = rekeyToAddress
         )
     }
 }

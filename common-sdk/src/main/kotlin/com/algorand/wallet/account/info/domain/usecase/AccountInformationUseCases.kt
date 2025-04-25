@@ -118,8 +118,16 @@ fun interface GetAccountAssetHoldingsFlow {
     operator fun invoke(address: String): Flow<List<AssetHolding>>
 }
 
+fun interface GetAccountAssetHoldingFlow {
+    operator fun invoke(address: String, assetId: Long): Flow<AssetHolding?>
+}
+
 fun interface GetAccountAssetHolding {
     suspend operator fun invoke(address: String, assetId: Long): AssetHolding?
+}
+
+fun interface GetAccountAssetHoldings {
+    suspend operator fun invoke(address: String): List<AssetHolding>
 }
 
 fun interface IsAccountCachedSuccessfully {

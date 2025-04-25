@@ -32,7 +32,7 @@ import com.algorand.android.utils.flatten
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.isGreaterThan
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,7 +49,7 @@ class AssetTransferPreviewViewModel @Inject constructor(
     private val assetTransferPreviewUseCase: AssetTransferPreviewUseCase,
     private val transactionSignManager: TransactionSignManager,
     private val getTransactionSigner: GetTransactionSigner,
-    private val getAccountInformation: GetAccountInformation,
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress,
     private val eventDelegate: EventDelegate<ViewEvent>,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
@@ -185,10 +185,9 @@ class AssetTransferPreviewViewModel @Inject constructor(
             if (transaction.accountAddress == transactionData.senderAccountAddress) {
                 transactionData.copy(transactionByteArray = transaction.transactionByteArray)
             } else {
-                val targetAccountInfo = getAccountInformation(transactionData.targetUser.publicKey)
                 TransactionSignData.AddAsset(
                     senderAccountAddress = transactionData.targetUser.publicKey,
-                    senderAuthAddress = targetAccountInfo?.rekeyAdminAddress,
+                    senderAuthAddress = getAccountRekeyAdminAddress(transactionData.targetUser.publicKey),
                     assetId = transactionData.assetId,
                     transactionByteArray = transaction.transactionByteArray,
                     isArc59Transaction = transactionData.isArc59Transaction,

@@ -13,25 +13,15 @@
 package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData
-import com.algorand.android.nft.domain.usecase.GetAccountCollectiblesData
+import com.algorand.android.nft.domain.usecase.GetAccountCollectibleData
 import javax.inject.Inject
 
 internal class GetAccountBaseOwnedAssetDataUseCase @Inject constructor(
     private val getAccountOwnedAssetData: GetAccountOwnedAssetData,
-    private val getAccountCollectiblesData: GetAccountCollectiblesData
+    private val getAccountCollectibleData: GetAccountCollectibleData
 ) : GetAccountBaseOwnedAssetData {
 
     override suspend fun invoke(address: String, assetId: Long): BaseOwnedAssetData? {
-        return getAccountAssetData(address, assetId) ?: getAccountCollectibleData(address, assetId)
-    }
-
-    private suspend fun getAccountAssetData(address: String, assetId: Long): BaseOwnedAssetData? {
-        return getAccountOwnedAssetData(address, assetId)
-    }
-
-    private suspend fun getAccountCollectibleData(address: String, assetId: Long): BaseOwnedAssetData? {
-        return getAccountCollectiblesData(address).find {
-            it.id == assetId
-        }
+        return getAccountOwnedAssetData(address, assetId) ?: getAccountCollectibleData(address, assetId)
     }
 }

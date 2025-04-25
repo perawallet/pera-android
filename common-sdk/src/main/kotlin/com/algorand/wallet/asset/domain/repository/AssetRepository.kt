@@ -31,6 +31,8 @@ internal interface AssetRepository {
 
     suspend fun getAssetDetail(assetId: Long): AssetDetail?
 
+    suspend fun getAssetsDetail(assetIds: List<Long>): List<AssetDetail>
+
     suspend fun getCollectibleDetail(collectibleId: Long): CollectibleDetail?
 
     suspend fun getAsset(assetId: Long): Asset?

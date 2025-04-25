@@ -33,7 +33,7 @@ import com.algorand.android.utils.Event
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
@@ -49,11 +49,11 @@ class AssetDetailPreviewUseCase @Inject constructor(
     private val getAssetDetail: GetAssetDetail,
     private val getSelectedAssetExchangeValueUseCase: GetSelectedAssetExchangeValueUseCase,
     private val accountDetailSummaryUseCase: AccountDetailSummaryUseCase,
-    private val getAccountInformationFlow: GetAccountInformationFlow,
     private val getAccountType: GetAccountType,
     private val getSwapNavigationDestination: GetSwapNavigationDestination,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
-    private val getAccountDisplayName: GetAccountDisplayName
+    private val getAccountDisplayName: GetAccountDisplayName,
+    private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow
 ) {
 
     fun updatePreviewForDiscoverMarketEvent(currentPreview: AssetDetailPreview): AssetDetailPreview {
@@ -143,13 +143,13 @@ class AssetDetailPreviewUseCase @Inject constructor(
         assetId: Long,
         isQuickActionButtonsVisible: Boolean
     ): Flow<AssetDetailPreview?> {
-        return getAccountInformationFlow(accountAddress).filterNotNull().map { accountInfo ->
+        return getAccountAssetHoldingsFlow(accountAddress).filterNotNull().map { assetHoldings ->
             val baseOwnedAssetDetail = getAccountBaseOwnedAssetData(
                 assetId = assetId,
                 address = accountAddress
             ) ?: return@map null
             val isSwapButtonSelected = getRedDotVisibility(baseOwnedAssetDetail.isAlgo)
-            val isUserOptedInToAsa = accountInfo.hasAsset(assetId)
+            val isUserOptedInToAsa = assetHoldings.any { it.assetId == assetId }
             val assetDetail = getAssetDetail(assetId)
             val isAvailableOnDiscoverMobile = assetDetail?.assetInfo?.isAvailableOnDiscoverMobile ?: false
             val formattedAssetPrice = getSelectedAssetExchangeValueUseCase.getSelectedAssetExchangeValue(assetDetail)

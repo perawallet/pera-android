@@ -61,6 +61,8 @@ internal interface AccountInformationRepository {
 
     fun getAssetHoldingsFlow(address: String): Flow<List<AssetHolding>>
 
+    fun getAssetHoldingFlow(address: String, assetId: Long): Flow<AssetHolding?>
+
     suspend fun getFailedAccountInformation(): List<String>
 
     suspend fun getRekeyAuthAddress(address: String): String?
@@ -82,4 +84,6 @@ internal interface AccountInformationRepository {
     suspend fun getAccountAssetsAndAppsCount(address: String): AccountAssetAndAppsCount?
 
     suspend fun getAssetHolding(address: String, assetId: Long): AssetHolding?
+
+    suspend fun getAssetHoldings(address: String): List<AssetHolding>
 }

@@ -14,38 +14,39 @@ package com.algorand.android.modules.accountcore.ui.usecase
 
 import com.algorand.android.R
 import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
-import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import javax.inject.Inject
 
 internal class GetAccountDetailSummaryUseCase @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountDisplayName: GetAccountDisplayName,
-    private val getAccountDetail: GetAccountDetail
+    private val getAccountLite: GetAccountLite
 ) : GetAccountDetailSummary {
 
     override suspend fun invoke(address: String): AccountDetailSummary {
-        val accountDetail = getAccountDetail(address)
+        val accountLite = getAccountLite(address)
+        val accountType = accountLite?.cachedInfo?.type
         return AccountDetailSummary(
             address = address,
             accountIconDrawable = getAccountIconDrawablePreview(address),
             accountDisplayName = getAccountDisplayName(address),
-            accountTypeResId = getAccountTypeResId(accountDetail.accountType),
-            shouldDisplayAccountType = shouldDisplayAccountType(accountDetail.accountType),
-            accountDetail = accountDetail
+            accountTypeResId = getAccountTypeResId(accountType),
+            shouldDisplayAccountType = shouldDisplayAccountType(accountType),
+            accountType = accountType
         )
     }
 
-    override suspend fun invoke(accountDetail: AccountDetail): AccountDetailSummary {
-        return with(accountDetail) {
+    override suspend fun invoke(accountLite: AccountLite): AccountDetailSummary {
+        return with(accountLite) {
             AccountDetailSummary(
                 address = address,
-                accountIconDrawable = getAccountIconDrawablePreview(address),
-                accountDisplayName = getAccountDisplayName(address),
-                accountTypeResId = getAccountTypeResId(accountType),
-                shouldDisplayAccountType = shouldDisplayAccountType(accountType),
-                accountDetail = accountDetail
+                accountIconDrawable = getAccountIconDrawablePreview(this),
+                accountDisplayName = getAccountDisplayName(this),
+                accountTypeResId = getAccountTypeResId(cachedInfo?.type),
+                shouldDisplayAccountType = shouldDisplayAccountType(cachedInfo?.type),
+                accountType = cachedInfo?.type
             )
         }
     }

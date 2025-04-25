@@ -35,5 +35,17 @@ data class AccountLite(
         val assetCount: Int,
         val minRequiredBalance: BigInteger,
         val rekeyAuthAddress: String?
-    )
+    ) {
+
+        val isRekeyed
+            get(): Boolean = !rekeyAuthAddress.isNullOrEmpty()
+
+        fun getPrimaryAccountValueWithoutAlgo(): BigDecimal {
+            return primaryAccountValue - algoAmountValue.parityValueInSelectedCurrency.amountAsCurrency
+        }
+
+        fun getSecondaryAccountValueWithoutAlgo(): BigDecimal {
+            return secondaryAccountValue - algoAmountValue.parityValueInSecondaryCurrency.amountAsCurrency
+        }
+    }
 }

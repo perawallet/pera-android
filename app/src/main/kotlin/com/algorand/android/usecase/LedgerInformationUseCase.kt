@@ -75,7 +75,7 @@ class LedgerInformationUseCase @Inject constructor(
         return withContext(Dispatchers.Default) {
             return@withContext mutableListOf<LedgerInformationListItem>().apply {
                 val selectedCurrencySymbol = parityUseCase.getPrimaryCurrencySymbolOrName()
-                val accountBalance = getAccountTotalValue(accountInformation, includeAlgo = true)
+                val accountBalance = getAccountTotalValue(accountInformation.address, includeAlgo = true)
                 val portfolioValue = getPortfolioValue(accountBalance, selectedCurrencySymbol)
                 addAll(createLedgerAccountItem(accountInformation, portfolioValue))
                 addAll(createAssetItems(accountInformation))

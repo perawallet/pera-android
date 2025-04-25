@@ -29,3 +29,7 @@ fun interface GetAccountLiteCacheFlow {
 fun interface GetAccountLiteCacheData {
     operator fun invoke(): AccountLiteCacheStatus.Data?
 }
+
+fun interface GetAccountLite {
+    suspend operator fun invoke(address: String): AccountLite?
+}

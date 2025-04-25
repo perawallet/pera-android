@@ -58,7 +58,7 @@ class Arc59ReceiveDetailPreviewMapperImpl @Inject constructor(
     private suspend fun getReceiverAccountDetail(args: Arc59ReceiveDetailNavArgs): ReceiverAccountDetailPreview {
         val receiverAccountInfo = getAccountInformation(args.receiverAddress)
         val accountValue = if (receiverAccountInfo != null) {
-            getAccountTotalValue(receiverAccountInfo, includeAlgo = true)
+            getAccountTotalValue(receiverAccountInfo.address, includeAlgo = true)
         } else {
             AccountTotalValue(ZERO, ZERO, 0)
         }

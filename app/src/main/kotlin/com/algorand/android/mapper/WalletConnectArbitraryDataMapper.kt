@@ -25,7 +25,7 @@ import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvi
 import com.algorand.android.utils.multiplyOrZero
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.math.BigInteger
 import javax.inject.Inject
@@ -36,7 +36,7 @@ class WalletConnectArbitraryDataMapper @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val walletConnectAssetInformationMapper: WalletConnectAssetInformationMapper,
     private val getAccountCustomName: GetAccountCustomName,
-    private val getAccountInformation: GetAccountInformation,
+    private val getAccountAlgoBalance: GetAccountAlgoBalance,
     private val getAccountOwnedAssetData: GetAccountOwnedAssetData,
     private val getAccountType: GetAccountType
 ) {
@@ -52,7 +52,7 @@ class WalletConnectArbitraryDataMapper @Inject constructor(
                 name = getAccountCustomName(signerAddress).orEmpty(),
                 accountIconDrawablePreview = getAccountIconDrawablePreview(signerAddress)
             )
-            val amount = getAccountInformation(signerAddress)?.amount ?: BigInteger.ZERO
+            val amount = getAccountAlgoBalance(signerAddress) ?: BigInteger.ZERO
             val ownedAsset = getAccountOwnedAssetData(signerAddress, AssetConstants.ALGO_ID)
 
             val walletConnectAssetInformation = createWalletConnectAssetInformation(ownedAsset, amount)

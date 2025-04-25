@@ -19,6 +19,8 @@ import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteC
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLitesFlow
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLitesFlowUseCase
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,4 +45,7 @@ internal object AccountLiteAppModule {
 
     @Provides
     fun provideGetAccountLiteCacheData(useCase: GetAccountLiteCacheDataUseCase): GetAccountLiteCacheData = useCase
+
+    @Provides
+    fun provideGetAccountLite(useCase: GetAccountLiteUseCase): GetAccountLite = useCase
 }

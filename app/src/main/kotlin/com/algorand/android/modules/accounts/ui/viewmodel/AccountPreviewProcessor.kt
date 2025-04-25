@@ -16,6 +16,7 @@ import com.algorand.android.R
 import com.algorand.android.banner.domain.model.BaseBanner
 import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewByType
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accounts.ui.mapper.BaseAccountListItemBannerItemMapper
@@ -53,6 +54,7 @@ class AccountPreviewProcessor @Inject constructor(
     private val getAccountDisplayName: GetAccountDisplayName,
     private val accountPreviewMapper: AccountPreviewMapper,
     private val getAccountIconDrawablePreviewByType: GetAccountIconDrawablePreviewByType,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val bannerItemMapper: BaseAccountListItemBannerItemMapper,
     private val backupBannerProcessor: AccountsPreviewBackupBannerProcessor,
     private val getLocalAccounts: GetLocalAccounts,
@@ -85,7 +87,7 @@ class AccountPreviewProcessor @Inject constructor(
             if (accountLite.cachedInfo != null) {
                 primaryAccountValue += accountLite.cachedInfo.primaryAccountValue
                 secondaryAccountValue += accountLite.cachedInfo.secondaryAccountValue
-                getAccountSuccessItem(accountLite, currencyData)
+                getAccountSuccessItem(accountLite, accountLite.cachedInfo, currencyData)
             } else {
                 getAccountErrorItem(accountLite)
             }
@@ -130,18 +132,19 @@ class AccountPreviewProcessor @Inject constructor(
 
     private suspend fun getAccountSuccessItem(
         accountLite: AccountLite,
+        cachedInfo: AccountLite.CachedInfo,
         currencyData: CurrencyData
     ): BaseAccountListItem.AccountSuccessItem {
         val address = accountLite.address
-        val displayName = getAccountDisplayName(address, accountLite.customName, accountLite.cachedInfo?.type)
+        val displayName = getAccountDisplayName(accountLite)
         return BaseAccountListItem.AccountSuccessItem(
             address = address,
             primaryDisplayName = displayName.primaryDisplayName,
             secondaryDisplayName = displayName.secondaryDisplayName.orEmpty(),
-            accountIconDrawablePreview = getAccountIconDrawablePreviewByType(accountLite.cachedInfo!!.type),
-            formattedPrimaryValue = accountLite.cachedInfo.getFormattedPrimaryValue(currencyData),
-            formattedSecondaryValue = accountLite.cachedInfo.getFormattedSecondaryValue(currencyData),
-            canCopyable = accountLite.cachedInfo.type != AccountType.NoAuth,
+            accountIconDrawablePreview = getAccountIconDrawablePreview(accountLite),
+            formattedPrimaryValue = cachedInfo.getFormattedPrimaryValue(currencyData),
+            formattedSecondaryValue = cachedInfo.getFormattedSecondaryValue(currencyData),
+            canCopyable = cachedInfo.type != AccountType.NoAuth,
             startSmallIconResource = accountLite.getStartSmallIconResource()
         )
     }
@@ -173,7 +176,7 @@ class AccountPreviewProcessor @Inject constructor(
 
     private suspend fun getAccountErrorItem(accountLite: AccountLite): BaseAccountListItem.AccountErrorItem {
         val address = accountLite.address
-        val displayName = getAccountDisplayName(address, accountLite.customName, accountLite.cachedInfo?.type)
+        val displayName = getAccountDisplayName(accountLite)
         return BaseAccountListItem.AccountErrorItem(
             address = address,
             primaryDisplayName = displayName.primaryDisplayName,

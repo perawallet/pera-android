@@ -21,11 +21,10 @@ import com.algorand.android.models.TargetUser
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.utils.Event
 import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssets
-import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import java.math.BigInteger
 import javax.inject.Inject
@@ -38,9 +37,8 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
     private val getAccountSelectionAccountsWhichCanSignTransaction: GetAccountSelectionAccountsWhichCanSignTransaction,
     private val fetchAccountInformationAndCacheAssets: FetchAccountInformationAndCacheAssets,
     private val getAccountInformation: GetAccountInformation,
-    private val getAccountMinBalance: GetAccountMinBalance,
-    private val getAccountCustomName: GetAccountCustomName,
-    private val getTransactionSigner: GetTransactionSigner
+    private val getTransactionSigner: GetTransactionSigner,
+    private val getAccountLite: GetAccountLite
 ) {
 
     suspend fun createSendTransactionData(
@@ -50,16 +48,15 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
         amount: BigInteger,
         assetTransaction: AssetTransaction
     ): TransactionSignData.Send? {
-        val senderAccountDetail = getAccountInformation(accountAddress) ?: return null
+        val senderAccountLite = getAccountLite(accountAddress)
+        val senderAccountLiteCachedData = senderAccountLite?.cachedInfo ?: return null
         val receiverAccountInfo = getAccountInformation(accountAddress)
-        val accountName = getAccountCustomName(accountAddress)
-        val minBalance = getAccountMinBalance(senderAccountDetail)
         return TransactionSignData.Send(
-            senderAccountAddress = senderAccountDetail.address,
-            senderAuthAddress = senderAccountDetail.rekeyAdminAddress,
-            senderAlgoAmount = senderAccountDetail.amount,
-            senderAccountName = accountName.orEmpty(),
-            minimumBalance = minBalance.toLong(),
+            senderAccountAddress = accountAddress,
+            senderAuthAddress = senderAccountLiteCachedData.rekeyAuthAddress,
+            senderAlgoAmount = senderAccountLiteCachedData.algoAmountValue.amount,
+            senderAccountName = senderAccountLite.customName,
+            minimumBalance = senderAccountLiteCachedData.minRequiredBalance.toLong(),
             amount = amount,
             assetId = assetId,
             note = note,

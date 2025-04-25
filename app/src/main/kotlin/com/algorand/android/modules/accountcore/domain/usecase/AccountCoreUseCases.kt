@@ -17,6 +17,7 @@ import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseO
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.android.modules.accountcore.domain.model.AccountAssetData
 import com.algorand.android.modules.accountcore.domain.model.AccountTotalValue
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.asset.domain.model.AssetDetail
 import java.math.BigInteger
@@ -69,7 +70,7 @@ fun interface GetAccountOwnedCollectibleData {
 
 interface GetAccountTotalValue {
     suspend operator fun invoke(address: String, includeAlgo: Boolean): AccountTotalValue
-    suspend operator fun invoke(accountInformation: AccountInformation, includeAlgo: Boolean): AccountTotalValue
+    suspend operator fun invoke(accountLite: AccountLite?, includeAlgo: Boolean): AccountTotalValue
 }
 
 fun interface GetAccountTotalValueFlow {

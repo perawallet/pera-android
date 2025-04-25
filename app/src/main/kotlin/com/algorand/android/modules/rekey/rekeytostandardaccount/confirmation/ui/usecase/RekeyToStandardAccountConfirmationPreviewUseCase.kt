@@ -17,6 +17,7 @@ import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.SignedTransactionDetail
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.modules.rekey.domain.usecase.SendSignedTransactionUseCase
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.mapper.RekeyToStandardAccountConfirmationPreviewMapper
 import com.algorand.android.modules.rekey.rekeytostandardaccount.confirmation.ui.model.RekeyToStandardAccountConfirmationPreview
@@ -27,7 +28,6 @@ import com.algorand.android.utils.calculateRekeyFee
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoString
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
 
@@ -37,7 +37,7 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
     private val sendSignedTransactionUseCase: SendSignedTransactionUseCase,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-    private val getAccountInformation: GetAccountInformation
+    private val getAccountLite: GetAccountLite
 ) {
 
     fun sendRekeyToStandardAccountTransaction(
@@ -66,19 +66,19 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
         accountAddress: String,
         authAccountAddress: String
     ): RekeyToStandardAccountConfirmationPreview {
-        val accountInfo = getAccountInformation(accountAddress)
-        val isAccountRekeyed = accountInfo?.isRekeyed() == true
-        val accountDisplayName = getAccountDisplayName(accountAddress)
+        val accountLite = getAccountLite(accountAddress)
+        val isAccountRekeyed = accountLite?.cachedInfo?.isRekeyed == true
+        val displayName = getAccountDisplayName(accountAddress, accountLite?.customName, accountLite?.cachedInfo?.type)
 
         val authAccountDisplayName = getAccountDisplayName(authAccountAddress)
 
         val currentlyRekeyedAccountDisplayName = if (isAccountRekeyed) {
-            getAccountDisplayName(accountInfo?.rekeyAdminAddress.orEmpty())
+            getAccountDisplayName(accountLite?.cachedInfo?.rekeyAuthAddress.orEmpty())
         } else {
             null
         }
         val currentlyRekeyAccountIconDrawable = if (isAccountRekeyed) {
-            getAccountIconDrawablePreview(accountInfo?.rekeyAdminAddress.orEmpty())
+            getAccountIconDrawablePreview(accountLite?.cachedInfo?.rekeyAuthAddress.orEmpty())
         } else {
             null
         }
@@ -86,7 +86,7 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
         return rekeyToStandardAccountConfirmationPreviewMapper.mapToRekeyToStandardAccountConfirmationPreview(
             isLoading = false,
             descriptionAnnotatedString = getDescriptionAnnotatedString(isAccountRekeyed = isAccountRekeyed),
-            rekeyedAccountDisplayName = accountDisplayName,
+            rekeyedAccountDisplayName = displayName,
             rekeyedAccountIconResource = getAccountIconDrawablePreview(accountAddress),
             authAccountDisplayName = authAccountDisplayName,
             authAccountIconResource = getAccountIconDrawablePreview(authAccountAddress),
@@ -128,8 +128,8 @@ class RekeyToStandardAccountConfirmationPreviewUseCase @Inject constructor(
         accountAddress: String,
         preview: RekeyToStandardAccountConfirmationPreview
     ): RekeyToStandardAccountConfirmationPreview {
-        val accountInfo = getAccountInformation(accountAddress) ?: return preview
-        return if (accountInfo.isRekeyed()) {
+        val accountLiteCachedInfo = getAccountLite(accountAddress)?.cachedInfo ?: return preview
+        return if (accountLiteCachedInfo.isRekeyed) {
             preview.copy(navToRekeyedAccountConfirmationBottomSheetEvent = Event(Unit))
         } else {
             preview.copy(onSendTransactionEvent = Event(Unit))

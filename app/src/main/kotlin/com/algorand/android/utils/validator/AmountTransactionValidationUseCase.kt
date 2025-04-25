@@ -15,12 +15,14 @@ package com.algorand.android.utils.validator
 
 import com.algorand.android.models.AssetTransferAmountValidationResult
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.utils.MIN_FEE
 import com.algorand.android.utils.formatAmountAsBigInteger
 import com.algorand.android.utils.isGreaterThan
 import com.algorand.android.utils.isLesserThan
-import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingAmount
+import com.algorand.wallet.account.info.domain.usecase.IsAccountOptedInToAnyApp
+import com.algorand.wallet.account.info.domain.usecase.IsAccountOptedInToAnyAsset
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.util.AssetConstants
 import java.math.BigDecimal
@@ -28,10 +30,12 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class AmountTransactionValidationUseCase @Inject constructor(
-    private val getAccountMinBalance: GetAccountMinBalance,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
-    private val getAccountInformation: GetAccountInformation,
-    private val getAsset: GetAsset
+    private val getAsset: GetAsset,
+    private val getAccountLite: GetAccountLite,
+    private val isAccountOptedInToAnyApp: IsAccountOptedInToAnyApp,
+    private val isAccountOptedInToAnyAsset: IsAccountOptedInToAnyAsset,
+    private val getAccountAssetHoldingAmount: GetAccountAssetHoldingAmount
 ) {
 
     suspend fun validateAssetAmount(
@@ -60,12 +64,13 @@ class AmountTransactionValidationUseCase @Inject constructor(
     }
 
     suspend fun getMaximumSendableAmount(address: String, assetId: Long): BigInteger? {
-        val accountMinRequiredBalance = getAccountMinBalance(address)
-        val ownedAssetData = getAccountBaseOwnedAssetData(address, assetId) ?: return null
         return if (assetId == AssetConstants.ALGO_ID) {
-            ownedAssetData.amount - accountMinRequiredBalance - MIN_FEE.toBigInteger()
+            val accountLiteCachedInfo = getAccountLite(address)?.cachedInfo ?: return null
+            val algoAmount = accountLiteCachedInfo.algoAmountValue.amount
+            val minRequiredBalance = accountLiteCachedInfo.minRequiredBalance
+            algoAmount - minRequiredBalance - MIN_FEE.toBigInteger()
         } else {
-            ownedAssetData.amount
+            getAccountAssetHoldingAmount(address, assetId)
         }
     }
 
@@ -76,17 +81,18 @@ class AmountTransactionValidationUseCase @Inject constructor(
     }
 
     private suspend fun isBalanceInsufficientForPayingFee(address: String): Boolean? {
-        val accountInformation = getAccountInformation(address) ?: return null
-        val requiredMinBalance = getAccountMinBalance(accountInformation)
-        return accountInformation.amount.isLesserThan(requiredMinBalance + MIN_FEE.toBigInteger())
+        val accountLiteCachedInfo = getAccountLite(address)?.cachedInfo ?: return null
+        val requiredMinBalance = accountLiteCachedInfo.minRequiredBalance
+        val algoAmount = accountLiteCachedInfo.algoAmountValue.amount
+        return algoAmount.isLesserThan(requiredMinBalance + MIN_FEE.toBigInteger())
     }
 
     private suspend fun isMinimumBalanceViolated(address: String, assetId: Long, amount: BigDecimal): Boolean? {
-        val accountInformation = getAccountInformation(address) ?: return null
-        val requiredMinBalance = getAccountMinBalance(accountInformation)
+        val accountLiteCachedInfo = getAccountLite(address)?.cachedInfo ?: return null
+        val requiredMinBalance = accountLiteCachedInfo.minRequiredBalance
         val ownedAssetData = getAccountBaseOwnedAssetData(address, assetId) ?: return null
-        val isThereAnotherAsset = accountInformation.isThereAnOptedInAsset()
-        val isThereAppOptedIn = accountInformation.isThereAnOptedInApp()
+        val isThereAnotherAsset = isAccountOptedInToAnyAsset(address)
+        val isThereAppOptedIn = isAccountOptedInToAnyApp(address)
         val amountAsBigInteger = amount.formatAmountAsBigInteger(ownedAssetData.decimals)
         return ownedAssetData.isAlgo &&
             (ownedAssetData.amount - amountAsBigInteger - MIN_FEE.toBigInteger()) isLesserThan requiredMinBalance &&

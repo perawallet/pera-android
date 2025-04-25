@@ -16,6 +16,7 @@ import com.algorand.android.models.TargetUser
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetsData
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.modules.dapp.bidali.domain.mapper.BidaliAssetMapper
 import com.algorand.android.modules.dapp.bidali.domain.model.BidaliPaymentRequestDTO
 import com.algorand.android.modules.dapp.bidali.domain.model.MainnetBidaliSupportedCurrency
@@ -24,10 +25,8 @@ import com.algorand.android.modules.dapp.bidali.getCompiledBidaliJavascript
 import com.algorand.android.usecase.IsOnMainnetUseCase
 import com.algorand.android.utils.formatAmountAsBigInteger
 import com.algorand.android.utils.toBigDecimalOrZero
-import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -39,11 +38,10 @@ class BidaliBrowserUseCase @Inject constructor(
     private val bidaliAssetMapper: BidaliAssetMapper,
     private val isOnMainnetUseCase: IsOnMainnetUseCase,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
-    private val getAccountInformation: GetAccountInformation,
-    private val getAccountMinBalance: GetAccountMinBalance,
-    private val getAccountCustomName: GetAccountCustomName,
     private val getTransactionSigner: GetTransactionSigner,
-    private val getAsset: GetAsset
+    private val getAsset: GetAsset,
+    private val getAccountLite: GetAccountLite,
+    private val isAssetOptedInByAccount: IsAssetOptedInByAccount
 ) {
 
     suspend fun generateBidaliJavascript(accountAddress: String): String {
@@ -62,8 +60,9 @@ class BidaliBrowserUseCase @Inject constructor(
         accountAddress: String
     ): TransactionSignData.Send? {
         // TODO handle cases when we can't find address or assets
-        val selectedAccount = getAccountInformation(accountAddress) ?: return null
-        val receiverAccount = getAccountInformation(paymentRequest.address) ?: return null
+        val selectedAccountLite = getAccountLite(accountAddress)
+        if (selectedAccountLite?.cachedInfo == null) return null
+        val receiverAccount = getAccountLite(paymentRequest.address) ?: return null
 
         val selectedAssetId = getAssetIdFromBidaliIdentifier(
             bidaliId = paymentRequest.protocol,
@@ -73,12 +72,15 @@ class BidaliBrowserUseCase @Inject constructor(
             paymentRequest.amount.toBigDecimalOrZero(),
             selectedAssetId
         ) ?: return null
+
+        val isReceiverOptedInToAsset = isAssetOptedInByAccount(receiverAccount.address, selectedAssetId) == true
+
         return TransactionSignData.Send(
-            senderAccountAddress = selectedAccount.address,
-            senderAuthAddress = selectedAccount.rekeyAdminAddress,
-            senderAccountName = getAccountCustomName(selectedAccount.address).orEmpty(),
-            senderAlgoAmount = selectedAccount.amount,
-            minimumBalance = getAccountMinBalance(selectedAccount.address).toLong(),
+            senderAccountAddress = selectedAccountLite.address,
+            senderAuthAddress = selectedAccountLite.cachedInfo.rekeyAuthAddress,
+            senderAccountName = selectedAccountLite.customName,
+            senderAlgoAmount = selectedAccountLite.cachedInfo.algoAmountValue.amount,
+            minimumBalance = selectedAccountLite.cachedInfo.minRequiredBalance.toLong(),
             amount = amountAsBigInteger,
             assetId = selectedAssetId,
             xnote = paymentRequest.extraId,
@@ -86,8 +88,8 @@ class BidaliBrowserUseCase @Inject constructor(
                 publicKey = paymentRequest.address,
                 accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             ),
-            isArc59Transaction = !receiverAccount.hasAsset(selectedAssetId),
-            signer = getTransactionSigner(selectedAccount.address)
+            isArc59Transaction = !isReceiverOptedInToAsset,
+            signer = getTransactionSigner(selectedAccountLite.address)
         )
     }
 

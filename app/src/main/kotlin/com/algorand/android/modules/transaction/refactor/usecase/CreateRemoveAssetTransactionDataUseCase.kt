@@ -13,24 +13,24 @@
 package com.algorand.android.modules.transaction.refactor.usecase
 
 import com.algorand.android.models.TransactionSignData
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
-import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.asset.domain.usecase.GetAssetCreatorAddress
 import javax.inject.Inject
 
 internal class CreateRemoveAssetTransactionDataUseCase @Inject constructor(
-    private val getAccountInformation: GetAccountInformation,
     private val getTransactionSigner: GetTransactionSigner,
-    private val getAsset: GetAsset
+    private val getAccountLite: GetAccountLite,
+    private val getAssetCreatorAddress: GetAssetCreatorAddress
 ) : CreateRemoveAssetTransactionData {
 
     override suspend fun invoke(address: String, assetId: Long): TransactionSignData.RemoveAsset? {
-        val senderInfo = getAccountInformation(address) ?: return null
-        val creatorAddress = getAsset(assetId)?.creatorAddress ?: return null
+        val senderAccountLiteCachedInfo = getAccountLite(address)?.cachedInfo ?: return null
+        val creatorAddress = getAssetCreatorAddress(assetId) ?: return null
         return TransactionSignData.RemoveAsset(
-            senderAccountAddress = senderInfo.address,
-            senderAuthAddress = senderInfo.rekeyAdminAddress,
-            signer = getTransactionSigner(senderInfo.address),
+            senderAccountAddress = address,
+            senderAuthAddress = senderAccountLiteCachedInfo.rekeyAuthAddress,
+            signer = getTransactionSigner(address),
             assetId = assetId,
             creatorAddress = creatorAddress
         )

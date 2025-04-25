@@ -27,7 +27,7 @@ import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.decider
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlow
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -47,7 +47,7 @@ class AccountStatusDetailViewModel @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountOriginalStateIconDrawablePreview: GetAccountOriginalStateIconDrawablePreview,
     private val accountStatusDetailPreviewDecider: AccountStatusDetailPreviewDecider,
-    private val getAccountInformation: GetAccountInformation
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
     private val navArgs = AccountStatusDetailBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
@@ -63,8 +63,7 @@ class AccountStatusDetailViewModel @Inject constructor(
             getAccountDetailFlow(accountAddress).collectLatest { accountDetail ->
                 if (accountDetail == null) return@collectLatest
 
-                val accountInformation = getAccountInformation(accountAddress)
-                val authAccountAddress = accountInformation?.rekeyAdminAddress
+                val authAccountAddress = getAccountRekeyAdminAddress(accountAddress)
                 val hasAccountAuthority = accountDetail.accountType?.canSignTransaction() == true
 
                 val titleString = accountStatusDetailPreviewDecider.decideTitleString(accountDetail.accountType)

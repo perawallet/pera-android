@@ -13,6 +13,7 @@
 package com.algorand.android.modules.swap.assetswap.ui.usecase
 
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountOwnedAssetData
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForRequest
 import com.algorand.android.modules.swap.assetswap.domain.usecase.GetPeraFeeUseCase
 import com.algorand.android.modules.swap.utils.swapFeePadding
@@ -20,8 +21,6 @@ import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.exceptions.InsufficientAlgoBalance
 import com.algorand.android.utils.isLesserThan
-import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -33,8 +32,7 @@ import kotlinx.coroutines.flow.flow
 class GetPercentageCalculatedBalanceForSwapUseCase @Inject constructor(
     private val getPeraFeeUseCase: GetPeraFeeUseCase,
     private val getAccountOwnedAssetData: GetAccountOwnedAssetData,
-    private val getAccountInformation: GetAccountInformation,
-    private val getAccountMinBalance: GetAccountMinBalance
+    private val getAccountLite: GetAccountLite
 ) {
 
     suspend fun getBalanceForSelectedPercentage(
@@ -163,9 +161,9 @@ class GetPercentageCalculatedBalanceForSwapUseCase @Inject constructor(
     }
 
     private suspend fun getMinBalanceAndAccountAlgoBalancePair(accountAddress: String): Pair<BigInteger, BigInteger> {
-        val accountInfo = getAccountInformation(accountAddress) ?: return BigInteger.ZERO to BigInteger.ZERO
-        val minRequiredAlgoBalance = getAccountMinBalance(accountInfo)
-        return minRequiredAlgoBalance to accountInfo.amount
+        val accountLiteCachedInfo = getAccountLite(accountAddress)?.cachedInfo
+            ?: return BigInteger.ZERO to BigInteger.ZERO
+        return accountLiteCachedInfo.minRequiredBalance to accountLiteCachedInfo.algoAmountValue.amount
     }
 
     companion object {

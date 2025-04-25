@@ -56,7 +56,8 @@ import com.algorand.android.utils.signTx
 import com.algorand.android.utils.toBytesArray
 import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingAmount
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetAlgo25SecretKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
@@ -76,7 +77,8 @@ class TransactionSignManager @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val ledgerBleOperationManager: LedgerBleOperationManager,
     private val signHelper: TransactionSignSigningHelper,
-    private val getAccountInformation: GetAccountInformation,
+    private val getAccountAlgoBalance: GetAccountAlgoBalance,
+    private val getAccountAssetHoldingAmount: GetAccountAssetHoldingAmount,
     private val getAccountMinBalance: GetAccountMinBalance,
     private val getAlgo25SecretKey: GetAlgo25SecretKey,
     private val getHdSeed: GetHdSeed,
@@ -457,13 +459,13 @@ class TransactionSignManager @Inject constructor(
         return if (assetId != ALGO_ID) {
             false
         } else {
-            getAccountInformation(publicKey)?.amount == amount
+            getAccountAlgoBalance(publicKey) == amount
         }
     }
 
     private suspend fun shouldCreateAssetRemoveTransaction(publicKey: String, assetId: Long): Boolean {
-        val assetHolding = getAccountInformation(publicKey)?.assetHoldings?.firstOrNull { it.assetId == assetId }
-        return assetHolding != null && assetHolding.amount == BigInteger.ZERO
+        val assetHoldingAmount = getAccountAssetHoldingAmount(publicKey, assetId)
+        return assetHoldingAmount != null && assetHoldingAmount == BigInteger.ZERO
     }
 
     private fun TransactionSignData.isCloseToSameAccount(): Boolean {
@@ -492,7 +494,7 @@ class TransactionSignManager @Inject constructor(
             }
         }
 
-        val balance = getAccountInformation(senderAccountAddress)?.amount ?: run {
+        val balance = getAccountAlgoBalance(senderAccountAddress) ?: run {
             setSignFailed(Defined(AnnotatedString(stringResId = R.string.minimum_balance_required)))
             return true
         }

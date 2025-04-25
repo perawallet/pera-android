@@ -13,36 +13,36 @@
 package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
-import com.algorand.wallet.account.info.domain.model.AccountInformation
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 
 internal class GetAccountOwnedAssetDataUseCase @Inject constructor(
-    private val getAccountInformation: GetAccountInformation,
     private val getAssetDetail: GetAssetDetail,
+    private val getAccountAlgoBalance: GetAccountAlgoBalance,
+    private val getAccountAssetHolding: GetAccountAssetHolding,
     private val createAccountOwnedAssetData: CreateAccountOwnedAssetData,
     private val createAlgoOwnedAssetData: CreateAlgoOwnedAssetData
 ) : GetAccountOwnedAssetData {
 
     override suspend fun invoke(address: String, assetId: Long): OwnedAssetData? {
-        val accountInfo = getAccountInformation(address) ?: return null
         return if (assetId == ALGO_ID) {
-            createOwnedAlgo(accountInfo)
+            createOwnedAlgo(address)
         } else {
-            createOwnedAsset(accountInfo, assetId)
+            createOwnedAsset(address, assetId)
         }
     }
 
-    private suspend fun createOwnedAsset(accountInformation: AccountInformation, assetId: Long): OwnedAssetData? {
-        val assetHolding = accountInformation.assetHoldings.find { it.assetId == assetId } ?: return null
+    private suspend fun createOwnedAsset(address: String, assetId: Long): OwnedAssetData? {
+        val assetHolding = getAccountAssetHolding(address, assetId) ?: return null
         val assetDetail = getAssetDetail(assetId) ?: return null
         return createAccountOwnedAssetData(assetDetail, assetHolding)
     }
 
-    private suspend fun createOwnedAlgo(accountInformation: AccountInformation): OwnedAssetData {
-        val algoAmount = accountInformation.amount
+    private suspend fun createOwnedAlgo(address: String): OwnedAssetData? {
+        val algoAmount = getAccountAlgoBalance(address) ?: return null
         return createAlgoOwnedAssetData(algoAmount)
     }
 }

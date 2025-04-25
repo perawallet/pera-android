@@ -12,35 +12,43 @@
 
 package com.algorand.android.ui.accountoptions
 
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.ui.accountoptions.model.AccountOptionsPreview
-import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType.Algo25
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType.HdKey
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import javax.inject.Inject
 
 class AccountOptionsPreviewUseCase @Inject constructor(
-    private val getAccountInformation: GetAccountInformation,
     private val getAccountDisplayName: GetAccountDisplayName,
-    private val getAccountDetail: GetAccountDetail
+    private val getAccountLite: GetAccountLite
 ) {
 
     suspend fun getPreview(address: String): AccountOptionsPreview? {
-        val accountDetail = getAccountDetail(address)
-        val canSignTransaction = accountDetail.accountType?.canSignTransaction() == true
-        return getAccountInformation(address)?.run {
+        return getAccountLite(address)?.run {
+            val canSignTransaction = cachedInfo?.type?.canSignTransaction() == true
+            val isRekeyed = cachedInfo?.isRekeyed == true
             AccountOptionsPreview(
                 accountAddress = address,
-                authAddress = rekeyAdminAddress,
+                authAddress = cachedInfo?.rekeyAuthAddress,
                 accountDisplayName = getAccountDisplayName(address),
-                authAccountDisplayName = if (isRekeyed()) getAccountDisplayName(rekeyAdminAddress.orEmpty()) else null,
-                isAuthAddressButtonVisible = isRekeyed(),
-                isPassphraseButtonVisible = accountDetail.accountRegistrationType == AccountRegistrationType.Algo25 ||
-                        accountDetail.accountRegistrationType == AccountRegistrationType.HdKey,
-                isUndoRekeyButtonVisible = isRekeyed() && canSignTransaction,
+                authAccountDisplayName = getAuthAccountDisplayName(this),
+                isAuthAddressButtonVisible = isRekeyed,
+                isPassphraseButtonVisible = registrationType == Algo25 || registrationType == HdKey,
+                isUndoRekeyButtonVisible = isRekeyed && canSignTransaction,
                 canSignTransaction = canSignTransaction
             )
+        }
+    }
+
+    private suspend fun getAuthAccountDisplayName(accountLite: AccountLite): AccountDisplayName? {
+        return if (accountLite.cachedInfo?.isRekeyed == true) {
+            getAccountDisplayName(accountLite.cachedInfo.rekeyAuthAddress.orEmpty())
+        } else {
+            null
         }
     }
 }

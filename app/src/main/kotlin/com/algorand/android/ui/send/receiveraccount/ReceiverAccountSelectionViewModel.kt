@@ -22,13 +22,12 @@ import com.algorand.android.models.Result
 import com.algorand.android.models.TargetUser
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accountasset.domain.model.AccountAssetDetail
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.modules.assetinbox.expresssend.domain.usecase.Arc59ExpressSendUseCase
 import com.algorand.android.usecase.ReceiverAccountSelectionUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
-import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -47,8 +46,7 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
     private val arc59ExpressSendUseCase: Arc59ExpressSendUseCase,
     private val getTransactionSigner: GetTransactionSigner,
     private val getAccountInformation: GetAccountInformation,
-    private val getAccountMinBalance: GetAccountMinBalance,
-    private val getAccountCustomName: GetAccountCustomName,
+    private val getAccountLite: GetAccountLite,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -165,15 +163,14 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
 
         viewModelScope.launch {
             val isArc59Transaction = isArc59Transaction(targetUser.publicKey, assetTransaction.assetId)
-            val accountInfo = getAccountInformation(assetTransaction.senderAddress) ?: return@launch
-            val accountName = getAccountCustomName(assetTransaction.senderAddress)
-            val minBalance = getAccountMinBalance(accountInfo)
+            val accountLite = getAccountLite(assetTransaction.senderAddress)
+            val accountLiteCachedInfo = accountLite?.cachedInfo ?: return@launch
             val txnData = TransactionSignData.Send(
                 senderAccountAddress = assetTransaction.senderAddress,
-                senderAccountName = accountName.orEmpty(),
-                senderAuthAddress = accountInfo.rekeyAdminAddress,
-                senderAlgoAmount = accountInfo.amount,
-                minimumBalance = minBalance.toLong(),
+                senderAccountName = accountLite.customName,
+                senderAuthAddress = accountLiteCachedInfo.rekeyAuthAddress,
+                senderAlgoAmount = accountLiteCachedInfo.algoAmountValue.amount,
+                minimumBalance = accountLiteCachedInfo.minRequiredBalance.toLong(),
                 amount = minBalanceCalculatedAmount,
                 assetId = assetTransaction.assetId,
                 note = note,

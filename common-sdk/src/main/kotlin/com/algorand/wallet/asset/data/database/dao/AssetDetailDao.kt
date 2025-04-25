@@ -46,4 +46,7 @@ internal interface AssetDetailDao {
 
     @Query("SELECT asset_id, usd_value, decimals FROM asset_detail WHERE asset_id IN (:assetIds)")
     fun getLiteInformationByAssetIds(assetIds: List<Long>): Flow<List<AssetLiteInformationDao>>
+
+    @Query("SELECT asset_creator_address FROM asset_detail WHERE asset_id = :assetId")
+    suspend fun getAssetCreatorAddress(assetId: Long): String?
 }

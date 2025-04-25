@@ -38,10 +38,6 @@ data class AccountInformation(
         return assetId == ALGO_ID || assetHoldings.any { it.assetId == assetId }
     }
 
-    fun hasAssetAmount(assetId: Long): Boolean {
-        return assetHoldings.any { it.assetId == assetId && it.amount != BigInteger.ZERO }
-    }
-
     fun getAssetHoldingIds() = assetHoldings.map { it.assetId }
 
     fun isCreated() = createdAtRound != null

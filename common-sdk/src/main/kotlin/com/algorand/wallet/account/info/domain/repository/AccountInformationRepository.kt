@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.info.domain.repository
 
+import com.algorand.wallet.account.info.domain.model.AccountAssetAndAppsCount
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
@@ -72,5 +73,13 @@ internal interface AccountInformationRepository {
 
     fun getAssetHoldingsLiteFlow(addresses: List<String>): Flow<Map<String, AssetHoldingLite>>
 
+    suspend fun getAccountAssetHoldingAmount(address: String, assetId: Long): BigInteger?
+
     suspend fun getCachedAccountMinRequiredBalance(address: String): BigInteger?
+
+    suspend fun isAssetOptedInByAccount(address: String, assetId: Long): Boolean
+
+    suspend fun getAccountAssetsAndAppsCount(address: String): AccountAssetAndAppsCount?
+
+    suspend fun getAssetHolding(address: String, assetId: Long): AssetHolding?
 }

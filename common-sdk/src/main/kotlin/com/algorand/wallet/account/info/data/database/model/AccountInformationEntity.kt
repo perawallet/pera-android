@@ -29,6 +29,9 @@ internal data class AccountInformationEntity(
     @ColumnInfo(name = "opted_in_apps_count")
     val optedInAppsCount: Int,
 
+    @ColumnInfo(name = "opted_in_assets_count")
+    val optedInAssetsCount: Int,
+
     @ColumnInfo(name = "apps_total_extra_pages")
     val appsTotalExtraPages: Int,
 

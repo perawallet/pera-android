@@ -196,6 +196,12 @@ internal class AssetRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getAssetCreatorAddress(assetId: Long): String? {
+        return withContext(coroutineDispatcher) {
+            assetDetailDao.getAssetCreatorAddress(assetId)
+        }
+    }
+
     companion object {
         private const val MAX_ASSET_FETCH_COUNT = 100
     }

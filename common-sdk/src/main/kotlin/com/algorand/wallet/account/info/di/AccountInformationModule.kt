@@ -22,6 +22,8 @@ import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMap
 import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapperImpl
 import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapperImpl
+import com.algorand.wallet.account.info.data.mapper.model.AccountAssetAndAppsCountMapper
+import com.algorand.wallet.account.info.data.mapper.model.AccountAssetAndAppsCountMapperImpl
 import com.algorand.wallet.account.info.data.mapper.model.AccountFastLookupMapper
 import com.algorand.wallet.account.info.data.mapper.model.AccountFastLookupMapperImpl
 import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
@@ -56,6 +58,8 @@ import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformationWi
 import com.algorand.wallet.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingAmount
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
@@ -73,6 +77,12 @@ import com.algorand.wallet.account.info.domain.usecase.GetRegisteredHdKeys
 import com.algorand.wallet.account.info.domain.usecase.GetRegisteredHdKeysUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsAccountCachedSuccessfully
 import com.algorand.wallet.account.info.domain.usecase.IsAccountCachedSuccessfullyUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsAccountOptedInToAnyApp
+import com.algorand.wallet.account.info.domain.usecase.IsAccountOptedInToAnyAppUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsAccountOptedInToAnyAsset
+import com.algorand.wallet.account.info.domain.usecase.IsAccountOptedInToAnyAssetUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccountUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAnyLocalAccount
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccountUseCase
@@ -351,4 +361,36 @@ internal object AccountInformationModule {
     ): FetchAccountInformationWithoutAssets {
         return FetchAccountInformationWithoutAssets(repository::fetchAccountInformationWithoutAssets)
     }
+
+    @Provides
+    fun provideGetAccountAssetHoldingAmount(
+        repository: AccountInformationRepository
+    ): GetAccountAssetHoldingAmount {
+        return GetAccountAssetHoldingAmount(repository::getAccountAssetHoldingAmount)
+    }
+
+    @Provides
+    fun provideIsAssetOptedInByAccount(useCase: IsAssetOptedInByAccountUseCase): IsAssetOptedInByAccount = useCase
+
+    @Provides
+    fun provideIsAccountOptedInToAnyAsset(
+        useCase: IsAccountOptedInToAnyAssetUseCase
+    ): IsAccountOptedInToAnyAsset = useCase
+
+    @Provides
+    fun provideIsAccountOptedInToAnyApp(
+        useCase: IsAccountOptedInToAnyAppUseCase
+    ): IsAccountOptedInToAnyApp = useCase
+
+    @Provides
+    fun provideGetAccountAssetHolding(
+        repository: AccountInformationRepository
+    ): GetAccountAssetHolding {
+        return GetAccountAssetHolding(repository::getAssetHolding)
+    }
+
+    @Provides
+    fun provideAccountAssetAndAppsCountMapper(
+        impl: AccountAssetAndAppsCountMapperImpl
+    ): AccountAssetAndAppsCountMapper = impl
 }

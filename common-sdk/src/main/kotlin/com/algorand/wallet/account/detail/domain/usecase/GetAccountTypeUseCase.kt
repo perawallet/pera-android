@@ -13,22 +13,22 @@
 package com.algorand.wallet.account.detail.domain.usecase
 
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import javax.inject.Inject
 
 internal class GetAccountTypeUseCase @Inject constructor(
     private val getLocalAccounts: GetLocalAccounts,
-    private val getAccountInformation: GetAccountInformation
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) : GetAccountType {
 
     override suspend fun invoke(address: String): AccountType? {
         val localAccounts = getLocalAccounts()
-        val cachedAccount = getAccountInformation(address) ?: return null
+        val rekeyAdminAddress = getAccountRekeyAdminAddress(address)
         val account = localAccounts.firstOrNull { it.algoAddress == address } ?: return null
-        return if (cachedAccount.rekeyAdminAddress != null) {
-            getAccountTypeForRekeyedAccount(account, cachedAccount.rekeyAdminAddress, localAccounts)
+        return if (rekeyAdminAddress != null) {
+            getAccountTypeForRekeyedAccount(account, rekeyAdminAddress, localAccounts)
         } else {
             getAccountTypeForNonRekeyedAccount(account)
         }

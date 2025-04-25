@@ -12,9 +12,6 @@
 
 package com.algorand.wallet.account.info.domain.usecase
 
-import com.algorand.test.peraFixture
-import com.algorand.wallet.account.info.domain.model.AccountInformation
-import com.algorand.wallet.account.info.domain.model.AssetHolding
 import io.mockk.coEvery
 import io.mockk.mockk
 import java.math.BigInteger
@@ -25,13 +22,14 @@ import org.junit.Test
 
 class IsAssetOwnedByAccountUseCaseTest {
 
-    private val getAccountInformation: GetAccountInformation = mockk()
+    private val getAccountAlgoBalance: GetAccountAlgoBalance = mockk()
+    private val getAccountAssetHoldingAmount: GetAccountAssetHoldingAmount = mockk()
 
-    private val sut = IsAssetOwnedByAccountUseCase(getAccountInformation)
+    private val sut = IsAssetOwnedByAccountUseCase(getAccountAlgoBalance, getAccountAssetHoldingAmount)
 
     @Test
     fun `EXPECT false WHEN invoked by address and account information is null`() = runTest {
-        coEvery { getAccountInformation(ADDRESS) } returns null
+        coEvery { getAccountAssetHoldingAmount(ADDRESS, ASSET_ID) } returns null
 
         val result = sut(ADDRESS, ASSET_ID)
 
@@ -40,8 +38,7 @@ class IsAssetOwnedByAccountUseCaseTest {
 
     @Test
     fun `EXPECT true WHEN invoked by address, asset id is ALGO_ID and account amount is greater than zero`() = runTest {
-        val accountInfo = ACCOUNT_INFO.copy(amount = BigInteger.ONE)
-        coEvery { getAccountInformation(ADDRESS) } returns accountInfo
+        coEvery { getAccountAlgoBalance(ADDRESS) } returns BigInteger.TWO
 
         val result = sut(ADDRESS, ALGO_ID)
 
@@ -50,8 +47,7 @@ class IsAssetOwnedByAccountUseCaseTest {
 
     @Test
     fun `EXPECT false WHEN invoked by address, asset id is ALGO_ID and account amount is zero`() = runTest {
-        val accountInfo = ACCOUNT_INFO.copy(amount = BigInteger.ZERO)
-        coEvery { getAccountInformation(ADDRESS) } returns accountInfo
+        coEvery { getAccountAlgoBalance(ADDRESS) } returns BigInteger.ZERO
 
         val result = sut(ADDRESS, ALGO_ID)
 
@@ -61,9 +57,7 @@ class IsAssetOwnedByAccountUseCaseTest {
     @Test
     fun `EXPECT true WHEN invoked by address, asset id is not ALGO_ID and account has asset holdings with amount greater than zero`() =
         runTest {
-            val assetHolding = ASSET_HOLDING.copy(amount = BigInteger.ONE)
-            val accountInfo = ACCOUNT_INFO.copy(assetHoldings = listOf(assetHolding))
-            coEvery { getAccountInformation(ADDRESS) } returns accountInfo
+            coEvery { getAccountAssetHoldingAmount(ADDRESS, ASSET_ID) } returns BigInteger.ONE
 
             val result = sut(ADDRESS, ASSET_ID)
 
@@ -73,9 +67,7 @@ class IsAssetOwnedByAccountUseCaseTest {
     @Test
     fun `EXPECT false WHEN invoked by address, asset id is not ALGO_ID and account has asset holdings with amount zero`() =
         runTest {
-            val assetHolding = ASSET_HOLDING.copy(amount = BigInteger.ZERO)
-            val accountInfo = ACCOUNT_INFO.copy(assetHoldings = listOf(assetHolding))
-            coEvery { getAccountInformation(ADDRESS) } returns accountInfo
+            coEvery { getAccountAssetHoldingAmount(ADDRESS, ASSET_ID) } returns BigInteger.ZERO
 
             val result = sut(ADDRESS, ASSET_ID)
 
@@ -84,9 +76,7 @@ class IsAssetOwnedByAccountUseCaseTest {
 
     @Test
     fun `EXPECT false WHEN invoked by address, asset id is not ALGO_ID and account has no asset holdings`() = runTest {
-        val assetHolding = peraFixture<AssetHolding>().copy(assetId = 9)
-        val accountInfo = ACCOUNT_INFO.copy(assetHoldings = listOf(assetHolding))
-        coEvery { getAccountInformation(ADDRESS) } returns accountInfo
+        coEvery { getAccountAssetHoldingAmount(ADDRESS, ASSET_ID) } returns null
 
         val result = sut(ADDRESS, ASSET_ID)
 
@@ -97,8 +87,5 @@ class IsAssetOwnedByAccountUseCaseTest {
         const val ADDRESS = "address"
         const val ASSET_ID = 1L
         const val ALGO_ID = -7L
-
-        val ACCOUNT_INFO = peraFixture<AccountInformation>()
-        val ASSET_HOLDING = peraFixture<AssetHolding>().copy(assetId = ASSET_ID)
     }
 }

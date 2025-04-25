@@ -17,10 +17,12 @@ import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
 import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapper
 import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapper
+import com.algorand.wallet.account.info.data.mapper.model.AccountAssetAndAppsCountMapper
 import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
 import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
+import com.algorand.wallet.account.info.domain.model.AccountAssetAndAppsCount
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
@@ -52,7 +54,8 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     private val assetStatusEntityMapper: AssetStatusEntityMapper,
     private val assetHoldingEntityMapper: AssetHoldingEntityMapper,
     private val accountInformationErrorCache: AccountInformationErrorCache,
-    private val getLocalAccountsAddresses: GetLocalAccountsAddresses
+    private val getLocalAccountsAddresses: GetLocalAccountsAddresses,
+    private val accountAssetAndAppsCountMapper: AccountAssetAndAppsCountMapper
 ) : AccountInformationRepository {
 
     override suspend fun fetchAccountInformation(
@@ -231,8 +234,26 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getAccountAssetHoldingAmount(address: String, assetId: Long): BigInteger? {
+        return assetHoldingDao.getAssetHoldingAmount(address, assetId)
+    }
+
     override suspend fun getCachedAccountMinRequiredBalance(address: String): BigInteger? {
         return accountInformationDao.getMinRequiredBalance(address)
+    }
+
+    override suspend fun isAssetOptedInByAccount(address: String, assetId: Long): Boolean {
+        return assetHoldingDao.isAssetOptedInByAccount(address, assetId)
+    }
+
+    override suspend fun getAccountAssetsAndAppsCount(address: String): AccountAssetAndAppsCount? {
+        return accountInformationDao.getAssetsAndAppsCount(address)?.let {
+            accountAssetAndAppsCountMapper.map(it)
+        }
+    }
+
+    override suspend fun getAssetHolding(address: String, assetId: Long): AssetHolding? {
+        return assetHoldingDao.getAssetHolding(address, assetId)?.let { assetHoldingMapper(it) }
     }
 
     private suspend fun PeraResult<AccountInformationResponse>.mapToAccountInfo(): PeraResult<AccountInformation> {

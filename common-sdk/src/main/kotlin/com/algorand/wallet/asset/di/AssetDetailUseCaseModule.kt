@@ -22,6 +22,7 @@ import com.algorand.wallet.asset.domain.usecase.FetchAssetDetailFromNode
 import com.algorand.wallet.asset.domain.usecase.FetchAssets
 import com.algorand.wallet.asset.domain.usecase.FetchCollectibleDetail
 import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.asset.domain.usecase.GetAssetCreatorAddress
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
 import com.algorand.wallet.asset.domain.usecase.GetCollectiblesDetail
@@ -108,5 +109,10 @@ internal object AssetDetailUseCaseModule {
         repository: AssetRepository
     ): GetAssetsLiteInformationFlow {
         return GetAssetsLiteInformationFlow(repository::getAssetsLiteInformationFlow)
+    }
+
+    @Provides
+    fun provideGetAssetCreatorAddress(repository: AssetRepository): GetAssetCreatorAddress {
+        return GetAssetCreatorAddress(repository::getAssetCreatorAddress)
     }
 }

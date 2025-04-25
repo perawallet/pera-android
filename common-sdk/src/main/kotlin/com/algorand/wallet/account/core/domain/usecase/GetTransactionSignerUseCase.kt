@@ -25,14 +25,14 @@ import com.algorand.wallet.account.detail.domain.model.AccountType.NoAuth
 import com.algorand.wallet.account.detail.domain.model.AccountType.Rekeyed
 import com.algorand.wallet.account.detail.domain.model.AccountType.RekeyedAuth
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.usecase.GetLedgerBleAccount
 import javax.inject.Inject
 
 internal class GetTransactionSignerUseCase @Inject constructor(
     private val getAccountDetail: GetAccountDetail,
     private val getLedgerBleAccount: GetLedgerBleAccount,
-    private val getAccountInformation: GetAccountInformation
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress
 ) : GetTransactionSigner {
 
     override suspend fun invoke(address: String): TransactionSigner {
@@ -57,9 +57,8 @@ internal class GetTransactionSignerUseCase @Inject constructor(
     }
 
     private suspend fun getRekeyedAuthSigner(rekeyedAccountDetail: AccountDetail, address: String): TransactionSigner {
-        val rekeyedAccountInformation = getAccountInformation(rekeyedAccountDetail.address)
-            ?: return AccountNotFound(address)
-        val authAddress = rekeyedAccountInformation.rekeyAdminAddress ?: return AuthAddressNotFound(address)
+        val authAddress = getAccountRekeyAdminAddress(rekeyedAccountDetail.address)
+            ?: return AuthAddressNotFound(address)
         val authAccountDetail = getAccountDetail(authAddress)
         return when (authAccountDetail.accountRegistrationType) {
             AccountRegistrationType.Algo25 -> getAlgo25Signer(authAddress)

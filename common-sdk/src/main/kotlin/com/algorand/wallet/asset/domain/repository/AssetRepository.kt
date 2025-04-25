@@ -46,4 +46,6 @@ internal interface AssetRepository {
     suspend fun getCachedAssetIds(): List<Long>
 
     fun getAssetsLiteInformationFlow(assetIds: List<Long>): Flow<Map<Long, AssetLiteInformation?>>
+
+    suspend fun getAssetCreatorAddress(assetId: Long): String?
 }

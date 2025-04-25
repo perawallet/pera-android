@@ -18,6 +18,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
 import com.algorand.wallet.account.info.data.database.model.AccountLiteInformationDao
+import com.algorand.wallet.account.info.data.model.AccountAssetAndAppsCountDto
 import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
 
@@ -74,4 +75,13 @@ internal interface AccountInformationDao {
 
     @Query("SELECT min_required_balance FROM account_information WHERE :address = algo_address")
     suspend fun getMinRequiredBalance(address: String): BigInteger?
+
+    @Query(
+        """
+        SELECT opted_in_apps_count, opted_in_assets_count, total_created_apps_count, total_created_assets_count
+        FROM account_information
+        WHERE :address = algo_address
+    """
+    )
+    suspend fun getAssetsAndAppsCount(address: String): AccountAssetAndAppsCountDto?
 }

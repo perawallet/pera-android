@@ -90,6 +90,10 @@ fun interface IsAssetOptedInByAnyLocalAccount {
     suspend operator fun invoke(assetId: Long): Boolean
 }
 
+fun interface IsAssetOptedInByAccount {
+    suspend operator fun invoke(address: String, assetId: Long): Boolean?
+}
+
 fun interface DeleteAccountInformation {
     suspend operator fun invoke(address: String)
 }
@@ -114,6 +118,10 @@ fun interface GetAccountAssetHoldingsFlow {
     operator fun invoke(address: String): Flow<List<AssetHolding>>
 }
 
+fun interface GetAccountAssetHolding {
+    suspend operator fun invoke(address: String, assetId: Long): AssetHolding?
+}
+
 fun interface IsAccountCachedSuccessfully {
     suspend operator fun invoke(address: String): Boolean
 }
@@ -132,4 +140,16 @@ fun interface GetAccountAlgoBalance {
 
 fun interface GetRegisteredHdKeys {
     suspend operator fun invoke(entropy: ByteArray): List<RegisteredHdKey>
+}
+
+fun interface GetAccountAssetHoldingAmount {
+    suspend operator fun invoke(address: String, assetId: Long): BigInteger?
+}
+
+fun interface IsAccountOptedInToAnyAsset {
+    suspend operator fun invoke(address: String): Boolean
+}
+
+fun interface IsAccountOptedInToAnyApp {
+    suspend operator fun invoke(address: String): Boolean
 }

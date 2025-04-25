@@ -18,12 +18,21 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 internal class IsAssetOwnedByAccountUseCase @Inject constructor(
-    private val getAccountInformation: GetAccountInformation
+    private val getAccountAlgoBalance: GetAccountAlgoBalance,
+    private val getAccountAssetHoldingAmount: GetAccountAssetHoldingAmount
 ) : IsAssetOwnedByAccount {
 
     override suspend operator fun invoke(address: String, assetId: Long): Boolean {
-        val accountInfo = getAccountInformation(address) ?: return false
-        return invoke(accountInfo, assetId)
+        val assetBalance = getAssetBalance(address, assetId) ?: return false
+        return assetBalance > BigInteger.ZERO
+    }
+
+    private suspend fun getAssetBalance(address: String, assetId: Long): BigInteger? {
+        return if (assetId == ALGO_ID) {
+            getAccountAlgoBalance(address)
+        } else {
+            getAccountAssetHoldingAmount(address, assetId)
+        }
     }
 
     override suspend fun invoke(accountInfo: AccountInformation, assetId: Long): Boolean {

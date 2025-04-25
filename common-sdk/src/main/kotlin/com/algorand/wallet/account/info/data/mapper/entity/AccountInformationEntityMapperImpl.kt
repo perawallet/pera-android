@@ -28,6 +28,7 @@ internal class AccountInformationEntityMapperImpl @Inject constructor() :
             lastFetchedRound = response.currentRound ?: return null,
             authAlgoAddress = response.accountInformation.rekeyAdminAddress,
             optedInAppsCount = response.accountInformation.totalAppsOptedIn ?: 0,
+            optedInAssetsCount = response.accountInformation.totalAssetsOptedIn ?: 0,
             totalCreatedAppsCount = response.accountInformation.totalCreatedApps ?: 0,
             totalCreatedAssetsCount = response.accountInformation.totalCreatedAssets ?: 0,
             appsTotalExtraPages = response.accountInformation.appsTotalExtraPages ?: 0,

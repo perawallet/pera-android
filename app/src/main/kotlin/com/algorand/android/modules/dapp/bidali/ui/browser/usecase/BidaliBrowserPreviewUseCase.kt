@@ -139,7 +139,7 @@ class BidaliBrowserPreviewUseCase @Inject constructor(
         accountAddress: String
     ): BidaliBrowserPreview? {
         val accountDetail = cacheAccountDetail(accountAddress).getDataOrNull() ?: return null
-        val accountOwnedAssetDataList = getAccountOwnedAssetsData(accountDetail, includeAlgo = true)
+        val accountOwnedAssetDataList = getAccountOwnedAssetsData(accountDetail.address, includeAlgo = true)
         return previousState.copy(
             updatedBalancesJavascript = getCompiledUpdatedBalancesJavascript(
                 bidaliAssetMapper.mapFromOwnedAssetData(

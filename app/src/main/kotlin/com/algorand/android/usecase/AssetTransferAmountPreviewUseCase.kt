@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -47,9 +47,9 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
     private val accountNameIconUseCase: AccountNameIconUseCase,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
+    private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
     private val getTransactionSigner: GetTransactionSigner,
-    private val getAccountLite: GetAccountLite,
-    private val isAssetOptedInByAccount: IsAssetOptedInByAccount
+    private val getAccountLite: GetAccountLite
 ) {
 
     suspend fun createSendTransactionData(

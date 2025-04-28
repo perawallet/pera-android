@@ -292,7 +292,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
         }
     }
 
-    object NoAssetFoundViewItem : AccountDetailAssetsItem() {
+    data object NoAssetFoundViewItem : AccountDetailAssetsItem() {
 
         override val itemType: ItemType
             get() = ItemType.NO_ASSET_FOUND

@@ -17,6 +17,7 @@ import androidx.core.net.toUri
 import com.algorand.android.R
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDetailItemMapper
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
 import com.algorand.android.repository.ContactRepository
@@ -27,7 +28,7 @@ import javax.inject.Inject
 class GetTransactionDetailAccountUseCase @Inject constructor(
     private val contactRepository: ContactRepository,
     private val transactionDetailItemMapper: TransactionDetailItemMapper,
-    private val getAccountDetail: GetAccountDetail,
+    private val getAccountLite: GetAccountLite,
     private val getAccountDisplayName: GetAccountDisplayName,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) {
@@ -99,7 +100,7 @@ class GetTransactionDetailAccountUseCase @Inject constructor(
         @StringRes labelTextResource: Int,
         showToolTipView: Boolean = false
     ): TransactionDetailItem.StandardTransactionItem.AccountItem.WalletItem? {
-        val foundAccount = getAccountDetail(publicKey).takeIf { it.accountRegistrationType != null }
+        val foundAccount = getAccountLite(publicKey).takeIf { it?.registrationType != null }
         if (foundAccount != null) {
             return transactionDetailItemMapper.mapToWalletAccountItem(
                 labelTextRes = labelTextResource,

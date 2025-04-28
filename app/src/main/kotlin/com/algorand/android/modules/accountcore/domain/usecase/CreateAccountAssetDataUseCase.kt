@@ -44,21 +44,25 @@ internal class CreateAccountAssetDataUseCase @Inject constructor(
             ownedAssetDataList.add(createAlgoOwnedAssetData(algoBalance))
         }
 
-        val assetDetails = getAssetDetails(assetHoldings.map { it.assetId }).associateBy { it.id }
-        assetHoldings.forEach { assetHolding ->
-            val assetDetail = assetDetails[assetHolding.assetId] ?: return@forEach
-            when (assetHolding.status) {
-                AssetStatus.PENDING_FOR_REMOVAL -> {
-                    val assetData = createAccountPendingDeletionAssetData(assetDetail)
-                    pendingDeletionAssetDataList.add(assetData)
-                }
-                AssetStatus.PENDING_FOR_ADDITION -> {
-                    val assetData = createAccountPendingAdditionAssetData(assetDetail)
-                    pendingAdditionAssetDataList.add(assetData)
-                }
-                AssetStatus.OWNED_BY_ACCOUNT -> {
-                    val assetData = createAccountOwnedAssetData(assetDetail, assetHolding)
-                    ownedAssetDataList.add(assetData)
+        val assetHoldingsMap = assetHoldings.associateBy { it.assetId }
+        val ownedAssetDetails = getAssetDetails(assetHoldingsMap.keys.toList())
+        ownedAssetDetails.forEach { assetDetail ->
+            assetHoldingsMap[assetDetail.id]?.let { assetHolding ->
+                when (assetHolding.status) {
+                    AssetStatus.PENDING_FOR_REMOVAL -> {
+                        val assetData = createAccountPendingDeletionAssetData(assetDetail)
+                        pendingDeletionAssetDataList.add(assetData)
+                    }
+
+                    AssetStatus.PENDING_FOR_ADDITION -> {
+                        val assetData = createAccountPendingAdditionAssetData(assetDetail)
+                        pendingAdditionAssetDataList.add(assetData)
+                    }
+
+                    AssetStatus.OWNED_BY_ACCOUNT -> {
+                        val assetData = createAccountOwnedAssetData(assetDetail, assetHolding)
+                        ownedAssetDataList.add(assetData)
+                    }
                 }
             }
         }

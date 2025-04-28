@@ -30,9 +30,9 @@ internal class GetAllAccountsAllCollectibleDataFlowUseCase @Inject constructor(
         return getAllAccountInformationFlow().mapNotNull { accountsInfoMap ->
             accountsInfoMap.map { (address, accountInfo) ->
                 val assetData = if (accountInfo != null) {
-                    getAccountCollectiblesData(accountInfo)
+                    getAccountCollectiblesData(address)
                 } else {
-                    emptyList<BaseOwnedCollectibleData>()
+                    emptyList()
                 }
                 getAccountDetail(address) to assetData
             }

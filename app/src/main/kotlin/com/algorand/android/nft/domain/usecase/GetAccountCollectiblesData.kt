@@ -17,5 +17,4 @@ import com.algorand.wallet.account.info.domain.model.AccountInformation
 
 interface GetAccountCollectiblesData {
     suspend operator fun invoke(address: String): List<BaseOwnedCollectibleData>
-    suspend operator fun invoke(accountInformation: AccountInformation): List<BaseOwnedCollectibleData>
 }

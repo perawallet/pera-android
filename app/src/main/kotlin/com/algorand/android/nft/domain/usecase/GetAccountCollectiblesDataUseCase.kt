@@ -14,34 +14,33 @@ package com.algorand.android.nft.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
 import com.algorand.android.modules.collectibles.common.mapper.BaseOwnedCollectibleDataFactory
-import com.algorand.wallet.account.info.domain.model.AccountInformation
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
-import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
+import com.algorand.wallet.account.info.domain.model.AssetHolding
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldings
+import com.algorand.wallet.asset.domain.usecase.GetCollectiblesDetail
 import javax.inject.Inject
 
 internal class GetAccountCollectiblesDataUseCase @Inject constructor(
-    private val getAccountInformation: GetAccountInformation,
-    private val getCollectibleDetail: GetCollectibleDetail,
+    private val getAccountAssetHoldings: GetAccountAssetHoldings,
+    private val getCollectiblesDetail: GetCollectiblesDetail,
     private val baseOwnedCollectibleDataFactory: BaseOwnedCollectibleDataFactory
 ) : GetAccountCollectiblesData {
 
     override suspend fun invoke(address: String): List<BaseOwnedCollectibleData> {
-        val accountInformation = getAccountInformation(address) ?: return emptyList()
-        return getAccountCollectibleListData(accountInformation)
-    }
-
-    override suspend fun invoke(accountInformation: AccountInformation): List<BaseOwnedCollectibleData> {
-        return getAccountCollectibleListData(accountInformation)
+        val accountAssetHoldings = getAccountAssetHoldings(address)
+        return getAccountCollectibleListData(accountAssetHoldings)
     }
 
     private suspend fun getAccountCollectibleListData(
-        accountInformation: AccountInformation
+        assetHoldings: List<AssetHolding>
     ): MutableList<BaseOwnedCollectibleData> {
         val accountAssetDataList = mutableListOf<BaseOwnedCollectibleData>()
 
-        accountInformation.assetHoldings.forEach { assetHolding ->
-            getCollectibleDetail(assetHolding.assetId)?.run {
-                val collectibleData = baseOwnedCollectibleDataFactory(assetHolding, this)
+        val assetHoldingMap = assetHoldings.associateBy { it.assetId }
+        val ownedCollectibleDetails = getCollectiblesDetail(assetHoldingMap.keys.toList())
+
+        ownedCollectibleDetails.forEach { collectibleDetail ->
+            assetHoldingMap[collectibleDetail.id]?.let {
+                val collectibleData = baseOwnedCollectibleDataFactory(it, collectibleDetail)
                 accountAssetDataList.add(collectibleData)
             }
         }

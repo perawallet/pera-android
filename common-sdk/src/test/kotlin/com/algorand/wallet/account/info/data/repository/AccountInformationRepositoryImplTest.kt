@@ -22,7 +22,9 @@ import com.algorand.wallet.account.info.data.mapper.model.AccountAssetAndAppsCou
 import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
 import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.model.AccountAssetAndAppsCountDto
+import com.algorand.wallet.account.info.data.model.AssetHoldingNodeResponse
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
+import com.algorand.wallet.account.info.data.service.AssetHoldingNodeApiService
 import com.algorand.wallet.account.info.domain.model.AccountAssetAndAppsCount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import io.mockk.coEvery
@@ -30,13 +32,18 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import java.math.BigInteger
 import kotlinx.coroutines.test.runTest
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import retrofit2.Response
 
 class AccountInformationRepositoryImplTest {
 
     private val indexerApi: AccountInformationApiService = mockk()
     private val accountInformationMapper: AccountInformationMapper = mockk()
+    private val assetHoldingNodeApiService: AssetHoldingNodeApiService = mockk()
     private val accountInformationDao: AccountInformationDao = mockk()
     private val assetHoldingDao: AssetHoldingDao = mockk()
     private val assetHoldingMapper: AssetHoldingMapper = mockk()
@@ -47,6 +54,7 @@ class AccountInformationRepositoryImplTest {
     private val accountAssetAndAppsCountMapper: AccountAssetAndAppsCountMapper = mockk()
     private val sut = AccountInformationRepositoryImpl(
         indexerApi,
+        assetHoldingNodeApiService,
         accountInformationMapper,
         accountInformationDao,
         assetHoldingDao,
@@ -117,6 +125,40 @@ class AccountInformationRepositoryImplTest {
         val result = sut.getAccountAssetsAndAppsCount(ADDRESS)
 
         assertEquals(null, result)
+    }
+
+    @Test
+    fun `EXPECT true WHEN account is opted in to asset and exists in cache`() = runTest {
+        val assetId = 1234L
+        coEvery { assetHoldingDao.isAssetOptedInByAccount(ADDRESS, assetId) } returns true
+
+        val result = sut.isAssetOptedInByAccount(ADDRESS, assetId)
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun `EXPECT true WHEN account is opted in to asset and not exist in cache`() = runTest {
+        val assetId = 1234L
+        val assetHoldingResponse = Response.success(peraFixture<AssetHoldingNodeResponse>())
+        coEvery { assetHoldingDao.isAssetOptedInByAccount(ADDRESS, assetId) } returns false
+        coEvery { assetHoldingNodeApiService.getAssetHolding(ADDRESS, assetId) } returns assetHoldingResponse
+
+        val result = sut.isAssetOptedInByAccount(ADDRESS, assetId)
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun `EXPECT false WHEN account is not opted in to asset`() = runTest {
+        val assetId = 1234L
+        val assetHoldingResponse = Response.error<AssetHoldingNodeResponse>(404, byteArrayOf().toResponseBody(null))
+        coEvery { assetHoldingDao.isAssetOptedInByAccount(ADDRESS, assetId) } returns false
+        coEvery { assetHoldingNodeApiService.getAssetHolding(ADDRESS, assetId) } returns assetHoldingResponse
+
+        val result = sut.isAssetOptedInByAccount(ADDRESS, assetId)
+
+        assertFalse(result)
     }
 
     private companion object {

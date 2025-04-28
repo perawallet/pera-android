@@ -22,6 +22,7 @@ import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapp
 import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
+import com.algorand.wallet.account.info.data.service.AssetHoldingNodeApiService
 import com.algorand.wallet.account.info.domain.model.AccountAssetAndAppsCount
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
@@ -45,6 +46,7 @@ import kotlinx.coroutines.withContext
 
 internal class AccountInformationRepositoryImpl @Inject constructor(
     private val indexerApi: AccountInformationApiService,
+    private val assetHoldingNodeApiService: AssetHoldingNodeApiService,
     private val accountInformationMapper: AccountInformationMapper,
     private val accountInformationDao: AccountInformationDao,
     private val assetHoldingDao: AssetHoldingDao,
@@ -250,7 +252,9 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     }
 
     override suspend fun isAssetOptedInByAccount(address: String, assetId: Long): Boolean {
-        return assetHoldingDao.isAssetOptedInByAccount(address, assetId)
+        val isOptedIn = assetHoldingDao.isAssetOptedInByAccount(address, assetId)
+        if (isOptedIn) return true
+        return request { assetHoldingNodeApiService.getAssetHolding(address, assetId) }.isSuccess
     }
 
     override suspend fun getAccountAssetsAndAppsCount(address: String): AccountAssetAndAppsCount? {

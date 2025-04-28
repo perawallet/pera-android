@@ -46,6 +46,7 @@ import com.algorand.wallet.account.info.data.repository.AssetHoldingCacheHelper
 import com.algorand.wallet.account.info.data.repository.AssetHoldingCacheHelperImpl
 import com.algorand.wallet.account.info.data.service.AccountFastLookupApiService
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
+import com.algorand.wallet.account.info.data.service.AssetHoldingNodeApiService
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManager
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManagerImpl
 import com.algorand.wallet.account.info.domain.repository.AccountFastLookupRepository
@@ -125,6 +126,14 @@ internal object AccountInformationModule {
         @Named("indexerRetrofitInterface") retrofit: Retrofit
     ): AccountInformationApiService {
         return retrofit.create(AccountInformationApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAssetHoldingNodeApiService(
+        @Named("algodRetrofitInterface") retrofit: Retrofit
+    ): AssetHoldingNodeApiService {
+        return retrofit.create(AssetHoldingNodeApiService::class.java)
     }
 
     @Provides

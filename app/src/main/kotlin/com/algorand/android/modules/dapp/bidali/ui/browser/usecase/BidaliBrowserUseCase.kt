@@ -62,7 +62,6 @@ class BidaliBrowserUseCase @Inject constructor(
         // TODO handle cases when we can't find address or assets
         val selectedAccountLite = getAccountLite(accountAddress)
         if (selectedAccountLite?.cachedInfo == null) return null
-        val receiverAccount = getAccountLite(paymentRequest.address) ?: return null
 
         val selectedAssetId = getAssetIdFromBidaliIdentifier(
             bidaliId = paymentRequest.protocol,
@@ -72,8 +71,6 @@ class BidaliBrowserUseCase @Inject constructor(
             paymentRequest.amount.toBigDecimalOrZero(),
             selectedAssetId
         ) ?: return null
-
-        val isReceiverOptedInToAsset = isAssetOptedInByAccount(receiverAccount.address, selectedAssetId) == true
 
         return TransactionSignData.Send(
             senderAccountAddress = selectedAccountLite.address,
@@ -88,7 +85,7 @@ class BidaliBrowserUseCase @Inject constructor(
                 publicKey = paymentRequest.address,
                 accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             ),
-            isArc59Transaction = !isReceiverOptedInToAsset,
+            isArc59Transaction = !isAssetOptedInByAccount(paymentRequest.address, selectedAssetId),
             signer = getTransactionSigner(selectedAccountLite.address)
         )
     }

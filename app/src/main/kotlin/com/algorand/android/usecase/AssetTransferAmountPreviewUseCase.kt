@@ -31,7 +31,7 @@ import com.algorand.android.utils.getDecimalSeparator
 import com.algorand.android.utils.multiplyOrNull
 import com.algorand.android.utils.validator.AmountTransactionValidationUseCase
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -47,9 +47,9 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
     private val accountNameIconUseCase: AccountNameIconUseCase,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
-    private val getAccountInformation: GetAccountInformation,
     private val getTransactionSigner: GetTransactionSigner,
-    private val getAccountLite: GetAccountLite
+    private val getAccountLite: GetAccountLite,
+    private val isAssetOptedInByAccount: IsAssetOptedInByAccount
 ) {
 
     suspend fun createSendTransactionData(
@@ -61,7 +61,7 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
     ): TransactionSignData.Send? {
         val senderAccountLite = getAccountLite(accountAddress) ?: return null
         val senderAccountCachedInfo = senderAccountLite.cachedInfo ?: return null
-        val receiverAccountInfo = getAccountInformation(accountAddress)
+        val receiverAddress = assetTransaction.receiverUser?.publicKey
         return TransactionSignData.Send(
             senderAccountAddress = senderAccountLite.address,
             senderAuthAddress = senderAccountCachedInfo.rekeyAuthAddress,
@@ -77,7 +77,7 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
                 accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             ),
             signer = getTransactionSigner(accountAddress),
-            isArc59Transaction = receiverAccountInfo?.hasAsset(assetId)?.not() ?: false
+            isArc59Transaction = !isAssetOptedInByAccount(receiverAddress.orEmpty(), assetId)
         )
     }
 

@@ -91,7 +91,7 @@ fun interface IsAssetOptedInByAnyLocalAccount {
 }
 
 fun interface IsAssetOptedInByAccount {
-    suspend operator fun invoke(address: String, assetId: Long): Boolean?
+    suspend operator fun invoke(address: String, assetId: Long): Boolean
 }
 
 fun interface DeleteAccountInformation {

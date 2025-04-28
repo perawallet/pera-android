@@ -28,7 +28,7 @@ import com.algorand.android.usecase.ReceiverAccountSelectionUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,8 +45,8 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
     private val receiverAccountSelectionUseCase: ReceiverAccountSelectionUseCase,
     private val arc59ExpressSendUseCase: Arc59ExpressSendUseCase,
     private val getTransactionSigner: GetTransactionSigner,
-    private val getAccountInformation: GetAccountInformation,
     private val getAccountLite: GetAccountLite,
+    private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -162,7 +162,6 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
         val minBalanceCalculatedAmount = assetTransaction.amount
 
         viewModelScope.launch {
-            val isArc59Transaction = isArc59Transaction(targetUser.publicKey, assetTransaction.assetId)
             val accountLite = getAccountLite(assetTransaction.senderAddress)
             val accountLiteCachedInfo = accountLite?.cachedInfo ?: return@launch
             val txnData = TransactionSignData.Send(
@@ -175,15 +174,11 @@ class ReceiverAccountSelectionViewModel @Inject constructor(
                 assetId = assetTransaction.assetId,
                 note = note,
                 targetUser = targetUser,
-                isArc59Transaction = isArc59Transaction,
+                isArc59Transaction = !isAssetOptedInByAccount(targetUser.publicKey, assetTransaction.assetId),
                 signer = getTransactionSigner(assetTransaction.senderAddress)
             )
             _sendTransactionDataFlow.emit(Event(txnData))
         }
-    }
-
-    private suspend fun isArc59Transaction(targetUserAddress: String, assetId: Long): Boolean {
-        return getAccountInformation(targetUserAddress)?.hasAsset(assetId) == false
     }
 
     fun isExpressSendWarningEnabled(isArc59Transaction: Boolean): Boolean {

@@ -99,12 +99,6 @@ class WalletConnectArbitraryDataRequestViewModel @Inject constructor(
         }
     }
 
-    fun signArbitraryData(arbitraryData: WalletConnectArbitraryDataRequest) {
-        viewModelScope.launch {
-            walletConnectArbitraryDataSignManager.signArbitraryData(arbitraryData)
-        }
-    }
-
     fun processWalletConnectSignResult(result: WalletConnectSignResult) {
         viewModelScope.launch {
             walletConnectManager.processWalletConnectSignResult(result)

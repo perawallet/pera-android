@@ -48,13 +48,13 @@ class WalletConnectArbitraryDataSignManager @Inject constructor(
     private var arbitraryData: WalletConnectArbitraryDataRequest? = null
 
     private val signHelperListener = object : ListQueuingHelper.Listener<WalletConnectArbitraryData, ByteArray> {
-        override fun onAllItemsDequeued(signedTransactions: List<ByteArray?>) {
+        override fun onAllItemsDequeued(dequeuedItemList: List<ByteArray?>) {
             arbitraryData?.run {
                 _signResultLiveData.postValue(
                     Success(
                         session.sessionIdentifier,
                         requestId,
-                        signedTransactions
+                        dequeuedItemList
                     )
                 )
             }

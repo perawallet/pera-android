@@ -22,7 +22,6 @@ import com.algorand.android.modules.transaction.detail.ui.mapper.TransactionDeta
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailItem
 import com.algorand.android.repository.ContactRepository
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import javax.inject.Inject
 
 class GetTransactionDetailAccountUseCase @Inject constructor(

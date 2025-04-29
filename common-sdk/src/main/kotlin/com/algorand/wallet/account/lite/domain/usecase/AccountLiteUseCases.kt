@@ -20,7 +20,10 @@ fun interface GetAccountsLiteInformationFlow {
     operator fun invoke(addresses: List<String>): Flow<Map<String, AccountLiteInformation?>>
 }
 
+fun interface GetAccountLiteInformationFlow {
+    operator fun invoke(address: String): Flow<AccountLiteInformation?>
+}
+
 fun interface GetAssetHoldingsLiteFlow {
     operator fun invoke(addresses: List<String>): Flow<Map<String, AssetHoldingLite>>
 }
-

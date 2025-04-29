@@ -17,12 +17,12 @@ import com.algorand.android.modules.accountcore.domain.model.AccountAssetData
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
-import com.algorand.wallet.asset.domain.usecase.GetAssetDetails
+import com.algorand.wallet.asset.lite.domain.usecase.GetAssetDetailsLite
 import java.math.BigInteger
 import javax.inject.Inject
 
 internal class CreateAccountAssetDataUseCase @Inject constructor(
-    private val getAssetDetails: GetAssetDetails,
+    private val getAssetDetailsLite: GetAssetDetailsLite,
     private val createAlgoOwnedAssetData: CreateAlgoOwnedAssetData,
     private val createAccountOwnedAssetData: CreateAccountOwnedAssetData,
     private val createAccountPendingAdditionAssetData: CreateAccountPendingAdditionAssetData,
@@ -45,22 +45,22 @@ internal class CreateAccountAssetDataUseCase @Inject constructor(
         }
 
         val assetHoldingsMap = assetHoldings.associateBy { it.assetId }
-        val ownedAssetDetails = getAssetDetails(assetHoldingsMap.keys.toList())
-        ownedAssetDetails.forEach { assetDetail ->
-            assetHoldingsMap[assetDetail.id]?.let { assetHolding ->
+        val ownedAssetDetails = getAssetDetailsLite(assetHoldingsMap.keys.toList())
+        ownedAssetDetails.values.filterNotNull().forEach { assetDetailLite ->
+            assetHoldingsMap[assetDetailLite.id]?.let { assetHolding ->
                 when (assetHolding.status) {
                     AssetStatus.PENDING_FOR_REMOVAL -> {
-                        val assetData = createAccountPendingDeletionAssetData(assetDetail)
+                        val assetData = createAccountPendingDeletionAssetData(assetDetailLite)
                         pendingDeletionAssetDataList.add(assetData)
                     }
 
                     AssetStatus.PENDING_FOR_ADDITION -> {
-                        val assetData = createAccountPendingAdditionAssetData(assetDetail)
+                        val assetData = createAccountPendingAdditionAssetData(assetDetailLite)
                         pendingAdditionAssetDataList.add(assetData)
                     }
 
                     AssetStatus.OWNED_BY_ACCOUNT -> {
-                        val assetData = createAccountOwnedAssetData(assetDetail, assetHolding)
+                        val assetData = createAccountOwnedAssetData(assetDetailLite, assetHolding)
                         ownedAssetDataList.add(assetData)
                     }
                 }

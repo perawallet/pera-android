@@ -16,7 +16,7 @@ import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.Owned
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldings
-import com.algorand.wallet.asset.domain.usecase.GetAssetDetails
+import com.algorand.wallet.asset.lite.domain.usecase.GetAssetDetailsLite
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -25,7 +25,7 @@ internal class GetAccountOwnedAssetsDataUseCase @Inject constructor(
     private val createAlgoOwnedAssetData: CreateAlgoOwnedAssetData,
     private val getAccountAlgoBalance: GetAccountAlgoBalance,
     private val getAccountAssetHoldings: GetAccountAssetHoldings,
-    private val getAssetDetails: GetAssetDetails
+    private val getAssetDetailsLite: GetAssetDetailsLite
 ) : GetAccountOwnedAssetsData {
 
     override suspend fun invoke(address: String, includeAlgo: Boolean): List<OwnedAssetData> {
@@ -57,7 +57,7 @@ internal class GetAccountOwnedAssetsDataUseCase @Inject constructor(
 
     private suspend fun getOwnedAssetDataList(assetHoldings: List<AssetHolding>): List<OwnedAssetData> {
         val assetHoldingsMap = assetHoldings.associateBy { it.assetId }
-        val assetDetails = getAssetDetails(assetHoldingsMap.keys.toList()).associateBy { it.id }
+        val assetDetails = getAssetDetailsLite(assetHoldingsMap.keys.toList())
         return assetHoldingsMap.mapNotNull { (id, assetHolding) ->
             val assetDetail = assetDetails[id] ?: return@mapNotNull null
             createAccountOwnedAssetData(assetDetail, assetHolding)

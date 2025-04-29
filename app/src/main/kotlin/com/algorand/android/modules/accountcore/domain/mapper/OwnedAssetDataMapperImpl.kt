@@ -15,7 +15,7 @@ package com.algorand.android.modules.accountcore.domain.mapper
 import com.algorand.android.assetsearch.domain.mapper.LegacyVerificationTierMapper
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.parity.domain.model.ParityValue
-import com.algorand.wallet.asset.domain.model.AssetDetail
+import com.algorand.wallet.asset.lite.domain.model.AssetDetailLite
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -24,7 +24,7 @@ internal class OwnedAssetDataMapperImpl @Inject constructor(
 ) : OwnedAssetDataMapper {
 
     override fun invoke(
-        assetDetail: AssetDetail,
+        assetDetailLite: AssetDetailLite,
         amount: BigInteger,
         formattedAmount: String,
         formattedCompactAmount: String,
@@ -33,21 +33,22 @@ internal class OwnedAssetDataMapperImpl @Inject constructor(
         optedInAtRound: Long?
     ): BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData {
         return BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData(
-            id = assetDetail.id,
-            name = assetDetail.fullName,
-            shortName = assetDetail.shortName,
+            id = assetDetailLite.id,
+            name = assetDetailLite.name,
+            shortName = assetDetailLite.shortName,
             amount = amount,
             formattedAmount = formattedAmount,
             formattedCompactAmount = formattedCompactAmount,
             isAlgo = false,
-            decimals = assetDetail.getDecimalsOrZero(),
-            creatorPublicKey = assetDetail.creatorAddress,
-            usdValue = assetDetail.usdValue,
-            isAmountInSelectedCurrencyVisible = assetDetail.usdValue != null && amount.compareTo(BigInteger.ZERO) == 1,
+            decimals = assetDetailLite.decimals,
+            creatorPublicKey = assetDetailLite.creatorAddress,
+            usdValue = assetDetailLite.usdValue,
+            isAmountInSelectedCurrencyVisible =
+                assetDetailLite.usdValue != null && amount.compareTo(BigInteger.ZERO) == 1,
             parityValueInSelectedCurrency = parityValueInSelectedCurrency,
             parityValueInSecondaryCurrency = parityValueInSecondaryCurrency,
-            prismUrl = assetDetail.logoUri,
-            verificationTier = legacyVerificationTierMapper(assetDetail.verificationTier),
+            prismUrl = assetDetailLite.logoUrl,
+            verificationTier = legacyVerificationTierMapper(assetDetailLite.verificationTier),
             optedInAtRound = optedInAtRound
         )
     }

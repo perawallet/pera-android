@@ -30,6 +30,8 @@ import com.algorand.wallet.asset.data.mapper.model.AlgoAssetDetailMapper
 import com.algorand.wallet.asset.data.mapper.model.AlgoAssetDetailMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.AssetCreatorMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetCreatorMapperImpl
+import com.algorand.wallet.asset.data.mapper.model.AssetDetailLiteMapper
+import com.algorand.wallet.asset.data.mapper.model.AssetDetailLiteMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.AssetDetailMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetDetailMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.AssetInfoMapper
@@ -163,4 +165,7 @@ internal object AssetDetailMappersModule {
 
     @Provides
     fun provideVideoCollectibleDetailMapper(impl: VideoCollectibleDetailMapperImpl): VideoCollectibleDetailMapper = impl
+
+    @Provides
+    fun provideAssetDetailLiteMapper(impl: AssetDetailLiteMapperImpl): AssetDetailLiteMapper = impl
 }

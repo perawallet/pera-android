@@ -30,6 +30,10 @@ import com.algorand.wallet.asset.domain.usecase.GetCollectiblesDetail
 import com.algorand.wallet.asset.domain.usecase.InitializeAssets
 import com.algorand.wallet.asset.domain.usecase.InitializeAssetsUseCase
 import com.algorand.wallet.asset.domain.usecase.IsCollectibleExist
+import com.algorand.wallet.asset.lite.domain.usecase.GetAssetDetailLite
+import com.algorand.wallet.asset.lite.domain.usecase.GetAssetDetailLiteFlow
+import com.algorand.wallet.asset.lite.domain.usecase.GetAssetDetailsLite
+import com.algorand.wallet.asset.lite.domain.usecase.GetAssetDetailsLiteFlow
 import com.algorand.wallet.asset.lite.domain.usecase.GetAssetsLiteInformationFlow
 import dagger.Module
 import dagger.Provides
@@ -110,6 +114,34 @@ internal object AssetDetailUseCaseModule {
         repository: AssetRepository
     ): GetAssetsLiteInformationFlow {
         return GetAssetsLiteInformationFlow(repository::getAssetsLiteInformationFlow)
+    }
+
+    @Provides
+    fun provideGetAssetDetailsLiteFlow(
+        repository: AssetRepository
+    ): GetAssetDetailsLiteFlow {
+        return GetAssetDetailsLiteFlow(repository::getAssetDetailsLiteFlow)
+    }
+
+    @Provides
+    fun provideGetAssetDetailLiteFlow(
+        repository: AssetRepository
+    ): GetAssetDetailLiteFlow {
+        return GetAssetDetailLiteFlow(repository::getAssetDetailLiteFlow)
+    }
+
+    @Provides
+    fun provideGetAssetDetailsLite(
+        repository: AssetRepository
+    ): GetAssetDetailsLite {
+        return GetAssetDetailsLite(repository::getAssetDetailsLite)
+    }
+
+    @Provides
+    fun provideGetAssetDetailLite(
+        repository: AssetRepository
+    ): GetAssetDetailLite {
+        return GetAssetDetailLite(repository::getAssetDetailLite)
     }
 
     @Provides

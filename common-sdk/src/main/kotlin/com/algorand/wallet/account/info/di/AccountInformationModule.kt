@@ -355,7 +355,7 @@ internal object AccountInformationModule {
     fun provideGetAccountAssetHoldingsFlow(
         repository: AccountInformationRepository
     ): GetAccountAssetHoldingsFlow {
-        return GetAccountAssetHoldingsFlow(repository::getAssetHoldingsFlow)
+        return GetAccountAssetHoldingsFlow(repository::getAccountAssetHoldingsFlow)
     }
 
     @Provides

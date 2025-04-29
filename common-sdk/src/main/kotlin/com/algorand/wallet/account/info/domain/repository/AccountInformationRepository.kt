@@ -59,7 +59,7 @@ internal interface AccountInformationRepository {
 
     suspend fun isAssetOptedInByAnyLocalAccount(assetId: Long): Boolean
 
-    fun getAssetHoldingsFlow(address: String): Flow<List<AssetHolding>>
+    fun getAccountAssetHoldingsFlow(address: String): Flow<List<AssetHolding>>
 
     fun getAssetHoldingFlow(address: String, assetId: Long): Flow<AssetHolding?>
 
@@ -72,6 +72,8 @@ internal interface AccountInformationRepository {
     suspend fun getAccountAlgoBalance(address: String): BigInteger?
 
     fun getAccountsLiteInformationFlow(addresses: List<String>): Flow<Map<String, AccountLiteInformation?>>
+
+    fun getAccountLiteInformationFlow(address: String): Flow<AccountLiteInformation?>
 
     fun getAssetHoldingsLiteFlow(addresses: List<String>): Flow<Map<String, AssetHoldingLite>>
 

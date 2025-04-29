@@ -17,6 +17,7 @@ import com.algorand.wallet.asset.data.database.dao.CollectibleDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleMediaDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleTraitDao
 import com.algorand.wallet.asset.data.mapper.model.AlgoAssetDetailMapper
+import com.algorand.wallet.asset.data.mapper.model.AssetDetailLiteMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetMapper
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleDetailMapper
 import com.algorand.wallet.asset.data.service.AssetDetailApiService
@@ -37,6 +38,7 @@ class AssetRepositoryImplTest {
     private val assetMapper: AssetMapper = mockk(relaxed = true)
     private val algoAssetDetailMapper: AlgoAssetDetailMapper = mockk(relaxed = true)
     private val collectibleDetailMapper: CollectibleDetailMapper = mockk(relaxed = true)
+    private val assetDetailLiteMapper: AssetDetailLiteMapper = mockk(relaxed = true)
     private val collectibleMediaDao: CollectibleMediaDao = mockk(relaxed = true)
     private val collectibleTraitDao: CollectibleTraitDao = mockk(relaxed = true)
 
@@ -49,6 +51,7 @@ class AssetRepositoryImplTest {
         assetMapper,
         algoAssetDetailMapper,
         collectibleDetailMapper,
+        assetDetailLiteMapper,
         collectibleMediaDao,
         collectibleTraitDao
     )

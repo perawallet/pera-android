@@ -10,10 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.android.nft.domain.usecase
+package com.algorand.wallet.asset.data.mapper.model
 
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.wallet.asset.data.database.model.AssetDetailLiteDto
+import com.algorand.wallet.asset.lite.domain.model.AssetDetailLite
 
-interface GetAccountCollectiblesData {
-    suspend operator fun invoke(address: String): List<BaseOwnedCollectibleData>
+internal interface AssetDetailLiteMapper {
+    operator fun invoke(assetDetailLiteDto: AssetDetailLiteDto): AssetDetailLite?
+
 }

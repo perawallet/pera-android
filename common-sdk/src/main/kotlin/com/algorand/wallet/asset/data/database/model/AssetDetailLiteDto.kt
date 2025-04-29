@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2025 Pera Wallet, LDA
+ * Copyright 2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,9 +15,17 @@ package com.algorand.wallet.asset.data.database.model
 import androidx.room.ColumnInfo
 import java.math.BigDecimal
 
-internal data class AssetLiteInformationDao(
+internal data class AssetDetailLiteDto(
     @ColumnInfo(name = "asset_id")
     val id: Long,
+    @ColumnInfo("name")
+    val name: String?,
+    @ColumnInfo("unit_name")
+    val unitName: String?,
+    @ColumnInfo("asset_creator_address")
+    val assetCreatorAddress: String?,
+    @ColumnInfo("logo_url")
+    val logoUrl: String?,
     @ColumnInfo("usd_value")
     val usdValue: BigDecimal?,
     @ColumnInfo("decimals")

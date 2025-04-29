@@ -14,23 +14,23 @@ package com.algorand.android.modules.accountcore.domain.mapper
 
 import com.algorand.android.assetsearch.domain.mapper.LegacyVerificationTierMapper
 import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.lite.domain.model.AssetDetailLite
 import javax.inject.Inject
 
 internal class PendingAdditionAssetDataMapperImpl @Inject constructor(
     private val legacyVerificationTierMapper: LegacyVerificationTierMapper
 ) : PendingAdditionAssetDataMapper {
 
-    override fun invoke(asset: Asset): BaseAccountAssetData.PendingAssetData.AdditionAssetData {
+    override fun invoke(assetDetailLite: AssetDetailLite): BaseAccountAssetData.PendingAssetData.AdditionAssetData {
         return BaseAccountAssetData.PendingAssetData.AdditionAssetData(
-            id = asset.id,
-            name = asset.fullName,
-            shortName = asset.shortName,
+            id = assetDetailLite.id,
+            name = assetDetailLite.name,
+            shortName = assetDetailLite.shortName,
             isAlgo = false,
-            decimals = asset.getDecimalsOrZero(),
-            creatorPublicKey = asset.creatorAddress,
-            usdValue = asset.usdValue,
-            verificationTier = legacyVerificationTierMapper(asset.verificationTier)
+            decimals = assetDetailLite.decimals,
+            creatorPublicKey = assetDetailLite.creatorAddress,
+            usdValue = assetDetailLite.usdValue,
+            verificationTier = legacyVerificationTierMapper(assetDetailLite.verificationTier)
         )
     }
 }

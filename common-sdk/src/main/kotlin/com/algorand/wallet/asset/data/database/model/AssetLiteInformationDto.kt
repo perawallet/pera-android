@@ -10,10 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.android.nft.domain.usecase
+package com.algorand.wallet.asset.data.database.model
 
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import androidx.room.ColumnInfo
+import java.math.BigDecimal
 
-interface GetAccountCollectiblesData {
-    suspend operator fun invoke(address: String): List<BaseOwnedCollectibleData>
-}
+internal data class AssetLiteInformationDto(
+    @ColumnInfo(name = "asset_id")
+    val id: Long,
+    @ColumnInfo("usd_value")
+    val usdValue: BigDecimal?,
+    @ColumnInfo("decimals")
+    val decimals: Int
+)

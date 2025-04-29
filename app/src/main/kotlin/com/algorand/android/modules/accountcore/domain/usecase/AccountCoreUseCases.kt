@@ -19,7 +19,7 @@ import com.algorand.android.modules.accountcore.domain.model.AccountAssetData
 import com.algorand.android.modules.accountcore.domain.model.AccountTotalValue
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.wallet.account.info.domain.model.AssetHolding
-import com.algorand.wallet.asset.domain.model.AssetDetail
+import com.algorand.wallet.asset.lite.domain.model.AssetDetailLite
 import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
 
@@ -57,11 +57,15 @@ internal interface CreateAlgoOwnedAssetData {
 }
 
 internal interface CreateAccountPendingAdditionAssetData {
-    suspend operator fun invoke(assetDetail: AssetDetail): BaseAccountAssetData.PendingAssetData.AdditionAssetData
+    suspend operator fun invoke(
+        assetDetailLite: AssetDetailLite
+    ): BaseAccountAssetData.PendingAssetData.AdditionAssetData
 }
 
 internal interface CreateAccountPendingDeletionAssetData {
-    suspend operator fun invoke(assetDetail: AssetDetail): BaseAccountAssetData.PendingAssetData.DeletionAssetData
+    suspend operator fun invoke(
+        assetDetailLite: AssetDetailLite
+    ): BaseAccountAssetData.PendingAssetData.DeletionAssetData
 }
 
 fun interface GetAccountBaseOwnedAssetData {

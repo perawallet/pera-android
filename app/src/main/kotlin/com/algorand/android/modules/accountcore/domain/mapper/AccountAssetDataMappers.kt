@@ -14,17 +14,16 @@ package com.algorand.android.modules.accountcore.domain.mapper
 
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.parity.domain.model.ParityValue
-import com.algorand.wallet.asset.domain.model.Asset
-import com.algorand.wallet.asset.domain.model.AssetDetail
+import com.algorand.wallet.asset.lite.domain.model.AssetDetailLite
 import java.math.BigDecimal
 import java.math.BigInteger
 
 internal interface PendingAdditionAssetDataMapper {
-    operator fun invoke(asset: Asset): BaseAccountAssetData.PendingAssetData.AdditionAssetData
+    operator fun invoke(asset: AssetDetailLite): BaseAccountAssetData.PendingAssetData.AdditionAssetData
 }
 
 internal interface PendingDeletionAssetDataMapper {
-    operator fun invoke(asset: Asset): BaseAccountAssetData.PendingAssetData.DeletionAssetData
+    operator fun invoke(asset: AssetDetailLite): BaseAccountAssetData.PendingAssetData.DeletionAssetData
 }
 
 internal interface AlgoAssetDataMapper {
@@ -38,7 +37,7 @@ internal interface AlgoAssetDataMapper {
 
 internal interface OwnedAssetDataMapper {
     operator fun invoke(
-        assetDetail: AssetDetail,
+        assetDetailLite: AssetDetailLite,
         amount: BigInteger,
         formattedAmount: String,
         formattedCompactAmount: String,

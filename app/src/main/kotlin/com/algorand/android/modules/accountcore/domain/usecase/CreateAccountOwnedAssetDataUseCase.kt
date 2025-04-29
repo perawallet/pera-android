@@ -20,7 +20,7 @@ import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAs
 import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.orZero
 import com.algorand.wallet.account.info.domain.model.AssetHolding
-import com.algorand.wallet.asset.domain.model.AssetDetail
+import com.algorand.wallet.asset.lite.domain.model.AssetDetailLite
 import javax.inject.Inject
 
 internal class CreateAccountOwnedAssetDataUseCase @Inject constructor(
@@ -29,35 +29,41 @@ internal class CreateAccountOwnedAssetDataUseCase @Inject constructor(
     private val getSecondaryCurrencyAssetParityValue: GetSecondaryCurrencyAssetParityValue,
 ) : CreateAccountOwnedAssetData {
 
-    override suspend fun invoke(assetDetail: AssetDetail, assetHolding: AssetHolding): OwnedAssetData {
+    override suspend fun invoke(assetDetailLite: AssetDetailLite, assetHolding: AssetHolding): OwnedAssetData {
         val amount = assetHolding.amount
         return ownedAssetDataMapper(
-            assetDetail,
+            assetDetailLite,
             amount = amount,
-            formattedAmount = amount.formatAmount(assetDetail.getDecimalsOrZero()),
+            formattedAmount = amount.formatAmount(assetDetailLite.decimals),
             formattedCompactAmount = amount.formatAmount(
-                assetDetail.getDecimalsOrZero(),
+                assetDetailLite.decimals,
                 isCompact = true
             ),
-            parityValueInSelectedCurrency = getParityValueInSelectedCurrency(assetDetail, assetHolding),
-            parityValueInSecondaryCurrency = getParityValueInSecondaryCurrency(assetDetail, assetHolding),
+            parityValueInSelectedCurrency = getParityValueInSelectedCurrency(assetDetailLite, assetHolding),
+            parityValueInSecondaryCurrency = getParityValueInSecondaryCurrency(assetDetailLite, assetHolding),
             optedInAtRound = assetHolding.optedInAtRound
         )
     }
 
-    private fun getParityValueInSelectedCurrency(assetDetail: AssetDetail, assetHolding: AssetHolding): ParityValue {
+    private fun getParityValueInSelectedCurrency(
+        assetDetailLite: AssetDetailLite,
+        assetHolding: AssetHolding
+    ): ParityValue {
         return getPrimaryCurrencyAssetParityValue(
             assetHolding.amount,
-            assetDetail.usdValue.orZero(),
-            assetDetail.getDecimalsOrZero()
+            assetDetailLite.usdValue.orZero(),
+            assetDetailLite.decimals
         )
     }
 
-    private fun getParityValueInSecondaryCurrency(assetDetail: AssetDetail, assetHolding: AssetHolding): ParityValue {
+    private fun getParityValueInSecondaryCurrency(
+        assetDetailLite: AssetDetailLite,
+        assetHolding: AssetHolding
+    ): ParityValue {
         return getSecondaryCurrencyAssetParityValue(
             assetHolding.amount,
-            assetDetail.usdValue.orZero(),
-            assetDetail.getDecimalsOrZero()
+            assetDetailLite.usdValue.orZero(),
+            assetDetailLite.decimals
         )
     }
 }

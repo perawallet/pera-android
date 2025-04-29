@@ -17,7 +17,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
-import com.algorand.wallet.asset.data.database.model.AssetLiteInformationDao
+import com.algorand.wallet.asset.data.database.model.AssetDetailLiteDto
+import com.algorand.wallet.asset.data.database.model.AssetLiteInformationDto
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -45,7 +46,23 @@ internal interface AssetDetailDao {
     suspend fun clearAll()
 
     @Query("SELECT asset_id, usd_value, decimals FROM asset_detail WHERE asset_id IN (:assetIds)")
-    fun getLiteInformationByAssetIds(assetIds: List<Long>): Flow<List<AssetLiteInformationDao>>
+    fun getLiteInformationByAssetIds(assetIds: List<Long>): Flow<List<AssetLiteInformationDto>>
+
+    @Query("SELECT asset_id, name, unit_name, asset_creator_address, logo_url, usd_value, decimals" +
+            " FROM asset_detail WHERE asset_id IN (:assetIds)")
+    fun getAssetDetailsLiteFlowByAssetIds(assetIds: List<Long>): Flow<List<AssetDetailLiteDto>>
+
+    @Query("SELECT asset_id, name, unit_name, asset_creator_address, logo_url, usd_value, decimals" +
+            " FROM asset_detail WHERE asset_id IN (:assetIds)")
+    fun getAssetDetailsLiteByAssetIds(assetIds: List<Long>): List<AssetDetailLiteDto>
+
+    @Query("SELECT asset_id, name, unit_name, asset_creator_address, logo_url, usd_value, decimals" +
+            " FROM asset_detail WHERE asset_id = :assetId")
+    fun getAssetDetailLiteFlowByAssetId(assetId: Long): Flow<AssetDetailLiteDto>
+
+    @Query("SELECT asset_id, name, unit_name, asset_creator_address, logo_url, usd_value, decimals" +
+            " FROM asset_detail WHERE asset_id = :assetId")
+    fun getAssetDetailLiteByAssetId(assetId: Long): AssetDetailLiteDto
 
     @Query("SELECT asset_creator_address FROM asset_detail WHERE asset_id = :assetId")
     suspend fun getAssetCreatorAddress(assetId: Long): String?

@@ -14,21 +14,21 @@ package com.algorand.android.modules.accountcore.domain.mapper
 
 import com.algorand.android.assetsearch.domain.mapper.LegacyVerificationTierMapper
 import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.lite.domain.model.AssetDetailLite
 import javax.inject.Inject
 
 internal class PendingDeletionAssetDataMapperImpl @Inject constructor(
     private val legacyVerificationTierMapper: LegacyVerificationTierMapper
 ) : PendingDeletionAssetDataMapper {
 
-    override fun invoke(asset: Asset): BaseAccountAssetData.PendingAssetData.DeletionAssetData {
-        return with(asset) {
+    override fun invoke(assetDetailLite: AssetDetailLite): BaseAccountAssetData.PendingAssetData.DeletionAssetData {
+        return with(assetDetailLite) {
             BaseAccountAssetData.PendingAssetData.DeletionAssetData(
                 id = id,
-                name = fullName,
+                name = name,
                 shortName = shortName,
                 isAlgo = false,
-                decimals = getDecimalsOrZero(),
+                decimals = decimals,
                 creatorPublicKey = creatorAddress,
                 usdValue = usdValue,
                 verificationTier = legacyVerificationTierMapper(verificationTier)

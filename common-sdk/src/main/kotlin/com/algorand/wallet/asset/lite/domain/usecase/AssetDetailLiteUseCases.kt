@@ -10,10 +10,23 @@
  * limitations under the License
  */
 
-package com.algorand.android.nft.domain.usecase
+package com.algorand.wallet.asset.lite.domain.usecase
 
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData
+import com.algorand.wallet.asset.lite.domain.model.AssetDetailLite
+import kotlinx.coroutines.flow.Flow
 
-interface GetAccountCollectiblesData {
-    suspend operator fun invoke(address: String): List<BaseOwnedCollectibleData>
+fun interface GetAssetDetailsLiteFlow {
+    operator fun invoke(assetIds: List<Long>): Flow<Map<Long, AssetDetailLite?>>
+}
+
+fun interface GetAssetDetailLiteFlow {
+    operator fun invoke(assetId: Long): Flow<AssetDetailLite?>
+}
+
+fun interface GetAssetDetailsLite {
+    operator fun invoke(assetIds: List<Long>): Map<Long, AssetDetailLite?>
+}
+
+fun interface GetAssetDetailLite {
+    operator fun invoke(assetId: Long): AssetDetailLite?
 }

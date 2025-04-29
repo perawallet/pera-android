@@ -15,12 +15,12 @@ package com.algorand.android.modules.accountcore.domain.usecase
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.OwnedAssetData
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
-import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.asset.lite.domain.usecase.GetAssetDetailLite
 import javax.inject.Inject
 
 internal class GetAccountOwnedAssetDataUseCase @Inject constructor(
-    private val getAssetDetail: GetAssetDetail,
+    private val getAssetDetailLite: GetAssetDetailLite,
     private val getAccountAlgoBalance: GetAccountAlgoBalance,
     private val getAccountAssetHolding: GetAccountAssetHolding,
     private val createAccountOwnedAssetData: CreateAccountOwnedAssetData,
@@ -37,8 +37,8 @@ internal class GetAccountOwnedAssetDataUseCase @Inject constructor(
 
     private suspend fun createOwnedAsset(address: String, assetId: Long): OwnedAssetData? {
         val assetHolding = getAccountAssetHolding(address, assetId) ?: return null
-        val assetDetail = getAssetDetail(assetId) ?: return null
-        return createAccountOwnedAssetData(assetDetail, assetHolding)
+        val assetDetailLite = getAssetDetailLite(assetId) ?: return null
+        return createAccountOwnedAssetData(assetDetailLite, assetHolding)
     }
 
     private suspend fun createOwnedAlgo(address: String): OwnedAssetData? {

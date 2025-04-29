@@ -12,16 +12,16 @@
 
 package com.algorand.android.modules.accountcore.domain.usecase
 
-import com.algorand.android.models.BaseAccountAssetData
+import com.algorand.android.models.BaseAccountAssetData.PendingAssetData.AdditionAssetData
 import com.algorand.android.modules.accountcore.domain.mapper.PendingAdditionAssetDataMapper
-import com.algorand.wallet.asset.domain.model.AssetDetail
+import com.algorand.wallet.asset.lite.domain.model.AssetDetailLite
 import javax.inject.Inject
 
 internal class CreateAccountPendingAdditionAssetDataUseCase @Inject constructor(
     private val pendingAdditionAssetDataMapper: PendingAdditionAssetDataMapper
 ) : CreateAccountPendingAdditionAssetData {
 
-    override suspend fun invoke(assetDetail: AssetDetail): BaseAccountAssetData.PendingAssetData.AdditionAssetData {
-        return pendingAdditionAssetDataMapper(assetDetail)
+    override suspend fun invoke(assetDetailLite: AssetDetailLite): AdditionAssetData {
+        return pendingAdditionAssetDataMapper(assetDetailLite)
     }
 }

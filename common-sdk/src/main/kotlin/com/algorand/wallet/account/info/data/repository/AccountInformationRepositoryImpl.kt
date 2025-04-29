@@ -183,7 +183,7 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         assetHoldingDao.insert(entity)
     }
 
-    override fun getAssetHoldingsFlow(address: String): Flow<List<AssetHolding>> {
+    override fun getAccountAssetHoldingsFlow(address: String): Flow<List<AssetHolding>> {
         return assetHoldingDao.getAssetsByAddressAsFlow(address).map { assetHoldingMapper(it) }
     }
 
@@ -220,6 +220,17 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
                     minRequiredBalance = accountLiteInformation.minRequiredBalance
                 )
             }
+        }
+    }
+
+    override fun getAccountLiteInformationFlow(address: String): Flow<AccountLiteInformation?> {
+        return accountInformationDao.getAccountLiteInformationFlow(address).map { accountLiteInformation ->
+            AccountLiteInformation(
+                address = accountLiteInformation.address,
+                rekeyAuthAddress = accountLiteInformation.rekeyAuthAddress,
+                algoBalance = accountLiteInformation.algoBalance,
+                minRequiredBalance = accountLiteInformation.minRequiredBalance
+            )
         }
     }
 

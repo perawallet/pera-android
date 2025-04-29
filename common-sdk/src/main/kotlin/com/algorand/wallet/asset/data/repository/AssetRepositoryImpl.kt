@@ -17,6 +17,7 @@ import com.algorand.wallet.asset.data.database.dao.CollectibleDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleMediaDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleTraitDao
 import com.algorand.wallet.asset.data.mapper.model.AlgoAssetDetailMapper
+import com.algorand.wallet.asset.data.mapper.model.AssetDetailLiteMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetMapper
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleDetailMapper
 import com.algorand.wallet.asset.data.model.AssetResponse
@@ -28,6 +29,7 @@ import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.asset.domain.repository.AssetRepository
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.asset.lite.domain.model.AssetDetailLite
 import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
@@ -49,6 +51,7 @@ internal class AssetRepositoryImpl @Inject constructor(
     private val assetMapper: AssetMapper,
     private val algoAssetDetailMapper: AlgoAssetDetailMapper,
     private val collectibleDetailMapper: CollectibleDetailMapper,
+    private val assetDetailLiteMapper: AssetDetailLiteMapper,
     private val collectibleMediaDao: CollectibleMediaDao,
     private val collectibleTraitDao: CollectibleTraitDao,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -186,14 +189,38 @@ internal class AssetRepositoryImpl @Inject constructor(
 
     override fun getAssetsLiteInformationFlow(assetIds: List<Long>): Flow<Map<Long, AssetLiteInformation?>> {
         return assetDetailDao.getLiteInformationByAssetIds(assetIds).map {
-            it.associate { assetLiteInformationDao ->
-                assetLiteInformationDao.id to AssetLiteInformation(
-                    assetLiteInformationDao.id,
-                    assetLiteInformationDao.usdValue,
-                    assetLiteInformationDao.decimals
+            it.associate { assetLiteInformationDto ->
+                assetLiteInformationDto.id to AssetLiteInformation(
+                    assetLiteInformationDto.id,
+                    assetLiteInformationDto.usdValue,
+                    assetLiteInformationDto.decimals
                 )
             }
         }
+    }
+
+    override fun getAssetDetailsLiteFlow(assetIds: List<Long>): Flow<Map<Long, AssetDetailLite?>> {
+        return assetDetailDao.getAssetDetailsLiteFlowByAssetIds(assetIds).map {
+            it.associate { assetDetailLiteDto ->
+                assetDetailLiteDto.id to assetDetailLiteMapper(assetDetailLiteDto)
+            }
+        }
+    }
+
+    override fun getAssetDetailsLite(assetIds: List<Long>): Map<Long, AssetDetailLite?> {
+        return assetDetailDao.getAssetDetailsLiteByAssetIds(assetIds).associate { assetDetailLiteDto ->
+            assetDetailLiteDto.id to assetDetailLiteMapper(assetDetailLiteDto)
+        }
+    }
+
+    override fun getAssetDetailLiteFlow(assetId: Long): Flow<AssetDetailLite?> {
+        return assetDetailDao.getAssetDetailLiteFlowByAssetId(assetId).map {
+            assetDetailLiteMapper(it)
+        }
+    }
+
+    override fun getAssetDetailLite(assetId: Long): AssetDetailLite? {
+        return assetDetailLiteMapper(assetDetailDao.getAssetDetailLiteByAssetId(assetId))
     }
 
     private fun mapAssetDetailResponseToResult(assetResponse: AssetResponse): PeraResult<Asset> {

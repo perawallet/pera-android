@@ -73,6 +73,9 @@ internal interface AccountInformationDao {
     @Query("SELECT algo_address, auth_algo_address, algo_amount, min_required_balance FROM account_information WHERE algo_address IN (:addresses)")
     fun getAccountLiteInformationFlow(addresses: List<String>): Flow<List<AccountLiteInformationDao>>
 
+    @Query("SELECT algo_address, auth_algo_address, algo_amount, min_required_balance FROM account_information WHERE algo_address = :address")
+    fun getAccountLiteInformationFlow(address: String): Flow<AccountLiteInformationDao>
+
     @Query("SELECT min_required_balance FROM account_information WHERE :address = algo_address")
     suspend fun getMinRequiredBalance(address: String): BigInteger?
 

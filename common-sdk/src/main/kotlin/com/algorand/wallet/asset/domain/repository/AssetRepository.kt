@@ -17,6 +17,7 @@ import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.asset.lite.domain.model.AssetDetailLite
 import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
+import com.algorand.wallet.asset.lite.domain.model.CollectibleDetailLite
 import com.algorand.wallet.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
 
@@ -57,6 +58,14 @@ internal interface AssetRepository {
     fun getAssetDetailsLite(assetIds: List<Long>): Map<Long, AssetDetailLite?>
 
     fun getAssetDetailLite(assetId: Long): AssetDetailLite?
+
+    fun getCollectibleDetailsLiteFlow(collectibleIds: List<Long>): Flow<Map<Long, CollectibleDetailLite?>>
+
+    fun getCollectibleDetailLiteFlow(collectibleId: Long): Flow<CollectibleDetailLite?>
+
+    fun getCollectibleDetailsLite(collectibleIds: List<Long>): Map<Long, CollectibleDetailLite?>
+
+    fun getCollectibleDetailLite(collectibleId: Long): CollectibleDetailLite?
 
     suspend fun getAssetCreatorAddress(assetId: Long): String?
 }

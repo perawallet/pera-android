@@ -38,6 +38,8 @@ import com.algorand.wallet.asset.data.mapper.model.AssetInfoMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetInfoMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.AssetMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetMapperImpl
+import com.algorand.wallet.asset.data.mapper.model.CollectibleDetailLiteMapper
+import com.algorand.wallet.asset.data.mapper.model.CollectibleDetailLiteMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.CollectibleInfoMapper
 import com.algorand.wallet.asset.data.mapper.model.CollectibleInfoMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.VerificationTierMapper
@@ -168,4 +170,7 @@ internal object AssetDetailMappersModule {
 
     @Provides
     fun provideAssetDetailLiteMapper(impl: AssetDetailLiteMapperImpl): AssetDetailLiteMapper = impl
+
+    @Provides
+    fun provideCollectibleDetailLiteMapper(impl: CollectibleDetailLiteMapperImpl): CollectibleDetailLiteMapper = impl
 }

@@ -94,8 +94,8 @@ internal class AssetDetailCacheHelperImpl @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getAsset(assetId: Long): Asset? {
         return withContext(coroutineDispatcher) {
-            val deferredAssetDetailEntity = async { assetDetailDao.getByAssetId(assetId) }
             val deferredCollectibleEntity = async { collectibleDao.getByCollectibleAssetId(assetId) }
+            val deferredAssetDetailEntity = async { assetDetailDao.getByAssetId(assetId) }
             val deferredCollectibleMediaEntities = async { collectibleMediaDao.getByCollectibleAssetId(assetId) }
             val deferredCollectibleTraits = async { collectibleTraitDao.getByCollectibleAssetId(assetId) }
             awaitAll(

@@ -49,8 +49,6 @@ internal class ImageCollectibleDetailMapperImpl @Inject constructor(
     override fun invoke(
         entity: AssetDetailEntity,
         collectibleEntity: CollectibleEntity,
-        collectibleMediaEntities: List<CollectibleMediaEntity>?,
-        collectibleTraitEntities: List<CollectibleTraitEntity>?
     ): ImageCollectibleDetail {
         return ImageCollectibleDetail(
             id = entity.assetId,

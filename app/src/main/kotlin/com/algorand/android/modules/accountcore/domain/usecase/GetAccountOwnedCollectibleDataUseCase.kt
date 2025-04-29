@@ -15,18 +15,18 @@ package com.algorand.android.modules.accountcore.domain.usecase
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData
 import com.algorand.android.modules.collectibles.common.mapper.BaseOwnedCollectibleDataFactory
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
-import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
+import com.algorand.wallet.asset.lite.domain.usecase.GetCollectibleDetailLite
 import javax.inject.Inject
 
 internal class GetAccountOwnedCollectibleDataUseCase @Inject constructor(
-    private val getCollectibleDetail: GetCollectibleDetail,
+    private val getCollectibleDetailLite: GetCollectibleDetailLite,
     private val baseOwnedCollectibleDataFactory: BaseOwnedCollectibleDataFactory,
     private val getAccountAssetHolding: GetAccountAssetHolding
 ) : GetAccountOwnedCollectibleData {
 
     override suspend fun invoke(address: String, collectibleId: Long): BaseOwnedAssetData.BaseOwnedCollectibleData? {
         val assetHolding = getAccountAssetHolding(address, collectibleId) ?: return null
-        val collectibleDetail = getCollectibleDetail(collectibleId) ?: return null
+        val collectibleDetail = getCollectibleDetailLite(collectibleId) ?: return null
         return baseOwnedCollectibleDataFactory(assetHolding, collectibleDetail)
     }
 }

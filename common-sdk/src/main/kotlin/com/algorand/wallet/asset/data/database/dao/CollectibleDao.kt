@@ -16,7 +16,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.algorand.wallet.asset.data.database.model.AssetDetailLiteDto
+import com.algorand.wallet.asset.data.database.model.CollectibleDetailLiteDto
 import com.algorand.wallet.asset.data.database.model.CollectibleEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface CollectibleDao {
@@ -44,4 +47,20 @@ internal interface CollectibleDao {
 
     @Query("DELETE FROM collectible")
     suspend fun clearAll()
+
+    @Query("SELECT id, title, collection_name, description, primary_image_url" +
+            " FROM collectible WHERE collectible_asset_id IN (:collectibleIds)")
+    fun getCollectibleDetailsLiteFlowByCollectibleIds(collectibleIds: List<Long>): Flow<List<CollectibleDetailLiteDto>>
+
+    @Query("SELECT id, title, collection_name, description, primary_image_url" +
+            " FROM collectible WHERE collectible_asset_id IN (:collectibleIds)")
+    fun getCollectibleDetailsLiteByCollectibleIds(collectibleIds: List<Long>): List<CollectibleDetailLiteDto>
+
+    @Query("SELECT id, title, collection_name, description, primary_image_url" +
+            " FROM collectible WHERE collectible_asset_id = :collectibleId")
+    fun getCollectibleDetailLiteFlowByCollectibleId(collectibleId: Long): Flow<CollectibleDetailLiteDto>
+
+    @Query("SELECT id, title, collection_name, description, primary_image_url" +
+            " FROM collectible WHERE collectible_asset_id = :collectibleId")
+    fun getCollectibleDetailLiteByCollectibleId(collectibleId: Long): CollectibleDetailLiteDto
 }

@@ -19,6 +19,8 @@ import com.algorand.wallet.asset.data.database.dao.CollectibleTraitDao
 import com.algorand.wallet.asset.data.mapper.model.AlgoAssetDetailMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetDetailLiteMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetMapper
+import com.algorand.wallet.asset.data.mapper.model.CollectibleDetailLiteMapper
+import com.algorand.wallet.asset.data.mapper.model.CollectibleDetailLiteMapperImpl
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleDetailMapper
 import com.algorand.wallet.asset.data.model.AssetResponse
 import com.algorand.wallet.asset.data.service.AssetDetailApiService
@@ -31,6 +33,7 @@ import com.algorand.wallet.asset.domain.repository.AssetRepository
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.lite.domain.model.AssetDetailLite
 import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
+import com.algorand.wallet.asset.lite.domain.model.CollectibleDetailLite
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
 import javax.inject.Inject
@@ -52,6 +55,7 @@ internal class AssetRepositoryImpl @Inject constructor(
     private val algoAssetDetailMapper: AlgoAssetDetailMapper,
     private val collectibleDetailMapper: CollectibleDetailMapper,
     private val assetDetailLiteMapper: AssetDetailLiteMapper,
+    private val collectibleDetailLiteMapper: CollectibleDetailLiteMapper,
     private val collectibleMediaDao: CollectibleMediaDao,
     private val collectibleTraitDao: CollectibleTraitDao,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -221,6 +225,31 @@ internal class AssetRepositoryImpl @Inject constructor(
 
     override fun getAssetDetailLite(assetId: Long): AssetDetailLite? {
         return assetDetailLiteMapper(assetDetailDao.getAssetDetailLiteByAssetId(assetId))
+    }
+
+    override fun getCollectibleDetailsLiteFlow(collectibleIds: List<Long>): Flow<Map<Long, CollectibleDetailLite?>> {
+        return collectibleDao.getCollectibleDetailsLiteFlowByCollectibleIds(collectibleIds).map {
+            it.associate { collectibleDetailLiteDto ->
+                collectibleDetailLiteDto.id to collectibleDetailLiteMapper(collectibleDetailLiteDto)
+            }
+        }
+    }
+
+    override fun getCollectibleDetailsLite(collectibleIds: List<Long>): Map<Long, CollectibleDetailLite?> {
+        return collectibleDao.getCollectibleDetailsLiteByCollectibleIds(collectibleIds)
+            .associate { collectibleDetailLiteDto ->
+                collectibleDetailLiteDto.id to collectibleDetailLiteMapper(collectibleDetailLiteDto)
+            }
+    }
+
+    override fun getCollectibleDetailLiteFlow(collectibleId: Long): Flow<CollectibleDetailLite?> {
+        return collectibleDao.getCollectibleDetailLiteFlowByCollectibleId(collectibleId).map {
+            collectibleDetailLiteMapper(it)
+        }
+    }
+
+    override fun getCollectibleDetailLite(collectibleId: Long): CollectibleDetailLite? {
+        return collectibleDetailLiteMapper(collectibleDao.getCollectibleDetailLiteByCollectibleId(collectibleId))
     }
 
     private fun mapAssetDetailResponseToResult(assetResponse: AssetResponse): PeraResult<Asset> {

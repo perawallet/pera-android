@@ -23,13 +23,15 @@ class SelectedCurrencyDetailMapper @Inject constructor() {
         currencySymbol: String?,
         algoToSelectedCurrencyConversionRate: BigDecimal?,
         usdToSelectedCurrencyConversionRate: BigDecimal?,
+        algoUsdExchangePrice: BigDecimal?
     ): SelectedCurrencyDetail {
         return SelectedCurrencyDetail(
             currencyId = currencyId,
             currencyName = currencyName,
             currencySymbol = currencySymbol,
             algoToSelectedCurrencyConversionRate = algoToSelectedCurrencyConversionRate,
-            usdToSelectedCurrencyConversionRate = usdToSelectedCurrencyConversionRate
+            usdToSelectedCurrencyConversionRate = usdToSelectedCurrencyConversionRate,
+            algoUsdExchangePrice = algoUsdExchangePrice
         )
     }
 }

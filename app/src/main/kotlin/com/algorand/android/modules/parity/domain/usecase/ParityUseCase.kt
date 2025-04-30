@@ -158,7 +158,8 @@ class ParityUseCase @Inject constructor(
                             getSelectedCurrencyName(currencyDetailDTO, isPrimaryCurrencyAlgo),
                             getSelectedCurrencySymbol(currencyDetailDTO, isPrimaryCurrencyAlgo),
                             getAlgoToSelectedCurrencyParityValue(currencyDetailDTO, isPrimaryCurrencyAlgo),
-                            getUsdToSelectedCurrencyParityValue(currencyDetailDTO, isPrimaryCurrencyAlgo)
+                            getUsdToSelectedCurrencyParityValue(currencyDetailDTO, isPrimaryCurrencyAlgo),
+                            getAlgoUsdExchangePrice(currencyDetailDTO, isPrimaryCurrencyAlgo)
                         )
                     )
                 )
@@ -216,6 +217,22 @@ class ParityUseCase @Inject constructor(
             } else {
                 currencyDetailDTO.usdValue
             }
+        }
+    }
+
+    private fun getAlgoUsdExchangePrice(
+        currencyDetailDTO: CurrencyDetailDTO,
+        isSelectedCurrencyAlgo: Boolean
+    ): BigDecimal? {
+        val exchangePrice = currencyDetailDTO.exchangePrice?.toBigDecimalOrNull()
+        return if (isSelectedCurrencyAlgo) {
+            exchangePrice
+        } else {
+            if (exchangePrice?.isEqualTo(BigDecimal.ZERO) == true) return null
+            val selectedCurrencyUsdValue = currencyDetailDTO.usdValue
+            val ratio = selectedCurrencyUsdValue?.divide(exchangePrice, SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)
+            if (ratio?.isEqualTo(BigDecimal.ZERO) == true) return null
+            BigDecimal.ONE.divide(ratio, SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)
         }
     }
 

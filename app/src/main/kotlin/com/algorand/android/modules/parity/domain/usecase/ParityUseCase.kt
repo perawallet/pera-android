@@ -21,6 +21,7 @@ import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.modules.parity.domain.repository.ParityRepository
 import com.algorand.android.utils.CacheResult
 import com.algorand.android.utils.DataResource
+import com.algorand.android.utils.isEqualTo
 import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject
@@ -50,8 +51,8 @@ class ParityUseCase @Inject constructor(
 
     fun getUsdToAlgoConversionRate(): BigDecimal {
         return parityRepository.getCachedSelectedCurrencyDetail()?.data?.let {
-            if (it.algoToSelectedCurrencyConversionRate == BigDecimal.ZERO ||
-                it.algoToSelectedCurrencyConversionRate == null
+            if (it.algoToSelectedCurrencyConversionRate == null ||
+                it.algoToSelectedCurrencyConversionRate.isEqualTo(BigDecimal.ZERO)
             ) {
                 BigDecimal.ZERO
             } else {
@@ -207,7 +208,7 @@ class ParityUseCase @Inject constructor(
         with(currencyDetailDTO) {
             return if (isSelectedCurrencyAlgo) {
                 val algoToCurrencyConversionRate = exchangePrice?.toBigDecimalOrNull()
-                if (algoToCurrencyConversionRate == BigDecimal.ZERO || algoToCurrencyConversionRate == null) {
+                if (algoToCurrencyConversionRate == null || algoToCurrencyConversionRate.isEqualTo(BigDecimal.ZERO)) {
                     BigDecimal.ZERO
                 } else {
                     usdValue?.divide(algoToCurrencyConversionRate, SAFE_PARITY_DIVISION_DECIMALS, RoundingMode.UP)

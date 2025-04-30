@@ -17,11 +17,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.databinding.ItemAccountValueBinding
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 
 class AccountValueViewHolder(
     private val binding: ItemAccountValueBinding
-) : BaseViewHolder<AccountDetailAssetsItem>(binding.root) {
+) : BaseViewHolder<AccountDetailAccountsItem>(binding.root) {
 
     companion object {
         fun create(parent: ViewGroup): AccountValueViewHolder {
@@ -30,8 +30,8 @@ class AccountValueViewHolder(
         }
     }
 
-    override fun bind(item: AccountDetailAssetsItem) {
-        if (item !is AccountDetailAssetsItem.AccountPortfolioItem) return
+    override fun bind(item: AccountDetailAccountsItem) {
+        if (item !is AccountDetailAccountsItem.AccountPortfolioItem) return
         with(binding) {
             primaryValueTextView.text = item.accountPrimaryFormattedParityValue
             secondaryValueTextView.text = item.accountSecondaryFormattedParityValue.orEmpty()

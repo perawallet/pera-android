@@ -16,14 +16,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.databinding.ItemBackupWarningBinding
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 
 class BackupWarningViewHolder(
     private val binding: ItemBackupWarningBinding,
     private val listener: Listener,
-) : BaseViewHolder<AccountDetailAssetsItem>(binding.root) {
+) : BaseViewHolder<AccountDetailAccountsItem>(binding.root) {
 
-    override fun bind(item: AccountDetailAssetsItem) {
+    override fun bind(item: AccountDetailAccountsItem) {
         binding.backupNowButton.setOnClickListener { listener.onBackupNowClick() }
     }
 

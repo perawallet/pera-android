@@ -14,78 +14,20 @@
 package com.algorand.android.modules.accountdetail.assets.ui.adapter
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.accountdetail.assets.ui.adapter.AccountDetailAssetsTitleViewHolder.AccountDetailAssetsTitleViewHolderListener
-import com.algorand.android.modules.accountdetail.assets.ui.adapter.AccountDetailQuickActionsViewHolder.AccountDetailQuickActionsListener
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.ACCOUNT_PORTFOLIO
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.ASSET
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.ASSETS_LIST_TITLE
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.BACKUP_WARNING
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.NFT
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.NO_ASSET_FOUND
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.PENDING_ASSET
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.PENDING_NFT
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.QUICK_ACTIONS
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.REQUIRED_MINIMUM_BALANCE
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.SEARCH
-import com.algorand.android.utils.hideKeyboard
 
 class AccountAssetsAdapter(
     private val listener: Listener
-) : ListAdapter<AccountDetailAssetsItem, BaseViewHolder<AccountDetailAssetsItem>>(BaseDiffUtil()) {
-
-    private val searchViewItemListener = object : SearchViewViewHolder.Listener {
-        override fun onSearchQueryChanged(query: String) {
-            listener.onSearchQueryUpdated(query)
-        }
-    }
-
-    private val quickActionsViewHolderListener = object : AccountDetailQuickActionsListener {
-        override fun onAssetInboxClick() {
-            listener.onAssetInboxClick()
-        }
-
-        override fun onSendClick() {
-            listener.onSendClick()
-        }
-
-        override fun onSwapClick() {
-            listener.onSwapClick()
-        }
-
-        override fun onMoreClick() {
-            listener.onMoreClick()
-        }
-
-        override fun onCopyAddressClick() {
-            listener.onCopyAddressClick()
-        }
-
-        override fun onShowAddressClick() {
-            listener.onShowAddressClick()
-        }
-
-        override fun onBuySellClick() {
-            listener.onBuySellClick()
-        }
-    }
-
-    private val assetsTitleViewHolderListener = object : AccountDetailAssetsTitleViewHolderListener {
-        override fun onManageAssetsClick() {
-            listener.onManageAssetsClick()
-        }
-
-        override fun onAddAssetClick() {
-            listener.onAddNewAssetClick()
-        }
-    }
-
-    private val requiredMinimumBalanceListener = RequiredMinimumBalanceItemViewHolder.RequiredMinimumBalanceListener {
-        listener.onRequiredMinimumBalanceClick()
-    }
+) : PagingDataAdapter<AccountDetailAssetsItem, BaseViewHolder<AccountDetailAssetsItem>>(BaseDiffUtil()) {
 
     private val ownedAssetViewHolderListener = object : OwnedAssetViewHolder.Listener {
         override fun onOwnedAssetItemClick(assetId: Long) {
@@ -107,50 +49,28 @@ class AccountAssetsAdapter(
         }
     }
 
-    private val backupWarningListener = object : BackupWarningViewHolder.Listener {
-        override fun onBackupNowClick() {
-            listener.onBackupNowClick()
-        }
-    }
-
     override fun getItemViewType(position: Int): Int {
-        return getItem(position).itemType.ordinal
+        if (position == RecyclerView.NO_POSITION || position >= itemCount) {
+            return -1
+        }
+        return getItem(position)?.itemType?.viewType ?: -1
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<AccountDetailAssetsItem> {
         return when (viewType) {
-            SEARCH.ordinal -> createAssetSearchItemViewHolder(parent)
-            ACCOUNT_PORTFOLIO.ordinal -> createAccountValueViewHolder(parent)
-            ASSET.ordinal -> createOwnedAssetViewHolder(parent)
-            ASSETS_LIST_TITLE.ordinal -> createAssetTitleViewHolder(parent)
-            PENDING_ASSET.ordinal -> createPendingAssetViewHolder(parent)
-            QUICK_ACTIONS.ordinal -> createQuickActionsViewHolder(parent)
-            NO_ASSET_FOUND.ordinal -> createNoAssetFoundScreenStateViewHolder(parent)
-            REQUIRED_MINIMUM_BALANCE.ordinal -> createRequiredMinimumBalanceViewHolder(parent)
-            NFT.ordinal -> createOwnedNFTViewHolder(parent)
-            PENDING_NFT.ordinal -> createPendingNFTViewHolder(parent)
-            BACKUP_WARNING.ordinal -> createBackupWarningViewHolder(parent)
+            ASSET.viewType -> createOwnedAssetViewHolder(parent)
+            PENDING_ASSET.viewType -> createPendingAssetViewHolder(parent)
+            NO_ASSET_FOUND.viewType -> createNoAssetFoundScreenStateViewHolder(parent)
+            NFT.viewType -> createOwnedNFTViewHolder(parent)
+            PENDING_NFT.viewType -> createPendingNFTViewHolder(parent)
             else -> throw IllegalArgumentException("$logTag : Item View Type is Unknown.")
         }
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<AccountDetailAssetsItem>, position: Int) {
-        holder.bind(getItem(position))
-    }
-
-    override fun onViewDetachedFromWindow(holder: BaseViewHolder<AccountDetailAssetsItem>) {
-        super.onViewDetachedFromWindow(holder)
-        if (holder is SearchViewViewHolder) {
-            holder.itemView.hideKeyboard()
+        if (position != -1 && position < itemCount) {
+            getItem(position)?.let { holder.bind(it) }
         }
-    }
-
-    private fun createAssetSearchItemViewHolder(parent: ViewGroup): SearchViewViewHolder {
-        return SearchViewViewHolder.create(parent, searchViewItemListener)
-    }
-
-    private fun createAccountValueViewHolder(parent: ViewGroup): AccountValueViewHolder {
-        return AccountValueViewHolder.create(parent)
     }
 
     private fun createOwnedAssetViewHolder(parent: ViewGroup): OwnedAssetViewHolder {
@@ -161,20 +81,8 @@ class AccountAssetsAdapter(
         return PendingAssetViewHolder.create(parent)
     }
 
-    private fun createAssetTitleViewHolder(parent: ViewGroup): AccountDetailAssetsTitleViewHolder {
-        return AccountDetailAssetsTitleViewHolder.create(parent, assetsTitleViewHolderListener)
-    }
-
-    private fun createQuickActionsViewHolder(parent: ViewGroup): AccountDetailQuickActionsViewHolder {
-        return AccountDetailQuickActionsViewHolder.create(parent, quickActionsViewHolderListener)
-    }
-
     private fun createNoAssetFoundScreenStateViewHolder(parent: ViewGroup): NoAssetFoundScreenStateViewHolder {
         return NoAssetFoundScreenStateViewHolder.create(parent)
-    }
-
-    private fun createRequiredMinimumBalanceViewHolder(parent: ViewGroup): RequiredMinimumBalanceItemViewHolder {
-        return RequiredMinimumBalanceItemViewHolder.create(parent, requiredMinimumBalanceListener)
     }
 
     private fun createOwnedNFTViewHolder(parent: ViewGroup): OwnedNFTViewHolder {
@@ -185,30 +93,14 @@ class AccountAssetsAdapter(
         return PendingNFTViewHolder.create(parent)
     }
 
-    private fun createBackupWarningViewHolder(parent: ViewGroup): BackupWarningViewHolder {
-        return BackupWarningViewHolder.create(parent, backupWarningListener)
-    }
-
     interface Listener {
-        fun onSearchQueryUpdated(query: String) {}
         fun onAssetClick(assetId: Long)
         fun onAssetLongClick(assetId: Long)
         fun onNFTClick(nftId: Long)
         fun onNFTLongClick(nftId: Long)
-        fun onAddNewAssetClick() {}
-        fun onManageAssetsClick()
-        fun onAssetInboxClick()
-        fun onSendClick()
-        fun onSwapClick()
-        fun onMoreClick()
-        fun onRequiredMinimumBalanceClick()
-        fun onCopyAddressClick()
-        fun onShowAddressClick()
-        fun onBackupNowClick()
-        fun onBuySellClick()
     }
 
     companion object {
-        private val logTag = AccountAssetsAdapter::class.java.simpleName
+        private val logTag = AccountAssetsAdapter::class.simpleName
     }
 }

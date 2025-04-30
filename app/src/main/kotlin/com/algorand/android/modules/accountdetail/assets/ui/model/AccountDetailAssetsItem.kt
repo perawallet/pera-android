@@ -25,102 +25,16 @@ import java.math.BigDecimal
 
 sealed class AccountDetailAssetsItem : RecyclerListItem {
 
-    enum class ItemType {
-        ACCOUNT_PORTFOLIO,
-        ASSETS_LIST_TITLE,
-        SEARCH,
-        QUICK_ACTIONS,
-        ASSET,
-        PENDING_ASSET,
-        NFT,
-        PENDING_NFT,
-        NO_ASSET_FOUND,
-        REQUIRED_MINIMUM_BALANCE,
-        BACKUP_WARNING
+    @Suppress("MagicNumber")
+    enum class ItemType(val viewType: Int) {
+        ASSET(101),
+        PENDING_ASSET(102),
+        NFT(103),
+        PENDING_NFT(104),
+        NO_ASSET_FOUND(105)
     }
 
     abstract val itemType: ItemType
-
-    data class AccountPortfolioItem(
-        val accountPrimaryFormattedParityValue: String?,
-        val accountSecondaryFormattedParityValue: String?
-    ) : AccountDetailAssetsItem() {
-
-        override val itemType: ItemType
-            get() = ItemType.ACCOUNT_PORTFOLIO
-
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is AccountPortfolioItem &&
-                accountPrimaryFormattedParityValue == other.accountPrimaryFormattedParityValue
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is AccountPortfolioItem && this == other
-        }
-    }
-
-    data class BackupWarningItem(
-        val isBackedUp: Boolean
-    ) : AccountDetailAssetsItem() {
-
-        override val itemType: ItemType
-            get() = ItemType.BACKUP_WARNING
-
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is BackupWarningItem
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is BackupWarningItem && this == other
-        }
-    }
-
-    data class TitleItem(
-        @StringRes val titleRes: Int,
-        val isAddAssetButtonVisible: Boolean
-    ) : AccountDetailAssetsItem() {
-
-        override val itemType: ItemType
-            get() = ItemType.ASSETS_LIST_TITLE
-
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is TitleItem && titleRes == other.titleRes
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is TitleItem && this == other
-        }
-    }
-
-    data class SearchViewItem(val query: String) : AccountDetailAssetsItem() {
-
-        override val itemType: ItemType
-            get() = ItemType.SEARCH
-
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is SearchViewItem
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is SearchViewItem
-        }
-    }
-
-    data class QuickActionItemContainer(
-        val quickActionItemList: List<QuickActionItem>
-    ) : AccountDetailAssetsItem() {
-
-        override val itemType: ItemType
-            get() = ItemType.QUICK_ACTIONS
-
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is QuickActionItemContainer && quickActionItemList == other.quickActionItemList
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is QuickActionItemContainer && this == other
-        }
-    }
 
     sealed class BaseAssetItem : AccountDetailAssetsItem(), AssetSortableItem {
         abstract val id: Long
@@ -292,7 +206,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
         }
     }
 
-    object NoAssetFoundViewItem : AccountDetailAssetsItem() {
+    data object NoAssetFoundViewItem : AccountDetailAssetsItem() {
 
         override val itemType: ItemType
             get() = ItemType.NO_ASSET_FOUND
@@ -306,32 +220,8 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
         }
     }
 
-    data class RequiredMinimumBalanceItem(
-        val formattedRequiredMinimumBalance: String
-    ) : AccountDetailAssetsItem() {
-
-        override val itemType: ItemType
-            get() = ItemType.REQUIRED_MINIMUM_BALANCE
-
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is RequiredMinimumBalanceItem &&
-                formattedRequiredMinimumBalance == other.formattedRequiredMinimumBalance
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is RequiredMinimumBalanceItem && this == other
-        }
-    }
-
     companion object {
-        val excludedItemFromDivider = listOf(
-            ItemType.ACCOUNT_PORTFOLIO.ordinal,
-            ItemType.ASSETS_LIST_TITLE.ordinal,
-            ItemType.SEARCH.ordinal,
-            ItemType.QUICK_ACTIONS.ordinal,
-            ItemType.NO_ASSET_FOUND.ordinal,
-            ItemType.REQUIRED_MINIMUM_BALANCE.ordinal,
-            ItemType.BACKUP_WARNING.ordinal
-        )
+        val excludedItemFromDivider =
+            AccountDetailAccountsItem.ItemType.entries.map { it.viewType } + ItemType.NO_ASSET_FOUND.viewType
     }
 }

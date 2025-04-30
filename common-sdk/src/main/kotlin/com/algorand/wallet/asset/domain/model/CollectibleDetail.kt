@@ -33,7 +33,7 @@ sealed interface CollectibleDetail : Asset {
         get() = collectibleInfo.primaryImageUrl
 
     val isPure: Boolean
-        get() = assetInfo?.supply?.total == BigDecimal.ONE && assetInfo?.decimals == 0
+        get() = assetInfo?.supply?.total?.compareTo(BigDecimal.ONE) == 0 && assetInfo?.decimals == 0
 
     data class CollectibleInfo(
         val title: String?,

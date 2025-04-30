@@ -23,6 +23,7 @@ import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
+import com.algorand.wallet.asset.data.database.dao.PaginatedAssetCollectibleDao
 import com.algorand.wallet.asset.data.database.dao.AssetDetailDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleMediaDao
@@ -67,6 +68,7 @@ internal abstract class PeraDatabase : RoomDatabase() {
     abstract fun collectibleTraitDao(): CollectibleTraitDao
     abstract fun customAccountInfoDao(): CustomAccountInfoDao
     abstract fun customHdSeedInfoDao(): CustomHdSeedInfoDao
+    abstract fun paginatedAssetCollectibleDao(): PaginatedAssetCollectibleDao
 
     companion object {
         const val DATABASE_VERSION = 3

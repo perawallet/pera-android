@@ -17,6 +17,7 @@ import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapper
 import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
+import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
@@ -29,10 +30,14 @@ internal class AssetHoldingCacheHelperImpl @Inject constructor(
 ) : AssetHoldingCacheHelper {
 
     override suspend fun cacheAssetHolding(
-        address: String,
-        assetHoldings: List<AssetHoldingResponse>
+        accountInformationResponse: AccountInformationResponse
     ): List<AssetHolding> {
-        val updatedAssetHoldingEntities = getUpdatedAssetHoldings(address, assetHoldings)
+        val address = accountInformationResponse.accountInformation?.address ?: return emptyList()
+        val assetHoldings = accountInformationResponse.accountInformation.allAssetHoldingList.orEmpty()
+        val updatedAssetHoldingEntities = getUpdatedAssetHoldings(address, assetHoldings).apply {
+            val algoAmount = accountInformationResponse.accountInformation.amount
+            add(assetHoldingEntityMapper.mapToAlgoAssetHoldingEntity(address, algoAmount))
+        }
         assetHoldingDao.updateAssetHoldings(address, updatedAssetHoldingEntities)
         return assetHoldingMapper(updatedAssetHoldingEntities)
     }
@@ -40,7 +45,7 @@ internal class AssetHoldingCacheHelperImpl @Inject constructor(
     private suspend fun getUpdatedAssetHoldings(
         address: String,
         assetHoldings: List<AssetHoldingResponse>
-    ): List<AssetHoldingEntity> {
+    ): MutableList<AssetHoldingEntity> {
         val updatedAssetHoldings = mutableListOf<AssetHoldingEntity>()
         val cachedAssetHoldings = assetHoldingDao.getAssetsByAddress(address).toMutableList()
 

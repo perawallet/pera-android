@@ -13,8 +13,10 @@
 package com.algorand.wallet.account.info.data.mapper.entity
 
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
+import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
 import com.algorand.wallet.account.info.domain.model.AssetStatus
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -45,6 +47,19 @@ internal class AssetHoldingEntityMapperImpl @Inject constructor(
             optedInAtRound = null,
             optedOutAtRound = null,
             assetStatusEntity = assetStatusEntityMapper(status)
+        )
+    }
+
+    override fun mapToAlgoAssetHoldingEntity(address: String, amount: String?): AssetHoldingEntity {
+        return AssetHoldingEntity(
+            assetId = ALGO_ID,
+            amount = amount?.toBigIntegerOrNull() ?: BigInteger.ZERO,
+            isDeleted = false,
+            isFrozen = false,
+            optedInAtRound = 0,
+            optedOutAtRound = 0,
+            assetStatusEntity = AssetStatusEntity.OWNED_BY_ACCOUNT,
+            algoAddress = address
         )
     }
 }

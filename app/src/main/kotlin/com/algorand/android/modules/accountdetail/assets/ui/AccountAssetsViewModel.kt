@@ -21,14 +21,15 @@ import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountAssets
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountAssetsPreview
 import com.algorand.android.modules.tracking.accountdetail.accountassets.AccountAssetsFragmentEventTracker
 import com.algorand.android.utils.getOrThrow
-import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
@@ -38,7 +39,6 @@ import kotlinx.coroutines.launch
 class AccountAssetsViewModel @Inject constructor(
     private val accountAssetsPreviewUseCase: AccountAssetsPreviewUseCase,
     private val accountAssetsFragmentEventTracker: AccountAssetsFragmentEventTracker,
-    private val getAssetInboxRequest: GetAssetInboxRequest,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -60,9 +60,8 @@ class AccountAssetsViewModel @Inject constructor(
             searchQueryFlow
                 .debounce(QUERY_DEBOUNCE)
                 .distinctUntilChanged()
-                .flatMapLatest { query ->
-                    accountAssetsPreviewUseCase.fetchAccountDetail(accountAddress, query, hasInboxItem())
-                }.collectLatest { list -> _accountAssetsFlow.emit(list) }
+                .flatMapLatest(::initAccountDetail)
+                .collectLatest { list -> _accountAssetsFlow.emit(list) }
         }
     }
 
@@ -82,9 +81,13 @@ class AccountAssetsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun hasInboxItem(): Boolean {
-        val addressRequest = getAssetInboxRequest(accountAddress) ?: return false
-        return addressRequest.requestCount > 0
+    private suspend fun initAccountDetail(query: String): Flow<AccountAssetsPreview> {
+        return combine(
+            accountAssetsPreviewUseCase.getAccountDetailsItemsFlow(accountAddress, query),
+            accountAssetsPreviewUseCase.getAssetsPagingFlow(viewModelScope, accountAddress, query)
+        ) { accountDetailItems, assetPagingItems ->
+            AccountAssetsPreview(assetPagingItems, accountDetailItems, false)
+        }
     }
 
     companion object {

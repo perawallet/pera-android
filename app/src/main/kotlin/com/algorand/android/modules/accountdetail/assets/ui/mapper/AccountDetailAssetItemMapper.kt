@@ -14,15 +14,27 @@ package com.algorand.android.modules.accountdetail.assets.ui.mapper
 
 import com.algorand.android.R
 import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.models.BaseAccountAssetData
-import com.algorand.android.models.BaseAccountAssetData.PendingAssetData
 import com.algorand.android.modules.accountdetail.assets.ui.decider.NFTIndicatorDrawableDecider
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BasePendingItem
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.NFTItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
 import com.algorand.android.modules.collectibles.util.deciders.NFTAmountFormatDecider
+import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.AssetName
+import com.algorand.android.utils.formatAmount
+import com.algorand.android.utils.formatting.FormatAmountByCollectibleFractionalDigit
+import com.algorand.android.utils.isGreaterThan
+import com.algorand.android.utils.orZero
+import com.algorand.wallet.account.info.domain.model.AssetStatus
+import com.algorand.wallet.asset.domain.model.AssetLite
+import com.algorand.wallet.asset.domain.model.AssetLite.Type
+import java.math.BigDecimal
+import java.math.BigInteger
 import javax.inject.Inject
 
 // TODO Rename this function to make it screen independent
@@ -30,56 +42,89 @@ class AccountDetailAssetItemMapper @Inject constructor(
     private val verificationTierConfigurationDecider: VerificationTierConfigurationDecider,
     private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
     private val nftIndicatorDrawableDecider: NFTIndicatorDrawableDecider,
-    private val nftAmountFormatDecider: NFTAmountFormatDecider
+    private val nftAmountFormatDecider: NFTAmountFormatDecider,
+    private val getPrimaryCurrencyAssetParityValue: GetPrimaryCurrencyAssetParityValue,
+    private val formatAmountByCollectibleFractionalDigit: FormatAmountByCollectibleFractionalDigit
 ) {
 
-    fun mapToOwnedAssetItem(
-        accountAssetData: BaseAccountAssetData.BaseOwnedAssetData
-    ): AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.AssetItem {
-        return with(accountAssetData) {
-            AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.AssetItem(
-                id = id,
+    fun mapToAssetListItem(assetLite: AssetLite, isHoldingByWatchAccount: Boolean): AccountDetailAssetsItem {
+        return when (assetLite.type) {
+            is Type.Asset -> mapToAssetListItem(assetLite)
+            is Type.Collectible -> mapToCollectibleListItem(assetLite, isHoldingByWatchAccount)
+        }
+    }
+
+    private fun mapToAssetListItem(assetLite: AssetLite): AccountDetailAssetsItem {
+        return when (assetLite.assetStatus) {
+            AssetStatus.OWNED_BY_ACCOUNT -> mapToOwnedAssetItem(assetLite)
+            AssetStatus.PENDING_FOR_ADDITION -> mapToPendingAdditionAssetItem(assetLite)
+            AssetStatus.PENDING_FOR_REMOVAL -> mapToPendingRemovalAssetItem(assetLite)
+        }
+    }
+
+    private fun mapToCollectibleListItem(
+        assetLite: AssetLite,
+        isHoldingByWatchAccount: Boolean
+    ): AccountDetailAssetsItem {
+        return when (assetLite.assetStatus) {
+            AssetStatus.OWNED_BY_ACCOUNT -> {
+                val isOwned = assetLite.amount isGreaterThan BigInteger.ZERO
+                val isAmountVisible = assetLite.amount isGreaterThan BigInteger.ONE
+                mapToOwnedNFTItem(
+                    assetLite = assetLite,
+                    isHoldingByWatchAccount = isHoldingByWatchAccount,
+                    isOwned = isOwned,
+                    isAmountVisible = isAmountVisible,
+                    shouldDecreaseOpacity = !isOwned || isHoldingByWatchAccount
+                )
+            }
+
+            AssetStatus.PENDING_FOR_ADDITION -> mapToPendingAdditionNFTITem(assetLite)
+            AssetStatus.PENDING_FOR_REMOVAL -> mapToPendingRemovalNFTItem(assetLite)
+        }
+    }
+
+    private fun mapToOwnedAssetItem(assetLite: AssetLite): BaseAssetItem.BaseOwnedItem.AssetItem {
+        return with(assetLite) {
+            val primaryParityValue = getPrimaryCurrencyAssetParityValue(amount, usdValue.orZero(), decimal)
+            BaseAssetItem.BaseOwnedItem.AssetItem(
+                id = assetId,
                 name = AssetName.create(name),
                 shortName = AssetName.createShortName(shortName),
-                formattedAmount = formattedCompactAmount,
-                formattedDisplayedCurrencyValue = getSelectedCurrencyParityValue()
-                    .getFormattedCompactValue(),
-                isAmountInDisplayedCurrencyVisible = isAmountInSelectedCurrencyVisible,
+                formattedAmount = amount.formatAmount(decimal, isCompact = true),
+                formattedDisplayedCurrencyValue = primaryParityValue.getFormattedCompactValue(),
+                isAmountInDisplayedCurrencyVisible = usdValue != null && usdValue.orZero() > BigDecimal.ZERO,
                 verificationTierConfiguration = verificationTierConfigurationDecider
                     .decideVerificationTierConfiguration(verificationTier),
                 baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
-                amountInSelectedCurrency = parityValueInSelectedCurrency.amountAsCurrency
+                amountInSelectedCurrency = primaryParityValue.amountAsCurrency
             )
         }
     }
 
-    suspend fun mapToPendingAdditionAssetItem(
-        accountAssetData: PendingAssetData.AdditionAssetData
-    ): AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.AdditionItem {
-        return AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.AdditionItem(
-            id = accountAssetData.id,
-            name = AssetName.create(accountAssetData.name),
-            shortName = AssetName.createShortName(accountAssetData.shortName),
+    private fun mapToPendingAdditionAssetItem(assetLite: AssetLite): BasePendingItem.AssetItem.AdditionItem {
+        return BasePendingItem.AssetItem.AdditionItem(
+            id = assetLite.assetId,
+            name = AssetName.create(assetLite.name),
+            shortName = AssetName.createShortName(assetLite.shortName),
             actionDescriptionResId = R.string.adding_asset,
             verificationTierConfiguration = verificationTierConfigurationDecider.decideVerificationTierConfiguration(
-                accountAssetData.verificationTier
+                assetLite.verificationTier
             ),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData.id)
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetLite)
         )
     }
 
-    suspend fun mapToPendingRemovalAssetItem(
-        accountAssetData: PendingAssetData.DeletionAssetData
-    ): AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.RemovalItem {
-        return AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.AssetItem.RemovalItem(
-            id = accountAssetData.id,
-            name = AssetName.create(accountAssetData.name),
-            shortName = AssetName.createShortName(accountAssetData.shortName),
+    private fun mapToPendingRemovalAssetItem(assetLite: AssetLite): BasePendingItem.AssetItem.RemovalItem {
+        return BasePendingItem.AssetItem.RemovalItem(
+            id = assetLite.assetId,
+            name = AssetName.create(assetLite.name),
+            shortName = AssetName.createShortName(assetLite.shortName),
             actionDescriptionResId = R.string.removing_asset,
             verificationTierConfiguration = verificationTierConfigurationDecider.decideVerificationTierConfiguration(
-                accountAssetData.verificationTier
+                assetLite.verificationTier
             ),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData.id)
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetLite)
         )
     }
 
@@ -89,22 +134,22 @@ class AccountDetailAssetItemMapper @Inject constructor(
 
     fun mapToQuickActionItemContainer(
         quickActionItemList: List<QuickActionItem>
-    ): AccountDetailAssetsItem.QuickActionItemContainer {
-        return AccountDetailAssetsItem.QuickActionItemContainer(quickActionItemList)
+    ): AccountDetailAccountsItem.QuickActionItemContainer {
+        return AccountDetailAccountsItem.QuickActionItemContainer(quickActionItemList)
     }
 
-    fun mapToSearchViewItem(query: String): AccountDetailAssetsItem.SearchViewItem {
-        return AccountDetailAssetsItem.SearchViewItem(query = query)
+    fun mapToSearchViewItem(query: String): AccountDetailAccountsItem.SearchViewItem {
+        return AccountDetailAccountsItem.SearchViewItem(query = query)
     }
 
     fun mapToBackupWarningItem(
         isBackedUp: Boolean
-    ): AccountDetailAssetsItem.BackupWarningItem {
-        return AccountDetailAssetsItem.BackupWarningItem(isBackedUp)
+    ): AccountDetailAccountsItem.BackupWarningItem {
+        return AccountDetailAccountsItem.BackupWarningItem(isBackedUp)
     }
 
-    fun mapToTitleItem(titleRes: Int, isAddAssetButtonVisible: Boolean): AccountDetailAssetsItem.TitleItem {
-        return AccountDetailAssetsItem.TitleItem(titleRes, isAddAssetButtonVisible)
+    fun mapToTitleItem(titleRes: Int, isAddAssetButtonVisible: Boolean): AccountDetailAccountsItem.TitleItem {
+        return AccountDetailAccountsItem.TitleItem(titleRes, isAddAssetButtonVisible)
     }
 
     fun mapToNoAssetFoundViewItem(): AccountDetailAssetsItem.NoAssetFoundViewItem {
@@ -113,67 +158,62 @@ class AccountDetailAssetItemMapper @Inject constructor(
 
     fun mapToRequiredMinimumBalanceItem(
         formattedRequiredMinimumBalance: String
-    ): AccountDetailAssetsItem.RequiredMinimumBalanceItem {
-        return AccountDetailAssetsItem.RequiredMinimumBalanceItem(
+    ): AccountDetailAccountsItem.RequiredMinimumBalanceItem {
+        return AccountDetailAccountsItem.RequiredMinimumBalanceItem(
             formattedRequiredMinimumBalance = formattedRequiredMinimumBalance
         )
     }
 
-    fun mapToOwnedNFTItem(
-        accountAssetData: BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData,
+    private fun mapToOwnedNFTItem(
+        assetLite: AssetLite,
         isHoldingByWatchAccount: Boolean,
         isOwned: Boolean,
-        nftListingViewType: NFTListingViewType,
         isAmountVisible: Boolean,
         shouldDecreaseOpacity: Boolean
-    ): AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.NFTItem {
-        return with(accountAssetData) {
-            AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.NFTItem(
-                id = id,
+    ): BaseAssetItem.BaseOwnedItem.NFTItem {
+        return with(assetLite) {
+            BaseAssetItem.BaseOwnedItem.NFTItem(
+                id = assetId,
                 name = AssetName.create(name),
                 shortName = AssetName.createShortName(shortName),
                 baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 formattedAmount = nftAmountFormatDecider.decideNFTAmountFormat(
                     nftAmount = amount,
-                    fractionalDecimal = decimals,
-                    formattedAmount = formattedAmount,
-                    formattedCompactAmount = formattedCompactAmount
+                    fractionalDecimal = decimal,
+                    formattedAmount = formatAmountByCollectibleFractionalDigit(amount, decimal),
+                    formattedCompactAmount = formatAmountByCollectibleFractionalDigit(amount, decimal, true)
                 ),
                 nftIndicatorDrawable = nftIndicatorDrawableDecider.decideNFTIndicatorDrawable(
                     isOwned = isOwned,
                     isHoldingByWatchAccount = isHoldingByWatchAccount,
-                    nftListingViewType = nftListingViewType
+                    nftListingViewType = NFTListingViewType.LINEAR_VERTICAL
                 ),
                 shouldDecreaseOpacity = shouldDecreaseOpacity,
                 isAmountVisible = isAmountVisible,
-                collectionName = accountAssetData.collectionName
+                collectionName = (assetLite.type as? Type.Collectible)?.collectionName
             )
         }
     }
 
-    fun mapToPendingAdditionNFTITem(
-        accountAssetData: PendingAssetData.BasePendingCollectibleData
-    ): AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.NFTItem.AdditionItem {
-        return AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.NFTItem.AdditionItem(
-            id = accountAssetData.id,
-            name = AssetName.create(accountAssetData.name),
-            shortName = AssetName.createShortName(accountAssetData.shortName),
+    private fun mapToPendingAdditionNFTITem(assetLite: AssetLite): NFTItem.AdditionItem {
+        return NFTItem.AdditionItem(
+            id = assetLite.assetId,
+            name = AssetName.create(assetLite.name),
+            shortName = AssetName.createShortName(assetLite.shortName),
             actionDescriptionResId = R.string.adding_asset,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData),
-            collectionName = accountAssetData.collectionName
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetLite),
+            collectionName = (assetLite.type as? Type.Collectible)?.collectionName
         )
     }
 
-    fun mapToPendingRemovalNFTItem(
-        accountAssetData: PendingAssetData.BasePendingCollectibleData
-    ): AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.NFTItem.RemovalItem {
-        return AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.NFTItem.RemovalItem(
-            id = accountAssetData.id,
-            name = AssetName.create(accountAssetData.name),
-            shortName = AssetName.createShortName(accountAssetData.shortName),
+    private fun mapToPendingRemovalNFTItem(assetLite: AssetLite): NFTItem.RemovalItem {
+        return NFTItem.RemovalItem(
+            id = assetLite.assetId,
+            name = AssetName.create(assetLite.name),
+            shortName = AssetName.createShortName(assetLite.shortName),
             actionDescriptionResId = R.string.removing_asset,
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(accountAssetData),
-            collectionName = accountAssetData.collectionName
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetLite),
+            collectionName = (assetLite.type as? Type.Collectible)?.collectionName
         )
     }
 }

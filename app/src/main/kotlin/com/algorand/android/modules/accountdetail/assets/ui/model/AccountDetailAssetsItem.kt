@@ -221,7 +221,7 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
     }
 
     companion object {
-        val excludedItemFromDivider =
-            AccountDetailAccountsItem.ItemType.entries.map { it.viewType } + ItemType.NO_ASSET_FOUND.viewType
+        val excludedItemFromDivider = AccountDetailAccountsItem.ItemType.entries
+            .map { it.viewType } + ItemType.NO_ASSET_FOUND.viewType
     }
 }

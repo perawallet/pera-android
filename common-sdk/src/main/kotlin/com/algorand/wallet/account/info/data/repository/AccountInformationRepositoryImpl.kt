@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,14 +17,19 @@ import com.algorand.wallet.account.info.data.database.dao.AccountInformationDao
 import com.algorand.wallet.account.info.data.database.dao.AssetHoldingDao
 import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapper
 import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapper
+import com.algorand.wallet.account.info.data.mapper.model.AccountAssetAndAppsCountMapper
 import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
 import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.model.AccountInformationResponse
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
+import com.algorand.wallet.account.info.data.service.AssetHoldingNodeApiService
+import com.algorand.wallet.account.info.domain.model.AccountAssetAndAppsCount
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
+import com.algorand.wallet.account.lite.domain.model.AccountLiteInformation
+import com.algorand.wallet.account.lite.domain.model.AssetHoldingLite
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
@@ -41,6 +46,7 @@ import kotlinx.coroutines.withContext
 
 internal class AccountInformationRepositoryImpl @Inject constructor(
     private val indexerApi: AccountInformationApiService,
+    private val assetHoldingNodeApiService: AssetHoldingNodeApiService,
     private val accountInformationMapper: AccountInformationMapper,
     private val accountInformationDao: AccountInformationDao,
     private val assetHoldingDao: AssetHoldingDao,
@@ -50,7 +56,8 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     private val assetStatusEntityMapper: AssetStatusEntityMapper,
     private val assetHoldingEntityMapper: AssetHoldingEntityMapper,
     private val accountInformationErrorCache: AccountInformationErrorCache,
-    private val getLocalAccountsAddresses: GetLocalAccountsAddresses
+    private val getLocalAccountsAddresses: GetLocalAccountsAddresses,
+    private val accountAssetAndAppsCountMapper: AccountAssetAndAppsCountMapper
 ) : AccountInformationRepository {
 
     override suspend fun fetchAccountInformation(
@@ -68,7 +75,12 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     }
 
     override fun getCachedAccountInformationCountFlow(): Flow<Int> {
-        return accountInformationDao.getTableSizeAsFlow()
+        return combine(
+            accountInformationDao.getTableSizeAsFlow(),
+            accountInformationErrorCache.getAsFlow()
+        ) { cachedAccounts, errorAccounts ->
+            cachedAccounts + errorAccounts.size
+        }
     }
 
     override suspend fun getAllAssetHoldingIds(addresses: List<String>): List<Long> {
@@ -175,6 +187,13 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         return assetHoldingDao.getAssetsByAddressAsFlow(address).map { assetHoldingMapper(it) }
     }
 
+    override fun getAssetHoldingFlow(address: String, assetId: Long): Flow<AssetHolding?> {
+        return assetHoldingDao.getAssetHoldingAsFlow(address, assetId).map {
+            if (it == null) return@map null
+            assetHoldingMapper(it)
+        }.distinctUntilChanged()
+    }
+
     override suspend fun getFailedAccountInformation(): List<String> {
         return accountInformationErrorCache.getAll()
     }
@@ -189,6 +208,67 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
 
     override suspend fun getAccountAlgoBalance(address: String): BigInteger? {
         return accountInformationDao.getAccountAlgoBalance(address)
+    }
+
+    override fun getAccountsLiteInformationFlow(addresses: List<String>): Flow<Map<String, AccountLiteInformation?>> {
+        return accountInformationDao.getAccountLiteInformationFlow(addresses).map { accountLiteInformationList ->
+            accountLiteInformationList.associate { accountLiteInformation ->
+                accountLiteInformation.address to AccountLiteInformation(
+                    address = accountLiteInformation.address,
+                    rekeyAuthAddress = accountLiteInformation.rekeyAuthAddress,
+                    algoBalance = accountLiteInformation.algoBalance,
+                    minRequiredBalance = accountLiteInformation.minRequiredBalance
+                )
+            }
+        }
+    }
+
+    override fun getAssetHoldingsLiteFlow(addresses: List<String>): Flow<Map<String, AssetHoldingLite>> {
+        return assetHoldingDao.getAssetHoldingsLiteInformationFlow(addresses).map { assetHoldingLiteList ->
+            val assetHoldingMap = mutableMapOf<String, AssetHoldingLite>()
+            assetHoldingLiteList.forEach { assetHoldingLite ->
+                val assetHolding = assetHoldingMap[assetHoldingLite.address]
+                assetHoldingMap[assetHoldingLite.address] = if (assetHolding == null) {
+                    AssetHoldingLite(
+                        assetHoldingLite.address,
+                        mapOf(assetHoldingLite.assetId to assetHoldingLite.amount)
+                    )
+                } else {
+                    assetHolding.copy(
+                        assetHoldingAmounts = assetHolding.assetHoldingAmounts + (assetHoldingLite.assetId to assetHoldingLite.amount)
+                    )
+                }
+            }
+            assetHoldingMap
+        }
+    }
+
+    override suspend fun getAccountAssetHoldingAmount(address: String, assetId: Long): BigInteger? {
+        return assetHoldingDao.getAssetHoldingAmount(address, assetId)
+    }
+
+    override suspend fun getCachedAccountMinRequiredBalance(address: String): BigInteger? {
+        return accountInformationDao.getMinRequiredBalance(address)
+    }
+
+    override suspend fun isAssetOptedInByAccount(address: String, assetId: Long): Boolean {
+        val isOptedIn = assetHoldingDao.isAssetOptedInByAccount(address, assetId)
+        if (isOptedIn) return true
+        return request { assetHoldingNodeApiService.getAssetHolding(address, assetId) }.isSuccess
+    }
+
+    override suspend fun getAccountAssetsAndAppsCount(address: String): AccountAssetAndAppsCount? {
+        return accountInformationDao.getAssetsAndAppsCount(address)?.let {
+            accountAssetAndAppsCountMapper.map(it)
+        }
+    }
+
+    override suspend fun getAssetHolding(address: String, assetId: Long): AssetHolding? {
+        return assetHoldingDao.getAssetHolding(address, assetId)?.let { assetHoldingMapper(it) }
+    }
+
+    override suspend fun getAssetHoldings(address: String): List<AssetHolding> {
+        return assetHoldingDao.getAssetsByAddress(address).map { assetHoldingMapper(it) }
     }
 
     private suspend fun PeraResult<AccountInformationResponse>.mapToAccountInfo(): PeraResult<AccountInformation> {

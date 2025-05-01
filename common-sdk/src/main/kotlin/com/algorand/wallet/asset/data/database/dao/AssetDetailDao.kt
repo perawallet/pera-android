@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,6 +17,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
+import com.algorand.wallet.asset.data.database.model.AssetLiteInformationDao
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface AssetDetailDao {
@@ -41,4 +43,10 @@ internal interface AssetDetailDao {
 
     @Query("DELETE FROM asset_detail")
     suspend fun clearAll()
+
+    @Query("SELECT asset_id, usd_value, decimals FROM asset_detail WHERE asset_id IN (:assetIds)")
+    fun getLiteInformationByAssetIds(assetIds: List<Long>): Flow<List<AssetLiteInformationDao>>
+
+    @Query("SELECT asset_creator_address FROM asset_detail WHERE asset_id = :assetId")
+    suspend fun getAssetCreatorAddress(assetId: Long): String?
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,7 +17,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.databinding.ItemGovernanceBannerBinding
-import com.algorand.android.modules.accounts.domain.model.BaseAccountListItem
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.google.android.material.button.MaterialButton
 
 class GovernanceBannerViewHolder(
@@ -34,9 +34,10 @@ class GovernanceBannerViewHolder(
     override val descriptionTextView: TextView
         get() = binding.bannerDescriptionTextView
 
-    override fun initActionButton(item: BaseAccountListItem.BaseBannerItem) {
+    override fun initActionButton(item: BaseAccountListItem.BannerItem) {
         initActionButton(item, BannerType.GOVERNANCE)
     }
+
     companion object : BannerViewHolderCreator {
         override fun create(listener: BannerListener, parent: ViewGroup): BaseBannerViewHolder {
             val binding = ItemGovernanceBannerBinding.inflate(LayoutInflater.from(parent.context), parent, false)

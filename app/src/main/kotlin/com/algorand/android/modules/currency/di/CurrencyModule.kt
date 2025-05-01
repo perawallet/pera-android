@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -24,6 +24,8 @@ import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrency
 import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrencySymbolUseCase
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgoUseCase
+import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyUsd
+import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyUsdUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,6 +53,9 @@ internal object CurrencyModule {
 
     @Provides
     fun provideIsPrimaryCurrencyAlgo(useCase: IsPrimaryCurrencyAlgoUseCase): IsPrimaryCurrencyAlgo = useCase
+
+    @Provides
+    fun provideIsPrimaryCurrencyUsd(useCase: IsPrimaryCurrencyUsdUseCase): IsPrimaryCurrencyUsd = useCase
 
     @Provides
     fun provideGetSecondaryCurrencySymbol(

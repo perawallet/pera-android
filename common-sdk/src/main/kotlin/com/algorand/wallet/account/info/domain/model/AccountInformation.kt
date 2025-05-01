@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -36,10 +36,6 @@ data class AccountInformation(
 
     fun hasAsset(assetId: Long): Boolean {
         return assetId == ALGO_ID || assetHoldings.any { it.assetId == assetId }
-    }
-
-    fun hasAssetAmount(assetId: Long): Boolean {
-        return assetHoldings.any { it.assetId == assetId && it.amount != BigInteger.ZERO }
     }
 
     fun getAssetHoldingIds() = assetHoldings.map { it.assetId }

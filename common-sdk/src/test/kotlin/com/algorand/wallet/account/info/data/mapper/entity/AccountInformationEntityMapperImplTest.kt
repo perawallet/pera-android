@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -82,7 +82,8 @@ class AccountInformationEntityMapperImplTest {
                 totalAppsOptedIn = null,
                 totalCreatedApps = null,
                 totalCreatedAssets = null,
-                appsTotalExtraPages = null
+                appsTotalExtraPages = null,
+                minRequiredBalance = BigInteger.ZERO
             ),
             currentRound = 9
         )
@@ -116,7 +117,8 @@ class AccountInformationEntityMapperImplTest {
             totalAppsOptedIn = 9,
             totalAssetsOptedIn = 4,
             totalCreatedAssets = 0,
-            totalCreatedApps = 0
+            totalCreatedApps = 0,
+            minRequiredBalance = BigInteger.ZERO
         )
         private val ACCOUNT_INFORMATION_RESPONSE = AccountInformationResponse(
             accountInformation = ACCOUNT_INFORMATION_PAYLOAD,
@@ -134,7 +136,9 @@ class AccountInformationEntityMapperImplTest {
             totalCreatedAssetsCount = 0,
             totalCreatedAppsCount = 0,
             appStateNumByteSlice = 21,
-            appStateSchemaUint = 12
+            appStateSchemaUint = 12,
+            minRequiredBalance = BigInteger.ZERO,
+            optedInAssetsCount = 4,
         )
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -23,14 +23,25 @@ internal class IsThereAnyCachedErrorAccountUseCase @Inject constructor(
 ) : IsThereAnyCachedErrorAccount {
 
     override suspend fun invoke(excludeNoAuthAccounts: Boolean): Boolean {
+        return isThereAnyCachedErrorAccount(getLocalAccounts(), excludeNoAuthAccounts)
+    }
+
+    override suspend fun invoke(localAccounts: List<LocalAccount>, excludeNoAuthAccounts: Boolean): Boolean {
+        return isThereAnyCachedErrorAccount(localAccounts, excludeNoAuthAccounts)
+    }
+
+    private suspend fun isThereAnyCachedErrorAccount(
+        localAccounts: List<LocalAccount>,
+        excludeNoAuthAccounts: Boolean
+    ): Boolean {
         val failedAccounts = accountInformationRepository.getFailedAccountInformation()
-        val localAccounts = if (excludeNoAuthAccounts) {
-            getLocalAccounts().filter { it !is LocalAccount.NoAuth }
+        val filteredLocalAccounts = if (excludeNoAuthAccounts) {
+            localAccounts.filter { it !is LocalAccount.NoAuth }
         } else {
-            getLocalAccounts()
+            localAccounts
         }
 
-        return localAccounts.any { localAccount ->
+        return filteredLocalAccounts.any { localAccount ->
             failedAccounts.any { address ->
                 localAccount.algoAddress == address
             }

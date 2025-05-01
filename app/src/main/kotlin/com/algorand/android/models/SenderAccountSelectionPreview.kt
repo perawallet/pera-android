@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,13 +15,12 @@ package com.algorand.android.models
 
 import androidx.navigation.NavDirections
 import com.algorand.android.utils.Event
-import com.algorand.wallet.account.info.domain.model.AccountInformation
 
 data class SenderAccountSelectionPreview(
     val accountList: List<BaseAccountSelectionListItem>,
     val isLoading: Boolean,
     val isEmptyStateVisible: Boolean,
-    val senderAccountInformationSuccessEvent: Event<AccountInformation>?,
+    val senderAccountInformationSuccessEvent: Event<String>?,
     val senderAccountInformationErrorEvent: Event<Result.Error>?,
     val navigateToDestination: Event<NavDirections>? = null
 )

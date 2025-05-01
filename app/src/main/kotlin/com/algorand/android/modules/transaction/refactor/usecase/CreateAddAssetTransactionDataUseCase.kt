@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,21 +13,21 @@
 package com.algorand.android.modules.transaction.refactor.usecase
 
 import com.algorand.android.models.TransactionSignData
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import javax.inject.Inject
 
 internal class CreateAddAssetTransactionDataUseCase @Inject constructor(
-    private val getAccountInformation: GetAccountInformation,
-    private val getTransactionSigner: GetTransactionSigner
+    private val getTransactionSigner: GetTransactionSigner,
+    private val getAccountLite: GetAccountLite
 ) : CreateAddAssetTransactionData {
 
     override suspend fun invoke(address: String, assetId: Long): TransactionSignData.AddAsset? {
-        val senderInfo = getAccountInformation(address) ?: return null
+        val senderInfo = getAccountLite(address)?.cachedInfo ?: return null
         return TransactionSignData.AddAsset(
             senderAccountAddress = address,
-            senderAuthAddress = senderInfo.rekeyAdminAddress,
-            signer = getTransactionSigner(senderInfo.address),
+            senderAuthAddress = senderInfo.rekeyAuthAddress,
+            signer = getTransactionSigner(address),
             assetId = assetId
         )
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -15,7 +15,9 @@ package com.algorand.wallet.asset.domain.repository
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
+import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
 import com.algorand.wallet.foundation.PeraResult
+import kotlinx.coroutines.flow.Flow
 
 internal interface AssetRepository {
 
@@ -28,6 +30,8 @@ internal interface AssetRepository {
     suspend fun fetchAndCacheAssets(assetIds: List<Long>, includeDeleted: Boolean): PeraResult<Unit>
 
     suspend fun getAssetDetail(assetId: Long): AssetDetail?
+
+    suspend fun getAssetsDetail(assetIds: List<Long>): List<AssetDetail>
 
     suspend fun getCollectibleDetail(collectibleId: Long): CollectibleDetail?
 
@@ -42,4 +46,8 @@ internal interface AssetRepository {
     suspend fun fetchCollectibleDetail(collectibleAssetId: Long): PeraResult<CollectibleDetail>
 
     suspend fun getCachedAssetIds(): List<Long>
+
+    fun getAssetsLiteInformationFlow(assetIds: List<Long>): Flow<Map<Long, AssetLiteInformation?>>
+
+    suspend fun getAssetCreatorAddress(assetId: Long): String?
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,19 +14,18 @@ package com.algorand.android.modules.accountcore.domain.usecase
 
 import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData
 import com.algorand.android.modules.collectibles.common.mapper.BaseOwnedCollectibleDataFactory
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
 import javax.inject.Inject
 
 internal class GetAccountOwnedCollectibleDataUseCase @Inject constructor(
-    private val getAccountInformation: GetAccountInformation,
     private val getCollectibleDetail: GetCollectibleDetail,
-    private val baseOwnedCollectibleDataFactory: BaseOwnedCollectibleDataFactory
+    private val baseOwnedCollectibleDataFactory: BaseOwnedCollectibleDataFactory,
+    private val getAccountAssetHolding: GetAccountAssetHolding
 ) : GetAccountOwnedCollectibleData {
 
     override suspend fun invoke(address: String, collectibleId: Long): BaseOwnedAssetData.BaseOwnedCollectibleData? {
-        val accountInfo = getAccountInformation(address) ?: return null
-        val assetHolding = accountInfo.assetHoldings.find { it.assetId == collectibleId } ?: return null
+        val assetHolding = getAccountAssetHolding(address, collectibleId) ?: return null
         val collectibleDetail = getCollectibleDetail(collectibleId) ?: return null
         return baseOwnedCollectibleDataFactory(assetHolding, collectibleDetail)
     }

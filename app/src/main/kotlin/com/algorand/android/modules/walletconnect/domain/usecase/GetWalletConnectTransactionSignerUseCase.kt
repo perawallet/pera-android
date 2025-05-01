@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -47,7 +47,7 @@ internal class GetWalletConnectTransactionSignerUseCase @Inject constructor(
             AccountRegistrationType.Algo25 -> TransactionSigner.Algo25(address)
             AccountRegistrationType.LedgerBle -> getLedgerSigner(address)
             AccountRegistrationType.NoAuth -> SignerNotFound.NoAuth(address)
-            AccountRegistrationType.HdKey -> null // TODO
+            AccountRegistrationType.HdKey -> TransactionSigner.HdKey(address)
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -21,12 +21,11 @@ import com.algorand.android.models.TargetUser
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accountcore.ui.accountselection.usecase.GetAccountSelectionAccountsWhichCanSignTransaction
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.utils.Event
 import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssets
-import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import java.math.BigInteger
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -37,10 +36,9 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountSelectionAccountsWhichCanSignTransaction: GetAccountSelectionAccountsWhichCanSignTransaction,
     private val fetchAccountInformationAndCacheAssets: FetchAccountInformationAndCacheAssets,
-    private val getAccountInformation: GetAccountInformation,
-    private val getAccountMinBalance: GetAccountMinBalance,
-    private val getAccountCustomName: GetAccountCustomName,
-    private val getTransactionSigner: GetTransactionSigner
+    private val getTransactionSigner: GetTransactionSigner,
+    private val getAccountLite: GetAccountLite,
+    private val isAssetOptedInByAccount: IsAssetOptedInByAccount
 ) {
 
     suspend fun createSendTransactionData(
@@ -50,16 +48,15 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
         amount: BigInteger,
         assetTransaction: AssetTransaction
     ): TransactionSignData.Send? {
-        val senderAccountDetail = getAccountInformation(accountAddress) ?: return null
-        val receiverAccountInfo = getAccountInformation(accountAddress)
-        val accountName = getAccountCustomName(accountAddress)
-        val minBalance = getAccountMinBalance(senderAccountDetail)
+        val senderAccountLite = getAccountLite(accountAddress)
+        val senderAccountLiteCachedData = senderAccountLite?.cachedInfo ?: return null
+        val receiverAddress = assetTransaction.receiverUser?.publicKey
         return TransactionSignData.Send(
-            senderAccountAddress = senderAccountDetail.address,
-            senderAuthAddress = senderAccountDetail.rekeyAdminAddress,
-            senderAlgoAmount = senderAccountDetail.amount,
-            senderAccountName = accountName.orEmpty(),
-            minimumBalance = minBalance.toLong(),
+            senderAccountAddress = accountAddress,
+            senderAuthAddress = senderAccountLiteCachedData.rekeyAuthAddress,
+            senderAlgoAmount = senderAccountLiteCachedData.algoAmountValue.amount,
+            senderAccountName = senderAccountLite.customName,
+            minimumBalance = senderAccountLiteCachedData.minRequiredBalance.toLong(),
             amount = amount,
             assetId = assetId,
             note = note,
@@ -68,7 +65,7 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
                 publicKey = assetTransaction.receiverUser?.publicKey.orEmpty(),
                 accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             ),
-            isArc59Transaction = receiverAccountInfo?.hasAsset(assetId)?.not() ?: false,
+            isArc59Transaction = !isAssetOptedInByAccount(receiverAddress.orEmpty(), assetId),
             signer = getTransactionSigner(accountAddress)
         )
     }
@@ -101,20 +98,25 @@ class SenderAccountSelectionPreviewUseCase @Inject constructor(
     }
 
     fun getUpdatedPreviewFlowWithAccountInformation(
-        senderAccountAddress: String,
+        senderAddress: String,
         preview: SenderAccountSelectionPreview
     ): Flow<SenderAccountSelectionPreview> = flow {
-        emit(preview.copy(isLoading = true))
-        val loadingFinishedPreview = preview.copy(isLoading = false)
-        fetchAccountInformationAndCacheAssets(senderAccountAddress, false).use(
-            onSuccess = {
-                emit(loadingFinishedPreview.copy(senderAccountInformationSuccessEvent = Event(it)))
-            },
-            onFailed = { exception, code ->
-                val errorEvent = Event(Result.Error(exception, code))
-                emit(loadingFinishedPreview.copy(senderAccountInformationErrorEvent = errorEvent))
-            }
-        )
+        val accountLite = getAccountLite(senderAddress)
+        if (accountLite?.cachedInfo == null) {
+            emit(preview.copy(isLoading = true))
+            val loadingFinishedPreview = preview.copy(isLoading = false)
+            fetchAccountInformationAndCacheAssets(senderAddress, false).use(
+                onSuccess = {
+                    emit(loadingFinishedPreview.copy(senderAccountInformationSuccessEvent = Event(senderAddress)))
+                },
+                onFailed = { exception, code ->
+                    val errorEvent = Event(Result.Error(exception, code))
+                    emit(loadingFinishedPreview.copy(senderAccountInformationErrorEvent = errorEvent))
+                }
+            )
+        } else {
+            emit(preview.copy(senderAccountInformationSuccessEvent = Event(senderAddress)))
+        }
     }
 
     private suspend fun getBaseNormalAccountListItems(): List<BaseAccountSelectionListItem> {

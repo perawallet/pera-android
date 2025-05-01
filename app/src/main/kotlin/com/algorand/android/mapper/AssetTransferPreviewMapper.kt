@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -18,6 +18,7 @@ import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import java.math.BigDecimal
+import java.math.BigInteger
 import javax.inject.Inject
 
 class AssetTransferPreviewMapper @Inject constructor() {
@@ -33,6 +34,7 @@ class AssetTransferPreviewMapper @Inject constructor() {
         note: String?,
         isNoteEditable: Boolean,
         accountIconDrawablePreview: AccountIconDrawablePreview,
+        senderAssetAmount: BigInteger,
         fee: Long,
         targetAccountDetail: AccountDetail
     ): AssetTransferPreview {
@@ -49,7 +51,7 @@ class AssetTransferPreviewMapper @Inject constructor() {
                 senderAccountName = senderAccountName,
                 senderAccountAddress = senderAccountAddress,
                 targetAccountDetail = targetAccountDetail,
-                senderAssetAmount = senderAlgoAmount,
+                senderAssetAmount = senderAssetAmount,
                 assetId = assetId,
                 assetShortName = assetShortName,
                 assetDecimals = assetDecimals

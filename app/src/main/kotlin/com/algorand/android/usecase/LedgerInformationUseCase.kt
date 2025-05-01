@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -75,7 +75,7 @@ class LedgerInformationUseCase @Inject constructor(
         return withContext(Dispatchers.Default) {
             return@withContext mutableListOf<LedgerInformationListItem>().apply {
                 val selectedCurrencySymbol = parityUseCase.getPrimaryCurrencySymbolOrName()
-                val accountBalance = getAccountTotalValue(accountInformation, includeAlgo = true)
+                val accountBalance = getAccountTotalValue(accountInformation.address, includeAlgo = true)
                 val portfolioValue = getPortfolioValue(accountBalance, selectedCurrencySymbol)
                 addAll(createLedgerAccountItem(accountInformation, portfolioValue))
                 addAll(createAssetItems(accountInformation))

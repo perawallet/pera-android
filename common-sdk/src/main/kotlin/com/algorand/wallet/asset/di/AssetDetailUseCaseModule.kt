@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -22,12 +22,15 @@ import com.algorand.wallet.asset.domain.usecase.FetchAssetDetailFromNode
 import com.algorand.wallet.asset.domain.usecase.FetchAssets
 import com.algorand.wallet.asset.domain.usecase.FetchCollectibleDetail
 import com.algorand.wallet.asset.domain.usecase.GetAsset
+import com.algorand.wallet.asset.domain.usecase.GetAssetCreatorAddress
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
+import com.algorand.wallet.asset.domain.usecase.GetAssetDetails
 import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
 import com.algorand.wallet.asset.domain.usecase.GetCollectiblesDetail
 import com.algorand.wallet.asset.domain.usecase.InitializeAssets
 import com.algorand.wallet.asset.domain.usecase.InitializeAssetsUseCase
 import com.algorand.wallet.asset.domain.usecase.IsCollectibleExist
+import com.algorand.wallet.asset.lite.domain.usecase.GetAssetsLiteInformationFlow
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -100,5 +103,22 @@ internal object AssetDetailUseCaseModule {
         repository: AssetRepository
     ): IsCollectibleExist {
         return IsCollectibleExist(repository::isCollectibleExist)
+    }
+
+    @Provides
+    fun provideGetAssetsLiteInformationFlow(
+        repository: AssetRepository
+    ): GetAssetsLiteInformationFlow {
+        return GetAssetsLiteInformationFlow(repository::getAssetsLiteInformationFlow)
+    }
+
+    @Provides
+    fun provideGetAssetCreatorAddress(repository: AssetRepository): GetAssetCreatorAddress {
+        return GetAssetCreatorAddress(repository::getAssetCreatorAddress)
+    }
+
+    @Provides
+    fun provideGetAssetDetails(repository: AssetRepository): GetAssetDetails {
+        return GetAssetDetails(repository::getAssetsDetail)
     }
 }

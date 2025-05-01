@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,7 +13,7 @@
 @file:Suppress("TooManyFunctions") // TODO: We should remove this after function count decrease under 25
 
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -58,7 +58,6 @@ import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
 import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
-import com.algorand.android.modules.firebase.token.model.FirebaseTokenResult
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
 import com.algorand.android.modules.qrscanning.QrScannerViewModel
@@ -132,6 +131,7 @@ class MainActivity :
             is MainViewModel.ViewEvent.ShowLockSuggestion -> showLockSuggestion()
 
             is MainViewModel.ViewEvent.StartInAppReview -> startInAppReview()
+            is MainViewModel.ViewEvent.ProcessNodeChange -> onNewNodeActivated()
         }
     }
 
@@ -400,14 +400,6 @@ class MainActivity :
         checkIfConnectedToTestNet(activatedNode)
     }
 
-    private val firebaseTokenResultCollector: suspend (FirebaseTokenResult) -> Unit = { firebaseTokenResult ->
-        when (firebaseTokenResult) {
-            FirebaseTokenResult.TokenLoaded -> onNewNodeActivated()
-            FirebaseTokenResult.TokenLoading -> Unit
-            FirebaseTokenResult.TokenFailed -> Unit
-        }
-    }
-
     private val sessionResultFlowCollector: suspend (Event<Resource<WalletConnectSessionProposal>>) -> Unit = { event ->
         event.consume()?.use(
             onSuccess = ::onSessionConnected,
@@ -578,11 +570,6 @@ class MainActivity :
         collectLatestOnLifecycle(
             flow = mainViewModel.activeNodeFlow,
             collection = activeNodeCollector
-        )
-
-        collectLatestOnLifecycle(
-            flow = mainViewModel.firebaseTokenResultFlow,
-            collection = firebaseTokenResultCollector
         )
 
         collectLatestOnLifecycle(

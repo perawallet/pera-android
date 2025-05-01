@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -26,13 +26,13 @@ import com.algorand.android.utils.isValidAddress
 import com.algorand.android.utils.minBalancePerAssetAsBigInteger
 import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.info.domain.model.AccountInformation
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 import javax.inject.Inject
 
 class AccountTransactionValidator @Inject constructor(
-    private val getAccountInformation: GetAccountInformation,
+    private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
     private val getAccountMinBalance: GetAccountMinBalance
 ) {
 
@@ -47,7 +47,7 @@ class AccountTransactionValidator @Inject constructor(
         if (assetId == ALGO_ID) {
             return true
         }
-        return getAccountInformation(fromAccountPublicKey)?.hasAsset(assetId) == true
+        return isAssetOptedInByAccount(fromAccountPublicKey, assetId) == true
     }
 
     fun isSendingAmountLesserThanMinimumBalance(

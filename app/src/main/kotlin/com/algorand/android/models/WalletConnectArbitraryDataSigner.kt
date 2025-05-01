@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -50,6 +50,7 @@ sealed class WalletConnectArbitraryDataSigner : Parcelable {
             return signer.takeIf {
                 it.address?.isValidAddress() == true &&
                     (signerAccountType == AccountType.Algo25 ||
+                            signerAccountType == AccountType.HdKey ||
                         signerAccountType == AccountType.Rekeyed ||
                         signerAccountType == AccountType.RekeyedAuth)
             } ?: Unsignable(error)

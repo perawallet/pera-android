@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -29,7 +29,7 @@ import com.algorand.android.modules.verificationtier.ui.decider.VerificationTier
 import com.algorand.android.usecase.AccountAddressUseCase
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.isGreaterThan
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.VerificationTier
 import com.algorand.wallet.asset.domain.usecase.GetAsset
@@ -56,8 +56,8 @@ class AsaProfilePreviewUseCase @Inject constructor(
     private val getAssetName: GetAssetName,
     private val getSingleAssetDetailFlow: GetSingleAssetDetailFlow,
     private val getAsset: GetAsset,
-    private val getAccountInformationFlow: GetAccountInformationFlow,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
+    private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow
 ) {
 
     fun createAssetAction(assetId: Long, accountAddress: String?, assetName: AssetName?): AssetAction {
@@ -95,11 +95,11 @@ class AsaProfilePreviewUseCase @Inject constructor(
     ): Flow<AsaProfilePreview?> {
         return combine(
             getSingleAssetDetailFlow(),
-            getAccountInformationFlow(accountAddress)
-        ) { assetDetail, accountInfo ->
+            getAccountAssetHoldingsFlow(accountAddress)
+        ) { assetDetail, assetHoldings ->
             val ownedAssetData = getAccountBaseOwnedAssetData(accountAddress, assetId)
             val hasUserAmount = ownedAssetData?.amount isGreaterThan BigInteger.ZERO
-            val isUserOptedInAsset = accountInfo?.hasAsset(assetId) == true
+            val isUserOptedInAsset = assetHoldings.any { it.assetId == assetId }
             val asaStatusPreview = createAsaStatusPreview(
                 isAlgo = false,
                 isUserOptedInAsset = isUserOptedInAsset,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -22,19 +22,20 @@ import com.algorand.android.assetsearch.ui.mapper.BaseAssetSearchItemMapper
 import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.assets.addition.domain.usecase.AddAssetItemActionButtonStateDecider
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 class AddAssetPreviewUseCase @Inject constructor(
     private val searchAssetUseCase: SearchAssetUseCase,
     private val assetSearchQueryMapper: AssetSearchQueryMapper,
     private val assetSearchItemMapper: BaseAssetSearchItemMapper,
     private val addAssetItemActionButtonStateDecider: AddAssetItemActionButtonStateDecider,
-    private val getAccountInformationFlow: GetAccountInformationFlow
+    private val getAccountAssetHoldingsFlow: GetAccountAssetHoldingsFlow
 ) {
 
     fun getSearchPaginationFlow(
@@ -54,13 +55,12 @@ class AddAssetPreviewUseCase @Inject constructor(
             defaultQuery = assetSearchQuery
         )
 
-        val accountInformationFlow = getAccountInformationFlow(accountAddress)
+        val assetHoldingsFlow = getAccountAssetHoldingsFlow(accountAddress).map { it.associateBy { it.assetId } }
 
-        return combine(searchedAssetFlow, accountInformationFlow) { searchedAsset, accountInfo ->
+        return combine(searchedAssetFlow, assetHoldingsFlow) { searchedAsset, assetHoldings ->
             searchedAsset.map { baseSearchedAsset ->
-                val assetHolding = accountInfo?.assetHoldings?.find { it.assetId == baseSearchedAsset.assetId }
                 val assetActionButtonState = addAssetItemActionButtonStateDecider.decideAddAssetItemActionButtonState(
-                    assetHolding = assetHolding
+                    assetHolding = assetHoldings[baseSearchedAsset.assetId]
                 )
                 getSearchItemMappedAssetDetail(baseSearchedAsset, assetActionButtonState)
             }

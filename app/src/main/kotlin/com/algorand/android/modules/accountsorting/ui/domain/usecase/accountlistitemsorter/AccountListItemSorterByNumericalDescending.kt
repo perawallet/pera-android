@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -12,9 +12,10 @@
 
 package com.algorand.android.modules.accountsorting.ui.domain.usecase.accountlistitemsorter
 
+import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accountsorting.ui.domain.model.AccountAndAssetListItem
 import com.algorand.android.modules.accountsorting.ui.domain.model.BaseAccountAndAssetListItem
-import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -39,5 +40,11 @@ internal class AccountListItemSorterByNumericalDescending @Inject constructor() 
             accountDisplayName.primaryDisplayName
         }
         return accountNameAndValueMap.toSortedMap(comparator)
+    }
+
+    override fun sortAccountLites(accountLites: Map<String, AccountLite>): Map<String, AccountLite> {
+        return accountLites.entries.sortedByDescending {
+            it.value.cachedInfo?.primaryAccountValue
+        }.associate { it.toPair() }
     }
 }

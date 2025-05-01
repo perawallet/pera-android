@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -22,6 +22,8 @@ import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMap
 import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapperImpl
 import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapper
 import com.algorand.wallet.account.info.data.mapper.entity.AssetStatusEntityMapperImpl
+import com.algorand.wallet.account.info.data.mapper.model.AccountAssetAndAppsCountMapper
+import com.algorand.wallet.account.info.data.mapper.model.AccountAssetAndAppsCountMapperImpl
 import com.algorand.wallet.account.info.data.mapper.model.AccountFastLookupMapper
 import com.algorand.wallet.account.info.data.mapper.model.AccountFastLookupMapperImpl
 import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
@@ -44,6 +46,7 @@ import com.algorand.wallet.account.info.data.repository.AssetHoldingCacheHelper
 import com.algorand.wallet.account.info.data.repository.AssetHoldingCacheHelperImpl
 import com.algorand.wallet.account.info.data.service.AccountFastLookupApiService
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
+import com.algorand.wallet.account.info.data.service.AssetHoldingNodeApiService
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManager
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManagerImpl
 import com.algorand.wallet.account.info.domain.repository.AccountFastLookupRepository
@@ -56,6 +59,10 @@ import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformationWi
 import com.algorand.wallet.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingAmount
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingFlow
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldings
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
@@ -73,6 +80,12 @@ import com.algorand.wallet.account.info.domain.usecase.GetRegisteredHdKeys
 import com.algorand.wallet.account.info.domain.usecase.GetRegisteredHdKeysUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsAccountCachedSuccessfully
 import com.algorand.wallet.account.info.domain.usecase.IsAccountCachedSuccessfullyUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsAccountOptedInToAnyApp
+import com.algorand.wallet.account.info.domain.usecase.IsAccountOptedInToAnyAppUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsAccountOptedInToAnyAsset
+import com.algorand.wallet.account.info.domain.usecase.IsAccountOptedInToAnyAssetUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccountUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAnyLocalAccount
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccountUseCase
@@ -113,6 +126,14 @@ internal object AccountInformationModule {
         @Named("indexerRetrofitInterface") retrofit: Retrofit
     ): AccountInformationApiService {
         return retrofit.create(AccountInformationApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAssetHoldingNodeApiService(
+        @Named("algodRetrofitInterface") retrofit: Retrofit
+    ): AssetHoldingNodeApiService {
+        return retrofit.create(AssetHoldingNodeApiService::class.java)
     }
 
     @Provides
@@ -338,6 +359,13 @@ internal object AccountInformationModule {
     }
 
     @Provides
+    fun provideGetAccountAssetHoldingFlow(
+        repository: AccountInformationRepository
+    ): GetAccountAssetHoldingFlow {
+        return GetAccountAssetHoldingFlow(repository::getAssetHoldingFlow)
+    }
+
+    @Provides
     fun getAccountAlgoBalance(repository: AccountInformationRepository): GetAccountAlgoBalance {
         return GetAccountAlgoBalance(repository::getAccountAlgoBalance)
     }
@@ -351,4 +379,39 @@ internal object AccountInformationModule {
     ): FetchAccountInformationWithoutAssets {
         return FetchAccountInformationWithoutAssets(repository::fetchAccountInformationWithoutAssets)
     }
+
+    @Provides
+    fun provideGetAccountAssetHoldingAmount(
+        repository: AccountInformationRepository
+    ): GetAccountAssetHoldingAmount {
+        return GetAccountAssetHoldingAmount(repository::getAccountAssetHoldingAmount)
+    }
+
+    @Provides
+    fun provideIsAssetOptedInByAccount(useCase: IsAssetOptedInByAccountUseCase): IsAssetOptedInByAccount = useCase
+
+    @Provides
+    fun provideIsAccountOptedInToAnyAsset(
+        useCase: IsAccountOptedInToAnyAssetUseCase
+    ): IsAccountOptedInToAnyAsset = useCase
+
+    @Provides
+    fun provideIsAccountOptedInToAnyApp(
+        useCase: IsAccountOptedInToAnyAppUseCase
+    ): IsAccountOptedInToAnyApp = useCase
+
+    @Provides
+    fun provideGetAccountAssetHolding(repository: AccountInformationRepository): GetAccountAssetHolding {
+        return GetAccountAssetHolding(repository::getAssetHolding)
+    }
+
+    @Provides
+    fun provideGetAccountAssetHoldings(repository: AccountInformationRepository): GetAccountAssetHoldings {
+        return GetAccountAssetHoldings(repository::getAssetHoldings)
+    }
+
+    @Provides
+    fun provideAccountAssetAndAppsCountMapper(
+        impl: AccountAssetAndAppsCountMapperImpl
+    ): AccountAssetAndAppsCountMapper = impl
 }

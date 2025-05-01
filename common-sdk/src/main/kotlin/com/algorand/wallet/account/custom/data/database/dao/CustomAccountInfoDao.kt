@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,6 +17,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.algorand.wallet.account.custom.data.database.model.CustomAccountInfoEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface CustomAccountInfoDao {
@@ -29,6 +30,12 @@ internal interface CustomAccountInfoDao {
 
     @Query("SELECT * FROM custom_account_info")
     suspend fun getAll(): List<CustomAccountInfoEntity>
+
+    @Query("SELECT * FROM custom_account_info WHERE algo_address IN (:addresses)")
+    suspend fun getAll(addresses: List<String>): List<CustomAccountInfoEntity>
+
+    @Query("SELECT * FROM custom_account_info WHERE  algo_address IN (:addresses)")
+    fun getAllAsFlow(addresses: List<String>): Flow<List<CustomAccountInfoEntity>>
 
     @Query("SELECT * FROM custom_account_info WHERE :address = algo_address")
     suspend fun get(address: String): CustomAccountInfoEntity

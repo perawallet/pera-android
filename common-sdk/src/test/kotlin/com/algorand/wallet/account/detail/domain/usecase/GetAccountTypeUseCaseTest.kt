@@ -2,8 +2,7 @@ package com.algorand.wallet.account.detail.domain.usecase
 
 import com.algorand.test.peraFixture
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.info.domain.model.AccountInformation
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import kotlinx.coroutines.test.runTest
@@ -19,16 +18,14 @@ class GetAccountTypeUseCaseTest {
     private val getLocalAccounts: GetLocalAccounts = mock {
         onBlocking { invoke() } doReturn LOCAL_ACCOUNTS
     }
-    private val getAccountInformation: GetAccountInformation = mock {
-        onBlocking { invoke(ADDRESS) } doReturn ACCOUNT_INFORMATION
+    private val getAccountRekeyAdminAddress: GetAccountRekeyAdminAddress = mock {
+        onBlocking { invoke(ADDRESS) } doReturn null
     }
 
-    private val sut = GetAccountTypeUseCase(getLocalAccounts, getAccountInformation)
+    private val sut = GetAccountTypeUseCase(getLocalAccounts, getAccountRekeyAdminAddress)
 
     @Test
     fun `EXPECT null WHEN account information is null`() = runTest {
-        whenever(getAccountInformation(ADDRESS)).thenReturn(null)
-
         val result = sut(ADDRESS)
 
         assertNull(result)
@@ -37,7 +34,6 @@ class GetAccountTypeUseCaseTest {
     @Test
     fun `EXPECT null WHEN address is not in local accounts`() = runTest {
         val localAccounts = listOf(NO_AUTH_ACCOUNT.copy(algoAddress = "no_auth_address"))
-        whenever(getAccountInformation("no_auth_address")).thenReturn(ACCOUNT_INFORMATION)
         whenever(getLocalAccounts()).thenReturn(localAccounts)
 
         val result = sut(ADDRESS)
@@ -91,8 +87,7 @@ class GetAccountTypeUseCaseTest {
             NO_AUTH_ACCOUNT.copy(algoAddress = "no_auth"),
             ALGO_25_ACCOUNT.copy(algoAddress = "algo_25")
         )
-        whenever(getAccountInformation("no_auth"))
-            .thenReturn(ACCOUNT_INFORMATION.copy(rekeyAdminAddress = "algo_25"))
+        whenever(getAccountRekeyAdminAddress("no_auth")).thenReturn("algo_25")
         whenever(getLocalAccounts()).thenReturn(localAccounts)
 
         val result = sut("no_auth")
@@ -105,8 +100,7 @@ class GetAccountTypeUseCaseTest {
         val localAccounts = listOf(
             ALGO_25_ACCOUNT.copy(algoAddress = "rekeyed_algo_25")
         )
-        whenever(getAccountInformation("rekeyed_algo_25"))
-            .thenReturn(ACCOUNT_INFORMATION.copy(rekeyAdminAddress = "algo_25"))
+        whenever(getAccountRekeyAdminAddress("rekeyed_algo_25")).thenReturn("algo_25")
         whenever(getLocalAccounts()).thenReturn(localAccounts)
 
         val result = sut("rekeyed_algo_25")
@@ -119,8 +113,7 @@ class GetAccountTypeUseCaseTest {
         val localAccounts = listOf(
             NO_AUTH_ACCOUNT.copy(algoAddress = "no_auth")
         )
-        whenever(getAccountInformation("no_auth"))
-            .thenReturn(ACCOUNT_INFORMATION.copy(rekeyAdminAddress = "algo_25"))
+        whenever(getAccountRekeyAdminAddress("no_auth")).thenReturn("algo_25")
         whenever(getLocalAccounts()).thenReturn(localAccounts)
 
         val result = sut("no_auth")
@@ -137,7 +130,5 @@ class GetAccountTypeUseCaseTest {
         val HD_KEY_ACCOUNT = peraFixture<LocalAccount.HdKey>()
 
         val LOCAL_ACCOUNTS = listOf(NO_AUTH_ACCOUNT, ALGO_25_ACCOUNT, LEDGER_BLE_ACCOUNT, HD_KEY_ACCOUNT)
-
-        val ACCOUNT_INFORMATION = peraFixture<AccountInformation>().copy(rekeyAdminAddress = null)
     }
 }

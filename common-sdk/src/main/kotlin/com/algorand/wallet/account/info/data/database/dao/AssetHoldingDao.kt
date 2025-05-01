@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,10 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.algorand.wallet.account.info.data.database.model.AssetHoldingDao
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
+import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -35,6 +37,9 @@ internal interface AssetHoldingDao {
 
     @Query("SELECT COUNT(*) > 0 FROM asset_holding_table WHERE asset_id = :assetId AND  algo_address IN (:algoAddressList)")
     suspend fun isAssetOptedInByAnyLocalAccount(algoAddressList: List<String>, assetId: Long): Boolean
+
+    @Query("SELECT COUNT(*) > 0 FROM asset_holding_table WHERE asset_id = :assetId AND algo_address = :algoAddress")
+    suspend fun isAssetOptedInByAccount(algoAddress: String, assetId: Long): Boolean
 
     @Query("SELECT * FROM asset_holding_table WHERE :algoAddress = algo_address")
     suspend fun getAssetsByAddress(algoAddress: String): List<AssetHoldingEntity>
@@ -77,6 +82,18 @@ internal interface AssetHoldingDao {
     @Query("SELECT * FROM asset_holding_table WHERE algo_address = :algoAddress")
     fun getAssetsByAddressAsFlow(algoAddress: String): Flow<List<AssetHoldingEntity>>
 
+    @Query("SELECT * FROM asset_holding_table WHERE algo_address = :algoAddress AND asset_id = :assetId")
+    fun getAssetHoldingAsFlow(algoAddress: String, assetId: Long): Flow<AssetHoldingEntity?>
+
     @Query("DELETE FROM asset_holding_table")
     suspend fun clearAll()
+
+    @Query("SELECT algo_address, asset_id, amount FROM asset_holding_table WHERE algo_address IN (:addresses)")
+    fun getAssetHoldingsLiteInformationFlow(addresses: List<String>): Flow<List<AssetHoldingDao>>
+
+    @Query("SELECT amount FROM asset_holding_table WHERE algo_address = :address AND asset_id = :assetId")
+    suspend fun getAssetHoldingAmount(address: String, assetId: Long): BigInteger?
+
+    @Query("SELECT * FROM asset_holding_table WHERE algo_address = :address AND asset_id = :assetId")
+    suspend fun getAssetHolding(address: String, assetId: Long): AssetHoldingEntity?
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,6 +13,7 @@
 package com.algorand.wallet.account.info.data.model
 
 import com.google.gson.annotations.SerializedName
+import java.math.BigInteger
 
 internal data class AccountInformationResponsePayloadResponse(
     @SerializedName("address")
@@ -38,5 +39,7 @@ internal data class AccountInformationResponsePayloadResponse(
     @SerializedName("total-created-apps")
     val totalCreatedApps: Int? = null,
     @SerializedName("total-created-assets")
-    val totalCreatedAssets: Int? = null
+    val totalCreatedAssets: Int? = null,
+    @SerializedName("min-balance")
+    val minRequiredBalance: BigInteger?
 )

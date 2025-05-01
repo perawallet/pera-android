@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -13,9 +13,9 @@
 package com.algorand.android.modules.accountcore.ui.usecase
 
 import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
-import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 
 interface GetAccountDetailSummary {
     suspend operator fun invoke(address: String): AccountDetailSummary
-    suspend operator fun invoke(accountDetail: AccountDetail): AccountDetailSummary
+    suspend operator fun invoke(accountLite: AccountLite): AccountDetailSummary
 }

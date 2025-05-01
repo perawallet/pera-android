@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -12,9 +12,12 @@
 
 package com.algorand.wallet.account.info.domain.repository
 
+import com.algorand.wallet.account.info.domain.model.AccountAssetAndAppsCount
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
+import com.algorand.wallet.account.lite.domain.model.AccountLiteInformation
+import com.algorand.wallet.account.lite.domain.model.AssetHoldingLite
 import com.algorand.wallet.foundation.PeraResult
 import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
@@ -58,11 +61,29 @@ internal interface AccountInformationRepository {
 
     fun getAssetHoldingsFlow(address: String): Flow<List<AssetHolding>>
 
+    fun getAssetHoldingFlow(address: String, assetId: Long): Flow<AssetHolding?>
+
     suspend fun getFailedAccountInformation(): List<String>
 
     suspend fun getRekeyAuthAddress(address: String): String?
-    
+
     suspend fun getFilteredRekeyedAccountCount(authAddress: String, algoAddresses: List<String>): Int
 
     suspend fun getAccountAlgoBalance(address: String): BigInteger?
+
+    fun getAccountsLiteInformationFlow(addresses: List<String>): Flow<Map<String, AccountLiteInformation?>>
+
+    fun getAssetHoldingsLiteFlow(addresses: List<String>): Flow<Map<String, AssetHoldingLite>>
+
+    suspend fun getAccountAssetHoldingAmount(address: String, assetId: Long): BigInteger?
+
+    suspend fun getCachedAccountMinRequiredBalance(address: String): BigInteger?
+
+    suspend fun isAssetOptedInByAccount(address: String, assetId: Long): Boolean
+
+    suspend fun getAccountAssetsAndAppsCount(address: String): AccountAssetAndAppsCount?
+
+    suspend fun getAssetHolding(address: String, assetId: Long): AssetHolding?
+
+    suspend fun getAssetHoldings(address: String): List<AssetHolding>
 }

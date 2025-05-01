@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -22,6 +22,7 @@ import com.algorand.android.models.TargetUser
 import com.algorand.android.models.TransactionSignData
 import com.algorand.android.modules.accountcore.domain.usecase.GetAccountBaseOwnedAssetData
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
 import com.algorand.android.modules.parity.domain.usecase.ParityUseCase
 import com.algorand.android.utils.Event
@@ -29,10 +30,8 @@ import com.algorand.android.utils.formatAsCurrency
 import com.algorand.android.utils.getDecimalSeparator
 import com.algorand.android.utils.multiplyOrNull
 import com.algorand.android.utils.validator.AmountTransactionValidationUseCase
-import com.algorand.wallet.account.core.domain.usecase.GetAccountMinBalance
 import com.algorand.wallet.account.core.domain.usecase.GetTransactionSigner
-import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
-import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -48,10 +47,9 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
     private val accountNameIconUseCase: AccountNameIconUseCase,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
-    private val getAccountInformation: GetAccountInformation,
-    private val getAccountMinBalance: GetAccountMinBalance,
-    private val getAccountCustomName: GetAccountCustomName,
-    private val getTransactionSigner: GetTransactionSigner
+    private val isAssetOptedInByAccount: IsAssetOptedInByAccount,
+    private val getTransactionSigner: GetTransactionSigner,
+    private val getAccountLite: GetAccountLite
 ) {
 
     suspend fun createSendTransactionData(
@@ -61,16 +59,15 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
         amount: BigInteger,
         assetTransaction: AssetTransaction
     ): TransactionSignData.Send? {
-        val senderAccountDetail = getAccountInformation(accountAddress) ?: return null
-        val receiverAccountInfo = getAccountInformation(accountAddress)
-        val accountName = getAccountCustomName(accountAddress)
-        val minBalance = getAccountMinBalance(senderAccountDetail)
+        val senderAccountLite = getAccountLite(accountAddress) ?: return null
+        val senderAccountCachedInfo = senderAccountLite.cachedInfo ?: return null
+        val receiverAddress = assetTransaction.receiverUser?.publicKey
         return TransactionSignData.Send(
-            senderAccountAddress = senderAccountDetail.address,
-            senderAuthAddress = senderAccountDetail.rekeyAdminAddress,
-            senderAccountName = accountName.orEmpty(),
-            senderAlgoAmount = senderAccountDetail.amount,
-            minimumBalance = minBalance.toLong(),
+            senderAccountAddress = senderAccountLite.address,
+            senderAuthAddress = senderAccountCachedInfo.rekeyAuthAddress,
+            senderAccountName = senderAccountLite.customName,
+            senderAlgoAmount = senderAccountCachedInfo.algoAmountValue.amount,
+            minimumBalance = senderAccountCachedInfo.minRequiredBalance.toLong(),
             amount = amount,
             assetId = assetId,
             note = note,
@@ -80,7 +77,7 @@ class AssetTransferAmountPreviewUseCase @Inject constructor(
                 accountIconDrawablePreview = getAccountIconDrawablePreview(accountAddress)
             ),
             signer = getTransactionSigner(accountAddress),
-            isArc59Transaction = receiverAccountInfo?.hasAsset(assetId)?.not() ?: false
+            isArc59Transaction = !isAssetOptedInByAccount(receiverAddress.orEmpty(), assetId)
         )
     }
 

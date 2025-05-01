@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -18,6 +18,7 @@ import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
+import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.foundation.PeraResult
 import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
@@ -70,12 +71,14 @@ fun interface GetAccountInformationFlow {
     operator fun invoke(address: String): Flow<AccountInformation?>
 }
 
-fun interface IsThereAnyCachedErrorAccount {
+interface IsThereAnyCachedErrorAccount {
     suspend operator fun invoke(excludeNoAuthAccounts: Boolean): Boolean
+    suspend operator fun invoke(localAccounts: List<LocalAccount>, excludeNoAuthAccounts: Boolean): Boolean
 }
 
-fun interface IsThereAnyCachedSuccessAccount {
+interface IsThereAnyCachedSuccessAccount {
     suspend operator fun invoke(excludeNoAuthAccounts: Boolean): Boolean
+    suspend operator fun invoke(localAccounts: List<LocalAccount>, excludeNoAuthAccounts: Boolean): Boolean
 }
 
 interface IsAssetOwnedByAccount {
@@ -85,6 +88,10 @@ interface IsAssetOwnedByAccount {
 
 fun interface IsAssetOptedInByAnyLocalAccount {
     suspend operator fun invoke(assetId: Long): Boolean
+}
+
+fun interface IsAssetOptedInByAccount {
+    suspend operator fun invoke(address: String, assetId: Long): Boolean
 }
 
 fun interface DeleteAccountInformation {
@@ -111,6 +118,18 @@ fun interface GetAccountAssetHoldingsFlow {
     operator fun invoke(address: String): Flow<List<AssetHolding>>
 }
 
+fun interface GetAccountAssetHoldingFlow {
+    operator fun invoke(address: String, assetId: Long): Flow<AssetHolding?>
+}
+
+fun interface GetAccountAssetHolding {
+    suspend operator fun invoke(address: String, assetId: Long): AssetHolding?
+}
+
+fun interface GetAccountAssetHoldings {
+    suspend operator fun invoke(address: String): List<AssetHolding>
+}
+
 fun interface IsAccountCachedSuccessfully {
     suspend operator fun invoke(address: String): Boolean
 }
@@ -129,4 +148,16 @@ fun interface GetAccountAlgoBalance {
 
 fun interface GetRegisteredHdKeys {
     suspend operator fun invoke(entropy: ByteArray): List<RegisteredHdKey>
+}
+
+fun interface GetAccountAssetHoldingAmount {
+    suspend operator fun invoke(address: String, assetId: Long): BigInteger?
+}
+
+fun interface IsAccountOptedInToAnyAsset {
+    suspend operator fun invoke(address: String): Boolean
+}
+
+fun interface IsAccountOptedInToAnyApp {
+    suspend operator fun invoke(address: String): Boolean
 }

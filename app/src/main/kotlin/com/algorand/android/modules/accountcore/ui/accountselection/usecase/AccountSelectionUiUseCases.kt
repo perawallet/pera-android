@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,19 +14,19 @@ package com.algorand.android.modules.accountcore.ui.accountselection.usecase
 
 import com.algorand.android.models.BaseAccountSelectionListItem
 import com.algorand.android.modules.accountcore.ui.model.BaseItemConfiguration
-import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.wallet.account.detail.domain.model.AccountType
 
 fun interface CreateLoadedAccountConfiguration {
     suspend operator fun invoke(
-        accountDetail: AccountDetail,
+        accountLite: AccountLite,
         showHoldings: Boolean,
         selectedCurrencySymbol: String
     ): BaseItemConfiguration.AccountItemConfiguration
 }
 
 fun interface CreateNotLoadedAccountConfiguration {
-    suspend operator fun invoke(address: String): BaseItemConfiguration.AccountItemConfiguration
+    suspend operator fun invoke(accountLite: AccountLite): BaseItemConfiguration.AccountItemConfiguration
 }
 
 fun interface GetAccountSelectionAccountItems {

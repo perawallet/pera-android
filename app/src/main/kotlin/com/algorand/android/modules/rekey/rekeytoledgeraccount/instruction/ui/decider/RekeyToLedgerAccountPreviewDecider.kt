@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -21,12 +21,12 @@ class RekeyToLedgerAccountPreviewDecider @Inject constructor() {
 
     fun decideBannerDrawableResId(accountType: AccountType?): Int {
         return when (accountType) {
-            AccountType.Algo25 -> R.drawable.ic_rekey_from_standard_banner
+            AccountType.Algo25 -> R.drawable.ic_rekey_from_algo25_banner
             AccountType.LedgerBle -> R.drawable.ic_rekey_from_ledger_banner
             AccountType.Rekeyed, AccountType.RekeyedAuth -> R.drawable.ic_rekey_from_rekeyed_banner
             // [null] and [Watch] cases are not possible
             AccountType.NoAuth, null -> R.drawable.ic_rekey_from_rekeyed_banner
-            AccountType.HdKey -> R.drawable.ic_rekey_from_standard_banner // TODO HDWallet
+            AccountType.HdKey -> R.drawable.ic_rekey_from_hdkey_banner
         }
     }
 
@@ -36,7 +36,7 @@ class RekeyToLedgerAccountPreviewDecider @Inject constructor() {
             AccountType.LedgerBle -> R.string.change_the_ledger_account_signing
             AccountType.Rekeyed, AccountType.RekeyedAuth -> R.string.rekey_your_account_to_a_different_account
             AccountType.NoAuth, null -> null
-            AccountType.HdKey -> R.string.back_your_standard_account_with // TODO HDWallet
+            AccountType.HdKey -> R.string.back_your_standard_account_with
         }
         // TODO find a way to use `click spannable` in use case
         return AnnotatedString(stringResId = stringResId ?: return null)
@@ -45,7 +45,7 @@ class RekeyToLedgerAccountPreviewDecider @Inject constructor() {
     fun decideExpectationListItems(accountType: AccountType?): List<AnnotatedString> {
         return mutableListOf<AnnotatedString>().apply {
             when (accountType) {
-                AccountType.Algo25 -> {
+                AccountType.Algo25, AccountType.HdKey -> {
                     add(AnnotatedString(stringResId = R.string.future_transactions_will_be))
                     add(AnnotatedString(stringResId = R.string.this_account_will_no_longer))
                     add(AnnotatedString(stringResId = R.string.your_account_s_public_key))
@@ -64,9 +64,6 @@ class RekeyToLedgerAccountPreviewDecider @Inject constructor() {
                     add(AnnotatedString(stringResId = R.string.make_sure_bluetooth))
                 }
                 AccountType.NoAuth, null -> Unit
-                AccountType.HdKey -> {
-                    /* TODO HDWallet */
-                }
             }
         }
     }

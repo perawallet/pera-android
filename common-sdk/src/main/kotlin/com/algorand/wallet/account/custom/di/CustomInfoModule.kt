@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -34,6 +34,8 @@ import com.algorand.wallet.account.custom.domain.usecase.GetAccountBackUpStatus
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountsCustomInfo
+import com.algorand.wallet.account.custom.domain.usecase.GetAccountsCustomInfoFlow
 import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
 import com.algorand.wallet.account.custom.domain.usecase.GetAllHdSeedOrderIndexes
 import com.algorand.wallet.account.custom.domain.usecase.GetBackedUpAccounts
@@ -88,6 +90,16 @@ internal object CustomInfoModule {
     @Provides
     fun provideGetAccountCustomName(repository: CustomAccountInfoRepository): GetAccountCustomName {
         return GetAccountCustomName(repository::getCustomName)
+    }
+
+    @Provides
+    fun provideGetAccountsCustomInfoFlow(repository: CustomAccountInfoRepository): GetAccountsCustomInfoFlow {
+        return GetAccountsCustomInfoFlow(repository::getCustomInfoFlow)
+    }
+
+    @Provides
+    fun provideGetAccountsCustomInfo(repository: CustomAccountInfoRepository): GetAccountsCustomInfo {
+        return GetAccountsCustomInfo(repository::getCustomInfos)
     }
 
     @Provides

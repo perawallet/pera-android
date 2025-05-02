@@ -47,7 +47,7 @@ internal class GetWalletConnectTransactionSignerUseCase @Inject constructor(
             AccountRegistrationType.Algo25 -> TransactionSigner.Algo25(address)
             AccountRegistrationType.LedgerBle -> getLedgerSigner(address)
             AccountRegistrationType.NoAuth -> SignerNotFound.NoAuth(address)
-            AccountRegistrationType.HdKey -> null // TODO
+            AccountRegistrationType.HdKey -> TransactionSigner.HdKey(address)
         }
     }
 

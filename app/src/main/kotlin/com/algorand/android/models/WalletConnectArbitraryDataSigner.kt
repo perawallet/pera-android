@@ -50,6 +50,7 @@ sealed class WalletConnectArbitraryDataSigner : Parcelable {
             return signer.takeIf {
                 it.address?.isValidAddress() == true &&
                     (signerAccountType == AccountType.Algo25 ||
+                            signerAccountType == AccountType.HdKey ||
                         signerAccountType == AccountType.Rekeyed ||
                         signerAccountType == AccountType.RekeyedAuth)
             } ?: Unsignable(error)

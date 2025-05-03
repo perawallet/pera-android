@@ -36,7 +36,7 @@ internal class AccountInformationCacheHelperImpl @Inject constructor(
     ): AccountInformation? {
         val entity = accountInformationEntityMapper(response)
         return if (entity != null) {
-            val assetHoldings = assetHoldingCacheHelper.cacheAssetHolding(response)
+            val assetHoldings = assetHoldingCacheHelper.cacheAssetHolding(response.accountInformation)
             accountInformationErrorCache.remove(address)
             cacheAccountInformation(entity, assetHoldings)
         } else {

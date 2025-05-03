@@ -55,7 +55,9 @@ class AccountInformationCacheHelperImplTest {
 
         coEvery { mockResponse.accountInformation?.allAssetHoldingList } returns mockAssetHoldingList
         coEvery { mockAccountInformationEntityMapper(mockResponse) } returns mockEntity
-        coEvery { mockAssetHoldingCacheHelper.cacheAssetHolding(mockResponse) } returns mockAssetHoldings
+        coEvery {
+            mockAssetHoldingCacheHelper.cacheAssetHolding(mockResponse.accountInformation)
+        } returns mockAssetHoldings
         coEvery { mockAccountInformationMapper(mockEntity, mockAssetHoldings) } returns expectedAccountInformation
 
         val result = sut.cacheAccountInformation(address, mockResponse)
@@ -107,7 +109,9 @@ class AccountInformationCacheHelperImplTest {
 
         coEvery { mockResponse.accountInformation?.allAssetHoldingList } returns null
         coEvery { mockAccountInformationEntityMapper(mockResponse) } returns mockEntity
-        coEvery { mockAssetHoldingCacheHelper.cacheAssetHolding(mockResponse) } returns emptyAssetHoldings
+        coEvery {
+            mockAssetHoldingCacheHelper.cacheAssetHolding(mockResponse.accountInformation)
+        } returns emptyAssetHoldings
         coEvery { mockAccountInformationMapper(mockEntity, emptyAssetHoldings) } returns expectedAccountInformation
 
         val result = sut.cacheAccountInformation(address, mockResponse)

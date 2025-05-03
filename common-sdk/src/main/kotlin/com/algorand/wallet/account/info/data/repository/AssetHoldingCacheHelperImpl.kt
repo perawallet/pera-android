@@ -17,7 +17,7 @@ import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import com.algorand.wallet.account.info.data.mapper.entity.AssetHoldingEntityMapper
 import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
-import com.algorand.wallet.account.info.data.model.AccountInformationResponse
+import com.algorand.wallet.account.info.data.model.AccountInformationResponsePayloadResponse
 import com.algorand.wallet.account.info.data.model.AssetHoldingResponse
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
@@ -29,14 +29,11 @@ internal class AssetHoldingCacheHelperImpl @Inject constructor(
     private val assetHoldingMapper: AssetHoldingMapper
 ) : AssetHoldingCacheHelper {
 
-    override suspend fun cacheAssetHolding(
-        accountInformationResponse: AccountInformationResponse
-    ): List<AssetHolding> {
-        val address = accountInformationResponse.accountInformation?.address ?: return emptyList()
-        val assetHoldings = accountInformationResponse.accountInformation.allAssetHoldingList.orEmpty()
+    override suspend fun cacheAssetHolding(response: AccountInformationResponsePayloadResponse?): List<AssetHolding> {
+        val address = response?.address ?: return emptyList()
+        val assetHoldings = response.allAssetHoldingList.orEmpty()
         val updatedAssetHoldingEntities = getUpdatedAssetHoldings(address, assetHoldings).apply {
-            val algoAmount = accountInformationResponse.accountInformation.amount
-            add(assetHoldingEntityMapper.mapToAlgoAssetHoldingEntity(address, algoAmount))
+            add(assetHoldingEntityMapper.mapToAlgoAssetHoldingEntity(address, response.amount))
         }
         assetHoldingDao.updateAssetHoldings(address, updatedAssetHoldingEntities)
         return assetHoldingMapper(updatedAssetHoldingEntities)

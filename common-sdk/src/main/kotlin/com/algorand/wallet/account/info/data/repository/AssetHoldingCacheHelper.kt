@@ -12,9 +12,9 @@
 
 package com.algorand.wallet.account.info.data.repository
 
-import com.algorand.wallet.account.info.data.model.AccountInformationResponse
+import com.algorand.wallet.account.info.data.model.AccountInformationResponsePayloadResponse
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 
 internal interface AssetHoldingCacheHelper {
-    suspend fun cacheAssetHolding(accountInformationResponse: AccountInformationResponse): List<AssetHolding>
+    suspend fun cacheAssetHolding(response: AccountInformationResponsePayloadResponse?): List<AssetHolding>
 }

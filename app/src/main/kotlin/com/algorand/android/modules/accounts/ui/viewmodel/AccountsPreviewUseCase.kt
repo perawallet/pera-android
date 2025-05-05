@@ -29,13 +29,13 @@ import com.algorand.android.modules.peraconnectivitymanager.ui.PeraConnectivityM
 import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.utils.CacheResult
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequestCountFlow
-import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapLatest
+import javax.inject.Inject
 
 class AccountsPreviewUseCase @Inject constructor(
     private val accountPreviewMapper: AccountPreviewMapper,
@@ -80,7 +80,12 @@ class AccountsPreviewUseCase @Inject constructor(
     private suspend fun getAccountPreviewInitializationFlow(accountLiteCacheData: Data): Flow<AccountPreview> {
         return combine(bannersUseCase.getBanner(), getAssetInboxRequestCountFlow()) { banner, assetInboxCount ->
             with(accountLiteCacheData) {
-                accountPreviewProcessor.prepareAccountPreview(localAccounts, accountLites, banner, assetInboxCount)
+                accountPreviewProcessor.prepareAccountPreview(
+                    localAccounts,
+                    accountLites,
+                    banner,
+                    assetInboxCount
+                )
             }
         }
     }

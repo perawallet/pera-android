@@ -15,27 +15,32 @@ package com.algorand.android.ui.register.registerintro
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.RegisterIntroPreview
 import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.usecase.RegisterIntroPreviewUseCase
 import com.algorand.android.usecase.RegistrationUseCase
+import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.getOrElse
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RegisterIntroViewModel @Inject constructor(
     private val registerIntroPreviewUseCase: RegisterIntroPreviewUseCase,
     private val registrationUseCase: RegistrationUseCase,
     private val isOnHdWalletUseCase: IsOnHdWalletUseCase,
+    private val algoAccountSdk: AlgoAccountSdk,
+    private val aesPlatformManager: AESPlatformManager,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    private val accountAddress: String? = savedStateHandle.getOrElse(ACCOUNT_ADDRESS_KEY, null)
     private val isShowingCloseButton = savedStateHandle.getOrElse(IS_SHOWING_CLOSE_BUTTON_KEY, false)
 
     private val _registerIntroPreviewFlow = MutableStateFlow<RegisterIntroPreview?>(null)
@@ -48,8 +53,6 @@ class RegisterIntroViewModel @Inject constructor(
     fun setRegisterSkip() {
         registrationUseCase.setRegistrationSkipPreferenceAsSkipped()
     }
-
-    fun getAccountAddress(): String? = accountAddress
 
     private fun getRegisterIntroPreview() {
         viewModelScope.launch {
@@ -75,8 +78,43 @@ class RegisterIntroViewModel @Inject constructor(
         return isOnHdWalletUseCase.invoke()
     }
 
+    fun createHdKeyAccount(): AccountCreation? {
+        val account = algoAccountSdk.createHdAccount()
+            ?: return null
+
+        return AccountCreation(
+            address = account.address,
+            customName = null,
+            isBackedUp = false,
+            type = AccountCreation.Type.HdKey(
+                account.publicKey,
+                aesPlatformManager.encryptByteArray(account.privateKey),
+                aesPlatformManager.encryptByteArray(account.entropy),
+                account.account,
+                account.change,
+                account.keyIndex,
+                account.derivationType,
+            ),
+            creationType = CreationType.CREATE
+        )
+    }
+
+    fun createAlgo25Account(): AccountCreation? {
+        val account = algoAccountSdk.createAlgo25Account()
+            ?: return null
+
+        return AccountCreation(
+            address = account.address,
+            customName = null,
+            isBackedUp = false,
+            type = AccountCreation.Type.Algo25(
+                aesPlatformManager.encryptByteArray(account.secretKey)
+            ),
+            creationType = CreationType.CREATE
+        )
+    }
+
     companion object {
         private const val IS_SHOWING_CLOSE_BUTTON_KEY = "isShowingCloseButton"
-        private const val ACCOUNT_ADDRESS_KEY = "accountAddress"
     }
 }

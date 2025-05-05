@@ -13,10 +13,8 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/backupPassphraseAccountNameNavigation"
+    android:id="@+id/createAccountNameRegistrationNavigation"
     app:startDestination="@id/createAccountNameRegistrationFragment">
-
-    <include app:graph="@navigation/meld_navigation" />
 
     <include app:graph="@navigation/lock_preference_navigation" />
 
@@ -29,11 +27,6 @@
             android:name="accountCreation"
             app:argType="com.algorand.android.models.AccountCreation" />
         <action
-            android:id="@+id/action_createAccountNameRegistrationFragment_to_createAccountResultInfoFragment"
-            app:destination="@id/createAccountResultInfoFragment"
-            app:popUpTo="@id/loginNavigation"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_createAccountNameRegistrationFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"
             app:popUpTo="@id/loginNavigation"
@@ -41,32 +34,6 @@
             <argument
                 android:name="showConfetti"
                 android:defaultValue="true"
-                app:argType="boolean" />
-        </action>
-    </fragment>
-
-    <fragment
-        android:id="@+id/createAccountResultInfoFragment"
-        android:name="com.algorand.android.ui.register.createaccount.result.CreateAccountResultInfoFragment"
-        android:label="CreateAccountResultInfoFragment">
-        <action
-            android:id="@+id/action_createAccountResultInfoFragment_to_meldNavigation"
-            app:destination="@id/meldNavigation"
-            app:popUpTo="@id/backupPassphraseNavigation"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_createAccountResultInfoFragment_to_homeNavigation"
-            app:destination="@id/homeNavigation"
-            app:popUpTo="@id/backupPassphraseNavigation"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_createAccountResultInfoFragment_to_lockPreferenceNavigation"
-            app:destination="@id/lockPreferenceNavigation"
-            app:popUpTo="@id/backupPassphraseNavigation"
-            app:popUpToInclusive="true">
-            <argument
-                android:name="shouldNavigateHome"
-                android:defaultValue="false"
                 app:argType="boolean" />
         </action>
     </fragment>

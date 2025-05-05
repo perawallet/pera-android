@@ -13,6 +13,7 @@
 package com.algorand.android.modules.accounts.ui.view
 
 import android.Manifest
+import android.animation.Animator
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -21,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.MainNavigationDirections
@@ -73,10 +75,14 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             is NavigateToSwap -> nav(event.navDirections)
             is ShowAccountAddressCopyTutorial -> showAccountAddressCopyTutorialDialog(event.tutorialId)
             is ShowGiftCardsTutorial -> showGiftCardsTutorialDialog(event.tutorialId)
-            ShowNotificationPermission -> askNotificationPermission()
+            is ShowNotificationPermission -> askNotificationPermission()
             is ShowSwapTutorial -> showSwapTutorialDialog(event.tutorialId)
         }
     }
+
+    private val args by navArgs<AccountsFragmentArgs>()
+
+    private var hasPlayedConfetti = false
 
     override val fragmentConfiguration = FragmentConfiguration(
         isBottomBarNeeded = true,
@@ -206,6 +212,37 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
+    private fun showConfetti() {
+        binding.confettiAnimationLottieView.apply {
+            progress = 0F
+            isVisible = !hasPlayedConfetti
+            if (isVisible) {
+                hasPlayedConfetti = true
+                playAnimation()
+                addAnimatorListener(object : Animator.AnimatorListener {
+                    override fun onAnimationEnd(animation: Animator) {
+                        isVisible = false
+                        removeAnimatorListener(this)
+                    }
+
+                    override fun onAnimationStart(animation: Animator) {
+                        // Nothing to do
+                    }
+
+                    override fun onAnimationCancel(animation: Animator) {
+                        // Nothing to do
+                    }
+
+                    override fun onAnimationRepeat(animation: Animator) {
+                        // Nothing to do
+                    }
+                })
+            } else {
+                cancelAnimation()
+            }
+        }
+    }
+
     private val notificationStateCollector: suspend (Boolean?) -> Unit = { isActive ->
         if (isActive != null) {
             binding.notificationImageButton.isActivated = isActive
@@ -294,6 +331,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             navigateToNotifications()
         }
         binding.assetInboxAllAccountsButton.setOnClickListener { navToAssetInboxAllAccountsNavigation() }
+
+        if (args.showConfetti) {
+            showConfetti()
+        }
     }
 
     override fun onResume() {
@@ -342,7 +383,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 notificationStateCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.assetInboxCount },
+                accountPreviewFlow.map { it?.assetInboxCount }.distinctUntilChanged(),
                 assetInboxCountCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(

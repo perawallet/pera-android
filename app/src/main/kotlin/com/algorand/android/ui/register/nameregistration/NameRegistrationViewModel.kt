@@ -28,12 +28,12 @@ import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class NameRegistrationViewModel @Inject constructor(
@@ -64,7 +64,8 @@ class NameRegistrationViewModel @Inject constructor(
 
     private fun updatePreviewWithHdWalletData() {
         viewModelScope.launch(Dispatchers.IO) {
-            walletId = (getMaxHdSeedId.invoke() ?: 0) + 1
+            val seeId = (accountCreation?.type as? AccountCreation.Type.HdKey)?.seedId
+            walletId = seeId ?: ((getMaxHdSeedId.invoke() ?: 0) + 1)
             walletId?.let {
                 nameRegistrationPreviewUseCase.getInitialPreviewWithHdWalletData(
                     walletId = it

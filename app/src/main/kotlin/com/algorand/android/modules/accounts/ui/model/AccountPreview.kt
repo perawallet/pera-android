@@ -27,5 +27,5 @@ data class AccountPreview(
     @ColorRes val portfolioValuesBackgroundRes: Int,
     val isSuccessStateVisible: Boolean,
     val hasNewNotification: Boolean,
-    val assetInboxCount: Int = 0
+    val assetInboxCount: Int
 )

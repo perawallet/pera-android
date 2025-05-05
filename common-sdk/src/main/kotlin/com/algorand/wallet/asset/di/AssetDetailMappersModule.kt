@@ -12,6 +12,8 @@
 
 package com.algorand.wallet.asset.di
 
+import com.algorand.wallet.asset.data.mapper.entity.AlgoAssetDetailEntityMapper
+import com.algorand.wallet.asset.data.mapper.entity.AlgoAssetDetailEntityMapperImpl
 import com.algorand.wallet.asset.data.mapper.entity.AssetDetailEntityMapper
 import com.algorand.wallet.asset.data.mapper.entity.AssetDetailEntityMapperImpl
 import com.algorand.wallet.asset.data.mapper.entity.CollectibleEntityMapper
@@ -163,4 +165,7 @@ internal object AssetDetailMappersModule {
 
     @Provides
     fun provideVideoCollectibleDetailMapper(impl: VideoCollectibleDetailMapperImpl): VideoCollectibleDetailMapper = impl
+
+    @Provides
+    fun provideAlgoAssetDetailEntityMapper(impl: AlgoAssetDetailEntityMapperImpl): AlgoAssetDetailEntityMapper = impl
 }

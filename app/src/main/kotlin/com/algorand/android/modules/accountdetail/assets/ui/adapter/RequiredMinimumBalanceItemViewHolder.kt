@@ -4,16 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemRequiredMinimumBalanceBinding
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 
 class RequiredMinimumBalanceItemViewHolder(
     private val binding: ItemRequiredMinimumBalanceBinding,
     private val listener: RequiredMinimumBalanceListener
-) : BaseViewHolder<AccountDetailAssetsItem>(binding.root) {
+) : BaseViewHolder<AccountDetailAccountsItem>(binding.root) {
 
-    override fun bind(item: AccountDetailAssetsItem) {
-        if (item !is AccountDetailAssetsItem.RequiredMinimumBalanceItem) return
+    override fun bind(item: AccountDetailAccountsItem) {
+        if (item !is AccountDetailAccountsItem.RequiredMinimumBalanceItem) return
         binding.requiredMinBalanceTextView.apply {
             text = resources.getString(
                 R.string.min_balance,

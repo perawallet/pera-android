@@ -19,8 +19,8 @@ import com.algorand.android.ui.register.selectwallet.SelectUniversalWalletViewMo
 import com.algorand.android.ui.register.selectwallet.SelectUniversalWalletViewModel.ViewState
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.launchIO
-import com.algorand.wallet.account.local.domain.usecase.GetAllHdSeeds
 import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
+import com.algorand.wallet.account.local.domain.usecase.GetHdWalletSummaries
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
@@ -40,7 +40,7 @@ class SelectUniversalWalletViewModel @Inject constructor(
     private val algoAccountSdk: AlgoAccountSdk,
     private val bip39Sdk: PeraBip39Sdk,
     private val getHdEntropy: GetHdEntropy,
-    private val getAllHdSeeds: GetAllHdSeeds
+    private val getHdWalletSummaries: GetHdWalletSummaries
 ) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
     init {
@@ -50,15 +50,16 @@ class SelectUniversalWalletViewModel @Inject constructor(
     fun loadLocalWallets() {
         stateDelegate.updateState { ViewState.Loading }
         viewModelScope.launch {
-            val walletItemPreviews = getAllHdSeeds().map {
+            val walletItemPreviews = getHdWalletSummaries()?.map {
                 WalletItemPreview(
                     seedId = it.seedId,
                     name = "Wallet #${it.seedId}",
-                    numberOfAccounts = "1 account",
-                    primaryValue = "0,00",
-                    secondaryValue = "0,00"
+                    numberOfAccounts = "${it.accountCount} account",
+                    primaryValue = it.primaryValue,
+                    secondaryValue = it.secondaryValue,
+                    maxAccountIndex = it.maxAccountIndex
                 )
-            }
+            }.orEmpty()
             stateDelegate.updateState {
                 ViewState.Content(
                     walletItemPreviews = walletItemPreviews,
@@ -92,12 +93,16 @@ class SelectUniversalWalletViewModel @Inject constructor(
         }
     }
 
-    fun createNewHdAccount(seedId: Int) {
+    fun createNewHdAccount(seedId: Int, maxAccountIndex: Int) {
         viewModelScope.launchIO {
 
             val entropy = getHdEntropy(seedId)
+            val nextHdAccountIndex = maxAccountIndex + 1
             val account = bip39Sdk.getHdKeyAccount(
-                entropy = entropy ?: return@launchIO, accountIndex = 1, changeIndex = 0, keyIndex = 0
+                entropy = entropy ?: return@launchIO,
+                accountIndex = nextHdAccountIndex,
+                changeIndex = 0,
+                keyIndex = 0
             ) ?: return@launchIO
 
             val accountCreation = AccountCreation(
@@ -121,7 +126,8 @@ class SelectUniversalWalletViewModel @Inject constructor(
         val name: String,
         val numberOfAccounts: String,
         val primaryValue: String,
-        val secondaryValue: String
+        val secondaryValue: String,
+        val maxAccountIndex: Int
     )
 
     sealed interface ViewState {

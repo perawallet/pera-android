@@ -169,7 +169,7 @@ class SelectUniversalWalletFragment : DaggerBaseFragment(0) {
                                 secondaryValue = secondaryValue,
                                 icon = ImageVector.vectorResource(id = R.drawable.ic_wallet),
                                 iconContentDescription = stringResource(id = R.string.create_a_new_algorand_account_with),
-                                onClick = { onWalletSelected(seedId) }
+                                onClick = { onWalletSelected(seedId, maxAccountIndex) }
                             )
                         }
                     }
@@ -255,8 +255,8 @@ class SelectUniversalWalletFragment : DaggerBaseFragment(0) {
         viewModel.createNewHdWallet()
     }
 
-    private fun onWalletSelected(seedId: Int) {
-        viewModel.createNewHdAccount(seedId)
+    private fun onWalletSelected(seedId: Int, maxAccountIndex: Int) {
+        viewModel.createNewHdAccount(seedId, maxAccountIndex)
     }
 
     private fun navToCreateWalletNameNavigation(accountCreation: AccountCreation?) {

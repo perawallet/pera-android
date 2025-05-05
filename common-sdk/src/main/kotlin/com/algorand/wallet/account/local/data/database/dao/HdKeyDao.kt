@@ -51,4 +51,14 @@ internal interface HdKeyDao {
 
     @Query("DELETE FROM hd_keys")
     suspend fun clearAll()
+
+    @Query("""
+        SELECT * FROM hd_keys 
+        WHERE (seed_id, account) IN (
+            SELECT seed_id, MAX(account) 
+            FROM hd_keys 
+            GROUP BY seed_id
+        )
+    """)
+    suspend fun getOnlyMaxAccountsPerSeed(): List<HdKeyEntity>
 }

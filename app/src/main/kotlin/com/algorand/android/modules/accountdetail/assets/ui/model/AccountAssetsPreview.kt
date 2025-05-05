@@ -12,7 +12,10 @@
 
 package com.algorand.android.modules.accountdetail.assets.ui.model
 
+import androidx.paging.PagingData
+
 data class AccountAssetsPreview(
-    val accountDetailAssetsItemList: List<AccountDetailAssetsItem>,
+    val accountDetailAssetsItemList: PagingData<AccountDetailAssetsItem>,
+    val accountDetailAccountItems: List<AccountDetailAccountsItem>,
     val isWatchAccount: Boolean
 )

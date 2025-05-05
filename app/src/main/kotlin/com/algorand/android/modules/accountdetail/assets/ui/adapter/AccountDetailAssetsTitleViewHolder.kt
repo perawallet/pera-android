@@ -16,16 +16,16 @@ package com.algorand.android.modules.accountdetail.assets.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.databinding.ItemAccountDetailAssetTitleBinding
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 
 class AccountDetailAssetsTitleViewHolder(
     private val binding: ItemAccountDetailAssetTitleBinding,
     private val listener: AccountDetailAssetsTitleViewHolderListener
-) : BaseViewHolder<AccountDetailAssetsItem>(binding.root) {
+) : BaseViewHolder<AccountDetailAccountsItem>(binding.root) {
 
-    override fun bind(item: AccountDetailAssetsItem) {
-        if (item !is AccountDetailAssetsItem.TitleItem) return
+    override fun bind(item: AccountDetailAccountsItem) {
+        if (item !is AccountDetailAccountsItem.TitleItem) return
         with(binding.listConfigurationHeaderView) {
             setTitle(item.titleRes)
             setPrimaryButtonClickListener { listener.onManageAssetsClick() }

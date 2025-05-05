@@ -15,6 +15,7 @@ package com.algorand.wallet.cache.domain.usecase
 import androidx.lifecycle.Lifecycle
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManager
 import com.algorand.wallet.asset.assetinbox.domain.AssetInboxCacheManager
+import com.algorand.wallet.asset.manager.AlgoAssetDetailCacheManager
 import com.algorand.wallet.nameservice.domain.manager.LocalAccountsNameServiceManager
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -24,13 +25,15 @@ internal class InitializeAppCacheImpl @Inject constructor(
     private val accountCacheManager: AccountCacheManager,
     private val localAccountsNameServiceManager: LocalAccountsNameServiceManager,
     private val assetInboxCacheManager: AssetInboxCacheManager,
-    private val clearPreviousSessionCache: ClearPreviousSessionCache
+    private val clearPreviousSessionCache: ClearPreviousSessionCache,
+    private val algoAssetDetailCacheManager: AlgoAssetDetailCacheManager
 ) : InitializeAppCache {
 
     override suspend fun invoke(lifecycle: Lifecycle) {
         clearPreviousSessionCache()
         withContext(Dispatchers.Main) {
             accountCacheManager.initialize(lifecycle)
+            algoAssetDetailCacheManager.initialize(lifecycle)
             localAccountsNameServiceManager.initialize(lifecycle)
             assetInboxCacheManager.initialize(lifecycle)
         }

@@ -16,6 +16,7 @@ import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.foundation.PeraResult
+import java.math.BigDecimal
 import kotlinx.coroutines.flow.Flow
 
 fun interface ClearAssetCache {
@@ -88,4 +89,8 @@ fun interface GetSingleAssetDetailFlow {
 
 fun interface ClearSingleAssetCache {
     suspend operator fun invoke()
+}
+
+fun interface CacheAlgoAssetDetail {
+    suspend operator fun invoke(usdValue: BigDecimal?)
 }

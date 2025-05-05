@@ -15,7 +15,7 @@ package com.algorand.wallet.cache
 import androidx.lifecycle.DefaultLifecycleObserver
 import kotlinx.coroutines.CoroutineScope
 
-internal interface LifecycleAwareCacheManager : DefaultLifecycleObserver {
+interface LifecycleAwareCacheManager : DefaultLifecycleObserver {
     fun stopCurrentJob()
     fun startJob()
     fun setListener(listener: CacheManagerListener)

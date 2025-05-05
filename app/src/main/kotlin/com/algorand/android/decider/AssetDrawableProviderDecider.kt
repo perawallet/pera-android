@@ -19,6 +19,7 @@ import com.algorand.android.utils.assetdrawable.AlgoDrawableProvider
 import com.algorand.android.utils.assetdrawable.AssetDrawableProvider
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.assetdrawable.CollectibleDrawableProvider
+import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.asset.domain.model.Asset
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.asset.domain.usecase.GetAsset
@@ -113,6 +114,28 @@ class AssetDrawableProviderDecider @Inject constructor(
             else -> AssetDrawableProvider(
                 assetName = AssetName.create(assetName),
                 logoUri = asset.logoUri
+            )
+        }
+    }
+
+    fun getAssetDrawableProvider(assetLite: AssetLite): BaseAssetDrawableProvider {
+        return when {
+            assetLite.assetId == AssetConstants.ALGO_ID -> AlgoDrawableProvider()
+            assetLite.type is AssetLite.Type.Asset -> {
+                AssetDrawableProvider(
+                    assetName = AssetName.create(assetLite.name),
+                    logoUri = assetLite.logoUrl
+                )
+            }
+            assetLite.type is AssetLite.Type.Collectible -> {
+                CollectibleDrawableProvider(
+                    assetName = AssetName.create((assetLite.type as AssetLite.Type.Collectible).name),
+                    logoUri = assetLite.logoUrl
+                )
+            }
+            else -> AssetDrawableProvider(
+                assetName = AssetName.create(assetLite.name),
+                logoUri = assetLite.logoUrl
             )
         }
     }

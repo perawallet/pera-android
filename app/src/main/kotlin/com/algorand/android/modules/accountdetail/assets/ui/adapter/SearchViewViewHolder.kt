@@ -16,16 +16,16 @@ package com.algorand.android.modules.accountdetail.assets.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.databinding.ItemAccountSearchViewBinding
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 
 class SearchViewViewHolder(
     private val binding: ItemAccountSearchViewBinding,
     private val listener: Listener
-) : BaseViewHolder<AccountDetailAssetsItem>(binding.root) {
+) : BaseViewHolder<AccountDetailAccountsItem>(binding.root) {
 
-    override fun bind(item: AccountDetailAssetsItem) {
-        if (item !is AccountDetailAssetsItem.SearchViewItem) return
+    override fun bind(item: AccountDetailAccountsItem) {
+        if (item !is AccountDetailAccountsItem.SearchViewItem) return
         with(binding.assetSearchView) {
             text = item.query
             setOnTextChanged { listener.onSearchQueryChanged(it) }

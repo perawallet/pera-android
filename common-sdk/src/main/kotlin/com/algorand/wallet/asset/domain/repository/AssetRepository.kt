@@ -17,6 +17,7 @@ import com.algorand.wallet.asset.domain.model.AssetDetail
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
 import com.algorand.wallet.foundation.PeraResult
+import java.math.BigDecimal
 import kotlinx.coroutines.flow.Flow
 
 internal interface AssetRepository {
@@ -50,4 +51,6 @@ internal interface AssetRepository {
     fun getAssetsLiteInformationFlow(assetIds: List<Long>): Flow<Map<Long, AssetLiteInformation?>>
 
     suspend fun getAssetCreatorAddress(assetId: Long): String?
+
+    suspend fun cacheAlgoAssetDetail(usdValue: BigDecimal?)
 }

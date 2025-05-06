@@ -62,10 +62,10 @@ internal class GetTransactionSignerUseCase @Inject constructor(
         val authAccountDetail = getAccountDetail(authAddress)
         return when (authAccountDetail.accountRegistrationType) {
             AccountRegistrationType.Algo25 -> getAlgo25Signer(authAddress)
+            AccountRegistrationType.HdKey -> getHdKeySigner(authAddress)
             AccountRegistrationType.LedgerBle -> getLedgerSigner(authAddress)
             AccountRegistrationType.NoAuth -> SignerNotFound.AuthAccountIsNoAuth(authAddress)
             null -> AccountNotFound(authAddress)
-            AccountRegistrationType.HdKey -> TODO()
         }
     }
 

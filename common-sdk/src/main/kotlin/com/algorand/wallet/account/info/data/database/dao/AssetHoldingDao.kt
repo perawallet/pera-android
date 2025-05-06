@@ -37,7 +37,7 @@ internal interface AssetHoldingDao {
         smartUpsert(
             newEntity = entity,
             getKey = { it },
-            fetchExistingByKey = { get(it.algoAddress, it.assetId) },
+            fetchExistingByKey = { getAssetHolding(it.algoAddress, it.assetId) },
             upsert = { upsert(it) }
         )
     }
@@ -52,9 +52,6 @@ internal interface AssetHoldingDao {
             upsert = { upsertAll(it) }
         )
     }
-
-    @Query("SELECT * FROM asset_holding_table WHERE :algoAddress = algo_address AND :assetId = asset_id")
-    suspend fun get(algoAddress: String, assetId: Long): AssetHoldingEntity
 
     @Query("SELECT COUNT(*) > 0 FROM asset_holding_table WHERE asset_id = :assetId AND  algo_address IN (:algoAddressList)")
     suspend fun isAssetOptedInByAnyLocalAccount(algoAddressList: List<String>, assetId: Long): Boolean

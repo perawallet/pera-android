@@ -21,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class CreateAccountNameRegistrationFragment : BaseNameRegistrationFragment() {
 
-    override val accountCreation: AccountCreation
+    override val accountCreation: AccountCreation?
         get() = args.accountCreation
 
     private val args: CreateAccountNameRegistrationFragmentArgs by navArgs()

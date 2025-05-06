@@ -204,6 +204,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 if (isVisible.not()) binding.accountsFragmentMotionLayout.transitionToState(R.id.start)
                 accountsFragmentMotionLayout.getTransition(R.id.accountsFragmentTransition).isEnabled = isVisible
             }
+            accountsViewModel.checkConfettiState()
         }
     }
 
@@ -321,7 +322,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             navigateToNotifications()
         }
         binding.assetInboxAllAccountsButton.setOnClickListener { navToAssetInboxAllAccountsNavigation() }
-        accountsViewModel.checkConfettiState()
     }
 
     override fun onResume() {

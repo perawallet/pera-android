@@ -12,12 +12,12 @@
 
 package com.algorand.android.customviews.accountandassetitem.mapper
 
-import com.algorand.android.assetsearch.domain.model.VerificationTier
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.customviews.accountandassetitem.model.BaseItemConfiguration
 import com.algorand.android.decider.AssetDrawableProviderDecider
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.utils.AssetName
+import com.algorand.wallet.asset.domain.model.VerificationTier
 import java.math.BigDecimal
 import javax.inject.Inject
 

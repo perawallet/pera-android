@@ -16,5 +16,3 @@ fun AssetLite.getFormattedCompactAmount(): String {
 fun AssetLite.isAmountInSelectedCurrencyVisible(): Boolean {
     return usdValue != null && amount isGreaterThan BigInteger.ZERO
 }
-
-

@@ -12,154 +12,89 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.customviews.accountandassetitem.model.BaseItemConfiguration
+import androidx.paging.PagingData
+import androidx.paging.map
+import com.algorand.android.customviews.accountandassetitem.mapper.AssetItemConfigurationMapper
 import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleAudioData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleImageData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleMixedData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedCollectibleVideoData
-import com.algorand.android.models.BaseAccountAssetData.BaseOwnedAssetData.BaseOwnedCollectibleData.OwnedUnsupportedCollectibleData
-import com.algorand.android.models.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectAudioCollectibleItem
-import com.algorand.android.models.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectCollectibleImageItem
-import com.algorand.android.models.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectMixedCollectibleItem
-import com.algorand.android.models.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectNotSupportedCollectibleItem
-import com.algorand.android.models.BaseSelectAssetItem.BaseSelectCollectibleItem.SelectVideoCollectibleItem
-import com.algorand.android.models.BaseSelectAssetItem.SelectAssetItem
+import com.algorand.android.modules.parity.domain.model.ParityValue
+import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
+import com.algorand.android.ui.asset.lite.extension.getFormattedAmount
+import com.algorand.android.ui.asset.lite.extension.getFormattedCompactAmount
+import com.algorand.android.ui.asset.lite.extension.isAmountInSelectedCurrencyVisible
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.SelectAssetItem
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.SelectCollectibleItem
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.SelectCollectibleItem.CollectibleType
 import com.algorand.android.utils.AssetName
+import com.algorand.android.utils.orZero
+import com.algorand.wallet.asset.domain.model.AssetLite
+import com.algorand.wallet.asset.domain.model.AssetLite.Type
+import com.algorand.wallet.asset.domain.model.CollectibleMediaType
 import javax.inject.Inject
 
 class AssetSelectionMapper @Inject constructor(
-    private val assetDrawableProviderDecider: AssetDrawableProviderDecider
+    private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
+    private val getPrimaryCurrencyAssetParityValue: GetPrimaryCurrencyAssetParityValue,
+    private val assetItemConfigurationMapper: AssetItemConfigurationMapper,
 ) {
 
-    fun mapToAssetItem(
-        assetItemConfiguration: BaseItemConfiguration.BaseAssetItemConfiguration.AssetItemConfiguration
-    ): SelectAssetItem {
-        return SelectAssetItem(assetItemConfiguration)
+    fun createAssetSelectionItems(assetLites: PagingData<AssetLite>): PagingData<BaseSelectAssetItem> {
+        return assetLites.map { assetLite ->
+            when (val assetLiteType = assetLite.type) {
+                is Type.Asset -> createAssetSelectionItems(assetLite)
+                is Type.Collectible -> mapToSelectCollectibleItem(assetLite, assetLiteType)
+            }
+        }
     }
 
-    fun mapToCollectibleImageItem(
-        ownedCollectibleImageData: OwnedCollectibleImageData
-    ): SelectCollectibleImageItem {
-        return SelectCollectibleImageItem(
-            id = ownedCollectibleImageData.id,
-            isAlgo = ownedCollectibleImageData.isAlgo,
-            shortName = ownedCollectibleImageData.shortName,
-            name = ownedCollectibleImageData.name,
-            amount = ownedCollectibleImageData.amount,
-            formattedAmount = ownedCollectibleImageData.formattedAmount,
-            formattedCompactAmount = ownedCollectibleImageData.formattedCompactAmount,
-            formattedSelectedCurrencyValue = ownedCollectibleImageData.parityValueInSelectedCurrency
-                .getFormattedValue(),
-            formattedSelectedCurrencyCompactValue = ownedCollectibleImageData.parityValueInSelectedCurrency
-                .getFormattedCompactValue(),
-            isAmountInSelectedCurrencyVisible = ownedCollectibleImageData.isAmountInSelectedCurrencyVisible,
-            avatarDisplayText = AssetName.create(ownedCollectibleImageData.name),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                ownedCollectibleImageData
-            ),
-            optedInAtRound = ownedCollectibleImageData.optedInAtRound,
-            amountInSelectedCurrency = ownedCollectibleImageData.parityValueInSelectedCurrency.amountAsCurrency
+    private suspend fun createAssetSelectionItems(assetLite: AssetLite): BaseSelectAssetItem {
+        val parityValueInSelectedCurrency = assetLite.getParityValueInSelectedCurrency()
+        val assetItemConfig = assetItemConfigurationMapper.mapTo(
+            isAmountInSelectedCurrencyVisible = assetLite.usdValue != null,
+            secondaryValueText = parityValueInSelectedCurrency.getFormattedValue(isCompact = true),
+            formattedCompactAmount = parityValueInSelectedCurrency.getFormattedCompactValue(),
+            assetId = assetLite.assetId,
+            name = assetLite.name,
+            shortName = assetLite.shortName,
+            verificationTier = assetLite.verificationTier,
+            primaryValue = parityValueInSelectedCurrency.amountAsCurrency
+        )
+        return SelectAssetItem(assetItemConfig)
+    }
+
+    private fun mapToSelectCollectibleItem(assetLite: AssetLite, collectible: Type.Collectible): SelectCollectibleItem {
+        val collectibleType = when (collectible.mediaType) {
+            CollectibleMediaType.IMAGE -> CollectibleType.Image
+            CollectibleMediaType.VIDEO -> CollectibleType.Video
+            CollectibleMediaType.MIXED -> CollectibleType.Mixed
+            CollectibleMediaType.AUDIO -> CollectibleType.Audio
+            CollectibleMediaType.UNKNOWN -> CollectibleType.NotSupported
+        }
+        return mapToSelectCollectibleItem(assetLite, collectibleType)
+    }
+
+    private fun mapToSelectCollectibleItem(assetLite: AssetLite, type: CollectibleType): SelectCollectibleItem {
+        val parityValueInSelectedCurrency = assetLite.getParityValueInSelectedCurrency()
+        return SelectCollectibleItem(
+            id = assetLite.assetId,
+            isAlgo = assetLite.isAlgo,
+            shortName = assetLite.shortName,
+            name = assetLite.name,
+            amount = assetLite.amount,
+            formattedAmount = assetLite.getFormattedAmount(),
+            formattedCompactAmount = assetLite.getFormattedCompactAmount(),
+            formattedSelectedCurrencyValue = parityValueInSelectedCurrency.getFormattedValue(),
+            formattedSelectedCurrencyCompactValue = parityValueInSelectedCurrency.getFormattedCompactValue(),
+            isAmountInSelectedCurrencyVisible = assetLite.isAmountInSelectedCurrencyVisible(),
+            avatarDisplayText = AssetName.create(assetLite.name),
+            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetLite),
+            optedInAtRound = assetLite.optedInAtRound,
+            amountInSelectedCurrency = parityValueInSelectedCurrency.amountAsCurrency,
+            type = type
         )
     }
 
-    fun mapToCollectibleVideoItem(
-        ownedCollectibleVideoData: OwnedCollectibleVideoData
-    ): SelectVideoCollectibleItem {
-        return SelectVideoCollectibleItem(
-            id = ownedCollectibleVideoData.id,
-            isAlgo = ownedCollectibleVideoData.isAlgo,
-            shortName = ownedCollectibleVideoData.shortName,
-            name = ownedCollectibleVideoData.name,
-            amount = ownedCollectibleVideoData.amount,
-            formattedAmount = ownedCollectibleVideoData.formattedAmount,
-            formattedCompactAmount = ownedCollectibleVideoData.formattedCompactAmount,
-            formattedSelectedCurrencyValue = ownedCollectibleVideoData.parityValueInSelectedCurrency
-                .getFormattedValue(),
-            formattedSelectedCurrencyCompactValue = ownedCollectibleVideoData.parityValueInSelectedCurrency
-                .getFormattedCompactValue(),
-            isAmountInSelectedCurrencyVisible = ownedCollectibleVideoData.isAmountInSelectedCurrencyVisible,
-            avatarDisplayText = AssetName.create(ownedCollectibleVideoData.name),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                ownedCollectibleVideoData
-            ),
-            optedInAtRound = ownedCollectibleVideoData.optedInAtRound,
-            amountInSelectedCurrency = ownedCollectibleVideoData.parityValueInSelectedCurrency.amountAsCurrency
-        )
-    }
-
-    fun mapToCollectibleAudioItem(
-        ownedCollectibleAudioData: OwnedCollectibleAudioData
-    ): SelectAudioCollectibleItem {
-        return SelectAudioCollectibleItem(
-            id = ownedCollectibleAudioData.id,
-            isAlgo = ownedCollectibleAudioData.isAlgo,
-            shortName = ownedCollectibleAudioData.shortName,
-            name = ownedCollectibleAudioData.name,
-            amount = ownedCollectibleAudioData.amount,
-            formattedAmount = ownedCollectibleAudioData.formattedAmount,
-            formattedCompactAmount = ownedCollectibleAudioData.formattedCompactAmount,
-            formattedSelectedCurrencyValue = ownedCollectibleAudioData.parityValueInSelectedCurrency
-                .getFormattedValue(),
-            formattedSelectedCurrencyCompactValue = ownedCollectibleAudioData.parityValueInSelectedCurrency
-                .getFormattedCompactValue(),
-            isAmountInSelectedCurrencyVisible = ownedCollectibleAudioData.isAmountInSelectedCurrencyVisible,
-            avatarDisplayText = AssetName.create(ownedCollectibleAudioData.name),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                ownedCollectibleAudioData
-            ),
-            optedInAtRound = ownedCollectibleAudioData.optedInAtRound,
-            amountInSelectedCurrency = ownedCollectibleAudioData.parityValueInSelectedCurrency.amountAsCurrency
-        )
-    }
-
-    fun mapToCollectibleMixedItem(
-        ownedCollectibleMixedData: OwnedCollectibleMixedData
-    ): SelectMixedCollectibleItem {
-        return SelectMixedCollectibleItem(
-            id = ownedCollectibleMixedData.id,
-            isAlgo = ownedCollectibleMixedData.isAlgo,
-            shortName = ownedCollectibleMixedData.shortName,
-            name = ownedCollectibleMixedData.name,
-            amount = ownedCollectibleMixedData.amount,
-            formattedAmount = ownedCollectibleMixedData.formattedAmount,
-            formattedCompactAmount = ownedCollectibleMixedData.formattedCompactAmount,
-            formattedSelectedCurrencyValue = ownedCollectibleMixedData.parityValueInSelectedCurrency
-                .getFormattedValue(),
-            formattedSelectedCurrencyCompactValue = ownedCollectibleMixedData.parityValueInSelectedCurrency
-                .getFormattedCompactValue(),
-            isAmountInSelectedCurrencyVisible = ownedCollectibleMixedData.isAmountInSelectedCurrencyVisible,
-            avatarDisplayText = AssetName.create(ownedCollectibleMixedData.name),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                ownedCollectibleMixedData
-            ),
-            optedInAtRound = ownedCollectibleMixedData.optedInAtRound,
-            amountInSelectedCurrency = ownedCollectibleMixedData.parityValueInSelectedCurrency.amountAsCurrency
-        )
-    }
-
-    fun mapToCollectibleNotSupportedItem(
-        ownedUnsupportedCollectibleData: OwnedUnsupportedCollectibleData
-    ): SelectNotSupportedCollectibleItem {
-        return SelectNotSupportedCollectibleItem(
-            id = ownedUnsupportedCollectibleData.id,
-            isAlgo = ownedUnsupportedCollectibleData.isAlgo,
-            shortName = ownedUnsupportedCollectibleData.shortName,
-            name = ownedUnsupportedCollectibleData.name,
-            amount = ownedUnsupportedCollectibleData.amount,
-            formattedAmount = ownedUnsupportedCollectibleData.formattedAmount,
-            formattedCompactAmount = ownedUnsupportedCollectibleData.formattedCompactAmount,
-            formattedSelectedCurrencyValue = ownedUnsupportedCollectibleData.parityValueInSelectedCurrency
-                .getFormattedValue(),
-            formattedSelectedCurrencyCompactValue = ownedUnsupportedCollectibleData.parityValueInSelectedCurrency
-                .getFormattedCompactValue(),
-            isAmountInSelectedCurrencyVisible = ownedUnsupportedCollectibleData.isAmountInSelectedCurrencyVisible,
-            avatarDisplayText = AssetName.create(ownedUnsupportedCollectibleData.name),
-            baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(
-                ownedUnsupportedCollectibleData
-            ),
-            optedInAtRound = ownedUnsupportedCollectibleData.optedInAtRound,
-            amountInSelectedCurrency = ownedUnsupportedCollectibleData.parityValueInSelectedCurrency.amountAsCurrency
-        )
+    private fun AssetLite.getParityValueInSelectedCurrency(): ParityValue {
+        return getPrimaryCurrencyAssetParityValue(amount, usdValue.orZero(), decimal)
     }
 }

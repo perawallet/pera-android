@@ -15,11 +15,13 @@ package com.algorand.wallet.account.info.data.database.model
 import androidx.room.ColumnInfo
 import java.math.BigInteger
 
-internal data class AssetHoldingDao(
+internal data class AssetHoldingDto(
     @ColumnInfo(name = "algo_address")
     val address: String,
     @ColumnInfo(name = "asset_id")
     val assetId: Long,
     @ColumnInfo(name = "amount")
-    val amount: BigInteger
+    val amount: BigInteger,
+    @ColumnInfo(name = "asset_status")
+    val assetStatus: AssetStatusEntity
 )

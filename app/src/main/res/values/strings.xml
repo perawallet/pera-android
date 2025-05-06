@@ -444,7 +444,7 @@
     <string name="close_the_algorand_app">Close the Algorand app on the Ledger device.</string>
     <string name="on_the_ledger_home_screen">On the Ledger home screen, confirm pairing.</string>
     <string name="pairing_failed">Pairing failed!</string>
-    <string name="having_ledger_nano_x">Having Ledger Nano X connection issues?</string>
+    <string name="having_ledger_nano_x">Having Ledger connection issues?</string>
     <string name="make_sure_the_device_is">Make sure the device is unlocked, nearby and has bluetooth enabled. If problems persist, please remove the device from your phone\'s bluetooth settings, remove the ledger account, and then re-pair your Ledger following the Pera Wallet instructions.</string>
     <string name="become_a_governor">Become a governor.\nVote on Algorand\'s future.\nEarn rewards.</string>
     <string name="the_registration_window_for">The registration window for Governance Period #2 is Dec 25 to Jan 7, 16:00 UTC</string>

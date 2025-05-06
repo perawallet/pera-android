@@ -16,6 +16,7 @@ import com.algorand.wallet.asset.data.database.dao.AssetDetailDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleMediaDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleTraitDao
+import com.algorand.wallet.asset.data.mapper.entity.AlgoAssetDetailEntityMapper
 import com.algorand.wallet.asset.data.mapper.model.AlgoAssetDetailMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetMapper
 import com.algorand.wallet.asset.data.mapper.model.collectible.CollectibleDetailMapper
@@ -31,12 +32,14 @@ import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
+import java.math.BigDecimal
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -51,6 +54,7 @@ internal class AssetRepositoryImpl @Inject constructor(
     private val collectibleDetailMapper: CollectibleDetailMapper,
     private val collectibleMediaDao: CollectibleMediaDao,
     private val collectibleTraitDao: CollectibleTraitDao,
+    private val algoAssetDetailEntityMapper: AlgoAssetDetailEntityMapper,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AssetRepository {
 
@@ -185,15 +189,17 @@ internal class AssetRepositoryImpl @Inject constructor(
     }
 
     override fun getAssetsLiteInformationFlow(assetIds: List<Long>): Flow<Map<Long, AssetLiteInformation?>> {
-        return assetDetailDao.getLiteInformationByAssetIds(assetIds).map {
-            it.associate { assetLiteInformationDao ->
-                assetLiteInformationDao.id to AssetLiteInformation(
-                    assetLiteInformationDao.id,
-                    assetLiteInformationDao.usdValue,
-                    assetLiteInformationDao.decimals
-                )
+        return assetDetailDao.getLiteInformationByAssetIds(assetIds)
+            .distinctUntilChanged()
+            .map {
+                it.associate { assetLiteInformationDao ->
+                    assetLiteInformationDao.id to AssetLiteInformation(
+                        assetLiteInformationDao.id,
+                        assetLiteInformationDao.usdValue,
+                        assetLiteInformationDao.decimals
+                    )
+                }
             }
-        }
     }
 
     private fun mapAssetDetailResponseToResult(assetResponse: AssetResponse): PeraResult<Asset> {
@@ -208,6 +214,13 @@ internal class AssetRepositoryImpl @Inject constructor(
     override suspend fun getAssetCreatorAddress(assetId: Long): String? {
         return withContext(coroutineDispatcher) {
             assetDetailDao.getAssetCreatorAddress(assetId)
+        }
+    }
+
+    override suspend fun cacheAlgoAssetDetail(usdValue: BigDecimal?) {
+        withContext(coroutineDispatcher) {
+            val entity = algoAssetDetailEntityMapper(usdValue)
+            assetDetailDao.insert(entity)
         }
     }
 

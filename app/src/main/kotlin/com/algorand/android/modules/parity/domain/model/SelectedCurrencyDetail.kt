@@ -19,5 +19,6 @@ data class SelectedCurrencyDetail(
     val currencyName: String?,
     val currencySymbol: String?,
     val algoToSelectedCurrencyConversionRate: BigDecimal?,
-    val usdToSelectedCurrencyConversionRate: BigDecimal?
+    val usdToSelectedCurrencyConversionRate: BigDecimal?,
+    val algoUsdExchangePrice: BigDecimal?
 )

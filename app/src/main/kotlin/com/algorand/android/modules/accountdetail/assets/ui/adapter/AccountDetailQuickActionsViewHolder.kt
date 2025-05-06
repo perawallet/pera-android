@@ -18,7 +18,7 @@ import android.view.ViewGroup
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemAccountDetailQuickActionsBinding
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem.AssetInbox
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem.AssetInboxActive
@@ -32,10 +32,10 @@ import com.google.android.material.button.MaterialButton
 class AccountDetailQuickActionsViewHolder(
     private val binding: ItemAccountDetailQuickActionsBinding,
     private val listener: AccountDetailQuickActionsListener
-) : BaseViewHolder<AccountDetailAssetsItem>(binding.root) {
+) : BaseViewHolder<AccountDetailAccountsItem>(binding.root) {
 
-    override fun bind(item: AccountDetailAssetsItem) {
-        if (item !is AccountDetailAssetsItem.QuickActionItemContainer || areButtonsAlreadyAdded()) return
+    override fun bind(item: AccountDetailAccountsItem) {
+        if (item !is AccountDetailAccountsItem.QuickActionItemContainer || areButtonsAlreadyAdded()) return
         initializeButtons(item.quickActionItemList)
     }
 

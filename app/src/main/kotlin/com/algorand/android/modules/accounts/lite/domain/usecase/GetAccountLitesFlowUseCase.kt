@@ -13,7 +13,6 @@
 package com.algorand.android.modules.accounts.lite.domain.usecase
 
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
-import com.algorand.android.modules.parity.domain.model.AlgoAmountValue
 import com.algorand.android.modules.parity.domain.usecase.GetAlgoAmountValue
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
@@ -128,8 +127,7 @@ internal class GetAccountLitesFlowUseCase @Inject constructor(
         val algoBalance = accountPayload.accountInfoLiteInformation.algoBalance
         val algoAmountValue = getAlgoAmountValue(algoBalance)
         val (primaryAccountValue, secondaryAccountValue) = getPrimaryAndSecondaryAccountValues(
-            accountPayload.assetHoldingLiteInformation,
-            algoAmountValue
+            accountPayload.assetHoldingLiteInformation
         )
         return AccountLite.CachedInfo(
             type = accountType,
@@ -143,11 +141,10 @@ internal class GetAccountLitesFlowUseCase @Inject constructor(
     }
 
     private fun getPrimaryAndSecondaryAccountValues(
-        assetHoldingLiteInformation: Map<Long, AssetHoldingLiteInformation?>,
-        algoAmountValue: AlgoAmountValue
+        assetHoldingLiteInformation: Map<Long, AssetHoldingLiteInformation?>
     ): Pair<BigDecimal, BigDecimal> {
-        var primary = algoAmountValue.parityValueInSelectedCurrency.amountAsCurrency
-        var secondary = algoAmountValue.parityValueInSecondaryCurrency.amountAsCurrency
+        var primary = BigDecimal.ZERO
+        var secondary = BigDecimal.ZERO
         assetHoldingLiteInformation.values.forEach {
             if (it?.usdValue == null) return@forEach
             primary += getPrimaryCurrencyAssetParityValue(it.amount, it.usdValue, it.decimals).amountAsCurrency

@@ -13,6 +13,7 @@
 package com.algorand.wallet.asset.di
 
 import com.algorand.wallet.asset.domain.repository.AssetRepository
+import com.algorand.wallet.asset.domain.usecase.CacheAlgoAssetDetail
 import com.algorand.wallet.asset.domain.usecase.ClearAssetCache
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheMissingAssets
@@ -120,5 +121,10 @@ internal object AssetDetailUseCaseModule {
     @Provides
     fun provideGetAssetDetails(repository: AssetRepository): GetAssetDetails {
         return GetAssetDetails(repository::getAssetsDetail)
+    }
+
+    @Provides
+    fun provideCacheAlgoAssetDetail(repository: AssetRepository): CacheAlgoAssetDetail {
+        return CacheAlgoAssetDetail(repository::cacheAlgoAssetDetail)
     }
 }

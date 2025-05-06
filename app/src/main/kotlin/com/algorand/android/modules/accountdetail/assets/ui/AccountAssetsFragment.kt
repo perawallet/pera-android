@@ -18,12 +18,16 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.paging.PagingData
+import androidx.recyclerview.widget.ConcatAdapter
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentAccountAssetsBinding
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.modules.accountdetail.assets.ui.adapter.AccountAssetsAccountDetailAdapter
 import com.algorand.android.modules.accountdetail.assets.ui.adapter.AccountAssetsAdapter
 import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountAssetsPreviewUseCase
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
 import com.algorand.android.utils.ExcludedViewTypesDividerItemDecoration
 import com.algorand.android.utils.RecyclerViewPositionVisibilityHandler
@@ -31,6 +35,7 @@ import com.algorand.android.utils.addCustomDivider
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
@@ -55,7 +60,7 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         listener = recyclerViewPositionVisibilityListener
     )
 
-    private val accountAssetListener = object : AccountAssetsAdapter.Listener {
+    private val accountAssetsListener = object : AccountAssetsAdapter.Listener {
         override fun onAssetClick(assetId: Long) {
             listener?.onAssetClick(assetId)
         }
@@ -71,7 +76,9 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         override fun onNFTLongClick(nftId: Long) {
             listener?.onNFTLongClick(nftId)
         }
+    }
 
+    private val accountDetailAdapterListener = object : AccountAssetsAccountDetailAdapter.Listener {
         override fun onAddNewAssetClick() {
             accountAssetsViewModel.logAccountAssetsAddAssetEvent()
             listener?.onAddAssetClick()
@@ -123,10 +130,18 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         }
     }
 
-    private val accountAssetsAdapter = AccountAssetsAdapter(accountAssetListener)
+    private val accountAssetsAdapter = AccountAssetsAdapter(accountAssetsListener)
 
-    private val accountAssetsCollector: suspend (List<AccountDetailAssetsItem>?) -> Unit = { accountDetailItemList ->
-        accountAssetsAdapter.submitList(accountDetailItemList.orEmpty())
+    private val accountAssetsAccountDetailAdapter = AccountAssetsAccountDetailAdapter(accountDetailAdapterListener)
+
+    private val accountAssetsConcatAdapter = ConcatAdapter(accountAssetsAccountDetailAdapter, accountAssetsAdapter)
+
+    private val accountAssetsCollector: suspend (PagingData<AccountDetailAssetsItem>?) -> Unit = { items ->
+        items?.let { accountAssetsAdapter.submitData(items) }
+    }
+
+    private val accountAssetsHeadersCollector: suspend (List<AccountDetailAccountsItem>?) -> Unit = { items ->
+        items?.let { accountAssetsAccountDetailAdapter.submitList(items) }
     }
 
     override fun onAttach(context: Context) {
@@ -149,7 +164,7 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
     private fun initUi() {
         binding.accountAssetsRecyclerView.apply {
             recyclerViewPositionVisibilityHandler.addOnScrollListener(this)
-            adapter = accountAssetsAdapter
+            adapter = accountAssetsConcatAdapter
             addCustomDivider(
                 drawableResId = R.drawable.horizontal_divider_80_24dp,
                 showLast = false,
@@ -166,8 +181,12 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
     private fun initObservers() {
         with(accountAssetsViewModel.accountAssetsFlow) {
             collectLatestOnLifecycle(
-                flow = map { it?.accountDetailAssetsItemList },
+                flow = map { it?.accountDetailAssetsItemList }.distinctUntilChanged(),
                 collection = accountAssetsCollector
+            )
+            collectLatestOnLifecycle(
+                flow = map { it?.accountDetailAccountItems }.distinctUntilChanged(),
+                collection = accountAssetsHeadersCollector
             )
         }
     }

@@ -22,7 +22,7 @@ import com.algorand.android.utils.AssetName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class AlgoDrawableProvider : BaseAssetDrawableProvider() {
+object AlgoDrawableProvider : BaseAssetDrawableProvider() {
 
     override val assetName: AssetName
         get() = AssetName.create(ALGO_FULL_NAME)

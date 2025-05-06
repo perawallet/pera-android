@@ -20,6 +20,7 @@ import com.algorand.android.utils.assetdrawable.AssetDrawableProvider
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 import com.algorand.android.utils.assetdrawable.CollectibleDrawableProvider
 import com.algorand.wallet.asset.domain.model.Asset
+import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.asset.domain.model.CollectibleDetail
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.usecase.GetCollectibleDetail
@@ -34,7 +35,7 @@ class AssetDrawableProviderDecider @Inject constructor(
 ) {
 
     suspend fun getAssetDrawableProvider(assetId: Long): BaseAssetDrawableProvider {
-        if (assetId == AssetConstants.ALGO_ID) return AlgoDrawableProvider()
+        if (assetId == AssetConstants.ALGO_ID) return AlgoDrawableProvider
 
         val collectibleDetail = getCollectibleDetail(assetId)
         if (collectibleDetail != null) {
@@ -59,7 +60,7 @@ class AssetDrawableProviderDecider @Inject constructor(
         val isAlgo = assetId == AssetConstants.ALGO_ID
         val isCollectible = isCollectibleExist(assetId)
         return when {
-            isAlgo -> AlgoDrawableProvider()
+            isAlgo -> AlgoDrawableProvider
             isCollectible -> CollectibleDrawableProvider(assetName, logoUri)
             else -> AssetDrawableProvider(assetName, logoUri)
         }
@@ -73,7 +74,7 @@ class AssetDrawableProviderDecider @Inject constructor(
         return when {
             searchedAsset.assetId == AssetConstants.ALGO_ID -> {
                 // This is unnecessary check but to keep consistency, I added this check, too
-                AlgoDrawableProvider()
+                AlgoDrawableProvider
             }
             searchedAsset is BaseSearchedAsset.SearchedAsset -> {
                 AssetDrawableProvider(
@@ -97,7 +98,7 @@ class AssetDrawableProviderDecider @Inject constructor(
     fun getAssetDrawableProvider(asset: Asset): BaseAssetDrawableProvider {
         val assetName = asset.assetInfo?.name?.fullName
         return when {
-            asset.id == AssetConstants.ALGO_ID -> AlgoDrawableProvider()
+            asset.id == AssetConstants.ALGO_ID -> AlgoDrawableProvider
             asset is com.algorand.wallet.asset.domain.model.AssetDetail -> {
                 AssetDrawableProvider(
                     assetName = AssetName.create(assetName),
@@ -117,8 +118,30 @@ class AssetDrawableProviderDecider @Inject constructor(
         }
     }
 
+    fun getAssetDrawableProvider(assetLite: AssetLite): BaseAssetDrawableProvider {
+        return when {
+            assetLite.assetId == AssetConstants.ALGO_ID -> AlgoDrawableProvider
+            assetLite.type is AssetLite.Type.Asset -> {
+                AssetDrawableProvider(
+                    assetName = AssetName.create(assetLite.name),
+                    logoUri = assetLite.logoUrl
+                )
+            }
+            assetLite.type is AssetLite.Type.Collectible -> {
+                CollectibleDrawableProvider(
+                    assetName = AssetName.create((assetLite.type as AssetLite.Type.Collectible).name),
+                    logoUri = assetLite.logoUrl
+                )
+            }
+            else -> AssetDrawableProvider(
+                assetName = AssetName.create(assetLite.name),
+                logoUri = assetLite.logoUrl
+            )
+        }
+    }
+
     fun getAssetDrawableProvider(assetData: BaseAccountAssetData.BaseOwnedAssetData): BaseAssetDrawableProvider {
-        if (assetData.id == AssetConstants.ALGO_ID) return AlgoDrawableProvider()
+        if (assetData.id == AssetConstants.ALGO_ID) return AlgoDrawableProvider
         return AssetDrawableProvider(
             assetName = AssetName.create(assetData.name),
             logoUri = assetData.prismUrl

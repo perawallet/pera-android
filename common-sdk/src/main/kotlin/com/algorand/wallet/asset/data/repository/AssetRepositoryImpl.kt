@@ -39,6 +39,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -188,15 +189,17 @@ internal class AssetRepositoryImpl @Inject constructor(
     }
 
     override fun getAssetsLiteInformationFlow(assetIds: List<Long>): Flow<Map<Long, AssetLiteInformation?>> {
-        return assetDetailDao.getLiteInformationByAssetIds(assetIds).map {
-            it.associate { assetLiteInformationDao ->
-                assetLiteInformationDao.id to AssetLiteInformation(
-                    assetLiteInformationDao.id,
-                    assetLiteInformationDao.usdValue,
-                    assetLiteInformationDao.decimals
-                )
+        return assetDetailDao.getLiteInformationByAssetIds(assetIds)
+            .distinctUntilChanged()
+            .map {
+                it.associate { assetLiteInformationDao ->
+                    assetLiteInformationDao.id to AssetLiteInformation(
+                        assetLiteInformationDao.id,
+                        assetLiteInformationDao.usdValue,
+                        assetLiteInformationDao.decimals
+                    )
+                }
             }
-        }
     }
 
     private fun mapAssetDetailResponseToResult(assetResponse: AssetResponse): PeraResult<Asset> {

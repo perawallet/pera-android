@@ -168,7 +168,9 @@ class SelectUniversalWalletFragment : DaggerBaseFragment(0) {
                                 primaryValue = primaryValue,
                                 secondaryValue = secondaryValue,
                                 icon = ImageVector.vectorResource(id = R.drawable.ic_wallet),
-                                iconContentDescription = stringResource(id = R.string.create_a_new_algorand_account_with),
+                                iconContentDescription = stringResource(
+                                    id = R.string.create_a_new_algorand_account_with
+                                ),
                                 onClick = { onWalletSelected(seedId, maxAccountIndex) }
                             )
                         }

@@ -68,7 +68,6 @@ class SelectUniversalWalletViewModel @Inject constructor(
         }
     }
 
-
     fun createNewHdWallet() {
         viewModelScope.launchIO {
             val account = algoAccountSdk.createHdAccount()

@@ -59,7 +59,7 @@ internal class AssetDetailCacheHelperImpl @Inject constructor(
 
             collectibleDao.insertAll(collectibleEntities)
             collectibleMediaDao.insertAll(collectibleMediaEntities)
-            assetDetailDao.insert(assetDetailEntities)
+            assetDetailDao.insertAll(assetDetailEntities)
             collectibleTraitDao.insertAll(collectibleTraitEntities)
         }
     }

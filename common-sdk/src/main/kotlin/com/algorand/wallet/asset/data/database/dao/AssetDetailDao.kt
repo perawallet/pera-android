@@ -13,51 +13,41 @@
 package com.algorand.wallet.asset.data.database.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
+import androidx.room.Upsert
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
 import com.algorand.wallet.asset.data.database.model.AssetLiteInformationDao
+import com.algorand.wallet.foundation.database.util.DaoUtils.smartUpsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface AssetDetailDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertIgnore(entity: AssetDetailEntity): Long
+    @Upsert
+    suspend fun upsert(entity: AssetDetailEntity)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAllIgnore(entities: List<AssetDetailEntity>): List<Long>
-
-    @Update
-    suspend fun update(entity: AssetDetailEntity)
-
-    @Update
-    suspend fun updateAll(entities: List<AssetDetailEntity>)
+    @Upsert
+    suspend fun upsertAll(entities: List<AssetDetailEntity>)
 
     @Transaction
     suspend fun insert(entity: AssetDetailEntity) {
-        val insertResult = insertIgnore(entity)
-        if (insertResult == -1L) {
-            update(entity)
-        }
+        smartUpsert(
+            newEntity = entity,
+            getKey = { it.assetId },
+            fetchExistingByKey = { getByAssetId(it) },
+            upsert = { upsert(it) }
+        )
     }
 
     @Transaction
-    suspend fun insert(entities: List<AssetDetailEntity>) {
-        val insertResults = insertAllIgnore(entities)
-
-        val itemsToUpdate = entities
-            .zip(insertResults)
-            .mapNotNull { (item, result) ->
-                item.takeIf { result == -1L }
-            }
-
-        if (itemsToUpdate.isNotEmpty()) {
-            updateAll(itemsToUpdate)
-        }
+    suspend fun insertAll(entities: List<AssetDetailEntity>) {
+        smartUpsert(
+            newEntities = entities,
+            getKey = { it.assetId },
+            fetchExistingByKeys = { getByAssetIds(it) },
+            upsert = { upsertAll(it) }
+        )
     }
 
     @Query("DELETE FROM asset_detail WHERE asset_id = :assetId")

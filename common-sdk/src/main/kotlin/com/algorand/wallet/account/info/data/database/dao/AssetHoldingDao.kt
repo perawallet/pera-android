@@ -13,15 +13,13 @@
 package com.algorand.wallet.account.info.data.database.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
 import androidx.room.Upsert
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingDto
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
+import com.algorand.wallet.foundation.database.util.DaoUtils.smartUpsert
 import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
 
@@ -29,10 +27,31 @@ import kotlinx.coroutines.flow.Flow
 internal interface AssetHoldingDao {
 
     @Upsert
-    suspend fun insert(entity: AssetHoldingEntity)
+    suspend fun upsert(entity: AssetHoldingEntity)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAllIgnore(entities: List<AssetHoldingEntity>): List<Long>
+    @Upsert
+    suspend fun upsertAll(entities: List<AssetHoldingEntity>)
+
+    @Transaction
+    suspend fun insert(entity: AssetHoldingEntity) {
+        smartUpsert(
+            newEntity = entity,
+            getKey = { it },
+            fetchExistingByKey = { get(it.algoAddress, it.assetId) },
+            upsert = { upsert(it) }
+        )
+    }
+
+    @Transaction
+    suspend fun insertAll(algoAddress: String, assetHoldingEntities: List<AssetHoldingEntity>) {
+        deleteAssetsNotInList(algoAddress, assetHoldingEntities.map { it.assetId })
+        smartUpsert(
+            newEntities = assetHoldingEntities,
+            getKey = { it.assetId },
+            fetchExistingByKeys = { getAll(algoAddress, it) },
+            upsert = { upsertAll(it) }
+        )
+    }
 
     @Query("SELECT * FROM asset_holding_table WHERE :algoAddress = algo_address AND :assetId = asset_id")
     suspend fun get(algoAddress: String, assetId: Long): AssetHoldingEntity
@@ -72,24 +91,8 @@ internal interface AssetHoldingDao {
     )
     suspend fun deleteAssetsNotInList(algoAddress: String, assetIds: List<Long>)
 
-    @Update
-    fun updateAll(entities: List<AssetHoldingEntity>)
-
-    @Transaction
-    suspend fun updateAssetHoldings(algoAddress: String, assetHoldingEntities: List<AssetHoldingEntity>) {
-        deleteAssetsNotInList(algoAddress, assetHoldingEntities.map { it.assetId })
-
-        val insertResults = insertAllIgnore(assetHoldingEntities)
-        val itemsToUpdate = assetHoldingEntities
-            .zip(insertResults)
-            .mapNotNull { (item, result) ->
-                item.takeIf { result == -1L }
-            }
-
-        if (itemsToUpdate.isNotEmpty()) {
-            updateAll(itemsToUpdate)
-        }
-    }
+    @Query("SELECT * FROM asset_holding_table WHERE :algoAddress = algo_address AND asset_id IN (:assetIds)")
+    suspend fun getAll(algoAddress: String, assetIds: List<Long>): List<AssetHoldingEntity>
 
     @Query("SELECT * FROM asset_holding_table")
     fun getAllAsFlow(): Flow<List<AssetHoldingEntity>>

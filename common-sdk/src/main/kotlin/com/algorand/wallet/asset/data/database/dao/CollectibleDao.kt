@@ -13,35 +13,26 @@
 package com.algorand.wallet.asset.data.database.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
+import androidx.room.Upsert
 import com.algorand.wallet.asset.data.database.model.CollectibleEntity
+import com.algorand.wallet.foundation.database.util.DaoUtils.smartUpsert
 
 @Dao
 internal interface CollectibleDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAllIgnore(entities: List<CollectibleEntity>): List<Long>
-
-    @Update
-    suspend fun updateAll(entities: List<CollectibleEntity>)
+    @Upsert
+    suspend fun upsertAll(entities: List<CollectibleEntity>)
 
     @Transaction
     suspend fun insertAll(entities: List<CollectibleEntity>) {
-        val insertedIds = insertAllIgnore(entities)
-
-        val itemsToUpdate = entities
-            .zip(insertedIds)
-            .mapNotNull { (item, result) ->
-                item.takeIf { result == -1L }
-            }
-
-        if (itemsToUpdate.isNotEmpty()) {
-            updateAll(itemsToUpdate)
-        }
+        smartUpsert(
+            newEntities = entities,
+            getKey = { it.collectibleAssetId },
+            fetchExistingByKeys = { getByCollectibleAssetIds(it) },
+            upsert = { upsertAll(it) }
+        )
     }
 
     @Query("DELETE FROM collectible WHERE collectible_asset_id = :collectibleAssetId")

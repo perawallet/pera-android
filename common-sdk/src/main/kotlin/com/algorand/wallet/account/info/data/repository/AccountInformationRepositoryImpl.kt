@@ -34,6 +34,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
 import java.math.BigInteger
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -96,7 +97,7 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         addresses: List<String>
     ): Map<String, AccountInformation?> {
         return withContext(Dispatchers.IO) {
-            val result = mutableMapOf<String, AccountInformation?>()
+            val result = ConcurrentHashMap<String, AccountInformation?>()
             addresses.map { address ->
                 async {
                     result[address] = accountInformationFetchHelper.fetchAccount(
@@ -211,36 +212,40 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     }
 
     override fun getAccountsLiteInformationFlow(addresses: List<String>): Flow<Map<String, AccountLiteInformation?>> {
-        return accountInformationDao.getAccountLiteInformationFlow(addresses).map { accountLiteInformationList ->
-            accountLiteInformationList.associate { accountLiteInformation ->
-                accountLiteInformation.address to AccountLiteInformation(
-                    address = accountLiteInformation.address,
-                    rekeyAuthAddress = accountLiteInformation.rekeyAuthAddress,
-                    algoBalance = accountLiteInformation.algoBalance,
-                    minRequiredBalance = accountLiteInformation.minRequiredBalance
-                )
-            }
-        }
-    }
-
-    override fun getAssetHoldingsLiteFlow(addresses: List<String>): Flow<Map<String, AssetHoldingLite>> {
-        return assetHoldingDao.getAssetHoldingsLiteInformationFlow(addresses).map { assetHoldingLiteList ->
-            val assetHoldingMap = mutableMapOf<String, AssetHoldingLite>()
-            assetHoldingLiteList.forEach { assetHoldingLite ->
-                val assetHolding = assetHoldingMap[assetHoldingLite.address]
-                assetHoldingMap[assetHoldingLite.address] = if (assetHolding == null) {
-                    AssetHoldingLite(
-                        assetHoldingLite.address,
-                        mapOf(assetHoldingLite.assetId to assetHoldingLite.amount)
-                    )
-                } else {
-                    assetHolding.copy(
-                        assetHoldingAmounts = assetHolding.assetHoldingAmounts + (assetHoldingLite.assetId to assetHoldingLite.amount)
+        return accountInformationDao.getAccountLiteInformationFlow(addresses)
+            .distinctUntilChanged()
+            .map { accountLiteInformationList ->
+                accountLiteInformationList.associate { accountLiteInformation ->
+                    accountLiteInformation.address to AccountLiteInformation(
+                        address = accountLiteInformation.address,
+                        rekeyAuthAddress = accountLiteInformation.rekeyAuthAddress,
+                        algoBalance = accountLiteInformation.algoBalance,
+                        minRequiredBalance = accountLiteInformation.minRequiredBalance
                     )
                 }
             }
-            assetHoldingMap
-        }
+    }
+
+    override fun getAssetHoldingsLiteFlow(addresses: List<String>): Flow<Map<String, AssetHoldingLite>> {
+        return assetHoldingDao.getAssetHoldingsLiteInformationFlow(addresses)
+            .distinctUntilChanged()
+            .map { assetHoldingLiteList ->
+                val assetHoldingMap = mutableMapOf<String, AssetHoldingLite>()
+                assetHoldingLiteList.forEach { assetHoldingLite ->
+                    val assetHolding = assetHoldingMap[assetHoldingLite.address]
+                    assetHoldingMap[assetHoldingLite.address] = if (assetHolding == null) {
+                        AssetHoldingLite(
+                            assetHoldingLite.address,
+                            mapOf(assetHoldingLite.assetId to assetHoldingLite.amount)
+                        )
+                    } else {
+                        assetHolding.copy(
+                            assetHoldingAmounts = assetHolding.assetHoldingAmounts + (assetHoldingLite.assetId to assetHoldingLite.amount)
+                        )
+                    }
+                }
+                assetHoldingMap
+            }
     }
 
     override suspend fun getAccountAssetHoldingAmount(address: String, assetId: Long): BigInteger? {

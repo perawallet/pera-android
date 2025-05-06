@@ -16,6 +16,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
 import com.algorand.wallet.asset.data.database.model.AssetLiteInformationDao
 import kotlinx.coroutines.flow.Flow
@@ -23,11 +25,40 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 internal interface AssetDetailDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entity: AssetDetailEntity)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIgnore(entity: AssetDetailEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(entities: List<AssetDetailEntity>)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAllIgnore(entities: List<AssetDetailEntity>): List<Long>
+
+    @Update
+    suspend fun update(entity: AssetDetailEntity)
+
+    @Update
+    suspend fun updateAll(entities: List<AssetDetailEntity>)
+
+    @Transaction
+    suspend fun insert(entity: AssetDetailEntity) {
+        val insertResult = insertIgnore(entity)
+        if (insertResult == -1L) {
+            update(entity)
+        }
+    }
+
+    @Transaction
+    suspend fun insert(entities: List<AssetDetailEntity>) {
+        val insertResults = insertAllIgnore(entities)
+
+        val itemsToUpdate = entities
+            .zip(insertResults)
+            .mapNotNull { (item, result) ->
+                item.takeIf { result == -1L }
+            }
+
+        if (itemsToUpdate.isNotEmpty()) {
+            updateAll(itemsToUpdate)
+        }
+    }
 
     @Query("DELETE FROM asset_detail WHERE asset_id = :assetId")
     suspend fun deleteAllByAssetId(assetId: Long)

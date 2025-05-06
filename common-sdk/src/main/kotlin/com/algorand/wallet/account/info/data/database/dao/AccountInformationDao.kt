@@ -16,6 +16,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
 import com.algorand.wallet.account.info.data.database.model.AccountLiteInformationDao
 import com.algorand.wallet.account.info.data.model.AccountAssetAndAppsCountDto
@@ -25,11 +27,19 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 internal interface AccountInformationDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(accountInformationEntity: AccountInformationEntity)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIgnore(accountInformationEntity: AccountInformationEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(accountInformationEntities: List<AccountInformationEntity>)
+    @Update
+    suspend fun update(accountInformationEntity: AccountInformationEntity)
+
+    @Transaction
+    suspend fun insert(accountInformationEntity: AccountInformationEntity) {
+        val insertResult = insertIgnore(accountInformationEntity)
+        if (insertResult == -1L) {
+            update(accountInformationEntity)
+        }
+    }
 
     @Query("SELECT * FROM account_information WHERE :algoAddress = algo_address")
     suspend fun get(algoAddress: String): AccountInformationEntity?

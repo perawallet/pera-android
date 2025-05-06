@@ -17,7 +17,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.algorand.wallet.account.info.data.database.model.AssetHoldingDao
+import androidx.room.Update
+import androidx.room.Upsert
+import com.algorand.wallet.account.info.data.database.model.AssetHoldingDto
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
 import java.math.BigInteger
@@ -26,11 +28,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 internal interface AssetHoldingDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insert(entity: AssetHoldingEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(entities: List<AssetHoldingEntity>)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAllIgnore(entities: List<AssetHoldingEntity>): List<Long>
 
     @Query("SELECT * FROM asset_holding_table WHERE :algoAddress = algo_address AND :assetId = asset_id")
     suspend fun get(algoAddress: String, assetId: Long): AssetHoldingEntity
@@ -70,10 +72,23 @@ internal interface AssetHoldingDao {
     )
     suspend fun deleteAssetsNotInList(algoAddress: String, assetIds: List<Long>)
 
+    @Update
+    fun updateAll(entities: List<AssetHoldingEntity>)
+
     @Transaction
     suspend fun updateAssetHoldings(algoAddress: String, assetHoldingEntities: List<AssetHoldingEntity>) {
-        deleteByAddress(algoAddress)
-        insertAll(assetHoldingEntities)
+        deleteAssetsNotInList(algoAddress, assetHoldingEntities.map { it.assetId })
+
+        val insertResults = insertAllIgnore(assetHoldingEntities)
+        val itemsToUpdate = assetHoldingEntities
+            .zip(insertResults)
+            .mapNotNull { (item, result) ->
+                item.takeIf { result == -1L }
+            }
+
+        if (itemsToUpdate.isNotEmpty()) {
+            updateAll(itemsToUpdate)
+        }
     }
 
     @Query("SELECT * FROM asset_holding_table")
@@ -88,8 +103,14 @@ internal interface AssetHoldingDao {
     @Query("DELETE FROM asset_holding_table")
     suspend fun clearAll()
 
-    @Query("SELECT algo_address, asset_id, amount FROM asset_holding_table WHERE algo_address IN (:addresses)")
-    fun getAssetHoldingsLiteInformationFlow(addresses: List<String>): Flow<List<AssetHoldingDao>>
+    @Query(
+        """
+        SELECT algo_address, asset_id, amount, asset_status 
+        FROM asset_holding_table 
+        WHERE algo_address IN (:addresses) 
+    """
+    )
+    fun getAssetHoldingsLiteInformationFlow(addresses: List<String>): Flow<List<AssetHoldingDto>>
 
     @Query("SELECT amount FROM asset_holding_table WHERE algo_address = :address AND asset_id = :assetId")
     suspend fun getAssetHoldingAmount(address: String, assetId: Long): BigInteger?

@@ -16,16 +16,33 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.algorand.wallet.asset.data.database.model.CollectibleEntity
 
 @Dao
 internal interface CollectibleDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entity: CollectibleEntity)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAllIgnore(entities: List<CollectibleEntity>): List<Long>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(entities: List<CollectibleEntity>)
+    @Update
+    suspend fun updateAll(entities: List<CollectibleEntity>)
+
+    @Transaction
+    suspend fun insertAll(entities: List<CollectibleEntity>) {
+        val insertedIds = insertAllIgnore(entities)
+
+        val itemsToUpdate = entities
+            .zip(insertedIds)
+            .mapNotNull { (item, result) ->
+                item.takeIf { result == -1L }
+            }
+
+        if (itemsToUpdate.isNotEmpty()) {
+            updateAll(itemsToUpdate)
+        }
+    }
 
     @Query("DELETE FROM collectible WHERE collectible_asset_id = :collectibleAssetId")
     suspend fun deleteAllByCollectibleAssetId(collectibleAssetId: Long)
@@ -39,7 +56,7 @@ internal interface CollectibleDao {
     @Query("SELECT * FROM collectible WHERE collectible_asset_id IN (:collectibleAssetIds)")
     suspend fun getByCollectibleAssetIds(collectibleAssetIds: List<Long>): List<CollectibleEntity>
 
-    @Query("SELECT id FROM collectible")
+    @Query("SELECT collectible_asset_id FROM collectible")
     suspend fun getCollectibleIds(): List<Long>
 
     @Query("DELETE FROM collectible")

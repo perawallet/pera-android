@@ -13,21 +13,42 @@
 package com.algorand.wallet.asset.data.database.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Upsert
 import com.algorand.wallet.asset.data.database.model.AssetDetailEntity
 import com.algorand.wallet.asset.data.database.model.AssetLiteInformationDao
+import com.algorand.wallet.foundation.database.util.DaoUtils.smartUpsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface AssetDetailDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entity: AssetDetailEntity)
+    @Upsert
+    suspend fun upsert(entity: AssetDetailEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(entities: List<AssetDetailEntity>)
+    @Upsert
+    suspend fun upsertAll(entities: List<AssetDetailEntity>)
+
+    @Transaction
+    suspend fun insert(entity: AssetDetailEntity) {
+        smartUpsert(
+            newEntity = entity,
+            getKey = { it.assetId },
+            fetchExistingByKey = { getByAssetId(it) },
+            upsert = { upsert(it) }
+        )
+    }
+
+    @Transaction
+    suspend fun insertAll(entities: List<AssetDetailEntity>) {
+        smartUpsert(
+            newEntities = entities,
+            getKey = { it.assetId },
+            fetchExistingByKeys = { getByAssetIds(it) },
+            upsert = { upsertAll(it) }
+        )
+    }
 
     @Query("DELETE FROM asset_detail WHERE asset_id = :assetId")
     suspend fun deleteAllByAssetId(assetId: Long)

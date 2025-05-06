@@ -161,7 +161,6 @@ internal class CollectibleMapperImplTest {
         )
 
         private val COLLECTIBLE_ENTITY = CollectibleEntity(
-            id = 1L,
             collectibleAssetId = 1L,
             standardType = CollectibleStandardTypeEntity.ARC_3,
             mediaType = CollectibleMediaTypeEntity.IMAGE,

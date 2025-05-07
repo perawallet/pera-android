@@ -16,17 +16,12 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import com.algorand.android.customviews.accountandassetitem.mapper.AssetItemConfigurationMapper
 import com.algorand.android.decider.AssetDrawableProviderDecider
-import com.algorand.android.modules.parity.domain.model.ParityValue
-import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
-import com.algorand.android.ui.asset.lite.extension.getFormattedAmount
-import com.algorand.android.ui.asset.lite.extension.getFormattedCompactAmount
-import com.algorand.android.ui.asset.lite.extension.isAmountInSelectedCurrencyVisible
+import com.algorand.android.modules.parity.domain.usecase.GetParityDisplayValue
 import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem
 import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.SelectAssetItem
 import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.SelectCollectibleItem
 import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.SelectCollectibleItem.CollectibleType
 import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.orZero
 import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.asset.domain.model.AssetLite.Type
 import com.algorand.wallet.asset.domain.model.CollectibleMediaType
@@ -34,8 +29,8 @@ import javax.inject.Inject
 
 class AssetSelectionMapper @Inject constructor(
     private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
-    private val getPrimaryCurrencyAssetParityValue: GetPrimaryCurrencyAssetParityValue,
     private val assetItemConfigurationMapper: AssetItemConfigurationMapper,
+    private val getParityDisplayValue: GetParityDisplayValue
 ) {
 
     fun createAssetSelectionItems(assetLites: PagingData<AssetLite>): PagingData<BaseSelectAssetItem> {
@@ -48,16 +43,16 @@ class AssetSelectionMapper @Inject constructor(
     }
 
     private suspend fun createAssetSelectionItems(assetLite: AssetLite): BaseSelectAssetItem {
-        val parityValueInSelectedCurrency = assetLite.getParityValueInSelectedCurrency()
+        val parityDisplayValue = getParityDisplayValue(assetLite)
         val assetItemConfig = assetItemConfigurationMapper.mapTo(
             isAmountInSelectedCurrencyVisible = assetLite.usdValue != null,
-            secondaryValueText = parityValueInSelectedCurrency.getFormattedValue(isCompact = true),
-            formattedCompactAmount = parityValueInSelectedCurrency.getFormattedCompactValue(),
+            formattedCompactAmount = parityDisplayValue.formattedAmount,
+            secondaryValueText = parityDisplayValue.primaryParityValue.getFormattedValue(isCompact = true),
             assetId = assetLite.assetId,
             name = assetLite.name,
             shortName = assetLite.shortName,
             verificationTier = assetLite.verificationTier,
-            primaryValue = parityValueInSelectedCurrency.amountAsCurrency
+            primaryValue = parityDisplayValue.primaryParityValue.amountAsCurrency
         )
         return SelectAssetItem(assetItemConfig)
     }
@@ -74,27 +69,23 @@ class AssetSelectionMapper @Inject constructor(
     }
 
     private fun mapToSelectCollectibleItem(assetLite: AssetLite, type: CollectibleType): SelectCollectibleItem {
-        val parityValueInSelectedCurrency = assetLite.getParityValueInSelectedCurrency()
+        val parityDisplayValue = getParityDisplayValue(assetLite)
         return SelectCollectibleItem(
             id = assetLite.assetId,
             isAlgo = assetLite.isAlgo,
             shortName = assetLite.shortName,
             name = assetLite.name,
             amount = assetLite.amount,
-            formattedAmount = assetLite.getFormattedAmount(),
-            formattedCompactAmount = assetLite.getFormattedCompactAmount(),
-            formattedSelectedCurrencyValue = parityValueInSelectedCurrency.getFormattedValue(),
-            formattedSelectedCurrencyCompactValue = parityValueInSelectedCurrency.getFormattedCompactValue(),
-            isAmountInSelectedCurrencyVisible = assetLite.isAmountInSelectedCurrencyVisible(),
+            formattedAmount = parityDisplayValue.formattedAmount,
+            formattedCompactAmount = parityDisplayValue.formattedCompactAmount,
+            formattedSelectedCurrencyValue = parityDisplayValue.primaryParityValue.getFormattedValue(),
+            formattedSelectedCurrencyCompactValue = parityDisplayValue.primaryParityValue.getFormattedCompactValue(),
+            isAmountInSelectedCurrencyVisible = parityDisplayValue.isAmountInSelectedCurrencyVisible,
             avatarDisplayText = AssetName.create(assetLite.name),
             baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(assetLite),
             optedInAtRound = assetLite.optedInAtRound,
-            amountInSelectedCurrency = parityValueInSelectedCurrency.amountAsCurrency,
+            amountInSelectedCurrency = parityDisplayValue.primaryParityValue.amountAsCurrency,
             type = type
         )
-    }
-
-    private fun AssetLite.getParityValueInSelectedCurrency(): ParityValue {
-        return getPrimaryCurrencyAssetParityValue(amount, usdValue.orZero(), decimal)
     }
 }

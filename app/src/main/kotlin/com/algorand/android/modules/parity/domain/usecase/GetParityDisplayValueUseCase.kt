@@ -16,16 +16,17 @@ internal class GetParityDisplayValueUseCase @Inject constructor(
 ) : GetParityDisplayValue {
 
     override fun invoke(assetLite: AssetLite): ParityDisplayValue {
-        val selectedParityValue = assetLite.getPrimaryParityValue()
-        val secondaryParityValue = assetLite.getSecondaryParityValue()
-
-        return ParityDisplayValue(
-            primaryParityValue = assetLite.getPrimaryParityValue(selectedParityValue, secondaryParityValue),
-            secondaryParityValue = secondaryParityValue,
-            formattedAmount = assetLite.amount.formatAmount(assetLite.decimal),
-            formattedCompactAmount = assetLite.amount.formatAmount(assetLite.decimal, isCompact = true),
-            isAmountInSelectedCurrencyVisible = assetLite.usdValue != null && assetLite.amount isGreaterThan BigInteger.ZERO
-        )
+        return with(assetLite) {
+            val selectedParityValue = getSelectedParityValue()
+            val secondaryParityValue = getSecondaryParityValue()
+            ParityDisplayValue(
+                primaryParityValue = getPrimaryParityValue(selectedParityValue, secondaryParityValue),
+                secondaryParityValue = secondaryParityValue,
+                formattedAmount = amount.formatAmount(decimal),
+                formattedCompactAmount = amount.formatAmount(decimal, isCompact = true),
+                isAmountInSelectedCurrencyVisible = usdValue != null && amount isGreaterThan BigInteger.ZERO
+            )
+        }
     }
 
     private fun AssetLite.getPrimaryParityValue(
@@ -39,7 +40,7 @@ internal class GetParityDisplayValueUseCase @Inject constructor(
         }
     }
 
-    private fun AssetLite.getPrimaryParityValue(): ParityValue {
+    private fun AssetLite.getSelectedParityValue(): ParityValue {
         return getPrimaryCurrencyAssetParityValue(amount, usdValue.orZero(), decimal)
     }
 

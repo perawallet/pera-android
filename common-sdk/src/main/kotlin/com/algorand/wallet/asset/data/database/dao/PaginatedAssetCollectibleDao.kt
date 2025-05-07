@@ -25,7 +25,8 @@ internal interface PaginatedAssetCollectibleDao {
         asset.verification_tier AS verification_tier,
         collectible.title AS title,
         collectible.primary_image_url AS primary_image_url,
-        collectible.collection_name AS collection_name
+        collectible.collection_name AS collection_name,
+        collectible.media_type AS media_type
     FROM asset_detail AS asset
     INNER JOIN asset_holding_table AS holding 
         ON asset.asset_id = holding.asset_id

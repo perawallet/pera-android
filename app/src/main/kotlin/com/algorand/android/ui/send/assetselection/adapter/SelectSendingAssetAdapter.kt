@@ -13,20 +13,20 @@
 package com.algorand.android.ui.send.assetselection.adapter
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.models.BaseDiffUtil
-import com.algorand.android.models.BaseSelectAssetItem
-import com.algorand.android.models.BaseSelectAssetItem.ItemType.SELECT_ASSET_TEM
-import com.algorand.android.models.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_AUDIO_ITEM
-import com.algorand.android.models.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_IMAGE_ITEM
-import com.algorand.android.models.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_MIXED_ITEM
-import com.algorand.android.models.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_NOT_SUPPORTED_ITEM
-import com.algorand.android.models.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_VIDEO_ITEM
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.SELECT_ASSET_TEM
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_AUDIO_ITEM
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_IMAGE_ITEM
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_MIXED_ITEM
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_NOT_SUPPORTED_ITEM
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_VIDEO_ITEM
 
 class SelectSendingAssetAdapter(onAssetClick: (Long) -> Unit) :
-    ListAdapter<BaseSelectAssetItem, BaseViewHolder<BaseSelectAssetItem>>(BaseDiffUtil()) {
+    PagingDataAdapter<BaseSelectAssetItem, BaseViewHolder<BaseSelectAssetItem>>(BaseDiffUtil()) {
 
     private val assetListener = SelectAssetItemViewHolder.SelectAssetItemListener(onAssetClick)
     private val collectibleListener = BaseSelectCollectibleItemViewHolder.SelectCollectibleItemListener(onAssetClick)
@@ -74,7 +74,9 @@ class SelectSendingAssetAdapter(onAssetClick: (Long) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<BaseSelectAssetItem>, position: Int) {
-        holder.bind(getItem(position))
+        if (position == RecyclerView.NO_POSITION || position >= itemCount) return
+        val item = getItem(position) ?: return
+        holder.bind(item)
     }
 
     companion object {

@@ -20,10 +20,15 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.R
 import com.algorand.android.core.transaction.TransactionSignBaseFragment
 import com.algorand.android.databinding.FragmentAssetSelectionBinding
+import com.algorand.android.models.AssetSelectionOptInPayload
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assetinbox.send.summary.ui.model.Arc59SendSummaryNavArgs
-import com.algorand.android.nft.ui.model.AssetSelectionPreview
+import com.algorand.android.ui.send.assetselection.AssetSelectionViewModel.ViewEvent.NavToAssetTransferAmountFragment
+import com.algorand.android.ui.send.assetselection.AssetSelectionViewModel.ViewEvent.NavToOptIn
+import com.algorand.android.ui.send.assetselection.AssetSelectionViewModel.ViewState.Content
+import com.algorand.android.ui.send.assetselection.AssetSelectionViewModel.ViewState.Content.ContentStateType
+import com.algorand.android.ui.send.assetselection.AssetSelectionViewModel.ViewState.Loading
 import com.algorand.android.ui.send.assetselection.adapter.SelectSendingAssetAdapter
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.viewbinding.viewBinding
@@ -46,8 +51,15 @@ class AssetSelectionFragment : TransactionSignBaseFragment(R.layout.fragment_ass
 
     private val assetSelectionAdapter = SelectSendingAssetAdapter(::onAssetClick)
 
-    private val assetSelectionPreviewCollector: suspend (preview: AssetSelectionPreview) -> Unit = {
+    private val assetSelectionPreviewCollector: suspend (AssetSelectionViewModel.ViewState) -> Unit = {
         updateUiWithPreview(it)
+    }
+
+    private val viewEventCollector: suspend (AssetSelectionViewModel.ViewEvent) -> Unit = {
+        when (it) {
+            is NavToAssetTransferAmountFragment -> navToAssetTransferAmountFragment(it.assetId)
+            is NavToOptIn -> navToArc59SendSummaryFragment(it.payload)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,26 +67,25 @@ class AssetSelectionFragment : TransactionSignBaseFragment(R.layout.fragment_ass
         showTransactionTipsIfNeed()
         initObservers()
         binding.assetsToSendRecyclerView.adapter = assetSelectionAdapter
+        assetSelectionViewModel.initViewState()
     }
 
     private fun initObservers() {
         viewLifecycleOwner.collectLatestOnLifecycle(
-            assetSelectionViewModel.assetSelectionPreview,
+            assetSelectionViewModel.state,
             assetSelectionPreviewCollector
+        )
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            assetSelectionViewModel.viewEvent,
+            viewEventCollector
         )
     }
 
-    private fun updateUiWithPreview(assetSelectionPreview: AssetSelectionPreview) {
-        with(assetSelectionPreview) {
-            binding.progressBar.loadingProgressBar.isVisible =
-                isAssetListLoadingVisible || isReceiverAccountOptInCheckLoadingVisible
-            assetList?.let { assetSelectionAdapter.submitList(it) }
-            navigateToOptInEvent?.consume()?.run {
-                navToArc59SendSummaryFragment(assetId, assetSelectionPreview)
-            }
-            navigateToAssetTransferAmountFragmentEvent?.consume()?.run {
-                navToAssetTransferAmountFragment(this)
-            }
+    private suspend fun updateUiWithPreview(state: AssetSelectionViewModel.ViewState) {
+        val isContentStateTypeLoading = (state is Content && state.type == ContentStateType.Loading)
+        binding.progressBar.loadingProgressBar.isVisible = state is Loading || isContentStateTypeLoading
+        if (state is Content) {
+            assetSelectionAdapter.submitData(state.assetListItems)
         }
     }
 
@@ -97,19 +108,14 @@ class AssetSelectionFragment : TransactionSignBaseFragment(R.layout.fragment_ass
         }
     }
 
-    private fun navToArc59SendSummaryFragment(
-        assetId: Long,
-        preview: AssetSelectionPreview
-    ) {
-        val receiverPublicKey = preview.assetTransaction.receiverUser?.publicKey ?: return
-        val senderPublicKey = preview.assetTransaction.senderAddress
+    private fun navToArc59SendSummaryFragment(payload: AssetSelectionOptInPayload) {
         nav(
             AssetSelectionFragmentDirections.actionAssetSelectionFragmentToArc59RequestOptInNavigation(
                 Arc59SendSummaryNavArgs(
-                    senderPublicKey = senderPublicKey,
-                    receiverPublicKey = receiverPublicKey,
-                    assetId = assetId,
-                    assetAmount = preview.assetTransaction.amount
+                    senderPublicKey = payload.senderAddress,
+                    receiverPublicKey = payload.receiverAddress,
+                    assetId = payload.assetId,
+                    assetAmount = payload.assetAmount
                 )
             )
         )

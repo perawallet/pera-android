@@ -1,0 +1,54 @@
+package com.algorand.wallet.account.webauthn.data.database.model
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+
+/**
+ * Represents a database entity for storing passkey information associated with a user and site.
+ *
+ * This entity is part of the Room persistence library, defining the structure of the "passkeys" table
+ * in the database. Each entry corresponds to the details of a passkey, including user information,
+ * credential data, and its association with a specific site.
+ *
+ * Database Table: "passkeys"
+ * - The primary key for this table is `id`, which is auto-generated.
+ * - An index is defined on the `credentialId` column to enforce uniqueness constraints.
+ *
+ * Fields:
+ * - `id`: Unique identifier for the passkey.
+ * - `userId`: Identifier of the user associated with the passkey.
+ * - `username`: Name of the user associated with the passkey.
+ * - `userHandle`: User handle linked to the passkey.
+ * - `credentialId`: Credential ID associated with the passkey (uniquely indexed).
+ * - `count`: Counter associated with the passkey, typically incremented with usage.
+ * - `lastUsedTimeMs`: Timestamp representing the last usage time of the passkey in milliseconds.
+ * - `siteId`: Foreign key referencing the site to which the passkey belongs.
+ *
+ * Relationships:
+ * - This entity is associated with the `SiteEntity` class via the `siteId` foreign key.
+ */
+@Entity(
+    tableName = "passkeys",
+    indices = [
+        Index("credentialId", unique = true),
+    ],
+)
+data class PasskeyEntity(
+    // Primary Key
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = 0,
+
+    // User Data
+    @ColumnInfo(name = "userId") val userId: String,
+    @ColumnInfo(name = "username") val username: String,
+    @ColumnInfo(name = "userHandle") val userHandle: String,
+
+    // Key Data
+    @ColumnInfo(name = "credentialId") val credentialId: String,
+    @ColumnInfo(name = "count") val count: Int,
+    @ColumnInfo(name = "lastUsedTimeMs") val lastUsedTimeMs: Long,
+
+    // Foreign Keys
+    @ColumnInfo(name = "siteId") val siteId: Long,
+)

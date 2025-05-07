@@ -1,6 +1,7 @@
 package com.algorand.wallet.asset.domain.model
 
 import com.algorand.wallet.account.info.domain.model.AssetStatus
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -15,8 +16,12 @@ data class AssetLite(
     val shortName: String?,
     val type: Type,
     val verificationTier: VerificationTier,
-    val assetStatus: AssetStatus
+    val assetStatus: AssetStatus,
+    val optedInAtRound: Long?
 ) {
+
+    val isAlgo: Boolean
+        get() = assetId == ALGO_ID
 
     val logoUrl: String?
         get() = type.logoUrl
@@ -30,7 +35,8 @@ data class AssetLite(
         data class Collectible(
             override val logoUrl: String?,
             val name: String,
-            val collectionName: String?
+            val collectionName: String?,
+            val mediaType: CollectibleMediaType
         ) : Type
     }
 }

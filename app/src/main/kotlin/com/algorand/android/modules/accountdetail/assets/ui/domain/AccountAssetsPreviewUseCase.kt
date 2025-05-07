@@ -25,14 +25,13 @@ import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionIte
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
+import com.algorand.android.modules.accountsorting.domain.usecase.GetAssetCollectibleLiteSortType
 import com.algorand.android.modules.assets.filter.domain.usecase.ShouldDisplayNFTInAssetsPreferenceUseCase
 import com.algorand.android.modules.assets.filter.domain.usecase.ShouldDisplayOptedInNFTInAssetsPreferenceUseCase
 import com.algorand.android.modules.assets.filter.domain.usecase.ShouldHideZeroBalanceAssetsPreferenceUseCase
 import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencyName
 import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbol
 import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrencySymbol
-import com.algorand.android.modules.sorting.assetsorting.domain.model.AssetSortPreference
-import com.algorand.android.modules.sorting.assetsorting.domain.usecase.AssetSortTypeUseCase
 import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibilityUseCase
 import com.algorand.android.utils.formatAsAlgoAmount
 import com.algorand.android.utils.formatAsAlgoDisplayString
@@ -41,7 +40,6 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequest
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQuery
-import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteSortType
 import com.algorand.wallet.asset.domain.usecase.GetAssetCollectibleLitesFlow
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -63,7 +61,7 @@ class AccountAssetsPreviewUseCase @Inject constructor(
     private val shouldHideZeroBalanceAssetsPreferenceUseCase: ShouldHideZeroBalanceAssetsPreferenceUseCase,
     private val shouldDisplayNFTInAssetsPreferenceUseCase: ShouldDisplayNFTInAssetsPreferenceUseCase,
     private val shouldDisplayOptedInNFTInAssetsPreferenceUseCase: ShouldDisplayOptedInNFTInAssetsPreferenceUseCase,
-    private val assetSortTypeUseCase: AssetSortTypeUseCase,
+    private val getAssetCollectibleLiteSortType: GetAssetCollectibleLiteSortType
 ) {
 
     fun getAccountDetailsItemsFlow(address: String, query: String?): Flow<List<AccountDetailAccountsItem>> {
@@ -102,17 +100,8 @@ class AccountAssetsPreviewUseCase @Inject constructor(
             filterOutZeroAmount = shouldHideZeroBalanceAssetsPreferenceUseCase(),
             filterOutCollectibles = !shouldDisplayNFTInAssetsPreferenceUseCase(),
             filterOutCollectiblesWithZeroAmount = !shouldDisplayOptedInNFTInAssetsPreferenceUseCase(),
-            sortType = getAssetQuerySortType()
+            sortType = getAssetCollectibleLiteSortType()
         )
-    }
-
-    private suspend fun getAssetQuerySortType(): AssetCollectibleLiteSortType {
-        return when (assetSortTypeUseCase.getSortPreferenceType()) {
-            AssetSortPreference.ALPHABETICALLY_ASCENDING -> AssetCollectibleLiteSortType.NameAscending
-            AssetSortPreference.ALPHABETICALLY_DESCENDING -> AssetCollectibleLiteSortType.NameDescending
-            AssetSortPreference.BALANCE_ASCENDING -> AssetCollectibleLiteSortType.ValueAscending
-            AssetSortPreference.BALANCE_DESCENDING -> AssetCollectibleLiteSortType.ValueDescending
-        }
     }
 
     private suspend fun hasInboxItem(address: String): Boolean {

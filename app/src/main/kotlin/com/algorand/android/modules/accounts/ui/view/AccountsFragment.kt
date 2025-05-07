@@ -210,6 +210,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 accountsFragmentMotionLayout.getTransition(R.id.accountsFragmentTransition).isEnabled = isVisible
             }
         }
+
+        if (isVisible == true && args.showConfetti) {
+            showConfetti()
+        }
     }
 
     private fun showConfetti() {
@@ -331,10 +335,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             navigateToNotifications()
         }
         binding.assetInboxAllAccountsButton.setOnClickListener { navToAssetInboxAllAccountsNavigation() }
-
-        if (args.showConfetti) {
-            showConfetti()
-        }
     }
 
     override fun onResume() {

@@ -88,7 +88,7 @@ interface PasskeyDao {
      * @param credentialId The unique credential ID associated with the passkey to retrieve.
      * @return The matching `PasskeyEntity` if it exists; otherwise, null.
      */
-    @Query("SELECT * FROM passkeys WHERE credentialId = :credentialId")
+    @Query("SELECT * FROM passkeys WHERE credential_id = :credentialId")
     suspend fun get(credentialId: String): PasskeyEntity?
 
     /**
@@ -96,7 +96,7 @@ interface PasskeyDao {
      *
      * @param credentialId The unique identifier of the passkey to be deleted.
      */
-    @Query("DELETE FROM passkeys WHERE credentialId = :credentialId")
+    @Query("DELETE FROM passkeys WHERE credential_id = :credentialId")
     suspend fun delete(credentialId: String)
 
     /**

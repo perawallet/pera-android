@@ -35,6 +35,6 @@ import androidx.room.PrimaryKey
 data class SiteEntity (
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = 0,
     @ColumnInfo(name = "url") val url: String = "",
-    @ColumnInfo(name = "packageName") val packageName: String = "",
+    @ColumnInfo(name = "package_name") val packageName: String = "",
     @ColumnInfo(name = "name") val name: String = "",
 )

@@ -25,7 +25,7 @@ data class SiteWithPasskeysQuery(
     @Embedded val site: SiteEntity,
     @Relation(
         parentColumn = "id",
-        entityColumn = "siteId",
+        entityColumn = "site_id",
     )
     val passkeys: List<PasskeyEntity>,
 )

@@ -32,23 +32,25 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "passkeys",
     indices = [
-        Index("credentialId", unique = true),
+        Index("credential_id", unique = true),
     ],
 )
 data class PasskeyEntity(
     // Primary Key
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = 0,
 
+    // Foreign Keys
+    @ColumnInfo(name = "site_id") val siteId: Long,
+    @ColumnInfo(name = "seed_id") val seedId: Long,
+
     // User Data
-    @ColumnInfo(name = "userId") val userId: String,
-    @ColumnInfo(name = "username") val username: String,
-    @ColumnInfo(name = "userHandle") val userHandle: String,
+    @ColumnInfo(name = "user_id") val userId: String,
+    @ColumnInfo(name = "user_name") val username: String,
+    @ColumnInfo(name = "user_handle") val userHandle: String,
 
     // Key Data
-    @ColumnInfo(name = "credentialId") val credentialId: String,
+    @ColumnInfo(name = "credential_id") val credentialId: String,
     @ColumnInfo(name = "count") val count: Int,
-    @ColumnInfo(name = "lastUsedTimeMs") val lastUsedTimeMs: Long,
+    @ColumnInfo(name = "last_used_time_ms") val lastUsedTimeMs: Long,
 
-    // Foreign Keys
-    @ColumnInfo(name = "siteId") val siteId: Long,
 )

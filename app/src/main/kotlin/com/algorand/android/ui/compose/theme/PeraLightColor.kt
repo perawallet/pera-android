@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -31,7 +31,7 @@ object PeraLightColor : PeraColor {
 
     override val layer = object : PeraColor.Layer {
         override val gray = ColorPalette.Gray.V200
-        override val grayLighter = ColorPalette.Gray.V50
+        override val grayLighter = ColorPalette.Gray.V100
         override val grayLightest = ColorPalette.White.Default
     }
 
@@ -141,7 +141,7 @@ object PeraLightColor : PeraColor {
 
         override val governor = object : PeraColor.Governor {
             override val wallet1Icon = ColorPalette.Turquoise.V600
-            override val wallet3Icon = ColorPalette.Salmon.V600
+            override val wallet3Icon = ColorPalette.Purple.V500
             override val wallet4Icon = ColorPalette.Blush.V600
         }
     }

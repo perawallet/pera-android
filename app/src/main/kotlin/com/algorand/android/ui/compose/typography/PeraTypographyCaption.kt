@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,33 +14,46 @@ package com.algorand.android.ui.compose.typography
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.algorand.android.R
+import com.algorand.android.ui.compose.widget.peraMono
+import com.algorand.android.ui.compose.widget.peraSans
 
 @Composable
-internal fun getPeraTypographyCaption(): PeraTypography.Caption {
-    val caption = TextStyle(
+fun getPeraTypographyCaption(): PeraTypography.Caption = PeraTypography.Caption(
+    sans = TextStyle(
+        fontFamily = peraSans,
+        fontWeight = FontWeight.Normal,
         fontSize = 11.sp,
-        lineHeight = 16.sp
+        lineHeight = 16.sp,
+        letterSpacing = 0.sp
+    ),
+    sansBold = TextStyle(
+        fontFamily = peraSans,
+        fontWeight = FontWeight.Bold,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.sp
+    ),
+    sansMedium = TextStyle(
+        fontFamily = peraSans,
+        fontWeight = FontWeight.Medium,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.sp
+    ),
+    mono = TextStyle(
+        fontFamily = peraMono,
+        fontWeight = FontWeight.Normal,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.sp
+    ),
+    monoMedium = TextStyle(
+        fontFamily = peraMono,
+        fontWeight = FontWeight.Medium,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.sp
     )
-    return PeraTypography.Caption(
-        sans = caption.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_regular, FontWeight.Normal)),
-        ),
-        sansMedium = caption.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_medium, FontWeight.Medium)),
-        ),
-        sansBold = caption.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_bold, FontWeight.Bold)),
-        ),
-        mono = caption.copy(
-            fontFamily = FontFamily(Font(R.font.dmmono_regular, FontWeight.Normal)),
-        ),
-        monoMedium = caption.copy(
-            fontFamily = FontFamily(Font(R.font.dmmono_medium, FontWeight.Medium)),
-        )
-    )
-}
+)

@@ -63,7 +63,7 @@ interface PasskeyDao {
      * @return A Flow that emits lists of all `PasskeyEntity` objects stored in the database.
      */
     @Query("SELECT * from passkeys")
-    suspend fun getAlLAsFlow(): Flow<List<PasskeyEntity>>
+    fun getAlLAsFlow(): Flow<List<PasskeyEntity>>
 
     /**
      * Retrieves the total number of entries in the "passkeys" table.

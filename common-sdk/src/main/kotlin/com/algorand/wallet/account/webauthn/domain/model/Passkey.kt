@@ -19,6 +19,7 @@ package com.algorand.wallet.account.webauthn.domain.model
  * - `credId`: A unique credential ID used to identify the passkey credential.
  */
 data class Passkey(
+    val seedId: String,
     val uid: String,
     val rpid: String,
     val username: String,

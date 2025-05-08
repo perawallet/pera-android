@@ -182,6 +182,7 @@ class PasskeyRepositoryImpl(
 
         passkeyDao.insert(
             PasskeyEntity(
+                seedId = passkeyMetadata.seedId,
                 userId = passkeyMetadata.uid,
                 username = passkeyMetadata.username,
                 userHandle = passkeyMetadata.displayName,

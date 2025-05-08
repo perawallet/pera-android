@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.algorand.wallet.account.webauthn.data.database.model.SiteEntity
 import com.algorand.wallet.account.webauthn.data.database.model.SiteWithPasskeysQuery
 import kotlinx.coroutines.flow.Flow
@@ -45,6 +46,7 @@ interface SiteDao {
      * @param url The URL of the site for which to retrieve the associated passkey data.
      * @return A `SiteWithPasskeysQuery` containing the site information and its associated passkeys, or null if no matching site is found.
      */
+    @Transaction
     @Query("SELECT * FROM sites WHERE url = :url")
     fun getPasskeys(url: String): SiteWithPasskeysQuery
 
@@ -55,6 +57,7 @@ interface SiteDao {
      * @return A Flow that emits lists of `SiteWithPasskeysQuery` objects, where each object contains
      *         a `SiteEntity` and the corresponding list of `PasskeyEntity` objects associated with it.
      */
+    @Transaction
     @Query("SELECT * FROM sites ORDER BY url")
     fun getPasskeysAsFlow(): Flow<List<SiteWithPasskeysQuery>>
 
@@ -83,7 +86,7 @@ interface SiteDao {
      * @return A Flow emitting lists of `SiteEntity` objects representing all entries in the "sites" table.
      */
     @Query("SELECT * from sites")
-    suspend fun getAlLAsFlow(): Flow<List<SiteEntity>>
+    fun getAlLAsFlow(): Flow<List<SiteEntity>>
 
     /**
      * Retrieves the total number of entries in the "sites" table.

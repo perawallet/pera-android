@@ -1,13 +1,13 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License
+ *  Copyright 2022-2025 Pera Wallet, LDA
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License
  */
 
 package com.algorand.android.ui.register.registerintro
@@ -20,28 +20,29 @@ import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -49,10 +50,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
@@ -64,6 +71,7 @@ import com.algorand.android.LoginNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OnboardingAccountType
@@ -72,9 +80,9 @@ import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.theme.PeraTheme.typography
 import com.algorand.android.ui.compose.widget.PeraCard
-import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.ui.compose.widget.text.PeraTitleText
 import com.algorand.android.utils.browser.PRIVACY_POLICY_URL
 import com.algorand.android.utils.browser.TERMS_AND_SERVICES_URL
@@ -85,7 +93,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
-// TODO: 16.02.2022 login_navigation graph should be separated into multiple graphs
+@Suppress("MagicNumber")
 @AndroidEntryPoint
 class RegisterIntroFragment : DaggerBaseFragment(0) {
 
@@ -150,79 +158,207 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
     @Suppress("LongMethod")
     @Composable
     fun RegisterTypeSelectionScreen(showBottomSheet: MutableState<Boolean>) {
-        val coroutineScope = rememberCoroutineScope()
-        val registerIntroPreview by registerIntroViewModel.registerIntroPreviewFlow.collectAsState()
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Top
         ) {
-            PeraHeadlineText(
-                text = stringResource(id = R.string.welcome_to_pera),
+            Row(
                 modifier = Modifier
-                    .padding(start = 24.dp)
-                    .align(alignment = Alignment.Start)
-            )
+                    .fillMaxWidth()
+                    .padding(start = 24.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    style = typography.title.regular.sansMedium,
+                    color = PeraTheme.colors.text.main,
+                    text = stringResource(
+                        if (registerIntroViewModel.isHdWalletToggleEnabled()) {
+                            R.string.add_a_wallet_or_account
+                        } else {
+                            R.string.welcome_to_pera
+                        }
+                    )
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                PeraIcon(
+                    painter = painterResource(R.drawable.pera_icon_3d),
+                    contentDescription = stringResource(id = R.string.add_a_wallet_or_account)
+                )
+            }
             Spacer(modifier = Modifier.weight(1f))
+
             // uncomment when we get add HD address screen designed
-//            if (registerIntroViewModel.isHdWalletToggleEnabled() &&
-//                (registerIntroPreview?.hasHdWallet ?: false)
-//            ) {
-//                ItemChoiceWidget(
-//                    modifier = Modifier,
-//                    title = stringResource(id = R.string.create_a_new_account),
-//                    description = stringResource(id = R.string.create_a_new_account_desc),
-//                    icon = ImageVector.vectorResource(R.drawable.ic_wallet),
-//                    iconContentDescription = stringResource(id = R.string.create_a_new_account_desc),
+//            if (registerIntroViewModel.isHdWalletToggleEnabled() && registerIntroPreview?.hasHdWallet == true) {
+//                CreateNewAccountCard(
 //                    onClick = {
-//                        coroutineScope.launch {
-//                            showBottomSheet.value = true
-//                        }
+//                        navToSelectUniversalWalletFragment()
 //                    }
 //                )
-//                Spacer(modifier = Modifier.height(40.dp))
+//                Spacer(modifier = Modifier.height(20.dp))
 //            }
-            GroupChoiceWidget(
-                modifier = Modifier,
-                title = stringResource(id = R.string.create_a_new_wallet),
-                description = stringResource(id = R.string.create_a_new_algorand_account_with),
-                icon = ImageVector.vectorResource(R.drawable.ic_wallet),
-                iconContentDescription = stringResource(id = R.string.create_a_new_algorand_account_with),
-                onClick = {
-                    coroutineScope.launch {
-                        if (registerIntroViewModel.isHdWalletToggleEnabled()) {
-                            showBottomSheet.value = true
-                        } else {
-                            navToBackupPassphraseInfoNavigation(
-                                OnboardingAccountType.Algo25
-                            )
-                        }
-                    }
-                }
-            )
-            Spacer(modifier = Modifier.height(40.dp))
-            GroupChoiceWidget(
-                modifier = Modifier,
-                title = stringResource(id = R.string.import_an_account),
-                description = stringResource(id = R.string.import_an_existing),
-                iconContentDescription = stringResource(id = R.string.import_an_existing),
-                icon = ImageVector.vectorResource(R.drawable.ic_key),
-                onClick = ::navToAccountRecoveryTypeSelectionFragment
-            )
-            Spacer(modifier = Modifier.height(40.dp))
-            GroupChoiceWidget(
-                modifier = Modifier,
-                title = stringResource(id = R.string.watch_an_account),
-                description = stringResource(id = R.string.monitor_an_algorand_account),
-                iconContentDescription = stringResource(id = R.string.monitor_an_algorand_account),
-                icon = ImageVector.vectorResource(R.drawable.ic_eye),
-                onClick = ::navToWatchAccountInfoFragment
-            )
+
+            if (registerIntroViewModel.isHdWalletToggleEnabled()) {
+                CreateWalletHdWidget(showBottomSheet)
+                ImportUniversalWalletWidget()
+            } else {
+                CreateAlgo25AccountWidget()
+                ImportAlgo25AccountWidget()
+            }
+
+            WatchAddressWidget()
             Spacer(modifier = Modifier.weight(1f))
+
             TermsAndPrivacy()
         }
+    }
+
+    @Suppress("LongMethod")
+    @Composable
+    fun CreateNewAccountCard(
+        modifier: Modifier = Modifier,
+        onClick: () -> Unit = {}
+    ) {
+        val icon = ImageVector.vectorResource(id = R.drawable.ic_hd_wallet)
+        val outlineColor = PeraTheme.colors.wallet.governor.wallet3Icon
+        val dashEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+
+        Box(
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+                .pointerInput(Unit) { detectTapGestures(onTap = { onClick() }) }
+                .drawBehind {
+                    drawRoundRect(
+                        color = outlineColor,
+                        size = Size(size.width, size.height),
+                        cornerRadius = CornerRadius(12.dp.toPx(), 12.dp.toPx()),
+                        style = Stroke(width = 2.dp.toPx(), pathEffect = dashEffect)
+                    )
+                }
+        ) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(PeraTheme.colors.layer.grayLighter)
+                        .padding(8.dp),
+                    imageVector = icon,
+                    contentDescription = stringResource(id = R.string.add_a_new_account_desc),
+                    tint = PeraTheme.colors.text.main
+                )
+
+                Spacer(Modifier.width(24.dp))
+                Column {
+                    Text(
+                        style = typography.body.regular.sansMedium,
+                        color = PeraTheme.colors.text.main,
+                        text = stringResource(id = R.string.add_a_new_account)
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        style = typography.footnote.sans,
+                        color = PeraTheme.colors.text.gray,
+                        text = stringResource(id = R.string.add_a_new_account_desc)
+                    )
+                }
+            }
+
+            Row(
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(y = (-12).dp)
+                    .background(PeraTheme.colors.background.primary)
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                PeraIcon(
+                    painter = painterResource(id = R.drawable.ic_info),
+                    contentDescription = stringResource(id = R.string.warning),
+                    modifier = Modifier.size(20.dp),
+                    tintColor = PeraTheme.colors.wallet.governor.wallet3Icon
+                )
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = stringResource(id = R.string.because_you_have_already),
+                    style = typography.footnote.sansMedium,
+                    color = PeraTheme.colors.wallet.governor.wallet3Icon
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun CreateWalletHdWidget(showBottomSheet: MutableState<Boolean>) {
+        GroupChoiceWidget(
+            modifier = Modifier.padding(horizontal = 12.dp),
+            title = stringResource(id = R.string.create_a_new_wallet),
+            description = stringResource(id = R.string.create_a_new_wallet_desc),
+            icon = ImageVector.vectorResource(R.drawable.ic_wallet),
+            iconContentDescription = stringResource(id = R.string.create_a_new_algorand_account_with),
+            onClick = {
+                showBottomSheet.value = true
+            }
+        )
+    }
+
+    @Composable
+    private fun CreateAlgo25AccountWidget() {
+        GroupChoiceWidget(
+            modifier = Modifier.padding(horizontal = 12.dp),
+            title = stringResource(id = R.string.create_a_new_account),
+            description = stringResource(id = R.string.create_a_new_algorand_account_with),
+            icon = ImageVector.vectorResource(R.drawable.ic_wallet),
+            iconContentDescription = stringResource(id = R.string.create_a_new_algorand_account_with),
+            onClick = {
+                navToBackupPassphraseInfoNavigation(
+                    OnboardingAccountType.Algo25
+                )
+            }
+        )
+    }
+
+    @Composable
+    private fun ImportUniversalWalletWidget() {
+        GroupChoiceWidget(
+            modifier = Modifier.padding(horizontal = 12.dp),
+            title = stringResource(id = R.string.import_a_wallet),
+            description = stringResource(id = R.string.import_an_existing),
+            iconContentDescription = stringResource(id = R.string.import_an_existing),
+            icon = ImageVector.vectorResource(R.drawable.ic_key),
+            onClick = ::navToAccountRecoveryTypeSelectionFragment
+        )
+    }
+
+    @Composable
+    private fun ImportAlgo25AccountWidget() {
+        GroupChoiceWidget(
+            modifier = Modifier.padding(horizontal = 12.dp),
+            title = stringResource(id = R.string.import_an_account),
+            description = stringResource(id = R.string.import_an_existing),
+            iconContentDescription = stringResource(id = R.string.import_an_existing),
+            icon = ImageVector.vectorResource(R.drawable.ic_key),
+            onClick = ::navToAccountRecoveryTypeSelectionFragment
+        )
+    }
+
+    @Composable
+    private fun WatchAddressWidget() {
+        GroupChoiceWidget(
+            modifier = Modifier.padding(horizontal = 12.dp),
+            title = stringResource(id = R.string.watch_an_address),
+            description = stringResource(id = R.string.monitor_an_algorand_address),
+            iconContentDescription = stringResource(id = R.string.monitor_an_algorand_address),
+            icon = ImageVector.vectorResource(R.drawable.ic_eye),
+            onClick = ::navToWatchAccountInfoFragment
+        )
     }
 
     @Composable
@@ -233,7 +369,9 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         }
         val annotatedString = createAnnotatedString()
 
-        PeraBodyText(
+        Text(
+            style = typography.footnote.sans,
+            color = PeraTheme.colors.text.gray,
             modifier = modifier
                 .pointerInput(Unit) {
                     detectTapGestures { pos ->
@@ -243,20 +381,20 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
                                 tag = "TERMS_AND_CONDITIONS",
                                 start = offset,
                                 end = offset
-                            ).firstOrNull()?.let { annotation ->
+                            ).firstOrNull()?.let {
                                 context.openTermsAndServicesUrl()
                             }
                             annotatedString.getStringAnnotations(
                                 tag = "PRIVACY_POLICY",
                                 start = offset,
                                 end = offset
-                            ).firstOrNull()?.let { annotation ->
+                            ).firstOrNull()?.let {
                                 context.openPrivacyPolicyUrl()
                             }
                         }
                     }
                 }
-                .padding(start = 43.dp, end = 43.dp, bottom = 24.dp),
+                .padding(horizontal = 43.dp, vertical = 24.dp),
             text = annotatedString,
             onTextLayout = {
                 layoutResult.value = it
@@ -266,7 +404,13 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
 
     @Composable
     private fun createAnnotatedString() = buildAnnotatedString {
-        val fullText = stringResource(id = R.string.by_creating_account)
+        val fullText = stringResource(
+            id = if (registerIntroViewModel.isHdWalletToggleEnabled()) {
+                R.string.by_adding_a_wallet
+            } else {
+                R.string.by_creating_account
+            }
+        )
         val termsAndConditionsText = stringResource(id = R.string.terms_and_conditions)
         val privacyPolicyText = stringResource(id = R.string.privacy_policy)
 
@@ -373,18 +517,14 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
             horizontalArrangement = Arrangement.Start
         ) {
             IconButton(
+                iconResId = R.drawable.ic_close,
                 onClick = {
                     coroutineScope.launch {
                         sheetState.hide()
                         onDismiss()
                     }
-                }) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    tint = PeraTheme.colors.text.main,
-                    contentDescription = stringResource(id = R.string.close)
-                )
-            }
+                }
+            )
             Spacer(Modifier.weight(0.1f))
 
             PeraTitleText(

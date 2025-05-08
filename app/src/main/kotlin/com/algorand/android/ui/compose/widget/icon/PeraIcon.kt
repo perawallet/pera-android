@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,13 +24,14 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 private fun PeraCoreIcon(
     modifier: Modifier = Modifier,
     painter: Painter,
-    contentDescription: String
+    contentDescription: String,
+    tintColor: Color?
 ) {
     Image(
+        modifier = modifier,
         painter = painter,
-        colorFilter = ColorFilter.tint(color = PeraTheme.colors.link.primary),
         contentDescription = contentDescription,
-        modifier = modifier
+        colorFilter = tintColor?.let { ColorFilter.tint(it) }
     )
 }
 
@@ -37,12 +39,14 @@ private fun PeraCoreIcon(
 fun PeraIcon(
     modifier: Modifier = Modifier,
     painter: Painter,
-    contentDescription: String
+    contentDescription: String,
+    tintColor: Color? = null
 ) {
     PeraCoreIcon(
         modifier = modifier,
         painter = painter,
-        contentDescription = contentDescription
+        contentDescription = contentDescription,
+        tintColor = tintColor
     )
 }
 

@@ -16,27 +16,31 @@ import com.algorand.wallet.account.local.data.database.dao.HdKeyDao
 import com.algorand.wallet.account.local.data.database.model.HdKeyEntity
 import com.algorand.wallet.account.local.data.mapper.entity.HdKeyEntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdKeyMapper
+import com.algorand.wallet.account.local.data.mapper.model.HdWalletSummaryMapper
+import com.algorand.wallet.account.local.domain.model.HdWalletSummary
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.Test
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Test
 
 class HdKeyAccountRepositoryImplTest {
 
     private val hdKeyDao: HdKeyDao = mockk()
     private val hdKeyEntityMapper: HdKeyEntityMapper = mockk()
     private val hdKeyMapper: HdKeyMapper = mockk()
+    private val hdWalletSummaryMapper: HdWalletSummaryMapper = mockk()
     private val aesPlatformManager: AESPlatformManager = mockk()
     private val sut = HdKeyAccountRepositoryImpl(
         hdKeyDao,
         hdKeyEntityMapper,
+        hdWalletSummaryMapper,
         hdKeyMapper,
         aesPlatformManager
     )
@@ -191,5 +195,43 @@ class HdKeyAccountRepositoryImplTest {
 
         coVerify { hdKeyDao.get("non_existent_address") }
         assertEquals(null, result)
+    }
+
+
+    @Test
+    fun `EXPECT wallet summaries WHEN getHdWalletSummaries is invoked`() = runTest {
+        val seedId1 = 100
+        val seedId2 = 200
+
+        val entities = listOf(
+            HdKeyEntity("addr1", byteArrayOf(1), byteArrayOf(2), seedId1, 0, 0, 0, 1),
+            HdKeyEntity("addr2", byteArrayOf(3), byteArrayOf(4), seedId1, 1, 0, 0, 1),
+            HdKeyEntity("addr3", byteArrayOf(5), byteArrayOf(6), seedId1, 2, 0, 0, 1),
+            HdKeyEntity("addr4", byteArrayOf(7), byteArrayOf(8), seedId2, 0, 0, 0, 1)
+        )
+
+        val expectedSummary1 = HdWalletSummary(
+            seedId = seedId1,
+            accountCount = 3,
+            maxAccountIndex = 2,
+            primaryValue = "",
+            secondaryValue = ""
+        )
+        val expectedSummary2 = HdWalletSummary(
+            seedId = seedId2,
+            accountCount = 1,
+            maxAccountIndex = 0,
+            primaryValue = "",
+            secondaryValue = ""
+        )
+
+        coEvery { hdKeyDao.getAll() } returns entities
+        coEvery { hdWalletSummaryMapper(entities[2], 3) } returns expectedSummary1
+        coEvery { hdWalletSummaryMapper(entities[3], 1) } returns expectedSummary2
+
+        val result = sut.getHdWalletSummaries()
+
+        coVerify { hdKeyDao.getAll() }
+        assertEquals(listOf(expectedSummary1, expectedSummary2), result)
     }
 }

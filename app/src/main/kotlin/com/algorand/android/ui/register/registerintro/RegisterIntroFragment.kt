@@ -33,20 +33,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,19 +65,15 @@ import com.algorand.android.LoginNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
-import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.RegisterIntroPreview
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.theme.PeraTheme.typography
-import com.algorand.android.ui.compose.widget.PeraCard
 import com.algorand.android.ui.compose.widget.icon.PeraIcon
-import com.algorand.android.ui.compose.widget.text.PeraTitleText
 import com.algorand.android.utils.browser.PRIVACY_POLICY_URL
 import com.algorand.android.utils.browser.TERMS_AND_SERVICES_URL
 import com.algorand.android.utils.browser.openPrivacyPolicyUrl
@@ -91,7 +81,6 @@ import com.algorand.android.utils.browser.openTermsAndServicesUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.launch
 
 @Suppress("MagicNumber")
 @AndroidEntryPoint
@@ -115,7 +104,6 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         (activity as MainActivity).hideProgress()
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -124,32 +112,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         return ComposeView(requireContext()).apply {
             setContent {
                 PeraTheme {
-                    val sheetState = rememberModalBottomSheetState(
-                        skipPartiallyExpanded = true
-                    )
-                    val showBottomSheet = rememberSaveable { mutableStateOf(false) }
-
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = PeraTheme.colors.background.primary
-                    ) {
-                        RegisterTypeSelectionScreen(showBottomSheet)
-                        if (showBottomSheet.value) {
-                            androidx.compose.material3.ModalBottomSheet(
-                                onDismissRequest = {
-                                    showBottomSheet.value = false
-                                },
-                                sheetState = sheetState,
-                                containerColor = PeraTheme.colors.background.primary,
-                                contentColor = PeraTheme.colors.text.main
-                            ) {
-                                BottomSheetContent(
-                                    sheetState = sheetState,
-                                    onDismiss = { showBottomSheet.value = false }
-                                )
-                            }
-                        }
-                    }
+                    RegisterTypeSelectionScreen()
                 }
             }
         }
@@ -157,7 +120,8 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
 
     @Suppress("LongMethod")
     @Composable
-    fun RegisterTypeSelectionScreen(showBottomSheet: MutableState<Boolean>) {
+    fun RegisterTypeSelectionScreen() {
+        val registerIntroPreview by registerIntroViewModel.registerIntroPreviewFlow.collectAsState()
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -189,19 +153,18 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
             }
             Spacer(modifier = Modifier.weight(1f))
 
-            // uncomment when we get add HD address screen designed
-//            if (registerIntroViewModel.isHdWalletToggleEnabled() && registerIntroPreview?.hasHdWallet == true) {
-//                CreateNewAccountCard(
-//                    onClick = {
-//                        navToSelectUniversalWalletFragment()
-//                    }
-//                )
-//                Spacer(modifier = Modifier.height(20.dp))
-//            }
+            if (registerIntroViewModel.isHdWalletToggleEnabled() && registerIntroPreview?.hasHdWallet == true) {
+                CreateNewAccountCard(
+                    onClick = {
+                        navToHdWalletSelectionFragment()
+                    }
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+            }
 
             if (registerIntroViewModel.isHdWalletToggleEnabled()) {
-                CreateWalletHdWidget(showBottomSheet)
-                ImportUniversalWalletWidget()
+                CreateWalletHdWidget()
+                ImportHdWalletWidget()
             } else {
                 CreateAlgo25AccountWidget()
                 ImportAlgo25AccountWidget()
@@ -296,16 +259,14 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
     }
 
     @Composable
-    private fun CreateWalletHdWidget(showBottomSheet: MutableState<Boolean>) {
+    private fun CreateWalletHdWidget() {
         GroupChoiceWidget(
             modifier = Modifier.padding(horizontal = 12.dp),
             title = stringResource(id = R.string.create_a_new_wallet),
             description = stringResource(id = R.string.create_a_new_wallet_desc),
             icon = ImageVector.vectorResource(R.drawable.ic_wallet),
             iconContentDescription = stringResource(id = R.string.create_a_new_algorand_account_with),
-            onClick = {
-                showBottomSheet.value = true
-            }
+            onClick = ::navToCreateWalletNameRegistrationFragment
         )
     }
 
@@ -317,16 +278,12 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
             description = stringResource(id = R.string.create_a_new_algorand_account_with),
             icon = ImageVector.vectorResource(R.drawable.ic_wallet),
             iconContentDescription = stringResource(id = R.string.create_a_new_algorand_account_with),
-            onClick = {
-                navToBackupPassphraseInfoNavigation(
-                    OnboardingAccountType.Algo25
-                )
-            }
+            onClick = ::navToCreateAccountNameRegistrationFragment
         )
     }
 
     @Composable
-    private fun ImportUniversalWalletWidget() {
+    private fun ImportHdWalletWidget() {
         GroupChoiceWidget(
             modifier = Modifier.padding(horizontal = 12.dp),
             title = stringResource(id = R.string.import_a_wallet),
@@ -450,90 +407,6 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         )
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun BottomSheetContent(
-        sheetState: SheetState,
-        onDismiss: () -> Unit
-    ) {
-        val coroutineScope = rememberCoroutineScope()
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(PeraTheme.colors.background.primary)
-                .padding(16.dp)
-        ) {
-            BottomSheetHeader(sheetState, onDismiss)
-
-            PeraCard(
-                title = stringResource(R.string.mnemonic_type_universal_title),
-                description = stringResource(R.string.mnemonic_type_universal_description),
-                footer = stringResource(R.string.mnemonic_type_universal_footer),
-                highlighted = stringResource(R.string.recommended),
-                onClick = {
-                    navToBackupPassphraseInfoNavigation(
-                        OnboardingAccountType.HdKey
-                    )
-                    coroutineScope.launch {
-                        sheetState.hide()
-                    }
-                }
-            )
-
-            PeraCard(
-                title = stringResource(R.string.mnemonic_type_algo25_title),
-                description = stringResource(R.string.mnemonic_type_algo25_description),
-                footer = stringResource(R.string.mnemonic_type_algo25_footer),
-                onClick = {
-                    navToBackupPassphraseInfoNavigation(
-                        OnboardingAccountType.Algo25
-                    )
-                    coroutineScope.launch {
-                        sheetState.hide()
-                    }
-                }
-            )
-        }
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Suppress("MagicNumber")
-    @Composable
-    fun BottomSheetHeader(
-        sheetState: SheetState,
-        onDismiss: () -> Unit
-    ) {
-        val coroutineScope = rememberCoroutineScope()
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = 10.dp,
-                    end = 40.dp,
-                    bottom = 24.dp
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            IconButton(
-                iconResId = R.drawable.ic_close,
-                onClick = {
-                    coroutineScope.launch {
-                        sheetState.hide()
-                        onDismiss()
-                    }
-                }
-            )
-            Spacer(Modifier.weight(0.1f))
-
-            PeraTitleText(
-                text = stringResource(id = R.string.bottom_sheet_mnemonic_type_title)
-            )
-            Spacer(Modifier.weight(1f))
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObservers()
@@ -546,13 +419,10 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
         )
     }
 
-    private fun navToBackupPassphraseInfoNavigation(onboardingAccountType: OnboardingAccountType) {
+    private fun navToHdWalletSelectionFragment() {
         registerIntroViewModel.logOnboardingWelcomeAccountCreateClickEvent()
         nav(
-            RegisterIntroFragmentDirections.actionRegisterIntroFragmentToBackupPassphraseInfoNavigation(
-                accountsToBackup = emptyArray(),
-                onboardingAccountType = onboardingAccountType
-            )
+            RegisterIntroFragmentDirections.actionRegisterIntroFragmentToHdWalletSelectionFragment()
         )
     }
 
@@ -564,6 +434,24 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
     private fun navToWatchAccountInfoFragment() {
         registerIntroViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_WELCOME_WATCH)
         nav(RegisterIntroFragmentDirections.actionRegisterIntroFragmentToWatchAccountInfoFragment())
+    }
+
+    private fun navToCreateWalletNameRegistrationFragment() {
+        registerIntroViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_CREATE_WALLET)
+        nav(
+            RegisterIntroFragmentDirections.actionRegisterIntroFragmentToCreateWalletNameRegistrationNavigation(
+                registerIntroViewModel.createHdKeyAccount()
+            )
+        )
+    }
+
+    private fun navToCreateAccountNameRegistrationFragment() {
+        registerIntroViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_CREATE_ACCOUNT)
+        nav(
+            RegisterIntroFragmentDirections.actionRegisterIntroFragmentToCreateAccountNameRegistrationNavigation(
+                registerIntroViewModel.createAlgo25Account()
+            )
+        )
     }
 
     private fun configureToolbar(isCloseButtonVisible: Boolean, isSkipButtonVisible: Boolean) {

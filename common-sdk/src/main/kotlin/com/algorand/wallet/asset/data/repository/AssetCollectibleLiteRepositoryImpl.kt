@@ -22,6 +22,9 @@ import com.algorand.wallet.asset.data.database.model.PaginatedAssetCollectibleIt
 import com.algorand.wallet.asset.data.mapper.model.AssetCollectibleLiteSortTypeQueryMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetLiteMapper
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQuery
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutCollectibles
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutCollectiblesWithZeroAmount
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutZeroAmount
 import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.asset.domain.repository.AssetCollectibleLiteRepository
 import javax.inject.Inject
@@ -48,11 +51,12 @@ internal class AssetCollectibleLiteRepositoryImpl @Inject constructor(
     private fun getPagingSource(query: AssetCollectibleLiteQuery): PagingSource<Int, PaginatedAssetCollectibleItemDto> {
         return paginatedAssetCollectibleDao.getPaginatedAssetCollectibleItems(
             addressList = query.addresses,
-            searchKeyword = query.searchKeyword,
-            filterOutZeroAmount = query.filterOutZeroAmount,
-            filterOutCollectibles = query.filterOutCollectibles,
-            filterOutCollectiblesWithZeroAmount = query.filterOutCollectiblesWithZeroAmount,
-            sortType = assetCollectibleLiteSortTypeQueryMapper(query.sortType)
+            searchKeyword = query.getSearchKeyword(),
+            filterOutZeroAmount = query.filters.contains(FilterOutZeroAmount),
+            filterOutCollectibles = query.filters.contains(FilterOutCollectibles),
+            filterOutCollectiblesWithZeroAmount = query.filters.contains(FilterOutCollectiblesWithZeroAmount),
+            sortType = assetCollectibleLiteSortTypeQueryMapper(query.sortType),
+            excludedAssetIds = query.getExcludedAssetIds()
         )
     }
 

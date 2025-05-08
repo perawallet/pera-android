@@ -15,8 +15,18 @@ package com.algorand.wallet.asset.domain.model
 data class AssetCollectibleLiteQuery(
     val addresses: List<String>,
     val sortType: AssetCollectibleLiteSortType,
-    val searchKeyword: String?,
-    val filterOutZeroAmount: Boolean,
-    val filterOutCollectibles: Boolean,
-    val filterOutCollectiblesWithZeroAmount: Boolean,
-)
+    val filters: List<AssetCollectibleLiteQueryFilter> = emptyList()
+) {
+
+    fun getExcludedAssetIds(): List<Long> {
+        return filters.filterIsInstance<AssetCollectibleLiteQueryFilter.ExcludedAssetIds>()
+            .flatMap { it.excludedAssetIds }
+            .distinct()
+    }
+
+    fun getSearchKeyword(): String? {
+        return filters.filterIsInstance<AssetCollectibleLiteQueryFilter.SearchKeyword>()
+            .firstOrNull()
+            ?.keyword
+    }
+}

@@ -42,6 +42,7 @@ internal interface PaginatedAssetCollectibleDao {
     FROM asset_detail AS asset
     INNER JOIN asset_holding_table AS holding 
         ON asset.asset_id = holding.asset_id
+        AND holding.asset_id NOT IN (:excludedAssetIds)
     LEFT JOIN collectible AS collectible 
         ON asset.asset_id = collectible.collectible_asset_id
     WHERE
@@ -74,6 +75,7 @@ internal interface PaginatedAssetCollectibleDao {
         filterOutZeroAmount: Boolean,
         filterOutCollectibles: Boolean,
         filterOutCollectiblesWithZeroAmount: Boolean,
-        sortType: String
+        sortType: String,
+        excludedAssetIds: List<Long>,
     ): PagingSource<Int, PaginatedAssetCollectibleItemDto>
 }

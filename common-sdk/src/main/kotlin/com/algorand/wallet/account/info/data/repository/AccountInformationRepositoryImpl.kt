@@ -100,17 +100,27 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
             val result = ConcurrentHashMap<String, AccountInformation?>()
             addresses.map { address ->
                 async {
-                    result[address] = accountInformationFetchHelper.fetchAccount(
-                        address,
-                        includeClosedAccount = false
-                    ).use(
-                        onSuccess = { response ->
-                            accountInformationCacheHelper.cacheAccountInformation(address, response)
-                        },
-                        onFailed = { _, _ ->
-                            null
+                    try {
+                        val accountInfo = accountInformationFetchHelper.fetchAccount(
+                            address,
+                            includeClosedAccount = false
+                        ).use(
+                            onSuccess = { response ->
+                                accountInformationCacheHelper.cacheAccountInformation(address, response)
+                            },
+                            onFailed = { _, _ ->
+                                null
+                            }
+                        )
+
+                        if (accountInfo != null) {
+                            result[address] = accountInfo
+                        } else {
+                            result[address] = null
                         }
-                    )
+                    } catch (e: Exception) {
+                        result[address] = null
+                    }
                 }
             }.awaitAll()
             result

@@ -161,3 +161,7 @@ fun interface IsAccountOptedInToAnyAsset {
 fun interface IsAccountOptedInToAnyApp {
     suspend operator fun invoke(address: String): Boolean
 }
+
+fun interface IsThereAnyAssetCanAddressOptOut {
+    suspend operator fun invoke(address: String): Boolean
+}

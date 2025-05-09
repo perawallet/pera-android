@@ -9,6 +9,7 @@ internal class IsAccountOptedInToAnyAssetUseCase @Inject constructor(
 
     override suspend fun invoke(address: String): Boolean {
         val assetAndAppsCount = accountInformationRepository.getAccountAssetsAndAppsCount(address) ?: return false
-        return assetAndAppsCount.optedInAssetsCount > 0 || assetAndAppsCount.totalCreatedAssetsCount > 0
+        val assetCountWithoutAlgo = assetAndAppsCount.optedInAssetsCount - 1
+        return assetCountWithoutAlgo > 0 || assetAndAppsCount.totalCreatedAssetsCount > 0
     }
 }

@@ -10,17 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.domain.usecase
+package com.algorand.android.ui.asset.remove.di
 
-import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
-import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
-import javax.inject.Inject
+import com.algorand.android.ui.asset.remove.viewmodel.RemoveAssetItemProcessor
+import com.algorand.android.ui.asset.remove.viewmodel.RemoveAssetItemProcessorImpl
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-internal class IsThereAnyAssetCanAddressOptOutUseCase @Inject constructor(
-    private val accountInformationRepository: AccountInformationRepository
-) : IsThereAnyAssetCanAddressOptOut {
+@Module
+@InstallIn(SingletonComponent::class)
+internal object RemoveAssetUiModule {
 
-    override suspend fun invoke(address: String): Boolean {
-        return accountInformationRepository.isThereAnyAssetCanAddressOptOut(address, ALGO_ID)
-    }
+    @Provides
+    fun provideRemoveAssetItemProcessor(impl: RemoveAssetItemProcessorImpl): RemoveAssetItemProcessor = impl
 }

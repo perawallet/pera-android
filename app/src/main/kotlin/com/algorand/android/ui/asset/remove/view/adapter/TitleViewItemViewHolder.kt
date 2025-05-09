@@ -10,19 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.assets.remove.ui.adapter
+package com.algorand.android.ui.asset.remove.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.databinding.ItemRemoveAssetTitleBinding
-import com.algorand.android.models.BaseRemoveAssetItem
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.ui.asset.remove.model.RemoveAssetHeaderItem
 
 class TitleViewItemViewHolder(
     private val binding: ItemRemoveAssetTitleBinding
-) : BaseViewHolder<BaseRemoveAssetItem>(binding.root) {
-    override fun bind(item: BaseRemoveAssetItem) {
-        if (item !is BaseRemoveAssetItem.TitleViewItem) return
+) : BaseViewHolder<RemoveAssetHeaderItem>(binding.root) {
+
+    override fun bind(item: RemoveAssetHeaderItem) {
+        if (item !is RemoveAssetHeaderItem.TitleViewItem) return
         binding.titleTextView.setText(item.titleTextRes)
     }
 

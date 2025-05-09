@@ -620,7 +620,7 @@
 
     <fragment
         android:id="@+id/removeAssetsFragment"
-        android:name="com.algorand.android.modules.assets.remove.ui.RemoveAssetsFragment"
+        android:name="com.algorand.android.ui.asset.remove.view.RemoveAssetsFragment"
         android:label="fragment_remove_assets"
         tools:layout="@layout/fragment_remove_assets">
         <argument

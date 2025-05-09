@@ -10,15 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.assets.remove.ui.mapper
+package com.algorand.android.ui.asset.remove.model
 
-import com.algorand.android.models.BaseRemoveAssetItem
-import com.algorand.android.modules.assets.remove.ui.model.RemoveAssetsPreview
-import javax.inject.Inject
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteSortType
 
-class RemoveAssetsPreviewMapper @Inject constructor() {
-
-    fun mapToRemoveAssetsPreview(removableAssetList: List<BaseRemoveAssetItem>): RemoveAssetsPreview {
-        return RemoveAssetsPreview(removableAssetList = removableAssetList)
-    }
-}
+data class RemoveAssetItemProcessorData(
+    val address: String,
+    val isThereAnyAssetCanAddressOptOut: Boolean,
+    val sortType: AssetCollectibleLiteSortType,
+    val searchKeyword: String
+)

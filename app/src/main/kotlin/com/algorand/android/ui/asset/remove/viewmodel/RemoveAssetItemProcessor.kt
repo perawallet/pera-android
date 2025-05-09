@@ -10,8 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.assets.remove.ui.model
+package com.algorand.android.ui.asset.remove.viewmodel
 
-import com.algorand.android.models.BaseRemoveAssetItem
+import androidx.paging.PagingData
+import com.algorand.android.ui.asset.remove.model.BaseRemoveAssetItem
+import com.algorand.android.ui.asset.remove.model.RemoveAssetItemProcessorData
+import kotlinx.coroutines.flow.Flow
 
-data class RemoveAssetsPreview(val removableAssetList: List<BaseRemoveAssetItem>)
+fun interface RemoveAssetItemProcessor {
+    fun getPagedAssetItems(data: RemoveAssetItemProcessorData): Flow<PagingData<BaseRemoveAssetItem>>
+}

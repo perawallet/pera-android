@@ -10,20 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.assets.remove.ui.adapter
+package com.algorand.android.ui.asset.remove.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.databinding.ItemRemoveAssetSearchBinding
-import com.algorand.android.models.BaseRemoveAssetItem
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.ui.asset.remove.model.RemoveAssetHeaderItem
 
 class SearchViewItemViewHolder(
     private val binding: ItemRemoveAssetSearchBinding,
     private val listener: SearchViewItemListener
-) : BaseViewHolder<BaseRemoveAssetItem>(binding.root) {
-    override fun bind(item: BaseRemoveAssetItem) {
-        if (item !is BaseRemoveAssetItem.SearchViewItem) return
+) : BaseViewHolder<RemoveAssetHeaderItem>(binding.root) {
+    override fun bind(item: RemoveAssetHeaderItem) {
+        if (item !is RemoveAssetHeaderItem.SearchViewItem) return
         binding.assetSearchView.apply {
             hint = resources.getString(item.searchViewHintResId)
             setOnTextChanged(listener::onSearchQueryUpdate)

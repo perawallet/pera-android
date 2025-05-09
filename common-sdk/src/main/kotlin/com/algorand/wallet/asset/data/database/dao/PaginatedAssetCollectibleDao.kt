@@ -26,7 +26,7 @@ internal interface PaginatedAssetCollectibleDao {
         holding.algo_address AS algo_address,
         holding.amount AS amount,
         holding.asset_status AS asset_status,
- (holding.amount * IFNULL(asset.usd_value, 0)) AS total_usd_value,
+        (holding.amount * IFNULL(asset.usd_value, 0)) AS total_usd_value,
         holding.opted_in_at_round AS opted_in_at_round,
         asset.asset_id AS asset_id,
         asset.name AS name,
@@ -43,6 +43,11 @@ internal interface PaginatedAssetCollectibleDao {
     INNER JOIN asset_holding_table AS holding 
         ON asset.asset_id = holding.asset_id
         AND holding.asset_id NOT IN (:excludedAssetIds)
+        AND (
+            (:filterOutZeroAmount = 0 AND :filterOutNonZeroAmount = 0) OR
+            (:filterOutZeroAmount = 1 AND holding.amount != 0) OR
+            (:filterOutNonZeroAmount = 1 AND holding.amount = 0)
+        )
     LEFT JOIN collectible AS collectible 
         ON asset.asset_id = collectible.collectible_asset_id
     WHERE
@@ -52,8 +57,6 @@ internal interface PaginatedAssetCollectibleDao {
          asset.asset_id LIKE '%' || :searchKeyword || '%' OR 
          asset.name LIKE '%' || :searchKeyword || '%' OR 
          collectible.title LIKE '%' || :searchKeyword || '%')
-    AND
-        (:filterOutZeroAmount = 0 OR holding.amount != 0)
     AND
         (:filterOutCollectibles = 0 OR collectible.title IS NULL)
     AND
@@ -73,6 +76,7 @@ internal interface PaginatedAssetCollectibleDao {
         addressList: List<String>,
         searchKeyword: String?,
         filterOutZeroAmount: Boolean,
+        filterOutNonZeroAmount: Boolean,
         filterOutCollectibles: Boolean,
         filterOutCollectiblesWithZeroAmount: Boolean,
         sortType: String,

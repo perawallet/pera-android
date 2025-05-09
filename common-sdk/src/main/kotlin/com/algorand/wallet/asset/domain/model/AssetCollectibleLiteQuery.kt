@@ -18,6 +18,12 @@ data class AssetCollectibleLiteQuery(
     val filters: List<AssetCollectibleLiteQueryFilter> = emptyList()
 ) {
 
+    constructor(
+        address: String,
+        sortType: AssetCollectibleLiteSortType,
+        filters: List<AssetCollectibleLiteQueryFilter> = emptyList()
+    ) : this(addresses = listOf(address), sortType = sortType, filters = filters)
+
     fun getExcludedAssetIds(): List<Long> {
         return filters.filterIsInstance<AssetCollectibleLiteQueryFilter.ExcludedAssetIds>()
             .flatMap { it.excludedAssetIds }

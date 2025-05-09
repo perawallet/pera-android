@@ -24,6 +24,7 @@ import com.algorand.wallet.asset.data.mapper.model.AssetLiteMapper
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQuery
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutCollectibles
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutCollectiblesWithZeroAmount
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutNonZeroAmount
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutZeroAmount
 import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.asset.domain.repository.AssetCollectibleLiteRepository
@@ -53,6 +54,7 @@ internal class AssetCollectibleLiteRepositoryImpl @Inject constructor(
             addressList = query.addresses,
             searchKeyword = query.getSearchKeyword(),
             filterOutZeroAmount = query.filters.contains(FilterOutZeroAmount),
+            filterOutNonZeroAmount = query.filters.contains(FilterOutNonZeroAmount),
             filterOutCollectibles = query.filters.contains(FilterOutCollectibles),
             filterOutCollectiblesWithZeroAmount = query.filters.contains(FilterOutCollectiblesWithZeroAmount),
             sortType = assetCollectibleLiteSortTypeQueryMapper(query.sortType),

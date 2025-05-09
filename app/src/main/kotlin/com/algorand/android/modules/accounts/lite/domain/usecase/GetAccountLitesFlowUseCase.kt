@@ -122,12 +122,12 @@ internal class GetAccountLitesFlowUseCase @Inject constructor(
             return null
         }
         val rekeyAuthAddress = accountPayload.accountInfoLiteInformation.rekeyAuthAddress
-        val accountType = getAccountType(address, rekeyAuthAddress, localAccounts) ?: return null
         val rekeyAuthAccountType = rekeyAuthAddress?.let { rekeyAdminAddress ->
             localAccounts.firstOrNull { it.algoAddress == rekeyAdminAddress }?.let {
                 getAccountRegistrationType(it)
             }
         }
+        val accountType = getAccountType(address, rekeyAuthAddress, localAccounts) ?: return null
 
         val algoBalance = accountPayload.accountInfoLiteInformation.algoBalance
         val algoAmountValue = getAlgoAmountValue(algoBalance)

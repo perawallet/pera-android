@@ -57,15 +57,11 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             AccountType.Rekeyed -> context.getString(R.string.no_auth)
             AccountType.RekeyedAuth -> {
                 val accountOriginalState = when (accountLite.registrationType) {
-                    AccountRegistrationType.Algo25, AccountRegistrationType.HdKey -> R.string.standard
                     AccountRegistrationType.LedgerBle -> R.string.ledger
                     AccountRegistrationType.NoAuth -> R.string.watch
                     else -> R.string.standard
                 }
                 val accountAuthState = when (accountLite.cachedInfo.rekeyAuthRegistrationType) {
-                    AccountRegistrationType.Algo25, AccountRegistrationType.HdKey -> {
-                        R.string.standard
-                    }
                     AccountRegistrationType.LedgerBle -> R.string.ledger
                     AccountRegistrationType.NoAuth -> R.string.watch
                     else -> R.string.standard

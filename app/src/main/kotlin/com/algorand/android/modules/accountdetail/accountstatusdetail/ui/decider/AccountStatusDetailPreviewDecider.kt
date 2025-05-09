@@ -56,11 +56,23 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             AccountType.Algo25 -> context.getString(R.string.standard)
             AccountType.Rekeyed -> context.getString(R.string.no_auth)
             AccountType.RekeyedAuth -> {
-                val hasValidSecretKey = accountLite.registrationType == AccountRegistrationType.Algo25
-                val accountOriginalState = if (hasValidSecretKey) R.string.standard else R.string.rekeyed
+                val accountOriginalState = when (accountLite.registrationType) {
+                    AccountRegistrationType.Algo25, AccountRegistrationType.HdKey -> R.string.standard
+                    AccountRegistrationType.LedgerBle -> R.string.ledger
+                    AccountRegistrationType.NoAuth -> R.string.watch
+                    else -> R.string.standard
+                }
+                val accountAuthState = when (accountLite.cachedInfo.rekeyAuthRegistrationType) {
+                    AccountRegistrationType.Algo25, AccountRegistrationType.HdKey -> {
+                        R.string.standard
+                    }
+                    AccountRegistrationType.LedgerBle -> R.string.ledger
+                    AccountRegistrationType.NoAuth -> R.string.watch
+                    else -> R.string.standard
+                }
                 val accountStateString = context.getString(R.string.rekeyed)
                 val accountOriginalStateString = context.getString(accountOriginalState)
-                val authAccountState = context.getString(R.string.standard)
+                val authAccountState = context.getString(accountAuthState)
                 context.getString(
                     R.string.account_state_transition,
                     accountStateString,
@@ -81,11 +93,12 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             AccountType.Algo25 -> R.string.your_account_is_a_standard
             AccountType.Rekeyed -> R.string.your_account_is_rekeyed_to_an
             AccountType.RekeyedAuth -> {
-                val hasValidSecretKey = accountLite.registrationType == AccountRegistrationType.Algo25
-                if (hasValidSecretKey) {
-                    R.string.your_account_is_rekeyed_to_another
-                } else {
-                    R.string.no_record_of_original_account
+                when (accountLite.cachedInfo.rekeyAuthRegistrationType) {
+                    AccountRegistrationType.Algo25, AccountRegistrationType.HdKey -> {
+                        R.string.your_account_is_rekeyed_to_another
+                    }
+                    AccountRegistrationType.LedgerBle -> R.string.your_account_is_rekeyed_to_an_account_on
+                    else -> R.string.your_account_is_rekeyed_to_unknown
                 }
             }
             null -> R.string.your_account_is_rekeyed_to_an

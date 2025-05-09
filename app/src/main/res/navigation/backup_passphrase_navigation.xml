@@ -18,7 +18,7 @@
 
     <include app:graph="@navigation/meld_navigation" />
 
-    <include app:graph="@navigation/backup_passphrase_account_name_navigation" />
+    <include app:graph="@navigation/create_account_name_registration_navigation" />
 
     <fragment
         android:id="@+id/backupPassphraseFragment"
@@ -27,8 +27,8 @@
         tools:layout="@layout/fragment_backup_passphrase">
         <argument
             android:name="accountToBackup"
-            app:nullable="true"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="accountCreation"
             app:argType="com.algorand.android.models.AccountCreation"
@@ -38,7 +38,7 @@
             app:destination="@id/passphraseValidationFragment" />
         <action
             android:id="@+id/action_backupPassphraseFragment_to_backupPassphraseAccountNameNavigation"
-            app:destination="@id/backupPassphraseAccountNameNavigation">
+            app:destination="@id/createAccountNameRegistrationNavigation">
             <argument
                 android:name="accountCreation"
                 app:argType="com.algorand.android.models.AccountCreation" />
@@ -52,8 +52,8 @@
         tools:layout="@layout/fragment_passphrase_validation">
         <argument
             android:name="accountToBackup"
-            app:nullable="true"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="accountCreation"
             app:argType="com.algorand.android.models.AccountCreation"
@@ -73,7 +73,7 @@
             app:nullable="true" />
         <action
             android:id="@+id/action_passphraseVerifiedInfoFragment_to_backupPassphraseAccountNameNavigation"
-            app:destination="@id/backupPassphraseAccountNameNavigation">
+            app:destination="@id/createAccountNameRegistrationNavigation">
             <argument
                 android:name="accountCreation"
                 app:argType="com.algorand.android.models.AccountCreation" />

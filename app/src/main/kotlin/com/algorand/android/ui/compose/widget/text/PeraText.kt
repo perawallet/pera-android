@@ -29,13 +29,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.peraSans
 
 @Composable
 fun PeraHeadlineText(
@@ -46,9 +44,7 @@ fun PeraHeadlineText(
         modifier = modifier,
         text = text,
         style = PeraTheme.typography.title.regular.sansMedium,
-        fontFamily = peraSans,
         color = PeraTheme.colors.text.main,
-        fontWeight = FontWeight.Medium,
     )
 }
 
@@ -62,9 +58,7 @@ fun PeraTitleText(
         modifier = modifier,
         text = text,
         style = PeraTheme.typography.body.large.sansMedium,
-        fontFamily = peraSans,
         color = color,
-        fontWeight = FontWeight.Medium,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
     )
@@ -81,9 +75,7 @@ fun PeraBodyText(
         modifier = modifier,
         text = text,
         style = PeraTheme.typography.body.regular.sansMedium,
-        fontFamily = peraSans,
         color = color,
-        fontWeight = FontWeight.Medium,
         overflow = TextOverflow.Ellipsis,
         textAlign = textAlign
     )
@@ -99,9 +91,7 @@ fun PeraBodyText(
         modifier = modifier,
         text = text,
         style = PeraTheme.typography.body.regular.sansMedium,
-        fontFamily = peraSans,
         color = PeraTheme.colors.text.gray,
-        fontWeight = FontWeight.Medium,
         overflow = TextOverflow.Ellipsis,
         onTextLayout = onTextLayout
     )
@@ -113,9 +103,7 @@ fun PeraLinkText(modifier: Modifier = Modifier, text: String) {
         modifier = modifier,
         text = text,
         style = PeraTheme.typography.body.regular.sansMedium,
-        fontFamily = peraSans,
         color = PeraTheme.colors.link.primary,
-        fontWeight = FontWeight.Medium
     )
 }
 
@@ -125,9 +113,17 @@ fun PeraScrimText(modifier: Modifier = Modifier, text: String) {
         modifier = modifier,
         text = text,
         style = PeraTheme.typography.body.regular.sansMedium,
-        fontFamily = peraSans,
         color = PeraTheme.colors.link.primary,
-        fontWeight = FontWeight.Medium
+    )
+}
+
+@Composable
+fun PeraFootnoteText(modifier: Modifier = Modifier, text: String) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = PeraTheme.typography.body.regular.sansMedium,
+        color = PeraTheme.colors.link.primary,
     )
 }
 
@@ -144,8 +140,6 @@ fun PeraWarningText(modifier: Modifier = Modifier, text: String) {
             modifier = Modifier.padding(start = 12.dp),
             text = text,
             style = PeraTheme.typography.body.regular.sansMedium,
-            fontFamily = peraSans,
-            fontWeight = FontWeight.Medium,
             color = PeraTheme.colors.status.negative,
         )
     }

@@ -10,3 +10,8 @@ val peraSans = FontFamily(
     Font(R.font.dmsans_medium, FontWeight.Medium),
     Font(R.font.dmsans_bold, FontWeight.Bold)
 )
+
+val peraMono = FontFamily(
+    Font(R.font.dmmono_regular, FontWeight.Normal),
+    Font(R.font.dmmono_medium, FontWeight.Medium),
+)

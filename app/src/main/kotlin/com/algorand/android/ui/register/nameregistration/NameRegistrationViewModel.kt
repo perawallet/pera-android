@@ -64,7 +64,8 @@ class NameRegistrationViewModel @Inject constructor(
 
     private fun updatePreviewWithHdWalletData() {
         viewModelScope.launch(Dispatchers.IO) {
-            walletId = (getMaxHdSeedId.invoke() ?: 0) + 1
+            val seeId = (accountCreation?.type as? AccountCreation.Type.HdKey)?.seedId
+            walletId = seeId ?: ((getMaxHdSeedId.invoke() ?: 0) + 1)
             walletId?.let {
                 nameRegistrationPreviewUseCase.getInitialPreviewWithHdWalletData(
                     walletId = it

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022-2025 Pera Wallet, LDA
+  ~ Copyright 2025 Pera Wallet, LDA
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -26,6 +26,10 @@
 
     <include app:graph="@navigation/asb_import_navigation" />
 
+    <include app:graph="@navigation/create_account_name_registration_navigation" />
+
+    <include app:graph="@navigation/create_wallet_name_registration_navigation" />
+
     <include app:graph="@navigation/backup_passphrase_info_navigation" />
 
     <action
@@ -44,7 +48,6 @@
             android:defaultValue="false"
             app:argType="boolean" />
     </action>
-
 
     <fragment
         android:id="@+id/registerIntroFragment"
@@ -68,15 +71,45 @@
             android:id="@+id/action_registerIntroFragment_to_asbImportNavigation"
             app:destination="@id/asbImportNavigation" />
         <action
-            android:id="@+id/action_registerIntroFragment_to_backupPassphraseInfoNavigation"
-            app:destination="@id/backupPassphraseInfoNavigation">
+            android:id="@+id/action_registerIntroFragment_to_hdWalletSelectionFragment"
+            app:destination="@id/hdWalletSelectionFragment" />
+        <action
+            android:id="@+id/action_registerIntroFragment_to_createWalletNameRegistrationNavigation"
+            app:destination="@id/createWalletNameRegistrationNavigation">
             <argument
-                android:name="accountsToBackup"
-                app:argType="string[]" />
+                android:name="accountCreation"
+                app:argType="com.algorand.android.models.AccountCreation"
+                app:nullable="true" />
+        </action>
+        <action
+            android:id="@+id/action_registerIntroFragment_to_createAccountNameRegistrationNavigation"
+            app:destination="@id/createAccountNameRegistrationNavigation">
             <argument
-                android:name="onboardingAccountType"
-                app:argType="com.algorand.android.models.OnboardingAccountType"
-                app:nullable="false" />
+                android:name="accountCreation"
+                app:argType="com.algorand.android.models.AccountCreation"
+                app:nullable="true" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/hdWalletSelectionFragment"
+        android:name="com.algorand.android.ui.register.selectwallet.HdWalletSelectionFragment"
+        android:label="HdWalletSelectionFragment">
+        <action
+            android:id="@+id/action_hdWalletSelectionFragment_to_createAccountNameRegistrationNavigation"
+            app:destination="@id/createAccountNameRegistrationNavigation">
+            <argument
+                android:name="accountCreation"
+                app:argType="com.algorand.android.models.AccountCreation"
+                app:nullable="true" />
+        </action>
+        <action
+            android:id="@+id/action_hdWalletSelectionFragment_to_createWalletNameRegistrationNavigation"
+            app:destination="@id/createWalletNameRegistrationNavigation">
+            <argument
+                android:name="accountCreation"
+                app:argType="com.algorand.android.models.AccountCreation"
+                app:nullable="true" />
         </action>
     </fragment>
 

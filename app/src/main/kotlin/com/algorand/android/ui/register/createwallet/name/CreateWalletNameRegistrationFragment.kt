@@ -10,25 +10,26 @@
  *  limitations under the License
  */
 
-package com.algorand.android.ui.register.watch.name
+package com.algorand.android.ui.register.createwallet.name
 
-import androidx.navigation.fragment.navArgs
 import com.algorand.android.models.AccountCreation
+import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.ui.register.nameregistration.BaseNameRegistrationFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class WatchAccountNameRegistrationFragment : BaseNameRegistrationFragment() {
+class CreateWalletNameRegistrationFragment : BaseNameRegistrationFragment() {
 
-    override val accountCreation: AccountCreation
-        get() = args.accountCreation
-
-    private val args: WatchAccountNameRegistrationFragmentArgs by navArgs()
+    override val accountCreation: AccountCreation?
+        get() = null
 
     override fun navToNextFragment() {
+        nameRegistrationViewModel.logEvent(PeraEvent.ONBOARDING_NAME_WALLET_COMPLETE)
         nav(
-            WatchAccountNameRegistrationFragmentDirections
-                .actionWatchAccountNameRegistrationFragmentToWatchAccountResultInfoFragment()
+            CreateWalletNameRegistrationFragmentDirections
+                .actionCreateWalletNameRegistrationFragmentToHomeNavigation(
+                    showConfetti = true
+                )
         )
     }
 }

@@ -34,7 +34,6 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
 import java.math.BigInteger
-import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -97,23 +96,29 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         addresses: List<String>
     ): Map<String, AccountInformation?> {
         return withContext(Dispatchers.IO) {
-            val result = ConcurrentHashMap<String, AccountInformation?>()
-            addresses.map { address ->
+            val results = addresses.map { address ->
                 async {
-                    result[address] = accountInformationFetchHelper.fetchAccount(
-                        address,
-                        includeClosedAccount = false
-                    ).use(
-                        onSuccess = { response ->
-                            accountInformationCacheHelper.cacheAccountInformation(address, response)
-                        },
-                        onFailed = { _, _ ->
-                            null
-                        }
-                    )
+                    try {
+                        val accountInfo = accountInformationFetchHelper.fetchAccount(
+                            address,
+                            includeClosedAccount = false
+                        ).use(
+                            onSuccess = { response ->
+                                accountInformationCacheHelper.cacheAccountInformation(address, response)
+                            },
+                            onFailed = { _, _ ->
+                                null
+                            }
+                        )
+                        Pair(address, accountInfo)
+                    } catch (e: Exception) {
+                        Pair(address, null)
+                    }
                 }
             }.awaitAll()
-            result
+
+            val resultMap = results.associate { it }
+            resultMap
         }
     }
 

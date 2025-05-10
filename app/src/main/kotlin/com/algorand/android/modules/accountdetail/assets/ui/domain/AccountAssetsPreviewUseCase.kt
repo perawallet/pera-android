@@ -40,6 +40,11 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequest
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQuery
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutCollectibles
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutCollectiblesWithZeroAmount
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutZeroAmount
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.SearchKeyword
 import com.algorand.wallet.asset.domain.usecase.GetAssetCollectibleLitesFlow
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -94,13 +99,16 @@ class AccountAssetsPreviewUseCase @Inject constructor(
     }
 
     private suspend fun getPaginationQuery(address: String, searchKeyword: String): AssetCollectibleLiteQuery {
+        val filters = mutableListOf<AssetCollectibleLiteQueryFilter>().apply {
+            if (shouldHideZeroBalanceAssetsPreferenceUseCase()) add(FilterOutZeroAmount)
+            if (!shouldDisplayNFTInAssetsPreferenceUseCase()) add(FilterOutCollectibles)
+            if (!shouldDisplayOptedInNFTInAssetsPreferenceUseCase()) add(FilterOutCollectiblesWithZeroAmount)
+            if (searchKeyword.isNotBlank()) add(SearchKeyword(searchKeyword))
+        }
         return AssetCollectibleLiteQuery(
             addresses = listOf(address),
-            searchKeyword = searchKeyword,
-            filterOutZeroAmount = shouldHideZeroBalanceAssetsPreferenceUseCase(),
-            filterOutCollectibles = !shouldDisplayNFTInAssetsPreferenceUseCase(),
-            filterOutCollectiblesWithZeroAmount = !shouldDisplayOptedInNFTInAssetsPreferenceUseCase(),
-            sortType = getAssetCollectibleLiteSortType()
+            sortType = getAssetCollectibleLiteSortType(),
+            filters = filters
         )
     }
 

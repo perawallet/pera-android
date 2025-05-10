@@ -10,15 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.assets.remove.ui.mapper
+package com.algorand.wallet.account.info.domain.usecase
 
-import com.algorand.android.models.BaseRemoveAssetItem
-import com.algorand.android.modules.assets.remove.ui.model.RemoveAssetsPreview
+import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import javax.inject.Inject
 
-class RemoveAssetsPreviewMapper @Inject constructor() {
+internal class IsThereAnyAssetCanAddressOptOutUseCase @Inject constructor(
+    private val accountInformationRepository: AccountInformationRepository
+) : IsThereAnyAssetCanAddressOptOut {
 
-    fun mapToRemoveAssetsPreview(removableAssetList: List<BaseRemoveAssetItem>): RemoveAssetsPreview {
-        return RemoveAssetsPreview(removableAssetList = removableAssetList)
+    override suspend fun invoke(address: String): Boolean {
+        return accountInformationRepository.isThereAnyAssetCanAddressOptOut(address, ALGO_ID)
     }
 }

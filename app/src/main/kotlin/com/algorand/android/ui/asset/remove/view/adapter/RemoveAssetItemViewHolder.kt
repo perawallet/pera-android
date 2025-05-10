@@ -10,16 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.assets.remove.ui.adapter
+package com.algorand.android.ui.asset.remove.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.databinding.ItemRemoveAssetBinding
-import com.algorand.android.models.BaseRemoveAssetItem
-import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem.RemoveAssetItem
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.models.ui.AccountAssetItemButtonState
+import com.algorand.android.ui.asset.remove.model.BaseRemoveAssetItem
+import com.algorand.android.ui.asset.remove.model.BaseRemoveAssetItem.RemoveAssetItem
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 
 class RemoveAssetItemViewHolder(
@@ -29,6 +29,7 @@ class RemoveAssetItemViewHolder(
 
     override fun bind(item: BaseRemoveAssetItem) {
         if (item !is RemoveAssetItem) return
+        if (item.type !is RemoveAssetItem.RemoveAssetItemType.Asset) return
         with(item) {
             setActionButtonState(actionItemButtonState)
             setAssetStartIconDrawable(assetDrawableProvider = baseAssetDrawableProvider)
@@ -36,7 +37,7 @@ class RemoveAssetItemViewHolder(
             setAssetDescriptionText(shortName.assetName)
             setAssetPrimaryValue(formattedCompactAmount)
             setAssetSecondaryValue(formattedSelectedCurrencyCompactValue)
-            setAssetVerificationTier(verificationTierConfiguration)
+            setAssetVerificationTier(item.type.verificationTierConfiguration)
             setClickListeners(this)
         }
     }

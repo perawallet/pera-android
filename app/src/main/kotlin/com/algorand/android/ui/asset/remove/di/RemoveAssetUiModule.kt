@@ -10,11 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.data.mapper.model
+package com.algorand.android.ui.asset.remove.di
 
-import com.algorand.wallet.asset.data.database.model.PaginatedAssetCollectibleItemDto
-import com.algorand.wallet.asset.domain.model.AssetLite
+import com.algorand.android.ui.asset.remove.viewmodel.RemoveAssetItemProcessor
+import com.algorand.android.ui.asset.remove.viewmodel.RemoveAssetItemProcessorImpl
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-internal fun interface AssetLiteMapper {
-    operator fun invoke(dto: PaginatedAssetCollectibleItemDto): AssetLite
+@Module
+@InstallIn(SingletonComponent::class)
+internal object RemoveAssetUiModule {
+
+    @Provides
+    fun provideRemoveAssetItemProcessor(impl: RemoveAssetItemProcessorImpl): RemoveAssetItemProcessor = impl
 }

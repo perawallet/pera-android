@@ -10,11 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.asset.data.mapper.model
+package com.algorand.android.ui.asset.remove.model
 
-import com.algorand.wallet.asset.data.database.model.PaginatedAssetCollectibleItemDto
-import com.algorand.wallet.asset.domain.model.AssetLite
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteSortType
 
-internal fun interface AssetLiteMapper {
-    operator fun invoke(dto: PaginatedAssetCollectibleItemDto): AssetLite
-}
+data class RemoveAssetItemProcessorData(
+    val address: String,
+    val isThereAnyAssetCanAddressOptOut: Boolean,
+    val sortType: AssetCollectibleLiteSortType,
+    val searchKeyword: String
+)

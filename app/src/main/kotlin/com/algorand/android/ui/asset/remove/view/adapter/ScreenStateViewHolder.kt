@@ -7,19 +7,18 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- *  limitations under the License
- *
+ * limitations under the License
  */
 
-package com.algorand.android.modules.assets.remove.ui
+package com.algorand.android.ui.asset.remove.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemScreenStateViewBinding
-import com.algorand.android.models.BaseRemoveAssetItem
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.ui.asset.remove.model.BaseRemoveAssetItem
 
 class ScreenStateViewHolder(
     private val binding: ItemScreenStateViewBinding

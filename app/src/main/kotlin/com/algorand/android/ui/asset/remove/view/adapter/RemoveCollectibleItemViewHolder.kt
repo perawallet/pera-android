@@ -10,23 +10,23 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.assets.remove.ui.adapter
+package com.algorand.android.ui.asset.remove.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.databinding.ItemRemoveCollectibleBinding
-import com.algorand.android.models.BaseRemoveAssetItem
-import com.algorand.android.models.BaseRemoveAssetItem.BaseRemovableItem.BaseRemoveCollectibleItem
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.ui.asset.remove.model.BaseRemoveAssetItem
+import com.algorand.android.ui.asset.remove.model.BaseRemoveAssetItem.RemoveAssetItem
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
 
-abstract class BaseRemoveCollectibleItemViewHolder(
+class RemoveCollectibleItemViewHolder(
     private val binding: ItemRemoveCollectibleBinding,
     private val listener: CollectibleRemovalItemListener
 ) : BaseViewHolder<BaseRemoveAssetItem>(binding.root) {
 
     override fun bind(item: BaseRemoveAssetItem) {
-        if (item !is BaseRemoveCollectibleItem) return
+        if (item !is RemoveAssetItem) return
         with(binding.collectibleStatefulItemView) {
             with(item) {
                 bindImage(baseAssetDrawableProvider = baseAssetDrawableProvider)
@@ -51,7 +51,7 @@ abstract class BaseRemoveCollectibleItemViewHolder(
         }
     }
 
-    private fun setClickListeners(removeCollectibleListItem: BaseRemoveCollectibleItem) {
+    private fun setClickListeners(removeCollectibleListItem: RemoveAssetItem) {
         with(binding.collectibleStatefulItemView) {
             setOnClickListener { listener.onItemClick(removeCollectibleListItem.id) }
             setActionButtonClickListener { listener.onActionButtonClick(removeCollectibleListItem) }
@@ -59,17 +59,16 @@ abstract class BaseRemoveCollectibleItemViewHolder(
     }
 
     interface CollectibleRemovalItemListener {
-        fun onActionButtonClick(removeAssetListItem: BaseRemoveCollectibleItem)
+        fun onActionButtonClick(removeAssetListItem: RemoveAssetItem)
         fun onItemClick(collectibleId: Long)
     }
 
-    protected interface RemoveCollectibleItemViewHolderCreator {
-        fun create(parent: ViewGroup, listener: CollectibleRemovalItemListener): BaseRemoveCollectibleItemViewHolder
-    }
-
     companion object {
-        fun createItemRemoveCollectibleBinding(parent: ViewGroup): ItemRemoveCollectibleBinding {
-            return ItemRemoveCollectibleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        fun create(parent: ViewGroup, listener: CollectibleRemovalItemListener): RemoveCollectibleItemViewHolder {
+            return RemoveCollectibleItemViewHolder(
+                ItemRemoveCollectibleBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                listener
+            )
         }
     }
 }

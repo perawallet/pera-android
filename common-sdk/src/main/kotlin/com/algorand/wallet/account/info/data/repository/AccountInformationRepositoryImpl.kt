@@ -297,6 +297,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun isThereAnyAssetCanAddressOptOut(address: String, algoId: Long): Boolean {
+        return assetHoldingDao.isThereAnyAssetCanAddressOptOut(address, algoId)
+    }
+
     companion object {
         private const val DEFAULT_EARLIEST_LAST_FETCHED_ROUND = 0L
     }

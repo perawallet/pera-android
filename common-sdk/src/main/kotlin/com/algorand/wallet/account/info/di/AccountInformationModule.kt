@@ -91,6 +91,8 @@ import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccountUs
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAnyLocalAccount
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccountUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsThereAnyAssetCanAddressOptOut
+import com.algorand.wallet.account.info.domain.usecase.IsThereAnyAssetCanAddressOptOutUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccount
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccountUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
@@ -419,4 +421,9 @@ internal object AccountInformationModule {
 
     @Provides
     fun provideAssetStatusMapper(impl: AssetStatusMapperImpl): AssetStatusMapper = impl
+
+    @Provides
+    fun provideIsThereAnyAssetCanAddressOptOut(
+        useCase: IsThereAnyAssetCanAddressOptOutUseCase
+    ): IsThereAnyAssetCanAddressOptOut = useCase
 }

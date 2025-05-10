@@ -10,11 +10,12 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.assets.remove.ui
+package com.algorand.android.ui.asset.remove.view
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ConcatAdapter
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
@@ -22,12 +23,15 @@ import com.algorand.android.databinding.FragmentRemoveAssetsBinding
 import com.algorand.android.models.AssetAction
 import com.algorand.android.models.AssetActionResult
 import com.algorand.android.models.AssetTransaction
-import com.algorand.android.models.BaseRemoveAssetItem
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.assets.action.transferbalance.TransferBalanceActionBottomSheet.Companion.TRANSFER_ASSET_ACTION_RESULT
-import com.algorand.android.modules.assets.remove.ui.adapter.RemoveAssetAdapter
-import com.algorand.android.modules.assets.remove.ui.model.RemoveAssetsPreview
+import com.algorand.android.ui.asset.remove.model.BaseRemoveAssetItem.RemoveAssetItem
+import com.algorand.android.ui.asset.remove.model.RemoveAssetHeaderItem
+import com.algorand.android.ui.asset.remove.view.RemoveAssetsViewModel.ViewState.Content
+import com.algorand.android.ui.asset.remove.view.RemoveAssetsViewModel.ViewState.Idle
+import com.algorand.android.ui.asset.remove.view.adapter.RemoveAssetAdapter
+import com.algorand.android.ui.asset.remove.view.adapter.RemoveAssetHeaderAdapter
 import com.algorand.android.utils.ExcludedViewTypesDividerItemDecoration
 import com.algorand.android.utils.addCustomDivider
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -52,10 +56,6 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
     private val binding by viewBinding(FragmentRemoveAssetsBinding::bind)
 
     private val removeAssetAdapterListener = object : RemoveAssetAdapter.RemoveAssetAdapterListener {
-        override fun onSearchQueryUpdate(query: String) {
-            removeAssetsViewModel.updateSearchingQuery(query)
-        }
-
         override fun onAssetItemClick(assetId: Long) {
             navToAsaProfile(assetId)
         }
@@ -64,21 +64,35 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
             navToCollectibleProfile(collectibleId)
         }
 
-        override fun onCollectibleRemoveClick(
-            baseRemoveAssetItem: BaseRemoveAssetItem.BaseRemovableItem.BaseRemoveCollectibleItem
-        ) {
-            onRemoveCollectibleClick(baseRemoveAssetItem)
+        override fun onCollectibleRemoveClick(removeAssetItem: RemoveAssetItem) {
+            onRemoveCollectibleClick(removeAssetItem)
         }
 
-        override fun onAssetRemoveClick(baseRemoveAssetItem: BaseRemoveAssetItem.BaseRemovableItem.RemoveAssetItem) {
-            onRemoveAssetClick(baseRemoveAssetItem)
+        override fun onAssetRemoveClick(removeAssetItem: RemoveAssetItem) {
+            onRemoveAssetClick(removeAssetItem)
+        }
+    }
+
+    private val removeAssetHeaderAdapterListener = object : RemoveAssetHeaderAdapter.RemoveAssetHeaderAdapterListener {
+        override fun onSearchQueryUpdate(query: String) {
+            removeAssetsViewModel.updateSearchingQuery(query)
         }
     }
 
     private val removeAssetAdapter = RemoveAssetAdapter(removeAssetAdapterListener)
 
-    private val removeAssetsPreviewCollector: suspend (RemoveAssetsPreview?) -> Unit = { preview ->
-        if (preview != null) updatePreview(preview)
+    private val removeAssetHeaderAdapter = RemoveAssetHeaderAdapter(removeAssetHeaderAdapterListener)
+
+    private val concatAdapter = ConcatAdapter(removeAssetHeaderAdapter, removeAssetAdapter)
+
+    private val viewStateCollector: suspend (RemoveAssetsViewModel.ViewState) -> Unit = { state ->
+        when (state) {
+            Idle -> Unit
+            is Content -> {
+                removeAssetHeaderAdapter.submitList(state.headerItems)
+                removeAssetAdapter.submitData(state.removeAssetItems)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,35 +100,29 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
         setupToolbar()
         setupRecyclerView()
         initObservers()
+        removeAssetsViewModel.initializeViewState()
     }
 
     private fun setupToolbar() {
         getAppToolbar()?.configure(toolbarConfiguration)
     }
 
-    private fun updatePreview(preview: RemoveAssetsPreview) {
-        removeAssetAdapter.submitList(preview.removableAssetList)
-    }
-
     private fun setupRecyclerView() {
         binding.assetsRecyclerView.apply {
-            adapter = removeAssetAdapter
+            adapter = concatAdapter
             addCustomDivider(
                 drawableResId = R.drawable.horizontal_divider_80_24dp,
                 showLast = false,
-                divider = ExcludedViewTypesDividerItemDecoration(BaseRemoveAssetItem.excludedItemFromDivider)
+                divider = ExcludedViewTypesDividerItemDecoration(RemoveAssetHeaderItem.excludedItemFromDivider)
             )
         }
     }
 
     private fun initObservers() {
-        viewLifecycleOwner.collectLatestOnLifecycle(
-            removeAssetsViewModel.removeAssetsPreviewFlow,
-            removeAssetsPreviewCollector
-        )
+        viewLifecycleOwner.collectLatestOnLifecycle(removeAssetsViewModel.state, viewStateCollector)
     }
 
-    private fun onRemoveAssetClick(removeAssetItem: BaseRemoveAssetItem.BaseRemovableItem) {
+    private fun onRemoveAssetClick(removeAssetItem: RemoveAssetItem) {
         val hasBalanceInAccount = removeAssetItem.amount isGreaterThan BigInteger.ZERO
         if (hasBalanceInAccount) {
             navToTransferBalanceActionBottomSheet(removeAssetItem)
@@ -123,9 +131,7 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
         }
     }
 
-    private fun onRemoveCollectibleClick(
-        removeAssetItem: BaseRemoveAssetItem.BaseRemovableItem.BaseRemoveCollectibleItem
-    ) {
+    private fun onRemoveCollectibleClick(removeAssetItem: RemoveAssetItem) {
         val hasBalanceInAccount = removeAssetItem.amount isGreaterThan BigInteger.ZERO
         if (hasBalanceInAccount) {
             navToTransferBalanceActionBottomSheet(removeAssetItem)
@@ -152,44 +158,35 @@ class RemoveAssetsFragment : BaseFragment(R.layout.fragment_remove_assets) {
         )
     }
 
-    private fun navToTransferBalanceActionBottomSheet(removeAssetItem: BaseRemoveAssetItem.BaseRemovableItem) {
+    private fun navToTransferBalanceActionBottomSheet(removeAssetItem: RemoveAssetItem) {
         nav(
             RemoveAssetsFragmentDirections.actionRemoveAssetsFragmentToAssetTransferBalanceActionNavigation(
-                AssetAction(
-                    assetId = removeAssetItem.id,
-                    assetFullName = removeAssetItem.name,
-                    publicKey = removeAssetsViewModel.accountAddress
-                )
+                assetAction = createAssetAction(removeAssetItem)
             )
         )
     }
 
-    private fun navToRemoveAssetActionBottomSheet(removeAssetItem: BaseRemoveAssetItem.BaseRemovableItem) {
+    private fun navToRemoveAssetActionBottomSheet(removeAssetItem: RemoveAssetItem) {
         nav(
             RemoveAssetsFragmentDirections.actionRemoveAssetsFragmentToAssetRemovalActionNavigation(
-                AssetAction(
-                    assetId = removeAssetItem.id,
-                    publicKey = removeAssetsViewModel.accountAddress,
-                    assetFullName = removeAssetItem.name
-                )
+                assetAction = createAssetAction(removeAssetItem)
             )
         )
     }
 
-    private fun navToOptOutCollectibleActionBottomSheet(
-        removeAssetItem: BaseRemoveAssetItem.BaseRemovableItem.BaseRemoveCollectibleItem
-    ) {
-        val assetAction = with(removeAssetItem) {
-            AssetAction(
-                assetId = id,
-                publicKey = removeAssetsViewModel.accountAddress,
-                assetFullName = name
-            )
-        }
+    private fun navToOptOutCollectibleActionBottomSheet(removeAssetItem: RemoveAssetItem) {
         nav(
             RemoveAssetsFragmentDirections.actionRemoveAssetsFragmentToNftOptOutConfirmationNavigation(
-                assetAction = assetAction
+                assetAction = createAssetAction(removeAssetItem)
             )
+        )
+    }
+
+    private fun createAssetAction(removeAssetItem: RemoveAssetItem): AssetAction {
+        return AssetAction(
+            assetId = removeAssetItem.id,
+            assetFullName = removeAssetItem.name,
+            publicKey = removeAssetsViewModel.accountAddress
         )
     }
 

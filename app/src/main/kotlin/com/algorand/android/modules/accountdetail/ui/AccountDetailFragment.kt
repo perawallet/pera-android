@@ -44,7 +44,6 @@ import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
 import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragment
-import com.algorand.android.modules.accountdetail.collectibles.ui.AccountCollectiblesFragment
 import com.algorand.android.modules.accountdetail.haveyoubackedupconfirmation.ui.HaveYouBackedUpAccountConfirmationBottomSheet.Companion.HAVE_YOU_BACKED_UP_ACCOUNT_CONFIRMATION_KEY
 import com.algorand.android.modules.accountdetail.history.ui.AccountHistoryFragment
 import com.algorand.android.modules.accountdetail.removeaccount.ui.RemoveAccountConfirmationBottomSheet.Companion.ACCOUNT_REMOVE_CONFIRMATION_KEY
@@ -58,6 +57,7 @@ import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetai
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.ui.accountoptions.AccountOptionsBottomSheet.Companion.ACCOUNT_REMOVE_ACTION_KEY
 import com.algorand.android.ui.accounts.RenameAccountBottomSheet
+import com.algorand.android.ui.asset.collectible.listing.account.view.AccountCollectiblesFragment
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.emptyString
 import com.algorand.android.utils.extensions.collectOnLifecycle

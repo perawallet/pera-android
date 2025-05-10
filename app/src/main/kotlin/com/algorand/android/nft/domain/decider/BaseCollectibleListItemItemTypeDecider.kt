@@ -15,22 +15,22 @@ package com.algorand.android.nft.domain.decider
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType.GRID
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType.LINEAR_VERTICAL
-import com.algorand.android.nft.ui.model.BaseCollectibleListItem
+import com.algorand.android.ui.asset.collectible.listing.model.CollectibleListItem
 import javax.inject.Inject
 
 class BaseCollectibleListItemItemTypeDecider @Inject constructor() {
 
-    fun decideSimpleNFTViewType(nftListingViewType: NFTListingViewType): BaseCollectibleListItem.ItemType {
+    fun decideSimpleNFTViewType(nftListingViewType: NFTListingViewType): CollectibleListItem.ItemType {
         return when (nftListingViewType) {
-            LINEAR_VERTICAL -> BaseCollectibleListItem.ItemType.LINEAR_VERTICAL_SIMPLE_NFT_ITEM
-            GRID -> BaseCollectibleListItem.ItemType.GRID_SIMPLE_NFT_ITEM
+            LINEAR_VERTICAL -> CollectibleListItem.ItemType.LINEAR_VERTICAL_SIMPLE_NFT_ITEM
+            GRID -> CollectibleListItem.ItemType.GRID_SIMPLE_NFT_ITEM
         }
     }
 
-    fun decideSimplePendingNFTViewType(nftListingViewType: NFTListingViewType): BaseCollectibleListItem.ItemType {
+    fun decideSimplePendingNFTViewType(nftListingViewType: NFTListingViewType): CollectibleListItem.ItemType {
         return when (nftListingViewType) {
-            LINEAR_VERTICAL -> BaseCollectibleListItem.ItemType.LINEAR_VERTICAL_SIMPLE_PENDING_ITEM
-            GRID -> BaseCollectibleListItem.ItemType.GRID_SIMPLE_PENDING_ITEM
+            LINEAR_VERTICAL -> CollectibleListItem.ItemType.LINEAR_VERTICAL_SIMPLE_PENDING_ITEM
+            GRID -> CollectibleListItem.ItemType.GRID_SIMPLE_PENDING_ITEM
         }
     }
 }

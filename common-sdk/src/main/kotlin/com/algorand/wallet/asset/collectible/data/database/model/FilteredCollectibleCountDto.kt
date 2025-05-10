@@ -10,16 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.android.repository
+package com.algorand.wallet.asset.collectible.data.database.model
 
-import com.algorand.android.models.AccountDetail
-import com.algorand.android.utils.CacheResult
-import javax.inject.Inject
+import androidx.room.ColumnInfo
 
-@Deprecated("Use related common sdk use cases")
-class AccountRepository @Inject constructor() {
-
-    fun getCachedAccountDetail(publicKey: String): CacheResult<AccountDetail>? {
-        return null
-    }
-}
+internal data class FilteredCollectibleCountDto(
+    @ColumnInfo("total_count")
+    val totalCount: Int,
+    @ColumnInfo("filtered_and_search_count")
+    val filteredAndSearchQueriedCount: Int,
+    @ColumnInfo("filtered_out_count")
+    val totalFilteredOutCount: Int
+)

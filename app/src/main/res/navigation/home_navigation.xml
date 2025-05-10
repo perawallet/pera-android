@@ -372,7 +372,7 @@
 
     <fragment
         android:id="@+id/collectiblesFragment"
-        android:name="com.algorand.android.nft.ui.nftlisting.collectibles.CollectiblesFragment"
+        android:name="com.algorand.android.ui.asset.collectible.listing.common.view.SharedCollectiblesFragment"
         android:label="fragment_collectibles"
         tools:layout="@layout/fragment_base_collectibles_listing">
         <action

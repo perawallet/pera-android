@@ -15,7 +15,8 @@ sealed interface BaseSelectAssetItem : RecyclerListItem {
         SELECT_COLLECTIBLE_VIDEO_ITEM,
         SELECT_COLLECTIBLE_AUDIO_ITEM,
         SELECT_COLLECTIBLE_NOT_SUPPORTED_ITEM,
-        SELECT_COLLECTIBLE_MIXED_ITEM
+        SELECT_COLLECTIBLE_MIXED_ITEM,
+        PLACEHOLDER_ITEM
     }
 
     val itemType: ItemType

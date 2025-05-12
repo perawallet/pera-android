@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.PLACEHOLDER_ITEM
 import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.SELECT_ASSET_TEM
 import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_AUDIO_ITEM
 import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_IMAGE_ITEM
@@ -32,7 +33,8 @@ class SelectSendingAssetAdapter(onAssetClick: (Long) -> Unit) :
     private val collectibleListener = BaseSelectCollectibleItemViewHolder.SelectCollectibleItemListener(onAssetClick)
 
     override fun getItemViewType(position: Int): Int {
-        return getItem(position)?.itemType?.ordinal ?: RecyclerView.NO_POSITION
+        if (position == RecyclerView.NO_POSITION || position >= itemCount) return PLACEHOLDER_ITEM.ordinal
+        return getItem(position)?.itemType?.ordinal ?: PLACEHOLDER_ITEM.ordinal
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<BaseSelectAssetItem> {
@@ -43,6 +45,7 @@ class SelectSendingAssetAdapter(onAssetClick: (Long) -> Unit) :
             SELECT_COLLECTIBLE_AUDIO_ITEM.ordinal -> createCollectibleAudioItemViewHolder(parent)
             SELECT_COLLECTIBLE_NOT_SUPPORTED_ITEM.ordinal -> createCollectibleNotSupportedItemViewHolder(parent)
             SELECT_COLLECTIBLE_MIXED_ITEM.ordinal -> createCollectibleMixedItemViewHolder(parent)
+            PLACEHOLDER_ITEM.ordinal -> createPlaceholderItemViewHolder(parent)
             else -> throw IllegalArgumentException("$logTag : Unknown viewType = $viewType")
         }
     }
@@ -71,6 +74,12 @@ class SelectSendingAssetAdapter(onAssetClick: (Long) -> Unit) :
         parent: ViewGroup
     ): SelectCollectibleNotSupportedItemViewHolder {
         return SelectCollectibleNotSupportedItemViewHolder.create(parent, collectibleListener)
+    }
+
+    private fun createPlaceholderItemViewHolder(
+        parent: ViewGroup
+    ): SelectSendingAssetPagingPlaceholderViewHolder {
+        return SelectSendingAssetPagingPlaceholderViewHolder.create(parent)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<BaseSelectAssetItem>, position: Int) {

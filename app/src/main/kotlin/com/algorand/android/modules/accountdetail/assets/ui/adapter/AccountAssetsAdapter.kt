@@ -24,6 +24,8 @@ import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailA
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.NO_ASSET_FOUND
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.PENDING_ASSET
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.PENDING_NFT
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.PLACEHOLDER_ITEM
+import com.algorand.android.ui.asset.collectible.listing.view.adapter.AccountAssetsPagingPlaceholderViewHolder
 
 class AccountAssetsAdapter(
     private val listener: Listener
@@ -50,10 +52,8 @@ class AccountAssetsAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == RecyclerView.NO_POSITION || position >= itemCount) {
-            return -1
-        }
-        return getItem(position)?.itemType?.viewType ?: -1
+        if (position == RecyclerView.NO_POSITION || position >= itemCount) return PLACEHOLDER_ITEM.viewType
+        return getItem(position)?.itemType?.viewType ?: PLACEHOLDER_ITEM.viewType
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<AccountDetailAssetsItem> {
@@ -63,6 +63,7 @@ class AccountAssetsAdapter(
             NO_ASSET_FOUND.viewType -> createNoAssetFoundScreenStateViewHolder(parent)
             NFT.viewType -> createOwnedNFTViewHolder(parent)
             PENDING_NFT.viewType -> createPendingNFTViewHolder(parent)
+            PLACEHOLDER_ITEM.viewType -> createPlaceholderViewHolder(parent)
             else -> throw IllegalArgumentException("$logTag : Item View Type is Unknown.")
         }
     }
@@ -91,6 +92,10 @@ class AccountAssetsAdapter(
 
     private fun createPendingNFTViewHolder(parent: ViewGroup): PendingNFTViewHolder {
         return PendingNFTViewHolder.create(parent)
+    }
+
+    private fun createPlaceholderViewHolder(parent: ViewGroup): AccountAssetsPagingPlaceholderViewHolder {
+        return AccountAssetsPagingPlaceholderViewHolder.create(parent)
     }
 
     interface Listener {

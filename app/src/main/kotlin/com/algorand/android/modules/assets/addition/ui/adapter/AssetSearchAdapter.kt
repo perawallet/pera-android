@@ -23,6 +23,7 @@ import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem.ItemTyp
 import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem.ItemType.COLLECTIBLE_NOT_SUPPORTED_ITEM
 import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem.ItemType.COLLECTIBLE_VIDEO_ITEM
 import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem.ItemType.INFO_VIEW_ITEM
+import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem.ItemType.PLACEHOLDER_ITEM
 import com.algorand.android.assetsearch.ui.model.BaseAssetSearchListItem.ItemType.SEARCH_VIEW_ITEM
 import com.algorand.android.assetsearch.ui.viewholder.BaseCollectibleSearchItemViewHolder
 import com.algorand.android.assetsearch.ui.viewholder.CollectibleSearchImageItemViewHolder
@@ -33,6 +34,7 @@ import com.algorand.android.assetsearch.ui.viewholder.InfoViewItemViewHolder
 import com.algorand.android.assetsearch.ui.viewholder.SearchViewItemViewHolder
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.ui.asset.collectible.listing.view.adapter.AssetSearchPagingPlaceholderViewHolder
 import com.algorand.android.utils.hideKeyboard
 
 class AssetSearchAdapter(
@@ -67,7 +69,8 @@ class AssetSearchAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return getItem(position)?.itemType?.ordinal ?: RecyclerView.NO_POSITION
+        if (position == RecyclerView.NO_POSITION || position >= itemCount) return PLACEHOLDER_ITEM.ordinal
+        return getItem(position)?.itemType?.ordinal ?: PLACEHOLDER_ITEM.ordinal
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<BaseAssetSearchListItem> {
@@ -79,6 +82,7 @@ class AssetSearchAdapter(
             COLLECTIBLE_NOT_SUPPORTED_ITEM.ordinal -> createNotSupportedItemViewHolder(parent)
             COLLECTIBLE_VIDEO_ITEM.ordinal -> createVideoItemViewHolder(parent)
             COLLECTIBLE_MIXED_ITEM.ordinal -> createMixedItemViewHolder(parent)
+            PLACEHOLDER_ITEM.ordinal -> createPlaceholderViewHolder(parent)
             else -> throw IllegalArgumentException("$logTag: Unknown viewType = $viewType")
         }
     }
@@ -116,6 +120,10 @@ class AssetSearchAdapter(
 
     private fun createNotSupportedItemViewHolder(parent: ViewGroup): CollectibleSearchNotSupportedItemViewHolder {
         return CollectibleSearchNotSupportedItemViewHolder.create(parent, collectibleSearchItemListener)
+    }
+
+    private fun createPlaceholderViewHolder(parent: ViewGroup): AssetSearchPagingPlaceholderViewHolder {
+        return AssetSearchPagingPlaceholderViewHolder.create(parent)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<BaseAssetSearchListItem>, position: Int) {

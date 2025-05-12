@@ -15,26 +15,23 @@ package com.algorand.android.modules.transactionhistory.ui.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.databinding.ItemAccountHistoryTitleBinding
+import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 
-class AccountHistoryTitleViewHolder(
+class AccountHistoryStringTitleViewHolder(
     private val binding: ItemAccountHistoryTitleBinding
-) : RecyclerView.ViewHolder(binding.root) {
+) : BaseViewHolder<BaseTransactionItem>(binding.root) {
 
-    fun bind(headerItemString: BaseTransactionItem.StringTitleItem) {
-        binding.titleTextView.text = headerItemString.title
-    }
-
-    fun bind(headerTitleRes: BaseTransactionItem.ResourceTitleItem) {
-        binding.titleTextView.setText(headerTitleRes.stringRes)
+    override fun bind(item: BaseTransactionItem) {
+        if (item !is BaseTransactionItem.StringTitleItem) return
+        binding.titleTextView.text = item.title
     }
 
     companion object {
-        fun create(parent: ViewGroup): AccountHistoryTitleViewHolder {
+        fun create(parent: ViewGroup): AccountHistoryStringTitleViewHolder {
             val binding = ItemAccountHistoryTitleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return AccountHistoryTitleViewHolder(binding)
+            return AccountHistoryStringTitleViewHolder(binding)
         }
     }
 }

@@ -16,36 +16,47 @@ package com.algorand.android.modules.transactionhistory.ui
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.algorand.android.R
 import com.algorand.android.models.BaseDiffUtil
+import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
-import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryTitleViewHolder
+import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem.ItemType.APPLICATION_CALL_ITEM
+import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem.ItemType.PLACEHOLDER_ITEM
+import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem.ItemType.RESOURCE_TITLE_ITEM
+import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem.ItemType.STRING_TITLE_ITEM
+import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem.ItemType.TRANSACTION_ITEM
+import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryPagingPlaceholderViewHolder
+import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryResourceTitleViewHolder
+import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryStringTitleViewHolder
 import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryTransactionItemViewHolder
 import com.algorand.android.modules.transactionhistory.ui.viewholder.ApplicationCallItemViewHolder
 
 class AccountHistoryAdapter(
     private val listener: Listener
-) : PagingDataAdapter<BaseTransactionItem, RecyclerView.ViewHolder>(BaseDiffUtil()) {
+) : PagingDataAdapter<BaseTransactionItem, BaseViewHolder<BaseTransactionItem>>(BaseDiffUtil()) {
 
     private val applicationCallItemListener = ApplicationCallItemViewHolder.ApplicationCallItemListener {
         listener.onApplicationCallTransactionClick(it)
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is BaseTransactionItem.StringTitleItem -> R.layout.item_account_history_title
-            is BaseTransactionItem.TransactionItem.ApplicationCallItem -> R.layout.item_application_call_transaction
-            is BaseTransactionItem.TransactionItem -> R.layout.item_account_history_transaction
-            else -> throw Exception("$logTag: List Item is Unknown.")
+        if (position == RecyclerView.NO_POSITION || position >= itemCount) return PLACEHOLDER_ITEM.value
+        return getItem(position)?.itemType?.value ?: PLACEHOLDER_ITEM.value
+    }
+
+    override fun onBindViewHolder(holder: BaseViewHolder<BaseTransactionItem>, position: Int) {
+        if (position != -1 && position < itemCount) {
+            getItem(position)?.let { holder.bind(it) }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<BaseTransactionItem> {
         return when (viewType) {
-            R.layout.item_account_history_title -> createHistoryHeaderViewHolder(parent)
-            R.layout.item_account_history_transaction -> createHistoryItemViewHolder(parent)
-            R.layout.item_application_call_transaction -> createApplicationCallItemViewHolder(parent)
-            else -> throw Exception("$logTag: List Item is Unknown.")
+            STRING_TITLE_ITEM.value -> createHistoryStringTitleViewHolder(parent)
+            RESOURCE_TITLE_ITEM.value -> createHistoryResourceTitleViewHolder(parent)
+            APPLICATION_CALL_ITEM.value -> createApplicationCallItemViewHolder(parent)
+            TRANSACTION_ITEM.value -> createHistoryItemViewHolder(parent)
+            PLACEHOLDER_ITEM.value -> createPlaceholderViewHolder(parent)
+            else -> throw IllegalArgumentException("$logTag : Item View Type is Unknown.")
         }
     }
 
@@ -61,12 +72,20 @@ class AccountHistoryAdapter(
         return null
     }
 
-    private fun createApplicationCallItemViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
+    private fun createApplicationCallItemViewHolder(parent: ViewGroup): ApplicationCallItemViewHolder {
         return ApplicationCallItemViewHolder.create(parent, applicationCallItemListener)
     }
 
-    private fun createHistoryHeaderViewHolder(parent: ViewGroup): AccountHistoryTitleViewHolder {
-        return AccountHistoryTitleViewHolder.create(parent)
+    private fun createHistoryStringTitleViewHolder(parent: ViewGroup): AccountHistoryStringTitleViewHolder {
+        return AccountHistoryStringTitleViewHolder.create(parent)
+    }
+
+    private fun createHistoryResourceTitleViewHolder(parent: ViewGroup): AccountHistoryResourceTitleViewHolder {
+        return AccountHistoryResourceTitleViewHolder.create(parent)
+    }
+
+    private fun createPlaceholderViewHolder(parent: ViewGroup): AccountHistoryPagingPlaceholderViewHolder {
+        return AccountHistoryPagingPlaceholderViewHolder.create(parent)
     }
 
     private fun createHistoryItemViewHolder(parent: ViewGroup): AccountHistoryTransactionItemViewHolder {
@@ -77,20 +96,6 @@ class AccountHistoryAdapter(
                         getItem(bindingAdapterPosition) as BaseTransactionItem.TransactionItem
                     )
                 }
-            }
-        }
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is AccountHistoryTitleViewHolder -> {
-                holder.bind(getItem(position) as BaseTransactionItem.StringTitleItem)
-            }
-            is ApplicationCallItemViewHolder -> {
-                holder.bind(getItem(position) as BaseTransactionItem.TransactionItem.ApplicationCallItem)
-            }
-            is AccountHistoryTransactionItemViewHolder -> {
-                holder.bind(getItem(position) as BaseTransactionItem.TransactionItem)
             }
         }
     }

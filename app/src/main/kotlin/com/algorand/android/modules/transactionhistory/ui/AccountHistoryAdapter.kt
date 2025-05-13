@@ -24,11 +24,11 @@ import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionI
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem.ItemType.RESOURCE_TITLE_ITEM
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem.ItemType.STRING_TITLE_ITEM
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem.ItemType.TRANSACTION_ITEM
-import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryPagingPlaceholderViewHolder
 import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryResourceTitleViewHolder
 import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryStringTitleViewHolder
 import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryTransactionItemViewHolder
 import com.algorand.android.modules.transactionhistory.ui.viewholder.ApplicationCallItemViewHolder
+import com.algorand.android.ui.common.listhelper.viewholders.PagingPlaceholderViewHolder
 
 class AccountHistoryAdapter(
     private val listener: Listener
@@ -84,8 +84,8 @@ class AccountHistoryAdapter(
         return AccountHistoryResourceTitleViewHolder.create(parent)
     }
 
-    private fun createPlaceholderViewHolder(parent: ViewGroup): AccountHistoryPagingPlaceholderViewHolder {
-        return AccountHistoryPagingPlaceholderViewHolder.create(parent)
+    private fun createPlaceholderViewHolder(parent: ViewGroup): PagingPlaceholderViewHolder<BaseTransactionItem> {
+        return PagingPlaceholderViewHolder.create(parent)
     }
 
     private fun createHistoryItemViewHolder(parent: ViewGroup): AccountHistoryTransactionItemViewHolder {

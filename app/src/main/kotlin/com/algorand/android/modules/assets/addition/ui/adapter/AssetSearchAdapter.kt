@@ -34,7 +34,7 @@ import com.algorand.android.assetsearch.ui.viewholder.InfoViewItemViewHolder
 import com.algorand.android.assetsearch.ui.viewholder.SearchViewItemViewHolder
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.ui.asset.collectible.listing.view.adapter.AssetSearchPagingPlaceholderViewHolder
+import com.algorand.android.ui.common.listhelper.viewholders.PagingPlaceholderViewHolder
 import com.algorand.android.utils.hideKeyboard
 
 class AssetSearchAdapter(
@@ -122,8 +122,8 @@ class AssetSearchAdapter(
         return CollectibleSearchNotSupportedItemViewHolder.create(parent, collectibleSearchItemListener)
     }
 
-    private fun createPlaceholderViewHolder(parent: ViewGroup): AssetSearchPagingPlaceholderViewHolder {
-        return AssetSearchPagingPlaceholderViewHolder.create(parent)
+    private fun createPlaceholderViewHolder(parent: ViewGroup): PagingPlaceholderViewHolder<BaseAssetSearchListItem> {
+        return PagingPlaceholderViewHolder.create(parent)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<BaseAssetSearchListItem>, position: Int) {

@@ -26,6 +26,7 @@ import com.algorand.android.ui.asset.remove.model.BaseRemoveAssetItem.ItemType.S
 import com.algorand.android.ui.asset.remove.model.BaseRemoveAssetItem.RemoveAssetItem
 import com.algorand.android.ui.asset.remove.view.adapter.RemoveAssetItemViewHolder.AssetRemovalItemListener
 import com.algorand.android.ui.asset.remove.view.adapter.RemoveCollectibleItemViewHolder.CollectibleRemovalItemListener
+import com.algorand.android.ui.common.listhelper.viewholders.PagingPlaceholderViewHolder
 
 class RemoveAssetAdapter(
     private val listener: RemoveAssetAdapterListener
@@ -61,7 +62,7 @@ class RemoveAssetAdapter(
             REMOVE_ASSET_ITEM.value -> RemoveAssetItemViewHolder.create(parent, assetRemovalItemListener)
             REMOVE_COLLECTIBLE_ITEM.value -> RemoveCollectibleItemViewHolder.create(parent, collectibleItemListener)
             SCREEN_STATE_ITEM.value -> ScreenStateViewHolder.create(parent)
-            PLACEHOLDER_ITEM.value -> RemoveAssetPagingPlaceholderViewHolder.create(parent)
+            PLACEHOLDER_ITEM.value -> PagingPlaceholderViewHolder.create(parent)
             else -> throw IllegalArgumentException("$logTag: Unknown viewType = $viewType")
         }
     }

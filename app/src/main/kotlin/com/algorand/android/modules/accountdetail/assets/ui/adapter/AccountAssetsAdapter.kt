@@ -25,7 +25,7 @@ import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailA
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.PENDING_ASSET
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.PENDING_NFT
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.ItemType.PLACEHOLDER_ITEM
-import com.algorand.android.ui.asset.collectible.listing.view.adapter.AccountAssetsPagingPlaceholderViewHolder
+import com.algorand.android.ui.common.listhelper.viewholders.PagingPlaceholderViewHolder
 
 class AccountAssetsAdapter(
     private val listener: Listener
@@ -94,8 +94,8 @@ class AccountAssetsAdapter(
         return PendingNFTViewHolder.create(parent)
     }
 
-    private fun createPlaceholderViewHolder(parent: ViewGroup): AccountAssetsPagingPlaceholderViewHolder {
-        return AccountAssetsPagingPlaceholderViewHolder.create(parent)
+    private fun createPlaceholderViewHolder(parent: ViewGroup): PagingPlaceholderViewHolder<AccountDetailAssetsItem> {
+        return PagingPlaceholderViewHolder.create(parent)
     }
 
     interface Listener {

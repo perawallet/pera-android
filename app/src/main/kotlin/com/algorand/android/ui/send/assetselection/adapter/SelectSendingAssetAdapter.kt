@@ -25,6 +25,7 @@ import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.It
 import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_MIXED_ITEM
 import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_NOT_SUPPORTED_ITEM
 import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem.ItemType.SELECT_COLLECTIBLE_VIDEO_ITEM
+import com.algorand.android.ui.common.listhelper.viewholders.PagingPlaceholderViewHolder
 
 class SelectSendingAssetAdapter(onAssetClick: (Long) -> Unit) :
     PagingDataAdapter<BaseSelectAssetItem, BaseViewHolder<BaseSelectAssetItem>>(BaseDiffUtil()) {
@@ -76,10 +77,8 @@ class SelectSendingAssetAdapter(onAssetClick: (Long) -> Unit) :
         return SelectCollectibleNotSupportedItemViewHolder.create(parent, collectibleListener)
     }
 
-    private fun createPlaceholderItemViewHolder(
-        parent: ViewGroup
-    ): SelectSendingAssetPagingPlaceholderViewHolder {
-        return SelectSendingAssetPagingPlaceholderViewHolder.create(parent)
+    private fun createPlaceholderItemViewHolder(parent: ViewGroup): PagingPlaceholderViewHolder<BaseSelectAssetItem> {
+        return PagingPlaceholderViewHolder.create(parent)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<BaseSelectAssetItem>, position: Int) {

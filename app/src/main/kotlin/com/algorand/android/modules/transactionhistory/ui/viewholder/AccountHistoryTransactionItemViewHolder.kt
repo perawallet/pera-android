@@ -16,18 +16,19 @@ package com.algorand.android.modules.transactionhistory.ui.viewholder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.databinding.ItemAccountHistoryTransactionBinding
+import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.utils.extensions.setTextAndVisibility
 
 class AccountHistoryTransactionItemViewHolder(
     private val binding: ItemAccountHistoryTransactionBinding
-) : RecyclerView.ViewHolder(binding.root) {
+) : BaseViewHolder<BaseTransactionItem>(binding.root) {
 
-    fun bind(transaction: BaseTransactionItem.TransactionItem) {
+    override fun bind(item: BaseTransactionItem) {
+        if (item !is BaseTransactionItem.TransactionItem) return
         with(binding) {
-            with(transaction) {
+            with(item) {
                 pendingTransactionProgressBar.isVisible = isPending
                 nameRes?.let { titleTextView.setText(it) }
                 descriptionTextView.setTextAndVisibility(description)

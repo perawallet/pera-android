@@ -126,7 +126,7 @@ class VerifyLedgerInfoFragment : BaseInfoFragment() {
     }
 
     private fun navToHomeNavigation() {
-        nav(LoginNavigationDirections.actionGlobalToHomeNavigation())
+        nav(VerifyLedgerInfoFragmentDirections.actionVerifyLedgerInfoFragmentToHomeNavigation())
     }
 
     private fun navToForceLockNavigation() {

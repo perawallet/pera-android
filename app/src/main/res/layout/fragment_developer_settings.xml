@@ -35,6 +35,15 @@
     </com.algorand.android.customviews.SettingsListItem>
 
     <com.algorand.android.customviews.SettingsListItem
+        android:id="@+id/createlegacyAlgo25ListItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:endViewLayoutResource="@layout/layout_right_arrow"
+        app:settingIcon="@drawable/ic_wallet"
+        app:settingTitle="@string/create_legacy_algo25_account">
+    </com.algorand.android.customviews.SettingsListItem>
+
+    <com.algorand.android.customviews.SettingsListItem
         android:id="@+id/migrationListItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

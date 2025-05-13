@@ -15,18 +15,20 @@ package com.algorand.android.modules.transactionhistory.ui.viewholder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
 import com.algorand.android.databinding.ItemApplicationCallTransactionBinding
+import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
+import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem.TransactionItem.ApplicationCallItem
 
 // TODO: extend this from base view holder
 class ApplicationCallItemViewHolder(
     private val binding: ItemApplicationCallTransactionBinding,
     private val listener: ApplicationCallItemListener
-) : RecyclerView.ViewHolder(binding.root) {
+) : BaseViewHolder<BaseTransactionItem>(binding.root) {
 
-    fun bind(item: BaseTransactionItem.TransactionItem.ApplicationCallItem) {
+    override fun bind(item: BaseTransactionItem) {
+        if (item !is ApplicationCallItem) return
         with(item) {
             with(binding) {
                 transactionTypeTextView.setText(item.nameRes)
@@ -47,7 +49,7 @@ class ApplicationCallItemViewHolder(
     }
 
     fun interface ApplicationCallItemListener {
-        fun onApplicationCallItemClick(transaction: BaseTransactionItem.TransactionItem.ApplicationCallItem)
+        fun onApplicationCallItemClick(transaction: ApplicationCallItem)
     }
 
     companion object {

@@ -328,6 +328,8 @@ dependencies {
     // ExoPlayer
     implementation libs.exoplayer
 
+    implementation libs.coil.kt.coil.compose
+
     // Test
     testImplementation(project(":test-utils"))
     testImplementation libs.mockk

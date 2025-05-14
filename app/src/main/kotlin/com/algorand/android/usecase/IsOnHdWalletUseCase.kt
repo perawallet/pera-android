@@ -25,7 +25,7 @@ class IsOnHdWalletUseCase @Inject constructor(
     operator fun invoke(): Boolean {
         val isHdWalletToggleEnabled = isFeatureToggleEnabled(HD_WALLET_BUTTON_TOGGLE) &&
                 !isProdReleaseVariant()
-        return isHdWalletToggleEnabled
+        return true
     }
 
     fun isConnectedToTestnet(): Boolean {

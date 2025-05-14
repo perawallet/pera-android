@@ -19,7 +19,6 @@ import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.usecase.GetIsProductionReleaseUseCase
 import com.algorand.wallet.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,8 +37,8 @@ class CoreActionsTabBarViewModel @Inject constructor(
     fun changeViewStateForFeatureFlag() {
         val isImmersveToggleEnabled = isFeatureToggleEnabled(IMMERSVE_BUTTON_TOGGLE) &&
                 !(isConnectedToTestnet() && isProdReleaseVariant())
-        val isStakingToggleEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE) &&
-                !isConnectedToTestnet()
+        val isStakingToggleEnabled = true/*isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE) &&
+                !isConnectedToTestnet()*/
         _viewState.value = ViewState.Content(isImmersveToggleEnabled, isStakingToggleEnabled)
     }
 

@@ -20,6 +20,7 @@ bip39 = "1.0.7"
 ble = "2.8.0"
 browser = "1.8.0"
 buildConfig = "4.1.1"
+coilCompose = "2.5.0"
 constraintLayout = "2.2.0"
 coil = "3.0.1"
 compose = "1.6.10"
@@ -98,6 +99,7 @@ androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref =
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
+coil-kt-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose-ui" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose-ui" }
 compose-ui-testManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-ui" }

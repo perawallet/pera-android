@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.peraSans
@@ -171,4 +172,22 @@ fun PeraHighlightedText(modifier: Modifier = Modifier, text: String) {
             text = text
         )
     }
+}
+
+@Composable
+fun PeraFootNoteText(
+    modifier: Modifier = Modifier,
+    text: String,
+    color: Color = PeraTheme.colors.text.main
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = PeraTheme.typography.footnote.sans,
+        fontFamily = peraSans,
+        color = color,
+        fontWeight = FontWeight.Medium,
+        lineHeight = 20.sp,
+        overflow = TextOverflow.Ellipsis
+    )
 }

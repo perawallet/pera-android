@@ -50,11 +50,7 @@ fun AddressCard(
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                start = 24.dp,
-                end = 24.dp,
-                bottom = 24.dp
-            ),
+            .padding(8.dp),
         shape = CardDefaults.outlinedShape,
         border = BorderStroke(0.dp, Color.Transparent),
         colors = CardDefaults.outlinedCardColors(containerColor = PeraTheme.colors.layer.grayLightest),
@@ -67,9 +63,13 @@ fun AddressCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 PeraIconRoundShape(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier,
                     imageVector = ImageVector.vectorResource(R.drawable.ic_wallet),
-                    contentDescription = stringResource(R.string.algo_wallet)
+                    contentDescription = stringResource(R.string.algo_wallet),
+                    iconBackgroundColor = if (hdWallet.not())
+                        PeraTheme.colors.wallet.wallet4.background
+                    else PeraTheme.colors.layer.grayLighter,
+                    mainAddress = hdWallet
                 )
                 val nameText = hdWallet.let {
                     when (it) {
@@ -82,12 +82,13 @@ fun AddressCard(
                         modifier = Modifier
                             .widthIn(max = 200.dp, min = 20.dp)
                             .padding(start = 16.dp, end = 16.dp),
-                        text = nameText
+                        text = if (hdWallet.not()) nameText.toShortenedAddress() else nameText
                     )
                 }
                 if (hdWallet.not()) {
                     PeraIcon(
-                        modifier = Modifier.padding(end = 30.dp)
+                        modifier = Modifier
+                            .padding(end = 30.dp)
                             .clickable {
                                 onCopyClick()
                             },
@@ -101,7 +102,7 @@ fun AddressCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
-                            .padding(start = 36.dp)
+                            .padding(start = 30.dp)
                             .height(65.dp)
                             .width(1.dp)
                             .background(color = PeraTheme.colors.text.main)
@@ -109,7 +110,8 @@ fun AddressCard(
                         // just empty
                     }
                     PeraIconHighlightedText(
-                        modifier = Modifier.padding(start = 37.dp)
+                        modifier = Modifier
+                            .padding(start = 37.dp)
                             .clickable {
                                 onHdScanNewAddressesClick()
                             },
@@ -123,10 +125,10 @@ fun AddressCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     PeraIconRoundShape(
-                        modifier = Modifier.padding(start = 16.dp),
+                        modifier = Modifier,
                         imageVector = ImageVector.vectorResource(R.drawable.ic_wallet_address),
                         contentDescription = stringResource(R.string.address),
-                        iconBackgroundColor = PeraTheme.colors.icon.trusted.background
+                        iconBackgroundColor = PeraTheme.colors.wallet.wallet4.background
                     )
                     Column(modifier = Modifier.weight(1F)) {
                         PeraTitleText(
@@ -144,7 +146,8 @@ fun AddressCard(
                         )
                     }
                     PeraIcon(
-                        modifier = Modifier.padding(end = 16.dp)
+                        modifier = Modifier
+                            .padding(end = 16.dp)
                             .clickable {
                                 onCopyClick()
                             },

@@ -55,7 +55,8 @@ fun PeraIconRoundShape(
     modifier: Modifier = Modifier,
     imageVector: ImageVector,
     contentDescription: String,
-    iconBackgroundColor: Color = PeraTheme.colors.layer.grayLighter
+    iconBackgroundColor: Color = PeraTheme.colors.layer.grayLighter,
+    mainAddress: Boolean = false
 ) {
     Box(
         modifier = modifier
@@ -67,7 +68,8 @@ fun PeraIconRoundShape(
         Icon(
             modifier = Modifier.align(Alignment.Center),
             imageVector = imageVector,
-            tint = PeraTheme.colors.text.main,
+            tint = if (mainAddress.not()) PeraTheme.colors.wallet.governor.wallet4Icon
+            else PeraTheme.colors.text.main,
             contentDescription = contentDescription
         )
     }

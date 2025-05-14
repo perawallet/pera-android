@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,11 +24,12 @@ import com.algorand.android.ui.compose.theme.PeraTheme
 private fun PeraCoreIcon(
     modifier: Modifier = Modifier,
     painter: Painter,
-    contentDescription: String
+    contentDescription: String,
+    colorFilter: ColorFilter = ColorFilter.tint(color = PeraTheme.colors.link.primary)
 ) {
     Image(
         painter = painter,
-        colorFilter = ColorFilter.tint(color = PeraTheme.colors.link.primary),
+        colorFilter = colorFilter,
         contentDescription = contentDescription,
         modifier = modifier
     )
@@ -37,12 +39,14 @@ private fun PeraCoreIcon(
 fun PeraIcon(
     modifier: Modifier = Modifier,
     painter: Painter,
-    contentDescription: String
+    contentDescription: String,
+    colorFilter: ColorFilter = ColorFilter.tint(color = PeraTheme.colors.link.primary)
 ) {
     PeraCoreIcon(
         modifier = modifier,
         painter = painter,
-        contentDescription = contentDescription
+        contentDescription = contentDescription,
+        colorFilter = colorFilter
     )
 }
 
@@ -50,14 +54,15 @@ fun PeraIcon(
 fun PeraIconRoundShape(
     modifier: Modifier = Modifier,
     imageVector: ImageVector,
-    contentDescription: String
+    contentDescription: String,
+    iconBackgroundColor: Color = PeraTheme.colors.layer.grayLighter
 ) {
     Box(
         modifier = modifier
             .padding(start = 10.dp)
             .size(40.dp)
             .clip(shape = CircleShape)
-            .background(color = PeraTheme.colors.layer.grayLighter)
+            .background(color = iconBackgroundColor)
     ) {
         Icon(
             modifier = Modifier.align(Alignment.Center),

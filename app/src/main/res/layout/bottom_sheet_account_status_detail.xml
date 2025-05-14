@@ -45,7 +45,7 @@
             android:layout_marginTop="@dimen/spacing_xlarge"
             android:background="@drawable/bg_rectangle_radius_20_stroke_2">
 
-            <com.algorand.android.customviews.accountassetitem.StatefulButtonAccountAssetItemView
+            <androidx.compose.ui.platform.ComposeView
                 android:id="@+id/accountItemView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -53,56 +53,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <View
-                android:id="@+id/firstDividerLineView"
-                style="@style/Divider"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/divider_height"
-                android:layout_marginEnd="@dimen/spacing_large"
-                app:layout_constraintBottom_toBottomOf="@id/rekeyToTextview"
-                app:layout_constraintEnd_toStartOf="@id/rekeyToTextview"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/rekeyToTextview" />
-
-            <TextView
-                android:id="@+id/rekeyToTextview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/rekeyed_to"
-                android:textAllCaps="true"
-                android:textAppearance="@style/TextAppearance.Caption.Medium"
-                android:textColor="@color/text_gray_lighter"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/secondDividerLineView"
-                app:layout_constraintStart_toEndOf="@id/firstDividerLineView"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <View
-                android:id="@+id/secondDividerLineView"
-                style="@style/Divider"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/divider_height"
-                android:layout_marginStart="@dimen/spacing_large"
-                app:layout_constraintBottom_toBottomOf="@id/rekeyToTextview"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/rekeyToTextview"
-                app:layout_constraintTop_toTopOf="@id/rekeyToTextview" />
-
             <com.algorand.android.customviews.accountassetitem.StatefulButtonAccountAssetItemView
                 android:id="@+id/authAccountItemView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rekeyToTextview" />
-
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/rekeyGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:constraint_referenced_ids="firstDividerLineView, secondDividerLineView, rekeyToTextview, authAccountItemView"
-                tools:visibility="visible" />
+                app:layout_constraintTop_toBottomOf="@id/accountItemView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

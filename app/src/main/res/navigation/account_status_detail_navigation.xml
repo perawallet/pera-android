@@ -22,6 +22,8 @@
 
     <include app:graph="@navigation/rekey_undo_navigation" />
 
+    <include app:graph="@navigation/recover_with_passphrase_navigation" />
+
     <dialog
         android:id="@+id/accountStatusDetailBottomSheet"
         android:name="com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailBottomSheet"
@@ -57,6 +59,14 @@
                 android:name="accountAddress"
                 app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_accountStatusDetailBottomSheet_to_recoverRegisteredAccountsFragment"
+            app:destination="@id/recoverRegisteredAccountsFragment"
+            app:popUpTo="@id/accountStatusDetailBottomSheet"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="accountCreation"
+                app:argType="com.algorand.android.models.AccountCreation" />
+        </action>
     </dialog>
-
 </navigation>

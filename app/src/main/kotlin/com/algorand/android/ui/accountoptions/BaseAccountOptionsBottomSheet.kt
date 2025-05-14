@@ -47,7 +47,7 @@ abstract class BaseAccountOptionsBottomSheet : DaggerBaseBottomSheet(
     private fun setupCopyButton() {
         with(binding) {
             copyAddressLayout.setOnClickListener {
-                onAccountAddressCopied(accountOptionsViewModel.accountAddress)
+                onCopyAccountAddressToClipboard(accountOptionsViewModel.accountAddress)
                 navBack()
             }
             addressTextView.text = accountOptionsViewModel.accountAddress

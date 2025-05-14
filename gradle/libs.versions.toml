@@ -3,7 +3,7 @@ agp = "8.7.3"
 algoSdk = "2.7.0"
 algoGoMobilesdk = "1.0.1"
 android-application = "8.2.2"
-android-compileSdk = "34"
+android-compileSdk = "35"
 android-discover-staging = "4"
 android-discover-prod = "4"
 android-minSdk = "28"
@@ -85,6 +85,7 @@ tink = "1.14.0"
 xhdwalletapi = "1.1.0"
 walletConnectBom = "1.34.1"
 zxing = "4.3.0"
+credentials = "1.5.0"
 
 [libraries]
 
@@ -239,6 +240,7 @@ kotlinx-coroutines-iosSimulatorArm64 = { module = "org.jetbrains.kotlinx:kotlinx
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 
 [bundles]
 firebase = ["firebase-analytics",

@@ -64,7 +64,15 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/accountTypeView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+   <!--     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_xxlarge"
@@ -117,7 +125,7 @@
             app:drawableEndCompat="@drawable/ic_right"
             app:drawableTint="@color/text_gray_lighter"
             tools:visibility="visible" />
-
+-->
     </LinearLayout>
 
 </ScrollView>

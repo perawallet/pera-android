@@ -13,10 +13,7 @@
 package com.algorand.android.modules.accountdetail.accountstatusdetail.ui
 
 import android.os.Bundle
-import android.text.method.LinkMovementMethod
 import android.view.View
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import com.algorand.android.R
@@ -26,13 +23,10 @@ import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewEvent
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewState
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.AccountTypeStatus
 import com.algorand.android.ui.compose.widget.AddressCard
 import com.algorand.android.utils.AccountIconDrawable
-import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
-import com.algorand.android.utils.getCustomClickableSpan
-import com.algorand.android.utils.getXmlStyledString
-import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -45,22 +39,20 @@ class AccountStatusDetailBottomSheet :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initUi()
+        // initUi()
         initObservers()
         viewModel.loadAccountStatusDetail()
     }
-
-    private fun initUi() {
-        with(binding) {
-            accountStateDescriptionTextView.apply {
-                highlightColor = ContextCompat.getColor(context, R.color.transparent)
-                movementMethod = LinkMovementMethod.getInstance()
+    /*    private fun initUi() {
+            with(binding) {
+                accountStateDescriptionTextView.apply {
+                    highlightColor = ContextCompat.getColor(context, R.color.transparent)
+                    movementMethod = LinkMovementMethod.getInstance()
+                }
+                rekeyToStandardAccountButton.setOnClickListener { onNavigateToRekeyToStandardAccount() }
+                rekeyToLedgerAccountButton.setOnClickListener { onNavigateToRekeyToLedgerAccount() }
             }
-            rekeyToStandardAccountButton.setOnClickListener { onNavigateToRekeyToStandardAccount() }
-            rekeyToLedgerAccountButton.setOnClickListener { onNavigateToRekeyToLedgerAccount() }
-        }
-    }
-
+        }*/
     private val viewStateCollector: suspend (ViewState) -> Unit = { state ->
         when (state) {
             is ViewState.Idle, is ViewState.Loading, is ViewState.Error -> {
@@ -104,10 +96,11 @@ class AccountStatusDetailBottomSheet :
 
     private fun renderContentState(state: ViewState.Content) {
         setupOriginalAccountDetails(state)
+        setupAccountTypeInfoCompose(state)
         setupAccountTypeInfo(state)
         setupAuthAccountDetails(state)
-        setupDescriptionText(state)
-        setupVisibility(state)
+        //      setupDescriptionText(state)
+        //  setupVisibility(state)
         setupButtons(state)
     }
 
@@ -136,21 +129,31 @@ class AccountStatusDetailBottomSheet :
         }
     }
 
-    private fun setupAccountTypeInfo(state: ViewState.Content) {
+    private fun setupAccountTypeInfoCompose(state: ViewState.Content) {
         with(binding) {
-            accountTypeTextView.text = state.titleString
-            accountStateTextView.text = state.accountTypeString
-
-            state.accountTypeDrawablePreview?.let { drawablePreview ->
-                val drawable = AccountIconDrawable.create(
-                    requireContext(),
-                    R.dimen.spacing_xxxxlarge,
-                    drawablePreview
-                )
-                accountStateTextView.setDrawable(start = drawable)
-            }
+         accountTypeView.setContent {
+             PeraTheme {
+                 AccountTypeStatus(state.titleString.toString())
+             }
+         }
         }
     }
+
+       private fun setupAccountTypeInfo(state: ViewState.Content) {
+           with(binding) {
+               accountTypeTextView.text = state.titleString
+              // accountStateTextView.text = state.accountTypeString
+
+               state.accountTypeDrawablePreview?.let { drawablePreview ->
+                   val drawable = AccountIconDrawable.create(
+                       requireContext(),
+                       R.dimen.spacing_xxxxlarge,
+                       drawablePreview
+                   )
+               //    accountStateTextView.setDrawable(start = drawable)
+               }
+           }
+       }
 
     private fun setupAuthAccountDetails(state: ViewState.Content) {
         with(binding) {
@@ -177,33 +180,34 @@ class AccountStatusDetailBottomSheet :
         }
     }
 
-    private fun setupDescriptionText(state: ViewState.Content) {
-        with(binding) {
-            state.descriptionDetail.let { descriptionDetail ->
-                descriptionDetail.annotatedString.let { annotatedString ->
-                    val linkTextColor = ContextCompat.getColor(root.context, R.color.link_primary)
-                    val clickSpannable = getCustomClickableSpan(
-                        clickableColor = linkTextColor,
-                        onClick = {
-                            context?.openUrl(descriptionDetail.hyperlinkUrl)
-                        }
-                    )
-                    val clickableAnnotatedString = annotatedString.copy(
-                        customAnnotationList = listOf("learn_more" to clickSpannable)
-                    )
-                    accountStateDescriptionTextView.text =
-                        context?.getXmlStyledString(clickableAnnotatedString)
+    /*    private fun setupDescriptionText(state: ViewState.Content) {
+            with(binding) {
+                state.descriptionDetail.annotatedString.stringResId
+                state.descriptionDetail.let { descriptionDetail ->
+                    descriptionDetail.annotatedString.let { annotatedString ->
+                        val linkTextColor = ContextCompat.getColor(root.context, R.color.link_primary)
+                        val clickSpannable = getCustomClickableSpan(
+                            clickableColor = linkTextColor,
+                            onClick = {
+                                context?.openUrl(descriptionDetail.hyperlinkUrl)
+                            }
+                        )
+                        val clickableAnnotatedString = annotatedString.copy(
+                            customAnnotationList = listOf("learn_more" to clickSpannable)
+                        )
+                        accountStateDescriptionTextView.text =
+                            context?.getXmlStyledString(clickableAnnotatedString)
+                    }
                 }
             }
-        }
-    }
+        }*/
 
-    private fun setupVisibility(state: ViewState.Content) {
-        with(binding) {
-            rekeyToLedgerAccountButton.isVisible = state.isRekeyToLedgerAccountVisible == true
-            rekeyToStandardAccountButton.isVisible = state.isRekeyToStandardAccountVisible == true
-        }
-    }
+    /*  private fun setupVisibility(state: ViewState.Content) {
+          with(binding) {
+              rekeyToLedgerAccountButton.isVisible = state.isRekeyToLedgerAccountVisible == true
+              rekeyToStandardAccountButton.isVisible = state.isRekeyToStandardAccountVisible == true
+          }
+      }*/
 
     private fun setupButtons(state: ViewState.Content) {
         with(binding) {
@@ -238,7 +242,9 @@ class AccountStatusDetailBottomSheet :
     private fun onNavigateToHdScanNewAddresses(accountCreation: AccountCreation) {
         nav(
             AccountStatusDetailBottomSheetDirections
-                .actionAccountStatusDetailBottomSheetToRecoverRegisteredAccountsFragment(accountCreation)
+                .actionAccountStatusDetailBottomSheetToRecoverRegisteredAccountsFragment(
+                    accountCreation
+                )
         )
     }
 }

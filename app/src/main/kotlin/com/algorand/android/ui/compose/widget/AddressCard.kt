@@ -51,9 +51,7 @@ fun AddressCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                start = 24.dp,
-                end = 24.dp,
-                bottom = 24.dp
+                16.dp
             ),
         shape = CardDefaults.outlinedShape,
         border = BorderStroke(0.dp, Color.Transparent),
@@ -67,9 +65,12 @@ fun AddressCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 PeraIconRoundShape(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier,
                     imageVector = ImageVector.vectorResource(R.drawable.ic_wallet),
-                    contentDescription = stringResource(R.string.algo_wallet)
+                    contentDescription = stringResource(R.string.algo_wallet),
+                    iconBackgroundColor = if (hdWallet.not())
+                        PeraTheme.colors.icon.trusted.background
+                    else PeraTheme.colors.layer.grayLighter
                 )
                 val nameText = hdWallet.let {
                     when (it) {
@@ -87,7 +88,8 @@ fun AddressCard(
                 }
                 if (hdWallet.not()) {
                     PeraIcon(
-                        modifier = Modifier.padding(end = 30.dp)
+                        modifier = Modifier
+                            .padding(end = 30.dp)
                             .clickable {
                                 onCopyClick()
                             },
@@ -109,7 +111,8 @@ fun AddressCard(
                         // just empty
                     }
                     PeraIconHighlightedText(
-                        modifier = Modifier.padding(start = 37.dp)
+                        modifier = Modifier
+                            .padding(start = 37.dp)
                             .clickable {
                                 onHdScanNewAddressesClick()
                             },
@@ -144,7 +147,8 @@ fun AddressCard(
                         )
                     }
                     PeraIcon(
-                        modifier = Modifier.padding(end = 16.dp)
+                        modifier = Modifier
+                            .padding(end = 16.dp)
                             .clickable {
                                 onCopyClick()
                             },

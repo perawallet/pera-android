@@ -7,7 +7,10 @@ import com.algorand.wallet.account.webauthn.data.database.model.SiteEntity
 import com.algorand.wallet.account.webauthn.data.database.model.SiteWithPasskeysQuery
 import com.algorand.wallet.account.webauthn.domain.model.Passkey
 import com.algorand.wallet.account.webauthn.domain.repository.PasskeyRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import java.math.BigInteger
 import java.security.AlgorithmParameters
 import java.security.KeyFactory
@@ -33,6 +36,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 class PasskeyRepositoryImpl(
     private val passkeyDao: PasskeyDao,
     private val siteDao: SiteDao,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): PasskeyRepository {
     /**
      * Clears all stored data in the repository by removing all entries
@@ -48,8 +52,10 @@ class PasskeyRepositoryImpl(
      * This operation is typically used when a full reset of the stored data is required.
      */
     override suspend fun clear() {
-        passkeyDao.clearAll()
-        siteDao.clearAll()
+        withContext(coroutineDispatcher) {
+            passkeyDao.clearAll()
+            siteDao.clearAll()
+        }
     }
 
     /**
@@ -60,7 +66,7 @@ class PasskeyRepositoryImpl(
      *
      * @return A Flow that emits lists of `SiteWithPasskeysQuery` objects, representing sites and their related passkeys.
      */
-    override fun getPasskeysAsFlow(): Flow<List<SiteWithPasskeysQuery>> {
+    override fun getSitePasskeysAsFlow(): Flow<List<SiteWithPasskeysQuery>> {
         return siteDao.getPasskeysAsFlow()
     }
 
@@ -71,13 +77,19 @@ class PasskeyRepositoryImpl(
      * @return A `SiteWithPasskeysQuery` object containing the site and its associated passkeys,
      *         or null if the URL is null or no matching site is found.
      */
-    override fun getPasskeys(url: String?): SiteWithPasskeysQuery? {
+    override fun getSitePasskeys(url: String?): SiteWithPasskeysQuery? {
         if (url == null) {
             return null
         }
         return siteDao.getPasskeys(url)
     }
 
+    override suspend fun getAllPasskeysAsFlow(): Flow<List<PasskeyEntity>> {
+        return passkeyDao.getAllAsFlow()
+    }
+    override suspend fun getSite(siteId: Long): SiteEntity? {
+        return siteDao.get(siteId)
+    }
     /**
      * Adds a new site to the database.
      *
@@ -177,12 +189,12 @@ class PasskeyRepositoryImpl(
      *                        the username, display name, and the credential ID (`credId`).
      */
     override suspend fun addNewPasskey(passkeyMetadata: Passkey) {
-        val site = siteDao.get(passkeyMetadata.rpid)
-        val siteId = site?.id ?: addSite(SiteEntity(url = passkeyMetadata.rpid, name = ""))
+        val site = siteDao.get(passkeyMetadata.origin!!)
+        val siteId = site?.id ?: addSite(SiteEntity(url = passkeyMetadata.origin, name = ""))
 
         passkeyDao.insert(
             PasskeyEntity(
-                seedId = passkeyMetadata.seedId,
+                seedId = passkeyMetadata.seedId!!,
                 userId = passkeyMetadata.uid,
                 username = passkeyMetadata.username,
                 userHandle = passkeyMetadata.displayName,

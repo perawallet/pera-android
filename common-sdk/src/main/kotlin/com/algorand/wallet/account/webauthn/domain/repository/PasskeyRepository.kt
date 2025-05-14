@@ -22,8 +22,9 @@ import java.security.KeyPair
  */
 interface PasskeyRepository {
     suspend fun clear()
-    fun getPasskeysAsFlow(): Flow<List<SiteWithPasskeysQuery>>
-    fun getPasskeys(url: String?): SiteWithPasskeysQuery?
+    fun getSitePasskeysAsFlow(): Flow<List<SiteWithPasskeysQuery>>
+    fun getSitePasskeys(url: String?): SiteWithPasskeysQuery?
+    suspend fun getSite(siteId: Long): SiteEntity?
     suspend fun addSite(siteMetaData: SiteEntity): Long
     suspend fun deleteSite(url: String)
     fun deriveKeyPairFromPasskey(passkey: PasskeyEntity): KeyPair
@@ -31,4 +32,5 @@ interface PasskeyRepository {
     suspend fun removePasskey(passkey: PasskeyEntity)
     suspend fun addNewPasskey(passkeyMetadata: Passkey)
     suspend fun getPasskey(credId: String): PasskeyEntity?
+    suspend fun getAllPasskeysAsFlow(): Flow<List<PasskeyEntity>>
 }

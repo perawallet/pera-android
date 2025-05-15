@@ -6,8 +6,10 @@ import com.algorand.algosdk.transaction.SignedTransaction
 import com.algorand.algosdk.transaction.Transaction
 import com.algorand.algosdk.util.Encoder
 import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
+import foundation.algorand.xhdwalletapi.Bip32DerivationType
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
+import foundation.algorand.xhdwalletapi.XHDWalletAPIBase.Companion.getBIP44PathFromContext
 import javax.inject.Inject
 
 internal class SignHdKeyTransactionImpl @Inject constructor(
@@ -56,7 +58,7 @@ internal class SignHdKeyTransactionImpl @Inject constructor(
         }
     }
 
-    override fun signArbitaryData(
+    override fun signLegacyArbitaryData(
         transactionByteArray: ByteArray,
         seed: ByteArray,
         account: Int,
@@ -73,12 +75,14 @@ internal class SignHdKeyTransactionImpl @Inject constructor(
                 key.toUInt()
             )
 
-            val stx = xHDWalletAPI.signAlgoTransaction(
-                context = KeyContext.Address,
-                account = accountIndex,
-                change = changeIndex,
-                keyIndex = keyIndex,
-                prefixEncodedTx = prefixedData
+            val stx = xHDWalletAPI.rawSign(
+                getBIP44PathFromContext(
+                    context = KeyContext.Address,
+                    account = accountIndex,
+                    change = changeIndex,
+                    keyIndex = keyIndex),
+                prefixedData,
+                Bip32DerivationType.Peikert
             )
 
             return stx

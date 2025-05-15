@@ -99,7 +99,7 @@ class WalletConnectArbitraryDataSignManager @Inject constructor(
 
             val seed = getHdSeed(seedId = localAccount.seedId) ?: return cacheNullDequeuedItem()
 
-            val transactionSignedByteArray = signHdKeyTransaction.signArbitaryData(
+            val transactionSignedByteArray = signHdKeyTransaction.signLegacyArbitaryData(
                 transactionByteArray,
                 seed,
                 localAccount.account,

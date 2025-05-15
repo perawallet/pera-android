@@ -5,17 +5,20 @@ import com.algorand.algosdk.crypto.Signature
 import com.algorand.algosdk.transaction.SignedTransaction
 import com.algorand.algosdk.transaction.Transaction
 import com.algorand.algosdk.util.Encoder
+import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import foundation.algorand.xhdwalletapi.KeyContext
 import foundation.algorand.xhdwalletapi.XHDWalletAPIAndroid
 import javax.inject.Inject
 
-internal class SignHdKeyTransactionImpl @Inject constructor() : SignHdKeyTransaction {
+internal class SignHdKeyTransactionImpl @Inject constructor(
+    private val peraExceptionLogger: PeraExceptionLogger
+) : SignHdKeyTransaction {
     override fun signTransaction(
         transactionByteArray: ByteArray,
         seed: ByteArray,
         account: Int,
         change: Int,
-        keyIndex: Int
+        key: Int
     ): ByteArray? {
         return try {
             val tx = Encoder.decodeFromMsgPack(transactionByteArray, Transaction::class.java)
@@ -24,7 +27,7 @@ internal class SignHdKeyTransactionImpl @Inject constructor() : SignHdKeyTransac
             val (accountIndex, changeIndex, keyIndex) = listOf(
                 account.toUInt(),
                 change.toUInt(),
-                keyIndex.toUInt()
+                key.toUInt()
             )
 
             val pkAddress = Address(
@@ -48,7 +51,45 @@ internal class SignHdKeyTransactionImpl @Inject constructor() : SignHdKeyTransac
 
             return Encoder.encodeToMsgPack(stx)
         } catch (e: Exception) {
+            peraExceptionLogger.logException(e)
             null
         }
+    }
+
+    override fun signArbitaryData(
+        transactionByteArray: ByteArray,
+        seed: ByteArray,
+        account: Int,
+        change: Int,
+        key: Int
+    ): ByteArray? {
+        return try {
+            val prefixedData = prefixData(transactionByteArray)
+
+            val xHDWalletAPI = XHDWalletAPIAndroid(seed)
+            val (accountIndex, changeIndex, keyIndex) = listOf(
+                account.toUInt(),
+                change.toUInt(),
+                key.toUInt()
+            )
+
+            val stx = xHDWalletAPI.signAlgoTransaction(
+                context = KeyContext.Address,
+                account = accountIndex,
+                change = changeIndex,
+                keyIndex = keyIndex,
+                prefixEncodedTx = prefixedData
+            )
+
+            return stx
+        } catch (e: Exception) {
+            peraExceptionLogger.logException(e)
+            null
+        }
+    }
+
+    private fun prefixData(data: ByteArray): ByteArray {
+        val prefix = "MX".toByteArray(Charsets.UTF_8)
+        return prefix + data
     }
 }

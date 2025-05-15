@@ -1,3 +1,15 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
 package com.algorand.wallet.asset.data.database.dao
 
 import androidx.paging.PagingSource
@@ -14,7 +26,7 @@ internal interface PaginatedAssetCollectibleDao {
         holding.algo_address AS algo_address,
         holding.amount AS amount,
         holding.asset_status AS asset_status,
- (holding.amount * IFNULL(asset.usd_value, 0)) AS total_usd_value,
+        (holding.amount * IFNULL(asset.usd_value, 0)) AS total_usd_value,
         holding.opted_in_at_round AS opted_in_at_round,
         asset.asset_id AS asset_id,
         asset.name AS name,
@@ -30,6 +42,12 @@ internal interface PaginatedAssetCollectibleDao {
     FROM asset_detail AS asset
     INNER JOIN asset_holding_table AS holding 
         ON asset.asset_id = holding.asset_id
+        AND holding.asset_id NOT IN (:excludedAssetIds)
+        AND (
+            (:filterOutZeroAmount = 0 AND :filterOutNonZeroAmount = 0) OR
+            (:filterOutZeroAmount = 1 AND holding.amount != 0) OR
+            (:filterOutNonZeroAmount = 1 AND holding.amount = 0)
+        )
     LEFT JOIN collectible AS collectible 
         ON asset.asset_id = collectible.collectible_asset_id
     WHERE
@@ -39,8 +57,6 @@ internal interface PaginatedAssetCollectibleDao {
          asset.asset_id LIKE '%' || :searchKeyword || '%' OR 
          asset.name LIKE '%' || :searchKeyword || '%' OR 
          collectible.title LIKE '%' || :searchKeyword || '%')
-    AND
-        (:filterOutZeroAmount = 0 OR holding.amount != 0)
     AND
         (:filterOutCollectibles = 0 OR collectible.title IS NULL)
     AND
@@ -60,8 +76,10 @@ internal interface PaginatedAssetCollectibleDao {
         addressList: List<String>,
         searchKeyword: String?,
         filterOutZeroAmount: Boolean,
+        filterOutNonZeroAmount: Boolean,
         filterOutCollectibles: Boolean,
         filterOutCollectiblesWithZeroAmount: Boolean,
-        sortType: String
+        sortType: String,
+        excludedAssetIds: List<Long>,
     ): PagingSource<Int, PaginatedAssetCollectibleItemDto>
 }

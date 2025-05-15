@@ -34,7 +34,8 @@ data class AccountLite(
         val secondaryAccountValue: BigDecimal,
         val assetCount: Int,
         val minRequiredBalance: BigInteger,
-        val rekeyAuthAddress: String?
+        val rekeyAuthAddress: String?,
+        val rekeyAuthRegistrationType: AccountRegistrationType?
     ) {
 
         val isRekeyed

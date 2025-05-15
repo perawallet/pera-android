@@ -16,18 +16,18 @@ import androidx.lifecycle.ViewModel
 import com.algorand.android.BuildConfig.DISCOVER_MAINNET_URL
 import com.algorand.android.BuildConfig.DISCOVER_TESTNET_URL
 import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
-import com.algorand.android.usecase.GetIsProductionReleaseUseCase
+import com.algorand.android.usecase.GetIsProductionBuildUseCase
 import com.algorand.wallet.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
 
 @HiltViewModel
 class CoreActionsTabBarViewModel @Inject constructor(
-    private val getIsProductionReleaseUseCase: GetIsProductionReleaseUseCase,
+    private val getIsProductionBuildUseCase: GetIsProductionBuildUseCase,
     private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : ViewModel() {
@@ -37,7 +37,7 @@ class CoreActionsTabBarViewModel @Inject constructor(
 
     fun changeViewStateForFeatureFlag() {
         val isImmersveToggleEnabled = isFeatureToggleEnabled(IMMERSVE_BUTTON_TOGGLE) &&
-                !(isConnectedToTestnet() && isProdReleaseVariant())
+                !(isConnectedToTestnet() && isProductionBuild())
         val isStakingToggleEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE) &&
                 !isConnectedToTestnet()
         _viewState.value = ViewState.Content(isImmersveToggleEnabled, isStakingToggleEnabled)
@@ -58,8 +58,8 @@ class CoreActionsTabBarViewModel @Inject constructor(
         return getIsActiveNodeTestnetUseCase.invoke()
     }
 
-    fun isProdReleaseVariant(): Boolean {
-        return getIsProductionReleaseUseCase.invoke()
+    fun isProductionBuild(): Boolean {
+        return getIsProductionBuildUseCase.invoke()
     }
 
     sealed interface ViewState {

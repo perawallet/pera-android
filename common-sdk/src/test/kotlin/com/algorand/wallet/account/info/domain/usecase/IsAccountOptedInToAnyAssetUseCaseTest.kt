@@ -39,9 +39,9 @@ class IsAccountOptedInToAnyAssetUseCaseTest {
     }
 
     @Test
-    fun `EXPECT true WHEN account is cached and opted in assets is greater than zero`() = runTest {
+    fun `EXPECT true WHEN account is cached and opted in assets is greater than one`() = runTest {
         val assetAndAppsCount = ACCOUNT_ASSET_AND_APPS_COUNT.copy(
-            optedInAssetsCount = 1,
+            optedInAssetsCount = 2, // 1 for ALGO
             totalCreatedAssetsCount = 0
         )
         coEvery { accountInformationRepository.getAccountAssetsAndAppsCount(ADDRESS) } returns assetAndAppsCount

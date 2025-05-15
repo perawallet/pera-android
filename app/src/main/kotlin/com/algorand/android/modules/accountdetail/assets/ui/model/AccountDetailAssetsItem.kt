@@ -31,7 +31,8 @@ sealed class AccountDetailAssetsItem : RecyclerListItem {
         PENDING_ASSET(102),
         NFT(103),
         PENDING_NFT(104),
-        NO_ASSET_FOUND(105)
+        NO_ASSET_FOUND(105),
+        PLACEHOLDER_ITEM(106)
     }
 
     abstract val itemType: ItemType

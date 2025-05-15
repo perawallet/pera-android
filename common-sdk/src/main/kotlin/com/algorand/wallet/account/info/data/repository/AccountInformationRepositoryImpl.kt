@@ -96,29 +96,22 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         addresses: List<String>
     ): Map<String, AccountInformation?> {
         return withContext(Dispatchers.IO) {
-            val results = addresses.map { address ->
+            addresses.map { address ->
                 async {
-                    try {
-                        val accountInfo = accountInformationFetchHelper.fetchAccount(
-                            address,
-                            includeClosedAccount = false
-                        ).use(
-                            onSuccess = { response ->
-                                accountInformationCacheHelper.cacheAccountInformation(address, response)
-                            },
-                            onFailed = { _, _ ->
-                                null
-                            }
-                        )
-                        Pair(address, accountInfo)
-                    } catch (e: Exception) {
-                        Pair(address, null)
-                    }
+                    val accountInfo = accountInformationFetchHelper.fetchAccount(
+                        address,
+                        includeClosedAccount = false
+                    ).use(
+                        onSuccess = { response ->
+                            accountInformationCacheHelper.cacheAccountInformation(address, response)
+                        },
+                        onFailed = { _, _ ->
+                            null
+                        }
+                    )
+                    Pair(address, accountInfo)
                 }
-            }.awaitAll()
-
-            val resultMap = results.associate { it }
-            resultMap
+            }.awaitAll().associate { it }
         }
     }
 
@@ -295,6 +288,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
                 PeraResult.Error(exception)
             }
         )
+    }
+
+    override suspend fun isThereAnyAssetCanAddressOptOut(address: String, algoId: Long): Boolean {
+        return assetHoldingDao.isThereAnyAssetCanAddressOptOut(address, algoId)
     }
 
     companion object {

@@ -1,3 +1,15 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
 package com.algorand.wallet.asset.data.repository
 
 import androidx.paging.Pager
@@ -10,6 +22,10 @@ import com.algorand.wallet.asset.data.database.model.PaginatedAssetCollectibleIt
 import com.algorand.wallet.asset.data.mapper.model.AssetCollectibleLiteSortTypeQueryMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetLiteMapper
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQuery
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutCollectibles
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutCollectiblesWithZeroAmount
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutNonZeroAmount
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter.FilterOutZeroAmount
 import com.algorand.wallet.asset.domain.model.AssetLite
 import com.algorand.wallet.asset.domain.repository.AssetCollectibleLiteRepository
 import javax.inject.Inject
@@ -36,11 +52,13 @@ internal class AssetCollectibleLiteRepositoryImpl @Inject constructor(
     private fun getPagingSource(query: AssetCollectibleLiteQuery): PagingSource<Int, PaginatedAssetCollectibleItemDto> {
         return paginatedAssetCollectibleDao.getPaginatedAssetCollectibleItems(
             addressList = query.addresses,
-            searchKeyword = query.searchKeyword,
-            filterOutZeroAmount = query.filterOutZeroAmount,
-            filterOutCollectibles = query.filterOutCollectibles,
-            filterOutCollectiblesWithZeroAmount = query.filterOutCollectiblesWithZeroAmount,
-            sortType = assetCollectibleLiteSortTypeQueryMapper(query.sortType)
+            searchKeyword = query.getSearchKeyword(),
+            filterOutZeroAmount = query.filters.contains(FilterOutZeroAmount),
+            filterOutNonZeroAmount = query.filters.contains(FilterOutNonZeroAmount),
+            filterOutCollectibles = query.filters.contains(FilterOutCollectibles),
+            filterOutCollectiblesWithZeroAmount = query.filters.contains(FilterOutCollectiblesWithZeroAmount),
+            sortType = assetCollectibleLiteSortTypeQueryMapper(query.sortType),
+            excludedAssetIds = query.getExcludedAssetIds()
         )
     }
 

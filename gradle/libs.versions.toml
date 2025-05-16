@@ -45,7 +45,6 @@ hilt = "2.55"
 hiltCompiler = "1.2.0"
 installreferrer = "2.2"
 javaWebSocket = "1.5.6"
-jsonKotlinSchema = "0.46"
 junit = "4.13.2"
 junitKtx = "1.2.1"
 khex = "1.1.2"
@@ -142,7 +141,6 @@ navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.
 
 # Networking / Json Parsing
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
-json-kotlin-schema = { module = "net.pwall.json:json-kotlin-schema", version.ref = "jsonKotlinSchema" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }

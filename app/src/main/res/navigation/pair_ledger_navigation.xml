@@ -24,8 +24,15 @@
         android:label="VerifyLedgerAddressFragment"
         tools:layout="@layout/fragment_verify_ledger_address">
         <action
-            android:id="@+id/action_verifyLedgerAddressFragment_to_verifyLedgerInfoFragment"
-            app:destination="@id/verifyLedgerInfoFragment" />
+            android:id="@+id/action_verifyLedgerAddressFragment_to_homeNavigation"
+            app:destination="@id/homeNavigation"
+            app:popUpTo="@id/loginNavigation"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="showConfetti"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
     </fragment>
 
     <fragment
@@ -62,30 +69,6 @@
         <action
             android:id="@+id/action_ledgerInstructionFragment_to_registerLedgerSearchFragment"
             app:destination="@id/registerLedgerSearchFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/verifyLedgerInfoFragment"
-        android:name="com.algorand.android.modules.onboarding.pairledger.resultinfo.VerifyLedgerInfoFragment"
-        android:label="VerifyLedgerInfoFragment">
-        <argument
-            android:name="numberOfAccounts"
-            app:argType="integer" />
-        <action
-            android:id="@+id/action_verifyLedgerInfoFragment_to_meldNavigation"
-            app:destination="@id/meldNavigation"
-            app:popUpTo="@id/loginNavigation"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_verifyLedgerInfoFragment_to_homeNavigation"
-            app:destination="@id/homeNavigation"
-            app:popUpTo="@id/loginNavigation"
-            app:popUpToInclusive="true">
-            <argument
-                android:name="showConfetti"
-                android:defaultValue="true"
-                app:argType="boolean" />
-        </action>
     </fragment>
 
     <dialog

@@ -1508,5 +1508,10 @@
     <string name="incoming_call_is_not_privileged_to_get_the_origin">Incoming call is not privileged to get the origin</string>
     <string name="privileged_allowlist_is_not_formatted_properly">Privileged allowlist is not formatted properly</string>
     <string name="platform">platform</string>
+    <string name="cred_id">credId</string>
+    <string name="could_not_retrieve_gpm_allowlist">Could not retrieve GPM allowlist</string>
+    <string name="extra_intent_data">EXTRA_INTENT_DATA</string>
+    <string name="is_auto_selected">IS_AUTO_SELECTED</string>
+    <string name="unable_to_retrieve_data_from_intent">Unable to retrieve data from intent</string>
     <string name="empty" />
 </resources>

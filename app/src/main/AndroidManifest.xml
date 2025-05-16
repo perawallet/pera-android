@@ -239,6 +239,17 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+                android:name=".credentials.ui.GetPasskeyActivity"
+                android:enabled="true"
+                android:screenOrientation="portrait"
+                android:exported="true"
+                tools:targetApi="35">
+            <intent-filter>
+                <action android:name="com.algorand.android.credentials.GET_PASSKEY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <service
                 android:name=".credentials.ProviderService"
                 android:enabled="true"

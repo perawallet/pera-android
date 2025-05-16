@@ -40,6 +40,9 @@ interface SiteDao {
     @Query("SELECT COUNT(*) FROM sites WHERE id = :siteId")
     fun getPasskeySize(siteId: Long): Int
 
+    @Query("SELECT COUNT(*) FROM sites WHERE url = :url")
+    fun getPasskeySize(url: String): Int
+
     /**
      * Retrieves a site and its associated passkeys from the database based on the provided URL.
      *
@@ -112,9 +115,9 @@ interface SiteDao {
      * @return The matching `SiteEntity` if it exists; otherwise, null.
      */
     @Query("SELECT * FROM sites WHERE url = :url")
-    suspend fun get(url: String): SiteEntity?
-    @Query("SELECT * FROM sites WHERE url = :siteId")
-    suspend fun get(siteId: Long): SiteEntity?
+    suspend fun get(url: String): SiteEntity
+    @Query("SELECT * FROM sites WHERE id = :siteId")
+    suspend fun get(siteId: Long): SiteEntity
 
     /**
      * Deletes a site entry from the database based on the specified URL.

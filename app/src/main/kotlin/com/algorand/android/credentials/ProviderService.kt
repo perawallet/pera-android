@@ -23,7 +23,6 @@ import androidx.credentials.provider.ProviderClearCredentialStateRequest
 import androidx.annotation.RequiresApi
 import androidx.credentials.provider.BeginCreatePublicKeyCredentialRequest
 import androidx.credentials.provider.BeginGetCredentialResponse.Builder
-import androidx.credentials.provider.BeginGetPasswordOption
 import androidx.credentials.provider.BeginGetPublicKeyCredentialOption
 import androidx.credentials.provider.BiometricPromptData
 import androidx.credentials.provider.CreateEntry
@@ -31,12 +30,21 @@ import androidx.credentials.provider.PublicKeyCredentialEntry
 import com.algorand.android.R
 import com.algorand.android.credentials.webauthn.PublicKeyCredentialRequestOptions
 import com.algorand.wallet.account.webauthn.data.database.model.PasskeyEntity
+import com.algorand.wallet.account.webauthn.domain.repository.PasskeyRepository
+import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
+import kotlinx.coroutines.runBlocking
+import org.json.JSONObject
 import java.io.IOException
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicInteger
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@AndroidEntryPoint
 class ProviderService : CredentialProviderService() {
+    @Inject
+    lateinit var passkeyRepository: PasskeyRepository
+
     private val requestCode: AtomicInteger = AtomicInteger()
     private val allowedAuthenticator =
         BiometricManager.Authenticators.BIOMETRIC_WEAK or
@@ -82,19 +90,19 @@ class ProviderService : CredentialProviderService() {
             ).build()
     }
 
-    private fun processCreateCredentialsRequest(request: BeginCreateCredentialRequest): BeginCreateCredentialResponse? {
+    private suspend fun processCreateCredentialsRequest(
+        request: BeginCreateCredentialRequest
+    ): BeginCreateCredentialResponse? {
         var passkeyCount = 0
 
-        // TODO: get count from database for origin
-//        val requestJson =
-//            request.candidateQueryData.getString("androidx.credentials.BUNDLE_KEY_REQUEST_JSON")
-//        if (!requestJson.isNullOrEmpty()) {
-//            val requestJsonObject = JSONObject(requestJson)
-//            val rp: JSONObject = requestJsonObject.getJSONObject("rp")
-//            val id: String = rp.getString("id")
-//            val query = passkeyRepository.getSitePasskeys(id)
-//            passkeyCount = query?.passkeys?.size ?: 0
-//        }
+        val requestJson =
+            request.candidateQueryData.getString("androidx.credentials.BUNDLE_KEY_REQUEST_JSON")
+        if (!requestJson.isNullOrEmpty()) {
+            val requestJsonObject = JSONObject(requestJson)
+            val rp: JSONObject = requestJsonObject.getJSONObject("rp")
+            val id: String = rp.getString("id")
+            passkeyCount = passkeyRepository.getSitePasskeysSize(id) ?: 0
+        }
 
         when (request) {
             is BeginCreatePublicKeyCredentialRequest -> {
@@ -114,65 +122,61 @@ class ProviderService : CredentialProviderService() {
         cancellationSignal: CancellationSignal,
         callback: OutcomeReceiver<BeginCreateCredentialResponse, CreateCredentialException>,
     ) {
-        val response: BeginCreateCredentialResponse? = processCreateCredentialsRequest(request)
-
-        if (response != null) {
-            callback.onResult(response)
-        } else {
-            callback.onError(
-                CreateCredentialUnknownException(),
-            )
+        // TODO: Get dispatcher
+        runBlocking {
+            val response: BeginCreateCredentialResponse? = processCreateCredentialsRequest(request)
+            if (response != null) {
+                callback.onResult(response)
+            } else {
+                callback.onError(
+                    CreateCredentialUnknownException(),
+                )
+            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-    private fun populatePasskeyData(
+    private suspend fun populatePasskeyData(
         option: BeginGetPublicKeyCredentialOption,
         responseBuilder: Builder,
     ): Boolean {
         try {
             // Parse the request options into a PublicKeyCredentialRequestOptions object.
             val request = PublicKeyCredentialRequestOptions(option.requestJson)
-            return false
             // Get the credentials for the site specified in the request.
-//            val credentials = passkeyRepository.getSitePasskeys(request.rpId) ?: return false
+            val credentials = passkeyRepository.getSitePasskeys(request.rpId)
 
-//            val passkeys = credentials.passkeys
-//            for (passkey in passkeys) {
-//                val data = Bundle()
-//                data.putString("requestJson", option.requestJson)
-//                data.putString("credId", passkey.credentialId)
-//
-//                // Create a PendingIntent to launch the activity that will handle the passkey retrieval
-//                val pendingIntent = createNewPendingIntent(
-//                    GET_PASSKEY_INTENT,
-//                    data,
-//                )
-//
-//                val entry = publicKeyCredentialEntry(passkey, option, pendingIntent)
-//                // Add the entry to the response builder.
-//                responseBuilder.addCredentialEntry(entry)
-//            }
+            val passkeys = credentials.passkeys
+            for (passkey in passkeys) {
+                val data = Bundle()
+                data.putString("requestJson", option.requestJson)
+                data.putString("credId", passkey.credentialId)
+
+                // Create a PendingIntent to launch the activity that will handle the passkey retrieval
+                val pendingIntent = createNewPendingIntent(
+                    GET_PASSKEY_INTENT,
+                    data,
+                )
+
+                val entry = publicKeyCredentialEntry(passkey, option, pendingIntent)
+                // Add the entry to the response builder.
+                responseBuilder.addCredentialEntry(entry)
+            }
         } catch (e: IOException) {
             return false
         }
         return true
     }
-    fun processGetCredentialsRequest(
+    suspend fun processGetCredentialsRequest(
         request: BeginGetCredentialRequest,
         responseBuilder: Builder,
     ): Boolean {
-        val callingPackage = request.callingAppInfo?.packageName ?: return false
+        request.callingAppInfo?.packageName ?: return false
 
         var hasFoundCredentials = false
 
         for (option in request.beginGetCredentialOptions) {
             when (option) {
-                // If the chosen option is a Password credential
-                is BeginGetPasswordOption -> {
-                    hasFoundCredentials = false
-                }
-
                 // If the chosen option is a Passkey credential
                 is BeginGetPublicKeyCredentialOption -> {
                     if (populatePasskeyData(option, responseBuilder)) {
@@ -196,8 +200,9 @@ class ProviderService : CredentialProviderService() {
 
         val responseBuilder = Builder()
 
-        val hasCredentialsFound =
+        val hasCredentialsFound = runBlocking {
             processGetCredentialsRequest(request, responseBuilder)
+        }
         val hasActionsPopulated =
             populateActions(responseBuilder, requestCode)
 
@@ -237,7 +242,7 @@ class ProviderService : CredentialProviderService() {
     ): PendingIntent {
         val intent = Intent(action).setPackage(applicationContext.packageName)
         if (extra != null) {
-            intent.putExtra("VAULT_DATA", extra)
+            intent.putExtra("EXTRA_INTENT_DATA", extra)
         }
         return PendingIntent.getActivity(
             applicationContext,

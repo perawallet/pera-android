@@ -11,7 +11,6 @@ import androidx.annotation.RequiresApi
 import androidx.biometric.BiometricManager.Authenticators
 import androidx.biometric.BiometricPrompt
 import androidx.biometric.BiometricPrompt.PromptInfo.Builder
-
 import androidx.credentials.CreatePublicKeyCredentialRequest
 import androidx.credentials.CreatePublicKeyCredentialResponse
 import androidx.credentials.exceptions.GetCredentialUnknownException
@@ -19,11 +18,8 @@ import androidx.credentials.provider.CallingAppInfo
 import androidx.credentials.provider.PendingIntentHandler
 import androidx.credentials.provider.ProviderCreateCredentialRequest
 import androidx.fragment.app.FragmentActivity
-import cash.z.ecc.android.bip39.Mnemonics
-
 import com.algorand.android.R
 import com.algorand.android.credentials.BiometricErrorUtils
-import com.algorand.android.credentials.KeyManager
 import com.algorand.android.credentials.ProviderService
 import com.algorand.android.credentials.encoding.appInfoToOrigin
 import com.algorand.android.credentials.webauthn.AssetLinkVerifier
@@ -32,15 +28,11 @@ import com.algorand.android.credentials.webauthn.AuthenticatorFlags
 import com.algorand.android.credentials.webauthn.Cbor
 import com.algorand.android.credentials.webauthn.FidoPublicKeyCredential
 import com.algorand.android.credentials.webauthn.PublicKeyCredentialCreationOptions
-
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-
 import kotlinx.coroutines.runBlocking
-
 import org.json.JSONObject
-
 import java.math.BigInteger
 import java.net.URL
 import java.security.KeyPair
@@ -52,19 +44,25 @@ import kotlin.collections.set
 import kotlin.io.readText
 import kotlin.text.isNotEmpty
 import androidx.core.content.edit
+import com.algorand.android.credentials.encoding.b64Encode
+import com.algorand.wallet.account.webauthn.domain.PasskeyManager
+import com.algorand.wallet.account.webauthn.domain.model.Passkey
+import com.algorand.wallet.account.webauthn.domain.repository.PasskeyRepository
+import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
 
 const val DEFAULT_BYTE_LENGTH = 32
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@AndroidEntryPoint
 class CreatePasskeyActivity : FragmentActivity() {
+    @Inject
+    lateinit var passkeyRepository: PasskeyRepository
+    @Inject
+    lateinit var passkeyManager: PasskeyManager
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
-        // TODO: Remove fake keys
-        val entropy = ByteArray(DEFAULT_BYTE_LENGTH)
-        SecureRandom().nextBytes(entropy)
-        KeyManager.setRootKey(Mnemonics.MnemonicCode(entropy))
 
         val request = PendingIntentHandler.retrieveProviderCreateCredentialRequest(intent)
 
@@ -273,9 +271,13 @@ class CreatePasskeyActivity : FragmentActivity() {
         )
         return response
     }
-
+    @Suppress("MaxLineLength")
     private fun generateKeyPair(origin: String, userHandle: String): KeyPair {
-        return KeyManager.generatePasskey(origin, userHandle)
+        return passkeyManager.derivePasskey(
+            seedId = "1234",
+            origin = origin,
+            userHandle = userHandle
+        )
     }
 
     private fun validateAssetLinks(rpId: String, callingAppInfo: CallingAppInfo) {
@@ -469,19 +471,24 @@ class CreatePasskeyActivity : FragmentActivity() {
         keyPair: KeyPair,
     ) {
         // TODO: Save credential
-//        runBlocking {
-//            credentialsRepository.addNewPasskey(
-//                PasskeyMetadata(
-//                    uid = b64Encode(request.user.id),
-//                    rpid = request.rp.id,
-//                    username = request.user.name,
-//                    displayName = request.user.displayName,
-//                    credId = b64Encode(credId),
+        runBlocking {
+            passkeyRepository.addNewPasskey(
+                Passkey(
+                    siteId = null,
+                    seedId = "12345",
+                    uid = b64Encode(request.user.id),
+                    origin = request.rp.id,
+                    username = request.user.name,
+                    userHandle = request.user.displayName,
+                    displayName = request.user.displayName,
+                    credId = b64Encode(credId),
+                    count = 0,
+                    lastUsed = 0,
 //                    credPublicKey = b64Encode((keyPair.public as ECPublicKey).encoded),
 //                    credPrivateKey = b64Encode((keyPair.private as ECPrivateKey).s.toByteArray()),
-//                ),
-//            )
-//        }
+                ),
+            )
+        }
     }
     companion object {
         private const val INVALID_ALLOWLIST = "{\"apps\": [\n" +

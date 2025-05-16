@@ -5,6 +5,7 @@ import com.algorand.wallet.account.webauthn.data.database.dao.SiteDao
 import com.algorand.wallet.account.webauthn.data.database.model.PasskeyEntity
 import com.algorand.wallet.account.webauthn.data.database.model.SiteEntity
 import com.algorand.wallet.account.webauthn.data.database.model.SiteWithPasskeysQuery
+import com.algorand.wallet.account.webauthn.domain.PasskeyManager
 import com.algorand.wallet.account.webauthn.domain.model.Passkey
 import com.algorand.wallet.account.webauthn.domain.repository.PasskeyRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,6 +20,7 @@ import java.security.spec.ECGenParameterSpec
 import java.security.spec.ECParameterSpec
 import java.security.spec.ECPrivateKeySpec
 import java.security.spec.X509EncodedKeySpec
+import javax.inject.Inject
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -33,7 +35,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
  * @property siteDao An instance of `SiteDao` for performing database operations
  * related to sites.
  */
-class PasskeyRepositoryImpl(
+class PasskeyRepositoryImpl @Inject constructor(
     private val passkeyDao: PasskeyDao,
     private val siteDao: SiteDao,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -58,6 +60,12 @@ class PasskeyRepositoryImpl(
         }
     }
 
+    override suspend fun getSitePasskeysSize(url: String): Int? {
+        return withContext(coroutineDispatcher) {
+            siteDao.getPasskeySize(url)
+        }
+    }
+
     /**
      * Retrieves a stream of site data along with their associated passkeys from the database.
      *
@@ -77,18 +85,21 @@ class PasskeyRepositoryImpl(
      * @return A `SiteWithPasskeysQuery` object containing the site and its associated passkeys,
      *         or null if the URL is null or no matching site is found.
      */
-    override fun getSitePasskeys(url: String?): SiteWithPasskeysQuery? {
-        if (url == null) {
-            return null
+    override suspend fun getSitePasskeys(url: String): SiteWithPasskeysQuery {
+        return withContext(coroutineDispatcher) {
+            siteDao.getPasskeys(url)
         }
-        return siteDao.getPasskeys(url)
     }
 
     override suspend fun getAllPasskeysAsFlow(): Flow<List<PasskeyEntity>> {
-        return passkeyDao.getAllAsFlow()
+        return withContext(coroutineDispatcher) {
+            passkeyDao.getAllAsFlow()
+        }
     }
     override suspend fun getSite(siteId: Long): SiteEntity? {
-        return siteDao.get(siteId)
+        return withContext(coroutineDispatcher) {
+            siteDao.get(siteId)
+        }
     }
     /**
      * Adds a new site to the database.
@@ -101,7 +112,9 @@ class PasskeyRepositoryImpl(
      * @return The row ID of the newly inserted or updated site entry as a `Long`.
      */
     override suspend fun addSite(siteMetaData: SiteEntity): Long {
-        return siteDao.insert(siteMetaData)
+        return withContext(coroutineDispatcher) {
+            siteDao.insert(siteMetaData)
+        }
     }
 
     /**
@@ -111,41 +124,9 @@ class PasskeyRepositoryImpl(
      *            specific site entry in the database that should be removed.
      */
     override suspend fun deleteSite(url: String) {
-        return siteDao.delete(url)
-    }
-
-
-    /**
-     * Derives a cryptographic key pair from the given passkey entity.
-     *
-     * This method processes the provided `PasskeyEntity` and generates a key pair
-     * using the DP256 curve. It utilizes the encoded private and public key data
-     * to create the specified key pair.
-     *
-     * @param passkey The `PasskeyEntity` containing the data necessary for key pair derivation.
-     *                This includes fields such as user information, credential ID, and others.
-     * @return A `KeyPair` consisting of the derived public and private keys.
-     */
-    @OptIn(ExperimentalEncodingApi::class)
-    override fun deriveKeyPairFromPasskey(passkey: PasskeyEntity): KeyPair {
-        val keyPair = TODO("Derive keypair from DP256")
-        val publicKeyBytes = Base64.decode("")
-        val privateKeyBytes = Base64.decode("")
-
-        val params = AlgorithmParameters.getInstance("EC")
-        params.init(ECGenParameterSpec("secp256r1"))
-        val spec = params.getParameterSpec(ECParameterSpec::class.java)
-
-        // Convert the private key bytes to a BigInteger.
-        val bi = BigInteger(1, privateKeyBytes)
-        // Create an EC private key specification from the BigInteger and the EC parameter specification.
-        val privateKeySpec = ECPrivateKeySpec(bi, spec)
-
-        val factory = KeyFactory.getInstance("EC")
-
-        val publicKey = factory.generatePublic(X509EncodedKeySpec(publicKeyBytes))
-        val privateKey = factory.generatePrivate(privateKeySpec)
-        return KeyPair(publicKey, privateKey)
+        return withContext(coroutineDispatcher) {
+            siteDao.delete(url)
+        }
     }
 
     /**
@@ -159,7 +140,9 @@ class PasskeyRepositoryImpl(
      *                user information, credential data, or usage metadata.
      */
     override suspend fun updatePasskey(passkey: PasskeyEntity) {
-        passkeyDao.update(passkey)
+        withContext(coroutineDispatcher) {
+            passkeyDao.update(passkey)
+        }
     }
 
     /**
@@ -170,10 +153,12 @@ class PasskeyRepositoryImpl(
      *                details such as the credential ID and site association.
      */
     override suspend fun removePasskey(passkey: PasskeyEntity) {
-        val siteId = passkey.siteId
-        passkeyDao.delete(passkey.credentialId)
-        if (siteDao.getPasskeySize(siteId) == 0) {
-            siteDao.delete(siteId)
+        withContext(coroutineDispatcher) {
+            val siteId = passkey.siteId
+            passkeyDao.delete(passkey.credentialId)
+            if (siteDao.getPasskeySize(siteId) == 0) {
+                siteDao.delete(siteId)
+            }
         }
     }
 
@@ -189,21 +174,23 @@ class PasskeyRepositoryImpl(
      *                        the username, display name, and the credential ID (`credId`).
      */
     override suspend fun addNewPasskey(passkeyMetadata: Passkey) {
-        val site = siteDao.get(passkeyMetadata.origin!!)
-        val siteId = site?.id ?: addSite(SiteEntity(url = passkeyMetadata.origin, name = ""))
+        withContext(coroutineDispatcher) {
+            val site = siteDao.get(passkeyMetadata.origin!!)
+            val siteId = site?.id ?: addSite(SiteEntity(url = passkeyMetadata.origin, name = ""))
 
-        passkeyDao.insert(
-            PasskeyEntity(
-                seedId = passkeyMetadata.seedId!!,
-                userId = passkeyMetadata.uid,
-                username = passkeyMetadata.username,
-                userHandle = passkeyMetadata.displayName,
-                credentialId = passkeyMetadata.credId,
-                siteId = siteId,
-                count = 0,
-                lastUsedTimeMs = 0L,
-            ),
-        )
+            passkeyDao.insert(
+                PasskeyEntity(
+                    seedId = passkeyMetadata.seedId!!,
+                    userId = passkeyMetadata.uid,
+                    username = passkeyMetadata.username,
+                    userHandle = passkeyMetadata.displayName,
+                    credentialId = passkeyMetadata.credId,
+                    siteId = siteId,
+                    count = 0,
+                    lastUsedTimeMs = 0L,
+                ),
+            )
+        }
     }
 
     /**
@@ -216,6 +203,8 @@ class PasskeyRepositoryImpl(
      * @return The corresponding `PasskeyEntity` if found; otherwise, null.
      */
     override suspend fun getPasskey(credId: String): PasskeyEntity? {
-        return passkeyDao.get(credId)
+        return withContext(coroutineDispatcher) {
+            passkeyDao.get(credId)
+        }
     }
 }

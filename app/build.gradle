@@ -332,7 +332,7 @@ dependencies {
     implementation libs.xhdwalletapi
     implementation libs.kotlin.bip39
     implementation libs.androidx.credentials
-    implementation files("libs/dP256.jar")
+    implementation files("../libs/dP256.jar")
 
     // Test
     testImplementation(project(":test-utils"))

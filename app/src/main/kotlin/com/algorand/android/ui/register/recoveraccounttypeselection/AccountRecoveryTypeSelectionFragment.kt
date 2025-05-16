@@ -63,6 +63,15 @@ class AccountRecoveryTypeSelectionFragment : BaseFragment(R.layout.fragment_acco
             pairLedgerSelectionItem.setOnClickListener { navToPairLedgerNavigation() }
             importFromWebSelectionItem.setOnClickListener { navToImportFromWeb() }
             algorandSecureBackupSelectionItem.setOnClickListener { navToAlgorandSecureRestoreNavigation() }
+            if (accountRecoveryTypeSelectionViewModel.isOnHdWallet()) {
+                titleTextView.setText(R.string.import_a_wallet)
+                recoverAnAccountSelectionItem.setTitle(R.string.recover_a_wallet)
+                recoverAnAccountSelectionItem.setDescription(R.string.i_want_to_recover_wallet)
+            } else {
+                titleTextView.setText(R.string.import_an_account)
+                recoverAnAccountSelectionItem.setTitle(R.string.recover_an_account)
+                recoverAnAccountSelectionItem.setDescription(R.string.i_want_to_recover)
+            }
         }
     }
 

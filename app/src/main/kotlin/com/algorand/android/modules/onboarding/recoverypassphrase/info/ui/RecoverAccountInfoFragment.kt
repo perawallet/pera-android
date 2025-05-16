@@ -42,15 +42,15 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraCard
-import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.text.PeraTitleText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import com.algorand.android.ui.compose.theme.PeraTheme
 
 @AndroidEntryPoint
 class RecoverAccountInfoFragment : BaseInfoFragment() {
@@ -74,25 +74,41 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
         )
 
     @Composable
-    override fun Title(modifier: Modifier) =
+    override fun Title(modifier: Modifier) {
+        val titleTextRes = if (recoveryAccountInfoViewModel.isHdWalletToggleEnabled()) {
+            R.string.recover_an_algorand_wallet
+        } else {
+            R.string.recover_an_algorand_account
+        }
         PeraHeadlineText(
             modifier = modifier,
-            text = stringResource(id = R.string.recover_an_algorand)
+            text = stringResource(id = titleTextRes)
         )
+    }
 
     @Composable
-    override fun Description(modifier: Modifier) =
+    override fun Description(modifier: Modifier) {
+        val descriptionTextRes = if (recoveryAccountInfoViewModel.isHdWalletToggleEnabled()) {
+            R.string.in_the_following_wallet
+        } else {
+            R.string.in_the_following_account
+        }
         PeraBodyText(
             modifier = modifier,
-            text = stringResource(id = R.string.in_the_following)
+            text = stringResource(id = descriptionTextRes)
         )
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun PrimaryButton(modifier: Modifier, sheetState: SheetState) {
         val coroutineScope = rememberCoroutineScope()
         val showBottomSheet = rememberSaveable { mutableStateOf(false) }
-
+        val buttonTextRes = if (recoveryAccountInfoViewModel.isHdWalletToggleEnabled()) {
+            R.string.recover_an_algorand_wallet
+        } else {
+            R.string.recover_an_algorand_account
+        }
         PeraPrimaryButton(
             modifier = modifier,
             onClick = {
@@ -106,7 +122,7 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
                     }
                 }
             },
-            text = stringResource(id = R.string.recover_an_algorand)
+            text = stringResource(id = buttonTextRes)
         )
 
         if (showBottomSheet.value) {

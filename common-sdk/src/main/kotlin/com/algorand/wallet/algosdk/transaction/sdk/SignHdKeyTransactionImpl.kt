@@ -58,6 +58,11 @@ internal class SignHdKeyTransactionImpl @Inject constructor(
         }
     }
 
+    /*
+    * currently cards arbitrary signing uses a prefix MX that is not supported
+    * in xHD library. SignData is basically rawSign with a validation step before
+    * it, but since we can't validate the prefix MX...we're calling rawSign directly
+    */
     override fun signLegacyArbitaryData(
         transactionByteArray: ByteArray,
         seed: ByteArray,

@@ -275,8 +275,10 @@
     <string name="the_only_way_to">The only way to recover an Algorand account is with this recovery passphrase.</string>
     <string name="im_ready_to_begin">I\'m Ready to Begin</string>
     <string name="create_a_watch">Create a Watch Account</string>
-    <string name="recover_an_algorand">Recover an Algorand account</string>
-    <string name="in_the_following">In the following steps, you\'ll enter your recovery passphrase to recover an Algorand account. Have your recovery phrase handy before you begin.</string>
+    <string name="recover_an_algorand_account">Recover an Algorand Account</string>
+    <string name="recover_an_algorand_wallet">Recover an Algorand Wallet</string>
+    <string name="in_the_following_account">In the following steps, you\'ll enter your recovery passphrase to recover an Algorand account. Have your recovery phrase handy before you begin.</string>
+    <string name="in_the_following_wallet">In the following steps, you\'ll enter your recovery passphrase to recover an Algorand wallet. Have your recovery phrase handy before you begin.</string>
     <string name="finish_account_creation">Finish Account Creation</string>
     <string name="welcome_to_pera">Welcome to\nPera Wallet</string>
     <string name="i_want_to_monitor">I want to monitor an account that\'s held in cold storage.</string>
@@ -1503,4 +1505,7 @@
 
     <string name="select_universal_wallet">Select Universal Wallet</string>
     <string name="create_your_new_account">Create your new account under a Universal Wallet you already have</string>
+
+    <string name="recover_a_wallet">Recover a wallet</string>
+    <string name="i_want_to_recover_wallet">I want to recover an Algorand wallet.</string>
 </resources>

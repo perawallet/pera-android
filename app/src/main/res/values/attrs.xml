@@ -79,8 +79,6 @@
     <declare-styleable name="RegisterTypeSelectionItem">
         <attr name="typeSelectionIcon" format="reference" />
         <attr name="typeSelectionTitleText" format="string" />
-        <attr name="typeSelectionTitleBadgeVisible" format="boolean" />
-        <attr name="typeSelectionTitleBadgeText" format="string" />
         <attr name="typeSelectionDescriptionText" format="string" />
     </declare-styleable>
 

@@ -74,14 +74,21 @@ class GetActiveHdAccountsUseCaseTest {
             ACC_1_ADDR_4 to ACC_1_ADDR_4_FAST_LOOKUP.copy(accountExists = true),
             ACC_1_ADDR_5 to ACC_1_ADDR_5_FAST_LOOKUP.copy(accountExists = false),
         )
+        val acc1HdAccountAddresses = listOf(
+            HdAccountAddress(ACC_1_ADDR_1, 0, 0, 0, ACC_1_ADDR_1_FAST_LOOKUP.copy(accountExists = false)),
+            HdAccountAddress(ACC_1_ADDR_2, 0, 0, 1, ACC_1_ADDR_2_FAST_LOOKUP.copy(accountExists = false)),
+            HdAccountAddress(ACC_1_ADDR_3, 0, 0, 2, ACC_1_ADDR_3_FAST_LOOKUP.copy(accountExists = false)),
+            HdAccountAddress(ACC_1_ADDR_4, 0, 0, 3, ACC_1_ADDR_4_FAST_LOOKUP.copy(accountExists = true)),
+            HdAccountAddress(ACC_1_ADDR_5, 0, 0, 4, ACC_1_ADDR_5_FAST_LOOKUP.copy(accountExists = false)),
+        )
         val secondFastLookupResult = peraFixture<Map<String, AccountFastLookup?>>()
         coEvery { getAccountFastLookupBatch(FIRST_ACCOUNT_ADDRESSES) } returns firstFastLookupResult
         coEvery { getAccountFastLookupBatch(SECOND_ACCOUNT_ADDRESSES) } returns secondFastLookupResult
-        every { hdAccountAddressMapper(ACC_1_HD_KEY_DETAILS, firstFastLookupResult) } returns ACC_1_HD_ACCOUNT_ADDRESSES
+        every { hdAccountAddressMapper(ACC_1_HD_KEY_DETAILS, firstFastLookupResult) } returns acc1HdAccountAddresses
 
         val result = sut(ENTROPY)
 
-        val expected = listOf(ActiveHdAccount(accountIndex = 0, ENTROPY, ACC_1_HD_ACCOUNT_ADDRESSES))
+        val expected = listOf(ActiveHdAccount(accountIndex = 0, ENTROPY, acc1HdAccountAddresses))
         assertEquals(expected, result)
     }
 
@@ -113,14 +120,6 @@ class GetActiveHdAccountsUseCaseTest {
             HdKeyDetail(ACC_1_ADDR_3, 0, 0, 2),
             HdKeyDetail(ACC_1_ADDR_4, 0, 0, 3),
             HdKeyDetail(ACC_1_ADDR_5, 0, 0, 4)
-        )
-
-        val ACC_1_HD_ACCOUNT_ADDRESSES = listOf(
-            HdAccountAddress(ACC_1_ADDR_1, 0, 0, 0, ACC_1_ADDR_1_FAST_LOOKUP),
-            HdAccountAddress(ACC_1_ADDR_2, 0, 0, 1, ACC_1_ADDR_2_FAST_LOOKUP),
-            HdAccountAddress(ACC_1_ADDR_3, 0, 0, 2, ACC_1_ADDR_3_FAST_LOOKUP),
-            HdAccountAddress(ACC_1_ADDR_4, 0, 0, 3, ACC_1_ADDR_4_FAST_LOOKUP),
-            HdAccountAddress(ACC_1_ADDR_5, 0, 0, 4, ACC_1_ADDR_5_FAST_LOOKUP)
         )
 
         val SECOND_ACCOUNT_ADDRESSES = listOf(ACC_2_ADDR_1, ACC_2_ADDR_2, ACC_2_ADDR_3, ACC_2_ADDR_4, ACC_2_ADDR_5)

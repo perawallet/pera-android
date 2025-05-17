@@ -13,6 +13,8 @@
 package com.algorand.wallet.account.core.domain.usecase
 
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
+import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedCustomInfoOrNull
+import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedIdFromAddress
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
@@ -25,7 +27,9 @@ internal class GetAccountsDetailsFlowUseCase @Inject constructor(
     private val getAllLocalAccountAddressesAsFlow: GetAllLocalAccountAddressesAsFlow,
     private val getAccountType: GetAccountType,
     private val getAccountRegistrationType: GetAccountRegistrationType,
-    private val getAccountCustomInfoOrNull: GetAccountCustomInfoOrNull
+    private val getAccountCustomInfoOrNull: GetAccountCustomInfoOrNull,
+    private val getHdSeedCustomInfoOrNull: GetHdSeedCustomInfoOrNull,
+    private val getHdSeedIdFromAddress: GetHdSeedIdFromAddress
 ) : GetAccountsDetailsFlow {
 
     override fun invoke(): Flow<List<AccountDetail>> {
@@ -35,6 +39,7 @@ internal class GetAccountsDetailsFlowUseCase @Inject constructor(
                 AccountDetail(
                     address = address,
                     customAccountInfo = customInfo,
+                    customHdSeedInfo = getHdSeedCustomInfoOrNull(getHdSeedIdFromAddress.invoke(address)),
                     accountRegistrationType = getAccountRegistrationType(address),
                     accountType = getAccountType(address)
                 )

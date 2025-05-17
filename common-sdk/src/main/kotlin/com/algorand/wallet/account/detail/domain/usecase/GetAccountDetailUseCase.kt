@@ -13,12 +13,16 @@
 package com.algorand.wallet.account.detail.domain.usecase
 
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
+import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedCustomInfoOrNull
+import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedIdFromAddress
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import javax.inject.Inject
 
 internal class GetAccountDetailUseCase @Inject constructor(
     private val getCustomInfoOrNull: GetAccountCustomInfoOrNull,
-    private val getAccountState: GetAccountState
+    private val getAccountState: GetAccountState,
+    private val getHdSeedCustomInfoOrNull: GetHdSeedCustomInfoOrNull,
+    private val getHdSeedIdFromAddress: GetHdSeedIdFromAddress
 ) : GetAccountDetail {
 
     override suspend fun invoke(address: String): AccountDetail {
@@ -26,6 +30,7 @@ internal class GetAccountDetailUseCase @Inject constructor(
         return AccountDetail(
             address = address,
             customAccountInfo = getCustomInfoOrNull(address),
+            customHdSeedInfo = getHdSeedCustomInfoOrNull(getHdSeedIdFromAddress.invoke(address)),
             accountRegistrationType = accountState.accountRegistrationType,
             accountType = accountState.accountType
         )

@@ -17,7 +17,6 @@ import com.algorand.android.R
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewState.Content.DescriptionDetail
-import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.utils.browser.ALGO25_ACCOUNT_SUPPORT_URL
 import com.algorand.android.utils.browser.HD_ACCOUNT_SUPPORT_URL
 import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
@@ -49,19 +48,23 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
         return accountTypeString
     }
 
-    fun decideAccountTypeString(accountLite: AccountLite): String {
-        val accountTypeString = when (accountLite.cachedInfo?.type) {
+    fun decideAccountTypeString(
+        accountType: AccountType?,
+        accountRegistrationType: AccountRegistrationType?,
+        rekeyAdminAccountType: AccountRegistrationType?
+    ): String {
+        val accountTypeString = when (accountType) {
             AccountType.LedgerBle -> context.getString(R.string.ledger)
             AccountType.NoAuth -> context.getString(R.string.watch)
             AccountType.Algo25 -> context.getString(R.string.standard)
             AccountType.Rekeyed -> context.getString(R.string.no_auth)
             AccountType.RekeyedAuth -> {
-                val accountOriginalState = when (accountLite.registrationType) {
+                val accountOriginalState = when (accountRegistrationType) {
                     AccountRegistrationType.LedgerBle -> R.string.ledger
                     AccountRegistrationType.NoAuth -> R.string.watch
                     else -> R.string.standard
                 }
-                val accountAuthState = when (accountLite.cachedInfo.rekeyAuthRegistrationType) {
+                val accountAuthState = when (rekeyAdminAccountType) {
                     AccountRegistrationType.LedgerBle -> R.string.ledger
                     AccountRegistrationType.NoAuth -> R.string.watch
                     else -> R.string.standard
@@ -82,14 +85,17 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
         return accountTypeString
     }
 
-    fun decideDescriptionDetail(accountLite: AccountLite): DescriptionDetail {
-        val descriptionStringResId = when (accountLite.cachedInfo?.type) {
+    fun decideDescriptionDetail(
+        accountType: AccountType?,
+        rekeyAdminAccountType: AccountRegistrationType?
+    ): DescriptionDetail {
+        val descriptionStringResId = when (accountType) {
             AccountType.LedgerBle -> R.string.your_account_is_a_Ledger
             AccountType.NoAuth -> R.string.this_account_was_not
             AccountType.Algo25 -> R.string.your_account_is_a_standard
             AccountType.Rekeyed -> R.string.your_account_is_rekeyed_to_an
             AccountType.RekeyedAuth -> {
-                when (accountLite.cachedInfo.rekeyAuthRegistrationType) {
+                when (rekeyAdminAccountType) {
                     AccountRegistrationType.Algo25, AccountRegistrationType.HdKey -> {
                         R.string.your_account_is_rekeyed_to_another
                     }
@@ -97,10 +103,10 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
                     else -> R.string.your_account_is_rekeyed_to_unknown
                 }
             }
-            null -> R.string.your_account_is_rekeyed_to_an
             AccountType.HdKey -> R.string.your_account_is_a_hd_wallet_address
+            null -> R.string.your_account_is_rekeyed_to_an
         }
-        val hyperlinkUrl = when (accountLite.cachedInfo?.type) {
+        val hyperlinkUrl = when (accountType) {
             AccountType.Algo25 -> ALGO25_ACCOUNT_SUPPORT_URL
             AccountType.HdKey -> HD_ACCOUNT_SUPPORT_URL
             AccountType.LedgerBle -> LEDGER_SUPPORT_URL

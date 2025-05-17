@@ -82,6 +82,9 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
             is ViewEvent.NavigateToRekeyToLedgerAccount -> {
                 navToRekeyToLedgerAccountNavigation()
             }
+            is ViewEvent.NavigateToHdScanNewAddresses -> {
+                // Will be added when hd widget is merged in
+            }
         }
     }
 

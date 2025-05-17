@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 internal class AccountInformationMapperImpl @Inject constructor(
     private val appStateSchemeMapper: AppStateSchemeMapper,
-    private val assetHoldingMapper: AssetHoldingMapper,
+    private val assetHoldingMapper: AssetHoldingMapper
 ) : AccountInformationMapper {
 
     override fun invoke(response: AccountInformationResponse): AccountInformation? {
@@ -43,6 +43,7 @@ internal class AccountInformationMapperImpl @Inject constructor(
         val assetHoldingList = response.allAssetHoldingList.orEmpty().map {
             assetHoldingMapper(it)
         }
+
         if (assetHoldingList.any { it == null }) return null
         return AccountInformation(
             address = response.address ?: return null,

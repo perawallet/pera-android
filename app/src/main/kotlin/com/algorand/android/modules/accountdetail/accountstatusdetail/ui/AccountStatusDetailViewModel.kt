@@ -15,6 +15,7 @@ package com.algorand.android.modules.accountdetail.accountstatusdetail.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.ui.AccountAssetItemButtonState
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
@@ -25,9 +26,19 @@ import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.Account
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewState
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.decider.AccountStatusDetailPreviewDecider
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
-import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
+import com.algorand.android.utils.analytics.CreationType
+import com.algorand.android.utils.launchIO
+import com.algorand.wallet.account.core.domain.usecase.GetAccountDetailFlow
+import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
+import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
+import com.algorand.wallet.account.local.domain.model.LocalAccount
+import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
+import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -37,6 +48,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@Suppress("LongParameterList")
 @HiltViewModel
 class AccountStatusDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -46,7 +58,13 @@ class AccountStatusDetailViewModel @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountOriginalStateIconDrawablePreview: GetAccountOriginalStateIconDrawablePreview,
     private val accountStatusDetailPreviewDecider: AccountStatusDetailPreviewDecider,
-    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow
+    private val getAccountDetailFlow: GetAccountDetailFlow,
+    private val getAccountInformation: GetAccountInformation,
+    private val getAccountRegistrationType: GetAccountRegistrationType,
+    private val getLocalAccount: GetLocalAccount,
+    private val aesPlatformManager: AESPlatformManager,
+    private val getHdKeyPrivateKey: GetHdKeyPrivateKey,
+    private val getHdEntropy: GetHdEntropy
 ) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
     private val navArgs = AccountStatusDetailBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
@@ -56,24 +74,46 @@ class AccountStatusDetailViewModel @Inject constructor(
         stateDelegate.setDefaultState(ViewState.Idle)
     }
 
+    @Suppress("LongMethod")
     fun loadAccountStatusDetail() {
         stateDelegate.updateState { ViewState.Loading }
         viewModelScope.launch {
-            getAccountLiteCacheFlow().collectLatest { cacheStatus ->
-                val accountLite = (cacheStatus as? AccountLiteCacheStatus.Data)?.accountLites?.get(accountAddress)
-                if (accountLite?.cachedInfo == null) return@collectLatest
+            getAccountDetailFlow(accountAddress).collectLatest { accountDetail ->
+                if (accountDetail == null) return@collectLatest
+                val accountType = accountDetail.accountType
 
-                val accountType = accountLite.cachedInfo.type
-
-                val authAccountAddress = accountLite.cachedInfo.rekeyAuthAddress
-                val hasAccountAuthority = accountType.canSignTransaction()
+                val accountInformation = getAccountInformation(accountAddress)
+                val authAccountAddress = accountInformation?.rekeyAdminAddress
+                val hasAccountAuthority = accountDetail.accountType?.canSignTransaction() == true
 
                 val titleString = accountStatusDetailPreviewDecider.decideTitleString(accountType)
-                val accountOriginalTypeDisplayName = getAccountDisplayName(accountAddress)
+                val accountOriginalTypeDisplayName = if (accountType == AccountType.HdKey) {
+                    AccountDisplayName(
+                        accountAddress = accountAddress,
+                        primaryDisplayName = accountDetail.customHdSeedInfo?.entropyCustomName ?: accountAddress,
+                        secondaryDisplayName = accountDetail.customHdSeedInfo?.entropyCustomName ?: accountAddress
+                    )
+                } else {
+                    getAccountDisplayName(accountAddress)
+                }
+
                 val accountOriginalTypeIconDrawablePreview = getAccountOriginalStateIconDrawablePreview(accountAddress)
                 val accountTypeDrawablePreview = getAccountIconDrawablePreview(accountAddress)
-                val accountTypeString = accountStatusDetailPreviewDecider.decideAccountTypeString(accountLite)
-                val descriptionDetail = accountStatusDetailPreviewDecider.decideDescriptionDetail(accountLite)
+
+                val rekeyAdminRegistrationType = accountInformation?.rekeyAdminAddress?.let {
+                    getAccountRegistrationType(it)
+                }
+                val accountTypeString = accountStatusDetailPreviewDecider
+                    .decideAccountTypeString(
+                        accountType,
+                        accountDetail.accountRegistrationType,
+                        rekeyAdminRegistrationType
+                    )
+                val descriptionDetail = accountStatusDetailPreviewDecider
+                    .decideDescriptionDetail(
+                        accountType,
+                        rekeyAdminRegistrationType
+                    )
                 val authAccountDisplayName = authAccountAddress?.let { safeAuthAddress ->
                     getAccountDisplayName(safeAuthAddress)
                 }
@@ -96,6 +136,7 @@ class AccountStatusDetailViewModel @Inject constructor(
                         accountTypeDrawablePreview = accountTypeDrawablePreview,
                         descriptionDetail = descriptionDetail,
                         accountTypeString = accountTypeString,
+                        isHdWallet = accountType == AccountType.HdKey,
                         isRekeyGroupVisible = authAccountAddress != null,
                         isRekeyToLedgerAccountVisible = hasAccountAuthority,
                         isRekeyToStandardAccountVisible = hasAccountAuthority
@@ -121,6 +162,39 @@ class AccountStatusDetailViewModel @Inject constructor(
         eventDelegate.sendEvent(viewModelScope, ViewEvent.NavigateToRekeyToLedgerAccount)
     }
 
+    fun navToHdScanNewAddresses() {
+        viewModelScope.launchIO {
+            val account = getLocalAccount.invoke(accountAddress)
+            when (account) {
+                is LocalAccount.HdKey -> {
+                    val privateKey = getHdKeyPrivateKey.invoke(accountAddress)
+                    val entropy = getHdEntropy.invoke(account.seedId)
+                    if (privateKey != null && entropy != null) {
+                        val accountCreation = AccountCreation(
+                            address = account.algoAddress,
+                            customName = null,
+                            isBackedUp = false,
+                            type = AccountCreation.Type.HdKey(
+                                account.publicKey,
+                                aesPlatformManager.encryptByteArray(privateKey.copyOf()),
+                                aesPlatformManager.encryptByteArray(entropy.copyOf()),
+                                account.account,
+                                account.change,
+                                account.keyIndex,
+                                account.derivationType,
+                            ),
+                            creationType = CreationType.RECOVER
+                        )
+                        privateKey.clearFromMemory()
+                        entropy.clearFromMemory()
+                        eventDelegate.sendEvent(viewModelScope, ViewEvent.NavigateToHdScanNewAddresses(accountCreation))
+                    }
+                }
+                else -> { }
+            }
+        }
+    }
+
     sealed interface ViewState {
         data object Idle : ViewState
         data object Loading : ViewState
@@ -136,6 +210,7 @@ class AccountStatusDetailViewModel @Inject constructor(
             val accountTypeDrawablePreview: AccountIconDrawablePreview? = null,
             val descriptionDetail: DescriptionDetail,
             val accountTypeString: String? = null,
+            val isHdWallet: Boolean? = null,
             val isRekeyGroupVisible: Boolean? = null,
             val isRekeyToLedgerAccountVisible: Boolean? = null,
             val isRekeyToStandardAccountVisible: Boolean? = null
@@ -151,6 +226,7 @@ class AccountStatusDetailViewModel @Inject constructor(
 
     sealed interface ViewEvent {
         data class CopyAccountAddressToClipboard(val address: String) : ViewEvent
+        data class NavigateToHdScanNewAddresses(val accountCreation: AccountCreation) : ViewEvent
         data object NavigateToUndoRekey : ViewEvent
         data object NavigateToRekeyToStandardAccount : ViewEvent
         data object NavigateToRekeyToLedgerAccount : ViewEvent

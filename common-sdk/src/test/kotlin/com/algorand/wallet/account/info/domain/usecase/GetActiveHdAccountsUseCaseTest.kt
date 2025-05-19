@@ -81,9 +81,8 @@ class GetActiveHdAccountsUseCaseTest {
             HdAccountAddress(ACC_1_ADDR_4, 0, 0, 3, ACC_1_ADDR_4_FAST_LOOKUP.copy(accountExists = true)),
             HdAccountAddress(ACC_1_ADDR_5, 0, 0, 4, ACC_1_ADDR_5_FAST_LOOKUP.copy(accountExists = false)),
         )
-        val secondFastLookupResult = peraFixture<Map<String, AccountFastLookup?>>()
         coEvery { getAccountFastLookupBatch(FIRST_ACCOUNT_ADDRESSES) } returns firstFastLookupResult
-        coEvery { getAccountFastLookupBatch(SECOND_ACCOUNT_ADDRESSES) } returns secondFastLookupResult
+        coEvery { getAccountFastLookupBatch(SECOND_ACCOUNT_ADDRESSES) } returns emptyMap()
         every { hdAccountAddressMapper(ACC_1_HD_KEY_DETAILS, firstFastLookupResult) } returns acc1HdAccountAddresses
 
         val result = sut(ENTROPY)

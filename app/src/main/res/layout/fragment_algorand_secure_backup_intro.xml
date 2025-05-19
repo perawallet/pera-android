@@ -23,17 +23,17 @@
         android:layout_marginTop="@dimen/spacing_xxxsmall"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:paddingHorizontal="@dimen/spacing_xlarge"
-        android:paddingBottom="@dimen/bottom_fade_gradient_height">
+        android:paddingHorizontal="@dimen/spacing_xlarge">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/bottom_fade_gradient_height">
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:text="@string/algorand_secure_n_backup"
                 android:textAppearance="@style/TextAppearance.Title.Sans.Medium" />
 
@@ -78,6 +78,14 @@
                 app:title="@string/save_your_backup_file"
                 app:titleTextAppearance="@style/TextAppearance.Body.Sans.Medium" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xxxxlarge"
+                android:layout_marginBottom="@dimen/spacing_xxxxlarge"
+                android:text="@string/please_note_we_currently"
+                android:textAppearance="@style/TextAppearance.Body.Sans"
+                android:textColor="@color/text_gray" />
         </LinearLayout>
 
     </ScrollView>

@@ -82,7 +82,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xxxxlarge"
-                android:layout_marginBottom="@dimen/spacing_xxxxlarge"
                 android:text="@string/please_note_we_currently"
                 android:textAppearance="@style/TextAppearance.Body.Sans"
                 android:textColor="@color/text_gray" />

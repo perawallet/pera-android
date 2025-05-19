@@ -12,6 +12,8 @@
 
 package com.algorand.android.modules.onboarding.recoverypassphrase.info.ui
 
+import android.os.Bundle
+import android.view.View
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
+import com.algorand.android.customviews.toolbar.buttoncontainer.model.IconButton
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
@@ -49,6 +52,8 @@ import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.text.PeraTitleText
+import com.algorand.android.utils.browser.RECOVER_OR_IMPORT_ACCOUNT_SUPPORT_URL
+import com.algorand.android.utils.browser.openUrl
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -65,12 +70,31 @@ class RecoverAccountInfoFragment : BaseInfoFragment() {
 
     private val recoveryAccountInfoViewModel by viewModels<RecoveryAccountInfoViewModel>()
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        configureToolbar()
+    }
+
+    private fun configureToolbar() {
+        getAppToolbar()?.setEndButton(
+            button = IconButton(
+                R.drawable.ic_info,
+                onClick = ::onInfoClick
+            )
+        )
+    }
+
+    private fun onInfoClick() {
+        context?.openUrl(RECOVER_OR_IMPORT_ACCOUNT_SUPPORT_URL)
+    }
+
     @Composable
     override fun Icon(modifier: Modifier) =
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_key),
             contentDescription = stringResource(id = R.string.key),
-            modifier = modifier
+            modifier = modifier,
+            tintColor = PeraTheme.colors.link.icon
         )
 
     @Composable

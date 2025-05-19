@@ -32,6 +32,7 @@ import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.ui.common.BaseInfoFragment
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToBackupPassphraseAccountNameNavigation
 import com.algorand.android.ui.common.warningconfirmation.BackupInfoFragmentDirections.Companion.actionBackupInfoFragmentToWriteDownInfoFragment
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.icon.PeraIcon
@@ -65,7 +66,8 @@ class BackupInfoFragment : BaseInfoFragment() {
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_shield),
             contentDescription = stringResource(R.string.shield),
-            modifier = modifier
+            modifier = modifier,
+            tintColor = PeraTheme.colors.link.icon
         )
 
     @Composable

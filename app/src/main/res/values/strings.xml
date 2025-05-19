@@ -1509,6 +1509,10 @@
 
     <string name="recover_a_wallet">Recover a wallet</string>
     <string name="i_want_to_recover_wallet">I want to recover an Algorand wallet.</string>
+
     <string name="new_to_algorand">New to Algorand?</string>
     <string name="already_have_an_account">Already have an account?</string>
+
+    <string name="please_note_we_currently">Please note: We currently do not support the backing up of Universal and Ledger Wallets</string>
+
 </resources>

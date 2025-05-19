@@ -428,7 +428,7 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
 
     private fun navToAccountRecoveryTypeSelectionFragment() {
         registerIntroViewModel.logOnboardingWelcomeAccountRecoverClickEvent()
-        nav(RegisterIntroFragmentDirections.actionRegisterIntroFragmentToAccountRecoveryTypeSelectionFragment())
+        nav(RegisterIntroFragmentDirections.actionRegisterIntroFragmentToRecoveryTypeSelectionNavigation())
     }
 
     private fun navToWatchAccountInfoFragment() {

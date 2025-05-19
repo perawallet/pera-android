@@ -20,6 +20,8 @@
 
     <include app:graph="@navigation/login_navigation" />
 
+    <include app:graph="@navigation/initial_register_navigation" />
+
     <include app:graph="@navigation/lock_preference_navigation" />
 
     <include app:graph="@navigation/single_button_bottom_sheet_navigation" />
@@ -81,6 +83,10 @@
             app:argType="string"
             app:nullable="true" />
     </action>
+
+    <action
+        android:id="@+id/action_global_initialRegisterIntroNavigation"
+        app:destination="@id/initialRegisterIntroNavigation" />
 
     <action
         android:id="@+id/action_to_lockPreferenceNavigation"

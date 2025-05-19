@@ -48,9 +48,9 @@ import com.algorand.android.utils.setupWithNavController
 import com.algorand.android.utils.showDarkStatusBarIcons
 import com.algorand.android.utils.showLightStatusBarIcons
 import com.algorand.android.utils.viewbinding.viewBinding
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.properties.Delegates
-import kotlinx.coroutines.launch
 
 abstract class CoreMainActivity : BaseActivity() {
 
@@ -89,7 +89,13 @@ abstract class CoreMainActivity : BaseActivity() {
         when (event) {
             InitializeCoreManagers -> initializeCoreManagers()
             InitializeHomeNavigation -> startNavigation(R.id.homeNavigation)
-            InitializeLoginNavigation -> startNavigation(R.id.loginNavigation)
+            InitializeLoginNavigation -> startNavigation(
+                if (coreMainViewModel.isHdWalletToggleEnabled()) {
+                    R.id.initialRegisterIntroNavigation
+                } else {
+                    R.id.loginNavigation
+                }
+            )
         }
     }
 

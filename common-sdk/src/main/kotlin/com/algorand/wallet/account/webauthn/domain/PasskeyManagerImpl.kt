@@ -1,38 +1,15 @@
 package com.algorand.wallet.account.webauthn.domain
 
 import foundation.algorand.deterministicP256.DeterministicP256
-import java.math.BigInteger
-import java.security.AlgorithmParameters
-import java.security.KeyFactory
 import java.security.KeyPair
 import java.security.MessageDigest
-import java.security.interfaces.ECPrivateKey
-import java.security.spec.ECGenParameterSpec
-import java.security.spec.ECParameterSpec
-import java.security.spec.ECPrivateKeySpec
-import java.security.spec.X509EncodedKeySpec
 import javax.inject.Inject
 
 class PasskeyManagerImpl @Inject constructor() : PasskeyManager {
     private var xPasskey = DeterministicP256()
+    // TODO: move to parameter
     private val key = xPasskey.genDerivedMainKeyWithBIP39("salon zoo engage submit smile frost later decide wing sight chaos renew lizard rely canal coral scene hobby scare step bus leaf tobacco slice")
 
-    override fun convertKeyPair(keyPair: KeyPair): KeyPair {
-        val params = AlgorithmParameters.getInstance("EC")
-        params.init(ECGenParameterSpec("secp256r1"))
-        val spec = params.getParameterSpec(ECParameterSpec::class.java)
-
-        // Convert the private key bytes to a BigInteger.
-        val bi = BigInteger(1, (keyPair.private as ECPrivateKey).s.toByteArray())
-        // Create an EC private key specification from the BigInteger and the EC parameter specification.
-        val privateKeySpec = ECPrivateKeySpec(bi, spec)
-
-        val factory = KeyFactory.getInstance("EC")
-
-        val publicKey = factory.generatePublic(X509EncodedKeySpec(keyPair.public.encoded))
-        val privateKey = factory.generatePrivate(privateKeySpec)
-        return KeyPair(publicKey, privateKey)
-    }
     /**
      * Signs the provided payload using the given domain-specific key pair.
      *
@@ -44,8 +21,8 @@ class PasskeyManagerImpl @Inject constructor() : PasskeyManager {
      * @param payload A `ByteArray` containing the data to be signed.
      * @return A `ByteArray` representing the cryptographic signature of the payload.
      */
-    override fun signPasskey(keyPair: KeyPair, payload: ByteArray): ByteArray {
-        return xPasskey.signWithDomainSpecificKeyPair(keyPair, payload)
+    override fun signPasskey(seedId: String, origin: String, userHandle: String, payload: ByteArray): ByteArray {
+        return xPasskey.signWithDomainSpecificKeyPair(derivePasskey(seedId, origin, userHandle), payload)
     }
     /**
      * Generates a credential identifier by hashing the public key associated with the given key pair.

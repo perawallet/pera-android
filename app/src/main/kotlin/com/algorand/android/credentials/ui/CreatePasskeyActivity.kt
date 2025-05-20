@@ -220,7 +220,7 @@ class CreatePasskeyActivity : FragmentActivity() {
         val userHandle = if (user.has("name")) user.getString("name") else user.getString("displayName")
 
         // Generate key
-        val keyPair = generateKeyPair(callingOrigin, userHandle)
+        val keyPair = generateKeyPair(callingAppInfoOrigin ?: callingOrigin, userHandle)
 
         // Save the private key in your local database against callingAppInfo.packageName.
         savePasskeyInCredentialsDataStore(request, credentialId, keyPair)

@@ -115,9 +115,9 @@ interface SiteDao {
      * @return The matching `SiteEntity` if it exists; otherwise, null.
      */
     @Query("SELECT * FROM sites WHERE url = :url")
-    suspend fun get(url: String): SiteEntity
+    suspend fun get(url: String): SiteEntity?
     @Query("SELECT * FROM sites WHERE id = :siteId")
-    suspend fun get(siteId: Long): SiteEntity
+    suspend fun get(siteId: Long): SiteEntity?
 
     /**
      * Deletes a site entry from the database based on the specified URL.

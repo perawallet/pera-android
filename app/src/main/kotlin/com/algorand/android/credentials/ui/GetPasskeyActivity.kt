@@ -160,11 +160,11 @@ class GetPasskeyActivity : FragmentActivity() {
         val packageName = request.callingAppInfo.packageName
 
         // Get the KeyPair
-        val key = passkeyManager.convertKeyPair(passkeyManager.derivePasskey(
+        val key = passkeyManager.derivePasskey(
             seedId = "1234",
-            origin = site.url,
+            origin = callingAppOriginInfo ?: origin,
             userHandle = userHandle
-        ))
+        )
 
         // Extract the client data hash if the calling application's origin is available.
         var clientDataHash: ByteArray? = null
@@ -180,6 +180,7 @@ class GetPasskeyActivity : FragmentActivity() {
                 callingAppOriginInfo,
                 publicKeyRequestOptions,
                 uid,
+                userHandle,
                 packageName,
                 clientDataHash,
                 key,
@@ -362,6 +363,7 @@ class GetPasskeyActivity : FragmentActivity() {
             callingAppInfo,
             publicKeyRequestOptions,
             uid,
+            userHandle,
             packageName,
             clientDataHash,
             key,
@@ -391,6 +393,7 @@ class GetPasskeyActivity : FragmentActivity() {
         callingAppInfoOrigin: String?,
         request: PublicKeyCredentialRequestOptions,
         uid: ByteArray,
+        userHandle: String,
         packageName: String,
         clientDataHash: ByteArray?,
         key: KeyPair,
@@ -425,6 +428,7 @@ class GetPasskeyActivity : FragmentActivity() {
                         callingAppInfoOrigin,
                         request,
                         uid,
+                        userHandle,
                         packageName,
                         clientDataHash,
                         key,
@@ -441,6 +445,7 @@ class GetPasskeyActivity : FragmentActivity() {
         callingAppInfoOrigin: String?,
         request: PublicKeyCredentialRequestOptions,
         uid: ByteArray,
+        userHandle: String,
         packageName: String,
         clientDataHash: ByteArray?,
         key: KeyPair,
@@ -459,6 +464,7 @@ class GetPasskeyActivity : FragmentActivity() {
             request,
             origin = callingOrigin,
             uid,
+            userHandle,
             packageName,
             clientDataHash,
             key,
@@ -501,6 +507,7 @@ class GetPasskeyActivity : FragmentActivity() {
         request: PublicKeyCredentialRequestOptions,
         origin: String,
         uid: ByteArray,
+        userHandle: String,
         packageName: String,
         clientDataHash: ByteArray?,
         key: KeyPair,
@@ -520,7 +527,7 @@ class GetPasskeyActivity : FragmentActivity() {
             clientDataHash,
         )
 
-         response.signature = passkeyManager.signPasskey(key, response.dataToSign())
+         response.signature = passkeyManager.signPasskey("1234", origin, userHandle, response.dataToSign())
 
         val credential = FidoPublicKeyCredential(
             rawId = credId,

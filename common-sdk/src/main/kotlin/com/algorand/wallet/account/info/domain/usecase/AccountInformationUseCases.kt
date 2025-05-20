@@ -15,6 +15,7 @@ package com.algorand.wallet.account.info.domain.usecase
 import com.algorand.wallet.account.info.domain.model.AccountCacheStatus
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import com.algorand.wallet.account.info.domain.model.AccountInformation
+import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
@@ -164,4 +165,16 @@ fun interface IsAccountOptedInToAnyApp {
 
 fun interface IsThereAnyAssetCanAddressOptOut {
     suspend operator fun invoke(address: String): Boolean
+}
+
+internal fun interface GetActiveHdAccounts {
+    suspend operator fun invoke(entropy: ByteArray): List<ActiveHdAccount>
+}
+
+internal fun interface GetActiveHdAccountAddresses {
+    suspend operator fun invoke(activeHdAccount: ActiveHdAccount): List<ActiveHdAccount.HdAccountAddress>
+}
+
+internal fun interface GetAccountFastLookupBatch {
+    suspend operator fun invoke(addresses: List<String>): Map<String, AccountFastLookup?>
 }

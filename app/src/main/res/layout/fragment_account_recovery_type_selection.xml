@@ -71,7 +71,7 @@
             app:layout_constraintVertical_chainStyle="packed"
             app:typeSelectionDescriptionText="@string/i_want_to_recover_an"
             app:typeSelectionIcon="@drawable/ic_ledger"
-            app:typeSelectionTitleText="@string/pair_Ledger_device" />
+            app:typeSelectionTitleText="@string/pair_ledger_device" />
 
         <com.algorand.android.customviews.RegisterTypeSelectionItem
             android:id="@+id/importFromWebSelectionItem"

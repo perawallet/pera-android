@@ -118,6 +118,11 @@
         android:name="com.algorand.android.ui.register.recoveraccounttypeselection.AccountRecoveryTypeSelectionFragment"
         android:label="RecoverAccountTypeSelectionFragment"
         tools:layout="@layout/fragment_account_recovery_type_selection">
+        <argument
+            android:name="onboardingAccountType"
+            android:defaultValue="@null"
+            app:argType="com.algorand.android.models.OnboardingAccountType"
+            app:nullable="true" />
         <action
             android:id="@+id/action_accountRecoveryTypeSelectionFragment_to_recoverAccountInfoFragment"
             app:destination="@id/recoverAccountInfoFragment" />
@@ -139,14 +144,13 @@
         android:id="@+id/recoverAccountInfoFragment"
         android:name="com.algorand.android.modules.onboarding.recoverypassphrase.info.ui.RecoverAccountInfoFragment"
         android:label="fragment_recover_account_info">
+        <argument
+            android:name="onboardingAccountType"
+            app:argType="com.algorand.android.models.OnboardingAccountType"
+            app:nullable="false" />
         <action
             android:id="@+id/action_recoverAccountInfoFragment_to_recoverWithPassphraseNavigation"
             app:destination="@id/recoverWithPassphraseNavigation">
-            <argument
-                android:name="mnemonic"
-                android:defaultValue="@null"
-                app:argType="string"
-                app:nullable="true" />
             <argument
                 android:name="onboardingAccountType"
                 app:argType="com.algorand.android.models.OnboardingAccountType"

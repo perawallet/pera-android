@@ -218,6 +218,8 @@
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="privacy_click">Privacy Policy</string>
     <string name="by_creating_account">By creating an account, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
+    <string name="by_adding_a_wallet">By adding a wallet, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
+    <string name="by_creating_a_wallet">By creating a wallet, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
     <string name="create_new_account">Create new Account</string>
     <string name="watch_account">Watch Account</string>
     <string name="wallet_address">Wallet address</string>
@@ -274,8 +276,10 @@
     <string name="the_only_way_to">The only way to recover an Algorand account is with this recovery passphrase.</string>
     <string name="im_ready_to_begin">I\'m Ready to Begin</string>
     <string name="create_a_watch">Create a Watch Account</string>
-    <string name="recover_an_algorand">Recover an Algorand account</string>
-    <string name="in_the_following">In the following steps, you\'ll enter your recovery passphrase to recover an Algorand account. Have your recovery phrase handy before you begin.</string>
+    <string name="recover_an_algorand_account">Recover an Algorand Account</string>
+    <string name="recover_an_algorand_wallet">Recover an Algorand Wallet</string>
+    <string name="in_the_following_account">In the following steps, you\'ll enter your recovery passphrase to recover an Algorand account. Have your recovery phrase handy before you begin.</string>
+    <string name="in_the_following_wallet">In the following steps, you\'ll enter your recovery passphrase to recover an Algorand wallet. Have your recovery phrase handy before you begin.</string>
     <string name="finish_account_creation">Finish Account Creation</string>
     <string name="welcome_to_pera">Welcome to\nPera Wallet</string>
     <string name="i_want_to_monitor">I want to monitor an account that\'s held in cold storage.</string>
@@ -587,8 +591,11 @@
     <string name="i_want_to_create">I want to create an account</string>
     <string name="i_want_to_create_an_algorand_account">I want to create\nan Algorand account</string>
     <string name="create_a_new_account">Create a new account</string>
-    <string name="create_a_new_account_desc">Create a new account for an existing HD Wallet</string>
+    <string name="add_a_new_account">Add a new account</string>
+    <string name="add_a_new_account_desc">Create a new account for an existing Universal Wallet</string>
     <string name="create_a_new_wallet">Create a new wallet</string>
+    <string name="add_a_wallet_or_account">Add a wallet\nor account</string>
+    <string name="create_a_new_wallet_desc">Create a new Algorand wallet with a new address and recovery passphrase</string>
     <string name="create_a_new_algorand_account_with">Create a new Algorand account with a new wallet and recovery passphrase</string>
     <string name="recover_an_account">Recover an account</string>
     <string name="i_want_to_recover">I want to recover an Algorand account using my 25-word passphrase</string>
@@ -1280,6 +1287,7 @@
     <string name="your_account_is_rekeyed_to">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_rekeyed_to_an">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_rekeyed_to_another">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
+    <string name="your_account_is_rekeyed_to_unknown">* No record of rekeyed account type found\n\nYour account is rekeyed to another Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="no_record_of_original_account">* No record of original account type found\n\nYour account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_rekeyed_to_an_account_on">Your account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="no_record_of_original_account_type">* No record of original account type found\n\nYour account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
@@ -1338,12 +1346,14 @@
     <string name="online">Online</string>
     <string name="offline">Offline</string>
 
+    <string name="import_a_wallet">Import a wallet</string>
     <string name="import_an_account">Import an account</string>
     <string name="import_an_existing">Import an existing Algorand account with various methods or pair your Ledger</string>
-    <string name="watch_an_account">Watch an account</string>
-    <string name="monitor_an_algorand_account">Monitor an Algorand account by providing its address</string>
+    <string name="watch_an_address">Watch an address</string>
+    <string name="monitor_an_algorand_address">Monitor an Algorand address by providing its address</string>
     <string name="recover_an_account_with_qr">Recover an account with QR code</string>
     <string name="i_want_to_recover_qr">I want to recover an Algorand account using my QR code</string>
+    <string name="because_you_have_already">Because you have already a Universal Wallet</string>
 
     <string name="action_required">ACTION REQUIRED</string>
     <string name="you_need_to_backup_account">You need to backup the passphrase of your account</string>
@@ -1514,4 +1524,16 @@
     <string name="is_auto_selected">IS_AUTO_SELECTED</string>
     <string name="unable_to_retrieve_data_from_intent">Unable to retrieve data from intent</string>
     <string name="empty" />
+
+    <string name="select_universal_wallet">Select Universal Wallet</string>
+    <string name="create_your_new_account">Create your new account under a Universal Wallet you already have</string>
+
+    <string name="recover_a_wallet">Recover a wallet</string>
+    <string name="i_want_to_recover_wallet">I want to recover an Algorand wallet.</string>
+
+    <string name="new_to_algorand">New to Algorand?</string>
+    <string name="already_have_an_account">Already have an account?</string>
+
+    <string name="please_note_we_currently">Please note: We currently do not support the backing up of Universal and Ledger Wallets</string>
+
 </resources>

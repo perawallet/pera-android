@@ -32,6 +32,7 @@ import com.algorand.android.usecase.TransactionTipsUseCase
 import com.algorand.android.utils.getOrThrow
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccount
 import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQuery
+import com.algorand.wallet.asset.domain.model.AssetCollectibleLiteQueryFilter
 import com.algorand.wallet.asset.domain.usecase.GetAsset
 import com.algorand.wallet.asset.domain.usecase.GetAssetCollectibleLitesFlow
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
@@ -141,13 +142,11 @@ class AssetSelectionViewModel @Inject constructor(
     }
 
     private suspend fun getAssetSelectionQuery(): AssetCollectibleLiteQuery {
+        val filters = listOf(AssetCollectibleLiteQueryFilter.FilterOutCollectiblesWithZeroAmount)
         return AssetCollectibleLiteQuery(
             addresses = listOf(assetTransaction.senderAddress),
             sortType = getAssetCollectibleLiteSortType(),
-            searchKeyword = null,
-            filterOutZeroAmount = false,
-            filterOutCollectibles = false,
-            filterOutCollectiblesWithZeroAmount = true
+            filters = filters
         )
     }
 

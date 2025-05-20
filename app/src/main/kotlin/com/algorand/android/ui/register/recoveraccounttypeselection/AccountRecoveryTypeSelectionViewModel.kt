@@ -14,20 +14,22 @@ package com.algorand.android.ui.register.recoveraccounttypeselection
 
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
-import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.preference.setRegisterSkip
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class AccountRecoveryTypeSelectionViewModel @Inject constructor(
     private val sharedPref: SharedPreferences,
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val stateDelegate: StateDelegate<ViewState>,
+    private val isOnHdWalletUseCase: IsOnHdWalletUseCase
 ) : ViewModel(), StateViewModel<AccountRecoveryTypeSelectionViewModel.ViewState> by stateDelegate {
 
     init {
@@ -44,6 +46,10 @@ class AccountRecoveryTypeSelectionViewModel @Inject constructor(
                 stateDelegate.setDefaultState(ViewState.NoLocalAccountState)
             }
         }
+    }
+
+    fun isOnHdWallet(): Boolean {
+        return isOnHdWalletUseCase.invoke()
     }
 
     sealed interface ViewState {

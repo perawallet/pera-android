@@ -237,7 +237,7 @@
     <!-- Bidali -->
     <color name="bidali">#6241E2</color>
 
-    <!-- Algorand Standart Assets (ASA) Tiers -->
+    <!-- Algorand Standard Assets (ASA) Tiers -->
     <color name="trusted_icon_bg">@color/turquoise_600</color>
     <color name="trusted_icon_inline">@color/white</color>
     <color name="trusted_icon_bg_opacity_16">#292CB7BC</color>

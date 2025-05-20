@@ -17,9 +17,9 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.algorand.android.R
 import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragment
-import com.algorand.android.modules.accountdetail.collectibles.ui.AccountCollectiblesFragment
 import com.algorand.android.modules.accountdetail.history.ui.AccountHistoryFragment
 import com.algorand.android.modules.accountdetail.ui.model.AccountDetailPagerAdapterItem
+import com.algorand.android.ui.asset.collectible.listing.account.view.AccountCollectiblesFragment
 
 class AccountDetailPagerAdapter(
     fragment: Fragment,

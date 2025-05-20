@@ -64,7 +64,12 @@
             android:id="@+id/action_asbAccountRestoreResultFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"
             app:popUpTo="@id/loginNavigation"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true">
+            <argument
+                android:name="showConfetti"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
     </fragment>
 
 </navigation>

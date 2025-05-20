@@ -20,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class RecoverAccountNameRegistrationFragment : BaseNameRegistrationFragment() {
 
-    override val accountCreation: AccountCreation?
+    override val accountCreation: AccountCreation
         get() = args.accountCreation
 
     private val args: RecoverAccountNameRegistrationFragmentArgs by navArgs()

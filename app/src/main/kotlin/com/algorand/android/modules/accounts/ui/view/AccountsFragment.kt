@@ -13,6 +13,7 @@
 package com.algorand.android.modules.accounts.ui.view
 
 import android.Manifest
+import android.animation.Animator
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -38,6 +39,7 @@ import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToBackupPassphraseInfo
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToSwap
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowAccountAddressCopyTutorial
+import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowConfetti
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowGiftCardsTutorial
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowMaxAccountLimitExceededError
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowNotificationPermission
@@ -65,16 +67,15 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private val viewEventCollector: suspend (AccountsViewModel.ViewEvent) -> Unit = { event ->
         when (event) {
-            is AccountsViewModel.ViewEvent.NavToLoginNavigation ->
-                navToLoginNavigation()
-
+            is AccountsViewModel.ViewEvent.NavToLoginNavigation -> navToLoginNavigation()
             is ShowMaxAccountLimitExceededError -> showMaxAccountLimitExceededError()
             is NavigateToBackupPassphraseInfo -> navToBackupPassphraseInfo(event.addresses)
             is NavigateToSwap -> nav(event.navDirections)
             is ShowAccountAddressCopyTutorial -> showAccountAddressCopyTutorialDialog(event.tutorialId)
             is ShowGiftCardsTutorial -> showGiftCardsTutorialDialog(event.tutorialId)
-            ShowNotificationPermission -> askNotificationPermission()
+            is ShowNotificationPermission -> askNotificationPermission()
             is ShowSwapTutorial -> showSwapTutorialDialog(event.tutorialId)
+            is ShowConfetti -> showConfetti()
         }
     }
 
@@ -203,6 +204,35 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 if (isVisible.not()) binding.accountsFragmentMotionLayout.transitionToState(R.id.start)
                 accountsFragmentMotionLayout.getTransition(R.id.accountsFragmentTransition).isEnabled = isVisible
             }
+            if (isVisible) {
+                accountsViewModel.checkConfettiState()
+            }
+        }
+    }
+
+    private fun showConfetti() {
+        binding.confettiAnimationLottieView.apply {
+            progress = 0F
+            isVisible = true
+            playAnimation()
+            addAnimatorListener(object : Animator.AnimatorListener {
+                override fun onAnimationEnd(animation: Animator) {
+                    isVisible = false
+                    removeAnimatorListener(this)
+                }
+
+                override fun onAnimationStart(animation: Animator) {
+                    // Nothing to do
+                }
+
+                override fun onAnimationCancel(animation: Animator) {
+                    // Nothing to do
+                }
+
+                override fun onAnimationRepeat(animation: Animator) {
+                    // Nothing to do
+                }
+            })
         }
     }
 

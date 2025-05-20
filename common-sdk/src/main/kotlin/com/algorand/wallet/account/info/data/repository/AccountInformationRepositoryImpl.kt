@@ -34,7 +34,6 @@ import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresse
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
 import java.math.BigInteger
-import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -97,10 +96,9 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
         addresses: List<String>
     ): Map<String, AccountInformation?> {
         return withContext(Dispatchers.IO) {
-            val result = ConcurrentHashMap<String, AccountInformation?>()
             addresses.map { address ->
                 async {
-                    result[address] = accountInformationFetchHelper.fetchAccount(
+                    val accountInfo = accountInformationFetchHelper.fetchAccount(
                         address,
                         includeClosedAccount = false
                     ).use(
@@ -111,9 +109,9 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
                             null
                         }
                     )
+                    Pair(address, accountInfo)
                 }
-            }.awaitAll()
-            result
+            }.awaitAll().associate { it }
         }
     }
 
@@ -290,6 +288,10 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
                 PeraResult.Error(exception)
             }
         )
+    }
+
+    override suspend fun isThereAnyAssetCanAddressOptOut(address: String, algoId: Long): Boolean {
+        return assetHoldingDao.isThereAnyAssetCanAddressOptOut(address, algoId)
     }
 
     companion object {

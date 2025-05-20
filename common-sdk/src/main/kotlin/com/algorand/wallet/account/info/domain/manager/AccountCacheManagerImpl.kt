@@ -50,7 +50,8 @@ internal class AccountCacheManagerImpl @Inject constructor(
     }
 
     private val localAccountCollector: suspend (Int) -> Unit = { accountCount ->
-        if (accountCount > 0) cacheManager.startJob() else cacheManager.stopCurrentJob()
+        cacheManager.stopCurrentJob()
+        if (accountCount > 0) cacheManager.startJob()
     }
 
     override fun initialize(lifecycle: Lifecycle) {

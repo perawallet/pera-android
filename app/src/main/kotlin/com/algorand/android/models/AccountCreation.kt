@@ -37,14 +37,21 @@ data class AccountCreation(
             val account: Int,
             val change: Int,
             val keyIndex: Int,
-            val derivationType: Int
+            val derivationType: Int,
+            val seedId: Int? = null
         ) : Type
 
         @Parcelize
-        data class Algo25(val encryptedSecretKey: ByteArray) : Type
+        data class Algo25(
+            val encryptedSecretKey: ByteArray
+        ) : Type
 
         @Parcelize
-        data class LedgerBle(val deviceMacAddress: String, val indexInLedger: Int, val bluetoothName: String?) : Type
+        data class LedgerBle(
+            val deviceMacAddress: String,
+            val indexInLedger: Int,
+            val bluetoothName: String?
+        ) : Type
 
         @Parcelize
         data object NoAuth : Type
@@ -66,13 +73,18 @@ data class AccountCreation(
                     type.keyIndex,
                     type.derivationType,
                 )
-                is Type.Algo25 -> CreateAccount.Type.Algo25(type.encryptedSecretKey)
-                is Type.NoAuth -> CreateAccount.Type.NoAuth
+
+                is Type.Algo25 -> CreateAccount.Type.Algo25(
+                    type.encryptedSecretKey
+                )
+
                 is Type.LedgerBle -> CreateAccount.Type.LedgerBle(
                     type.deviceMacAddress,
                     type.indexInLedger,
                     type.bluetoothName
                 )
+
+                is Type.NoAuth -> CreateAccount.Type.NoAuth
             }
         )
     }

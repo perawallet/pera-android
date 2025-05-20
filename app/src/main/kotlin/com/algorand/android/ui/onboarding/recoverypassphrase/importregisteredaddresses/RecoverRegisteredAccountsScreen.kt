@@ -12,7 +12,6 @@
 
 package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -69,12 +68,10 @@ fun RecoverRegisteredAccountsScreen(
     val viewState by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        Log.e("RecoverRegisteredAccountsScreen", "LaunchedEffect - Unit")
         viewModel.loadRegisteredAccounts()
     }
 
     LaunchedEffect(viewModel.viewEvent) {
-        Log.e("RecoverRegisteredAccountsScreen", "LaunchedEffect - viewEvent")
         viewModel.viewEvent.collectLatest { event ->
             when (event) {
                 is ViewEvent.NavigateToHome -> onNavToHomeNavigation()
@@ -130,7 +127,7 @@ private fun ContentStateContent(
                 )
 
                 LazyColumn(modifier = Modifier.weight(1f)) {
-                    items(state.registeredAccounts) { account ->
+                    itemsIndexed(state.registeredAccounts) { index, account ->
                         AddressItem(
                             selectedAddresses = state.selectedAddresses,
                             account = account,
@@ -138,14 +135,23 @@ private fun ContentStateContent(
                                 viewModel.toggleAccountSelection(account.address, isChecked)
                             }
                         )
+                        if (index != state.registeredAccounts.lastIndex) {
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                thickness = 1.dp,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
                     }
                 }
 
+                val isPrimaryButtonEnabled = state.selectedAddresses.isNotEmpty() ||
+                    (state.registeredAccounts.size == 1 && state.registeredAccounts[0].isImportedToDB)
                 PeraPrimaryButton(
                     onClick = viewModel::importSelectedAccounts,
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.continue_text),
-                    state = if (state.selectedAddresses.isNotEmpty()) {
+                    state = if (isPrimaryButtonEnabled) {
                         PeraButtonState.ENABLED
                     } else {
                         PeraButtonState.DISABLED
@@ -271,9 +277,4 @@ fun AddressItem(
             }
         }
     }
-    HorizontalDivider(
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        thickness = 1.dp,
-        modifier = Modifier.padding(horizontal = 16.dp)
-    )
 }

@@ -10,17 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.domain.model
+package com.algorand.wallet.account.info.domain.mapper
 
-import java.math.BigDecimal
+import com.algorand.wallet.account.info.domain.model.AccountFastLookup
+import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
+import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
 
-data class RegisteredHdKey(
-    val address: String,
-    val algoValue: BigDecimal,
-    val usdValue: BigDecimal,
-    val accountExists: Boolean,
-    val isImportedToDB: Boolean,
-    val account: Int,
-    val change: Int,
-    val keyIndex: Int
-)
+internal interface RegisteredHdKeyMapper {
+    operator fun invoke(
+        hdAccountAddress: ActiveHdAccount.HdAccountAddress,
+        fastLookupAccount: AccountFastLookup?,
+        isAlreadyImported: Boolean
+    ): RegisteredHdKey
+}

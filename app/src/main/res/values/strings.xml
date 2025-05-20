@@ -219,6 +219,7 @@
     <string name="privacy_click">Privacy Policy</string>
     <string name="by_creating_account">By creating an account, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
     <string name="by_adding_a_wallet">By adding a wallet, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
+    <string name="by_creating_a_wallet">By creating a wallet, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
     <string name="create_new_account">Create new Account</string>
     <string name="watch_account">Watch Account</string>
     <string name="wallet_address">Wallet address</string>
@@ -1508,4 +1509,10 @@
 
     <string name="recover_a_wallet">Recover a wallet</string>
     <string name="i_want_to_recover_wallet">I want to recover an Algorand wallet.</string>
+
+    <string name="new_to_algorand">New to Algorand?</string>
+    <string name="already_have_an_account">Already have an account?</string>
+
+    <string name="please_note_we_currently">Please note: We currently do not support the backing up of Universal and Ledger Wallets</string>
+
 </resources>

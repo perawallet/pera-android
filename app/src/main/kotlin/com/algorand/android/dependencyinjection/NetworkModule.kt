@@ -31,7 +31,6 @@ import dagger.hilt.components.SingletonComponent
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
-import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -123,20 +122,13 @@ object NetworkModule {
         mobileHeaderInterceptor: MobileHeaderInterceptor,
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
-        /**
-         * This client is being used for fast lookup API which is used to fetch 125 items at once.
-         * Make sure to update the number of items in the loop if you change the number of items
-        **/
         val dispatcher = Dispatcher().apply {
-            maxRequestsPerHost = 125
-            maxRequests = 125
+            maxRequestsPerHost = 25
         }
-        val connectionPool = ConnectionPool(125, 20, TimeUnit.SECONDS)
         return OkHttpClient.Builder()
             .addInterceptor(mobileHeaderInterceptor)
             .addInterceptor(loggingInterceptor)
             .dispatcher(dispatcher)
-            .connectionPool(connectionPool)
             .connectTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_CONSTANT, TimeUnit.SECONDS)

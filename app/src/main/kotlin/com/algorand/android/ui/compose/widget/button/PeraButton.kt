@@ -13,17 +13,18 @@
 package com.algorand.android.ui.compose.widget.button
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndicator
@@ -32,10 +33,11 @@ import com.algorand.android.ui.compose.widget.progress.PeraCircularProgressIndic
 private fun PeraCoreButton(modifier: PeraButtonModifier) {
     Button(
         onClick = { modifier.onClick() },
-        modifier = modifier.modifier.height(48.dp),
-        shape = ShapeDefaults.ExtraSmall,
+        modifier = modifier.modifier,
+        shape = RoundedCornerShape(modifier.cornerRadius),
         colors = modifier.colors,
-        enabled = modifier.state == PeraButtonState.ENABLED
+        enabled = modifier.state == PeraButtonState.ENABLED,
+        contentPadding = PaddingValues(16.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -55,16 +57,22 @@ private fun PeraCoreButton(modifier: PeraButtonModifier) {
                 else -> {
                     if (modifier.leftIcon != null) {
                         modifier.leftIcon.invoke()
-                        Spacer(modifier = Modifier.width(16.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
                     }
                     Text(
                         text = modifier.text,
+                        style = modifier.textStyle,
                         color = if (modifier.state == PeraButtonState.DISABLED) {
                             modifier.colors.disabledContentColor
                         } else {
                             modifier.colors.contentColor
                         }
                     )
+
+                    if (modifier.leftIcon != null) {
+                        Spacer(Modifier.weight(1f))
+                    }
+
                     if (modifier.rightIcon != null) {
                         Spacer(modifier = Modifier.width(16.dp))
                         modifier.rightIcon.invoke()
@@ -82,13 +90,14 @@ fun PeraPrimaryButton(
     text: String,
     state: PeraButtonState = PeraButtonState.ENABLED,
     leftIcon: @Composable (() -> Unit)? = null,
-    rightIcon: @Composable (() -> Unit)? = null
+    rightIcon: @Composable (() -> Unit)? = null,
 ) {
     PeraCoreButton(
         modifier = PeraButtonModifier(
             modifier = modifier,
             onClick = onClick,
             text = text,
+            textStyle = PeraTheme.typography.body.regular.sansMedium,
             colors = ButtonDefaults.buttonColors(
                 containerColor = PeraTheme.colors.button.primary.background,
                 disabledContainerColor = PeraTheme.colors.button.primary.disabledBackground,
@@ -97,7 +106,7 @@ fun PeraPrimaryButton(
             ),
             state = state,
             leftIcon = leftIcon,
-            rightIcon = rightIcon
+            rightIcon = rightIcon,
         )
     )
 }
@@ -109,7 +118,37 @@ fun PeraSecondaryButton(
     text: String,
     state: PeraButtonState = PeraButtonState.ENABLED,
     leftIcon: @Composable (() -> Unit)? = null,
-    rightIcon: @Composable (() -> Unit)? = null
+    rightIcon: @Composable (() -> Unit)? = null,
+    cornerRadius: Dp = 4.dp
+) {
+    PeraCoreButton(
+        modifier = PeraButtonModifier(
+            modifier = modifier,
+            onClick = onClick,
+            text = text,
+            textStyle = PeraTheme.typography.body.regular.sansMedium,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = PeraTheme.colors.button.secondary.background,
+                disabledContainerColor = PeraTheme.colors.button.secondary.disabledBackground,
+                contentColor = PeraTheme.colors.button.secondary.text,
+                disabledContentColor = PeraTheme.colors.button.secondary.disabledText
+            ),
+            state = state,
+            leftIcon = leftIcon,
+            rightIcon = rightIcon,
+            cornerRadius = cornerRadius
+        )
+    )
+}
+
+@Composable
+fun PeraTertiaryButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String,
+    state: PeraButtonState = PeraButtonState.ENABLED,
+    leftIcon: @Composable (() -> Unit)? = null,
+    rightIcon: @Composable (() -> Unit)? = null,
 ) {
     PeraCoreButton(
         modifier = PeraButtonModifier(
@@ -124,7 +163,9 @@ fun PeraSecondaryButton(
             ),
             state = state,
             leftIcon = leftIcon,
-            rightIcon = rightIcon
+            rightIcon = rightIcon,
+            cornerRadius = 16.dp,
+            textStyle = PeraTheme.typography.body.large.sansMedium
         )
     )
 }

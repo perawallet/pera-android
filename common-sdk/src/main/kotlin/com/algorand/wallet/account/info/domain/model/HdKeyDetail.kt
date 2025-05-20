@@ -12,15 +12,9 @@
 
 package com.algorand.wallet.account.info.domain.model
 
-import java.math.BigDecimal
-
-data class RegisteredHdKey(
-    val address: String,
-    val algoValue: BigDecimal,
-    val usdValue: BigDecimal,
-    val accountExists: Boolean,
-    val isImportedToDB: Boolean,
-    val account: Int,
-    val change: Int,
+internal data class HdKeyDetail(
+    val algoAddress: String,
+    val accountIndex: Int,
+    val changeIndex: Int,
     val keyIndex: Int
 )

@@ -12,15 +12,17 @@
 
 package com.algorand.wallet.account.info.domain.model
 
-import java.math.BigDecimal
+internal data class ActiveHdAccount(
+    val accountIndex: Int,
+    val entropy: ByteArray,
+    val firstBatchHdAccountAddress: List<HdAccountAddress>
+) {
 
-data class RegisteredHdKey(
-    val address: String,
-    val algoValue: BigDecimal,
-    val usdValue: BigDecimal,
-    val accountExists: Boolean,
-    val isImportedToDB: Boolean,
-    val account: Int,
-    val change: Int,
-    val keyIndex: Int
-)
+    data class HdAccountAddress(
+        val address: String,
+        val accountIndex: Int,
+        val changeIndex: Int,
+        val keyIndex: Int,
+        val fastLookup: AccountFastLookup?
+    )
+}

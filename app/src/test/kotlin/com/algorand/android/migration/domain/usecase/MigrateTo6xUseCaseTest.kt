@@ -10,12 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android
+package com.algorand.android.migration.domain.usecase
 
 import com.algorand.android.encryption.domain.usecase.AndroidEncryptionManager
 import com.algorand.android.models.Account
 import com.algorand.android.models.AccountCreation
-import com.algorand.android.modules.settings.domain.usecase.MigrateTo6xUseCase
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
 import com.algorand.android.utils.analytics.CreationType

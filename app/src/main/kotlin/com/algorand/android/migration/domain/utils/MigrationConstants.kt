@@ -10,20 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.data.repository
+package com.algorand.android.migration.domain.utils
 
-import com.algorand.android.modules.settings.domain.repository.MigrationTo6xRepository
-import com.algorand.wallet.foundation.cache.PersistentCache
-
-internal class MigrationTo6xRepositoryImpl(
-    private val migrateTo6x: PersistentCache<Boolean>,
-) : MigrationTo6xRepository {
-
-    override suspend fun saveMigratedTo6xCheck(check: Boolean) {
-        migrateTo6x.put(check)
-    }
-
-    override suspend fun getMigratedTo6xCheck(): Boolean {
-        return migrateTo6x.get() ?: false
-    }
+internal object MigrationConstants {
+    const val MIGRATE_TO_6X = "migrate_to_6x"
 }

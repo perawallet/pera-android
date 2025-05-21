@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.data.repository
+package com.algorand.android.migration.data.repository
 
 import com.algorand.wallet.foundation.cache.PersistentCache
 import io.mockk.coEvery

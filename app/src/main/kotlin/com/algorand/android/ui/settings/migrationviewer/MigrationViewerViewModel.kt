@@ -14,8 +14,8 @@ package com.algorand.android.ui.settings.migrationviewer
 
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.migration.domain.usecase.MigrateTo6x
 import com.algorand.android.models.Account
-import com.algorand.android.modules.settings.domain.usecase.MigrateTo6xUseCase
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewEvent
 import com.algorand.android.ui.settings.migrationviewer.MigrationViewerViewModel.ViewState
 import com.algorand.android.usecase.GetLocalAccountsFromSharedPrefUseCase
@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class MigrationViewerViewModel @Inject constructor(
     private val getAccountsDetailsFlow: GetAccountsDetailsFlow,
-    private val migrateTo6xUseCase: MigrateTo6xUseCase,
+    private val migrateTo6x: MigrateTo6x,
     private val getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
@@ -66,9 +66,7 @@ class MigrationViewerViewModel @Inject constructor(
 
     fun migrate() {
         viewModelScope.launchIO {
-            val result = migrateTo6xUseCase.invoke()
-
-            when (result) {
+            when (val result = migrateTo6x()) {
                 is PeraResult.Success -> {
                     val migratedCount = result.data
                     if (migratedCount > 0) {

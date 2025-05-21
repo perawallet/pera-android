@@ -58,7 +58,8 @@ class WriteDownInfoFragment : BaseInfoFragment() {
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_pen),
             contentDescription = stringResource(R.string.pen),
-            modifier = modifier
+            modifier = modifier,
+            tintColor = PeraTheme.colors.link.icon
         )
 
     @Composable

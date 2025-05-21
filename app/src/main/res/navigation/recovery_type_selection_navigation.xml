@@ -48,6 +48,10 @@
         android:id="@+id/recoverAccountInfoFragment"
         android:name="com.algorand.android.modules.onboarding.recoverypassphrase.info.ui.RecoverAccountInfoFragment"
         android:label="fragment_recover_account_info">
+        <argument
+            android:name="onboardingAccountType"
+            app:argType="com.algorand.android.models.OnboardingAccountType"
+            app:nullable="false" />
         <action
             android:id="@+id/action_recoverAccountInfoFragment_to_recoverWithPassphraseNavigation"
             app:destination="@id/recoverWithPassphraseNavigation">

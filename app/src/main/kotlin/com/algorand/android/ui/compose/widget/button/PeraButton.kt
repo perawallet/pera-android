@@ -69,7 +69,9 @@ private fun PeraCoreButton(modifier: PeraButtonModifier) {
                         }
                     )
 
-                    Spacer(Modifier.weight(1f))
+                    if (modifier.leftIcon != null) {
+                        Spacer(Modifier.weight(1f))
+                    }
 
                     if (modifier.rightIcon != null) {
                         Spacer(modifier = Modifier.width(16.dp))

@@ -54,8 +54,16 @@ fun PreviewPeraWarningText() {
 
 @PreviewLightDark
 @Composable
-fun PreviewPeraHighlightedText() {
+fun PreviewPeraHighlightedGreenText() {
     PeraTheme {
-        PeraHighlightedText(text = "Highlighted Text")
+        PeraHighlightedGreenText(text = "Highlighted Text")
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun PreviewPeraHighlightedGrayText() {
+    PeraTheme {
+        PeraHighlightedGrayText(text = "Highlighted Text")
     }
 }

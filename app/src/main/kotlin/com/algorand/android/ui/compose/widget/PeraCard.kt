@@ -16,9 +16,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -35,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
-import com.algorand.android.ui.compose.widget.text.PeraHighlightedText
+import com.algorand.android.ui.compose.widget.text.PeraHighlightedGrayText
 import com.algorand.android.ui.compose.widget.text.PeraLinkText
 import com.algorand.android.ui.compose.widget.text.PeraTitleText
 
@@ -45,7 +47,7 @@ fun PeraCard(
     title: String,
     description: String,
     footer: String,
-    highlighted: String? = null,
+    highlightContent: (@Composable () -> Unit)? = null,
     onClick: () -> Unit
 ) {
     OutlinedCard(
@@ -64,10 +66,9 @@ fun PeraCard(
         Column(Modifier.padding(all = 20.dp)) {
             Row {
                 PeraTitleText(text = title)
-                highlighted?.let {
-                    PeraHighlightedText(
-                        text = it
-                    )
+                highlightContent?.let {
+                    Spacer(Modifier.width(8.dp))
+                    it()
                 }
             }
 
@@ -104,7 +105,11 @@ fun PeraCardPreview() {
         title = stringResource(R.string.mnemonic_type_algo25_title),
         description = stringResource(R.string.mnemonic_type_algo25_description),
         footer = stringResource(R.string.mnemonic_type_algo25_footer),
-        highlighted = stringResource(R.string.recommended),
+        highlightContent = {
+            PeraHighlightedGrayText(
+                text = stringResource(R.string.recommended)
+            )
+        },
         onClick = { }
     )
 }

@@ -110,28 +110,28 @@ object PeraLightColor : PeraColor {
 
     override val wallet = object : PeraColor.Wallet {
         override val wallet1 = object : PeraColor.WalletStyle {
-            override val background = ColorPalette.Turquoise.V50
-            override val icon = ColorPalette.Turquoise.V600
+            override val background = ColorPalette.Blush.V600
+            override val icon = ColorPalette.Others.V200
         }
 
         override val wallet2 = object : PeraColor.WalletStyle {
-            override val background = ColorPalette.Purple.V50
-            override val icon = ColorPalette.Purple.V600
+            override val background = ColorPalette.Salmon.V500
+            override val icon = ColorPalette.Others.V300
         }
 
         override val wallet3 = object : PeraColor.WalletStyle {
-            override val background = ColorPalette.Salmon.V50
-            override val icon = ColorPalette.Salmon.V600
+            override val background = ColorPalette.Purple.V500
+            override val icon = ColorPalette.Pink.V900
         }
 
         override val wallet4 = object : PeraColor.WalletStyle {
-            override val background = ColorPalette.Blush.V50
-            override val icon = ColorPalette.Blush.V600
+            override val background = ColorPalette.Turquoise.V300
+            override val icon = ColorPalette.Turquoise.V800
         }
 
         override val wallet5 = object : PeraColor.WalletStyle {
-            override val background = ColorPalette.Yellow.V100
-            override val icon = ColorPalette.Yellow.V600
+            override val background = ColorPalette.Salmon.V400
+            override val icon = ColorPalette.Others.V200
         }
 
         override val placeholder = object : PeraColor.WalletStyle {

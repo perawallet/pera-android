@@ -48,7 +48,7 @@ fun GroupChoiceWidget(
     Row(
         modifier = modifier
             .clickable { onClick() }
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 24.dp)
             .fillMaxWidth()
             .padding(vertical = 20.dp),
         verticalAlignment = Alignment.CenterVertically,

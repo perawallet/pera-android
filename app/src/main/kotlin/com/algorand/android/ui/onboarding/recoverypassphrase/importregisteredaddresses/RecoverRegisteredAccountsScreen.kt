@@ -48,7 +48,7 @@ import com.algorand.android.ui.compose.widget.button.PeraButtonState
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.text.PeraHighlightedText
+import com.algorand.android.ui.compose.widget.text.PeraHighlightedGrayText
 import com.algorand.android.ui.compose.widget.text.PeraTitleText
 import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewEvent
 import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState
@@ -251,7 +251,8 @@ fun AddressItem(
             text = account.address.toShortenedAddress().toUpperCase(Locale.current)
         )
         if (account.isImportedToDB) {
-            PeraHighlightedText(
+            PeraHighlightedGrayText(
+                modifier = Modifier.padding(start = 8.dp),
                 text = stringResource(R.string.already_imported).toUpperCase(Locale.current)
             )
         } else {

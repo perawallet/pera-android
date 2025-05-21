@@ -97,3 +97,63 @@ fun PeraSecondaryButtonProgressPreview() {
         )
     }
 }
+
+@PreviewLightDark
+@Composable
+fun PeraTertiaryButtonPreview() {
+    PeraTheme {
+        PeraTertiaryButton(
+            onClick = { },
+            text = "Tertiary Button"
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun PeraTertiaryButtonDisabledPreview() {
+    PeraTheme {
+        PeraTertiaryButton(
+            onClick = { },
+            text = "Tertiary Button Disabled",
+            state = PeraButtonState.DISABLED
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun PeraTertiaryButtonWithIconPreview() {
+    PeraTheme {
+        PeraTertiaryButton(
+            onClick = { },
+            text = "Tertiary Button",
+            rightIcon = {
+                PeraIcon(
+                    painter = painterResource(id = R.drawable.ic_plus),
+                    contentDescription = stringResource(id = R.string.check),
+                    modifier = Modifier
+                )
+            },
+            leftIcon = {
+                PeraIcon(
+                    painter = painterResource(id = R.drawable.ic_plus),
+                    contentDescription = stringResource(id = R.string.check),
+                    modifier = Modifier
+                )
+            }
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun PeraTertiaryButtonProgressPreview() {
+    PeraTheme {
+        PeraTertiaryButton(
+            onClick = { },
+            text = "Tertiary Button",
+            state = PeraButtonState.PROGRESS
+        )
+    }
+}

@@ -201,6 +201,7 @@ class MainActivity :
 
     private val appCacheStatusCollector: suspend (AppCacheStatus) -> Unit = {
         mainViewModel.isAssetSetupCompleted = it == AppCacheStatus.INITIALIZED
+        coreActionsTabBarViewModel.changeViewStateForFeatureFlag()
         binding.coreActionsTabBarView.setCoreActionButtonEnabled(it == AppCacheStatus.INITIALIZED)
     }
 
@@ -728,7 +729,6 @@ class MainActivity :
     private fun onNewNodeActivated() {
         hideProgress()
         mainViewModel.onNewNodeActivated(lifecycle)
-        coreActionsTabBarViewModel.changeViewStateForFeatureFlag()
     }
 
     private fun rejectScamSession(sessionProposal: WalletConnectSessionProposal) {

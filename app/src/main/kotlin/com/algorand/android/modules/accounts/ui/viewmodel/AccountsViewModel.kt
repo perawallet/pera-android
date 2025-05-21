@@ -12,12 +12,14 @@
 
 package com.algorand.android.modules.accounts.ui.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
+import com.algorand.android.modules.accounts.ui.view.AccountsFragmentArgs
 import com.algorand.android.modules.tracking.accounts.AccountsEventTracker
 import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.tracking.core.PeraEvent
@@ -32,7 +34,6 @@ import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +41,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@SuppressWarnings("LongParameterList")
 @HiltViewModel
 class AccountsViewModel @Inject constructor(
     private val accountsPreviewUseCase: AccountsPreviewUseCase,
@@ -51,9 +54,11 @@ class AccountsViewModel @Inject constructor(
     private val getNotBackedUpAccounts: GetNotBackedUpAccounts,
     private val tutorialUseCase: TutorialUseCase,
     private val getAskNotificationPermissionEventFlowUseCase: GetAskNotificationPermissionEventFlowUseCase,
-    private val eventDelegate: EventDelegate<ViewEvent>
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel(), EventViewModel<AccountsViewModel.ViewEvent> by eventDelegate {
 
+    private val args = AccountsFragmentArgs.fromSavedStateHandle(savedStateHandle)
     private val _accountPreviewFlow = MutableStateFlow<AccountPreview?>(null)
     val accountPreviewFlow: Flow<AccountPreview?>
         get() = _accountPreviewFlow.asStateFlow()
@@ -61,6 +66,8 @@ class AccountsViewModel @Inject constructor(
     private var tutorialJob: Job? = null
 
     private var initializationJob: Job? = null
+
+    private var hasPlayedConfetti = false
 
     init {
         initializeAccountPreviewFlow()
@@ -206,6 +213,15 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
+    fun checkConfettiState() {
+        viewModelScope.launchIO {
+            if (!hasPlayedConfetti && args.showConfetti) {
+                hasPlayedConfetti = true
+                eventDelegate.sendEvent(ViewEvent.ShowConfetti)
+            }
+        }
+    }
+
     private suspend fun updatePreviewForSwapNavigation() {
         accountsPreviewUseCase.getSwapNavigationDirection()?.let { navDirections ->
             eventDelegate.sendEvent(ViewEvent.NavigateToSwap(navDirections))
@@ -221,5 +237,6 @@ class AccountsViewModel @Inject constructor(
         data class ShowAccountAddressCopyTutorial(val tutorialId: Int) : ViewEvent
         data class ShowSwapTutorial(val tutorialId: Int) : ViewEvent
         data object ShowNotificationPermission : ViewEvent
+        data object ShowConfetti : ViewEvent
     }
 }

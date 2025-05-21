@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,8 +34,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.text.PeraBodyText
-import com.algorand.android.ui.compose.widget.text.PeraTitleText
 
 @SuppressWarnings("LongMethod")
 @Composable
@@ -49,9 +48,9 @@ fun GroupChoiceWidget(
     Row(
         modifier = modifier
             .clickable { onClick() }
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 24.dp)
             .fillMaxWidth()
-            .padding(vertical = 12.dp),
+            .padding(vertical = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -64,13 +63,17 @@ fun GroupChoiceWidget(
             contentDescription = iconContentDescription,
             tint = PeraTheme.colors.text.main
         )
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(24.dp))
         Column {
-            PeraTitleText(
+            Text(
+                style = PeraTheme.typography.body.regular.sansMedium,
+                color = PeraTheme.colors.text.main,
                 text = title
             )
             Spacer(modifier = Modifier.height(4.dp))
-            PeraBodyText(
+            Text(
+                style = PeraTheme.typography.footnote.sans,
+                color = PeraTheme.colors.text.gray,
                 text = description
             )
         }

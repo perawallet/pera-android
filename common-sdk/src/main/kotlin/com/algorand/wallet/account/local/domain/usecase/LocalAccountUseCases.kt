@@ -14,6 +14,7 @@ package com.algorand.wallet.account.local.domain.usecase
 
 import com.algorand.wallet.account.local.domain.model.AccountMnemonic
 import com.algorand.wallet.account.local.domain.model.HdSeed
+import com.algorand.wallet.account.local.domain.model.HdWalletSummary
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.foundation.PeraResult
 import kotlinx.coroutines.flow.Flow
@@ -160,6 +161,10 @@ fun interface UpdateNoAuthAccountToLedgerBle {
     suspend operator fun invoke(
         address: String, deviceMacAddress: String, bluetoothName: String, indexInLedger: Int
     )
+}
+
+fun interface GetHdWalletSummaries {
+    suspend operator fun invoke(): List<HdWalletSummary>?
 }
 
 fun interface GetMaxHdSeedId {

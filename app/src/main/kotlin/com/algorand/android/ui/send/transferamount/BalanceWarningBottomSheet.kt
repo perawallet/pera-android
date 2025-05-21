@@ -64,7 +64,7 @@ class BalanceWarningBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_balance_
             with(binding.assetItemView) {
                 setTitleText(preview.algoFullName)
                 setDescriptionText(preview.algoShortName)
-                AlgoDrawableProvider().provideAssetDrawable(
+                AlgoDrawableProvider.provideAssetDrawable(
                     imageView = getStartIconImageView(),
                     onResourceFailed = ::setStartIconDrawable
                 )

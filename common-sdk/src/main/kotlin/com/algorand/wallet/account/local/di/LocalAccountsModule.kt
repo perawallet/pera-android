@@ -31,6 +31,8 @@ import com.algorand.wallet.account.local.data.mapper.model.HdKeyMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdKeyMapperImpl
 import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapperImpl
+import com.algorand.wallet.account.local.data.mapper.model.HdWalletSummaryMapper
+import com.algorand.wallet.account.local.data.mapper.model.HdWalletSummaryMapperImpl
 import com.algorand.wallet.account.local.data.mapper.model.LedgerBleMapper
 import com.algorand.wallet.account.local.data.mapper.model.LedgerBleMapperImpl
 import com.algorand.wallet.account.local.data.mapper.model.NoAuthMapper
@@ -59,6 +61,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetHasAnyHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
 import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
+import com.algorand.wallet.account.local.domain.usecase.GetHdWalletSummaries
 import com.algorand.wallet.account.local.domain.usecase.GetLedgerBleAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountCount
@@ -164,6 +167,9 @@ internal object LocalAccountsModule {
 
     @Provides
     fun provideHdSeedMapper(impl: HdSeedMapperImpl): HdSeedMapper = impl
+
+    @Provides
+    fun provideHdWalletSummaryMapper(impl: HdWalletSummaryMapperImpl): HdWalletSummaryMapper = impl
 
     @Provides
     fun provideHdKeyMapper(impl: HdKeyMapperImpl): HdKeyMapper = impl
@@ -304,4 +310,10 @@ internal object LocalAccountsModule {
 
     @Provides
     fun provideGetAccountMnemonic(useCase: GetAccountMnemonicUseCase): GetAccountMnemonic = useCase
+
+
+    @Provides
+    fun provideGetHdWalletSummaries(repository: HdKeyAccountRepository): GetHdWalletSummaries =
+        GetHdWalletSummaries(repository::getHdWalletSummaries)
+
 }

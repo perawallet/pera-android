@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -173,6 +173,13 @@ object ColorPalette {
     object Red {
         // These colors are not defined in Figma color palette
         val V900 = Color(0xFF29FF6D5F)
+    }
+
+    object Others {
+        // These colors are not defined in Figma color palette
+        val V100 = Color(0xFF424F76)
+        val V200 = Color(0xFF9B0C48)
+        val V300 = Color(0XFFFFEAC2)
     }
 
     object Discover {

@@ -22,6 +22,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.FragmentNavigator
@@ -46,6 +48,7 @@ import com.algorand.android.utils.setupWithNavController
 import com.algorand.android.utils.showDarkStatusBarIcons
 import com.algorand.android.utils.showLightStatusBarIcons
 import com.algorand.android.utils.viewbinding.viewBinding
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
@@ -86,7 +89,13 @@ abstract class CoreMainActivity : BaseActivity() {
         when (event) {
             InitializeCoreManagers -> initializeCoreManagers()
             InitializeHomeNavigation -> startNavigation(R.id.homeNavigation)
-            InitializeLoginNavigation -> startNavigation(R.id.loginNavigation)
+            InitializeLoginNavigation -> startNavigation(
+                if (coreMainViewModel.isHdWalletToggleEnabled()) {
+                    R.id.initialRegisterIntroNavigation
+                } else {
+                    R.id.loginNavigation
+                }
+            )
         }
     }
 
@@ -110,7 +119,15 @@ abstract class CoreMainActivity : BaseActivity() {
         if (savedInstanceState != null) {
             isBottomBarNavigationVisible = savedInstanceState.getBoolean(IS_BOTTOM_BAR_VISIBLE_KEY)
         }
-        coreMainViewModel.initialize()
+        initializeActivity()
+    }
+
+    private fun initializeActivity() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                coreMainViewModel.initialize()
+            }
+        }
     }
 
     private fun initObservers() {

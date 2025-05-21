@@ -32,7 +32,7 @@ class IsOnHdWalletUseCase @Inject constructor(
         return getIsActiveNodeTestnetUseCase.invoke()
     }
 
-    fun isProdReleaseVariant(): Boolean {
+    private fun isProdReleaseVariant(): Boolean {
         return getIsProductionReleaseUseCase.invoke()
     }
 }

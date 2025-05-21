@@ -15,15 +15,15 @@ package com.algorand.android.ui.send.assetselection.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.algorand.android.databinding.ItemSelectCollectibleBinding
-import com.algorand.android.models.BaseSelectAssetItem
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.ui.asset.selection.view.model.BaseSelectAssetItem
 
 abstract class BaseSelectCollectibleItemViewHolder(
     private val binding: ItemSelectCollectibleBinding,
     private val listener: SelectCollectibleItemListener
 ) : BaseViewHolder<BaseSelectAssetItem>(binding.root) {
 
-    protected open fun bindImage(item: BaseSelectAssetItem.BaseSelectCollectibleItem) {
+    protected open fun bindImage(item: BaseSelectAssetItem.SelectCollectibleItem) {
         binding.collectibleItemView.apply {
             getStartIconImageView().apply {
                 item.baseAssetDrawableProvider.provideAssetDrawable(
@@ -35,7 +35,7 @@ abstract class BaseSelectCollectibleItemViewHolder(
     }
 
     override fun bind(item: BaseSelectAssetItem) {
-        if (item !is BaseSelectAssetItem.BaseSelectCollectibleItem) return
+        if (item !is BaseSelectAssetItem.SelectCollectibleItem) return
         with(item) {
             with(binding.collectibleItemView) {
                 setTitleText(name)

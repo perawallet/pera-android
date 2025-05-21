@@ -2,13 +2,12 @@ package com.algorand.android.customviews
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.annotation.StringRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
 import com.algorand.android.R
 import com.algorand.android.databinding.CustomRegisterTypeSelectionBinding
-import com.algorand.android.utils.BadgeDrawable
-import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 
 class RegisterTypeSelectionItem @JvmOverloads constructor(
@@ -25,42 +24,34 @@ class RegisterTypeSelectionItem @JvmOverloads constructor(
 
     private fun initAttributes(attrs: AttributeSet?) {
         context.obtainStyledAttributes(attrs, R.styleable.RegisterTypeSelectionItem).use {
-            val typeTitle = it.getText(R.styleable.RegisterTypeSelectionItem_typeSelectionTitleText)
-            val badgeText = it.getText(R.styleable.RegisterTypeSelectionItem_typeSelectionTitleBadgeText)
-            val isTypeBadgeVisible = it.getBoolean(
-                R.styleable.RegisterTypeSelectionItem_typeSelectionTitleBadgeVisible,
-                false
-            )
-            initTypeTitle(typeTitle, badgeText, isTypeBadgeVisible)
+            val title = it.getText(R.styleable.RegisterTypeSelectionItem_typeSelectionTitleText)
+            setTitle(title)
 
-            val typeDescription = it.getText(R.styleable.RegisterTypeSelectionItem_typeSelectionDescriptionText)
-            initTypeDescription(typeDescription)
+            val description = it.getText(R.styleable.RegisterTypeSelectionItem_typeSelectionDescriptionText)
+            setDescription(description)
 
-            val typeIcon = it.getResourceIdOrThrow(R.styleable.RegisterTypeSelectionItem_typeSelectionIcon)
-            initTypeIcon(typeIcon)
+            val icon = it.getResourceIdOrThrow(R.styleable.RegisterTypeSelectionItem_typeSelectionIcon)
+            setIcon(icon)
         }
     }
 
-    private fun initTypeTitle(typeTitle: CharSequence, badgeText: CharSequence?, isTypeBadgeVisible: Boolean) {
-        binding.titleTextView.apply {
-            text = typeTitle
-            if (isTypeBadgeVisible) {
-                val badgeDrawable = BadgeDrawable.toDrawable(
-                    context = context,
-                    badgeText = badgeText.toString().uppercase(),
-                    textColor = R.color.positive,
-                    backgroundColor = R.color.positive_lighter
-                )
-                setDrawable(end = badgeDrawable)
-            }
-        }
+    fun setTitle(@StringRes titleRes: Int) {
+        binding.titleTextView.setText(titleRes)
     }
 
-    private fun initTypeDescription(typeDescription: CharSequence) {
-        binding.descriptionTextView.text = typeDescription
+    fun setDescription(@StringRes descriptionRes: Int) {
+        binding.descriptionTextView.setText(descriptionRes)
     }
 
-    private fun initTypeIcon(typeIcon: Int) {
-        binding.typeImageView.setImageResource(typeIcon)
+    private fun setTitle(title: CharSequence) {
+        binding.titleTextView.text = title
+    }
+
+    private fun setDescription(description: CharSequence) {
+        binding.descriptionTextView.text = description
+    }
+
+    private fun setIcon(icon: Int) {
+        binding.iconImageView.setImageResource(icon)
     }
 }

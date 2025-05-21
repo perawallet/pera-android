@@ -14,16 +14,15 @@ package com.algorand.wallet.asset.data.database.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.Index
 import com.algorand.wallet.asset.data.database.model.CollectibleEntity.Companion.COLLECTIBLE_TABLE_NAME
 
-@Entity(tableName = COLLECTIBLE_TABLE_NAME)
+@Entity(
+    tableName = COLLECTIBLE_TABLE_NAME,
+    indices = [Index(value = ["collectible_asset_id"], unique = true)],
+    primaryKeys = ["collectible_asset_id"]
+)
 internal data class CollectibleEntity(
-
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo("id")
-    val id: Long = 0L,
-
     @ColumnInfo("collectible_asset_id")
     val collectibleAssetId: Long,
 

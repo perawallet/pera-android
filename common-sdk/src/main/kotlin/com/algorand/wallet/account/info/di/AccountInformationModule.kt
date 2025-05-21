@@ -51,6 +51,10 @@ import com.algorand.wallet.account.info.data.service.AccountInformationApiServic
 import com.algorand.wallet.account.info.data.service.AssetHoldingNodeApiService
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManager
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManagerImpl
+import com.algorand.wallet.account.info.domain.mapper.DefaultHdAccountAddressMapper
+import com.algorand.wallet.account.info.domain.mapper.DefaultRegisteredHdKeyMapper
+import com.algorand.wallet.account.info.domain.mapper.HdAccountAddressMapper
+import com.algorand.wallet.account.info.domain.mapper.RegisteredHdKeyMapper
 import com.algorand.wallet.account.info.domain.repository.AccountFastLookupRepository
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.account.info.domain.usecase.AddAssetHoldingToAccountAsPending
@@ -69,9 +73,15 @@ import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFl
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountFastLookup
+import com.algorand.wallet.account.info.domain.usecase.GetAccountFastLookupBatch
+import com.algorand.wallet.account.info.domain.usecase.GetAccountFastLookupBatchUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
+import com.algorand.wallet.account.info.domain.usecase.GetActiveHdAccountAddresses
+import com.algorand.wallet.account.info.domain.usecase.GetActiveHdAccountAddressesUseCase
+import com.algorand.wallet.account.info.domain.usecase.GetActiveHdAccounts
+import com.algorand.wallet.account.info.domain.usecase.GetActiveHdAccountsUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAllAssetHoldingIds
 import com.algorand.wallet.account.info.domain.usecase.GetAllFailedCachedAccountAddresses
@@ -91,6 +101,8 @@ import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAccountUs
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOptedInByAnyLocalAccount
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccount
 import com.algorand.wallet.account.info.domain.usecase.IsAssetOwnedByAccountUseCase
+import com.algorand.wallet.account.info.domain.usecase.IsThereAnyAssetCanAddressOptOut
+import com.algorand.wallet.account.info.domain.usecase.IsThereAnyAssetCanAddressOptOutUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccount
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedErrorAccountUseCase
 import com.algorand.wallet.account.info.domain.usecase.IsThereAnyCachedSuccessAccount
@@ -419,4 +431,26 @@ internal object AccountInformationModule {
 
     @Provides
     fun provideAssetStatusMapper(impl: AssetStatusMapperImpl): AssetStatusMapper = impl
+
+    @Provides
+    fun provideIsThereAnyAssetCanAddressOptOut(
+        useCase: IsThereAnyAssetCanAddressOptOutUseCase
+    ): IsThereAnyAssetCanAddressOptOut = useCase
+
+    @Provides
+    fun provideRegisteredHdKeyMapper(impl: DefaultRegisteredHdKeyMapper): RegisteredHdKeyMapper = impl
+
+    @Provides
+    fun provideGetActiveHdAccounts(useCase: GetActiveHdAccountsUseCase): GetActiveHdAccounts = useCase
+
+    @Provides
+    fun provideGetAccountFastLookupBatch(useCase: GetAccountFastLookupBatchUseCase): GetAccountFastLookupBatch = useCase
+
+    @Provides
+    fun provideGetActiveHdAccountAddresses(
+        useCase: GetActiveHdAccountAddressesUseCase
+    ): GetActiveHdAccountAddresses = useCase
+
+    @Provides
+    fun provideHdAccountAddressMapper(impl: DefaultHdAccountAddressMapper): HdAccountAddressMapper = impl
 }

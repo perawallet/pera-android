@@ -120,7 +120,6 @@
 
     <include
         android:id="@+id/progressBar"
-        layout="@layout/layout_full_screen_progress"
-        android:visibility="visible" />
+        layout="@layout/layout_full_screen_progress" />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

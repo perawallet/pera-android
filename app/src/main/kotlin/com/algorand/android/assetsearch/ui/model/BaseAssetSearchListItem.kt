@@ -27,7 +27,8 @@ sealed class BaseAssetSearchListItem : RecyclerListItem {
         COLLECTIBLE_IMAGE_ITEM,
         COLLECTIBLE_VIDEO_ITEM,
         COLLECTIBLE_MIXED_ITEM,
-        COLLECTIBLE_NOT_SUPPORTED_ITEM
+        COLLECTIBLE_NOT_SUPPORTED_ITEM,
+        PLACEHOLDER_ITEM
     }
 
     abstract val itemType: ItemType
@@ -104,63 +105,6 @@ sealed class BaseAssetSearchListItem : RecyclerListItem {
 
                 override fun areContentsTheSame(other: RecyclerListItem): Boolean {
                     return other is ImageCollectibleSearchItem && other == this
-                }
-            }
-
-            data class VideoCollectibleSearchItem(
-                override val assetId: Long,
-                override val fullName: AssetName,
-                override val shortName: AssetName,
-                override val accountAssetItemButtonState: AccountAssetItemButtonState,
-                override val baseAssetDrawableProvider: BaseAssetDrawableProvider
-            ) : BaseCollectibleSearchListItem() {
-
-                override val itemType: ItemType = ItemType.COLLECTIBLE_VIDEO_ITEM
-
-                override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-                    return other is VideoCollectibleSearchItem && other.assetId == assetId
-                }
-
-                override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-                    return other is VideoCollectibleSearchItem && other == this
-                }
-            }
-
-            data class MixedCollectibleSearchItem(
-                override val assetId: Long,
-                override val fullName: AssetName,
-                override val shortName: AssetName,
-                override val accountAssetItemButtonState: AccountAssetItemButtonState,
-                override val baseAssetDrawableProvider: BaseAssetDrawableProvider
-            ) : BaseCollectibleSearchListItem() {
-
-                override val itemType: ItemType = ItemType.COLLECTIBLE_MIXED_ITEM
-
-                override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-                    return other is MixedCollectibleSearchItem && other.assetId == assetId
-                }
-
-                override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-                    return other is MixedCollectibleSearchItem && other == this
-                }
-            }
-
-            data class NotSupportedCollectibleSearchItem(
-                override val assetId: Long,
-                override val fullName: AssetName,
-                override val shortName: AssetName,
-                override val accountAssetItemButtonState: AccountAssetItemButtonState,
-                override val baseAssetDrawableProvider: BaseAssetDrawableProvider
-            ) : BaseCollectibleSearchListItem() {
-
-                override val itemType: ItemType = ItemType.COLLECTIBLE_NOT_SUPPORTED_ITEM
-
-                override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-                    return other is NotSupportedCollectibleSearchItem && other.assetId == assetId
-                }
-
-                override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-                    return other is NotSupportedCollectibleSearchItem && other == this
                 }
             }
         }

@@ -14,6 +14,7 @@ package com.algorand.android.ui.register.nameregistration
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.algorand.android.R
@@ -43,6 +44,7 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
     }
 
     abstract val accountCreation: AccountCreation?
+
     abstract fun navToNextFragment()
 
     protected val nameRegistrationViewModel: NameRegistrationViewModel by viewModels()
@@ -124,11 +126,11 @@ abstract class BaseNameRegistrationFragment : DaggerBaseFragment(R.layout.fragme
                 ?.let { nameRegistrationViewModel.updateWatchAccount(it) }
             handleNextNavigationEvent?.consume()?.let { navToNextFragment() }
 
-            val isVisible = nameRegistrationViewModel.isOnHdWallet() &&
+            val isWalletVisible = nameRegistrationViewModel.isOnHdWallet() &&
                     nameRegistrationViewModel.isHdKey()
-            binding.cardviewWalletNumber.visibility = if (isVisible) View.VISIBLE else View.GONE
+            binding.cardviewWalletNumber.isVisible = isWalletVisible
 
-            if (isVisible) {
+            if (isWalletVisible) {
                 preview.getWalletId()?.let {
                     binding.tvWalletNumber.text = getString(
                         R.string.wallet_number,

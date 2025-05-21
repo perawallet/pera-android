@@ -19,6 +19,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navGraphViewModels
+import com.algorand.android.LoginNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentVerifyLedgerAddressBinding
@@ -36,9 +37,9 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.sendErrorLog
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class VerifyLedgerAddressFragment : DaggerBaseFragment(R.layout.fragment_verify_ledger_address) {
@@ -83,6 +84,7 @@ class VerifyLedgerAddressFragment : DaggerBaseFragment(R.layout.fragment_verify_
                 is LedgerBleResult.OnLedgerDisconnected -> {
                     retryCurrentOperation()
                 }
+
                 is LedgerBleResult.AppErrorResult -> {
                     showGlobalError(
                         errorMessage = getString(ledgerBleResult.errorMessageId),
@@ -90,16 +92,20 @@ class VerifyLedgerAddressFragment : DaggerBaseFragment(R.layout.fragment_verify_
                     )
                     retryCurrentOperation()
                 }
+
                 is LedgerBleResult.LedgerErrorResult -> {
                     showGlobalError(errorMessage = ledgerBleResult.errorMessage)
                     retryCurrentOperation()
                 }
+
                 is LedgerBleResult.OperationCancelledResult -> {
                     verifyLedgerAddressViewModel.onCurrentOperationDone(isVerified = false)
                 }
+
                 is LedgerBleResult.VerifyPublicKeyResult -> {
                     verifyLedgerAddressViewModel.onCurrentOperationDone(isVerified = ledgerBleResult.isVerified)
                 }
+
                 else -> {
                     sendErrorLog("Unhandled else case in ledgerResultCollector")
                 }
@@ -176,11 +182,23 @@ class VerifyLedgerAddressFragment : DaggerBaseFragment(R.layout.fragment_verify_
             pairLedgerNavigationViewModel.selectedLedgerAccounts
         )
         verifyLedgerAddressViewModel.addNewAccount(selectedVerifiedAccounts)
-        nav(
-            VerifyLedgerAddressFragmentDirections.actionVerifyLedgerAddressFragmentToVerifyLedgerInfoFragment(
-                selectedVerifiedAccounts.size
-            )
-        )
+        navToNextFragment()
+    }
+
+    private fun navToNextFragment() {
+        if (verifyLedgerAddressViewModel.shouldForceLockNavigation()) {
+            navToForceLockNavigation()
+        } else {
+            navToHomeNavigation()
+        }
+    }
+
+    private fun navToHomeNavigation() {
+        nav(VerifyLedgerAddressFragmentDirections.actionVerifyLedgerAddressFragmentToHomeNavigation())
+    }
+
+    private fun navToForceLockNavigation() {
+        nav(LoginNavigationDirections.actionToLockPreferenceNavigation(shouldNavigateHome = true))
     }
 
     companion object {

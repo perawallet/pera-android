@@ -22,11 +22,12 @@ import com.algorand.android.R
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.text.PeraBodyText
-import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.button.PeraSecondaryButton
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
 import com.algorand.android.utils.alertDialog
 import com.algorand.android.utils.showBiometricAuthentication
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,7 +50,8 @@ class BiometricRegistrationFragment : BaseInfoFragment() {
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_faceid),
             contentDescription = stringResource(R.string.face_id),
-            modifier = modifier
+            modifier = modifier,
+            tintColor = PeraTheme.colors.link.icon
         )
 
     @Composable

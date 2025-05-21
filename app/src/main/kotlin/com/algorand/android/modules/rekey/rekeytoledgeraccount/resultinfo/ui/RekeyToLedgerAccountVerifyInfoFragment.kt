@@ -24,10 +24,11 @@ import com.algorand.android.R
 import com.algorand.android.RekeyLedgerNavigationDirections
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
+import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.icon.PeraIcon
-import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,7 +43,8 @@ class RekeyToLedgerAccountVerifyInfoFragment : BaseInfoFragment() {
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_check),
             contentDescription = stringResource(id = R.string.check),
-            modifier = modifier
+            modifier = modifier,
+            tintColor = PeraTheme.colors.link.icon
         )
 
     @Composable

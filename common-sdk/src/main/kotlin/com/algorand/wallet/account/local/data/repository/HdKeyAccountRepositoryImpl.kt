@@ -15,6 +15,8 @@ package com.algorand.wallet.account.local.data.repository
 import com.algorand.wallet.account.local.data.database.dao.HdKeyDao
 import com.algorand.wallet.account.local.data.mapper.entity.HdKeyEntityMapper
 import com.algorand.wallet.account.local.data.mapper.model.HdKeyMapper
+import com.algorand.wallet.account.local.data.mapper.model.HdWalletSummaryMapper
+import com.algorand.wallet.account.local.domain.model.HdWalletSummary
 import com.algorand.wallet.account.local.domain.model.LocalAccount.HdKey
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
@@ -28,6 +30,7 @@ import javax.inject.Inject
 internal class HdKeyAccountRepositoryImpl @Inject constructor(
     private val hdKeyDao: HdKeyDao,
     private val hdKeyEntityMapper: HdKeyEntityMapper,
+    private val hdWalletSummaryMapper: HdWalletSummaryMapper,
     private val hdKeyMapper: HdKeyMapper,
     private val aesPlatformManager: AESPlatformManager,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -89,6 +92,20 @@ internal class HdKeyAccountRepositoryImpl @Inject constructor(
         return withContext(coroutineDispatcher) {
             val encryptedSK = hdKeyDao.get(address)?.encryptedPrivateKey
             encryptedSK?.let { aesPlatformManager.decryptByteArray(it) }
+        }
+    }
+
+    override suspend fun getHdWalletSummaries(): List<HdWalletSummary> {
+        return withContext(coroutineDispatcher) {
+            val hdKeyEntities = hdKeyDao.getAll()
+
+            val uniqueHdKeyEntities = hdKeyEntities.groupBy { it.seedId }
+                .mapNotNull { (_, group) -> group.maxByOrNull { it.account } }
+
+            uniqueHdKeyEntities.map { uniqueHdKeyEntity ->
+                val accountCount = hdKeyEntities.count { uniqueHdKeyEntity.seedId == it.seedId }
+                hdWalletSummaryMapper(uniqueHdKeyEntity, accountCount)
+            }
         }
     }
 }

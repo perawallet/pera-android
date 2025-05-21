@@ -8,8 +8,22 @@ import kotlinx.parcelize.Parcelize
 
 sealed class BaseTransactionItem : RecyclerListItem, Parcelable {
 
+    @Suppress("MagicNumber")
+    enum class ItemType(val value: Int) {
+        STRING_TITLE_ITEM(0),
+        RESOURCE_TITLE_ITEM(1),
+        APPLICATION_CALL_ITEM(2),
+        TRANSACTION_ITEM(3),
+        PLACEHOLDER_ITEM(4)
+    }
+
+    abstract val itemType: ItemType
+
     @Parcelize
     data class StringTitleItem(val title: String) : BaseTransactionItem(), Parcelable {
+        override val itemType: ItemType
+            get() = ItemType.STRING_TITLE_ITEM
+
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is StringTitleItem && title == other.title
         }
@@ -21,6 +35,9 @@ sealed class BaseTransactionItem : RecyclerListItem, Parcelable {
 
     @Parcelize
     data class ResourceTitleItem(@StringRes val stringRes: Int) : BaseTransactionItem(), Parcelable {
+        override val itemType: ItemType
+            get() = ItemType.RESOURCE_TITLE_ITEM
+
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is ResourceTitleItem && stringRes == other.stringRes
         }
@@ -31,6 +48,8 @@ sealed class BaseTransactionItem : RecyclerListItem, Parcelable {
     }
 
     sealed class TransactionItem : BaseTransactionItem(), Parcelable {
+        override val itemType: ItemType
+            get() = ItemType.TRANSACTION_ITEM
 
         abstract val id: String?
         abstract val signature: String?
@@ -297,6 +316,8 @@ sealed class BaseTransactionItem : RecyclerListItem, Parcelable {
             val innerTransactionCount: Int,
             val applicationId: Long?
         ) : TransactionItem() {
+            override val itemType: ItemType
+                get() = ItemType.APPLICATION_CALL_ITEM
 
             override fun isSameTransaction(other: RecyclerListItem): Boolean {
                 val transaction = other as? ApplicationCallItem ?: return false

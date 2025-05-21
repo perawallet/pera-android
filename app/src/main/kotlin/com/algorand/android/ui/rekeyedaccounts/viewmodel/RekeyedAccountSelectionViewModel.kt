@@ -23,14 +23,15 @@ import com.algorand.android.ui.rekeyedaccounts.viewmodel.RekeyedAccountSelection
 import com.algorand.android.ui.rekeyedaccounts.viewmodel.RekeyedAccountSelectionViewModel.ViewState
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
+import com.algorand.android.usecase.LockPreferencesUseCase
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RekeyedAccountSelectionViewModel @Inject constructor(
@@ -38,7 +39,8 @@ class RekeyedAccountSelectionViewModel @Inject constructor(
     private val accountAdditionUseCase: AccountAdditionUseCase,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
     private val stateDelegate: StateDelegate<ViewState>,
-    private val eventDelegate: EventDelegate<ViewEvent>
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val lockPreferencesUseCase: LockPreferencesUseCase
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
     init {
@@ -104,8 +106,12 @@ class RekeyedAccountSelectionViewModel @Inject constructor(
 
     private fun RekeyedAccountSelectionItem.isSelectedItem(accountItem: AccountItem): Boolean {
         return this is AccountItem &&
-            authAddress == accountItem.authAddress &&
-            accountDisplayName.accountAddress == accountItem.accountDisplayName.accountAddress
+                authAddress == accountItem.authAddress &&
+                accountDisplayName.accountAddress == accountItem.accountDisplayName.accountAddress
+    }
+
+    fun shouldForceLockNavigation(): Boolean {
+        return lockPreferencesUseCase.shouldNavigateLockNavigation()
     }
 
     sealed interface ViewState {

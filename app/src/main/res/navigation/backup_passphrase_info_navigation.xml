@@ -18,7 +18,7 @@
 
     <include app:graph="@navigation/backup_passphrase_navigation" />
 
-    <include app:graph="@navigation/backup_passphrase_account_name_navigation" />
+    <include app:graph="@navigation/create_account_name_registration_navigation" />
 
     <action
         android:id="@+id/action_to_lockPreferenceNavigation"
@@ -45,7 +45,7 @@
             app:nullable="true" />
         <action
             android:id="@+id/action_backupInfoFragment_to_backupPassphraseAccountNameNavigation"
-            app:destination="@id/backupPassphraseAccountNameNavigation">
+            app:destination="@id/createAccountNameRegistrationNavigation">
             <argument
                 android:name="accountCreation"
                 app:argType="com.algorand.android.models.AccountCreation" />
@@ -68,7 +68,7 @@
             app:nullable="true" />
         <action
             android:id="@+id/action_writeDownInfoFragment_to_backupPassphraseAccountNameNavigation"
-            app:destination="@id/backupPassphraseAccountNameNavigation">
+            app:destination="@id/createAccountNameRegistrationNavigation">
             <argument
                 android:name="accountCreation"
                 app:argType="com.algorand.android.models.AccountCreation" />
@@ -78,8 +78,8 @@
             app:destination="@id/backupPassphraseNavigation">
             <argument
                 android:name="accountToBackup"
-                app:nullable="true"
-                app:argType="string" />
+                app:argType="string"
+                app:nullable="true" />
             <argument
                 android:name="accountCreation"
                 app:argType="com.algorand.android.models.AccountCreation"

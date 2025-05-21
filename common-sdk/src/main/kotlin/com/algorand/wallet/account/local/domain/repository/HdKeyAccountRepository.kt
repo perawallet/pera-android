@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.account.local.domain.repository
 
+import com.algorand.wallet.account.local.domain.model.HdWalletSummary
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import kotlinx.coroutines.flow.Flow
 
@@ -36,4 +37,6 @@ internal interface HdKeyAccountRepository {
     suspend fun deleteAllAccounts()
 
     suspend fun getPrivateKey(address: String): ByteArray?
+
+    suspend fun getHdWalletSummaries(): List<HdWalletSummary>
 }

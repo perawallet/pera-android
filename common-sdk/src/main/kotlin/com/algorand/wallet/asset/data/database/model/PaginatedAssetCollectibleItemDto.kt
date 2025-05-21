@@ -49,5 +49,8 @@ internal data class PaginatedAssetCollectibleItemDto(
     val collectionName: String?,
 
     @ColumnInfo("verification_tier")
-    val verificationTierEntity: VerificationTierEntity
+    val verificationTierEntity: VerificationTierEntity,
+
+    @ColumnInfo("media_type")
+    val mediaTypeEntity: CollectibleMediaTypeEntity?
 )

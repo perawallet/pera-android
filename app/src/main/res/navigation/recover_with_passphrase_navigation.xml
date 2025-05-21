@@ -57,7 +57,12 @@
             android:id="@+id/action_recoverRegisteredAccountsFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"
             app:popUpTo="@id/recoverWithPassphraseNavigation"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true">
+            <argument
+                android:name="showConfetti"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
         <action
             android:id="@+id/action_recoverRegisteredAccountsFragment_to_recoverHdKeyRekeyedAccountSelectionFragment"
             app:destination="@id/recoverHdKeyRekeyedAccountSelectionFragment" />
@@ -71,10 +76,15 @@
             android:name="accountCreation"
             app:argType="com.algorand.android.models.AccountCreation" />
         <action
-            android:id="@+id/action_recoverAccountNameRegistrationFragment_to_recoverAccountResultInfoFragment"
-            app:destination="@id/recoverAccountResultInfoFragment"
-            app:popUpTo="@id/loginNavigation"
-            app:popUpToInclusive="true" />
+            android:id="@+id/action_recoverAccountNameRegistrationFragment_to_lockPreferenceNavigation"
+            app:destination="@id/lockPreferenceNavigation"
+            app:popUpTo="@id/recoverWithPassphraseNavigation"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="shouldNavigateHome"
+                android:defaultValue="false"
+                app:argType="boolean" />
+        </action>
         <action
             android:id="@+id/action_recoverAccountNameRegistrationFragment_to_homeNavigation"
             app:destination="@id/homeNavigation"
@@ -83,32 +93,6 @@
             <argument
                 android:name="showConfetti"
                 android:defaultValue="true"
-                app:argType="boolean" />
-        </action>
-    </fragment>
-
-    <fragment
-        android:id="@+id/recoverAccountResultInfoFragment"
-        android:name="com.algorand.android.modules.onboarding.recoverypassphrase.result.ui.RecoverAccountResultInfoFragment"
-        android:label="RecoverAccountResultInfoFragment">
-        <action
-            android:id="@+id/action_recoverAccountResultInfoFragment_to_meldNavigation"
-            app:destination="@id/meldNavigation"
-            app:popUpTo="@id/recoverWithPassphraseNavigation"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_recoverAccountResultInfoFragment_to_homeNavigation"
-            app:destination="@id/homeNavigation"
-            app:popUpTo="@id/recoverWithPassphraseNavigation"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_recoverAccountResultInfoFragment_to_lockPreferenceNavigation"
-            app:destination="@id/lockPreferenceNavigation"
-            app:popUpTo="@id/recoverWithPassphraseNavigation"
-            app:popUpToInclusive="true">
-            <argument
-                android:name="shouldNavigateHome"
-                android:defaultValue="false"
                 app:argType="boolean" />
         </action>
     </fragment>
@@ -132,18 +116,33 @@
         android:id="@+id/recoverHdKeyRekeyedAccountSelectionFragment"
         android:name="com.algorand.android.ui.rekeyedaccounts.hdkey.view.RecoverHdKeyRekeyedAccountSelectionFragment"
         android:label="RecoverHdKeyRekeyedAccountSelectionFragment">
-
         <argument
             android:name="rekeyedAccountSelectionNavArg"
             app:argType="com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg[]" />
 
         <action
-            android:id="@+id/action_recoverHdKeyRekeyedAccountSelectionFragment_to_recoverAccountResultInfoFragment"
-            app:destination="@id/recoverAccountResultInfoFragment" />
-
-        <action
             android:id="@+id/action_recoverHdKeyRekeyedAccountSelectionFragment_to_rekeyedAccountInformationFragment"
             app:destination="@id/rekeyedAccountInformationFragment" />
+        <action
+            android:id="@+id/action_recoverHdKeyRekeyedAccountSelectionFragment_to_lockPreferenceNavigation"
+            app:destination="@id/lockPreferenceNavigation"
+            app:popUpTo="@id/recoverWithPassphraseNavigation"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="shouldNavigateHome"
+                android:defaultValue="false"
+                app:argType="boolean" />
+        </action>
+        <action
+            android:id="@+id/action_recoverHdKeyRekeyedAccountSelectionFragment_to_homeNavigation"
+            app:destination="@id/homeNavigation"
+            app:popUpTo="@id/loginNavigation"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="showConfetti"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
     </fragment>
 
     <fragment

@@ -109,9 +109,9 @@ class RekeyToStandardAccountSelectionPreviewUseCase @Inject constructor(
 
     private suspend fun isAccountEligibleToRekey(localAccountAddress: String, accountAddress: String): Boolean {
         val accountType = getAccountType(localAccountAddress)
-        val isAlgo25Account = accountType == AccountType.Algo25
+        val isEligibleAccount = accountType == AccountType.Algo25 || accountType == AccountType.HdKey
         val isSameAddress = localAccountAddress == accountAddress
 
-        return isAlgo25Account && !isSameAddress && accountType?.canSignTransaction() == true
+        return isEligibleAccount && !isSameAddress && accountType?.canSignTransaction() == true
     }
 }

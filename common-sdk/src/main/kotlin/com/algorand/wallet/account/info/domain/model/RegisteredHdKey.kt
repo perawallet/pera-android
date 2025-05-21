@@ -23,18 +23,4 @@ data class RegisteredHdKey(
     val account: Int,
     val change: Int,
     val keyIndex: Int
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as RegisteredHdKey
-
-        return address == other.address
-    }
-
-    override fun hashCode(): Int {
-        val result = address.hashCode()
-        return result
-    }
-}
+)

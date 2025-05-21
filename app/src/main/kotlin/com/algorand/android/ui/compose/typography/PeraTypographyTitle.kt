@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,74 +14,92 @@ package com.algorand.android.ui.compose.typography
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.algorand.android.R
+import com.algorand.android.ui.compose.widget.peraMono
+import com.algorand.android.ui.compose.widget.peraSans
 
 @Composable
-internal fun getPeraTypographyTitle(): PeraTypography.Title {
-    return PeraTypography.Title(
-        regular = getPeraTypographyTitleRegular(),
-        large = getPeraTypographyTitleLarge(),
-        small = getPeraTypographyTitleSmall()
-    )
-}
+fun getPeraTypographyTitle(): PeraTypography.Title = PeraTypography.Title(
+    regular = getTitleRegular(),
+    large = getTitleLarge(),
+    small = getTitleSmall()
+)
 
 @Composable
-private fun getPeraTypographyTitleRegular(): PeraTypography.Title.TitleRegular {
-    val titleStyle = TextStyle(
-        fontSize = 32.sp,
-        lineHeight = 40.sp,
-    )
-    return PeraTypography.Title.TitleRegular(
-        sans = titleStyle.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_regular, FontWeight.Normal))
+private fun getTitleRegular(): PeraTypography.Title.TitleRegular =
+    PeraTypography.Title.TitleRegular(
+        sans = TextStyle(
+            fontFamily = peraSans,
+            fontWeight = FontWeight.Normal,
+            fontSize = 32.sp,
+            lineHeight = 40.sp,
+            letterSpacing = (-0.36).sp
         ),
-        sansMedium = titleStyle.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_medium, FontWeight.Medium))
+        sansMedium = TextStyle(
+            fontFamily = peraSans,
+            fontWeight = FontWeight.Medium,
+            fontSize = 32.sp,
+            lineHeight = 40.sp,
+            letterSpacing = (-0.36).sp
         ),
-        sansBold = titleStyle.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_bold, FontWeight.Bold))
+        sansBold = TextStyle(
+            fontFamily = peraSans,
+            fontWeight = FontWeight.Bold,
+            fontSize = 32.sp,
+            lineHeight = 40.sp,
+            letterSpacing = (-0.36).sp
         )
     )
-}
 
 @Composable
-private fun getPeraTypographyTitleLarge(): PeraTypography.Title.TitleLarge {
-    val titleStyle = TextStyle(
-        fontSize = 36.sp,
-        lineHeight = 48.sp,
-    )
-    return PeraTypography.Title.TitleLarge(
-        sans = titleStyle.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_regular, FontWeight.Normal))
+private fun getTitleLarge(): PeraTypography.Title.TitleLarge =
+    PeraTypography.Title.TitleLarge(
+        sans = TextStyle(
+            fontFamily = peraSans,
+            fontWeight = FontWeight.Normal,
+            fontSize = 36.sp,
+            lineHeight = 48.sp,
+            letterSpacing = (-0.36).sp
         ),
-        sansMedium = titleStyle.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_medium, FontWeight.Medium))
+        sansMedium = TextStyle(
+            fontFamily = peraSans,
+            fontWeight = FontWeight.Medium,
+            fontSize = 36.sp,
+            lineHeight = 48.sp,
+            letterSpacing = (-0.36).sp
         ),
-        mono = titleStyle.copy(
-            fontFamily = FontFamily(Font(R.font.dmmono_regular, FontWeight.Normal))
+        mono = TextStyle(
+            fontFamily = peraMono,
+            fontWeight = FontWeight.Normal,
+            fontSize = 36.sp,
+            lineHeight = 48.sp,
+            letterSpacing = (-0.72).sp
         ),
-        monoMedium = titleStyle.copy(
-            fontFamily = FontFamily(Font(R.font.dmmono_medium, FontWeight.Medium))
+        monoMedium = TextStyle(
+            fontFamily = peraMono,
+            fontWeight = FontWeight.Medium,
+            fontSize = 36.sp,
+            lineHeight = 48.sp,
+            letterSpacing = (-0.72).sp
         )
     )
-}
 
 @Composable
-private fun getPeraTypographyTitleSmall(): PeraTypography.Title.TitleSmall {
-    val titleStyle = TextStyle(
-        fontSize = 28.sp,
-        lineHeight = 32.sp,
-    )
-    return PeraTypography.Title.TitleSmall(
-        sans = titleStyle.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_regular, FontWeight.Normal))
+private fun getTitleSmall(): PeraTypography.Title.TitleSmall =
+    PeraTypography.Title.TitleSmall(
+        sans = TextStyle(
+            fontFamily = peraSans,
+            fontWeight = FontWeight.Normal,
+            fontSize = 28.sp,
+            lineHeight = 36.sp,
+            letterSpacing = (-0.36).sp
         ),
-        sansMedium = titleStyle.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_medium, FontWeight.Medium))
+        sansMedium = TextStyle(
+            fontFamily = peraSans,
+            fontWeight = FontWeight.Medium,
+            fontSize = 28.sp,
+            lineHeight = 36.sp,
+            letterSpacing = (-0.36).sp
         )
     )
-}

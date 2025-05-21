@@ -67,9 +67,26 @@ class RecoverHdKeyRekeyedAccountSelectionFragment : BaseFragment(R.layout.fragme
     }
 
     override fun navToNextScreen() {
+        if (viewModel.shouldForceLockNavigation()) {
+            navToForceLockNavigation()
+        } else {
+            navToHomeNavigation()
+        }
+    }
+
+    private fun navToHomeNavigation() {
         nav(
             RecoverHdKeyRekeyedAccountSelectionFragmentDirections
-                .actionRecoverHdKeyRekeyedAccountSelectionFragmentToRecoverAccountResultInfoFragment()
+                .actionRecoverHdKeyRekeyedAccountSelectionFragmentToHomeNavigation()
+        )
+    }
+
+    private fun navToForceLockNavigation() {
+        nav(
+            RecoverHdKeyRekeyedAccountSelectionFragmentDirections
+                .actionRecoverHdKeyRekeyedAccountSelectionFragmentToLockPreferenceNavigation(
+                    shouldNavigateHome = true
+                )
         )
     }
 

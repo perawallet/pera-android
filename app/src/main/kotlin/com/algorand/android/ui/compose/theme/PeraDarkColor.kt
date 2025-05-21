@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -111,12 +111,12 @@ object PeraDarkColor : PeraColor {
     override val wallet = object : PeraColor.Wallet {
         override val wallet1 = object : PeraColor.WalletStyle {
             override val background = ColorPalette.Blush.V600
-            override val icon = ColorPalette.Blush.V900
+            override val icon = ColorPalette.Others.V200
         }
 
         override val wallet2 = object : PeraColor.WalletStyle {
             override val background = ColorPalette.Salmon.V500
-            override val icon = ColorPalette.Yellow.V200
+            override val icon = ColorPalette.Others.V300
         }
 
         override val wallet3 = object : PeraColor.WalletStyle {
@@ -131,7 +131,7 @@ object PeraDarkColor : PeraColor {
 
         override val wallet5 = object : PeraColor.WalletStyle {
             override val background = ColorPalette.Salmon.V400
-            override val icon = ColorPalette.Navy.V900
+            override val icon = ColorPalette.Others.V100
         }
 
         override val placeholder = object : PeraColor.WalletStyle {

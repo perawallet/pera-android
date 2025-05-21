@@ -15,17 +15,14 @@ package com.algorand.wallet.account.info.data.database.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
-import androidx.room.PrimaryKey
 import java.math.BigInteger
 
 @Entity(
     tableName = "asset_holding_table",
-    indices = [Index(value = ["algo_address", "asset_id"], unique = true)]
+    indices = [Index(value = ["algo_address", "asset_id"], unique = true)],
+    primaryKeys = ["algo_address", "asset_id"]
 )
 internal data class AssetHoldingEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-
     @ColumnInfo(name = "algo_address")
     val algoAddress: String,
 

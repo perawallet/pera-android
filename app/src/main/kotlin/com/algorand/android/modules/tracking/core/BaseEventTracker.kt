@@ -30,7 +30,7 @@ open class BaseEventTracker protected constructor(private val peraEventTracker: 
         peraEventTracker.logEvent(eventName, payloadMap)
     }
 
-    suspend fun getFormattedEventName(eventName: String): String {
+    private suspend fun getFormattedEventName(eventName: String): String {
         return if (nodeSettingsUseCase.isSelectedNodeTestnet()) "$TESTNET_EVENT_NAME_PREFIX$eventName" else eventName
     }
 

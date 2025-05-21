@@ -86,4 +86,6 @@ internal interface AccountInformationRepository {
     suspend fun getAssetHolding(address: String, assetId: Long): AssetHolding?
 
     suspend fun getAssetHoldings(address: String): List<AssetHolding>
+
+    suspend fun isThereAnyAssetCanAddressOptOut(address: String, algoId: Long): Boolean
 }

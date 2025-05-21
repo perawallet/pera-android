@@ -3,6 +3,7 @@ package com.algorand.android.ui.compose.widget
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -45,7 +46,7 @@ fun AnimationLoader(
                 composition = preloaderLottieComposition,
                 progress = { preloaderProgress },
                 modifier = Modifier
-                    .padding(start = 20.dp, end = 20.dp)
+                    .width(120.dp)
                     .align(alignment = Alignment.CenterVertically),
             )
             PeraIconRoundShapeBig(

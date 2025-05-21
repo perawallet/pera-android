@@ -13,6 +13,8 @@
 package com.algorand.android.modules.accountsorting.di
 
 import com.algorand.android.modules.accountsorting.domain.usecase.GetAccountSortingTypeIdentifier
+import com.algorand.android.modules.accountsorting.domain.usecase.GetAssetCollectibleLiteSortType
+import com.algorand.android.modules.accountsorting.domain.usecase.GetAssetCollectibleLiteSortTypeUseCase
 import com.algorand.android.modules.accountsorting.ui.domain.mapper.AccountAndAssetAccountListItemMapper
 import com.algorand.android.modules.accountsorting.ui.domain.mapper.AccountAndAssetAccountListItemMapperImpl
 import com.algorand.android.modules.accountsorting.ui.domain.mapper.BaseAccountAndAssetListItemMapper
@@ -92,4 +94,9 @@ internal object AccountSortingUiModule {
     fun provideGetFilteredSortedAccountListWhichNotBackedUp(
         useCase: GetFilteredSortedAccountListWhichNotBackedUpUseCase
     ): GetFilteredSortedAccountListWhichNotBackedUp = useCase
+
+    @Provides
+    fun provideGetAssetCollectibleLiteSortType(
+        useCase: GetAssetCollectibleLiteSortTypeUseCase
+    ): GetAssetCollectibleLiteSortType = useCase
 }

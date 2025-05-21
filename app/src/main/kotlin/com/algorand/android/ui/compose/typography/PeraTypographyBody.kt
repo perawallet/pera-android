@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Pera Wallet, LDA
+ * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,60 +14,79 @@ package com.algorand.android.ui.compose.typography
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.algorand.android.R
+import com.algorand.android.ui.compose.widget.peraMono
+import com.algorand.android.ui.compose.widget.peraSans
 
 @Composable
-internal fun getPeraTypographyBody(): PeraTypography.Body {
-    return PeraTypography.Body(
-        regular = getPeraTypographyBodyRegular(),
-        large = getPeraTypographyBodyLarge()
-    )
-}
+fun getPeraTypographyBody(): PeraTypography.Body = PeraTypography.Body(
+    regular = getBodyRegular(),
+    large = getBodyLarge()
+)
 
 @Composable
-private fun getPeraTypographyBodyRegular(): PeraTypography.Body.BodyRegular {
-    val body = TextStyle(
-        fontSize = 15.sp,
-        lineHeight = 24.sp
-    )
-    return PeraTypography.Body.BodyRegular(
-        sans = body.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_regular, FontWeight.Normal))
+private fun getBodyRegular(): PeraTypography.Body.BodyRegular =
+    PeraTypography.Body.BodyRegular(
+        sans = TextStyle(
+            fontFamily = peraSans,
+            fontWeight = FontWeight.Normal,
+            fontSize = 15.sp,
+            lineHeight = 24.sp,
+            letterSpacing = 0.sp
         ),
-        sansMedium = body.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_medium, FontWeight.Medium))
+        sansMedium = TextStyle(
+            fontFamily = peraSans,
+            fontWeight = FontWeight.Medium,
+            fontSize = 15.sp,
+            lineHeight = 24.sp,
+            letterSpacing = 0.sp
         ),
-        sansBold = body.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_bold, FontWeight.Bold))
+        sansBold = TextStyle(
+            fontFamily = peraSans,
+            fontWeight = FontWeight.Bold,
+            fontSize = 15.sp,
+            lineHeight = 24.sp,
+            letterSpacing = 0.sp
         ),
-        mono = body.copy(
-            fontFamily = FontFamily(Font(R.font.dmmono_regular, FontWeight.Normal))
+        mono = TextStyle(
+            fontFamily = peraMono,
+            fontWeight = FontWeight.Normal,
+            fontSize = 15.sp,
+            lineHeight = 24.sp,
+            letterSpacing = (-0.72).sp
         ),
-        monoMedium = body.copy(
-            fontFamily = FontFamily(Font(R.font.dmmono_medium, FontWeight.Medium))
+        monoMedium = TextStyle(
+            fontFamily = peraMono,
+            fontWeight = FontWeight.Medium,
+            fontSize = 15.sp,
+            lineHeight = 24.sp,
+            letterSpacing = (-0.72).sp
         )
     )
-}
 
 @Composable
-private fun getPeraTypographyBodyLarge(): PeraTypography.Body.BodyLarge {
-    val body = TextStyle(
-        fontSize = 19.sp,
-        lineHeight = 28.sp
-    )
-    return PeraTypography.Body.BodyLarge(
-        sans = body.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_regular, FontWeight.Normal))
+private fun getBodyLarge(): PeraTypography.Body.BodyLarge =
+    PeraTypography.Body.BodyLarge(
+        sans = TextStyle(
+            fontFamily = peraSans,
+            fontWeight = FontWeight.Normal,
+            fontSize = 19.sp,
+            lineHeight = 28.sp,
+            letterSpacing = 0.sp
         ),
-        sansMedium = body.copy(
-            fontFamily = FontFamily(Font(R.font.dmsans_medium, FontWeight.Medium))
+        sansMedium = TextStyle(
+            fontFamily = peraSans,
+            fontWeight = FontWeight.Medium,
+            fontSize = 19.sp,
+            lineHeight = 28.sp,
+            letterSpacing = 0.sp
         ),
-        mono = body.copy(
-            fontFamily = FontFamily(Font(R.font.dmmono_regular, FontWeight.Normal))
+        mono = TextStyle(
+            fontFamily = peraMono,
+            fontWeight = FontWeight.Normal,
+            fontSize = 19.sp,
+            lineHeight = 28.sp,
+            letterSpacing = (-0.72).sp
         )
     )
-}

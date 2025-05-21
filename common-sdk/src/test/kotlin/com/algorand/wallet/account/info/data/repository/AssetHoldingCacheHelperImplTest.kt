@@ -52,7 +52,7 @@ class AssetHoldingCacheHelperImplTest {
 
         val result = sut.cacheAssetHolding(response)
 
-        coVerify { assetHoldingDao.updateAssetHoldings(ADDRESS, listOf(ALGO_ASSET_HOLDING_ENTITY)) }
+        coVerify { assetHoldingDao.insertAll(ADDRESS, listOf(ALGO_ASSET_HOLDING_ENTITY)) }
         assertEquals(listOf(ALGO_ASSET_HOLDING), result)
     }
 
@@ -60,7 +60,7 @@ class AssetHoldingCacheHelperImplTest {
     fun `EXPECT empty list WHEN response is null`() = runTest {
         val result = sut.cacheAssetHolding(null)
 
-        coVerify(exactly = 0) { assetHoldingDao.updateAssetHoldings(any(), any()) }
+        coVerify(exactly = 0) { assetHoldingDao.insertAll(any(), any()) }
         assertTrue(result.isEmpty())
     }
 
@@ -70,7 +70,7 @@ class AssetHoldingCacheHelperImplTest {
 
         val result = sut.cacheAssetHolding(response)
 
-        coVerify(exactly = 0) { assetHoldingDao.updateAssetHoldings(any(), any()) }
+        coVerify(exactly = 0) { assetHoldingDao.insertAll(any(), any()) }
         assertTrue(result.isEmpty())
     }
 
@@ -85,7 +85,7 @@ class AssetHoldingCacheHelperImplTest {
 
         val result = sut.cacheAssetHolding(response)
 
-        coVerify { assetHoldingDao.updateAssetHoldings(ADDRESS, listOf(OWNED_ENTITY, ALGO_ASSET_HOLDING_ENTITY)) }
+        coVerify { assetHoldingDao.insertAll(ADDRESS, listOf(OWNED_ENTITY, ALGO_ASSET_HOLDING_ENTITY)) }
         val expected = listOf(OWNED_ASSET_HOLDING, ALGO_ASSET_HOLDING)
         assertEquals(expected, result)
     }
@@ -102,7 +102,7 @@ class AssetHoldingCacheHelperImplTest {
 
         val result = sut.cacheAssetHolding(response)
 
-        coVerify { assetHoldingDao.updateAssetHoldings(ADDRESS, listOf(OWNED_ENTITY, ALGO_ASSET_HOLDING_ENTITY)) }
+        coVerify { assetHoldingDao.insertAll(ADDRESS, listOf(OWNED_ENTITY, ALGO_ASSET_HOLDING_ENTITY)) }
         val expected = listOf(OWNED_ASSET_HOLDING, ALGO_ASSET_HOLDING)
         assertEquals(expected, result)
     }
@@ -124,7 +124,7 @@ class AssetHoldingCacheHelperImplTest {
         val result = sut.cacheAssetHolding(response)
 
         coVerify {
-            assetHoldingDao.updateAssetHoldings(
+            assetHoldingDao.insertAll(
                 ADDRESS,
                 listOf(OWNED_ENTITY, PENDING_FOR_REMOVAL_ENTITY, ALGO_ASSET_HOLDING_ENTITY)
             )
@@ -139,7 +139,6 @@ class AssetHoldingCacheHelperImplTest {
             amount = "0"
         )
         val ownedEntity = peraFixture<AssetHoldingEntity>().copy(
-            id = PENDING_FOR_ADDITION_ENTITY.id,
             assetStatusEntity = OWNED_BY_ACCOUNT,
             amount = BigInteger.ZERO,
             algoAddress = ADDRESS
@@ -158,7 +157,7 @@ class AssetHoldingCacheHelperImplTest {
 
         val result = sut.cacheAssetHolding(response)
 
-        coVerify { assetHoldingDao.updateAssetHoldings(ADDRESS, listOf(ownedEntity, ALGO_ASSET_HOLDING_ENTITY)) }
+        coVerify { assetHoldingDao.insertAll(ADDRESS, listOf(ownedEntity, ALGO_ASSET_HOLDING_ENTITY)) }
         val expected = listOf(assetHolding, ALGO_ASSET_HOLDING)
         assertEquals(expected, result)
     }
@@ -176,7 +175,7 @@ class AssetHoldingCacheHelperImplTest {
         val result = sut.cacheAssetHolding(response)
 
         coVerify {
-            assetHoldingDao.updateAssetHoldings(
+            assetHoldingDao.insertAll(
                 ADDRESS,
                 listOf(OWNED_ENTITY, PENDING_FOR_ADDITION_ENTITY, ALGO_ASSET_HOLDING_ENTITY)
             )
@@ -194,7 +193,7 @@ class AssetHoldingCacheHelperImplTest {
 
         val result = sut.cacheAssetHolding(response)
 
-        coVerify { assetHoldingDao.updateAssetHoldings(ADDRESS, listOf(ALGO_ASSET_HOLDING_ENTITY)) }
+        coVerify { assetHoldingDao.insertAll(ADDRESS, listOf(ALGO_ASSET_HOLDING_ENTITY)) }
         assertEquals(listOf(ALGO_ASSET_HOLDING), result)
     }
 
@@ -207,24 +206,21 @@ class AssetHoldingCacheHelperImplTest {
 
         val result = sut.cacheAssetHolding(response)
 
-        coVerify { assetHoldingDao.updateAssetHoldings(ADDRESS, listOf(ALGO_ASSET_HOLDING_ENTITY)) }
+        coVerify { assetHoldingDao.insertAll(ADDRESS, listOf(ALGO_ASSET_HOLDING_ENTITY)) }
         assertEquals(listOf(ALGO_ASSET_HOLDING), result)
     }
 
     private companion object {
         private const val ADDRESS = "ADDRESS"
         private val OWNED_ENTITY = peraFixture<AssetHoldingEntity>().copy(
-            id = 1,
             assetStatusEntity = OWNED_BY_ACCOUNT,
             amount = BigInteger.ONE
         )
         private val PENDING_FOR_REMOVAL_ENTITY = peraFixture<AssetHoldingEntity>().copy(
-            id = 2,
             assetStatusEntity = PENDING_FOR_REMOVAL,
             amount = BigInteger.ONE
         )
         private val PENDING_FOR_ADDITION_ENTITY = peraFixture<AssetHoldingEntity>().copy(
-            id = 3,
             assetStatusEntity = PENDING_FOR_ADDITION,
             amount = BigInteger.ONE
         )

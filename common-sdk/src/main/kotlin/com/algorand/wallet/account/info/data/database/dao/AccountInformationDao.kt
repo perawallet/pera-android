@@ -13,23 +13,31 @@
 package com.algorand.wallet.account.info.data.database.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Upsert
 import com.algorand.wallet.account.info.data.database.model.AccountInformationEntity
 import com.algorand.wallet.account.info.data.database.model.AccountLiteInformationDao
 import com.algorand.wallet.account.info.data.model.AccountAssetAndAppsCountDto
+import com.algorand.wallet.foundation.database.util.DaoUtils.smartUpsert
 import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface AccountInformationDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(accountInformationEntity: AccountInformationEntity)
+    @Upsert
+    suspend fun upsert(entity: AccountInformationEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(accountInformationEntities: List<AccountInformationEntity>)
+    @Transaction
+    suspend fun insert(accountInformationEntity: AccountInformationEntity) {
+        smartUpsert(
+            newEntity = accountInformationEntity,
+            getKey = { it.algoAddress },
+            fetchExistingByKey = { get(it) },
+            upsert = { upsert(it) }
+        )
+    }
 
     @Query("SELECT * FROM account_information WHERE :algoAddress = algo_address")
     suspend fun get(algoAddress: String): AccountInformationEntity?

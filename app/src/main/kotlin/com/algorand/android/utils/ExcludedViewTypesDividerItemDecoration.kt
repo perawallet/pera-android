@@ -15,8 +15,8 @@ package com.algorand.android.utils
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.View
-import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.algorand.android.utils.recyclerview.findAdapterAndLocalPosition
 import kotlin.math.roundToInt
 
 class ExcludedViewTypesDividerItemDecoration(
@@ -49,13 +49,7 @@ class ExcludedViewTypesDividerItemDecoration(
             val adapter = parent.adapter
             if (position == RecyclerView.NO_POSITION || adapter == null) continue
 
-            val wrapperAdapter = adapter as? ConcatAdapter
-            val (_, viewType) = wrapperAdapter
-                ?.findAdapterAndLocalPosition(position)
-                ?.let { (childAdapter, localPosition) ->
-                    childAdapter to childAdapter.getItemViewType(localPosition)
-                }
-                ?: (null to adapter.getItemViewType(position))
+            val (_, viewType) = adapter.findAdapterAndLocalPosition(position)
 
             if (viewType !in excludedViewTypes) {
                 parent.getDecoratedBoundsWithMargins(child, bounds)
@@ -66,16 +60,6 @@ class ExcludedViewTypesDividerItemDecoration(
             }
         }
         canvas.restore()
-    }
-
-    private fun ConcatAdapter.findAdapterAndLocalPosition(globalPosition: Int): Pair<RecyclerView.Adapter<*>, Int>? {
-        var pos = globalPosition
-        for (adapter in adapters) {
-            val itemCount = adapter.itemCount
-            if (pos < itemCount) return adapter to pos
-            pos -= itemCount
-        }
-        return null
     }
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {

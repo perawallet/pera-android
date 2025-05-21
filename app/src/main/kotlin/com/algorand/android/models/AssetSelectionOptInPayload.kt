@@ -12,9 +12,12 @@
 
 package com.algorand.android.models
 
+import java.math.BigInteger
+
 data class AssetSelectionOptInPayload(
     val assetId: Long,
     val senderAddress: String,
     val receiverAddress: String,
-    val assetName: String?
+    val assetName: String?,
+    val assetAmount: BigInteger
 )

@@ -20,6 +20,8 @@ import com.algorand.android.modules.parity.domain.usecase.GetAlgoAmountValue
 import com.algorand.android.modules.parity.domain.usecase.GetAlgoAmountValueUseCase
 import com.algorand.android.modules.parity.domain.usecase.GetAlgoToUsdConversionRate
 import com.algorand.android.modules.parity.domain.usecase.GetAlgoToUsdConversionRateUseCase
+import com.algorand.android.modules.parity.domain.usecase.GetParityDisplayValue
+import com.algorand.android.modules.parity.domain.usecase.GetParityDisplayValueUseCase
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryAlgoParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryAlgoParityValueUseCase
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
@@ -100,4 +102,7 @@ internal object ParityModule {
     fun provideGetSelectedCurrencyDetailFlow(parityRepository: ParityRepository): GetSelectedCurrencyDetailFlow {
         return GetSelectedCurrencyDetailFlow(parityRepository::getSelectedCurrencyDetailCacheFlow)
     }
+
+    @Provides
+    fun provideGetParityDisplayValue(useCase: GetParityDisplayValueUseCase): GetParityDisplayValue = useCase
 }

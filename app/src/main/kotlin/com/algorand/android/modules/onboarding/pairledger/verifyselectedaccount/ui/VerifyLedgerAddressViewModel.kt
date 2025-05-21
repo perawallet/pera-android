@@ -23,6 +23,7 @@ import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import com.algorand.android.modules.rekey.model.SelectedLedgerAccount.LedgerAccount
 import com.algorand.android.modules.rekey.model.SelectedLedgerAccounts
 import com.algorand.android.usecase.AccountAdditionUseCase
+import com.algorand.android.usecase.LockPreferencesUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.launchIO
@@ -33,7 +34,8 @@ import javax.inject.Inject
 @HiltViewModel
 class VerifyLedgerAddressViewModel @Inject constructor(
     private val verifyLedgerAddressQueueManager: VerifyLedgerAddressQueueManager,
-    private val accountAdditionUseCase: AccountAdditionUseCase
+    private val accountAdditionUseCase: AccountAdditionUseCase,
+    private val lockPreferencesUseCase: LockPreferencesUseCase
 ) : BaseViewModel() {
 
     val currentLedgerAddressesListLiveData = MutableLiveData<List<VerifyLedgerAddressListItem>>()
@@ -156,6 +158,10 @@ class VerifyLedgerAddressViewModel @Inject constructor(
                 accountAdditionUseCase.addNewAccount(accountCreation)
             }
         }
+    }
+
+    fun shouldForceLockNavigation(): Boolean {
+        return lockPreferencesUseCase.shouldNavigateLockNavigation()
     }
 
     private fun createLedgerAccount(selectedAccount: LedgerAccount): AccountCreation {

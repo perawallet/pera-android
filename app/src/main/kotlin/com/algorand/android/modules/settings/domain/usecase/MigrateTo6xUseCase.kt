@@ -57,9 +57,7 @@ class MigrateTo6xUseCase @Inject constructor(
             is Account.Detail.Standard,
             is Account.Detail.Rekeyed,
             is Account.Detail.RekeyedAuth -> createStandardAccount(localAccount)
-
             is Account.Detail.Ledger -> createLedgerAccount(localAccount)
-
             is Account.Detail.Watch -> createWatchAccount(localAccount)
 
             else -> null
@@ -67,18 +65,21 @@ class MigrateTo6xUseCase @Inject constructor(
     }
 
     private fun createStandardAccount(localAccount: Account): AccountCreation {
-        return localAccount.getSecretKey()?.let {
+        val legacyAccountSecretKey = localAccount.getSecretKey()
+        return if (legacyAccountSecretKey == null || legacyAccountSecretKey.isEmpty()) {
+            createWatchAccount(localAccount)
+        } else {
             AccountCreation(
                 address = localAccount.address,
                 customName = localAccount.name,
                 orderIndex = localAccount.index,
                 isBackedUp = localAccount.isBackedUp,
                 type = AccountCreation.Type.Algo25(
-                    aesPlatformManager.encryptByteArray(it)
+                    aesPlatformManager.encryptByteArray(legacyAccountSecretKey)
                 ),
                 creationType = CreationType.RECOVER
             )
-        } ?: createWatchAccount(localAccount)
+        }
     }
 
     private fun createLedgerAccount(localAccount: Account): AccountCreation {

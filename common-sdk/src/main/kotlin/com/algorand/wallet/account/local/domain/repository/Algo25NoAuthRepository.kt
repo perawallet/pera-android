@@ -10,12 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.android.migration.domain.repository
+package com.algorand.wallet.account.local.domain.repository
 
-internal interface MigrationTo6xRepository {
-    suspend fun saveMigratedTo6xCheck(check: Boolean)
-    suspend fun getMigratedTo6xCheck(): Boolean
-
-    suspend fun setSecretKeyValidatedForMigratedAccounts()
-    suspend fun isSecretKeyValidatedForMigratedAccounts(): Boolean
+internal interface Algo25NoAuthRepository {
+    suspend fun updateInvalidAlgo25AccountsToNoAuth()
 }

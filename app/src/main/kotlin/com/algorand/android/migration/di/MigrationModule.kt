@@ -12,13 +12,18 @@
 
 package com.algorand.android.migration.di
 
+import com.algorand.android.migration.data.repository.MigrationTo6xRepositoryImpl
+import com.algorand.android.migration.domain.manager.Account6xMigrationManager
+import com.algorand.android.migration.domain.manager.DefaultAccount6xMigrationManager
+import com.algorand.android.migration.domain.repository.MigrationTo6xRepository
 import com.algorand.android.migration.domain.usecase.GetMigratedTo6xCheck
+import com.algorand.android.migration.domain.usecase.IsSecretKeyValidatedForMigratedAccounts
 import com.algorand.android.migration.domain.usecase.MigrateTo6x
 import com.algorand.android.migration.domain.usecase.MigrateTo6xUseCase
 import com.algorand.android.migration.domain.usecase.SaveMigratedTo6xCheck
-import com.algorand.android.migration.data.repository.MigrationTo6xRepositoryImpl
-import com.algorand.android.migration.domain.repository.MigrationTo6xRepository
-import com.algorand.android.migration.domain.utils.MigrationConstants
+import com.algorand.android.migration.domain.usecase.SetSecretKeyValidatedForMigratedAccounts
+import com.algorand.android.migration.domain.utils.MigrationConstants.IS_SECRET_KEYS_VALIDATED_AFTER_6X_MIGRATION
+import com.algorand.android.migration.domain.utils.MigrationConstants.MIGRATE_TO_6X
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import dagger.Module
 import dagger.Provides
@@ -38,7 +43,8 @@ internal object MigrationModule {
     @Singleton
     fun provideMigrationTo6xRepository(persistentCacheProvider: PersistentCacheProvider): MigrationTo6xRepository {
         return MigrationTo6xRepositoryImpl(
-            persistentCacheProvider.getPersistentCache(Boolean::class.java, MigrationConstants.MIGRATE_TO_6X),
+            persistentCacheProvider.getPersistentCache(Boolean::class.java, MIGRATE_TO_6X),
+            persistentCacheProvider.getPersistentCache(Boolean::class.java, IS_SECRET_KEYS_VALIDATED_AFTER_6X_MIGRATION)
         )
     }
 
@@ -51,4 +57,21 @@ internal object MigrationModule {
     fun provideSaveMigratedTo6xCheck(
         repository: MigrationTo6xRepository
     ): SaveMigratedTo6xCheck = SaveMigratedTo6xCheck(repository::saveMigratedTo6xCheck)
+
+    @Provides
+    fun provideAccount6xMigrationManager(impl: DefaultAccount6xMigrationManager): Account6xMigrationManager = impl
+
+    @Provides
+    fun provideIsSecretKeyValidatedForMigratedAccounts(
+        repository: MigrationTo6xRepository
+    ): IsSecretKeyValidatedForMigratedAccounts {
+        return IsSecretKeyValidatedForMigratedAccounts(repository::isSecretKeyValidatedForMigratedAccounts)
+    }
+
+    @Provides
+    fun provideSetSecretKeyValidatedForMigratedAccounts(
+        repository: MigrationTo6xRepository
+    ): SetSecretKeyValidatedForMigratedAccounts {
+        return SetSecretKeyValidatedForMigratedAccounts(repository::setSecretKeyValidatedForMigratedAccounts)
+    }
 }

@@ -16,14 +16,23 @@ import com.algorand.android.migration.domain.repository.MigrationTo6xRepository
 import com.algorand.wallet.foundation.cache.PersistentCache
 
 internal class MigrationTo6xRepositoryImpl(
-    private val migrateTo6x: PersistentCache<Boolean>,
+    private val migrationTo6xCache: PersistentCache<Boolean>,
+    private val secretKeyValidationCache: PersistentCache<Boolean>,
 ) : MigrationTo6xRepository {
 
     override suspend fun saveMigratedTo6xCheck(check: Boolean) {
-        migrateTo6x.put(check)
+        migrationTo6xCache.put(check)
     }
 
     override suspend fun getMigratedTo6xCheck(): Boolean {
-        return migrateTo6x.get() ?: false
+        return migrationTo6xCache.get() ?: false
+    }
+
+    override suspend fun setSecretKeyValidatedForMigratedAccounts() {
+        secretKeyValidationCache.put(true)
+    }
+
+    override suspend fun isSecretKeyValidatedForMigratedAccounts(): Boolean {
+        return secretKeyValidationCache.get() ?: false
     }
 }

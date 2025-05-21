@@ -15,6 +15,7 @@ package com.algorand.android.migration
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import com.algorand.android.migration.domain.manager.Account6xMigrationManager
 import com.algorand.wallet.analytics.domain.service.PeraExceptionLogger
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject

@@ -18,4 +18,5 @@ import com.algorand.wallet.account.local.domain.model.LocalAccount
 internal interface NoAuthEntityMapper {
 
     operator fun invoke(localAccount: LocalAccount.NoAuth): NoAuthEntity
+    operator fun invoke(address: String): NoAuthEntity
 }

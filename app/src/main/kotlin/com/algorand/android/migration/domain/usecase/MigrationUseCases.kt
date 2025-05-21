@@ -25,3 +25,11 @@ fun interface GetMigratedTo6xCheck {
 fun interface SaveMigratedTo6xCheck {
     suspend operator fun invoke(check: Boolean)
 }
+
+fun interface IsSecretKeyValidatedForMigratedAccounts {
+    suspend operator fun invoke(): Boolean
+}
+
+fun interface SetSecretKeyValidatedForMigratedAccounts {
+    suspend operator fun invoke()
+}

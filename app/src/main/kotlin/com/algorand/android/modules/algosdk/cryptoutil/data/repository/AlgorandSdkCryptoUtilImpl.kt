@@ -19,6 +19,7 @@ class AlgorandSdkCryptoUtilImpl : AlgorandSdkCryptoUtil {
 
     override suspend fun generateAccountAddressFromSecretKey(secretKey: ByteArray): String? {
         return try {
+            if (secretKey.isEmpty()) return null
             Sdk.generateAddressFromSK(secretKey)
         } catch (exception: Exception) {
             null

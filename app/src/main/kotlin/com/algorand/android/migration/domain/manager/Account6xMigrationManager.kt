@@ -10,12 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.android.migration.domain.repository
+package com.algorand.android.migration.domain.manager
 
-internal interface MigrationTo6xRepository {
-    suspend fun saveMigratedTo6xCheck(check: Boolean)
-    suspend fun getMigratedTo6xCheck(): Boolean
-
-    suspend fun setSecretKeyValidatedForMigratedAccounts()
-    suspend fun isSecretKeyValidatedForMigratedAccounts(): Boolean
+interface Account6xMigrationManager {
+    suspend fun migrateTo6xIfNeeded()
 }

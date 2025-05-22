@@ -10,13 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.data.mapper.entity
+package com.algorand.wallet.account.local.domain.repository
 
-import com.algorand.wallet.account.local.data.database.model.NoAuthEntity
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-
-internal interface NoAuthEntityMapper {
-
-    operator fun invoke(localAccount: LocalAccount.NoAuth): NoAuthEntity
-    operator fun invoke(address: String): NoAuthEntity
+internal interface Algo25NoAuthRepository {
+    suspend fun updateInvalidAlgo25AccountsToNoAuth()
 }

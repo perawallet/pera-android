@@ -10,9 +10,26 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.domain.repository
+package com.algorand.android.migration.domain.usecase
 
-internal interface MigrationTo6xRepository {
-    suspend fun saveMigratedTo6xCheck(check: Boolean)
-    suspend fun getMigratedTo6xCheck(): Boolean
+import com.algorand.wallet.foundation.PeraResult
+
+fun interface MigrateTo6x {
+    suspend operator fun invoke(): PeraResult<Int>
+}
+
+fun interface GetMigratedTo6xCheck {
+    suspend operator fun invoke(): Boolean
+}
+
+fun interface SaveMigratedTo6xCheck {
+    suspend operator fun invoke(check: Boolean)
+}
+
+fun interface IsSecretKeyValidatedForMigratedAccounts {
+    suspend operator fun invoke(): Boolean
+}
+
+fun interface SetSecretKeyValidatedForMigratedAccounts {
+    suspend operator fun invoke()
 }

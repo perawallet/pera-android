@@ -18,6 +18,8 @@
 
     <include app:graph="@navigation/meld_navigation" />
 
+    <include app:graph="@navigation/rekeyed_account_info_navigation" />
+
     <fragment
         android:id="@+id/recoverWithPassphraseFragment"
         android:name="com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.RecoverWithPassphraseFragment"
@@ -104,15 +106,6 @@
         tools:layout="@layout/bottom_sheet_recover_options" />
 
     <fragment
-        android:id="@+id/rekeyedAccountInformationFragment"
-        android:name="com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.RekeyedAccountInformationFragment"
-        android:label="RekeyedAccountInformationFragment"
-        tools:layout="@layout/fragment_base_found_account_information">
-        <argument
-            android:name="accountAddress"
-            app:argType="string" />
-    </fragment>
-    <fragment
         android:id="@+id/recoverHdKeyRekeyedAccountSelectionFragment"
         android:name="com.algorand.android.ui.rekeyedaccounts.hdkey.view.RecoverHdKeyRekeyedAccountSelectionFragment"
         android:label="RecoverHdKeyRekeyedAccountSelectionFragment">
@@ -121,8 +114,12 @@
             app:argType="com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg[]" />
 
         <action
-            android:id="@+id/action_recoverHdKeyRekeyedAccountSelectionFragment_to_rekeyedAccountInformationFragment"
-            app:destination="@id/rekeyedAccountInformationFragment" />
+            android:id="@+id/action_recoverHdKeyRekeyedAccountSelectionFragment_to_rekeyedAccountInformationNavigation"
+            app:destination="@id/rekeyedAccountInfoNavigation" >
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+        </action>
         <action
             android:id="@+id/action_recoverHdKeyRekeyedAccountSelectionFragment_to_lockPreferenceNavigation"
             app:destination="@id/lockPreferenceNavigation"
@@ -162,8 +159,12 @@
             android:id="@+id/action_recoverSingleAddressRekeyedAccountSelectionFragment_to_recoverAccountNameRegistrationFragment"
             app:destination="@id/recoverAccountNameRegistrationFragment" />
         <action
-            android:id="@+id/action_recoverSingleAddressRekeyedAccountSelectionFragment_to_rekeyedAccountInformationFragment"
-            app:destination="@id/rekeyedAccountInformationFragment" />
+            android:id="@+id/action_recoverSingleAddressRekeyedAccountSelectionFragment_to_rekeyedAccountInformationNavigation"
+            app:destination="@id/rekeyedAccountInfoNavigation" >
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+        </action>
 
     </fragment>
 

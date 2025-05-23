@@ -14,20 +14,32 @@ package com.algorand.android.ui.accountoptions
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.DaggerBaseBottomSheet
 import com.algorand.android.databinding.BottomSheetAccountDetailAccountsOptionsBinding
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.HideFetchingRekeyedAccountsDialog
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.NavToNoRekeyedAccounts
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.NavToRekeyedAccountSelection
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.ShowFetchingRekeyedAccountsDialog
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.ShowGenericError
 import com.algorand.android.ui.accountoptions.model.AccountOptionsPreview
+import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
+import com.algorand.android.ui.rekeyedaccounts.view.FetchingRekeyedAccountsLoadingDialog
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.collectOnLifecycle
 import com.algorand.android.utils.extensions.show
 import com.algorand.android.utils.setFragmentNavigationResult
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -37,11 +49,26 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     firebaseEventScreenId = null
 ) {
 
-    private val args by navArgs<AccountOptionsBottomSheetArgs>()
-
     private val binding by viewBinding(BottomSheetAccountDetailAccountsOptionsBinding::bind)
 
+    private var fetchingRekeyedAccountsDialog: AlertDialog? = null
+
     private val accountOptionsViewModel: AccountOptionsViewModel by viewModels()
+
+    private val viewEventObserver: suspend (ViewEvent) -> Unit = { viewEvent ->
+        when (viewEvent) {
+            NavToNoRekeyedAccounts -> navToNoRekeyedAccounts()
+            is NavToRekeyedAccountSelection -> navToRekeyedAccountSelection(viewEvent)
+            HideFetchingRekeyedAccountsDialog -> dismissFetchingRekeyedAccountsDialog()
+            ShowFetchingRekeyedAccountsDialog -> showFetchingRekeyedAccountsDialog()
+            ShowGenericError -> showGlobalError(getString(R.string.an_error_occured))
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        dismissFetchingRekeyedAccountsDialog()
+    }
 
     private val accountOptionsPreviewCollector: suspend (AccountOptionsPreview?) -> Unit = { preview ->
         preview?.run {
@@ -51,6 +78,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
             setupShowQrButton(accountAddress)
             setupUndoRekeyOptionButton(isUndoRekeyButtonVisible, authAccountDisplayName)
             setupRekeyToOptions(canSignTransaction)
+            setupRescanRekeyedAccountsButton(registrationType)
         }
     }
 
@@ -82,6 +110,10 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
             accountOptionsViewModel.accountOptionsPreviewFlow,
             accountOptionsPreviewCollector
         )
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            accountOptionsViewModel.viewEvent,
+            viewEventObserver
+        )
     }
 
     private fun setupUndoRekeyOptionButton(isUndoRekeyButtonVisible: Boolean, authAccDisplayName: AccountDisplayName?) {
@@ -93,6 +125,13 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
             R.string.rekeyed_to_account_name,
             authAccDisplayName?.primaryDisplayName.orEmpty()
         )
+    }
+
+    private fun setupRescanRekeyedAccountsButton(registrationType: AccountRegistrationType) {
+        binding.rescanRekeyedAccountsButton.apply {
+            this.isVisible = registrationType.hasSignerDetails
+            setOnClickListener { accountOptionsViewModel.scanRekeyedAccounts() }
+        }
     }
 
     private fun setupRekeyToOptions(canSignTransaction: Boolean) {
@@ -123,10 +162,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
             binding.authAddressButton.apply {
                 show()
                 setOnClickListener {
-                    navToShowQrBottomSheet(
-                        getString(R.string.auth_account_address),
-                        authAddress.orEmpty()
-                    )
+                    navToShowQrBottomSheet(getString(R.string.auth_account_address), authAddress.orEmpty())
                 }
             }
         }
@@ -147,8 +183,10 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     }
 
     private fun navToRekeyToLedgerAccountFragment() {
-        nav(AccountOptionsBottomSheetDirections
-            .actionAccountOptionsBottomSheetToRekeyLedgerNavigation(accountOptionsViewModel.accountAddress))
+        nav(
+            AccountOptionsBottomSheetDirections
+                .actionAccountOptionsBottomSheetToRekeyLedgerNavigation(accountOptionsViewModel.accountAddress)
+        )
     }
 
     private fun navToRekeyToStandardAccountFragment() {
@@ -174,8 +212,10 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     }
 
     private fun navToShowQrBottomSheet(title: String, accountAddress: String) {
-        nav(AccountOptionsBottomSheetDirections
-            .actionAccountOptionsBottomSheetToShowQrNavigation(title, accountAddress))
+        nav(
+            AccountOptionsBottomSheetDirections
+                .actionAccountOptionsBottomSheetToShowQrNavigation(title, accountAddress)
+        )
     }
 
     private fun onViewPassphraseClicked() {
@@ -209,9 +249,37 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
         binding.showQrButton.setOnClickListener { navToShowQrBottomSheet(getString(R.string.qr_code), accountAddress) }
     }
 
+    private fun showFetchingRekeyedAccountsDialog() {
+        val dialogView = createFetchingRekeyedAccountsView()
+        fetchingRekeyedAccountsDialog = AlertDialog.Builder(requireContext(), R.style.FullScreenDialogStyle)
+            .setView(dialogView)
+            .setOnDismissListener {
+                accountOptionsViewModel.stopFetchingRekeyedAccounts()
+            }
+            .show()
+    }
+
+    private fun createFetchingRekeyedAccountsView(): ComposeView {
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                PeraTheme {
+                    FetchingRekeyedAccountsLoadingDialog()
+                }
+            }
+        }
+    }
+
+    private fun dismissFetchingRekeyedAccountsDialog() {
+        fetchingRekeyedAccountsDialog?.dismiss()
+        fetchingRekeyedAccountsDialog = null
+    }
+
     private fun navToUndoRekeyNavigation() {
-        nav(AccountOptionsBottomSheetDirections
-            .actionAccountOptionsBottomSheetToRekeyUndoNavigation(accountOptionsViewModel.accountAddress))
+        nav(
+            AccountOptionsBottomSheetDirections
+                .actionAccountOptionsBottomSheetToRekeyUndoNavigation(accountOptionsViewModel.accountAddress)
+        )
     }
 
     private fun navToInAppPinNavigation() {
@@ -225,6 +293,20 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
         nav(
             AccountOptionsBottomSheetDirections
                 .actionAccountOptionsBottomSheetToViewPassphraseNavigation(accountOptionsViewModel.accountAddress)
+        )
+    }
+
+    private fun navToNoRekeyedAccounts() {
+        nav(AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToNoRekeyedAccountsFragment())
+    }
+
+    private fun navToRekeyedAccountSelection(viewEvent: NavToRekeyedAccountSelection) {
+        val navArg = with(viewEvent) {
+            RekeyedAccountSelectionNavArg(authAddress, authDrawable, rekeyedAddresses)
+        }
+        nav(
+            AccountOptionsBottomSheetDirections
+                .actionAccountOptionsBottomSheetToRescanRekeyedAccountSelectionNavigation(navArg)
         )
     }
 

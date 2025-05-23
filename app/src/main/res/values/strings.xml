@@ -1508,4 +1508,8 @@
 
     <string name="recover_a_wallet">Recover a wallet</string>
     <string name="i_want_to_recover_wallet">I want to recover an Algorand wallet.</string>
+    <string name="rescan_rekeyed_accounts">Rescan Rekeyed Accounts</string>
+    <string name="import_any_rekeyed_accounts">Import any rekeyed accounts</string>
+    <string name="no_rekeyed_accounts_found">No Rekeyed Accounts Found</string>
+    <string name="we_have_scanned_the_blockchain">We have scanned the blockchain and were not able to find any accounts that have not been imported.</string>
 </resources>

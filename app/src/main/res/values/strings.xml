@@ -219,6 +219,7 @@
     <string name="privacy_click">Privacy Policy</string>
     <string name="by_creating_account">By creating an account, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
     <string name="by_adding_a_wallet">By adding a wallet, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
+    <string name="by_creating_a_wallet">By creating a wallet, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
     <string name="create_new_account">Create new Account</string>
     <string name="watch_account">Watch Account</string>
     <string name="wallet_address">Wallet address</string>
@@ -598,7 +599,7 @@
     <string name="create_a_new_algorand_account_with">Create a new Algorand account with a new wallet and recovery passphrase</string>
     <string name="recover_an_account">Recover an account</string>
     <string name="i_want_to_recover">I want to recover an Algorand account using my 25-word passphrase</string>
-    <string name="pair_Ledger_device">Pair Ledger device</string>
+    <string name="pair_ledger_device">Pair Ledger device</string>
     <string name="operation_completed">Operation completed</string>
     <string name="asset_transfer_completed">Asset transfer completed</string>
     <string name="your_transaction_was">Your transaction was successfully received by the Algorand network.</string>
@@ -1508,6 +1509,12 @@
 
     <string name="recover_a_wallet">Recover a wallet</string>
     <string name="i_want_to_recover_wallet">I want to recover an Algorand wallet.</string>
+
+    <string name="new_to_algorand">New to Algorand?</string>
+    <string name="already_have_an_account">Already have an account?</string>
+
+    <string name="please_note_we_currently">Please note: We currently do not support the backing up of Universal and Ledger Wallets</string>
+
     <string name="rescan_rekeyed_accounts">Rescan Rekeyed Accounts</string>
     <string name="import_any_rekeyed_accounts">Import any rekeyed accounts</string>
     <string name="no_rekeyed_accounts_found">No Rekeyed Accounts Found</string>

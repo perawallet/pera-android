@@ -40,7 +40,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/spacing_xlarge"
-            android:layout_marginTop="@dimen/spacing_normal"
             android:text="@string/import_from_pera_web"
             app:layout_constraintBottom_toTopOf="@id/descriptionTextView"
             app:layout_constraintEnd_toEndOf="parent"

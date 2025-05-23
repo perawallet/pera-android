@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.domain.usecase
+package com.algorand.android.migration.domain.usecase
 
 import com.algorand.android.encryption.domain.usecase.AndroidEncryptionManager
 import com.algorand.android.models.Account
@@ -23,15 +23,15 @@ import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.foundation.PeraResult
 import javax.inject.Inject
 
-class MigrateTo6xUseCase @Inject constructor(
+internal class MigrateTo6xUseCase @Inject constructor(
     private val getLocalAccountsFromSharedPrefUseCase: GetLocalAccountsFromSharedPrefUseCase,
     private val androidEncryptionManager: AndroidEncryptionManager,
     private val aesPlatformManager: AESPlatformManager,
     private val accountAdditionUseCase: AccountAdditionUseCase,
     private val peraExceptionLogger: PeraExceptionLogger
-) {
+) : MigrateTo6x {
 
-    suspend fun invoke(): PeraResult<Int> {
+    override suspend operator fun invoke(): PeraResult<Int> {
         return try {
             androidEncryptionManager.initializeEncryptionManager()
 
@@ -57,9 +57,7 @@ class MigrateTo6xUseCase @Inject constructor(
             is Account.Detail.Standard,
             is Account.Detail.Rekeyed,
             is Account.Detail.RekeyedAuth -> createStandardAccount(localAccount)
-
             is Account.Detail.Ledger -> createLedgerAccount(localAccount)
-
             is Account.Detail.Watch -> createWatchAccount(localAccount)
 
             else -> null
@@ -67,18 +65,21 @@ class MigrateTo6xUseCase @Inject constructor(
     }
 
     private fun createStandardAccount(localAccount: Account): AccountCreation {
-        return localAccount.getSecretKey()?.let {
+        val legacyAccountSecretKey = localAccount.getSecretKey()
+        return if (legacyAccountSecretKey == null || legacyAccountSecretKey.isEmpty()) {
+            createWatchAccount(localAccount)
+        } else {
             AccountCreation(
                 address = localAccount.address,
                 customName = localAccount.name,
                 orderIndex = localAccount.index,
                 isBackedUp = localAccount.isBackedUp,
                 type = AccountCreation.Type.Algo25(
-                    aesPlatformManager.encryptByteArray(it)
+                    aesPlatformManager.encryptByteArray(legacyAccountSecretKey)
                 ),
                 creationType = CreationType.RECOVER
             )
-        } ?: createWatchAccount(localAccount)
+        }
     }
 
     private fun createLedgerAccount(localAccount: Account): AccountCreation {

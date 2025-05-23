@@ -16,19 +16,21 @@ import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.CoreMainViewModel.ViewEvent
+import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.utils.preference.getRegisterSkip
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class CoreMainViewModel @Inject constructor(
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val sharedPref: SharedPreferences,
-    private val eventDelegate: EventDelegate<ViewEvent>
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val isOnHdWalletUseCase: IsOnHdWalletUseCase,
 ) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
     fun initialize() {
@@ -40,6 +42,10 @@ class CoreMainViewModel @Inject constructor(
             }
             eventDelegate.sendEvent(ViewEvent.InitializeCoreManagers)
         }
+    }
+
+    fun isHdWalletToggleEnabled(): Boolean {
+        return isOnHdWalletUseCase.invoke()
     }
 
     sealed interface ViewEvent {

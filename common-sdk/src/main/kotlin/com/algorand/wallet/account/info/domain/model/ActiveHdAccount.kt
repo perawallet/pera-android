@@ -10,9 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.settings.domain.repository
+package com.algorand.wallet.account.info.domain.model
 
-internal interface MigrationTo6xRepository {
-    suspend fun saveMigratedTo6xCheck(check: Boolean)
-    suspend fun getMigratedTo6xCheck(): Boolean
+internal data class ActiveHdAccount(
+    val accountIndex: Int,
+    val entropy: ByteArray,
+    val firstBatchHdAccountAddress: List<HdAccountAddress>
+) {
+
+    data class HdAccountAddress(
+        val address: String,
+        val accountIndex: Int,
+        val changeIndex: Int,
+        val keyIndex: Int,
+        val fastLookup: AccountFastLookup?
+    )
 }

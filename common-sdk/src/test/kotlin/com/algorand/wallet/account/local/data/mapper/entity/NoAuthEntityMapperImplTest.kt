@@ -27,4 +27,12 @@ internal class NoAuthEntityMapperImplTest {
         val expected = NoAuthEntity(algoAddress = "unencrypted_address")
         assertEquals(expected, result)
     }
+
+    @Test
+    fun `EXPECT mapped entity with address`() {
+        val result = sut("unencrypted_address")
+
+        val expected = NoAuthEntity(algoAddress = "unencrypted_address")
+        assertEquals(expected, result)
+    }
 }

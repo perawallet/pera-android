@@ -29,11 +29,12 @@ import com.algorand.android.customviews.toolbar.buttoncontainer.model.TextButton
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.common.BaseInfoFragment
-import com.algorand.android.ui.compose.widget.text.PeraBodyText
-import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
-import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.button.PeraSecondaryButton
+import com.algorand.android.ui.compose.widget.icon.PeraIcon
+import com.algorand.android.ui.compose.widget.text.PeraBodyText
+import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
 import com.algorand.android.utils.preference.setLockDontAskAgain
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -74,7 +75,8 @@ class ChoosePasswordInfoFragment : BaseInfoFragment() {
         PeraIcon(
             painter = painterResource(id = R.drawable.ic_locked),
             contentDescription = stringResource(id = R.string.check),
-            modifier = modifier
+            modifier = modifier,
+            tintColor = PeraTheme.colors.link.icon
         )
 
     @Composable

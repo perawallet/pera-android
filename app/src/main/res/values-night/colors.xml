@@ -128,7 +128,7 @@
     <color name="nft_icon_bg">@color/gray_900_alpha_60</color>
     <color name="nft_icon">@color/white</color>
 
-    <!-- Algorand Standart Assets (ASA) Tiers -->
+    <!-- Algorand Standard Assets (ASA) Tiers -->
     <color name="trusted_icon_bg">@color/turquoise_600</color>
     <color name="trusted_icon_inline">@color/gray_900</color>
     <color name="trusted_icon_bg_opacity_16">#291A304A</color>

@@ -175,6 +175,13 @@ object ColorPalette {
         val V900 = Color(0xFF29FF6D5F)
     }
 
+    object Others {
+        // These colors are not defined in Figma color palette
+        val V100 = Color(0xFF424F76)
+        val V200 = Color(0xFF9B0C48)
+        val V300 = Color(0XFFFFEAC2)
+    }
+
     object Discover {
         val HelperPurple = Purple.V400
         val HelperPurpleAlpha35 = Purple.V400Alpha35

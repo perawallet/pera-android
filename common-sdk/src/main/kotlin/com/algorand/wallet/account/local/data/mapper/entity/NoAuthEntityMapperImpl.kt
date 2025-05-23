@@ -23,4 +23,8 @@ internal class NoAuthEntityMapperImpl @Inject constructor() : NoAuthEntityMapper
             algoAddress = localAccount.algoAddress
         )
     }
+
+    override fun invoke(address: String): NoAuthEntity {
+        return NoAuthEntity(algoAddress = address)
+    }
 }

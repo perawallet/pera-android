@@ -10,13 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.data.mapper.entity
+package com.algorand.android.migration.domain.utils
 
-import com.algorand.wallet.account.local.data.database.model.NoAuthEntity
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-
-internal interface NoAuthEntityMapper {
-
-    operator fun invoke(localAccount: LocalAccount.NoAuth): NoAuthEntity
-    operator fun invoke(address: String): NoAuthEntity
+internal object MigrationConstants {
+    const val MIGRATE_TO_6X = "migrate_to_6x"
+    const val IS_SECRET_KEYS_VALIDATED_AFTER_6X_MIGRATION = "is_secret_keys_validated_after_6x_migration"
 }

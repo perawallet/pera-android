@@ -10,13 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.local.data.mapper.entity
+package com.algorand.android.migration.domain.manager
 
-import com.algorand.wallet.account.local.data.database.model.NoAuthEntity
-import com.algorand.wallet.account.local.domain.model.LocalAccount
-
-internal interface NoAuthEntityMapper {
-
-    operator fun invoke(localAccount: LocalAccount.NoAuth): NoAuthEntity
-    operator fun invoke(address: String): NoAuthEntity
+interface Account6xMigrationManager {
+    suspend fun migrateTo6xIfNeeded()
 }

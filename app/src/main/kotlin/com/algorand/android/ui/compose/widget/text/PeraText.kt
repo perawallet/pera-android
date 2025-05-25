@@ -29,11 +29,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.peraSans
 
 @Composable
 fun PeraHeadlineText(
@@ -69,7 +72,7 @@ fun PeraBodyText(
     modifier: Modifier = Modifier,
     text: String,
     textAlign: TextAlign = TextAlign.Left,
-    color: Color = PeraTheme.colors.text.gray
+    color: Color = PeraTheme.colors.text.gray,
 ) {
     Text(
         modifier = modifier,
@@ -187,5 +190,23 @@ fun PeraHighlightedGrayText(modifier: Modifier = Modifier, text: String) {
         text = text,
         textColor = PeraTheme.colors.text.gray,
         backgroundColor = PeraTheme.colors.layer.grayLighter
+    )
+}
+
+@Composable
+fun PeraFootNoteText(
+    modifier: Modifier = Modifier,
+    text: String,
+    color: Color = PeraTheme.colors.text.main
+) {
+    Text(
+        modifier = modifier,
+        text = text,
+        style = PeraTheme.typography.footnote.sans,
+        fontFamily = peraSans,
+        color = color,
+        fontWeight = FontWeight.Medium,
+        lineHeight = 20.sp,
+        overflow = TextOverflow.Ellipsis
     )
 }

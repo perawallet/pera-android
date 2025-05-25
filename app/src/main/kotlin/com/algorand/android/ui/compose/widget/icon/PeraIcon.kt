@@ -60,19 +60,20 @@ fun PeraIcon(
 fun PeraIconRoundShape(
     modifier: Modifier = Modifier,
     imageVector: ImageVector,
-    contentDescription: String
+    contentDescription: String?,
+    iconTintColor: Color?,
+    iconBackgroundColor: Color = PeraTheme.colors.layer.grayLighter,
 ) {
     Box(
         modifier = modifier
-            .padding(start = 10.dp)
             .size(40.dp)
             .clip(shape = CircleShape)
-            .background(color = PeraTheme.colors.layer.grayLighter)
+            .background(color = iconBackgroundColor)
     ) {
         Icon(
             modifier = Modifier.align(Alignment.Center),
             imageVector = imageVector,
-            tint = PeraTheme.colors.text.main,
+            tint = iconTintColor ?: PeraTheme.colors.wallet.governor.wallet4Icon,
             contentDescription = contentDescription
         )
     }

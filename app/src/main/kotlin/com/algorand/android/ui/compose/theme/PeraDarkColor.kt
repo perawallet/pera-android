@@ -32,7 +32,7 @@ object PeraDarkColor : PeraColor {
     override val layer = object : PeraColor.Layer {
         override val gray = ColorPalette.Gray.V700
         override val grayLighter = ColorPalette.Gray.V800
-        override val grayLightest = ColorPalette.Gray.V800
+        override val grayLightest = ColorPalette.Gray.V900
     }
 
     override val link = object : PeraColor.Link {

@@ -43,6 +43,9 @@ internal interface HdKeyDao {
     @Query("SELECT COUNT(*) FROM hd_keys")
     suspend fun getTableSize(): Int
 
+    @Query("SELECT COUNT(*) FROM hd_keys WHERE seed_id = :seedId")
+    suspend fun getDerivedAddressCountOfSeed(seedId: Int): Int
+
     @Query("SELECT * FROM hd_keys WHERE :algoAddress = algo_address")
     suspend fun get(algoAddress: String): HdKeyEntity?
 

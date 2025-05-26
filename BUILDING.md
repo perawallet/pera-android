@@ -43,4 +43,4 @@ similarly changed):
 2.4. **Build the app:** Once all the above steps are complete, you are ready to build and deploy the
 Android app.
 
-Test 1
+Test 2

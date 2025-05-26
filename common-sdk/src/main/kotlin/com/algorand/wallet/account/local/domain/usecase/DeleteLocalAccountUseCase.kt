@@ -39,7 +39,6 @@ internal class DeleteLocalAccountUseCase @Inject constructor(
             AccountRegistrationType.NoAuth -> noAuthAccountRepository.deleteAccount(address)
             null -> Unit
         }
-        hdKeyAccountRepository.deleteAccount(address)
     }
 
     private suspend fun deleteHdKeyAccount(address: String) {

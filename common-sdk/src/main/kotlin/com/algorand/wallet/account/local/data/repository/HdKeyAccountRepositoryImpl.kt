@@ -20,12 +20,12 @@ import com.algorand.wallet.account.local.domain.model.HdWalletSummary
 import com.algorand.wallet.account.local.domain.model.LocalAccount.HdKey
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 internal class HdKeyAccountRepositoryImpl @Inject constructor(
     private val hdKeyDao: HdKeyDao,
@@ -66,6 +66,12 @@ internal class HdKeyAccountRepositoryImpl @Inject constructor(
     override suspend fun getAccount(address: String): HdKey? {
         return withContext(coroutineDispatcher) {
             hdKeyDao.get(address)?.let { hdKeyMapper(it) }
+        }
+    }
+
+    override suspend fun getDerivedAddressCountOfSeed(seedId: Int): Int {
+        return withContext(coroutineDispatcher) {
+            hdKeyDao.getDerivedAddressCountOfSeed(seedId)
         }
     }
 

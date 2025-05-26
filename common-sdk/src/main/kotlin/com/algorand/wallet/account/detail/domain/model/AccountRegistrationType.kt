@@ -14,11 +14,26 @@ package com.algorand.wallet.account.detail.domain.model
 
 sealed interface AccountRegistrationType {
 
-    data object Algo25 : AccountRegistrationType
+    val hasSignerDetails: Boolean
 
-    data object LedgerBle : AccountRegistrationType
+    data object Algo25 : AccountRegistrationType {
 
-    data object NoAuth : AccountRegistrationType
+        override val hasSignerDetails: Boolean
+            get() = true
+    }
 
-    data object HdKey : AccountRegistrationType
+    data object LedgerBle : AccountRegistrationType {
+        override val hasSignerDetails: Boolean
+            get() = true
+    }
+
+    data object NoAuth : AccountRegistrationType {
+        override val hasSignerDetails: Boolean
+            get() = false
+    }
+
+    data object HdKey : AccountRegistrationType {
+        override val hasSignerDetails: Boolean
+            get() = true
+    }
 }

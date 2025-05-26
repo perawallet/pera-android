@@ -185,6 +185,15 @@
         <item name="android:backgroundDimAmount">0.5</item>
     </style>
 
+    <style name="FullScreenDialogStyle" parent="Base.Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
     <style name="ChartTimeFrameButton">
         <item name="android:textAppearance">@style/TextAppearance.Footnote.Sans.Medium</item>
         <item name="android:layout_height">30dp</item>

@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.rekeyedaccounts.singleaddress.view
+package com.algorand.android.ui.rekeyedaccounts.rescan
 
 import android.os.Bundle
 import android.view.View
@@ -28,13 +28,14 @@ import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class RecoverSingleAddressRekeyedAccountSelectionFragment : BaseFragment(R.layout.fragment_rekeyed_account_selection),
+class RescanRekeyedAccountSelectionFragment : BaseFragment(R.layout.fragment_rekeyed_account_selection),
     RekeyedAccountSelectionListener {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,
         startIconClick = ::navBack
     )
+
     override val fragmentConfiguration = FragmentConfiguration(toolbarConfiguration = toolbarConfiguration)
 
     private val viewModel: RekeyedAccountSelectionViewModel by viewModels()
@@ -43,7 +44,7 @@ class RecoverSingleAddressRekeyedAccountSelectionFragment : BaseFragment(R.layou
 
     private var fragmentDelegate: RekeyedAccountSelectionFragmentDelegate? = null
 
-    private val args by navArgs<RecoverSingleAddressRekeyedAccountSelectionFragmentArgs>()
+    private val args: RescanRekeyedAccountSelectionFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -66,28 +67,21 @@ class RecoverSingleAddressRekeyedAccountSelectionFragment : BaseFragment(R.layou
         fragmentDelegate = null
     }
 
-    override fun onSkipClick() {
-        navToNextScreen()
-    }
-
     override fun onAccountsAdded() {
-        navToNextScreen()
+        nav(
+            RescanRekeyedAccountSelectionFragmentDirections
+                .actionRescanRekeyedAccountSelectionFragmentToHomeNavigation(showConfetti = true)
+        )
     }
 
-    private fun navToNextScreen() {
-        val accountCreation = args.accountCreation
-        nav(
-            RecoverSingleAddressRekeyedAccountSelectionFragmentDirections
-                .actionRecoverSingleAddressRekeyedAccountSelectionFragmentToRecoverAccountNameRegistrationFragment(
-                    accountCreation
-                )
-        )
+    override fun onSkipClick() {
+        navBack()
     }
 
     override fun navToAccountInformationBottomSheet(address: String) {
         nav(
-            RecoverSingleAddressRekeyedAccountSelectionFragmentDirections
-                .actionRecoverSingleAddressRekeyedAccountSelectionFragmentToRekeyedAccountInformationNavigation(address)
+            RescanRekeyedAccountSelectionFragmentDirections
+                .actionRescanRekeyedAccountSelectionFragmentToRekeyedAccountInformationNavigation(address)
         )
     }
 }

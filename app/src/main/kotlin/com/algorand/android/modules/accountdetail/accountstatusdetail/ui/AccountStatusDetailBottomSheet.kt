@@ -23,7 +23,10 @@ import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.databinding.BottomSheetAccountStatusDetailBinding
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewEvent
+import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewEvent.NavToRekeyedAccountSelection
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewState
+import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
+import com.algorand.android.ui.rekeyedaccounts.view.FetchingRekeyedAccountsDialogDelegate
 import com.algorand.android.utils.AccountIconDrawable
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
@@ -38,6 +41,10 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
 
     private val viewModel by viewModels<AccountStatusDetailViewModel>()
     private val binding by viewBinding(BottomSheetAccountStatusDetailBinding::bind)
+
+    private val fetchingRekeyedAccountsDialogDelegate by lazy {
+        FetchingRekeyedAccountsDialogDelegate(viewModel::stopFetchingRekeyedAccounts)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -82,6 +89,11 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
             is ViewEvent.NavigateToRekeyToLedgerAccount -> {
                 navToRekeyToLedgerAccountNavigation()
             }
+            ViewEvent.HideFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.dismiss()
+            ViewEvent.ShowFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.show(requireContext())
+            ViewEvent.NavToNoRekeyedAccounts -> navToNoRekeyedAccounts()
+            is NavToRekeyedAccountSelection -> navToRekeyedAccountSelection(event)
+            ViewEvent.ShowGenericError -> showGlobalError(getString(R.string.an_error_occured))
         }
     }
 
@@ -112,7 +124,7 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
                 }
             }
 
-            state.accountOriginalTypeIconDrawablePreview?.let { drawablePreview ->
+            state.accountOriginalTypeIconDrawablePreview.let { drawablePreview ->
                 val drawable = AccountIconDrawable.create(requireContext(), R.dimen.spacing_xxxxlarge, drawablePreview)
                 accountItemView.setStartIconDrawable(drawable)
             }
@@ -124,7 +136,7 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
             accountTypeTextView.text = state.titleString
             accountStateTextView.text = state.accountTypeString
 
-            state.accountTypeDrawablePreview?.let { drawablePreview ->
+            state.accountTypeDrawablePreview.let { drawablePreview ->
                 val drawable = AccountIconDrawable.create(requireContext(), R.dimen.spacing_xxxxlarge, drawablePreview)
                 accountStateTextView.setDrawable(start = drawable)
             }
@@ -181,9 +193,14 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
 
     private fun setupButtons(state: ViewState.Content) {
         with(binding) {
-            state.accountOriginalActionButton?.let { buttonState ->
-                accountItemView.setButtonState(buttonState)
-                accountItemView.setActionButtonClickListener { viewModel.onAccountActionButtonClicked() }
+            accountItemView.apply {
+                setButtonState(state.accountOriginalActionButton)
+                setActionButtonClickListener { viewModel.onAccountActionButtonClicked() }
+            }
+
+            binding.rescanRekeyedAccountsButton.apply {
+                isVisible = state.accountRegistrationType.hasSignerDetails
+                setOnClickListener { viewModel.scanRekeyedAccounts() }
             }
 
             state.authAccountActionButton?.let { buttonState ->
@@ -211,6 +228,22 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
         nav(
             AccountStatusDetailBottomSheetDirections
                 .actionAccountStatusDetailBottomSheetToRekeyUndoNavigation(viewModel.accountAddress)
+        )
+    }
+
+    private fun navToNoRekeyedAccounts() {
+        nav(
+            AccountStatusDetailBottomSheetDirections.actionAccountStatusDetailBottomSheetToNoRekeyedAccountsNavigation()
+        )
+    }
+
+    private fun navToRekeyedAccountSelection(viewEvent: NavToRekeyedAccountSelection) {
+        val navArg = with(viewEvent) {
+            RekeyedAccountSelectionNavArg(authAddress, authDrawable, rekeyedAddresses)
+        }
+        nav(
+            AccountStatusDetailBottomSheetDirections
+                .actionAccountStatusDetailBottomSheetToRescanRekeyedAccountSelectionNavigation(navArg)
         )
     }
 }

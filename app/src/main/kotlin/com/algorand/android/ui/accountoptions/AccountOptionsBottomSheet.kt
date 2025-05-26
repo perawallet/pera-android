@@ -14,9 +14,6 @@ package com.algorand.android.ui.accountoptions
 
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AlertDialog
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.algorand.android.R
@@ -30,9 +27,8 @@ import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.
 import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.ShowFetchingRekeyedAccountsDialog
 import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.ShowGenericError
 import com.algorand.android.ui.accountoptions.model.AccountOptionsPreview
-import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
-import com.algorand.android.ui.rekeyedaccounts.view.FetchingRekeyedAccountsLoadingDialog
+import com.algorand.android.ui.rekeyedaccounts.view.FetchingRekeyedAccountsDialogDelegate
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.collectOnLifecycle
@@ -51,23 +47,25 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
 
     private val binding by viewBinding(BottomSheetAccountDetailAccountsOptionsBinding::bind)
 
-    private var fetchingRekeyedAccountsDialog: AlertDialog? = null
-
     private val accountOptionsViewModel: AccountOptionsViewModel by viewModels()
+
+    private val fetchingRekeyedAccountsDialogDelegate by lazy {
+        FetchingRekeyedAccountsDialogDelegate(accountOptionsViewModel::stopFetchingRekeyedAccounts)
+    }
 
     private val viewEventObserver: suspend (ViewEvent) -> Unit = { viewEvent ->
         when (viewEvent) {
             NavToNoRekeyedAccounts -> navToNoRekeyedAccounts()
             is NavToRekeyedAccountSelection -> navToRekeyedAccountSelection(viewEvent)
-            HideFetchingRekeyedAccountsDialog -> dismissFetchingRekeyedAccountsDialog()
-            ShowFetchingRekeyedAccountsDialog -> showFetchingRekeyedAccountsDialog()
+            HideFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.dismiss()
+            ShowFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.show(requireContext())
             ShowGenericError -> showGlobalError(getString(R.string.an_error_occured))
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        dismissFetchingRekeyedAccountsDialog()
+        fetchingRekeyedAccountsDialogDelegate.dismiss()
     }
 
     private val accountOptionsPreviewCollector: suspend (AccountOptionsPreview?) -> Unit = { preview ->
@@ -249,32 +247,6 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
         binding.showQrButton.setOnClickListener { navToShowQrBottomSheet(getString(R.string.qr_code), accountAddress) }
     }
 
-    private fun showFetchingRekeyedAccountsDialog() {
-        val dialogView = createFetchingRekeyedAccountsView()
-        fetchingRekeyedAccountsDialog = AlertDialog.Builder(requireContext(), R.style.FullScreenDialogStyle)
-            .setView(dialogView)
-            .setOnDismissListener {
-                accountOptionsViewModel.stopFetchingRekeyedAccounts()
-            }
-            .show()
-    }
-
-    private fun createFetchingRekeyedAccountsView(): ComposeView {
-        return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                PeraTheme {
-                    FetchingRekeyedAccountsLoadingDialog()
-                }
-            }
-        }
-    }
-
-    private fun dismissFetchingRekeyedAccountsDialog() {
-        fetchingRekeyedAccountsDialog?.dismiss()
-        fetchingRekeyedAccountsDialog = null
-    }
-
     private fun navToUndoRekeyNavigation() {
         nav(
             AccountOptionsBottomSheetDirections
@@ -297,7 +269,7 @@ class AccountOptionsBottomSheet : DaggerBaseBottomSheet(
     }
 
     private fun navToNoRekeyedAccounts() {
-        nav(AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToNoRekeyedAccountsFragment())
+        nav(AccountOptionsBottomSheetDirections.actionAccountOptionsBottomSheetToNoRekeyedAccountsNavigation())
     }
 
     private fun navToRekeyedAccountSelection(viewEvent: NavToRekeyedAccountSelection) {

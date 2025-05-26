@@ -21,6 +21,7 @@ import com.algorand.wallet.account.info.data.mapper.model.AccountAssetAndAppsCou
 import com.algorand.wallet.account.info.data.mapper.model.AccountInformationMapper
 import com.algorand.wallet.account.info.data.mapper.model.AssetHoldingMapper
 import com.algorand.wallet.account.info.data.model.AccountInformationResponse
+import com.algorand.wallet.account.info.data.model.IndexerAccountFetchRequestExcludes.ALL
 import com.algorand.wallet.account.info.data.service.AccountInformationApiService
 import com.algorand.wallet.account.info.data.service.AssetHoldingNodeApiService
 import com.algorand.wallet.account.info.domain.model.AccountAssetAndAppsCount
@@ -164,6 +165,15 @@ internal class AccountInformationRepositoryImpl @Inject constructor(
     override suspend fun fetchRekeyedAccounts(address: String): PeraResult<List<AccountInformation>> {
         return request { indexerApi.getRekeyedAccounts(address) }.map {
             accountInformationMapper(it)
+        }
+    }
+
+    override suspend fun fetchRekeyedAddresses(address: String): PeraResult<List<String>> {
+        val excludesQuery = IndexerAccountFetchRequestExcludesQueryBuilder.newBuilder().addExclude(ALL).build()
+        return request { indexerApi.getRekeyedAccounts(address, excludesQuery) }.map { response ->
+            response.accountInformationList?.mapNotNull { accountInfo ->
+                accountInfo.address
+            }.orEmpty()
         }
     }
 

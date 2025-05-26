@@ -64,6 +64,8 @@ import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformationWithoutAssets
 import com.algorand.wallet.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddressesUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingAmount
@@ -332,6 +334,9 @@ internal object AccountInformationModule {
     fun provideFetchRekeyedAccounts(repository: AccountInformationRepository): FetchRekeyedAccounts {
         return FetchRekeyedAccounts(repository::fetchRekeyedAccounts)
     }
+
+    @Provides
+    fun provideFetchRekeyedAddresses(useCase: FetchRekeyedAddressesUseCase): FetchRekeyedAddresses = useCase
 
     @Provides
     fun provideAssetStatusEntityMapper(impl: AssetStatusEntityMapperImpl): AssetStatusEntityMapper = impl

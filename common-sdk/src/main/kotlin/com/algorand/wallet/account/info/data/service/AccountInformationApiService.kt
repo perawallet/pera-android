@@ -31,7 +31,8 @@ internal interface AccountInformationApiService {
 
     @GET("v2/accounts")
     suspend fun getRekeyedAccounts(
-        @Query("auth-addr") rekeyAdminAddress: String
+        @Query("auth-addr") rekeyAdminAddress: String,
+        @Query("exclude", encoded = true) excludes: String? = null
     ): Response<RekeyedAccountsResponse>
 
     @GET("v2/accounts/{address}/assets")

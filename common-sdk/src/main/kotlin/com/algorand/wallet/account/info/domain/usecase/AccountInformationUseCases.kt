@@ -19,6 +19,7 @@ import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
 import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.model.AssetStatus
 import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
+import com.algorand.wallet.account.info.domain.model.RekeyedAddresses
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.foundation.PeraResult
 import java.math.BigInteger
@@ -105,6 +106,10 @@ fun interface FetchAccountInformation {
 
 fun interface FetchRekeyedAccounts {
     suspend operator fun invoke(address: String): PeraResult<List<AccountInformation>>
+}
+
+fun interface FetchRekeyedAddresses {
+    suspend operator fun invoke(address: String): PeraResult<RekeyedAddresses>
 }
 
 fun interface SetAccountAssetStatus {

@@ -22,18 +22,23 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreview
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewEvent
+import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewEvent.NavToNoRekeyedAccounts
+import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewEvent.NavToRekeyedAccountSelection
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewState
 import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.decider.AccountStatusDetailPreviewDecider
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -46,9 +51,11 @@ class AccountStatusDetailViewModel @Inject constructor(
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val getAccountOriginalStateIconDrawablePreview: GetAccountOriginalStateIconDrawablePreview,
     private val accountStatusDetailPreviewDecider: AccountStatusDetailPreviewDecider,
-    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow
+    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
+    private val fetchRekeyedAddresses: FetchRekeyedAddresses
 ) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
+    private var rekeyedAccountFetchingJob: Job? = null
     private val navArgs = AccountStatusDetailBottomSheetArgs.fromSavedStateHandle(savedStateHandle)
     val accountAddress = navArgs.accountAddress
 
@@ -96,6 +103,7 @@ class AccountStatusDetailViewModel @Inject constructor(
                         accountTypeDrawablePreview = accountTypeDrawablePreview,
                         descriptionDetail = descriptionDetail,
                         accountTypeString = accountTypeString,
+                        accountRegistrationType = accountLite.registrationType,
                         isRekeyGroupVisible = authAccountAddress != null,
                         isRekeyToLedgerAccountVisible = hasAccountAuthority,
                         isRekeyToStandardAccountVisible = hasAccountAuthority
@@ -121,6 +129,35 @@ class AccountStatusDetailViewModel @Inject constructor(
         eventDelegate.sendEvent(viewModelScope, ViewEvent.NavigateToRekeyToLedgerAccount)
     }
 
+    fun scanRekeyedAccounts() {
+        stateDelegate.onState<ViewState.Content> { contentState ->
+            eventDelegate.sendEvent(viewModelScope, ViewEvent.ShowFetchingRekeyedAccountsDialog)
+            rekeyedAccountFetchingJob = viewModelScope.launch {
+                val viewEvent = fetchRekeyedAddresses(accountAddress).use(
+                    onSuccess = { rekeyedAddresses ->
+                        val notImported = rekeyedAddresses.notImportedAddresses
+                        if (notImported.isEmpty()) {
+                            NavToNoRekeyedAccounts
+                        } else {
+                            val accountIconDrawable = contentState.accountOriginalTypeIconDrawablePreview
+                            NavToRekeyedAccountSelection(accountAddress, accountIconDrawable, notImported)
+                        }
+                    },
+                    onFailed = { _, _ ->
+                        ViewEvent.ShowGenericError
+                    }
+                )
+                eventDelegate.sendEvent(ViewEvent.HideFetchingRekeyedAccountsDialog)
+                eventDelegate.sendEvent(viewEvent)
+            }
+        }
+    }
+
+    fun stopFetchingRekeyedAccounts() {
+        rekeyedAccountFetchingJob?.cancel()
+        rekeyedAccountFetchingJob = null
+    }
+
     sealed interface ViewState {
         data object Idle : ViewState
         data object Loading : ViewState
@@ -128,12 +165,13 @@ class AccountStatusDetailViewModel @Inject constructor(
         data class Content(
             val titleString: String? = null,
             val accountOriginalTypeDisplayName: AccountDisplayName? = null,
-            val accountOriginalTypeIconDrawablePreview: AccountIconDrawablePreview? = null,
-            val accountOriginalActionButton: AccountAssetItemButtonState? = null,
+            val accountOriginalTypeIconDrawablePreview: AccountIconDrawablePreview,
+            val accountOriginalActionButton: AccountAssetItemButtonState,
+            val accountRegistrationType: AccountRegistrationType,
             val authAccountDisplayName: AccountDisplayName? = null,
             val authAccountIconDrawablePreview: AccountIconDrawablePreview? = null,
             val authAccountActionButton: AccountAssetItemButtonState? = null,
-            val accountTypeDrawablePreview: AccountIconDrawablePreview? = null,
+            val accountTypeDrawablePreview: AccountIconDrawablePreview,
             val descriptionDetail: DescriptionDetail,
             val accountTypeString: String? = null,
             val isRekeyGroupVisible: Boolean? = null,
@@ -154,5 +192,15 @@ class AccountStatusDetailViewModel @Inject constructor(
         data object NavigateToUndoRekey : ViewEvent
         data object NavigateToRekeyToStandardAccount : ViewEvent
         data object NavigateToRekeyToLedgerAccount : ViewEvent
+        data object ShowFetchingRekeyedAccountsDialog : ViewEvent
+        data object HideFetchingRekeyedAccountsDialog : ViewEvent
+        data class NavToRekeyedAccountSelection(
+            val authAddress: String,
+            val authDrawable: AccountIconDrawablePreview,
+            val rekeyedAddresses: List<String>
+        ) : ViewEvent
+
+        data object NavToNoRekeyedAccounts : ViewEvent
+        data object ShowGenericError : ViewEvent
     }
 }

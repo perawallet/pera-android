@@ -100,11 +100,11 @@ android {
             multiDexEnabled true
             minifyEnabled false
             manifestPlaceholders = [enableCrashReporting: "false", enableFirebasePerformanceLogcat: "true"]
-            resValue("string", "app_name", "Pera Wallet (Dev)")
+            resValue("string", "app_name", "Pera (Dev)")
         }
     }
 
-    flavorDimensions "server"
+    flavorDimensions += "server"
     productFlavors {
         def apiKeyProps = new Properties()
         def apiUrlProps = new Properties()

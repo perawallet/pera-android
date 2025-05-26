@@ -22,6 +22,8 @@
 
     <include app:graph="@navigation/asb_import_navigation" />
 
+    <include app:graph="@navigation/recover_with_passphrase_navigation" />
+
     <fragment
         android:id="@+id/accountRecoveryTypeSelectionFragment"
         android:name="com.algorand.android.ui.register.recoveraccounttypeselection.AccountRecoveryTypeSelectionFragment"

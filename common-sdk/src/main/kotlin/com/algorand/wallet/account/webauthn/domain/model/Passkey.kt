@@ -20,7 +20,7 @@ package com.algorand.wallet.account.webauthn.domain.model
  */
 data class Passkey(
     val siteId: Long?,
-    val seedId: String?,
+    val seedId: Int?,
     val origin: String?,
     val uid: String,
     val username: String,

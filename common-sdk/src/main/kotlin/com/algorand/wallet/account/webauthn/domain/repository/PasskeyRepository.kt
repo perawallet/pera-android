@@ -1,5 +1,6 @@
 package com.algorand.wallet.account.webauthn.domain.repository
 
+import com.algorand.wallet.account.custom.domain.model.CustomHdSeedInfo
 import com.algorand.wallet.account.webauthn.data.database.model.PasskeyEntity
 import com.algorand.wallet.account.webauthn.data.database.model.SiteEntity
 import com.algorand.wallet.account.webauthn.data.database.model.SiteWithPasskeysQuery
@@ -33,4 +34,5 @@ interface PasskeyRepository {
     suspend fun addNewPasskey(passkeyMetadata: Passkey)
     suspend fun getPasskey(credId: String): PasskeyEntity?
     suspend fun getAllPasskeysAsFlow(): Flow<List<PasskeyEntity>>
+    suspend fun getAllCustomHdSeedInfo(): List<CustomHdSeedInfo>
 }

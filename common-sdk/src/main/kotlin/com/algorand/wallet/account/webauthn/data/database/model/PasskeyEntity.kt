@@ -41,7 +41,7 @@ data class PasskeyEntity(
 
     // Foreign Keys
     @ColumnInfo(name = "site_id") val siteId: Long,
-    @ColumnInfo(name = "seed_id") val seedId: String,
+    @ColumnInfo(name = "seed_id") val seedId: Int,
 
     // User Data
     @ColumnInfo(name = "user_id") val userId: String,

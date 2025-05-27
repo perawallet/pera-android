@@ -20,7 +20,7 @@ import androidx.credentials.provider.ProviderCreateCredentialRequest
 import androidx.fragment.app.FragmentActivity
 import com.algorand.android.R
 import com.algorand.android.credentials.BiometricErrorUtils
-import com.algorand.android.credentials.ProviderService
+import com.algorand.android.credentials.ProviderService.Companion.KEY_SEED_ID
 import com.algorand.android.credentials.encoding.appInfoToOrigin
 import com.algorand.android.credentials.webauthn.AssetLinkVerifier
 import com.algorand.android.credentials.webauthn.AuthenticatorAttestationResponse
@@ -38,21 +38,41 @@ import java.net.URL
 import java.security.KeyPair
 import java.security.SecureRandom
 import java.security.interfaces.ECPublicKey
-import java.time.Instant
 import kotlin.collections.plus
 import kotlin.collections.set
 import kotlin.io.readText
 import kotlin.text.isNotEmpty
-import androidx.core.content.edit
 import com.algorand.android.credentials.encoding.b64Encode
 import com.algorand.wallet.account.webauthn.domain.PasskeyManager
 import com.algorand.wallet.account.webauthn.domain.model.Passkey
 import com.algorand.wallet.account.webauthn.domain.repository.PasskeyRepository
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
+import java.util.UUID
 
 const val DEFAULT_BYTE_LENGTH = 32
 
+/**
+ * `CreatePasskeyActivity` is responsible for handling the lifecycle and operations required
+ * to create a public key credential for authentication. It manages the overall workflow for
+ * passkey generation, including biometric authentication, origin validation, and response
+ * construction.
+ *
+ * This activity leverages `PasskeyRepository` and `PasskeyManager` to handle credential storage
+ * and cryptographic operations. It also provides mechanisms to interact with the calling app
+ * and handle any errors effectively.
+ *
+ * Key responsibilities include:
+ * - Managing the lifecycle of passkey creation requests.
+ * - Handling error conditions or exceptions during the credential creation process.
+ * - Validating the origin and other metadata associated with the requesting app.
+ * - Facilitating biometric and non-biometric flows for creating passkeys.
+ * - Constructing and returning responses adhering to WebAuthn specifications.
+ *
+ * Fields:
+ * - `passkeyRepository`: Provides operations for managing stored passkey and site data.
+ * - `passkeyManager`: Handles cryptographic operations such as passkey signing and derivation.
+ */
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @AndroidEntryPoint
 class CreatePasskeyActivity : FragmentActivity() {
@@ -60,22 +80,39 @@ class CreatePasskeyActivity : FragmentActivity() {
     lateinit var passkeyRepository: PasskeyRepository
     @Inject
     lateinit var passkeyManager: PasskeyManager
+
+    /**
+     * Called when the activity is first created. This method sets up the activity by enabling
+     * edge-to-edge display and managing initialization required for handling a provider request
+     * for creating a credential. If the request cannot be extracted or is invalid, it handles
+     * the error condition gracefully.
+     *
+     * @param savedInstanceState A `Bundle` containing the activity's previously saved state, or
+     *                           `null` if none existed.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        // Retrieve the Provider Request from the ProviderService
         val request = PendingIntentHandler.retrieveProviderCreateCredentialRequest(intent)
 
+        // Handle undefined requests
         if (request == null) {
-            // If the request is null, send an unknown exception to client and finish the flow
-            setUpFailureResponseAndFinish("Unable to extract request from intent")
+            handleUnknownException(getString(R.string.unable_to_extract_data_from_intent))
             return
         }
 
         handleCreatePublicKeyCredentialRequest(request)
     }
 
-    private fun setUpFailureResponseAndFinish(message: String) {
+    /**
+     * Handles unknown exceptions occurring within the activity by preparing the result and finishing the activity.
+     *
+     * @param message A string representing the message or description of the unknown exception.
+     */
+    private fun handleUnknownException(message: String) {
+        Log.e(TAG, message)
         val result = Intent()
         PendingIntentHandler.setGetCredentialException(
             result,
@@ -85,8 +122,23 @@ class CreatePasskeyActivity : FragmentActivity() {
         finish()
     }
 
+    /**
+     * Handles the creation of a public key credential request. This method processes the request
+     * by validating the biometric prompt result and determines the appropriate flow to create a passkey.
+     * If a biometrics authentication result is present, it utilizes the biometric flow; otherwise, it
+     * defaults to a non-biometric method.
+     *
+     * @param request An instance of `ProviderCreateCredentialRequest` which contains request data
+     *        and biometric prompt results.
+     */
     private fun handleCreatePublicKeyCredentialRequest(request: ProviderCreateCredentialRequest) {
-        val accountId = intent.getStringExtra(KEY_ACCOUNT_ID)
+        // Receive the Seed
+        // TODO: Decide UX for selector when it is AutoSelect.
+        //  Possibly just use Two Tap UX which allows the seed id to be passed to the activity
+        val seedId: Int = intent.getIntExtra(KEY_SEED_ID, 1)
+
+        Log.d(TAG, "handleCreatePublicKeyCredentialRequest: $seedId")
+
         // Retrieve the BiometricPromptResult from the request.
         val biometricPromptResult = request.biometricPromptResult
 
@@ -96,7 +148,7 @@ class CreatePasskeyActivity : FragmentActivity() {
 
         // If there's valid biometric error, set up the failure response and finish.
         if (biometricErrorMessage.isNotEmpty()) {
-            setUpFailureResponseAndFinish(biometricErrorMessage)
+            handleUnknownException(biometricErrorMessage)
             return
         }
 
@@ -113,7 +165,7 @@ class CreatePasskeyActivity : FragmentActivity() {
                     publicKeyRequest.requestJson,
                     request.callingAppInfo,
                     publicKeyRequest.clientDataHash,
-                    accountId,
+                    seedId,
                 )
                 return
             }
@@ -123,19 +175,29 @@ class CreatePasskeyActivity : FragmentActivity() {
                 publicKeyRequest.requestJson,
                 request.callingAppInfo,
                 publicKeyRequest.clientDataHash,
-                accountId,
+                seedId,
             )
         } else {
-            setUpFailureResponseAndFinish(getString(R.string.unexpected_create_request_found_in_intent))
+            handleUnknownException(getString(R.string.unexpected_create_request_found_in_intent))
             return
         }
     }
 
+    /**
+     * Initiates the default flow for creating a passkey by validating the request origin
+     * and displaying a biometric prompt for user authentication.
+     *
+     * @param requestJson A JSON string representing the public key credential creation options.
+     * @param callingAppInfo An object containing information about the calling application;
+     *                       it includes details such as origin and signing info.
+     * @param clientDataHash A hash of client-provided data used in the creation of the credential
+     * @param seedId An integer identifier used for deriving the passkey.
+     */
     private fun createPasskeyWithDefaultFlow(
         requestJson: String,
         callingAppInfo: CallingAppInfo?,
         clientDataHash: ByteArray?,
-        accountId: String?,
+        seedId: Int,
     ) {
         if (callingAppInfo == null) {
             finish()
@@ -144,6 +206,7 @@ class CreatePasskeyActivity : FragmentActivity() {
 
         val request = PublicKeyCredentialCreationOptions(requestJson)
 
+        // Should always be a native call from GPM and no need to validate
         if (!hasRequestContainsOrigin(callingAppInfo)) {
             // Native call. Check for asset links
             validateAssetLinks(request.rp.id, callingAppInfo)
@@ -178,7 +241,7 @@ class CreatePasskeyActivity : FragmentActivity() {
                         requestJson,
                         callingAppInfo,
                         clientDataHash,
-                        accountId,
+                        seedId,
                     )
                 }
             },
@@ -186,11 +249,23 @@ class CreatePasskeyActivity : FragmentActivity() {
         authenticate(biometricPrompt)
     }
 
+    /**
+     * Initiates the creation of a passkey using the biometric flow. This method processes the provided
+     * request, validates the calling application, generates a key pair, and saves the passkey,
+     * ensuring secure association with the calling application.
+     *
+     * @param requestJson A JSON string representing the public key credential creation options.
+     * @param callingAppInfo An object containing details about the calling application, such as
+     *                       origin and signing information. This parameter can be null.
+     * @param clientDataHash A nullable byte array representing a hash of client-provided data used in
+     *                       the creation of the credential.
+     * @param seedId An integer identifier used for the derivation of the passkey.
+     */
     private fun createPasskeyWithBiometricFlow(
         requestJson: String,
         callingAppInfo: CallingAppInfo?,
         clientDataHash: ByteArray?,
-        accountId: String?,
+        seedId: Int,
     ) {
         if (callingAppInfo == null) {
             finish()
@@ -219,13 +294,15 @@ class CreatePasskeyActivity : FragmentActivity() {
 
         val userHandle = if (user.has("name")) user.getString("name") else user.getString("displayName")
 
-        // Generate key
-        val keyPair = generateKeyPair(callingAppInfoOrigin ?: callingOrigin, userHandle)
+        // Generate key, used
+        val keyPair = passkeyManager.derivePasskey(
+            seedId = seedId,
+            origin = callingAppInfoOrigin ?: callingOrigin,
+            userHandle = userHandle
+        )
 
         // Save the private key in your local database against callingAppInfo.packageName.
-        savePasskeyInCredentialsDataStore(request, credentialId, keyPair)
-
-        updateMetaInSharedPreferences(accountId)
+        addNewPasskey(seedId, request, credentialId)
 
         if (callingAppInfoOrigin != null) {
             callingOrigin = callingAppInfoOrigin
@@ -242,6 +319,19 @@ class CreatePasskeyActivity : FragmentActivity() {
         setIntentForCredentialCredentialResponse(credentialId, response)
     }
 
+    /**
+     * Constructs a `WebAuthn` response in the form of an `AuthenticatorAttestationResponse` object.
+     * This response includes details like the credential ID, public key, attestation data, origin,
+     * and other metadata required for the Web Authentication process.
+     *
+     * @param keyPair The key pair used for generating the public key credential.
+     * @param request The public key credential creation options that define the credential request data.
+     * @param credId A byte array representing the credential ID that uniquely identifies the created credential.
+     * @param callingOrigin A string representing the origin of the calling application.
+     * @param callingAppInfo An object containing metadata about the calling application.
+     * @param clientDataHash An optional byte array containing the hash of client-provided data.
+     * @return An instance of `AuthenticatorAttestationResponse` containing the constructed WebAuthn response data.
+     */
     private fun constructWebAuthnResponse(
         keyPair: KeyPair,
         request: PublicKeyCredentialCreationOptions,
@@ -255,6 +345,7 @@ class CreatePasskeyActivity : FragmentActivity() {
 
         // Construct a Web Authentication API JSON response that consists of the public key and the credentialId.
         val response = AuthenticatorAttestationResponse(
+            aaguid = UUID.randomUUID(),
             requestOptions = request,
             credentialId = credId,
             credentialPublicKey = Cbor().encode(coseKey),
@@ -267,19 +358,21 @@ class CreatePasskeyActivity : FragmentActivity() {
             ),
             packageName = callingAppInfo.packageName,
             clientDataHash = clientDataHash,
-            spki,
+            spki = spki,
         )
         return response
     }
-    @Suppress("MaxLineLength")
-    private fun generateKeyPair(origin: String, userHandle: String): KeyPair {
-        return passkeyManager.derivePasskey(
-            seedId = "1234",
-            origin = origin,
-            userHandle = userHandle
-        )
-    }
 
+    /**
+     * Validates the asset links for a given relying party identifier (rpId) and calling application
+     * information. This method ensures that the rpId is associated with the calling application by
+     * verifying its signing info and package name. If the validation fails, it handles the error
+     * condition accordingly.
+     *
+     * @param rpId The relying party identifier representing the domain or origin being validated.
+     * @param callingAppInfo An object containing information about the calling application, including
+     *                       package name and signing details.
+     */
     private fun validateAssetLinks(rpId: String, callingAppInfo: CallingAppInfo) {
         val isRpValid: Boolean = runBlocking {
             val isRpValidDeferred: Deferred<Boolean> = async(Dispatchers.IO) {
@@ -297,11 +390,20 @@ class CreatePasskeyActivity : FragmentActivity() {
         }
 
         if (!isRpValid) {
-            setUpFailureResponseAndFinish(getString(R.string.failed_to_validate_rp))
+            handleUnknownException(getString(R.string.failed_to_validate_rp))
             return
         }
     }
 
+    /**
+     * Validates the given relying party identifier (rpId) by verifying its association with a caller's
+     * package and signing information through the Asset Link Verification process.
+     *
+     * @param rpId The relying party identifier representing the domain or origin to be validated.
+     * @param signingInfo The signing information of the calling application, used to verify its authenticity.
+     * @param callingPackage The package name of the calling application.
+     * @return `true` if the rpId is valid and the verification is successful; `false` otherwise.
+     */
     private fun isValidRpId(
         rpId: String,
         signingInfo: SigningInfo,
@@ -318,6 +420,16 @@ class CreatePasskeyActivity : FragmentActivity() {
         return false
     }
 
+    /**
+     * Validates the calling application's privilege level by checking if it is within the allowlist
+     * of privileged applications. If the origin is validated, it is returned. Otherwise, null is returned
+     * if the allowlist cannot be retrieved, or if there are formatting or state-related issues.
+     *
+     * @param callingAppInfo An instance of `CallingAppInfo` containing information about the calling application,
+     *                       such as its origin and signing details.
+     * @return A string representing the origin of the calling application if validation is successful,
+     *         or null if the application is not privileged or errors occur during validation.
+     */
     private fun validatePrivilegedCallingApp(callingAppInfo: CallingAppInfo): String? {
         val privilegedAppsAllowlist = getGPMPrivilegedAppAllowlist()
         if (privilegedAppsAllowlist != null) {
@@ -327,19 +439,28 @@ class CreatePasskeyActivity : FragmentActivity() {
                 )
             } catch (e: IllegalStateException) {
                 val message = getString(R.string.incoming_call_is_not_privileged_to_get_the_origin)
-                setUpFailureResponseAndFinish(message)
+                handleUnknownException(message)
                 null
             } catch (e: IllegalArgumentException) {
                 val message = getString(R.string.privileged_allowlist_is_not_formatted_properly)
-                setUpFailureResponseAndFinish(message)
+                handleUnknownException(message)
                 null
             }
         }
         val message = "Could not retrieve GPM allowlist"
-        setUpFailureResponseAndFinish(message)
+        handleUnknownException(message)
         return null
     }
 
+    /**
+     * Retrieves the allowlist of privileged applications for Google Play Management (GPM).
+     * This method attempts to fetch the allowlist by making a network request to a predefined
+     * URL and returning the response as a string. If an error occurs during the retrieval process,
+     * such as a networking issue or invalid URL, it returns null.
+     *
+     * @return A string representing the allowlist of privileged applications if successfully retrieved,
+     *         or null if the retrieval fails due to an exception.
+     */
     private fun getGPMPrivilegedAppAllowlist(): String? {
         val gpmAllowlist: String? = runBlocking {
             val allowlist: Deferred<String?> = async(Dispatchers.IO) {
@@ -356,8 +477,18 @@ class CreatePasskeyActivity : FragmentActivity() {
         return gpmAllowlist
     }
 
+    /**
+     * Determines whether the request contains an origin by attempting to retrieve the origin
+     * from the provided `CallingAppInfo` instance. If an `IllegalStateException` occurs during
+     * the process, it implies that the origin is not available in the request.
+     *
+     * @param callingAppInfo An instance of `CallingAppInfo` that holds information about the
+     *                       calling application, including its origin and other metadata.
+     * @return `true` if the request does not contain a valid origin; `false` otherwise.
+     */
     private fun hasRequestContainsOrigin(callingAppInfo: CallingAppInfo): Boolean {
         try {
+            // TODO: allow fetching of allow list from origin
             callingAppInfo.getOrigin(INVALID_ALLOWLIST)
         } catch (e: IllegalStateException) {
             return true
@@ -365,6 +496,14 @@ class CreatePasskeyActivity : FragmentActivity() {
         return false
     }
 
+    /**
+     * Converts a COSE key represented as a mutable map into an SPKI (Subject Public Key Info) formatted byte array.
+     *
+     * @param coseKey A mutable map containing key-value pairs representing a COSE-encoded key.
+     *                Keys should include `-2` for the X-coordinate and `-3` for the Y-coordinate of the EC point.
+     * @return A byte array representing the SPKI-formatted public key, or null if the conversion fails.
+     * @todo: move to common module.
+     */
     @Suppress("MagicNumber")
     private fun coseKeyToSPKI(coseKey: MutableMap<Int, Any>): ByteArray? {
         try {
@@ -378,6 +517,16 @@ class CreatePasskeyActivity : FragmentActivity() {
         return null
     }
 
+    /**
+     * Sets up an intent containing a response for the creation of a public key credential.
+     * This method constructs a `FidoPublicKeyCredential` with the provided credential ID and
+     * attestation response, wraps it as a `CreatePublicKeyCredentialResponse`, and attaches it
+     * to the intent as an extra. The configured intent is then set as the result of the activity.
+     *
+     * @param credentialId A byte array representing the unique identifier for the created credential.
+     * @param response The attestation response (`AuthenticatorAttestationResponse`) containing data
+     *                 necessary for the credential creation process.
+     */
     private fun setIntentForCredentialCredentialResponse(
         credentialId: ByteArray,
         response: AuthenticatorAttestationResponse,
@@ -399,6 +548,13 @@ class CreatePasskeyActivity : FragmentActivity() {
         finish()
     }
 
+    /**
+     * Initiates authentication using the provided biometric prompt. This method builds
+     * the biometric prompt information with specific configurations like title, subtitle,
+     * and allowed authenticators, and then requests user authentication.
+     *
+     * @param biometricPrompt An instance of `BiometricPrompt` used to authenticate the user.
+     */
     private fun authenticate(
         biometricPrompt: BiometricPrompt,
     ) {
@@ -410,6 +566,13 @@ class CreatePasskeyActivity : FragmentActivity() {
         biometricPrompt.authenticate(promptInfo)
     }
 
+    /**
+     * Converts an EC public key into a COSE (CBOR Object Signing and Encryption) key format.
+     *
+     * @param key The EC public key to be converted.
+     * @return A mutable map containing the COSE representation of the provided EC public key.
+     * @todo: Move to common
+     */
     @Suppress("MagicNumber")
     private fun publicKeyToCose(key: ECPublicKey): MutableMap<Int, Any> {
         val x = bigIntToFixedArray(key.w.affineX)
@@ -423,6 +586,15 @@ class CreatePasskeyActivity : FragmentActivity() {
         return coseKey
     }
 
+    /**
+     * Converts a non-negative BigInteger into a fixed-size 32-byte array.
+     * If the BigInteger is smaller than 32 bytes, the resulting array is left-padded with zeros.
+     *
+     * @param n The non-negative BigInteger to be converted. Assumes the input value is non-negative.
+     * @return A 32-byte array representing the BigInteger.
+     * @throws AssertionError If the input BigInteger is negative or exceeds 32 bytes when converted to a byte array.
+     * @todo: Move to common
+     */
     @Suppress("MagicNumber")
     private fun bigIntToFixedArray(n: BigInteger): ByteArray {
         assert(n.signum() >= 0)
@@ -442,40 +614,22 @@ class CreatePasskeyActivity : FragmentActivity() {
         return output
     }
 
-    private fun updateMetaInSharedPreferences(accountId: String?) {
-        if (accountId == null || (accountId != ProviderService.APPLICATION_ACCOUNT)) {
-            // AccountId was not set
-        } else {
-            applicationContext.getSharedPreferences(
-                applicationContext.packageName,
-                MODE_PRIVATE,
-            ).edit {
-                putLong(
-                    KEY_ACCOUNT_LAST_USED_MS,
-                    Instant.now().toEpochMilli(),
-                )
-            }
-        }
-    }
-
     /**
      * Saves the passkey in the credentials data store.
      *
      * @param request The public key credential creation options.
      * @param credId The credential ID.
-     * @param keyPair The key pair.
      */
-    private fun savePasskeyInCredentialsDataStore(
+    private fun addNewPasskey(
+        seedId: Int,
         request: PublicKeyCredentialCreationOptions,
         credId: ByteArray,
-        keyPair: KeyPair,
     ) {
-        // TODO: Save credential
         runBlocking {
             passkeyRepository.addNewPasskey(
                 Passkey(
                     siteId = null,
-                    seedId = "12345",
+                    seedId = seedId,
                     uid = b64Encode(request.user.id),
                     origin = request.rp.id,
                     username = request.user.name,
@@ -484,13 +638,21 @@ class CreatePasskeyActivity : FragmentActivity() {
                     credId = b64Encode(credId),
                     count = 0,
                     lastUsed = 0,
-//                    credPublicKey = b64Encode((keyPair.public as ECPublicKey).encoded),
-//                    credPrivateKey = b64Encode((keyPair.private as ECPrivateKey).s.toByteArray()),
                 ),
             )
         }
     }
     companion object {
+        /**
+         * A JSON string representing an invalid allowlist configuration.
+         *
+         * This constant holds a predefined JSON object structure that contains
+         * details about applications including their package names, build types,
+         * and certificate fingerprints. This configuration is intentionally invalid
+         * and may be used for testing purposes where an improperly defined allowlist
+         * is required to simulate erroneous scenarios.
+         * @deprecated
+         */
         private const val INVALID_ALLOWLIST = "{\"apps\": [\n" +
                 "   {\n" +
                 "      \"type\": \"android\", \n" +
@@ -508,11 +670,11 @@ class CreatePasskeyActivity : FragmentActivity() {
                 "]}\n" +
                 "\n"
 
+        /**
+         * @todo: Move to common sdk
+         */
         private const val GPM_ALLOWLIST_URL =
             "https://www.gstatic.com/gpm-passkeys-privileged-apps/apps.json"
-
-        private const val TAG = "ProviderService"
-        const val KEY_ACCOUNT_LAST_USED_MS = "key_account_last_used_ms"
-        const val KEY_ACCOUNT_ID = "key_account_id"
+        private const val TAG = "CreatePasskeyActivity"
     }
 }

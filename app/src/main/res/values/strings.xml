@@ -1522,9 +1522,8 @@
     <string name="could_not_retrieve_gpm_allowlist">Could not retrieve GPM allowlist</string>
     <string name="extra_intent_data">EXTRA_INTENT_DATA</string>
     <string name="is_auto_selected">IS_AUTO_SELECTED</string>
-    <string name="unable_to_retrieve_data_from_intent">Unable to retrieve data from intent</string>
+    <string name="unable_to_extract_data_from_intent">Unable to extract data from intent</string>
     <string name="empty" />
-
     <string name="select_universal_wallet">Select Universal Wallet</string>
     <string name="create_your_new_account">Create your new account under a Universal Wallet you already have</string>
 

@@ -30,7 +30,6 @@ import com.algorand.android.credentials.webauthn.AuthenticatorAssertionResponse
 import com.algorand.android.credentials.webauthn.AuthenticatorFlags
 import com.algorand.android.credentials.webauthn.FidoPublicKeyCredential
 import com.algorand.android.credentials.webauthn.PublicKeyCredentialRequestOptions
-import com.algorand.wallet.account.webauthn.data.database.model.PasskeyEntity
 import com.algorand.wallet.account.webauthn.domain.PasskeyManager
 import com.algorand.wallet.account.webauthn.domain.repository.PasskeyRepository
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,9 +40,16 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.net.URL
-import java.security.KeyPair
 import java.security.Security
 
+/**
+ * GetPasskeyActivity is responsible for managing the workflow related to retrieving passkeys
+ * for authentication in a secure and efficient manner. This includes handling the intent to retrieve
+ * a passkey, configuring assertion processes, and validating the calling application's credentials.
+ *
+ * @property passkeyRepository The repository interface for accessing passkey-related data and operations.
+ * @property passkeyManager The manager facilitating passkey operations and handling the assertion process.
+ */
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @AndroidEntryPoint
 class GetPasskeyActivity : FragmentActivity() {
@@ -52,6 +58,19 @@ class GetPasskeyActivity : FragmentActivity() {
     @Inject
     lateinit var passkeyManager: PasskeyManager
 
+    /**
+     * Called when the activity is first created.
+     *
+     * This method initializes the activity by setting up the necessary providers
+     * and enabling edge-to-edge UI.
+     *
+     * Additionally, it invokes intent handling logic specific to retrieving
+     * and processing passkey-related information.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously
+     * being shut down, this Bundle contains the data it most recently supplied.
+     * Otherwise, it is null.
+     */
     public override fun onCreate(savedInstanceState: Bundle?) {
         Security.removeProvider("BC")
         Security.insertProviderAt(BouncyCastleProvider(), 0)
@@ -59,6 +78,25 @@ class GetPasskeyActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         handleGetPasskeyIntent()
     }
+
+    /**
+     * Handles the intent to retrieve a passkey.
+     *
+     * This method is invoked to extract and process the relevant data from the incoming intent
+     * for handling passkey functionality. The flow includes checking whether the intent contains
+     * the required information, validating biometric authentication results, and configuring the
+     * passkey assertion process.
+     *
+     * Key Steps:
+     * - Extracts the intent data, including supplementary request details and the passkey request.
+     * - Validates the extracted data and checks for any errors.
+     * - Handles biometric authentication results and ensures there are no errors during the process.
+     * - Configures the assertion flow for the passkey based on the retrieved information.
+     *
+     * Failure Handling:
+     * If the required data or request is missing, or if biometric errors are encountered, a failure
+     * response is configured, and the activity is terminated.
+     */
     private fun handleGetPasskeyIntent() {
         // Retrieve the request information from the intent.
         val requestInfo = intent.getBundleExtra(getString(R.string.extra_intent_data))
@@ -76,18 +114,18 @@ class GetPasskeyActivity : FragmentActivity() {
         // Check if the request information or the request itself is null.
         if (requestInfo == null || request == null) {
             // If either is null, set up a failure response and finish the activity.
-            setUpFailureResponseAndFinish(getString(R.string.unable_to_retrieve_data_from_intent))
+            setUpFailureResponseAndFinish(getString(R.string.unable_to_extract_data_from_intent))
             return
         }
 
         // Retrieve the BiometricPromptResult from the request.
         val biometricPromptResult = request.biometricPromptResult
 
-        // Validate the error message in biometric result
+        // Validate the error message in a biometric result
         val biometricErrorMessage =
             BiometricErrorUtils.getBiometricErrorMessage(this, biometricPromptResult)
 
-        // If there's valid biometric error, set up the failure response and finish.
+        // If there's a valid biometric error, set up the failure response and finish.
         if (biometricErrorMessage.isNotEmpty()) {
             setUpFailureResponseAndFinish(biometricErrorMessage)
             return
@@ -124,7 +162,6 @@ class GetPasskeyActivity : FragmentActivity() {
 
         // Retrieve the PasskeyItem from the data source using the encoded credential ID.
         val passkey = runBlocking { passkeyRepository.getPasskey(credentialIdEncoded)!! }
-        val site = runBlocking { passkeyRepository.getSite(passkey.siteId)!! }
 
         // Extract the GetPublicKeyCredentialOption from the request.
         val publicKeyCredentialOption = request.credentialOptions[0]
@@ -159,13 +196,6 @@ class GetPasskeyActivity : FragmentActivity() {
         val origin = appInfoToOrigin(request.callingAppInfo)
         val packageName = request.callingAppInfo.packageName
 
-        // Get the KeyPair
-        val key = passkeyManager.derivePasskey(
-            seedId = "1234",
-            origin = callingAppOriginInfo ?: origin,
-            userHandle = userHandle
-        )
-
         // Extract the client data hash if the calling application's origin is available.
         var clientDataHash: ByteArray? = null
         if (callingAppOriginInfo != null) {
@@ -176,27 +206,26 @@ class GetPasskeyActivity : FragmentActivity() {
         if (biometricPromptResult?.authenticationResult != null) {
             // If biometric authentication was successful, use the biometric flow.
             assertPasskeyWithBiometricFlow(
-                origin,
-                callingAppOriginInfo,
-                publicKeyRequestOptions,
-                uid,
-                userHandle,
-                packageName,
-                clientDataHash,
-                key,
-                credentialID,
+                credId = credentialID,
+                origin = origin,
+                request = publicKeyRequestOptions,
+                uid = uid,
+                userHandle = userHandle,
+                packageName = packageName,
+                callingAppInfo = callingAppOriginInfo,
+                clientDataHash = clientDataHash,
+
             )
         } else {
             // If biometric authentication was not used or was not successful, use the default flow.
             assertPasskeyWithDefaultFlow(
-                origin,
-                callingAppOriginInfo,
-                publicKeyRequestOptions,
-                uid,
-                userHandle,
-                clientDataHash,
-                key,
-                credentialID,
+                credId = credentialID,
+                origin = origin,
+                request = publicKeyRequestOptions,
+                uid = uid,
+                userHandle = userHandle,
+                callingAppInfo = callingAppOriginInfo,
+                clientDataHash = clientDataHash,
             )
         }
     }
@@ -329,75 +358,69 @@ class GetPasskeyActivity : FragmentActivity() {
     }
 
     /**
-     * Asserts the passkey using the default flow, which involves presenting a biometric prompt.
+     * Asserts the passkey using the default authentication flow.
      *
-     * <p>This method is called when the biometric authentication flow is not used or
-     * was not successful. It configures a {@link BiometricPrompt} using the provided
-     * parameters and then initiates the authentication process. The authentication
-     * process will prompt the user to authenticate using biometrics or device
-     * credentials.
+     * This method configures a BiometricPrompt with the provided parameters and initiates the
+     * authentication process to assert the passkey.
      *
-     * @param passkey               The {@link PasskeyItem} containing the passkey details.
-     * @param origin                The origin of the calling application.
-     * @param callingAppInfo        The origin information of the calling application, if available.
-     * @param publicKeyRequestOptions The {@link PublicKeyCredentialRequestOptions} containing the
-     *                                request details.
-     * @param uid                   The unique identifier associated with the passkey.
-     * @param clientDataHash        The client data hash, if available.
-     * @param convertedPrivateKey   The converted private key for the passkey.
-     * @param credId                The credential ID of the passkey.
+     * @param origin The origin of the calling application.
+     * @param callingAppInfo Information about the calling application, optionally null.
+     * @param request The PublicKeyCredentialRequestOptions containing the credential request details.
+     * @param uid The unique identifier associated with the passkey.
+     * @param userHandle The user handle associated with the credential request.
+     * @param clientDataHash The client data hash, optionally null.
+     * @param credId The credential ID for the associated passkey.
      */
     private fun assertPasskeyWithDefaultFlow(
+        credId: ByteArray,
         origin: String,
-        callingAppInfo: String?,
-        publicKeyRequestOptions: PublicKeyCredentialRequestOptions,
+        request: PublicKeyCredentialRequestOptions,
         uid: ByteArray,
         userHandle: String,
+        callingAppInfo: String?,
         clientDataHash: ByteArray?,
-        key: KeyPair,
-        credId: ByteArray,
     ) {
         // Configure the BiometricPrompt with the provided parameters.
         val biometricPrompt = configureBioMetricPrompt(
-            origin,
-            callingAppInfo,
-            publicKeyRequestOptions,
-            uid,
-            userHandle,
-            packageName,
-            clientDataHash,
-            key,
-            credId,
+            credId = credId,
+            origin = origin,
+            callingAppInfoOrigin = callingAppInfo,
+            request = request,
+            uid = uid,
+            userHandle = userHandle,
+            packageName = packageName,
+            clientDataHash = clientDataHash,
         )
         // Initiate the authentication process using the configured BiometricPrompt.
         authenticate(biometricPrompt)
     }
 
     /**
-     * Configures the BiometricPrompt with authentication callbacks.
+     * Configures and returns a BiometricPrompt for user authentication.
      *
-     * @param passkey The PasskeyItem associated with the authentication.
-     * @param origin The origin of the calling app.
-     * @param callingAppInfoOrigin The origin of the calling app if it is privileged.
-     * @param request The PublicKeyCredentialRequestOptions for the authentication.
-     * @param uid The user ID for the authentication.
-     * @param packageName The package name of the calling app.
-     * @param clientDataHash The client data hash for the authentication.
-     * @param convertedPrivateKey The converted private key for the authentication.
-     * @param credId The credential ID for the authentication.
+     * This method sets up a BiometricPrompt with a callback to handle authentication
+     * events like success, failure, or errors. Once the user is authenticated,
+     * it invokes the passkey assertion process.
      *
-     * @return The configured BiometricPrompt.
+     * @param origin The origin of the calling application.
+     * @param callingAppInfoOrigin The origin information of the calling application, if available.
+     * @param request The PublicKeyCredentialRequestOptions containing the credential request details.
+     * @param uid The unique identifier associated with the passkey.
+     * @param userHandle The user handle associated with the credential request.
+     * @param packageName The package name of the calling application.
+     * @param clientDataHash The client data hash, optionally null.
+     * @param credId The credential ID for the associated passkey.
+     * @return A configured BiometricPrompt instance ready to be displayed to the user.
      */
     private fun configureBioMetricPrompt(
+        credId: ByteArray,
         origin: String,
-        callingAppInfoOrigin: String?,
         request: PublicKeyCredentialRequestOptions,
         uid: ByteArray,
         userHandle: String,
         packageName: String,
+        callingAppInfoOrigin: String?,
         clientDataHash: ByteArray?,
-        key: KeyPair,
-        credId: ByteArray,
     ): BiometricPrompt {
         val biometricPrompt = BiometricPrompt(
             this,
@@ -424,15 +447,14 @@ class GetPasskeyActivity : FragmentActivity() {
                     super.onAuthenticationSucceeded(result)
 
                     assertPasskeyWithBiometricFlow(
-                        origin,
-                        callingAppInfoOrigin,
-                        request,
-                        uid,
-                        userHandle,
-                        packageName,
-                        clientDataHash,
-                        key,
-                        credId,
+                        credId = credId,
+                        origin = origin,
+                        request = request,
+                        uid = uid,
+                        userHandle = userHandle,
+                        packageName = packageName,
+                        callingAppInfo = callingAppInfoOrigin,
+                        clientDataHash = clientDataHash,
                     )
                 }
             },
@@ -440,35 +462,47 @@ class GetPasskeyActivity : FragmentActivity() {
         return biometricPrompt
     }
 
+    /**
+     * Asserts the passkey using the biometric authentication flow.
+     * This method determines the appropriate origin (calling app origin if available, otherwise the provided origin)
+     * and configures the credential response accordingly.
+     *
+     * @param credId The credential ID for the associated passkey.
+     * @param origin The origin of the calling application.
+     * @param callingAppInfoOrigin The origin information of the calling application if available.
+     * @param request The PublicKeyCredentialRequestOptions containing the credential request details.
+     * @param uid The unique identifier associated with the passkey.
+     * @param userHandle The user handle associated with the credential request.
+     * @param packageName The package name of the calling application.
+     * @param clientDataHash The client data hash, if available.
+     */
     private fun assertPasskeyWithBiometricFlow(
+        credId: ByteArray,
         origin: String,
-        callingAppInfoOrigin: String?,
         request: PublicKeyCredentialRequestOptions,
         uid: ByteArray,
         userHandle: String,
         packageName: String,
+        callingAppInfo: String?,
         clientDataHash: ByteArray?,
-        key: KeyPair,
-        credId: ByteArray,
     ) {
 
         // Determine the calling origin. If callingAppInfoOrigin is available, use it;
         // otherwise, use the provided origin.
         var callingOrigin = origin
-        if (callingAppInfoOrigin != null) {
-            callingOrigin = callingAppInfoOrigin
+        if (callingAppInfo != null) {
+            callingOrigin = callingAppInfo
         }
 
         // Configure the credential response with the determined origin and other parameters.
         configureGetCredentialResponse(
-            request,
+            credId = credId,
+            request = request,
             origin = callingOrigin,
-            uid,
-            userHandle,
-            packageName,
-            clientDataHash,
-            key,
-            credId,
+            uid = uid,
+            userHandle = userHandle,
+            packageName = packageName,
+            clientDataHash = clientDataHash,
         )
     }
 
@@ -489,29 +523,25 @@ class GetPasskeyActivity : FragmentActivity() {
     }
 
     /**
-     * Once the authentication succeeds, construct a JSON response based on the W3 Web Authentication Assertion spec.
+     * Configures the response for a Get Credential operation, constructing an
+     * AuthenticatorAssertionResponse and packaging it into a PublicKeyCredential.
      *
-     * Construct a PublicKeyCredential using the JSON generated above and set it on a final GetCredentialResponse.
-     *
-     * Set this final response on the result of this activity.
-     *
-     * @param request The PublicKeyCredentialRequestOptions object.
-     * @param origin The origin of the calling app.
-     * @param uid The user ID.
-     * @param packageName The package name of the calling app.
-     * @param clientDataHash The client data hash.
-     * @param privateKey The private key.
-     * @param credId The credential ID.
+     * @param credId The credential identifier in the form of a byte array.
+     * @param request The options for the public key credential request.
+     * @param origin The origin of the request.
+     * @param uid A byte array representing the user identifier.
+     * @param userHandle The string representation of the user handle.
+     * @param packageName The package name of the requesting application.
+     * @param clientDataHash Optional byte array representing the hash of the client data, if provided.
      */
     private fun configureGetCredentialResponse(
+        credId: ByteArray,
         request: PublicKeyCredentialRequestOptions,
         origin: String,
         uid: ByteArray,
         userHandle: String,
         packageName: String,
         clientDataHash: ByteArray?,
-        key: KeyPair,
-        credId: ByteArray,
     ) {
         val response = AuthenticatorAssertionResponse(
             requestOptions = request,
@@ -527,7 +557,7 @@ class GetPasskeyActivity : FragmentActivity() {
             clientDataHash,
         )
 
-         response.signature = passkeyManager.signPasskey("1234", origin, userHandle, response.dataToSign())
+         response.signature = passkeyManager.signPasskey(1, origin, userHandle, response.dataToSign())
 
         val credential = FidoPublicKeyCredential(
             rawId = credId,
@@ -544,16 +574,17 @@ class GetPasskeyActivity : FragmentActivity() {
         finish()
     }
 
-    private fun updatePasskeyInCredentialsDataSource(passkeyItem: PasskeyEntity) {
-        runBlocking {
-            passkeyRepository.updatePasskey(
-                passkeyItem.copy(),
-            )
-        }
-    }
-
     companion object {
-        // This is to check if the origin was populated.
+        /**
+         * A JSON string representing an invalid allowlist configuration.
+         *
+         * This constant holds a predefined JSON object structure that contains
+         * details about applications including their package names, build types,
+         * and certificate fingerprints. This configuration is intentionally invalid
+         * and may be used for testing purposes where an improperly defined allowlist
+         * is required to simulate erroneous scenarios.
+         * @deprecated
+         */
         private const val INVALID_ALLOWLIST = "{\"apps\": [\n" +
                 "   {\n" +
                 "      \"type\": \"android\", \n" +
@@ -570,6 +601,10 @@ class GetPasskeyActivity : FragmentActivity() {
                 "    }\n" +
                 "]}\n" +
                 "\n"
+
+        /**
+         * @todo: Move to common sdk
+         */
         private const val GPM_ALLOWLIST_URL =
             "https://www.gstatic.com/gpm-passkeys-privileged-apps/apps.json"
 

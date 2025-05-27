@@ -4,14 +4,37 @@ import android.util.Log
 import com.algorand.android.credentials.encoding.b64Encode
 import org.json.JSONArray
 import org.json.JSONObject
+import java.nio.ByteBuffer
 import java.security.MessageDigest
+import java.util.UUID
 
+/**
+ * Represents the response payload for the creation of a new public key credential during
+ * WebAuthn registration. It provides the details of the authenticator's attestation response.
+ *
+ * This class implements the [AuthenticatorResponse] interface and includes functionality
+ * to encode the attestation object and parse the client and authenticator data as specified
+ * in the WebAuthn standard.
+ *
+ * @constructor Instantiates an [AuthenticatorAttestationResponse] with all necessary attributes.
+ * @param requestOptions The public key credential creation options containing the
+ * Relying Party's (RP) and user's information.
+ * @param credentialId The unique identifier for the newly created credential.
+ * @param credentialPublicKey The public key associated with the newly created credential.
+ * @param origin The origin of the request that initiated the credential creation.
+ * @param authFlags Flags indicating the authenticator's capabilities and state.
+ * @param aaguid The Authenticator Attestation GUID (AAGUID) identifying the authenticator model.
+ * @param packageName Optional package name of the Android application initiating the registration.
+ * @param clientDataHash Optional SHA-256 hash of the client data used during the WebAuthn interaction.
+ * @param spki Optional Subject Public Key Info (SPKI) for the credential.
+ */
 class AuthenticatorAttestationResponse(
     private val requestOptions: PublicKeyCredentialCreationOptions,
     private val credentialId: ByteArray,
     private val credentialPublicKey: ByteArray,
     origin: String,
     private val authFlags: AuthenticatorFlags,
+    private val aaguid: UUID,
     packageName: String? = null,
     private val clientDataHash: ByteArray? = null,
     private val spki: ByteArray? = null,
@@ -49,7 +72,7 @@ class AuthenticatorAttestationResponse(
         }
         flags = flags or 0x40
 
-        val aaguid = ByteArray(16) { 0 }
+        val aaguid = uuidToBytes(aaguid)
         val credIdLen = byteArrayOf((credentialId.size shr 8).toByte(), credentialId.size.toByte())
 
         return rpHash +
@@ -60,7 +83,21 @@ class AuthenticatorAttestationResponse(
             credentialId +
             credentialPublicKey
     }
+    @Suppress("MagicNumber")
+    private fun uuidToBytes(uuid: UUID): ByteArray {
+        val byteBuffer = ByteBuffer.wrap(ByteArray(16))
+        byteBuffer.putLong(uuid.mostSignificantBits)
+        byteBuffer.putLong(uuid.leastSignificantBits)
+        return byteBuffer.array()
+    }
 
+    /**
+     * Adds parsed fields from an attestation object to a JSON object.
+     *
+     * @param authData The authenticator data in byte array form.
+     * @param publicKeyAlgorithm The algorithm identifier for the associated public key.
+     * @param jsonOutput The JSON object to which the parsed attestation fields will be added.
+     */
     private fun addParsedAttestationObjectFieldsToJSON(
         authData: ByteArray,
         publicKeyAlgorithm: Long,

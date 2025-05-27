@@ -71,9 +71,18 @@ class ProviderService : CredentialProviderService() {
             )
             .build()
     }
-    private fun createEntry(passkeyCount: Int, intent: PendingIntent): CreateEntry {
+
+    /**
+     * Creates a new credential entry with the provided account name, passkey count, and pending intent.
+     *
+     * @param accountName The name of the account for which the credential entry is being created.
+     * @param passkeyCount The number of passkeys associated with the account.
+     * @param intent The pending intent to be used for further actions related to the created entry.
+     * @return A newly constructed credential entry of type CreateEntry.
+     */
+    private fun createEntry(accountName: String, passkeyCount: Int, intent: PendingIntent): CreateEntry {
         return CreateEntry.Builder(
-            APPLICATION_ACCOUNT, intent
+            accountName, intent
         )
             .setLastUsedTime(
                 Instant.ofEpochMilli(0L),
@@ -90,6 +99,15 @@ class ProviderService : CredentialProviderService() {
             ).build()
     }
 
+    /**
+     * Processes a request to create credentials for a site. This involves interpreting
+     * the provided request, fetching relevant passkey and seed information, and constructing
+     * an appropriate response if applicable.
+     *
+     * @param request The `BeginCreateCredentialRequest` containing the details about the credentials to be created.
+     * @return A `BeginCreateCredentialResponse` containing the entries for
+     * credential creation, or null if no response can be constructed.
+     */
     private suspend fun processCreateCredentialsRequest(
         request: BeginCreateCredentialRequest
     ): BeginCreateCredentialResponse? {
@@ -97,21 +115,30 @@ class ProviderService : CredentialProviderService() {
 
         val requestJson =
             request.candidateQueryData.getString("androidx.credentials.BUNDLE_KEY_REQUEST_JSON")
-        if (!requestJson.isNullOrEmpty()) {
-            val requestJsonObject = JSONObject(requestJson)
-            val rp: JSONObject = requestJsonObject.getJSONObject("rp")
-            val id: String = rp.getString("id")
-            passkeyCount = passkeyRepository.getSitePasskeysSize(id) ?: 0
-        }
 
         when (request) {
             is BeginCreatePublicKeyCredentialRequest -> {
-                return BeginCreateCredentialResponse.Builder().addCreateEntry(
-                    createEntry(
-                        passkeyCount,
-                        createNewPendingIntent(CREATE_PASSKEY_INTENT)
-                    ),
-                ).build()
+                val seedInfo = passkeyRepository.getAllCustomHdSeedInfo()
+                val builder = BeginCreateCredentialResponse.Builder()
+
+                seedInfo.forEach {
+                    if (!requestJson.isNullOrEmpty()) {
+                        val requestJsonObject = JSONObject(requestJson)
+                        val rp: JSONObject = requestJsonObject.getJSONObject("rp")
+                        val id: String = rp.getString("id")
+                        passkeyCount = passkeyRepository.getSitePasskeysSize(id) ?: 0
+                    }
+                    val data = Bundle()
+                    data.putInt(KEY_SEED_ID, it.seedId)
+                    builder.addCreateEntry(
+                        createEntry(
+                            it.entropyCustomName,
+                            passkeyCount,
+                            createNewPendingIntent(CREATE_PASSKEY_INTENT, data)
+                        )
+                    )
+                }
+                return builder.build()
             }
         }
         return null
@@ -274,7 +301,7 @@ class ProviderService : CredentialProviderService() {
     }
 
     companion object {
-        const val APPLICATION_ACCOUNT = "com.algorand.android.credentials"
+        const val KEY_SEED_ID = "SEED-ID"
         private const val OPEN_APP_INTENT = "com.algorand.android.OPEN_APP"
         private const val CREATE_PASSKEY_INTENT =
             "com.algorand.android.credentials.CREATE_PASSKEY"

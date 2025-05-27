@@ -4,7 +4,7 @@ import java.security.KeyPair
 
 
 interface PasskeyManager {
-    fun signPasskey(seedId: String, origin: String, userHandle: String, payload: ByteArray): ByteArray
+    fun signPasskey(seedId: Int, origin: String, userHandle: String, payload: ByteArray): ByteArray
     fun generateCredentialId(keyPair: KeyPair): ByteArray
-    fun derivePasskey(seedId: String, origin: String, userHandle: String): KeyPair
+    fun derivePasskey(seedId: Int, origin: String, userHandle: String): KeyPair
 }

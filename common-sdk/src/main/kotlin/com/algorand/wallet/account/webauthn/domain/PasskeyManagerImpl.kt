@@ -1,14 +1,18 @@
 package com.algorand.wallet.account.webauthn.domain
 
+import cash.z.ecc.android.bip39.Mnemonics
+import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
+import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import foundation.algorand.deterministicP256.DeterministicP256
+import kotlinx.coroutines.runBlocking
 import java.security.KeyPair
 import java.security.MessageDigest
 import javax.inject.Inject
 
-class PasskeyManagerImpl @Inject constructor() : PasskeyManager {
+class PasskeyManagerImpl @Inject internal constructor(
+    private val hdSeedRepository: HdSeedRepository,
+) : PasskeyManager {
     private var xPasskey = DeterministicP256()
-    // TODO: move to parameter
-    private val key = xPasskey.genDerivedMainKeyWithBIP39("salon zoo engage submit smile frost later decide wing sight chaos renew lizard rely canal coral scene hobby scare step bus leaf tobacco slice")
 
     /**
      * Signs the provided payload using the given domain-specific key pair.
@@ -21,7 +25,7 @@ class PasskeyManagerImpl @Inject constructor() : PasskeyManager {
      * @param payload A `ByteArray` containing the data to be signed.
      * @return A `ByteArray` representing the cryptographic signature of the payload.
      */
-    override fun signPasskey(seedId: String, origin: String, userHandle: String, payload: ByteArray): ByteArray {
+    override fun signPasskey(seedId: Int, origin: String, userHandle: String, payload: ByteArray): ByteArray {
         return xPasskey.signWithDomainSpecificKeyPair(derivePasskey(seedId, origin, userHandle), payload)
     }
     /**
@@ -57,7 +61,10 @@ class PasskeyManagerImpl @Inject constructor() : PasskeyManager {
      *                   It is used in a case-insensitive manner by converting it to lowercase.
      * @return A KeyPair object containing the generated public and private keys.
      */
-    override fun derivePasskey(seedId: String, origin: String, userHandle: String): KeyPair {
+    override fun derivePasskey(seedId: Int, origin: String, userHandle: String): KeyPair {
+        var entropy = runBlocking { hdSeedRepository.getEntropy(seedId) }
+        val key = xPasskey.genDerivedMainKeyWithBIP39(Mnemonics.MnemonicCode(entropy!!).joinToString(" "))
+        entropy.clearFromMemory()
         return xPasskey.genDomainSpecificKeypair(key, origin, userHandle.lowercase())
     }
 }

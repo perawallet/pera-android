@@ -1,28 +1,20 @@
 package com.algorand.wallet.account.webauthn.data.repository
 
+import com.algorand.wallet.account.custom.domain.model.CustomHdSeedInfo
+import com.algorand.wallet.account.custom.domain.repository.CustomHdSeedInfoRepository
+import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.account.webauthn.data.database.dao.PasskeyDao
 import com.algorand.wallet.account.webauthn.data.database.dao.SiteDao
 import com.algorand.wallet.account.webauthn.data.database.model.PasskeyEntity
 import com.algorand.wallet.account.webauthn.data.database.model.SiteEntity
 import com.algorand.wallet.account.webauthn.data.database.model.SiteWithPasskeysQuery
-import com.algorand.wallet.account.webauthn.domain.PasskeyManager
 import com.algorand.wallet.account.webauthn.domain.model.Passkey
 import com.algorand.wallet.account.webauthn.domain.repository.PasskeyRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import java.math.BigInteger
-import java.security.AlgorithmParameters
-import java.security.KeyFactory
-import java.security.KeyPair
-import java.security.spec.ECGenParameterSpec
-import java.security.spec.ECParameterSpec
-import java.security.spec.ECPrivateKeySpec
-import java.security.spec.X509EncodedKeySpec
 import javax.inject.Inject
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 /**
  * Implementation of the `PasskeyRepository` interface.
@@ -35,7 +27,8 @@ import kotlin.io.encoding.ExperimentalEncodingApi
  * @property siteDao An instance of `SiteDao` for performing database operations
  * related to sites.
  */
-class PasskeyRepositoryImpl @Inject constructor(
+class PasskeyRepositoryImpl @Inject internal constructor(
+    private val customHdSeedInfoRepository: CustomHdSeedInfoRepository,
     private val passkeyDao: PasskeyDao,
     private val siteDao: SiteDao,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -58,6 +51,10 @@ class PasskeyRepositoryImpl @Inject constructor(
             passkeyDao.clearAll()
             siteDao.clearAll()
         }
+    }
+
+    override suspend fun getAllCustomHdSeedInfo(): List<CustomHdSeedInfo>{
+        return customHdSeedInfoRepository.getAllCustomInfo()
     }
 
     override suspend fun getSitePasskeysSize(url: String): Int? {

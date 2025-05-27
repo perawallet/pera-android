@@ -186,3 +186,7 @@ fun interface GetSeedIdIfExistingEntropy {
 fun interface GetAllHdSeeds {
     suspend operator fun invoke(): List<HdSeed>
 }
+
+fun interface GetHdSeedId {
+    suspend operator fun invoke(address: String): Int?
+}

@@ -114,4 +114,10 @@ internal class HdKeyAccountRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun getHdSeedId(address: String): Int? {
+        return withContext(coroutineDispatcher) {
+            hdKeyDao.getHdSeedId(address)
+        }
+    }
 }

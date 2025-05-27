@@ -49,6 +49,9 @@ internal interface HdKeyDao {
     @Query("SELECT * FROM hd_keys WHERE :algoAddress = algo_address")
     suspend fun get(algoAddress: String): HdKeyEntity?
 
+    @Query("SELECT seed_id FROM hd_keys WHERE algo_address = :algoAddress")
+    suspend fun getHdSeedId(algoAddress: String): Int?
+
     @Query("DELETE FROM hd_keys WHERE :algoAddress = algo_address")
     suspend fun delete(algoAddress: String)
 

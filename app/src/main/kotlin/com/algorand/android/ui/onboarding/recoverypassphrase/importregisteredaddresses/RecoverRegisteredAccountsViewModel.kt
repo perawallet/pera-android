@@ -28,11 +28,9 @@ import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.core.domain.model.CreateAccount.Type
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
-import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
 import com.algorand.wallet.account.info.domain.usecase.GetRegisteredHdKeys
-import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
 import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
@@ -57,11 +55,10 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
     private val bip39Sdk: PeraBip39Sdk,
     private val accountAdditionUseCase: AccountAdditionUseCase,
     private val getRegisteredHdKeys: GetRegisteredHdKeys,
-    private val fetchRekeyedAccounts: FetchRekeyedAccounts,
+    private val fetchRekeyedAddresses: FetchRekeyedAddresses,
     private val getAccountIconDrawablePreviewByType: GetAccountIconDrawablePreviewByType,
     private val stateDelegate: StateDelegate<ViewState>,
-    private val eventDelegate: EventDelegate<ViewEvent>,
-    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress
+    private val eventDelegate: EventDelegate<ViewEvent>
 ) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
     private val accountCreation: AccountCreation = savedStateHandle["accountCreation"]
@@ -164,26 +161,25 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
         return supervisorScope {
             val deferredFetchRekeyedAccounts = selectedAddresses.map {
                 async {
-                    val rekeyedAddresses = fetchRekeyedAccounts(it.address)
+                    val notImportedRekeyedAddresses = fetchRekeyedAddresses(it.address)
                         .getDataOrNull()
+                        ?.notImportedAddresses
                         .orEmpty()
-                        .filter { !isThereAnyAccountWithAddress(it.address) }
-                    it.address to rekeyedAddresses
+                    it.address to notImportedRekeyedAddresses
                 }
             }
             deferredFetchRekeyedAccounts
                 .awaitAll()
-                .mapNotNull { (authAddress, rekeyedAccountInfos) ->
-                    getRekeyedAccountSelectionNavArg(authAddress, rekeyedAccountInfos)
+                .mapNotNull { (authAddress, rekeyedAddresses) ->
+                    getRekeyedAccountSelectionNavArg(authAddress, rekeyedAddresses)
                 }
         }
     }
 
     private fun getRekeyedAccountSelectionNavArg(
         authAddress: String,
-        rekeyedAccountInfos: List<AccountInformation>
+        rekeyedAddresses: List<String>
     ): RekeyedAccountSelectionNavArg? {
-        val rekeyedAddresses = rekeyedAccountInfos.map { rekeyedAccountInfo -> rekeyedAccountInfo.address }
         if (rekeyedAddresses.isEmpty()) return null
         return RekeyedAccountSelectionNavArg(
             authAddress = authAddress,

@@ -13,9 +13,7 @@
 package com.algorand.android.modules.accountcore.ui.usecase
 
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.wallet.account.detail.domain.model.AccountType
 
-interface GetAccountOriginalStateIconDrawablePreview {
-    suspend operator fun invoke(address: String): AccountIconDrawablePreview
-    suspend operator fun invoke(accountType: AccountType?): AccountIconDrawablePreview
+fun interface GetWalletIconDrawablePreview {
+    operator fun invoke(): AccountIconDrawablePreview
 }

@@ -41,4 +41,6 @@ internal interface HdKeyAccountRepository {
     suspend fun getPrivateKey(address: String): ByteArray?
 
     suspend fun getHdWalletSummaries(): List<HdWalletSummary>
+
+    suspend fun getHdSeedId(address: String): Int?
 }

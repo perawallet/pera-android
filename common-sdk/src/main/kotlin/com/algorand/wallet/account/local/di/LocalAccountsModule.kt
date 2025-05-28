@@ -63,6 +63,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetHasAnyHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
 import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
+import com.algorand.wallet.account.local.domain.usecase.GetHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.GetHdWalletSummaries
 import com.algorand.wallet.account.local.domain.usecase.GetLedgerBleAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
@@ -332,4 +333,8 @@ internal object LocalAccountsModule {
     fun provideGetHdWalletSummaries(repository: HdKeyAccountRepository): GetHdWalletSummaries =
         GetHdWalletSummaries(repository::getHdWalletSummaries)
 
+    @Provides
+    fun provideGetHdSeedId(repository: HdKeyAccountRepository): GetHdSeedId {
+        return GetHdSeedId(repository::getHdSeedId)
+    }
 }

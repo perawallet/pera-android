@@ -31,7 +31,7 @@ import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
-import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
@@ -44,7 +44,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val recoverWithPassphrasePreviewMapper: RecoverWithPassphrasePreviewMapper,
     private val passphraseInputGroupUseCase: PassphraseInputGroupUseCase,
     private val passphraseInputConfigurationUtil: PassphraseInputConfigurationUtil,
-    private val fetchRekeyedAccounts: FetchRekeyedAccounts,
+    private val fetchRekeyedAddresses: FetchRekeyedAddresses,
     private val peraBip39Sdk: PeraBip39Sdk,
     private val algoAccountSdk: AlgoAccountSdk,
     private val getAccountRegistrationType: GetAccountRegistrationType,
@@ -166,15 +166,15 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                     }
                 }
 
-                fetchRekeyedAccounts(accountAddress).use(
+                fetchRekeyedAddresses(accountAddress).use(
                     onSuccess = {
-                        val updatedPreview = if (it.isEmpty()) {
+                        val updatedPreview = if (it.notImportedAddresses.isEmpty()) {
                             preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
                         } else {
                             val rekeyedAccountSelectionNavArg = RekeyedAccountSelectionNavArg(
                                 authAddress = accountAddress,
                                 authAddressIconDrawablePreview = getAccountIconDrawablePreview(recoveredAccount.type),
-                                rekeyedAccountAddresses = it.map { it.address }
+                                rekeyedAccountAddresses = it.notImportedAddresses
                             )
                             val event = Event(recoveredAccount to rekeyedAccountSelectionNavArg)
                             preview.copy(navToImportRekeyedAccountEvent = event)

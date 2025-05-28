@@ -17,8 +17,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -27,8 +26,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Idle
+import com.algorand.android.ui.compose.theme.PeraTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountStatusBottomSheetScreen(
     listener: AccountStatusBottomSheetScreenListener,
@@ -39,7 +38,7 @@ fun AccountStatusBottomSheetScreen(
             modifier = Modifier
                 .padding(top = 12.dp)
                 .size(width = 36.dp, height = 4.dp)
-                .background(color = BottomSheetDefaults.ScrimColor)
+                .background(color = PeraTheme.colors.background.bottomSheetLine, shape = RoundedCornerShape(2.dp))
         )
         when (val state = viewModel.state.collectAsStateWithLifecycle().value) {
             Idle -> Unit

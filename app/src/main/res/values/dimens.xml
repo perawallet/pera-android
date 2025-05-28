@@ -201,4 +201,6 @@
     <dimen name="action_button_corner_radius">8dp</dimen>
 
     <dimen name="rekey_confirmation_bottom_padding">240dp</dimen>
+
+    <dimen name="discover_search_bar_height">88dp</dimen>
 </resources>

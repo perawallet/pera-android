@@ -15,7 +15,8 @@ package com.algorand.android.discover.home.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
-import android.widget.SearchView.OnQueryTextListener
+import androidx.appcompat.widget.SearchView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.paging.CombinedLoadStates
@@ -39,7 +40,6 @@ import com.algorand.android.discover.utils.getDiscoverAuthHeader
 import com.algorand.android.discover.utils.getDiscoverCustomUrl
 import com.algorand.android.discover.utils.getDiscoverHomeUrl
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.utils.browser.openExternalBrowserApp
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
@@ -58,16 +58,11 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
     PeraMobileWebInterface.WebInterfaceListener,
     BottomNavBarFragmentDelegation by BottomNavBarFragmentDelegationImpl() {
 
-    private val toolbarConfiguration = ToolbarConfiguration()
-
     override val discoverViewModel: DiscoverHomeViewModel by viewModels()
 
     override lateinit var binding: FragmentDiscoverHomeBinding
 
-    override val fragmentConfiguration = FragmentConfiguration(
-        toolbarConfiguration = toolbarConfiguration,
-        isBottomBarNeeded = true
-    )
+    override val fragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     private val discoverHomePreviewCollector: suspend (DiscoverHomePreview) -> Unit = { preview ->
         with(preview) {
@@ -118,7 +113,7 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
         }
     }
 
-    private val searchViewQueryTextListener = object : OnQueryTextListener {
+    private val searchViewQueryTextListener = object : SearchView.OnQueryTextListener {
         override fun onQueryTextSubmit(query: String?): Boolean {
             view?.hideKeyboard()
             return false
@@ -206,7 +201,16 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
                 discoverViewModel.requestSearchVisible(false)
             }
             tryAgainButton.setOnClickListener { discoverViewModel.requestLoadHomepage() }
+
+            updateHeaderState()
         }
+    }
+
+    private fun updateHeaderState() {
+        val params = binding.headerBottomGuideline.layoutParams as ConstraintLayout.LayoutParams
+        val guideBeginPx = resources.getDimensionPixelSize(R.dimen.discover_search_bar_height)
+        params.guideBegin = if (discoverViewModel.isV5Enabled()) 0 else guideBeginPx
+        binding.headerBottomGuideline.layoutParams = params
     }
 
     private fun updateUi(preview: DiscoverHomePreview) {

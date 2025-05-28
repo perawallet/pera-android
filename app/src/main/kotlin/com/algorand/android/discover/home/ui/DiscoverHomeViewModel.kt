@@ -24,6 +24,8 @@ import com.algorand.android.discover.home.ui.usecase.DiscoverHomeUseCase
 import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
 import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.utils.preference.ThemePreference
+import com.algorand.wallet.remoteconfig.domain.usecase.DISCOVER_V5_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,7 +43,8 @@ class DiscoverHomeViewModel @Inject constructor(
     private val discoverHomePreviewUseCase: DiscoverHomePreviewUseCase,
     private val discoverHomeEventTracker: DiscoverHomeEventTracker,
     private val discoverHomeUseCase: DiscoverHomeUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
+    savedStateHandle: SavedStateHandle
 ) : BaseDiscoverViewModel() {
 
     private val assetSearchPagerBuilder = AssetSearchPagerBuilder.create()
@@ -194,7 +197,7 @@ class DiscoverHomeViewModel @Inject constructor(
             _discoverHomePreviewFlow
                 .emit(
                     discoverHomePreviewUseCase
-                    .onPageRequestedShouldOverrideUrlLoading(_discoverHomePreviewFlow.value),
+                        .onPageRequestedShouldOverrideUrlLoading(_discoverHomePreviewFlow.value),
                 )
         }
         return false
@@ -215,6 +218,7 @@ class DiscoverHomeViewModel @Inject constructor(
     }
 
     override fun onHttpError() {
+
         viewModelScope.launch {
             _discoverHomePreviewFlow
                 .emit(discoverHomePreviewUseCase.onHttpError(_discoverHomePreviewFlow.value))
@@ -227,6 +231,10 @@ class DiscoverHomeViewModel @Inject constructor(
 
     fun isConnectedToTestnet(): Boolean {
         return getIsActiveNodeTestnetUseCase.invoke()
+    }
+
+    fun isV5Enabled(): Boolean {
+        return isFeatureToggleEnabled(DISCOVER_V5_TOGGLE)
     }
 
     companion object {

@@ -13,7 +13,9 @@
 package com.algorand.android.ui.accountstatus.di
 
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusAccountActionProcessor
+import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusTypeDetailProcessor
 import com.algorand.android.ui.accountstatus.viewmodel.DefaultAccountStatusAccountActionProcessor
+import com.algorand.android.ui.accountstatus.viewmodel.DefaultAccountStatusTypeDetailProcessor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,4 +29,9 @@ internal object AccountStatusUiModule {
     fun provideAccountStatusAccountActionProcessor(
         impl: DefaultAccountStatusAccountActionProcessor
     ): AccountStatusAccountActionProcessor = impl
+
+    @Provides
+    fun provideAccountStatusTypeDetailProcessor(
+        impl: DefaultAccountStatusTypeDetailProcessor
+    ): AccountStatusTypeDetailProcessor = impl
 }

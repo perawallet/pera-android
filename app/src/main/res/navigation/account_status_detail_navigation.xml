@@ -28,7 +28,7 @@
 
     <dialog
         android:id="@+id/accountStatusDetailBottomSheet"
-        android:name="com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailBottomSheet"
+        android:name="com.algorand.android.ui.accountstatus.view.AccountStatusDetailBottomSheet"
         android:label="AccountStatusDetailBottomSheet"
         tools:layout="@layout/bottom_sheet_account_status_detail">
         <argument

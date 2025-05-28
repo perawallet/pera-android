@@ -13,8 +13,8 @@
 package com.algorand.android.ui.accountstatus.viewmodel
 
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
-import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content.AccountAction
+import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content.AccountStatusTypeDetail
 
-interface AccountStatusAccountActionProcessor {
-    suspend fun getAccountActions(accountLite: AccountLite): List<AccountAction>
+interface AccountStatusTypeDetailProcessor {
+    suspend fun getAccountStatusTypeDetail(accountLite: AccountLite): AccountStatusTypeDetail?
 }

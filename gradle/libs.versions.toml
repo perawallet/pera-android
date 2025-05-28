@@ -79,13 +79,13 @@ peraWalletConnect = "1.0.1"
 retrofit = "2.11.0"
 review = "2.0.2"
 room = "2.7.0-alpha07"
+screenshot = "0.0.1-alpha07"
 sqlite = "2.5.0-alpha11"
 runner = "1.6.2"
 tink = "1.14.0"
 xhdwalletapi = "1.1.0"
 walletConnectBom = "1.34.1"
 zxing = "4.3.0"
-screenshot = "0.0.1-alpha07"
 
 [libraries]
 
@@ -256,10 +256,10 @@ android-application = { id = "com.android.application", version.ref = "android-a
 buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+hilt = { id = "dagger.hilt.android.plugin", version.ref = "hilt" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "room" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-hilt = { id = "dagger.hilt.android.plugin", version.ref = "hilt" }
 screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot"}

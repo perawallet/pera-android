@@ -20,7 +20,7 @@ import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.supervisorScope
 
 internal class GetRegisteredHdKeysUseCase @Inject constructor(
     private val getLocalAccountsAddresses: GetLocalAccountsAddresses,
@@ -38,7 +38,7 @@ internal class GetRegisteredHdKeysUseCase @Inject constructor(
             return getFirstAccountFirstAddress(entropy, localAccountAddresses)
         }
 
-        val activeHdAccountAddresses = coroutineScope {
+        val activeHdAccountAddresses = supervisorScope {
             activeHdAccounts.map { activeHdAccount ->
                 async {
                     getActiveHdAccountAddresses(activeHdAccount)

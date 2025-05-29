@@ -17,6 +17,10 @@ import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
 import com.algorand.wallet.account.info.domain.model.HdKeyDetail
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import javax.inject.Inject
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.supervisorScope
 
 internal class GetActiveHdAccountsUseCase @Inject constructor(
     private val peraBip39Sdk: PeraBip39Sdk,
@@ -28,19 +32,44 @@ internal class GetActiveHdAccountsUseCase @Inject constructor(
         val activeHdAccounts = mutableListOf<ActiveHdAccount>()
         var accountIndex = 0
         while (true) {
-            val firstBatchHdKeyDetails = getFirstHdKeyDetailsBatch(accountIndex, entropy)
-            val addresses = firstBatchHdKeyDetails.map { it.algoAddress }
-            val firstBatchAccountFastLookup = getAccountFastLookupBatch(addresses)
-            val isAccountActive = firstBatchAccountFastLookup.any { it.value?.accountExists == true }
-            if (isAccountActive) {
-                val hdAccountAddresses = hdAccountAddressMapper(firstBatchHdKeyDetails, firstBatchAccountFastLookup)
-                activeHdAccounts.add(ActiveHdAccount(accountIndex, entropy, hdAccountAddresses))
-                accountIndex++
-            } else {
+            val activeAccountsBatch = getActiveAccountsBatchDeferred(accountIndex, entropy)
+                .awaitAll()
+                .filterNotNull()
+
+            if (activeAccountsBatch.isEmpty()) {
                 break
+            } else {
+                activeHdAccounts.addAll(activeAccountsBatch)
+                accountIndex += SEARCH_BATCH_COUNT
             }
         }
         return activeHdAccounts
+    }
+
+    private suspend fun getActiveAccountsBatchDeferred(
+        accountIndex: Int,
+        entropy: ByteArray
+    ): List<Deferred<ActiveHdAccount?>> {
+        return supervisorScope {
+            (accountIndex until accountIndex + SEARCH_BATCH_COUNT).map { index ->
+                async {
+                    getActiveHdAccountIfExist(index, entropy)
+                }
+            }
+        }
+    }
+
+    private suspend fun getActiveHdAccountIfExist(accountIndex: Int, entropy: ByteArray): ActiveHdAccount? {
+        val firstBatchHdKeyDetails = getFirstHdKeyDetailsBatch(accountIndex, entropy)
+        val addresses = firstBatchHdKeyDetails.map { it.algoAddress }
+        val firstBatchAccountFastLookup = getAccountFastLookupBatch(addresses)
+        val isAccountActive = firstBatchAccountFastLookup.any { it.value?.accountExists == true }
+        return if (isAccountActive) {
+            val hdAccountAddresses = hdAccountAddressMapper(firstBatchHdKeyDetails, firstBatchAccountFastLookup)
+            ActiveHdAccount(accountIndex, entropy, hdAccountAddresses)
+        } else {
+            null
+        }
     }
 
     private fun getFirstHdKeyDetailsBatch(accountIndex: Int, entropy: ByteArray): List<HdKeyDetail> {

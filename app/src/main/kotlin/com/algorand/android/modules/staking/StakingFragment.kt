@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.algorand.android.R
 import com.algorand.android.databinding.FragmentStakingBinding
@@ -41,8 +42,10 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.hide
 import com.algorand.android.utils.extensions.show
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
 
@@ -166,14 +169,16 @@ class StakingFragment : BasePeraWebViewFragment(R.layout.fragment_staking),
 
     override fun openDappWebview(jsonEncodedPayload: String) {
         stakingViewModel.getOpenDappWebview(jsonEncodedPayload)?.let { dappInfo ->
-            nav(
-                StakingFragmentDirections.actionStakingFragmentToDiscoverDappNavigation(
-                    dappUrl = dappInfo.url ?: stakingViewModel.getStakingUrl(),
-                    dappTitle = dappInfo.name ?: "",
-                    favorites = null, // always empty for now
-                    showFavorites = false
+            lifecycleScope.launch(Dispatchers.Main.immediate) {
+                nav(
+                    StakingFragmentDirections.actionStakingFragmentToDiscoverDappNavigation(
+                        dappUrl = dappInfo.url ?: stakingViewModel.getStakingUrl(),
+                        dappTitle = dappInfo.name ?: "",
+                        favorites = null, // always empty for now
+                        showFavorites = false
+                    )
                 )
-            )
+            }
         }
     }
 

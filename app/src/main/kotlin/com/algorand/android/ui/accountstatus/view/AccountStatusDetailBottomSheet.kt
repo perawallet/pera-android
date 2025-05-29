@@ -26,6 +26,7 @@ import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewEvent.HideFetchingRekeyedAccountsDialog
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewEvent.NavToNoRekeyedAccounts
+import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewEvent.NavToRecoverRegisteredAccounts
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewEvent.NavToRekeyedAccountSelection
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewEvent.ShowFetchingRekeyedAccountsDialog
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewEvent.ShowGenericError
@@ -69,6 +70,14 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
         when (event) {
             HideFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.dismiss()
             ShowFetchingRekeyedAccountsDialog -> fetchingRekeyedAccountsDialogDelegate.show(requireContext())
+            is NavToRecoverRegisteredAccounts -> {
+                nav(
+                    AccountStatusDetailBottomSheetDirections
+                        .actionAccountStatusDetailBottomSheetToRecoverRegisteredAccountsNavigation(
+                            event.encryptedEntropyBase64
+                        )
+                )
+            }
             NavToNoRekeyedAccounts -> navToNoRekeyedAccounts()
             is NavToRekeyedAccountSelection -> navToRekeyedAccountSelection(event)
             ShowGenericError -> showGlobalError(getString(R.string.an_error_occured))
@@ -125,7 +134,7 @@ class AccountStatusDetailBottomSheet : BaseBottomSheet(R.layout.bottom_sheet_acc
     }
 
     override fun onScanRegisteredAddressesClick() {
-        // TODO will be implemented - PERA-1582
+        viewModel.navigateToRecoverRegisteredAccounts(args.accountAddress)
     }
 
     override fun onLearnMoreClick(url: String) {

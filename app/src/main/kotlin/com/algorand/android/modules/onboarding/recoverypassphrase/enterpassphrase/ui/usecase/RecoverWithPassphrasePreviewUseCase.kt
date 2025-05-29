@@ -16,6 +16,7 @@ import com.algorand.android.R
 import com.algorand.android.customviews.passphraseinput.usecase.PassphraseInputGroupUseCase
 import com.algorand.android.customviews.passphraseinput.util.PassphraseInputConfigurationUtil
 import com.algorand.android.models.AccountCreation
+import com.algorand.android.models.AccountCreation.Type
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewByType
@@ -35,6 +36,7 @@ import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
@@ -49,6 +51,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
     private val algoAccountSdk: AlgoAccountSdk,
     private val getAccountRegistrationType: GetAccountRegistrationType,
     private val aesPlatformManager: AESPlatformManager,
+    private val base64Manager: Base64Manager,
     private val getAccountIconDrawablePreviewByType: GetAccountIconDrawablePreviewByType
 ) {
 
@@ -189,6 +192,11 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                         emit(updatedPreview)
                     }
                 )
+            } else if (onboardingAccountType == OnboardingAccountType.HdKey) {
+                val encryptedEntropy = (recoveredAccount.type as? Type.HdKey)?.encryptedEntropy ?: return@flow
+                val encryptedEntropyBase64 = base64Manager.encode(encryptedEntropy)
+                val updatedPreview = preview.copy(navToRecoverRegisteredAccountsEvent = Event(encryptedEntropyBase64))
+                emit(updatedPreview)
             } else {
                 val updatedPreview = preview.copy(navToNameRegistrationEvent = Event(recoveredAccount))
                 emit(updatedPreview)
@@ -198,12 +206,12 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
         }
     }
 
-    private fun getAccountIconDrawablePreview(accountType: AccountCreation.Type): AccountIconDrawablePreview {
+    private fun getAccountIconDrawablePreview(accountType: Type): AccountIconDrawablePreview {
         return when (accountType) {
-            is AccountCreation.Type.Algo25 -> getAccountIconDrawablePreviewByType(AccountType.Algo25)
-            is AccountCreation.Type.HdKey -> getAccountIconDrawablePreviewByType(AccountType.HdKey)
-            is AccountCreation.Type.LedgerBle -> getAccountIconDrawablePreviewByType(AccountType.LedgerBle)
-            AccountCreation.Type.NoAuth -> getAccountIconDrawablePreviewByType(AccountType.NoAuth)
+            is Type.Algo25 -> getAccountIconDrawablePreviewByType(AccountType.Algo25)
+            is Type.HdKey -> getAccountIconDrawablePreviewByType(AccountType.HdKey)
+            is Type.LedgerBle -> getAccountIconDrawablePreviewByType(AccountType.LedgerBle)
+            Type.NoAuth -> getAccountIconDrawablePreviewByType(AccountType.NoAuth)
         }
     }
 
@@ -221,7 +229,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                     address = algo25account.address,
                     customName = algo25account.address.toShortenedAddress(),
                     isBackedUp = true,
-                    type = AccountCreation.Type.Algo25(aesPlatformManager.encryptByteArray(algo25account.secretKey)),
+                    type = Type.Algo25(aesPlatformManager.encryptByteArray(algo25account.secretKey)),
                     creationType = RECOVER
                 )
             }
@@ -232,7 +240,7 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                     address = accountAddress,
                     customName = accountAddress.toShortenedAddress(),
                     isBackedUp = true,
-                    type = AccountCreation.Type.HdKey(
+                    type = Type.HdKey(
                         publicKey = ByteArray(0),
                         encryptedPrivateKey = ByteArray(0),
                         encryptedEntropy = aesPlatformManager.encryptByteArray(entropy),

@@ -29,6 +29,10 @@ import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewMo
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
+import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
+import com.algorand.wallet.account.local.domain.usecase.GetHdSeedId
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -51,6 +55,10 @@ class AccountStatusDetailViewModel @Inject constructor(
     private val accountActionProcessor: AccountStatusAccountActionProcessor,
     private val statusTypeProcessor: AccountStatusTypeDetailProcessor,
     private val accountStatusDetailPreviewDecider: AccountStatusDetailPreviewDecider,
+    private val getHdSeedId: GetHdSeedId,
+    private val getHdEntropy: GetHdEntropy,
+    private val base64Manager: Base64Manager,
+    private val aesPlatformManager: AESPlatformManager,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
@@ -125,6 +133,16 @@ class AccountStatusDetailViewModel @Inject constructor(
         }
     }
 
+    fun navigateToRecoverRegisteredAccounts(address: String) {
+        viewModelScope.launch {
+            val hdSeed = getHdSeedId(address) ?: return@launch
+            val entropy = getHdEntropy(hdSeed) ?: return@launch
+            val encryptedEntropy = aesPlatformManager.encryptByteArray(entropy)
+            val encryptedEntropyBase64 = base64Manager.encode(encryptedEntropy)
+            eventDelegate.sendEvent(ViewEvent.NavToRecoverRegisteredAccounts(encryptedEntropyBase64))
+        }
+    }
+
     sealed interface ViewState {
         data object Idle : ViewState
 
@@ -177,6 +195,7 @@ class AccountStatusDetailViewModel @Inject constructor(
     sealed interface ViewEvent {
         data object ShowFetchingRekeyedAccountsDialog : ViewEvent
         data object HideFetchingRekeyedAccountsDialog : ViewEvent
+        data class NavToRecoverRegisteredAccounts(val encryptedEntropyBase64: String) : ViewEvent
         data class NavToRekeyedAccountSelection(
             val authAddress: String,
             val authDrawable: AccountIconDrawablePreview,

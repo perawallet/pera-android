@@ -15,7 +15,8 @@ package com.algorand.wallet.account.info.domain.usecase
 import com.algorand.test.peraFixture
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import com.algorand.wallet.account.info.domain.model.ActiveHdAccount.HdAccountAddress
-import com.algorand.wallet.account.info.domain.model.HdKeyDetail
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressLite
 
 internal class GetActiveHdAccountsUseCaseTestHelper(accountCount: Int, addressCount: Int) {
 
@@ -33,9 +34,11 @@ internal class GetActiveHdAccountsUseCaseTestHelper(accountCount: Int, addressCo
         return accounts[AccountIndex(accountIndex)]!!.map { it.address }
     }
 
-    fun getAccountIndexAndAddressesPair(): List<Pair<Int, List<String>>> {
+    fun getAccountIndexAndAddressesPair(): List<Pair<Int, List<HdKeyAddressLite>>> {
         return accounts.map { (account, addresses) ->
-            account.index to addresses.map { it.address }
+            account.index to addresses.map {
+                HdKeyAddressLite(it.address, HdKeyAddressIndex(account.index, 0, keyIndex = it.index))
+            }
         }
     }
 
@@ -61,9 +64,9 @@ internal class GetActiveHdAccountsUseCaseTestHelper(accountCount: Int, addressCo
         }
     }
 
-    fun getHdKeyDetails(accountIndex: Int): List<HdKeyDetail> {
+    fun getHdKeyDetails(accountIndex: Int): List<HdKeyAddressLite> {
         return accounts[AccountIndex(accountIndex)]!!.map { address ->
-            HdKeyDetail(address.address, accountIndex, 0, keyIndex = address.index)
+            HdKeyAddressLite(address.address, HdKeyAddressIndex(accountIndex, 0, keyIndex = address.index))
         }
     }
 

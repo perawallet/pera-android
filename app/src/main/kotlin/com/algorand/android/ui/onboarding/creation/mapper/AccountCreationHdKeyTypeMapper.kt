@@ -10,10 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.transaction.sdk
+package com.algorand.android.ui.onboarding.creation.mapper
 
-interface PeraBip39Sdk {
-    fun getSeedFromEntropy(entropy: ByteArray): ByteArray?
-    fun getEntropyFromMnemonic(mnemonic: String): ByteArray?
-    fun getMnemonicFromEntropy(entropy: ByteArray): String?
+import com.algorand.android.models.AccountCreation
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddress
+
+fun interface AccountCreationHdKeyTypeMapper {
+    operator fun invoke(entropy: ByteArray, hdKeyAddress: HdKeyAddress, seedId: Int?): AccountCreation.Type.HdKey
 }

@@ -15,7 +15,9 @@ package com.algorand.wallet.account.info.domain.usecase
 import com.algorand.wallet.account.info.domain.mapper.HdAccountAddressMapper
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
-import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -26,12 +28,15 @@ import org.junit.Test
 
 class GetActiveHdAccountsUseCaseTest {
 
-    private val peraBip39Sdk: PeraBip39Sdk = mockk(relaxed = true)
+    private val bip39Wallet: Bip39Wallet = mockk(relaxed = true)
+    private val bip39WalletProvider: Bip39WalletProvider = mockk {
+        every { getBip39Wallet(ENTROPY) } returns bip39Wallet
+    }
     private val getAccountFastLookupBatch: GetAccountFastLookupBatch = mockk()
     private val hdAccountAddressMapper: HdAccountAddressMapper = mockk()
 
     private val sut = GetActiveHdAccountsUseCase(
-        peraBip39Sdk = peraBip39Sdk,
+        bip39WalletProvider = bip39WalletProvider,
         getAccountFastLookupBatch = getAccountFastLookupBatch,
         hdAccountAddressMapper = hdAccountAddressMapper
     )
@@ -110,7 +115,9 @@ class GetActiveHdAccountsUseCaseTest {
     private fun mockPeraBip39SdkGenerateHdKeyAddress(testHelper: GetActiveHdAccountsUseCaseTestHelper) {
         testHelper.getAccountIndexAndAddressesPair().forEach { (accountIndex, addresses) ->
             addresses.forEachIndexed { addressIndex, address ->
-                every { peraBip39Sdk.generateHdKeyAddress(ENTROPY, accountIndex, 0, addressIndex) } returns address
+                every {
+                    bip39Wallet.generateAddressLite(HdKeyAddressIndex(accountIndex, 0, addressIndex))
+                } returns address
             }
         }
     }
@@ -127,7 +134,7 @@ class GetActiveHdAccountsUseCaseTest {
 
     private fun verifyGetAccountFastLookupBatchInvokeCount(testHelper: GetActiveHdAccountsUseCaseTestHelper) {
         testHelper.getAccountIndexAndAddressesPair().forEach { (_, addresses) ->
-            coVerify(exactly = 1) { getAccountFastLookupBatch(addresses) }
+            coVerify(exactly = 1) { getAccountFastLookupBatch(addresses.map { it.address }) }
         }
     }
 

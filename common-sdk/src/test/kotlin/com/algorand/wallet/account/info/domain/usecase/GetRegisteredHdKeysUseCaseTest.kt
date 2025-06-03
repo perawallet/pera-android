@@ -19,7 +19,10 @@ import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
 import com.algorand.wallet.account.info.domain.model.ActiveHdAccount.HdAccountAddress
 import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
-import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressLite
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -33,8 +36,11 @@ class GetRegisteredHdKeysUseCaseTest {
     private val getActiveHdAccounts: GetActiveHdAccounts = mockk()
     private val getActiveHdAccountAddresses: GetActiveHdAccountAddresses = mockk()
     private val registeredHdKeyMapper: RegisteredHdKeyMapper = mockk()
-    private val peraBip39Sdk: PeraBip39Sdk = mockk {
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 0) } returns FIRST_ADDRESS
+    private val bip39Wallet: Bip39Wallet = mockk(relaxed = true) {
+        every { generateAddressLite(HdKeyAddressIndex()) } returns HdKeyAddressLite(FIRST_ADDRESS, HdKeyAddressIndex())
+    }
+    private val bip39WalletProvider: Bip39WalletProvider = mockk {
+        every { getBip39Wallet(ENTROPY) } returns bip39Wallet
     }
 
     private val sut = GetRegisteredHdKeysUseCase(
@@ -42,7 +48,7 @@ class GetRegisteredHdKeysUseCaseTest {
         getActiveHdAccounts = getActiveHdAccounts,
         getActiveHdAccountAddresses = getActiveHdAccountAddresses,
         registeredHdKeyMapper = registeredHdKeyMapper,
-        peraBip39Sdk = peraBip39Sdk
+        bip39WalletProvider = bip39WalletProvider
     )
 
     @Test
@@ -87,7 +93,9 @@ class GetRegisteredHdKeysUseCaseTest {
         coEvery { getLocalAccountsAddresses() } returns listOf(ADDRESS_1, ADDRESS_2)
         coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_1) } returns listOf(FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS)
         coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_2) } returns listOf(SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS)
-        every { peraBip39Sdk.generateHdKeyAddress(ENTROPY, 0, 0, 0) } returns ADDRESS_1
+        every {
+            bip39Wallet.generateAddressLite(HdKeyAddressIndex())
+        } returns HdKeyAddressLite(ADDRESS_1, HdKeyAddressIndex())
         coEvery {
             registeredHdKeyMapper(
                 FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS,
@@ -122,7 +130,9 @@ class GetRegisteredHdKeysUseCaseTest {
         coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_1) } returns listOf(firstAccountAddress)
         coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_2) } returns listOf(secondAccountAddress)
         coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_3) } returns listOf(THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS)
-        every { peraBip39Sdk.generateHdKeyAddress(ENTROPY, 0, 0, 0) } returns ADDRESS_1
+        every {
+            bip39Wallet.generateAddressLite(HdKeyAddressIndex())
+        } returns HdKeyAddressLite(ADDRESS_1, HdKeyAddressIndex())
         coEvery {
             registeredHdKeyMapper(
                 THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS,

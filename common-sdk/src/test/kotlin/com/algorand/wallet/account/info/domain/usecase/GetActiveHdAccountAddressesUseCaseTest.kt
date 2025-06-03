@@ -16,8 +16,10 @@ import com.algorand.test.peraFixture
 import com.algorand.wallet.account.info.domain.mapper.HdAccountAddressMapper
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
-import com.algorand.wallet.account.info.domain.model.HdKeyDetail
-import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressLite
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -27,23 +29,17 @@ import org.junit.Test
 
 class GetActiveHdAccountAddressesUseCaseTest {
 
-    private val peraBip39Sdk: PeraBip39Sdk = mockk {
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 5) } returns ADDR_6
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 6) } returns ADDR_7
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 7) } returns ADDR_8
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 8) } returns ADDR_9
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 9) } returns ADDR_10
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 10) } returns ADDR_11
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 11) } returns ADDR_12
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 12) } returns ADDR_13
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 13) } returns ADDR_14
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 14) } returns ADDR_15
-    }
     private val getAccountFastLookupBatch: GetAccountFastLookupBatch = mockk()
     private val hdAccountAddressMapper: HdAccountAddressMapper = mockk()
+    private val bip39Wallet: Bip39Wallet = mockk(relaxed = true) {
+        mockBip39Wallet()
+    }
+    private val bip39WalletProvider: Bip39WalletProvider = mockk {
+        every { getBip39Wallet(ENTROPY) } returns bip39Wallet
+    }
 
     private val sut = GetActiveHdAccountAddressesUseCase(
-        peraBip39Sdk = peraBip39Sdk,
+        bip39WalletProvider = bip39WalletProvider,
         getAccountFastLookupBatch = getAccountFastLookupBatch,
         hdAccountAddressMapper = hdAccountAddressMapper
     )
@@ -69,6 +65,29 @@ class GetActiveHdAccountAddressesUseCaseTest {
             SECOND_BATCH_HD_ACCOUNT_ADDRESS
         ).flatten()
         assertEquals(expected, result)
+    }
+
+    private fun Bip39Wallet.mockBip39Wallet() {
+        val add6Index = HdKeyAddressIndex(0, 0, 5)
+        every { generateAddressLite(add6Index) } returns HdKeyAddressLite(ADDR_6, add6Index)
+        val add7Index = HdKeyAddressIndex(0, 0, 6)
+        every { generateAddressLite(add7Index) } returns HdKeyAddressLite(ADDR_7, add7Index)
+        val add8Index = HdKeyAddressIndex(0, 0, 7)
+        every { generateAddressLite(add8Index) } returns HdKeyAddressLite(ADDR_8, add8Index)
+        val add9Index = HdKeyAddressIndex(0, 0, 8)
+        every { generateAddressLite(add9Index) } returns HdKeyAddressLite(ADDR_9, add9Index)
+        val add10Index = HdKeyAddressIndex(0, 0, 9)
+        every { generateAddressLite(add10Index) } returns HdKeyAddressLite(ADDR_10, add10Index)
+        val add11Index = HdKeyAddressIndex(0, 0, 10)
+        every { generateAddressLite(add11Index) } returns HdKeyAddressLite(ADDR_11, add11Index)
+        val add12Index = HdKeyAddressIndex(0, 0, 11)
+        every { generateAddressLite(add12Index) } returns HdKeyAddressLite(ADDR_12, add12Index)
+        val add13Index = HdKeyAddressIndex(0, 0, 12)
+        every { generateAddressLite(add13Index) } returns HdKeyAddressLite(ADDR_13, add13Index)
+        val add14Index = HdKeyAddressIndex(0, 0, 13)
+        every { generateAddressLite(add14Index) } returns HdKeyAddressLite(ADDR_14, add14Index)
+        val add15Index = HdKeyAddressIndex(0, 0, 14)
+        every { generateAddressLite(add15Index) } returns HdKeyAddressLite(ADDR_15, add15Index)
     }
 
     private companion object {
@@ -97,11 +116,11 @@ class GetActiveHdAccountAddressesUseCaseTest {
         val ADDR_14_FAST_LOOKUP = peraFixture<AccountFastLookup>().copy(accountExists = false)
         val ADDR_15_FAST_LOOKUP = peraFixture<AccountFastLookup>().copy(accountExists = false)
 
-        val ADDR_6_HD_KEY_DETAIL = HdKeyDetail(algoAddress = ADDR_6, accountIndex = 0, changeIndex = 0, keyIndex = 5)
-        val ADDR_7_HD_KEY_DETAIL = HdKeyDetail(algoAddress = ADDR_7, accountIndex = 0, changeIndex = 0, keyIndex = 6)
-        val ADDR_8_HD_KEY_DETAIL = HdKeyDetail(algoAddress = ADDR_8, accountIndex = 0, changeIndex = 0, keyIndex = 7)
-        val ADDR_9_HD_KEY_DETAIL = HdKeyDetail(algoAddress = ADDR_9, accountIndex = 0, changeIndex = 0, keyIndex = 8)
-        val ADDR_10_HD_KEY_DETAIL = HdKeyDetail(algoAddress = ADDR_10, accountIndex = 0, changeIndex = 0, keyIndex = 9)
+        val ADDR_6_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_6, HdKeyAddressIndex(0, 0, 5))
+        val ADDR_7_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_7, HdKeyAddressIndex(0, 0, 6))
+        val ADDR_8_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_8, HdKeyAddressIndex(0, 0, 7))
+        val ADDR_9_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_9, HdKeyAddressIndex(0, 0, 8))
+        val ADDR_10_HD_KEY_DETAIL = HdKeyAddressLite(ADDR_10, HdKeyAddressIndex(0, 0, 9))
 
         val SECOND_BATCH_ADDRESSES = listOf(ADDR_6, ADDR_7, ADDR_8, ADDR_9, ADDR_10)
         val SECOND_BATCH_FAST_LOOKUP = mapOf(

@@ -17,6 +17,7 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewByType
+import com.algorand.android.ui.onboarding.creation.mapper.AccountCreationHdKeyTypeMapper
 import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewEvent
 import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState
 import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState.Content.ContentType
@@ -31,8 +32,10 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
 import com.algorand.wallet.account.info.domain.usecase.GetRegisteredHdKeys
-import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
-import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddress
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import com.algorand.wallet.viewmodel.EventDelegate
@@ -52,11 +55,12 @@ import kotlinx.coroutines.supervisorScope
 class RecoverRegisteredAccountsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val aesPlatformManager: AESPlatformManager,
-    private val bip39Sdk: PeraBip39Sdk,
+    private val bip39WalletProvider: Bip39WalletProvider,
     private val accountAdditionUseCase: AccountAdditionUseCase,
     private val getRegisteredHdKeys: GetRegisteredHdKeys,
     private val fetchRekeyedAddresses: FetchRekeyedAddresses,
     private val getAccountIconDrawablePreviewByType: GetAccountIconDrawablePreviewByType,
+    private val accountCreationHdKeyTypeMapper: AccountCreationHdKeyTypeMapper,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
@@ -147,12 +151,14 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
     private suspend fun addSelectedAddresses(selectedAddresses: List<RegisteredHdKey>) {
         val encryptedEntropy = (accountCreation.type as AccountCreation.Type.HdKey).encryptedEntropy
         val entropy = aesPlatformManager.decryptByteArray(encryptedEntropy)
+        val wallet = bip39WalletProvider.getBip39Wallet(entropy.copyOf())
         selectedAddresses.forEach { accountItem ->
-            val hdKeyAccount = createHdKeyAccount(entropy, accountItem) ?: return@forEach
-            val newAccountCreation = createAccountCreation(hdKeyAccount)
+            val hdKeyAccount = createHdKeyAddress(wallet, accountItem)
+            val newAccountCreation = createAccountCreation(entropy, hdKeyAccount)
             accountAdditionUseCase.addNewAccount(newAccountCreation)
         }
         entropy.clearFromMemory()
+        wallet.invalidate()
     }
 
     private suspend fun fetchRekeyedAddresses(
@@ -188,23 +194,16 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
         )
     }
 
-    private fun createHdKeyAccount(entropy: ByteArray, accountItem: RegisteredHdKey): HdKeyAccount? {
+    private fun createHdKeyAddress(bip39Wallet: Bip39Wallet, accountItem: RegisteredHdKey): HdKeyAddress {
         return with(accountItem) {
-            bip39Sdk.getHdKeyAccount(entropy.copyOf(), account, change, keyIndex)
+            val index = HdKeyAddressIndex(accountIndex = account, changeIndex = change, keyIndex = keyIndex)
+            bip39Wallet.generateAddress(index)
         }
     }
 
-    private fun createAccountCreation(account: HdKeyAccount): AccountCreation {
-        return with(account) {
-            val hdKeyType = AccountCreation.Type.HdKey(
-                publicKey,
-                aesPlatformManager.encryptByteArray(privateKey),
-                aesPlatformManager.encryptByteArray(entropy),
-                account.account,
-                change,
-                keyIndex,
-                derivationType,
-            )
+    private fun createAccountCreation(entropy: ByteArray, hdKeyAddress: HdKeyAddress): AccountCreation {
+        return with(hdKeyAddress) {
+            val hdKeyType = accountCreationHdKeyTypeMapper(entropy, hdKeyAddress, seedId = null)
             AccountCreation(
                 address = address,
                 customName = address.toShortenedAddress(),

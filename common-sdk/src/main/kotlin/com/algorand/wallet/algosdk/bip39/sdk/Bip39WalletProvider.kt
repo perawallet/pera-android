@@ -10,10 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.transaction.sdk
+package com.algorand.wallet.algosdk.bip39.sdk
 
-interface PeraBip39Sdk {
-    fun getSeedFromEntropy(entropy: ByteArray): ByteArray?
-    fun getEntropyFromMnemonic(mnemonic: String): ByteArray?
-    fun getMnemonicFromEntropy(entropy: ByteArray): String?
+interface Bip39WalletProvider {
+    fun getBip39Wallet(entropy: ByteArray): Bip39Wallet
+    fun createBip39Wallet(): Bip39Wallet
 }

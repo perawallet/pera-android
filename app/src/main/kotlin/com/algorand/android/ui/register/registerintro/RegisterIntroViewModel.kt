@@ -17,19 +17,22 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.RegisterIntroPreview
+import com.algorand.android.ui.onboarding.creation.mapper.AccountCreationHdKeyTypeMapper
 import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.usecase.RegisterIntroPreviewUseCase
 import com.algorand.android.usecase.RegistrationUseCase
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.getOrElse
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class RegisterIntroViewModel @Inject constructor(
@@ -38,6 +41,8 @@ class RegisterIntroViewModel @Inject constructor(
     private val isOnHdWalletUseCase: IsOnHdWalletUseCase,
     private val algoAccountSdk: AlgoAccountSdk,
     private val aesPlatformManager: AESPlatformManager,
+    private val bip39WalletProvider: Bip39WalletProvider,
+    private val accountCreationHdKeyTypeMapper: AccountCreationHdKeyTypeMapper,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -78,38 +83,26 @@ class RegisterIntroViewModel @Inject constructor(
         return isOnHdWalletUseCase.invoke()
     }
 
-    fun createHdKeyAccount(): AccountCreation? {
-        val account = algoAccountSdk.createHdAccount()
-            ?: return null
-
+    fun createHdKeyAccount(): AccountCreation {
+        val wallet = bip39WalletProvider.createBip39Wallet()
+        val hdKeyAddress = wallet.generateAddress(HdKeyAddressIndex())
+        val hdKeyType = accountCreationHdKeyTypeMapper(wallet.getEntropy().value, hdKeyAddress, seedId = null)
         return AccountCreation(
-            address = account.address,
+            address = hdKeyAddress.address,
             customName = null,
             isBackedUp = false,
-            type = AccountCreation.Type.HdKey(
-                account.publicKey,
-                aesPlatformManager.encryptByteArray(account.privateKey),
-                aesPlatformManager.encryptByteArray(account.entropy),
-                account.account,
-                account.change,
-                account.keyIndex,
-                account.derivationType,
-            ),
+            type = hdKeyType,
             creationType = CreationType.CREATE
         )
     }
 
     fun createAlgo25Account(): AccountCreation? {
-        val account = algoAccountSdk.createAlgo25Account()
-            ?: return null
-
+        val account = algoAccountSdk.createAlgo25Account() ?: return null
         return AccountCreation(
             address = account.address,
             customName = null,
             isBackedUp = false,
-            type = AccountCreation.Type.Algo25(
-                aesPlatformManager.encryptByteArray(account.secretKey)
-            ),
+            type = AccountCreation.Type.Algo25(aesPlatformManager.encryptByteArray(account.secretKey)),
             creationType = CreationType.CREATE
         )
     }

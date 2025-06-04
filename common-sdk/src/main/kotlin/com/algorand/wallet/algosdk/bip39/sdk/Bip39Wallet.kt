@@ -10,15 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.account.info.domain.mapper
+package com.algorand.wallet.algosdk.bip39.sdk
 
-import com.algorand.wallet.account.info.domain.model.AccountFastLookup
-import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
+import com.algorand.wallet.algosdk.bip39.model.Bip39Entropy
+import com.algorand.wallet.algosdk.bip39.model.Bip39Mnemonic
+import com.algorand.wallet.algosdk.bip39.model.Bip39Seed
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddress
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
 import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressLite
 
-internal interface HdAccountAddressMapper {
-    operator fun invoke(
-        hdKeyDetails: List<HdKeyAddressLite>,
-        accountFastLookupBatch: Map<String, AccountFastLookup?>
-    ): List<ActiveHdAccount.HdAccountAddress>
+interface Bip39Wallet {
+    fun getEntropy(): Bip39Entropy
+    fun getSeed(): Bip39Seed
+    fun getMnemonic(): Bip39Mnemonic
+    fun generateAddress(index: HdKeyAddressIndex): HdKeyAddress
+    fun generateAddressLite(index: HdKeyAddressIndex): HdKeyAddressLite
+    fun invalidate()
 }

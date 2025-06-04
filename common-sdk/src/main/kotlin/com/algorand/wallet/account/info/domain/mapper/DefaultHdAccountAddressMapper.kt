@@ -14,22 +14,22 @@ package com.algorand.wallet.account.info.domain.mapper
 
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import com.algorand.wallet.account.info.domain.model.ActiveHdAccount.HdAccountAddress
-import com.algorand.wallet.account.info.domain.model.HdKeyDetail
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressLite
 import javax.inject.Inject
 
 internal class DefaultHdAccountAddressMapper @Inject constructor() : HdAccountAddressMapper {
 
     override fun invoke(
-        hdKeyDetails: List<HdKeyDetail>,
+        hdKeyDetails: List<HdKeyAddressLite>,
         accountFastLookupBatch: Map<String, AccountFastLookup?>
     ): List<HdAccountAddress> {
         return hdKeyDetails.map { hdKeyDetail ->
             HdAccountAddress(
-                address = hdKeyDetail.algoAddress,
-                accountIndex = hdKeyDetail.accountIndex,
-                changeIndex = hdKeyDetail.changeIndex,
-                keyIndex = hdKeyDetail.keyIndex,
-                fastLookup = accountFastLookupBatch[hdKeyDetail.algoAddress]
+                address = hdKeyDetail.address,
+                accountIndex = hdKeyDetail.index.accountIndex,
+                changeIndex = hdKeyDetail.index.changeIndex,
+                keyIndex = hdKeyDetail.index.keyIndex,
+                fastLookup = accountFastLookupBatch[hdKeyDetail.address]
             )
         }
     }

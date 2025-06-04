@@ -10,10 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.transaction.sdk
+package com.algorand.wallet.algosdk.bip39.model
 
-interface PeraBip39Sdk {
-    fun getSeedFromEntropy(entropy: ByteArray): ByteArray?
-    fun getEntropyFromMnemonic(mnemonic: String): ByteArray?
-    fun getMnemonicFromEntropy(entropy: ByteArray): String?
+enum class HdKeyAddressDerivationType(val value: Int) {
+    Peikert(9),
+    Khovratovich(32)
 }

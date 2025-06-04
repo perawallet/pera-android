@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -61,7 +62,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun RecoverRegisteredAccountsScreen(
     viewModel: RecoverRegisteredAccountsViewModel,
-    onNavToHomeNavigation: () -> Unit,
+    onNavToHomeNavigation: (isNewAccountAdded: Boolean) -> Unit,
     onNavBack: () -> Unit,
     onNavToRekeyedAccountSelection: (List<RekeyedAccountSelectionNavArg>) -> Unit
 ) {
@@ -74,7 +75,7 @@ fun RecoverRegisteredAccountsScreen(
     LaunchedEffect(viewModel.viewEvent) {
         viewModel.viewEvent.collectLatest { event ->
             when (event) {
-                is ViewEvent.NavigateToHome -> onNavToHomeNavigation()
+                is ViewEvent.NavigateToHome -> onNavToHomeNavigation(event.isNewAccountAdded)
                 is ViewEvent.NavigateBack -> onNavBack()
                 is ViewEvent.NavigateToRekeyedAccountSelection -> onNavToRekeyedAccountSelection(event.args)
             }
@@ -138,8 +139,7 @@ private fun ContentStateContent(
                         if (index != state.registeredAccounts.lastIndex) {
                             HorizontalDivider(
                                 color = MaterialTheme.colorScheme.surfaceVariant,
-                                thickness = 1.dp,
-                                modifier = Modifier.padding(horizontal = 16.dp)
+                                thickness = 1.dp
                             )
                         }
                     }
@@ -242,6 +242,7 @@ fun AddressItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .defaultMinSize(minHeight = 76.dp)
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween

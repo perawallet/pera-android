@@ -34,7 +34,6 @@ sealed interface BaseAccountListItem : RecyclerListItem {
 
     data class QuickActionsItem(
         val isSwapButtonSelected: Boolean,
-        val isImmersveEnabled: Boolean,
         val isStakingEnabled: Boolean
     ) : BaseAccountListItem {
 

@@ -14,6 +14,7 @@ package com.algorand.wallet.account.local.domain.usecase
 
 import com.algorand.wallet.account.local.domain.repository.Algo25AccountRepository
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
+import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import io.mockk.coVerify
@@ -28,12 +29,14 @@ class DeleteAllLocalAccountsUseCaseTest {
     private val algo25AccountRepository: Algo25AccountRepository = mockk(relaxed = true)
     private val ledgerBleAccountRepository: LedgerBleAccountRepository = mockk(relaxed = true)
     private val noAuthAccountRepository: NoAuthAccountRepository = mockk(relaxed = true)
+    private val hdSeedRepository: HdSeedRepository = mockk(relaxed = true)
 
     private val sut = DeleteAllLocalAccountsUseCase(
         hdKeyAccountRepository,
         algo25AccountRepository,
         ledgerBleAccountRepository,
         noAuthAccountRepository,
+        hdSeedRepository,
         Dispatchers.IO
     )
 
@@ -42,6 +45,7 @@ class DeleteAllLocalAccountsUseCaseTest {
         sut()
 
         coVerify { hdKeyAccountRepository.deleteAllAccounts() }
+        coVerify { hdSeedRepository.deleteAllHdSeeds() }
         coVerify { algo25AccountRepository.deleteAllAccounts() }
         coVerify { ledgerBleAccountRepository.deleteAllAccounts() }
         coVerify { noAuthAccountRepository.deleteAllAccounts() }

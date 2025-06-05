@@ -14,6 +14,7 @@ package com.algorand.wallet.account.local.domain.usecase
 
 import com.algorand.wallet.account.local.domain.repository.Algo25AccountRepository
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
+import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
 import com.algorand.wallet.account.local.domain.repository.NoAuthAccountRepository
 import javax.inject.Inject
@@ -27,17 +28,20 @@ internal class DeleteAllLocalAccountsUseCase @Inject constructor(
     private val algo25AccountRepository: Algo25AccountRepository,
     private val ledgerBleAccountRepository: LedgerBleAccountRepository,
     private val noAuthAccountRepository: NoAuthAccountRepository,
+    private val hdSeedRepository: HdSeedRepository,
     private val dispatcher: CoroutineDispatcher
 ) : DeleteAllLocalAccounts {
 
     override suspend fun invoke() {
         withContext(dispatcher) {
             val deferredDeleteHdKeyAccounts = async { hdKeyAccountRepository.deleteAllAccounts() }
+            val deferredDeleteHdSeeds = async { hdSeedRepository.deleteAllHdSeeds() }
             val deferredDeleteAlgo25Accounts = async { algo25AccountRepository.deleteAllAccounts() }
             val deferredDeleteLedgerBleAccounts = async { ledgerBleAccountRepository.deleteAllAccounts() }
             val deferredDeleteNoAuthAccounts = async { noAuthAccountRepository.deleteAllAccounts() }
             awaitAll(
                 deferredDeleteHdKeyAccounts,
+                deferredDeleteHdSeeds,
                 deferredDeleteAlgo25Accounts,
                 deferredDeleteLedgerBleAccounts,
                 deferredDeleteNoAuthAccounts

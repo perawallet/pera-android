@@ -36,7 +36,6 @@ import com.algorand.wallet.algosdk.bip39.model.HdKeyAddress
 import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
 import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
 import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
-import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
@@ -134,8 +133,9 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
                 val selectedAddresses = currentState.registeredAccounts.filter {
                     currentState.selectedAddresses.contains(it.address)
                 }
-                val addressesToImport = getAddressesToImport(selectedAddresses)
-                addSelectedAddresses(addressesToImport)
+                val entropy = aesPlatformManager.decryptByteArray(encryptedEntropy)
+                val addressesToImport = getAddressesToImport(entropy, selectedAddresses)
+                addSelectedAddresses(entropy, addressesToImport)
                 val rekeyedAddresses = fetchRekeyedAddresses(selectedAddresses)
                 stateDelegate.updateState { currentState.copy(type = ContentType.Idle) }
                 if (rekeyedAddresses.isNotEmpty()) {
@@ -144,47 +144,24 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
                     val isNewAccountAdded = addressesToImport.isNotEmpty()
                     eventDelegate.sendEvent(ViewEvent.NavigateToHome(isNewAccountAdded))
                 }
+                entropy.clearFromMemory()
             }
         }
     }
 
-    private suspend fun addSelectedAddresses(selectedAddresses: List<RegisteredHdKey>) {
-        val encryptedEntropy = (accountCreation.type as AccountCreation.Type.HdKey).encryptedEntropy
-        val entropy = aesPlatformManager.decryptByteArray(encryptedEntropy)
-        selectedAddresses.forEach { accountItem ->
-            val hdKeyAccount = createHdKeyAccount(entropy, accountItem) ?: return@forEach
-            val newAccountCreation = createAccountCreation(hdKeyAccount)
-            accountAdditionUseCase.addNewAccount(newAccountCreation)
-        }
-        entropy.clearFromMemory()
-    }
-
-    private suspend fun addSelectedAddresses(selectedAddresses: List<RegisteredHdKey>) {
-        val encryptedEntropy = (accountCreation.type as AccountCreation.Type.HdKey).encryptedEntropy
-        val entropy = aesPlatformManager.decryptByteArray(encryptedEntropy)
-        val wallet = bip39WalletProvider.getBip39Wallet(entropy.copyOf())
-        selectedAddresses.forEach { accountItem ->
-            val hdKeyAccount = createHdKeyAddress(wallet, accountItem)
+    private suspend fun addSelectedAddresses(entropy: ByteArray, selectedAddresses: List<HdKeyAddress>) {
+        selectedAddresses.forEach { hdKeyAccount ->
             val newAccountCreation = createAccountCreation(entropy, hdKeyAccount)
             accountAdditionUseCase.addNewAccount(newAccountCreation)
         }
-        entropy.clearFromMemory()
-        wallet.invalidate()
     }
 
-    private suspend fun addSelectedAddresses(selectedAddresses: List<HdKeyAccount>) {
-        selectedAddresses.forEach { hdKeyAccount ->
-            val newAccountCreation = createAccountCreation(hdKeyAccount)
-            accountAdditionUseCase.addNewAccount(newAccountCreation)
-        }
-    }
-
-    private fun getAddressesToImport(selectedAddresses: List<RegisteredHdKey>): List<HdKeyAccount> {
-        val entropy = aesPlatformManager.decryptByteArray(encryptedEntropy)
-        return selectedAddresses.mapNotNull { accountItem ->
-            createHdKeyAccount(entropy, accountItem)
+    private fun getAddressesToImport(entropy: ByteArray, selectedAddresses: List<RegisteredHdKey>): List<HdKeyAddress> {
+        val wallet = bip39WalletProvider.getBip39Wallet(entropy.copyOf())
+        return selectedAddresses.map { accountItem ->
+            createHdKeyAddress(wallet, accountItem)
         }.also {
-            entropy.clearFromMemory()
+            wallet.invalidate()
         }
     }
 

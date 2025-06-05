@@ -45,14 +45,14 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
         super.onViewCreated(view, savedInstanceState)
         binding.nodeSettingsListItem.setOnClickListener { onNodeSettingsClick() }
         binding.dispenserListItem.setOnClickListener { onDispenserClick() }
-        binding.createlegacyAlgo25ListItem.setOnClickListener { onCreateLegacyAlgo25Click() }
+        binding.createLegacyAlgo25ListItem.setOnClickListener { onCreateLegacyAlgo25Click() }
         binding.migrationListItem.setOnClickListener { onMigrationViewerClick() }
     }
 
     override fun onResume() {
         super.onResume()
         binding.dispenserListItem.isVisible = developerSettingsViewModel.isConnectedToTestnet()
-        binding.createlegacyAlgo25ListItem.isVisible = developerSettingsViewModel.showCreateLegacyAlgo25Account()
+        binding.createLegacyAlgo25ListItem.isVisible = developerSettingsViewModel.showCreateLegacyAlgo25Account()
         binding.migrationListItem.isVisible = developerSettingsViewModel.showMigrationViewer()
     }
 
@@ -74,7 +74,7 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
             DeveloperSettingsFragmentDirections
                 .actionDeveloperSettingsFragmentToCreateAccountNameRegistrationNavigation(
                     developerSettingsViewModel.createAlgo25Account()
-            )
+                )
         )
     }
 }

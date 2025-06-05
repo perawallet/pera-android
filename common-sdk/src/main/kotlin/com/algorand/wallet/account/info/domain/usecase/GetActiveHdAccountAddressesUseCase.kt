@@ -16,24 +16,28 @@ import com.algorand.wallet.account.info.domain.mapper.HdAccountAddressMapper
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
 import com.algorand.wallet.account.info.domain.model.ActiveHdAccount.HdAccountAddress
-import com.algorand.wallet.account.info.domain.model.HdKeyDetail
-import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressLite
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import javax.inject.Inject
 
 internal class GetActiveHdAccountAddressesUseCase @Inject constructor(
-    private val peraBip39Sdk: PeraBip39Sdk,
+    private val bip39WalletProvider: Bip39WalletProvider,
     private val getAccountFastLookupBatch: GetAccountFastLookupBatch,
     private val hdAccountAddressMapper: HdAccountAddressMapper
 ) : GetActiveHdAccountAddresses {
 
     override suspend fun invoke(activeHdAccount: ActiveHdAccount): List<HdAccountAddress> {
+        val accountIndex = activeHdAccount.accountIndex
         val hdKeyDetailsList = mutableListOf<HdAccountAddress>().apply {
             addAll(activeHdAccount.firstBatchHdAccountAddress)
         }
         var rangeStart = SEARCH_BATCH_COUNT
+        val bip39Api = bip39WalletProvider.getBip39Wallet(activeHdAccount.entropy)
         while (true) {
-            val hdKeyDetailsBatch = createHdKeyDetailBatch(activeHdAccount, getSearchBatchRange(rangeStart))
-            val addresses = hdKeyDetailsBatch.map { it.algoAddress }
+            val hdKeyDetailsBatch = createHdKeyDetailBatch(bip39Api, accountIndex, getSearchBatchRange(rangeStart))
+            val addresses = hdKeyDetailsBatch.map { it.address }
             val accountFastLookupBatch = getAccountFastLookupBatch(addresses)
             if (shouldContinueSearching(accountFastLookupBatch)) {
                 val hdAccountAddresses = hdAccountAddressMapper(hdKeyDetailsBatch, accountFastLookupBatch)
@@ -43,6 +47,7 @@ internal class GetActiveHdAccountAddressesUseCase @Inject constructor(
                 break
             }
         }
+        bip39Api.invalidate()
         return hdKeyDetailsList
     }
 
@@ -50,10 +55,10 @@ internal class GetActiveHdAccountAddressesUseCase @Inject constructor(
         return accountFastLookupBatch.values.any { it?.accountExists == true }
     }
 
-    private fun createHdKeyDetailBatch(account: ActiveHdAccount, range: IntRange): List<HdKeyDetail> {
+    private fun createHdKeyDetailBatch(bip39Wallet: Bip39Wallet, accountIndex: Int, range: IntRange): List<HdKeyAddressLite> {
         return range.map { keyIndex ->
-            val address = peraBip39Sdk.generateHdKeyAddress(account.entropy, account.accountIndex, 0, keyIndex)
-            HdKeyDetail(address, account.accountIndex, 0, keyIndex)
+            val index = HdKeyAddressIndex(accountIndex, 0, keyIndex)
+            bip39Wallet.generateAddressLite(index)
         }
     }
 

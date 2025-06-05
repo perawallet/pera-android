@@ -10,10 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.transaction.sdk
+package com.algorand.wallet.algosdk.bip39.di
 
-interface PeraBip39Sdk {
-    fun getSeedFromEntropy(entropy: ByteArray): ByteArray?
-    fun getEntropyFromMnemonic(mnemonic: String): ByteArray?
-    fun getMnemonicFromEntropy(entropy: ByteArray): String?
+import com.algorand.wallet.algosdk.bip39.sdk.AlgorandBip39WalletProvider
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+
+@Module
+@InstallIn(SingletonComponent::class)
+internal object Bip39Module {
+
+    @Provides
+    fun provideBip39ApiProvider(impl: AlgorandBip39WalletProvider): Bip39WalletProvider = impl
 }

@@ -15,32 +15,32 @@ package com.algorand.android.ui.register.selectwallet
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
+import com.algorand.android.ui.onboarding.creation.mapper.AccountCreationHdKeyTypeMapper
 import com.algorand.android.ui.register.selectwallet.HdWalletSelectionViewModel.ViewEvent
 import com.algorand.android.ui.register.selectwallet.HdWalletSelectionViewModel.ViewState
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
 import com.algorand.wallet.account.local.domain.usecase.GetHdWalletSummaries
-import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
-import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
-import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
+import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HdWalletSelectionViewModel @Inject constructor(
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>,
-    private val aesPlatformManager: AESPlatformManager,
-    private val algoAccountSdk: AlgoAccountSdk,
-    private val bip39Sdk: PeraBip39Sdk,
+    private val bip39WalletProvider: Bip39WalletProvider,
     private val getHdEntropy: GetHdEntropy,
-    private val getHdWalletSummaries: GetHdWalletSummaries
+    private val getHdWalletSummaries: GetHdWalletSummaries,
+    private val accountCreationHdKeyTypeMapper: AccountCreationHdKeyTypeMapper
 ) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
     init {
@@ -70,22 +70,14 @@ class HdWalletSelectionViewModel @Inject constructor(
 
     fun createNewHdWallet() {
         viewModelScope.launchIO {
-            val account = algoAccountSdk.createHdAccount()
-                ?: return@launchIO
-
+            val wallet = bip39WalletProvider.createBip39Wallet()
+            val hdKeyAddress = wallet.generateAddress(HdKeyAddressIndex())
+            val hdKeyType = accountCreationHdKeyTypeMapper(wallet.getEntropy().value, hdKeyAddress, seedId = null)
             val accountCreation = AccountCreation(
-                address = account.address,
+                address = hdKeyAddress.address,
                 customName = null,
                 isBackedUp = false,
-                type = AccountCreation.Type.HdKey(
-                    account.publicKey,
-                    aesPlatformManager.encryptByteArray(account.privateKey),
-                    aesPlatformManager.encryptByteArray(account.entropy),
-                    account.account,
-                    account.change,
-                    account.keyIndex,
-                    account.derivationType,
-                ),
+                type = hdKeyType,
                 creationType = CreationType.CREATE
             )
             eventDelegate.sendEvent(ViewEvent.NavigateToCreateWalletNameRegistrationNavigation(accountCreation))
@@ -95,27 +87,20 @@ class HdWalletSelectionViewModel @Inject constructor(
     fun createNewHdAccount(seedId: Int, maxAccountIndex: Int) {
         viewModelScope.launchIO {
 
-            val entropy = getHdEntropy(seedId)
+            val entropy = getHdEntropy(seedId) ?: return@launchIO
             val nextHdAccountIndex = maxAccountIndex + 1
-            val account = bip39Sdk.getHdKeyAccount(
-                entropy = entropy ?: return@launchIO,
-                accountIndex = nextHdAccountIndex,
-                changeIndex = 0,
-                keyIndex = 0
-            ) ?: return@launchIO
-
+            val wallet = bip39WalletProvider.getBip39Wallet(entropy)
+            val index = HdKeyAddressIndex(nextHdAccountIndex, changeIndex = 0, keyIndex = 0)
+            val hdKeyAddress = wallet.generateAddress(index)
             val accountCreation = AccountCreation(
-                address = account.address, customName = null, isBackedUp = false, type = AccountCreation.Type.HdKey(
-                    account.publicKey,
-                    aesPlatformManager.encryptByteArray(account.privateKey),
-                    aesPlatformManager.encryptByteArray(account.entropy),
-                    account.account,
-                    account.change,
-                    account.keyIndex,
-                    account.derivationType,
-                    seedId
-                ), creationType = CreationType.CREATE
+                address = hdKeyAddress.address,
+                customName = null,
+                isBackedUp = false,
+                type = accountCreationHdKeyTypeMapper(entropy, hdKeyAddress, seedId),
+                creationType = CreationType.CREATE
             )
+            entropy.clearFromMemory()
+            wallet.invalidate()
             eventDelegate.sendEvent(ViewEvent.NavigateToCreateAccountNameRegistrationNavigation(accountCreation))
         }
     }

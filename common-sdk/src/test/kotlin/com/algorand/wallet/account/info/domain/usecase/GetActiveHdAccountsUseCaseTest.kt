@@ -12,14 +12,14 @@
 
 package com.algorand.wallet.account.info.domain.usecase
 
-import com.algorand.test.peraFixture
 import com.algorand.wallet.account.info.domain.mapper.HdAccountAddressMapper
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
-import com.algorand.wallet.account.info.domain.model.ActiveHdAccount.HdAccountAddress
-import com.algorand.wallet.account.info.domain.model.HdKeyDetail
-import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -28,37 +28,31 @@ import org.junit.Test
 
 class GetActiveHdAccountsUseCaseTest {
 
-    private val peraBip39Sdk: PeraBip39Sdk = mockk {
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 0) } returns ACC_1_ADDR_1
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 1) } returns ACC_1_ADDR_2
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 2) } returns ACC_1_ADDR_3
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 3) } returns ACC_1_ADDR_4
-        every { generateHdKeyAddress(ENTROPY, 0, 0, 4) } returns ACC_1_ADDR_5
-        every { generateHdKeyAddress(ENTROPY, 1, 0, 0) } returns ACC_2_ADDR_1
-        every { generateHdKeyAddress(ENTROPY, 1, 0, 1) } returns ACC_2_ADDR_2
-        every { generateHdKeyAddress(ENTROPY, 1, 0, 2) } returns ACC_2_ADDR_3
-        every { generateHdKeyAddress(ENTROPY, 1, 0, 3) } returns ACC_2_ADDR_4
-        every { generateHdKeyAddress(ENTROPY, 1, 0, 4) } returns ACC_2_ADDR_5
+    private val bip39Wallet: Bip39Wallet = mockk(relaxed = true)
+    private val bip39WalletProvider: Bip39WalletProvider = mockk {
+        every { getBip39Wallet(ENTROPY) } returns bip39Wallet
     }
     private val getAccountFastLookupBatch: GetAccountFastLookupBatch = mockk()
     private val hdAccountAddressMapper: HdAccountAddressMapper = mockk()
 
     private val sut = GetActiveHdAccountsUseCase(
-        peraBip39Sdk = peraBip39Sdk,
+        bip39WalletProvider = bip39WalletProvider,
         getAccountFastLookupBatch = getAccountFastLookupBatch,
         hdAccountAddressMapper = hdAccountAddressMapper
     )
 
     @Test
-    fun `EXPECT empty list WHEN the first account addresses are closed or fast lookup null`() = runTest {
-        val batchFastLookupResult = mapOf(
-            ACC_1_ADDR_1 to ACC_1_ADDR_1_FAST_LOOKUP.copy(accountExists = false),
-            ACC_1_ADDR_2 to ACC_1_ADDR_2_FAST_LOOKUP.copy(accountExists = false),
-            ACC_1_ADDR_3 to null,
-            ACC_1_ADDR_4 to ACC_1_ADDR_4_FAST_LOOKUP.copy(accountExists = false),
-            ACC_1_ADDR_5 to ACC_1_ADDR_5_FAST_LOOKUP.copy(accountExists = false),
-        )
-        coEvery { getAccountFastLookupBatch(FIRST_ACCOUNT_ADDRESSES) } returns batchFastLookupResult
+    fun `EXPECT empty list WHEN the first 5 accounts addresses are closed or fast lookup null`() = runTest {
+        val accountCount = 5
+        val testHelper = GetActiveHdAccountsUseCaseTestHelper(accountCount, addressCount = 5)
+        mockPeraBip39SdkGenerateHdKeyAddress(testHelper)
+        val firstFiveAccountBatchFastLookupResults = (0 until accountCount).map {
+            testHelper.getInactiveAccountFastLookupResult(it)
+        }
+        firstFiveAccountBatchFastLookupResults.forEachIndexed { index, fastLookupResult ->
+            val addresses = testHelper.getAccountAddresses(accountIndex = index)
+            coEvery { getAccountFastLookupBatch(addresses) } returns fastLookupResult
+        }
 
         val result = sut(ENTROPY)
 
@@ -66,61 +60,85 @@ class GetActiveHdAccountsUseCaseTest {
     }
 
     @Test
-    fun `EXPECT active account list WHEN there is active accounts`() = runTest {
-        val firstFastLookupResult = mapOf(
-            ACC_1_ADDR_1 to ACC_1_ADDR_1_FAST_LOOKUP.copy(accountExists = false),
-            ACC_1_ADDR_2 to ACC_1_ADDR_2_FAST_LOOKUP.copy(accountExists = false),
-            ACC_1_ADDR_3 to ACC_1_ADDR_3_FAST_LOOKUP.copy(accountExists = false),
-            ACC_1_ADDR_4 to ACC_1_ADDR_4_FAST_LOOKUP.copy(accountExists = true),
-            ACC_1_ADDR_5 to ACC_1_ADDR_5_FAST_LOOKUP.copy(accountExists = false),
+    fun `EXPECT fifth account WHEN first four accounts are closed`() = runTest {
+        val accountCount = 10
+        val testHelper = GetActiveHdAccountsUseCaseTestHelper(accountCount, addressCount = 5)
+        val inactiveAccounts0to4 = (0 until 4).map { testHelper.getInactiveAccountFastLookupResult(it) }
+        val account5 = testHelper.getActiveAccountFastLookupResult(4)
+        val inactiveAccounts5to10 = (5 until accountCount).map { testHelper.getInactiveAccountFastLookupResult(it) }
+        val accountsFastLookupResults = inactiveAccounts0to4 + account5 + inactiveAccounts5to10
+        mockGetAccountFastLookupBatch(testHelper, accountsFastLookupResults)
+        mockPeraBip39SdkGenerateHdKeyAddress(testHelper)
+        val account5HdAccountAddresses = testHelper.getHdAccountAddresses(
+            accountIndex = 4,
+            fastLookups = account5.values.toList()
         )
-        val acc1HdAccountAddresses = listOf(
-            HdAccountAddress(ACC_1_ADDR_1, 0, 0, 0, ACC_1_ADDR_1_FAST_LOOKUP.copy(accountExists = false)),
-            HdAccountAddress(ACC_1_ADDR_2, 0, 0, 1, ACC_1_ADDR_2_FAST_LOOKUP.copy(accountExists = false)),
-            HdAccountAddress(ACC_1_ADDR_3, 0, 0, 2, ACC_1_ADDR_3_FAST_LOOKUP.copy(accountExists = false)),
-            HdAccountAddress(ACC_1_ADDR_4, 0, 0, 3, ACC_1_ADDR_4_FAST_LOOKUP.copy(accountExists = true)),
-            HdAccountAddress(ACC_1_ADDR_5, 0, 0, 4, ACC_1_ADDR_5_FAST_LOOKUP.copy(accountExists = false)),
-        )
-        coEvery { getAccountFastLookupBatch(FIRST_ACCOUNT_ADDRESSES) } returns firstFastLookupResult
-        coEvery { getAccountFastLookupBatch(SECOND_ACCOUNT_ADDRESSES) } returns emptyMap()
-        every { hdAccountAddressMapper(ACC_1_HD_KEY_DETAILS, firstFastLookupResult) } returns acc1HdAccountAddresses
+        every {
+            hdAccountAddressMapper(testHelper.getHdKeyDetails(accountIndex = 4), account5)
+        } returns account5HdAccountAddresses
 
         val result = sut(ENTROPY)
 
-        val expected = listOf(ActiveHdAccount(accountIndex = 0, ENTROPY, acc1HdAccountAddresses))
+        val expected = listOf(ActiveHdAccount(accountIndex = 4, ENTROPY, account5HdAccountAddresses))
         assertEquals(expected, result)
+        verifyGetAccountFastLookupBatchInvokeCount(testHelper)
+    }
+
+    @Test
+    fun `EXPECT first 20 accounts WHEN 21, 22, 23, 24, 25 accounts are inactive`() = runTest {
+        val accountCount = 25
+        val testHelper = GetActiveHdAccountsUseCaseTestHelper(accountCount, addressCount = 5)
+        val activeAccounts = (0 until 20).map { testHelper.getActiveAccountFastLookupResult(it) }
+        val inactiveAccounts = (20 until 25).map { testHelper.getInactiveAccountFastLookupResult(it) }
+        val accountsFastLookupResults = activeAccounts + inactiveAccounts
+        mockGetAccountFastLookupBatch(testHelper, accountsFastLookupResults)
+        mockPeraBip39SdkGenerateHdKeyAddress(testHelper)
+        val activeHdAccountAddresses = activeAccounts.mapIndexed { index, fastLookup ->
+            testHelper.getHdAccountAddresses(accountIndex = index, fastLookups = fastLookup.values.toList())
+        }
+        repeat(20) { accountIndex ->
+            every {
+                hdAccountAddressMapper(testHelper.getHdKeyDetails(accountIndex), activeAccounts[accountIndex])
+            } returns activeHdAccountAddresses[accountIndex]
+        }
+
+        val result = sut(ENTROPY)
+
+        val expected = activeAccounts.map {
+            val accountIndex = activeAccounts.indexOf(it)
+            ActiveHdAccount(accountIndex = accountIndex, ENTROPY, activeHdAccountAddresses[accountIndex])
+        }
+        assertEquals(expected, result)
+        verifyGetAccountFastLookupBatchInvokeCount(testHelper)
+    }
+
+    private fun mockPeraBip39SdkGenerateHdKeyAddress(testHelper: GetActiveHdAccountsUseCaseTestHelper) {
+        testHelper.getAccountIndexAndAddressesPair().forEach { (accountIndex, addresses) ->
+            addresses.forEachIndexed { addressIndex, address ->
+                every {
+                    bip39Wallet.generateAddressLite(HdKeyAddressIndex(accountIndex, 0, addressIndex))
+                } returns address
+            }
+        }
+    }
+
+    private fun mockGetAccountFastLookupBatch(
+        testHelper: GetActiveHdAccountsUseCaseTestHelper,
+        accountsFastLookupResults: List<Map<String, AccountFastLookup?>>
+    ) {
+        accountsFastLookupResults.forEachIndexed { index, fastLookupResult ->
+            val addresses = testHelper.getAccountAddresses(accountIndex = index)
+            coEvery { getAccountFastLookupBatch(addresses) } returns fastLookupResult
+        }
+    }
+
+    private fun verifyGetAccountFastLookupBatchInvokeCount(testHelper: GetActiveHdAccountsUseCaseTestHelper) {
+        testHelper.getAccountIndexAndAddressesPair().forEach { (_, addresses) ->
+            coVerify(exactly = 1) { getAccountFastLookupBatch(addresses.map { it.address }) }
+        }
     }
 
     private companion object {
         val ENTROPY = byteArrayOf(1, 2, 3)
-
-        const val ACC_1_ADDR_1 = "acc_1_addr_1"
-        const val ACC_1_ADDR_2 = "acc_1_addr_2"
-        const val ACC_1_ADDR_3 = "acc_1_addr_3"
-        const val ACC_1_ADDR_4 = "acc_1_addr_4"
-        const val ACC_1_ADDR_5 = "acc_1_addr_5"
-        const val ACC_2_ADDR_1 = "acc_2_addr_1"
-        const val ACC_2_ADDR_2 = "acc_2_addr_2"
-        const val ACC_2_ADDR_3 = "acc_2_addr_3"
-        const val ACC_2_ADDR_4 = "acc_2_addr_4"
-        const val ACC_2_ADDR_5 = "acc_2_addr_5"
-
-        val FIRST_ACCOUNT_ADDRESSES = listOf(ACC_1_ADDR_1, ACC_1_ADDR_2, ACC_1_ADDR_3, ACC_1_ADDR_4, ACC_1_ADDR_5)
-
-        val ACC_1_ADDR_1_FAST_LOOKUP = peraFixture<AccountFastLookup>()
-        val ACC_1_ADDR_2_FAST_LOOKUP = peraFixture<AccountFastLookup>()
-        val ACC_1_ADDR_3_FAST_LOOKUP = peraFixture<AccountFastLookup>()
-        val ACC_1_ADDR_4_FAST_LOOKUP = peraFixture<AccountFastLookup>()
-        val ACC_1_ADDR_5_FAST_LOOKUP = peraFixture<AccountFastLookup>()
-
-        val ACC_1_HD_KEY_DETAILS = listOf(
-            HdKeyDetail(ACC_1_ADDR_1, 0, 0, 0),
-            HdKeyDetail(ACC_1_ADDR_2, 0, 0, 1),
-            HdKeyDetail(ACC_1_ADDR_3, 0, 0, 2),
-            HdKeyDetail(ACC_1_ADDR_4, 0, 0, 3),
-            HdKeyDetail(ACC_1_ADDR_5, 0, 0, 4)
-        )
-
-        val SECOND_ACCOUNT_ADDRESSES = listOf(ACC_2_ADDR_1, ACC_2_ADDR_2, ACC_2_ADDR_3, ACC_2_ADDR_4, ACC_2_ADDR_5)
     }
 }

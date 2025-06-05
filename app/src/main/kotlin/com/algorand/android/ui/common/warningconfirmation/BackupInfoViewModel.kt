@@ -18,8 +18,11 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.modules.tracking.onboarding.register.OnboardingPassphraseUnderstandEventTracker
+import com.algorand.android.ui.onboarding.creation.mapper.AccountCreationHdKeyTypeMapper
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.android.utils.getOrElse
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +34,8 @@ class BackupInfoViewModel @Inject constructor(
     private val onboardingPassphraseUnderstandEventTracker: OnboardingPassphraseUnderstandEventTracker,
     private val algoAccountSdk: AlgoAccountSdk,
     private val aesPlatformManager: AESPlatformManager,
+    private val bip39WalletProvider: Bip39WalletProvider,
+    private val accountCreationHdKeyTypeMapper: AccountCreationHdKeyTypeMapper,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -48,31 +53,27 @@ class BackupInfoViewModel @Inject constructor(
         }
     }
 
-    fun createHdKeyAccount(): AccountCreation? {
-        val account = algoAccountSdk.createHdAccount()
-            ?: return null
-
+    fun createHdKeyAccount(): AccountCreation {
+        val wallet = bip39WalletProvider.createBip39Wallet()
+        val hdKeyAddress = wallet.generateAddress(HdKeyAddressIndex())
+        val hdKeyType = accountCreationHdKeyTypeMapper(
+            entropy = wallet.getEntropy().value,
+            hdKeyAddress = hdKeyAddress,
+            seedId = null
+        )
         return AccountCreation(
-            address = account.address,
+            address = hdKeyAddress.address,
             customName = null,
             isBackedUp = false,
-            type = AccountCreation.Type.HdKey(
-                account.publicKey,
-                aesPlatformManager.encryptByteArray(account.privateKey),
-                aesPlatformManager.encryptByteArray(account.entropy),
-                account.account,
-                account.change,
-                account.keyIndex,
-                account.derivationType,
-            ),
+            type = hdKeyType,
             creationType = CreationType.CREATE
-        )
+        ).also {
+            wallet.invalidate()
+        }
     }
 
     fun createAlgo25Account(): AccountCreation? {
-        val account = algoAccountSdk.createAlgo25Account()
-            ?: return null
-
+        val account = algoAccountSdk.createAlgo25Account() ?: return null
         return AccountCreation(
             address = account.address,
             customName = null,

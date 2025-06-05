@@ -16,29 +16,32 @@ import com.algorand.wallet.account.info.domain.mapper.RegisteredHdKeyMapper
 import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
 import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
-import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.supervisorScope
 
 internal class GetRegisteredHdKeysUseCase @Inject constructor(
     private val getLocalAccountsAddresses: GetLocalAccountsAddresses,
     private val getActiveHdAccounts: GetActiveHdAccounts,
     private val getActiveHdAccountAddresses: GetActiveHdAccountAddresses,
     private val registeredHdKeyMapper: RegisteredHdKeyMapper,
-    private val peraBip39Sdk: PeraBip39Sdk,
+    private val bip39WalletProvider: Bip39WalletProvider
 ) : GetRegisteredHdKeys {
 
     override suspend fun invoke(entropy: ByteArray): List<RegisteredHdKey> {
         val localAccountAddresses = getLocalAccountsAddresses()
         val activeHdAccounts = getActiveHdAccounts(entropy)
+        val walletApi = bip39WalletProvider.getBip39Wallet(entropy)
 
         if (activeHdAccounts.isEmpty()) {
-            return getFirstAccountFirstAddress(entropy, localAccountAddresses)
+            return getFirstAccountFirstAddress(walletApi, localAccountAddresses)
         }
 
-        val activeHdAccountAddresses = coroutineScope {
+        val activeHdAccountAddresses = supervisorScope {
             activeHdAccounts.map { activeHdAccount ->
                 async {
                     getActiveHdAccountAddresses(activeHdAccount)
@@ -53,15 +56,18 @@ internal class GetRegisteredHdKeysUseCase @Inject constructor(
             val isAlreadyImported = localAccountAddresses.contains(hdAccountAddress.address)
             registeredHdKeyMapper(hdAccountAddress, hdAccountAddress.fastLookup, isAlreadyImported)
         }.ifEmpty {
-            getFirstAccountFirstAddress(entropy, localAccountAddresses)
+            getFirstAccountFirstAddress(walletApi, localAccountAddresses)
+        }.also {
+            walletApi.invalidate()
         }
     }
 
     private fun getFirstAccountFirstAddress(
-        entropy: ByteArray,
+        bip39Wallet: Bip39Wallet,
         localAccountAddresses: List<String>
     ): List<RegisteredHdKey> {
-        val address = peraBip39Sdk.generateHdKeyAddress(entropy, 0, 0, 0)
+        val index = HdKeyAddressIndex(accountIndex = 0, changeIndex = 0, keyIndex = 0)
+        val address = bip39Wallet.generateAddressLite(index).address
         val hdAccountAddress = ActiveHdAccount.HdAccountAddress(address, 0, 0, 0, null)
         val isAlreadyImported = localAccountAddresses.contains(address)
         return listOf(registeredHdKeyMapper(hdAccountAddress, null, isAlreadyImported))

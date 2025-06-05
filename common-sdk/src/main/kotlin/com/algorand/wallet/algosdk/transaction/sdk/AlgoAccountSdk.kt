@@ -13,11 +13,8 @@
 package com.algorand.wallet.algosdk.transaction.sdk
 
 import com.algorand.wallet.algosdk.domain.model.Algo25Account
-import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 
 interface AlgoAccountSdk {
-
-    fun createHdAccount(): HdKeyAccount?
 
     fun createAlgo25Account(): Algo25Account?
 

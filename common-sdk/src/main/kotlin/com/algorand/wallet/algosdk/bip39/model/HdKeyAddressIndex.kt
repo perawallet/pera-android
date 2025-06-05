@@ -10,10 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.algosdk.transaction.sdk
+package com.algorand.wallet.algosdk.bip39.model
 
-interface PeraBip39Sdk {
-    fun getSeedFromEntropy(entropy: ByteArray): ByteArray?
-    fun getEntropyFromMnemonic(mnemonic: String): ByteArray?
-    fun getMnemonicFromEntropy(entropy: ByteArray): String?
-}
+data class HdKeyAddressIndex(
+    val accountIndex: Int = 0,
+    val changeIndex: Int = 0,
+    val keyIndex: Int = 0
+)

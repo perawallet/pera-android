@@ -50,6 +50,7 @@ object ColorPalette {
         val V700Alpha20 = V700.copy(alpha = 0.2f)
         val V700Alpha28 = V700.copy(alpha = 0.28f)
         val V600 = Color(0xFF2CB7BC)
+        val V600Alpha12 = V600.copy(alpha = 0.12f)
         val V500 = Color(0xFF3EDBD2)
         val V500Alpha12 = V500.copy(alpha = 0.12f)
         val V500Alpha24 = V500.copy(alpha = 0.24f)

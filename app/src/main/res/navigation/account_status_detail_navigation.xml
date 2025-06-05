@@ -26,9 +26,11 @@
 
     <include app:graph="@navigation/no_rekeyed_accounts_navigation" />
 
+    <include app:graph="@navigation/recover_registered_accounts_navigation" />
+
     <dialog
         android:id="@+id/accountStatusDetailBottomSheet"
-        android:name="com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailBottomSheet"
+        android:name="com.algorand.android.ui.accountstatus.view.AccountStatusDetailBottomSheet"
         android:label="AccountStatusDetailBottomSheet"
         tools:layout="@layout/bottom_sheet_account_status_detail">
         <argument
@@ -76,6 +78,14 @@
         <action
             android:id="@+id/action_accountStatusDetailBottomSheet_to_noRekeyedAccountsNavigation"
             app:destination="@id/noRekeyedAccountsNavigation" />
+
+        <action
+            android:id="@+id/action_accountStatusDetailBottomSheet_to_recoverRegisteredAccountsNavigation"
+            app:destination="@id/recoverRegisteredAccountsNavigation">
+            <argument
+                android:name="encryptedEntropyBase64"
+                app:argType="string" />
+        </action>
     </dialog>
 
 </navigation>

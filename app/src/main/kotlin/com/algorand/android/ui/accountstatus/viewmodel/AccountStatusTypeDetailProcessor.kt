@@ -10,12 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accountcore.ui.usecase
+package com.algorand.android.ui.accountstatus.viewmodel
 
-import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
-import com.algorand.wallet.account.detail.domain.model.AccountType
+import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content.AccountStatusTypeDetail
 
-interface GetAccountOriginalStateIconDrawablePreview {
-    suspend operator fun invoke(address: String): AccountIconDrawablePreview
-    suspend operator fun invoke(accountType: AccountType?): AccountIconDrawablePreview
+interface AccountStatusTypeDetailProcessor {
+    suspend fun getAccountStatusTypeDetail(accountLite: AccountLite): AccountStatusTypeDetail?
 }

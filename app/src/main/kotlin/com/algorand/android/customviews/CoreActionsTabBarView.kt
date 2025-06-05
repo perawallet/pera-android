@@ -81,15 +81,14 @@ class CoreActionsTabBarView @JvmOverloads constructor(
     fun initViewState(viewState: CoreActionsTabBarViewModel.ViewState) {
         when (viewState) {
             is Content -> {
-                binding.cardsButton.isVisible = viewState.isImmersveEnabled
                 binding.stakingButton.isVisible = viewState.isStakingEnabled
                 binding.sendButton.isVisible = !viewState.isStakingEnabled
                 binding.scanQrButton.isVisible = !viewState.isStakingEnabled
                 binding.buySellButton.isVisible = binding.buySellButton.isEnabled
                 binding.browseDAppsButton.isVisible = binding.browseDAppsButton.isEnabled
             }
+
             Idle -> {
-                binding.cardsButton.visibility = GONE
                 binding.stakingButton.visibility = GONE
             }
         }

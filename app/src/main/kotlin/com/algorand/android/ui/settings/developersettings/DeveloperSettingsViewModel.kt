@@ -14,8 +14,13 @@ package com.algorand.android.ui.settings.developersettings
 
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.models.AccountCreation
 import com.algorand.android.ui.settings.usecase.DeveloperSettingsPreviewUseCase
+import com.algorand.android.utils.analytics.CreationType
+import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
+import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.remoteconfig.domain.usecase.ENABLE_ACCOUNT_DB_MIGRATION_VIEWER
+import com.algorand.wallet.remoteconfig.domain.usecase.HD_WALLET_BUTTON_TOGGLE
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -24,7 +29,9 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class DeveloperSettingsViewModel @Inject constructor(
     private val developerSettingsPreviewUseCase: DeveloperSettingsPreviewUseCase,
-    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
+    private val algoAccountSdk: AlgoAccountSdk,
+    private val aesPlatformManager: AESPlatformManager,
 ) : BaseViewModel() {
 
     var firstAccountAddress: String? = null
@@ -46,5 +53,25 @@ class DeveloperSettingsViewModel @Inject constructor(
     fun showMigrationViewer(): Boolean {
         return isFeatureToggleEnabled
             .invoke(ENABLE_ACCOUNT_DB_MIGRATION_VIEWER)
+    }
+
+    fun showCreateLegacyAlgo25Account(): Boolean {
+        return isFeatureToggleEnabled
+            .invoke(HD_WALLET_BUTTON_TOGGLE)
+    }
+
+    fun createAlgo25Account(): AccountCreation? {
+        val account = algoAccountSdk.createAlgo25Account()
+            ?: return null
+
+        return AccountCreation(
+            address = account.address,
+            customName = null,
+            isBackedUp = false,
+            type = AccountCreation.Type.Algo25(
+                aesPlatformManager.encryptByteArray(account.secretKey)
+            ),
+            creationType = CreationType.CREATE
+        )
     }
 }

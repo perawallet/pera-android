@@ -12,6 +12,7 @@ plugins {
 
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
+    alias(libs.plugins.screenshot)
 }
 
 apply from: "$projectDir/quality.gradle"
@@ -231,6 +232,7 @@ android {
     }
 
     namespace libs.versions.android.namespace.get().toString()
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -338,4 +340,5 @@ dependencies {
     androidTestImplementation libs.room.testing
     androidTestImplementation libs.runner
     androidTestImplementation libs.espresso.core
+    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }

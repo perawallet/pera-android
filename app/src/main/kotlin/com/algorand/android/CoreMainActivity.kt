@@ -36,6 +36,7 @@ import com.algorand.android.customviews.toolbar.CustomToolbar
 import com.algorand.android.databinding.ActivityMainBinding
 import com.algorand.android.models.Node
 import com.algorand.android.models.StatusBarConfiguration
+import com.algorand.android.modules.autolockmanager.ui.AutoLockManager
 import com.algorand.android.notification.NotificationPermissionManager
 import com.algorand.android.notification.PeraNotificationManager
 import com.algorand.android.utils.TESTNET_NETWORK_SLUG
@@ -48,9 +49,9 @@ import com.algorand.android.utils.setupWithNavController
 import com.algorand.android.utils.showDarkStatusBarIcons
 import com.algorand.android.utils.showLightStatusBarIcons
 import com.algorand.android.utils.viewbinding.viewBinding
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.properties.Delegates
+import kotlinx.coroutines.launch
 
 abstract class CoreMainActivity : BaseActivity() {
 
@@ -59,6 +60,9 @@ abstract class CoreMainActivity : BaseActivity() {
 
     @Inject
     lateinit var parityManager: ParityManager
+
+    @Inject
+    lateinit var autoLockManager: AutoLockManager
 
     @Inject
     lateinit var notificationPermissionManager: NotificationPermissionManager
@@ -109,6 +113,8 @@ abstract class CoreMainActivity : BaseActivity() {
     }
 
     abstract fun onMenuItemClicked(item: MenuItem)
+
+    abstract fun observeAutoLockManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -193,6 +199,7 @@ abstract class CoreMainActivity : BaseActivity() {
             addObserver(parityManager)
             addObserver(notificationPermissionManager)
         }
+        observeAutoLockManager()
     }
 
     private fun startNavigation(startDestinationFragmentId: Int) {

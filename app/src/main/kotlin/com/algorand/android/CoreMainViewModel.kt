@@ -19,28 +19,32 @@ import com.algorand.android.CoreMainViewModel.ViewEvent
 import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.utils.preference.getRegisterSkip
 import com.algorand.wallet.account.local.domain.usecase.IsThereAnyLocalAccount
-import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CoreMainViewModel @Inject constructor(
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val sharedPref: SharedPreferences,
-    private val eventDelegate: EventDelegate<ViewEvent>,
     private val isOnHdWalletUseCase: IsOnHdWalletUseCase,
-) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
+) : ViewModel(), EventViewModel<ViewEvent> {
+
+    private val _viewEvent = MutableSharedFlow<ViewEvent>(extraBufferCapacity = VIEW_EVENT_BUFFER_CAPACITY)
+    override val viewEvent: Flow<ViewEvent> = _viewEvent.asSharedFlow()
 
     fun initialize() {
         viewModelScope.launch {
             if (isThereAnyLocalAccount() || sharedPref.getRegisterSkip()) {
-                eventDelegate.sendEvent(ViewEvent.InitializeHomeNavigation)
+                _viewEvent.emit(ViewEvent.InitializeHomeNavigation)
             } else {
-                eventDelegate.sendEvent(ViewEvent.InitializeLoginNavigation)
+                _viewEvent.emit(ViewEvent.InitializeLoginNavigation)
             }
-            eventDelegate.sendEvent(ViewEvent.InitializeCoreManagers)
+            _viewEvent.emit(ViewEvent.InitializeCoreManagers)
         }
     }
 
@@ -52,5 +56,9 @@ class CoreMainViewModel @Inject constructor(
         data object InitializeHomeNavigation : ViewEvent
         data object InitializeLoginNavigation : ViewEvent
         data object InitializeCoreManagers : ViewEvent
+    }
+
+    private companion object {
+        const val VIEW_EVENT_BUFFER_CAPACITY = 3
     }
 }

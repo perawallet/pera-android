@@ -175,14 +175,14 @@ class MainActivity :
     @Inject
     lateinit var inAppReviewManager: InAppReviewManager
 
-    private val autoLockManagerListener = object : AutoLockManager.AutoLockManagerListener {
-        override fun onLock() {
-            nav(MainNavigationDirections.actionGlobalLockFragment())
-        }
-
-        override fun onUnlock() {
-            nav(MainNavigationDirections.actionGlobalLockFragmentPop())
-            mainViewModel.handlePendingIntent(true)
+    private val autoLockManagerCollector: suspend (Event<AutoLockManager.AutoLockEvent>) -> Unit = {
+        when (it.consume()) {
+            AutoLockManager.AutoLockEvent.Lock -> nav(MainNavigationDirections.actionGlobalLockFragment())
+            AutoLockManager.AutoLockEvent.Unlock -> {
+                nav(MainNavigationDirections.actionGlobalLockFragmentPop())
+                mainViewModel.handlePendingIntent(true)
+            }
+            AutoLockManager.AutoLockEvent.Idle, null -> Unit
         }
     }
 
@@ -416,7 +416,6 @@ class MainActivity :
         mainViewModel.initializeApp(lifecycle)
         mainViewModel.fetchInstallReferrer()
         mainViewModel.setDeepLinkHandlerListener(deepLinkHandlerListener)
-        mainViewModel.setAutoLockManagerListener(autoLockManagerListener)
         setupCoreActionsTabBarView()
 
         initObservers()
@@ -436,6 +435,13 @@ class MainActivity :
             R.id.collectiblesFragment -> mainViewModel.logEvent(PeraClickEvent.TAP_LOWERMENU_NFTS)
             R.id.settingsFragment -> mainViewModel.logEvent(PeraClickEvent.TAP_LOWERMENU_SETTINGS)
         }
+    }
+
+    override fun observeAutoLockManager() {
+        collectLatestOnLifecycle(
+            flow = autoLockManager.eventFlow,
+            collection = autoLockManagerCollector
+        )
     }
 
     override fun onAccountSelected(publicKey: String) {

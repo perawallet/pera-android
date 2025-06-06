@@ -17,6 +17,7 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewByType
+import com.algorand.android.ui.onboarding.creation.mapper.AccountCreationHdKeyTypeMapper
 import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewEvent
 import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState
 import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState.Content.ContentType
@@ -24,16 +25,19 @@ import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredadd
 import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.utils.analytics.CreationType
+import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.account.core.domain.model.CreateAccount.Type
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
 import com.algorand.wallet.account.info.domain.usecase.GetRegisteredHdKeys
-import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
-import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddress
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
+import com.algorand.wallet.encryption.domain.manager.Base64Manager
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
@@ -52,17 +56,20 @@ import kotlinx.coroutines.supervisorScope
 class RecoverRegisteredAccountsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val aesPlatformManager: AESPlatformManager,
-    private val bip39Sdk: PeraBip39Sdk,
+    private val bip39WalletProvider: Bip39WalletProvider,
     private val accountAdditionUseCase: AccountAdditionUseCase,
     private val getRegisteredHdKeys: GetRegisteredHdKeys,
     private val fetchRekeyedAddresses: FetchRekeyedAddresses,
     private val getAccountIconDrawablePreviewByType: GetAccountIconDrawablePreviewByType,
+    private val accountCreationHdKeyTypeMapper: AccountCreationHdKeyTypeMapper,
+    private val base64Manager: Base64Manager,
     private val stateDelegate: StateDelegate<ViewState>,
     private val eventDelegate: EventDelegate<ViewEvent>
 ) : BaseViewModel(), StateViewModel<ViewState> by stateDelegate, EventViewModel<ViewEvent> by eventDelegate {
 
-    private val accountCreation: AccountCreation = savedStateHandle["accountCreation"]
-        ?: error("Missing accountCreation argument")
+    private val encryptedEntropy: ByteArray = savedStateHandle.getOrThrow<String>("encryptedEntropyBase64").let {
+        base64Manager.decode(it)
+    }
 
     init {
         stateDelegate.setDefaultState(ViewState.Idle)
@@ -72,13 +79,7 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
         stateDelegate.onState<ViewState.Idle> {
             stateDelegate.updateState { ViewState.Loading }
             viewModelScope.launchIO {
-                val hdKey = accountCreation.toCreateAccount().type as? Type.HdKey
-                if (hdKey == null) {
-                    stateDelegate.updateState { ViewState.Content(registeredAccounts = emptyList()) }
-                    return@launchIO
-                }
-
-                val entropy = aesPlatformManager.decryptByteArray(hdKey.encryptedEntropy)
+                val entropy = aesPlatformManager.decryptByteArray(encryptedEntropy)
                 val registeredAccounts = getRegisteredHdKeys(entropy.copyOf())
                 entropy.clearFromMemory()
                 val notImportedAddresses = registeredAccounts.mapNotNull {
@@ -132,27 +133,36 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
                 val selectedAddresses = currentState.registeredAccounts.filter {
                     currentState.selectedAddresses.contains(it.address)
                 }
-                addSelectedAddresses(selectedAddresses)
+                val entropy = aesPlatformManager.decryptByteArray(encryptedEntropy)
+                val addressesToImport = getAddressesToImport(entropy, selectedAddresses)
+                addSelectedAddresses(entropy, addressesToImport)
                 val rekeyedAddresses = fetchRekeyedAddresses(selectedAddresses)
                 stateDelegate.updateState { currentState.copy(type = ContentType.Idle) }
                 if (rekeyedAddresses.isNotEmpty()) {
                     eventDelegate.sendEvent(ViewEvent.NavigateToRekeyedAccountSelection(rekeyedAddresses))
                 } else {
-                    eventDelegate.sendEvent(ViewEvent.NavigateToHome)
+                    val isNewAccountAdded = addressesToImport.isNotEmpty()
+                    eventDelegate.sendEvent(ViewEvent.NavigateToHome(isNewAccountAdded))
                 }
+                entropy.clearFromMemory()
             }
         }
     }
 
-    private suspend fun addSelectedAddresses(selectedAddresses: List<RegisteredHdKey>) {
-        val encryptedEntropy = (accountCreation.type as AccountCreation.Type.HdKey).encryptedEntropy
-        val entropy = aesPlatformManager.decryptByteArray(encryptedEntropy)
-        selectedAddresses.forEach { accountItem ->
-            val hdKeyAccount = createHdKeyAccount(entropy, accountItem) ?: return@forEach
-            val newAccountCreation = createAccountCreation(hdKeyAccount)
+    private suspend fun addSelectedAddresses(entropy: ByteArray, selectedAddresses: List<HdKeyAddress>) {
+        selectedAddresses.forEach { hdKeyAccount ->
+            val newAccountCreation = createAccountCreation(entropy, hdKeyAccount)
             accountAdditionUseCase.addNewAccount(newAccountCreation)
         }
-        entropy.clearFromMemory()
+    }
+
+    private fun getAddressesToImport(entropy: ByteArray, selectedAddresses: List<RegisteredHdKey>): List<HdKeyAddress> {
+        val wallet = bip39WalletProvider.getBip39Wallet(entropy.copyOf())
+        return selectedAddresses.map { accountItem ->
+            createHdKeyAddress(wallet, accountItem)
+        }.also {
+            wallet.invalidate()
+        }
     }
 
     private suspend fun fetchRekeyedAddresses(
@@ -188,23 +198,16 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
         )
     }
 
-    private fun createHdKeyAccount(entropy: ByteArray, accountItem: RegisteredHdKey): HdKeyAccount? {
+    private fun createHdKeyAddress(bip39Wallet: Bip39Wallet, accountItem: RegisteredHdKey): HdKeyAddress {
         return with(accountItem) {
-            bip39Sdk.getHdKeyAccount(entropy.copyOf(), account, change, keyIndex)
+            val index = HdKeyAddressIndex(accountIndex = account, changeIndex = change, keyIndex = keyIndex)
+            bip39Wallet.generateAddress(index)
         }
     }
 
-    private fun createAccountCreation(account: HdKeyAccount): AccountCreation {
-        return with(account) {
-            val hdKeyType = AccountCreation.Type.HdKey(
-                publicKey,
-                aesPlatformManager.encryptByteArray(privateKey),
-                aesPlatformManager.encryptByteArray(entropy),
-                account.account,
-                change,
-                keyIndex,
-                derivationType,
-            )
+    private fun createAccountCreation(entropy: ByteArray, hdKeyAddress: HdKeyAddress): AccountCreation {
+        return with(hdKeyAddress) {
+            val hdKeyType = accountCreationHdKeyTypeMapper(entropy, hdKeyAddress, seedId = null)
             AccountCreation(
                 address = address,
                 customName = address.toShortenedAddress(),
@@ -234,7 +237,7 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
     }
 
     sealed interface ViewEvent {
-        data object NavigateToHome : ViewEvent
+        data class NavigateToHome(val isNewAccountAdded: Boolean) : ViewEvent
         data object NavigateBack : ViewEvent
         data class NavigateToRekeyedAccountSelection(val args: List<RekeyedAccountSelectionNavArg>) : ViewEvent
     }

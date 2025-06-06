@@ -14,10 +14,8 @@ package com.algorand.android.modules.accountdetail.accountstatusdetail.ui.decide
 
 import android.content.Context
 import com.algorand.android.R
-import com.algorand.android.models.AnnotatedString
-import com.algorand.android.models.ui.AccountAssetItemButtonState
-import com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailViewModel.ViewState.Content.DescriptionDetail
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content.DescriptionDetail
 import com.algorand.android.utils.browser.ALGO25_ACCOUNT_SUPPORT_URL
 import com.algorand.android.utils.browser.HD_ACCOUNT_SUPPORT_URL
 import com.algorand.android.utils.browser.LEDGER_SUPPORT_URL
@@ -41,12 +39,13 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             AccountType.Rekeyed, null -> R.string.no_auth
             AccountType.HdKey -> R.string.wallet_address
         }
-        var accountTypeString = context.getString(typeResId)
-        if (accountType != AccountType.HdKey) {
-            accountTypeString += " account"
+        return buildString {
+            append(context.getString(typeResId))
+            if (accountType != AccountType.HdKey) {
+                append(" ")
+                append(context.getString(R.string.account).lowercase())
+            }
         }
-
-        return accountTypeString
     }
 
     fun decideAccountTypeString(accountLite: AccountLite): String {
@@ -110,18 +109,9 @@ class AccountStatusDetailPreviewDecider @Inject constructor(
             null -> ALGO25_ACCOUNT_SUPPORT_URL
         }
         return DescriptionDetail(
-            annotatedString = AnnotatedString(descriptionStringResId),
+            description = context.getString(descriptionStringResId),
+            hyperlinkText = context.getString(R.string.learn_more),
             hyperlinkUrl = hyperlinkUrl
         )
-    }
-
-    fun decideAuthAccountActionButtonState(accountType: AccountType?): AccountAssetItemButtonState? {
-        return when (accountType) {
-            AccountType.LedgerBle, AccountType.NoAuth -> null
-            AccountType.Algo25 -> null
-            AccountType.RekeyedAuth -> AccountAssetItemButtonState.UNDO_REKEY
-            AccountType.Rekeyed, null -> AccountAssetItemButtonState.WARNING
-            AccountType.HdKey -> null
-        }
     }
 }

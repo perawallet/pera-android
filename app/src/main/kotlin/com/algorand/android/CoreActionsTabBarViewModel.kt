@@ -17,13 +17,12 @@ import com.algorand.android.BuildConfig.DISCOVER_MAINNET_URL
 import com.algorand.android.BuildConfig.DISCOVER_TESTNET_URL
 import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.usecase.GetIsProductionBuildUseCase
-import com.algorand.wallet.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 @HiltViewModel
 class CoreActionsTabBarViewModel @Inject constructor(
@@ -36,11 +35,9 @@ class CoreActionsTabBarViewModel @Inject constructor(
     val viewState get() = _viewState.asStateFlow()
 
     fun changeViewStateForFeatureFlag() {
-        val isImmersveToggleEnabled = isFeatureToggleEnabled(IMMERSVE_BUTTON_TOGGLE) &&
-                !(isConnectedToTestnet() && isProductionBuild())
         val isStakingToggleEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE) &&
                 !isConnectedToTestnet()
-        _viewState.value = ViewState.Content(isImmersveToggleEnabled, isStakingToggleEnabled)
+        _viewState.value = ViewState.Content(isStakingToggleEnabled)
     }
 
     fun getDiscoverBrowseDappUrl(): String {
@@ -65,7 +62,6 @@ class CoreActionsTabBarViewModel @Inject constructor(
     sealed interface ViewState {
         data object Idle : ViewState
         data class Content(
-            val isImmersveEnabled: Boolean,
             val isStakingEnabled: Boolean
         ) : ViewState
     }

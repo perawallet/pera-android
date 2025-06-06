@@ -108,6 +108,8 @@
 
     <include app:graph="@navigation/add_note_navigation" />
 
+    <include app:graph="@navigation/create_account_name_registration_navigation" />
+
     <action
         android:id="@+id/action_global_showQrNavigation"
         app:destination="@id/showQrNavigation">
@@ -806,6 +808,14 @@
         <action
             android:id="@+id/action_developerSettingsFragment_to_migrationViewerFragment"
             app:destination="@id/migrationViewerFragment" />
+        <action
+            android:id="@+id/action_developerSettingsFragment_to_createAccountNameRegistrationNavigation"
+            app:destination="@id/createAccountNameRegistrationNavigation">
+            <argument
+                android:name="accountCreation"
+                app:argType="com.algorand.android.models.AccountCreation"
+                app:nullable="true" />
+        </action>
     </fragment>
 
     <fragment

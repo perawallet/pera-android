@@ -27,6 +27,7 @@ data class RecoverWithPassphrasePreview(
     val onRestorePassphraseInputGroupEvent: Event<PassphraseInputGroupConfiguration>?,
     val onDisplayWrongMnemonicEvent: Event<AnnotatedString>?,
     val navToNameRegistrationEvent: Event<AccountCreation>?,
+    val navToRecoverRegisteredAccountsEvent: Event<String>?,
     val onAccountNotFoundEvent: Event<AnnotatedString>?,
     val navToImportRekeyedAccountEvent: Event<Pair<AccountCreation, RekeyedAccountSelectionNavArg>>?,
     val showErrorEvent: Event<AnnotatedString>?

@@ -35,7 +35,7 @@ class SwapFromAssetSelectionPreviewUseCase @Inject constructor(
         accountAddress: String,
         query: String?
     ): Flow<SwapAssetSelectionPreview> = flow {
-        val accountAssets = getAccountOwnedAssetsData(accountAddress, includeAlgo = true)
+        val accountAssets = getAccountOwnedAssetsData(accountAddress, includeAlgo = false)
         val balanceFilteredAccountAssetList = accountAssets.filter { ownedAssetData ->
             if (ownedAssetData.isAlgo && query.isNullOrBlank()) return@filter true
 

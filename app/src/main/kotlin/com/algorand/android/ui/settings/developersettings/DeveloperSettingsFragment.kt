@@ -21,6 +21,7 @@ import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentDeveloperSettingsBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.ToolbarConfiguration
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.utils.browser.openDispenserUrl
 import com.algorand.android.utils.viewbinding.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,12 +45,14 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
         super.onViewCreated(view, savedInstanceState)
         binding.nodeSettingsListItem.setOnClickListener { onNodeSettingsClick() }
         binding.dispenserListItem.setOnClickListener { onDispenserClick() }
+        binding.createLegacyAlgo25ListItem.setOnClickListener { onCreateLegacyAlgo25Click() }
         binding.migrationListItem.setOnClickListener { onMigrationViewerClick() }
     }
 
     override fun onResume() {
         super.onResume()
         binding.dispenserListItem.isVisible = developerSettingsViewModel.isConnectedToTestnet()
+        binding.createLegacyAlgo25ListItem.isVisible = developerSettingsViewModel.showCreateLegacyAlgo25Account()
         binding.migrationListItem.isVisible = developerSettingsViewModel.showMigrationViewer()
     }
 
@@ -63,5 +66,15 @@ class DeveloperSettingsFragment : DaggerBaseFragment(R.layout.fragment_developer
 
     private fun onMigrationViewerClick() {
         nav(DeveloperSettingsFragmentDirections.actionDeveloperSettingsFragmentToMigrationViewerFragment())
+    }
+
+    private fun onCreateLegacyAlgo25Click() {
+        developerSettingsViewModel.logEvent(PeraClickEvent.TAP_ONBOARDING_CREATE_ACCOUNT)
+        nav(
+            DeveloperSettingsFragmentDirections
+                .actionDeveloperSettingsFragmentToCreateAccountNameRegistrationNavigation(
+                    developerSettingsViewModel.createAlgo25Account()
+                )
+        )
     }
 }

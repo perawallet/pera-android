@@ -15,22 +15,11 @@ package com.algorand.wallet.algosdk.transaction.sdk
 import com.algorand.algosdk.account.Account
 import com.algorand.algosdk.sdk.Sdk
 import com.algorand.wallet.algosdk.domain.model.Algo25Account
-import com.algorand.wallet.algosdk.domain.model.HdKeyAccount
 import com.algorand.wallet.encryption.domain.utils.clearFromMemory
 import java.security.NoSuchAlgorithmException
 import javax.inject.Inject
 
-internal class AlgoAccountSdkImpl @Inject constructor(
-    private val bip39Sdk: PeraBip39Sdk
-) : AlgoAccountSdk {
-
-    override fun createHdAccount(): HdKeyAccount? {
-        return try {
-            bip39Sdk.createHdKeyAccount()
-        } catch (e: Exception) {
-            null
-        }
-    }
+internal class AlgoAccountSdkImpl @Inject constructor() : AlgoAccountSdk {
 
     override fun createAlgo25Account(): Algo25Account? {
         return try {

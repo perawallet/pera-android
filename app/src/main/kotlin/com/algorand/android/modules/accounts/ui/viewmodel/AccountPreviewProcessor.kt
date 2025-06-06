@@ -36,7 +36,6 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
-import com.algorand.wallet.remoteconfig.domain.usecase.IMMERSVE_BUTTON_TOGGLE
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import java.math.BigDecimal
@@ -191,7 +190,6 @@ class AccountPreviewProcessor @Inject constructor(
             index = QUICK_ACTIONS_ITEM_INDEX,
             element = BaseAccountListItem.QuickActionsItem(
                 isSwapButtonSelected = getSwapFeatureRedDotVisibility.getSwapFeatureRedDotVisibility(),
-                isImmersveEnabled = isFeatureToggleEnabled(IMMERSVE_BUTTON_TOGGLE),
                 isStakingEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE)
             )
         )

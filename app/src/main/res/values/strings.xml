@@ -1278,18 +1278,18 @@
     <string name="no_auth">No Auth</string>
     <string name="unknown">Unknown</string>
     <string name="rekeyed_to">Rekeyed to</string>
-    <string name="your_account_is_a_hd_wallet_address">Wallet that lets you derive new accounts, all using same key\n<annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_a_standard">Your account is a standard Algorand account. It has not been rekeyed and it is not associated with a Ledger device. It was added to your wallet with its keys. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_a_Ledger">Your account is a Ledger account. It was added to your wallet directly from the hardware device. All transactions for this account must be confirmed on your Ledger. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
+    <string name="your_account_is_a_hd_wallet_address">Wallet that lets you derive new accounts, all using same key.</string>
+    <string name="your_account_is_a_standard">Your account is a standard Algorand account. It has not been rekeyed and it is not associated with a Ledger device. It was added to your wallet with its keys.</string>
+    <string name="your_account_is_a_Ledger">Your account is a Ledger account. It was added to your wallet directly from the hardware device. All transactions for this account must be confirmed on your Ledger.</string>
     <string name="this_account_was_not">This account was not added to your wallet with its keys. It is read-only and cannot interact with other accounts or authorize transactions.</string>
     <string name="your_account_doesn_t">Your account doesn’t have any Auth information. You can\'t send assets or sign transactions. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_rekeyed">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_rekeyed_to">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_rekeyed_to_an">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_rekeyed_to_another">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_rekeyed_to_unknown">* No record of rekeyed account type found\n\nYour account is rekeyed to another Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
+    <string name="your_account_is_rekeyed_to_an">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions.</string>
+    <string name="your_account_is_rekeyed_to_another">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account.</string>
+    <string name="your_account_is_rekeyed_to_unknown">* No record of rekeyed account type found\n\nYour account is rekeyed to another Algorand account. Transactions for this account will be authorized by the other account.</string>
     <string name="no_record_of_original_account">* No record of original account type found\n\nYour account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_rekeyed_to_an_account_on">Your account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
+    <string name="your_account_is_rekeyed_to_an_account_on">Your account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device.</string>
     <string name="no_record_of_original_account_type">* No record of original account type found\n\nYour account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="you_are_about_to_undo_this">You are about to undo this account\'s rekey operation. You will rekey the account back to itself using its authorized address. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
 
@@ -1474,6 +1474,8 @@
     <string name="wallet_number">Wallet #%1$d</string>
     <string name="select_hd_wallet">Select HD Wallet</string>
     <string name="create_your_new_account_under">Create your new account under an HD wallet you already have</string>
+
+    <string name="create_legacy_algo25_account">Create Legacy Algo25 Account</string>
 
     <string name="migration_viewer">Migration Viewer</string>
     <string name="migration_troubleshooter">Migration Troubleshooter</string>

@@ -68,8 +68,12 @@ class RecoverRegisteredAccountsFragment : BaseFragment(0) {
         )
     }
 
-    private fun navToHomeNavigation() {
-        nav(RecoverRegisteredAccountsFragmentDirections.actionRecoverRegisteredAccountsFragmentToHomeNavigation())
+    private fun navToHomeNavigation(isNewAccountAdded: Boolean) {
+        nav(
+            RecoverRegisteredAccountsFragmentDirections.actionRecoverRegisteredAccountsFragmentToHomeNavigation(
+                showConfetti = isNewAccountAdded
+            )
+        )
     }
 
     private fun configureToolbar() {

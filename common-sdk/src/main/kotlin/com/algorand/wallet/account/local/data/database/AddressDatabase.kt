@@ -16,6 +16,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.algorand.wallet.account.local.data.database.AddressDatabase.Companion.DATABASE_VERSION
 import com.algorand.wallet.account.local.data.database.dao.Algo25Dao
+import com.algorand.wallet.account.local.data.database.dao.Algo25NoAuthDao
 import com.algorand.wallet.account.local.data.database.dao.HdKeyDao
 import com.algorand.wallet.account.local.data.database.dao.HdSeedDao
 import com.algorand.wallet.account.local.data.database.dao.LedgerBleDao
@@ -43,6 +44,7 @@ internal abstract class AddressDatabase : RoomDatabase() {
     abstract fun hdKeyDao(): HdKeyDao
     abstract fun hdSeedDao(): HdSeedDao
     abstract fun algo25Dao(): Algo25Dao
+    abstract fun algo25NoAuthDao(): Algo25NoAuthDao
 
     companion object {
         const val DATABASE_VERSION = 1

@@ -53,6 +53,8 @@ internal interface AccountInformationRepository {
 
     suspend fun fetchRekeyedAccounts(address: String): PeraResult<List<AccountInformation>>
 
+    suspend fun fetchRekeyedAddresses(address: String): PeraResult<List<String>>
+
     suspend fun setAssetStatus(address: String, assetId: Long, status: AssetStatus)
 
     suspend fun addAssetHoldingAsPending(address: String, assetId: Long)

@@ -22,9 +22,15 @@
 
     <include app:graph="@navigation/rekey_undo_navigation" />
 
+    <include app:graph="@navigation/rescan_rekeyed_account_selection_navigation" />
+
+    <include app:graph="@navigation/no_rekeyed_accounts_navigation" />
+
+    <include app:graph="@navigation/recover_registered_accounts_navigation" />
+
     <dialog
         android:id="@+id/accountStatusDetailBottomSheet"
-        android:name="com.algorand.android.modules.accountdetail.accountstatusdetail.ui.AccountStatusDetailBottomSheet"
+        android:name="com.algorand.android.ui.accountstatus.view.AccountStatusDetailBottomSheet"
         android:label="AccountStatusDetailBottomSheet"
         tools:layout="@layout/bottom_sheet_account_status_detail">
         <argument
@@ -55,6 +61,29 @@
             app:popUpToInclusive="true">
             <argument
                 android:name="accountAddress"
+                app:argType="string" />
+        </action>
+
+        <action
+            android:id="@+id/action_accountStatusDetailBottomSheet_to_rescanRekeyedAccountSelectionNavigation"
+            app:destination="@id/rescanRekeyedAccountSelectionNavigation"
+            app:popUpTo="@id/accountStatusDetailBottomSheet"
+            app:popUpToInclusive="true">
+
+            <argument
+                android:name="rekeyedAccountSelectionNavArg"
+                app:argType="com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg" />
+        </action>
+
+        <action
+            android:id="@+id/action_accountStatusDetailBottomSheet_to_noRekeyedAccountsNavigation"
+            app:destination="@id/noRekeyedAccountsNavigation" />
+
+        <action
+            android:id="@+id/action_accountStatusDetailBottomSheet_to_recoverRegisteredAccountsNavigation"
+            app:destination="@id/recoverRegisteredAccountsNavigation">
+            <argument
+                android:name="encryptedEntropyBase64"
                 app:argType="string" />
         </action>
     </dialog>

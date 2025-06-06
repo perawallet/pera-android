@@ -21,47 +21,44 @@
         style="@style/TextAppearance.Title.Sans.Medium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/spacing_small"
+        android:layout_marginBottom="@dimen/spacing_normal"
         android:paddingHorizontal="@dimen/spacing_xlarge"
         android:text="@string/discover"
         app:layout_constraintBottom_toTopOf="@id/headerBottomGuideline"
         app:layout_constraintEnd_toStartOf="@id/searchIconView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/searchIconView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/spacing_xlarge"
+        android:layout_marginBottom="@dimen/spacing_normal"
         android:background="@drawable/bg_layer_gray_lighter_oval"
         android:padding="@dimen/spacing_small"
         android:src="@drawable/ic_search"
-        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/headerBottomGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/headerTextView"
-        app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/secondary_icon_tint_color" />
 
-    <SearchView
+    <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_large"
+        android:layout_marginTop="@dimen/spacing_large"
         android:background="@drawable/bg_search_bar_rounded"
         android:iconifiedByDefault="false"
         android:inputType="text"
         android:paddingStart="0dp"
-        android:queryBackground="@android:color/transparent"
-        android:queryHint="@string/search_for_any_asa_by"
         android:theme="@style/SearchViewStyle"
         app:endIconTintColor="@color/secondary_icon_tint_color"
         app:layout_constraintEnd_toStartOf="@id/cancelSearchButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:queryBackground="@android:color/transparent"
-        app:startIconTintColor="@color/search_bar_view_icon_color"
-        tools:visibility="visible" />
+        app:queryHint="@string/search_for_any_asa_by" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/cancelSearchButton"
@@ -70,7 +67,7 @@
         android:layout_height="wrap_content"
         android:minWidth="0dp"
         android:minHeight="0dp"
-        android:paddingHorizontal="@dimen/spacing_small"
+        android:paddingHorizontal="@dimen/spacing_xlarge"
         android:text="@string/cancel"
         android:textAppearance="@style/TextAppearance.Body.Sans.Medium"
         android:textColor="@color/discover_helper_purple"
@@ -78,44 +75,49 @@
         app:layout_constraintBottom_toBottomOf="@id/searchView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/searchView"
-        app:layout_constraintTop_toTopOf="@id/searchView"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="@id/searchView" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/headerBottomGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/spacing_small"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/button_min_height" />
+        app:layout_constraintGuide_begin="@dimen/discover_search_bar_height" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchRecyclerView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_large"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerBottomGuideline" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchView" />
 
     <com.algorand.android.customviews.PeraWebView
         android:id="@+id/webView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/headerBottomGuideline" />
 
     <LinearLayout
         android:id="@+id/errorScreenState"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/headerBottomGuideline"
         tools:visibility="visible">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/infoIconImageView"
             android:layout_width="96dp"
             android:layout_height="96dp"
@@ -148,10 +150,11 @@
             style="@style/Button.Discover"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/spacing_xxlarge"
             android:layout_marginHorizontal="@dimen/spacing_xlarge"
             android:layout_marginTop="@dimen/spacing_xxlarge"
-            android:text="@string/try_again"/>
+            android:paddingHorizontal="@dimen/spacing_xxlarge"
+            android:text="@string/try_again" />
+
     </LinearLayout>
 
     <androidx.core.widget.ContentLoadingProgressBar
@@ -170,16 +173,13 @@
         android:id="@+id/searchDeactivatedGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:constraint_referenced_ids="searchIconView,headerTextView"
-        tools:visibility="visible" />
+        app:constraint_referenced_ids="searchIconView,headerTextView" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/searchActivatedGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="searchRecyclerView,searchView,cancelSearchButton"
-        tools:visibility="gone" />
+        app:constraint_referenced_ids="searchRecyclerView,searchView,cancelSearchButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

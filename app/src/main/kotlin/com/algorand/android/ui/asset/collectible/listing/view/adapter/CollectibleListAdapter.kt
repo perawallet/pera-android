@@ -24,6 +24,7 @@ import com.algorand.android.ui.asset.collectible.listing.model.CollectibleListIt
 import com.algorand.android.ui.asset.collectible.listing.model.CollectibleListItem.ItemType.LINEAR_VERTICAL_SIMPLE_NFT_ITEM
 import com.algorand.android.ui.asset.collectible.listing.model.CollectibleListItem.ItemType.LINEAR_VERTICAL_SIMPLE_PENDING_ITEM
 import com.algorand.android.ui.asset.collectible.listing.model.CollectibleListItem.ItemType.PLACEHOLDER_ITEM
+import com.algorand.android.ui.common.listhelper.viewholders.PagingPlaceholderViewHolder
 
 class CollectibleListAdapter(
     private val listener: CollectibleListAdapterListener
@@ -44,7 +45,7 @@ class CollectibleListAdapter(
             LINEAR_VERTICAL_SIMPLE_PENDING_ITEM.value -> createLinearVerticalSimplePendingNFTViewHolder(parent)
             GRID_SIMPLE_NFT_ITEM.value -> createGridSimpleNFTViewHolder(parent)
             GRID_SIMPLE_PENDING_ITEM.value -> createGridSimplePendingNFTViewHolder(parent)
-            PLACEHOLDER_ITEM.value -> PagingDataAdapterPlaceholderViewHolder.create(parent)
+            PLACEHOLDER_ITEM.value -> PagingPlaceholderViewHolder.create(parent)
             else -> throw IllegalArgumentException("$logTag: Unknown Item Type -> $viewType")
         }
     }

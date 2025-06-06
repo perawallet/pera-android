@@ -166,10 +166,13 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         }
     }
 
-    private val navToNameRegistrationScreenEventCollector: suspend (Event<AccountCreation>?) -> Unit =
-        {
-            it?.consume()?.run { navigateToSuccess(this) }
-        }
+    private val navToNameRegistrationScreenEventCollector: suspend (Event<AccountCreation>?) -> Unit = {
+        it?.consume()?.run { navToNameRegistration(this) }
+    }
+
+    private val navToRecoverRegisteredAccountsEventCollector: suspend (Event<String>?) -> Unit = {
+        it?.consume()?.run { navToRecoverRegisteredAccounts(this) }
+    }
 
     private val navToImportRekeyedAccountEventCollector: suspend (
         Event<Pair<AccountCreation, RekeyedAccountSelectionNavArg>>?
@@ -274,6 +277,10 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
                 collection = navToNameRegistrationScreenEventCollector
             )
             collectLatestOnLifecycle(
+                flow = map { it.navToRecoverRegisteredAccountsEvent }.distinctUntilChanged(),
+                collection = navToRecoverRegisteredAccountsEventCollector
+            )
+            collectLatestOnLifecycle(
                 flow = map { it.onAccountNotFoundEvent }.distinctUntilChanged(),
                 collection = accountNotFoundEventCollector
             )
@@ -311,27 +318,20 @@ class RecoverWithPassphraseFragment : DaggerBaseFragment(R.layout.fragment_recov
         recoverWithPassphraseViewModel.onClipboardTextPasted(pastedPassphrase)
     }
 
-    private fun navigateToSuccess(accountCreation: AccountCreation) {
-        when (accountCreation.type) {
-            is AccountCreation.Type.Algo25 -> {
-                nav(
-                    RecoverWithPassphraseFragmentDirections
-                        .actionRecoverWithPassphraseFragmentToRecoverAccountNameRegistrationFragment(
-                            accountCreation = accountCreation
-                        )
+    private fun navToNameRegistration(accountCreation: AccountCreation) {
+        nav(
+            RecoverWithPassphraseFragmentDirections
+                .actionRecoverWithPassphraseFragmentToRecoverAccountNameRegistrationFragment(
+                    accountCreation = accountCreation
                 )
-            }
+        )
+    }
 
-            is AccountCreation.Type.HdKey -> {
-                nav(
-                    RecoverWithPassphraseFragmentDirections
-                        .actionRecoverWithPassphraseFragmentToRecoverRegisteredAccountsFragment(
-                            accountCreation = accountCreation
-                        )
-                )
-            }
-            else -> {}
-        }
+    private fun navToRecoverRegisteredAccounts(encryptedEntropyBase64: String) {
+        nav(
+            RecoverWithPassphraseFragmentDirections
+                .actionRecoverWithPassphraseFragmentToRecoverRegisteredAccountsNavigation(encryptedEntropyBase64)
+        )
     }
 
     private fun showErrorBottomSheet(descriptionString: AnnotatedString) {

@@ -50,7 +50,7 @@ class RekeyedAccountSelectionFragmentDelegate(
 
     private val viewEventCollector: suspend (RekeyedAccountSelectionViewModel.ViewEvent) -> Unit = { event ->
         when (event) {
-            NavigateToNextScreen -> listener.navToNextScreen()
+            NavigateToNextScreen -> listener.onAccountsAdded()
             ShowAccountLimitError -> fragment.showMaxAccountLimitExceededError()
         }
     }
@@ -71,7 +71,7 @@ class RekeyedAccountSelectionFragmentDelegate(
         with(binding) {
             rekeyedAccountSelectionRecyclerView.adapter = rekeyedAccountSelectionAdapter
             primaryActionButton.setOnClickListener { viewModel.addSelectedAccounts() }
-            secondaryActionButton.setOnClickListener { listener.navToNextScreen() }
+            secondaryActionButton.setOnClickListener { listener.onSkipClick() }
         }
     }
 
@@ -85,7 +85,8 @@ class RekeyedAccountSelectionFragmentDelegate(
     }
 
     interface RekeyedAccountSelectionListener {
-        fun navToNextScreen()
+        fun onSkipClick()
+        fun onAccountsAdded()
         fun navToAccountInformationBottomSheet(address: String)
     }
 }

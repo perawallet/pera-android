@@ -50,6 +50,7 @@ object ColorPalette {
         val V700Alpha20 = V700.copy(alpha = 0.2f)
         val V700Alpha28 = V700.copy(alpha = 0.28f)
         val V600 = Color(0xFF2CB7BC)
+        val V600Alpha12 = V600.copy(alpha = 0.12f)
         val V500 = Color(0xFF3EDBD2)
         val V500Alpha12 = V500.copy(alpha = 0.12f)
         val V500Alpha24 = V500.copy(alpha = 0.24f)
@@ -173,6 +174,13 @@ object ColorPalette {
     object Red {
         // These colors are not defined in Figma color palette
         val V900 = Color(0xFF29FF6D5F)
+    }
+
+    object Others {
+        // These colors are not defined in Figma color palette
+        val V100 = Color(0xFF424F76)
+        val V200 = Color(0xFF9B0C48)
+        val V300 = Color(0XFFFFEAC2)
     }
 
     object Discover {

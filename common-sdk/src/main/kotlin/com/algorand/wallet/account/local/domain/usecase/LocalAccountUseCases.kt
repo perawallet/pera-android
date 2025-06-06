@@ -140,6 +140,10 @@ fun interface UpdateNoAuthAccountToAlgo25 {
     suspend operator fun invoke(address: String, secretKey: ByteArray)
 }
 
+fun interface UpdateInvalidAlgo25AccountsToNoAuth {
+    suspend operator fun invoke()
+}
+
 fun interface UpdateNoAuthAccountToHdKey {
     suspend operator fun invoke(
         address: String,
@@ -181,4 +185,8 @@ fun interface GetSeedIdIfExistingEntropy {
 
 fun interface GetAllHdSeeds {
     suspend operator fun invoke(): List<HdSeed>
+}
+
+fun interface GetHdSeedId {
+    suspend operator fun invoke(address: String): Int?
 }

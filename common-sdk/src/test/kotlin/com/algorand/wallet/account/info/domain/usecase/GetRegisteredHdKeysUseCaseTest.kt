@@ -13,82 +13,228 @@
 package com.algorand.wallet.account.info.domain.usecase
 
 import com.algorand.test.peraFixture
+import com.algorand.wallet.account.info.domain.mapper.RegisteredHdKeyMapper
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
+import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
+import com.algorand.wallet.account.info.domain.model.ActiveHdAccount.HdAccountAddress
 import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
-import com.algorand.wallet.account.local.domain.usecase.IsThereAnyAccountWithAddress
-import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
-import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.account.local.domain.usecase.GetLocalAccountsAddresses
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressLite
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
+import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import java.math.BigDecimal
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class GetRegisteredHdKeysUseCaseTest {
 
-    private val getAccountFastLookup: GetAccountFastLookup = mockk {
-        coEvery { invoke(address = "address") } returns PeraResult.Error(Exception())
+    private val getLocalAccountsAddresses: GetLocalAccountsAddresses = mockk()
+    private val getActiveHdAccounts: GetActiveHdAccounts = mockk()
+    private val getActiveHdAccountAddresses: GetActiveHdAccountAddresses = mockk()
+    private val registeredHdKeyMapper: RegisteredHdKeyMapper = mockk()
+    private val bip39Wallet: Bip39Wallet = mockk(relaxed = true) {
+        every { generateAddressLite(HdKeyAddressIndex()) } returns HdKeyAddressLite(FIRST_ADDRESS, HdKeyAddressIndex())
     }
-    private val isThereAnyAccountWithAddress: IsThereAnyAccountWithAddress = mockk {
-        coEvery { invoke(address = "address") } returns false
-    }
-    private val peraBip39Sdk: PeraBip39Sdk = mockk {
-        every { generateHdKeyAddress(ENTROPY, any(), any(), any()) } returns "address"
+    private val bip39WalletProvider: Bip39WalletProvider = mockk {
+        every { getBip39Wallet(ENTROPY) } returns bip39Wallet
     }
 
     private val sut = GetRegisteredHdKeysUseCase(
-        getAccountFastLookup = getAccountFastLookup,
-        isThereAnyAccountWithAddress = isThereAnyAccountWithAddress,
-        peraBip39Sdk = peraBip39Sdk
+        getLocalAccountsAddresses = getLocalAccountsAddresses,
+        getActiveHdAccounts = getActiveHdAccounts,
+        getActiveHdAccountAddresses = getActiveHdAccountAddresses,
+        registeredHdKeyMapper = registeredHdKeyMapper,
+        bip39WalletProvider = bip39WalletProvider
     )
 
     @Test
-    fun `EXPECT empty list WHEN fast lookup fails`() = runTest {
-        every { peraBip39Sdk.generateHdKeyAddress(ENTROPY, 0, 0, 0) } returns ADDRESS
-        coEvery { getAccountFastLookup(ADDRESS) } returns PeraResult.Error(Exception())
+    fun `EXPECT first registered hd key WHEN there is no active hd account`() = runTest {
+        val registeredHdKey = peraFixture<RegisteredHdKey>()
+        coEvery { getActiveHdAccounts(ENTROPY) } returns emptyList()
+        coEvery { getLocalAccountsAddresses() } returns emptyList()
+        coEvery {
+            registeredHdKeyMapper(FIRST_HD_ACCOUNT_ADDRESS, fastLookupAccount = null, isAlreadyImported = false)
+        } returns registeredHdKey
 
         val result = sut(ENTROPY)
 
-        assertTrue(result.isEmpty())
+        val expected = listOf(registeredHdKey)
+        assertEquals(expected, result)
     }
 
     @Test
-    fun `EXPECT empty list WHEN accounts are not exists`() = runTest {
-        every { peraBip39Sdk.generateHdKeyAddress(ENTROPY, 0, 0, 0) } returns ADDRESS
-        val fastLookup = ACCOUNT_FAST_LOOKUP.copy(accountExists = false)
-        coEvery { getAccountFastLookup(ADDRESS) } returns PeraResult.Success(fastLookup)
+    fun `EXPECT first registered hd key WHEN all addresses are filtered out`() = runTest {
+        val registeredHdKey = peraFixture<RegisteredHdKey>()
+        coEvery { getActiveHdAccounts(ENTROPY) } returns listOf(ACTIVE_HD_ACCOUNT_1, ACTIVE_HD_ACCOUNT_2)
+        coEvery { getLocalAccountsAddresses() } returns listOf(ADDRESS_1, ADDRESS_2)
+        val firstAccountAddress = FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS.copy(fastLookup = null)
+        val secondAccountAddress = SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS.copy(
+            fastLookup = SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP.copy(accountExists = false)
+        )
+        coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_1) } returns listOf(firstAccountAddress)
+        coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_2) } returns listOf(secondAccountAddress)
+        coEvery {
+            registeredHdKeyMapper(FIRST_HD_ACCOUNT_ADDRESS, fastLookupAccount = null, isAlreadyImported = false)
+        } returns registeredHdKey
 
         val result = sut(ENTROPY)
 
-        assertTrue(result.isEmpty())
+        val expected = listOf(registeredHdKey)
+        assertEquals(expected, result)
     }
 
     @Test
-    fun `EXPECT registered hd keys WHEN there are accounts`() = runTest {
-        every { peraBip39Sdk.generateHdKeyAddress(ENTROPY, 0, 0, 0) } returns ADDRESS
-        val fastLookup = ACCOUNT_FAST_LOOKUP.copy(accountExists = true)
-        coEvery { getAccountFastLookup(ADDRESS) } returns PeraResult.Success(fastLookup)
-        coEvery { isThereAnyAccountWithAddress(ADDRESS) } returns true
+    fun `EXPECT registered hd keys WHEN there are active hd accounts`() = runTest {
+        coEvery { getActiveHdAccounts(ENTROPY) } returns listOf(ACTIVE_HD_ACCOUNT_1, ACTIVE_HD_ACCOUNT_2)
+        coEvery { getLocalAccountsAddresses() } returns listOf(ADDRESS_1, ADDRESS_2)
+        coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_1) } returns listOf(FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS)
+        coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_2) } returns listOf(SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS)
+        every {
+            bip39Wallet.generateAddressLite(HdKeyAddressIndex())
+        } returns HdKeyAddressLite(ADDRESS_1, HdKeyAddressIndex())
+        coEvery {
+            registeredHdKeyMapper(
+                FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS,
+                FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP,
+                isAlreadyImported = true
+            )
+        } returns FIRST_ACCOUNT_REGISTERED_HD_KEY
+        coEvery {
+            registeredHdKeyMapper(
+                SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS,
+                SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP,
+                isAlreadyImported = true
+            )
+        } returns SECOND_ACCOUNT_REGISTERED_HD_KEY
 
         val result = sut(ENTROPY)
 
-        val expected = listOf(REGISTERED_HD_KEY)
+        val expected = listOf(FIRST_ACCOUNT_REGISTERED_HD_KEY, SECOND_ACCOUNT_REGISTERED_HD_KEY)
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `EXPECT addresses to be filtered out WHEN fast lookup is null or account is not exist`() = runTest {
+        coEvery {
+            getActiveHdAccounts(ENTROPY)
+        } returns listOf(ACTIVE_HD_ACCOUNT_1, ACTIVE_HD_ACCOUNT_2, ACTIVE_HD_ACCOUNT_3)
+        coEvery { getLocalAccountsAddresses() } returns listOf(ADDRESS_1, ADDRESS_2, ADDRESS_3)
+        val firstAccountAddress = FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS.copy(fastLookup = null)
+        val secondAccountAddress = SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS.copy(
+            fastLookup = SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP.copy(accountExists = false)
+        )
+        coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_1) } returns listOf(firstAccountAddress)
+        coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_2) } returns listOf(secondAccountAddress)
+        coEvery { getActiveHdAccountAddresses(ACTIVE_HD_ACCOUNT_3) } returns listOf(THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS)
+        every {
+            bip39Wallet.generateAddressLite(HdKeyAddressIndex())
+        } returns HdKeyAddressLite(ADDRESS_1, HdKeyAddressIndex())
+        coEvery {
+            registeredHdKeyMapper(
+                THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS,
+                THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP,
+                isAlreadyImported = true
+            )
+        } returns THIRD_ACCOUNT_REGISTERED_HD_KEY
+
+        val result = sut(ENTROPY)
+
+        val expected = listOf(THIRD_ACCOUNT_REGISTERED_HD_KEY)
         assertEquals(expected, result)
     }
 
     private companion object {
-        const val ADDRESS = "address_1"
-        val ACCOUNT_FAST_LOOKUP = peraFixture<AccountFastLookup>()
         val ENTROPY = byteArrayOf(1, 2, 3)
-        val REGISTERED_HD_KEY = peraFixture<RegisteredHdKey>().copy(
-            address = ADDRESS,
-            algoValue = BigDecimal.ZERO,
-            usdValue = BigDecimal.ZERO,
-            accountExists = true,
+        const val FIRST_ADDRESS = "first_address"
+        const val ADDRESS_1 = "address_1"
+        const val ADDRESS_2 = "address_2"
+        const val ADDRESS_3 = "address_3"
+        val FIRST_HD_ACCOUNT_ADDRESS = HdAccountAddress(
+            address = FIRST_ADDRESS,
+            accountIndex = 0,
+            changeIndex = 0,
+            keyIndex = 0,
+            fastLookup = null
+        )
+
+        val FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP = peraFixture<AccountFastLookup>().copy(
+            accountExists = true
+        )
+        val FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS = HdAccountAddress(
+            address = ADDRESS_1,
+            accountIndex = 0,
+            changeIndex = 0,
+            keyIndex = 0,
+            fastLookup = FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP
+        )
+        val ACTIVE_HD_ACCOUNT_1 = ActiveHdAccount(
+            accountIndex = 0,
+            entropy = ENTROPY,
+            firstBatchHdAccountAddress = listOf(FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS)
+        )
+        val FIRST_ACCOUNT_REGISTERED_HD_KEY = RegisteredHdKey(
+            address = FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS.address,
+            algoValue = FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP.algoValue,
+            usdValue = FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP.usdValue,
+            accountExists = FIRST_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP.accountExists,
             account = 0,
+            change = 0,
+            keyIndex = 0,
+            isImportedToDB = true
+        )
+
+        val SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP = peraFixture<AccountFastLookup>().copy(
+            accountExists = true
+        )
+        val SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS = HdAccountAddress(
+            address = ADDRESS_2,
+            accountIndex = 1,
+            changeIndex = 0,
+            keyIndex = 0,
+            fastLookup = SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP
+        )
+        val ACTIVE_HD_ACCOUNT_2 = ActiveHdAccount(
+            accountIndex = 1,
+            entropy = ENTROPY,
+            firstBatchHdAccountAddress = listOf(SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS)
+        )
+
+        val SECOND_ACCOUNT_REGISTERED_HD_KEY = RegisteredHdKey(
+            address = SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS.address,
+            algoValue = SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP.algoValue,
+            usdValue = SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP.usdValue,
+            accountExists = SECOND_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP.accountExists,
+            account = 1,
+            change = 0,
+            keyIndex = 0,
+            isImportedToDB = true
+        )
+
+        val THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP = peraFixture<AccountFastLookup>().copy(
+            accountExists = true
+        )
+        val THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS = HdAccountAddress(
+            address = ADDRESS_3,
+            accountIndex = 2,
+            changeIndex = 0,
+            keyIndex = 0,
+            fastLookup = THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP
+        )
+        val ACTIVE_HD_ACCOUNT_3 = ActiveHdAccount(
+            accountIndex = 0,
+            entropy = ENTROPY,
+            firstBatchHdAccountAddress = listOf(THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS)
+        )
+        val THIRD_ACCOUNT_REGISTERED_HD_KEY = RegisteredHdKey(
+            address = THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS.address,
+            algoValue = THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP.algoValue,
+            usdValue = THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP.usdValue,
+            accountExists = THIRD_ACCOUNT_HD_ACCOUNT_ADDRESS_LOOKUP.accountExists,
+            account = 1,
             change = 0,
             keyIndex = 0,
             isImportedToDB = true

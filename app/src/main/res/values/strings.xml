@@ -219,6 +219,7 @@
     <string name="privacy_click">Privacy Policy</string>
     <string name="by_creating_account">By creating an account, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
     <string name="by_adding_a_wallet">By adding a wallet, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
+    <string name="by_creating_a_wallet">By creating a wallet, you agree to Pera Wallet\'s <annotation font="dmsans_medium"><annotation custom="terms_click">Terms and Conditions</annotation></annotation> and <annotation font="dmsans_medium"><annotation custom="privacy_click">Privacy Policy</annotation></annotation></string>
     <string name="create_new_account">Create new Account</string>
     <string name="watch_account">Watch Account</string>
     <string name="wallet_address">Wallet address</string>
@@ -275,8 +276,10 @@
     <string name="the_only_way_to">The only way to recover an Algorand account is with this recovery passphrase.</string>
     <string name="im_ready_to_begin">I\'m Ready to Begin</string>
     <string name="create_a_watch">Create a Watch Account</string>
-    <string name="recover_an_algorand">Recover an Algorand account</string>
-    <string name="in_the_following">In the following steps, you\'ll enter your recovery passphrase to recover an Algorand account. Have your recovery phrase handy before you begin.</string>
+    <string name="recover_an_algorand_account">Recover an Algorand Account</string>
+    <string name="recover_an_algorand_wallet">Recover an Algorand Wallet</string>
+    <string name="in_the_following_account">In the following steps, you\'ll enter your recovery passphrase to recover an Algorand account. Have your recovery phrase handy before you begin.</string>
+    <string name="in_the_following_wallet">In the following steps, you\'ll enter your recovery passphrase to recover an Algorand wallet. Have your recovery phrase handy before you begin.</string>
     <string name="finish_account_creation">Finish Account Creation</string>
     <string name="welcome_to_pera">Welcome to\nPera Wallet</string>
     <string name="i_want_to_monitor">I want to monitor an account that\'s held in cold storage.</string>
@@ -596,7 +599,7 @@
     <string name="create_a_new_algorand_account_with">Create a new Algorand account with a new wallet and recovery passphrase</string>
     <string name="recover_an_account">Recover an account</string>
     <string name="i_want_to_recover">I want to recover an Algorand account using my 25-word passphrase</string>
-    <string name="pair_Ledger_device">Pair Ledger device</string>
+    <string name="pair_ledger_device">Pair Ledger device</string>
     <string name="operation_completed">Operation completed</string>
     <string name="asset_transfer_completed">Asset transfer completed</string>
     <string name="your_transaction_was">Your transaction was successfully received by the Algorand network.</string>
@@ -1275,18 +1278,18 @@
     <string name="no_auth">No Auth</string>
     <string name="unknown">Unknown</string>
     <string name="rekeyed_to">Rekeyed to</string>
-    <string name="your_account_is_a_hd_wallet_address">Wallet that lets you derive new accounts, all using same key\n<annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_a_standard">Your account is a standard Algorand account. It has not been rekeyed and it is not associated with a Ledger device. It was added to your wallet with its keys. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_a_Ledger">Your account is a Ledger account. It was added to your wallet directly from the hardware device. All transactions for this account must be confirmed on your Ledger. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
+    <string name="your_account_is_a_hd_wallet_address">Wallet that lets you derive new accounts, all using same key.</string>
+    <string name="your_account_is_a_standard">Your account is a standard Algorand account. It has not been rekeyed and it is not associated with a Ledger device. It was added to your wallet with its keys.</string>
+    <string name="your_account_is_a_Ledger">Your account is a Ledger account. It was added to your wallet directly from the hardware device. All transactions for this account must be confirmed on your Ledger.</string>
     <string name="this_account_was_not">This account was not added to your wallet with its keys. It is read-only and cannot interact with other accounts or authorize transactions.</string>
     <string name="your_account_doesn_t">Your account doesn’t have any Auth information. You can\'t send assets or sign transactions. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_rekeyed">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_rekeyed_to">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_rekeyed_to_an">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_rekeyed_to_another">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_rekeyed_to_unknown">* No record of rekeyed account type found\n\nYour account is rekeyed to another Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
+    <string name="your_account_is_rekeyed_to_an">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions.</string>
+    <string name="your_account_is_rekeyed_to_another">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account.</string>
+    <string name="your_account_is_rekeyed_to_unknown">* No record of rekeyed account type found\n\nYour account is rekeyed to another Algorand account. Transactions for this account will be authorized by the other account.</string>
     <string name="no_record_of_original_account">* No record of original account type found\n\nYour account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_rekeyed_to_an_account_on">Your account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
+    <string name="your_account_is_rekeyed_to_an_account_on">Your account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device.</string>
     <string name="no_record_of_original_account_type">* No record of original account type found\n\nYour account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="you_are_about_to_undo_this">You are about to undo this account\'s rekey operation. You will rekey the account back to itself using its authorized address. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
 
@@ -1505,4 +1508,17 @@
 
     <string name="select_universal_wallet">Select Universal Wallet</string>
     <string name="create_your_new_account">Create your new account under a Universal Wallet you already have</string>
+
+    <string name="recover_a_wallet">Recover a wallet</string>
+    <string name="i_want_to_recover_wallet">I want to recover an Algorand wallet.</string>
+
+    <string name="new_to_algorand">New to Algorand?</string>
+    <string name="already_have_an_account">Already have an account?</string>
+
+    <string name="please_note_we_currently">Please note: We currently do not support the backing up of Universal and Ledger Wallets</string>
+
+    <string name="rescan_rekeyed_accounts">Rescan Rekeyed Accounts</string>
+    <string name="import_any_rekeyed_accounts">Import any rekeyed accounts</string>
+    <string name="no_rekeyed_accounts_found">No Rekeyed Accounts Found</string>
+    <string name="we_have_scanned_the_blockchain">We have scanned the blockchain and were not able to find any accounts that have not been imported.</string>
 </resources>

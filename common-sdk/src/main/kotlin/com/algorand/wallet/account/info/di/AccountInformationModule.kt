@@ -51,6 +51,10 @@ import com.algorand.wallet.account.info.data.service.AccountInformationApiServic
 import com.algorand.wallet.account.info.data.service.AssetHoldingNodeApiService
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManager
 import com.algorand.wallet.account.info.domain.manager.AccountCacheManagerImpl
+import com.algorand.wallet.account.info.domain.mapper.DefaultHdAccountAddressMapper
+import com.algorand.wallet.account.info.domain.mapper.DefaultRegisteredHdKeyMapper
+import com.algorand.wallet.account.info.domain.mapper.HdAccountAddressMapper
+import com.algorand.wallet.account.info.domain.mapper.RegisteredHdKeyMapper
 import com.algorand.wallet.account.info.domain.repository.AccountFastLookupRepository
 import com.algorand.wallet.account.info.domain.repository.AccountInformationRepository
 import com.algorand.wallet.account.info.domain.usecase.AddAssetHoldingToAccountAsPending
@@ -60,6 +64,8 @@ import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchAccountInformationWithoutAssets
 import com.algorand.wallet.account.info.domain.usecase.FetchAndCacheAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddressesUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHolding
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingAmount
@@ -69,9 +75,15 @@ import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFl
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountDetailCacheStatusFlowUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountFastLookup
+import com.algorand.wallet.account.info.domain.usecase.GetAccountFastLookupBatch
+import com.algorand.wallet.account.info.domain.usecase.GetAccountFastLookupBatchUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformation
 import com.algorand.wallet.account.info.domain.usecase.GetAccountInformationFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAccountRekeyAdminAddress
+import com.algorand.wallet.account.info.domain.usecase.GetActiveHdAccountAddresses
+import com.algorand.wallet.account.info.domain.usecase.GetActiveHdAccountAddressesUseCase
+import com.algorand.wallet.account.info.domain.usecase.GetActiveHdAccounts
+import com.algorand.wallet.account.info.domain.usecase.GetActiveHdAccountsUseCase
 import com.algorand.wallet.account.info.domain.usecase.GetAllAccountInformationFlow
 import com.algorand.wallet.account.info.domain.usecase.GetAllAssetHoldingIds
 import com.algorand.wallet.account.info.domain.usecase.GetAllFailedCachedAccountAddresses
@@ -324,6 +336,9 @@ internal object AccountInformationModule {
     }
 
     @Provides
+    fun provideFetchRekeyedAddresses(useCase: FetchRekeyedAddressesUseCase): FetchRekeyedAddresses = useCase
+
+    @Provides
     fun provideAssetStatusEntityMapper(impl: AssetStatusEntityMapperImpl): AssetStatusEntityMapper = impl
 
     @Provides
@@ -426,4 +441,21 @@ internal object AccountInformationModule {
     fun provideIsThereAnyAssetCanAddressOptOut(
         useCase: IsThereAnyAssetCanAddressOptOutUseCase
     ): IsThereAnyAssetCanAddressOptOut = useCase
+
+    @Provides
+    fun provideRegisteredHdKeyMapper(impl: DefaultRegisteredHdKeyMapper): RegisteredHdKeyMapper = impl
+
+    @Provides
+    fun provideGetActiveHdAccounts(useCase: GetActiveHdAccountsUseCase): GetActiveHdAccounts = useCase
+
+    @Provides
+    fun provideGetAccountFastLookupBatch(useCase: GetAccountFastLookupBatchUseCase): GetAccountFastLookupBatch = useCase
+
+    @Provides
+    fun provideGetActiveHdAccountAddresses(
+        useCase: GetActiveHdAccountAddressesUseCase
+    ): GetActiveHdAccountAddresses = useCase
+
+    @Provides
+    fun provideHdAccountAddressMapper(impl: DefaultHdAccountAddressMapper): HdAccountAddressMapper = impl
 }

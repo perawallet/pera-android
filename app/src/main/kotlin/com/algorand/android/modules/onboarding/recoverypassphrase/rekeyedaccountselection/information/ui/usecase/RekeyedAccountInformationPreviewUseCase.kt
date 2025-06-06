@@ -32,7 +32,7 @@ import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.core.domain.usecase.FetchAccountInformationAndCacheAssets
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.info.domain.model.AccountInformation
-import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.foundation.PeraResult
 import java.math.BigDecimal
@@ -45,7 +45,7 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
     private val assetDrawableProviderDecider: AssetDrawableProviderDecider,
     private val parityUseCase: ParityUseCase,
     private val accountIconDrawablePreviewMapper: AccountIconDrawablePreviewMapper,
-    private val fetchRekeyedAccounts: FetchRekeyedAccounts,
+    private val fetchRekeyedAddresses: FetchRekeyedAddresses,
     private val getAccountBaseOwnedAssetData: GetAccountBaseOwnedAssetData,
     private val fetchAccountInformationAndCacheAssets: FetchAccountInformationAndCacheAssets,
     private val getAccountDisplayName: GetAccountDisplayName,
@@ -68,17 +68,17 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
             includeClosedAccount = false
         ).map { accountInformation ->
             lateinit var foundAccountInformationItemList: List<BaseFoundAccountInformationItem>
-            fetchRekeyedAccounts(accountAddress).use(
-                onSuccess = { rekeyedAccountInformation ->
+            fetchRekeyedAddresses(accountAddress).use(
+                onSuccess = { rekeyedAddresses ->
                     foundAccountInformationItemList = createBaseFoundAccountInformationItemList(
                         accountInformation = accountInformation,
-                        rekeyedAccounts = rekeyedAccountInformation
+                        rekeyedAddresses = rekeyedAddresses.importedAddresses + rekeyedAddresses.notImportedAddresses
                     )
                 },
                 onFailed = { _, _ ->
                     foundAccountInformationItemList = createBaseFoundAccountInformationItemList(
                         accountInformation = accountInformation,
-                        rekeyedAccounts = emptyList()
+                        rekeyedAddresses = emptyList()
                     )
                 }
             )
@@ -91,7 +91,7 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
 
     private suspend fun createBaseFoundAccountInformationItemList(
         accountInformation: AccountInformation,
-        rekeyedAccounts: List<AccountInformation>
+        rekeyedAddresses: List<String>
     ): List<BaseFoundAccountInformationItem> {
         var primaryAccountValue = BigDecimal.ZERO
         var secondaryAccountValue = BigDecimal.ZERO
@@ -124,7 +124,7 @@ class RekeyedAccountInformationPreviewUseCase @Inject constructor(
 
         val authAccountItem = crateAuthAccount(accountInformation.rekeyAdminAddress)
 
-        val rekeyedAccountItemList = rekeyedAccounts.map { it.address }.run { createRekeyedAccounts(this) }
+        val rekeyedAccountItemList = createRekeyedAccounts(rekeyedAddresses)
         return mutableListOf<BaseFoundAccountInformationItem>().apply {
             add(createTitleItem(R.string.account_details))
             add(accountItem)

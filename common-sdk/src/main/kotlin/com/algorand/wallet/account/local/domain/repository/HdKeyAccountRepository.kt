@@ -30,6 +30,8 @@ internal interface HdKeyAccountRepository {
 
     suspend fun getAccount(address: String): LocalAccount.HdKey?
 
+    suspend fun getDerivedAddressCountOfSeed(seedId: Int): Int
+
     suspend fun addAccount(account: LocalAccount.HdKey, privateKey: ByteArray)
 
     suspend fun deleteAccount(address: String)
@@ -39,4 +41,6 @@ internal interface HdKeyAccountRepository {
     suspend fun getPrivateKey(address: String): ByteArray?
 
     suspend fun getHdWalletSummaries(): List<HdWalletSummary>
+
+    suspend fun getHdSeedId(address: String): Int?
 }

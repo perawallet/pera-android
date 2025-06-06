@@ -17,7 +17,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -146,21 +146,46 @@ fun PeraWarningText(modifier: Modifier = Modifier, text: String) {
 }
 
 @Composable
-fun PeraHighlightedText(modifier: Modifier = Modifier, text: String) {
+fun PeraHighlightedText(
+    modifier: Modifier = Modifier,
+    text: String,
+    textColor: Color,
+    backgroundColor: Color
+) {
     Box(
         modifier = modifier
-            .padding(start = 10.dp)
-            .clip(shape = CircleShape)
-            .background(color = PeraTheme.colors.layer.grayLighter)
+            .clip(RoundedCornerShape(8.dp))
+            .background(color = backgroundColor),
+        contentAlignment = Alignment.Center
     ) {
-        PeraBodyText(
+        Text(
             modifier = Modifier.padding(
-                start = 7.dp,
-                end = 7.dp,
-                top = 3.dp,
-                bottom = 3.dp
+                horizontal = 8.dp,
+                vertical = 4.dp
             ),
-            text = text
+            text = text,
+            style = PeraTheme.typography.caption.sansMedium,
+            color = textColor
         )
     }
+}
+
+@Composable
+fun PeraHighlightedGreenText(modifier: Modifier = Modifier, text: String) {
+    PeraHighlightedText(
+        modifier = modifier,
+        text = text,
+        textColor = PeraTheme.colors.wallet.wallet4.icon,
+        backgroundColor = PeraTheme.colors.wallet.wallet4.background
+    )
+}
+
+@Composable
+fun PeraHighlightedGrayText(modifier: Modifier = Modifier, text: String) {
+    PeraHighlightedText(
+        modifier = modifier,
+        text = text,
+        textColor = PeraTheme.colors.text.gray,
+        backgroundColor = PeraTheme.colors.layer.grayLighter
+    )
 }

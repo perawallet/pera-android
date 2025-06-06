@@ -23,10 +23,12 @@ import java.math.BigInteger
 
 sealed interface BaseRemoveAssetItem : RecyclerListItem {
 
+    @Suppress("MagicNumber")
     enum class ItemType(val value: Int) {
         REMOVE_ASSET_ITEM(0),
         REMOVE_COLLECTIBLE_ITEM(1),
-        SCREEN_STATE_ITEM(2)
+        SCREEN_STATE_ITEM(2),
+        PLACEHOLDER_ITEM(3)
     }
 
     val itemType: ItemType

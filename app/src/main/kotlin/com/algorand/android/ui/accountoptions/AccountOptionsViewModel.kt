@@ -13,17 +13,25 @@
 package com.algorand.android.ui.accountoptions
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.core.BaseViewModel
 import com.algorand.android.database.NotificationFilterDao
+import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.repository.NotificationRepository
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.NavToNoRekeyedAccounts
+import com.algorand.android.ui.accountoptions.AccountOptionsViewModel.ViewEvent.NavToRekeyedAccountSelection
 import com.algorand.android.ui.accountoptions.model.AccountOptionsPreview
 import com.algorand.android.usecase.AccountDeletionUseCase
 import com.algorand.android.usecase.SecurityUseCase
 import com.algorand.android.utils.Resource
+import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -35,8 +43,10 @@ class AccountOptionsViewModel @Inject constructor(
     private val accountDeletionUseCase: AccountDeletionUseCase,
     private val securityUseCase: SecurityUseCase,
     private val accountOptionsPreviewUseCase: AccountOptionsPreviewUseCase,
+    private val fetchRekeyedAddresses: FetchRekeyedAddresses,
+    private val eventDelegate: EventDelegate<ViewEvent>,
     savedStateHandle: SavedStateHandle
-) : BaseViewModel() {
+) : ViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
     val accountAddress = savedStateHandle.get<String>(ACCOUNT_ADDRESS).orEmpty()
 
@@ -45,6 +55,7 @@ class AccountOptionsViewModel @Inject constructor(
     private val _accountOptionsPreviewFlow = MutableStateFlow<AccountOptionsPreview?>(null)
     val accountOptionsPreviewFlow: StateFlow<AccountOptionsPreview?>
         get() = _accountOptionsPreviewFlow
+    private var rekeyedAccountFetchingJob: Job? = null
 
     init {
         checkIfNotificationFiltered()
@@ -74,6 +85,34 @@ class AccountOptionsViewModel @Inject constructor(
         }
     }
 
+    fun scanRekeyedAccounts() {
+        _accountOptionsPreviewFlow.value?.let { preview ->
+            eventDelegate.sendEvent(viewModelScope, ViewEvent.ShowFetchingRekeyedAccountsDialog)
+            rekeyedAccountFetchingJob = viewModelScope.launch {
+                val viewEvent = fetchRekeyedAddresses(accountAddress).use(
+                    onSuccess = { rekeyedAddresses ->
+                        val notImported = rekeyedAddresses.notImportedAddresses
+                        if (notImported.isEmpty()) {
+                            NavToNoRekeyedAccounts
+                        } else {
+                            NavToRekeyedAccountSelection(accountAddress, preview.accountIconDrawable, notImported)
+                        }
+                    },
+                    onFailed = { _, _ ->
+                        ViewEvent.ShowGenericError
+                    }
+                )
+                eventDelegate.sendEvent(ViewEvent.HideFetchingRekeyedAccountsDialog)
+                eventDelegate.sendEvent(viewEvent)
+            }
+        }
+    }
+
+    fun stopFetchingRekeyedAccounts() {
+        rekeyedAccountFetchingJob?.cancel()
+        rekeyedAccountFetchingJob = null
+    }
+
     fun canDisplayPassphrases(): Boolean {
         return _accountOptionsPreviewFlow.value?.isPassphraseButtonVisible == true
     }
@@ -90,6 +129,19 @@ class AccountOptionsViewModel @Inject constructor(
 
     fun isPinCodeEnabled(): Boolean {
         return securityUseCase.isPinCodeEnabled()
+    }
+
+    sealed interface ViewEvent {
+        data object ShowFetchingRekeyedAccountsDialog : ViewEvent
+        data object HideFetchingRekeyedAccountsDialog : ViewEvent
+        data class NavToRekeyedAccountSelection(
+            val authAddress: String,
+            val authDrawable: AccountIconDrawablePreview,
+            val rekeyedAddresses: List<String>
+        ) : ViewEvent
+
+        data object NavToNoRekeyedAccounts : ViewEvent
+        data object ShowGenericError : ViewEvent
     }
 
     companion object {

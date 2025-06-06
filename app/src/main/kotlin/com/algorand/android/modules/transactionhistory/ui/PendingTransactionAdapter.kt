@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.algorand.android.R
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
-import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryTitleViewHolder
+import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryResourceTitleViewHolder
 import com.algorand.android.modules.transactionhistory.ui.viewholder.AccountHistoryTransactionItemViewHolder
 
 class PendingTransactionAdapter(
@@ -36,14 +36,14 @@ class PendingTransactionAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            R.layout.item_account_history_title -> createHistoryHeaderViewHolder(parent)
+            R.layout.item_account_history_title -> createAccountHistoryResourceTitleViewHolder(parent)
             R.layout.item_account_history_transaction -> createPendingTransactionItem(parent)
             else -> throw Exception("$logTag: List Item is Unknown.")
         }
     }
 
-    private fun createHistoryHeaderViewHolder(parent: ViewGroup): AccountHistoryTitleViewHolder {
-        return AccountHistoryTitleViewHolder.create(parent)
+    private fun createAccountHistoryResourceTitleViewHolder(parent: ViewGroup): AccountHistoryResourceTitleViewHolder {
+        return AccountHistoryResourceTitleViewHolder.create(parent)
     }
 
     private fun createPendingTransactionItem(parent: ViewGroup): AccountHistoryTransactionItemViewHolder {
@@ -58,9 +58,10 @@ class PendingTransactionAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is AccountHistoryTitleViewHolder -> {
+            is AccountHistoryResourceTitleViewHolder -> {
                 holder.bind(getItem(position) as BaseTransactionItem.ResourceTitleItem)
             }
+
             is AccountHistoryTransactionItemViewHolder -> {
                 holder.bind(getItem(position) as BaseTransactionItem.TransactionItem)
             }

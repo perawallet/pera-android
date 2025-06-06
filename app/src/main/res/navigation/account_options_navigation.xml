@@ -30,6 +30,10 @@
 
     <include app:graph="@navigation/view_passphrase_navigation" />
 
+    <include app:graph="@navigation/rescan_rekeyed_account_selection_navigation" />
+
+    <include app:graph="@navigation/no_rekeyed_accounts_navigation" />
+
     <dialog
         android:id="@+id/accountOptionsBottomSheet"
         android:name="com.algorand.android.ui.accountoptions.AccountOptionsBottomSheet"
@@ -103,6 +107,20 @@
                 android:name="accountAddress"
                 app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_accountOptionsBottomSheet_to_rescanRekeyedAccountSelectionNavigation"
+            app:destination="@id/rescanRekeyedAccountSelectionNavigation"
+            app:popUpTo="@id/accountOptionsBottomSheet"
+            app:popUpToInclusive="true">
+
+            <argument
+                android:name="rekeyedAccountSelectionNavArg"
+                app:argType="com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg" />
+        </action>
+
+        <action
+            android:id="@+id/action_accountOptionsBottomSheet_to_noRekeyedAccountsNavigation"
+            app:destination="@id/noRekeyedAccountsNavigation" />
     </dialog>
 
 </navigation>

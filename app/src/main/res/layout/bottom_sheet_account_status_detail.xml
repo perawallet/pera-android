@@ -160,6 +160,19 @@
             app:drawableTint="@color/text_gray_lighter"
             tools:visibility="visible" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rescanRekeyedAccountsButton"
+            style="@style/Button.Text.Options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="@string/rescan_rekeyed_accounts"
+            android:textAppearance="@style/TextAppearance.Body.Sans"
+            android:visibility="gone"
+            app:drawableEndCompat="@drawable/ic_right"
+            app:drawableTint="@color/text_gray_lighter"
+            tools:visibility="visible" />
+
     </LinearLayout>
 
 </ScrollView>

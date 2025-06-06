@@ -1475,6 +1475,8 @@
     <string name="select_hd_wallet">Select HD Wallet</string>
     <string name="create_your_new_account_under">Create your new account under an HD wallet you already have</string>
 
+    <string name="create_legacy_algo25_account">Create Legacy Algo25 Account</string>
+
     <string name="migration_viewer">Migration Viewer</string>
     <string name="migration_troubleshooter">Migration Troubleshooter</string>
     <string name="clear_new_accounts">Clear Post v6 Accounts</string>

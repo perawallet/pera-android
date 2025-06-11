@@ -10,11 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.foundation.cache
+package com.algorand.wallet.privacy.data.mapper
 
-import java.lang.reflect.Type
+import com.algorand.wallet.privacy.data.model.PrivacyModeCacheValue
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
+import javax.inject.Inject
 
-interface PersistentCacheProvider {
-    fun <T : Any> getPersistentCache(type: Type, key: String): PersistentCache<T>
-    fun <T : Any> getFlowPersistentCache(type: Type, key: String, defaultValue: T): FlowPersistentCache<T>
+internal class DefaultPrivacyModeCacheValueMapper @Inject constructor() : PrivacyModeCacheValueMapper {
+
+    override fun invoke(privacyMode: PrivacyMode): PrivacyModeCacheValue {
+        return when (privacyMode) {
+            PrivacyMode.Enabled -> PrivacyModeCacheValue.ENABLED
+            PrivacyMode.Disabled -> PrivacyModeCacheValue.DISABLED
+        }
+    }
 }

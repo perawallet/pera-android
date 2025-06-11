@@ -12,9 +12,9 @@
 
 package com.algorand.wallet.foundation.cache
 
-import java.lang.reflect.Type
+import kotlinx.coroutines.flow.StateFlow
 
-interface PersistentCacheProvider {
-    fun <T : Any> getPersistentCache(type: Type, key: String): PersistentCache<T>
-    fun <T : Any> getFlowPersistentCache(type: Type, key: String, defaultValue: T): FlowPersistentCache<T>
+interface FlowPersistentCache<T : Any> : PersistentCache<T> {
+    fun observe(): StateFlow<T>
+    override fun get(): T
 }

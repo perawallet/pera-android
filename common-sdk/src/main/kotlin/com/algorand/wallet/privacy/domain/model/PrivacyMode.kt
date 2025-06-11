@@ -10,11 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.foundation.cache
+package com.algorand.wallet.privacy.domain.model
 
-import java.lang.reflect.Type
-
-interface PersistentCacheProvider {
-    fun <T : Any> getPersistentCache(type: Type, key: String): PersistentCache<T>
-    fun <T : Any> getFlowPersistentCache(type: Type, key: String, defaultValue: T): FlowPersistentCache<T>
+sealed interface PrivacyMode {
+    data object Enabled : PrivacyMode
+    data object Disabled : PrivacyMode
 }

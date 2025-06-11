@@ -10,11 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.foundation.cache
+package com.algorand.wallet.privacy.domain.repository
 
-import java.lang.reflect.Type
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
+import kotlinx.coroutines.flow.Flow
 
-interface PersistentCacheProvider {
-    fun <T : Any> getPersistentCache(type: Type, key: String): PersistentCache<T>
-    fun <T : Any> getFlowPersistentCache(type: Type, key: String, defaultValue: T): FlowPersistentCache<T>
+internal interface PrivacyModeRepository {
+    fun getPrivacyModeFlow(): Flow<PrivacyMode>
+    suspend fun getPrivacyMode(): PrivacyMode
+    suspend fun setPrivacyMode(privacyMode: PrivacyMode)
 }

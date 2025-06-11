@@ -10,11 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.android.models
+package com.algorand.android.ui.common.amount
 
-import com.google.gson.annotations.SerializedName
-
-data class AssetPriceHistory(
-    @SerializedName("coin") val assetPair: String,
-    @SerializedName("history") val candleHistory: List<CandleHistory>
-)
+interface FormattedAmount {
+    fun getFormattedValue(): String
+}

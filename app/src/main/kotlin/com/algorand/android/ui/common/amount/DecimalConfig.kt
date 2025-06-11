@@ -10,18 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.android.models
+package com.algorand.android.ui.common.amount
 
-import com.algorand.android.utils.formatAsTwoDecimals
-import java.math.BigDecimal
-
-data class ValuePosition(
-    val value: BigDecimal,
-    val x: Float,
-    val y: Float
+data class DecimalConfig(
+    val maxDecimals: Int,
+    val minDecimals: MinDecimalType = MinDecimalType.Default
 ) {
 
-    fun getFormattedPriceValue(): String {
-        return value.formatAsTwoDecimals()
+    sealed interface MinDecimalType {
+        data object Default : MinDecimalType
+        data object FixedToMax : MinDecimalType
+        data class Fixed(val value: Int) : MinDecimalType
     }
 }

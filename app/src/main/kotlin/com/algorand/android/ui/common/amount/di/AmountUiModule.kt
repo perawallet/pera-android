@@ -10,15 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.ui.model
+package com.algorand.android.ui.common.amount.di
 
-import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
-import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.common.amount.mapper.AmountRendererTypeMapper
+import com.algorand.android.ui.common.amount.mapper.DefaultAmountRendererTypeMapper
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-data class PortfolioItemProcessorData(
-    val accountLites: Map<String, AccountLite>,
-    val primaryCurrencySymbol: String,
-    val secondaryCurrencySymbol: String,
-    val isPrimaryCurrencyAlgo: Boolean,
-    val amountRendererType: AmountRenderer.RenderType
-)
+@Module
+@InstallIn(SingletonComponent::class)
+internal object AmountUiModule {
+
+    @Provides
+    fun provideAmountRendererTypeMapper(mapper: DefaultAmountRendererTypeMapper): AmountRendererTypeMapper = mapper
+}

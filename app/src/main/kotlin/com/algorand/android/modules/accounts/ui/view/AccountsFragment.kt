@@ -281,10 +281,16 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private fun setPortfolioValues(portfolioValues: BasePortfolioValueItem) {
         with(binding) {
-            primaryPortfolioValue.apply { text = portfolioValues.getPrimaryAccountValue(context) }
-            toolbarPrimaryPortfolioValue.apply { text = portfolioValues.getPrimaryAccountValue(context) }
-            secondaryPortfolioValue.apply { text = portfolioValues.getSecondaryAccountValue(context) }
-            toolbarSecondaryPortfolioValue.apply { text = portfolioValues.getSecondaryAccountValue(context) }
+            primaryPortfolioValue.apply {
+                text = portfolioValues.getPrimaryAccountValue(context)
+                setOnClickListener { accountsViewModel.togglePrivacy() }
+            }
+            secondaryPortfolioValue.apply {
+                text = portfolioValues.getSecondaryAccountValue(context)
+                setOnClickListener { accountsViewModel.togglePrivacy() }
+            }
+            toolbarPrimaryPortfolioValue.text = portfolioValues.getPrimaryAccountValue(root.context)
+            toolbarSecondaryPortfolioValue.text = portfolioValues.getSecondaryAccountValue(root.context)
             portfolioValueTitleTextView.apply {
                 setTextColor(ContextCompat.getColor(root.context, portfolioValues.titleColorResId))
                 setDrawableTintColor(portfolioValues.titleColorResId)

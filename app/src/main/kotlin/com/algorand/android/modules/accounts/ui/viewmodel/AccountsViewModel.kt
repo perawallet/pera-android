@@ -31,6 +31,7 @@ import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.privacy.domain.usecase.TogglePrivacyMode
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,6 +56,7 @@ class AccountsViewModel @Inject constructor(
     private val tutorialUseCase: TutorialUseCase,
     private val getAskNotificationPermissionEventFlowUseCase: GetAskNotificationPermissionEventFlowUseCase,
     private val eventDelegate: EventDelegate<ViewEvent>,
+    private val togglePrivacyMode: TogglePrivacyMode,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(), EventViewModel<AccountsViewModel.ViewEvent> by eventDelegate {
 
@@ -219,6 +221,12 @@ class AccountsViewModel @Inject constructor(
                 hasPlayedConfetti = true
                 eventDelegate.sendEvent(ViewEvent.ShowConfetti)
             }
+        }
+    }
+
+    fun togglePrivacy() {
+        viewModelScope.launch {
+            togglePrivacyMode()
         }
     }
 

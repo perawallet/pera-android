@@ -29,13 +29,19 @@ import com.algorand.android.modules.currency.domain.usecase.GetSecondaryCurrency
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.modules.notification.domain.usecase.NotificationStatusUseCase
 import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibilityUseCase
-import com.algorand.android.utils.formatAsCurrency
+import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.common.amount.CompactFormattedAmount
+import com.algorand.android.ui.common.amount.CompactFormattedAmount.FractionalType.Asset
+import com.algorand.android.ui.common.amount.CompactFormattedAmount.FractionalType.Fiat
+import com.algorand.android.ui.common.amount.PeraAmount
+import com.algorand.android.ui.common.amount.mapper.AmountRendererTypeMapper
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountsCustomInfo
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import java.math.BigDecimal
@@ -59,18 +65,19 @@ class AccountPreviewProcessor @Inject constructor(
     private val getLocalAccounts: GetLocalAccounts,
     private val getAccountsCustomInfo: GetAccountsCustomInfo,
     private val getAccountRegistrationType: GetAccountRegistrationType,
-    private val sortAccountsBySortingPreference: SortAccountsBySortingPreference
+    private val sortAccountsBySortingPreference: SortAccountsBySortingPreference,
+    private val amountRendererTypeMapper: AmountRendererTypeMapper
 ) {
 
     suspend fun prepareAccountPreview(
         localAccounts: List<LocalAccount>,
         accountLites: Map<String, AccountLite>,
         banner: BaseBanner?,
-        assetInboxCount: Int
+        assetInboxCount: Int,
+        privacyMode: PrivacyMode
     ): AccountPreview {
+        val amountRenderType = amountRendererTypeMapper(privacyMode)
         val accountList = mutableListOf<BaseAccountListItem>()
-        var primaryAccountValue = BigDecimal.ZERO
-        var secondaryAccountValue = BigDecimal.ZERO
         val currencyData = getCurrencyData()
 
         insertQuickActionsItem(accountList)
@@ -82,28 +89,35 @@ class AccountPreviewProcessor @Inject constructor(
             accountList.add(BANNER_ITEM_INDEX, bannerItem)
         }
 
-        val accountItems = sortAccountsBySortingPreference.sortAccountLites(accountLites).map { (_, accountLite) ->
-            if (accountLite.cachedInfo != null) {
-                primaryAccountValue += accountLite.cachedInfo.primaryAccountValue
-                secondaryAccountValue += accountLite.cachedInfo.secondaryAccountValue
-                getAccountSuccessItem(accountLite, accountLite.cachedInfo, currencyData)
-            } else {
-                getAccountErrorItem(accountLite)
-            }
-        }
+        val accountItems = getAccountItems(accountLites, currencyData, amountRenderType)
 
         if (accountItems.isNotEmpty()) {
             accountList.add(BaseAccountListItem.HeaderItem(R.string.accounts))
             accountList.addAll(accountItems)
         }
 
-        val portfolioData = getPortfolioItemProcessorData(primaryAccountValue, secondaryAccountValue, currencyData)
+        val portfolioData = getPortfolioItemProcessorData(accountLites, currencyData, amountRenderType)
+        val portfolio = portfolioItemProcessor.getPortfolioItem(portfolioData, localAccounts)
         return accountPreviewMapper.getSuccessAccountPreview(
             accountListItems = accountList,
-            portfolioValueItem = portfolioItemProcessor.getPortfolioItem(portfolioData, localAccounts),
+            portfolioValueItem = portfolio,
             hasNewNotification = notificationStatusUseCase.hasNewNotification(),
             assetInboxCount = assetInboxCount
         )
+    }
+
+    private suspend fun getAccountItems(
+        accountLites: Map<String, AccountLite>,
+        currencyData: CurrencyData,
+        rendererType: AmountRenderer.RenderType
+    ): List<BaseAccountListItem> {
+        return sortAccountsBySortingPreference.sortAccountLites(accountLites).map { (_, accountLite) ->
+            if (accountLite.cachedInfo != null) {
+                getAccountSuccessItem(accountLite, accountLite.cachedInfo, currencyData, rendererType)
+            } else {
+                getAccountErrorItem(accountLite)
+            }
+        }
     }
 
     suspend fun createAccountErrorItemList(): List<BaseAccountListItem> {
@@ -132,7 +146,8 @@ class AccountPreviewProcessor @Inject constructor(
     private suspend fun getAccountSuccessItem(
         accountLite: AccountLite,
         cachedInfo: AccountLite.CachedInfo,
-        currencyData: CurrencyData
+        currencyData: CurrencyData,
+        amountRenderType: AmountRenderer.RenderType
     ): BaseAccountListItem.AccountSuccessItem {
         val address = accountLite.address
         val displayName = getAccountDisplayName(accountLite)
@@ -141,27 +156,29 @@ class AccountPreviewProcessor @Inject constructor(
             primaryDisplayName = displayName.primaryDisplayName,
             secondaryDisplayName = displayName.secondaryDisplayName.orEmpty(),
             accountIconDrawablePreview = getAccountIconDrawablePreview(accountLite),
-            formattedPrimaryValue = cachedInfo.getFormattedPrimaryValue(currencyData),
-            formattedSecondaryValue = cachedInfo.getFormattedSecondaryValue(currencyData),
+            formattedPrimaryValue = cachedInfo.getFormattedPrimaryValue(currencyData, amountRenderType),
+            formattedSecondaryValue = cachedInfo.getFormattedSecondaryValue(currencyData, amountRenderType),
             canCopyable = cachedInfo.type != AccountType.NoAuth,
             startSmallIconResource = accountLite.getStartSmallIconResource()
         )
     }
 
-    private fun AccountLite.CachedInfo.getFormattedPrimaryValue(currencyData: CurrencyData): String {
-        return primaryAccountValue.formatAsCurrency(
-            symbol = currencyData.primaryCurrencySymbol,
-            isCompact = true,
-            isFiat = !currencyData.isPrimaryCurrencyAlgo
-        )
+    private fun AccountLite.CachedInfo.getFormattedPrimaryValue(
+        currencyData: CurrencyData,
+        amountRenderType: AmountRenderer.RenderType
+    ): AmountRenderer {
+        val fractionalType = if (currencyData.isPrimaryCurrencyAlgo) Asset else Fiat
+        val formattedAmount = CompactFormattedAmount(PeraAmount(primaryAccountValue), fractionalType)
+        return AmountRenderer(formattedAmount, amountRenderType, currencyData.primaryCurrencySymbol)
     }
 
-    private fun AccountLite.CachedInfo.getFormattedSecondaryValue(currencyData: CurrencyData): String {
-        return secondaryAccountValue.formatAsCurrency(
-            symbol = currencyData.secondaryCurrencySymbol,
-            isCompact = true,
-            isFiat = !currencyData.isSecondaryCurrencyAlgo
-        )
+    private fun AccountLite.CachedInfo.getFormattedSecondaryValue(
+        currencyData: CurrencyData,
+        amountRenderType: AmountRenderer.RenderType
+    ): AmountRenderer {
+        val fractionalType = if (currencyData.isSecondaryCurrencyAlgo) Asset else Fiat
+        val formattedAmount = CompactFormattedAmount(PeraAmount(secondaryAccountValue), fractionalType)
+        return AmountRenderer(formattedAmount, amountRenderType, currencyData.secondaryCurrencySymbol)
     }
 
     private fun AccountLite.getStartSmallIconResource(): Int? {
@@ -204,15 +221,16 @@ class AccountPreviewProcessor @Inject constructor(
     }
 
     private fun getPortfolioItemProcessorData(
-        primaryAccountValue: BigDecimal,
-        secondaryAccountValue: BigDecimal,
-        currencyData: CurrencyData
+        accountLites: Map<String, AccountLite>,
+        currencyData: CurrencyData,
+        amountRenderType: AmountRenderer.RenderType
     ): PortfolioItemProcessorData {
         return PortfolioItemProcessorData(
-            totalPrimaryValue = primaryAccountValue,
-            totalSecondaryValue = secondaryAccountValue,
+            accountLites = accountLites,
             primaryCurrencySymbol = currencyData.primaryCurrencySymbol,
-            secondaryCurrencySymbol = currencyData.secondaryCurrencySymbol
+            secondaryCurrencySymbol = currencyData.secondaryCurrencySymbol,
+            isPrimaryCurrencyAlgo = currencyData.isPrimaryCurrencyAlgo,
+            amountRendererType = amountRenderType
         )
     }
 

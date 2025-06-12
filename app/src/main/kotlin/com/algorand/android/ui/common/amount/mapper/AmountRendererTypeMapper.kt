@@ -10,15 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.ui.model
+package com.algorand.android.ui.common.amount.mapper
 
-import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
 
-data class PortfolioItemProcessorData(
-    val accountLites: Map<String, AccountLite>,
-    val primaryCurrencySymbol: String,
-    val secondaryCurrencySymbol: String,
-    val isPrimaryCurrencyAlgo: Boolean,
-    val amountRendererType: AmountRenderer.RenderType
-)
+fun interface AmountRendererTypeMapper {
+    operator fun invoke(privacyMode: PrivacyMode): AmountRenderer.RenderType
+}

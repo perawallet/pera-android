@@ -33,7 +33,7 @@ sealed class PlainFormattedAmount : FormattedAmount {
         )
     }
 
-    data class FiatPlainFormattedAmount(
+    data class SimplePlainFormattedAmount(
         override val amount: PeraAmount,
         override val decimalConfig: DecimalConfig
     ) : PlainFormattedAmount()

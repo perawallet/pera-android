@@ -10,15 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.ui.model
+package com.algorand.android.ui.common.amount.domain
 
-import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.common.amount.PeraAmount
 
-data class PortfolioItemProcessorData(
-    val accountLites: Map<String, AccountLite>,
-    val primaryCurrencySymbol: String,
-    val secondaryCurrencySymbol: String,
-    val isPrimaryCurrencyAlgo: Boolean,
-    val amountRendererType: AmountRenderer.RenderType
-)
+fun interface GetCompactPrimaryAmountRenderer {
+    operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
+}
+
+fun interface GetCompactSecondaryAmountRenderer {
+    operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
+}

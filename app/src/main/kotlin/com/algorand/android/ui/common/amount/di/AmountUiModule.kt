@@ -12,6 +12,10 @@
 
 package com.algorand.android.ui.common.amount.di
 
+import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRendererUseCase
+import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
+import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRendererUseCase
 import com.algorand.android.ui.common.amount.mapper.AmountRendererTypeMapper
 import com.algorand.android.ui.common.amount.mapper.DefaultAmountRendererTypeMapper
 import dagger.Module
@@ -25,4 +29,14 @@ internal object AmountUiModule {
 
     @Provides
     fun provideAmountRendererTypeMapper(mapper: DefaultAmountRendererTypeMapper): AmountRendererTypeMapper = mapper
+
+    @Provides
+    fun provideGetCompactPrimaryAmountRenderer(
+        useCase: GetCompactPrimaryAmountRendererUseCase
+    ): GetCompactPrimaryAmountRenderer = useCase
+
+    @Provides
+    fun provideGetCompactSecondaryAmountRenderer(
+        useCase: GetCompactSecondaryAmountRendererUseCase
+    ): GetCompactSecondaryAmountRenderer = useCase
 }

@@ -44,7 +44,7 @@ class PlainFormattedAmountTest {
         val amount = PeraAmount(BigDecimal.valueOf(123456789.1234567))
         val decimalConfig = DecimalConfig(2, DecimalConfig.MinDecimalType.FixedToMax)
 
-        val result = PlainFormattedAmount.FiatPlainFormattedAmount(amount, decimalConfig).getFormattedValue()
+        val result = PlainFormattedAmount.SimplePlainFormattedAmount(amount, decimalConfig).getFormattedValue()
 
         val expected = "123,456,789.12"
         assertEquals(expected, result)

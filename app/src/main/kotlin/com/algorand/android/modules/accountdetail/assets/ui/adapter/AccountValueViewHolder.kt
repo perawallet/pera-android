@@ -20,21 +20,32 @@ import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 
 class AccountValueViewHolder(
-    private val binding: ItemAccountValueBinding
+    private val binding: ItemAccountValueBinding,
+    private val listener: Listener
 ) : BaseViewHolder<AccountDetailAccountsItem>(binding.root) {
 
     companion object {
-        fun create(parent: ViewGroup): AccountValueViewHolder {
+        fun create(parent: ViewGroup, listener: Listener): AccountValueViewHolder {
             val binding = ItemAccountValueBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return AccountValueViewHolder(binding)
+            return AccountValueViewHolder(binding, listener)
         }
     }
 
     override fun bind(item: AccountDetailAccountsItem) {
         if (item !is AccountDetailAccountsItem.AccountPortfolioItem) return
         with(binding) {
-            primaryValueTextView.text = item.accountPrimaryFormattedParityValue
-            secondaryValueTextView.text = item.accountSecondaryFormattedParityValue.orEmpty()
+            primaryValueTextView.apply {
+                text = item.accountPrimaryFormattedParityValue
+                setOnClickListener { listener.onAccountValueClick() }
+            }
+            secondaryValueTextView.apply {
+                text = item.accountSecondaryFormattedParityValue.orEmpty()
+                setOnClickListener { listener.onAccountValueClick() }
+            }
         }
+    }
+
+    interface Listener {
+        fun onAccountValueClick()
     }
 }

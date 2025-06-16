@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/recoverRegisteredAccountsFragment"
-        android:name="com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsFragment"
+        android:name="com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.view.RecoverRegisteredAccountsFragment"
         android:label="RecoveryRegisteredAccountsFragment">
         <argument
             android:name="encryptedEntropyBase64"

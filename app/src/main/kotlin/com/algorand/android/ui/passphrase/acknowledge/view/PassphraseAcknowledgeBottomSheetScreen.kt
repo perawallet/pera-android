@@ -80,6 +80,7 @@ fun PassphraseAcknowledgeBottomSheetScreen(
         ConfirmButton(confirmationItems, onConfirm)
         Spacer(modifier = Modifier.height(12.dp))
         CancelButton(onCancel)
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 

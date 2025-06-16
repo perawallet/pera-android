@@ -62,9 +62,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun RecoverRegisteredAccountsScreen(
     viewModel: RecoverRegisteredAccountsViewModel,
-    onNavToHomeNavigation: (isNewAccountAdded: Boolean) -> Unit,
-    onNavBack: () -> Unit,
-    onNavToRekeyedAccountSelection: (List<RekeyedAccountSelectionNavArg>) -> Unit
+    listener: RecoverRegisteredAccountsScreenListener
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -75,9 +73,10 @@ fun RecoverRegisteredAccountsScreen(
     LaunchedEffect(viewModel.viewEvent) {
         viewModel.viewEvent.collectLatest { event ->
             when (event) {
-                is ViewEvent.NavigateToHome -> onNavToHomeNavigation(event.isNewAccountAdded)
-                is ViewEvent.NavigateBack -> onNavBack()
-                is ViewEvent.NavigateToRekeyedAccountSelection -> onNavToRekeyedAccountSelection(event.args)
+                is ViewEvent.NavigateToHome -> listener.onNavToHomeNavigation(event.isNewAccountAdded)
+                is ViewEvent.NavigateBack -> listener.onNavBack()
+                is ViewEvent.NavigateToRekeyedAccountSelection -> listener.onNavToRekeyedAccountSelection(event.args)
+                is ViewEvent.NavigateToAddressNaming -> listener.onNavToNewAddressNamingFragment(event.address)
             }
         }
     }
@@ -278,4 +277,11 @@ fun AddressItem(
             }
         }
     }
+}
+
+interface RecoverRegisteredAccountsScreenListener {
+    fun onNavToHomeNavigation(isNewAccountAdded: Boolean)
+    fun onNavBack()
+    fun onNavToRekeyedAccountSelection(navArgs: List<RekeyedAccountSelectionNavArg>)
+    fun onNavToNewAddressNamingFragment(address: String)
 }

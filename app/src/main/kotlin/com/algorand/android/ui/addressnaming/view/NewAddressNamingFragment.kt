@@ -28,7 +28,7 @@ import com.algorand.android.ui.compose.extensions.createComposeView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class NewAddressNamingFragment : BaseFragment(R.layout.fragment_address_naming), AddressNamingScreenListener {
+class NewAddressNamingFragment : BaseFragment(0), AddressNamingScreenListener {
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconResId = R.drawable.ic_left_arrow,

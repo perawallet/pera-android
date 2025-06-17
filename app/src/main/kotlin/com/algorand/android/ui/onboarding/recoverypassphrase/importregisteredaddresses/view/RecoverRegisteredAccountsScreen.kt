@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses
+package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -51,12 +51,13 @@ import com.algorand.android.ui.compose.widget.text.PeraBodyText
 import com.algorand.android.ui.compose.widget.text.PeraHeadlineText
 import com.algorand.android.ui.compose.widget.text.PeraHighlightedGrayText
 import com.algorand.android.ui.compose.widget.text.PeraTitleText
-import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewEvent
-import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.model.RegisteredHdKeyItem
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.viewmodel.RecoverRegisteredAccountsViewModel
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.viewmodel.RecoverRegisteredAccountsViewModel.ViewEvent
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.viewmodel.RecoverRegisteredAccountsViewModel.ViewState
 import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
 import com.algorand.android.ui.rekeyedaccounts.view.FetchingRekeyedAccountsLoadingDialog
 import com.algorand.android.utils.toShortenedAddress
-import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -235,7 +236,7 @@ private fun ListHeaderContainer(
 @Composable
 fun AddressItem(
     selectedAddresses: Set<String>,
-    account: RegisteredHdKey,
+    account: RegisteredHdKeyItem,
     onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
@@ -259,7 +260,7 @@ fun AddressItem(
             Row {
                 Column {
                     PeraTitleText(text = "\u0086${account.algoValue}")
-                    PeraBodyText(text = "$${account.usdValue}")
+                    PeraBodyText(text = account.formattedSelectedCurrencyValue)
                 }
                 val current = ToggleableState(selectedAddresses.contains(account.address))
                 PeraCheckbox(

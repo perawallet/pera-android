@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses
+package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -18,10 +18,11 @@ import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewByType
 import com.algorand.android.ui.onboarding.creation.mapper.AccountCreationHdKeyTypeMapper
-import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewEvent
-import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState
-import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState.Content.ContentType
-import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsViewModel.ViewState.Content.ContentType.LoadingRekeyedAddresses
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.model.RegisteredHdKeyItem
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.viewmodel.RecoverRegisteredAccountsViewModel.ViewEvent
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.viewmodel.RecoverRegisteredAccountsViewModel.ViewState
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.viewmodel.RecoverRegisteredAccountsViewModel.ViewState.Content.ContentType
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.viewmodel.RecoverRegisteredAccountsViewModel.ViewState.Content.ContentType.LoadingRekeyedAddresses
 import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
 import com.algorand.android.usecase.AccountAdditionUseCase
 import com.algorand.android.utils.analytics.CreationType
@@ -29,9 +30,7 @@ import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.detail.domain.model.AccountType
-import com.algorand.wallet.account.info.domain.model.RegisteredHdKey
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAddresses
-import com.algorand.wallet.account.info.domain.usecase.GetRegisteredHdKeys
 import com.algorand.wallet.algosdk.bip39.model.HdKeyAddress
 import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
 import com.algorand.wallet.algosdk.bip39.sdk.Bip39Wallet
@@ -58,7 +57,7 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
     private val aesPlatformManager: AESPlatformManager,
     private val bip39WalletProvider: Bip39WalletProvider,
     private val accountAdditionUseCase: AccountAdditionUseCase,
-    private val getRegisteredHdKeys: GetRegisteredHdKeys,
+    private val registeredAccountsProcessor: RecoverRegisteredAccountsAccountProcessor,
     private val fetchRekeyedAddresses: FetchRekeyedAddresses,
     private val getAccountIconDrawablePreviewByType: GetAccountIconDrawablePreviewByType,
     private val accountCreationHdKeyTypeMapper: AccountCreationHdKeyTypeMapper,
@@ -79,9 +78,7 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
         stateDelegate.onState<ViewState.Idle> {
             stateDelegate.updateState { ViewState.Loading }
             viewModelScope.launchIO {
-                val entropy = aesPlatformManager.decryptByteArray(encryptedEntropy)
-                val registeredAccounts = getRegisteredHdKeys(entropy.copyOf())
-                entropy.clearFromMemory()
+                val registeredAccounts = registeredAccountsProcessor.getRegisteredHdKeyItems(encryptedEntropy)
                 val notImportedAddresses = registeredAccounts.mapNotNull {
                     it.takeIf { !it.isImportedToDB }?.address
                 }.toSet()
@@ -160,7 +157,10 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
         }
     }
 
-    private fun getAddressesToImport(entropy: ByteArray, selectedAddresses: List<RegisteredHdKey>): List<HdKeyAddress> {
+    private fun getAddressesToImport(
+        entropy: ByteArray,
+        selectedAddresses: List<RegisteredHdKeyItem>
+    ): List<HdKeyAddress> {
         val wallet = bip39WalletProvider.getBip39Wallet(entropy.copyOf())
         return selectedAddresses.map { accountItem ->
             createHdKeyAddress(wallet, accountItem)
@@ -170,7 +170,7 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
     }
 
     private suspend fun fetchRekeyedAddresses(
-        selectedAddresses: List<RegisteredHdKey>
+        selectedAddresses: List<RegisteredHdKeyItem>
     ): List<RekeyedAccountSelectionNavArg> {
         return supervisorScope {
             val deferredFetchRekeyedAccounts = selectedAddresses.map {
@@ -202,7 +202,7 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
         )
     }
 
-    private fun createHdKeyAddress(bip39Wallet: Bip39Wallet, accountItem: RegisteredHdKey): HdKeyAddress {
+    private fun createHdKeyAddress(bip39Wallet: Bip39Wallet, accountItem: RegisteredHdKeyItem): HdKeyAddress {
         return with(accountItem) {
             val index = HdKeyAddressIndex(accountIndex = account, changeIndex = change, keyIndex = keyIndex)
             bip39Wallet.generateAddress(index)
@@ -227,7 +227,7 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
         data object Loading : ViewState
 
         data class Content(
-            val registeredAccounts: List<RegisteredHdKey> = emptyList(),
+            val registeredAccounts: List<RegisteredHdKeyItem> = emptyList(),
             val registeredAddressesNotImported: Set<String> = emptySet(),
             val selectedAddresses: Set<String> = emptySet(),
             val type: ContentType = ContentType.Idle

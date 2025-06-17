@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses
+package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,6 +25,7 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.viewmodel.RecoverRegisteredAccountsViewModel
 import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
 import dagger.hilt.android.AndroidEntryPoint
 

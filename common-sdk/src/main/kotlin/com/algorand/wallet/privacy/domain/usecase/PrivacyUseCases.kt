@@ -10,18 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.android.models
+package com.algorand.wallet.privacy.domain.usecase
 
-import com.algorand.android.utils.formatAsTwoDecimals
-import java.math.BigDecimal
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
+import kotlinx.coroutines.flow.Flow
 
-data class ValuePosition(
-    val value: BigDecimal,
-    val x: Float,
-    val y: Float
-) {
+fun interface GetPrivacyModeFlow {
+    operator fun invoke(): Flow<PrivacyMode>
+}
 
-    fun getFormattedPriceValue(): String {
-        return value.formatAsTwoDecimals()
-    }
+fun interface SetPrivacyMode {
+    suspend operator fun invoke(privacyMode: PrivacyMode)
+}
+
+fun interface TogglePrivacyMode {
+    suspend operator fun invoke()
 }

@@ -10,11 +10,9 @@
  * limitations under the License
  */
 
-package com.algorand.android.models
+package com.algorand.wallet.privacy.domain.model
 
-import com.google.gson.annotations.SerializedName
-
-data class AssetPriceHistory(
-    @SerializedName("coin") val assetPair: String,
-    @SerializedName("history") val candleHistory: List<CandleHistory>
-)
+sealed interface PrivacyMode {
+    data object Enabled : PrivacyMode
+    data object Disabled : PrivacyMode
+}

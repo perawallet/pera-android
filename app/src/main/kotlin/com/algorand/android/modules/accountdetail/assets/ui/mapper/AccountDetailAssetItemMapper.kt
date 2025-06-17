@@ -18,15 +18,23 @@ import com.algorand.android.modules.accountdetail.assets.ui.decider.NFTIndicator
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.AssetItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BasePendingItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.NFTItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
 import com.algorand.android.modules.collectibles.util.deciders.NFTAmountFormatDecider
+import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryCurrencyAssetParityValue
+import com.algorand.android.modules.parity.domain.usecase.GetSecondaryCurrencyAssetParityValue
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
+import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.common.amount.AmountRenderer.RenderType
+import com.algorand.android.ui.common.amount.DecimalConfig
+import com.algorand.android.ui.common.amount.PeraAmount
+import com.algorand.android.ui.common.amount.PlainFormattedAmount.SimplePlainFormattedAmount
+import com.algorand.android.ui.common.amount.SimpleFormattedAmount
 import com.algorand.android.utils.AssetName
-import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.formatting.FormatAmountByCollectibleFractionalDigit
 import com.algorand.android.utils.isGreaterThan
 import com.algorand.android.utils.orZero
@@ -44,19 +52,24 @@ class AccountDetailAssetItemMapper @Inject constructor(
     private val nftIndicatorDrawableDecider: NFTIndicatorDrawableDecider,
     private val nftAmountFormatDecider: NFTAmountFormatDecider,
     private val getPrimaryCurrencyAssetParityValue: GetPrimaryCurrencyAssetParityValue,
+    private val getSecondaryCurrencyAssetParityValue: GetSecondaryCurrencyAssetParityValue,
     private val formatAmountByCollectibleFractionalDigit: FormatAmountByCollectibleFractionalDigit
 ) {
 
-    fun mapToAssetListItem(assetLite: AssetLite, isHoldingByWatchAccount: Boolean): AccountDetailAssetsItem {
+    fun mapToAssetListItem(
+        assetLite: AssetLite,
+        isHoldingByWatchAccount: Boolean,
+        amountRendererType: RenderType
+    ): AccountDetailAssetsItem {
         return when (assetLite.type) {
-            is Type.Asset -> mapToAssetListItem(assetLite)
-            is Type.Collectible -> mapToCollectibleListItem(assetLite, isHoldingByWatchAccount)
+            is Type.Asset -> mapToAssetListItem(assetLite, amountRendererType)
+            is Type.Collectible -> mapToCollectibleListItem(assetLite, isHoldingByWatchAccount, amountRendererType)
         }
     }
 
-    private fun mapToAssetListItem(assetLite: AssetLite): AccountDetailAssetsItem {
+    private fun mapToAssetListItem(assetLite: AssetLite, amountRendererType: RenderType): AccountDetailAssetsItem {
         return when (assetLite.assetStatus) {
-            AssetStatus.OWNED_BY_ACCOUNT -> mapToOwnedAssetItem(assetLite)
+            AssetStatus.OWNED_BY_ACCOUNT -> mapToOwnedAssetItem(assetLite, amountRendererType)
             AssetStatus.PENDING_FOR_ADDITION -> mapToPendingAdditionAssetItem(assetLite)
             AssetStatus.PENDING_FOR_REMOVAL -> mapToPendingRemovalAssetItem(assetLite)
         }
@@ -64,18 +77,20 @@ class AccountDetailAssetItemMapper @Inject constructor(
 
     private fun mapToCollectibleListItem(
         assetLite: AssetLite,
-        isHoldingByWatchAccount: Boolean
+        isHoldingByWatchAccount: Boolean,
+        amountRendererType: RenderType
     ): AccountDetailAssetsItem {
         return when (assetLite.assetStatus) {
             AssetStatus.OWNED_BY_ACCOUNT -> {
                 val isOwned = assetLite.amount isGreaterThan BigInteger.ZERO
                 val isAmountVisible = assetLite.amount isGreaterThan BigInteger.ONE
                 mapToOwnedNFTItem(
-                    assetLite = assetLite,
-                    isHoldingByWatchAccount = isHoldingByWatchAccount,
-                    isOwned = isOwned,
-                    isAmountVisible = isAmountVisible,
-                    shouldDecreaseOpacity = !isOwned || isHoldingByWatchAccount
+                    assetLite,
+                    isHoldingByWatchAccount,
+                    isOwned,
+                    isAmountVisible,
+                    shouldDecreaseOpacity = !isOwned || isHoldingByWatchAccount,
+                    amountRendererType
                 )
             }
 
@@ -84,21 +99,45 @@ class AccountDetailAssetItemMapper @Inject constructor(
         }
     }
 
-    private fun mapToOwnedAssetItem(assetLite: AssetLite): BaseAssetItem.BaseOwnedItem.AssetItem {
+    private fun mapToOwnedAssetItem(assetLite: AssetLite, amountRendererType: RenderType): AssetItem {
         return with(assetLite) {
-            val primaryParityValue = getPrimaryCurrencyAssetParityValue(amount, usdValue.orZero(), decimal)
-            BaseAssetItem.BaseOwnedItem.AssetItem(
+            val primaryParityValue = getAssetItemPrimaryParityValue(assetLite)
+            val currencyAmountRenderer = getSelectedCurrencyRenderer(primaryParityValue, amountRendererType)
+            AssetItem(
                 id = assetId,
                 name = AssetName.create(name),
                 shortName = AssetName.createShortName(shortName),
-                formattedAmount = amount.formatAmount(decimal, isCompact = true),
-                formattedDisplayedCurrencyValue = primaryParityValue.getFormattedCompactValue(),
+                formattedAmount = getAmountRenderer(assetLite, amountRendererType).getDisplayValue(),
+                formattedDisplayedCurrencyValue = currencyAmountRenderer.getDisplayValue(),
                 isAmountInDisplayedCurrencyVisible = usdValue != null && usdValue.orZero() > BigDecimal.ZERO,
                 verificationTierConfiguration = verificationTierConfigurationDecider
                     .decideVerificationTierConfiguration(verificationTier),
                 baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
                 amountInSelectedCurrency = primaryParityValue.amountAsCurrency
             )
+        }
+    }
+
+    private fun getAssetItemPrimaryParityValue(assetLite: AssetLite): ParityValue {
+        return with(assetLite) {
+            if (isAlgo) {
+                getSecondaryCurrencyAssetParityValue(amount, usdValue.orZero(), decimal)
+            } else {
+                getPrimaryCurrencyAssetParityValue(amount, usdValue.orZero(), decimal)
+            }
+        }
+    }
+
+    private fun getSelectedCurrencyRenderer(parityValue: ParityValue, amountRendererType: RenderType): AmountRenderer {
+        val currencyAmount = PeraAmount(parityValue.amountAsCurrency)
+        val formattedAmount = SimplePlainFormattedAmount(currencyAmount, DecimalConfig(2))
+        return AmountRenderer(formattedAmount, amountRendererType, parityValue.selectedCurrencySymbol)
+    }
+
+    private fun getAmountRenderer(assetLite: AssetLite, amountRendererType: RenderType): AmountRenderer {
+        return with(assetLite) {
+            val assetAmount = SimplePlainFormattedAmount(PeraAmount(amount, decimal), DecimalConfig(decimal))
+            AmountRenderer(assetAmount, amountRendererType)
         }
     }
 
@@ -169,20 +208,23 @@ class AccountDetailAssetItemMapper @Inject constructor(
         isHoldingByWatchAccount: Boolean,
         isOwned: Boolean,
         isAmountVisible: Boolean,
-        shouldDecreaseOpacity: Boolean
+        shouldDecreaseOpacity: Boolean,
+        amountRendererType: RenderType
     ): BaseAssetItem.BaseOwnedItem.NFTItem {
         return with(assetLite) {
+            val formattedAmount = nftAmountFormatDecider.decideNFTAmountFormat(
+                nftAmount = amount,
+                fractionalDecimal = decimal,
+                formattedAmount = formatAmountByCollectibleFractionalDigit(amount, decimal),
+                formattedCompactAmount = formatAmountByCollectibleFractionalDigit(amount, decimal, true)
+            )
+            val amountRenderer = AmountRenderer(SimpleFormattedAmount(formattedAmount), amountRendererType)
             BaseAssetItem.BaseOwnedItem.NFTItem(
                 id = assetId,
                 name = AssetName.create(name),
                 shortName = AssetName.createShortName(shortName),
                 baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),
-                formattedAmount = nftAmountFormatDecider.decideNFTAmountFormat(
-                    nftAmount = amount,
-                    fractionalDecimal = decimal,
-                    formattedAmount = formatAmountByCollectibleFractionalDigit(amount, decimal),
-                    formattedCompactAmount = formatAmountByCollectibleFractionalDigit(amount, decimal, true)
-                ),
+                formattedAmount = amountRenderer.getDisplayValue(),
                 nftIndicatorDrawable = nftIndicatorDrawableDecider.decideNFTIndicatorDrawable(
                     isOwned = isOwned,
                     isHoldingByWatchAccount = isHoldingByWatchAccount,

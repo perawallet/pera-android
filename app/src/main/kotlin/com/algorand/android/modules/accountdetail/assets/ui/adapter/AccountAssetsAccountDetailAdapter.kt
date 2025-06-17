@@ -32,6 +32,12 @@ class AccountAssetsAccountDetailAdapter(
     private val listener: Listener
 ) : ListAdapter<AccountDetailAccountsItem, BaseViewHolder<AccountDetailAccountsItem>>(BaseDiffUtil()) {
 
+    private val accountValueViewHolderListener = object : AccountValueViewHolder.Listener {
+        override fun onAccountValueClick() {
+            listener.onAccountValueClick()
+        }
+    }
+
     private val searchViewItemListener = object : SearchViewViewHolder.Listener {
         override fun onSearchQueryChanged(query: String) {
             listener.onSearchQueryUpdated(query)
@@ -120,7 +126,7 @@ class AccountAssetsAccountDetailAdapter(
     }
 
     private fun createAccountValueViewHolder(parent: ViewGroup): AccountValueViewHolder {
-        return AccountValueViewHolder.create(parent)
+        return AccountValueViewHolder.create(parent, accountValueViewHolderListener)
     }
 
     private fun createAssetTitleViewHolder(parent: ViewGroup): AccountDetailAssetsTitleViewHolder {
@@ -152,6 +158,7 @@ class AccountAssetsAccountDetailAdapter(
         fun onShowAddressClick()
         fun onBackupNowClick()
         fun onBuySellClick()
+        fun onAccountValueClick()
     }
 
     companion object {

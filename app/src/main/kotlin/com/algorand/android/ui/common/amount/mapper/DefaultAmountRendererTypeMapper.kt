@@ -10,13 +10,18 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.ui.model
+package com.algorand.android.ui.common.amount.mapper
 
-import java.math.BigDecimal
+import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
+import javax.inject.Inject
 
-data class PortfolioItemProcessorData(
-    val totalPrimaryValue: BigDecimal,
-    val totalSecondaryValue: BigDecimal,
-    val primaryCurrencySymbol: String,
-    val secondaryCurrencySymbol: String,
-)
+internal class DefaultAmountRendererTypeMapper @Inject constructor() : AmountRendererTypeMapper {
+
+    override fun invoke(privacyMode: PrivacyMode): AmountRenderer.RenderType {
+        return when (privacyMode) {
+            PrivacyMode.Enabled -> AmountRenderer.RenderType.Hidden()
+            PrivacyMode.Disabled -> AmountRenderer.RenderType.Plain
+        }
+    }
+}

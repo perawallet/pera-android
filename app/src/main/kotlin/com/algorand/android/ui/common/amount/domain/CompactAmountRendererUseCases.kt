@@ -10,18 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.android.models
+package com.algorand.android.ui.common.amount.domain
 
-import com.algorand.android.utils.formatAsTwoDecimals
-import java.math.BigDecimal
+import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.common.amount.PeraAmount
 
-data class ValuePosition(
-    val value: BigDecimal,
-    val x: Float,
-    val y: Float
-) {
+fun interface GetCompactPrimaryAmountRenderer {
+    operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
+}
 
-    fun getFormattedPriceValue(): String {
-        return value.formatAsTwoDecimals()
-    }
+fun interface GetCompactSecondaryAmountRenderer {
+    operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
 }

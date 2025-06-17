@@ -31,17 +31,19 @@ import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
+import com.algorand.wallet.privacy.domain.usecase.TogglePrivacyMode
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 @HiltViewModel
@@ -55,6 +57,7 @@ class AccountsViewModel @Inject constructor(
     private val tutorialUseCase: TutorialUseCase,
     private val getAskNotificationPermissionEventFlowUseCase: GetAskNotificationPermissionEventFlowUseCase,
     private val eventDelegate: EventDelegate<ViewEvent>,
+    private val togglePrivacyMode: TogglePrivacyMode,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(), EventViewModel<AccountsViewModel.ViewEvent> by eventDelegate {
 
@@ -88,10 +91,11 @@ class AccountsViewModel @Inject constructor(
                         Tutorial.GIFT_CARDS -> ViewEvent.ShowGiftCardsTutorial(tutorial.id)
                         Tutorial.ACCOUNT_ADDRESS_COPY -> ViewEvent.ShowAccountAddressCopyTutorial(tutorial.id)
                         Tutorial.SWAP -> ViewEvent.ShowSwapTutorial(tutorial.id)
+                        Tutorial.PRIVACY_MODE -> ViewEvent.ShowPrivacyTooltip(tutorial.id)
                     }
                     eventDelegate.sendEvent(tutorialEvent)
                 }
-            }
+            }.launchIn(viewModelScope)
         }
     }
 
@@ -222,6 +226,12 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
+    fun togglePrivacy() {
+        viewModelScope.launch {
+            togglePrivacyMode()
+        }
+    }
+
     private suspend fun updatePreviewForSwapNavigation() {
         accountsPreviewUseCase.getSwapNavigationDirection()?.let { navDirections ->
             eventDelegate.sendEvent(ViewEvent.NavigateToSwap(navDirections))
@@ -238,5 +248,6 @@ class AccountsViewModel @Inject constructor(
         data class ShowSwapTutorial(val tutorialId: Int) : ViewEvent
         data object ShowNotificationPermission : ViewEvent
         data object ShowConfetti : ViewEvent
+        data class ShowPrivacyTooltip(val tutorialId: Int) : ViewEvent
     }
 }

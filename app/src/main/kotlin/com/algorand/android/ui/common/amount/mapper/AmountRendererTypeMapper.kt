@@ -10,11 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.models
+package com.algorand.android.ui.common.amount.mapper
 
-import com.google.gson.annotations.SerializedName
+import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
 
-data class AssetPriceHistory(
-    @SerializedName("coin") val assetPair: String,
-    @SerializedName("history") val candleHistory: List<CandleHistory>
-)
+fun interface AmountRendererTypeMapper {
+    operator fun invoke(privacyMode: PrivacyMode): AmountRenderer.RenderType
+}

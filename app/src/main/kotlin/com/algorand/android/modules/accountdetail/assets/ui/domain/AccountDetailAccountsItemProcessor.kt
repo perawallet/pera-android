@@ -10,12 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.android.models
+package com.algorand.android.modules.accountdetail.assets.ui.domain
 
-import com.algorand.android.R
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
+import kotlinx.coroutines.flow.Flow
 
-enum class LineChartTheme(val markerDrawableResId: Int, val lineColorResId: Int) {
-    GREEN(R.drawable.bg_chart_mark_green_oval, R.color.positive),
-    RED(R.drawable.bg_chart_mark_red_oval, R.color.negative),
-    GRAY(R.drawable.bg_chart_mark_gray_oval, R.color.gray_400)
+interface AccountDetailAccountsItemProcessor {
+    fun getAccountDetailsItemsFlow(address: String, query: String?): Flow<List<AccountDetailAccountsItem>>
+
+    companion object {
+        const val QUICK_ACTIONS_INDEX = 2
+    }
 }

@@ -1,4 +1,3 @@
-@file:Suppress("MagicNumber")
 /*
  * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,11 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.tutorialdialog.data.model
+package com.algorand.android.ui.common.amount
 
-enum class Tutorial(val id: Int) {
-    ACCOUNT_ADDRESS_COPY(0),
-    SWAP(1),
-    GIFT_CARDS(2),
-    PRIVACY_MODE(3)
+data class DecimalConfig(
+    val maxDecimals: Int,
+    val minDecimals: MinDecimalType = MinDecimalType.Default
+) {
+
+    sealed interface MinDecimalType {
+        data object Default : MinDecimalType
+        data object FixedToMax : MinDecimalType
+        data class Fixed(val value: Int) : MinDecimalType
+    }
 }

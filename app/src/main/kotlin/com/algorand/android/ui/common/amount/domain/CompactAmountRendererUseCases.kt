@@ -10,12 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.android.models
+package com.algorand.android.ui.common.amount.domain
 
-import com.algorand.android.R
+import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.common.amount.PeraAmount
 
-enum class LineChartTheme(val markerDrawableResId: Int, val lineColorResId: Int) {
-    GREEN(R.drawable.bg_chart_mark_green_oval, R.color.positive),
-    RED(R.drawable.bg_chart_mark_red_oval, R.color.negative),
-    GRAY(R.drawable.bg_chart_mark_gray_oval, R.color.gray_400)
+fun interface GetCompactPrimaryAmountRenderer {
+    operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
+}
+
+fun interface GetCompactSecondaryAmountRenderer {
+    operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
 }

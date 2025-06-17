@@ -10,13 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.accounts.ui.model
+package com.algorand.wallet.privacy.data.mapper
 
-import java.math.BigDecimal
+import com.algorand.wallet.privacy.data.model.PrivacyModeCacheValue
+import com.algorand.wallet.privacy.domain.model.PrivacyMode
 
-data class PortfolioItemProcessorData(
-    val totalPrimaryValue: BigDecimal,
-    val totalSecondaryValue: BigDecimal,
-    val primaryCurrencySymbol: String,
-    val secondaryCurrencySymbol: String,
-)
+internal fun interface PrivacyModeCacheValueMapper {
+    operator fun invoke(privacyMode: PrivacyMode): PrivacyModeCacheValue
+}

@@ -34,8 +34,8 @@ class AccountItemViewHolder(
                 setAccountStartIconDrawable(accountIconDrawablePreview)
                 setAccountTitleText(primaryDisplayName)
                 setAccountDescriptionText(secondaryDisplayName)
-                setAccountPrimaryValueText(formattedPrimaryValue)
-                setAccountSecondaryValueText(formattedSecondaryValue)
+                setAccountPrimaryValueText(formattedPrimaryValue.getDisplayValue())
+                setAccountSecondaryValueText(formattedSecondaryValue.getDisplayValue())
                 setStartSmallIconDrawableResource(startSmallIconResource)
                 root.setOnClickListener { listener.onAccountClick(address) }
                 root.setOnLongClickListener(getOnLongClickListener(item.canCopyable, address))

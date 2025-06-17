@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
 import androidx.viewbinding.ViewBinding
 import com.algorand.android.customviews.PeraWebView
@@ -84,6 +85,11 @@ abstract class BasePeraWebViewFragment(
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, onBackPressedCallback)
+    }
+
     private fun reloadWebView(parent: View?, webView: PeraWebView) {
         if (parent is ViewGroup) {
             for (cx in 0 until parent.childCount) {
@@ -117,5 +123,17 @@ abstract class BasePeraWebViewFragment(
             }
         }
         return null
+    }
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            getWebView(binding.root)?.run {
+                if (canGoBack()) {
+                    goBack()
+                } else {
+                    navBack()
+                }
+            }
+        }
     }
 }

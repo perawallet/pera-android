@@ -37,6 +37,9 @@
         <action
             android:id="@+id/action_recoverRegisteredAccountsFragment_to_recoverHdKeyRekeyedAccountSelectionFragment"
             app:destination="@id/recoverHdKeyRekeyedAccountSelectionFragment" />
+        <action
+            android:id="@+id/action_recoverRegisteredAccountsFragment_to_newAddressNamingFragment"
+            app:destination="@id/newAddressNamingFragment" />
     </fragment>
 
     <fragment
@@ -74,6 +77,30 @@
                 android:defaultValue="true"
                 app:argType="boolean" />
         </action>
+        <action
+            android:id="@+id/action_recoverHdKeyRekeyedAccountSelectionFragment_to_newAddressNamingFragment"
+            app:destination="@id/newAddressNamingFragment" />
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/newAddressNamingFragment"
+        android:name="com.algorand.android.ui.addressnaming.view.NewAddressNamingFragment"
+        android:label="NewAddressNamingFragment">
+        <action
+            android:id="@+id/action_newAddressNamingFragment_to_homeNavigation"
+            app:destination="@id/homeNavigation"
+            app:popUpTo="@id/loginNavigation"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="showConfetti"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
+        <argument
+            android:name="address"
+            app:argType="string" />
     </fragment>
 
 </navigation>

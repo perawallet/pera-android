@@ -141,8 +141,12 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
                 if (rekeyedAddresses.isNotEmpty()) {
                     eventDelegate.sendEvent(ViewEvent.NavigateToRekeyedAccountSelection(rekeyedAddresses))
                 } else {
-                    val isNewAccountAdded = addressesToImport.isNotEmpty()
-                    eventDelegate.sendEvent(ViewEvent.NavigateToHome(isNewAccountAdded))
+                    if (addressesToImport.size == 1) {
+                        eventDelegate.sendEvent(ViewEvent.NavigateToAddressNaming(addressesToImport.single().address))
+                    } else {
+                        val isNewAccountAdded = addressesToImport.isNotEmpty()
+                        eventDelegate.sendEvent(ViewEvent.NavigateToHome(isNewAccountAdded))
+                    }
                 }
                 entropy.clearFromMemory()
             }
@@ -238,6 +242,7 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
 
     sealed interface ViewEvent {
         data class NavigateToHome(val isNewAccountAdded: Boolean) : ViewEvent
+        data class NavigateToAddressNaming(val address: String) : ViewEvent
         data object NavigateBack : ViewEvent
         data class NavigateToRekeyedAccountSelection(val args: List<RekeyedAccountSelectionNavArg>) : ViewEvent
     }

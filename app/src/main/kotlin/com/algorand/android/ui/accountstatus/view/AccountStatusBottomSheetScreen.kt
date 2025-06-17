@@ -12,12 +12,8 @@
 
 package com.algorand.android.ui.accountstatus.view
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -26,7 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Content
 import com.algorand.android.ui.accountstatus.viewmodel.AccountStatusDetailViewModel.ViewState.Idle
-import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.PeraBottomSheetDragIndicator
 
 @Composable
 fun AccountStatusBottomSheetScreen(
@@ -34,12 +30,7 @@ fun AccountStatusBottomSheetScreen(
     viewModel: AccountStatusDetailViewModel
 ) {
     Column(horizontalAlignment = CenterHorizontally) {
-        Box(
-            modifier = Modifier
-                .padding(top = 12.dp)
-                .size(width = 36.dp, height = 4.dp)
-                .background(color = PeraTheme.colors.background.bottomSheetLine, shape = RoundedCornerShape(2.dp))
-        )
+        PeraBottomSheetDragIndicator(modifier = Modifier.padding(top = 12.dp))
         when (val state = viewModel.state.collectAsStateWithLifecycle().value) {
             Idle -> Unit
             is Content -> AccountStatusBottomSheetContentState(state, listener)

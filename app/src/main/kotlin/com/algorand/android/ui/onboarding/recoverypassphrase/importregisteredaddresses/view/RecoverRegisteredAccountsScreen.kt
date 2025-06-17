@@ -44,7 +44,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.AnimationLoader
-import com.algorand.android.ui.compose.widget.PeraCheckbox
+import com.algorand.android.ui.compose.widget.PeraTriStateCheckbox
 import com.algorand.android.ui.compose.widget.button.PeraButtonState
 import com.algorand.android.ui.compose.widget.button.PeraPrimaryButton
 import com.algorand.android.ui.compose.widget.text.PeraBodyText
@@ -219,7 +219,7 @@ private fun ListHeaderContainer(
             ToggleableState.Indeterminate
         }
 
-        PeraCheckbox(
+        PeraTriStateCheckbox(
             checkedState = { currentToggleState },
             onClick = {
                 if (currentToggleState == ToggleableState.On) {
@@ -263,7 +263,7 @@ fun AddressItem(
                     PeraBodyText(text = account.formattedSelectedCurrencyValue)
                 }
                 val current = ToggleableState(selectedAddresses.contains(account.address))
-                PeraCheckbox(
+                PeraTriStateCheckbox(
                     checkedState = {
                         current
                     },

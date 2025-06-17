@@ -14,6 +14,7 @@ package com.algorand.android.modules.accounts.domain.model
 
 import android.content.Context
 import androidx.annotation.StringRes
+import com.algorand.android.ui.common.amount.AmountRenderer
 
 sealed class BasePortfolioValueItem {
 
@@ -25,11 +26,11 @@ sealed class BasePortfolioValueItem {
     data class SuccessPortfolioValueItem(
         override val titleColorResId: Int,
         @StringRes override val errorStringResId: Int? = null,
-        val formattedPrimaryAccountValue: String,
-        val formattedSecondaryAccountValue: String
+        val primaryAmountRenderer: AmountRenderer,
+        val secondaryAmountRenderer: AmountRenderer
     ) : BasePortfolioValueItem() {
-        override fun getPrimaryAccountValue(context: Context): String = formattedPrimaryAccountValue
-        override fun getSecondaryAccountValue(context: Context): String = formattedSecondaryAccountValue
+        override fun getPrimaryAccountValue(context: Context): String = primaryAmountRenderer.getDisplayValue()
+        override fun getSecondaryAccountValue(context: Context): String = secondaryAmountRenderer.getDisplayValue()
     }
 
     data class ErrorPortfolioValueItem(
@@ -38,8 +39,7 @@ sealed class BasePortfolioValueItem {
         @StringRes val primaryAccountValueErrorResId: Int,
         @StringRes val secondaryAccountValueErrorResId: Int
     ) : BasePortfolioValueItem() {
-        override fun getPrimaryAccountValue(context: Context): String =
-            context.getString(primaryAccountValueErrorResId)
+        override fun getPrimaryAccountValue(context: Context): String = context.getString(primaryAccountValueErrorResId)
 
         override fun getSecondaryAccountValue(context: Context): String =
             context.getString(secondaryAccountValueErrorResId)
@@ -48,10 +48,10 @@ sealed class BasePortfolioValueItem {
     data class PartialErrorPortfolioValueItem(
         override val titleColorResId: Int,
         @StringRes override val errorStringResId: Int,
-        val formattedPrimaryAccountValueResId: String,
-        val formattedSecondaryAccountValueResId: String
+        val primaryAmountRenderer: AmountRenderer,
+        val secondaryAmountRenderer: AmountRenderer
     ) : BasePortfolioValueItem() {
-        override fun getPrimaryAccountValue(context: Context): String = formattedPrimaryAccountValueResId
-        override fun getSecondaryAccountValue(context: Context): String = formattedSecondaryAccountValueResId
+        override fun getPrimaryAccountValue(context: Context): String = primaryAmountRenderer.getDisplayValue()
+        override fun getSecondaryAccountValue(context: Context): String = secondaryAmountRenderer.getDisplayValue()
     }
 }

@@ -1521,6 +1521,7 @@
     <string name="import_any_rekeyed_accounts">Import any rekeyed accounts</string>
     <string name="no_rekeyed_accounts_found">No Rekeyed Accounts Found</string>
     <string name="we_have_scanned_the_blockchain">We have scanned the blockchain and were not able to find any accounts that have not been imported.</string>
+    <string name="tap_value_to_hide_your">Tap value to hide your balance</string>
     <string name="nobody_can_see_my_screen">Nobody can see my screen.</string>
     <string name="i_risk_losing_all_my">I risk losing all my funds if I share my Recovery Phrase with anyone.</string>
     <string name="my_funds_are_permanently_lost">My funds are permanently lost if I lose my Recovery Phrase and lose access to my wallet.</string>

@@ -14,30 +14,31 @@ package com.algorand.android.modules.accounts.domain.mapper
 
 import com.algorand.android.R
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
+import com.algorand.android.ui.common.amount.AmountRenderer
 import javax.inject.Inject
 
 class PortfolioValueItemMapper @Inject constructor() {
 
     fun mapToPortfolioValuesSuccessItem(
-        formattedPrimaryAccountValue: String,
-        formattedSecondaryAccountValue: String
+        primaryAmountRenderer: AmountRenderer,
+        secondaryAmountRenderer: AmountRenderer
     ): BasePortfolioValueItem.SuccessPortfolioValueItem {
         return BasePortfolioValueItem.SuccessPortfolioValueItem(
-            formattedPrimaryAccountValue = formattedPrimaryAccountValue,
-            formattedSecondaryAccountValue = formattedSecondaryAccountValue,
+            primaryAmountRenderer = primaryAmountRenderer,
+            secondaryAmountRenderer = secondaryAmountRenderer,
             titleColorResId = R.color.secondary_text_color
         )
     }
 
     fun mapToPortfolioValuesPartialErrorItem(
-        formattedPrimaryAccountValue: String,
-        formattedSecondaryAccountValue: String
+        primaryAmountRenderer: AmountRenderer,
+        secondaryAmountRenderer: AmountRenderer
     ): BasePortfolioValueItem.PartialErrorPortfolioValueItem {
         return BasePortfolioValueItem.PartialErrorPortfolioValueItem(
             titleColorResId = R.color.error_text_color,
             errorStringResId = R.string.sorry_there_was,
-            formattedPrimaryAccountValueResId = formattedPrimaryAccountValue,
-            formattedSecondaryAccountValueResId = formattedSecondaryAccountValue
+            primaryAmountRenderer = primaryAmountRenderer,
+            secondaryAmountRenderer = secondaryAmountRenderer
         )
     }
 

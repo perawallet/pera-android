@@ -17,10 +17,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragment.Companion.ADDRESS_KEY
-import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountAssetsPreviewUseCase
+import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountDetailAccountsItemProcessor
+import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountDetailAssetsItemProcessor
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountAssetsPreview
 import com.algorand.android.modules.tracking.accountdetail.accountassets.AccountAssetsFragmentEventTracker
 import com.algorand.android.utils.getOrThrow
+import com.algorand.wallet.privacy.domain.usecase.TogglePrivacyMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -37,8 +39,10 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AccountAssetsViewModel @Inject constructor(
-    private val accountAssetsPreviewUseCase: AccountAssetsPreviewUseCase,
     private val accountAssetsFragmentEventTracker: AccountAssetsFragmentEventTracker,
+    private val accountsItemProcessor: AccountDetailAccountsItemProcessor,
+    private val assetsItemProcessor: AccountDetailAssetsItemProcessor,
+    private val togglePrivacyMode: TogglePrivacyMode,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -81,10 +85,16 @@ class AccountAssetsViewModel @Inject constructor(
         }
     }
 
+    fun togglePrivacy() {
+        viewModelScope.launch {
+            togglePrivacyMode()
+        }
+    }
+
     private suspend fun initAccountDetail(query: String): Flow<AccountAssetsPreview> {
         return combine(
-            accountAssetsPreviewUseCase.getAccountDetailsItemsFlow(accountAddress, query),
-            accountAssetsPreviewUseCase.getAssetsPagingFlow(viewModelScope, accountAddress, query)
+            accountsItemProcessor.getAccountDetailsItemsFlow(accountAddress, query),
+            assetsItemProcessor.getAssetsPagingFlow(viewModelScope, accountAddress, query)
         ) { accountDetailItems, assetPagingItems ->
             AccountAssetsPreview(assetPagingItems, accountDetailItems, false)
         }

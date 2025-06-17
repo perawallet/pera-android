@@ -67,7 +67,16 @@ class RecoverHdKeyRekeyedAccountSelectionFragment : BaseFragment(R.layout.fragme
     }
 
     override fun onSkipClick() {
-        navToNextScreen()
+        if (args.rekeyedAccountSelectionNavArg.size == 1) {
+            nav(
+                RecoverHdKeyRekeyedAccountSelectionFragmentDirections
+                    .actionRecoverHdKeyRekeyedAccountSelectionFragmentToNewAddressNamingFragment(
+                        args.rekeyedAccountSelectionNavArg.first().authAddress
+                    )
+            )
+        } else {
+            navToNextScreen()
+        }
     }
 
     override fun onAccountsAdded() {

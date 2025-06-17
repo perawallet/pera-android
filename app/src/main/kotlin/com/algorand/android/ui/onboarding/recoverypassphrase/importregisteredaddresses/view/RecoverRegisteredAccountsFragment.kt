@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses
+package com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,11 +25,12 @@ import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.StatusBarConfiguration
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.viewmodel.RecoverRegisteredAccountsViewModel
 import com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class RecoverRegisteredAccountsFragment : BaseFragment(0) {
+class RecoverRegisteredAccountsFragment : BaseFragment(0), RecoverRegisteredAccountsScreenListener {
 
     private val viewModel: RecoverRegisteredAccountsViewModel by viewModels()
 
@@ -43,12 +44,7 @@ class RecoverRegisteredAccountsFragment : BaseFragment(0) {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 PeraTheme {
-                    RecoverRegisteredAccountsScreen(
-                        viewModel,
-                        ::navToHomeNavigation,
-                        ::navBack,
-                        ::navToRekeyedAccountSelection
-                    )
+                    RecoverRegisteredAccountsScreen(viewModel, listener = this@RecoverRegisteredAccountsFragment)
                 }
             }
         }
@@ -59,7 +55,23 @@ class RecoverRegisteredAccountsFragment : BaseFragment(0) {
         configureToolbar()
     }
 
-    private fun navToRekeyedAccountSelection(navArgs: List<RekeyedAccountSelectionNavArg>) {
+    private fun configureToolbar() {
+        getAppToolbar()?.configureStartButton(R.drawable.ic_left_arrow, ::navBack)
+    }
+
+    override fun onNavToHomeNavigation(isNewAccountAdded: Boolean) {
+        nav(
+            RecoverRegisteredAccountsFragmentDirections.actionRecoverRegisteredAccountsFragmentToHomeNavigation(
+                showConfetti = isNewAccountAdded
+            )
+        )
+    }
+
+    override fun onNavBack() {
+        navBack()
+    }
+
+    override fun onNavToRekeyedAccountSelection(navArgs: List<RekeyedAccountSelectionNavArg>) {
         nav(
             RecoverRegisteredAccountsFragmentDirections
                 .actionRecoverRegisteredAccountsFragmentToRecoverHdKeyRekeyedAccountSelectionFragment(
@@ -68,15 +80,10 @@ class RecoverRegisteredAccountsFragment : BaseFragment(0) {
         )
     }
 
-    private fun navToHomeNavigation(isNewAccountAdded: Boolean) {
+    override fun onNavToNewAddressNamingFragment(address: String) {
         nav(
-            RecoverRegisteredAccountsFragmentDirections.actionRecoverRegisteredAccountsFragmentToHomeNavigation(
-                showConfetti = isNewAccountAdded
-            )
+            RecoverRegisteredAccountsFragmentDirections
+                .actionRecoverRegisteredAccountsFragmentToNewAddressNamingFragment(address)
         )
-    }
-
-    private fun configureToolbar() {
-        getAppToolbar()?.configureStartButton(R.drawable.ic_left_arrow, ::navBack)
     }
 }

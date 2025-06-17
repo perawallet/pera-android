@@ -9,7 +9,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
- 
+
 package com.algorand.android.ui.compose.widget
 
 import androidx.compose.foundation.background

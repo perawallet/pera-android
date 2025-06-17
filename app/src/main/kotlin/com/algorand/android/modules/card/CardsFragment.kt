@@ -17,7 +17,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.algorand.android.R
@@ -92,7 +91,6 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, onBackPressedCallback)
         initUi()
         initObservers()
         loadCardsUrl()
@@ -198,18 +196,6 @@ class CardsFragment : BasePeraWebViewFragment(R.layout.fragment_cards), PeraMobi
     private fun initWebViewTheme() {
         getWebView(binding.root)?.let { currentWebView ->
             webViewThemeHelper.initWebViewTheme(currentWebView)
-        }
-    }
-
-    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            binding.webView.run {
-                if (canGoBack()) {
-                    goBack()
-                } else {
-                    navBack()
-                }
-            }
         }
     }
 }

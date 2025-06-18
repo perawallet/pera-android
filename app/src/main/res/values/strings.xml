@@ -1529,4 +1529,8 @@
     <string name="confirm_and_acknowledge_the_following">Confirm and acknowledge the following:</string>
     <string name="keep_it_secret_keep_it">Keep it secret. Keep it safe.</string>
     <string name="reveal_passphrase">Reveal Passphrase</string>
+    <string name="invite_friends">Invite Friends</string>
+    <string name="menu">Menu</string>
+    <string name="share_pera_wallet_download">Share the Pera Wallet download\nlink with your friends.</string>
+    <string name="simply_the_best_algorand">Simply the best Algorand wallet.</string>
 </resources>

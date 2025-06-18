@@ -47,7 +47,8 @@ class RecoverWithPassphrasePreviewMapper @Inject constructor() {
             navToNameRegistrationEvent = navToNameRegistrationEvent,
             navToImportRekeyedAccountEvent = navToImportRekeyedAccountEvent,
             onGlobalErrorEvent = onGlobalErrorEvent,
-            showErrorEvent = showErrorEvent
+            showErrorEvent = showErrorEvent,
+            navToRecoverRegisteredAccountsEvent = null
         )
     }
 }

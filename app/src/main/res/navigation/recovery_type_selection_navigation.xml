@@ -22,6 +22,8 @@
 
     <include app:graph="@navigation/asb_import_navigation" />
 
+    <include app:graph="@navigation/recover_with_passphrase_navigation" />
+
     <fragment
         android:id="@+id/accountRecoveryTypeSelectionFragment"
         android:name="com.algorand.android.ui.register.recoveraccounttypeselection.AccountRecoveryTypeSelectionFragment"
@@ -48,6 +50,10 @@
         android:id="@+id/recoverAccountInfoFragment"
         android:name="com.algorand.android.modules.onboarding.recoverypassphrase.info.ui.RecoverAccountInfoFragment"
         android:label="fragment_recover_account_info">
+        <argument
+            android:name="onboardingAccountType"
+            app:argType="com.algorand.android.models.OnboardingAccountType"
+            app:nullable="false" />
         <action
             android:id="@+id/action_recoverAccountInfoFragment_to_recoverWithPassphraseNavigation"
             app:destination="@id/recoverWithPassphraseNavigation">

@@ -14,11 +14,11 @@ package com.algorand.wallet.account.info.domain.mapper
 
 import com.algorand.wallet.account.info.domain.model.AccountFastLookup
 import com.algorand.wallet.account.info.domain.model.ActiveHdAccount
-import com.algorand.wallet.account.info.domain.model.HdKeyDetail
+import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressLite
 
 internal interface HdAccountAddressMapper {
     operator fun invoke(
-        hdKeyDetails: List<HdKeyDetail>,
+        hdKeyDetails: List<HdKeyAddressLite>,
         accountFastLookupBatch: Map<String, AccountFastLookup?>
     ): List<ActiveHdAccount.HdAccountAddress>
 }

@@ -40,6 +40,8 @@ import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawabl
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreviewUseCase
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreview
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountOriginalStateIconDrawablePreviewUseCase
+import com.algorand.android.modules.accountcore.ui.usecase.GetWalletIconDrawablePreview
+import com.algorand.android.modules.accountcore.ui.usecase.GetWalletIconDrawablePreviewUseCase
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import com.algorand.wallet.nameservice.domain.usecase.GetAccountNameService
@@ -119,4 +121,9 @@ internal object AccountCoreUiModule {
     fun provideGetAccountOwnedCollectibleData(
         useCase: GetAccountOwnedCollectibleDataUseCase
     ): GetAccountOwnedCollectibleData = useCase
+
+    @Provides
+    fun provideGetWalletIconDrawablePreview(
+        useCase: GetWalletIconDrawablePreviewUseCase
+    ): GetWalletIconDrawablePreview = useCase
 }

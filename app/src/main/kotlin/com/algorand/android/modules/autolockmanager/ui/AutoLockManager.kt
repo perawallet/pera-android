@@ -17,13 +17,17 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.algorand.android.MainActivity
-import com.algorand.android.utils.ActivityLifecycleObserver
 import com.algorand.android.modules.autolockmanager.ui.usecase.AutoLockManagerUseCase
+import com.algorand.android.utils.ActivityLifecycleObserver
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.launchIO
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.withContext
 
 /**
  * Since we have two activity in app lifecycle ([LauncerActivity] and [MainActivity]) I've added a kind of filter,
@@ -37,11 +41,8 @@ class AutoLockManager @Inject constructor(
     var isAppUnlocked: Boolean = true
         private set
 
-    private var listener: AutoLockManagerListener? = null
-
-    fun setListener(listener: AutoLockManagerListener) {
-        this.listener = listener
-    }
+    private val _eventFlow = MutableStateFlow<Event<AutoLockEvent>>(Event(AutoLockEvent.Idle))
+    val eventFlow: StateFlow<Event<AutoLockEvent>> = _eventFlow.asStateFlow()
 
     fun onAppUnlocked() {
         unlockApplication()
@@ -72,16 +73,17 @@ class AutoLockManager @Inject constructor(
 
     private fun lockApplication() {
         isAppUnlocked = false
-        listener?.onLock()
+        _eventFlow.value = Event(AutoLockEvent.Lock)
     }
 
     private fun unlockApplication() {
         isAppUnlocked = true
-        listener?.onUnlock()
+        _eventFlow.value = Event(AutoLockEvent.Unlock)
     }
 
-    interface AutoLockManagerListener {
-        fun onLock()
-        fun onUnlock()
+    sealed interface AutoLockEvent {
+        data object Idle : AutoLockEvent
+        data object Lock : AutoLockEvent
+        data object Unlock : AutoLockEvent
     }
 }

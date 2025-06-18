@@ -1,3 +1,4 @@
+@file:Suppress("MagicNumber")
 /*
  * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,5 +16,6 @@ package com.algorand.android.modules.tutorialdialog.data.model
 enum class Tutorial(val id: Int) {
     ACCOUNT_ADDRESS_COPY(0),
     SWAP(1),
-    GIFT_CARDS(2)
+    GIFT_CARDS(2),
+    PRIVACY_MODE(3)
 }

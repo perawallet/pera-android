@@ -151,8 +151,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_normal"
                 android:layout_marginTop="@dimen/spacing_xxxsmall"
-                android:maxLines="1"
                 android:ellipsize="end"
+                android:maxLines="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/undoRekeyIconImageView"
@@ -180,6 +180,54 @@
             android:visibility="gone"
             app:icon="@drawable/ic_rekey"
             tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/rescanRekeyedAccountsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:paddingVertical="@dimen/spacing_small">
+
+            <ImageView
+                android:id="@+id/rescanRekeyedAccountsIconImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_xsmall"
+                android:contentDescription="@string/rescan_rekeyed_accounts"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_rekey" />
+
+            <TextView
+                android:id="@+id/rescanRekeyedAccountsLabelTextView"
+                style="@style/TextAppearance.Body.Sans.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_normal"
+                android:text="@string/rescan_rekeyed_accounts"
+                app:layout_constraintBottom_toTopOf="@id/rescanRekeyedAccountsTextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/rescanRekeyedAccountsIconImageView"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/rescanRekeyedAccountsTextView"
+                style="@style/TextAppearance.Caption.Mono.Description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_normal"
+                android:layout_marginTop="@dimen/spacing_xxxsmall"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/import_any_rekeyed_accounts"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/rescanRekeyedAccountsIconImageView"
+                app:layout_constraintTop_toBottomOf="@id/rescanRekeyedAccountsLabelTextView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             style="@style/Divider"

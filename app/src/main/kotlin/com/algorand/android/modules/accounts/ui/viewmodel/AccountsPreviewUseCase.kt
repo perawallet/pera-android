@@ -29,6 +29,7 @@ import com.algorand.android.modules.peraconnectivitymanager.ui.PeraConnectivityM
 import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.utils.CacheResult
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequestCountFlow
+import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -45,7 +46,8 @@ class AccountsPreviewUseCase @Inject constructor(
     private val peraConnectivityManager: PeraConnectivityManager,
     private val accountPreviewProcessor: AccountPreviewProcessor,
     private val getAssetInboxRequestCountFlow: GetAssetInboxRequestCountFlow,
-    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow
+    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
+    private val getPrivacyModeFlow: GetPrivacyModeFlow
 ) {
 
     suspend fun getInitialAccountPreview(): AccountPreview {
@@ -78,10 +80,18 @@ class AccountsPreviewUseCase @Inject constructor(
     }
 
     private suspend fun getAccountPreviewInitializationFlow(accountLiteCacheData: Data): Flow<AccountPreview> {
-        return combine(bannersUseCase.getBanner(), getAssetInboxRequestCountFlow()) { banner, assetInboxCount ->
-            with(accountLiteCacheData) {
-                accountPreviewProcessor.prepareAccountPreview(localAccounts, accountLites, banner, assetInboxCount)
-            }
+        return combine(
+            bannersUseCase.getBanner(),
+            getAssetInboxRequestCountFlow(),
+            getPrivacyModeFlow()
+        ) { banner, assetInboxCount, privacyMode ->
+            accountPreviewProcessor.prepareAccountPreview(
+                accountLiteCacheData.localAccounts,
+                accountLiteCacheData.accountLites,
+                banner,
+                assetInboxCount,
+                privacyMode
+            )
         }
     }
 

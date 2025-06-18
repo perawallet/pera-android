@@ -33,9 +33,8 @@ class TutorialUseCase @Inject constructor(
         val applicationOpeningCount = applicationOpenCountPreferenceUseCase.getApplicationOpenCount()
         if (applicationOpeningCount < 1 || !isThereAnyNormalLocalAccount()) return
 
-        val tutorials = Tutorial.values().toList()
         val dismissedTutorials = getDismissedTutorialIdsUseCase.getDismissedTutorialIdList()
-        tutorials.firstOrNull { !dismissedTutorials.contains(it.ordinal) }?.let { upcomingTutorial ->
+        Tutorial.entries.firstOrNull { !dismissedTutorials.contains(it.ordinal) }?.let { upcomingTutorial ->
             cacheTutorialUseCase.cacheTutorial(upcomingTutorial)
         }
     }

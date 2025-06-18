@@ -66,7 +66,24 @@ class RecoverHdKeyRekeyedAccountSelectionFragment : BaseFragment(R.layout.fragme
         fragmentDelegate = null
     }
 
-    override fun navToNextScreen() {
+    override fun onSkipClick() {
+        if (args.rekeyedAccountSelectionNavArg.size == 1) {
+            nav(
+                RecoverHdKeyRekeyedAccountSelectionFragmentDirections
+                    .actionRecoverHdKeyRekeyedAccountSelectionFragmentToNewAddressNamingFragment(
+                        args.rekeyedAccountSelectionNavArg.first().authAddress
+                    )
+            )
+        } else {
+            navToNextScreen()
+        }
+    }
+
+    override fun onAccountsAdded() {
+        navToNextScreen()
+    }
+
+    private fun navToNextScreen() {
         if (viewModel.shouldForceLockNavigation()) {
             navToForceLockNavigation()
         } else {
@@ -93,7 +110,7 @@ class RecoverHdKeyRekeyedAccountSelectionFragment : BaseFragment(R.layout.fragme
     override fun navToAccountInformationBottomSheet(address: String) {
         nav(
             RecoverHdKeyRekeyedAccountSelectionFragmentDirections
-                .actionRecoverHdKeyRekeyedAccountSelectionFragmentToRekeyedAccountInformationFragment(address)
+                .actionRecoverHdKeyRekeyedAccountSelectionFragmentToRekeyedAccountInformationNavigation(address)
         )
     }
 }

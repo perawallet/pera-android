@@ -13,14 +13,18 @@
 package com.algorand.android.ui.accountoptions.model
 
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 
 data class AccountOptionsPreview(
     val accountAddress: String,
     val accountDisplayName: AccountDisplayName,
+    val accountIconDrawable: AccountIconDrawablePreview,
     val authAddress: String?,
     val authAccountDisplayName: AccountDisplayName?,
     val isAuthAddressButtonVisible: Boolean,
     val isPassphraseButtonVisible: Boolean,
     val isUndoRekeyButtonVisible: Boolean,
-    val canSignTransaction: Boolean
+    val canSignTransaction: Boolean,
+    val registrationType: AccountRegistrationType
 )

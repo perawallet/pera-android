@@ -599,7 +599,7 @@
     <string name="create_a_new_algorand_account_with">Create a new Algorand account with a new wallet and recovery passphrase</string>
     <string name="recover_an_account">Recover an account</string>
     <string name="i_want_to_recover">I want to recover an Algorand account using my 25-word passphrase</string>
-    <string name="pair_Ledger_device">Pair Ledger device</string>
+    <string name="pair_ledger_device">Pair Ledger device</string>
     <string name="operation_completed">Operation completed</string>
     <string name="asset_transfer_completed">Asset transfer completed</string>
     <string name="your_transaction_was">Your transaction was successfully received by the Algorand network.</string>
@@ -1278,18 +1278,18 @@
     <string name="no_auth">No Auth</string>
     <string name="unknown">Unknown</string>
     <string name="rekeyed_to">Rekeyed to</string>
-    <string name="your_account_is_a_hd_wallet_address">Wallet that lets you derive new accounts, all using same key\n<annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_a_standard">Your account is a standard Algorand account. It has not been rekeyed and it is not associated with a Ledger device. It was added to your wallet with its keys. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_a_Ledger">Your account is a Ledger account. It was added to your wallet directly from the hardware device. All transactions for this account must be confirmed on your Ledger. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
+    <string name="your_account_is_a_hd_wallet_address">Wallet that lets you derive new accounts, all using same key.</string>
+    <string name="your_account_is_a_standard">Your account is a standard Algorand account. It has not been rekeyed and it is not associated with a Ledger device. It was added to your wallet with its keys.</string>
+    <string name="your_account_is_a_Ledger">Your account is a Ledger account. It was added to your wallet directly from the hardware device. All transactions for this account must be confirmed on your Ledger.</string>
     <string name="this_account_was_not">This account was not added to your wallet with its keys. It is read-only and cannot interact with other accounts or authorize transactions.</string>
     <string name="your_account_doesn_t">Your account doesn’t have any Auth information. You can\'t send assets or sign transactions. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_rekeyed">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="your_account_is_rekeyed_to">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_rekeyed_to_an">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_rekeyed_to_another">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_rekeyed_to_unknown">* No record of rekeyed account type found\n\nYour account is rekeyed to another Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
+    <string name="your_account_is_rekeyed_to_an">Your account is rekeyed to an Algorand account that is not in your wallet. You can\'t send assets or sign transactions.</string>
+    <string name="your_account_is_rekeyed_to_another">Your account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account.</string>
+    <string name="your_account_is_rekeyed_to_unknown">* No record of rekeyed account type found\n\nYour account is rekeyed to another Algorand account. Transactions for this account will be authorized by the other account.</string>
     <string name="no_record_of_original_account">* No record of original account type found\n\nYour account is rekeyed to another standard Algorand account. Transactions for this account will be authorized by the other account. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
-    <string name="your_account_is_rekeyed_to_an_account_on">Your account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
+    <string name="your_account_is_rekeyed_to_an_account_on">Your account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device.</string>
     <string name="no_record_of_original_account_type">* No record of original account type found\n\nYour account is rekeyed to an account on a Ledger hardware device. Transactions for this account must be authorized on the Ledger device. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
     <string name="you_are_about_to_undo_this">You are about to undo this account\'s rekey operation. You will rekey the account back to itself using its authorized address. <annotation font="dmsans_medium"><annotation custom="learn_more">Learn more</annotation></annotation></string>
 
@@ -1475,6 +1475,8 @@
     <string name="select_hd_wallet">Select HD Wallet</string>
     <string name="create_your_new_account_under">Create your new account under an HD wallet you already have</string>
 
+    <string name="create_legacy_algo25_account">Create Legacy Algo25 Account</string>
+
     <string name="migration_viewer">Migration Viewer</string>
     <string name="migration_troubleshooter">Migration Troubleshooter</string>
     <string name="clear_new_accounts">Clear Post v6 Accounts</string>
@@ -1535,4 +1537,16 @@
 
     <string name="please_note_we_currently">Please note: We currently do not support the backing up of Universal and Ledger Wallets</string>
 
+    <string name="rescan_rekeyed_accounts">Rescan Rekeyed Accounts</string>
+    <string name="import_any_rekeyed_accounts">Import any rekeyed accounts</string>
+    <string name="no_rekeyed_accounts_found">No Rekeyed Accounts Found</string>
+    <string name="we_have_scanned_the_blockchain">We have scanned the blockchain and were not able to find any accounts that have not been imported.</string>
+    <string name="tap_value_to_hide_your">Tap value to hide your balance</string>
+    <string name="nobody_can_see_my_screen">Nobody can see my screen.</string>
+    <string name="i_risk_losing_all_my">I risk losing all my funds if I share my Recovery Phrase with anyone.</string>
+    <string name="my_funds_are_permanently_lost">My funds are permanently lost if I lose my Recovery Phrase and lose access to my wallet.</string>
+    <string name="pera_employees_will_never_ask">Pera employees will NEVER ask for my Recovery Phrase.</string>
+    <string name="confirm_and_acknowledge_the_following">Confirm and acknowledge the following:</string>
+    <string name="keep_it_secret_keep_it">Keep it secret. Keep it safe.</string>
+    <string name="reveal_passphrase">Reveal Passphrase</string>
 </resources>

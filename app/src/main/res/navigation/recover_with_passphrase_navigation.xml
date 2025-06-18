@@ -18,6 +18,10 @@
 
     <include app:graph="@navigation/meld_navigation" />
 
+    <include app:graph="@navigation/rekeyed_account_info_navigation" />
+
+    <include app:graph="@navigation/recover_registered_accounts_navigation" />
+
     <fragment
         android:id="@+id/recoverWithPassphraseFragment"
         android:name="com.algorand.android.modules.onboarding.recoverypassphrase.enterpassphrase.ui.RecoverWithPassphraseFragment"
@@ -40,33 +44,17 @@
             android:id="@+id/action_recoverWithPassphraseFragment_to_recoverAccountNameRegistrationFragment"
             app:destination="@id/recoverAccountNameRegistrationFragment" />
         <action
-            android:id="@+id/action_recoverWithPassphraseFragment_to_recoverRegisteredAccountsFragment"
-            app:destination="@id/recoverRegisteredAccountsFragment" />
+            android:id="@+id/action_recoverWithPassphraseFragment_to_recoverRegisteredAccountsNavigation"
+            app:destination="@id/recoverRegisteredAccountsNavigation">
+            <argument
+                android:name="encryptedEntropyBase64"
+                app:argType="string" />
+        </action>
         <action
             android:id="@+id/action_recoverWithPassphraseFragment_to_recoverSingleAddressRekeyedAccountSelectionFragment"
             app:destination="@id/recoverSingleAddressRekeyedAccountSelectionFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/recoverRegisteredAccountsFragment"
-        android:name="com.algorand.android.ui.onboarding.recoverypassphrase.importregisteredaddresses.RecoverRegisteredAccountsFragment"
-        android:label="RecoveryRegisteredAccountsFragment">
-        <argument
-            android:name="accountCreation"
-            app:argType="com.algorand.android.models.AccountCreation" />
-        <action
-            android:id="@+id/action_recoverRegisteredAccountsFragment_to_homeNavigation"
-            app:destination="@id/homeNavigation"
-            app:popUpTo="@id/recoverWithPassphraseNavigation"
-            app:popUpToInclusive="true">
-            <argument
-                android:name="showConfetti"
-                android:defaultValue="true"
-                app:argType="boolean" />
-        </action>
-        <action
-            android:id="@+id/action_recoverRegisteredAccountsFragment_to_recoverHdKeyRekeyedAccountSelectionFragment"
-            app:destination="@id/recoverHdKeyRekeyedAccountSelectionFragment" />
-    </fragment>
+
     <fragment
         android:id="@+id/recoverAccountNameRegistrationFragment"
         android:name="com.algorand.android.modules.onboarding.recoverypassphrase.nameregistration.RecoverAccountNameRegistrationFragment"
@@ -104,48 +92,6 @@
         tools:layout="@layout/bottom_sheet_recover_options" />
 
     <fragment
-        android:id="@+id/rekeyedAccountInformationFragment"
-        android:name="com.algorand.android.modules.onboarding.recoverypassphrase.rekeyedaccountselection.information.ui.RekeyedAccountInformationFragment"
-        android:label="RekeyedAccountInformationFragment"
-        tools:layout="@layout/fragment_base_found_account_information">
-        <argument
-            android:name="accountAddress"
-            app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/recoverHdKeyRekeyedAccountSelectionFragment"
-        android:name="com.algorand.android.ui.rekeyedaccounts.hdkey.view.RecoverHdKeyRekeyedAccountSelectionFragment"
-        android:label="RecoverHdKeyRekeyedAccountSelectionFragment">
-        <argument
-            android:name="rekeyedAccountSelectionNavArg"
-            app:argType="com.algorand.android.ui.rekeyedaccounts.model.RekeyedAccountSelectionNavArg[]" />
-
-        <action
-            android:id="@+id/action_recoverHdKeyRekeyedAccountSelectionFragment_to_rekeyedAccountInformationFragment"
-            app:destination="@id/rekeyedAccountInformationFragment" />
-        <action
-            android:id="@+id/action_recoverHdKeyRekeyedAccountSelectionFragment_to_lockPreferenceNavigation"
-            app:destination="@id/lockPreferenceNavigation"
-            app:popUpTo="@id/recoverWithPassphraseNavigation"
-            app:popUpToInclusive="true">
-            <argument
-                android:name="shouldNavigateHome"
-                android:defaultValue="false"
-                app:argType="boolean" />
-        </action>
-        <action
-            android:id="@+id/action_recoverHdKeyRekeyedAccountSelectionFragment_to_homeNavigation"
-            app:destination="@id/homeNavigation"
-            app:popUpTo="@id/loginNavigation"
-            app:popUpToInclusive="true">
-            <argument
-                android:name="showConfetti"
-                android:defaultValue="true"
-                app:argType="boolean" />
-        </action>
-    </fragment>
-
-    <fragment
         android:id="@+id/recoverSingleAddressRekeyedAccountSelectionFragment"
         android:name="com.algorand.android.ui.rekeyedaccounts.singleaddress.view.RecoverSingleAddressRekeyedAccountSelectionFragment"
         android:label="RecoverSingleAddressRekeyedAccountSelectionFragment">
@@ -162,8 +108,12 @@
             android:id="@+id/action_recoverSingleAddressRekeyedAccountSelectionFragment_to_recoverAccountNameRegistrationFragment"
             app:destination="@id/recoverAccountNameRegistrationFragment" />
         <action
-            android:id="@+id/action_recoverSingleAddressRekeyedAccountSelectionFragment_to_rekeyedAccountInformationFragment"
-            app:destination="@id/rekeyedAccountInformationFragment" />
+            android:id="@+id/action_recoverSingleAddressRekeyedAccountSelectionFragment_to_rekeyedAccountInformationNavigation"
+            app:destination="@id/rekeyedAccountInfoNavigation">
+            <argument
+                android:name="accountAddress"
+                app:argType="string" />
+        </action>
 
     </fragment>
 

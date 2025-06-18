@@ -14,6 +14,7 @@ package com.algorand.android.ui.accountoptions
 
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
+import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.ui.accountoptions.model.AccountOptionsPreview
@@ -24,7 +25,8 @@ import javax.inject.Inject
 
 class AccountOptionsPreviewUseCase @Inject constructor(
     private val getAccountDisplayName: GetAccountDisplayName,
-    private val getAccountLite: GetAccountLite
+    private val getAccountLite: GetAccountLite,
+    private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview
 ) {
 
     suspend fun getPreview(address: String): AccountOptionsPreview? {
@@ -35,11 +37,13 @@ class AccountOptionsPreviewUseCase @Inject constructor(
                 accountAddress = address,
                 authAddress = cachedInfo?.rekeyAuthAddress,
                 accountDisplayName = getAccountDisplayName(address),
+                accountIconDrawable = getAccountIconDrawablePreview(this),
                 authAccountDisplayName = getAuthAccountDisplayName(this),
                 isAuthAddressButtonVisible = isRekeyed,
                 isPassphraseButtonVisible = registrationType == Algo25 || registrationType == HdKey,
                 isUndoRekeyButtonVisible = isRekeyed && canSignTransaction,
-                canSignTransaction = canSignTransaction
+                canSignTransaction = canSignTransaction,
+                registrationType = registrationType
             )
         }
     }

@@ -11,6 +11,6 @@
   -->
 
 <resources>
-    <string name="app_name">Pera Algo Wallet Staging</string>
+    <string name="app_name">Pera Staging</string>
     <string name="version_format">Pera Algo Wallet Staging v%1$s</string>
 </resources>

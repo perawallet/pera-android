@@ -66,7 +66,15 @@ class RecoverSingleAddressRekeyedAccountSelectionFragment : BaseFragment(R.layou
         fragmentDelegate = null
     }
 
-    override fun navToNextScreen() {
+    override fun onSkipClick() {
+        navToNextScreen()
+    }
+
+    override fun onAccountsAdded() {
+        navToNextScreen()
+    }
+
+    private fun navToNextScreen() {
         val accountCreation = args.accountCreation
         nav(
             RecoverSingleAddressRekeyedAccountSelectionFragmentDirections
@@ -79,7 +87,7 @@ class RecoverSingleAddressRekeyedAccountSelectionFragment : BaseFragment(R.layou
     override fun navToAccountInformationBottomSheet(address: String) {
         nav(
             RecoverSingleAddressRekeyedAccountSelectionFragmentDirections
-                .actionRecoverSingleAddressRekeyedAccountSelectionFragmentToRekeyedAccountInformationFragment(address)
+                .actionRecoverSingleAddressRekeyedAccountSelectionFragmentToRekeyedAccountInformationNavigation(address)
         )
     }
 }

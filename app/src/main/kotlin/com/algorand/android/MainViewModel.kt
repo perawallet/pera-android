@@ -212,10 +212,6 @@ class MainViewModel @Inject constructor(
         return autoLockManager.isAppUnlocked
     }
 
-    fun setAutoLockManagerListener(autoLockManagerListener: AutoLockManager.AutoLockManagerListener) {
-        autoLockManager.setListener(autoLockManagerListener)
-    }
-
     fun handlePendingIntent(isAppStart: Boolean = false) {
         viewModelScope.launchIO {
             val isPendingIntentHandled = pendingIntentKeeper.pendingIntent?.let { intent ->

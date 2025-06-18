@@ -26,7 +26,7 @@ import com.algorand.android.databinding.FragmentAccountAssetsBinding
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.modules.accountdetail.assets.ui.adapter.AccountAssetsAccountDetailAdapter
 import com.algorand.android.modules.accountdetail.assets.ui.adapter.AccountAssetsAdapter
-import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountAssetsPreviewUseCase
+import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountDetailAccountsItemProcessor
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem
 import com.algorand.android.utils.ExcludedViewTypesDividerItemDecoration
@@ -56,7 +56,7 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
     }
 
     private val recyclerViewPositionVisibilityHandler = RecyclerViewPositionVisibilityHandler(
-        position = AccountAssetsPreviewUseCase.QUICK_ACTIONS_INDEX,
+        position = AccountDetailAccountsItemProcessor.QUICK_ACTIONS_INDEX,
         listener = recyclerViewPositionVisibilityListener
     )
 
@@ -128,6 +128,10 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         override fun onBuySellClick() {
             listener?.onBuySellClick()
         }
+
+        override fun onAccountValueClick() {
+            accountAssetsViewModel.togglePrivacy()
+        }
     }
 
     private val accountAssetsAdapter = AccountAssetsAdapter(accountAssetsListener)
@@ -165,6 +169,7 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         binding.accountAssetsRecyclerView.apply {
             recyclerViewPositionVisibilityHandler.addOnScrollListener(this)
             adapter = accountAssetsConcatAdapter
+            itemAnimator = null
             addCustomDivider(
                 drawableResId = R.drawable.horizontal_divider_80_24dp,
                 showLast = false,

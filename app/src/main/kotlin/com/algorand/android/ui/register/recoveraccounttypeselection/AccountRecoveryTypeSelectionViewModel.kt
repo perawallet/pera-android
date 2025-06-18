@@ -13,8 +13,10 @@
 package com.algorand.android.ui.register.recoveraccounttypeselection
 
 import android.content.SharedPreferences
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.core.BaseViewModel
+import com.algorand.android.models.OnboardingAccountType
+import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.utils.launchIO
 import com.algorand.android.utils.preference.setRegisterSkip
@@ -30,7 +32,7 @@ class AccountRecoveryTypeSelectionViewModel @Inject constructor(
     private val isThereAnyLocalAccount: IsThereAnyLocalAccount,
     private val stateDelegate: StateDelegate<ViewState>,
     private val isOnHdWalletUseCase: IsOnHdWalletUseCase
-) : ViewModel(), StateViewModel<AccountRecoveryTypeSelectionViewModel.ViewState> by stateDelegate {
+) : BaseViewModel(), StateViewModel<AccountRecoveryTypeSelectionViewModel.ViewState> by stateDelegate {
 
     init {
         stateDelegate.setDefaultState(ViewState.Idle)
@@ -50,6 +52,14 @@ class AccountRecoveryTypeSelectionViewModel @Inject constructor(
 
     fun isOnHdWallet(): Boolean {
         return isOnHdWalletUseCase.invoke()
+    }
+
+    fun logRecoverAccountTypeClickEvent(onboardingAccountType: OnboardingAccountType) {
+        val clickEvent = when (onboardingAccountType) {
+            OnboardingAccountType.HdKey -> PeraClickEvent.TAP_ONBOARDING_RECOVER_UNIVERSAL
+            OnboardingAccountType.Algo25 -> PeraClickEvent.TAP_ONBOARDING_RECOVER_ALGO25
+        }
+        logEvent(clickEvent)
     }
 
     sealed interface ViewState {

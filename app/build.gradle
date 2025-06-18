@@ -12,6 +12,7 @@ plugins {
 
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose)
+    alias(libs.plugins.screenshot)
 }
 
 apply from: "$projectDir/quality.gradle"
@@ -100,11 +101,11 @@ android {
             multiDexEnabled true
             minifyEnabled false
             manifestPlaceholders = [enableCrashReporting: "false", enableFirebasePerformanceLogcat: "true"]
-            resValue("string", "app_name", "Pera Wallet (Dev)")
+            resValue("string", "app_name", "Pera (Dev)")
         }
     }
 
-    flavorDimensions "server"
+    flavorDimensions += "server"
     productFlavors {
         def apiKeyProps = new Properties()
         def apiUrlProps = new Properties()
@@ -231,6 +232,7 @@ android {
     }
 
     namespace libs.versions.android.namespace.get().toString()
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -344,4 +346,5 @@ dependencies {
     androidTestImplementation libs.room.testing
     androidTestImplementation libs.runner
     androidTestImplementation libs.espresso.core
+    screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 }

@@ -38,11 +38,13 @@ import com.algorand.wallet.account.local.data.mapper.model.LedgerBleMapperImpl
 import com.algorand.wallet.account.local.data.mapper.model.NoAuthMapper
 import com.algorand.wallet.account.local.data.mapper.model.NoAuthMapperImpl
 import com.algorand.wallet.account.local.data.repository.Algo25AccountRepositoryImpl
+import com.algorand.wallet.account.local.data.repository.DefaultAlgo25NoAuthRepository
 import com.algorand.wallet.account.local.data.repository.HdKeyAccountRepositoryImpl
 import com.algorand.wallet.account.local.data.repository.HdSeedRepositoryImpl
 import com.algorand.wallet.account.local.data.repository.LedgerBleAccountRepositoryImpl
 import com.algorand.wallet.account.local.data.repository.NoAuthAccountRepositoryImpl
 import com.algorand.wallet.account.local.domain.repository.Algo25AccountRepository
+import com.algorand.wallet.account.local.domain.repository.Algo25NoAuthRepository
 import com.algorand.wallet.account.local.domain.repository.HdKeyAccountRepository
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.account.local.domain.repository.LedgerBleAccountRepository
@@ -61,6 +63,7 @@ import com.algorand.wallet.account.local.domain.usecase.GetHasAnyHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.GetHdEntropy
 import com.algorand.wallet.account.local.domain.usecase.GetHdKeyPrivateKey
 import com.algorand.wallet.account.local.domain.usecase.GetHdSeed
+import com.algorand.wallet.account.local.domain.usecase.GetHdSeedId
 import com.algorand.wallet.account.local.domain.usecase.GetHdWalletSummaries
 import com.algorand.wallet.account.local.domain.usecase.GetLedgerBleAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccount
@@ -86,6 +89,7 @@ import com.algorand.wallet.account.local.domain.usecase.SaveAlgo25Account
 import com.algorand.wallet.account.local.domain.usecase.SaveHdKeyAccount
 import com.algorand.wallet.account.local.domain.usecase.SaveLedgerBleAccount
 import com.algorand.wallet.account.local.domain.usecase.SaveNoAuthAccount
+import com.algorand.wallet.account.local.domain.usecase.UpdateInvalidAlgo25AccountsToNoAuth
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToAlgo25UseCase
 import com.algorand.wallet.account.local.domain.usecase.UpdateNoAuthAccountToHdKey
@@ -119,6 +123,10 @@ internal object LocalAccountsModule {
 
     @Provides
     @Singleton
+    fun provideAlgo25NoAuthDao(addressDatabase: AddressDatabase) = addressDatabase.algo25NoAuthDao()
+
+    @Provides
+    @Singleton
     fun provideHdKeyDao(addressDatabase: AddressDatabase) = addressDatabase.hdKeyDao()
 
     @Provides
@@ -146,6 +154,16 @@ internal object LocalAccountsModule {
     fun provideLedgerBleAccountRepository(
         repository: LedgerBleAccountRepositoryImpl
     ): LedgerBleAccountRepository = repository
+
+    @Provides
+    fun provideAlgo25NoAuthRepository(repository: DefaultAlgo25NoAuthRepository): Algo25NoAuthRepository = repository
+
+    @Provides
+    fun provideUpdateInvalidAlgo25AccountsToNoAuth(
+        repository: DefaultAlgo25NoAuthRepository
+    ): UpdateInvalidAlgo25AccountsToNoAuth {
+        return UpdateInvalidAlgo25AccountsToNoAuth(repository::updateInvalidAlgo25AccountsToNoAuth)
+    }
 
     @Provides
     fun provideNoAuthAccountRepository(repository: NoAuthAccountRepositoryImpl): NoAuthAccountRepository = repository
@@ -311,9 +329,12 @@ internal object LocalAccountsModule {
     @Provides
     fun provideGetAccountMnemonic(useCase: GetAccountMnemonicUseCase): GetAccountMnemonic = useCase
 
-
     @Provides
     fun provideGetHdWalletSummaries(repository: HdKeyAccountRepository): GetHdWalletSummaries =
         GetHdWalletSummaries(repository::getHdWalletSummaries)
 
+    @Provides
+    fun provideGetHdSeedId(repository: HdKeyAccountRepository): GetHdSeedId {
+        return GetHdSeedId(repository::getHdSeedId)
+    }
 }

@@ -261,7 +261,6 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
     @Composable
     private fun CreateWalletHdWidget() {
         GroupChoiceWidget(
-            modifier = Modifier.padding(horizontal = 12.dp),
             title = stringResource(id = R.string.create_a_new_wallet),
             description = stringResource(id = R.string.create_a_new_wallet_desc),
             icon = ImageVector.vectorResource(R.drawable.ic_wallet),
@@ -273,7 +272,6 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
     @Composable
     private fun CreateAlgo25AccountWidget() {
         GroupChoiceWidget(
-            modifier = Modifier.padding(horizontal = 12.dp),
             title = stringResource(id = R.string.create_a_new_account),
             description = stringResource(id = R.string.create_a_new_algorand_account_with),
             icon = ImageVector.vectorResource(R.drawable.ic_wallet),
@@ -285,7 +283,6 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
     @Composable
     private fun ImportHdWalletWidget() {
         GroupChoiceWidget(
-            modifier = Modifier.padding(horizontal = 12.dp),
             title = stringResource(id = R.string.import_a_wallet),
             description = stringResource(id = R.string.import_an_existing),
             iconContentDescription = stringResource(id = R.string.import_an_existing),
@@ -297,7 +294,6 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
     @Composable
     private fun ImportAlgo25AccountWidget() {
         GroupChoiceWidget(
-            modifier = Modifier.padding(horizontal = 12.dp),
             title = stringResource(id = R.string.import_an_account),
             description = stringResource(id = R.string.import_an_existing),
             iconContentDescription = stringResource(id = R.string.import_an_existing),
@@ -309,7 +305,6 @@ class RegisterIntroFragment : DaggerBaseFragment(0) {
     @Composable
     private fun WatchAddressWidget() {
         GroupChoiceWidget(
-            modifier = Modifier.padding(horizontal = 12.dp),
             title = stringResource(id = R.string.watch_an_address),
             description = stringResource(id = R.string.monitor_an_algorand_address),
             iconContentDescription = stringResource(id = R.string.monitor_an_algorand_address),

@@ -7,6 +7,7 @@ import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.first
@@ -18,7 +19,7 @@ import org.junit.Test
 
 class HdSeedRepositoryImplTest {
 
-    private val hdSeedDao = mockk<HdSeedDao>()
+    private val hdSeedDao = mockk<HdSeedDao>(relaxed = true)
     private val hdSeedEntityMapper = mockk<HdSeedEntityMapper>()
     private val hdSeedMapper = mockk<HdSeedMapper>()
     private val aesPlatformManager = mockk<AESPlatformManager>()
@@ -148,22 +149,38 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT successful completion WHEN deleting seed by id`() = runTest {
+    fun `EXPECT index cleared WHEN deleting last seed`() = runTest {
         val seedId = 123
 
         coEvery { hdSeedDao.delete(seedId) } returns Unit
+        coEvery { hdSeedDao.getTableSize() } returns 0
 
         val result = sut.deleteHdSeed(seedId)
 
+        coVerify { hdSeedDao.clearPrimaryKeyIndex() }
         assertEquals(Unit, result)
     }
 
     @Test
-    fun `EXPECT successful completion WHEN clearing all seeds`() = runTest {
+    fun `EXPECT index not cleared WHEN after deleting seed table is not empty`() = runTest {
+        val seedId = 123
+
+        coEvery { hdSeedDao.delete(seedId) } returns Unit
+        coEvery { hdSeedDao.getTableSize() } returns 2
+
+        val result = sut.deleteHdSeed(seedId)
+
+        coVerify(exactly = 0) { hdSeedDao.clearPrimaryKeyIndex() }
+        assertEquals(Unit, result)
+    }
+
+    @Test
+    fun `EXPECT index cleared WHEN deleting all seeds`() = runTest {
         coEvery { hdSeedDao.clearAll() } returns Unit
 
         val result = sut.deleteAllHdSeeds()
 
+        coVerify { hdSeedDao.clearPrimaryKeyIndex() }
         assertEquals(Unit, result)
     }
 

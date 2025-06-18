@@ -58,5 +58,5 @@ internal interface HdSeedDao {
     suspend fun clearAll()
 
     @Query("DELETE FROM sqlite_sequence")
-    fun clearPrimaryKeyIndex()
+    suspend fun clearPrimaryKeyIndex()
 }

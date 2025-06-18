@@ -7,15 +7,14 @@ import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.Test
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Test
 
 class HdSeedRepositoryImplTest {
 
@@ -164,6 +163,15 @@ class HdSeedRepositoryImplTest {
         coEvery { hdSeedDao.clearAll() } returns Unit
 
         val result = sut.deleteAllHdSeeds()
+
+        assertEquals(Unit, result)
+    }
+
+    @Test
+    fun `EXPECT successful completion WHEN clearing primary key index`() = runTest {
+        coEvery { hdSeedDao.clearPrimaryKeyIndex() } returns Unit
+
+        val result = hdSeedDao.clearPrimaryKeyIndex()
 
         assertEquals(Unit, result)
     }

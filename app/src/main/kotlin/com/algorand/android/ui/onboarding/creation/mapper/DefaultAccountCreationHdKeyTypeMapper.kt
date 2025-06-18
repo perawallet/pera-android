@@ -31,6 +31,7 @@ internal class DefaultAccountCreationHdKeyTypeMapper @Inject constructor(
                 index.changeIndex,
                 index.keyIndex,
                 derivationType.value,
+                seedId
             )
         }
     }

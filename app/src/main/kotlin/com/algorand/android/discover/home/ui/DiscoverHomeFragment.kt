@@ -93,6 +93,9 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
             scrollToTopEvent?.consume()?.run {
                 binding.searchRecyclerView.scrollToTop()
             }
+            sendMessageEvent?.consume()?.let { message ->
+                sendWebMessage(message)
+            }
         }
     }
 
@@ -179,6 +182,10 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
         discoverViewModel.getRedirectUrlFromJson(jsonEncodedPayload)?.let {
             context?.openExternalBrowserApp(it)
         }
+    }
+
+    override fun getAuthorizedAddresses() {
+        discoverViewModel.getAuthorizedAddresses()
     }
 
     private fun initSavedStateListener() {
@@ -362,5 +369,11 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
                 webUrl = url
             )
         )
+    }
+
+    private fun sendWebMessage(message: String) {
+        binding.webView.post {
+            binding.webView.evaluateJavascript(message, null)
+        }
     }
 }

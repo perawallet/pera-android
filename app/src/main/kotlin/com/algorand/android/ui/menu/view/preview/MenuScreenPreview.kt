@@ -10,12 +10,17 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.menu.view
+package com.algorand.android.ui.menu.view.preview
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.algorand.android.ui.menu.view.MenuScreen
+import com.algorand.android.ui.menu.view.MenuScreenListener
+import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel
 import com.algorand.android.ui.menu.viewmodel.MenuNftViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @PreviewLightDark
 @Composable
@@ -27,10 +32,21 @@ fun MenuScreenPreview() {
         override fun onInviteFriendsClick() {}
         override fun onReceiveClick() {}
         override fun onNftClick() {}
+        override fun onGoToCardsClick() {}
+        override fun onCreateCardClick() {}
     }
     val nftState = StateDelegate<MenuNftViewModel.ViewState>().apply {
         setDefaultState(MenuNftViewModel.ViewState.Idle)
     }
     val nftViewModel = MenuNftViewModel({ listOf() }, nftState)
-    MenuScreen(nftViewModel, listener)
+    val cardViewModel = getCardViewModel()
+    MenuScreen(nftViewModel, cardViewModel, listener)
+}
+
+private fun getCardViewModel(): MenuCardsViewModel {
+    return object : MenuCardsViewModel {
+        override fun initCardState() {}
+        override val state: StateFlow<MenuCardsViewModel.ViewState>
+            get() = MutableStateFlow(MenuCardsViewModel.ViewState.NewUser)
+    }
 }

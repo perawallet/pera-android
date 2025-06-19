@@ -20,6 +20,7 @@ import androidx.fragment.app.viewModels
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.compose.extensions.createComposeView
+import com.algorand.android.ui.menu.viewmodel.DefaultMenuCardsViewModel
 import com.algorand.android.ui.menu.viewmodel.MenuNftViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,9 +31,11 @@ class MenuFragment : BaseFragment(0), MenuScreenListener {
 
     private val menuNftViewModel: MenuNftViewModel by viewModels()
 
+    private val cardsViewModel: DefaultMenuCardsViewModel by viewModels()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
-            MenuScreen(menuNftViewModel, this)
+            MenuScreen(menuNftViewModel, cardsViewModel, this)
         }
     }
 
@@ -57,6 +60,14 @@ class MenuFragment : BaseFragment(0), MenuScreenListener {
     }
 
     override fun onNftClick() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onCreateCardClick() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onGoToCardsClick() {
         TODO("Not yet implemented")
     }
 }

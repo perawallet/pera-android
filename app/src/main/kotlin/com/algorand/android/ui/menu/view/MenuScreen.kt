@@ -31,11 +31,13 @@ import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.PeraToolbar
 import com.algorand.android.ui.compose.widget.PeraToolbarIcon
+import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel
 import com.algorand.android.ui.menu.viewmodel.MenuNftViewModel
 
 @Composable
 fun MenuScreen(
     menuNftViewModel: MenuNftViewModel,
+    menuCardViewModel: MenuCardsViewModel,
     listener: MenuScreenListener
 ) {
     Column(
@@ -46,6 +48,8 @@ fun MenuScreen(
             .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
     ) {
         MenuToolbar(listener::onSettingsClick, listener::onScanQrClick)
+        MenuItemSpacer()
+        MenuListCardItem(menuCardViewModel, listener)
         MenuItemSpacer()
         MenuListNftItem(menuNftViewModel, listener::onNftClick)
         MenuItemSpacer()
@@ -80,7 +84,7 @@ private fun MenuItemSpacer() {
     Spacer(modifier = Modifier.height(12.dp))
 }
 
-interface MenuScreenListener {
+interface MenuScreenListener : MenuListCardItemListener {
     fun onSettingsClick()
     fun onScanQrClick()
     fun onBuyAlgoClick()

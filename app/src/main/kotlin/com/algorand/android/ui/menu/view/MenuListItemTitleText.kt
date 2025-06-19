@@ -57,7 +57,7 @@ internal fun MenuListItemTrailingIcon() {
 
 @Composable
 internal fun MenuListItemContainer(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     Box(

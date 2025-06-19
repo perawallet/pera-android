@@ -12,6 +12,7 @@
 
 package com.algorand.android.ui.compose.widget.button
 
+import androidx.compose.foundation.layout.Arrangement.Horizontal
 import androidx.compose.material3.ButtonColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ data class PeraButtonModifier(
     val text: String,
     val textStyle: TextStyle,
     val colors: ButtonColors,
+    val horizontalArrangement: Horizontal,
     val state: PeraButtonState = PeraButtonState.ENABLED,
     val leftIcon: @Composable (() -> Unit)? = null,
     val rightIcon: @Composable (() -> Unit)? = null,

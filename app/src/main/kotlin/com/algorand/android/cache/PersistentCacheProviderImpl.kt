@@ -13,6 +13,7 @@
 package com.algorand.android.cache
 
 import android.content.SharedPreferences
+import com.algorand.wallet.foundation.cache.FlowPersistentCache
 import com.algorand.wallet.foundation.cache.PersistentCache
 import com.algorand.wallet.foundation.cache.PersistentCacheProvider
 import com.google.gson.Gson
@@ -25,5 +26,12 @@ internal class PersistentCacheProviderImpl(
 
     override fun <T : Any> getPersistentCache(type: Type, key: String): PersistentCache<T> {
         return SharedPrefPersistentCache(type, key, sharedPreferences, gson)
+    }
+
+    override fun <T : Any> getFlowPersistentCache(type: Type, key: String, defaultValue: T): FlowPersistentCache<T> {
+        return DefaultFlowPersistentCache(
+            SharedPrefPersistentCache(type, key, sharedPreferences, gson),
+            defaultValue
+        )
     }
 }

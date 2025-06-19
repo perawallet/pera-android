@@ -22,17 +22,20 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
 import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.customviews.Tooltip
 import com.algorand.android.databinding.FragmentAccountsBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ScreenState
+import com.algorand.android.models.TooltipConfig
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel
@@ -43,6 +46,7 @@ import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.View
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowGiftCardsTutorial
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowMaxAccountLimitExceededError
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowNotificationPermission
+import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowPrivacyTooltip
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowSwapTutorial
 import com.algorand.android.modules.sorting.accountsorting.ui.AccountSortFragment.Companion.ACCOUNT_SORT_RESULT_KEY
 import com.algorand.android.modules.tracking.core.PeraClickEvent
@@ -76,6 +80,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             is ShowNotificationPermission -> askNotificationPermission()
             is ShowSwapTutorial -> showSwapTutorialDialog(event.tutorialId)
             is ShowConfetti -> showConfetti()
+            is ShowPrivacyTooltip -> showPrivacyTooltip(event.tutorialId)
         }
     }
 
@@ -210,6 +215,20 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
     }
 
+    private fun showPrivacyTooltip(tutorialId: Int) {
+        with(binding.primaryPortfolioValue) {
+            postDelayed({
+                val config = TooltipConfig(
+                    anchor = this,
+                    offsetX = resources.getDimensionPixelOffset(R.dimen.spacing_xlarge),
+                    tooltipTextResId = R.string.tap_value_to_hide_your
+                )
+                Tooltip(context).show(config, findViewTreeLifecycleOwner())
+                accountsViewModel.dismissTutorial(tutorialId)
+            }, PRIVACY_TOOLTIP_DELAY)
+        }
+    }
+
     private fun showConfetti() {
         binding.confettiAnimationLottieView.apply {
             progress = 0F
@@ -281,10 +300,16 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private fun setPortfolioValues(portfolioValues: BasePortfolioValueItem) {
         with(binding) {
-            primaryPortfolioValue.apply { text = portfolioValues.getPrimaryAccountValue(context) }
-            toolbarPrimaryPortfolioValue.apply { text = portfolioValues.getPrimaryAccountValue(context) }
-            secondaryPortfolioValue.apply { text = portfolioValues.getSecondaryAccountValue(context) }
-            toolbarSecondaryPortfolioValue.apply { text = portfolioValues.getSecondaryAccountValue(context) }
+            primaryPortfolioValue.apply {
+                text = portfolioValues.getPrimaryAccountValue(context)
+                setOnClickListener { accountsViewModel.togglePrivacy() }
+            }
+            secondaryPortfolioValue.apply {
+                text = portfolioValues.getSecondaryAccountValue(context)
+                setOnClickListener { accountsViewModel.togglePrivacy() }
+            }
+            toolbarPrimaryPortfolioValue.text = portfolioValues.getPrimaryAccountValue(root.context)
+            toolbarSecondaryPortfolioValue.text = portfolioValues.getSecondaryAccountValue(root.context)
             portfolioValueTitleTextView.apply {
                 setTextColor(ContextCompat.getColor(root.context, portfolioValues.titleColorResId))
                 setDrawableTintColor(portfolioValues.titleColorResId)
@@ -443,5 +468,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     companion object {
         private const val FIREBASE_EVENT_SCREEN_ID = "screen_accounts"
+        private const val PRIVACY_TOOLTIP_DELAY = 500L
     }
 }

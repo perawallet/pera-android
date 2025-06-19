@@ -15,6 +15,7 @@ package com.algorand.android.modules.accounts.ui.model
 import androidx.annotation.StringRes
 import com.algorand.android.models.RecyclerListItem
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
+import com.algorand.android.ui.common.amount.AmountRenderer
 
 sealed interface BaseAccountListItem : RecyclerListItem {
 
@@ -130,8 +131,8 @@ sealed interface BaseAccountListItem : RecyclerListItem {
         val primaryDisplayName: String,
         val secondaryDisplayName: String,
         val accountIconDrawablePreview: AccountIconDrawablePreview,
-        val formattedPrimaryValue: String,
-        val formattedSecondaryValue: String,
+        val formattedPrimaryValue: AmountRenderer,
+        val formattedSecondaryValue: AmountRenderer,
         val canCopyable: Boolean,
         val startSmallIconResource: Int?
     ) : BaseAccountListItem {

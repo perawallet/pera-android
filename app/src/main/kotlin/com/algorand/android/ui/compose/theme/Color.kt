@@ -281,6 +281,10 @@ interface PeraColor {
         val icon: Color
     }
 
+    interface Helper {
+        val positive: Color
+    }
+
     interface ButtonStyle {
         val background: Color
         val focusBackground: Color
@@ -505,4 +509,5 @@ interface PeraColor {
     val market: Market
     val node: Node
     val divider: Divider
+    val helper: Helper
 }

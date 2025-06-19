@@ -1521,4 +1521,12 @@
     <string name="import_any_rekeyed_accounts">Import any rekeyed accounts</string>
     <string name="no_rekeyed_accounts_found">No Rekeyed Accounts Found</string>
     <string name="we_have_scanned_the_blockchain">We have scanned the blockchain and were not able to find any accounts that have not been imported.</string>
+    <string name="tap_value_to_hide_your">Tap value to hide your balance</string>
+    <string name="nobody_can_see_my_screen">Nobody can see my screen.</string>
+    <string name="i_risk_losing_all_my">I risk losing all my funds if I share my Recovery Phrase with anyone.</string>
+    <string name="my_funds_are_permanently_lost">My funds are permanently lost if I lose my Recovery Phrase and lose access to my wallet.</string>
+    <string name="pera_employees_will_never_ask">Pera employees will NEVER ask for my Recovery Phrase.</string>
+    <string name="confirm_and_acknowledge_the_following">Confirm and acknowledge the following:</string>
+    <string name="keep_it_secret_keep_it">Keep it secret. Keep it safe.</string>
+    <string name="reveal_passphrase">Reveal Passphrase</string>
 </resources>

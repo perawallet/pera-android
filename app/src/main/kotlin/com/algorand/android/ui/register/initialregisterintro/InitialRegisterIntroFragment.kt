@@ -18,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Start
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -165,7 +166,8 @@ class InitialRegisterIntroFragment : DaggerBaseFragment(0) {
                         contentDescription = stringResource(id = R.string.right_arrow),
                         tintColor = PeraTheme.colors.text.gray
                     )
-                }
+                },
+                horizontalArrangement = Start
             )
         }
     }
@@ -200,7 +202,8 @@ class InitialRegisterIntroFragment : DaggerBaseFragment(0) {
                         contentDescription = stringResource(id = R.string.right_arrow),
                         tintColor = PeraTheme.colors.text.gray
                     )
-                }
+                },
+                horizontalArrangement = Start
             )
         }
     }

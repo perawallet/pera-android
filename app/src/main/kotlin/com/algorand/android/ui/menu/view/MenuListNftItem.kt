@@ -54,7 +54,7 @@ internal fun MenuListNftItem(
             MenuListItemTrailingIcon()
         }
         LaunchedEffect(Unit) {
-            viewModel.init()
+            viewModel.initNftState()
         }
     }
 }

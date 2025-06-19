@@ -18,7 +18,6 @@ import com.algorand.android.ui.menu.view.MenuScreen
 import com.algorand.android.ui.menu.view.MenuScreenListener
 import com.algorand.android.ui.menu.viewmodel.MenuCardsViewModel
 import com.algorand.android.ui.menu.viewmodel.MenuNftViewModel
-import com.algorand.wallet.viewmodel.StateDelegate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -35,12 +34,16 @@ fun MenuScreenPreview() {
         override fun onGoToCardsClick() {}
         override fun onCreateCardClick() {}
     }
-    val nftState = StateDelegate<MenuNftViewModel.ViewState>().apply {
-        setDefaultState(MenuNftViewModel.ViewState.Idle)
+    MenuScreen(getNftViewModel(), getCardViewModel(), listener)
+}
+
+private fun getNftViewModel(): MenuNftViewModel {
+    return object : MenuNftViewModel {
+        override fun initNftState() {}
+        override val state: StateFlow<MenuNftViewModel.ViewState>
+            get() = MutableStateFlow(MenuNftViewModel.ViewState.Idle)
+
     }
-    val nftViewModel = MenuNftViewModel({ listOf() }, nftState)
-    val cardViewModel = getCardViewModel()
-    MenuScreen(nftViewModel, cardViewModel, listener)
 }
 
 private fun getCardViewModel(): MenuCardsViewModel {

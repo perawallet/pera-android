@@ -21,7 +21,7 @@ import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.menu.viewmodel.DefaultMenuCardsViewModel
-import com.algorand.android.ui.menu.viewmodel.MenuNftViewModel
+import com.algorand.android.ui.menu.viewmodel.DefaultMenuNftViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,7 +29,7 @@ class MenuFragment : BaseFragment(0), MenuScreenListener {
 
     override val fragmentConfiguration = FragmentConfiguration()
 
-    private val menuNftViewModel: MenuNftViewModel by viewModels()
+    private val menuNftViewModel: DefaultMenuNftViewModel by viewModels()
 
     private val cardsViewModel: DefaultMenuCardsViewModel by viewModels()
 

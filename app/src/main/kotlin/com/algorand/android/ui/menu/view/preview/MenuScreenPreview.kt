@@ -1,3 +1,4 @@
+@file:Suppress("EmptyFunctionBlock")
 /*
  * Copyright 2022-2025 Pera Wallet, LDA
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,7 +43,6 @@ private fun getNftViewModel(): MenuNftViewModel {
         override fun initNftState() {}
         override val state: StateFlow<MenuNftViewModel.ViewState>
             get() = MutableStateFlow(MenuNftViewModel.ViewState.Idle)
-
     }
 }
 

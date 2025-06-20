@@ -10,16 +10,16 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.Test
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Test
 
 class HdSeedRepositoryImplTest {
 
-    private val hdSeedDao = mockk<HdSeedDao>()
+    private val hdSeedDao = mockk<HdSeedDao>(relaxed = true)
     private val hdSeedEntityMapper = mockk<HdSeedEntityMapper>()
     private val hdSeedMapper = mockk<HdSeedMapper>()
     private val aesPlatformManager = mockk<AESPlatformManager>()
@@ -149,21 +149,46 @@ class HdSeedRepositoryImplTest {
     }
 
     @Test
-    fun `EXPECT successful completion WHEN deleting seed by id`() = runTest {
+    fun `EXPECT index cleared WHEN deleting last seed`() = runTest {
         val seedId = 123
 
         coEvery { hdSeedDao.delete(seedId) } returns Unit
+        coEvery { hdSeedDao.getTableSize() } returns 0
 
         val result = sut.deleteHdSeed(seedId)
 
+        coVerify { hdSeedDao.clearPrimaryKeyIndex() }
         assertEquals(Unit, result)
     }
 
     @Test
-    fun `EXPECT successful completion WHEN clearing all seeds`() = runTest {
+    fun `EXPECT index not cleared WHEN after deleting seed table is not empty`() = runTest {
+        val seedId = 123
+
+        coEvery { hdSeedDao.delete(seedId) } returns Unit
+        coEvery { hdSeedDao.getTableSize() } returns 2
+
+        val result = sut.deleteHdSeed(seedId)
+
+        coVerify(exactly = 0) { hdSeedDao.clearPrimaryKeyIndex() }
+        assertEquals(Unit, result)
+    }
+
+    @Test
+    fun `EXPECT index cleared WHEN deleting all seeds`() = runTest {
         coEvery { hdSeedDao.clearAll() } returns Unit
 
         val result = sut.deleteAllHdSeeds()
+
+        coVerify { hdSeedDao.clearPrimaryKeyIndex() }
+        assertEquals(Unit, result)
+    }
+
+    @Test
+    fun `EXPECT successful completion WHEN clearing primary key index`() = runTest {
+        coEvery { hdSeedDao.clearPrimaryKeyIndex() } returns Unit
+
+        val result = hdSeedDao.clearPrimaryKeyIndex()
 
         assertEquals(Unit, result)
     }

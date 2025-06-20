@@ -23,14 +23,13 @@ import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.databinding.FragmentSettingsBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.models.WarningConfirmation
 import com.algorand.android.ui.common.warningconfirmation.WarningConfirmationBottomSheet.Companion.WARNING_CONFIRMATION_KEY
 import com.algorand.android.ui.settings.SettingsViewModel.ViewEvent
 import com.algorand.android.utils.browser.openPrivacyPolicyUrl
 import com.algorand.android.utils.browser.openSupportCenterUrl
 import com.algorand.android.utils.browser.openTermsAndServicesUrl
-import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
-import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
@@ -42,8 +41,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
-class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings),
-    BottomNavBarFragmentDelegation by BottomNavBarFragmentDelegationImpl() {
+class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
 
     @Inject
     lateinit var aead: Aead
@@ -55,7 +53,16 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings),
 
     private val binding by viewBinding(FragmentSettingsBinding::bind)
 
-    override val fragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
+    private val toolbarConfiguration = ToolbarConfiguration(
+        titleResId = R.string.settings,
+        startIconResId = R.drawable.ic_left_arrow,
+        startIconClick = ::navBack
+    )
+
+    override val fragmentConfiguration = FragmentConfiguration(
+        isBottomBarNeeded = true,
+        toolbarConfiguration = toolbarConfiguration
+    )
 
     private val algorandSecureBackupDescriptionVisibilityCollector: suspend (Boolean?) -> Unit = { isVisible ->
         binding.algorandSecureBackupListItem.updateSubTitleVisibility(isVisible == true)
@@ -80,7 +87,6 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        registerBottomNavBarFragmentDelegation(this)
         initDialogSavedStateListener()
         initObservers()
         initUi()

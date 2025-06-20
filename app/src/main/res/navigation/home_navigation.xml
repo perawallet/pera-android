@@ -389,6 +389,10 @@
         <action
             android:id="@+id/action_collectiblesFragment_to_manageCollectiblesBottomSheet"
             app:destination="@id/manageCollectiblesBottomSheet" />
+        <argument
+            android:name="registerBottomNavDelegation"
+            android:defaultValue="true"
+            app:argType="boolean" />
     </fragment>
 
     <fragment
@@ -1563,5 +1567,33 @@
         android:name="com.algorand.android.modules.accountdetail.haveyoubackedupconfirmation.ui.HaveYouBackedUpAccountConfirmationBottomSheet"
         android:label="HaveYouBackedUpAccountConfirmationBottomSheet"
         tools:layout="@layout/bottom_sheet_double_button" />
+
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.algorand.android.ui.menu.view.MenuFragment"
+        android:label="MenuFragment">
+        <action
+            android:id="@+id/action_menuFragment_to_inviteFriendsBottomSheet"
+            app:destination="@id/inviteFriendsBottomSheet" />
+        <action
+            android:id="@+id/action_menuFragment_to_collectiblesFragment"
+            app:destination="@id/collectiblesFragment">
+
+            <argument
+                android:name="registerBottomNavDelegation"
+                app:argType="boolean" />
+        </action>
+
+        <action
+            android:id="@+id/action_menuFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/inviteFriendsBottomSheet"
+        android:name="com.algorand.android.ui.invite.view.InviteFriendsBottomSheet"
+        android:label="InviteFriendsBottomSheet" />
+
 
 </navigation>

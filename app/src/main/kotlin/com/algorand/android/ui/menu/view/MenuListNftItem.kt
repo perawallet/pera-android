@@ -23,6 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,10 +68,12 @@ private fun CollectibleImagePreviews(urls: List<String>) {
         urls.forEachIndexed { index, url ->
             GlideImage(
                 modifier = Modifier
-                    .size(40.dp)
                     .padding(start = (24 * index).dp)
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(9.dp))
                     .border(width = 2.dp, color = PeraTheme.colors.layer.grayLighter, shape = RoundedCornerShape(8.dp)),
                 model = url,
+                contentScale = ContentScale.Crop,
                 contentDescription = null
             )
         }

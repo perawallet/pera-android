@@ -14,10 +14,6 @@ package com.algorand.android.utils.delegation.bottomnavfragment
 
 import com.algorand.android.core.BaseFragment
 
-// TODO: We may create a bae class for bottom nav fragments like;
-/**
- * abstract class BottomNavFragment : BaseFragment
- */
 interface BottomNavBarFragmentDelegation {
     fun registerBottomNavBarFragmentDelegation(baseFragment: BaseFragment)
 }

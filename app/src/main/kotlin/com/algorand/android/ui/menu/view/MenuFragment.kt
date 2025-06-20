@@ -17,17 +17,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.ui.compose.extensions.createComposeView
 import com.algorand.android.ui.menu.viewmodel.DefaultMenuCardsViewModel
 import com.algorand.android.ui.menu.viewmodel.DefaultMenuNftViewModel
+import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
+import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MenuFragment : BaseFragment(0), MenuScreenListener {
+class MenuFragment : BaseFragment(0), MenuScreenListener,
+    BottomNavBarFragmentDelegation by BottomNavBarFragmentDelegationImpl() {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     private val menuNftViewModel: DefaultMenuNftViewModel by viewModels()
 
@@ -39,16 +43,21 @@ class MenuFragment : BaseFragment(0), MenuScreenListener {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        registerBottomNavBarFragmentDelegation(this)
+    }
+
     override fun onSettingsClick() {
-        TODO("Not yet implemented")
+        nav(MenuFragmentDirections.actionMenuFragmentToSettingsFragment())
     }
 
     override fun onScanQrClick() {
-        TODO("Not yet implemented")
+        nav(HomeNavigationDirections.actionGlobalAccountsQrScannerFragment())
     }
 
     override fun onBuyAlgoClick() {
-        TODO("Not yet implemented")
+        nav(HomeNavigationDirections.actionGlobalBuySellActionsBottomSheet())
     }
 
     override fun onInviteFriendsClick() {
@@ -56,18 +65,18 @@ class MenuFragment : BaseFragment(0), MenuScreenListener {
     }
 
     override fun onReceiveClick() {
-        TODO("Not yet implemented")
+        nav(HomeNavigationDirections.actionGlobalReceiveAccountSelectionFragment())
     }
 
     override fun onNftClick() {
-        TODO("Not yet implemented")
+        nav(MenuFragmentDirections.actionMenuFragmentToCollectiblesFragment(registerBottomNavDelegation = false))
     }
 
     override fun onCreateCardClick() {
-        TODO("Not yet implemented")
+        nav(HomeNavigationDirections.actionGlobalCardsFragment())
     }
 
     override fun onGoToCardsClick() {
-        TODO("Not yet implemented")
+        nav(HomeNavigationDirections.actionGlobalCardsFragment())
     }
 }

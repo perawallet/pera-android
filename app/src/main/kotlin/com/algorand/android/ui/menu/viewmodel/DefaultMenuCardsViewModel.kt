@@ -47,13 +47,15 @@ class DefaultMenuCardsViewModel @Inject constructor(
     }
 
     override fun initCardState() {
-        stateDelegate.updateState { ViewState.Loading }
-        viewModelScope.launch {
-            val (isWaitlisted, fundAddresses) = getWaitlistStateAndFundAddresses()
-            if (isWaitlisted == null || fundAddresses == null) {
-                stateDelegate.updateState { ViewState.Error }
-            } else {
-                stateDelegate.updateState { getSuccessViewState(isWaitlisted, fundAddresses) }
+        stateDelegate.onState<ViewState.Idle> {
+            stateDelegate.updateState { ViewState.Loading }
+            viewModelScope.launch {
+                val (isWaitlisted, fundAddresses) = getWaitlistStateAndFundAddresses()
+                if (isWaitlisted == null || fundAddresses == null) {
+                    stateDelegate.updateState { ViewState.Error }
+                } else {
+                    stateDelegate.updateState { getSuccessViewState(isWaitlisted, fundAddresses) }
+                }
             }
         }
     }

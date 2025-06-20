@@ -149,6 +149,17 @@ class DefaultMenuCardsViewModelTest {
         stateObserver.assertValueHistory(ViewState.Idle, ViewState.Loading, ViewState.NewUser)
     }
 
+    @Test
+    fun `EXPECT state to be initialized once WHEN init called multiple times`() = runTest {
+        coEvery { getCardFundAddresses() } returns PeraResult.Error(Exception())
+        coEvery { isCountryWaitlistedForCards() } returns PeraResult.Success(true)
+
+        sut.initCardState()
+        sut.initCardState()
+
+        stateObserver.assertValueHistory(ViewState.Idle, ViewState.Loading, ViewState.Error)
+    }
+
     private companion object {
         val FUND_ADDRESS = peraFixture<FundAddress>()
     }

@@ -32,5 +32,6 @@ data class DiscoverHomePreview(
     val handleQueryChangeForScrollEvent: Event<Unit>? = null,
     val scrollToTopEvent: Event<Unit>? = null,
     val loadHomeEvent: Event<Unit>? = null,
-    val loadCustomUrlEvent: Event<String>? = null
+    val loadCustomUrlEvent: Event<String>? = null,
+    val sendMessageEvent: Event<String>? = null,
 )

@@ -21,8 +21,10 @@ import com.algorand.android.discover.common.ui.model.DappFavoriteElement
 import com.algorand.android.discover.home.ui.model.DiscoverHomePreview
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomePreviewUseCase
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomeUseCase
+import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
 import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
 import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.preference.ThemePreference
 import com.algorand.wallet.remoteconfig.domain.usecase.DISCOVER_V5_TOGGLE
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
@@ -34,6 +36,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,6 +47,7 @@ class DiscoverHomeViewModel @Inject constructor(
     private val discoverHomeEventTracker: DiscoverHomeEventTracker,
     private val discoverHomeUseCase: DiscoverHomeUseCase,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
+    private val getAuthorizedAddressesWebMessage: GetAuthorizedAddressesWebMessage,
     savedStateHandle: SavedStateHandle
 ) : BaseDiscoverViewModel() {
 
@@ -235,6 +239,15 @@ class DiscoverHomeViewModel @Inject constructor(
 
     fun isV5Enabled(): Boolean {
         return isFeatureToggleEnabled(DISCOVER_V5_TOGGLE)
+    }
+
+    fun getAuthorizedAddresses() {
+        viewModelScope.launch {
+            val authAddressesMessage = getAuthorizedAddressesWebMessage()
+            _discoverHomePreviewFlow.update {
+                it.copy(sendMessageEvent = Event(authAddressesMessage))
+            }
+        }
     }
 
     companion object {

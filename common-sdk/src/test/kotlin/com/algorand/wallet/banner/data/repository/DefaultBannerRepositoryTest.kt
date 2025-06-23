@@ -14,22 +14,24 @@ package com.algorand.wallet.banner.data.repository
 
 import com.algorand.test.peraFixture
 import com.algorand.test.test
-import com.algorand.wallet.banner.data.cache.BannerInMemoryCache
 import com.algorand.wallet.banner.data.cache.DismissedBannerIdsCache
 import com.algorand.wallet.banner.data.mapper.BannerMapper
+import com.algorand.wallet.banner.data.model.BannerCache
 import com.algorand.wallet.banner.data.model.BannerDetailResponse
 import com.algorand.wallet.banner.data.model.BannerListResponse
 import com.algorand.wallet.banner.data.service.BannerApiService
 import com.algorand.wallet.banner.domain.model.Banner
 import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.foundation.cache.DefaultFlowInMemoryCache
+import com.algorand.wallet.foundation.cache.FakeInMemoryCache
+import com.algorand.wallet.foundation.cache.FlowInMemoryCache
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -38,7 +40,11 @@ class DefaultBannerRepositoryTest {
     private val bannerApiService: BannerApiService = mockk(relaxed = true)
     private val bannerMapper: BannerMapper = mockk(relaxed = true)
     private val dismissedBannerIdsCache: DismissedBannerIdsCache = mockk(relaxed = true)
-    private val bannerCache: BannerInMemoryCache = mockk(relaxed = true)
+    private val fakeInMemoryCache = FakeInMemoryCache<BannerCache>()
+    private val bannerCache: FlowInMemoryCache<BannerCache> = DefaultFlowInMemoryCache(
+        fakeInMemoryCache,
+        BannerCache(null)
+    )
 
     private val sut = DefaultBannerRepository(
         bannerApiService,
@@ -48,24 +54,21 @@ class DefaultBannerRepositoryTest {
     )
 
     @Test
-    fun `EXPECT banner cache flow WHEN getBannersFlow is invoked`() = runTest {
-        val cacheFlow = MutableStateFlow<List<Banner>>(listOf(BANNER_1))
-        every { bannerCache.observe() } returns cacheFlow
+    fun `EXPECT banner cache flow WHEN getBannerFlow is invoked`() = runTest {
+        bannerCache.put(BannerCache(BANNER_1))
 
-        val testObserver = sut.getBannersFlow().test()
-        cacheFlow.emit(listOf(BANNER_1, BANNER_2))
+        val testObserver = sut.getBannerFlow().test()
 
-        testObserver.assertValueHistory(
-            listOf(BANNER_1),
-            listOf(BANNER_1, BANNER_2)
-        )
+        testObserver.assertValueHistory(BANNER_1)
     }
 
     @Test
     fun `EXPECT banner cache cleared WHEN clearBannerCache is invoked`() = runTest {
+        fakeInMemoryCache.put(BannerCache(BANNER_1))
+
         sut.clearBannerCache()
 
-        verify { bannerCache.clear() }
+        assertNull(fakeInMemoryCache.get())
     }
 
     @Test
@@ -101,10 +104,12 @@ class DefaultBannerRepositoryTest {
 
     @Test
     fun `EXPECT banner to be removed from cache and id to be stored WHEN dismissBanner is invoked`() = runTest {
+        fakeInMemoryCache.put(BannerCache(BANNER_1))
+
         sut.dismissBanner(BANNER_1.bannerId)
 
         coVerify { dismissedBannerIdsCache.setDismissed(BANNER_1.bannerId) }
-        verify { bannerCache.remove(BANNER_1.bannerId) }
+        assertNull(fakeInMemoryCache.get())
     }
 
     @Test
@@ -126,9 +131,9 @@ class DefaultBannerRepositoryTest {
 
     @Test
     fun `EXPECT banners to be cached WHEN cacheBanners is invoked`() = runTest {
-        sut.cacheBanners(listOf(BANNER_1, BANNER_2))
+        sut.cacheBanner(BANNER_1)
 
-        coVerify { bannerCache.cacheAll(listOf(BANNER_1, BANNER_2)) }
+        assertEquals(BannerCache(BANNER_1), fakeInMemoryCache.get())
     }
 
     private companion object {

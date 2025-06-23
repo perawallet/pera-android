@@ -12,26 +12,26 @@
 
 package com.algorand.android.usecase
 
-import com.algorand.android.banner.domain.usecase.BannersUseCase
 import com.algorand.wallet.account.info.domain.usecase.ClearAccountInformationCache
 import com.algorand.wallet.asset.domain.usecase.ClearAssetCache
+import com.algorand.wallet.banner.domain.usecase.ClearBannerCache
 import javax.inject.Inject
 
 class CoreCacheUseCase @Inject constructor(
-    private val bannersUseCase: BannersUseCase,
     private val clearAssetCache: ClearAssetCache,
-    private val clearAccountInformationCache: ClearAccountInformationCache
+    private val clearAccountInformationCache: ClearAccountInformationCache,
+    private val clearBannerCache: ClearBannerCache
 ) {
 
     suspend fun handleNodeChange() {
         clearAccountInformationCache()
         clearAssetCache()
-        bannersUseCase.clearBannerCache()
+        clearBannerCache()
     }
 
     suspend fun clearAllCachedData() {
         clearAccountInformationCache()
         clearAssetCache()
-        bannersUseCase.clearBannerCache()
+        clearBannerCache()
     }
 }

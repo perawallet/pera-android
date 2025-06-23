@@ -12,29 +12,30 @@
 
 package com.algorand.wallet.banner.data.repository
 
-import com.algorand.wallet.banner.data.cache.BannerInMemoryCache
 import com.algorand.wallet.banner.data.cache.DismissedBannerIdsCache
 import com.algorand.wallet.banner.data.mapper.BannerMapper
+import com.algorand.wallet.banner.data.model.BannerCache
 import com.algorand.wallet.banner.data.service.BannerApiService
 import com.algorand.wallet.banner.domain.model.Banner
 import com.algorand.wallet.banner.domain.repository.BannerRepository
 import com.algorand.wallet.foundation.PeraResult
-import javax.inject.Inject
+import com.algorand.wallet.foundation.cache.FlowInMemoryCache
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-internal class DefaultBannerRepository @Inject constructor(
+internal class DefaultBannerRepository(
     private val bannerApiService: BannerApiService,
     private val bannerMapper: BannerMapper,
     private val dismissedBannerIdsCache: DismissedBannerIdsCache,
-    private val bannerCache: BannerInMemoryCache,
+    private val bannerCache: FlowInMemoryCache<BannerCache>
 ) : BannerRepository {
 
-    override fun getBannersFlow(): Flow<List<Banner>> {
-        return bannerCache.observe()
+    override fun getBannerFlow(): Flow<Banner?> {
+        return bannerCache.observe().map { it.banner }
     }
 
-    override suspend fun cacheBanners(banners: List<Banner>) {
-        bannerCache.cacheAll(banners)
+    override suspend fun cacheBanner(banner: Banner) {
+        bannerCache.put(BannerCache(banner))
     }
 
     override suspend fun getBanners(deviceId: String): PeraResult<List<Banner>> {
@@ -49,7 +50,7 @@ internal class DefaultBannerRepository @Inject constructor(
 
     override suspend fun dismissBanner(bannerId: Long) {
         dismissedBannerIdsCache.setDismissed(bannerId)
-        bannerCache.remove(bannerId)
+        bannerCache.clear()
     }
 
     override suspend fun getDismissedBannerIdList(): List<Long> {

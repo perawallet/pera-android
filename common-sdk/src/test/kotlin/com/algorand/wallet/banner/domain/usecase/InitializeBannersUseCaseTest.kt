@@ -35,19 +35,19 @@ class InitializeBannersUseCaseTest {
         sut(DEVICE_ID)
 
         coVerify { bannerRepository.clearBannerCache() }
-        coVerify(exactly = 0) { bannerRepository.cacheBanners(any()) }
+        coVerify(exactly = 0) { bannerRepository.cacheBanner(any()) }
     }
 
     @Test
-    fun `EXPECT dismissed banners to be filtered WHEN banners are cached`() = runTest {
+    fun `EXPECT dismissed banners to be filtered and first banner to be cached`() = runTest {
         val banners = listOf(BANNER_1, BANNER_2, BANNER_3)
         coEvery { bannerRepository.getBanners(DEVICE_ID) } returns PeraResult.Success(banners)
-        coEvery { bannerRepository.getDismissedBannerIdList() } returns listOf(BANNER_2.bannerId)
+        coEvery { bannerRepository.getDismissedBannerIdList() } returns listOf(BANNER_1.bannerId)
 
         sut(DEVICE_ID)
 
         coVerify { bannerRepository.clearBannerCache() }
-        coVerify { bannerRepository.cacheBanners(listOf(BANNER_1, BANNER_3)) }
+        coVerify { bannerRepository.cacheBanner(BANNER_2) }
     }
 
     private companion object {

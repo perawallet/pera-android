@@ -13,9 +13,8 @@
 package com.algorand.wallet.banner.data.cache
 
 import com.algorand.wallet.foundation.cache.PersistentCache
-import javax.inject.Inject
 
-internal class DefaultDismissedBannerIdsCache @Inject constructor(
+internal class DefaultDismissedBannerIdsCache(
     private val persistentCache: PersistentCache<Array<Long>>
 ) : DismissedBannerIdsCache {
 

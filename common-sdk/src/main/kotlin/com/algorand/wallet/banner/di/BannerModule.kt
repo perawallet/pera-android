@@ -12,18 +12,18 @@
 
 package com.algorand.wallet.banner.di
 
-import com.algorand.wallet.banner.data.cache.BannerInMemoryCache
-import com.algorand.wallet.banner.data.cache.DefaultBannerInMemoryCache
 import com.algorand.wallet.banner.data.cache.DefaultDismissedBannerIdsCache
 import com.algorand.wallet.banner.data.cache.DismissedBannerIdsCache
 import com.algorand.wallet.banner.data.mapper.BannerMapper
 import com.algorand.wallet.banner.data.mapper.DefaultBannerMapper
+import com.algorand.wallet.banner.data.model.BannerCache
 import com.algorand.wallet.banner.data.repository.DefaultBannerRepository
 import com.algorand.wallet.banner.data.service.BannerApiService
 import com.algorand.wallet.banner.domain.repository.BannerRepository
 import com.algorand.wallet.banner.domain.usecase.ClearBannerCache
+import com.algorand.wallet.banner.domain.usecase.ClearDismissedBannerIds
 import com.algorand.wallet.banner.domain.usecase.DismissBanner
-import com.algorand.wallet.banner.domain.usecase.GetBannersFlow
+import com.algorand.wallet.banner.domain.usecase.GetBannerFlow
 import com.algorand.wallet.banner.domain.usecase.InitializeBanners
 import com.algorand.wallet.banner.domain.usecase.InitializeBannersUseCase
 import com.algorand.wallet.foundation.cache.InMemoryCacheProvider
@@ -45,12 +45,6 @@ internal object BannerModule {
 
     @Singleton
     @Provides
-    fun provideBannerInMemoryCache(cacheProvider: InMemoryCacheProvider): BannerInMemoryCache {
-        return DefaultBannerInMemoryCache(cacheProvider.getFlowInMemoryCache(emptyList()))
-    }
-
-    @Singleton
-    @Provides
     fun provideDismissedBannerIdsCache(cacheProvider: PersistentCacheProvider): DismissedBannerIdsCache {
         return DefaultDismissedBannerIdsCache(
             persistentCache = cacheProvider.getPersistentCache(
@@ -61,7 +55,20 @@ internal object BannerModule {
     }
 
     @Provides
-    fun provideBannerRepository(repository: DefaultBannerRepository): BannerRepository = repository
+    @Singleton
+    fun provideBannerRepository(
+        bannerApiService: BannerApiService,
+        bannerMapper: BannerMapper,
+        dismissedBannerIdsCache: DismissedBannerIdsCache,
+        inMemoryCacheProvider: InMemoryCacheProvider
+    ): BannerRepository {
+        return DefaultBannerRepository(
+            bannerApiService,
+            bannerMapper,
+            dismissedBannerIdsCache,
+            inMemoryCacheProvider.getFlowInMemoryCache(BannerCache(null))
+        )
+    }
 
     @Provides
     @Singleton
@@ -73,7 +80,7 @@ internal object BannerModule {
     fun provideInitializeBanners(useCase: InitializeBannersUseCase): InitializeBanners = useCase
 
     @Provides
-    fun provideGetBannersFlow(repository: BannerRepository): GetBannersFlow = GetBannersFlow(repository::getBannersFlow)
+    fun provideGetBannerFlow(repository: BannerRepository): GetBannerFlow = GetBannerFlow(repository::getBannerFlow)
 
     @Provides
     fun provideDismissBanner(repository: BannerRepository): DismissBanner = DismissBanner(repository::dismissBanner)
@@ -81,5 +88,10 @@ internal object BannerModule {
     @Provides
     fun provideClearBannerCache(repository: BannerRepository): ClearBannerCache {
         return ClearBannerCache(repository::clearBannerCache)
+    }
+
+    @Provides
+    fun provideClearDismissedBannerIds(repository: BannerRepository): ClearDismissedBannerIds {
+        return ClearDismissedBannerIds(repository::clearDismissedBannerIds)
     }
 }

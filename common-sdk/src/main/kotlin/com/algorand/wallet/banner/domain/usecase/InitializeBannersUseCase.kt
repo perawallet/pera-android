@@ -23,7 +23,7 @@ internal class InitializeBannersUseCase @Inject constructor(
         bannerRepository.clearBannerCache()
         val banners = bannerRepository.getBanners(deviceId).getDataOrNull() ?: return
         val dismissedBannerIds = bannerRepository.getDismissedBannerIdList()
-        val bannersToDisplay = banners.filter { !dismissedBannerIds.contains(it.bannerId) }
-        bannerRepository.cacheBanners(banners = bannersToDisplay)
+        val bannerToDisplay = banners.firstOrNull { !dismissedBannerIds.contains(it.bannerId) }
+        if (bannerToDisplay != null) bannerRepository.cacheBanner(bannerToDisplay)
     }
 }

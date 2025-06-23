@@ -14,7 +14,6 @@ package com.algorand.android.modules.firebase.token
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.algorand.android.banner.domain.usecase.BannersUseCase
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.deviceregistration.domain.usecase.DeviceRegistrationUseCase
 import com.algorand.android.deviceregistration.domain.usecase.FirebasePushTokenUseCase
@@ -28,6 +27,7 @@ import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlow
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
+import com.algorand.wallet.banner.domain.usecase.InitializeBanners
 import com.google.firebase.messaging.FirebaseMessaging
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -45,12 +45,12 @@ import kotlinx.coroutines.flow.drop
 class FirebaseTokenManager @Inject constructor(
     private val firebasePushTokenUseCase: FirebasePushTokenUseCase,
     private val deviceRegistrationUseCase: DeviceRegistrationUseCase,
-    private val bannersUseCase: BannersUseCase,
     private val deviceIdUseCase: DeviceIdUseCase,
     private val updatePushTokenUseCase: UpdatePushTokenUseCase,
     private val applyNodeChangesUseCase: ApplyNodeChangesUseCase,
     private val firebaseTokenResultMapper: FirebaseTokenResultMapper,
-    private val getAccountsDetailsFlow: GetAccountsDetailsFlow
+    private val getAccountsDetailsFlow: GetAccountsDetailsFlow,
+    private val initializeBanners: InitializeBanners
 ) : DefaultLifecycleObserver {
 
     private val _firebaseTokenResultEventFlow = MutableStateFlow<FirebaseTokenResult>(FirebaseTokenResult.TokenLoading)
@@ -69,7 +69,7 @@ class FirebaseTokenManager @Inject constructor(
     private val deviceRegistrationTokenCollector: suspend (value: DataResource<String>) -> Unit = {
         if (it is DataResource.Success) {
             onPushTokenUpdated()
-            bannersUseCase.initializeBanner(deviceId = it.data)
+            initializeBanners(deviceId = it.data)
         } else {
             _firebaseTokenResultEventFlow.emit(firebaseTokenResultMapper.mapToTokenLoaded())
             onPushTokenFailed()

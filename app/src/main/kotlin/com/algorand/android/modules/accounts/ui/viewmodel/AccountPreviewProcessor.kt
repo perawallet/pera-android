@@ -13,7 +13,6 @@
 package com.algorand.android.modules.accounts.ui.viewmodel
 
 import com.algorand.android.R
-import com.algorand.android.banner.domain.model.BaseBanner
 import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
@@ -36,6 +35,7 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.wallet.banner.domain.model.Banner
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
@@ -66,7 +66,7 @@ class AccountPreviewProcessor @Inject constructor(
     suspend fun prepareAccountPreview(
         localAccounts: List<LocalAccount>,
         accountLites: Map<String, AccountLite>,
-        banner: BaseBanner?,
+        banner: Banner?,
         assetInboxCount: Int,
         privacyMode: PrivacyMode
     ): AccountPreview {

@@ -27,7 +27,6 @@ import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.Tooltip
 import com.algorand.android.databinding.FragmentAccountsBinding
@@ -60,6 +59,7 @@ import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.setDrawableTintColor
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.banner.domain.model.Banner.BannerType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -130,8 +130,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         override fun onBannerActionButtonClick(url: String, bannerType: BannerType) {
             accountsViewModel.logBannerClick(bannerType)
             when (bannerType) {
-                BannerType.STAKING -> nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
-                BannerType.CARD -> nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
+                BannerType.Staking -> nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
+                BannerType.Card -> nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
                 else -> nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
             }
         }

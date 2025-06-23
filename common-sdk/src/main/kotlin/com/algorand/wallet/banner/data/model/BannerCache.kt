@@ -14,6 +14,4 @@ package com.algorand.wallet.banner.data.model
 
 import com.algorand.wallet.banner.domain.model.Banner
 
-internal data class BannerCache(
-    val banners: List<Banner>
-)
+internal data class BannerCache(val banner: Banner?)

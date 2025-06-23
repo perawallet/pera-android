@@ -15,9 +15,9 @@ package com.algorand.android.banner.ui.viewholder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.databinding.ItemCardBannerBinding
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
+import com.algorand.wallet.banner.domain.model.Banner.BannerType
 import com.google.android.material.button.MaterialButton
 
 class CardsBannerViewHolder(
@@ -35,7 +35,7 @@ class CardsBannerViewHolder(
         get() = binding.bannerDescriptionTextView
 
     override fun initActionButton(item: BaseAccountListItem.BannerItem) {
-        initActionButton(item, BannerType.CARD)
+        initActionButton(item, BannerType.Card)
     }
 
     companion object : BannerViewHolderCreator {

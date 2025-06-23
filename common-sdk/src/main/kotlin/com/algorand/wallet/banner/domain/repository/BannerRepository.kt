@@ -18,9 +18,9 @@ import kotlinx.coroutines.flow.Flow
 
 internal interface BannerRepository {
 
-    fun getBannersFlow(): Flow<List<Banner>>
+    fun getBannerFlow(): Flow<Banner?>
 
-    suspend fun cacheBanners(banners: List<Banner>)
+    suspend fun cacheBanner(banner: Banner)
 
     suspend fun getBanners(deviceId: String): PeraResult<List<Banner>>
 

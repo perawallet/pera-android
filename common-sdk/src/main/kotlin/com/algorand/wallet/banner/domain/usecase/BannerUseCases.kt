@@ -19,8 +19,8 @@ fun interface InitializeBanners {
     suspend operator fun invoke(deviceId: String)
 }
 
-fun interface GetBannersFlow {
-    operator fun invoke(): Flow<List<Banner>>
+fun interface GetBannerFlow {
+    operator fun invoke(): Flow<Banner?>
 }
 
 fun interface DismissBanner {
@@ -28,5 +28,9 @@ fun interface DismissBanner {
 }
 
 fun interface ClearBannerCache {
+    suspend operator fun invoke()
+}
+
+fun interface ClearDismissedBannerIds {
     suspend operator fun invoke()
 }

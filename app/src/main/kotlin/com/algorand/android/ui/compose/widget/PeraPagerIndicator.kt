@@ -33,10 +33,10 @@ import androidx.compose.ui.unit.times
 import com.algorand.android.ui.compose.theme.PeraTheme
 import kotlin.math.absoluteValue
 
-private val INACTIVE_ITEM_WIDTH = 4.dp
-private val ACTIVE_ITEM_WIDTH = 12.dp
-private val ITEM_SPACING = 6.dp
-private val ITEM_HEIGHT = 4.dp
+private val inactiveItemWidth = 4.dp
+private val activeItemWidth = 12.dp
+private val itemSpacing = 6.dp
+private val itemHeight = 4.dp
 
 @Composable
 fun PeraPagerIndicator(
@@ -49,22 +49,22 @@ fun PeraPagerIndicator(
             val indicatorWidth by getIndicatorWidth(drawIndex = index, pagerState = pagerState)
             Canvas(
                 modifier = Modifier
-                    .height(ITEM_HEIGHT)
+                    .height(itemHeight)
                     .width(indicatorWidth)
             ) {
-                drawRoundRect(color = indicatorColor, cornerRadius = CornerRadius(ITEM_HEIGHT.toPx()))
+                drawRoundRect(color = indicatorColor, cornerRadius = CornerRadius(itemHeight.toPx()))
             }
             if (index != pagerState.pageCount - 1) {
-                Spacer(modifier = Modifier.width(ITEM_SPACING))
+                Spacer(modifier = Modifier.width(itemSpacing))
             }
         }
     }
 }
 
 private fun getContainerWidth(itemCount: Int): Dp {
-    val inactiveItemsWidth = (itemCount - 1) * INACTIVE_ITEM_WIDTH
-    val spacingWidth = (itemCount + 1) * ITEM_SPACING
-    return inactiveItemsWidth + spacingWidth + ACTIVE_ITEM_WIDTH
+    val inactiveItemsWidth = (itemCount - 1) * inactiveItemWidth
+    val spacingWidth = (itemCount + 1) * itemSpacing
+    return inactiveItemsWidth + spacingWidth + activeItemWidth
 }
 
 @Composable
@@ -88,12 +88,12 @@ private fun getIndicatorColor(drawIndex: Int, pagerState: PagerState): State<Col
 @Composable
 private fun getIndicatorWidth(drawIndex: Int, pagerState: PagerState): State<Dp> {
     val scrollPercentage = pagerState.currentPageOffsetFraction
-    val factor = scrollPercentage.absoluteValue * (ACTIVE_ITEM_WIDTH - INACTIVE_ITEM_WIDTH)
+    val factor = scrollPercentage.absoluteValue * (activeItemWidth - inactiveItemWidth)
     val nextIndex = if (scrollPercentage > 0) -1 else 1
     val targetValue = when {
-        drawIndex == pagerState.currentPage -> ACTIVE_ITEM_WIDTH - factor
-        drawIndex + nextIndex == pagerState.currentPage -> INACTIVE_ITEM_WIDTH + factor
-        else -> INACTIVE_ITEM_WIDTH
+        drawIndex == pagerState.currentPage -> activeItemWidth - factor
+        drawIndex + nextIndex == pagerState.currentPage -> inactiveItemWidth + factor
+        else -> inactiveItemWidth
     }
     return animateDpAsState(
         targetValue = targetValue,

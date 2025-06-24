@@ -28,7 +28,8 @@ internal class DefaultSpotBannerInMemoryCache(
     override suspend fun put(spotBanners: List<SpotBannerCacheData>) {
         val currentBanners = flowInMemoryCache.get()
         val updatedBanners = currentBanners + spotBanners
-        flowInMemoryCache.put(updatedBanners)
+        val filteredBanners = updatedBanners.distinctBy { it.id }.toTypedArray()
+        flowInMemoryCache.put(filteredBanners)
     }
 
     override suspend fun remove(id: Long) {

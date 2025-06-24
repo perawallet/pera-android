@@ -42,9 +42,10 @@ class DefaultSpotBannerInMemoryCacheTest {
     }
 
     @Test
-    fun `EXPECT cache to be updated with new banners`() = runTest {
+    fun `EXPECT cache to be updated with new banners only`() = runTest {
         inMemoryCache.put(arrayOf(SPOT_BANNER_CACHE_1))
 
+        sut.put(listOf(SPOT_BANNER_CACHE_1, SPOT_BANNER_CACHE_2))
         sut.put(listOf(SPOT_BANNER_CACHE_2))
 
         val expected = arrayOf(SPOT_BANNER_CACHE_1, SPOT_BANNER_CACHE_2)

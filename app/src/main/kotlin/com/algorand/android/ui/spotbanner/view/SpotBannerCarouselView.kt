@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.AbstractComposeView
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 
 class SpotBannerCarouselView(context: Context, attrs: AttributeSet? = null) : AbstractComposeView(context, attrs) {
@@ -28,7 +29,9 @@ class SpotBannerCarouselView(context: Context, attrs: AttributeSet? = null) : Ab
 
     @Composable
     override fun Content() {
-        SpotBannerCarousel(state, listener)
+        PeraTheme {
+            SpotBannerCarousel(state, listener)
+        }
     }
 
     fun setListener(listener: SpotBannerCarouselListener) {

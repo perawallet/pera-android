@@ -40,6 +40,7 @@ firebasePerformance = "1.4.2"
 flexbox = "3.0.0"
 fragmentKtx = "1.8.5"
 glide = "4.16.0"
+glideCompose = "1.0.0-beta01"
 googleServicesVersion = "4.4.2"
 hilt = "2.55"
 hiltCompiler = "1.2.0"
@@ -173,6 +174,7 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" 
 exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoPlayer" }
 glide-image = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
+glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpAndroidChart" }

@@ -33,6 +33,7 @@ import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.wallet.banner.domain.model.Banner.BannerType
 import com.algorand.wallet.banner.domain.usecase.DismissBanner
 import com.algorand.wallet.privacy.domain.usecase.TogglePrivacyMode
+import com.algorand.wallet.spotbanner.domain.usecase.DismissSpotBanner
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -60,6 +61,7 @@ class AccountsViewModel @Inject constructor(
     private val eventDelegate: EventDelegate<ViewEvent>,
     private val togglePrivacyMode: TogglePrivacyMode,
     private val dismissBannerById: DismissBanner,
+    private val dismissSpotBannerById: DismissSpotBanner,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(), EventViewModel<AccountsViewModel.ViewEvent> by eventDelegate {
 
@@ -110,6 +112,12 @@ class AccountsViewModel @Inject constructor(
     fun dismissBanner(bannerId: Long) {
         viewModelScope.launch {
             dismissBannerById(bannerId)
+        }
+    }
+
+    fun dismissSpotBanner(bannerId: Long) {
+        viewModelScope.launch {
+            dismissSpotBannerById(bannerId)
         }
     }
 

@@ -39,6 +39,7 @@ import com.algorand.wallet.banner.domain.model.Banner
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
+import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -53,7 +54,6 @@ class AccountPreviewProcessor @Inject constructor(
     private val getAccountIconDrawablePreviewByType: GetAccountIconDrawablePreviewByType,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val bannerItemMapper: BaseAccountListItemBannerItemMapper,
-    private val backupBannerProcessor: AccountsPreviewBackupBannerProcessor,
     private val getLocalAccounts: GetLocalAccounts,
     private val getAccountsCustomInfo: GetAccountsCustomInfo,
     private val getAccountRegistrationType: GetAccountRegistrationType,
@@ -68,18 +68,19 @@ class AccountPreviewProcessor @Inject constructor(
         accountLites: Map<String, AccountLite>,
         banner: Banner?,
         assetInboxCount: Int,
-        privacyMode: PrivacyMode
+        privacyMode: PrivacyMode,
+        spotBanners: List<SpotBanner>
     ): AccountPreview {
         val amountRenderType = amountRendererTypeMapper(privacyMode)
         val accountList = mutableListOf<BaseAccountListItem>()
 
         insertQuickActionsItem(accountList)
 
-        backupBannerProcessor.getBackupBanner(accountLites)?.also { backupBanner ->
-            accountList.add(BANNER_ITEM_INDEX, backupBanner)
-        }
         bannerItemMapper.map(banner)?.let { bannerItem ->
             accountList.add(BANNER_ITEM_INDEX, bannerItem)
+        }
+        if (spotBanners.isNotEmpty()) {
+            accountList.add(BANNER_ITEM_INDEX, BaseAccountListItem.SpotBannerItem(spotBanners))
         }
 
         val accountItems = getAccountItems(accountLites, amountRenderType)

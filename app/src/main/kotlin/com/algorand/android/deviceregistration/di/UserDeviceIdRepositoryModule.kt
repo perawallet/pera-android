@@ -19,7 +19,9 @@ import com.algorand.android.deviceregistration.data.mapper.DeviceRegistrationReq
 import com.algorand.android.deviceregistration.data.mapper.DeviceUpdateRequestMapper
 import com.algorand.android.deviceregistration.data.repository.UserDeviceIdRepositoryImpl
 import com.algorand.android.deviceregistration.domain.repository.UserDeviceIdRepository
+import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
 import com.algorand.android.network.MobileAlgorandApi
+import com.algorand.wallet.deviceregistration.domain.usecase.GetSelectedNodeDeviceId
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,5 +52,10 @@ object UserDeviceIdRepositoryModule {
             deviceRegistrationRequestMapper,
             deviceUpdateRequestMapper
         )
+    }
+
+    @Provides
+    fun provideGetSelectedNodeDeviceId(deviceIdUseCase: DeviceIdUseCase): GetSelectedNodeDeviceId {
+        return GetSelectedNodeDeviceId(deviceIdUseCase::getSelectedNodeDeviceId)
     }
 }

@@ -183,3 +183,7 @@ internal fun interface GetActiveHdAccountAddresses {
 internal fun interface GetAccountFastLookupBatch {
     suspend operator fun invoke(addresses: List<String>): Map<String, AccountFastLookup?>
 }
+
+fun interface IsThereAnyAuthAddressWithBalance {
+    suspend operator fun invoke(): Boolean
+}

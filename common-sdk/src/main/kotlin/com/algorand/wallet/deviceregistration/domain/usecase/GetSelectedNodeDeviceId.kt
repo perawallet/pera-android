@@ -10,27 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.banner.domain.usecase
+package com.algorand.wallet.deviceregistration.domain.usecase
 
-import com.algorand.wallet.banner.domain.model.Banner
-import kotlinx.coroutines.flow.Flow
-
-internal fun interface InitializeBanners {
-    suspend operator fun invoke(deviceId: String)
-}
-
-fun interface GetBannerFlow {
-    operator fun invoke(): Flow<Banner?>
-}
-
-fun interface DismissBanner {
-    suspend operator fun invoke(bannerId: Long)
-}
-
-internal fun interface ClearBannerCache {
-    suspend operator fun invoke()
-}
-
-fun interface ClearDismissedBannerIds {
-    suspend operator fun invoke()
+fun interface GetSelectedNodeDeviceId {
+    operator fun invoke(): String?
 }

@@ -10,27 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.banner.domain.usecase
+package com.algorand.wallet.spotbanner.data.model
 
-import com.algorand.wallet.banner.domain.model.Banner
-import kotlinx.coroutines.flow.Flow
+import com.google.gson.annotations.SerializedName
 
-internal fun interface InitializeBanners {
-    suspend operator fun invoke(deviceId: String)
-}
-
-fun interface GetBannerFlow {
-    operator fun invoke(): Flow<Banner?>
-}
-
-fun interface DismissBanner {
-    suspend operator fun invoke(bannerId: Long)
-}
-
-internal fun interface ClearBannerCache {
-    suspend operator fun invoke()
-}
-
-fun interface ClearDismissedBannerIds {
-    suspend operator fun invoke()
-}
+internal data class SpotBannerResponse(
+    @SerializedName("id") val id: Long?,
+    @SerializedName("text") val text: String?,
+    @SerializedName("image") val image: String?,
+    @SerializedName("url") val url: String?,
+    @SerializedName("button_url_is_external") val isExternalButtonUrl: Boolean?
+)

@@ -10,27 +10,14 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.banner.domain.usecase
+package com.algorand.wallet.spotbanner.data.cache
 
-import com.algorand.wallet.banner.domain.model.Banner
+import com.algorand.wallet.spotbanner.data.model.SpotBannerCacheData
 import kotlinx.coroutines.flow.Flow
 
-internal fun interface InitializeBanners {
-    suspend operator fun invoke(deviceId: String)
-}
-
-fun interface GetBannerFlow {
-    operator fun invoke(): Flow<Banner?>
-}
-
-fun interface DismissBanner {
-    suspend operator fun invoke(bannerId: Long)
-}
-
-internal fun interface ClearBannerCache {
-    suspend operator fun invoke()
-}
-
-fun interface ClearDismissedBannerIds {
-    suspend operator fun invoke()
+internal interface SpotBannerInMemoryCache {
+    fun observe(): Flow<List<SpotBannerCacheData>>
+    suspend fun put(spotBanners: List<SpotBannerCacheData>)
+    suspend fun remove(id: Long)
+    suspend fun clear()
 }

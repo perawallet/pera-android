@@ -76,11 +76,11 @@ class AccountPreviewProcessor @Inject constructor(
 
         insertQuickActionsItem(accountList)
 
-        bannerItemMapper.map(banner)?.let { bannerItem ->
-            accountList.add(BANNER_ITEM_INDEX, bannerItem)
-        }
         if (spotBanners.isNotEmpty()) {
             accountList.add(BANNER_ITEM_INDEX, BaseAccountListItem.SpotBannerItem(spotBanners))
+        }
+        bannerItemMapper.map(banner)?.let { bannerItem ->
+            accountList.add(BANNER_ITEM_INDEX, bannerItem)
         }
 
         val accountItems = getAccountItems(accountLites, amountRenderType)

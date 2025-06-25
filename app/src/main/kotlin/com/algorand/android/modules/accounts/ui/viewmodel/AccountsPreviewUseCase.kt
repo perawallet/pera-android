@@ -30,6 +30,7 @@ import com.algorand.android.utils.CacheResult
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequestCountFlow
 import com.algorand.wallet.banner.domain.usecase.GetBannerFlow
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
+import com.algorand.wallet.spotbanner.domain.model.SpotBannerFlowData
 import com.algorand.wallet.spotbanner.domain.usecase.GetSpotBannersFlow
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -85,7 +86,7 @@ class AccountsPreviewUseCase @Inject constructor(
     private suspend fun getAccountPreviewInitializationFlow(accountLiteCacheData: Data): Flow<AccountPreview> {
         return combine(
             getBannerFlow(),
-            getSpotBannersFlow(),
+            getSpotBannersFlow(getSpotBannerFlowData(accountLiteCacheData)),
             getAssetInboxRequestCountFlow(),
             getPrivacyModeFlow()
         ) { banner, spotBanners, assetInboxCount, privacyMode ->
@@ -97,6 +98,14 @@ class AccountsPreviewUseCase @Inject constructor(
                 privacyMode,
                 spotBanners
             )
+        }
+    }
+
+    private fun getSpotBannerFlowData(accountLiteCacheData: Data): List<SpotBannerFlowData> {
+        return accountLiteCacheData.accountLites.values.map { lite ->
+            with(lite) {
+                SpotBannerFlowData(address, isBackedUp, cachedInfo?.primaryAccountValue, cachedInfo?.type)
+            }
         }
     }
 

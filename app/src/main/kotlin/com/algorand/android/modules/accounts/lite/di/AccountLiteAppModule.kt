@@ -21,8 +21,6 @@ import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteC
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteUseCase
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLitesFlow
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLitesFlowUseCase
-import com.algorand.android.modules.accounts.lite.domain.usecase.IsThereAnyAuthAddressWithBalanceUseCase
-import com.algorand.wallet.account.info.domain.usecase.IsThereAnyAuthAddressWithBalance
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,9 +48,4 @@ internal object AccountLiteAppModule {
 
     @Provides
     fun provideGetAccountLite(useCase: GetAccountLiteUseCase): GetAccountLite = useCase
-
-    @Provides
-    fun provideIsThereAnyAuthAddressWithBalance(
-        useCase: IsThereAnyAuthAddressWithBalanceUseCase
-    ): IsThereAnyAuthAddressWithBalance = useCase
 }

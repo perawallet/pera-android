@@ -13,6 +13,7 @@
 package com.algorand.wallet.spotbanner.domain.usecase
 
 import com.algorand.wallet.spotbanner.domain.model.SpotBanner
+import com.algorand.wallet.spotbanner.domain.model.SpotBannerFlowData
 import kotlinx.coroutines.flow.Flow
 
 internal fun interface InitializeSpotBanners {
@@ -20,7 +21,7 @@ internal fun interface InitializeSpotBanners {
 }
 
 fun interface GetSpotBannersFlow {
-    operator fun invoke(): Flow<List<SpotBanner>>
+    operator fun invoke(data: List<SpotBannerFlowData>): Flow<List<SpotBanner>>
 }
 
 fun interface DismissSpotBanner {

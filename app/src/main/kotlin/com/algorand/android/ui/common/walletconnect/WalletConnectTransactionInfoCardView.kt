@@ -34,6 +34,7 @@ import com.algorand.android.utils.formatAmount
 import com.algorand.android.utils.setAssetNameTextColorByVerificationTier
 import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import java.math.BigInteger
 
 class WalletConnectTransactionInfoCardView(
@@ -175,6 +176,7 @@ class WalletConnectTransactionInfoCardView(
         accountAddress: String?
     ) {
         assetInformation?.let {
+            val assetId = it.assetId
             with(binding) {
                 it.verificationTierConfiguration.drawableResId?.run {
                     assetNameTextView.setDrawable(start = AppCompatResources.getDrawable(context, this))
@@ -183,13 +185,16 @@ class WalletConnectTransactionInfoCardView(
                     text = assetInformation.shortName
                     setAssetNameTextColorByVerificationTier(it.verificationTierConfiguration)
                     setOnClickListener {
-                        listener?.onAssetItemClick(assetId = assetInformation.assetId, accountAddress = accountAddress)
+                        listener?.onAssetItemClick(assetId = assetId, accountAddress = accountAddress)
                     }
                 }
-                assetIdTextView.apply {
-                    text = assetInformation.assetId.toString()
-                    setOnClickListener {
-                        listener?.onAssetItemClick(assetId = assetInformation.assetId, accountAddress = accountAddress)
+
+                if (assetId != ALGO_ID) {
+                    assetIdTextView.apply {
+                        text = assetId.toString()
+                        setOnClickListener {
+                            listener?.onAssetItemClick(assetId = assetId, accountAddress = accountAddress)
+                        }
                     }
                 }
                 assetGroup.show()

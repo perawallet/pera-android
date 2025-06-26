@@ -26,6 +26,7 @@ flowchart TD
                 E6("Asset/Collectibles")
                 E7("Node")
                 F1("Address Database")
+                F5("Passkey Database")
                 F2("Pera Database")
                 F3("Java/Go Algo SDK")
                 F4("Android Keystore")
@@ -54,9 +55,11 @@ flowchart TD
 
                 E3 <--> F1
                 E3 <--> F2
+                E3 <--> F5
                 E4 <--> F3
                 E2 <--> F3
                 E5 <--> F4
+                
             end
          D0 <--> D1
         end
@@ -205,6 +208,32 @@ erDiagram
         Int derivation_type
     }
     hd_keys ||--o{ hd_seeds : links
+```
+
+# Passkey Database
+
+```mermaid
+---
+title: PasskeyDatabase
+---
+erDiagram
+    site {
+        Int id PK
+        String url
+        String package_name
+        String name
+    }
+    passkey {
+        Int id PK
+        Int site_id FK
+        Int seed_id FK
+        String user_id
+        String user_name
+        String user_handle
+        String credential_id
+        Int count
+        Int last_used_time_ms
+    }
 ```
 
 # Pera Database

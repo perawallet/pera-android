@@ -27,6 +27,8 @@ import com.algorand.android.modules.firebase.token.FirebaseTokenManager
 import com.algorand.android.modules.pendingintentkeeper.ui.PendingIntentKeeper
 import com.algorand.android.utils.coremanager.ApplicationStatusObserver
 import com.algorand.android.utils.preference.getSavedThemePreference
+import com.algorand.wallet.account.webauthn.domain.PasskeyManager
+import com.algorand.wallet.account.webauthn.domain.repository.PasskeyRepository
 import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.security.PeraSecurityManager
@@ -38,6 +40,11 @@ import kotlinx.coroutines.flow.onEach
 
 @HiltAndroidApp
 open class PeraApp : Application() {
+    @Inject
+    lateinit var passkeyManager: PasskeyManager
+
+    @Inject
+    lateinit var passkeyRepository: PasskeyRepository
 
     @Inject
     lateinit var sharedPref: SharedPreferences

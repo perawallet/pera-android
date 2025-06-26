@@ -227,7 +227,6 @@
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

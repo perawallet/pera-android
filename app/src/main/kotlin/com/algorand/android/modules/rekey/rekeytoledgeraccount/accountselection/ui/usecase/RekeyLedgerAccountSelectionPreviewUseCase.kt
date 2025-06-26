@@ -22,7 +22,7 @@ import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.mapper.RekeyLedgerAccountSelectionPreviewMapper
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionNavArgs
 import com.algorand.android.modules.rekey.rekeytoledgeraccount.accountselection.ui.model.RekeyLedgerAccountSelectionPreview
-import com.algorand.android.utils.extensions.addFirst
+import com.algorand.android.utils.extensions.addFirst as addFirstToList
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
 import javax.inject.Inject
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -96,7 +96,8 @@ class RekeyLedgerAccountSelectionPreviewUseCase @Inject constructor(
                 accountSize = size,
                 searchType = AccountSelectionListItem.SearchType.REKEY
             )
-            addFirst(instructionItem)
+            // TODO: See what happened here, this an extension that is imported for a MutatableList
+            addFirstToList(instructionItem)
         }
         val preview = rekeyLedgerAccountSelectionPreviewMapper.mapToRekeyLedgerAccountSelectionPreview(
             isLoading = false,

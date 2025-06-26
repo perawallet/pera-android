@@ -17,6 +17,8 @@ import com.algorand.wallet.account.custom.domain.model.HdSeedOrderIndex
 
 internal interface CustomHdSeedInfoRepository {
 
+    suspend fun getAllCustomInfo(): List<CustomHdSeedInfo>
+
     suspend fun getCustomInfo(seedId: Int): CustomHdSeedInfo?
 
     suspend fun getCustomInfoOrNull(seedId: Int): CustomHdSeedInfo?

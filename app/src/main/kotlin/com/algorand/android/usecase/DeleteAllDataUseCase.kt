@@ -18,7 +18,7 @@ import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.repository.ContactRepository
 import com.algorand.wallet.account.custom.domain.usecase.ClearAllCustomInformation
 import com.algorand.wallet.account.local.domain.usecase.DeleteAllLocalAccounts
-import com.algorand.wallet.banner.domain.usecase.ClearBannerCache
+import com.algorand.wallet.banner.common.domain.usecase.ClearAllBannerCaches
 import com.algorand.wallet.banner.domain.usecase.ClearDismissedBannerIds
 import javax.inject.Inject
 
@@ -30,7 +30,7 @@ class DeleteAllDataUseCase @Inject constructor(
     private val deleteAllLocalAccounts: DeleteAllLocalAccounts,
     private val notificationManager: NotificationManager?,
     private val clearAllCustomInformation: ClearAllCustomInformation,
-    private val clearBannerCache: ClearBannerCache,
+    private val clearAllBannerCaches: ClearAllBannerCaches,
     private val clearDismissedBannerIds: ClearDismissedBannerIds
 ) {
     suspend fun deleteAllData() {
@@ -40,7 +40,7 @@ class DeleteAllDataUseCase @Inject constructor(
         clearAllCustomInformation()
         contactRepository.deleteAllContacts()
         coreCacheUseCase.clearAllCachedData()
-        clearBannerCache()
+        clearAllBannerCaches()
         clearDismissedBannerIds()
         notificationManager?.cancelAll()
     }

@@ -15,7 +15,7 @@ package com.algorand.wallet.banner.domain.usecase
 import com.algorand.wallet.banner.domain.model.Banner
 import kotlinx.coroutines.flow.Flow
 
-fun interface InitializeBanners {
+internal fun interface InitializeBanners {
     suspend operator fun invoke(deviceId: String)
 }
 
@@ -27,7 +27,7 @@ fun interface DismissBanner {
     suspend operator fun invoke(bannerId: Long)
 }
 
-fun interface ClearBannerCache {
+internal fun interface ClearBannerCache {
     suspend operator fun invoke()
 }
 

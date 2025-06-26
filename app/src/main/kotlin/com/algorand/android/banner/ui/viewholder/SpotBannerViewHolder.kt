@@ -14,32 +14,25 @@ package com.algorand.android.banner.ui.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.algorand.android.databinding.ItemBackupBannerBinding
+import com.algorand.android.databinding.ItemSpotBannerBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
+import com.algorand.android.ui.spotbanner.view.SpotBannerCarouselListener
 
-class BackupBannerViewHolder(
-    private val binding: ItemBackupBannerBinding,
-    private val listener: Listener,
+class SpotBannerViewHolder(
+    private val binding: ItemSpotBannerBinding
 ) : BaseViewHolder<BaseAccountListItem>(binding.root) {
 
     override fun bind(item: BaseAccountListItem) {
-        if (item !is BaseAccountListItem.BackupBannerItem) return
-        initActionButton()
-    }
-
-    private fun initActionButton() {
-        binding.bannerActionButton.setOnClickListener { listener.onActionButtonClick() }
-    }
-
-    interface Listener {
-        fun onActionButtonClick() {}
+        if (item !is BaseAccountListItem.SpotBannerItem) return
+        binding.root.updateData(item.spotBanners)
     }
 
     companion object {
-        fun create(parent: ViewGroup, listener: Listener): BackupBannerViewHolder {
-            val binding = ItemBackupBannerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return BackupBannerViewHolder(binding, listener)
+        fun create(parent: ViewGroup, listener: SpotBannerCarouselListener): SpotBannerViewHolder {
+            val binding = ItemSpotBannerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            binding.root.setListener(listener)
+            return SpotBannerViewHolder(binding)
         }
     }
 }

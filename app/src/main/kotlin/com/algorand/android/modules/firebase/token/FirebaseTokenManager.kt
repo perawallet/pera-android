@@ -27,7 +27,7 @@ import com.algorand.android.utils.DataResource
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.core.domain.usecase.GetAccountsDetailsFlow
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
-import com.algorand.wallet.banner.domain.usecase.InitializeBanners
+import com.algorand.wallet.banner.common.domain.usecase.InitializeAllBanners
 import com.google.firebase.messaging.FirebaseMessaging
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -50,7 +50,7 @@ class FirebaseTokenManager @Inject constructor(
     private val applyNodeChangesUseCase: ApplyNodeChangesUseCase,
     private val firebaseTokenResultMapper: FirebaseTokenResultMapper,
     private val getAccountsDetailsFlow: GetAccountsDetailsFlow,
-    private val initializeBanners: InitializeBanners
+    private val initializeAllBanners: InitializeAllBanners
 ) : DefaultLifecycleObserver {
 
     private val _firebaseTokenResultEventFlow = MutableStateFlow<FirebaseTokenResult>(FirebaseTokenResult.TokenLoading)
@@ -69,7 +69,7 @@ class FirebaseTokenManager @Inject constructor(
     private val deviceRegistrationTokenCollector: suspend (value: DataResource<String>) -> Unit = {
         if (it is DataResource.Success) {
             onPushTokenUpdated()
-            initializeBanners(deviceId = it.data)
+            initializeAllBanners(deviceId = it.data)
         } else {
             _firebaseTokenResultEventFlow.emit(firebaseTokenResultMapper.mapToTokenLoaded())
             onPushTokenFailed()

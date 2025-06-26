@@ -1529,4 +1529,5 @@
     <string name="confirm_and_acknowledge_the_following">Confirm and acknowledge the following:</string>
     <string name="keep_it_secret_keep_it">Keep it secret. Keep it safe.</string>
     <string name="reveal_passphrase">Reveal Passphrase</string>
+    <string name="you_need_to_backup_passphrase">You need to backup the passphrase</string>
 </resources>

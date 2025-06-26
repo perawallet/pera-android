@@ -16,6 +16,7 @@ import androidx.annotation.StringRes
 import com.algorand.android.models.RecyclerListItem
 import com.algorand.android.modules.accounticon.ui.model.AccountIconDrawablePreview
 import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 
 sealed interface BaseAccountListItem : RecyclerListItem {
 
@@ -29,8 +30,8 @@ sealed interface BaseAccountListItem : RecyclerListItem {
         GOVERNANCE_BANNER,
         STAKING_BANNER,
         GENERIC_BANNER,
-        BACKUP_BANNER,
-        CARD_BANNER
+        CARD_BANNER,
+        SPOT_BANNER
     }
 
     data class QuickActionsItem(
@@ -99,16 +100,15 @@ sealed interface BaseAccountListItem : RecyclerListItem {
         }
     }
 
-    data class BackupBannerItem(val addresses: List<String>) : BaseAccountListItem {
-
-        override val itemType: ItemType = ItemType.BACKUP_BANNER
+    data class SpotBannerItem(val spotBanners: List<SpotBanner>) : BaseAccountListItem {
+        override val itemType: ItemType = ItemType.SPOT_BANNER
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is BackupBannerItem
+            return other is SpotBannerItem
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is BackupBannerItem && other == this
+            return other is SpotBannerItem
         }
     }
 
@@ -174,7 +174,7 @@ sealed interface BaseAccountListItem : RecyclerListItem {
             ItemType.STAKING_BANNER.ordinal,
             ItemType.CARD_BANNER.ordinal,
             ItemType.GENERIC_BANNER.ordinal,
-            ItemType.BACKUP_BANNER.ordinal
+            ItemType.SPOT_BANNER.ordinal
         )
     }
 }

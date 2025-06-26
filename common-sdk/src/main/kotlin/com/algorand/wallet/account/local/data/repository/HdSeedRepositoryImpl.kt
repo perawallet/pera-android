@@ -18,12 +18,12 @@ import com.algorand.wallet.account.local.data.mapper.model.HdSeedMapper
 import com.algorand.wallet.account.local.domain.model.HdSeed
 import com.algorand.wallet.account.local.domain.repository.HdSeedRepository
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class HdSeedRepositoryImpl @Inject constructor(
     private val hdSeedDao: HdSeedDao,
@@ -92,12 +92,16 @@ internal class HdSeedRepositoryImpl @Inject constructor(
     override suspend fun deleteHdSeed(seedId: Int) {
         withContext(coroutineDispatcher) {
             hdSeedDao.delete(seedId)
+            if (hdSeedDao.getTableSize() < 1) {
+                hdSeedDao.clearPrimaryKeyIndex()
+            }
         }
     }
 
     override suspend fun deleteAllHdSeeds() {
         withContext(coroutineDispatcher) {
             hdSeedDao.clearAll()
+            hdSeedDao.clearPrimaryKeyIndex()
         }
     }
 

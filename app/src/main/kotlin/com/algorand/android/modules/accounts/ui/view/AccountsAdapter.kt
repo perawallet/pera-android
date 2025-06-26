@@ -14,30 +14,31 @@ package com.algorand.android.modules.accounts.ui.view
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.algorand.android.banner.domain.model.BannerType
-import com.algorand.android.banner.ui.viewholder.BackupBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.BaseBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.CardsBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.GenericBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.GovernanceBannerViewHolder
+import com.algorand.android.banner.ui.viewholder.SpotBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.StakingBannerViewHolder
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
-import com.algorand.android.modules.accounts.ui.view.viewholder.AccountErrorItemViewHolder
-import com.algorand.android.modules.accounts.ui.view.viewholder.AccountItemViewHolder
-import com.algorand.android.modules.accounts.ui.view.viewholder.AccountsQuickActionsViewHolder
-import com.algorand.android.modules.accounts.ui.view.viewholder.AccountsQuickActionsViewHolder.AccountsQuickActionsListener
-import com.algorand.android.modules.accounts.ui.view.viewholder.HeaderViewHolder
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.ACCOUNT_ERROR
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.ACCOUNT_SUCCESS
-import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.BACKUP_BANNER
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.CARD_BANNER
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.GENERIC_BANNER
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.GOVERNANCE_BANNER
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.HEADER
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.QUICK_ACTIONS
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.SPOT_BANNER
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.STAKING_BANNER
+import com.algorand.android.modules.accounts.ui.view.viewholder.AccountErrorItemViewHolder
+import com.algorand.android.modules.accounts.ui.view.viewholder.AccountItemViewHolder
+import com.algorand.android.modules.accounts.ui.view.viewholder.AccountsQuickActionsViewHolder
+import com.algorand.android.modules.accounts.ui.view.viewholder.AccountsQuickActionsViewHolder.AccountsQuickActionsListener
+import com.algorand.android.modules.accounts.ui.view.viewholder.HeaderViewHolder
+import com.algorand.android.ui.spotbanner.view.SpotBannerCarouselListener
+import com.algorand.wallet.banner.domain.model.Banner.BannerType
 
 class AccountsAdapter(
     private val accountAdapterListener: AccountAdapterListener
@@ -103,12 +104,6 @@ class AccountsAdapter(
         }
     }
 
-    private val backupBannerListener = object : BackupBannerViewHolder.Listener {
-        override fun onActionButtonClick() {
-            accountAdapterListener.onBackupBannerActionButtonClick()
-        }
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<BaseAccountListItem> {
         return when (viewType) {
             HEADER.ordinal -> HeaderViewHolder.create(parent, accountAdapterListener)
@@ -118,8 +113,8 @@ class AccountsAdapter(
             STAKING_BANNER.ordinal -> StakingBannerViewHolder.create(stakingBaseBannerListener, parent)
             CARD_BANNER.ordinal -> CardsBannerViewHolder.create(cardBaseBannerListener, parent)
             GENERIC_BANNER.ordinal -> GenericBannerViewHolder.create(baseBannerListener, parent)
-            BACKUP_BANNER.ordinal -> BackupBannerViewHolder.create(parent, backupBannerListener)
             QUICK_ACTIONS.ordinal -> AccountsQuickActionsViewHolder.create(parent, accountAdapterListener)
+            SPOT_BANNER.ordinal -> SpotBannerViewHolder.create(parent, accountAdapterListener)
             else -> throw Exception("$logTag: Item View Type is Unknown.")
         }
     }
@@ -132,13 +127,13 @@ class AccountsAdapter(
         return getItem(position).itemType.ordinal
     }
 
-    interface AccountAdapterListener : AccountsQuickActionsListener, HeaderViewHolder.OptionsClickListener {
+    interface AccountAdapterListener : AccountsQuickActionsListener, HeaderViewHolder.OptionsClickListener,
+        SpotBannerCarouselListener {
         fun onSucceedAccountClick(publicKey: String)
         fun onFailedAccountClick(publicKey: String)
         fun onAccountItemLongPressed(publicKey: String)
         fun onBannerCloseButtonClick(bannerId: Long)
         fun onBannerActionButtonClick(url: String, bannerType: BannerType)
-        fun onBackupBannerActionButtonClick()
     }
 
     companion object {

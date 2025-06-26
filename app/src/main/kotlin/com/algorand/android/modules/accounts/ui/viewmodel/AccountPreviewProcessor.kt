@@ -13,7 +13,6 @@
 package com.algorand.android.modules.accounts.ui.viewmodel
 
 import com.algorand.android.R
-import com.algorand.android.banner.domain.model.BaseBanner
 import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDisplayName
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountIconDrawablePreview
@@ -36,9 +35,11 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountRegistrationType
 import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
+import com.algorand.wallet.banner.domain.model.Banner
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
+import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -53,7 +54,6 @@ class AccountPreviewProcessor @Inject constructor(
     private val getAccountIconDrawablePreviewByType: GetAccountIconDrawablePreviewByType,
     private val getAccountIconDrawablePreview: GetAccountIconDrawablePreview,
     private val bannerItemMapper: BaseAccountListItemBannerItemMapper,
-    private val backupBannerProcessor: AccountsPreviewBackupBannerProcessor,
     private val getLocalAccounts: GetLocalAccounts,
     private val getAccountsCustomInfo: GetAccountsCustomInfo,
     private val getAccountRegistrationType: GetAccountRegistrationType,
@@ -66,17 +66,18 @@ class AccountPreviewProcessor @Inject constructor(
     suspend fun prepareAccountPreview(
         localAccounts: List<LocalAccount>,
         accountLites: Map<String, AccountLite>,
-        banner: BaseBanner?,
+        banner: Banner?,
         assetInboxCount: Int,
-        privacyMode: PrivacyMode
+        privacyMode: PrivacyMode,
+        spotBanners: List<SpotBanner>
     ): AccountPreview {
         val amountRenderType = amountRendererTypeMapper(privacyMode)
         val accountList = mutableListOf<BaseAccountListItem>()
 
         insertQuickActionsItem(accountList)
 
-        backupBannerProcessor.getBackupBanner(accountLites)?.also { backupBanner ->
-            accountList.add(BANNER_ITEM_INDEX, backupBanner)
+        if (spotBanners.isNotEmpty()) {
+            accountList.add(BANNER_ITEM_INDEX, BaseAccountListItem.SpotBannerItem(spotBanners))
         }
         bannerItemMapper.map(banner)?.let { bannerItem ->
             accountList.add(BANNER_ITEM_INDEX, bannerItem)

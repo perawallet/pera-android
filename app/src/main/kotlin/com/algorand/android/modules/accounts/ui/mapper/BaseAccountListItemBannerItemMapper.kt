@@ -12,23 +12,23 @@
 
 package com.algorand.android.modules.accounts.ui.mapper
 
-import com.algorand.android.banner.domain.model.BaseBanner
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
+import com.algorand.wallet.banner.domain.model.Banner
 import javax.inject.Inject
 
 class BaseAccountListItemBannerItemMapper @Inject constructor() {
 
-    fun map(baseBanner: BaseBanner?): BaseAccountListItem.BannerItem? {
+    fun map(baseBanner: Banner?): BaseAccountListItem.BannerItem? {
         return baseBanner?.let { banner ->
             val isButtonVisible = !banner.buttonTitle.isNullOrBlank() && !banner.buttonUrl.isNullOrBlank()
             val isTitleVisible = !banner.title.isNullOrBlank()
             val isDescriptionVisible = !banner.description.isNullOrBlank()
 
-            val bannerType = when (banner) {
-                is BaseBanner.GovernanceBanner -> BaseAccountListItem.BannerItem.BannerType.Governance
-                is BaseBanner.StakingBanner -> BaseAccountListItem.BannerItem.BannerType.Staking
-                is BaseBanner.CardBanner -> BaseAccountListItem.BannerItem.BannerType.Card
-                is BaseBanner.GenericBanner -> BaseAccountListItem.BannerItem.BannerType.Generic
+            val bannerType = when (banner.type) {
+                Banner.BannerType.Card -> BaseAccountListItem.BannerItem.BannerType.Card
+                Banner.BannerType.Generic -> BaseAccountListItem.BannerItem.BannerType.Generic
+                Banner.BannerType.Governance -> BaseAccountListItem.BannerItem.BannerType.Governance
+                Banner.BannerType.Staking -> BaseAccountListItem.BannerItem.BannerType.Staking
             }
             BaseAccountListItem.BannerItem(
                 bannerId = banner.bannerId,

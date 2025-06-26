@@ -299,6 +299,7 @@ dependencies {
     implementation libs.koin.android
 
     implementation libs.glide.image
+    implementation libs.glide.compose
     ksp libs.glide.compiler
 
     implementation libs.lottie

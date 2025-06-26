@@ -1550,4 +1550,12 @@
     <string name="keep_it_secret_keep_it">Keep it secret. Keep it safe.</string>
     <string name="reveal_passphrase">Reveal Passphrase</string>
     <string name="you_need_to_backup_passphrase">You need to backup the passphrase</string>
+    <string name="invite_friends">Invite Friends</string>
+    <string name="menu">Menu</string>
+    <string name="share_pera_wallet_download">Share the Pera Wallet download\nlink with your friends.</string>
+    <string name="simply_the_best_algorand">Simply the best Algorand wallet.</string>
+    <string name="you_are_all_set">You\'re all set!</string>
+    <string name="we_will_inform_this">We will inform this device via a push notification when we launch in your country.</string>
+    <string name="go_to_cards">Go to Cards</string>
+    <string name="create_pera_card">Create Pera Card</string>
 </resources>

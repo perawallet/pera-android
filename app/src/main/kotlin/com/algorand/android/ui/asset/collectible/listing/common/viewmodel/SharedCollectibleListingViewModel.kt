@@ -17,6 +17,7 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
 import com.algorand.android.modules.collectibles.filter.domain.usecase.ShouldDisplayWatchAccountNFTsPreferenceUseCase
+import com.algorand.android.ui.asset.collectible.listing.viewmodel.BaseCollectibleListHeaderItemProvider
 import com.algorand.android.ui.asset.collectible.listing.viewmodel.CollectibleListingViewModel
 import com.algorand.android.ui.asset.collectible.listing.viewmodel.CollectibleListingViewModelDelegate
 import com.algorand.wallet.account.detail.domain.model.AccountType.NoAuth
@@ -32,12 +33,20 @@ class SharedCollectibleListingViewModel @Inject constructor(
     private val shouldDisplayWatchAccountNFTs: ShouldDisplayWatchAccountNFTsPreferenceUseCase,
 ) : ViewModel(), CollectibleListingViewModel by viewModelDelegate {
 
-    fun initPreview() {
+    fun initPreview(registerBottomNavDelegation: Boolean) {
         viewModelDelegate.init(
             viewModelScope,
             getFilteredAccountLiteCacheFlow(),
-            SharedCollectibleListingHeaderItemProvider
+            getHeaderItemProvider(registerBottomNavDelegation)
         )
+    }
+
+    private fun getHeaderItemProvider(registerBottomNavDelegation: Boolean): BaseCollectibleListHeaderItemProvider {
+        return if (registerBottomNavDelegation) {
+            SharedCollectibleListingHeaderItemProvider
+        } else {
+            SharedNestedCollectibleListingHeaderItemProvider
+        }
     }
 
     private fun getFilteredAccountLiteCacheFlow(): Flow<AccountLiteCacheStatus> {

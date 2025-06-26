@@ -52,4 +52,16 @@ internal interface CollectibleDao {
 
     @Query("DELETE FROM collectible")
     suspend fun clearAll()
+
+    @Query(
+        """
+        SELECT collectible.primary_image_url
+        FROM asset_holding_table AS asset_holding
+        INNER JOIN collectible AS collectible ON asset_holding.asset_id = collectible.collectible_asset_id
+        WHERE asset_holding.opted_in_at_round IS NOT NULL
+        ORDER BY asset_holding.opted_in_at_round DESC
+        LIMIT :count
+    """
+    )
+    suspend fun getRecentlyAddedCollectibleUrls(count: Int): List<String>
 }

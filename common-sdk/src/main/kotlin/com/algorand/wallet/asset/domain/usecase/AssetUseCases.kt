@@ -94,3 +94,7 @@ fun interface ClearSingleAssetCache {
 fun interface CacheAlgoAssetDetail {
     suspend operator fun invoke(usdValue: BigDecimal?)
 }
+
+fun interface GetRecentlyAddedCollectibleUrls {
+    suspend operator fun invoke(count: Int): List<String>
+}

@@ -53,4 +53,6 @@ internal interface AssetRepository {
     suspend fun getAssetCreatorAddress(assetId: Long): String?
 
     suspend fun cacheAlgoAssetDetail(usdValue: BigDecimal?)
+
+    suspend fun getRecentlyAddedCollectibleUrls(count: Int): List<String>
 }

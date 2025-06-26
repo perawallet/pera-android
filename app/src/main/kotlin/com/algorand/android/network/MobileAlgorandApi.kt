@@ -12,7 +12,6 @@
 
 package com.algorand.android.network
 
-import com.algorand.android.banner.data.model.BannerListResponse
 import com.algorand.android.deviceregistration.data.model.DeviceRegistrationRequest
 import com.algorand.android.deviceregistration.data.model.DeviceRegistrationResponse
 import com.algorand.android.deviceregistration.data.model.DeviceUpdateRequest
@@ -135,11 +134,6 @@ interface MobileAlgorandApi {
         @Path("address") address: String,
         @Body notificationFilterRequest: NotificationFilterRequest
     ): Response<Unit>
-
-    @GET("v1/devices/{device_id}/banners/")
-    suspend fun getDeviceBanners(
-        @Path("device_id") deviceId: String
-    ): Response<BannerListResponse>
 
     @GET("v1/name-services/search/")
     suspend fun getNftDomainAccountAddresses(

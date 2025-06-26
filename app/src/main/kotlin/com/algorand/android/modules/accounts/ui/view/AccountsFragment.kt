@@ -27,7 +27,6 @@ import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.core.DaggerBaseFragment
 import com.algorand.android.customviews.Tooltip
 import com.algorand.android.databinding.FragmentAccountsBinding
@@ -54,12 +53,15 @@ import com.algorand.android.modules.tutorialdialog.util.showCopyAccountAddressTu
 import com.algorand.android.modules.tutorialdialog.util.showGiftCardsTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showSwapFeatureTutorialDialog
 import com.algorand.android.utils.BannerViewTypesDividerItemDecoration
+import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.setDrawableTintColor
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.banner.domain.model.Banner.BannerType
+import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -123,15 +125,11 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             accountsViewModel.dismissBanner(bannerId)
         }
 
-        override fun onBackupBannerActionButtonClick() {
-            accountsViewModel.navigateToBackUpPassphraseInfo()
-        }
-
         override fun onBannerActionButtonClick(url: String, bannerType: BannerType) {
             accountsViewModel.logBannerClick(bannerType)
             when (bannerType) {
-                BannerType.STAKING -> nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
-                BannerType.CARD -> nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
+                BannerType.Staking -> nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
+                BannerType.Card -> nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
                 else -> nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
             }
         }
@@ -167,6 +165,23 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         override fun onStakingClick() {
             accountsViewModel.logEvent(PeraClickEvent.TAP_HOME_SCREEN_STAKE)
             nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
+        }
+
+        override fun onBackupPassphraseBannerClick() {
+            accountsViewModel.navigateToBackUpPassphraseInfo()
+        }
+
+        override fun onSpotBannerBannerClick(spotBanner: SpotBanner.Generic) {
+            val url = spotBanner.url ?: return
+            if (spotBanner.isExternalButtonUrl) {
+                context?.openUrl(url)
+            } else {
+                (activity as MainActivity).handleDeepLink(url)
+            }
+        }
+
+        override fun onDismissSpotBannerClick(spotBanner: SpotBanner.Generic) {
+            accountsViewModel.dismissSpotBanner(spotBanner.id)
         }
     }
 

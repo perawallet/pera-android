@@ -13,12 +13,13 @@
 package com.algorand.android.usecase
 
 import android.app.NotificationManager
-import com.algorand.android.banner.domain.usecase.BannersUseCase
 import com.algorand.android.core.LegacyAccountManager
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.repository.ContactRepository
 import com.algorand.wallet.account.custom.domain.usecase.ClearAllCustomInformation
 import com.algorand.wallet.account.local.domain.usecase.DeleteAllLocalAccounts
+import com.algorand.wallet.banner.common.domain.usecase.ClearAllBannerCaches
+import com.algorand.wallet.banner.domain.usecase.ClearDismissedBannerIds
 import javax.inject.Inject
 
 class DeleteAllDataUseCase @Inject constructor(
@@ -26,10 +27,11 @@ class DeleteAllDataUseCase @Inject constructor(
     private val legacyAccountManager: LegacyAccountManager,
     private val walletConnectManager: WalletConnectManager,
     private val coreCacheUseCase: CoreCacheUseCase,
-    private val bannersUseCase: BannersUseCase,
     private val deleteAllLocalAccounts: DeleteAllLocalAccounts,
     private val notificationManager: NotificationManager?,
-    private val clearAllCustomInformation: ClearAllCustomInformation
+    private val clearAllCustomInformation: ClearAllCustomInformation,
+    private val clearAllBannerCaches: ClearAllBannerCaches,
+    private val clearDismissedBannerIds: ClearDismissedBannerIds
 ) {
     suspend fun deleteAllData() {
         legacyAccountManager.removeAllData()
@@ -38,7 +40,8 @@ class DeleteAllDataUseCase @Inject constructor(
         clearAllCustomInformation()
         contactRepository.deleteAllContacts()
         coreCacheUseCase.clearAllCachedData()
-        bannersUseCase.clearBannerCacheAndDismissedBannerIdList()
+        clearAllBannerCaches()
+        clearDismissedBannerIds()
         notificationManager?.cancelAll()
     }
 }

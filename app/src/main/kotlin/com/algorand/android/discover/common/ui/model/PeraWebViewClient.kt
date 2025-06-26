@@ -51,7 +51,7 @@ class PeraWebViewClient(val listener: PeraWebViewClientListener?) : WebViewClien
                     true
                 }
 
-                startsWith(BuildConfig.DEEPLINK_PREFIX) -> {
+                startsWith(BuildConfig.DEEPLINK_PREFIX) || startsWith(BuildConfig.PERA_WC_DEEPLINK_PREFIX) -> {
                     true
                 }
 

@@ -12,26 +12,39 @@
 
 package com.algorand.android.modules.staking
 
-import androidx.navigation.fragment.navArgs
+import android.os.Bundle
+import android.view.View
 import com.algorand.android.discover.utils.getCustomUrl
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
+import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
 @AndroidEntryPoint
-class StakingFragment : BaseStakingFragment() {
+class StakingStandaloneFragment : BaseStakingFragment(),
+    BottomNavBarFragmentDelegation by BottomNavBarFragmentDelegationImpl() {
 
-    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration: FragmentConfiguration = FragmentConfiguration(
+        isBottomBarNeeded = true
+    )
 
-    private val args: StakingFragmentArgs by navArgs()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        registerBottomNavBarFragmentDelegation(this)
+    }
 
     override fun getStakingUrl(): String {
-        val stakingUrl = "${stakingViewModel.getStakingBaseUrl()}/${args.path.orEmpty()}"
         return getCustomUrl(
-            url = stakingUrl,
+            url = stakingViewModel.getStakingBaseUrl(),
             themePreference = webViewThemeHelper.getWebViewThemeFromThemePreference(binding.root.context),
             currency = stakingViewModel.getPrimaryCurrencyId(),
-            locale = Locale.getDefault().language
+            locale = Locale.getDefault().language,
+            version = STAKING_STANDALONE_VERSION
         )
+    }
+
+    private companion object {
+        const val STAKING_STANDALONE_VERSION = "5"
     }
 }

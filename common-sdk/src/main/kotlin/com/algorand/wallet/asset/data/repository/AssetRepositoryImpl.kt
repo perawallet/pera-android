@@ -224,6 +224,10 @@ internal class AssetRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getRecentlyAddedCollectibleUrls(count: Int): List<String> {
+        return collectibleDao.getRecentlyAddedCollectibleUrls(count)
+    }
+
     companion object {
         private const val MAX_ASSET_FETCH_COUNT = 100
     }

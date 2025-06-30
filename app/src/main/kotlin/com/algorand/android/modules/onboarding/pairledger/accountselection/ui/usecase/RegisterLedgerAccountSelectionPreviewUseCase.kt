@@ -24,7 +24,7 @@ import com.algorand.android.modules.onboarding.pairledger.accountselection.ui.mo
 import com.algorand.android.modules.rekey.model.AccountSelectionListItem
 import com.algorand.android.modules.rekey.model.AccountSelectionListItem.SearchType
 import com.algorand.android.modules.rekey.model.SelectedLedgerAccount
-import com.algorand.android.utils.extensions.addFirst
+import com.algorand.android.utils.extensions.addFirst as addFirstToList
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.account.info.domain.usecase.FetchRekeyedAccounts
 import com.algorand.wallet.asset.domain.usecase.FetchAndCacheAssets
@@ -109,7 +109,8 @@ class RegisterLedgerAccountSelectionPreviewUseCase @Inject constructor(
                 accountSize = size,
                 searchType = SearchType.REGISTER
             )
-            addFirst(instructionItem)
+            // TODO: See what happened here, this an extension that is imported for a MutatableList
+            addFirstToList(instructionItem)
         }
 
         val preview = registerLedgerAccountSelectionPreviewMapper.mapToRegisterLedgerAccountSelectionPreview(

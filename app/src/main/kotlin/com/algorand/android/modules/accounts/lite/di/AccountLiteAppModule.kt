@@ -14,13 +14,13 @@ package com.algorand.android.modules.accounts.lite.di
 
 import com.algorand.android.modules.accounts.lite.domain.manager.AccountLiteManager
 import com.algorand.android.modules.accounts.lite.domain.manager.AccountLiteManagerImpl
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheData
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheDataUseCase
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
+import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteUseCase
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLitesFlow
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLitesFlowUseCase
-import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLite
-import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

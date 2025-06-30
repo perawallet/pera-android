@@ -15,6 +15,7 @@ package com.algorand.android.ui.asset.collectible.listing.common.view
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.algorand.android.R
 import com.algorand.android.core.BaseFragment
 import com.algorand.android.databinding.FragmentBaseCollectiblesListingBinding
@@ -45,11 +46,23 @@ class SharedCollectiblesFragment : BaseFragment(R.layout.fragment_base_collectib
 
     private val binding by viewBinding(FragmentBaseCollectiblesListingBinding::bind)
 
+    private val args: SharedCollectiblesFragmentArgs by navArgs()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initFragmentDelegate()
-        registerBottomNavBarFragmentDelegation(this)
-        collectiblesViewModel.initPreview()
+        initBottomNavBarFragmentDelegation()
+        initToolbar()
+        collectiblesViewModel.initPreview(args.registerBottomNavDelegation)
+    }
+
+    private fun initToolbar() {
+        if (!args.registerBottomNavDelegation) {
+            getAppToolbar()?.apply {
+                configureStartButton(resId = R.drawable.ic_left_arrow, clickAction = ::navBack)
+                changeTitle(R.string.nfts)
+            }
+        }
     }
 
     private fun initFragmentDelegate() {
@@ -60,6 +73,14 @@ class SharedCollectiblesFragment : BaseFragment(R.layout.fragment_base_collectib
             listener = this
         )
         collectiblesListingFragmentDelegate?.init()
+    }
+
+    private fun initBottomNavBarFragmentDelegation() {
+        if (args.registerBottomNavDelegation) {
+            registerBottomNavBarFragmentDelegation(this)
+        } else {
+            getAppToolbar()?.configureStartButton(R.drawable.ic_left_arrow, clickAction = ::navBack)
+        }
     }
 
     override fun onDestroy() {

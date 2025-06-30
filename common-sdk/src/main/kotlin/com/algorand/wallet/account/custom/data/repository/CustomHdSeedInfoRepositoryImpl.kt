@@ -29,6 +29,19 @@ internal class CustomHdSeedInfoRepositoryImpl @Inject constructor(
     private val customHdSeedInfoEntityMapper: CustomHdSeedInfoEntityMapper,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : CustomHdSeedInfoRepository {
+    override suspend fun getAllCustomInfo(): List<CustomHdSeedInfo> {
+        return withContext(coroutineDispatcher) {
+            customHdSeedInfoDao.getAll().map {
+                val customHdSeedInfo = CustomHdSeedInfo(
+                    seedId = it.seedId,
+                    entropyCustomName = it.entropyCustomName,
+                    orderIndex = it.orderIndex,
+                    isBackedUp = it.isBackedUp,
+                )
+                customHdSeedInfo
+            }
+        }
+    }
 
     override suspend fun getCustomInfo(seedId: Int): CustomHdSeedInfo? {
         return withContext(coroutineDispatcher) {

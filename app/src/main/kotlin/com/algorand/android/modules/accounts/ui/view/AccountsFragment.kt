@@ -22,17 +22,19 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.MainActivity
 import com.algorand.android.MainNavigationDirections
 import com.algorand.android.R
-import com.algorand.android.banner.domain.model.BannerType
 import com.algorand.android.core.DaggerBaseFragment
+import com.algorand.android.customviews.Tooltip
 import com.algorand.android.databinding.FragmentAccountsBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ScreenState
+import com.algorand.android.models.TooltipConfig
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel
@@ -43,6 +45,7 @@ import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.View
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowGiftCardsTutorial
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowMaxAccountLimitExceededError
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowNotificationPermission
+import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowPrivacyTooltip
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowSwapTutorial
 import com.algorand.android.modules.sorting.accountsorting.ui.AccountSortFragment.Companion.ACCOUNT_SORT_RESULT_KEY
 import com.algorand.android.modules.tracking.core.PeraClickEvent
@@ -50,12 +53,15 @@ import com.algorand.android.modules.tutorialdialog.util.showCopyAccountAddressTu
 import com.algorand.android.modules.tutorialdialog.util.showGiftCardsTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showSwapFeatureTutorialDialog
 import com.algorand.android.utils.BannerViewTypesDividerItemDecoration
+import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.setDrawableTintColor
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
+import com.algorand.wallet.banner.domain.model.Banner.BannerType
+import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -76,6 +82,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             is ShowNotificationPermission -> askNotificationPermission()
             is ShowSwapTutorial -> showSwapTutorialDialog(event.tutorialId)
             is ShowConfetti -> showConfetti()
+            is ShowPrivacyTooltip -> showPrivacyTooltip(event.tutorialId)
         }
     }
 
@@ -118,15 +125,11 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             accountsViewModel.dismissBanner(bannerId)
         }
 
-        override fun onBackupBannerActionButtonClick() {
-            accountsViewModel.navigateToBackUpPassphraseInfo()
-        }
-
         override fun onBannerActionButtonClick(url: String, bannerType: BannerType) {
             accountsViewModel.logBannerClick(bannerType)
             when (bannerType) {
-                BannerType.STAKING -> nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
-                BannerType.CARD -> nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
+                BannerType.Staking -> nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
+                BannerType.Card -> nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
                 else -> nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
             }
         }
@@ -162,6 +165,23 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         override fun onStakingClick() {
             accountsViewModel.logEvent(PeraClickEvent.TAP_HOME_SCREEN_STAKE)
             nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
+        }
+
+        override fun onBackupPassphraseBannerClick() {
+            accountsViewModel.navigateToBackUpPassphraseInfo()
+        }
+
+        override fun onSpotBannerBannerClick(spotBanner: SpotBanner.Generic) {
+            val url = spotBanner.url ?: return
+            if (spotBanner.isExternalButtonUrl) {
+                context?.openUrl(url)
+            } else {
+                (activity as MainActivity).handleDeepLink(url)
+            }
+        }
+
+        override fun onDismissSpotBannerClick(spotBanner: SpotBanner.Generic) {
+            accountsViewModel.dismissSpotBanner(spotBanner.id)
         }
     }
 
@@ -207,6 +227,20 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             if (isVisible) {
                 accountsViewModel.checkConfettiState()
             }
+        }
+    }
+
+    private fun showPrivacyTooltip(tutorialId: Int) {
+        with(binding.primaryPortfolioValue) {
+            postDelayed({
+                val config = TooltipConfig(
+                    anchor = this,
+                    offsetX = resources.getDimensionPixelOffset(R.dimen.spacing_xlarge),
+                    tooltipTextResId = R.string.tap_value_to_hide_your
+                )
+                Tooltip(context).show(config, findViewTreeLifecycleOwner())
+                accountsViewModel.dismissTutorial(tutorialId)
+            }, PRIVACY_TOOLTIP_DELAY)
         }
     }
 
@@ -281,10 +315,16 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private fun setPortfolioValues(portfolioValues: BasePortfolioValueItem) {
         with(binding) {
-            primaryPortfolioValue.apply { text = portfolioValues.getPrimaryAccountValue(context) }
-            toolbarPrimaryPortfolioValue.apply { text = portfolioValues.getPrimaryAccountValue(context) }
-            secondaryPortfolioValue.apply { text = portfolioValues.getSecondaryAccountValue(context) }
-            toolbarSecondaryPortfolioValue.apply { text = portfolioValues.getSecondaryAccountValue(context) }
+            primaryPortfolioValue.apply {
+                text = portfolioValues.getPrimaryAccountValue(context)
+                setOnClickListener { accountsViewModel.togglePrivacy() }
+            }
+            secondaryPortfolioValue.apply {
+                text = portfolioValues.getSecondaryAccountValue(context)
+                setOnClickListener { accountsViewModel.togglePrivacy() }
+            }
+            toolbarPrimaryPortfolioValue.text = portfolioValues.getPrimaryAccountValue(root.context)
+            toolbarSecondaryPortfolioValue.text = portfolioValues.getSecondaryAccountValue(root.context)
             portfolioValueTitleTextView.apply {
                 setTextColor(ContextCompat.getColor(root.context, portfolioValues.titleColorResId))
                 setDrawableTintColor(portfolioValues.titleColorResId)
@@ -443,5 +483,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     companion object {
         private const val FIREBASE_EVENT_SCREEN_ID = "screen_accounts"
+        private const val PRIVACY_TOOLTIP_DELAY = 500L
     }
 }

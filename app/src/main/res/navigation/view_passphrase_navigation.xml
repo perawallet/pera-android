@@ -14,7 +14,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/viewPassphraseNavigation"
-    app:startDestination="@id/viewPassphraseFragment">
+    app:startDestination="@id/passphraseAcknowledgeBottomSheet">
 
     <fragment
         android:id="@+id/viewPassphraseFragment"
@@ -25,5 +25,19 @@
             android:name="accountAddress"
             app:argType="string" />
     </fragment>
+
+    <dialog
+        android:id="@+id/passphraseAcknowledgeBottomSheet"
+        android:name="com.algorand.android.ui.passphrase.acknowledge.view.PassphraseAcknowledgeBottomSheet"
+        android:label="PassphraseAcknowledgeBottomSheet" >
+
+        <argument
+            android:name="accountAddress"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_passphraseAcknowledgeBottomSheet_to_viewPassphraseFragment"
+            app:destination="@id/viewPassphraseFragment" />
+    </dialog>
 
 </navigation>

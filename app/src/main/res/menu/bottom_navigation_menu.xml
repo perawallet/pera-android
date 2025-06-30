@@ -33,7 +33,7 @@
         android:title="@string/nfts" />
 
     <item
-        android:id="@id/settingsFragment"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/settings" />
+        android:id="@id/menuFragment"
+        android:icon="@drawable/ic_menu"
+        android:title="@string/menu" />
 </menu>

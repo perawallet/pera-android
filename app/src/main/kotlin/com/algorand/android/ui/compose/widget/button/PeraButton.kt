@@ -12,7 +12,9 @@
 
 package com.algorand.android.ui.compose.widget.button
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Center
+import androidx.compose.foundation.layout.Arrangement.Horizontal
+import androidx.compose.foundation.layout.Arrangement.Start
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,7 +42,7 @@ private fun PeraCoreButton(modifier: PeraButtonModifier) {
         contentPadding = PaddingValues(16.dp)
     ) {
         Row(
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = modifier.horizontalArrangement,
             verticalAlignment = Alignment.CenterVertically
         ) {
             when (modifier.state) {
@@ -59,6 +61,7 @@ private fun PeraCoreButton(modifier: PeraButtonModifier) {
                         modifier.leftIcon.invoke()
                         Spacer(modifier = Modifier.width(12.dp))
                     }
+
                     Text(
                         text = modifier.text,
                         style = modifier.textStyle,
@@ -69,7 +72,7 @@ private fun PeraCoreButton(modifier: PeraButtonModifier) {
                         }
                     )
 
-                    if (modifier.leftIcon != null) {
+                    if (modifier.horizontalArrangement == Start) {
                         Spacer(Modifier.weight(1f))
                     }
 
@@ -91,6 +94,7 @@ fun PeraPrimaryButton(
     state: PeraButtonState = PeraButtonState.ENABLED,
     leftIcon: @Composable (() -> Unit)? = null,
     rightIcon: @Composable (() -> Unit)? = null,
+    horizontalArrangement: Horizontal = Center
 ) {
     PeraCoreButton(
         modifier = PeraButtonModifier(
@@ -107,6 +111,7 @@ fun PeraPrimaryButton(
             state = state,
             leftIcon = leftIcon,
             rightIcon = rightIcon,
+            horizontalArrangement = horizontalArrangement
         )
     )
 }
@@ -119,7 +124,8 @@ fun PeraSecondaryButton(
     state: PeraButtonState = PeraButtonState.ENABLED,
     leftIcon: @Composable (() -> Unit)? = null,
     rightIcon: @Composable (() -> Unit)? = null,
-    cornerRadius: Dp = 4.dp
+    cornerRadius: Dp = 4.dp,
+    horizontalArrangement: Horizontal = Center
 ) {
     PeraCoreButton(
         modifier = PeraButtonModifier(
@@ -136,7 +142,8 @@ fun PeraSecondaryButton(
             state = state,
             leftIcon = leftIcon,
             rightIcon = rightIcon,
-            cornerRadius = cornerRadius
+            cornerRadius = cornerRadius,
+            horizontalArrangement = horizontalArrangement
         )
     )
 }
@@ -149,6 +156,7 @@ fun PeraTertiaryButton(
     state: PeraButtonState = PeraButtonState.ENABLED,
     leftIcon: @Composable (() -> Unit)? = null,
     rightIcon: @Composable (() -> Unit)? = null,
+    horizontalArrangement: Horizontal = Center
 ) {
     PeraCoreButton(
         modifier = PeraButtonModifier(
@@ -165,7 +173,8 @@ fun PeraTertiaryButton(
             leftIcon = leftIcon,
             rightIcon = rightIcon,
             cornerRadius = 16.dp,
-            textStyle = PeraTheme.typography.body.large.sansMedium
+            textStyle = PeraTheme.typography.body.large.sansMedium,
+            horizontalArrangement = horizontalArrangement
         )
     )
 }

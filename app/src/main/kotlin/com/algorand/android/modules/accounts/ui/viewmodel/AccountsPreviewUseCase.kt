@@ -13,7 +13,6 @@
 package com.algorand.android.modules.accounts.ui.viewmodel
 
 import androidx.navigation.NavDirections
-import com.algorand.android.banner.domain.usecase.BannersUseCase
 import com.algorand.android.mapper.AccountPreviewMapper
 import com.algorand.android.modules.accounts.domain.mapper.PortfolioValueItemMapper
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.CurrencyCachingError
@@ -29,6 +28,10 @@ import com.algorand.android.modules.peraconnectivitymanager.ui.PeraConnectivityM
 import com.algorand.android.modules.swap.utils.SwapNavigationDestinationHelper
 import com.algorand.android.utils.CacheResult
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequestCountFlow
+import com.algorand.wallet.banner.domain.usecase.GetBannerFlow
+import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
+import com.algorand.wallet.spotbanner.domain.model.SpotBannerFlowData
+import com.algorand.wallet.spotbanner.domain.usecase.GetSpotBannersFlow
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -37,15 +40,18 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapLatest
 
+@Suppress("LongParameterList")
 class AccountsPreviewUseCase @Inject constructor(
     private val accountPreviewMapper: AccountPreviewMapper,
-    private val bannersUseCase: BannersUseCase,
     private val portfolioValueItemMapper: PortfolioValueItemMapper,
     private val swapNavigationDestinationHelper: SwapNavigationDestinationHelper,
     private val peraConnectivityManager: PeraConnectivityManager,
     private val accountPreviewProcessor: AccountPreviewProcessor,
     private val getAssetInboxRequestCountFlow: GetAssetInboxRequestCountFlow,
-    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow
+    private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
+    private val getPrivacyModeFlow: GetPrivacyModeFlow,
+    private val getBannerFlow: GetBannerFlow,
+    private val getSpotBannersFlow: GetSpotBannersFlow
 ) {
 
     suspend fun getInitialAccountPreview(): AccountPreview {
@@ -78,15 +84,29 @@ class AccountsPreviewUseCase @Inject constructor(
     }
 
     private suspend fun getAccountPreviewInitializationFlow(accountLiteCacheData: Data): Flow<AccountPreview> {
-        return combine(bannersUseCase.getBanner(), getAssetInboxRequestCountFlow()) { banner, assetInboxCount ->
-            with(accountLiteCacheData) {
-                accountPreviewProcessor.prepareAccountPreview(localAccounts, accountLites, banner, assetInboxCount)
-            }
+        return combine(
+            getBannerFlow(),
+            getSpotBannersFlow(getSpotBannerFlowData(accountLiteCacheData)),
+            getAssetInboxRequestCountFlow(),
+            getPrivacyModeFlow()
+        ) { banner, spotBanners, assetInboxCount, privacyMode ->
+            accountPreviewProcessor.prepareAccountPreview(
+                accountLiteCacheData.localAccounts,
+                accountLiteCacheData.accountLites,
+                banner,
+                assetInboxCount,
+                privacyMode,
+                spotBanners
+            )
         }
     }
 
-    suspend fun dismissBanner(bannerId: Long) {
-        bannersUseCase.dismissBanner(bannerId)
+    private fun getSpotBannerFlowData(accountLiteCacheData: Data): List<SpotBannerFlowData> {
+        return accountLiteCacheData.accountLites.values.map { lite ->
+            with(lite) {
+                SpotBannerFlowData(address, isBackedUp, cachedInfo?.primaryAccountValue, cachedInfo?.type)
+            }
+        }
     }
 
     suspend fun getSwapNavigationDirection(): NavDirections? {

@@ -12,6 +12,8 @@
 
 package com.algorand.android.ui.compose.theme
 
+import androidx.compose.ui.graphics.Color
+
 object PeraLightColor : PeraColor {
     override val background = object : PeraColor.Background {
         override val primary = ColorPalette.White.Default
@@ -38,6 +40,12 @@ object PeraLightColor : PeraColor {
     override val link = object : PeraColor.Link {
         override val primary = ColorPalette.Turquoise.V600
         override val icon = ColorPalette.Turquoise.V600
+    }
+
+    override val helper = object : PeraColor.Helper {
+        override val positive: Color = ColorPalette.Turquoise.V700
+        override val negative: Color = ColorPalette.Salmon.V600
+        override val negativeLighter: Color = ColorPalette.Salmon.V100
     }
 
     override val button = object : PeraColor.Button {

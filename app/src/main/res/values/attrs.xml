@@ -150,10 +150,6 @@
         <attr name="customButtonIconColor" format="reference" />
     </declare-styleable>
 
-    <declare-styleable name="CompactChartView">
-        <attr name="showTimeFrame" format="boolean" />
-    </declare-styleable>
-
     <declare-styleable name="ViewPortHeightRecyclerView">
         <attr name="heightOffset" format="dimension" />
     </declare-styleable>

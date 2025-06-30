@@ -28,7 +28,7 @@ internal class DefaultRegisteredHdKeyMapper @Inject constructor() : RegisteredHd
         return RegisteredHdKey(
             address = hdAccountAddress.address,
             algoValue = fastLookupAccount?.algoValue ?: BigDecimal.ZERO,
-            usdValue = fastLookupAccount?.algoValue ?: BigDecimal.ZERO,
+            usdValue = fastLookupAccount?.usdValue ?: BigDecimal.ZERO,
             accountExists = fastLookupAccount?.accountExists ?: false,
             account = hdAccountAddress.accountIndex,
             change = hdAccountAddress.changeIndex,

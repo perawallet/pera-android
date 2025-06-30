@@ -17,22 +17,16 @@ import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import javax.inject.Inject
 
 class IsOnHdWalletUseCase @Inject constructor(
-    private val getIsProductionReleaseUseCase: GetIsProductionReleaseUseCase,
     private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
 ) {
 
     operator fun invoke(): Boolean {
-        val isHdWalletToggleEnabled = isFeatureToggleEnabled(HD_WALLET_BUTTON_TOGGLE) &&
-                !isProdReleaseVariant()
+        val isHdWalletToggleEnabled = isFeatureToggleEnabled(HD_WALLET_BUTTON_TOGGLE)
         return isHdWalletToggleEnabled
     }
 
     fun isConnectedToTestnet(): Boolean {
         return getIsActiveNodeTestnetUseCase.invoke()
-    }
-
-    private fun isProdReleaseVariant(): Boolean {
-        return getIsProductionReleaseUseCase.invoke()
     }
 }

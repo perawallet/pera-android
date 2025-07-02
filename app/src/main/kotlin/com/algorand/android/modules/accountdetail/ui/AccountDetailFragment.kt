@@ -90,7 +90,7 @@ class AccountDetailFragment :
         }
     }
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     private val binding by viewBinding(FragmentAccountDetailBinding::bind)
 

@@ -60,19 +60,6 @@
         app:menu="@menu/bottom_navigation_menu"
         tools:visibility="visible" />
 
-    <com.algorand.android.customviews.CoreActionsTabBarView
-        android:id="@+id/coreActionsTabBarView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:elevation="8dp"
-        android:visibility="gone"
-        app:layoutDescription="@xml/scene_core_actions_tab_bar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
-
     <include
         android:id="@+id/progressBar"
         layout="@layout/layout_full_screen_progress" />

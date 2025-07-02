@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.map
 @AndroidEntryPoint
 class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     private val binding by viewBinding(FragmentAccountAssetsBinding::bind)
 

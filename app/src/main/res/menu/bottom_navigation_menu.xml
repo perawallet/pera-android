@@ -23,14 +23,14 @@
         android:title="@string/discover" />
 
     <item
-        android:id="@+id/coreActionsMenuButton"
-        android:enabled="false"
-        android:title="" />
-
-    <item
         android:id="@id/stakingStandaloneFragment"
         android:icon="@drawable/ic_staking"
         android:title="@string/staking" />
+
+    <item
+        android:id="@id/collectiblesFragment"
+        android:icon="@drawable/ic_collectibles"
+        android:title="@string/nfts" />
 
     <item
         android:id="@id/menuFragment"

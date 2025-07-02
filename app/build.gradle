@@ -67,6 +67,7 @@ android {
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
         buildConfigField "String", "APPLICATION_NAME", '"pera"'
         buildConfigField "String", "DEEPLINK_PREFIX", '"algorand://"'
+        buildConfigField "String", "PERA_WC_DEEPLINK_PREFIX", '"perawallet-wc://"'
         buildConfigField "String", "VERSION_NAME", "\"$versionName\""
         buildConfigField "Integer", "VERSION_CODE", "$versionCode"
     }

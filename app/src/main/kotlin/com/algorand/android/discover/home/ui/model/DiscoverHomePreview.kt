@@ -12,6 +12,7 @@
 
 package com.algorand.android.discover.home.ui.model
 
+import androidx.navigation.NavDirections
 import com.algorand.android.discover.common.ui.model.DappFavoriteElement
 import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.discover.home.domain.model.DappInfo
@@ -34,4 +35,5 @@ data class DiscoverHomePreview(
     val loadHomeEvent: Event<Unit>? = null,
     val loadCustomUrlEvent: Event<String>? = null,
     val sendMessageEvent: Event<String>? = null,
+    val buySellActionEvent: Event<NavDirections>? = null,
 )

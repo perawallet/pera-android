@@ -36,10 +36,12 @@ import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.discover.home.ui.adapter.DiscoverAssetSearchAdapter
 import com.algorand.android.discover.home.ui.model.DiscoverAssetItem
 import com.algorand.android.discover.home.ui.model.DiscoverHomePreview
+import com.algorand.android.discover.utils.JAVASCRIPT_PERACONNECT
 import com.algorand.android.discover.utils.getDiscoverAuthHeader
 import com.algorand.android.discover.utils.getDiscoverCustomUrl
 import com.algorand.android.discover.utils.getDiscoverHomeUrl
 import com.algorand.android.models.FragmentConfiguration
+import com.algorand.android.utils.Event
 import com.algorand.android.utils.browser.openExternalBrowserApp
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
@@ -51,6 +53,8 @@ import com.algorand.android.utils.listenToNavigationResult
 import com.algorand.android.utils.preference.ThemePreference
 import com.algorand.android.utils.scrollToTop
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.mapNotNull
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -66,6 +70,7 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
 
     private val discoverHomePreviewCollector: suspend (DiscoverHomePreview) -> Unit = { preview ->
         with(preview) {
+            binding.webView.evaluateJavascript(JAVASCRIPT_PERACONNECT, null)
             updateUi(preview)
             loadingErrorEvent?.consume()?.run {
                 handleLoadingError(this)
@@ -95,6 +100,9 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
             }
             sendMessageEvent?.consume()?.let { message ->
                 sendWebMessage(message)
+            }
+            buySellActionEvent?.consume()?.run {
+                nav(this)
             }
         }
     }
@@ -288,6 +296,7 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
             webView.addJavascriptInterface(peraWebInterface, WEB_INTERFACE_NAME)
             webView.webViewClient = PeraWebViewClient(peraWebViewClientListener)
             webView.webChromeClient = PeraWebChromeClient(peraWebViewClientListener)
+            webView.evaluateJavascript(JAVASCRIPT_PERACONNECT, null)
         }
     }
 
@@ -337,6 +346,10 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
             discoverAssetSearchAdapter.loadStateFlow,
             loadStateFlowCollector
         )
+        viewLifecycleOwner.collectLatestOnLifecycle(
+            discoverViewModel.discoverHomePreviewFlow.mapNotNull { it.sendMessageEvent }.distinctUntilChanged(),
+            sendMessageEventCollector
+        )
     }
 
     private fun navigateToTokenDetailScreen(tokenDetail: TokenDetailInfo) {
@@ -345,6 +358,10 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
                 tokenDetail = tokenDetail
             )
         )
+    }
+
+    override fun handleTokenDetailActionButtonClick(jsonEncodedPayload: String) {
+        discoverViewModel.handleTokenDetailActionButtonClick(jsonEncodedPayload)
     }
 
     private fun navigateToDappUrl(
@@ -368,6 +385,12 @@ class DiscoverHomeFragment : BaseDiscoverFragment(R.layout.fragment_discover_hom
                 webUrl = url
             )
         )
+    }
+
+    private val sendMessageEventCollector: suspend (Event<String>) -> Unit = {
+        it.consume()?.let { message ->
+            sendWebMessage(message)
+        }
     }
 
     private fun sendWebMessage(message: String) {

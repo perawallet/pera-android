@@ -244,6 +244,19 @@ class DiscoverHomeViewModel @Inject constructor(
         }
     }
 
+    fun handleTokenDetailActionButtonClick(jsonEncodedPayload: String) {
+        viewModelScope.launch {
+            discoverHomePreviewUseCase.logTokenDetailActionButtonClick(jsonEncodedPayload)
+            _discoverHomePreviewFlow
+                .emit(
+                    discoverHomePreviewUseCase.handleTokenDetailActionButtonClick(
+                        jsonEncodedPayload,
+                        _discoverHomePreviewFlow.value
+                    )
+                )
+        }
+    }
+
     companion object {
         private const val QUERY_DEBOUNCE = 400L
         private const val URL_KEY = "url"

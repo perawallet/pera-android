@@ -24,7 +24,6 @@ import com.algorand.android.modules.perawebview.GetDeviceIdWebMessage
 import com.algorand.android.modules.perawebview.ParseOpenSystemBrowserUrl
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
 import com.algorand.android.modules.staking.model.StakingPreview
-import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.utils.Event
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,7 +36,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StakingViewModel @Inject constructor(
-    private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
     private val getAuthorizedAddressesInfoWebMessages: GetAuthorizedAddressesInfoWebMessages,
     private val getDeviceIdWebMessage: GetDeviceIdWebMessage,
     private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl,
@@ -53,12 +51,7 @@ class StakingViewModel @Inject constructor(
         get() = _stakingPreviewFlow.asStateFlow()
 
     fun getStakingUrl(): String {
-        val stakingBaseUrl = if (isConnectedToTestnet())
-            STAKING_URL
-        else
-            STAKING_URL
-
-        return "$stakingBaseUrl/${args.path.orEmpty()}"
+        return "$STAKING_URL/${args.path.orEmpty()}"
     }
 
     fun getAuthorizedAddresses() {
@@ -110,9 +103,5 @@ class StakingViewModel @Inject constructor(
 
     fun getPrimaryCurrencyId(): String {
         return currencyUseCase.getPrimaryCurrencyId()
-    }
-
-    fun isConnectedToTestnet(): Boolean {
-        return getIsActiveNodeTestnetUseCase.invoke()
     }
 }

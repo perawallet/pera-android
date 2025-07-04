@@ -21,9 +21,8 @@ import com.algorand.android.discover.common.ui.model.DappFavoriteElement
 import com.algorand.android.discover.home.ui.model.DiscoverHomePreview
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomePreviewUseCase
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomeUseCase
-import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
+import com.algorand.android.modules.perawebview.GetAuthorizedAddressesInfoWebMessages
 import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
-import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.preference.ThemePreference
 import com.algorand.wallet.remoteconfig.domain.usecase.DISCOVER_V5_TOGGLE
@@ -42,12 +41,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverHomeViewModel @Inject constructor(
-    private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
     private val discoverHomePreviewUseCase: DiscoverHomePreviewUseCase,
     private val discoverHomeEventTracker: DiscoverHomeEventTracker,
     private val discoverHomeUseCase: DiscoverHomeUseCase,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
-    private val getAuthorizedAddressesWebMessage: GetAuthorizedAddressesWebMessage,
+    private val getAuthorizedAddressesInfoWebMessages: GetAuthorizedAddressesInfoWebMessages,
     savedStateHandle: SavedStateHandle
 ) : BaseDiscoverViewModel() {
 
@@ -233,20 +231,29 @@ class DiscoverHomeViewModel @Inject constructor(
         return discoverHomePreviewFlow.value.themePreference
     }
 
-    fun isConnectedToTestnet(): Boolean {
-        return getIsActiveNodeTestnetUseCase.invoke()
-    }
-
     fun isV5Enabled(): Boolean {
         return isFeatureToggleEnabled(DISCOVER_V5_TOGGLE)
     }
 
     fun getAuthorizedAddresses() {
         viewModelScope.launch {
-            val authAddressesMessage = getAuthorizedAddressesWebMessage()
+            val authAddressesMessage = getAuthorizedAddressesInfoWebMessages()
             _discoverHomePreviewFlow.update {
                 it.copy(sendMessageEvent = Event(authAddressesMessage))
             }
+        }
+    }
+
+    fun handleTokenDetailActionButtonClick(jsonEncodedPayload: String) {
+        viewModelScope.launch {
+            discoverHomePreviewUseCase.logTokenDetailActionButtonClick(jsonEncodedPayload)
+            _discoverHomePreviewFlow
+                .emit(
+                    discoverHomePreviewUseCase.handleTokenDetailActionButtonClick(
+                        jsonEncodedPayload,
+                        _discoverHomePreviewFlow.value
+                    )
+                )
         }
     }
 

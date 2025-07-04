@@ -10,19 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.android.discover.detail.domain.model
+package com.algorand.android.modules.perawebview.model
 
-import android.os.Parcelable
-import com.algorand.android.discover.detail.ui.model.DiscoverDetailAction
-import com.google.gson.annotations.SerializedName
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
-data class DetailActionRequest(
-    @SerializedName("action")
-    val action: DiscoverDetailAction?,
-    @SerializedName("asset_in")
-    val assetIn: String?,
-    @SerializedName("asset_out")
-    val assetOut: String?
-) : Parcelable
+data class AddressInfoMessage(
+    val address: String,
+    val name: String,
+    val type: String
+)

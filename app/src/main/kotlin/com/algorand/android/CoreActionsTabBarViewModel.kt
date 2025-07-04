@@ -13,10 +13,8 @@
 package com.algorand.android
 
 import androidx.lifecycle.ViewModel
-import com.algorand.android.BuildConfig.DISCOVER_MAINNET_URL
-import com.algorand.android.BuildConfig.DISCOVER_TESTNET_URL
+import com.algorand.android.BuildConfig.DISCOVER_URL
 import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
-import com.algorand.android.usecase.GetIsProductionBuildUseCase
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +24,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CoreActionsTabBarViewModel @Inject constructor(
-    private val getIsProductionBuildUseCase: GetIsProductionBuildUseCase,
     private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : ViewModel() {
@@ -46,17 +43,12 @@ class CoreActionsTabBarViewModel @Inject constructor(
     }
 
     fun getDiscoverUrlWithPath(path: String): String {
-        val baseDiscoverUrl = if (isConnectedToTestnet()) DISCOVER_TESTNET_URL else DISCOVER_MAINNET_URL
         val normalizedPath = if (path.startsWith("/")) path else "/$path"
-        return baseDiscoverUrl + normalizedPath
+        return DISCOVER_URL + normalizedPath
     }
 
-    fun isConnectedToTestnet(): Boolean {
+    private fun isConnectedToTestnet(): Boolean {
         return getIsActiveNodeTestnetUseCase.invoke()
-    }
-
-    fun isProductionBuild(): Boolean {
-        return getIsProductionBuildUseCase.invoke()
     }
 
     sealed interface ViewState {

@@ -14,8 +14,7 @@ package com.algorand.android.discover.utils
 
 import android.util.Base64
 import com.algorand.android.BuildConfig
-import com.algorand.android.BuildConfig.DISCOVER_MAINNET_URL
-import com.algorand.android.BuildConfig.DISCOVER_TESTNET_URL
+import com.algorand.android.BuildConfig.DISCOVER_URL
 import com.algorand.android.discover.common.ui.model.WebViewTheme
 
 private const val WEBVIEW_AUTH_USERNAME = BuildConfig.DISCOVER_WEBVIEW_USERNAME
@@ -29,11 +28,9 @@ val regexPatternPeraURL = """^https://([\da-z-]+\.)*(?<!web\.)perawallet\.app((?
 fun getDiscoverHomeUrl(
     themePreference: WebViewTheme,
     currency: String,
-    locale: String,
-    isConnectedToTestnet: Boolean,
+    locale: String
 ): String {
-    val url = if (isConnectedToTestnet) DISCOVER_TESTNET_URL else DISCOVER_MAINNET_URL
-    return DiscoverUrlBuilder.create(url)
+    return DiscoverUrlBuilder.create(DISCOVER_URL)
         .addTheme(themePreference)
         .addVersion(BuildConfig.DISCOVER_VERSION)
         .addPlatform()
@@ -47,11 +44,9 @@ fun getDiscoverTokenDetailUrl(
     tokenId: String,
     poolId: String?,
     currency: String,
-    locale: String,
-    isConnectedToTestnet: Boolean,
+    locale: String
 ): String {
-    val url = if (isConnectedToTestnet) DISCOVER_TESTNET_URL else DISCOVER_MAINNET_URL
-    return DiscoverUrlBuilder.create(url)
+    return DiscoverUrlBuilder.create(DISCOVER_URL)
         .addTheme(themePreference)
         .addVersion(BuildConfig.DISCOVER_VERSION)
         .addPlatform()

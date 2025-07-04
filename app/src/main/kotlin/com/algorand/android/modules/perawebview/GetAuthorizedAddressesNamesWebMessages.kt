@@ -10,13 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.tracking.discover.detail
+package com.algorand.android.modules.perawebview
 
-import com.algorand.android.modules.tracking.discover.common.DiscoverCommonEventTracker
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
-import javax.inject.Inject
-
-// TODO use this class when the swap integration is completed to track buy/sell events
-class DiscoverDetailEventTracker @Inject constructor(
-    peraEventTracker: PeraEventTracker
-) : DiscoverCommonEventTracker(peraEventTracker)
+fun interface GetAuthorizedAddressesNamesWebMessages {
+    suspend operator fun invoke(): String
+}

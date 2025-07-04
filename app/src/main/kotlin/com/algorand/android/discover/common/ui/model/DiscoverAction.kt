@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.discover.detail.ui.model
+package com.algorand.android.discover.common.ui.model
 
 import com.google.gson.annotations.SerializedName
 
@@ -19,7 +19,7 @@ private const val SWAP_FROM_ALGO_SERIALIZATION_VALUE = "swap-from-algo"
 private const val SWAP_FROM_TOKEN_SERIALIZATION_VALUE = "swap-from-token"
 private const val SWAP_TO_TOKEN_SERIALIZATION_VALUE = "swap-to-token"
 
-enum class DiscoverDetailAction(val value: String?) {
+enum class DiscoverAction(val value: String?) {
     @SerializedName(BUY_ALGO_SERIALIZATION_VALUE)
     BUY_ALGO(BUY_ALGO_SERIALIZATION_VALUE),
 

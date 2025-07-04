@@ -15,13 +15,13 @@ package com.algorand.android.discover.detail.ui.usecase
 import android.content.SharedPreferences
 import androidx.navigation.NavDirections
 import com.algorand.android.deviceregistration.domain.usecase.DeviceIdUseCase
+import com.algorand.android.discover.common.domain.DiscoverActionRequest
+import com.algorand.android.discover.common.ui.model.DiscoverAction
 import com.algorand.android.discover.common.ui.model.OpenSystemBrowserRequest
 import com.algorand.android.discover.common.ui.model.WebViewError
-import com.algorand.android.discover.detail.domain.model.DetailActionRequest
 import com.algorand.android.discover.detail.ui.DiscoverDetailFragmentDirections
 import com.algorand.android.discover.detail.ui.mapper.BuySellActionRequestMapper
 import com.algorand.android.discover.detail.ui.model.BuySellActionRequest
-import com.algorand.android.discover.detail.ui.model.DiscoverDetailAction
 import com.algorand.android.discover.detail.ui.model.DiscoverDetailPreview
 import com.algorand.android.discover.home.domain.model.DappInfo
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
@@ -84,7 +84,7 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
 
         detailActionRequest?.let {
             logDetailAction(
-                detailActionRequest = it,
+                discoverActionRequest = it,
                 assetIn = getSafeAssetIdForResponse(it.assetIn?.toLongOrNull()) ?: -1,
                 assetOut = getSafeAssetIdForResponse(it.assetOut?.toLongOrNull()) ?: -1
             )
@@ -107,6 +107,7 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
             BuySellActionRequest.Destination.MELD -> {
                 swapNavDirection = DiscoverDetailFragmentDirections.actionDiscoverDetailFragmentToMeldNavigation()
             }
+
             BuySellActionRequest.Destination.SWAP -> {
                 discoverSwapNavigationDestinationHelper.getSwapNavigationDestination(
                     onNavToIntroduction = {
@@ -125,6 +126,7 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
                     }
                 )
             }
+
             BuySellActionRequest.Destination.ONRAMP -> {}
             else -> {}
         }
@@ -133,7 +135,7 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
         } ?: previousState
     }
 
-    suspend fun getSendDeviceIdJSFunctionOrNull(callingUrl: String): String? {
+    fun getSendDeviceIdJSFunctionOrNull(callingUrl: String): String? {
         val deviceId = deviceIdUseCase.getSelectedNodeDeviceId()
         return if (deviceId != null && isValidDiscoverURL(callingUrl)) {
             getSendDeviceId(deviceId, gson)
@@ -142,29 +144,31 @@ class DiscoverDetailPreviewUseCase @Inject constructor(
         }
     }
 
-    private fun getDetailActionRequestFromJson(jsonEncodedPayload: String): DetailActionRequest? {
-        return gson.fromJson<DetailActionRequest>(jsonEncodedPayload)
+    private fun getDetailActionRequestFromJson(jsonEncodedPayload: String): DiscoverActionRequest? {
+        return gson.fromJson<DiscoverActionRequest>(jsonEncodedPayload)
     }
 
     private suspend fun logDetailAction(
-        detailActionRequest: DetailActionRequest,
+        discoverActionRequest: DiscoverActionRequest,
         assetIn: Long,
         assetOut: Long
     ) {
-        when (detailActionRequest.action) {
-            DiscoverDetailAction.BUY_ALGO, DiscoverDetailAction.SWAP_TO_TOKEN -> {
+        when (discoverActionRequest.action) {
+            DiscoverAction.BUY_ALGO, DiscoverAction.SWAP_TO_TOKEN -> {
                 discoverDetailEventTracker.logTokenDetailBuyEvent(
                     assetIn = assetIn,
                     assetOut = assetOut
                 )
             }
-            DiscoverDetailAction.SWAP_FROM_ALGO, DiscoverDetailAction.SWAP_FROM_TOKEN -> {
+
+            DiscoverAction.SWAP_FROM_ALGO, DiscoverAction.SWAP_FROM_TOKEN -> {
                 discoverDetailEventTracker.logTokenDetailSellEvent(
                     assetIn = assetIn,
                     assetOut = assetOut
                 )
             }
-            DiscoverDetailAction.UNKNOWN, null -> {
+
+            DiscoverAction.UNKNOWN, null -> {
                 // No log action defined here
             }
         }

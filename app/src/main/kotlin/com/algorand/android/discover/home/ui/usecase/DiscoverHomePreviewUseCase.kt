@@ -13,20 +13,29 @@
 package com.algorand.android.discover.home.ui.usecase
 
 import android.content.SharedPreferences
+import androidx.navigation.NavDirections
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.algorand.android.assetsearch.domain.mapper.AssetSearchQueryMapper
 import com.algorand.android.assetsearch.domain.pagination.AssetSearchPagerBuilder
+import com.algorand.android.discover.common.domain.DiscoverActionRequest
+import com.algorand.android.discover.common.ui.model.DiscoverAction
 import com.algorand.android.discover.common.ui.model.OpenSystemBrowserRequest
 import com.algorand.android.discover.common.ui.model.WebViewError
+import com.algorand.android.discover.detail.ui.mapper.BuySellActionRequestMapper
+import com.algorand.android.discover.detail.ui.model.BuySellActionRequest
 import com.algorand.android.discover.home.domain.model.DappInfo
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.discover.home.domain.model.UrlElement
 import com.algorand.android.discover.home.domain.usecase.DiscoverSearchAssetUseCase
+import com.algorand.android.discover.home.ui.DiscoverHomeFragmentDirections
 import com.algorand.android.discover.home.ui.mapper.DiscoverAssetItemMapper
 import com.algorand.android.discover.home.ui.mapper.DiscoverDappFavoritesMapper
 import com.algorand.android.discover.home.ui.model.DiscoverAssetItem
 import com.algorand.android.discover.home.ui.model.DiscoverHomePreview
+import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForResponse
+import com.algorand.android.modules.swap.utils.DiscoverSwapNavigationDestinationHelper
+import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.fromJson
 import com.algorand.android.utils.preference.getSavedThemePreference
@@ -42,7 +51,10 @@ class DiscoverHomePreviewUseCase @Inject constructor(
     private val discoverAssetItemMapper: DiscoverAssetItemMapper,
     private val sharedPreferences: SharedPreferences,
     private val discoverDappFavoritesMapper: DiscoverDappFavoritesMapper,
-    private val gson: Gson
+    private val gson: Gson,
+    private val discoverHomeEventTracker: DiscoverHomeEventTracker,
+    private val buySellActionRequestMapper: BuySellActionRequestMapper,
+    private val discoverSwapNavigationDestinationHelper: DiscoverSwapNavigationDestinationHelper,
 ) {
 
     fun getSearchPaginationFlow(
@@ -103,9 +115,9 @@ class DiscoverHomePreviewUseCase @Inject constructor(
             if (isLoading.not()) previousState.handleQueryChangeForScrollEvent?.consume()?.run { Event(Unit) } else null
         return previousState.copy(
             isListEmpty = isListEmpty &&
-                !isCurrentStateError &&
-                !isLoading &&
-                previousState.isSearchActivated,
+                    !isCurrentStateError &&
+                    !isLoading &&
+                    previousState.isSearchActivated,
             scrollToTopEvent = scrollToTopEvent
         )
     }
@@ -178,5 +190,91 @@ class DiscoverHomePreviewUseCase @Inject constructor(
 
     fun getOpenSystemBrowserRequestFromJson(json: String): OpenSystemBrowserRequest? {
         return gson.fromJson<OpenSystemBrowserRequest>(json)
+    }
+
+    suspend fun handleTokenDetailActionButtonClick(
+        data: String,
+        previousState: DiscoverHomePreview
+    ): DiscoverHomePreview {
+        val detailActionRequest = getDetailActionRequestFromJson(data)
+
+        val buySellActionRequest = buySellActionRequestMapper.mapToBuySellActionRequest(
+            assetInId = getSafeAssetIdForResponse(detailActionRequest?.assetIn?.toLongOrNull()) ?: -1,
+            assetOutId = getSafeAssetIdForResponse(detailActionRequest?.assetOut?.toLongOrNull()) ?: -1,
+            detailAction = detailActionRequest?.action
+        )
+        var swapNavDirection: NavDirections? = null
+        when (buySellActionRequest.destination) {
+            BuySellActionRequest.Destination.MELD -> {
+                swapNavDirection = DiscoverHomeFragmentDirections.actionDiscoverHomeFragmentToMeldNavigation()
+            }
+
+            BuySellActionRequest.Destination.SWAP -> {
+                discoverSwapNavigationDestinationHelper.getSwapNavigationDestination(
+                    onNavToIntroduction = {
+                        swapNavDirection = DiscoverHomeFragmentDirections
+                            .actionDiscoverHomeFragmentToSwapIntroductionNavigation(
+                                fromAssetId = buySellActionRequest.assetInId ?: -1L,
+                                toAssetId = buySellActionRequest.assetOutId ?: -1L
+                            )
+                    },
+                    onNavToAccountSelection = {
+                        swapNavDirection = DiscoverHomeFragmentDirections
+                            .actionDiscoverHomeFragmentToSwapAccountSelectionNavigation(
+                                fromAssetId = buySellActionRequest.assetInId ?: -1L,
+                                toAssetId = buySellActionRequest.assetOutId ?: -1L
+                            )
+                    }
+                )
+            }
+
+            BuySellActionRequest.Destination.ONRAMP -> {}
+            else -> {}
+        }
+        return swapNavDirection?.let { direction ->
+            previousState.copy(buySellActionEvent = Event(direction))
+        } ?: previousState
+    }
+
+    private fun getDetailActionRequestFromJson(jsonEncodedPayload: String): DiscoverActionRequest? {
+        return gson.fromJson<DiscoverActionRequest>(jsonEncodedPayload)
+    }
+
+    suspend fun logTokenDetailActionButtonClick(jsonEncodedPayload: String) {
+        val detailActionRequest = getDetailActionRequestFromJson(jsonEncodedPayload)
+
+        detailActionRequest?.let {
+            logDetailAction(
+                discoverActionRequest = it,
+                assetIn = getSafeAssetIdForResponse(it.assetIn?.toLongOrNull()) ?: -1,
+                assetOut = getSafeAssetIdForResponse(it.assetOut?.toLongOrNull()) ?: -1
+            )
+        }
+    }
+
+    private suspend fun logDetailAction(
+        discoverActionRequest: DiscoverActionRequest,
+        assetIn: Long,
+        assetOut: Long
+    ) {
+        when (discoverActionRequest.action) {
+            DiscoverAction.BUY_ALGO, DiscoverAction.SWAP_TO_TOKEN -> {
+                discoverHomeEventTracker.logTokenDetailBuyEvent(
+                    assetIn = assetIn,
+                    assetOut = assetOut
+                )
+            }
+
+            DiscoverAction.SWAP_FROM_ALGO, DiscoverAction.SWAP_FROM_TOKEN -> {
+                discoverHomeEventTracker.logTokenDetailSellEvent(
+                    assetIn = assetIn,
+                    assetOut = assetOut
+                )
+            }
+
+            DiscoverAction.UNKNOWN, null -> {
+                // No log action defined here
+            }
+        }
     }
 }

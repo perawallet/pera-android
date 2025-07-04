@@ -48,7 +48,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AccountHistoryFragment : BaseFragment(R.layout.fragment_account_history) {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     private val binding by viewBinding(FragmentAccountHistoryBinding::bind)
 

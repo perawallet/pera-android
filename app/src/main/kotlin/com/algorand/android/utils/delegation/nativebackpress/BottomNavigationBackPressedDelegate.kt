@@ -31,14 +31,10 @@ class BottomNavigationBackPressedDelegate : BackPressedControllerComponent {
 
     override fun onBackButtonPressed() {
         val currentDestination = navController.currentDestination
-        if (activity.isCoreActionsTabBarViewVisible()) {
-            activity.hideCoreActionsTabBarView()
+        if (currentDestination?.id != ACCOUNTS_FRAGMENT_NAVIGATION_ID) {
+            activity.setBottomNavigationBarSelectedItem(ACCOUNTS_FRAGMENT_NAVIGATION_ID)
         } else {
-            if (currentDestination?.id != ACCOUNTS_FRAGMENT_NAVIGATION_ID) {
-                activity.setBottomNavigationBarSelectedItem(ACCOUNTS_FRAGMENT_NAVIGATION_ID)
-            } else {
-                activity.finish()
-            }
+            activity.finish()
         }
     }
 

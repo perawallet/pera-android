@@ -15,7 +15,6 @@ package com.algorand.android
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
@@ -75,9 +74,6 @@ abstract class CoreMainActivity : BaseActivity() {
     var isBottomBarNavigationVisible by Delegates.observable(false) { _, oldValue, newValue ->
         if (newValue != oldValue) {
             binding.bottomNavigationView.isVisible = newValue
-            binding.coreActionsTabBarView.apply {
-                if (newValue) visibility = View.VISIBLE else hideWithoutAnimation()
-            }
         }
     }
 
@@ -151,8 +147,11 @@ abstract class CoreMainActivity : BaseActivity() {
     }
 
     fun handleNavigationButtonsForChosenNetwork() {
-        handleBottomBarNavigationForChosenNetwork()
-        handleCoreActionsTabBarForChosenNetwork()
+        binding.bottomNavigationView.menu.forEach { menuItem ->
+            if (menuItem.itemId == R.id.discoverHomeNavigation) {
+                menuItem.isEnabled = isConnectedToTestNet.not() || isStagingApp()
+            }
+        }
     }
 
     fun checkIfConnectedToTestNet(activeNode: Node?) {
@@ -173,14 +172,6 @@ abstract class CoreMainActivity : BaseActivity() {
 
     fun setBottomNavigationBarSelectedItem(@IdRes itemRes: Int) {
         binding.bottomNavigationView.selectedItemId = itemRes
-    }
-
-    fun isCoreActionsTabBarViewVisible(): Boolean {
-        return isBottomBarNavigationVisible && binding.coreActionsTabBarView.isCoreActionsOpened
-    }
-
-    fun hideCoreActionsTabBarView() {
-        binding.coreActionsTabBarView.hideWithAnimation()
     }
 
     fun getToolbar(): CustomToolbar {
@@ -234,19 +225,6 @@ abstract class CoreMainActivity : BaseActivity() {
                 showDarkStatusBarIcons()
             }
         }
-    }
-
-    private fun handleBottomBarNavigationForChosenNetwork() {
-        binding.bottomNavigationView.menu.forEach { menuItem ->
-            if (menuItem.itemId == R.id.discoverHomeNavigation) {
-                menuItem.isEnabled = isConnectedToTestNet.not() || isStagingApp()
-            }
-        }
-    }
-
-    private fun handleCoreActionsTabBarForChosenNetwork() {
-        binding.coreActionsTabBarView.setBrowseDappsEnabled(isConnectedToTestNet.not())
-        binding.coreActionsTabBarView.setBuySellButtonEnabled(isConnectedToTestNet.not())
     }
 
     companion object {

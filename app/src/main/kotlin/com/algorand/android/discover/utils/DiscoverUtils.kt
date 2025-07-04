@@ -71,12 +71,21 @@ fun getDiscoverCustomUrl(
         .build()
 }
 
-fun getCustomUrl(url: String, themePreference: WebViewTheme, currency: String, locale: String): String {
+fun getCustomUrl(
+    url: String,
+    themePreference: WebViewTheme,
+    currency: String,
+    locale: String,
+    version: String? = null
+): String {
     return DiscoverUrlBuilder.create(url)
         .addTheme(themePreference)
         .addPlatform()
         .addCurrency(currency)
         .addLocale(locale)
+        .apply {
+            if (version != null) addVersion(version)
+        }
         .build()
 }
 

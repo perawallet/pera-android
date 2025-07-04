@@ -292,15 +292,16 @@ class InitialRegisterIntroFragment : DaggerBaseFragment(0) {
     }
 
     private fun onCreateNewWalletClicked() {
+        viewModel.logNewOnboardingImportClickEvent()
         navToCreateWalletNameRegistrationNavigation()
     }
 
     private fun onImportAccountClicked() {
+        viewModel.logNewOnboardingCreateNewAccountClickEvent()
         navToAccountRecoveryTypeSelectionNavigation()
     }
 
     private fun navToAccountRecoveryTypeSelectionNavigation() {
-        viewModel.logNewOnboardingCreateNewAccountClickEvent()
         nav(
             InitialRegisterIntroFragmentDirections
                 .actionInitialRegisterIntroFragmentToRecoveryTypeSelectionNavigation()
@@ -308,7 +309,6 @@ class InitialRegisterIntroFragment : DaggerBaseFragment(0) {
     }
 
     private fun navToCreateWalletNameRegistrationNavigation() {
-        viewModel.logNewOnboardingImportClickEvent()
         nav(
             InitialRegisterIntroFragmentDirections
                 .actionInitialRegisterIntroFragmentToCreateWalletNameRegistrationNavigation(

@@ -13,17 +13,15 @@
 package com.algorand.android.modules.staking
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.BuildConfig.STAKING_MAINNET_URL
-import com.algorand.android.BuildConfig.STAKING_TESTNET_URL
+import com.algorand.android.BuildConfig.STAKING_URL
 import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.discover.home.domain.model.DappInfo
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
-import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
+import com.algorand.android.modules.perawebview.GetAuthorizedAddressesInfoWebMessages
 import com.algorand.android.modules.perawebview.GetDeviceIdWebMessage
 import com.algorand.android.modules.perawebview.ParseOpenSystemBrowserUrl
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
 import com.algorand.android.modules.staking.model.StakingPreview
-import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.utils.Event
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,8 +34,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class StakingViewModel @Inject constructor(
-    private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
-    private val getAuthorizedAddressesWebMessage: GetAuthorizedAddressesWebMessage,
+    private val getAuthorizedAddressesInfoWebMessages: GetAuthorizedAddressesInfoWebMessages,
     private val getDeviceIdWebMessage: GetDeviceIdWebMessage,
     private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl,
     private val currencyUseCase: CurrencyUseCase,
@@ -49,15 +46,12 @@ class StakingViewModel @Inject constructor(
         get() = _stakingPreviewFlow.asStateFlow()
 
     fun getStakingBaseUrl(): String {
-        return if (isConnectedToTestnet())
-            STAKING_TESTNET_URL
-        else
-            STAKING_MAINNET_URL
+        return STAKING_URL
     }
 
     fun getAuthorizedAddresses() {
         viewModelScope.launch {
-            val authAddressesMessage = getAuthorizedAddressesWebMessage()
+            val authAddressesMessage = getAuthorizedAddressesInfoWebMessages()
             _stakingPreviewFlow.update {
                 it.copy(sendMessageEvent = Event(authAddressesMessage))
             }
@@ -104,9 +98,5 @@ class StakingViewModel @Inject constructor(
 
     fun getPrimaryCurrencyId(): String {
         return currencyUseCase.getPrimaryCurrencyId()
-    }
-
-    fun isConnectedToTestnet(): Boolean {
-        return getIsActiveNodeTestnetUseCase.invoke()
     }
 }

@@ -12,9 +12,9 @@
 
 package com.algorand.android.discover.detail.ui.mapper
 
+import com.algorand.android.discover.common.ui.model.DiscoverAction
 import com.algorand.android.discover.detail.ui.decider.BuySellActionDestinationDecider
 import com.algorand.android.discover.detail.ui.model.BuySellActionRequest
-import com.algorand.android.discover.detail.ui.model.DiscoverDetailAction
 import javax.inject.Inject
 
 class BuySellActionRequestMapper @Inject constructor(
@@ -24,7 +24,7 @@ class BuySellActionRequestMapper @Inject constructor(
     fun mapToBuySellActionRequest(
         assetInId: Long,
         assetOutId: Long,
-        detailAction: DiscoverDetailAction?
+        detailAction: DiscoverAction?
     ): BuySellActionRequest {
         return BuySellActionRequest(
             destination = buySellActionDestinationDecider.getBuySellActionDestination(detailAction),

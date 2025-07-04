@@ -12,15 +12,15 @@
 
 package com.algorand.android.modules.tracking.discover.home
 
-import com.algorand.android.modules.tracking.core.BaseEventTracker
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import com.algorand.android.modules.tracking.discover.DiscoverEventTrackerConstants.ASSET_ID_PAYLOAD_KEY
 import com.algorand.android.modules.tracking.discover.DiscoverEventTrackerConstants.QUERY_PAYLOAD_KEY
+import com.algorand.android.modules.tracking.discover.common.DiscoverCommonEventTracker
+import com.algorand.wallet.analytics.domain.service.PeraEventTracker
 import javax.inject.Inject
 
 class DiscoverHomeEventTracker @Inject constructor(
     peraEventTracker: PeraEventTracker
-) : BaseEventTracker(peraEventTracker) {
+) : DiscoverCommonEventTracker(peraEventTracker) {
 
     suspend fun logQueryEvent(
         query: String,

@@ -12,18 +12,18 @@
 
 package com.algorand.android.discover.detail.ui.decider
 
+import com.algorand.android.discover.common.ui.model.DiscoverAction
+import com.algorand.android.discover.common.ui.model.DiscoverAction.BUY_ALGO
+import com.algorand.android.discover.common.ui.model.DiscoverAction.SWAP_FROM_ALGO
+import com.algorand.android.discover.common.ui.model.DiscoverAction.SWAP_FROM_TOKEN
+import com.algorand.android.discover.common.ui.model.DiscoverAction.SWAP_TO_TOKEN
 import com.algorand.android.discover.detail.ui.model.BuySellActionRequest
-import com.algorand.android.discover.detail.ui.model.DiscoverDetailAction
-import com.algorand.android.discover.detail.ui.model.DiscoverDetailAction.BUY_ALGO
-import com.algorand.android.discover.detail.ui.model.DiscoverDetailAction.SWAP_FROM_ALGO
-import com.algorand.android.discover.detail.ui.model.DiscoverDetailAction.SWAP_FROM_TOKEN
-import com.algorand.android.discover.detail.ui.model.DiscoverDetailAction.SWAP_TO_TOKEN
 import javax.inject.Inject
 
 class BuySellActionDestinationDecider @Inject constructor() {
 
-    fun getBuySellActionDestination(discoverDetailAction: DiscoverDetailAction?): BuySellActionRequest.Destination? {
-        return when (discoverDetailAction) {
+    fun getBuySellActionDestination(discoverAction: DiscoverAction?): BuySellActionRequest.Destination? {
+        return when (discoverAction) {
             BUY_ALGO -> BuySellActionRequest.Destination.MELD
             SWAP_FROM_ALGO, SWAP_FROM_TOKEN, SWAP_TO_TOKEN -> BuySellActionRequest.Destination.SWAP
             else -> null

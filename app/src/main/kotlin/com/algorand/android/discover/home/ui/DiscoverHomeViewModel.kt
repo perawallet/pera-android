@@ -23,7 +23,6 @@ import com.algorand.android.discover.home.ui.usecase.DiscoverHomePreviewUseCase
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomeUseCase
 import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
 import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
-import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.preference.ThemePreference
 import com.algorand.wallet.remoteconfig.domain.usecase.DISCOVER_V5_TOGGLE
@@ -42,7 +41,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverHomeViewModel @Inject constructor(
-    private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
     private val discoverHomePreviewUseCase: DiscoverHomePreviewUseCase,
     private val discoverHomeEventTracker: DiscoverHomeEventTracker,
     private val discoverHomeUseCase: DiscoverHomeUseCase,
@@ -231,10 +229,6 @@ class DiscoverHomeViewModel @Inject constructor(
 
     override fun getDiscoverThemePreference(): ThemePreference {
         return discoverHomePreviewFlow.value.themePreference
-    }
-
-    fun isConnectedToTestnet(): Boolean {
-        return getIsActiveNodeTestnetUseCase.invoke()
     }
 
     fun isV5Enabled(): Boolean {

@@ -28,8 +28,7 @@ val regexPatternPeraURL = """^https://([\da-z-]+\.)*(?<!web\.)perawallet\.app((?
 fun getDiscoverHomeUrl(
     themePreference: WebViewTheme,
     currency: String,
-    locale: String,
-    isConnectedToTestnet: Boolean,
+    locale: String
 ): String {
     return DiscoverUrlBuilder.create(DISCOVER_URL)
         .addTheme(themePreference)
@@ -45,8 +44,7 @@ fun getDiscoverTokenDetailUrl(
     tokenId: String,
     poolId: String?,
     currency: String,
-    locale: String,
-    isConnectedToTestnet: Boolean,
+    locale: String
 ): String {
     return DiscoverUrlBuilder.create(DISCOVER_URL)
         .addTheme(themePreference)

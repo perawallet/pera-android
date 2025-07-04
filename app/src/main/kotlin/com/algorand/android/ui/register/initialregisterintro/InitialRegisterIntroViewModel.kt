@@ -12,19 +12,25 @@
 
 package com.algorand.android.ui.register.initialregisterintro
 
+import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
+import com.algorand.android.modules.tracking.onboarding.register.initialregisterintro.NewOnboardingCreateNewAccountEventTracker
+import com.algorand.android.modules.tracking.onboarding.register.initialregisterintro.NewOnboardingImportAccountEventTracker
 import com.algorand.android.ui.onboarding.creation.mapper.AccountCreationHdKeyTypeMapper
 import com.algorand.android.utils.analytics.CreationType
 import com.algorand.wallet.algosdk.bip39.model.HdKeyAddressIndex
 import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class InitialRegisterIntroViewModel @Inject constructor(
     private val bip39WalletProvider: Bip39WalletProvider,
-    private val accountCreationHdKeyTypeMapper: AccountCreationHdKeyTypeMapper
+    private val accountCreationHdKeyTypeMapper: AccountCreationHdKeyTypeMapper,
+    private val newOnboardingCreateNewAccountEventTracker: NewOnboardingCreateNewAccountEventTracker,
+    private val newOnboardingImportAccountEventTracker: NewOnboardingImportAccountEventTracker,
 ) : BaseViewModel() {
 
     fun createHdKeyAccount(): AccountCreation {
@@ -39,6 +45,18 @@ class InitialRegisterIntroViewModel @Inject constructor(
             creationType = CreationType.CREATE
         ).also {
             wallet.invalidate()
+        }
+    }
+
+    fun logNewOnboardingCreateNewAccountClickEvent() {
+        viewModelScope.launch {
+            newOnboardingCreateNewAccountEventTracker.logNewOnboardingCreateNewAccountEvent()
+        }
+    }
+
+    fun logNewOnboardingImportClickEvent() {
+        viewModelScope.launch {
+            newOnboardingImportAccountEventTracker.logNewOnboardingImportAccountEvent()
         }
     }
 }

@@ -12,6 +12,6 @@
 
 package com.algorand.android.modules.perawebview
 
-fun interface GetAuthorizedAddressesWebMessage {
+fun interface GetAuthorizedAddressesInfoWebMessages {
     suspend operator fun invoke(): String
 }

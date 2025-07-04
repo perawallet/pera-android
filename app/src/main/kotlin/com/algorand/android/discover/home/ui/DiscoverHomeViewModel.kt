@@ -21,7 +21,7 @@ import com.algorand.android.discover.common.ui.model.DappFavoriteElement
 import com.algorand.android.discover.home.ui.model.DiscoverHomePreview
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomePreviewUseCase
 import com.algorand.android.discover.home.ui.usecase.DiscoverHomeUseCase
-import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
+import com.algorand.android.modules.perawebview.GetAuthorizedAddressesInfoWebMessages
 import com.algorand.android.modules.tracking.discover.home.DiscoverHomeEventTracker
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.preference.ThemePreference
@@ -45,7 +45,7 @@ class DiscoverHomeViewModel @Inject constructor(
     private val discoverHomeEventTracker: DiscoverHomeEventTracker,
     private val discoverHomeUseCase: DiscoverHomeUseCase,
     private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
-    private val getAuthorizedAddressesWebMessage: GetAuthorizedAddressesWebMessage,
+    private val getAuthorizedAddressesInfoWebMessages: GetAuthorizedAddressesInfoWebMessages,
     savedStateHandle: SavedStateHandle
 ) : BaseDiscoverViewModel() {
 
@@ -237,7 +237,7 @@ class DiscoverHomeViewModel @Inject constructor(
 
     fun getAuthorizedAddresses() {
         viewModelScope.launch {
-            val authAddressesMessage = getAuthorizedAddressesWebMessage()
+            val authAddressesMessage = getAuthorizedAddressesInfoWebMessages()
             _discoverHomePreviewFlow.update {
                 it.copy(sendMessageEvent = Event(authAddressesMessage))
             }

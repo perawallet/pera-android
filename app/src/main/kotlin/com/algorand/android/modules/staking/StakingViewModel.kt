@@ -14,8 +14,7 @@ package com.algorand.android.modules.staking
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.BuildConfig.STAKING_MAINNET_URL
-import com.algorand.android.BuildConfig.STAKING_TESTNET_URL
+import com.algorand.android.BuildConfig.STAKING_URL
 import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.discover.home.domain.model.DappInfo
 import com.algorand.android.modules.card.CardsFragmentArgs
@@ -55,9 +54,9 @@ class StakingViewModel @Inject constructor(
 
     fun getStakingUrl(): String {
         val stakingBaseUrl = if (isConnectedToTestnet())
-            STAKING_TESTNET_URL
+            STAKING_URL
         else
-            STAKING_MAINNET_URL
+            STAKING_URL
 
         return "$stakingBaseUrl/${args.path.orEmpty()}"
     }

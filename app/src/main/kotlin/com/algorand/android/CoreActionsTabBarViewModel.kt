@@ -13,8 +13,7 @@
 package com.algorand.android
 
 import androidx.lifecycle.ViewModel
-import com.algorand.android.BuildConfig.DISCOVER_MAINNET_URL
-import com.algorand.android.BuildConfig.DISCOVER_TESTNET_URL
+import com.algorand.android.BuildConfig.DISCOVER_URL
 import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.usecase.GetIsProductionBuildUseCase
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
@@ -46,9 +45,8 @@ class CoreActionsTabBarViewModel @Inject constructor(
     }
 
     fun getDiscoverUrlWithPath(path: String): String {
-        val baseDiscoverUrl = if (isConnectedToTestnet()) DISCOVER_TESTNET_URL else DISCOVER_MAINNET_URL
         val normalizedPath = if (path.startsWith("/")) path else "/$path"
-        return baseDiscoverUrl + normalizedPath
+        return DISCOVER_URL + normalizedPath
     }
 
     fun isConnectedToTestnet(): Boolean {

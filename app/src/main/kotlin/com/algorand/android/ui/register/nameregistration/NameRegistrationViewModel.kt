@@ -18,6 +18,7 @@ import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountCreation
 import com.algorand.android.models.ui.NameRegistrationPreview
+import com.algorand.android.modules.tracking.onboarding.register.initialregisterintro.NewOnboardingNameAccountEventTracker
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.usecase.IsOnHdWalletUseCase
 import com.algorand.android.usecase.NameRegistrationPreviewUseCase
@@ -28,12 +29,12 @@ import com.algorand.wallet.account.local.domain.usecase.GetMaxHdSeedId
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class NameRegistrationViewModel @Inject constructor(
@@ -42,7 +43,8 @@ class NameRegistrationViewModel @Inject constructor(
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
     private val isOnHdWalletUseCase: IsOnHdWalletUseCase,
     private val getMaxHdSeedId: GetMaxHdSeedId,
-    private val eventDelegate: EventDelegate<ViewEvent>
+    private val eventDelegate: EventDelegate<ViewEvent>,
+    private val newOnboardingNameAccountEventTracker: NewOnboardingNameAccountEventTracker,
 ) : BaseViewModel(), EventViewModel<NameRegistrationViewModel.ViewEvent> by eventDelegate {
 
     private val _nameRegistrationPreviewFlow = MutableStateFlow(getInitialPreview())
@@ -88,6 +90,14 @@ class NameRegistrationViewModel @Inject constructor(
         }
     }
 
+    private fun getInitialPreview(): NameRegistrationPreview {
+        return nameRegistrationPreviewUseCase.getInitialPreview()
+    }
+
+    private suspend fun logNewOnboardingNameAccountEvent() {
+        newOnboardingNameAccountEventTracker.logNewOnboardingNameAccountEvent()
+    }
+
     fun updateWatchAccount(accountCreation: AccountCreation) {
         viewModelScope.launch {
             nameRegistrationPreviewUseCase.updateTypeOfWatchAccount(accountCreation)
@@ -105,10 +115,6 @@ class NameRegistrationViewModel @Inject constructor(
         }
     }
 
-    private fun getInitialPreview(): NameRegistrationPreview {
-        return nameRegistrationPreviewUseCase.getInitialPreview()
-    }
-
     fun isOnHdWallet(): Boolean {
         return isOnHdWalletUseCase.invoke()
     }
@@ -122,6 +128,7 @@ class NameRegistrationViewModel @Inject constructor(
             if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {
                 eventDelegate.sendEvent(ViewEvent.ShowMaxAccountLimitExceededError)
             } else {
+                logNewOnboardingNameAccountEvent()
                 updatePreviewWithAccountCreation(accountCreation, inputName)
             }
         }

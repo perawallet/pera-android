@@ -292,12 +292,12 @@ class InitialRegisterIntroFragment : DaggerBaseFragment(0) {
     }
 
     private fun onCreateNewWalletClicked() {
-        viewModel.logNewOnboardingImportClickEvent()
+        viewModel.logNewOnboardingCreateNewAccountClickEvent()
         navToCreateWalletNameRegistrationNavigation()
     }
 
     private fun onImportAccountClicked() {
-        viewModel.logNewOnboardingCreateNewAccountClickEvent()
+        viewModel.logNewOnboardingImportClickEvent()
         navToAccountRecoveryTypeSelectionNavigation()
     }
 

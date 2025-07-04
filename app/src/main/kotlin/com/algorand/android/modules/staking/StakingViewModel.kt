@@ -13,7 +13,6 @@
 package com.algorand.android.modules.staking
 
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.BuildConfig.STAKING_URL
 import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.discover.home.domain.model.DappInfo
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
@@ -44,10 +43,6 @@ class StakingViewModel @Inject constructor(
     private val _stakingPreviewFlow = MutableStateFlow<StakingPreview>(StakingPreview())
     val stakingPreviewFlow: StateFlow<StakingPreview?>
         get() = _stakingPreviewFlow.asStateFlow()
-
-    fun getStakingBaseUrl(): String {
-        return STAKING_URL
-    }
 
     fun getAuthorizedAddresses() {
         viewModelScope.launch {

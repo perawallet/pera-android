@@ -14,6 +14,7 @@ package com.algorand.android.modules.staking
 
 import android.os.Bundle
 import android.view.View
+import com.algorand.android.BuildConfig.STAKING_URL
 import com.algorand.android.discover.utils.getCustomUrl
 import com.algorand.android.models.FragmentConfiguration
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
@@ -36,7 +37,7 @@ class StakingStandaloneFragment : BaseStakingFragment(),
 
     override fun getStakingUrl(): String {
         return getCustomUrl(
-            url = stakingViewModel.getStakingBaseUrl(),
+            url = STAKING_URL,
             themePreference = webViewThemeHelper.getWebViewThemeFromThemePreference(binding.root.context),
             currency = stakingViewModel.getPrimaryCurrencyId(),
             locale = Locale.getDefault().language,

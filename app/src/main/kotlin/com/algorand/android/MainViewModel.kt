@@ -17,8 +17,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
-import com.algorand.android.BuildConfig.DISCOVER_MAINNET_URL
-import com.algorand.android.BuildConfig.DISCOVER_TESTNET_URL
+import com.algorand.android.BuildConfig.DISCOVER_URL
 import com.algorand.android.MainActivity.Companion.DEEPLINK_KEY
 import com.algorand.android.MainActivity.Companion.WC_ARBITRARY_DATA_ID_INTENT_KEY
 import com.algorand.android.MainActivity.Companion.WC_TRANSACTION_ID_INTENT_KEY
@@ -250,9 +249,8 @@ class MainViewModel @Inject constructor(
     }
 
     fun getDiscoverUrlWithPath(path: String): String {
-        val baseDiscoverUrl = if (getIsActiveNodeTestnetUseCase()) DISCOVER_TESTNET_URL else DISCOVER_MAINNET_URL
         val normalizedPath = if (path.startsWith("/")) path else "/$path"
-        return baseDiscoverUrl + normalizedPath
+        return DISCOVER_URL + normalizedPath
     }
 
     private suspend fun shouldAppLocked(): Boolean {

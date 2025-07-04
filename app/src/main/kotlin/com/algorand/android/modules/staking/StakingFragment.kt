@@ -13,6 +13,7 @@
 package com.algorand.android.modules.staking
 
 import androidx.navigation.fragment.navArgs
+import com.algorand.android.BuildConfig.STAKING_URL
 import com.algorand.android.discover.utils.getCustomUrl
 import com.algorand.android.models.FragmentConfiguration
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +27,7 @@ class StakingFragment : BaseStakingFragment() {
     private val args: StakingFragmentArgs by navArgs()
 
     override fun getStakingUrl(): String {
-        val stakingUrl = "${stakingViewModel.getStakingBaseUrl()}/${args.path.orEmpty()}"
+        val stakingUrl = "$STAKING_URL/${args.path.orEmpty()}"
         return getCustomUrl(
             url = stakingUrl,
             themePreference = webViewThemeHelper.getWebViewThemeFromThemePreference(binding.root.context),

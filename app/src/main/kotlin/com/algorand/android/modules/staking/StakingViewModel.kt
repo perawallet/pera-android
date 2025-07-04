@@ -19,7 +19,7 @@ import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.discover.home.domain.model.DappInfo
 import com.algorand.android.modules.card.CardsFragmentArgs
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
-import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
+import com.algorand.android.modules.perawebview.GetAuthorizedAddressesInfoWebMessages
 import com.algorand.android.modules.perawebview.GetDeviceIdWebMessage
 import com.algorand.android.modules.perawebview.ParseOpenSystemBrowserUrl
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
@@ -38,7 +38,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StakingViewModel @Inject constructor(
     private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
-    private val getAuthorizedAddressesWebMessage: GetAuthorizedAddressesWebMessage,
+    private val getAuthorizedAddressesInfoWebMessages: GetAuthorizedAddressesInfoWebMessages,
     private val getDeviceIdWebMessage: GetDeviceIdWebMessage,
     private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl,
     private val currencyUseCase: CurrencyUseCase,
@@ -63,7 +63,7 @@ class StakingViewModel @Inject constructor(
 
     fun getAuthorizedAddresses() {
         viewModelScope.launch {
-            val authAddressesMessage = getAuthorizedAddressesWebMessage()
+            val authAddressesMessage = getAuthorizedAddressesInfoWebMessages()
             _stakingPreviewFlow.update {
                 it.copy(sendMessageEvent = Event(authAddressesMessage))
             }

@@ -12,9 +12,8 @@
 
 package com.algorand.android.mapper
 
-import com.algorand.android.R
-import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
+import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import javax.inject.Inject
 
@@ -28,7 +27,6 @@ class AccountPreviewMapper @Inject constructor(
             isFullScreenAnimatedLoadingVisible = false,
             isBlockingLoadingVisible = false,
             isMotionLayoutTransitionEnabled = false,
-            portfolioValuesBackgroundRes = R.color.transparent,
             isSuccessStateVisible = false,
             hasNewNotification = false
         )
@@ -40,7 +38,6 @@ class AccountPreviewMapper @Inject constructor(
             isFullScreenAnimatedLoadingVisible = true,
             isBlockingLoadingVisible = false,
             isMotionLayoutTransitionEnabled = false,
-            portfolioValuesBackgroundRes = R.color.transparent,
             isSuccessStateVisible = false,
             hasNewNotification = false
         )
@@ -59,7 +56,6 @@ class AccountPreviewMapper @Inject constructor(
             bottomGlobalError = bottomGlobalErrorMapper.mapToBottomGlobalError(errorCode),
             portfolioValueItem = errorPortfolioValueItem,
             isMotionLayoutTransitionEnabled = true,
-            portfolioValuesBackgroundRes = R.color.hero_bg,
             isSuccessStateVisible = true,
             hasNewNotification = false
         )
@@ -78,7 +74,6 @@ class AccountPreviewMapper @Inject constructor(
             accountListItems = accountListItems,
             portfolioValueItem = portfolioValueItem,
             isMotionLayoutTransitionEnabled = true,
-            portfolioValuesBackgroundRes = R.color.hero_bg,
             isSuccessStateVisible = true,
             hasNewNotification = hasNewNotification,
             assetInboxCount = assetInboxCount

@@ -14,10 +14,10 @@ package com.algorand.android.modules.accounts.ui.view.viewholder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import com.algorand.android.databinding.ItemAccountsQuickActionsBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
+import com.algorand.android.ui.accounts.view.AccountsQuickActionsView.AccountsQuickActionsListener
 
 class AccountsQuickActionsViewHolder(
     private val binding: ItemAccountsQuickActionsBinding,
@@ -26,28 +26,10 @@ class AccountsQuickActionsViewHolder(
 
     override fun bind(item: BaseAccountListItem) {
         if (item !is BaseAccountListItem.QuickActionsItem) return
-        with(binding) {
-            stakingButton.apply {
-                isVisible = item.isStakingEnabled
-                setOnClickListener { listener.onStakingClick() }
-            }
-            buySellButton.apply {
-                setOnClickListener { listener.onBuySellClick() }
-            }
-            sendButton.setOnClickListener { listener.onSendClick() }
-            swapButton.apply {
-                isSelected = item.isSwapButtonSelected
-                setOnClickListener { listener.onSwapClick() }
-            }
+        binding.root.apply {
+            init(item.isStakingEnabled, item.isSwapButtonSelected)
+            setListener(listener)
         }
-    }
-
-    interface AccountsQuickActionsListener {
-        fun onBuySellClick()
-        fun onSendClick()
-        fun onSwapClick()
-        fun onScanQrClick()
-        fun onStakingClick()
     }
 
     companion object {

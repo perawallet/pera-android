@@ -10,8 +10,7 @@
   ~ limitations under the License
   -->
 
-<com.algorand.android.ui.accounts.view.AccountsQuickActionsView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.compose.ui.platform.ComposeView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingHorizontal="@dimen/spacing_normal"
-    android:paddingTop="@dimen/spacing_xxlarge" />
+    android:layout_height="136dp"
+    android:layout_marginTop="@dimen/spacing_xlarge" />

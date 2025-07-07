@@ -74,6 +74,8 @@ class AccountPreviewProcessor @Inject constructor(
         val amountRenderType = amountRendererTypeMapper(privacyMode)
         val accountList = mutableListOf<BaseAccountListItem>()
 
+        accountList.add(CHART_ITEM_INDEX, BaseAccountListItem.WalletChartItem)
+
         insertQuickActionsItem(accountList)
 
         if (spotBanners.isNotEmpty()) {
@@ -188,7 +190,8 @@ class AccountPreviewProcessor @Inject constructor(
     }
 
     companion object {
-        private const val QUICK_ACTIONS_ITEM_INDEX = 0
-        private const val BANNER_ITEM_INDEX = 1
+        private const val CHART_ITEM_INDEX = 0
+        private const val QUICK_ACTIONS_ITEM_INDEX = 1
+        private const val BANNER_ITEM_INDEX = 2
     }
 }

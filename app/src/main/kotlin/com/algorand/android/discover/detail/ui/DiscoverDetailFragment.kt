@@ -133,8 +133,7 @@ class DiscoverDetailFragment :
                             tokenId = tokenId,
                             poolId = preview.tokenDetail.poolId,
                             currency = discoverViewModel.getPrimaryCurrencyId(),
-                            locale = Locale.getDefault().language,
-                            isConnectedToTestnet = discoverViewModel.isConnectedToTestnet()
+                            locale = Locale.getDefault().language
                         ),
                         getDiscoverAuthHeader()
                     )
@@ -153,6 +152,7 @@ class DiscoverDetailFragment :
                     errorTitleTextView.text = getString(R.string.well_this_is_unexpected)
                     errorDescriptionTextView.text = getString(R.string.we_are_not_able_to_find)
                 }
+
                 WebViewError.NO_CONNECTION -> {
                     errorTitleTextView.text = getString(R.string.no_internet_connection)
                     errorDescriptionTextView.text = getString(R.string.you_dont_seem_to_be_connected)

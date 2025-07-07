@@ -23,9 +23,9 @@
         android:title="@string/discover" />
 
     <item
-        android:id="@+id/coreActionsMenuButton"
-        android:enabled="false"
-        android:title="" />
+        android:id="@id/stakingStandaloneFragment"
+        android:icon="@drawable/ic_staking"
+        android:title="@string/staking" />
 
     <item
         android:id="@id/collectiblesFragment"

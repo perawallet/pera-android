@@ -152,7 +152,7 @@ class InitialRegisterIntroFragment : DaggerBaseFragment(0) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                onClick = ::navToCreateWalletNameRegistrationNavigation,
+                onClick = ::onCreateNewWalletClicked,
                 text = stringResource(id = R.string.create_a_new_wallet),
                 leftIcon = {
                     PeraIcon(
@@ -188,7 +188,7 @@ class InitialRegisterIntroFragment : DaggerBaseFragment(0) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                onClick = ::navToAccountRecoveryTypeSelectionNavigation,
+                onClick = ::onImportAccountClicked,
                 text = stringResource(id = R.string.import_an_account),
                 leftIcon = {
                     PeraIcon(
@@ -289,6 +289,16 @@ class InitialRegisterIntroFragment : DaggerBaseFragment(0) {
             start = privacyPolicyStartIndex,
             end = privacyPolicyEndIndex
         )
+    }
+
+    private fun onCreateNewWalletClicked() {
+        viewModel.logNewOnboardingCreateNewAccountClickEvent()
+        navToCreateWalletNameRegistrationNavigation()
+    }
+
+    private fun onImportAccountClicked() {
+        viewModel.logNewOnboardingImportClickEvent()
+        navToAccountRecoveryTypeSelectionNavigation()
     }
 
     private fun navToAccountRecoveryTypeSelectionNavigation() {

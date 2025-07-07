@@ -13,18 +13,18 @@
 package com.algorand.android.modules.perawebview
 
 import com.algorand.android.modules.peraserializer.PeraSerializer
-import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountsDetails
+import com.algorand.wallet.account.info.domain.usecase.GetAccountAlgoBalance
 import com.google.crypto.tink.subtle.Base64
 import javax.inject.Inject
 
-class GetAuthorizedAddressesWebMessagesUseCase @Inject constructor(
+class GetAuthorizedAddressesNamesWebMessagesUseCase @Inject constructor(
     private val getAccountsDetails: GetAccountsDetails,
     private val peraSerializer: PeraSerializer,
     private val peraWebMessageBuilder: PeraWebMessageBuilder,
     private val getAccountAlgoBalance: GetAccountAlgoBalance
-) : GetAuthorizedAddressesWebMessage {
+) : GetAuthorizedAddressesNamesWebMessages {
 
     override suspend fun invoke(): String {
         val addressNameMap = getAddressNameMap()

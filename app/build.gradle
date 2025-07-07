@@ -139,15 +139,14 @@ android {
             buildConfigField "String", "ARC59_APP_ADDR_MAINNET", arc59Props["ARC59_APP_ADDR_MAINNET"]
             buildConfigField "long", "ARC59_APP_ID_MAINNET", arc59Props["ARC59_APP_ID_MAINNET"]
 
+            buildConfigField "String", "DISCOVER_URL", '"https://discover-mobile-staging.perawallet.app/"'
+            buildConfigField "String", "STAKING_URL", '"https://staking-mobile-staging.perawallet.app"'
+
             buildConfigField "String", "MELD_TESTNET_URL", '"https://testnet.api.perawallet.app"'
-            buildConfigField "String", "DISCOVER_TESTNET_URL", '"https://discover-mobile-testnet.perawallet.app"'
             buildConfigField "String", "CARDS_TESTNET_URL", '"https://cards-mobile-staging-testnet.perawallet.app"'
-            buildConfigField "String", "STAKING_TESTNET_URL", '"https://staking-mobile-testnet.perawallet.app"'
 
             buildConfigField "String", "MELD_MAINNET_URL", '"https://mainnet.staging.api.perawallet.app"'
-            buildConfigField "String", "DISCOVER_MAINNET_URL", '"https://discover-mobile-staging.perawallet.app"'
             buildConfigField "String", "CARDS_MAINNET_URL", '"https://cards-mobile-staging-mainnet.perawallet.app"'
-            buildConfigField "String", "STAKING_MAINNET_URL", '"https://staking-mobile-staging.perawallet.app"'
         }
 
         prod {
@@ -176,15 +175,14 @@ android {
             buildConfigField "String", "ARC59_APP_ADDR_MAINNET", arc59Props["ARC59_APP_ADDR_MAINNET"]
             buildConfigField "long", "ARC59_APP_ID_MAINNET", arc59Props["ARC59_APP_ID_MAINNET"]
 
+            buildConfigField "String", "DISCOVER_URL", '"https://discover-mobile.perawallet.app"'
+            buildConfigField "String", "STAKING_URL", '"https://staking-mobile.perawallet.app"'
+
             buildConfigField "String", "MELD_TESTNET_URL", '"https://testnet.api.perawallet.app"'
-            buildConfigField "String", "DISCOVER_TESTNET_URL", '"https://discover-mobile-testnet.perawallet.app"'
-            buildConfigField "String", "CARDS_TESTNET_URL", '"https://cards-mobile-prod-testnet.perawallet.app"'
-            buildConfigField "String", "STAKING_TESTNET_URL", '"https://staking-mobile-testnet.perawallet.app"'
+            buildConfigField "String", "CARDS_TESTNET_URL", '"https://cards-mobile.perawallet.app"'
 
             buildConfigField "String", "MELD_MAINNET_URL", '"https://mainnet.api.perawallet.app"'
-            buildConfigField "String", "DISCOVER_MAINNET_URL", '"https://discover-mobile.perawallet.app"'
             buildConfigField "String", "CARDS_MAINNET_URL", '"https://cards-mobile.perawallet.app"'
-            buildConfigField "String", "STAKING_MAINNET_URL", '"https://staking-mobile.perawallet.app"'
         }
     }
 

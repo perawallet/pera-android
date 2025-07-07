@@ -625,6 +625,31 @@
     </fragment>
 
     <fragment
+        android:id="@+id/stakingStandaloneFragment"
+        android:name="com.algorand.android.modules.staking.StakingStandaloneFragment"
+        android:label="StakingStandaloneFragment"
+        tools:layout="@layout/fragment_staking">
+        <action
+            android:id="@+id/action_stakingFragment_to_discoverDappNavigation"
+            app:destination="@id/discoverDappNavigation">
+            <argument
+                android:name="dappUrl"
+                app:argType="string" />
+            <argument
+                android:name="dappTitle"
+                app:argType="string" />
+            <argument
+                android:name="favorites"
+                app:argType="com.algorand.android.discover.common.ui.model.DappFavoriteElement[]"
+                app:nullable="true" />
+            <argument
+                android:name="showFavorites"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
+    </fragment>
+
+    <fragment
         android:id="@+id/removeAssetsFragment"
         android:name="com.algorand.android.ui.asset.remove.view.RemoveAssetsFragment"
         android:label="fragment_remove_assets"

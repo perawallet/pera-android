@@ -12,8 +12,10 @@
 
 package com.algorand.android.modules.card.di
 
-import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
-import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessagesUseCase
+import com.algorand.android.modules.perawebview.GetAuthorizedAddressesInfoWebMessages
+import com.algorand.android.modules.perawebview.GetAuthorizedAddressesInfoWebMessagesUseCase
+import com.algorand.android.modules.perawebview.GetAuthorizedAddressesNamesWebMessages
+import com.algorand.android.modules.perawebview.GetAuthorizedAddressesNamesWebMessagesUseCase
 import com.algorand.android.modules.perawebview.GetDeviceIdWebMessage
 import com.algorand.android.modules.perawebview.GetDeviceIdWebMessageUseCase
 import com.algorand.android.modules.perawebview.ParseOpenSystemBrowserUrl
@@ -32,9 +34,15 @@ object CardModule {
 
     @Provides
     @Singleton
-    fun provideGetAuthorizedAddressesWebMessage(
-        useCase: GetAuthorizedAddressesWebMessagesUseCase
-    ): GetAuthorizedAddressesWebMessage = useCase
+    fun provideGetAuthorizedAddressesInfoWebMessagesUseCase(
+        useCase: GetAuthorizedAddressesInfoWebMessagesUseCase
+    ): GetAuthorizedAddressesInfoWebMessages = useCase
+
+    @Provides
+    @Singleton
+    fun provideGetAuthorizedAddressesNamesWebMessagesUseCase(
+        useCase: GetAuthorizedAddressesNamesWebMessagesUseCase
+    ): GetAuthorizedAddressesNamesWebMessages = useCase
 
     @Provides
     @Singleton

@@ -19,7 +19,7 @@ import com.algorand.android.BuildConfig.CARDS_TESTNET_URL
 import com.algorand.android.discover.common.ui.model.WebViewError
 import com.algorand.android.modules.card.model.CardsPreview
 import com.algorand.android.modules.currency.domain.usecase.CurrencyUseCase
-import com.algorand.android.modules.perawebview.GetAuthorizedAddressesWebMessage
+import com.algorand.android.modules.perawebview.GetAuthorizedAddressesNamesWebMessages
 import com.algorand.android.modules.perawebview.GetDeviceIdWebMessage
 import com.algorand.android.modules.perawebview.ParseOpenSystemBrowserUrl
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewViewModel
@@ -36,7 +36,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CardsViewModel @Inject constructor(
     private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
-    private val getAuthorizedAddressesWebMessage: GetAuthorizedAddressesWebMessage,
+    private val getAuthorizedAddressesNamesWebMessages: GetAuthorizedAddressesNamesWebMessages,
     private val getDeviceIdWebMessage: GetDeviceIdWebMessage,
     private val parseOpenSystemBrowserUrl: ParseOpenSystemBrowserUrl,
     private val currencyUseCase: CurrencyUseCase,
@@ -56,7 +56,7 @@ class CardsViewModel @Inject constructor(
 
     fun getAuthorizedAddresses() {
         viewModelScope.launch {
-            val authAddressesMessage = getAuthorizedAddressesWebMessage()
+            val authAddressesMessage = getAuthorizedAddressesNamesWebMessages()
             _cardsPreviewFlow.update {
                 it.copy(sendMessageEvent = Event(authAddressesMessage))
             }

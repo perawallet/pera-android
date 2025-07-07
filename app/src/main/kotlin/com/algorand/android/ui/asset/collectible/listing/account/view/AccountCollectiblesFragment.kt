@@ -29,7 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class AccountCollectiblesFragment : BaseFragment(R.layout.fragment_base_collectibles_listing),
     CollectibleListingFragmentDelegate.Listener {
 
-    override val fragmentConfiguration = FragmentConfiguration()
+    override val fragmentConfiguration = FragmentConfiguration(isBottomBarNeeded = true)
 
     private var collectiblesListingFragmentDelegate: CollectibleListingFragmentDelegate? = null
 

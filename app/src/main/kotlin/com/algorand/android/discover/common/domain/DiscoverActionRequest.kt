@@ -10,13 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.android.modules.tracking.discover.detail
+package com.algorand.android.discover.common.domain
 
-import com.algorand.android.modules.tracking.discover.common.DiscoverCommonEventTracker
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
-import javax.inject.Inject
+import android.os.Parcelable
+import com.algorand.android.discover.common.ui.model.DiscoverAction
+import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
-// TODO use this class when the swap integration is completed to track buy/sell events
-class DiscoverDetailEventTracker @Inject constructor(
-    peraEventTracker: PeraEventTracker
-) : DiscoverCommonEventTracker(peraEventTracker)
+@Parcelize
+data class DiscoverActionRequest(
+    @SerializedName("action")
+    val action: DiscoverAction?,
+    @SerializedName("asset_in")
+    val assetIn: String?,
+    @SerializedName("asset_out")
+    val assetOut: String?
+) : Parcelable

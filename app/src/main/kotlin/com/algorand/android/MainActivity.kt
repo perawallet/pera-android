@@ -31,14 +31,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.core.view.forEach
 import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import com.algorand.android.HomeNavigationDirections.Companion.actionGlobalDiscoverHomeNavigation
 import com.algorand.android.MainNavigationDirections.Companion.actionToLockPreferenceNavigation
 import com.algorand.android.core.transaction.TransactionSignManager
-import com.algorand.android.customviews.CoreActionsTabBarView
 import com.algorand.android.customviews.LedgerLoadingDialog
 import com.algorand.android.customviews.alertview.ui.delegation.AlertDialogDelegation
 import com.algorand.android.customviews.alertview.ui.delegation.AlertDialogDelegationImpl
@@ -160,7 +158,6 @@ class MainActivity :
 
     val mainViewModel: MainViewModel by viewModels()
     val assetOperationViewModel: AssetOperationViewModel by viewModels()
-    private val coreActionsTabBarViewModel: CoreActionsTabBarViewModel by viewModels()
     private val walletConnectViewModel: WalletConnectViewModel by viewModels()
     private val qrScannerViewModel: QrScannerViewModel by viewModels()
 
@@ -201,8 +198,6 @@ class MainActivity :
 
     private val appCacheStatusCollector: suspend (AppCacheStatus) -> Unit = {
         mainViewModel.isAssetSetupCompleted = it == AppCacheStatus.INITIALIZED
-        coreActionsTabBarViewModel.changeViewStateForFeatureFlag()
-        binding.coreActionsTabBarView.setCoreActionButtonEnabled(it == AppCacheStatus.INITIALIZED)
     }
 
     private val newNotificationObserver = Observer<Event<NotificationMetadata>> {
@@ -416,7 +411,6 @@ class MainActivity :
         mainViewModel.initializeApp(lifecycle)
         mainViewModel.fetchInstallReferrer()
         mainViewModel.setDeepLinkHandlerListener(deepLinkHandlerListener)
-        setupCoreActionsTabBarView()
 
         initObservers()
         registerAlertDialogDelegation(this, alertDialogDelegationListener)
@@ -501,12 +495,9 @@ class MainActivity :
 
     fun navToDiscoverWithPath(path: String) {
         binding.apply {
-            coreActionsTabBarView.hideWithAnimation()
             bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true
             navController.navigateSafe(
-                actionGlobalDiscoverHomeNavigation(
-                    coreActionsTabBarViewModel.getDiscoverUrlWithPath(path)
-                )
+                actionGlobalDiscoverHomeNavigation(mainViewModel.getDiscoverUrlWithPath(path))
             )
         }
     }
@@ -577,11 +568,6 @@ class MainActivity :
         collectLatestOnLifecycle(
             flow = mainViewModel.activeNodeFlow,
             collection = activeNodeCollector
-        )
-
-        collectLatestOnLifecycle(
-            flow = coreActionsTabBarViewModel.viewState,
-            collection = { binding.coreActionsTabBarView.initViewState(it) }
         )
 
         collectLatestOnLifecycle(
@@ -678,60 +664,6 @@ class MainActivity :
         return mainViewModel.handlePendingIntent()
     }
 
-    private fun setupCoreActionsTabBarView() {
-        coreActionsTabBarViewModel.changeViewStateForFeatureFlag()
-        binding.coreActionsTabBarView.setListener(object : CoreActionsTabBarView.Listener {
-            override fun onSendClick() {
-                mainViewModel.logEvent(PeraClickEvent.TAP_TAB_SEND)
-                nav(HomeNavigationDirections.actionGlobalSendAlgoNavigation(null))
-            }
-
-            override fun onReceiveClick() {
-                mainViewModel.logEvent(PeraClickEvent.TAP_TAB_RECEIVE)
-                nav(HomeNavigationDirections.actionGlobalReceiveAccountSelectionFragment())
-            }
-
-            override fun onBuySellClick() {
-                mainViewModel.logEvent(PeraClickEvent.TAP_BOTTOM_NAVIGATION_BUY_ALGO)
-                navToBuySellActionsBottomSheet()
-            }
-
-            override fun onScanQRClick() {
-                mainViewModel.logEvent(PeraClickEvent.TAP_BOTTOM_NAVIGATION_QR_SCAN)
-                navToQRCodeScannerNavigation()
-            }
-
-            override fun onCoreActionsClick(isCoreActionsOpen: Boolean) {
-                if (isCoreActionsOpen)
-                    mainViewModel.logEvent(PeraClickEvent.TAP_LOWERMENU_PERA)
-                binding.bottomNavigationView.menu.forEach { menuItem ->
-                    menuItem.isEnabled = isCoreActionsOpen.not()
-                }
-                handleNavigationButtonsForChosenNetwork()
-            }
-
-            override fun onSwapClick() {
-                mainViewModel.logEvent(PeraClickEvent.TAP_BOTTOM_NAVIGATION_SWAP)
-                mainViewModel.onSwapActionButtonClick()
-            }
-
-            override fun onBrowseDappsClick() {
-                mainViewModel.logEvent(PeraClickEvent.TAP_BOTTOM_NAVIGATION_BROWSE_DAPPS)
-                handleBrowseDappsClick()
-            }
-
-            override fun onCardsClick() {
-                mainViewModel.logEvent(PeraClickEvent.TAP_BOTTOM_NAVIGATION_CARDS)
-                navToCardsFragment()
-            }
-
-            override fun onStakingClick() {
-                mainViewModel.logEvent(PeraClickEvent.TAP_BOTTOM_NAVIGATION_STAKE)
-                navToStakingFragment()
-            }
-        })
-    }
-
     private fun onNewNodeActivated() {
         hideProgress()
         mainViewModel.onNewNodeActivated(lifecycle)
@@ -778,14 +710,6 @@ class MainActivity :
         )
     }
 
-    private fun navToBuySellActionsBottomSheet() {
-        nav(HomeNavigationDirections.actionGlobalBuySellActionsBottomSheet())
-    }
-
-    private fun navToQRCodeScannerNavigation() {
-        nav(HomeNavigationDirections.actionGlobalAccountsQrScannerFragment())
-    }
-
     private fun navToDiscoverUrlViewerNavigation(webUrl: String) {
         nav(HomeNavigationDirections.actionGlobalDiscoverUrlViewerNavigation(webUrl))
     }
@@ -794,18 +718,6 @@ class MainActivity :
         hideProgress()
         ledgerLoadingDialog?.dismissAllowingStateLoss()
         ledgerLoadingDialog = null
-    }
-
-    private fun handleBrowseDappsClick() {
-        binding.apply {
-            coreActionsTabBarView.hideWithAnimation()
-            bottomNavigationView.menu.findItem(R.id.discoverHomeNavigation).isChecked = true
-            navController.navigateSafe(
-                actionGlobalDiscoverHomeNavigation(
-                    coreActionsTabBarViewModel.getDiscoverBrowseDappUrl()
-                )
-            )
-        }
     }
 
     private fun showLedgerLoadingDialog(ledgerName: String?) {

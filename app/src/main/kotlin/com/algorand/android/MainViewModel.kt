@@ -17,6 +17,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
+import com.algorand.android.BuildConfig.DISCOVER_URL
 import com.algorand.android.MainActivity.Companion.DEEPLINK_KEY
 import com.algorand.android.MainActivity.Companion.WC_ARBITRARY_DATA_ID_INTENT_KEY
 import com.algorand.android.MainActivity.Companion.WC_TRANSACTION_ID_INTENT_KEY
@@ -39,6 +40,7 @@ import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.repository.NodeRepository
 import com.algorand.android.ui.lockpreference.AutoLockSuggestionManager
+import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.launchIO
@@ -94,6 +96,7 @@ class MainViewModel @Inject constructor(
     private val autoLockSuggestionManager: AutoLockSuggestionManager,
     private val androidEncryptionManager: AndroidEncryptionManager,
     private val accountLiteManager: AccountLiteManager,
+    private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
     getAppCacheStatusFlow: GetAppCacheStatusFlow
 ) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
 
@@ -243,6 +246,11 @@ class MainViewModel @Inject constructor(
 
     fun setPendingIntent(intent: Intent?) {
         pendingIntentKeeper.setPendingIntent(intent)
+    }
+
+    fun getDiscoverUrlWithPath(path: String): String {
+        val normalizedPath = if (path.startsWith("/")) path else "/$path"
+        return DISCOVER_URL + normalizedPath
     }
 
     private suspend fun shouldAppLocked(): Boolean {

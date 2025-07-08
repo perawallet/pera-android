@@ -20,6 +20,8 @@ import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheS
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.Data
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus.EmptyLocalAccounts
 import com.algorand.android.modules.accounts.lite.domain.usecase.GetAccountLiteCacheFlow
+import com.algorand.android.ui.accounts.model.AccountsLineChartData
+import com.algorand.android.ui.accounts.usecase.GetAccountsLineChartData
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel.ViewState
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel.ViewState.Content.ContentState
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel.ViewState.Idle
@@ -32,7 +34,6 @@ import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChi
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
-import com.algorand.wallet.wealth.wallet.domain.usecase.GetWalletWealth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,9 +43,9 @@ import kotlinx.coroutines.flow.launchIn
 @HiltViewModel
 class AccountsLineChartViewModel @Inject constructor(
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
-    private val getWalletWealth: GetWalletWealth,
     private val walletWealthPeriodMapper: WalletWealthPeriodMapper,
-    private val stateDelegate: StateDelegate<ViewState>
+    private val stateDelegate: StateDelegate<ViewState>,
+    private val getAccountsLineChartData: GetAccountsLineChartData
 ) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
 
     init {
@@ -67,6 +68,10 @@ class AccountsLineChartViewModel @Inject constructor(
         }
     }
 
+    fun getSelectedChartData(index: Int): AccountsLineChartData? {
+        return ((state.value as? ViewState.Content)?.contentState as? ContentState.Data)?.chartData?.getOrNull(index)
+    }
+
     fun displaySelectedPeriodValues(period: PeraLineChartPeriodChip) {
         selectedPeriodFlow.value = period
     }
@@ -81,10 +86,9 @@ class AccountsLineChartViewModel @Inject constructor(
             stateDelegate.updateState { ViewState.Error }
             return
         } else {
-            val viewState = getWalletWealth(authAddresses, walletWealthPeriodMapper(selectedPeriod)).use(
+            val viewState = getAccountsLineChartData(authAddresses, walletWealthPeriodMapper(selectedPeriod)).use(
                 onSuccess = {
-                    val values = it.chartData.map { it.usdValue.toFloat() } // TODO Map to selected currency
-                    ViewState.Content(ContentState.Data(values), selectedPeriod)
+                    ViewState.Content(ContentState.Data(it), selectedPeriod)
                 },
                 onFailed = { _, _ ->
                     ViewState.Error
@@ -113,7 +117,7 @@ class AccountsLineChartViewModel @Inject constructor(
 
             sealed interface ContentState {
                 data object Loading : ContentState
-                data class Data(val chartData: List<Float>) : ContentState
+                data class Data(val chartData: List<AccountsLineChartData>) : ContentState
             }
         }
     }

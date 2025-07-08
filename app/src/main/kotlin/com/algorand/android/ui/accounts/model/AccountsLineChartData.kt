@@ -10,15 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.compose.widget.chart.model
+package com.algorand.android.ui.accounts.model
 
-import androidx.compose.ui.graphics.Color
+import com.algorand.android.ui.common.amount.AmountRenderer
+import java.math.BigDecimal
+import java.time.OffsetDateTime
 
-data class PeraLineChartTheme(
-    val lineColor: Color,
-    val gradientColors: List<Color>,
-    val lineSize: Float,
-    val selectedItemColor: Color,
-    val selectedItemBgColor: Color,
-    val selectedLineColor: Color
+data class AccountsLineChartData(
+    val datetime: OffsetDateTime,
+    val primaryValue: BigDecimal,
+    val primaryAmountRenderer: AmountRenderer,
+    val secondaryAmountRenderer: AmountRenderer,
+    val round: Int
 )

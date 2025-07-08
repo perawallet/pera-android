@@ -14,13 +14,14 @@ package com.algorand.android.modules.accounts.ui.view
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
+import com.algorand.android.banner.ui.viewholder.AccountListWalletChartViewHolder
+import com.algorand.android.banner.ui.viewholder.AccountListWalletChartViewHolder.AccountListWalletChartViewHolderListener
 import com.algorand.android.banner.ui.viewholder.BaseBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.CardsBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.GenericBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.GovernanceBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.SpotBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.StakingBannerViewHolder
-import com.algorand.android.banner.ui.viewholder.AccountListWalletChartViewHolder
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
@@ -119,7 +120,9 @@ class AccountsAdapter(
             GENERIC_BANNER.ordinal -> GenericBannerViewHolder.create(baseBannerListener, parent)
             QUICK_ACTIONS.ordinal -> AccountsQuickActionsViewHolder.create(parent, accountAdapterListener)
             SPOT_BANNER.ordinal -> SpotBannerViewHolder.create(parent, accountAdapterListener)
-            CHART.ordinal -> AccountListWalletChartViewHolder.create(parent, accountsLineChartViewModel)
+            CHART.ordinal -> {
+                AccountListWalletChartViewHolder.create(parent, accountsLineChartViewModel, accountAdapterListener)
+            }
             else -> throw Exception("$logTag: Item View Type is Unknown.")
         }
     }
@@ -133,7 +136,7 @@ class AccountsAdapter(
     }
 
     interface AccountAdapterListener : AccountsQuickActionsListener, HeaderViewHolder.OptionsClickListener,
-        SpotBannerCarouselListener {
+        SpotBannerCarouselListener, AccountListWalletChartViewHolderListener {
         fun onSucceedAccountClick(publicKey: String)
         fun onFailedAccountClick(publicKey: String)
         fun onAccountItemLongPressed(publicKey: String)

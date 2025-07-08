@@ -10,15 +10,15 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.compose.widget.chart.model
+package com.algorand.android.ui.accounts.usecase
 
-import androidx.compose.ui.graphics.Color
+import com.algorand.android.ui.accounts.model.AccountsLineChartData
+import com.algorand.wallet.foundation.PeraResult
+import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
 
-data class PeraLineChartTheme(
-    val lineColor: Color,
-    val gradientColors: List<Color>,
-    val lineSize: Float,
-    val selectedItemColor: Color,
-    val selectedItemBgColor: Color,
-    val selectedLineColor: Color
-)
+fun interface GetAccountsLineChartData {
+    suspend operator fun invoke(
+        addresses: List<String>,
+        period: WalletWealthPeriod
+    ): PeraResult<List<AccountsLineChartData>>
+}

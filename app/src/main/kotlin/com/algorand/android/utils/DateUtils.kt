@@ -202,3 +202,7 @@ fun getPreviousDayZonedDateTime(differenceAsDay: Long): ZonedDateTime {
 fun convertDateInMillisToStartOfDay(date: Long): Long {
     return date - (date % ONE_DAY_IN_MILLIS)
 }
+
+fun formatDateToChartDateString(date: OffsetDateTime): String {
+    return date.format(DateTimeFormatter.ofPattern(TXN_DATE_AND_TIME_PATTERN))
+}

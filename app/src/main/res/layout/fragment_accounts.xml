@@ -140,7 +140,6 @@
         android:layout_height="@dimen/primary_portfolio_value_height"
         android:layout_marginHorizontal="@dimen/spacing_xlarge"
         android:layout_marginTop="@dimen/spacing_xsmall"
-        android:gravity="center"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Title.Large.Sans.Medium"
         app:autoSizeMaxTextSize="@dimen/text_size_36"
@@ -156,7 +155,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/spacing_xlarge"
         android:layout_marginTop="@dimen/spacing_xxsmall"
-        android:gravity="center"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Body.Sans"
         android:textColor="@color/secondary_text_color"
@@ -165,6 +163,18 @@
         app:autoSizeTextType="uniform"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/primaryPortfolioValue"
+        tools:text="$105,413.95" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/chartSelectedItemDateTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/spacing_xlarge"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.Body.Sans"
+        android:textColor="@color/secondary_text_color"
+        app:layout_constraintBottom_toTopOf="@id/accountsRecyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:text="$105,413.95" />
 
     <androidx.recyclerview.widget.RecyclerView

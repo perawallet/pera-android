@@ -14,6 +14,7 @@ package com.algorand.android.ui.accounts.view
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,8 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel.ViewState.Content
+import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel.ViewState.Content.ContentState
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel.ViewState.Error
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel.ViewState.Idle
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel.ViewState.Loading
@@ -38,7 +41,11 @@ import com.algorand.android.ui.compose.widget.chart.view.PeraLineChartErrorState
 import com.algorand.android.ui.compose.widget.chart.view.PeraLineChartLoadingState
 
 @Composable
-fun AccountsLineChart(viewModel: AccountsLineChartViewModel) {
+fun AccountsLineChart(
+    viewModel: AccountsLineChartViewModel,
+    onItemSelected: (AccountsLineChartData) -> Unit,
+    onItemDeselected: () -> Unit
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = viewModel.state.collectAsStateWithLifecycle().value) {
             Idle -> Unit
@@ -49,15 +56,8 @@ fun AccountsLineChart(viewModel: AccountsLineChartViewModel) {
                     horizontalAlignment = CenterHorizontally
                 ) {
                     when (state.contentState) {
-                        Content.ContentState.Loading -> PeraLineChartLoadingState(modifier = Modifier.weight(1f))
-                        is Content.ContentState.Data -> {
-                            PeraLineChart(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(end = 16.dp),
-                                data = state.contentState.chartData
-                            )
-                        }
+                        ContentState.Loading -> PeraLineChartLoadingState(modifier = Modifier.weight(1f))
+                        is ContentState.Data -> Chart(state.contentState, viewModel, onItemSelected, onItemDeselected)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     PeraChartPeriodContainer {
@@ -78,4 +78,26 @@ fun AccountsLineChart(viewModel: AccountsLineChartViewModel) {
     LaunchedEffect(Unit) {
         viewModel.init()
     }
+}
+
+@Composable
+private fun ColumnScope.Chart(
+    state: ContentState.Data,
+    viewModel: AccountsLineChartViewModel,
+    onItemSelected: (AccountsLineChartData) -> Unit,
+    onItemDeselected: () -> Unit
+) {
+    PeraLineChart(
+        modifier = Modifier
+            .weight(1f)
+            .padding(end = 16.dp),
+        data = state.chartData.map { it.primaryValue.toFloat() },
+        onDataPointSelected = { index ->
+            if (index == null) {
+                onItemDeselected()
+            } else {
+                viewModel.getSelectedChartData(index)?.let(onItemSelected)
+            }
+        }
+    )
 }

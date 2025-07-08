@@ -18,26 +18,34 @@ import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartTheme
+import kotlin.math.abs
 
 @Composable
 fun PeraLineChart(
     modifier: Modifier = Modifier,
     data: List<Float>,
-    chartTheme: PeraLineChartTheme = getDefaultTheme()
+    chartTheme: PeraLineChartTheme = getDefaultTheme(),
+    onDataPointSelected: (index: Int?) -> Unit = {}
 ) {
     BoxWithConstraints(
         modifier = modifier.fillMaxWidth()
@@ -46,9 +54,47 @@ fun PeraLineChart(
         val density = LocalDensity.current
         val points = remember(data) { createPointOffsets(density, chartTheme, data) }
         val linePath = remember(points) { createLinePath(points) }
-        Canvas(modifier = Modifier.fillMaxSize()) {
+        var selectedOffset by remember { mutableStateOf<Offset?>(null) }
+        LaunchedEffect(selectedOffset) {
+            val selectedIndex = selectedOffset?.let { points.findClosestIndex(it.x) }
+            onDataPointSelected(selectedIndex)
+        }
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .detectChartTapGestures(points) { offset -> selectedOffset = offset }
+        ) {
             drawGradient(linePath, points, chartTheme)
             drawLine(density, linePath, chartTheme)
+            drawSelectedPointLine(chartTheme, points, selectedOffset)
+        }
+    }
+}
+
+private fun List<Offset>.findClosestIndex(x: Float): Int? {
+    return this.minByOrNull { abs(it.x - x) }?.let { closest ->
+        indexOf(closest)
+    }
+}
+
+private fun DrawScope.drawSelectedPointLine(
+    chartTheme: PeraLineChartTheme,
+    points: List<Offset>,
+    selectedOffset: Offset?
+) {
+    selectedOffset?.let { offset ->
+        val closestPoint = points.minByOrNull { abs(it.x - offset.x) }
+        closestPoint?.let { point ->
+            drawLine(
+                color = chartTheme.selectedLineColor,
+                start = Offset(point.x, 0f),
+                end = Offset(point.x, size.height),
+                strokeWidth = 1.dp.toPx(),
+                pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f))
+            )
+
+            drawCircle(color = chartTheme.selectedItemBgColor, radius = 6.dp.toPx(), center = point, style = Fill)
+            drawCircle(color = chartTheme.selectedItemColor, radius = 4.dp.toPx(), center = point, style = Fill)
         }
     }
 }
@@ -124,6 +170,9 @@ private fun getDefaultTheme(): PeraLineChartTheme {
     return PeraLineChartTheme(
         lineColor = PeraTheme.colors.helper.positive,
         gradientColors = listOf(Color(0xFF28A79B).copy(alpha = .3f), Color.Transparent),
-        lineSize = 2f
+        lineSize = 2f,
+        selectedItemColor = PeraTheme.colors.helper.positive,
+        selectedItemBgColor = PeraTheme.colors.background.primary,
+        selectedLineColor = PeraTheme.colors.text.grayLighter
     )
 }

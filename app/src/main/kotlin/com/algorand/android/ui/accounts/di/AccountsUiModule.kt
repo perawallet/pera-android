@@ -10,15 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.compose.widget.chart.model
+package com.algorand.android.ui.accounts.di
 
-import androidx.compose.ui.graphics.Color
+import com.algorand.android.ui.accounts.usecase.GetAccountsLineChartData
+import com.algorand.android.ui.accounts.usecase.GetAccountsLineChartDataUseCase
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-data class PeraLineChartTheme(
-    val lineColor: Color,
-    val gradientColors: List<Color>,
-    val lineSize: Float,
-    val selectedItemColor: Color,
-    val selectedItemBgColor: Color,
-    val selectedLineColor: Color
-)
+@Module
+@InstallIn(SingletonComponent::class)
+internal object AccountsUiModule {
+
+    @Provides
+    fun provideGetAccountsLineChartData(useCase: GetAccountsLineChartDataUseCase): GetAccountsLineChartData = useCase
+}

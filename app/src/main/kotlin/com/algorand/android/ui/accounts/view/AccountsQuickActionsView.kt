@@ -114,4 +114,3 @@ class AccountsQuickActionsView(context: Context, attrs: AttributeSet? = null) : 
         data class Content(val isStakingEnabled: Boolean, val isSwapButtonSelected: Boolean) : ViewState
     }
 }
-

@@ -62,7 +62,6 @@ class AccountsLineChartViewModel @Inject constructor(
                     AccountLiteCacheStatus.Loading -> stateDelegate.updateState { ViewState.Loading }
                     is CurrencyCachingError -> stateDelegate.updateState { ViewState.Error }
                     is Data -> updateAccountChartState(accountLiteCacheStatus.accountLites, selectedPeriod)
-
                 }
             }.launchIn(viewModelScope)
         }

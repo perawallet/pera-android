@@ -21,6 +21,7 @@ import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.accounts.view.AccountsLineChart
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel
+import com.algorand.android.ui.compose.theme.PeraTheme
 
 class AccountListWalletChartViewHolder(
     binding: ItemWalletChartBinding
@@ -40,7 +41,9 @@ class AccountListWalletChartViewHolder(
             binding.root.apply {
                 setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
                 setContent {
-                    AccountsLineChart(viewModel, listener::onItemSelected, listener::onItemDeselected)
+                    PeraTheme {
+                        AccountsLineChart(viewModel, listener::onItemSelected, listener::onItemDeselected)
+                    }
                 }
             }
             return AccountListWalletChartViewHolder(binding)

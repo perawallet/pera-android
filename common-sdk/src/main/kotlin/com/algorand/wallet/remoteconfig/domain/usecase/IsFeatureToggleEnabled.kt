@@ -12,10 +12,12 @@
 
 package com.algorand.wallet.remoteconfig.domain.usecase
 
+// TODO put feature toggle keys into their own modules
 const val STAKING_BUTTON_TOGGLE = "enable_staking"
 const val HD_WALLET_BUTTON_TOGGLE = "enable_hd_wallet"
 const val DISCOVER_V5_TOGGLE = "enable_discover_v5"
 const val ENABLE_ACCOUNT_DB_MIGRATION_VIEWER = "enable_account_migration_viewer"
+const val ACCOUNTS_CHART_TOGGLE = "enable_charts_portfolio"
 
 fun interface IsFeatureToggleEnabled {
     operator fun invoke(featureToggleKey: String): Boolean

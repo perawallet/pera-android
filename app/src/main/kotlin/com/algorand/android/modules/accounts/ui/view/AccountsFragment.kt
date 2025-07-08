@@ -193,7 +193,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
                 val portfolioValueItem = accountsViewModel.getPortfolioValueItem()
                 primaryPortfolioValue.text = portfolioValueItem?.getPrimaryAccountValue(requireContext())
                 secondaryPortfolioValue.text = portfolioValueItem?.getSecondaryAccountValue(requireContext())
-                chartSelectedItemDateTextView.text = ""
+                chartSelectedItemDateTextView.text = " "
             }
         }
 

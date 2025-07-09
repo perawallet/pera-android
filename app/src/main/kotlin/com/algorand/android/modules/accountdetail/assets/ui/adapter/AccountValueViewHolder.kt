@@ -15,37 +15,96 @@ package com.algorand.android.modules.accountdetail.assets.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.algorand.android.R
 import com.algorand.android.databinding.ItemAccountValueBinding
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsLineChartViewModel
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
+import com.algorand.android.modules.accountdetail.assets.ui.view.AccountAssetsLineChart
+import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.utils.extensions.hide
+import com.algorand.android.utils.extensions.show
+import com.algorand.android.utils.formatDateToChartDateString
 
 class AccountValueViewHolder(
     private val binding: ItemAccountValueBinding,
-    private val listener: Listener
+    private val address: String,
+    private val viewModel: AccountAssetsLineChartViewModel,
+    private val listener: Listener,
 ) : BaseViewHolder<AccountDetailAccountsItem>(binding.root) {
-
-    companion object {
-        fun create(parent: ViewGroup, listener: Listener): AccountValueViewHolder {
-            val binding = ItemAccountValueBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return AccountValueViewHolder(binding, listener)
-        }
-    }
 
     override fun bind(item: AccountDetailAccountsItem) {
         if (item !is AccountDetailAccountsItem.AccountPortfolioItem) return
-        with(binding) {
-            primaryValueTextView.apply {
-                text = item.accountPrimaryFormattedParityValue
-                setOnClickListener { listener.onAccountValueClick() }
+        setPrimaryText(item.accountPrimaryFormattedParityValue)
+        setSecondaryText(item.accountSecondaryFormattedParityValue)
+        setMinRequiredBalanceText(item.requiredMinBalance)
+        setChart(item)
+    }
+
+    private fun setMinRequiredBalanceText(requiredMinBalance: String) {
+        binding.helperTextView.apply {
+            text = binding.root.resources.getString(R.string.min_balance, requiredMinBalance)
+            setOnClickListener { listener.onInfoButtonClick() }
+        }
+    }
+
+    private fun setPrimaryText(primaryParityValue: String?) {
+        binding.primaryValueTextView.apply {
+            text = primaryParityValue.orEmpty()
+            setOnClickListener { listener.onAccountValueClick() }
+        }
+    }
+
+    private fun setSecondaryText(secondaryParityValue: String?) {
+        binding.secondaryValueTextView.apply {
+            text = secondaryParityValue.orEmpty()
+            setOnClickListener { listener.onAccountValueClick() }
+        }
+    }
+
+    private fun setChart(item: AccountDetailAccountsItem.AccountPortfolioItem) {
+        with(binding.chartComposeView) {
+            if (item.displayChart) {
+                setContent {
+                    PeraTheme {
+                        AccountAssetsLineChart(
+                            address,
+                            viewModel,
+                            onItemSelected = {
+                                setPrimaryText(it.primaryAmountRenderer.getDisplayValue())
+                                setSecondaryText(it.primaryAmountRenderer.getDisplayValue())
+                                binding.helperTextView.text = formatDateToChartDateString(it.datetime)
+                            },
+                            onItemDeselected = {
+                                setPrimaryText(item.accountPrimaryFormattedParityValue)
+                                setSecondaryText(item.accountSecondaryFormattedParityValue)
+                                setMinRequiredBalanceText(item.requiredMinBalance)
+                            }
+                        )
+                    }
+                }
+                show()
+            } else {
+                hide()
+                binding.chartComposeView.removeAllViews()
             }
-            secondaryValueTextView.apply {
-                text = item.accountSecondaryFormattedParityValue.orEmpty()
-                setOnClickListener { listener.onAccountValueClick() }
-            }
+        }
+    }
+
+    companion object {
+        fun create(
+            parent: ViewGroup,
+            address: String,
+            viewModel: AccountAssetsLineChartViewModel,
+            listener: Listener
+        ): AccountValueViewHolder {
+            val binding = ItemAccountValueBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return AccountValueViewHolder(binding, address, viewModel, listener)
         }
     }
 
     interface Listener {
         fun onAccountValueClick()
+        fun onInfoButtonClick()
     }
 }

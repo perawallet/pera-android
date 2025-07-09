@@ -16,7 +16,6 @@ import com.algorand.android.R
 import com.algorand.android.modules.accountdetail.assets.ui.mapper.AccountDetailAssetItemMapper
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.AccountPortfolioItem
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.RequiredMinimumBalanceItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem.AssetInbox
 import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem.AssetInboxActive
@@ -36,6 +35,8 @@ import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.can
 import com.algorand.wallet.asset.assetinbox.domain.usecase.GetAssetInboxRequest
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
+import com.algorand.wallet.remoteconfig.domain.usecase.ACCOUNT_DETAIL_CHART_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import java.math.BigDecimal
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -50,7 +51,8 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     private val getSwapFeatureRedDotVisibility: GetSwapFeatureRedDotVisibilityUseCase,
     private val accountDetailAssetItemMapper: AccountDetailAssetItemMapper,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
-    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer
+    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled
 ) : AccountDetailAccountsItemProcessor {
 
     override fun getAccountDetailsItemsFlow(address: String, query: String?): Flow<List<AccountDetailAccountsItem>> {
@@ -71,7 +73,6 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     ): List<AccountDetailAccountsItem> {
         return mutableListOf<AccountDetailAccountsItem>().apply {
             add(createAccountPortfolioItem(cachedInfo, privacyMode))
-            add(createRequiredMinimumBalanceItem(cachedInfo))
             add(createQuickActionItemList(accountLite))
             if (!accountLite.isBackedUp && cachedInfo.primaryAccountValue > BigDecimal.ZERO) {
                 add(accountDetailAssetItemMapper.mapToBackupWarningItem(isBackedUp = false))
@@ -91,16 +92,14 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
         val amountRenderType = amountRendererTypeMapper(privacyMode)
         val primaryAmount = PeraAmount(cachedInfo.primaryAccountValue)
         val secondaryAmount = PeraAmount(cachedInfo.secondaryAccountValue)
-        return AccountPortfolioItem(
-            getCompactPrimaryAmountRenderer(primaryAmount, amountRenderType).getDisplayValue(),
-            getCompactSecondaryAmountRenderer(secondaryAmount, amountRenderType).getDisplayValue()
-        )
-    }
-
-    private fun createRequiredMinimumBalanceItem(cachedInfo: CachedInfo): RequiredMinimumBalanceItem {
         val minBalance = cachedInfo.minRequiredBalance
         val formattedRequiredMinimumBalance = minBalance.formatAsAlgoDisplayString().formatAsAlgoAmount()
-        return accountDetailAssetItemMapper.mapToRequiredMinimumBalanceItem(formattedRequiredMinimumBalance)
+        return AccountPortfolioItem(
+            getCompactPrimaryAmountRenderer(primaryAmount, amountRenderType).getDisplayValue(),
+            getCompactSecondaryAmountRenderer(secondaryAmount, amountRenderType).getDisplayValue(),
+            requiredMinBalance = formattedRequiredMinimumBalance,
+            displayChart = isFeatureToggleEnabled(ACCOUNT_DETAIL_CHART_TOGGLE)
+        )
     }
 
     private suspend fun createQuickActionItemList(

@@ -173,12 +173,12 @@ abstract class BaseQrScannerFragment(
         return true
     }
 
-    override fun onCardsDeepLink(path: String): Boolean {
+    override fun onCardsDeepLink(path: String?): Boolean {
         (activity as? MainActivity)?.navToCardsFragment(path)
         return true
     }
 
-    override fun onStakingDeepLink(path: String): Boolean {
+    override fun onStakingDeepLink(path: String?): Boolean {
         (activity as? MainActivity)?.navToStakingFragment(path)
         return true
     }

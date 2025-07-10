@@ -59,6 +59,7 @@ internal interface CollectibleDao {
         FROM asset_holding_table AS asset_holding
         INNER JOIN collectible AS collectible ON asset_holding.asset_id = collectible.collectible_asset_id
         WHERE asset_holding.opted_in_at_round IS NOT NULL
+        AND collectible.primary_image_url IS NOT NULL
         ORDER BY asset_holding.opted_in_at_round DESC
         LIMIT :count
     """

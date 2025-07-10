@@ -72,6 +72,10 @@
             android:id="@id/assetIdTextView"
             app:visibilityMode="ignore" />
 
+        <ConstraintOverride
+            android:id="@id/priceHistoryChart"
+            app:visibilityMode="ignore" />
+
         <ConstraintOverride android:id="@id/assetPrimaryValueTextView">
             <PropertySet android:alpha="1" />
         </ConstraintOverride>
@@ -186,6 +190,10 @@
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
         </ConstraintOverride>
+
+        <ConstraintOverride
+            android:id="@id/priceHistoryChart"
+            app:visibilityMode="ignore" />
 
         <ConstraintOverride
             android:id="@id/quickActionButtons"

@@ -16,7 +16,6 @@
     android:id="@+id/assetDetailMotionLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/hero_bg"
     app:layoutDescription="@xml/scene_fragment_asset_detail">
 
     <com.algorand.android.customviews.toolbar.CustomToolbar
@@ -120,20 +119,29 @@
         app:layout_constraintTop_toBottomOf="@id/assetPrimaryValueTextView"
         tools:text="@tools:sample/lorem[2]" />
 
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/priceHistoryChart"
+        android:layout_width="0dp"
+        android:layout_height="172dp"
+        android:layout_marginTop="@dimen/spacing_xlarge"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/assetSecondaryValueTextView" />
+
     <androidx.constraintlayout.helper.widget.Flow
         android:id="@+id/quickActionButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/spacing_xlarge"
         android:layout_marginTop="@dimen/spacing_xxxxlarge"
+        android:visibility="gone"
         app:constraint_referenced_ids="swapButton, buyAlgoButton, sendButton, receiveButton"
         app:flow_horizontalGap="@dimen/spacing_xxlarge"
-        android:visibility="gone"
-        tools:visibility="visible"
         app:flow_maxElementsWrap="4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/assetSecondaryValueTextView" />
+        app:layout_constraintTop_toBottomOf="@id/priceHistoryChart"
+        tools:visibility="visible" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buyAlgoButton"

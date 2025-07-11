@@ -33,10 +33,14 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.assets.profile.about.ui.AssetAboutFragment
 import com.algorand.android.modules.assets.profile.activity.ui.AssetActivityFragment
+import com.algorand.android.modules.assets.profile.detail.ui.AssetDetailViewModel.ViewEvent.UpdatePrimaryAndSecondaryText
 import com.algorand.android.modules.assets.profile.detail.ui.adapter.AssetDetailPagerAdapter
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
+import com.algorand.android.ui.asset.detail.view.AssetPriceHistoryLineChart
+import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailPriceHistoryViewModel
+import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.PERA_VERIFICATION_MAIL_ADDRESS
@@ -58,8 +62,7 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconClick = ::navBack,
-        startIconResId = R.drawable.ic_left_arrow,
-        backgroundColor = R.color.hero_bg
+        startIconResId = R.drawable.ic_left_arrow
     )
 
     override val fragmentConfiguration = FragmentConfiguration()
@@ -67,6 +70,7 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
     private val binding by viewBinding(FragmentAssetDetailBinding::bind)
 
     private val assetDetailViewModel by viewModels<AssetDetailViewModel>()
+    private val priceHistoryViewModel by viewModels<AssetDetailPriceHistoryViewModel>()
 
     private lateinit var assetDetailPagerAdapter: AssetDetailPagerAdapter
 
@@ -98,6 +102,12 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
 
     private val navigateToDiscoverMarketEventCollector: suspend (Event<TokenDetailInfo>?) -> Unit = { event ->
         event?.consume()?.run { navToDiscoverTokenDetailPage(this) }
+    }
+
+    private val viewEventCollector: suspend (AssetDetailViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is UpdatePrimaryAndSecondaryText -> updatePrimaryAndSecondaryTexts(event.primaryText, event.secondaryText)
+        }
     }
 
     override fun onDateFilterClick(currentFilter: DateFilter) {
@@ -134,9 +144,11 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         configureToolbar()
         initPagerAdapter()
         configureTabLayout()
+        initPriceHistoryChart()
     }
 
     private fun initObservers() {
+        collectLatestOnLifecycle(assetDetailViewModel.viewEvent, viewEventCollector)
         with(assetDetailViewModel.assetDetailPreviewFlow) {
             collectLatestOnLifecycle(
                 flow = this,
@@ -179,6 +191,28 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
             isUserInputEnabled = false
             adapter = assetDetailPagerAdapter
         }
+    }
+
+    private fun initPriceHistoryChart() {
+        val isChartFeatureEnabled = assetDetailViewModel.isChartFeatureEnabled()
+        binding.priceHistoryChart.isVisible = isChartFeatureEnabled
+        if (isChartFeatureEnabled) {
+            binding.priceHistoryChart.setContent {
+                PeraTheme {
+                    AssetPriceHistoryLineChart(
+                        assetId = assetDetailViewModel.assetId,
+                        viewModel = priceHistoryViewModel,
+                        onItemSelected = assetDetailViewModel::displayAssetPriceHistory,
+                        onItemDeselected = assetDetailViewModel::displayAssetHoldings
+                    )
+                }
+            }
+        }
+    }
+
+    private fun updatePrimaryAndSecondaryTexts(primary: String, secondary: String) {
+        binding.assetPrimaryValueTextView.text = primary
+        binding.assetSecondaryValueTextView.text = secondary
     }
 
     private fun configureToolbar() {

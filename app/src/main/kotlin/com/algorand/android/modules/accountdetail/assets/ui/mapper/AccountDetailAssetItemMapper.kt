@@ -195,14 +195,6 @@ class AccountDetailAssetItemMapper @Inject constructor(
         return AccountDetailAssetsItem.NoAssetFoundViewItem
     }
 
-    fun mapToRequiredMinimumBalanceItem(
-        formattedRequiredMinimumBalance: String
-    ): AccountDetailAccountsItem.RequiredMinimumBalanceItem {
-        return AccountDetailAccountsItem.RequiredMinimumBalanceItem(
-            formattedRequiredMinimumBalance = formattedRequiredMinimumBalance
-        )
-    }
-
     private fun mapToOwnedNFTItem(
         assetLite: AssetLite,
         isHoldingByWatchAccount: Boolean,

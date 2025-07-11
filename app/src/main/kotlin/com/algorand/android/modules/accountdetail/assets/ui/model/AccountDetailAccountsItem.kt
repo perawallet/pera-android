@@ -11,7 +11,6 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
         ASSETS_LIST_TITLE(1),
         SEARCH(2),
         QUICK_ACTIONS(3),
-        REQUIRED_MINIMUM_BALANCE(4),
         BACKUP_WARNING(5)
     }
 
@@ -19,7 +18,9 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
 
     data class AccountPortfolioItem(
         val accountPrimaryFormattedParityValue: String?,
-        val accountSecondaryFormattedParityValue: String?
+        val accountSecondaryFormattedParityValue: String?,
+        val requiredMinBalance: String,
+        val displayChart: Boolean
     ) : AccountDetailAccountsItem {
 
         override val itemType: ItemType
@@ -91,21 +92,6 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
             return other is QuickActionItemContainer && this == other
-        }
-    }
-
-    data class RequiredMinimumBalanceItem(val formattedRequiredMinimumBalance: String) : AccountDetailAccountsItem {
-
-        override val itemType: ItemType
-            get() = ItemType.REQUIRED_MINIMUM_BALANCE
-
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is RequiredMinimumBalanceItem &&
-                formattedRequiredMinimumBalance == other.formattedRequiredMinimumBalance
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is RequiredMinimumBalanceItem && this == other
         }
     }
 }

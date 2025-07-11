@@ -170,11 +170,11 @@ sealed interface BaseAccountListItem : RecyclerListItem {
     }
 
     data object WalletChartItem : BaseAccountListItem {
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean = true
+        override fun areItemsTheSame(other: RecyclerListItem): Boolean = other is WalletChartItem
 
         override val itemType: ItemType = ItemType.CHART
 
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean = true
+        override fun areContentsTheSame(other: RecyclerListItem): Boolean = other is WalletChartItem
     }
 
     companion object {

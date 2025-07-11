@@ -184,8 +184,8 @@ class DeeplinkHandler @Inject constructor(
         fun onDiscoverDeepLink(path: String): Boolean = false
         fun onAssetInboxDeepLink(accountAddress: String, notificationGroupType: NotificationGroupType): Boolean = false
         fun onKeyRegDeeplink(deepLink: DeepLink.KeyReg): Boolean = false
-        fun onCardsDeepLink(path: String): Boolean = false
-        fun onStakingDeepLink(path: String): Boolean = false
+        fun onCardsDeepLink(path: String?): Boolean = false
+        fun onStakingDeepLink(path: String?): Boolean = false
         fun onUndefinedDeepLink(deepLink: DeepLink.Undefined)
         fun onDeepLinkNotHandled(deepLink: DeepLink)
     }

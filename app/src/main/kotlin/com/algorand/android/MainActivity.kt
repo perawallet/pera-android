@@ -303,12 +303,12 @@ class MainActivity :
             return true
         }
 
-        override fun onCardsDeepLink(path: String): Boolean {
+        override fun onCardsDeepLink(path: String?): Boolean {
             navToCardsFragment(path)
             return true
         }
 
-        override fun onStakingDeepLink(path: String): Boolean {
+        override fun onStakingDeepLink(path: String?): Boolean {
             navToStakingFragment(path)
             return true
         }

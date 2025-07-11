@@ -67,9 +67,9 @@ sealed interface DeepLink {
 
     data class Discover(val path: String) : DeepLink
 
-    data class Cards(val path: String) : DeepLink
+    data class Cards(val path: String?) : DeepLink
 
-    data class Staking(val path: String) : DeepLink
+    data class Staking(val path: String?) : DeepLink
 
     data class Notification(
         val address: String,

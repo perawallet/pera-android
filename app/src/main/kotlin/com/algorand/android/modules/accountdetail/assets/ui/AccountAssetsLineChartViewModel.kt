@@ -14,9 +14,6 @@ package com.algorand.android.modules.accountdetail.assets.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsLineChartViewModel.ViewState
-import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsLineChartViewModel.ViewState.Content.ContentState
-import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsLineChartViewModel.ViewState.Idle
 import com.algorand.android.modules.accountdetail.assets.ui.model.AddressLineChartData
 import com.algorand.android.modules.parity.domain.usecase.GetPrimaryAlgoParityValue
 import com.algorand.android.modules.parity.domain.usecase.GetSecondaryAlgoParityValue
@@ -25,11 +22,16 @@ import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
 import com.algorand.android.ui.compose.widget.chart.mapper.WalletWealthPeriodMapper
+import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneDay
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneMonth
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneWeek
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneYear
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Idle
 import com.algorand.android.utils.ALGO_DECIMALS
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
@@ -50,7 +52,7 @@ class AccountAssetsLineChartViewModel @Inject constructor(
     private val getSecondaryAlgoParityValue: GetSecondaryAlgoParityValue,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
     private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer
-) : ViewModel(), StateViewModel<ViewState> by stateDelegate {
+) : ViewModel(), StateViewModel<ViewState> by stateDelegate, StatefulPeraLineChartViewModel {
 
     init {
         stateDelegate.setDefaultState(Idle)
@@ -61,12 +63,12 @@ class AccountAssetsLineChartViewModel @Inject constructor(
     fun init(address: String) {
         stateDelegate.onState<Idle> {
             stateDelegate.updateState {
-                ViewState.Content(contentState = ContentState.Loading, INITIAL_CHART_PERIOD)
+                ViewState.Content(contentState = ContentState.Loading, INITIAL_CHART_PERIOD, PERIODS)
             }
             selectedPeriodFlow.onEach { period ->
                 val viewState = getAddressWealth(address, walletWealthPeriodMapper(period)).use(
                     onSuccess = { addressWealth ->
-                        ViewState.Content(ContentState.Data(getAddressChartData(addressWealth)), period)
+                        ViewState.Content(ContentState.Data(getAddressChartData(addressWealth)), period, PERIODS)
                     },
                     onFailed = { _, _ ->
                         ViewState.Error
@@ -77,11 +79,13 @@ class AccountAssetsLineChartViewModel @Inject constructor(
         }
     }
 
-    fun getSelectedChartData(index: Int): AddressLineChartData? {
-        return ((state.value as? ViewState.Content)?.contentState as? ContentState.Data)?.chartData?.getOrNull(index)
+    override fun getSelectedChartData(index: Int): PeraLineChartData? {
+        return ((state.value as? ViewState.Content)?.contentState as? ContentState.Data)
+            ?.chartData
+            ?.getOrNull(index)
     }
 
-    fun displaySelectedPeriodValues(period: PeraLineChartPeriodChip) {
+    override fun displaySelectedPeriodValues(period: PeraLineChartPeriodChip) {
         stateDelegate.onState<ViewState.Content> { currentState ->
             selectedPeriodFlow.value = period
             stateDelegate.updateState {
@@ -93,7 +97,7 @@ class AccountAssetsLineChartViewModel @Inject constructor(
         }
     }
 
-    private fun getAddressChartData(addressWealth: AddressWealth): List<AddressLineChartData> {
+    private fun getAddressChartData(addressWealth: AddressWealth): List<PeraLineChartData> {
         return addressWealth.chartData.map { chartData ->
             val algoAmount = chartData.algoValue.movePointRight(ALGO_DECIMALS).toBigInteger()
             val primaryAmount = PeraAmount(getPrimaryAlgoParityValue(algoAmount).amountAsCurrency)
@@ -108,24 +112,8 @@ class AccountAssetsLineChartViewModel @Inject constructor(
         }
     }
 
-    sealed interface ViewState {
-        data object Idle : ViewState
-        data object Loading : ViewState
-        data object Error : ViewState
-        data class Content(
-            val contentState: ContentState,
-            val selectedPeriod: PeraLineChartPeriodChip,
-            val periods: List<PeraLineChartPeriodChip> = listOf(OneDay, OneWeek, OneMonth, OneYear)
-        ) : ViewState {
-
-            sealed interface ContentState {
-                data object Loading : ContentState
-                data class Data(val chartData: List<AddressLineChartData>) : ContentState
-            }
-        }
-    }
-
     private companion object {
         val INITIAL_CHART_PERIOD = OneWeek
+        val PERIODS = listOf(OneDay, OneWeek, OneMonth, OneYear)
     }
 }

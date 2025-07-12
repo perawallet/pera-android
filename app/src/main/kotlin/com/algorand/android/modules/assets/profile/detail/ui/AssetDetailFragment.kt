@@ -38,9 +38,10 @@ import com.algorand.android.modules.assets.profile.detail.ui.adapter.AssetDetail
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
-import com.algorand.android.ui.asset.detail.view.AssetPriceHistoryLineChart
+import com.algorand.android.ui.asset.detail.model.AssetPriceHistoryItem
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailPriceHistoryViewModel
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.PERA_VERIFICATION_MAIL_ADDRESS
@@ -145,6 +146,7 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         initPagerAdapter()
         configureTabLayout()
         initPriceHistoryChart()
+        priceHistoryViewModel.init(assetDetailViewModel.assetId)
     }
 
     private fun initObservers() {
@@ -199,10 +201,11 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         if (isChartFeatureEnabled) {
             binding.priceHistoryChart.setContent {
                 PeraTheme {
-                    AssetPriceHistoryLineChart(
-                        assetId = assetDetailViewModel.assetId,
+                    StatefulPeraLineChart(
                         viewModel = priceHistoryViewModel,
-                        onItemSelected = assetDetailViewModel::displayAssetPriceHistory,
+                        onItemSelected = {
+                            assetDetailViewModel.displayAssetPriceHistory(it as AssetPriceHistoryItem)
+                        },
                         onItemDeselected = assetDetailViewModel::displayAssetHoldings
                     )
                 }

@@ -13,6 +13,7 @@
 package com.algorand.android.ui.accounts.model
 
 import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import java.math.BigDecimal
 import java.time.OffsetDateTime
 
@@ -22,4 +23,8 @@ data class AccountsLineChartData(
     val primaryAmountRenderer: AmountRenderer,
     val secondaryAmountRenderer: AmountRenderer,
     val round: Int
-)
+) : PeraLineChartData {
+
+    override val value: Float
+        get() = primaryValue.toFloat()
+}

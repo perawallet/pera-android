@@ -10,7 +10,7 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.asset.detail.view
+package com.algorand.android.ui.compose.widget.chart.view
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,32 +21,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.algorand.android.ui.asset.detail.model.AssetPriceHistoryItem
-import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailPriceHistoryViewModel
-import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailPriceHistoryViewModel.ViewState.Content
-import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailPriceHistoryViewModel.ViewState.Content.ContentState
-import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailPriceHistoryViewModel.ViewState.Error
-import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailPriceHistoryViewModel.ViewState.Idle
-import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailPriceHistoryViewModel.ViewState.Loading
-import com.algorand.android.ui.compose.widget.chart.view.PeraChartPeriodChip
-import com.algorand.android.ui.compose.widget.chart.view.PeraChartPeriodContainer
-import com.algorand.android.ui.compose.widget.chart.view.PeraLineChart
-import com.algorand.android.ui.compose.widget.chart.view.PeraLineChartErrorState
-import com.algorand.android.ui.compose.widget.chart.view.PeraLineChartLoadingState
+import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Error
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Idle
+import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Loading
 
 @Composable
-fun AssetPriceHistoryLineChart(
-    assetId: Long,
-    viewModel: AssetDetailPriceHistoryViewModel,
-    onItemSelected: (AssetPriceHistoryItem) -> Unit,
+fun StatefulPeraLineChart(
+    viewModel: StatefulPeraLineChartViewModel,
+    onItemSelected: (PeraLineChartData) -> Unit,
     onItemDeselected: () -> Unit
 ) {
+
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = viewModel.state.collectAsStateWithLifecycle().value) {
             Idle -> Unit
@@ -75,24 +69,20 @@ fun AssetPriceHistoryLineChart(
             Error -> PeraLineChartErrorState()
         }
     }
-
-    LaunchedEffect(Unit) {
-        viewModel.init(assetId)
-    }
 }
 
 @Composable
 private fun ColumnScope.Chart(
     state: ContentState.Data,
-    viewModel: AssetDetailPriceHistoryViewModel,
-    onItemSelected: (AssetPriceHistoryItem) -> Unit,
+    viewModel: StatefulPeraLineChartViewModel,
+    onItemSelected: (PeraLineChartData) -> Unit,
     onItemDeselected: () -> Unit
 ) {
     PeraLineChart(
         modifier = Modifier
             .weight(1f)
             .padding(end = 16.dp),
-        data = state.chartData.map { it.usdPrice.toFloat() },
+        data = state.chartData.map { it.value },
         onDataPointSelected = { index ->
             if (index == null) {
                 onItemDeselected()

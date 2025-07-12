@@ -24,7 +24,6 @@ import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.accounts.usecase.GetAccountsLineChartData
 import com.algorand.android.ui.compose.widget.chart.mapper.WalletWealthPeriodMapper
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip
-import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneDay
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneMonth
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneWeek
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneYear
@@ -113,6 +112,6 @@ class AccountsLineChartViewModel @Inject constructor(
 
     private companion object {
         val INITIAL_CHART_PERIOD = OneWeek
-        val PERIODS = listOf(OneDay, OneWeek, OneMonth, OneYear)
+        val PERIODS = listOf(OneWeek, OneMonth, OneYear)
     }
 }

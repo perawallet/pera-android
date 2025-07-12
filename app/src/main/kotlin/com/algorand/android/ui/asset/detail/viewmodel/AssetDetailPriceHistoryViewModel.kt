@@ -22,7 +22,6 @@ import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRende
 import com.algorand.android.ui.compose.widget.chart.mapper.WalletWealthPeriodMapper
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip
-import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneDay
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneMonth
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneWeek
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartPeriodChip.OneYear
@@ -97,6 +96,6 @@ class AssetDetailPriceHistoryViewModel @Inject constructor(
 
     private companion object {
         val INITIAL_CHART_PERIOD = OneWeek
-        val PERIODS = listOf(OneDay, OneWeek, OneMonth, OneYear)
+        val PERIODS = listOf(OneWeek, OneMonth, OneYear)
     }
 }

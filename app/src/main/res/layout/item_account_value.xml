@@ -59,9 +59,9 @@
         android:drawablePadding="@dimen/spacing_xxsmall"
         android:drawableTint="@color/text_gray_lighter"
         android:gravity="center_vertical"
-        android:textAppearance="@style/TextAppearance.Body.Sans"
-        android:textColor="@color/text_gray"
-        app:drawableEndCompat="@drawable/ic_info_small"
+        android:textAppearance="@style/TextAppearance.Footnote.Sans"
+        android:textColor="@color/text_gray_lighter"
+        app:drawableEndCompat="@drawable/ic_info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/secondaryValueTextView"
         tools:text="@tools:sample/lorem[3]" />

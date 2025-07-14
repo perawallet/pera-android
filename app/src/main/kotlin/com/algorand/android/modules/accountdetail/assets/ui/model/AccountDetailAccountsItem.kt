@@ -81,13 +81,15 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
         }
     }
 
-    data class QuickActionItemContainer(val quickActionItemList: List<QuickActionItem>) : AccountDetailAccountsItem {
+    data class QuickActionItemContainer(
+        val quickActionItems: List<AccountDetailQuickActionItem>
+    ) : AccountDetailAccountsItem {
 
         override val itemType: ItemType
             get() = ItemType.QUICK_ACTIONS
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is QuickActionItemContainer && quickActionItemList == other.quickActionItemList
+            return other is QuickActionItemContainer && quickActionItems == other.quickActionItems
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {

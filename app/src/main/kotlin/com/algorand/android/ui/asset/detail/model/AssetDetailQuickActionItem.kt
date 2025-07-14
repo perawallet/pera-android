@@ -12,16 +12,13 @@
 
 package com.algorand.android.ui.asset.detail.model
 
-import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
-import java.math.BigDecimal
-import java.time.OffsetDateTime
+sealed interface AssetDetailQuickActionItem {
 
-data class AssetPriceHistoryItem(
-    val datetime: OffsetDateTime,
-    val usdPrice: BigDecimal,
-    val formattedPriceInSelectedCurrency: String
-) : PeraLineChartData {
+    data class SwapButton(val isSelected: Boolean) : AssetDetailQuickActionItem
 
-    override val value: Float
-        get() = usdPrice.toFloat()
+    data object BuyAlgoButton : AssetDetailQuickActionItem
+
+    data object SendButton : AssetDetailQuickActionItem
+
+    data object ReceiveButton : AssetDetailQuickActionItem
 }

@@ -16,9 +16,8 @@ import com.algorand.android.R
 import com.algorand.android.modules.accountdetail.assets.ui.mapper.AccountDetailAssetItemMapper
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.AccountPortfolioItem
-import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem
-import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem.AssetInbox
-import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem.AssetInboxActive
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem
+import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailQuickActionItem.AssetInbox
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite.CachedInfo
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLiteCacheStatus
@@ -105,29 +104,28 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     private suspend fun createQuickActionItemList(
         accountLite: AccountLite
     ): AccountDetailAccountsItem.QuickActionItemContainer {
-        val quickActionItemList = mutableListOf<QuickActionItem>().apply {
+        val accountDetailQuickActionItemLists = mutableListOf<AccountDetailQuickActionItem>().apply {
             val isWatchAccount = accountLite.cachedInfo?.type == AccountType.NoAuth
             if (isWatchAccount) {
                 addAll(getWatchAccountQuickActionItems())
             } else {
                 addAll(getAuthAccountQuickActionItem(accountLite.address))
             }
-            add(QuickActionItem.MoreButton)
+            add(AccountDetailQuickActionItem.MoreButton)
         }
-        return accountDetailAssetItemMapper.mapToQuickActionItemContainer(quickActionItemList)
+        return AccountDetailAccountsItem.QuickActionItemContainer(accountDetailQuickActionItemLists)
     }
 
-    private fun getWatchAccountQuickActionItems(): List<QuickActionItem> {
-        return listOf(QuickActionItem.CopyAddressButton, QuickActionItem.ShowAddressButton)
+    private fun getWatchAccountQuickActionItems(): List<AccountDetailQuickActionItem> {
+        return listOf(AccountDetailQuickActionItem.CopyAddressButton, AccountDetailQuickActionItem.ShowAddressButton)
     }
 
-    private suspend fun getAuthAccountQuickActionItem(address: String): List<QuickActionItem> {
-        return mutableListOf<QuickActionItem>().apply {
+    private suspend fun getAuthAccountQuickActionItem(address: String): List<AccountDetailQuickActionItem> {
+        return mutableListOf<AccountDetailQuickActionItem>().apply {
             val isSwapSelected = getSwapFeatureRedDotVisibility.getSwapFeatureRedDotVisibility()
-            val inboxItem = if (hasInboxItem(address)) AssetInboxActive else AssetInbox
-            add(accountDetailAssetItemMapper.mapToSwapQuickActionItem(isSwapSelected))
-            add(QuickActionItem.BuyAlgoButton)
-            add(inboxItem)
+            add(AccountDetailQuickActionItem.SwapButton(isSwapSelected))
+            add(AccountDetailQuickActionItem.BuyAlgoButton)
+            add(AssetInbox(hasInboxItem(address)))
         }
     }
 }

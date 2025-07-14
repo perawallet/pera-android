@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.algorand.android.R
+import com.algorand.android.ui.compose.theme.PeraTheme
 
 @Composable
 internal fun PeraLineChartErrorState() {
@@ -29,6 +30,7 @@ internal fun PeraLineChartErrorState() {
             .fillMaxSize()
             .padding(24.dp),
         text = stringResource(R.string.no_chart_data_available),
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
+        color = PeraTheme.colors.text.main
     )
 }

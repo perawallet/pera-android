@@ -19,16 +19,18 @@ import com.algorand.android.databinding.ItemWalletChartBinding
 import com.algorand.android.models.BaseViewHolder
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.ui.accounts.model.AccountsLineChartData
-import com.algorand.android.ui.accounts.view.AccountsLineChart
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
 
 class AccountListWalletChartViewHolder(
+    private val viewModel: AccountsLineChartViewModel,
     binding: ItemWalletChartBinding
 ) : BaseViewHolder<BaseAccountListItem>(binding.root) {
 
     override fun bind(item: BaseAccountListItem) {
         if (item !is BaseAccountListItem.WalletChartItem) return
+        viewModel.init()
     }
 
     companion object {
@@ -42,11 +44,18 @@ class AccountListWalletChartViewHolder(
                 setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
                 setContent {
                     PeraTheme {
-                        AccountsLineChart(viewModel, listener::onItemSelected, listener::onItemDeselected)
+                        StatefulPeraLineChart(
+                            viewModel = viewModel,
+                            onItemSelected = {
+                                val accountsLineChartData = it as? AccountsLineChartData ?: return@StatefulPeraLineChart
+                                listener.onItemSelected(accountsLineChartData)
+                            },
+                            onItemDeselected = listener::onItemDeselected
+                        )
                     }
                 }
             }
-            return AccountListWalletChartViewHolder(binding)
+            return AccountListWalletChartViewHolder(viewModel, binding)
         }
     }
 

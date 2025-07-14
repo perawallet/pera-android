@@ -28,11 +28,17 @@ import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPr
 import com.algorand.android.modules.swap.common.domain.usecase.GetSwapNavigationDestination
 import com.algorand.android.modules.swap.model.SwapNavigationDestination
 import com.algorand.android.modules.swap.reddot.domain.usecase.GetSwapFeatureRedDotVisibilityUseCase
+import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem
+import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.BuyAlgoButton
+import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.ReceiveButton
+import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SendButton
+import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem.SwapButton
 import com.algorand.android.utils.ALGO_SHORT_NAME
 import com.algorand.android.utils.Event
 import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountType
+import com.algorand.wallet.account.info.domain.model.AssetHolding
 import com.algorand.wallet.account.info.domain.usecase.GetAccountAssetHoldingsFlow
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
@@ -148,8 +154,6 @@ class AssetDetailPreviewUseCase @Inject constructor(
                 assetId = assetId,
                 address = accountAddress
             ) ?: return@map null
-            val isSwapButtonSelected = getRedDotVisibility(baseOwnedAssetDetail.isAlgo)
-            val isUserOptedInToAsa = assetHoldings.any { it.assetId == assetId }
             val assetDetail = getAssetDetail(assetId)
             val isAvailableOnDiscoverMobile = assetDetail?.assetInfo?.isAvailableOnDiscoverMobile ?: false
             val formattedAssetPrice = getSelectedAssetExchangeValueUseCase.getSelectedAssetExchangeValue(assetDetail)
@@ -157,20 +161,47 @@ class AssetDetailPreviewUseCase @Inject constructor(
             val isMarketInformationVisible = isAvailableOnDiscoverMobile &&
                 baseOwnedAssetDetail.verificationTier != VerificationTier.SUSPICIOUS &&
                 assetDetail?.hasUsdValue() == true
-            val isWatchAccount = getAccountType(accountAddress) == AccountType.NoAuth
-            val safeIsQuickActionButtonsVisible = isQuickActionButtonsVisible && !isWatchAccount
             assetDetailPreviewMapper.mapToAssetDetailPreview(
                 baseOwnedAssetDetail = baseOwnedAssetDetail,
                 accountDisplayName = getAccountDisplayName(accountAddress),
-                isQuickActionButtonsVisible = safeIsQuickActionButtonsVisible,
-                isSwapButtonSelected = isSwapButtonSelected,
-                isSwapButtonVisible = isUserOptedInToAsa && safeIsQuickActionButtonsVisible,
                 isMarketInformationVisible = isMarketInformationVisible,
                 last24HoursChange = assetDetail?.assetInfo?.fiat?.last24HoursAlgoPriceChangePercentage,
                 formattedAssetPrice = formattedAssetPrice,
-                accountDetailSummary = accountDetailSummaryUseCase.getAccountDetailSummary(accountAddress)
+                accountDetailSummary = accountDetailSummaryUseCase.getAccountDetailSummary(accountAddress),
+                quickActionItems = getQuickActionItems(
+                    accountAddress,
+                    assetHoldings,
+                    assetId,
+                    isQuickActionButtonsVisible
+                )
             )
         }.distinctUntilChanged()
+    }
+
+    private suspend fun getQuickActionItems(
+        address: String,
+        assetHoldings: List<AssetHolding>,
+        assetId: Long,
+        isQuickActionButtonsVisible: Boolean
+    ): List<AssetDetailQuickActionItem> {
+        val isWatchAccount = getAccountType(address) == AccountType.NoAuth
+        val safeIsQuickActionButtonsVisible = isQuickActionButtonsVisible && !isWatchAccount
+        if (!safeIsQuickActionButtonsVisible) return emptyList()
+
+        val quickActionItems = mutableListOf<AssetDetailQuickActionItem>()
+
+        val isAlgo = assetId == ALGO_ID
+        val isUserOptedInToAsa = assetHoldings.any { it.assetId == assetId }
+        if (isUserOptedInToAsa) {
+            quickActionItems.add(SwapButton(getRedDotVisibility(isAlgo)))
+        }
+
+        if (isAlgo) {
+            quickActionItems.add(BuyAlgoButton)
+        }
+        quickActionItems.add(SendButton)
+        quickActionItems.add(ReceiveButton)
+        return quickActionItems
     }
 
     private suspend fun getRedDotVisibility(isAlgo: Boolean): Boolean {

@@ -17,6 +17,7 @@ import com.algorand.android.assetsearch.ui.model.VerificationTierConfiguration
 import com.algorand.android.discover.home.domain.model.TokenDetailInfo
 import com.algorand.android.models.AccountDetailSummary
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
+import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.assetdrawable.BaseAssetDrawableProvider
@@ -33,9 +34,6 @@ data class AssetDetailPreview(
     val accountDisplayName: AccountDisplayName,
     val baseAssetDrawableProvider: BaseAssetDrawableProvider,
     val assetPrismUrl: String?,
-    val isQuickActionButtonsVisible: Boolean,
-    val isSwapButtonSelected: Boolean,
-    val isSwapButtonVisible: Boolean,
     val onShowGlobalErrorEvent: Event<Int>? = null,
     val onNavigationEvent: Event<NavDirections>? = null,
     val isMarketInformationVisible: Boolean,
@@ -44,5 +42,6 @@ data class AssetDetailPreview(
     val changePercentage: BigDecimal?,
     val changePercentageIcon: Int?,
     val changePercentageTextColor: Int?,
-    val navigateToDiscoverMarket: Event<TokenDetailInfo>? = null
+    val navigateToDiscoverMarket: Event<TokenDetailInfo>? = null,
+    val quickActionItems: List<AssetDetailQuickActionItem>
 )

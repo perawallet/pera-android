@@ -12,19 +12,19 @@
 
 package com.algorand.android.modules.accountdetail.assets.ui.model
 
-import com.algorand.android.ui.common.amount.AmountRenderer
-import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
-import java.math.BigDecimal
-import java.time.OffsetDateTime
+sealed interface AccountDetailQuickActionItem {
 
-data class AddressLineChartData(
-    val datetime: OffsetDateTime,
-    val primaryValue: BigDecimal,
-    val primaryAmountRenderer: AmountRenderer,
-    val secondaryAmountRenderer: AmountRenderer,
-    val round: Int
-) : PeraLineChartData {
+    data class AssetInbox(val isSelected: Boolean) : AccountDetailQuickActionItem
 
-    override val value: Float
-        get() = primaryValue.toFloat()
+    data class SwapButton(val isSelected: Boolean) : AccountDetailQuickActionItem
+
+    data object SendButton : AccountDetailQuickActionItem
+
+    data object MoreButton : AccountDetailQuickActionItem
+
+    data object CopyAddressButton : AccountDetailQuickActionItem
+
+    data object ShowAddressButton : AccountDetailQuickActionItem
+
+    data object BuyAlgoButton : AccountDetailQuickActionItem
 }

@@ -19,12 +19,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.AbstractComposeView
-import androidx.compose.ui.res.stringResource
-import com.algorand.android.R
 import com.algorand.android.ui.compose.theme.PeraTheme
-import com.algorand.android.ui.compose.widget.quickaction.PrimaryQuickActionButton
+import com.algorand.android.ui.compose.widget.quickaction.BuySellQuickActionButton
 import com.algorand.android.ui.compose.widget.quickaction.QuickActionButtonContainer
-import com.algorand.android.ui.compose.widget.quickaction.SecondaryQuickActionButton
+import com.algorand.android.ui.compose.widget.quickaction.SendQuickActionButton
+import com.algorand.android.ui.compose.widget.quickaction.StakeQuickActionButton
+import com.algorand.android.ui.compose.widget.quickaction.SwapQuickActionButton
 
 class AccountsQuickActionsView(context: Context, attrs: AttributeSet? = null) : AbstractComposeView(context, attrs) {
 
@@ -39,12 +39,12 @@ class AccountsQuickActionsView(context: Context, attrs: AttributeSet? = null) : 
                 when (val state = viewState) {
                     is ViewState.Idle -> Unit
                     is ViewState.Content -> {
-                        SwapButton(state.isSwapButtonSelected)
-                        BuySellButton()
+                        SwapQuickActionButton(state.isSwapButtonSelected) { listener?.onSwapClick() }
+                        BuySellQuickActionButton { listener?.onBuySellClick() }
                         if (state.isStakingEnabled) {
-                            StakeButton()
+                            StakeQuickActionButton { listener?.onStakingClick() }
                         }
-                        SendButton()
+                        SendQuickActionButton { listener?.onSendClick() }
                     }
                 }
             }
@@ -62,43 +62,6 @@ class AccountsQuickActionsView(context: Context, attrs: AttributeSet? = null) : 
         viewState = ViewState.Content(
             isStakingEnabled = isStakingEnabled,
             isSwapButtonSelected = isSwapButtonSelected
-        )
-    }
-
-    @Composable
-    private fun SwapButton(isSelected: Boolean) {
-        PrimaryQuickActionButton(
-            iconResId = R.drawable.ic_swap,
-            text = stringResource(R.string.swap),
-            showIndicator = isSelected,
-            onClick = { listener?.onSwapClick() }
-        )
-    }
-
-    @Composable
-    private fun BuySellButton() {
-        SecondaryQuickActionButton(
-            iconResId = R.drawable.ic_buy_sell_small,
-            text = stringResource(R.string.buy_sell),
-            onClick = { listener?.onBuySellClick() },
-        )
-    }
-
-    @Composable
-    private fun StakeButton() {
-        SecondaryQuickActionButton(
-            iconResId = R.drawable.ic_staking,
-            text = stringResource(R.string.staking),
-            onClick = { listener?.onStakingClick() },
-        )
-    }
-
-    @Composable
-    private fun SendButton() {
-        SecondaryQuickActionButton(
-            iconResId = R.drawable.ic_send,
-            text = stringResource(R.string.send),
-            onClick = { listener?.onSendClick() },
         )
     }
 

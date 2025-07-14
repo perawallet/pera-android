@@ -10,18 +10,8 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.asset.detail.model
+package com.algorand.android.ui.compose.widget.chart.model
 
-import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
-import java.math.BigDecimal
-import java.time.OffsetDateTime
-
-data class AssetPriceHistoryItem(
-    val datetime: OffsetDateTime,
-    val usdPrice: BigDecimal,
-    val formattedPriceInSelectedCurrency: String
-) : PeraLineChartData {
-
-    override val value: Float
-        get() = usdPrice.toFloat()
+interface PeraLineChartData {
+    val value: Float
 }

@@ -39,6 +39,7 @@ import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPr
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.ui.asset.detail.model.AssetPriceHistoryItem
+import com.algorand.android.ui.asset.detail.view.AssetDetailQuickActionsView.AssetDetailQuickActionsViewListener
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailPriceHistoryViewModel
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
@@ -135,6 +136,24 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         )
     }
 
+    private val quickActionButtonsListener = object : AssetDetailQuickActionsViewListener {
+        override fun onSwapClick() {
+            assetDetailViewModel.onSwapClick()
+        }
+
+        override fun onBuyAlgoClick() {
+            assetDetailViewModel.onBuySellClick()
+        }
+
+        override fun onSendClick() {
+            assetDetailViewModel.onSendClick()
+        }
+
+        override fun onReceiveClick() {
+            navToShowQRBottomSheet()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
@@ -147,6 +166,7 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         configureTabLayout()
         initPriceHistoryChart()
         priceHistoryViewModel.init(assetDetailViewModel.assetId)
+        binding.quickActionButtons.setListener(quickActionButtonsListener)
     }
 
     private fun initObservers() {
@@ -240,12 +260,10 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
                 formattedPrimaryValue = formattedPrimaryValue,
                 formattedSecondaryValue = formattedSecondaryValue
             )
-            setQuickActionsButtons(
-                isAlgo = isAlgo,
-                isSwapButtonVisible = isSwapButtonVisible,
-                isQuickActionButtonsVisible = isQuickActionButtonsVisible,
-                isSwapButtonSelected = isSwapButtonSelected
-            )
+            binding.quickActionButtons.apply {
+                setQuickActionItems(quickActionItems)
+                isVisible = quickActionItems.isNotEmpty()
+            }
             setMarketInformation(
                 isMarketInformationVisible = isMarketInformationVisible,
                 formattedAssetPrice = formattedAssetPrice,
@@ -333,28 +351,6 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
             }
             assetIdTextView.isVisible = !isAlgo
             interpunctTextView.isVisible = !isAlgo
-        }
-    }
-
-    private fun setQuickActionsButtons(
-        isAlgo: Boolean,
-        isSwapButtonVisible: Boolean,
-        isQuickActionButtonsVisible: Boolean,
-        isSwapButtonSelected: Boolean
-    ) {
-        with(binding) {
-            quickActionButtons.isVisible = isQuickActionButtonsVisible
-            swapButton.apply {
-                isVisible = isSwapButtonVisible && isQuickActionButtonsVisible
-                isSelected = isSwapButtonSelected
-                setOnClickListener { assetDetailViewModel.onSwapClick() }
-            }
-            buyAlgoButton.apply {
-                isVisible = isAlgo && isQuickActionButtonsVisible
-                setOnClickListener { assetDetailViewModel.onBuySellClick() }
-            }
-            sendButton.setOnClickListener { assetDetailViewModel.onSendClick() }
-            receiveButton.setOnClickListener { navToShowQRBottomSheet() }
         }
     }
 

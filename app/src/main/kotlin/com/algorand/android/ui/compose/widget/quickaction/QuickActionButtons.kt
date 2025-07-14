@@ -89,3 +89,12 @@ fun ShowAddressQuickActionButton(onClick: () -> Unit) {
         onClick = onClick
     )
 }
+
+@Composable
+fun ReceiveQuickActionButton(onClick: () -> Unit) {
+    SecondaryQuickActionButton(
+        iconResId = R.drawable.ic_receive,
+        text = stringResource(R.string.receive),
+        onClick = onClick
+    )
+}

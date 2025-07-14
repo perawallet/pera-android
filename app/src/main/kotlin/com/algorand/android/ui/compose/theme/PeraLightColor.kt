@@ -67,7 +67,7 @@ object PeraLightColor : PeraColor {
 
         override val ghost = object : PeraColor.ButtonStyle {
             override val background = ColorPalette.White.Default
-            override val focusBackground = ColorPalette.Gray.V50
+            override val focusBackground = ColorPalette.Gray.V100
             override val disabledBackground = ColorPalette.White.Default
             override val text = ColorPalette.Turquoise.V600
             override val disabledText = ColorPalette.Gray.V400

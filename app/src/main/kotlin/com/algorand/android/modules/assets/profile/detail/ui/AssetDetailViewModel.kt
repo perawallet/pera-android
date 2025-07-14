@@ -15,12 +15,19 @@ package com.algorand.android.modules.assets.profile.detail.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.algorand.android.core.BaseViewModel
+import com.algorand.android.modules.assets.profile.detail.ui.AssetDetailViewModel.ViewEvent
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
 import com.algorand.android.modules.assets.profile.detail.ui.usecase.AssetDetailPreviewUseCase
 import com.algorand.android.modules.tracking.swap.assetdetail.AssetDetailAlgoSwapClickEventTracker
+import com.algorand.android.ui.asset.detail.model.AssetPriceHistoryItem
+import com.algorand.android.utils.formatDateToChartDateString
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
+import com.algorand.wallet.remoteconfig.domain.usecase.ASSET_DETAIL_CHART_TOGGLE
+import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
+import com.algorand.wallet.viewmodel.EventDelegate
+import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,8 +39,10 @@ import kotlinx.coroutines.launch
 class AssetDetailViewModel @Inject constructor(
     private val assetDetailPreviewUseCase: AssetDetailPreviewUseCase,
     private val algoSwapClickEventTracker: AssetDetailAlgoSwapClickEventTracker,
+    private val isFeatureToggleEnabled: IsFeatureToggleEnabled,
+    private val eventDelegate: EventDelegate<ViewEvent>,
     savedStateHandle: SavedStateHandle
-) : BaseViewModel() {
+) : BaseViewModel(), EventViewModel<ViewEvent> by eventDelegate {
 
     val assetId = savedStateHandle.getOrThrow<Long>(ASSET_ID_KEY)
     val accountAddress = savedStateHandle.getOrThrow<String>(ACCOUNT_ADDRESS_KEY)
@@ -57,6 +66,24 @@ class AssetDetailViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun isChartFeatureEnabled(): Boolean = isFeatureToggleEnabled(ASSET_DETAIL_CHART_TOGGLE)
+
+    fun displayAssetPriceHistory(item: AssetPriceHistoryItem) {
+        val event = ViewEvent.UpdatePrimaryAndSecondaryText(
+            primaryText = item.formattedPriceInSelectedCurrency,
+            secondaryText = formatDateToChartDateString(item.datetime)
+        )
+        eventDelegate.sendEvent(viewModelScope, event)
+    }
+
+    fun displayAssetHoldings() {
+        val event = ViewEvent.UpdatePrimaryAndSecondaryText(
+            primaryText = _assetDetailPreviewFlow.value?.formattedPrimaryValue.orEmpty(),
+            secondaryText = _assetDetailPreviewFlow.value?.formattedSecondaryValue.orEmpty()
+        )
+        eventDelegate.sendEvent(viewModelScope, event)
     }
 
     fun onAddAssetClick() {
@@ -110,6 +137,10 @@ class AssetDetailViewModel @Inject constructor(
                 _assetDetailPreviewFlow.emit(it)
             }
         }
+    }
+
+    sealed interface ViewEvent {
+        data class UpdatePrimaryAndSecondaryText(val primaryText: String, val secondaryText: String) : ViewEvent
     }
 
     companion object {

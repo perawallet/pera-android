@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.algorand.android.models.BaseDiffUtil
 import com.algorand.android.models.BaseViewHolder
+import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsLineChartViewModel
 import com.algorand.android.modules.accountdetail.assets.ui.adapter.AccountDetailAssetsTitleViewHolder.AccountDetailAssetsTitleViewHolderListener
 import com.algorand.android.modules.accountdetail.assets.ui.adapter.AccountDetailQuickActionsViewHolder.AccountDetailQuickActionsListener
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
@@ -24,17 +25,22 @@ import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailA
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.ASSETS_LIST_TITLE
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.BACKUP_WARNING
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.QUICK_ACTIONS
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.REQUIRED_MINIMUM_BALANCE
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.SEARCH
 import com.algorand.android.utils.hideKeyboard
 
 class AccountAssetsAccountDetailAdapter(
+    private val address: String,
+    private val lineChartViewModel: AccountAssetsLineChartViewModel,
     private val listener: Listener
 ) : ListAdapter<AccountDetailAccountsItem, BaseViewHolder<AccountDetailAccountsItem>>(BaseDiffUtil()) {
 
     private val accountValueViewHolderListener = object : AccountValueViewHolder.Listener {
         override fun onAccountValueClick() {
             listener.onAccountValueClick()
+        }
+
+        override fun onInfoButtonClick() {
+            listener.onRequiredMinimumBalanceClick()
         }
     }
 
@@ -84,10 +90,6 @@ class AccountAssetsAccountDetailAdapter(
         }
     }
 
-    private val requiredMinimumBalanceListener = RequiredMinimumBalanceItemViewHolder.RequiredMinimumBalanceListener {
-        listener.onRequiredMinimumBalanceClick()
-    }
-
     private val backupWarningListener = object : BackupWarningViewHolder.Listener {
         override fun onBackupNowClick() {
             listener.onBackupNowClick()
@@ -104,7 +106,6 @@ class AccountAssetsAccountDetailAdapter(
             ACCOUNT_PORTFOLIO.viewType -> createAccountValueViewHolder(parent)
             ASSETS_LIST_TITLE.viewType -> createAssetTitleViewHolder(parent)
             QUICK_ACTIONS.viewType -> createQuickActionsViewHolder(parent)
-            REQUIRED_MINIMUM_BALANCE.viewType -> createRequiredMinimumBalanceViewHolder(parent)
             BACKUP_WARNING.viewType -> createBackupWarningViewHolder(parent)
             else -> throw IllegalArgumentException("$logTag : Item View Type is Unknown.")
         }
@@ -126,7 +127,7 @@ class AccountAssetsAccountDetailAdapter(
     }
 
     private fun createAccountValueViewHolder(parent: ViewGroup): AccountValueViewHolder {
-        return AccountValueViewHolder.create(parent, accountValueViewHolderListener)
+        return AccountValueViewHolder.create(parent, address, lineChartViewModel, accountValueViewHolderListener)
     }
 
     private fun createAssetTitleViewHolder(parent: ViewGroup): AccountDetailAssetsTitleViewHolder {
@@ -135,10 +136,6 @@ class AccountAssetsAccountDetailAdapter(
 
     private fun createQuickActionsViewHolder(parent: ViewGroup): AccountDetailQuickActionsViewHolder {
         return AccountDetailQuickActionsViewHolder.create(parent, quickActionsViewHolderListener)
-    }
-
-    private fun createRequiredMinimumBalanceViewHolder(parent: ViewGroup): RequiredMinimumBalanceItemViewHolder {
-        return RequiredMinimumBalanceItemViewHolder.create(parent, requiredMinimumBalanceListener)
     }
 
     private fun createBackupWarningViewHolder(parent: ViewGroup): BackupWarningViewHolder {

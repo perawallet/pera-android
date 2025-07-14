@@ -16,6 +16,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
+import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.view.AccountsFragmentArgs
@@ -164,6 +165,10 @@ class AccountsViewModel @Inject constructor(
                 _accountPreviewFlow.emit(it)
             }
         }
+    }
+
+    fun getPortfolioValueItem(): BasePortfolioValueItem? {
+        return _accountPreviewFlow.value?.portfolioValueItem
     }
 
     fun checkConfettiState() {

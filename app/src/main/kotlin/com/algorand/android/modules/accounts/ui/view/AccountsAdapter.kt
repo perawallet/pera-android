@@ -14,6 +14,8 @@ package com.algorand.android.modules.accounts.ui.view
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
+import com.algorand.android.banner.ui.viewholder.AccountListWalletChartViewHolder
+import com.algorand.android.banner.ui.viewholder.AccountListWalletChartViewHolder.AccountListWalletChartViewHolderListener
 import com.algorand.android.banner.ui.viewholder.BaseBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.CardsBannerViewHolder
 import com.algorand.android.banner.ui.viewholder.GenericBannerViewHolder
@@ -26,6 +28,7 @@ import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.ACCOUNT_ERROR
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.ACCOUNT_SUCCESS
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.CARD_BANNER
+import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.CHART
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.GENERIC_BANNER
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.GOVERNANCE_BANNER
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemType.HEADER
@@ -35,13 +38,15 @@ import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem.ItemTy
 import com.algorand.android.modules.accounts.ui.view.viewholder.AccountErrorItemViewHolder
 import com.algorand.android.modules.accounts.ui.view.viewholder.AccountItemViewHolder
 import com.algorand.android.modules.accounts.ui.view.viewholder.AccountsQuickActionsViewHolder
-import com.algorand.android.modules.accounts.ui.view.viewholder.AccountsQuickActionsViewHolder.AccountsQuickActionsListener
 import com.algorand.android.modules.accounts.ui.view.viewholder.HeaderViewHolder
+import com.algorand.android.ui.accounts.view.AccountsQuickActionsView.AccountsQuickActionsListener
+import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel
 import com.algorand.android.ui.spotbanner.view.SpotBannerCarouselListener
 import com.algorand.wallet.banner.domain.model.Banner.BannerType
 
 class AccountsAdapter(
-    private val accountAdapterListener: AccountAdapterListener
+    private val accountAdapterListener: AccountAdapterListener,
+    private val accountsLineChartViewModel: AccountsLineChartViewModel
 ) : ListAdapter<BaseAccountListItem, BaseViewHolder<BaseAccountListItem>>(BaseDiffUtil()) {
 
     private val accountClickListener = object : AccountItemViewHolder.AccountClickListener {
@@ -115,6 +120,9 @@ class AccountsAdapter(
             GENERIC_BANNER.ordinal -> GenericBannerViewHolder.create(baseBannerListener, parent)
             QUICK_ACTIONS.ordinal -> AccountsQuickActionsViewHolder.create(parent, accountAdapterListener)
             SPOT_BANNER.ordinal -> SpotBannerViewHolder.create(parent, accountAdapterListener)
+            CHART.ordinal -> {
+                AccountListWalletChartViewHolder.create(parent, accountsLineChartViewModel, accountAdapterListener)
+            }
             else -> throw Exception("$logTag: Item View Type is Unknown.")
         }
     }
@@ -128,7 +136,7 @@ class AccountsAdapter(
     }
 
     interface AccountAdapterListener : AccountsQuickActionsListener, HeaderViewHolder.OptionsClickListener,
-        SpotBannerCarouselListener {
+        SpotBannerCarouselListener, AccountListWalletChartViewHolderListener {
         fun onSucceedAccountClick(publicKey: String)
         fun onFailedAccountClick(publicKey: String)
         fun onAccountItemLongPressed(publicKey: String)

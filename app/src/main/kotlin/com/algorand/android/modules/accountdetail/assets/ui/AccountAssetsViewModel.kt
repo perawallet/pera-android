@@ -46,7 +46,7 @@ class AccountAssetsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), AccountAssetsEventTracker by accountAssetsEventTracker {
 
-    private val accountAddress: String = savedStateHandle.getOrThrow(ADDRESS_KEY)
+    val accountAddress: String = savedStateHandle.getOrThrow(ADDRESS_KEY)
 
     val accountAssetsFlow: StateFlow<AccountAssetsPreview?> get() = _accountAssetsFlow
     private val _accountAssetsFlow = MutableStateFlow<AccountAssetsPreview?>(null)

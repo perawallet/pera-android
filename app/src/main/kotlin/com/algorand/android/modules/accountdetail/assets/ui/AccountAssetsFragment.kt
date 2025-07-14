@@ -47,6 +47,8 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
 
     private val accountAssetsViewModel: AccountAssetsViewModel by viewModels()
 
+    private val accountAssetsLineChartViewModel: AccountAssetsLineChartViewModel by viewModels()
+
     private var listener: Listener? = null
 
     private val recyclerViewPositionVisibilityListener = RecyclerViewPositionVisibilityHandler.Listener { isVisible ->
@@ -140,9 +142,9 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
 
     private val accountAssetsAdapter = AccountAssetsAdapter(accountAssetsListener)
 
-    private val accountAssetsAccountDetailAdapter = AccountAssetsAccountDetailAdapter(accountDetailAdapterListener)
+    private lateinit var accountAssetsAccountDetailAdapter: AccountAssetsAccountDetailAdapter
 
-    private val accountAssetsConcatAdapter = ConcatAdapter(accountAssetsAccountDetailAdapter, accountAssetsAdapter)
+    private lateinit var accountAssetsConcatAdapter: ConcatAdapter
 
     private val accountAssetsCollector: suspend (PagingData<AccountDetailAssetsItem>?) -> Unit = { items ->
         items?.let { accountAssetsAdapter.submitData(items) }
@@ -170,6 +172,12 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
     }
 
     private fun initUi() {
+        accountAssetsAccountDetailAdapter = AccountAssetsAccountDetailAdapter(
+            address = accountAssetsViewModel.accountAddress,
+            lineChartViewModel = accountAssetsLineChartViewModel,
+            listener = accountDetailAdapterListener
+        )
+        accountAssetsConcatAdapter = ConcatAdapter(accountAssetsAccountDetailAdapter, accountAssetsAdapter)
         binding.accountAssetsRecyclerView.apply {
             recyclerViewPositionVisibilityHandler.addOnScrollListener(this)
             adapter = accountAssetsConcatAdapter

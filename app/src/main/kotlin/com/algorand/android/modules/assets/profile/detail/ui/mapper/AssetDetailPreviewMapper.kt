@@ -18,6 +18,7 @@ import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
+import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem
 import com.algorand.android.utils.AssetName
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -32,13 +33,11 @@ class AssetDetailPreviewMapper @Inject constructor(
     fun mapToAssetDetailPreview(
         baseOwnedAssetDetail: BaseAccountAssetData.BaseOwnedAssetData,
         accountDisplayName: AccountDisplayName,
-        isQuickActionButtonsVisible: Boolean,
-        isSwapButtonSelected: Boolean,
-        isSwapButtonVisible: Boolean,
         isMarketInformationVisible: Boolean,
         last24HoursChange: BigDecimal?,
         formattedAssetPrice: String?,
-        accountDetailSummary: AccountDetailSummary?
+        accountDetailSummary: AccountDetailSummary?,
+        quickActionItems: List<AssetDetailQuickActionItem>
     ): AssetDetailPreview {
         return with(baseOwnedAssetDetail) {
             AssetDetailPreview(
@@ -53,9 +52,6 @@ class AssetDetailPreviewMapper @Inject constructor(
                 assetPrismUrl = prismUrl,
                 verificationTierConfiguration = verificationTierConfigurationDecider
                     .decideVerificationTierConfiguration(verificationTier),
-                isQuickActionButtonsVisible = isQuickActionButtonsVisible,
-                isSwapButtonSelected = isSwapButtonSelected,
-                isSwapButtonVisible = isSwapButtonVisible,
                 isMarketInformationVisible = isMarketInformationVisible,
                 isChangePercentageVisible = assetDetailMarketInformationDecider.decideIsChangePercentageVisible(
                     last24HoursChange
@@ -67,7 +63,8 @@ class AssetDetailPreviewMapper @Inject constructor(
                 ),
                 changePercentageTextColor = assetDetailMarketInformationDecider.decideTextColorResOfChangePercentage(
                     last24HoursChange
-                )
+                ),
+                quickActionItems = quickActionItems
             )
         }
     }

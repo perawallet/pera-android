@@ -21,7 +21,6 @@ import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailA
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BaseOwnedItem.AssetItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BasePendingItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAssetsItem.BaseAssetItem.BasePendingItem.NFTItem
-import com.algorand.android.modules.accountdetail.assets.ui.model.QuickActionItem
 import com.algorand.android.modules.collectibles.listingviewtype.domain.model.NFTListingViewType
 import com.algorand.android.modules.collectibles.util.deciders.NFTAmountFormatDecider
 import com.algorand.android.modules.parity.domain.model.ParityValue
@@ -167,16 +166,6 @@ class AccountDetailAssetItemMapper @Inject constructor(
         )
     }
 
-    fun mapToSwapQuickActionItem(isSelected: Boolean): QuickActionItem.SwapButton {
-        return QuickActionItem.SwapButton(isSelected)
-    }
-
-    fun mapToQuickActionItemContainer(
-        quickActionItemList: List<QuickActionItem>
-    ): AccountDetailAccountsItem.QuickActionItemContainer {
-        return AccountDetailAccountsItem.QuickActionItemContainer(quickActionItemList)
-    }
-
     fun mapToSearchViewItem(query: String): AccountDetailAccountsItem.SearchViewItem {
         return AccountDetailAccountsItem.SearchViewItem(query = query)
     }
@@ -193,14 +182,6 @@ class AccountDetailAssetItemMapper @Inject constructor(
 
     fun mapToNoAssetFoundViewItem(): AccountDetailAssetsItem.NoAssetFoundViewItem {
         return AccountDetailAssetsItem.NoAssetFoundViewItem
-    }
-
-    fun mapToRequiredMinimumBalanceItem(
-        formattedRequiredMinimumBalance: String
-    ): AccountDetailAccountsItem.RequiredMinimumBalanceItem {
-        return AccountDetailAccountsItem.RequiredMinimumBalanceItem(
-            formattedRequiredMinimumBalance = formattedRequiredMinimumBalance
-        )
     }
 
     private fun mapToOwnedNFTItem(

@@ -52,12 +52,15 @@ import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.tutorialdialog.util.showCopyAccountAddressTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showGiftCardsTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showSwapFeatureTutorialDialog
+import com.algorand.android.ui.accounts.model.AccountsLineChartData
+import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel
 import com.algorand.android.utils.BannerViewTypesDividerItemDecoration
 import com.algorand.android.utils.browser.openUrl
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegation
 import com.algorand.android.utils.delegation.bottomnavfragment.BottomNavBarFragmentDelegationImpl
 import com.algorand.android.utils.extensions.collectLatestOnLifecycle
 import com.algorand.android.utils.extensions.setDrawableTintColor
+import com.algorand.android.utils.formatDateToChartDateString
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.algorand.wallet.banner.domain.model.Banner.BannerType
@@ -94,6 +97,8 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
     private val binding by viewBinding(FragmentAccountsBinding::bind)
 
     private val accountsViewModel: AccountsViewModel by viewModels<AccountsViewModel>()
+
+    private val accountsLineChartViewModel: AccountsLineChartViewModel by viewModels()
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         // Nothing to do
@@ -148,11 +153,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             accountsViewModel.onSwapTapEvent()
         }
 
-        override fun onScanQrClick() {
-            accountsViewModel.logQrScanClick()
-            navToQrScanFragment()
-        }
-
         override fun onSortClick() {
             accountsViewModel.logSortClick()
             onArrangeListClick()
@@ -180,12 +180,29 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             }
         }
 
+        override fun onItemSelected(chartData: AccountsLineChartData) {
+            with(binding) {
+                primaryPortfolioValue.text = chartData.primaryAmountRenderer.getDisplayValue()
+                secondaryPortfolioValue.text = chartData.secondaryAmountRenderer.getDisplayValue()
+                chartSelectedItemDateTextView.text = formatDateToChartDateString(chartData.datetime)
+            }
+        }
+
+        override fun onItemDeselected() {
+            with(binding) {
+                val portfolioValueItem = accountsViewModel.getPortfolioValueItem()
+                primaryPortfolioValue.text = portfolioValueItem?.getPrimaryAccountValue(requireContext())
+                secondaryPortfolioValue.text = portfolioValueItem?.getSecondaryAccountValue(requireContext())
+                chartSelectedItemDateTextView.text = " "
+            }
+        }
+
         override fun onDismissSpotBannerClick(spotBanner: SpotBanner.Generic) {
             accountsViewModel.dismissSpotBanner(spotBanner.id)
         }
     }
 
-    private val accountAdapter: AccountsAdapter = AccountsAdapter(accountAdapterListener = accountAdapterListener)
+    private lateinit var accountAdapter: AccountsAdapter
 
     private val accountListCollector: suspend (List<BaseAccountListItem>?) -> Unit = { accountList ->
         accountList?.let { safeList ->
@@ -206,10 +223,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private val accountsPortfolioValuesCollector: suspend (BasePortfolioValueItem?) -> Unit = {
         if (it != null) setPortfolioValues(it)
-    }
-
-    private val portfolioValuesBackgroundColorCollector: suspend (Int?) -> Unit = {
-        if (it != null) binding.toolbarLayout.setBackgroundColor(ContextCompat.getColor(binding.root.context, it))
     }
 
     private val successStateVisibilityCollector: suspend (Boolean?) -> Unit = { isVisible ->
@@ -341,6 +354,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
     }
 
     private fun initUi() {
+        accountAdapter = AccountsAdapter(accountAdapterListener, accountsLineChartViewModel)
         binding.accountsRecyclerView.apply {
             adapter = accountAdapter
             itemAnimator = null
@@ -398,10 +412,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             viewLifecycleOwner.collectLatestOnLifecycle(
                 accountPreviewFlow.map { it?.portfolioValueItem }.distinctUntilChanged(),
                 accountsPortfolioValuesCollector
-            )
-            viewLifecycleOwner.collectLatestOnLifecycle(
-                accountPreviewFlow.map { it?.portfolioValuesBackgroundRes }.distinctUntilChanged(),
-                portfolioValuesBackgroundColorCollector
             )
             viewLifecycleOwner.collectLatestOnLifecycle(
                 accountPreviewFlow.map { it?.isSuccessStateVisible }.distinctUntilChanged(),

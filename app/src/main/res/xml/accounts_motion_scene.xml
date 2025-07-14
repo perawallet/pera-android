@@ -148,6 +148,17 @@
         </Constraint>
 
         <Constraint
+            android:id="@id/chartSelectedItemDateTextView"
+            app:visibilityMode="ignore">
+            <Layout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/spacing_xlarge"
+                app:layout_constraintBottom_toTopOf="@id/accountsRecyclerView"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </Constraint>
+
+        <Constraint
             android:id="@id/accountsRecyclerView"
             app:visibilityMode="ignore">
             <Layout
@@ -205,7 +216,7 @@
                 android:drawablePadding="6dp"
                 android:paddingHorizontal="@dimen/spacing_xsmall"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"  />
+                app:layout_constraintTop_toTopOf="parent" />
         </Constraint>
 
         <ConstraintOverride
@@ -290,6 +301,17 @@
         </Constraint>
 
         <Constraint
+            android:id="@id/chartSelectedItemDateTextView"
+            app:visibilityMode="ignore">
+            <Layout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/spacing_xlarge"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbarLayout" />
+        </Constraint>
+
+        <Constraint
             android:id="@id/accountsRecyclerView"
             app:visibilityMode="ignore">
             <Layout
@@ -301,7 +323,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/toolbarLayout" />
+                app:layout_constraintTop_toBottomOf="@id/chartSelectedItemDateTextView" />
         </Constraint>
 
         <ConstraintOverride

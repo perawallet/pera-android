@@ -37,6 +37,7 @@ import com.algorand.wallet.account.local.domain.model.LocalAccount
 import com.algorand.wallet.account.local.domain.usecase.GetLocalAccounts
 import com.algorand.wallet.banner.domain.model.Banner
 import com.algorand.wallet.privacy.domain.model.PrivacyMode
+import com.algorand.wallet.remoteconfig.domain.usecase.ACCOUNTS_CHART_TOGGLE
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import com.algorand.wallet.spotbanner.domain.model.SpotBanner
@@ -74,13 +75,18 @@ class AccountPreviewProcessor @Inject constructor(
         val amountRenderType = amountRendererTypeMapper(privacyMode)
         val accountList = mutableListOf<BaseAccountListItem>()
 
+        if (isFeatureToggleEnabled(ACCOUNTS_CHART_TOGGLE)) {
+            accountList.add(BaseAccountListItem.WalletChartItem)
+        }
+
         insertQuickActionsItem(accountList)
 
-        if (spotBanners.isNotEmpty()) {
-            accountList.add(BANNER_ITEM_INDEX, BaseAccountListItem.SpotBannerItem(spotBanners))
-        }
         bannerItemMapper.map(banner)?.let { bannerItem ->
-            accountList.add(BANNER_ITEM_INDEX, bannerItem)
+            accountList.add(bannerItem)
+        }
+
+        if (spotBanners.isNotEmpty()) {
+            accountList.add(BaseAccountListItem.SpotBannerItem(spotBanners))
         }
 
         val accountItems = getAccountItems(accountLites, amountRenderType)
@@ -130,8 +136,8 @@ class AccountPreviewProcessor @Inject constructor(
 
         if (accountErrorItems.isEmpty()) return emptyList()
         return mutableListOf<BaseAccountListItem>().apply {
-            add(BaseAccountListItem.HeaderItem(R.string.accounts))
             insertQuickActionsItem(this)
+            add(BaseAccountListItem.HeaderItem(R.string.accounts))
         }
     }
 
@@ -179,16 +185,10 @@ class AccountPreviewProcessor @Inject constructor(
 
     private suspend fun insertQuickActionsItem(accountsList: MutableList<BaseAccountListItem>) {
         accountsList.add(
-            index = QUICK_ACTIONS_ITEM_INDEX,
-            element = BaseAccountListItem.QuickActionsItem(
+            BaseAccountListItem.QuickActionsItem(
                 isSwapButtonSelected = getSwapFeatureRedDotVisibility.getSwapFeatureRedDotVisibility(),
                 isStakingEnabled = isFeatureToggleEnabled(STAKING_BUTTON_TOGGLE)
             )
         )
-    }
-
-    companion object {
-        private const val QUICK_ACTIONS_ITEM_INDEX = 0
-        private const val BANNER_ITEM_INDEX = 1
     }
 }

@@ -33,10 +33,16 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.assets.profile.about.ui.AssetAboutFragment
 import com.algorand.android.modules.assets.profile.activity.ui.AssetActivityFragment
+import com.algorand.android.modules.assets.profile.detail.ui.AssetDetailViewModel.ViewEvent.UpdatePrimaryAndSecondaryText
 import com.algorand.android.modules.assets.profile.detail.ui.adapter.AssetDetailPagerAdapter
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
+import com.algorand.android.ui.asset.detail.model.AssetPriceHistoryItem
+import com.algorand.android.ui.asset.detail.view.AssetDetailQuickActionsView.AssetDetailQuickActionsViewListener
+import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailPriceHistoryViewModel
+import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.PERA_VERIFICATION_MAIL_ADDRESS
@@ -58,8 +64,7 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
 
     private val toolbarConfiguration = ToolbarConfiguration(
         startIconClick = ::navBack,
-        startIconResId = R.drawable.ic_left_arrow,
-        backgroundColor = R.color.hero_bg
+        startIconResId = R.drawable.ic_left_arrow
     )
 
     override val fragmentConfiguration = FragmentConfiguration()
@@ -67,6 +72,7 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
     private val binding by viewBinding(FragmentAssetDetailBinding::bind)
 
     private val assetDetailViewModel by viewModels<AssetDetailViewModel>()
+    private val priceHistoryViewModel by viewModels<AssetDetailPriceHistoryViewModel>()
 
     private lateinit var assetDetailPagerAdapter: AssetDetailPagerAdapter
 
@@ -100,6 +106,12 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         event?.consume()?.run { navToDiscoverTokenDetailPage(this) }
     }
 
+    private val viewEventCollector: suspend (AssetDetailViewModel.ViewEvent) -> Unit = { event ->
+        when (event) {
+            is UpdatePrimaryAndSecondaryText -> updatePrimaryAndSecondaryTexts(event.primaryText, event.secondaryText)
+        }
+    }
+
     override fun onDateFilterClick(currentFilter: DateFilter) {
         nav(AssetDetailFragmentDirections.actionAssetDetailFragmentToDateFilterNavigation(currentFilter))
     }
@@ -124,6 +136,24 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         )
     }
 
+    private val quickActionButtonsListener = object : AssetDetailQuickActionsViewListener {
+        override fun onSwapClick() {
+            assetDetailViewModel.onSwapClick()
+        }
+
+        override fun onBuyAlgoClick() {
+            assetDetailViewModel.onBuySellClick()
+        }
+
+        override fun onSendClick() {
+            assetDetailViewModel.onSendClick()
+        }
+
+        override fun onReceiveClick() {
+            navToShowQRBottomSheet()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
@@ -134,9 +164,13 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         configureToolbar()
         initPagerAdapter()
         configureTabLayout()
+        initPriceHistoryChart()
+        priceHistoryViewModel.init(assetDetailViewModel.assetId)
+        binding.quickActionButtons.setListener(quickActionButtonsListener)
     }
 
     private fun initObservers() {
+        collectLatestOnLifecycle(assetDetailViewModel.viewEvent, viewEventCollector)
         with(assetDetailViewModel.assetDetailPreviewFlow) {
             collectLatestOnLifecycle(
                 flow = this,
@@ -181,6 +215,29 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         }
     }
 
+    private fun initPriceHistoryChart() {
+        val isChartFeatureEnabled = assetDetailViewModel.isChartFeatureEnabled()
+        binding.priceHistoryChart.isVisible = isChartFeatureEnabled
+        if (isChartFeatureEnabled) {
+            binding.priceHistoryChart.setContent {
+                PeraTheme {
+                    StatefulPeraLineChart(
+                        viewModel = priceHistoryViewModel,
+                        onItemSelected = {
+                            assetDetailViewModel.displayAssetPriceHistory(it as AssetPriceHistoryItem)
+                        },
+                        onItemDeselected = assetDetailViewModel::displayAssetHoldings
+                    )
+                }
+            }
+        }
+    }
+
+    private fun updatePrimaryAndSecondaryTexts(primary: String, secondary: String) {
+        binding.assetPrimaryValueTextView.text = primary
+        binding.assetSecondaryValueTextView.text = secondary
+    }
+
     private fun configureToolbar() {
         binding.toolbar.configure(toolbarConfiguration)
     }
@@ -203,12 +260,10 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
                 formattedPrimaryValue = formattedPrimaryValue,
                 formattedSecondaryValue = formattedSecondaryValue
             )
-            setQuickActionsButtons(
-                isAlgo = isAlgo,
-                isSwapButtonVisible = isSwapButtonVisible,
-                isQuickActionButtonsVisible = isQuickActionButtonsVisible,
-                isSwapButtonSelected = isSwapButtonSelected
-            )
+            binding.quickActionButtons.apply {
+                setQuickActionItems(quickActionItems)
+                isVisible = quickActionItems.isNotEmpty()
+            }
             setMarketInformation(
                 isMarketInformationVisible = isMarketInformationVisible,
                 formattedAssetPrice = formattedAssetPrice,
@@ -296,28 +351,6 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
             }
             assetIdTextView.isVisible = !isAlgo
             interpunctTextView.isVisible = !isAlgo
-        }
-    }
-
-    private fun setQuickActionsButtons(
-        isAlgo: Boolean,
-        isSwapButtonVisible: Boolean,
-        isQuickActionButtonsVisible: Boolean,
-        isSwapButtonSelected: Boolean
-    ) {
-        with(binding) {
-            quickActionButtons.isVisible = isQuickActionButtonsVisible
-            swapButton.apply {
-                isVisible = isSwapButtonVisible && isQuickActionButtonsVisible
-                isSelected = isSwapButtonSelected
-                setOnClickListener { assetDetailViewModel.onSwapClick() }
-            }
-            buyAlgoButton.apply {
-                isVisible = isAlgo && isQuickActionButtonsVisible
-                setOnClickListener { assetDetailViewModel.onBuySellClick() }
-            }
-            sendButton.setOnClickListener { assetDetailViewModel.onSendClick() }
-            receiveButton.setOnClickListener { navToShowQRBottomSheet() }
         }
     }
 

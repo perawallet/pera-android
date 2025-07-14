@@ -226,7 +226,7 @@ class CreateDeepLinkImplTest {
 
     @Test
     fun `EXPECT cards deep link`() {
-        val deepLink = DeepLink.Cards("path")
+        val deepLink = DeepLink.Cards(null)
         every { parseDeepLinkPayload("cardsDeepLink") } returns DEEP_LINK_PAYLOAD
         every { cardsDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
         every { cardsDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink
@@ -238,7 +238,7 @@ class CreateDeepLinkImplTest {
 
     @Test
     fun `EXPECT staking deep link`() {
-        val deepLink = DeepLink.Staking("path")
+        val deepLink = DeepLink.Staking(null)
         every { parseDeepLinkPayload("stakingDeepLink") } returns DEEP_LINK_PAYLOAD
         every { stakingDeepLinkBuilder.doesDeeplinkMeetTheRequirements(DEEP_LINK_PAYLOAD) } returns true
         every { stakingDeepLinkBuilder.createDeepLink(DEEP_LINK_PAYLOAD) } returns deepLink

@@ -20,7 +20,7 @@ import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragmen
 import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountDetailAccountsItemProcessor
 import com.algorand.android.modules.accountdetail.assets.ui.domain.AccountDetailAssetsItemProcessor
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountAssetsPreview
-import com.algorand.android.modules.tracking.accountdetail.accountassets.AccountAssetsFragmentEventTracker
+import com.algorand.android.ui.accountdetail.assets.tracker.AccountAssetsEventTracker
 import com.algorand.android.utils.getOrThrow
 import com.algorand.wallet.privacy.domain.usecase.TogglePrivacyMode
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,12 +39,12 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AccountAssetsViewModel @Inject constructor(
-    private val accountAssetsFragmentEventTracker: AccountAssetsFragmentEventTracker,
     private val accountsItemProcessor: AccountDetailAccountsItemProcessor,
     private val assetsItemProcessor: AccountDetailAssetsItemProcessor,
     private val togglePrivacyMode: TogglePrivacyMode,
+    private val accountAssetsEventTracker: AccountAssetsEventTracker,
     savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : ViewModel(), AccountAssetsEventTracker by accountAssetsEventTracker {
 
     private val accountAddress: String = savedStateHandle.getOrThrow(ADDRESS_KEY)
 
@@ -71,18 +71,6 @@ class AccountAssetsViewModel @Inject constructor(
 
     fun updateSearchQuery(query: String) {
         searchQueryFlow.value = query
-    }
-
-    fun logAccountAssetsAddAssetEvent() {
-        viewModelScope.launch(Dispatchers.IO) {
-            accountAssetsFragmentEventTracker.logAccountAssetsAddAssetEvent()
-        }
-    }
-
-    fun logAccountAssetsManageAssetsEvent() {
-        viewModelScope.launch(Dispatchers.IO) {
-            accountAssetsFragmentEventTracker.logAccountAssetsManageAssetsEvent()
-        }
     }
 
     fun togglePrivacy() {

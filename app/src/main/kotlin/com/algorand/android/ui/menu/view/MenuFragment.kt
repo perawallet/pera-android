@@ -49,34 +49,42 @@ class MenuFragment : BaseFragment(0), MenuScreenListener,
     }
 
     override fun onSettingsClick() {
+        menuNftViewModel.logSettingsClick()
         nav(MenuFragmentDirections.actionMenuFragmentToSettingsFragment())
     }
 
     override fun onScanQrClick() {
+        menuNftViewModel.logQrScanClick()
         nav(HomeNavigationDirections.actionGlobalAccountsQrScannerFragment())
     }
 
     override fun onBuyAlgoClick() {
+        menuNftViewModel.logBuyAlgoClick()
         nav(HomeNavigationDirections.actionGlobalBuySellActionsBottomSheet())
     }
 
     override fun onInviteFriendsClick() {
+        menuNftViewModel.logInviteFriendsClick()
         nav(MenuFragmentDirections.actionMenuFragmentToInviteFriendsBottomSheet())
     }
 
     override fun onReceiveClick() {
+        menuNftViewModel.logReceiveClick()
         nav(HomeNavigationDirections.actionGlobalReceiveAccountSelectionFragment())
     }
 
     override fun onNftClick() {
+        menuNftViewModel.logCollectiblesClick()
         nav(MenuFragmentDirections.actionMenuFragmentToCollectiblesFragment(registerBottomNavDelegation = false))
     }
 
     override fun onCreateCardClick() {
+        menuNftViewModel.logCreateCardClick()
         nav(HomeNavigationDirections.actionGlobalCardsFragment())
     }
 
     override fun onGoToCardsClick() {
+        menuNftViewModel.logGoToCardsClick()
         nav(HomeNavigationDirections.actionGlobalCardsFragment())
     }
 }

@@ -14,6 +14,7 @@ package com.algorand.android.ui.menu.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.algorand.android.ui.menu.tracker.MenuEventTracker
 import com.algorand.android.ui.menu.viewmodel.MenuNftViewModel.ViewState
 import com.algorand.wallet.asset.domain.usecase.GetRecentlyAddedCollectibleUrls
 import com.algorand.wallet.viewmodel.StateDelegate
@@ -25,8 +26,9 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class DefaultMenuNftViewModel @Inject constructor(
     private val getRecentlyAddedCollectibleUrls: GetRecentlyAddedCollectibleUrls,
-    private val stateDelegate: StateDelegate<ViewState>
-) : MenuNftViewModel, ViewModel() {
+    private val stateDelegate: StateDelegate<ViewState>,
+    private val menuEventTracker: MenuEventTracker
+) : MenuNftViewModel, ViewModel(), MenuEventTracker by menuEventTracker {
 
     override val state: StateFlow<ViewState>
         get() = stateDelegate.state

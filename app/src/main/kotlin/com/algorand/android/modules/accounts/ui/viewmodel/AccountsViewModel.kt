@@ -13,24 +13,20 @@
 package com.algorand.android.modules.accounts.ui.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
-import com.algorand.android.core.BaseViewModel
 import com.algorand.android.modules.accounts.ui.model.AccountPreview
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.view.AccountsFragmentArgs
-import com.algorand.android.modules.tracking.accounts.AccountsEventTracker
-import com.algorand.android.modules.tracking.core.PeraClickEvent
-import com.algorand.android.modules.tracking.core.PeraEvent
 import com.algorand.android.modules.tutorialdialog.data.model.Tutorial
 import com.algorand.android.modules.tutorialdialog.domain.usecase.TutorialUseCase
 import com.algorand.android.notification.domain.usecase.GetAskNotificationPermissionEventFlowUseCase
+import com.algorand.android.ui.accounts.tracker.AccountsEventTracker
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
 import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
-import com.algorand.wallet.analytics.domain.service.PeraEventTracker
-import com.algorand.wallet.banner.domain.model.Banner.BannerType
 import com.algorand.wallet.banner.domain.usecase.DismissBanner
 import com.algorand.wallet.privacy.domain.usecase.TogglePrivacyMode
 import com.algorand.wallet.spotbanner.domain.usecase.DismissSpotBanner
@@ -54,7 +50,6 @@ class AccountsViewModel @Inject constructor(
     private val accountsEventTracker: AccountsEventTracker,
     private val parityManager: ParityManager,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
-    private val peraEventTracker: PeraEventTracker,
     private val getNotBackedUpAccounts: GetNotBackedUpAccounts,
     private val tutorialUseCase: TutorialUseCase,
     private val getAskNotificationPermissionEventFlowUseCase: GetAskNotificationPermissionEventFlowUseCase,
@@ -63,7 +58,8 @@ class AccountsViewModel @Inject constructor(
     private val dismissBannerById: DismissBanner,
     private val dismissSpotBannerById: DismissSpotBanner,
     savedStateHandle: SavedStateHandle
-) : BaseViewModel(), EventViewModel<AccountsViewModel.ViewEvent> by eventDelegate {
+) : ViewModel(), EventViewModel<AccountsViewModel.ViewEvent> by eventDelegate,
+    AccountsEventTracker by accountsEventTracker {
 
     private val args = AccountsFragmentArgs.fromSavedStateHandle(savedStateHandle)
     private val _accountPreviewFlow = MutableStateFlow<AccountPreview?>(null)
@@ -121,71 +117,15 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    fun logNotificationClick() {
-        viewModelScope.launch {
-            logEvent(PeraClickEvent.TAP_HOME_SCREEN_NOTIFICATION)
-        }
-    }
-
-    fun logQrScanClick() {
-        viewModelScope.launch {
-            logEvent(PeraEvent.HOME_SCREEN_QR_SCAN)
-        }
-    }
-
-    fun logSortClick() {
-        viewModelScope.launch {
-            logEvent(PeraClickEvent.TAP_HOME_SCREEN_SORT)
-        }
-    }
-
-    fun logAlgoBuyClick() {
-        viewModelScope.launch {
-            accountsEventTracker.logAccountsFragmentAlgoBuyTapEvent()
-        }
-    }
-
-    fun logBannerClick(bannerType: BannerType) {
-        viewModelScope.launch {
-            val eventName = when (bannerType) {
-                BannerType.Governance -> PeraClickEvent.TAP_HOME_BANNER_GOVERNANCE
-                BannerType.Staking -> PeraClickEvent.TAP_HOME_BANNER_STAKING
-                BannerType.Card -> PeraClickEvent.TAP_HOME_BANNER_CARD
-                BannerType.Generic -> PeraClickEvent.TAP_HOME_BANNER_GENERIC
-            }
-            peraEventTracker.logEvent(eventName)
-        }
-    }
-
     fun dismissTutorial(tutorialId: Int) {
         viewModelScope.launch {
             tutorialUseCase.dismissTutorial(tutorialId)
         }
     }
 
-    fun onSendTapEvent() {
+    fun navigateToSwap() {
         viewModelScope.launch {
-            logEvent(PeraClickEvent.TAP_HOME_SCREEN_SEND)
-        }
-    }
-
-    fun onSwapTapEvent() {
-        viewModelScope.launch {
-            logEvent(PeraClickEvent.TAP_HOME_SCREEN_SWAP)
             updatePreviewForSwapNavigation()
-        }
-    }
-
-    fun onSwapClickFromTutorialDialog() {
-        viewModelScope.launch {
-            accountsEventTracker.logSwapTutorialTrySwapClickEvent()
-            updatePreviewForSwapNavigation()
-        }
-    }
-
-    fun logSwapLaterClick() {
-        viewModelScope.launch {
-            accountsEventTracker.logSwapLaterClickEvent()
         }
     }
 
@@ -198,9 +138,8 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    fun onAddAccountClick() {
+    fun navigateToAddAccount() {
         viewModelScope.launchIO {
-            accountsEventTracker.logAddAccountTapEvent()
             eventDelegate.sendEvent(
                 if (isAccountLimitExceedUseCase.isAccountLimitExceed()) {
                     ViewEvent.ShowMaxAccountLimitExceededError

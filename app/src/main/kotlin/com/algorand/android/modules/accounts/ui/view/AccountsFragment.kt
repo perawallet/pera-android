@@ -48,7 +48,6 @@ import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.View
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowPrivacyTooltip
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowSwapTutorial
 import com.algorand.android.modules.sorting.accountsorting.ui.AccountSortFragment.Companion.ACCOUNT_SORT_RESULT_KEY
-import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.tutorialdialog.util.showCopyAccountAddressTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showGiftCardsTutorialDialog
 import com.algorand.android.modules.tutorialdialog.util.showSwapFeatureTutorialDialog
@@ -135,17 +134,18 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onBuySellClick() {
-            accountsViewModel.logAlgoBuyClick()
+            accountsViewModel.logBuySellQuickActionClick()
             navToBuySellActionsBottomSheet()
         }
 
         override fun onSendClick() {
-            accountsViewModel.onSendTapEvent()
+            accountsViewModel.logSendQuickActionClick()
             navToSendAlgoNavigation()
         }
 
         override fun onSwapClick() {
-            accountsViewModel.onSwapTapEvent()
+            accountsViewModel.logSwapQuickActionClick()
+            accountsViewModel.navigateToSwap()
         }
 
         override fun onScanQrClick() {
@@ -159,11 +159,12 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onAddAccountClick() {
-            accountsViewModel.onAddAccountClick()
+            accountsViewModel.logAddAccountClick()
+            accountsViewModel.navigateToAddAccount()
         }
 
         override fun onStakingClick() {
-            accountsViewModel.logEvent(PeraClickEvent.TAP_HOME_SCREEN_STAKE)
+            accountsViewModel.logStakeQuickActionClick()
             nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
         }
 
@@ -172,6 +173,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onSpotBannerBannerClick(spotBanner: SpotBanner.Generic) {
+            accountsViewModel.logSpotBannerClick(spotBanner.text)
             val url = spotBanner.url ?: return
             if (spotBanner.isExternalButtonUrl) {
                 context?.openUrl(url)
@@ -181,6 +183,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         }
 
         override fun onDismissSpotBannerClick(spotBanner: SpotBanner.Generic) {
+            accountsViewModel.logSpotBannerDismissClick(spotBanner.text)
             accountsViewModel.dismissSpotBanner(spotBanner.id)
         }
     }
@@ -293,7 +296,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         with(accountsViewModel) {
             accountsViewModel.dismissTutorial(tutorialId)
             binding.root.context.showSwapFeatureTutorialDialog(
-                onTrySwap = ::onSwapClickFromTutorialDialog,
+                onTrySwap = {
+                    accountsViewModel.logSwapTutorialTrySwapClick()
+                    accountsViewModel.navigateToSwap()
+                },
                 onLater = ::logSwapLaterClick
             )
         }
@@ -423,7 +429,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
     }
 
     private fun onAddAccountClick() {
-        accountsViewModel.onAddAccountClick()
+        accountsViewModel.navigateToAddAccount()
     }
 
     private fun loadAccountsAndBalancePreview(accountListItems: List<BaseAccountListItem>) {

@@ -35,7 +35,11 @@ class DefaultPeraAnalyticsEventTrackerTest {
 
         sut.logEvent(EVENT_NAME)
 
-        coVerify { peraAnalyticsRepository.logEvent("t_$EVENT_NAME") }
+        // HACK: the logEvent happens on a different coroutine so this verify can fail
+        // in a race condition.  We add a delay here to attempt to resolve that race.
+        coVerify(timeout = 500) {
+            peraAnalyticsRepository.logEvent("t_$EVENT_NAME")
+        }
     }
 
     @Test

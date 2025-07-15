@@ -46,7 +46,8 @@ fun PeraLineChart(
     modifier: Modifier = Modifier,
     data: List<Float>,
     chartTheme: PeraLineChartTheme = getDefaultTheme(),
-    onDataPointSelected: (index: Int?) -> Unit = {}
+    onDataPointSelected: (index: Int?) -> Unit = {},
+    onChartTap: () -> Unit = {}
 ) {
     BoxWithConstraints(
         modifier = modifier.fillMaxWidth()
@@ -63,7 +64,7 @@ fun PeraLineChart(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .detectChartTapGestures(points) { offset -> selectedOffset = offset }
+                .detectChartTapGestures(points, onChartTap) { offset -> selectedOffset = offset }
         ) {
             drawGradient(linePath, points, chartTheme)
             drawLine(density, linePath, chartTheme)

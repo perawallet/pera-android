@@ -1,0 +1,62 @@
+/*
+ * Copyright 2022-2025 Pera Wallet, LDA
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
+ */
+
+package com.algorand.wallet.analytics.tracking.domain.tracker
+
+import com.algorand.wallet.analytics.tracking.domain.repository.PeraAnalyticsRepository
+import com.algorand.wallet.analytics.tracking.domain.usecase.GetEventNameForSelectedNode
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
+import org.junit.Test
+
+class DefaultPeraAnalyticsEventTrackerTest {
+
+    private val peraAnalyticsRepository: PeraAnalyticsRepository = mockk(relaxed = true)
+    private val getEventNameForSelectedNode: GetEventNameForSelectedNode = mockk()
+
+    private val sut = DefaultPeraAnalyticsEventTracker(
+        peraAnalyticsRepository,
+        getEventNameForSelectedNode
+    )
+
+    @Test
+    fun `EXPECT event to be logged with normalized name`() {
+        coEvery { getEventNameForSelectedNode(EVENT_NAME) } returns "t_$EVENT_NAME"
+
+        sut.logEvent(EVENT_NAME)
+
+        // HACK: the logEvent happens on a different coroutine so this verify can fail
+        // in a race condition.  We add a delay here to attempt to resolve that race.
+        coVerify(timeout = 500) {
+            peraAnalyticsRepository.logEvent("t_$EVENT_NAME")
+        }
+    }
+
+    @Test
+    fun `EXPECT event to be logged with normalized name and a payload`() {
+        val payloadMap = mapOf("key" to "value")
+        coEvery { getEventNameForSelectedNode(EVENT_NAME) } returns EVENT_NAME
+
+        sut.logEvent(EVENT_NAME, payloadMap)
+
+        // HACK: the logEvent happens on a different coroutine so this verify can fail
+        // in a race condition.  We add a delay here to attempt to resolve that race.
+        coVerify(timeout = 500) {
+            peraAnalyticsRepository.logEvent(EVENT_NAME, payloadMap)
+        }
+    }
+
+    private companion object {
+        const val EVENT_NAME = "some_event_name"
+    }
+}

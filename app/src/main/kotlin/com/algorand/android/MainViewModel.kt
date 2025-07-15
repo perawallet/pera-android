@@ -40,7 +40,7 @@ import com.algorand.android.network.MobileHeaderInterceptor
 import com.algorand.android.notification.domain.model.NotificationMetadata
 import com.algorand.android.repository.NodeRepository
 import com.algorand.android.ui.lockpreference.AutoLockSuggestionManager
-import com.algorand.android.usecase.GetIsActiveNodeTestnetUseCase
+import com.algorand.android.ui.main.tracker.BottomNavigationEventTracker
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.findAllNodes
 import com.algorand.android.utils.launchIO
@@ -96,9 +96,10 @@ class MainViewModel @Inject constructor(
     private val autoLockSuggestionManager: AutoLockSuggestionManager,
     private val androidEncryptionManager: AndroidEncryptionManager,
     private val accountLiteManager: AccountLiteManager,
-    private val getIsActiveNodeTestnetUseCase: GetIsActiveNodeTestnetUseCase,
+    private val bottomNavigationEventTracker: BottomNavigationEventTracker,
     getAppCacheStatusFlow: GetAppCacheStatusFlow
-) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate {
+) : BaseViewModel(), EventViewModel<MainViewModel.ViewEvent> by eventDelegate,
+    BottomNavigationEventTracker by bottomNavigationEventTracker {
 
     val appCacheStatusFlow = getAppCacheStatusFlow()
     val activeNodeFlow: StateFlow<Node?> get() = _activeNodeFlow

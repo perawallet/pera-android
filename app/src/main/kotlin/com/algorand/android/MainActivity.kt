@@ -59,7 +59,6 @@ import com.algorand.android.modules.deeplink.ui.DeeplinkHandler
 import com.algorand.android.modules.keyreg.ui.model.KeyRegTransactionDetail
 import com.algorand.android.modules.perawebview.ui.BasePeraWebViewFragment
 import com.algorand.android.modules.qrscanning.QrScannerViewModel
-import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.transaction.refactor.ui.AssetOperationViewModel
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.WalletConnectConnectionBottomSheet
 import com.algorand.android.modules.walletconnect.connectionrequest.ui.model.WCSessionRequestResult
@@ -424,10 +423,11 @@ class MainActivity :
 
     override fun onMenuItemClicked(item: MenuItem) {
         when (item.itemId) {
-            R.id.accountsFragment -> mainViewModel.logEvent(PeraClickEvent.TAP_LOWERMENU_HOME)
-            R.id.discoverHomeNavigation -> mainViewModel.logEvent(PeraClickEvent.TAP_LOWERMENU_DISCOVER)
-            R.id.collectiblesFragment -> mainViewModel.logEvent(PeraClickEvent.TAP_LOWERMENU_NFTS)
-            R.id.settingsFragment -> mainViewModel.logEvent(PeraClickEvent.TAP_LOWERMENU_SETTINGS)
+            R.id.accountsFragment -> mainViewModel.logHomeClick()
+            R.id.discoverHomeNavigation -> mainViewModel.logDiscoverClick()
+            R.id.stakingStandaloneFragment -> mainViewModel.logStakeClick()
+            R.id.collectiblesFragment -> mainViewModel.logCollectiblesClick()
+            R.id.menuFragment -> mainViewModel.logMenuClick()
         }
     }
 

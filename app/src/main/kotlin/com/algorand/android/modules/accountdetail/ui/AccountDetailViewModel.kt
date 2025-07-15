@@ -14,8 +14,8 @@
 package com.algorand.android.modules.accountdetail.ui
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.core.BaseViewModel
 import com.algorand.android.models.AccountDetailTab
 import com.algorand.android.modules.accountcore.ui.usecase.GetAccountDetailSummary
 import com.algorand.android.modules.accountdetail.ui.model.AccountDetailPreview
@@ -46,7 +46,7 @@ class AccountDetailViewModel @Inject constructor(
     private val getSwapNavigationDestination: GetSwapNavigationDestination,
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
     private val getAccountDetailSummary: GetAccountDetailSummary
-) : BaseViewModel() {
+) : ViewModel() {
 
     val accountAddress: String = savedStateHandle.getOrThrow(PUBLIC_KEY)
     private val accountDetailTab = savedStateHandle.get<AccountDetailTab?>(ACCOUNT_DETAIL_TAB)
@@ -121,7 +121,6 @@ class AccountDetailViewModel @Inject constructor(
 
     fun onSwapClick() {
         viewModelScope.launchIO {
-            accountDetailFragmentEventTracker.logAccountDetailSwapButtonClickEvent()
             _accountDetailPreviewFlow.update {
                 it?.copy(
                     swapNavigationDestinationEvent = Event(getSwapNavigationDestination(accountAddress))

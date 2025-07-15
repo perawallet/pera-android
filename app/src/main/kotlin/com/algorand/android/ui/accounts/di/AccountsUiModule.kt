@@ -12,6 +12,8 @@
 
 package com.algorand.android.ui.accounts.di
 
+import com.algorand.android.ui.accounts.tracker.AccountsEventTracker
+import com.algorand.android.ui.accounts.tracker.DefaultAccountsEventTracker
 import com.algorand.android.ui.accounts.usecase.GetAccountsLineChartData
 import com.algorand.android.ui.accounts.usecase.GetAccountsLineChartDataUseCase
 import dagger.Module
@@ -25,4 +27,7 @@ internal object AccountsUiModule {
 
     @Provides
     fun provideGetAccountsLineChartData(useCase: GetAccountsLineChartDataUseCase): GetAccountsLineChartData = useCase
+
+    @Provides
+    fun provideAccountsEventTracker(tracker: DefaultAccountsEventTracker): AccountsEventTracker = tracker
 }

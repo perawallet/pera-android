@@ -25,7 +25,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 
 @Composable
-internal fun Modifier.detectChartTapGestures(points: List<Offset>, onOffsetSelected: (Offset?) -> Unit): Modifier {
+internal fun Modifier.detectChartTapGestures(
+    points: List<Offset>,
+    onTap: () -> Unit,
+    onOffsetSelected: (Offset?) -> Unit
+): Modifier {
     var selectedOffset by remember { mutableStateOf<Offset?>(null) }
     LaunchedEffect(selectedOffset) {
         onOffsetSelected(selectedOffset)
@@ -41,7 +45,10 @@ internal fun Modifier.detectChartTapGestures(points: List<Offset>, onOffsetSelec
         }
         .pointerInput(points) {
             detectTapGestures(
-                onPress = { offset -> selectedOffset = offset }
+                onPress = { offset ->
+                    selectedOffset = offset
+                    onTap()
+                }
             )
         }
 }

@@ -52,7 +52,6 @@ import com.algorand.android.modules.inapppin.pin.ui.InAppPinFragment
 import com.algorand.android.modules.swap.model.SwapNavigationDestination
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.Introduction
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.Swap
-import com.algorand.android.modules.tracking.core.PeraClickEvent
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
 import com.algorand.android.ui.accountoptions.AccountOptionsBottomSheet.Companion.ACCOUNT_REMOVE_ACTION_KEY
@@ -168,27 +167,22 @@ class AccountDetailFragment :
     }
 
     override fun onAssetInboxClick() {
-        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_ASSET_INBOX)
         navToAssetInboxOneAccountNavigation()
     }
 
     override fun onSendClick() {
-        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SEND)
         handleSendClick()
     }
 
     override fun onSwapClick() {
-        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SWAP)
         handleSwapClick()
     }
 
     override fun onBuySellClick() {
-        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_BUY_ALGO)
         navToBuySellActionsBottomSheet()
     }
 
     override fun onMoreClick() {
-        accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_MORE)
         navToAccountOptionsBottomSheet()
     }
 
@@ -261,8 +255,10 @@ class AccountDetailFragment :
     }
 
     override fun onReceiveCollectibleClick() {
-        nav(AccountDetailFragmentDirections
-            .actionAccountDetailFragmentToReceiveCollectibleFragment(accountDetailViewModel.accountAddress))
+        nav(
+            AccountDetailFragmentDirections
+                .actionAccountDetailFragmentToReceiveCollectibleFragment(accountDetailViewModel.accountAddress)
+        )
     }
 
     override fun onManageCollectiblesClick() {
@@ -381,13 +377,17 @@ class AccountDetailFragment :
     }
 
     private fun navToAccountOptionsBottomSheet() {
-        nav(AccountDetailFragmentDirections
-            .actionAccountDetailFragmentToAccountOptionsNavigation(accountDetailViewModel.accountAddress))
+        nav(
+            AccountDetailFragmentDirections
+                .actionAccountDetailFragmentToAccountOptionsNavigation(accountDetailViewModel.accountAddress)
+        )
     }
 
     private fun navToAccountStatusDetailBottomSheet() {
-        nav(AccountDetailFragmentDirections
-            .actionAccountDetailFragmentToAccountStatusDetailNavigation(accountDetailViewModel.accountAddress))
+        nav(
+            AccountDetailFragmentDirections
+                .actionAccountDetailFragmentToAccountStatusDetailNavigation(accountDetailViewModel.accountAddress)
+        )
     }
 
     private fun initAccountDetailPager() {
@@ -402,8 +402,10 @@ class AccountDetailFragment :
     }
 
     private fun navToManageAssetsFragment() {
-        nav(AccountDetailFragmentDirections
-            .actionAccountDetailFragmentToManageAssetsBottomSheet(accountDetailViewModel.accountAddress))
+        nav(
+            AccountDetailFragmentDirections
+                .actionAccountDetailFragmentToManageAssetsBottomSheet(accountDetailViewModel.accountAddress)
+        )
     }
 
     private fun onSelectedPageChange(position: Int) {
@@ -457,8 +459,7 @@ class AccountDetailFragment :
             AccountDetailFragmentDirections
                 .actionAccountDetailFragmentToBackupPassphraseInfoNavigation(
                     accountsToBackup = arrayOf(accountDetailViewModel.accountAddress),
-                    onboardingAccountType = if (accountDetailViewModel.accountType ==
-                        AccountType.HdKey) {
+                    onboardingAccountType = if (accountDetailViewModel.accountType == AccountType.HdKey) {
                         OnboardingAccountType.HdKey
                     } else {
                         OnboardingAccountType.Algo25
@@ -509,7 +510,6 @@ class AccountDetailFragment :
 
     private fun handleSwapClick() {
         if (accountDetailViewModel.canAccountSignTransaction) {
-            accountDetailViewModel.logEvent(PeraClickEvent.TAP_ACCOUNT_SCREEN_SWAP)
             accountDetailViewModel.onSwapClick()
         } else {
             showActionNotAvailableError()

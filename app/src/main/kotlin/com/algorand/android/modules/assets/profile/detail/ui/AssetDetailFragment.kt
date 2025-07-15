@@ -42,7 +42,9 @@ import com.algorand.android.ui.asset.detail.model.AssetPriceHistoryItem
 import com.algorand.android.ui.asset.detail.view.AssetDetailQuickActionsView.AssetDetailQuickActionsViewListener
 import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailPriceHistoryViewModel
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
+import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChartListener
 import com.algorand.android.utils.AssetName
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.PERA_VERIFICATION_MAIL_ADDRESS
@@ -154,6 +156,16 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         }
     }
 
+    private val chartListener = object : StatefulPeraLineChartListener {
+        override fun onItemSelected(item: PeraLineChartData) {
+            assetDetailViewModel.displayAssetPriceHistory(item as AssetPriceHistoryItem)
+        }
+
+        override fun onItemDeselected() {
+            assetDetailViewModel.displayAssetHoldings()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
@@ -223,10 +235,7 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
                 PeraTheme {
                     StatefulPeraLineChart(
                         viewModel = priceHistoryViewModel,
-                        onItemSelected = {
-                            assetDetailViewModel.displayAssetPriceHistory(it as AssetPriceHistoryItem)
-                        },
-                        onItemDeselected = assetDetailViewModel::displayAssetHoldings
+                        listener = chartListener
                     )
                 }
             }

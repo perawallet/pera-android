@@ -82,7 +82,7 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
 
     private val accountDetailAdapterListener = object : AccountAssetsAccountDetailAdapter.Listener {
         override fun onAddNewAssetClick() {
-            accountAssetsViewModel.logAccountAssetsAddAssetEvent()
+            accountAssetsViewModel.logAddAssetClick()
             listener?.onAddAssetClick()
         }
 
@@ -91,11 +91,12 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         }
 
         override fun onManageAssetsClick() {
-            accountAssetsViewModel.logAccountAssetsManageAssetsEvent()
+            accountAssetsViewModel.logManageAssetsClick()
             listener?.onManageAssetsClick()
         }
 
         override fun onAssetInboxClick() {
+            accountAssetsViewModel.logAssetInboxClick()
             listener?.onAssetInboxClick()
         }
 
@@ -104,10 +105,12 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         }
 
         override fun onSwapClick() {
+            accountAssetsViewModel.logSwapClick()
             listener?.onSwapClick()
         }
 
         override fun onMoreClick() {
+            accountAssetsViewModel.logMoreClick()
             listener?.onMoreClick()
         }
 
@@ -128,11 +131,16 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         }
 
         override fun onBuySellClick() {
+            accountAssetsViewModel.logBuyAlgoClick()
             listener?.onBuySellClick()
         }
 
         override fun onAccountValueClick() {
             accountAssetsViewModel.togglePrivacy()
+        }
+
+        override fun onChartTap() {
+            accountAssetsViewModel.logChartTap()
         }
     }
 

@@ -14,18 +14,14 @@ package com.algorand.wallet.analytics.tracking.domain.tracker
 
 import com.algorand.wallet.analytics.tracking.domain.repository.PeraAnalyticsRepository
 import com.algorand.wallet.analytics.tracking.domain.usecase.GetEventNameForSelectedNode
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-internal class DefaultPeraAnalyticsEventTracker @Inject constructor(
+internal class DefaultPeraAnalyticsEventTracker(
     private val peraAnalyticsRepository: PeraAnalyticsRepository,
-    private val getEventNameForSelectedNode: GetEventNameForSelectedNode
+    private val getEventNameForSelectedNode: GetEventNameForSelectedNode,
+    private val coroutineScope: CoroutineScope
 ) : PeraAnalyticsEventTracker {
-
-    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun logEvent(eventName: String) {
         coroutineScope.launch {

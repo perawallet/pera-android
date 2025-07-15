@@ -37,8 +37,7 @@ import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineCh
 @Composable
 fun StatefulPeraLineChart(
     viewModel: StatefulPeraLineChartViewModel,
-    onItemSelected: (PeraLineChartData) -> Unit,
-    onItemDeselected: () -> Unit
+    listener: StatefulPeraLineChartListener
 ) {
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -52,7 +51,7 @@ fun StatefulPeraLineChart(
                 ) {
                     when (state.contentState) {
                         ContentState.Loading -> PeraLineChartLoadingState(modifier = Modifier.weight(1f))
-                        is ContentState.Data -> Chart(state.contentState, viewModel, onItemSelected, onItemDeselected)
+                        is ContentState.Data -> Chart(state.contentState, viewModel, listener)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     PeraChartPeriodContainer {
@@ -75,8 +74,7 @@ fun StatefulPeraLineChart(
 private fun ColumnScope.Chart(
     state: ContentState.Data,
     viewModel: StatefulPeraLineChartViewModel,
-    onItemSelected: (PeraLineChartData) -> Unit,
-    onItemDeselected: () -> Unit
+    listener: StatefulPeraLineChartListener
 ) {
     PeraLineChart(
         modifier = Modifier
@@ -85,10 +83,17 @@ private fun ColumnScope.Chart(
         data = state.chartData.map { it.value },
         onDataPointSelected = { index ->
             if (index == null) {
-                onItemDeselected()
+                listener.onItemDeselected()
             } else {
-                viewModel.getSelectedChartData(index)?.let(onItemSelected)
+                viewModel.getSelectedChartData(index)?.let(listener::onItemSelected)
             }
-        }
+        },
+        onChartTap = { listener.onChartTap() }
     )
+}
+
+interface StatefulPeraLineChartListener {
+    fun onItemSelected(item: PeraLineChartData)
+    fun onItemDeselected()
+    fun onChartTap() {}
 }

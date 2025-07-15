@@ -19,17 +19,30 @@ import android.view.ViewGroup
 import com.algorand.android.R
 import com.algorand.android.core.BaseBottomSheet
 import com.algorand.android.ui.compose.extensions.createComposeView
+import com.algorand.android.ui.invite.tracker.InviteFriendsEventTracker
 import com.algorand.android.utils.openTextShareBottomMenuChooser
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class InviteFriendsBottomSheet : BaseBottomSheet(0) {
+
+    @Inject
+    lateinit var inviteFriendsEventTracker: InviteFriendsEventTracker
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {
-            InviteFriendsBottomSheetScreen(::onShareClick, ::navBack)
+            InviteFriendsBottomSheetScreen(::onShareClick, ::onCloseClick)
         }
     }
 
+    private fun onCloseClick() {
+        inviteFriendsEventTracker.logCloseClick()
+        navBack()
+    }
+
     private fun onShareClick() {
+        inviteFriendsEventTracker.logShareClick()
         context?.openTextShareBottomMenuChooser(
             title = getString(R.string.simply_the_best_algorand),
             text = SHARE_URL

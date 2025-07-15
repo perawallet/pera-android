@@ -21,7 +21,9 @@ import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.ui.accounts.model.AccountsLineChartData
 import com.algorand.android.ui.accounts.viewmodel.AccountsLineChartViewModel
 import com.algorand.android.ui.compose.theme.PeraTheme
+import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
+import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChartListener
 
 class AccountListWalletChartViewHolder(
     private val viewModel: AccountsLineChartViewModel,
@@ -44,23 +46,36 @@ class AccountListWalletChartViewHolder(
                 setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
                 setContent {
                     PeraTheme {
-                        StatefulPeraLineChart(
-                            viewModel = viewModel,
-                            onItemSelected = {
-                                val accountsLineChartData = it as? AccountsLineChartData ?: return@StatefulPeraLineChart
-                                listener.onItemSelected(accountsLineChartData)
-                            },
-                            onItemDeselected = listener::onItemDeselected
-                        )
+                        StatefulPeraLineChart(viewModel, getChartListener(listener))
                     }
                 }
             }
             return AccountListWalletChartViewHolder(viewModel, binding)
+        }
+
+        private fun getChartListener(
+            listener: AccountListWalletChartViewHolderListener
+        ): StatefulPeraLineChartListener {
+            return object : StatefulPeraLineChartListener {
+                override fun onItemSelected(item: PeraLineChartData) {
+                    val accountsLineChartData = item as? AccountsLineChartData ?: return
+                    listener.onItemSelected(accountsLineChartData)
+                }
+
+                override fun onItemDeselected() {
+                    listener.onItemDeselected()
+                }
+
+                override fun onChartTap() {
+                    listener.onChartTap()
+                }
+            }
         }
     }
 
     interface AccountListWalletChartViewHolderListener {
         fun onItemSelected(chartData: AccountsLineChartData)
         fun onItemDeselected()
+        fun onChartTap()
     }
 }

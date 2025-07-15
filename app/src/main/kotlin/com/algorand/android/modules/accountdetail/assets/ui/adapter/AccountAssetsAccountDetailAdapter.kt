@@ -42,6 +42,10 @@ class AccountAssetsAccountDetailAdapter(
         override fun onInfoButtonClick() {
             listener.onRequiredMinimumBalanceClick()
         }
+
+        override fun onChartTap() {
+            listener.onChartTap()
+        }
     }
 
     private val searchViewItemListener = object : SearchViewViewHolder.Listener {
@@ -156,6 +160,7 @@ class AccountAssetsAccountDetailAdapter(
         fun onBackupNowClick()
         fun onBuySellClick()
         fun onAccountValueClick()
+        fun onChartTap()
     }
 
     companion object {

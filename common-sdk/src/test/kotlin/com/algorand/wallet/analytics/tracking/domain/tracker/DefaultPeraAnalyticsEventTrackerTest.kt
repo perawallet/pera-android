@@ -21,7 +21,7 @@ import org.junit.Test
 
 class DefaultPeraAnalyticsEventTrackerTest {
 
-    private val peraAnalyticsRepository: PeraAnalyticsRepository = mockk()
+    private val peraAnalyticsRepository: PeraAnalyticsRepository = mockk(relaxed = true)
     private val getEventNameForSelectedNode: GetEventNameForSelectedNode = mockk()
 
     private val sut = DefaultPeraAnalyticsEventTracker(

@@ -10,53 +10,8 @@
   ~ limitations under the License
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.algorand.android.ui.accounts.view.AccountsQuickActionsView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/hero_bg"
-    android:paddingVertical="@dimen/spacing_xxxlarge"
-    tools:ignore="MissingConstraints">
-
-    <androidx.constraintlayout.helper.widget.Flow
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="swapButton, buySellButton, stakingButton, sendButton"
-        app:flow_maxElementsWrap="4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/swapButton"
-        style="@style/IconButton.Transparent.QuickAction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/swap"
-        app:icon="@drawable/ic_swap_quick_actions" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buySellButton"
-        style="@style/IconButton.Transparent.QuickAction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/buy_sell"
-        app:icon="@drawable/ic_buy_sell_quick_actions" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/stakingButton"
-        style="@style/IconButton.Transparent.QuickAction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/staking"
-        app:icon="@drawable/ic_stake_helper_button_bg_ghost" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/sendButton"
-        style="@style/IconButton.Transparent.QuickAction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/send"
-        app:icon="@drawable/ic_send_helper_button_bg_ghost" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+    android:paddingHorizontal="@dimen/spacing_normal"
+    android:paddingTop="@dimen/spacing_xxlarge" />

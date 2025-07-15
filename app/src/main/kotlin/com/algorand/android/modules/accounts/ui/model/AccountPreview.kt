@@ -12,7 +12,6 @@
 
 package com.algorand.android.modules.accounts.ui.model
 
-import androidx.annotation.ColorRes
 import com.algorand.android.models.BottomGlobalError
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 
@@ -24,7 +23,6 @@ data class AccountPreview(
     val portfolioValueItem: BasePortfolioValueItem? = null,
     val bottomGlobalError: BottomGlobalError? = null,
     val isMotionLayoutTransitionEnabled: Boolean,
-    @ColorRes val portfolioValuesBackgroundRes: Int,
     val isSuccessStateVisible: Boolean,
     val hasNewNotification: Boolean,
     val assetInboxCount: Int = 0

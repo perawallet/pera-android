@@ -31,7 +31,8 @@ sealed interface BaseAccountListItem : RecyclerListItem {
         STAKING_BANNER,
         GENERIC_BANNER,
         CARD_BANNER,
-        SPOT_BANNER
+        SPOT_BANNER,
+        CHART
     }
 
     data class QuickActionsItem(
@@ -166,6 +167,14 @@ sealed interface BaseAccountListItem : RecyclerListItem {
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountErrorItem && this == other
         }
+    }
+
+    data object WalletChartItem : BaseAccountListItem {
+        override fun areItemsTheSame(other: RecyclerListItem): Boolean = other is WalletChartItem
+
+        override val itemType: ItemType = ItemType.CHART
+
+        override fun areContentsTheSame(other: RecyclerListItem): Boolean = other is WalletChartItem
     }
 
     companion object {

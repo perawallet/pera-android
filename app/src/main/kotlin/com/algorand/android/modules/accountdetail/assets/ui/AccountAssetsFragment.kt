@@ -138,6 +138,10 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         override fun onAccountValueClick() {
             accountAssetsViewModel.togglePrivacy()
         }
+
+        override fun onChartTap() {
+            accountAssetsViewModel.logChartTap()
+        }
     }
 
     private val accountAssetsAdapter = AccountAssetsAdapter(accountAssetsListener)

@@ -18,7 +18,7 @@ interface AccountsEventTracker {
     fun logAddAccountClick()
     fun logSwapTutorialTrySwapClick()
     fun logSwapLaterClick()
-    fun logChartTap() // TODO
+    fun logChartTap()
     fun logSwapQuickActionClick()
     fun logBuySellQuickActionClick()
     fun logStakeQuickActionClick()

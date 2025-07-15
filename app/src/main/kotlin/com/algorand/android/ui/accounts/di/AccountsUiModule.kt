@@ -28,5 +28,6 @@ internal object AccountsUiModule {
     @Provides
     fun provideGetAccountsLineChartData(useCase: GetAccountsLineChartDataUseCase): GetAccountsLineChartData = useCase
 
+    @Provides
     fun provideAccountsEventTracker(tracker: DefaultAccountsEventTracker): AccountsEventTracker = tracker
 }

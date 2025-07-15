@@ -172,6 +172,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
             accountsViewModel.navigateToBackUpPassphraseInfo()
         }
 
+        override fun onChartTap() {
+            accountsViewModel.logChartTap()
+        }
+
         override fun onSpotBannerBannerClick(spotBanner: SpotBanner.Generic) {
             accountsViewModel.logSpotBannerClick(spotBanner.text)
             val url = spotBanner.url ?: return

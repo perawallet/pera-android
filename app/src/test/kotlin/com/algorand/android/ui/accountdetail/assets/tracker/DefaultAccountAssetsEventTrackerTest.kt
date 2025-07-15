@@ -25,7 +25,7 @@ class DefaultAccountAssetsEventTrackerTest {
 
     @Test
     fun `EXPECT chart click to be logged`() {
-        sut.logChartClick()
+        sut.logChartTap()
 
         verify { peraAnalyticsEventTracker.logEvent("accountscr_chart_tap") }
     }

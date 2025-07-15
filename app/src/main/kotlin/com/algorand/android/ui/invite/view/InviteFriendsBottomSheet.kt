@@ -28,7 +28,7 @@ import javax.inject.Inject
 class InviteFriendsBottomSheet : BaseBottomSheet(0) {
 
     @Inject
-    private lateinit var inviteFriendsEventTracker: InviteFriendsEventTracker
+    lateinit var inviteFriendsEventTracker: InviteFriendsEventTracker
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return createComposeView {

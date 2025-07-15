@@ -19,8 +19,8 @@ internal class DefaultAccountAssetsEventTracker @Inject constructor(
     private val peraAnalyticsEventTracker: PeraAnalyticsEventTracker
 ) : AccountAssetsEventTracker {
 
-    override fun logChartClick() {
-        peraAnalyticsEventTracker.logEvent(CHART_CLICK)
+    override fun logChartTap() {
+        peraAnalyticsEventTracker.logEvent(CHART_TAP)
     }
 
     override fun logSwapClick() {
@@ -48,7 +48,7 @@ internal class DefaultAccountAssetsEventTracker @Inject constructor(
     }
 
     private companion object {
-        const val CHART_CLICK = "accountscr_chart_tap"
+        const val CHART_TAP = "accountscr_chart_tap"
         const val SWAP_CLICK = "accountscr_swap_click"
         const val BUY_SELL_CLICK = "acccountscr_buysell_click"
         const val ASSET_INBOX_CLICK = "accountscr_tapmenu_asset_inbox_tap"

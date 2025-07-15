@@ -13,7 +13,7 @@
 package com.algorand.android.ui.accountdetail.assets.tracker
 
 interface AccountAssetsEventTracker {
-    fun logChartClick()
+    fun logChartTap()
     fun logSwapClick()
     fun logBuyAlgoClick()
     fun logAssetInboxClick()

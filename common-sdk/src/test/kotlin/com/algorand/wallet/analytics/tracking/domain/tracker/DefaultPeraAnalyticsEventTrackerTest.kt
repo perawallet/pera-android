@@ -17,6 +17,14 @@ import com.algorand.wallet.analytics.tracking.domain.usecase.GetEventNameForSele
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 
 class DefaultPeraAnalyticsEventTrackerTest {
@@ -24,10 +32,26 @@ class DefaultPeraAnalyticsEventTrackerTest {
     private val peraAnalyticsRepository: PeraAnalyticsRepository = mockk(relaxed = true)
     private val getEventNameForSelectedNode: GetEventNameForSelectedNode = mockk()
 
-    private val sut = DefaultPeraAnalyticsEventTracker(
-        peraAnalyticsRepository,
-        getEventNameForSelectedNode
-    )
+    private val testDispatcher = UnconfinedTestDispatcher()
+    private val testScope = TestScope(testDispatcher)
+
+    private lateinit var sut: DefaultPeraAnalyticsEventTracker
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+        sut = DefaultPeraAnalyticsEventTracker(
+            peraAnalyticsRepository,
+            getEventNameForSelectedNode,
+            testScope
+        )
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+        testScope.cancel()
+    }
 
     @Test
     fun `EXPECT event to be logged with normalized name`() {
@@ -35,11 +59,7 @@ class DefaultPeraAnalyticsEventTrackerTest {
 
         sut.logEvent(EVENT_NAME)
 
-        // HACK: the logEvent happens on a different coroutine so this verify can fail
-        // in a race condition.  We add a delay here to attempt to resolve that race.
-        coVerify(timeout = 500) {
-            peraAnalyticsRepository.logEvent("t_$EVENT_NAME")
-        }
+        coVerify { peraAnalyticsRepository.logEvent("t_$EVENT_NAME") }
     }
 
     @Test
@@ -49,11 +69,7 @@ class DefaultPeraAnalyticsEventTrackerTest {
 
         sut.logEvent(EVENT_NAME, payloadMap)
 
-        // HACK: the logEvent happens on a different coroutine so this verify can fail
-        // in a race condition.  We add a delay here to attempt to resolve that race.
-        coVerify(timeout = 500) {
-            peraAnalyticsRepository.logEvent(EVENT_NAME, payloadMap)
-        }
+        coVerify { peraAnalyticsRepository.logEvent(EVENT_NAME, payloadMap) }
     }
 
     private companion object {

@@ -108,7 +108,7 @@ sealed class DateFilter(
     }
 
     companion object {
-        val DEFAULT_DATE_FILTER = AllTime
+        val DEFAULT_DATE_FILTER by lazy { AllTime }
 
         fun getDateFilterList(customRange: CustomRange? = null): MutableList<DateFilter> {
             return mutableListOf(

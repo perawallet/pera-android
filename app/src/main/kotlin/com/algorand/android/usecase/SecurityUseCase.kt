@@ -24,6 +24,10 @@ class SecurityUseCase @Inject constructor(
         securityRepository.setBiometricRegistrationPreference(isEnabled)
     }
 
+    fun setRekeySupportPreference(isEnabled: Boolean) {
+        securityRepository.setRekeySupportPreference(isEnabled)
+    }
+
     fun setPasswordPreferencesAsDisabled() {
         encryptedPinUseCase.clearEncryptedPin()
     }
@@ -34,5 +38,9 @@ class SecurityUseCase @Inject constructor(
 
     fun isBiometricActive(): Boolean {
         return securityRepository.isBiometricActive()
+    }
+
+    fun isRekeySupportEnabled(): Boolean {
+        return securityRepository.isRekeySupportEnabled()
     }
 }

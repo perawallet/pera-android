@@ -12,12 +12,12 @@
 
 package com.algorand.android.ui.settings.security
 
-import javax.inject.Inject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.algorand.android.usecase.SecurityUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
 class SecurityViewModel @Inject constructor(
@@ -30,8 +30,15 @@ class SecurityViewModel @Inject constructor(
     private val _isBiometricEnabledLiveData = MutableLiveData(securityUseCase.isBiometricActive())
     val isBiometricEnabledLiveData: LiveData<Boolean> = _isBiometricEnabledLiveData
 
+    private val _isRekeySupportEnabledLiveData = MutableLiveData(securityUseCase.isRekeySupportEnabled())
+    val isRekeySupportEnabledLiveData: LiveData<Boolean> = _isRekeySupportEnabledLiveData
+
     fun setBiometricRegistrationPreference(isEnabled: Boolean) {
         securityUseCase.setBiometricRegistrationPreference(isEnabled)
+    }
+
+    fun setRekeySupportPreference(isEnabled: Boolean) {
+        securityUseCase.setRekeySupportPreference(isEnabled)
     }
 
     fun setPasswordPreferencesAsDisabled() {
@@ -49,4 +56,6 @@ class SecurityViewModel @Inject constructor(
     fun isPasscodeSet() = _isPasswordChosenLiveData.value ?: false
 
     fun isBiometricAuthEnabled() = _isBiometricEnabledLiveData.value ?: false
+
+    fun isRekeySupportEnabled() = _isRekeySupportEnabledLiveData.value ?: false
 }

@@ -26,6 +26,21 @@
         app:settingIcon="@drawable/ic_shield_check"
         app:settingTitle="@string/enable_pin_code" />
 
+    <com.algorand.android.customviews.SettingsListItem
+        android:id="@+id/enableRekeySupportListItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:endViewLayoutResource="@layout/layout_switch_view"
+        app:settingIcon="@drawable/ic_rekey"
+        app:settingTitle="@string/enable_rekey_support" />
+
+    <TextView
+        style="@style/TextAppearance.Footnote.Sans"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/once_you_enable_this"
+        android:textColor="@color/text_gray" />
+
     <TextView
         android:id="@+id/securityPreferencesTextView"
         style="@style/TextAppearance.Footnote.Description"

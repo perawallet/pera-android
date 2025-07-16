@@ -1558,4 +1558,7 @@
     <string name="we_will_inform_this">We will inform this device via a push notification when we launch in your country.</string>
     <string name="go_to_cards">Go to Cards</string>
     <string name="create_pera_card">Create Pera Card</string>
+
+    <string name="enable_rekey_support">Enable Rekey Support</string>
+    <string name="once_you_enable_this">Once you enable this, you can confirm transaction request to rekey your account. This will give the control of your account to another address.</string>
 </resources>

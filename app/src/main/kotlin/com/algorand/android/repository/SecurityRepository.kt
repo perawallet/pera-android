@@ -20,11 +20,14 @@ import com.algorand.android.sharedpref.LockAttemptCountLocalSource
 import com.algorand.android.sharedpref.LockAttemptCountLocalSource.Companion.defaultLockAttemptCountPreference
 import com.algorand.android.sharedpref.LockPenaltyRemainingTimeLocalSource
 import com.algorand.android.sharedpref.LockPreferencesLocalSource
+import com.algorand.android.sharedpref.RekeySupportLocalSource
+import com.algorand.android.sharedpref.RekeySupportLocalSource.Companion.defaultRekeySupportPreference
 import javax.inject.Inject
 
 class SecurityRepository @Inject constructor(
     private val lockPreferencesLocalSource: LockPreferencesLocalSource,
     private val biometricRegistrationLocalSource: BiometricRegistrationLocalSource,
+    private val rekeySupportLocalSource: RekeySupportLocalSource,
     private val lockPenaltyRemainingTimeLocalSource: LockPenaltyRemainingTimeLocalSource,
     private val lockAttemptCountLocalSource: LockAttemptCountLocalSource
 ) {
@@ -39,8 +42,16 @@ class SecurityRepository @Inject constructor(
         biometricRegistrationLocalSource.saveData(isEnabled)
     }
 
+    fun setRekeySupportPreference(isEnabled: Boolean) {
+        rekeySupportLocalSource.saveData(isEnabled)
+    }
+
     fun isBiometricActive(): Boolean {
         return biometricRegistrationLocalSource.getData(defaultBiometricRegistrationPreference)
+    }
+
+    fun isRekeySupportEnabled(): Boolean {
+        return rekeySupportLocalSource.getData(defaultRekeySupportPreference)
     }
 
     fun setLockPenaltyRemainingTime(penaltyRemainingTime: Long) {

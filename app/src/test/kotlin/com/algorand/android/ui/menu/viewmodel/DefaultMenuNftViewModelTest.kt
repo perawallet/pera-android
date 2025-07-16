@@ -14,10 +14,9 @@
 
 package com.algorand.android.ui.menu.viewmodel
 
-import com.algorand.android.ui.menu.tracker.DefaultMenuEventTracker
+import com.algorand.android.ui.menu.tracker.MenuEventTracker
 import com.algorand.android.ui.menu.viewmodel.MenuNftViewModel.ViewState
 import com.algorand.test.test
-import com.algorand.wallet.analytics.tracking.domain.tracker.PeraAnalyticsEventTracker
 import com.algorand.wallet.asset.domain.usecase.GetRecentlyAddedCollectibleUrls
 import com.algorand.wallet.viewmodel.StateDelegate
 import io.mockk.coEvery
@@ -33,22 +32,13 @@ import org.junit.Before
 import org.junit.Test
 
 class DefaultMenuNftViewModelTest {
-    object AnalyticsTracker : PeraAnalyticsEventTracker {
-        override fun logEvent(eventName: String) {
-            // no-op
-        }
-
-        override fun logEvent(eventName: String, payloadMap: Map<String, Any>) {
-            // no-op
-        }
-    }
 
     private val testDispatcher = UnconfinedTestDispatcher()
 
     private val getRecentlyAddedCollectibleUrls: GetRecentlyAddedCollectibleUrls = mockk()
+    private val menuEventTracker: MenuEventTracker = mockk()
 
-    private val sut = DefaultMenuNftViewModel(getRecentlyAddedCollectibleUrls,
-        StateDelegate(), DefaultMenuEventTracker(AnalyticsTracker))
+    private val sut = DefaultMenuNftViewModel(getRecentlyAddedCollectibleUrls, StateDelegate(), menuEventTracker)
 
     private val stateObserver = sut.state.test()
 

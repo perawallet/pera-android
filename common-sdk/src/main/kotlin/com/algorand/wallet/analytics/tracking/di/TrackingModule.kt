@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.analytics.tracking.di
 
+import com.algorand.wallet.analytics.tracking.domain.repository.PeraAnalyticsRepository
 import com.algorand.wallet.analytics.tracking.domain.tracker.DefaultPeraAnalyticsEventTracker
 import com.algorand.wallet.analytics.tracking.domain.tracker.PeraAnalyticsEventTracker
 import com.algorand.wallet.analytics.tracking.domain.usecase.GetEventNameForSelectedNode
@@ -20,15 +21,27 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal object TrackingModule {
 
+    @Singleton
     @Provides
     fun providePeraAnalyticsEventTracker(
-        tracker: DefaultPeraAnalyticsEventTracker
-    ): PeraAnalyticsEventTracker = tracker
+        repository: PeraAnalyticsRepository,
+        getEventNameForSelectedNode: GetEventNameForSelectedNode
+    ): PeraAnalyticsEventTracker {
+        return DefaultPeraAnalyticsEventTracker(
+            repository,
+            getEventNameForSelectedNode,
+            CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        )
+    }
 
     @Provides
     fun provideGetEventNameForSelectedNode(

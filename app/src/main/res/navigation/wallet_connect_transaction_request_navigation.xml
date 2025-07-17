@@ -27,6 +27,8 @@
 
     <include app:graph="@navigation/wallet_connect_request_launch_back_navigation" />
 
+    <include app:graph="@navigation/security_navigation" />
+
     <action
         android:id="@+id/action_walletConnectTransactionRequestNavigation_pop"
         app:popUpTo="@id/walletConnectTransactionRequestNavigation"
@@ -81,6 +83,9 @@
                 app:argType="com.algorand.android.models.WalletConnectRequest"
                 app:nullable="true" />
         </action>
+        <action
+            android:id="@+id/action_walletConnectTransactionRequestFragment_to_securityNavigation"
+            app:destination="@id/securityNavigation" />
     </fragment>
 
     <!--  Bottom Sheets  -->

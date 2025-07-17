@@ -110,6 +110,8 @@
 
     <include app:graph="@navigation/create_account_name_registration_navigation" />
 
+    <include app:graph="@navigation/security_navigation" />
+
     <action
         android:id="@+id/action_global_showQrNavigation"
         app:destination="@id/showQrNavigation">
@@ -723,11 +725,6 @@
             app:destination="@id/assetTransferAmountFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/changePasswordFragment"
-        android:name="com.algorand.android.ui.settings.ChangePasswordFragment"
-        android:label="fragment_settings_change_password"
-        tools:layout="@layout/fragment_base_password" />
 
     <fragment
         android:id="@+id/settingsFragment"
@@ -760,33 +757,14 @@
             android:id="@+id/action_settingsFragment_to_walletConnectSessionsFragment"
             app:destination="@id/walletConnectSessionsFragment" />
         <action
-            android:id="@+id/action_settingsFragment_to_securityFragment"
-            app:destination="@id/securityFragment" />
+            android:id="@+id/action_settingsFragment_to_securityNavigation"
+            app:destination="@id/securityNavigation" />
         <action
             android:id="@+id/action_settingsFragment_to_contactsFragment"
             app:destination="@id/contactsFragment" />
         <action
             android:id="@+id/action_settingsFragment_to_asbCreationNavigation"
             app:destination="@id/asbCreationNavigation" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/securityFragment"
-        android:name="com.algorand.android.ui.settings.security.SecurityFragment"
-        android:label="SecurityFragment"
-        tools:layout="@layout/fragment_security">
-        <action
-            android:id="@+id/action_securityFragment_to_changePasswordFragment"
-            app:destination="@id/changePasswordFragment" />
-        <action
-            android:id="@+id/action_securityFragment_to_disablePasswordVerificationFragment"
-            app:destination="@id/disablePasswordVerificationFragment" />
-        <action
-            android:id="@+id/action_securityFragment_to_changePasswordVerificationFragment"
-            app:destination="@id/changePasswordVerificationFragment" />
-        <action
-            android:id="@+id/action_securityFragment_to_disableBiometricAuthPasswordVerificationFragment"
-            app:destination="@id/disableBiometricAuthPasswordVerificationFragment" />
     </fragment>
 
     <fragment
@@ -1341,16 +1319,6 @@
         </action>
     </dialog>
 
-    <fragment
-        android:id="@+id/disablePasswordVerificationFragment"
-        android:name="com.algorand.android.ui.lock.DisablePasswordVerificationFragment"
-        android:label="DisablePasswordVerificationFragment" />
-
-    <fragment
-        android:id="@+id/changePasswordVerificationFragment"
-        android:name="com.algorand.android.ui.lock.ChangePasswordVerificationFragment"
-        android:label="ChangePasswordVerificationFragment" />
-
     <dialog
         android:id="@+id/collectibleTransactionApproveBottomSheet"
         android:name="com.algorand.android.nft.ui.nftapprovetransaction.CollectibleTransactionApproveBottomSheet"
@@ -1379,11 +1347,6 @@
             app:nullable="true" />
     </dialog>
 
-    <fragment
-        android:id="@+id/disableBiometricAuthPasswordVerificationFragment"
-        android:name="com.algorand.android.ui.lock.DisableBiometricAuthPasswordVerificationFragment"
-        android:label="DisableBiometricAuthPasswordVerificationFragment"
-        tools:layout="@layout/fragment_base_password" />
     <dialog
         android:id="@+id/manageAssetsBottomSheet"
         android:name="com.algorand.android.modules.assets.manage.ui.ManageAssetsBottomSheet"

@@ -52,6 +52,7 @@ import com.algorand.android.models.WalletConnectRequest.WalletConnectTransaction
 import com.algorand.android.models.WalletConnectSignResult
 import com.algorand.android.modules.walletconnect.ui.model.WalletConnectSessionIdentifier
 import com.algorand.android.ui.common.walletconnect.WalletConnectAppPreviewCardView
+import com.algorand.android.ui.wctransactionrequest.WalletConnectTransactionRequestFragmentDirections.Companion.actionWalletConnectTransactionRequestFragmentToSecurityNavigation
 import com.algorand.android.utils.BaseDoubleButtonBottomSheet.Companion.RESULT_KEY
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
@@ -66,6 +67,7 @@ import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.algorand.android.utils.walletconnect.isFutureTransaction
+import com.algorand.android.utils.walletconnect.isRekeyTransaction
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.map
 
@@ -195,9 +197,23 @@ class WalletConnectTransactionRequestFragment :
 
     override fun onResume() {
         super.onResume()
+        initSavedStateListener()
+    }
+
+    private fun initSavedStateListener() {
         startSavedStateListener(R.id.walletConnectTransactionRequestFragment) {
             useSavedStateValue<ConfirmationBottomSheetResult>(RESULT_KEY) { result ->
-                if (result.isAccepted) confirmTransaction()
+                if (result.isAccepted) {
+                    when (result.confirmationIdentifier) {
+                        FUTURE_TRANSACTION_CONFIRMATION_ID, REKEY_TRANSACTION_CONFIRMATION_ID -> {
+                            confirmTransaction()
+                        }
+
+                        NAV_TO_SETTINGS_ID -> {
+                            navToSecurityNavigation()
+                        }
+                    }
+                }
             }
         }
     }
@@ -275,18 +291,26 @@ class WalletConnectTransactionRequestFragment :
 
     private fun onConfirmClick() {
         val currentTransaction = transactionRequestViewModel.transaction ?: return
-        if (currentTransaction.isFutureTransaction()) {
-            showFutureTransactionConfirmationBottomSheet(currentTransaction.requestId)
+        if (currentTransaction.isRekeyTransaction()) {
+            if (transactionRequestViewModel.isRekeySupportEnabled()) {
+                navToRekeyConfirmationBottomSheet()
+            } else {
+                navToEnableRekeySupportBottomSheet()
+            }
         } else {
-            confirmTransaction()
+            if (currentTransaction.isFutureTransaction()) {
+                showFutureTransactionConfirmationBottomSheet()
+            } else {
+                confirmTransaction()
+            }
         }
     }
 
-    private fun showFutureTransactionConfirmationBottomSheet(requestId: Long) {
+    private fun showFutureTransactionConfirmationBottomSheet() {
         val confirmationParams = ConfirmationBottomSheetParameters(
+            confirmationIdentifier = FUTURE_TRANSACTION_CONFIRMATION_ID,
             titleResId = R.string.future_transaction_detected,
-            descriptionText = getString(R.string.this_transaction_will_be),
-            confirmationIdentifier = requestId
+            descriptionText = getString(R.string.this_transaction_will_be)
         )
         nav(MainNavigationDirections.actionGlobalConfirmationBottomSheet(confirmationParams))
     }
@@ -378,6 +402,34 @@ class WalletConnectTransactionRequestFragment :
         showGlobalError(errorMessage = errorMessage, title = title, tag = baseActivityTag)
     }
 
+    private fun navToRekeyConfirmationBottomSheet() {
+        val parameters = ConfirmationBottomSheetParameters(
+            confirmationIdentifier = REKEY_TRANSACTION_CONFIRMATION_ID,
+            titleResId = R.string.are_you_sure,
+            descriptionText = getString(R.string.this_signature_includes),
+            iconDrawableResId = R.drawable.ic_error,
+            confirmButtonTextResId = R.string.continue_text,
+            rejectButtonTextResId = R.string.cancel
+        )
+        nav(MainNavigationDirections.actionGlobalConfirmationBottomSheet(parameters))
+    }
+
+    private fun navToEnableRekeySupportBottomSheet() {
+        val parameters = ConfirmationBottomSheetParameters(
+            confirmationIdentifier = NAV_TO_SETTINGS_ID,
+            titleResId = R.string.enable_rekey_support,
+            descriptionText = getString(R.string.rekey_transactions_can_cause),
+            iconDrawableResId = R.drawable.ic_error,
+            confirmButtonTextResId = R.string.go_to_advanced_settings,
+            rejectButtonTextResId = R.string.cancel
+        )
+        nav(MainNavigationDirections.actionGlobalConfirmationBottomSheet(parameters))
+    }
+
+    private fun navToSecurityNavigation() {
+        nav(actionWalletConnectTransactionRequestFragmentToSecurityNavigation())
+    }
+
     override fun onNavigate(navDirections: NavDirections) {
         walletConnectNavController.navigateSafe(navDirections)
     }
@@ -402,5 +454,11 @@ class WalletConnectTransactionRequestFragment :
 
     override fun motionTransitionToEnd() {
         binding.transactionRequestMotionLayout.transitionToEnd()
+    }
+
+    companion object {
+        const val FUTURE_TRANSACTION_CONFIRMATION_ID = 1001L
+        const val REKEY_TRANSACTION_CONFIRMATION_ID = 1002L
+        const val NAV_TO_SETTINGS_ID = 1003L
     }
 }

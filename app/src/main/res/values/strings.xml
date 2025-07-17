@@ -655,7 +655,7 @@
     <string name="search_or_enter_wallet_address">Search or enter wallet address</string>
     <string name="got_it">Got it!</string>
     <string name="approve_transaction">Approve Transaction</string>
-    <string name="are_you_sure">Are you sure you want to proceed?</string>
+    <string name="are_you_sure_you_want">Are you sure you want to proceed?</string>
     <string name="sender_account">Sender Account</string>
     <string name="transacting_fee">Transaction Fee</string>
     <string name="confirm_transfer">Confirm transfer</string>
@@ -1558,4 +1558,12 @@
     <string name="we_will_inform_this">We will inform this device via a push notification when we launch in your country.</string>
     <string name="go_to_cards">Go to Cards</string>
     <string name="create_pera_card">Create Pera Card</string>
+
+    <string name="enable_rekey_support">Enable Rekey Support</string>
+    <string name="once_you_enable_this">Once you enable this, you can confirm transaction request to rekey your account. This will give the control of your account to another address.</string>
+    <string name="rekey_transactions_can_cause">Rekey transactions can cause you to lose control of your account. In order to confirm this transaction, you need to enable the \"Rekey Support\" via app settings.</string>
+    <string name="go_to_advanced_settings">Go to Advanced Settings</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="this_signature_includes">This signature includes rekey transaction, giving control over your accounts to another address. Please make sure that you understand the implications before proceeding.</string>
+
 </resources>

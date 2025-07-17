@@ -56,9 +56,17 @@ class SecurityFragment : DaggerBaseFragment(R.layout.fragment_security) {
     private val pinCodeSwitch: SwitchMaterial?
         get() = binding.enablePinCodeListItem.getEndComponentViewStub()
 
+    private val rekeySupportSwitch: SwitchMaterial?
+        get() = binding.enableRekeySupportListItem.getEndComponentViewStub()
+
     private val isBiometricEnabledObserver = Observer<Boolean> { isChecked ->
         securityViewModel.setBiometricRegistrationPreference(isChecked)
         biometricSwitch?.isChecked = isChecked
+    }
+
+    private val isRekeySupportEnabledObserver = Observer<Boolean> { isChecked ->
+        securityViewModel.setRekeySupportPreference(isChecked)
+        rekeySupportSwitch?.isChecked = isChecked
     }
 
     private val isPasswordChosenObserver = Observer<Boolean> { isEnabled ->
@@ -89,6 +97,7 @@ class SecurityFragment : DaggerBaseFragment(R.layout.fragment_security) {
         with(securityViewModel) {
             isPasswordChosenLiveData.observe(viewLifecycleOwner, isPasswordChosenObserver)
             isBiometricEnabledLiveData.observe(viewLifecycleOwner, isBiometricEnabledObserver)
+            isRekeySupportEnabledLiveData.observe(viewLifecycleOwner, isRekeySupportEnabledObserver)
         }
     }
 
@@ -96,6 +105,7 @@ class SecurityFragment : DaggerBaseFragment(R.layout.fragment_security) {
     private fun initSwitchChangeListeners() {
         biometricSwitch?.setOnTouchListener { _, _ -> onEnableBiometricCodeTouch(); true }
         pinCodeSwitch?.setOnTouchListener { _, _ -> onEnablePinCodeTouch(); true }
+        rekeySupportSwitch?.setOnCheckedChangeListener { _, isChecked -> onRekeySupportCheckChanged(isChecked) }
     }
 
     private fun onEnableBiometricCodeTouch() {
@@ -112,6 +122,10 @@ class SecurityFragment : DaggerBaseFragment(R.layout.fragment_security) {
         } else {
             navToSetChangePasswordFragment()
         }
+    }
+
+    private fun onRekeySupportCheckChanged(isChecked: Boolean) {
+        securityViewModel.setRekeySupportPreference(isChecked)
     }
 
     private fun initDialogSavedStateListener() {

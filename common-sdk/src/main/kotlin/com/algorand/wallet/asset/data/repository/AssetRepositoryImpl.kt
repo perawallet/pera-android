@@ -16,6 +16,7 @@ import com.algorand.wallet.asset.data.database.dao.AssetDetailDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleMediaDao
 import com.algorand.wallet.asset.data.database.dao.CollectibleTraitDao
+import com.algorand.wallet.asset.data.database.model.AssetLiteInformationDao
 import com.algorand.wallet.asset.data.mapper.entity.AlgoAssetDetailEntityMapper
 import com.algorand.wallet.asset.data.mapper.model.AlgoAssetDetailMapper
 import com.algorand.wallet.asset.data.mapper.model.AssetMapper
@@ -32,16 +33,18 @@ import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.asset.lite.domain.model.AssetLiteInformation
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.foundation.network.utils.request
-import java.math.BigDecimal
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import java.math.BigDecimal
+import javax.inject.Inject
 
 internal class AssetRepositoryImpl @Inject constructor(
     private val assetDetailApi: AssetDetailApiService,
@@ -188,18 +191,35 @@ internal class AssetRepositoryImpl @Inject constructor(
         return assetDetailCacheHelper.isCollectibleExist(collectibleId)
     }
 
-    override fun getAssetsLiteInformationFlow(assetIds: List<Long>): Flow<Map<Long, AssetLiteInformation?>> {
-        return assetDetailDao.getLiteInformationByAssetIds(assetIds)
-            .distinctUntilChanged()
-            .map {
-                it.associate { assetLiteInformationDao ->
-                    assetLiteInformationDao.id to AssetLiteInformation(
-                        assetLiteInformationDao.id,
-                        assetLiteInformationDao.usdValue,
-                        assetLiteInformationDao.decimals
+    override fun getAssetsLiteInformationFlow(
+        assetIds: List<Long>
+    ): Flow<Map<Long, AssetLiteInformation?>> {
+        if (assetIds.isEmpty()) return flowOf(emptyMap())
+
+        val chunkFlows = assetIds
+            .chunked(MAX_ASSET_CHUNK_SIZE)
+            .map { chunk ->
+                assetDetailDao
+                    .getLiteInformationByAssetIds(chunk)
+                    .distinctUntilChanged()
+            }
+
+        return combine(chunkFlows) { assetDaoLists: Array<List<AssetLiteInformationDao>> ->
+            val fullAssetMap = mutableMapOf<Long, AssetLiteInformation?>()
+            assetDaoLists.forEach { assetDaoList ->
+                assetDaoList.forEach { assetDao ->
+                    fullAssetMap[assetDao.id] = AssetLiteInformation(
+                        id = assetDao.id,
+                        usdValue = assetDao.usdValue,
+                        decimals = assetDao.decimals
                     )
                 }
             }
+
+            fullAssetMap
+        }
+            .distinctUntilChanged()
+            .flowOn(Dispatchers.IO)
     }
 
     private fun mapAssetDetailResponseToResult(assetResponse: AssetResponse): PeraResult<Asset> {
@@ -230,5 +250,6 @@ internal class AssetRepositoryImpl @Inject constructor(
 
     companion object {
         private const val MAX_ASSET_FETCH_COUNT = 100
+        private const val MAX_ASSET_CHUNK_SIZE = 900
     }
 }

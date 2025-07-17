@@ -30,6 +30,7 @@ import com.algorand.android.modules.walletconnect.domain.WalletConnectErrorProvi
 import com.algorand.android.modules.walletconnect.domain.WalletConnectManager
 import com.algorand.android.ui.wctransactionrequest.ui.model.WalletConnectTransactionRequestPreview
 import com.algorand.android.ui.wctransactionrequest.ui.usecase.WalletConnectTransactionRequestPreviewUseCase
+import com.algorand.android.usecase.SecurityUseCase
 import com.algorand.android.utils.Event
 import com.algorand.android.utils.Resource
 import com.algorand.android.utils.getOrElse
@@ -37,10 +38,10 @@ import com.algorand.android.utils.preference.getFirstWalletConnectRequestBottomS
 import com.algorand.android.utils.preference.setFirstWalletConnectRequestBottomSheetShown
 import com.algorand.android.utils.walletconnect.WalletConnectTransactionSignManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class WalletConnectTransactionRequestViewModel @Inject constructor(
@@ -50,6 +51,7 @@ class WalletConnectTransactionRequestViewModel @Inject constructor(
     private val walletConnectSignManager: WalletConnectTransactionSignManager,
     private val transactionListBuilder: WalletConnectTransactionListBuilder,
     private val walletConnectTransactionRequestPreviewUseCase: WalletConnectTransactionRequestPreviewUseCase,
+    private val securityUseCase: SecurityUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -157,6 +159,10 @@ class WalletConnectTransactionRequestViewModel @Inject constructor(
 
     private fun getInitialPreview(): WalletConnectTransactionRequestPreview {
         return walletConnectTransactionRequestPreviewUseCase.getInitialWalletConnectTransactionRequestPreview()
+    }
+
+    fun isRekeySupportEnabled(): Boolean {
+        return securityUseCase.isRekeySupportEnabled()
     }
 
     companion object {

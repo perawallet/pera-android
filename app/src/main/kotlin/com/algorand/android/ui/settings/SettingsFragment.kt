@@ -37,8 +37,8 @@ import com.algorand.android.utils.viewbinding.viewBinding
 import com.google.crypto.tink.Aead
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
@@ -162,7 +162,7 @@ class SettingsFragment : DaggerBaseFragment(R.layout.fragment_settings) {
     }
 
     private fun onSecurityClick() {
-        nav(SettingsFragmentDirections.actionSettingsFragmentToSecurityFragment())
+        nav(SettingsFragmentDirections.actionSettingsFragmentToSecurityNavigation())
     }
 
     private fun initDialogSavedStateListener() {

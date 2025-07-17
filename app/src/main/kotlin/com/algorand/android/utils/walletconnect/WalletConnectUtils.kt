@@ -109,6 +109,12 @@ fun WalletConnectTransaction.isFutureTransaction(): Boolean {
     }
 }
 
+fun WalletConnectTransaction.isRekeyTransaction(): Boolean {
+    return transactionList.flatten().any {
+        it.getRekeyToAccountAddress() != null
+    }
+}
+
 fun String.getFallBackBrowserFromWCUrlOrNull(): String? {
     return if (contains(WALLET_CONNECT_FALLBACK_BROWSER_KEY)) {
         split(WALLET_CONNECT_FALLBACK_BROWSER_KEY)

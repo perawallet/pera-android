@@ -205,16 +205,12 @@ class WalletConnectTransactionRequestFragment :
             useSavedStateValue<ConfirmationBottomSheetResult>(RESULT_KEY) { result ->
                 if (result.isAccepted) {
                     when (result.confirmationIdentifier) {
-                        REJECT_CONFIRMATION_ID -> {
+                        FUTURE_TRANSACTION_CONFIRMATION_ID, REKEY_TRANSACTION_CONFIRMATION_ID -> {
                             confirmTransaction()
                         }
 
                         NAV_TO_SETTINGS_ID -> {
                             navToSecurityNavigation()
-                        }
-
-                        REKEY_CONFIRMATION_ID -> {
-                            confirmTransaction()
                         }
                     }
                 }
@@ -303,18 +299,18 @@ class WalletConnectTransactionRequestFragment :
             }
         } else {
             if (currentTransaction.isFutureTransaction()) {
-                showFutureTransactionConfirmationBottomSheet(currentTransaction.requestId)
+                showFutureTransactionConfirmationBottomSheet()
             } else {
                 confirmTransaction()
             }
         }
     }
 
-    private fun showFutureTransactionConfirmationBottomSheet(requestId: Long) {
+    private fun showFutureTransactionConfirmationBottomSheet() {
         val confirmationParams = ConfirmationBottomSheetParameters(
+            confirmationIdentifier = FUTURE_TRANSACTION_CONFIRMATION_ID,
             titleResId = R.string.future_transaction_detected,
-            descriptionText = getString(R.string.this_transaction_will_be),
-            confirmationIdentifier = requestId
+            descriptionText = getString(R.string.this_transaction_will_be)
         )
         nav(MainNavigationDirections.actionGlobalConfirmationBottomSheet(confirmationParams))
     }
@@ -408,7 +404,7 @@ class WalletConnectTransactionRequestFragment :
 
     private fun navToRekeyConfirmationBottomSheet() {
         val parameters = ConfirmationBottomSheetParameters(
-            confirmationIdentifier = REKEY_CONFIRMATION_ID,
+            confirmationIdentifier = REKEY_TRANSACTION_CONFIRMATION_ID,
             titleResId = R.string.are_you_sure,
             descriptionText = getString(R.string.this_signature_includes),
             iconDrawableResId = R.drawable.ic_error,
@@ -461,8 +457,8 @@ class WalletConnectTransactionRequestFragment :
     }
 
     companion object {
-        const val REJECT_CONFIRMATION_ID = 1001L
-        const val REKEY_CONFIRMATION_ID = 1002L
+        const val FUTURE_TRANSACTION_CONFIRMATION_ID = 1001L
+        const val REKEY_TRANSACTION_CONFIRMATION_ID = 1002L
         const val NAV_TO_SETTINGS_ID = 1003L
     }
 }

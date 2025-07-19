@@ -51,7 +51,7 @@ class AccountValueViewHolder(
             override fun onItemSelected(item: PeraLineChartData) {
                 val accountAssetsData = item as? AddressLineChartData ?: return
                 setPrimaryText(accountAssetsData.primaryAmountRenderer.getDisplayValue())
-                setSecondaryText(accountAssetsData.primaryAmountRenderer.getDisplayValue())
+                setSecondaryText(accountAssetsData.secondaryAmountRenderer.getDisplayValue())
                 binding.helperTextView.text = formatDateToChartDateString(accountAssetsData.datetime)
             }
 

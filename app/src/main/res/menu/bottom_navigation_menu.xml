@@ -23,7 +23,7 @@
         android:title="@string/discover" />
 
     <item
-        android:id="@id/stakingStandaloneFragment"
+        android:id="@id/stakingFragment"
         android:icon="@drawable/ic_staking"
         android:title="@string/staking" />
 

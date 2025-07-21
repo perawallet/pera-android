@@ -300,7 +300,9 @@
 
     <action
         android:id="@+id/action_global_stakingFragment"
-        app:destination="@id/stakingFragment" />
+        app:destination="@id/stakingFragment"
+        app:popUpTo="@id/accountsFragment"
+        app:popUpToInclusive="true"/>
 
     <!-- Remove this action and use the one in the main navigation after Lock Screen navigation change. -->
     <action
@@ -567,9 +569,6 @@
             android:id="@+id/action_accountsFragment_to_assetInboxAllAccountsNavigation"
             app:destination="@id/assetInboxAllAccountsNavigation" />
         <action
-            android:id="@+id/action_accountsFragment_to_StakingFragment"
-            app:destination="@id/stakingFragment" />
-        <action
             android:id="@+id/action_accountsFragment_to_CardsFragment"
             app:destination="@id/cardsFragment" />
     </fragment>
@@ -606,31 +605,6 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_stakingFragment_to_discoverDappNavigation"
-            app:destination="@id/discoverDappNavigation">
-            <argument
-                android:name="dappUrl"
-                app:argType="string" />
-            <argument
-                android:name="dappTitle"
-                app:argType="string" />
-            <argument
-                android:name="favorites"
-                app:argType="com.algorand.android.discover.common.ui.model.DappFavoriteElement[]"
-                app:nullable="true" />
-            <argument
-                android:name="showFavorites"
-                android:defaultValue="true"
-                app:argType="boolean" />
-        </action>
-    </fragment>
-
-    <fragment
-        android:id="@+id/stakingStandaloneFragment"
-        android:name="com.algorand.android.modules.staking.StakingStandaloneFragment"
-        android:label="StakingStandaloneFragment"
-        tools:layout="@layout/fragment_staking">
         <action
             android:id="@+id/action_stakingFragment_to_discoverDappNavigation"
             app:destination="@id/discoverDappNavigation">

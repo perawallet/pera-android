@@ -19,6 +19,7 @@ import androidx.room.Upsert
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingDto
 import com.algorand.wallet.account.info.data.database.model.AssetHoldingEntity
 import com.algorand.wallet.account.info.data.database.model.AssetStatusEntity
+import com.algorand.wallet.foundation.database.util.DaoUtils.executeChunked
 import com.algorand.wallet.foundation.database.util.DaoUtils.smartUpsert
 import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
@@ -44,7 +45,9 @@ internal interface AssetHoldingDao {
 
     @Transaction
     suspend fun insertAll(algoAddress: String, assetHoldingEntities: List<AssetHoldingEntity>) {
-        deleteAssetsNotInList(algoAddress, assetHoldingEntities.map { it.assetId })
+        executeChunked(assetHoldingEntities.map { it.assetId }) { assetIds ->
+            deleteAssetsNotInList(algoAddress, assetIds)
+        }
         smartUpsert(
             newEntities = assetHoldingEntities,
             getKey = { it.assetId },

@@ -2,7 +2,7 @@ package com.algorand.wallet.foundation.database.util
 
 internal object DaoUtils {
 
-    private const val DEFAULT_CHUNK_SIZE = 1000
+    private const val DEFAULT_CHUNK_SIZE = 900
 
     internal suspend fun <K, T> smartUpsert(
         newEntity: T,
@@ -33,5 +33,15 @@ internal object DaoUtils {
             }
         }
         if (entitiesToUpdate.isNotEmpty()) upsert(entitiesToUpdate)
+    }
+
+    internal suspend fun <T> executeChunked(
+        items: List<T>,
+        chunkSize: Int = DEFAULT_CHUNK_SIZE,
+        action: suspend (List<T>) -> Unit
+    ) {
+        items.chunked(chunkSize).forEach { chunk ->
+            action(chunk)
+        }
     }
 }

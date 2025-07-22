@@ -132,7 +132,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         override fun onBannerActionButtonClick(url: String, bannerType: BannerType) {
             accountsViewModel.logBannerClick(bannerType)
             when (bannerType) {
-                BannerType.Staking -> nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
+                BannerType.Staking -> navToStakingFragment()
                 BannerType.Card -> nav(AccountsFragmentDirections.actionAccountsFragmentToCardsFragment())
                 else -> nav(AccountsFragmentDirections.actionAccountsFragmentToBannerFragment(url))
             }
@@ -165,7 +165,7 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
         override fun onStakingClick() {
             accountsViewModel.logStakeQuickActionClick()
-            nav(AccountsFragmentDirections.actionAccountsFragmentToStakingFragment())
+            navToStakingFragment()
         }
 
         override fun onBackupPassphraseBannerClick() {
@@ -499,6 +499,10 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private fun navToBidali() {
         nav(AccountsFragmentDirections.actionAccountsFragmentToBidaliNavigation())
+    }
+
+    private fun navToStakingFragment() {
+        (activity as? MainActivity)?.navToStakingFragment()
     }
 
     companion object {

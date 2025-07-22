@@ -425,7 +425,7 @@ class MainActivity :
         when (item.itemId) {
             R.id.accountsFragment -> mainViewModel.logHomeClick()
             R.id.discoverHomeNavigation -> mainViewModel.logDiscoverClick()
-            R.id.stakingStandaloneFragment -> mainViewModel.logStakeClick()
+            R.id.stakingFragment -> mainViewModel.logStakeClick()
             R.id.collectiblesFragment -> mainViewModel.logCollectiblesClick()
             R.id.menuFragment -> mainViewModel.logMenuClick()
         }
@@ -482,6 +482,7 @@ class MainActivity :
     }
 
     fun navToStakingFragment(path: String? = null) {
+        binding.bottomNavigationView.menu.findItem(R.id.stakingFragment).isChecked = true
         nav(HomeNavigationDirections.actionGlobalStakingFragment(path))
     }
 

@@ -31,7 +31,6 @@ import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineCh
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Content.ContentState
 import com.algorand.android.ui.compose.widget.chart.viewmodel.StatefulPeraLineChartViewModel.ViewState.Idle
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.viewmodel.StateDelegate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -87,26 +86,20 @@ class AccountsLineChartViewModel @Inject constructor(
     ) {
         stateDelegate.updateState { ViewState.Content(ContentState.Loading, selectedPeriod, PERIODS) }
         val authAddresses = getAuthAddressesOrNull(accountLites)
-        if (authAddresses == null) {
-            stateDelegate.updateState { ViewState.Error }
-            return
-        } else {
-            val viewState = getAccountsLineChartData(authAddresses, walletWealthPeriodMapper(selectedPeriod)).use(
-                onSuccess = {
-                    ViewState.Content(ContentState.Data(it), selectedPeriod, PERIODS)
-                },
-                onFailed = { _, _ ->
-                    ViewState.Error
-                }
-            )
-            stateDelegate.updateState { viewState }
-        }
+        val viewState = getAccountsLineChartData(authAddresses, walletWealthPeriodMapper(selectedPeriod)).use(
+            onSuccess = {
+                ViewState.Content(ContentState.Data(it), selectedPeriod, PERIODS)
+            },
+            onFailed = { _, _ ->
+                ViewState.Error
+            }
+        )
+        stateDelegate.updateState { viewState }
     }
 
-    private fun getAuthAddressesOrNull(accountLites: Map<String, AccountLite>): List<String>? {
+    private fun getAuthAddressesOrNull(accountLites: Map<String, AccountLite>): List<String> {
         return accountLites.values.mapNotNull { accountLite ->
-            if (accountLite.cachedInfo == null) return null
-            accountLite.address.takeIf { accountLite.cachedInfo.type.canSignTransaction() }
+            accountLite.address.takeIf { accountLite.registrationType.hasSignerDetails }
         }
     }
 

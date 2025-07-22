@@ -76,8 +76,10 @@ class AccountsPreviewPortfolioItemProcessor @Inject constructor(
         var totalSecondaryValue = BigDecimal.ZERO
 
         accountLite.values.forEach { account ->
-            totalPrimaryValue += account.cachedInfo?.primaryAccountValue ?: BigDecimal.ZERO
-            totalSecondaryValue += account.cachedInfo?.secondaryAccountValue ?: BigDecimal.ZERO
+            if (account.registrationType.hasSignerDetails) {
+                totalPrimaryValue += account.cachedInfo?.primaryAccountValue ?: BigDecimal.ZERO
+                totalSecondaryValue += account.cachedInfo?.secondaryAccountValue ?: BigDecimal.ZERO
+            }
         }
 
         return Pair(PeraAmount(totalPrimaryValue), PeraAmount(totalSecondaryValue))

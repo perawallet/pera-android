@@ -46,6 +46,7 @@ class AssetDetailPreviewMapper @Inject constructor(
                 isAlgo = isAlgo,
                 formattedPrimaryValue = formattedAmount,
                 formattedSecondaryValue = getSelectedCurrencyParityValue().getFormattedValue(),
+                chartSelectedItemDate = "",
                 accountDetailSummary = accountDetailSummary,
                 accountDisplayName = accountDisplayName,
                 baseAssetDrawableProvider = assetDrawableProviderDecider.getAssetDrawableProvider(this),

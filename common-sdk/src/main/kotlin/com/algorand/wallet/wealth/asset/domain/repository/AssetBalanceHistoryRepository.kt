@@ -10,12 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.wealth.wallet.domain.repository
+package com.algorand.wallet.wealth.asset.domain.repository
 
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.wealth.wallet.domain.model.WalletWealth
+import com.algorand.wallet.wealth.asset.domain.model.AssetBalanceHistory
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
 
-internal interface WalletWealthRepository {
-    suspend fun getWalletWealth(addresses: List<String>, period: WalletWealthPeriod): PeraResult<WalletWealth>
+internal interface AssetBalanceHistoryRepository {
+    suspend fun getAssetBalanceHistory(
+        address: String,
+        assetId: Long,
+        period: WalletWealthPeriod
+    ): PeraResult<AssetBalanceHistory>
 }

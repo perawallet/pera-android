@@ -49,8 +49,8 @@
             app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toTopOf="@id/assetPrimaryValueTextView"
             app:layout_constraintEnd_toStartOf="@id/interpunctTextView"
-            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/assetLogoImageView"
             app:layout_editor_absoluteX="84dp"
@@ -74,15 +74,19 @@
             app:visibilityMode="ignore" />
 
         <ConstraintOverride
-            android:id="@id/priceHistoryChart"
+            android:id="@id/assetLineChart"
             app:visibilityMode="ignore" />
 
         <ConstraintOverride android:id="@id/assetPrimaryValueTextView">
             <PropertySet android:alpha="1" />
         </ConstraintOverride>
 
+        <ConstraintOverride android:id="@id/assetSecondaryValueTextView">
+            <PropertySet android:alpha="1" />
+        </ConstraintOverride>
+
         <ConstraintOverride
-            android:id="@id/assetSecondaryValueTextView"
+            android:id="@id/chartSelectedItemDateTextView"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="1" />
         </ConstraintOverride>
@@ -186,14 +190,18 @@
             <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
+        <ConstraintOverride android:id="@id/assetSecondaryValueTextView">
+            <PropertySet android:alpha="0" />
+        </ConstraintOverride>
+
         <ConstraintOverride
-            android:id="@id/assetSecondaryValueTextView"
+            android:id="@id/chartSelectedItemDateTextView"
             app:visibilityMode="ignore">
             <PropertySet android:alpha="0" />
         </ConstraintOverride>
 
         <ConstraintOverride
-            android:id="@id/priceHistoryChart"
+            android:id="@id/assetLineChart"
             app:visibilityMode="ignore" />
 
         <ConstraintOverride

@@ -10,12 +10,13 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.wealth.wallet.domain.repository
+package com.algorand.wallet.wealth.asset.domain.model
 
-import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.wealth.wallet.domain.model.WalletWealth
-import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
+import java.math.BigDecimal
+import java.time.OffsetDateTime
 
-internal interface WalletWealthRepository {
-    suspend fun getWalletWealth(addresses: List<String>, period: WalletWealthPeriod): PeraResult<WalletWealth>
-}
+data class AssetBalanceHistoryChartData(
+    val datetime: OffsetDateTime,
+    val usdValue: BigDecimal,
+    val amount: BigDecimal
+)

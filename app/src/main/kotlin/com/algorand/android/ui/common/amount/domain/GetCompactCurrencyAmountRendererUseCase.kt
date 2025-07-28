@@ -13,20 +13,20 @@
 package com.algorand.android.ui.common.amount.domain
 
 import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.common.amount.CompactFormattedAmount
+import com.algorand.android.ui.common.amount.CompactFormattedAmount.FractionalType.Asset
 import com.algorand.android.ui.common.amount.PeraAmount
+import javax.inject.Inject
 
-fun interface GetCompactCurrencyAmountRenderer {
-    operator fun invoke(
+internal class GetCompactCurrencyAmountRendererUseCase @Inject constructor() :
+    GetCompactCurrencyAmountRenderer {
+
+    override fun invoke(
         amount: PeraAmount,
         assetSymbol: String,
         amountRendererType: AmountRenderer.RenderType
-    ): AmountRenderer
-}
-
-fun interface GetCompactPrimaryAmountRenderer {
-    operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
-}
-
-fun interface GetCompactSecondaryAmountRenderer {
-    operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
+    ): AmountRenderer {
+        val formattedAmount = CompactFormattedAmount(amount, Asset)
+        return AmountRenderer(formattedAmount, amountRendererType, assetSymbol)
+    }
 }

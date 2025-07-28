@@ -16,9 +16,9 @@ import com.algorand.android.modules.parity.domain.model.AlgoAmountValue
 import com.algorand.android.modules.parity.domain.model.ParityValue
 import com.algorand.android.modules.parity.domain.model.SelectedCurrencyDetail
 import com.algorand.android.utils.CacheResult
+import kotlinx.coroutines.flow.Flow
 import java.math.BigDecimal
 import java.math.BigInteger
-import kotlinx.coroutines.flow.Flow
 
 fun interface GetAlgoToUsdConversionRate {
     operator fun invoke(): BigDecimal
@@ -46,6 +46,10 @@ fun interface GetPrimaryAlgoParityValue {
 
 fun interface GetSecondaryAlgoParityValue {
     operator fun invoke(algoAmount: BigInteger): ParityValue
+}
+
+fun interface GetDetailSecondaryAlgoParityValue {
+    operator fun invoke(amount: BigDecimal): ParityValue
 }
 
 fun interface GetUsdToPrimaryCurrencyConversionRate {

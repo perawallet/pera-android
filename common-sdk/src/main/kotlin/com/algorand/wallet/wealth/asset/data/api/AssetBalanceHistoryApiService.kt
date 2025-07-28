@@ -10,12 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.wealth.wallet.domain.repository
+package com.algorand.wallet.wealth.asset.data.api
 
-import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.wealth.wallet.domain.model.WalletWealth
-import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
+import com.algorand.wallet.wealth.asset.data.model.AssetBalanceHistoryResponseResults
+import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
 
-internal interface WalletWealthRepository {
-    suspend fun getWalletWealth(addresses: List<String>, period: WalletWealthPeriod): PeraResult<WalletWealth>
+internal interface AssetBalanceHistoryApiService {
+
+    @GET("v1/accounts/{account_address}/assets/{asset_id}/balance-history/")
+    suspend fun getAssetBalanceHistory(
+        @Path("account_address") address: String,
+        @Path("asset_id") assetId: Long,
+        @Query("period") period: String
+    ): AssetBalanceHistoryResponseResults
 }

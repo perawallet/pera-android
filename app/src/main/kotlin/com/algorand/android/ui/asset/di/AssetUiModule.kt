@@ -10,12 +10,19 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.wealth.wallet.domain.repository
+package com.algorand.android.ui.asset.di
 
-import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.wealth.wallet.domain.model.WalletWealth
-import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
+import com.algorand.android.ui.asset.detail.usecase.GetAssetLineChartData
+import com.algorand.android.ui.asset.detail.usecase.GetAssetLineChartDataUseCase
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-internal interface WalletWealthRepository {
-    suspend fun getWalletWealth(addresses: List<String>, period: WalletWealthPeriod): PeraResult<WalletWealth>
+@Module
+@InstallIn(SingletonComponent::class)
+internal object AssetUiModule {
+
+    @Provides
+    fun provideGetAssetLineChartData(useCase: GetAssetLineChartDataUseCase): GetAssetLineChartData = useCase
 }

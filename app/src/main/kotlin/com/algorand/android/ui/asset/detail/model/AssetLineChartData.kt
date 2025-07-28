@@ -10,23 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.common.amount.domain
+package com.algorand.android.ui.asset.detail.model
 
 import com.algorand.android.ui.common.amount.AmountRenderer
-import com.algorand.android.ui.common.amount.PeraAmount
+import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
+import java.math.BigDecimal
+import java.time.OffsetDateTime
 
-fun interface GetCompactCurrencyAmountRenderer {
-    operator fun invoke(
-        amount: PeraAmount,
-        assetSymbol: String,
-        amountRendererType: AmountRenderer.RenderType
-    ): AmountRenderer
-}
+data class AssetLineChartData(
+    val datetime: OffsetDateTime,
+    val primaryValue: BigDecimal,
+    val primaryAmountRenderer: AmountRenderer,
+    val secondaryAmountRenderer: AmountRenderer
+) : PeraLineChartData {
 
-fun interface GetCompactPrimaryAmountRenderer {
-    operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
-}
-
-fun interface GetCompactSecondaryAmountRenderer {
-    operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
+    override val value: Float
+        get() = primaryValue.toFloat()
 }

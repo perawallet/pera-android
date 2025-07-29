@@ -10,16 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.wealth.wallet.data.api
+package com.algorand.wallet.wealth.wallet.data.model
 
-import com.algorand.wallet.wealth.wallet.data.model.WalletChartRequest
-import com.algorand.wallet.wealth.wallet.data.model.WalletChartResponseResults
-import retrofit2.http.Body
-import retrofit2.http.POST
+import com.google.gson.annotations.SerializedName
 
-internal interface WalletWealthApiService {
-    @POST("v1/wallet/wealth/")
-    suspend fun getWalletWealth(
-        @Body wealthRequest: WalletChartRequest,
-    ): WalletChartResponseResults
-}
+internal data class WalletChartRequest(
+    @SerializedName("account_addresses") val accountAddresses: List<String>,
+    @SerializedName("period") val period: String
+)

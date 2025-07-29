@@ -20,7 +20,20 @@ data class AmountRenderer(
 ) {
 
     fun getDisplayValue(): String {
-        return "$prefix${getAmount()} $suffix"
+        val amount = getAmount()
+        val builder = StringBuilder()
+
+        if (!prefix.isNullOrBlank()) {
+            builder.append(prefix)
+        }
+
+        builder.append(amount)
+
+        if (!suffix.isNullOrBlank()) {
+            builder.append(" ").append(suffix)
+        }
+
+        return builder.toString()
     }
 
     private fun getAmount(): String {

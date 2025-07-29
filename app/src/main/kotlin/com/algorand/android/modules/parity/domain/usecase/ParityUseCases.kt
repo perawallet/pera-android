@@ -48,10 +48,6 @@ fun interface GetSecondaryAlgoParityValue {
     operator fun invoke(algoAmount: BigInteger): ParityValue
 }
 
-fun interface GetDetailSecondaryAlgoParityValue {
-    operator fun invoke(amount: BigDecimal): ParityValue
-}
-
 fun interface GetUsdToPrimaryCurrencyConversionRate {
     operator fun invoke(): BigDecimal
 }

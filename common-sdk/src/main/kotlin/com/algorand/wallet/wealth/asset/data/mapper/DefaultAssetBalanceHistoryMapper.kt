@@ -17,9 +17,8 @@ import com.algorand.wallet.wealth.asset.data.model.AssetBalanceHistoryResponseRe
 import com.algorand.wallet.wealth.asset.data.model.AssetBalanceHistoryResponseResults
 import com.algorand.wallet.wealth.asset.domain.model.AssetBalanceHistory
 import com.algorand.wallet.wealth.asset.domain.model.AssetBalanceHistoryChartData
-import javax.inject.Inject
 
-internal class DefaultAssetBalanceHistoryMapper @Inject constructor(
+internal class DefaultAssetBalanceHistoryMapper(
     private val dateTimeParser: DateTimeParser
 ) : AssetBalanceHistoryMapper {
 

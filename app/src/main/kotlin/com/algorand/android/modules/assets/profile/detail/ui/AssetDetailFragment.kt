@@ -181,7 +181,10 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         initPagerAdapter()
         configureTabLayout()
         initAssetLineChart()
-        assetLineChartViewModel.init(assetDetailViewModel.accountAddress, assetDetailViewModel.assetId)
+        assetLineChartViewModel.init(
+            assetDetailViewModel.accountAddress,
+            assetDetailViewModel.assetId
+        )
         binding.quickActionButtons.setListener(quickActionButtonsListener)
     }
 

@@ -34,7 +34,7 @@ const val CSV_PATTERN = "MM-dd-yyyy"
 const val MONTH_DAY_PATTERN = "MMM dd"
 const val DATE_AND_TIME_PATTERN = "MMMM dd, yyyy - HH:mm"
 const val DATE_AND_TIME_SEC_PATTERN = "MMMM dd, yyyy - HH:mm:ss"
-const val TXN_DATE_AND_TIME_PATTERN = "MMMM dd, yyyy hh:mm a"
+const val TXN_DATE_AND_TIME_PATTERN = "MMM dd, yyyy hh:mm a"
 const val TXN_DATE_PATTERN = "MMM dd, yyyy"
 const val UTC_ZONE_ID = "UTC"
 const val HOUR_MINUTE_AM_PM_PATTERN = "hh:mm a"
@@ -60,10 +60,6 @@ fun ZonedDateTime.format(pattern: String): String {
 
 fun ZonedDateTime.formatAsDate(): String {
     return format(DateTimeFormatter.ofPattern(TXN_DATE_PATTERN))
-}
-
-fun ZonedDateTime.formatAsTxnDateAndTime(): String {
-    return format(DateTimeFormatter.ofPattern(TXN_DATE_AND_TIME_PATTERN))
 }
 
 fun ZonedDateTime.formatAsCustomDateString(): String {
@@ -133,14 +129,17 @@ fun getRelativeTimeDifference(resources: Resources, time: ZonedDateTime, timeDif
             val minute = (timeDifference / DateUtils.MINUTE_IN_MILLIS).toInt()
             resources.getQuantityString(R.plurals.min_ago, minute, minute)
         }
+
         timeDifference < DateUtils.DAY_IN_MILLIS -> {
             val hours = (timeDifference / DateUtils.HOUR_IN_MILLIS).toInt()
             resources.getQuantityString(R.plurals.hours_ago, hours, hours)
         }
+
         timeDifference < DateUtils.WEEK_IN_MILLIS -> {
             val days = (timeDifference / DateUtils.DAY_IN_MILLIS).toInt()
             resources.getQuantityString(R.plurals.days_ago, days, days)
         }
+
         else -> {
             time.format(DateTimeFormatter.ofPattern(MONTH_DAY_YEAR_PATTERN))
         }
@@ -204,5 +203,6 @@ fun convertDateInMillisToStartOfDay(date: Long): Long {
 }
 
 fun formatDateToChartDateString(date: OffsetDateTime): String {
-    return date.format(DateTimeFormatter.ofPattern(TXN_DATE_AND_TIME_PATTERN))
+    val zonedOffsetDateTime = date.atZoneSameInstant(ZoneId.systemDefault()).toOffsetDateTime()
+    return zonedOffsetDateTime.format(DateTimeFormatter.ofPattern(TXN_DATE_AND_TIME_PATTERN))
 }

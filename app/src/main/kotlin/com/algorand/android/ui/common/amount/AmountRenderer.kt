@@ -15,15 +15,12 @@ package com.algorand.android.ui.common.amount
 data class AmountRenderer(
     private val formattedAmount: FormattedAmount,
     private val type: RenderType,
-    private val prefix: String? = null
+    private val prefix: String? = "",
+    private val suffix: String? = ""
 ) {
 
     fun getDisplayValue(): String {
-        return if (prefix.isNullOrBlank()) {
-            getAmount()
-        } else {
-            "$prefix${getAmount()}"
-        }
+        return "$prefix${getAmount()} $suffix"
     }
 
     private fun getAmount(): String {

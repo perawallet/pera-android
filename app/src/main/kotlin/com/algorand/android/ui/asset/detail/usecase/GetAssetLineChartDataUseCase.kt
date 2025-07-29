@@ -12,25 +12,33 @@
 
 package com.algorand.android.ui.asset.detail.usecase
 
-import com.algorand.android.modules.currency.domain.usecase.GetPrimaryCurrencySymbol
+import com.algorand.android.modules.currency.domain.model.Currency
+import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryCurrencyConversionRate
+import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForRequest
 import com.algorand.android.ui.asset.detail.model.AssetLineChartData
+import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
 import com.algorand.android.ui.common.amount.PeraAmount
+import com.algorand.android.ui.common.amount.domain.GetCompactAssetAmountRenderer
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
-import com.algorand.wallet.asset.domain.util.AssetConstants
+import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
+import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.wealth.asset.domain.usecase.GetAssetBalanceHistory
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
+import java.math.BigDecimal
 import javax.inject.Inject
 
 class GetAssetLineChartDataUseCase @Inject constructor(
     private val getAssetBalanceHistory: GetAssetBalanceHistory,
+    private val getCompactAssetAmountRenderer: GetCompactAssetAmountRenderer,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
     private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
-    private val getPrimaryCurrencySymbol: GetPrimaryCurrencySymbol,
     private val getUsdToPrimaryCurrencyConversionRate: GetUsdToPrimaryCurrencyConversionRate,
+    private val isPrimaryCurrencyAlgo: IsPrimaryCurrencyAlgo,
+    private val getAssetDetail: GetAssetDetail
 ) : GetAssetLineChartData {
 
     override suspend fun invoke(
@@ -38,31 +46,38 @@ class GetAssetLineChartDataUseCase @Inject constructor(
         assetId: Long,
         period: WalletWealthPeriod
     ): PeraResult<List<AssetLineChartData>> {
-        return getAssetBalanceHistory(address, assetId, period).map { assetBalanceHistory ->
+        val safeAssetId = getSafeAssetIdForRequest(assetId)
+        return getAssetBalanceHistory(address, safeAssetId, period).map { assetBalanceHistory ->
             assetBalanceHistory.chartData.map { chartData ->
-
+                val assetSymbol = getAssetSymbol(assetId)
                 val primaryAmount = PeraAmount(chartData.amount)
-                val secondaryAmount = PeraAmount(chartData.usdValue.multiply(getUsdToPrimaryCurrencyConversionRate()))
+                val primaryRenderer = getCompactAssetAmountRenderer(primaryAmount, assetSymbol, Plain)
 
-                val primaryRenderer = getCompactPrimaryAmountRenderer(primaryAmount, Plain)
-                val secondaryRenderer = getCompactSecondaryAmountRenderer(secondaryAmount, Plain)
-
-                if (assetId == 0L && getPrimaryCurrencySymbol() == AssetConstants.ALGO_SHORT_NAME) {
-                    AssetLineChartData(
-                        datetime = chartData.datetime,
-                        primaryValue = primaryAmount.value,
-                        primaryAmountRenderer = primaryRenderer,
-                        secondaryAmountRenderer = secondaryRenderer,
-                    )
-                } else {
-                    AssetLineChartData(
-                        datetime = chartData.datetime,
-                        primaryValue = primaryAmount.value,
-                        primaryAmountRenderer = primaryRenderer,
-                        secondaryAmountRenderer = primaryRenderer,
-                    )
-                }
+                AssetLineChartData(
+                    datetime = chartData.datetime,
+                    primaryValue = primaryAmount.value,
+                    primaryAmountRenderer = primaryRenderer,
+                    secondaryAmountRenderer = getSecondaryAmountRenderer(assetId, chartData.usdValue),
+                )
             }
+        }
+    }
+
+    private suspend fun getAssetSymbol(assetId: Long): String {
+        return if (assetId == ALGO_ID) {
+            Currency.ALGO.symbol
+        } else {
+            getAssetDetail(assetId)?.shortName.orEmpty()
+        }
+    }
+
+    private fun getSecondaryAmountRenderer(assetId: Long, usdValue: BigDecimal): AmountRenderer {
+        return if (assetId == ALGO_ID && isPrimaryCurrencyAlgo()) {
+            val secondaryAmount = PeraAmount(usdValue)
+            getCompactSecondaryAmountRenderer(secondaryAmount, Plain)
+        } else {
+            val secondaryAmount = PeraAmount(usdValue.multiply(getUsdToPrimaryCurrencyConversionRate()))
+            getCompactPrimaryAmountRenderer(secondaryAmount, Plain)
         }
     }
 }

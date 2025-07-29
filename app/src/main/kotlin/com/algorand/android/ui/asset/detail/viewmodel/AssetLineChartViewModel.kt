@@ -14,7 +14,6 @@ package com.algorand.android.ui.asset.detail.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForRequest
 import com.algorand.android.ui.asset.detail.usecase.GetAssetLineChartDataUseCase
 import com.algorand.android.ui.compose.widget.chart.mapper.WalletWealthPeriodMapper
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
@@ -52,18 +51,16 @@ class AssetLineChartViewModel @Inject constructor(
         stateDelegate.onState<ViewState.Idle> {
             stateDelegate.updateState { Content(contentState = ContentState.Loading, INITIAL_CHART_PERIOD, PERIODS) }
             selectedPeriodFlow.onEach { period ->
-                val safeAssetId = getSafeAssetIdForRequest(assetId)
-                val viewState =
-                    getAssetLineChartDataUseCase(address, safeAssetId, walletWealthPeriodMapper(period)).use(
-                        onSuccess = { history ->
-                            Content(
-                                Data(history),
-                                period,
-                                PERIODS
-                            )
-                        },
-                        onFailed = { _, _ -> ViewState.Error }
-                    )
+                val viewState = getAssetLineChartDataUseCase(address, assetId, walletWealthPeriodMapper(period)).use(
+                    onSuccess = { history ->
+                        Content(
+                            Data(history),
+                            period,
+                            PERIODS
+                        )
+                    },
+                    onFailed = { _, _ -> ViewState.Error }
+                )
                 stateDelegate.updateState { viewState }
             }.launchIn(viewModelScope)
         }

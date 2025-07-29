@@ -18,8 +18,8 @@ import com.algorand.android.ui.common.amount.CompactFormattedAmount.FractionalTy
 import com.algorand.android.ui.common.amount.PeraAmount
 import javax.inject.Inject
 
-internal class GetCompactCurrencyAmountRendererUseCase @Inject constructor() :
-    GetCompactCurrencyAmountRenderer {
+internal class GetCompactAssetAmountRendererUseCase @Inject constructor() :
+    GetCompactAssetAmountRenderer {
 
     override fun invoke(
         amount: PeraAmount,
@@ -30,7 +30,7 @@ internal class GetCompactCurrencyAmountRendererUseCase @Inject constructor() :
         return AmountRenderer(
             formattedAmount = formattedAmount,
             type = amountRendererType,
-            prefix = assetSymbol
+            suffix = assetSymbol
         )
     }
 }

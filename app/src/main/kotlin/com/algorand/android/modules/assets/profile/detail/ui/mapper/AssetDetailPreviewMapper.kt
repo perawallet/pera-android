@@ -17,6 +17,7 @@ import com.algorand.android.models.AccountDetailSummary
 import com.algorand.android.models.BaseAccountAssetData
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
+import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.modules.verificationtier.ui.decider.VerificationTierConfigurationDecider
 import com.algorand.android.ui.asset.detail.model.AssetDetailQuickActionItem
 import com.algorand.android.utils.AssetName
@@ -44,7 +45,7 @@ class AssetDetailPreviewMapper @Inject constructor(
                 assetId = id,
                 assetFullName = AssetName.create(name),
                 isAlgo = isAlgo,
-                formattedPrimaryValue = formattedAmount,
+                formattedPrimaryValue = getFormattedPrimaryValue(),
                 formattedSecondaryValue = getSelectedCurrencyParityValue().getFormattedValue(),
                 chartSelectedItemDate = "",
                 accountDetailSummary = accountDetailSummary,
@@ -68,5 +69,10 @@ class AssetDetailPreviewMapper @Inject constructor(
                 quickActionItems = quickActionItems
             )
         }
+    }
+
+    private fun BaseAccountAssetData.BaseOwnedAssetData.getFormattedPrimaryValue(): String {
+        val symbol = if (isAlgo) Currency.ALGO.symbol else shortName
+        return "$formattedAmount $symbol"
     }
 }

@@ -23,6 +23,14 @@ fun interface GetCompactCurrencyAmountRenderer {
     ): AmountRenderer
 }
 
+fun interface GetCompactAssetAmountRenderer {
+    operator fun invoke(
+        amount: PeraAmount,
+        assetSymbol: String,
+        amountRendererType: AmountRenderer.RenderType
+    ): AmountRenderer
+}
+
 fun interface GetCompactPrimaryAmountRenderer {
     operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
 }

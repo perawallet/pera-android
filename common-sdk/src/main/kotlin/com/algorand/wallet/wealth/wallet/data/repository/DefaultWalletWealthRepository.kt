@@ -16,6 +16,7 @@ import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.wealth.wallet.data.api.WalletWealthApiService
 import com.algorand.wallet.wealth.wallet.data.mapper.WalletWealthMapper
 import com.algorand.wallet.wealth.wallet.data.mapper.WalletWealthPeriodRequestMapper
+import com.algorand.wallet.wealth.wallet.data.model.WalletChartRequest
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealth
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
 import com.algorand.wallet.wealth.wallet.domain.repository.WalletWealthRepository
@@ -42,10 +43,10 @@ internal class DefaultWalletWealthRepository @Inject constructor(
         addresses: List<String>,
         period: WalletWealthPeriod
     ): PeraResult<WalletWealth> {
-        val results = walletWealthApiService.getWalletWealth(
-            addresses = addresses.joinToString(","),
-            period = periodRequestMapper(period)
-        )
+        val results =
+            walletWealthApiService.getWalletWealth(
+                WalletChartRequest(addresses, periodRequestMapper(period)),
+            )
         return PeraResult.Success(walletWealthMapper.map(results))
     }
 }

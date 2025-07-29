@@ -17,6 +17,7 @@ import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.wealth.wallet.data.api.WalletWealthApiService
 import com.algorand.wallet.wealth.wallet.data.mapper.WalletWealthMapper
 import com.algorand.wallet.wealth.wallet.data.mapper.WalletWealthPeriodRequestMapper
+import com.algorand.wallet.wealth.wallet.data.model.WalletChartRequest
 import com.algorand.wallet.wealth.wallet.data.model.WalletChartResponseResults
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealth
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
@@ -40,7 +41,7 @@ class DefaultWalletWealthRepositoryTest {
 
     @Test
     fun `EXPECT Error WHEN fetching wealth fails`() = runTest {
-        coEvery { walletWealthApiService.getWalletWealth(ADDRESSES_QUERY, PERIOD_QUERY) } throws Exception()
+        coEvery { walletWealthApiService.getWalletWealth(WalletChartRequest(ADDRESSES, PERIOD_QUERY)) } throws Exception()
 
         val result = sut.getWalletWealth(ADDRESSES, PERIOD)
 
@@ -49,7 +50,7 @@ class DefaultWalletWealthRepositoryTest {
 
     @Test
     fun `EXPECT mapped result WHEN fetching succeeds`() = runTest {
-        coEvery { walletWealthApiService.getWalletWealth(ADDRESSES_QUERY, PERIOD_QUERY) } returns WALLET_WEALTH_RESPONSE
+        coEvery { walletWealthApiService.getWalletWealth(WalletChartRequest(ADDRESSES, PERIOD_QUERY)) } returns WALLET_WEALTH_RESPONSE
         every { walletWealthMapper.map(WALLET_WEALTH_RESPONSE) } returns WALLET_WEALTH
 
         val result = sut.getWalletWealth(ADDRESSES, PERIOD)
@@ -63,7 +64,6 @@ class DefaultWalletWealthRepositoryTest {
         const val ADDRESS_2 = "address2"
 
         val ADDRESSES = listOf(ADDRESS_1, ADDRESS_2)
-        const val ADDRESSES_QUERY = "address1,address2"
         val PERIOD: WalletWealthPeriod = peraFixture()
         val PERIOD_QUERY: String = peraFixture()
 

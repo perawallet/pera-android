@@ -36,14 +36,6 @@ internal interface CustomAccountInfoRepository {
 
     suspend fun deleteCustomInfo(address: String)
 
-    suspend fun getNotBackedUpAccounts(): Set<String>
-
-    suspend fun getBackedUpAccounts(): Set<String>
-
-    suspend fun setAddressesBackedUp(addresses: Set<String>)
-
-    suspend fun isAccountBackedUp(accountAddress: String): Boolean
-
     suspend fun getAllAccountOrderIndexes(): List<AccountOrderIndex>
 
     suspend fun clearAllInformation()

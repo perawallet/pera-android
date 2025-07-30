@@ -23,7 +23,7 @@ internal class CustomAccountInfoEntityMapperImpl @Inject constructor() : CustomA
             algoAddress = customAccountInfo.address,
             customName = customAccountInfo.customName,
             orderIndex = customAccountInfo.orderIndex,
-            isBackedUp = customAccountInfo.isBackedUp
+            isBackedUp = false
         )
     }
 }

@@ -40,7 +40,6 @@ class InitialRegisterIntroViewModel @Inject constructor(
         return AccountCreation(
             address = hdKeyAddress.address,
             customName = null,
-            isBackedUp = false,
             type = hdKeyType,
             creationType = CreationType.CREATE
         ).also {

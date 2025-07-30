@@ -24,11 +24,11 @@ import com.algorand.wallet.spotbanner.domain.model.SpotBannerFlowData
 import com.algorand.wallet.spotbanner.domain.repository.SpotBannerRepository
 import io.mockk.coEvery
 import io.mockk.mockk
-import java.math.BigDecimal
-import java.math.BigDecimal.ONE
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import java.math.BigDecimal
+import java.math.BigDecimal.ONE
 
 class GetSpotBannersFlowUseCaseTest {
 
@@ -40,12 +40,12 @@ class GetSpotBannersFlowUseCaseTest {
     fun `EXPECT banners without backup passphrase WHEN there is not any auth address with balance`() = runTest {
         val cacheFlow = MutableStateFlow<List<SpotBanner>>(listOf(BANNER_1, BANNER_2))
         val data = listOf(
-            SpotBannerFlowData("address1", isBackedUp = true, type = null, primaryBalance = null),
-            SpotBannerFlowData("address1", isBackedUp = false, type = null, primaryBalance = null),
-            SpotBannerFlowData("address2", isBackedUp = true, type = NoAuth, primaryBalance = null),
-            SpotBannerFlowData("address2", isBackedUp = false, type = Algo25, primaryBalance = null),
-            SpotBannerFlowData("address3", isBackedUp = true, type = NoAuth, primaryBalance = BigDecimal.TEN),
-            SpotBannerFlowData("address3", isBackedUp = true, type = Algo25, primaryBalance = BigDecimal.TEN)
+            SpotBannerFlowData("address1", type = null, primaryBalance = null),
+            SpotBannerFlowData("address1", type = null, primaryBalance = null),
+            SpotBannerFlowData("address2", type = NoAuth, primaryBalance = null),
+            SpotBannerFlowData("address2", type = Algo25, primaryBalance = null),
+            SpotBannerFlowData("address3", type = NoAuth, primaryBalance = BigDecimal.TEN),
+            SpotBannerFlowData("address3", type = Algo25, primaryBalance = BigDecimal.TEN)
         )
         coEvery { spotBannerRepository.getSpotBannerFlow() } returns cacheFlow
 
@@ -62,10 +62,10 @@ class GetSpotBannersFlowUseCaseTest {
     fun `EXPECT banners with backup passphrase WHEN there is not backed up auth address with balance`() = runTest {
         val cacheFlow = MutableStateFlow<List<SpotBanner>>(emptyList())
         val data = listOf(
-            SpotBannerFlowData("address1", isBackedUp = false, type = Algo25, primaryBalance = ONE),
-            SpotBannerFlowData("address1", isBackedUp = false, type = HdKey, primaryBalance = ONE),
-            SpotBannerFlowData("address1", isBackedUp = false, type = LedgerBle, primaryBalance = ONE),
-            SpotBannerFlowData("address1", isBackedUp = false, type = RekeyedAuth, primaryBalance = ONE),
+            SpotBannerFlowData("address1", type = Algo25, primaryBalance = ONE),
+            SpotBannerFlowData("address1", type = HdKey, primaryBalance = ONE),
+            SpotBannerFlowData("address1", type = LedgerBle, primaryBalance = ONE),
+            SpotBannerFlowData("address1", type = RekeyedAuth, primaryBalance = ONE),
         )
         coEvery { spotBannerRepository.getSpotBannerFlow() } returns cacheFlow
 

@@ -126,10 +126,6 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
             listener?.onShowAddressClick()
         }
 
-        override fun onBackupNowClick() {
-            listener?.onBackupNowClick()
-        }
-
         override fun onBuySellClick() {
             accountAssetsViewModel.logBuyAlgoClick()
             listener?.onBuySellClick()
@@ -227,7 +223,6 @@ class AccountAssetsFragment : BaseFragment(R.layout.fragment_account_assets) {
         fun onMinimumBalanceInfoClick()
         fun onCopyAddressClick()
         fun onShowAddressClick()
-        fun onBackupNowClick()
         fun onBuySellClick()
     }
 

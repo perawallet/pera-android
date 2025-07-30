@@ -34,6 +34,5 @@ interface AccountItemConfigurationMapper {
         accountAssetCount: Int? = null,
         showWarningIcon: Boolean? = null,
         dragButtonConfiguration: ButtonConfiguration? = null,
-        startSmallIconResource: Int? = null
     ): BaseItemConfiguration.AccountItemConfiguration
 }

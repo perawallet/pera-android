@@ -23,7 +23,6 @@ import com.algorand.android.modules.accountdetail.assets.ui.adapter.AccountDetai
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.ACCOUNT_PORTFOLIO
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.ASSETS_LIST_TITLE
-import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.BACKUP_WARNING
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.QUICK_ACTIONS
 import com.algorand.android.modules.accountdetail.assets.ui.model.AccountDetailAccountsItem.ItemType.SEARCH
 import com.algorand.android.utils.hideKeyboard
@@ -94,12 +93,6 @@ class AccountAssetsAccountDetailAdapter(
         }
     }
 
-    private val backupWarningListener = object : BackupWarningViewHolder.Listener {
-        override fun onBackupNowClick() {
-            listener.onBackupNowClick()
-        }
-    }
-
     override fun getItemViewType(position: Int): Int {
         return getItem(position).itemType.viewType
     }
@@ -110,7 +103,6 @@ class AccountAssetsAccountDetailAdapter(
             ACCOUNT_PORTFOLIO.viewType -> createAccountValueViewHolder(parent)
             ASSETS_LIST_TITLE.viewType -> createAssetTitleViewHolder(parent)
             QUICK_ACTIONS.viewType -> createQuickActionsViewHolder(parent)
-            BACKUP_WARNING.viewType -> createBackupWarningViewHolder(parent)
             else -> throw IllegalArgumentException("$logTag : Item View Type is Unknown.")
         }
     }
@@ -142,10 +134,6 @@ class AccountAssetsAccountDetailAdapter(
         return AccountDetailQuickActionsViewHolder.create(parent, quickActionsViewHolderListener)
     }
 
-    private fun createBackupWarningViewHolder(parent: ViewGroup): BackupWarningViewHolder {
-        return BackupWarningViewHolder.create(parent, backupWarningListener)
-    }
-
     interface Listener {
         fun onSearchQueryUpdated(query: String) {}
         fun onAddNewAssetClick() {}
@@ -157,7 +145,6 @@ class AccountAssetsAccountDetailAdapter(
         fun onRequiredMinimumBalanceClick()
         fun onCopyAddressClick()
         fun onShowAddressClick()
-        fun onBackupNowClick()
         fun onBuySellClick()
         fun onAccountValueClick()
         fun onChartTap()

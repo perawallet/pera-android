@@ -30,7 +30,6 @@ package com.algorand.android.modules.accountdetail.ui
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.algorand.android.HomeNavigationDirections
 import com.algorand.android.R
@@ -40,11 +39,9 @@ import com.algorand.android.databinding.FragmentAccountDetailBinding
 import com.algorand.android.models.AssetTransaction
 import com.algorand.android.models.DateFilter
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.accountcore.ui.model.AccountDetailSummary
 import com.algorand.android.modules.accountdetail.assets.ui.AccountAssetsFragment
-import com.algorand.android.modules.accountdetail.haveyoubackedupconfirmation.ui.HaveYouBackedUpAccountConfirmationBottomSheet.Companion.HAVE_YOU_BACKED_UP_ACCOUNT_CONFIRMATION_KEY
 import com.algorand.android.modules.accountdetail.history.ui.AccountHistoryFragment
 import com.algorand.android.modules.accountdetail.removeaccount.ui.RemoveAccountConfirmationBottomSheet.Companion.ACCOUNT_REMOVE_CONFIRMATION_KEY
 import com.algorand.android.modules.assetinbox.assetinboxoneaccount.ui.model.AssetInboxOneAccountNavArgs
@@ -54,7 +51,6 @@ import com.algorand.android.modules.swap.model.SwapNavigationDestination.Introdu
 import com.algorand.android.modules.swap.model.SwapNavigationDestination.Swap
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
-import com.algorand.android.ui.accountoptions.AccountOptionsBottomSheet.Companion.ACCOUNT_REMOVE_ACTION_KEY
 import com.algorand.android.ui.accounts.RenameAccountBottomSheet
 import com.algorand.android.ui.asset.collectible.listing.account.view.AccountCollectiblesFragment
 import com.algorand.android.utils.Event
@@ -64,7 +60,6 @@ import com.algorand.android.utils.startSavedStateListener
 import com.algorand.android.utils.useFragmentResultListenerValue
 import com.algorand.android.utils.useSavedStateValue
 import com.algorand.android.utils.viewbinding.viewBinding
-import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.asset.domain.util.AssetConstants.ALGO_ID
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -94,8 +89,6 @@ class AccountDetailFragment :
     private val binding by viewBinding(FragmentAccountDetailBinding::bind)
 
     private val accountDetailViewModel: AccountDetailViewModel by viewModels()
-
-    private val args: AccountDetailFragmentArgs by navArgs()
 
     private val accountDetailSummaryCollector: suspend (AccountDetailSummary?) -> Unit = { summary ->
         if (summary != null) initAccountDetailSummary(summary)
@@ -217,10 +210,6 @@ class AccountDetailFragment :
         navToShowQrFragment()
     }
 
-    override fun onBackupNowClick() {
-        navToBackupPassphraseInfoNavigation()
-    }
-
     override fun onImageItemClick(nftAssetId: Long) {
         navToCollectibleDetailFragment(nftAssetId)
     }
@@ -277,16 +266,6 @@ class AccountDetailFragment :
     }
 
     private fun initSavedStateListener() {
-        useFragmentResultListenerValue<Boolean>(ACCOUNT_REMOVE_ACTION_KEY) { isConfirmed ->
-            if (isConfirmed) {
-                navToHaveYouBackedUpAccountConfirmationBottomSheet()
-            }
-        }
-        useFragmentResultListenerValue<Boolean>(HAVE_YOU_BACKED_UP_ACCOUNT_CONFIRMATION_KEY) { isConfirmed ->
-            if (isConfirmed) {
-                navToRemoveAccountConfirmationNavigation()
-            }
-        }
         useFragmentResultListenerValue<Boolean>(ACCOUNT_REMOVE_CONFIRMATION_KEY) { isConfirmed ->
             if (isConfirmed) {
                 accountDetailViewModel.removeAccount(
@@ -430,13 +409,6 @@ class AccountDetailFragment :
         )
     }
 
-    private fun navToHaveYouBackedUpAccountConfirmationBottomSheet() {
-        nav(
-            AccountDetailFragmentDirections
-                .actionAccountDetailFragmentToHaveYouBackedUpAccountConfirmationBottomSheet()
-        )
-    }
-
     private fun navToViewPassphraseNavigation(accountAddress: String) {
         nav(
             AccountDetailFragmentDirections
@@ -450,20 +422,6 @@ class AccountDetailFragment :
                 .actionGlobalShowQrNavigation(
                     title = getString(R.string.qr_code),
                     qrText = accountDetailViewModel.accountAddress
-                )
-        )
-    }
-
-    private fun navToBackupPassphraseInfoNavigation() {
-        nav(
-            AccountDetailFragmentDirections
-                .actionAccountDetailFragmentToBackupPassphraseInfoNavigation(
-                    accountsToBackup = arrayOf(accountDetailViewModel.accountAddress),
-                    onboardingAccountType = if (accountDetailViewModel.accountType == AccountType.HdKey) {
-                        OnboardingAccountType.HdKey
-                    } else {
-                        OnboardingAccountType.Algo25
-                    }
                 )
         )
     }

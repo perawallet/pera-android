@@ -28,25 +28,11 @@ sealed interface AccountDetailAccountsItem : RecyclerListItem {
 
         override fun areItemsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountPortfolioItem &&
-                accountPrimaryFormattedParityValue == other.accountPrimaryFormattedParityValue
+                    accountPrimaryFormattedParityValue == other.accountPrimaryFormattedParityValue
         }
 
         override fun areContentsTheSame(other: RecyclerListItem): Boolean {
             return other is AccountPortfolioItem && this == other
-        }
-    }
-
-    data class BackupWarningItem(val isBackedUp: Boolean) : AccountDetailAccountsItem {
-
-        override val itemType: ItemType
-            get() = ItemType.BACKUP_WARNING
-
-        override fun areItemsTheSame(other: RecyclerListItem): Boolean {
-            return other is BackupWarningItem
-        }
-
-        override fun areContentsTheSame(other: RecyclerListItem): Boolean {
-            return other is BackupWarningItem && this == other
         }
     }
 

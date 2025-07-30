@@ -32,13 +32,13 @@ import com.algorand.wallet.banner.domain.usecase.GetBannerFlow
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
 import com.algorand.wallet.spotbanner.domain.model.SpotBannerFlowData
 import com.algorand.wallet.spotbanner.domain.usecase.GetSpotBannersFlow
-import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapLatest
+import javax.inject.Inject
 
 @Suppress("LongParameterList")
 class AccountsPreviewUseCase @Inject constructor(
@@ -104,7 +104,7 @@ class AccountsPreviewUseCase @Inject constructor(
     private fun getSpotBannerFlowData(accountLiteCacheData: Data): List<SpotBannerFlowData> {
         return accountLiteCacheData.accountLites.values.map { lite ->
             with(lite) {
-                SpotBannerFlowData(address, isBackedUp, cachedInfo?.primaryAccountValue, cachedInfo?.type)
+                SpotBannerFlowData(address, cachedInfo?.primaryAccountValue, cachedInfo?.type)
             }
         }
     }

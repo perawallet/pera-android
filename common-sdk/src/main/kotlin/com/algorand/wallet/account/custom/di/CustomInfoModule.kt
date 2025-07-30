@@ -30,7 +30,6 @@ import com.algorand.wallet.account.custom.domain.usecase.ClearAllCustomInformati
 import com.algorand.wallet.account.custom.domain.usecase.ClearAllCustomInformationUseCase
 import com.algorand.wallet.account.custom.domain.usecase.DeleteAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.DeleteHdSeedCustomInfo
-import com.algorand.wallet.account.custom.domain.usecase.GetAccountBackUpStatus
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomInfoOrNull
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountCustomName
@@ -38,15 +37,11 @@ import com.algorand.wallet.account.custom.domain.usecase.GetAccountsCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.GetAccountsCustomInfoFlow
 import com.algorand.wallet.account.custom.domain.usecase.GetAllAccountOrderIndexes
 import com.algorand.wallet.account.custom.domain.usecase.GetAllHdSeedOrderIndexes
-import com.algorand.wallet.account.custom.domain.usecase.GetBackedUpAccounts
-import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedAsbBackUpStatus
 import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedCustomInfoOrNull
 import com.algorand.wallet.account.custom.domain.usecase.GetHdSeedCustomName
-import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountCustomName
 import com.algorand.wallet.account.custom.domain.usecase.SetAccountOrderIndex
-import com.algorand.wallet.account.custom.domain.usecase.SetAddressesBackedUp
 import com.algorand.wallet.account.custom.domain.usecase.SetHdSeedCustomInfo
 import com.algorand.wallet.account.custom.domain.usecase.SetHdSeedCustomName
 import com.algorand.wallet.account.custom.domain.usecase.SetHdSeedOrderIndex
@@ -128,26 +123,6 @@ internal object CustomInfoModule {
     }
 
     @Provides
-    fun provideGetNotBackedUpAccounts(repository: CustomAccountInfoRepository): GetNotBackedUpAccounts {
-        return GetNotBackedUpAccounts(repository::getNotBackedUpAccounts)
-    }
-
-    @Provides
-    fun provideGetAccountBackUpStatus(repository: CustomAccountInfoRepository): GetAccountBackUpStatus {
-        return GetAccountBackUpStatus(repository::isAccountBackedUp)
-    }
-
-    @Provides
-    fun provideGetBackedUpAccounts(repository: CustomAccountInfoRepository): GetBackedUpAccounts {
-        return GetBackedUpAccounts(repository::getBackedUpAccounts)
-    }
-
-    @Provides
-    fun provideSetAddressesBackedUp(repository: CustomAccountInfoRepository): SetAddressesBackedUp {
-        return SetAddressesBackedUp(repository::setAddressesBackedUp)
-    }
-
-    @Provides
     @Singleton
     fun provideCustomHdSeedInfoDao(database: PeraDatabase): CustomHdSeedInfoDao = database.customHdSeedInfoDao()
 
@@ -196,11 +171,6 @@ internal object CustomInfoModule {
     @Provides
     fun provideGetAllHdSeedOrderIndexes(repository: CustomHdSeedInfoRepository): GetAllHdSeedOrderIndexes {
         return GetAllHdSeedOrderIndexes(repository::getAllHdSeedOrderIndexes)
-    }
-
-    @Provides
-    fun provideGetHdSeedAsbBackUpStatus(repository: CustomHdSeedInfoRepository): GetHdSeedAsbBackUpStatus {
-        return GetHdSeedAsbBackUpStatus(repository::isHdSeedBackedUp)
     }
 
     @Provides

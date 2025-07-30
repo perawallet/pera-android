@@ -34,19 +34,16 @@ class CustomHdSeedInfoEntityMapperImplTest {
         val seedId = 123
         val entropyCustomName = "Test Seed"
         val orderIndex = 5
-        val isBackedUp = true
 
         every { domainModel.seedId } returns seedId
         every { domainModel.entropyCustomName } returns entropyCustomName
         every { domainModel.orderIndex } returns orderIndex
-        every { domainModel.isBackedUp } returns isBackedUp
 
         val result = sut.invoke(domainModel)
 
         assertEquals(seedId, result.seedId)
         assertEquals(entropyCustomName, result.entropyCustomName)
         assertEquals(orderIndex, result.orderIndex)
-        assertEquals(isBackedUp, result.isBackedUp)
     }
 
     @Test
@@ -55,18 +52,15 @@ class CustomHdSeedInfoEntityMapperImplTest {
         val seedId = 456
         val entropyCustomName = "Another Seed"
         val orderIndex = 10
-        val isBackedUp = false
 
         every { domainModel.seedId } returns seedId
         every { domainModel.entropyCustomName } returns entropyCustomName
         every { domainModel.orderIndex } returns orderIndex
-        every { domainModel.isBackedUp } returns isBackedUp
 
         val result = sut.invoke(domainModel)
 
         assertEquals(seedId, result.seedId)
         assertEquals(entropyCustomName, result.entropyCustomName)
         assertEquals(orderIndex, result.orderIndex)
-        assertEquals(isBackedUp, result.isBackedUp)
     }
 }

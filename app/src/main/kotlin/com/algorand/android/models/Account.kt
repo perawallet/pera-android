@@ -31,7 +31,6 @@ data class Account(
     val type: Type? = null,
     val detail: Detail? = null,
     var index: Int = NOT_INITIALIZED_ACCOUNT_INDEX,
-    var isBackedUp: Boolean
 ) : Parcelable {
 
     fun getSecretKey(): ByteArray? {
@@ -106,8 +105,7 @@ data class Account(
             publicKey: String,
             detail: Detail,
             accountName: String = publicKey.toShortenedAddress(),
-            index: Int = NOT_INITIALIZED_ACCOUNT_INDEX,
-            isBackedUp: Boolean = true
+            index: Int = NOT_INITIALIZED_ACCOUNT_INDEX
         ): Account {
             val type = when (detail) {
                 is Detail.Standard -> STANDARD
@@ -122,8 +120,7 @@ data class Account(
                 name = accountName,
                 type = type,
                 detail = detail,
-                index = index,
-                isBackedUp = isBackedUp
+                index = index
             )
         }
     }

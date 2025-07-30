@@ -36,7 +36,6 @@ class AccountItemViewHolder(
                 setAccountDescriptionText(secondaryDisplayName)
                 setAccountPrimaryValueText(formattedPrimaryValue.getDisplayValue())
                 setAccountSecondaryValueText(formattedSecondaryValue.getDisplayValue())
-                setStartSmallIconDrawableResource(startSmallIconResource)
                 root.setOnClickListener { listener.onAccountClick(address) }
                 root.setOnLongClickListener(getOnLongClickListener(item.canCopyable, address))
             }
@@ -70,10 +69,6 @@ class AccountItemViewHolder(
 
     private fun setAccountSecondaryValueText(accountSecondaryValue: String?) {
         binding.accountItemView.setSecondaryValueText(accountSecondaryValue)
-    }
-
-    private fun setStartSmallIconDrawableResource(startSmallIconDrawableResource: Int?) {
-        binding.accountItemView.setStartSmallIconDrawableResource(startSmallIconDrawableResource)
     }
 
     private fun getOnLongClickListener(canCopyable: Boolean, accountAddress: String): View.OnLongClickListener? {

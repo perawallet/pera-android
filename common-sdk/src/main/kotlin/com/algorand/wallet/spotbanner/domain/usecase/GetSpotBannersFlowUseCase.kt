@@ -12,34 +12,17 @@
 
 package com.algorand.wallet.spotbanner.domain.usecase
 
-import com.algorand.wallet.account.detail.domain.model.AccountType.Companion.canSignTransaction
 import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 import com.algorand.wallet.spotbanner.domain.model.SpotBannerFlowData
 import com.algorand.wallet.spotbanner.domain.repository.SpotBannerRepository
-import java.math.BigDecimal
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 internal class GetSpotBannersFlowUseCase @Inject constructor(
     private val spotBannerRepository: SpotBannerRepository
 ) : GetSpotBannersFlow {
 
     override fun invoke(data: List<SpotBannerFlowData>): Flow<List<SpotBanner>> {
-        return spotBannerRepository.getSpotBannerFlow().map { banners ->
-            if (isThereAnyNotBackedUpAuthAddressWithBalance(data)) {
-                listOf(SpotBanner.BackupPassphrase) + banners
-            } else {
-                banners
-            }
-        }
-    }
-
-    private fun isThereAnyNotBackedUpAuthAddressWithBalance(data: List<SpotBannerFlowData>): Boolean {
-        return data.any {
-            !it.isBackedUp &&
-                it.type?.canSignTransaction() == true &&
-                (it.primaryBalance ?: BigDecimal.ZERO).compareTo(BigDecimal.ZERO) == 1
-        }
+        return spotBannerRepository.getSpotBannerFlow()
     }
 }

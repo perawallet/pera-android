@@ -21,7 +21,6 @@ import com.algorand.android.modules.accountsorting.ui.domain.mapper.BaseAccountA
 import com.algorand.android.modules.accountsorting.ui.domain.mapper.BaseAccountAndAssetListItemMapperImpl
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetDefaultAccountSortingType
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction
-import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetFilteredSortedAccountListWhichNotBackedUp
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.GetSortedAccountsByPreference
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.SortAccountsBySortingPreference
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.accountlistitemsorter.AccountListItemSorterByAlphabeticallyAscending
@@ -31,7 +30,6 @@ import com.algorand.android.modules.accountsorting.ui.domain.usecase.accountlist
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.accountlistitemsorter.AccountListItemSorterByNumericalDescending
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.implementation.GetDefaultAccountSortingTypeUseCase
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.implementation.GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransactionUseCase
-import com.algorand.android.modules.accountsorting.ui.domain.usecase.implementation.GetFilteredSortedAccountListWhichNotBackedUpUseCase
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.implementation.GetSortedAccountsByPreferenceUseCase
 import com.algorand.android.modules.accountsorting.ui.domain.usecase.implementation.SortAccountsBySortingPreferenceUseCase
 import dagger.Module
@@ -88,12 +86,6 @@ internal object AccountSortingUiModule {
     fun provideGetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction(
         useCase: GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransactionUseCase
     ): GetFilteredSortedAccountListItemsByAssetIdsWhichCanSignTransaction = useCase
-
-    @Provides
-    @Singleton
-    fun provideGetFilteredSortedAccountListWhichNotBackedUp(
-        useCase: GetFilteredSortedAccountListWhichNotBackedUpUseCase
-    ): GetFilteredSortedAccountListWhichNotBackedUp = useCase
 
     @Provides
     fun provideGetAssetCollectibleLiteSortType(

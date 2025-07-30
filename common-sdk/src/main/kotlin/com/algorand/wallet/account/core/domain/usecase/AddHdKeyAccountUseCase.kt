@@ -32,12 +32,11 @@ internal class AddHdKeyAccountUseCase @Inject constructor(
         change: Int,
         keyIndex: Int,
         derivationType: Int,
-        isBackedUp: Boolean,
         customName: String?,
         orderIndex: Int
     ) {
         val account = LocalAccount.HdKey(address, publicKey, seedId, account, change, keyIndex, derivationType)
         saveHdKeyAccount(account, privateKey)
-        setCustomInfo(CustomAccountInfo(address, customName, orderIndex, isBackedUp))
+        setCustomInfo(CustomAccountInfo(address, customName, orderIndex))
     }
 }

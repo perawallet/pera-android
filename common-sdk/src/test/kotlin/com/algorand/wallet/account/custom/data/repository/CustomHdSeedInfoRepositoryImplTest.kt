@@ -21,14 +21,12 @@ import com.algorand.wallet.account.custom.domain.model.HdSeedOrderIndex
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Before
+import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class CustomHdSeedInfoRepositoryImplTest {
@@ -147,50 +145,6 @@ class CustomHdSeedInfoRepositoryImplTest {
         val result = sut.deleteCustomInfo(seedId)
 
         assertEquals(Unit, result)
-    }
-
-    @Test
-    fun `EXPECT set of not backed up seeds WHEN getNotBackedUpHdSeeds is invoked`() = runTest {
-        val notBackedUpSeedIds = listOf(123, 456, 789)
-
-        coEvery { customHdSeedInfoDao.getNotBackedUpSeedIds() } returns notBackedUpSeedIds
-
-        val result = sut.getNotBackedUpHdSeeds()
-
-        assertEquals(notBackedUpSeedIds.toSet(), result)
-    }
-
-    @Test
-    fun `EXPECT set of backed up seeds WHEN getBackedUpHdSeeds is invoked`() = runTest {
-        val backedUpSeedIds = listOf(123, 456, 789)
-
-        coEvery { customHdSeedInfoDao.getBackedUpSeedIds() } returns backedUpSeedIds
-
-        val result = sut.getBackedUpHdSeeds()
-
-        assertEquals(backedUpSeedIds.toSet(), result)
-    }
-
-    @Test
-    fun `EXPECT true WHEN isHdSeedBackedUp is invoked with backed up seed`() = runTest {
-        val seedId = 123
-
-        coEvery { customHdSeedInfoDao.isAccountBackedUp(seedId) } returns true
-
-        val result = sut.isHdSeedBackedUp(seedId)
-
-        assertTrue(result)
-    }
-
-    @Test
-    fun `EXPECT false WHEN isHdSeedBackedUp is invoked with not backed up seed`() = runTest {
-        val seedId = 123
-
-        coEvery { customHdSeedInfoDao.isAccountBackedUp(seedId) } returns false
-
-        val result = sut.isHdSeedBackedUp(seedId)
-
-        assertFalse(result)
     }
 
     @Test

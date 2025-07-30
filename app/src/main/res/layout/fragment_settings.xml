@@ -34,14 +34,6 @@
             android:textAppearance="@style/TextAppearance.Footnote.Description" />
 
         <com.algorand.android.customviews.SettingsListItem
-            android:id="@+id/algorandSecureBackupListItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:endViewLayoutResource="@layout/layout_right_arrow"
-            app:settingIcon="@drawable/ic_backup"
-            app:settingTitle="@string/algorand_secure_backup" />
-
-        <com.algorand.android.customviews.SettingsListItem
             android:id="@+id/securityListItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -162,8 +154,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
             android:layout_marginTop="@dimen/spacing_large"
+            android:gravity="center"
             tools:text="@string/version_format" />
 
         <TextView
@@ -172,9 +164,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
             android:layout_marginTop="@dimen/spacing_large"
             android:layout_marginBottom="52dp"
+            android:gravity="center"
             tools:text="@string/version_format" />
 
     </LinearLayout>

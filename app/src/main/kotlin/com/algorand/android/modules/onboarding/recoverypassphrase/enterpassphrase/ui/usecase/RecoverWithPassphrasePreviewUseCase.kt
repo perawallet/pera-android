@@ -37,9 +37,9 @@ import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.algosdk.transaction.sdk.PeraBip39Sdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import com.algorand.wallet.encryption.domain.manager.Base64Manager
+import kotlinx.coroutines.flow.flow
 import java.util.Locale
 import javax.inject.Inject
-import kotlinx.coroutines.flow.flow
 
 @Suppress("LongParameterList")
 class RecoverWithPassphrasePreviewUseCase @Inject constructor(
@@ -228,18 +228,17 @@ class RecoverWithPassphrasePreviewUseCase @Inject constructor(
                 AccountCreation(
                     address = algo25account.address,
                     customName = algo25account.address.toShortenedAddress(),
-                    isBackedUp = true,
                     type = Type.Algo25(aesPlatformManager.encryptByteArray(algo25account.secretKey)),
                     creationType = RECOVER
                 )
             }
+
             OnboardingAccountType.HdKey -> {
                 // only entropy is needed for next screen (importing registered addresses)
                 val entropy = peraBip39Sdk.getEntropyFromMnemonic(mnemonics) ?: return null
                 AccountCreation(
                     address = accountAddress,
                     customName = accountAddress.toShortenedAddress(),
-                    isBackedUp = true,
                     type = Type.HdKey(
                         publicKey = ByteArray(0),
                         encryptedPrivateKey = ByteArray(0),

@@ -23,7 +23,7 @@ internal class CustomHdSeedInfoEntityMapperImpl @Inject constructor() :
             seedId = info.seedId,
             entropyCustomName = info.entropyCustomName,
             orderIndex = info.orderIndex,
-            isBackedUp = info.isBackedUp
+            isBackedUp = false
         )
     }
 }

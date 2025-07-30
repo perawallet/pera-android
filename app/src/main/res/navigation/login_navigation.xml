@@ -23,8 +23,6 @@
 
     <include app:graph="@navigation/create_wallet_name_registration_navigation" />
 
-    <include app:graph="@navigation/backup_passphrase_info_navigation" />
-
     <include app:graph="@navigation/recovery_type_selection_navigation" />
 
     <action

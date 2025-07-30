@@ -25,8 +25,7 @@ internal class CustomAccountInfoMapperImpl @Inject constructor() : CustomAccount
         return CustomAccountInfo(
             address = address,
             customName = customAccountInfoEntity?.customName,
-            orderIndex = customAccountInfoEntity?.orderIndex ?: 0,
-            isBackedUp = customAccountInfoEntity?.isBackedUp ?: false
+            orderIndex = customAccountInfoEntity?.orderIndex ?: 0
         )
     }
 }

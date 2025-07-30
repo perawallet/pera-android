@@ -134,8 +134,7 @@ sealed interface BaseAccountListItem : RecyclerListItem {
         val accountIconDrawablePreview: AccountIconDrawablePreview,
         val formattedPrimaryValue: AmountRenderer,
         val formattedSecondaryValue: AmountRenderer,
-        val canCopyable: Boolean,
-        val startSmallIconResource: Int?
+        val canCopyable: Boolean
     ) : BaseAccountListItem {
         override val itemType: ItemType
             get() = ItemType.ACCOUNT_SUCCESS

@@ -74,18 +74,21 @@ class AccountAdditionUseCase @Inject constructor(
                         }
                     }
                 }
+
                 is Type.Algo25 -> {
                     val secretKey = aesPlatformManager.decryptByteArray(encryptedSecretKey)
                     updateNoAuthAccountToAlgo25(
                         address, secretKey
                     )
                 }
+
                 is Type.LedgerBle -> updateNoAuthAccountToLedgerBle(
                     address,
                     deviceMacAddress,
                     bluetoothName.orEmpty(),
                     indexInLedger
                 )
+
                 is Type.NoAuth -> Unit
             }
         }
@@ -116,7 +119,6 @@ class AccountAdditionUseCase @Inject constructor(
                             type.change,
                             type.keyIndex,
                             type.derivationType,
-                            isBackedUp,
                             customName,
                             createAccount.orderIndex
                         )
@@ -132,7 +134,6 @@ class AccountAdditionUseCase @Inject constructor(
             addAlgo25Account(
                 address,
                 secretKey.copyOf(),
-                isBackedUp,
                 customName,
                 createAccount.orderIndex
             )

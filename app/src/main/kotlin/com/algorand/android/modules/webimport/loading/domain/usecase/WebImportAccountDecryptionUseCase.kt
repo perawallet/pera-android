@@ -30,9 +30,9 @@ import com.algorand.android.utils.toShortenedAddress
 import com.algorand.wallet.account.detail.domain.model.AccountRegistrationType
 import com.algorand.wallet.account.detail.domain.usecase.GetAccountDetail
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Named
-import kotlinx.coroutines.flow.flow
 
 class WebImportAccountDecryptionUseCase @Inject constructor(
     private val gson: Gson,
@@ -94,7 +94,6 @@ class WebImportAccountDecryptionUseCase @Inject constructor(
                         val recoveredAccount = AccountCreation(
                             address = publicKey,
                             customName = it.name ?: publicKey.toShortenedAddress(),
-                            isBackedUp = true,
                             type = AccountCreation.Type.Algo25(privateKey),
                             creationType = CreationType.RECOVER
                         )
@@ -104,6 +103,7 @@ class WebImportAccountDecryptionUseCase @Inject constructor(
                 }
                 return DataResource.Success(ImportedAccountResult(importedAccounts, unimportedAccounts))
             }
+
             is Result.Error -> {
                 return DataResource.Error.Local(result.exception)
             }

@@ -23,7 +23,7 @@ data class AccountCreation(
     val address: String,
     var customName: String?,
     var orderIndex: Int = Int.MAX_VALUE,
-    val isBackedUp: Boolean,
+    val isBackedUp: Boolean = false,
     val type: Type,
     val creationType: CreationType
 ) : Parcelable {
@@ -62,7 +62,6 @@ data class AccountCreation(
             address = address,
             customName = customName,
             orderIndex = orderIndex,
-            isBackedUp = isBackedUp,
             type = when (type) {
                 is Type.HdKey -> CreateAccount.Type.HdKey(
                     type.publicKey,

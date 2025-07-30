@@ -54,22 +54,6 @@ fun interface SetAccountOrderIndex {
     suspend operator fun invoke(address: String, orderIndex: Int)
 }
 
-fun interface GetBackedUpAccounts {
-    suspend operator fun invoke(): Set<String>
-}
-
-fun interface GetNotBackedUpAccounts {
-    suspend operator fun invoke(): Set<String>
-}
-
-fun interface GetAccountBackUpStatus {
-    suspend operator fun invoke(accountAddress: String): Boolean
-}
-
-fun interface SetAddressesBackedUp {
-    suspend operator fun invoke(accountAddresses: Set<String>)
-}
-
 fun interface GetAllAccountOrderIndexes {
     suspend operator fun invoke(): List<AccountOrderIndex>
 }
@@ -106,18 +90,6 @@ fun interface GetHdSeedCustomInfo {
 
 fun interface SetHdSeedOrderIndex {
     suspend operator fun invoke(seedId: Int, orderIndex: Int)
-}
-
-fun interface GetBackedUpHdSeeds {
-    suspend operator fun invoke(): Set<String>
-}
-
-fun interface GetNotBackedUpHdSeeds {
-    suspend operator fun invoke(): Set<String>
-}
-
-fun interface GetHdSeedAsbBackUpStatus {
-    suspend operator fun invoke(seedId: Int): Boolean
 }
 
 fun interface GetAllHdSeedOrderIndexes {

@@ -59,8 +59,7 @@ internal class AddHdSeedUseCase @Inject constructor(
             CustomHdSeedInfo(
                 seedId = seedId,
                 entropyCustomName = "Wallet #$seedId",
-                orderIndex = seedId,
-                isBackedUp = false
+                orderIndex = seedId
             )
         )
     }

@@ -36,15 +36,6 @@ internal interface CustomHdSeedInfoDao {
     @Query("DELETE FROM custom_hd_seed_info")
     suspend fun clearAll()
 
-    @Query("SELECT seed_id FROM custom_hd_seed_info WHERE is_backed_up = 0")
-    suspend fun getNotBackedUpSeedIds(): List<Int>
-
-    @Query("SELECT seed_id FROM custom_hd_seed_info WHERE is_backed_up = 1")
-    suspend fun getBackedUpSeedIds(): List<Int>
-
-    @Query("SELECT is_backed_up FROM custom_hd_seed_info WHERE :seedId = seed_id")
-    suspend fun isAccountBackedUp(seedId: Int): Boolean
-
     @Query("SELECT entropy_custom_name FROM custom_hd_seed_info WHERE :seedId = seed_id")
     suspend fun getCustomName(seedId: Int): String?
 }

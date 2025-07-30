@@ -12,20 +12,10 @@
 
 package com.algorand.android.modules.asb.util
 
-import com.algorand.android.utils.ISO_EXTENDED_DATE_FORMAT
-import com.algorand.android.utils.getCurrentTimeAsZonedDateTime
-import java.time.format.DateTimeFormatter
-
 object AlgorandSecureBackupUtils {
 
-    private const val BACKUP_FILE_SUFFIX = "_backup.txt"
-    const val BACKUP_FILE_MIME_TYPE = "text/plain"
+    private const val BACKUP_FILE_MIME_TYPE = "text/plain"
     val IMPORT_BACKUP_FILE_MIME_TYPES = arrayOf(BACKUP_FILE_MIME_TYPE, "application/json")
 
     const val BACKUP_PASSPHRASES_WORD_COUNT = 12
-
-    fun createBackupFileName(): String {
-        val backupFileNameFormatter = DateTimeFormatter.ofPattern(ISO_EXTENDED_DATE_FORMAT)
-        return getCurrentTimeAsZonedDateTime().format(backupFileNameFormatter) + BACKUP_FILE_SUFFIX
-    }
 }

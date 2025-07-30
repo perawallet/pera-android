@@ -36,11 +36,10 @@ import com.algorand.wallet.privacy.domain.model.PrivacyMode
 import com.algorand.wallet.privacy.domain.usecase.GetPrivacyModeFlow
 import com.algorand.wallet.remoteconfig.domain.usecase.ACCOUNT_DETAIL_CHART_TOGGLE
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
-import java.math.BigDecimal
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import javax.inject.Inject
 
 internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
     private val getAccountLiteCacheFlow: GetAccountLiteCacheFlow,
@@ -73,9 +72,6 @@ internal class DefaultAccountDetailAccountsItemProcessor @Inject constructor(
         return mutableListOf<AccountDetailAccountsItem>().apply {
             add(createAccountPortfolioItem(cachedInfo, privacyMode))
             add(createQuickActionItemList(accountLite))
-            if (!accountLite.isBackedUp && cachedInfo.primaryAccountValue > BigDecimal.ZERO) {
-                add(accountDetailAssetItemMapper.mapToBackupWarningItem(isBackedUp = false))
-            }
             val hasAccountAuthority = cachedInfo.type.canSignTransaction()
             add(accountDetailAssetItemMapper.mapToTitleItem(R.string.assets, hasAccountAuthority))
             add(accountDetailAssetItemMapper.mapToSearchViewItem(query.orEmpty()))

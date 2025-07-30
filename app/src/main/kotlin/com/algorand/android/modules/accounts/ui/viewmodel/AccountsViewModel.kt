@@ -27,14 +27,12 @@ import com.algorand.android.ui.accounts.tracker.AccountsEventTracker
 import com.algorand.android.usecase.IsAccountLimitExceedUseCase
 import com.algorand.android.utils.coremanager.ParityManager
 import com.algorand.android.utils.launchIO
-import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.banner.domain.usecase.DismissBanner
 import com.algorand.wallet.privacy.domain.usecase.TogglePrivacyMode
 import com.algorand.wallet.spotbanner.domain.usecase.DismissSpotBanner
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +41,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 @HiltViewModel
@@ -51,7 +50,6 @@ class AccountsViewModel @Inject constructor(
     private val accountsEventTracker: AccountsEventTracker,
     private val parityManager: ParityManager,
     private val isAccountLimitExceedUseCase: IsAccountLimitExceedUseCase,
-    private val getNotBackedUpAccounts: GetNotBackedUpAccounts,
     private val tutorialUseCase: TutorialUseCase,
     private val getAskNotificationPermissionEventFlowUseCase: GetAskNotificationPermissionEventFlowUseCase,
     private val eventDelegate: EventDelegate<ViewEvent>,
@@ -130,15 +128,6 @@ class AccountsViewModel @Inject constructor(
         }
     }
 
-    fun navigateToBackUpPassphraseInfo() {
-        viewModelScope.launch {
-            val notBackedUpAccounts = getNotBackedUpAccounts()
-            if (notBackedUpAccounts.isNotEmpty()) {
-                eventDelegate.sendEvent(ViewEvent.NavigateToBackupPassphraseInfo(notBackedUpAccounts))
-            }
-        }
-    }
-
     fun navigateToAddAccount() {
         viewModelScope.launchIO {
             eventDelegate.sendEvent(
@@ -196,7 +185,6 @@ class AccountsViewModel @Inject constructor(
         data object NavToLoginNavigation : ViewEvent
         data object ShowMaxAccountLimitExceededError : ViewEvent
         data class NavigateToSwap(val navDirections: NavDirections) : ViewEvent
-        data class NavigateToBackupPassphraseInfo(val addresses: Set<String>) : ViewEvent
         data class ShowGiftCardsTutorial(val tutorialId: Int) : ViewEvent
         data class ShowAccountAddressCopyTutorial(val tutorialId: Int) : ViewEvent
         data class ShowSwapTutorial(val tutorialId: Int) : ViewEvent

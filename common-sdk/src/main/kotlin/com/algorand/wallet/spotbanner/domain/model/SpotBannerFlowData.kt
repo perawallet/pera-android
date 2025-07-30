@@ -17,7 +17,6 @@ import java.math.BigDecimal
 
 data class SpotBannerFlowData(
     val address: String,
-    val isBackedUp: Boolean,
     val primaryBalance: BigDecimal?,
     val type: AccountType?
 )

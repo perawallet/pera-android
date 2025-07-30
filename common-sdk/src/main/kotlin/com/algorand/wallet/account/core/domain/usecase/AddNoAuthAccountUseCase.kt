@@ -30,6 +30,6 @@ internal class AddNoAuthAccountUseCase @Inject constructor(
     ) {
         val account = LocalAccount.NoAuth(address)
         saveNoAuthAccount(account)
-        setAccountCustomInfo(CustomAccountInfo(address, customName, orderIndex, isBackedUp = true))
+        setAccountCustomInfo(CustomAccountInfo(address, customName, orderIndex))
     }
 }

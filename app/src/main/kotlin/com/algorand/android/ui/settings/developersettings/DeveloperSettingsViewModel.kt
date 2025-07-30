@@ -23,8 +23,8 @@ import com.algorand.wallet.remoteconfig.domain.usecase.ENABLE_ACCOUNT_DB_MIGRATI
 import com.algorand.wallet.remoteconfig.domain.usecase.HD_WALLET_BUTTON_TOGGLE
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class DeveloperSettingsViewModel @Inject constructor(
@@ -67,7 +67,6 @@ class DeveloperSettingsViewModel @Inject constructor(
         return AccountCreation(
             address = account.address,
             customName = null,
-            isBackedUp = false,
             type = AccountCreation.Type.Algo25(
                 aesPlatformManager.encryptByteArray(account.secretKey)
             ),

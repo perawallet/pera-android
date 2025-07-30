@@ -21,7 +21,6 @@ import java.math.BigInteger
 data class AccountLite(
     val address: String,
     val customName: String,
-    val isBackedUp: Boolean,
     val cachedInfo: CachedInfo?,
     val sortIndex: Int,
     val registrationType: AccountRegistrationType

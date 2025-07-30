@@ -14,35 +14,20 @@ package com.algorand.android.ui.settings.usecase
 
 import com.algorand.android.ui.settings.mapper.SettingsPreviewMapper
 import com.algorand.android.ui.settings.model.SettingsPreview
-import com.algorand.wallet.account.custom.domain.usecase.GetNotBackedUpAccounts
 import com.algorand.wallet.analytics.domain.usecase.GetFirebaseInstanceIdUseCase
-import com.algorand.wallet.asb.domain.usecase.GetAsbEligibleAccounts
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class SettingsPreviewUseCase @Inject constructor(
     private val settingsPreviewMapper: SettingsPreviewMapper,
-    private val getNotBackupAccounts: GetNotBackedUpAccounts,
     private val getFirebaseInstanceIdUseCase: GetFirebaseInstanceIdUseCase,
-    private val getAsbEligibleAccounts: GetAsbEligibleAccounts
 ) {
 
     fun getSettingsPreviewFlow(): Flow<SettingsPreview> = flow {
-        val eligibleToBackUpAddresses = getEligibleToBackUpAddresses()
         val preview = settingsPreviewMapper.mapToSettingsPreview(
-            isAlgorandSecureBackupDescriptionVisible = eligibleToBackUpAddresses.isNotEmpty(),
-            notBackedUpAccountCounts = eligibleToBackUpAddresses.size,
             firebaseInstanceId = getFirebaseInstanceIdUseCase()
         )
         emit(preview)
-    }
-
-    private suspend fun getEligibleToBackUpAddresses(): List<String> {
-        val notBackedUpAccounts = getNotBackupAccounts()
-        val asbEligibleAccounts = getAsbEligibleAccounts()
-        return notBackedUpAccounts.mapNotNull { address ->
-            asbEligibleAccounts.find { it.algoAddress == address }?.algoAddress
-        }
     }
 }

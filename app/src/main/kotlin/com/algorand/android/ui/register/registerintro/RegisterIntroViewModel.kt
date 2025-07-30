@@ -28,11 +28,11 @@ import com.algorand.wallet.algosdk.bip39.sdk.Bip39WalletProvider
 import com.algorand.wallet.algosdk.transaction.sdk.AlgoAccountSdk
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class RegisterIntroViewModel @Inject constructor(
@@ -90,7 +90,6 @@ class RegisterIntroViewModel @Inject constructor(
         return AccountCreation(
             address = hdKeyAddress.address,
             customName = null,
-            isBackedUp = false,
             type = hdKeyType,
             creationType = CreationType.CREATE
         )
@@ -101,7 +100,6 @@ class RegisterIntroViewModel @Inject constructor(
         return AccountCreation(
             address = account.address,
             customName = null,
-            isBackedUp = false,
             type = AccountCreation.Type.Algo25(aesPlatformManager.encryptByteArray(account.secretKey)),
             creationType = CreationType.CREATE
         )

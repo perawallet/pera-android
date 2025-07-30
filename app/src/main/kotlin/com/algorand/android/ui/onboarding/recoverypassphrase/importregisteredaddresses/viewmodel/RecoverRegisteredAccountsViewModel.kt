@@ -43,12 +43,12 @@ import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
+import javax.inject.Inject
 
 @Suppress("LongParameterList")
 @HiltViewModel
@@ -215,7 +215,6 @@ class RecoverRegisteredAccountsViewModel @Inject constructor(
             AccountCreation(
                 address = address,
                 customName = address.toShortenedAddress(),
-                isBackedUp = false,
                 type = hdKeyType,
                 creationType = CreationType.RECOVER
             )

@@ -18,10 +18,10 @@ import com.algorand.wallet.account.custom.data.mapper.model.CustomHdSeedInfoMapp
 import com.algorand.wallet.account.custom.domain.model.CustomHdSeedInfo
 import com.algorand.wallet.account.custom.domain.model.HdSeedOrderIndex
 import com.algorand.wallet.account.custom.domain.repository.CustomHdSeedInfoRepository
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class CustomHdSeedInfoRepositoryImpl @Inject constructor(
     private val customHdSeedInfoDao: CustomHdSeedInfoDao,
@@ -36,7 +36,6 @@ internal class CustomHdSeedInfoRepositoryImpl @Inject constructor(
                     seedId = it.seedId,
                     entropyCustomName = it.entropyCustomName,
                     orderIndex = it.orderIndex,
-                    isBackedUp = it.isBackedUp,
                 )
                 customHdSeedInfo
             }
@@ -79,24 +78,6 @@ internal class CustomHdSeedInfoRepositoryImpl @Inject constructor(
     override suspend fun deleteCustomInfo(seedId: Int) {
         withContext(coroutineDispatcher) {
             customHdSeedInfoDao.delete(seedId)
-        }
-    }
-
-    override suspend fun getNotBackedUpHdSeeds(): Set<Int> {
-        return withContext(coroutineDispatcher) {
-            customHdSeedInfoDao.getNotBackedUpSeedIds().toSet()
-        }
-    }
-
-    override suspend fun getBackedUpHdSeeds(): Set<Int> {
-        return withContext(coroutineDispatcher) {
-            customHdSeedInfoDao.getBackedUpSeedIds().toSet()
-        }
-    }
-
-    override suspend fun isHdSeedBackedUp(seedId: Int): Boolean {
-        return withContext(coroutineDispatcher) {
-            customHdSeedInfoDao.isAccountBackedUp(seedId)
         }
     }
 

@@ -30,8 +30,8 @@ import com.algorand.wallet.viewmodel.EventViewModel
 import com.algorand.wallet.viewmodel.StateDelegate
 import com.algorand.wallet.viewmodel.StateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class HdWalletSelectionViewModel @Inject constructor(
@@ -76,7 +76,6 @@ class HdWalletSelectionViewModel @Inject constructor(
             val accountCreation = AccountCreation(
                 address = hdKeyAddress.address,
                 customName = null,
-                isBackedUp = false,
                 type = hdKeyType,
                 creationType = CreationType.CREATE
             )
@@ -95,7 +94,6 @@ class HdWalletSelectionViewModel @Inject constructor(
             val accountCreation = AccountCreation(
                 address = hdKeyAddress.address,
                 customName = null,
-                isBackedUp = false,
                 type = accountCreationHdKeyTypeMapper(entropy, hdKeyAddress, seedId),
                 creationType = CreationType.CREATE
             )

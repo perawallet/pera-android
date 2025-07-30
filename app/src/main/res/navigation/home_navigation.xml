@@ -92,13 +92,9 @@
 
     <include app:graph="@navigation/web_import_navigation" />
 
-    <include app:graph="@navigation/asb_creation_navigation" />
-
     <include app:graph="@navigation/remove_account_confirmation_navigation" />
 
     <include app:graph="@navigation/in_app_pin_navigation" />
-
-    <include app:graph="@navigation/backup_passphrase_info_navigation" />
 
     <include app:graph="@navigation/asset_inbox_all_accounts_navigation" />
 
@@ -302,7 +298,7 @@
         android:id="@+id/action_global_stakingFragment"
         app:destination="@id/stakingFragment"
         app:popUpTo="@id/accountsFragment"
-        app:popUpToInclusive="true"/>
+        app:popUpToInclusive="true" />
 
     <!-- Remove this action and use the one in the main navigation after Lock Screen navigation change. -->
     <action
@@ -555,17 +551,6 @@
             android:id="@+id/action_accountsFragment_to_bannerFragment"
             app:destination="@id/bannerFragment" />
         <action
-            android:id="@+id/action_accountsFragment_to_backupPassphraseInfoNavigation"
-            app:destination="@id/backupPassphraseInfoNavigation">
-            <argument
-                android:name="accountsToBackup"
-                app:argType="string[]" />
-            <argument
-                android:name="onboardingAccountType"
-                app:argType="com.algorand.android.models.OnboardingAccountType"
-                app:nullable="false" />
-        </action>
-        <action
             android:id="@+id/action_accountsFragment_to_assetInboxAllAccountsNavigation"
             app:destination="@id/assetInboxAllAccountsNavigation" />
         <action
@@ -736,9 +721,6 @@
         <action
             android:id="@+id/action_settingsFragment_to_contactsFragment"
             app:destination="@id/contactsFragment" />
-        <action
-            android:id="@+id/action_settingsFragment_to_asbCreationNavigation"
-            app:destination="@id/asbCreationNavigation" />
     </fragment>
 
     <fragment
@@ -1007,20 +989,6 @@
             <argument
                 android:name="accountAddress"
                 app:argType="string" />
-        </action>
-        <action
-            android:id="@+id/action_accountDetailFragment_to_haveYouBackedUpAccountConfirmationBottomSheet"
-            app:destination="@id/haveYouBackedUpAccountConfirmationBottomSheet" />
-        <action
-            android:id="@+id/action_accountDetailFragment_to_backupPassphraseInfoNavigation"
-            app:destination="@id/backupPassphraseInfoNavigation">
-            <argument
-                android:name="accountsToBackup"
-                app:argType="string[]" />
-            <argument
-                android:name="onboardingAccountType"
-                app:argType="com.algorand.android.models.OnboardingAccountType"
-                app:nullable="false" />
         </action>
         <action
             android:id="@+id/action_accountDetailFragment_to_inAppPinNavigation"
@@ -1523,12 +1491,6 @@
                 app:nullable="true" />
         </action>
     </dialog>
-
-    <dialog
-        android:id="@+id/haveYouBackedUpAccountConfirmationBottomSheet"
-        android:name="com.algorand.android.modules.accountdetail.haveyoubackedupconfirmation.ui.HaveYouBackedUpAccountConfirmationBottomSheet"
-        android:label="HaveYouBackedUpAccountConfirmationBottomSheet"
-        tools:layout="@layout/bottom_sheet_double_button" />
 
     <fragment
         android:id="@+id/menuFragment"

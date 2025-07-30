@@ -57,6 +57,7 @@ internal class MigrateTo6xUseCase @Inject constructor(
             is Account.Detail.Standard,
             is Account.Detail.Rekeyed,
             is Account.Detail.RekeyedAuth -> createStandardAccount(localAccount)
+
             is Account.Detail.Ledger -> createLedgerAccount(localAccount)
             is Account.Detail.Watch -> createWatchAccount(localAccount)
 
@@ -73,7 +74,6 @@ internal class MigrateTo6xUseCase @Inject constructor(
                 address = localAccount.address,
                 customName = localAccount.name,
                 orderIndex = localAccount.index,
-                isBackedUp = localAccount.isBackedUp,
                 type = AccountCreation.Type.Algo25(
                     aesPlatformManager.encryptByteArray(legacyAccountSecretKey)
                 ),
@@ -88,7 +88,6 @@ internal class MigrateTo6xUseCase @Inject constructor(
             address = localAccount.address,
             customName = localAccount.name,
             orderIndex = localAccount.index,
-            isBackedUp = localAccount.isBackedUp,
             type = AccountCreation.Type.LedgerBle(
                 deviceMacAddress = ledgerDetail.bluetoothAddress,
                 indexInLedger = ledgerDetail.positionInLedger,
@@ -103,7 +102,6 @@ internal class MigrateTo6xUseCase @Inject constructor(
             address = localAccount.address,
             customName = localAccount.name,
             orderIndex = localAccount.index,
-            isBackedUp = localAccount.isBackedUp,
             type = AccountCreation.Type.NoAuth,
             creationType = CreationType.WATCH
         )

@@ -16,14 +16,13 @@ import com.algorand.wallet.account.core.domain.model.TransactionSigner
 import com.algorand.wallet.account.detail.domain.model.AccountDetail
 import com.algorand.wallet.account.info.domain.model.AccountInformation
 import com.algorand.wallet.foundation.PeraResult
-import java.math.BigInteger
 import kotlinx.coroutines.flow.Flow
+import java.math.BigInteger
 
 fun interface AddAlgo25Account {
     suspend operator fun invoke(
         address: String,
         secretKey: ByteArray,
-        isBackedUp: Boolean,
         customName: String?,
         orderIndex: Int
     )
@@ -43,7 +42,6 @@ fun interface AddHdKeyAccount {
         change: Int,
         keyIndex: Int,
         derivationType: Int,
-        isBackedUp: Boolean,
         customName: String?,
         orderIndex: Int
     )

@@ -32,13 +32,11 @@ import com.algorand.android.customviews.Tooltip
 import com.algorand.android.databinding.FragmentAccountsBinding
 import com.algorand.android.models.AnnotatedString
 import com.algorand.android.models.FragmentConfiguration
-import com.algorand.android.models.OnboardingAccountType
 import com.algorand.android.models.ScreenState
 import com.algorand.android.models.TooltipConfig
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.ui.model.BaseAccountListItem
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel
-import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToBackupPassphraseInfo
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.NavigateToSwap
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowAccountAddressCopyTutorial
 import com.algorand.android.modules.accounts.ui.viewmodel.AccountsViewModel.ViewEvent.ShowConfetti
@@ -77,7 +75,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         when (event) {
             is AccountsViewModel.ViewEvent.NavToLoginNavigation -> navToLoginNavigation()
             is ShowMaxAccountLimitExceededError -> showMaxAccountLimitExceededError()
-            is NavigateToBackupPassphraseInfo -> navToBackupPassphraseInfo(event.addresses)
             is NavigateToSwap -> nav(event.navDirections)
             is ShowAccountAddressCopyTutorial -> showAccountAddressCopyTutorialDialog(event.tutorialId)
             is ShowGiftCardsTutorial -> showGiftCardsTutorialDialog(event.tutorialId)
@@ -166,10 +163,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
         override fun onStakingClick() {
             accountsViewModel.logStakeQuickActionClick()
             navToStakingFragment()
-        }
-
-        override fun onBackupPassphraseBannerClick() {
-            accountsViewModel.navigateToBackUpPassphraseInfo()
         }
 
         override fun onChartTap() {
@@ -482,15 +475,6 @@ class AccountsFragment : DaggerBaseFragment(R.layout.fragment_accounts),
 
     private fun navToSendAlgoNavigation() {
         nav(AccountsFragmentDirections.actionGlobalSendAlgoNavigation(null))
-    }
-
-    private fun navToBackupPassphraseInfo(addresses: Set<String>) {
-        nav(
-            AccountsFragmentDirections.actionAccountsFragmentToBackupPassphraseInfoNavigation(
-                addresses.toTypedArray(),
-                OnboardingAccountType.Algo25
-            )
-        )
     }
 
     private fun navToLoginNavigation() {

@@ -41,7 +41,6 @@ import com.algorand.wallet.remoteconfig.domain.usecase.ACCOUNTS_CHART_TOGGLE
 import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.remoteconfig.domain.usecase.STAKING_BUTTON_TOGGLE
 import com.algorand.wallet.spotbanner.domain.model.SpotBanner
-import java.math.BigDecimal
 import javax.inject.Inject
 
 @Suppress("LongParameterList")
@@ -157,18 +156,8 @@ class AccountPreviewProcessor @Inject constructor(
             accountIconDrawablePreview = getAccountIconDrawablePreview(accountLite),
             formattedPrimaryValue = getCompactPrimaryAmountRenderer(primaryAmount, amountRenderType),
             formattedSecondaryValue = getCompactSecondaryAmountRenderer(secondaryAmount, amountRenderType),
-            canCopyable = cachedInfo.type != AccountType.NoAuth,
-            startSmallIconResource = accountLite.getStartSmallIconResource()
+            canCopyable = cachedInfo.type != AccountType.NoAuth
         )
-    }
-
-    private fun AccountLite.getStartSmallIconResource(): Int? {
-        val safePrimaryValue = cachedInfo?.primaryAccountValue ?: BigDecimal.ZERO
-        return if (!isBackedUp && safePrimaryValue > BigDecimal.ZERO) {
-            R.drawable.ic_error_negative
-        } else {
-            null
-        }
     }
 
     private suspend fun getAccountErrorItem(accountLite: AccountLite): BaseAccountListItem.AccountErrorItem {

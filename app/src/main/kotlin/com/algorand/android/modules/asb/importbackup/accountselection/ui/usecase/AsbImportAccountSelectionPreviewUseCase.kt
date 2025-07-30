@@ -38,8 +38,8 @@ import com.algorand.wallet.account.detail.domain.model.AccountType
 import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.ALGO_25_ACCOUNT_TYPE_NAME
 import com.algorand.wallet.asb.domain.utils.BackupProtocolConstants.NO_AUTH_ACCOUNT_TYPE_NAME
 import com.algorand.wallet.encryption.domain.manager.AESPlatformManager
-import javax.inject.Inject
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 @SuppressWarnings("LongParameterList")
 class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
@@ -247,13 +247,13 @@ class AsbImportAccountSelectionPreviewUseCase @Inject constructor(
                     val encryptedPrivateKey = aesPlatformManager.encryptByteArray(safeAccountPrivateKey)
                     AccountCreation.Type.Algo25(encryptedPrivateKey)
                 }
+
                 NO_AUTH_ACCOUNT_TYPE_NAME -> AccountCreation.Type.NoAuth
                 else -> return@mapNotNull null
             }
             AccountCreation(
                 address = safeAccountAddress,
                 customName = safeAccountName,
-                isBackedUp = true,
                 type = accountType,
                 creationType = CreationType.RECOVER
             )

@@ -90,7 +90,6 @@ class RekeyedAccountSelectionViewModel @Inject constructor(
         val rekeyedAccount = AccountCreation(
             address = accountItem.accountDisplayName.accountAddress,
             customName = accountItem.accountDisplayName.primaryDisplayName,
-            isBackedUp = true,
             type = AccountCreation.Type.NoAuth,
             creationType = CreationType.REKEYED
         )

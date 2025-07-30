@@ -63,10 +63,6 @@ fun SpotBannerCarousel(spotBanners: List<SpotBanner>, listener: SpotBannerCarous
                         listener?.onDismissSpotBannerClick(banner)
                     }
                 }
-                SpotBanner.BackupPassphrase -> {
-                    val modifier = getSpotBannerItemModifier { listener?.onBackupPassphraseBannerClick() }
-                    BackupPassphraseSpotBanner(modifier)
-                }
             }
         }
         if (banners.size > 1) {
@@ -108,7 +104,6 @@ internal fun RowScope.SpotBannerText(
 }
 
 interface SpotBannerCarouselListener {
-    fun onBackupPassphraseBannerClick()
     fun onDismissSpotBannerClick(spotBanner: SpotBanner.Generic)
     fun onSpotBannerBannerClick(spotBanner: SpotBanner.Generic)
 }

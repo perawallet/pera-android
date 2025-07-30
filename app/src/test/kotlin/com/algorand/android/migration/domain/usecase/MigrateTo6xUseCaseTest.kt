@@ -78,7 +78,6 @@ class MigrateTo6xUseCaseTest {
             customName = "Account 1",
             type = AccountCreation.Type.Algo25(encryptedSecretKey = ENCRYPTED_SECRET_KEY),
             creationType = CreationType.RECOVER,
-            isBackedUp = true
         )
 
         with(actualAccount) {
@@ -87,7 +86,6 @@ class MigrateTo6xUseCaseTest {
             assertTrue(type is AccountCreation.Type.Algo25)
             assertTrue((type as AccountCreation.Type.Algo25).encryptedSecretKey.contentEquals(ENCRYPTED_SECRET_KEY))
             assertEquals(expectedAccountCreation.creationType, creationType)
-            assertEquals(expectedAccountCreation.isBackedUp, isBackedUp)
         }
     }
 
@@ -109,7 +107,6 @@ class MigrateTo6xUseCaseTest {
             customName = "Account 2",
             type = AccountCreation.Type.NoAuth,
             creationType = CreationType.WATCH,
-            isBackedUp = false
         )
 
         with(actualAccount) {
@@ -117,7 +114,6 @@ class MigrateTo6xUseCaseTest {
             assertEquals(expectedAccount.customName, customName)
             assertTrue(type is AccountCreation.Type.NoAuth)
             assertEquals(expectedAccount.creationType, creationType)
-            assertEquals(expectedAccount.isBackedUp, isBackedUp)
         }
     }
 
@@ -142,8 +138,7 @@ class MigrateTo6xUseCaseTest {
                 indexInLedger = 0,
                 bluetoothName = "Ledger Nano X"
             ),
-            creationType = CreationType.LEDGER,
-            isBackedUp = true
+            creationType = CreationType.LEDGER
         )
 
         with(actualAccount) {
@@ -159,7 +154,6 @@ class MigrateTo6xUseCaseTest {
             assertEquals(expectedLedgerType.bluetoothName, ledgerType.bluetoothName)
 
             assertEquals(expectedAccount.creationType, creationType)
-            assertEquals(expectedAccount.isBackedUp, isBackedUp)
         }
     }
 
@@ -181,7 +175,6 @@ class MigrateTo6xUseCaseTest {
             customName = "Account 4",
             type = AccountCreation.Type.NoAuth,
             creationType = CreationType.WATCH,
-            isBackedUp = true
         )
 
         with(actualAccount) {
@@ -189,7 +182,6 @@ class MigrateTo6xUseCaseTest {
             assertEquals(expectedAccount.customName, customName)
             assertTrue(type is AccountCreation.Type.NoAuth)
             assertEquals(expectedAccount.creationType, creationType)
-            assertEquals(expectedAccount.isBackedUp, isBackedUp)
         }
     }
 
@@ -236,7 +228,6 @@ class MigrateTo6xUseCaseTest {
             orderIndex = 0,
             type = AccountCreation.Type.NoAuth,
             creationType = CreationType.WATCH,
-            isBackedUp = true
         )
         assertEquals(expectedAccount, capturedAccount.first())
     }
@@ -262,7 +253,6 @@ class MigrateTo6xUseCaseTest {
             orderIndex = 3,
             type = AccountCreation.Type.NoAuth,
             creationType = CreationType.WATCH,
-            isBackedUp = true
         )
         assertEquals(expectedAccount, capturedAccount.first())
     }
@@ -288,7 +278,6 @@ class MigrateTo6xUseCaseTest {
             orderIndex = 4,
             type = AccountCreation.Type.NoAuth,
             creationType = CreationType.WATCH,
-            isBackedUp = true
         )
         assertEquals(expectedAccount, capturedAccount.first())
     }
@@ -309,7 +298,6 @@ class MigrateTo6xUseCaseTest {
             orderIndex = 3,
             type = AccountCreation.Type.NoAuth,
             creationType = CreationType.WATCH,
-            isBackedUp = true
         )
         assertEquals(expectedAccount, capturedAccount.first())
     }
@@ -330,7 +318,6 @@ class MigrateTo6xUseCaseTest {
             orderIndex = 4,
             type = AccountCreation.Type.NoAuth,
             creationType = CreationType.WATCH,
-            isBackedUp = true
         )
         assertEquals(expectedAccount, capturedAccount.first())
     }
@@ -343,7 +330,6 @@ class MigrateTo6xUseCaseTest {
             address = "addr1",
             name = "Account 1",
             index = 0,
-            isBackedUp = true,
             detail = mockk<Account.Detail.Standard> {
                 every { secretKey } returns SECRET_KEY
             }
@@ -353,7 +339,6 @@ class MigrateTo6xUseCaseTest {
             address = "addr2",
             name = "Account 2",
             index = 1,
-            isBackedUp = false,
             detail = mockk<Account.Detail.Watch>()
         )
 
@@ -361,7 +346,6 @@ class MigrateTo6xUseCaseTest {
             address = "addr3",
             name = "Account 3",
             index = 2,
-            isBackedUp = true,
             detail = mockk<Account.Detail.Ledger>().apply {
                 every { bluetoothAddress } returns "AA:BB:CC:DD:EE:FF"
                 every { positionInLedger } returns 0
@@ -373,7 +357,6 @@ class MigrateTo6xUseCaseTest {
             address = "addr4",
             name = "Account 4",
             index = 3,
-            isBackedUp = true,
             detail = mockk<Account.Detail.Rekeyed> {
                 every { secretKey } returns null
             }
@@ -383,7 +366,6 @@ class MigrateTo6xUseCaseTest {
             address = "addr5",
             name = "Account 5",
             index = 4,
-            isBackedUp = true,
             detail = mockk<Account.Detail.RekeyedAuth> {
                 every { secretKey } returns null
                 every { authDetail } returns null

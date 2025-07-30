@@ -28,12 +28,11 @@ class CustomAccountInfoEntityMapperImplTest {
     }
 
     @Test
-    fun  `EXPECT correct entity WHEN domain model has valid data`() {
+    fun `EXPECT correct entity WHEN domain model has valid data`() {
         val customAccountInfo = CustomAccountInfo(
             address = "TESTADDRESS123456789",
             customName = "Test Account",
-            orderIndex = 3,
-            isBackedUp = true
+            orderIndex = 3
         )
 
         val result = sut.invoke(customAccountInfo)
@@ -41,8 +40,7 @@ class CustomAccountInfoEntityMapperImplTest {
         val expectedEntity = CustomAccountInfoEntity(
             algoAddress = "TESTADDRESS123456789",
             customName = "Test Account",
-            orderIndex = 3,
-            isBackedUp = true
+            orderIndex = 3
         )
         assertEquals(expectedEntity, result)
     }

@@ -18,12 +18,12 @@ import com.algorand.wallet.account.custom.data.mapper.model.CustomAccountInfoMap
 import com.algorand.wallet.account.custom.domain.model.AccountOrderIndex
 import com.algorand.wallet.account.custom.domain.model.CustomAccountInfo
 import com.algorand.wallet.account.custom.domain.repository.CustomAccountInfoRepository
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class CustomAccountInfoRepositoryImpl @Inject constructor(
     private val customAccountInfoDao: CustomAccountInfoDao,
@@ -85,30 +85,6 @@ internal class CustomAccountInfoRepositoryImpl @Inject constructor(
     override suspend fun deleteCustomInfo(address: String) {
         withContext(coroutineDispatcher) {
             customAccountInfoDao.delete(address)
-        }
-    }
-
-    override suspend fun getNotBackedUpAccounts(): Set<String> {
-        return withContext(coroutineDispatcher) {
-            customAccountInfoDao.getNotBackedUpAddresses().toSet()
-        }
-    }
-
-    override suspend fun getBackedUpAccounts(): Set<String> {
-        return withContext(coroutineDispatcher) {
-            customAccountInfoDao.getBackedUpAddresses().toSet()
-        }
-    }
-
-    override suspend fun setAddressesBackedUp(addresses: Set<String>) {
-        return withContext(coroutineDispatcher) {
-            customAccountInfoDao.setAddressesBackedUp(addresses.toList())
-        }
-    }
-
-    override suspend fun isAccountBackedUp(accountAddress: String): Boolean {
-        return withContext(coroutineDispatcher) {
-            customAccountInfoDao.isAccountBackedUp(accountAddress)
         }
     }
 

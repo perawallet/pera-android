@@ -16,6 +16,5 @@ package com.algorand.wallet.account.custom.domain.model
 data class CustomAccountInfo(
     val address: String,
     val customName: String?,
-    val orderIndex: Int,
-    val isBackedUp: Boolean
+    val orderIndex: Int
 )

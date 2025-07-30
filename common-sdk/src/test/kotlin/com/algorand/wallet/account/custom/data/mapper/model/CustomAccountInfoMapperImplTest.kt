@@ -34,18 +34,15 @@ class CustomAccountInfoMapperImplTest {
         val entity = mockk<CustomAccountInfoEntity>()
         val customName = "Test Account"
         val orderIndex = 5
-        val isBackedUp = true
 
         every { entity.customName } returns customName
         every { entity.orderIndex } returns orderIndex
-        every { entity.isBackedUp } returns isBackedUp
 
         val result = sut.invoke(address, entity)
 
         assertEquals(address, result.address)
         assertEquals(customName, result.customName)
         assertEquals(orderIndex, result.orderIndex)
-        assertEquals(isBackedUp, result.isBackedUp)
     }
 
     @Test
@@ -58,7 +55,6 @@ class CustomAccountInfoMapperImplTest {
         assertEquals(address, result.address)
         assertEquals(null, result.customName)
         assertEquals(0, result.orderIndex)
-        assertEquals(false, result.isBackedUp)
     }
 
     @Test
@@ -66,18 +62,15 @@ class CustomAccountInfoMapperImplTest {
         val address = "ABCDEF123456"
         val entity = mockk<CustomAccountInfoEntity>()
         val orderIndex = 3
-        val isBackedUp = true
 
         every { entity.customName } returns null
         every { entity.orderIndex } returns orderIndex
-        every { entity.isBackedUp } returns isBackedUp
 
         val result = sut.invoke(address, entity)
 
         assertEquals(address, result.address)
         assertEquals(null, result.customName)
         assertEquals(orderIndex, result.orderIndex)
-        assertEquals(isBackedUp, result.isBackedUp)
     }
 
     @Test
@@ -86,17 +79,14 @@ class CustomAccountInfoMapperImplTest {
         val entity = mockk<CustomAccountInfoEntity>()
         val customName = "Secondary Account"
         val orderIndex = 10
-        val isBackedUp = false
 
         every { entity.customName } returns customName
         every { entity.orderIndex } returns orderIndex
-        every { entity.isBackedUp } returns isBackedUp
 
         val result = sut.invoke(address, entity)
 
         assertEquals(address, result.address)
         assertEquals(customName, result.customName)
         assertEquals(orderIndex, result.orderIndex)
-        assertEquals(isBackedUp, result.isBackedUp)
     }
 }

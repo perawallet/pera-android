@@ -18,13 +18,9 @@ import javax.inject.Inject
 class SettingsPreviewMapper @Inject constructor() {
 
     fun mapToSettingsPreview(
-        isAlgorandSecureBackupDescriptionVisible: Boolean,
-        notBackedUpAccountCounts: Int,
         firebaseInstanceId: String
     ): SettingsPreview {
         return SettingsPreview(
-            isAlgorandSecureBackupDescriptionVisible = isAlgorandSecureBackupDescriptionVisible,
-            notBackedUpAccountCounts = notBackedUpAccountCounts,
             firebaseInstanceId = firebaseInstanceId
         )
     }

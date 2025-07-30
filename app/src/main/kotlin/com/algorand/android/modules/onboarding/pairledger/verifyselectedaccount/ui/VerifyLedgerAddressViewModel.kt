@@ -168,7 +168,6 @@ class VerifyLedgerAddressViewModel @Inject constructor(
         return AccountCreation(
             address = selectedAccount.address,
             customName = selectedAccount.address.toShortenedAddress(),
-            isBackedUp = true,
             type = AccountCreation.Type.LedgerBle(
                 deviceMacAddress = selectedAccount.bleAddress,
                 bluetoothName = selectedAccount.bleName,
@@ -182,7 +181,6 @@ class VerifyLedgerAddressViewModel @Inject constructor(
         return AccountCreation(
             address = selectedAccount.address,
             customName = selectedAccount.address.toShortenedAddress(),
-            isBackedUp = true,
             type = AccountCreation.Type.NoAuth,
             creationType = CreationType.REKEYED
         )

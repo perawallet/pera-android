@@ -10,12 +10,20 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.wealth.wallet.domain.repository
+package com.algorand.android.ui.asset.detail.model
 
-import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.wealth.wallet.domain.model.WalletWealth
-import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
+import com.algorand.android.ui.common.amount.AmountRenderer
+import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
+import java.math.BigDecimal
+import java.time.OffsetDateTime
 
-internal interface WalletWealthRepository {
-    suspend fun getWalletWealth(addresses: List<String>, period: WalletWealthPeriod): PeraResult<WalletWealth>
+data class AssetLineChartData(
+    val datetime: OffsetDateTime,
+    val primaryValue: BigDecimal,
+    val primaryAmountRenderer: AmountRenderer,
+    val secondaryAmountRenderer: AmountRenderer
+) : PeraLineChartData {
+
+    override val value: Float
+        get() = primaryValue.toFloat()
 }

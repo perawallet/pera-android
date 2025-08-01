@@ -19,7 +19,7 @@ import com.algorand.android.modules.assets.profile.detail.ui.AssetDetailViewMode
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
 import com.algorand.android.modules.assets.profile.detail.ui.usecase.AssetDetailPreviewUseCase
 import com.algorand.android.modules.tracking.swap.assetdetail.AssetDetailAlgoSwapClickEventTracker
-import com.algorand.android.ui.asset.detail.model.AssetPriceHistoryItem
+import com.algorand.android.ui.asset.detail.model.AssetLineChartData
 import com.algorand.android.utils.formatDateToChartDateString
 import com.algorand.android.utils.getOrThrow
 import com.algorand.android.utils.launchIO
@@ -29,11 +29,11 @@ import com.algorand.wallet.remoteconfig.domain.usecase.IsFeatureToggleEnabled
 import com.algorand.wallet.viewmodel.EventDelegate
 import com.algorand.wallet.viewmodel.EventViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AssetDetailViewModel @Inject constructor(
@@ -70,31 +70,22 @@ class AssetDetailViewModel @Inject constructor(
 
     fun isChartFeatureEnabled(): Boolean = isFeatureToggleEnabled(ASSET_DETAIL_CHART_TOGGLE)
 
-    fun displayAssetPriceHistory(item: AssetPriceHistoryItem) {
-        val event = ViewEvent.UpdatePrimaryAndSecondaryText(
-            primaryText = item.formattedPriceInSelectedCurrency,
-            secondaryText = formatDateToChartDateString(item.datetime)
+    fun displayAssetLineChart(item: AssetLineChartData) {
+        val event = ViewEvent.UpdateAssetBalanceText(
+            primaryText = item.primaryAmountRenderer.getDisplayValue(),
+            secondaryText = item.secondaryAmountRenderer.getDisplayValue(),
+            dateText = formatDateToChartDateString(item.datetime)
         )
         eventDelegate.sendEvent(viewModelScope, event)
     }
 
     fun displayAssetHoldings() {
-        val event = ViewEvent.UpdatePrimaryAndSecondaryText(
+        val event = ViewEvent.UpdateAssetBalanceText(
             primaryText = _assetDetailPreviewFlow.value?.formattedPrimaryValue.orEmpty(),
-            secondaryText = _assetDetailPreviewFlow.value?.formattedSecondaryValue.orEmpty()
+            secondaryText = _assetDetailPreviewFlow.value?.formattedSecondaryValue.orEmpty(),
+            dateText = _assetDetailPreviewFlow.value?.chartSelectedItemDate.orEmpty(),
         )
         eventDelegate.sendEvent(viewModelScope, event)
-    }
-
-    fun onAddAssetClick() {
-        viewModelScope.launch {
-            _assetDetailPreviewFlow.update { preview ->
-                assetDetailPreviewUseCase.updatePreviewWithAssetAdditionNavigation(
-                    preview = preview,
-                    accountAddress = accountAddress
-                )
-            }
-        }
     }
 
     fun onBuySellClick() {
@@ -140,7 +131,11 @@ class AssetDetailViewModel @Inject constructor(
     }
 
     sealed interface ViewEvent {
-        data class UpdatePrimaryAndSecondaryText(val primaryText: String, val secondaryText: String) : ViewEvent
+        data class UpdateAssetBalanceText(
+            val primaryText: String,
+            val secondaryText: String,
+            val dateText: String
+        ) : ViewEvent
     }
 
     companion object {

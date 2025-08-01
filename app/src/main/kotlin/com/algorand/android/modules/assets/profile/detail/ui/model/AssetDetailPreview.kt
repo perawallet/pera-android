@@ -28,6 +28,7 @@ data class AssetDetailPreview(
     val assetId: Long,
     val formattedPrimaryValue: String,
     val formattedSecondaryValue: String,
+    val chartSelectedItemDate: String,
     val isAlgo: Boolean,
     val verificationTierConfiguration: VerificationTierConfiguration,
     val accountDetailSummary: AccountDetailSummary?,

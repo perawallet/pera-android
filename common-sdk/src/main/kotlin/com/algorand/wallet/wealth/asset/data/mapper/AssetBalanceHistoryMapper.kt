@@ -10,18 +10,11 @@
  * limitations under the License
  */
 
-package com.algorand.android.ui.asset.detail.model
+package com.algorand.wallet.wealth.asset.data.mapper
 
-import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
-import java.math.BigDecimal
-import java.time.OffsetDateTime
+import com.algorand.wallet.wealth.asset.data.model.AssetBalanceHistoryResponseResults
+import com.algorand.wallet.wealth.asset.domain.model.AssetBalanceHistory
 
-data class AssetPriceHistoryItem(
-    val datetime: OffsetDateTime,
-    val usdPrice: BigDecimal,
-    val formattedPriceInSelectedCurrency: String
-) : PeraLineChartData {
-
-    override val value: Float
-        get() = usdPrice.toFloat()
+internal interface AssetBalanceHistoryMapper {
+    fun map(response: AssetBalanceHistoryResponseResults): AssetBalanceHistory
 }

@@ -33,14 +33,14 @@ import com.algorand.android.models.ToolbarConfiguration
 import com.algorand.android.modules.accountcore.ui.model.AccountDisplayName
 import com.algorand.android.modules.assets.profile.about.ui.AssetAboutFragment
 import com.algorand.android.modules.assets.profile.activity.ui.AssetActivityFragment
-import com.algorand.android.modules.assets.profile.detail.ui.AssetDetailViewModel.ViewEvent.UpdatePrimaryAndSecondaryText
+import com.algorand.android.modules.assets.profile.detail.ui.AssetDetailViewModel.ViewEvent.UpdateAssetBalanceText
 import com.algorand.android.modules.assets.profile.detail.ui.adapter.AssetDetailPagerAdapter
 import com.algorand.android.modules.assets.profile.detail.ui.model.AssetDetailPreview
 import com.algorand.android.modules.transaction.detail.ui.model.TransactionDetailEntryPoint
 import com.algorand.android.modules.transactionhistory.ui.model.BaseTransactionItem
-import com.algorand.android.ui.asset.detail.model.AssetPriceHistoryItem
+import com.algorand.android.ui.asset.detail.model.AssetLineChartData
 import com.algorand.android.ui.asset.detail.view.AssetDetailQuickActionsView.AssetDetailQuickActionsViewListener
-import com.algorand.android.ui.asset.detail.viewmodel.AssetDetailPriceHistoryViewModel
+import com.algorand.android.ui.asset.detail.viewmodel.AssetLineChartViewModel
 import com.algorand.android.ui.compose.theme.PeraTheme
 import com.algorand.android.ui.compose.widget.chart.model.PeraLineChartData
 import com.algorand.android.ui.compose.widget.chart.view.StatefulPeraLineChart
@@ -57,8 +57,8 @@ import com.algorand.android.utils.setDrawable
 import com.algorand.android.utils.viewbinding.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import java.math.BigDecimal
 import kotlinx.coroutines.flow.map
+import java.math.BigDecimal
 
 @AndroidEntryPoint
 class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetAboutFragment.AssetAboutTabListener,
@@ -74,7 +74,7 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
     private val binding by viewBinding(FragmentAssetDetailBinding::bind)
 
     private val assetDetailViewModel by viewModels<AssetDetailViewModel>()
-    private val priceHistoryViewModel by viewModels<AssetDetailPriceHistoryViewModel>()
+    private val assetLineChartViewModel by viewModels<AssetLineChartViewModel>()
 
     private lateinit var assetDetailPagerAdapter: AssetDetailPagerAdapter
 
@@ -110,7 +110,11 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
 
     private val viewEventCollector: suspend (AssetDetailViewModel.ViewEvent) -> Unit = { event ->
         when (event) {
-            is UpdatePrimaryAndSecondaryText -> updatePrimaryAndSecondaryTexts(event.primaryText, event.secondaryText)
+            is UpdateAssetBalanceText -> setAssetBalanceText(
+                event.primaryText,
+                event.secondaryText,
+                event.dateText
+            )
         }
     }
 
@@ -158,7 +162,7 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
 
     private val chartListener = object : StatefulPeraLineChartListener {
         override fun onItemSelected(item: PeraLineChartData) {
-            assetDetailViewModel.displayAssetPriceHistory(item as AssetPriceHistoryItem)
+            assetDetailViewModel.displayAssetLineChart(item as AssetLineChartData)
         }
 
         override fun onItemDeselected() {
@@ -176,8 +180,11 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         configureToolbar()
         initPagerAdapter()
         configureTabLayout()
-        initPriceHistoryChart()
-        priceHistoryViewModel.init(assetDetailViewModel.assetId)
+        initAssetLineChart()
+        assetLineChartViewModel.init(
+            assetDetailViewModel.accountAddress,
+            assetDetailViewModel.assetId
+        )
         binding.quickActionButtons.setListener(quickActionButtonsListener)
     }
 
@@ -227,14 +234,14 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         }
     }
 
-    private fun initPriceHistoryChart() {
+    private fun initAssetLineChart() {
         val isChartFeatureEnabled = assetDetailViewModel.isChartFeatureEnabled()
-        binding.priceHistoryChart.isVisible = isChartFeatureEnabled
+        binding.assetLineChart.isVisible = isChartFeatureEnabled
         if (isChartFeatureEnabled) {
-            binding.priceHistoryChart.setContent {
+            binding.assetLineChart.setContent {
                 PeraTheme {
                     StatefulPeraLineChart(
-                        viewModel = priceHistoryViewModel,
+                        viewModel = assetLineChartViewModel,
                         listener = chartListener
                     )
                 }
@@ -242,9 +249,14 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
         }
     }
 
-    private fun updatePrimaryAndSecondaryTexts(primary: String, secondary: String) {
-        binding.assetPrimaryValueTextView.text = primary
-        binding.assetSecondaryValueTextView.text = secondary
+    private fun setAssetBalanceText(
+        primaryValue: String,
+        secondaryValue: String,
+        dateValue: String
+    ) {
+        binding.assetPrimaryValueTextView.text = primaryValue
+        binding.assetSecondaryValueTextView.text = secondaryValue
+        binding.chartSelectedItemDateTextView.text = dateValue
     }
 
     private fun configureToolbar() {
@@ -265,9 +277,10 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
                 isAlgo = isAlgo,
                 verificationTierConfiguration = verificationTierConfiguration
             )
-            setAssetValues(
-                formattedPrimaryValue = formattedPrimaryValue,
-                formattedSecondaryValue = formattedSecondaryValue
+            setAssetBalanceText(
+                primaryValue = formattedPrimaryValue,
+                secondaryValue = formattedSecondaryValue,
+                dateValue = chartSelectedItemDate
             )
             binding.quickActionButtons.apply {
                 setQuickActionItems(quickActionItems)
@@ -378,13 +391,6 @@ class AssetDetailFragment : BaseFragment(R.layout.fragment_asset_detail), AssetA
                 assetDetailViewModel.accountAddress
             )
         )
-    }
-
-    private fun setAssetValues(formattedPrimaryValue: String, formattedSecondaryValue: String) {
-        with(binding) {
-            assetPrimaryValueTextView.text = formattedPrimaryValue
-            assetSecondaryValueTextView.text = formattedSecondaryValue
-        }
     }
 
     override fun onReportActionFailed() {

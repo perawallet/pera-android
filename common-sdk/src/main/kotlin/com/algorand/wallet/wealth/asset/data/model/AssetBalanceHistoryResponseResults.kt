@@ -10,12 +10,10 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.wealth.wallet.domain.repository
+package com.algorand.wallet.wealth.asset.data.model
 
-import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.wealth.wallet.domain.model.WalletWealth
-import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
+import com.google.gson.annotations.SerializedName
 
-internal interface WalletWealthRepository {
-    suspend fun getWalletWealth(addresses: List<String>, period: WalletWealthPeriod): PeraResult<WalletWealth>
-}
+internal data class AssetBalanceHistoryResponseResults(
+    @SerializedName("results") val results: List<AssetBalanceHistoryResponseResult>?
+)

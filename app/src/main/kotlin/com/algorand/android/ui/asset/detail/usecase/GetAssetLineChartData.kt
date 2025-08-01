@@ -10,12 +10,16 @@
  * limitations under the License
  */
 
-package com.algorand.wallet.wealth.wallet.domain.repository
+package com.algorand.android.ui.asset.detail.usecase
 
+import com.algorand.android.ui.asset.detail.model.AssetLineChartData
 import com.algorand.wallet.foundation.PeraResult
-import com.algorand.wallet.wealth.wallet.domain.model.WalletWealth
 import com.algorand.wallet.wealth.wallet.domain.model.WalletWealthPeriod
 
-internal interface WalletWealthRepository {
-    suspend fun getWalletWealth(addresses: List<String>, period: WalletWealthPeriod): PeraResult<WalletWealth>
+fun interface GetAssetLineChartData {
+    suspend operator fun invoke(
+        address: String,
+        assetId: Long,
+        period: WalletWealthPeriod
+    ): PeraResult<List<AssetLineChartData>>
 }

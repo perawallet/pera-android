@@ -15,12 +15,12 @@ package com.algorand.android.ui.asset.detail.usecase
 import com.algorand.android.modules.currency.domain.model.Currency
 import com.algorand.android.modules.currency.domain.usecase.IsPrimaryCurrencyAlgo
 import com.algorand.android.modules.parity.domain.usecase.GetUsdToPrimaryCurrencyConversionRate
-import com.algorand.android.modules.swap.assetswap.data.utils.getSafeAssetIdForRequest
 import com.algorand.android.ui.asset.detail.model.AssetLineChartData
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.AmountRenderer.RenderType.Plain
+import com.algorand.android.ui.common.amount.CompactFormattedAmount
+import com.algorand.android.ui.common.amount.CompactFormattedAmount.FractionalType.Asset
 import com.algorand.android.ui.common.amount.PeraAmount
-import com.algorand.android.ui.common.amount.domain.GetCompactAssetAmountRenderer
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
 import com.algorand.android.ui.common.amount.domain.GetCompactSecondaryAmountRenderer
 import com.algorand.wallet.asset.domain.usecase.GetAssetDetail
@@ -33,7 +33,6 @@ import javax.inject.Inject
 
 class GetAssetLineChartDataUseCase @Inject constructor(
     private val getAssetBalanceHistory: GetAssetBalanceHistory,
-    private val getCompactAssetAmountRenderer: GetCompactAssetAmountRenderer,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
     private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
     private val getUsdToPrimaryCurrencyConversionRate: GetUsdToPrimaryCurrencyConversionRate,
@@ -46,12 +45,16 @@ class GetAssetLineChartDataUseCase @Inject constructor(
         assetId: Long,
         period: WalletWealthPeriod
     ): PeraResult<List<AssetLineChartData>> {
-        val safeAssetId = getSafeAssetIdForRequest(assetId)
-        return getAssetBalanceHistory(address, safeAssetId, period).map { assetBalanceHistory ->
+        return getAssetBalanceHistory(address, assetId, period).map { assetBalanceHistory ->
             assetBalanceHistory.chartData.map { chartData ->
                 val assetSymbol = getAssetSymbol(assetId)
                 val primaryAmount = PeraAmount(chartData.amount)
-                val primaryRenderer = getCompactAssetAmountRenderer(primaryAmount, assetSymbol, Plain)
+                val formattedAmount = CompactFormattedAmount(primaryAmount, Asset)
+                val primaryRenderer = AmountRenderer(
+                    formattedAmount = formattedAmount,
+                    type = Plain,
+                    suffix = assetSymbol
+                )
 
                 AssetLineChartData(
                     datetime = chartData.datetime,

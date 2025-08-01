@@ -15,22 +15,6 @@ package com.algorand.android.ui.common.amount.domain
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.PeraAmount
 
-fun interface GetCompactCurrencyAmountRenderer {
-    operator fun invoke(
-        amount: PeraAmount,
-        assetSymbol: String,
-        amountRendererType: AmountRenderer.RenderType
-    ): AmountRenderer
-}
-
-fun interface GetCompactAssetAmountRenderer {
-    operator fun invoke(
-        amount: PeraAmount,
-        assetSymbol: String,
-        amountRendererType: AmountRenderer.RenderType
-    ): AmountRenderer
-}
-
 fun interface GetCompactPrimaryAmountRenderer {
     operator fun invoke(amount: PeraAmount, amountRendererType: AmountRenderer.RenderType): AmountRenderer
 }

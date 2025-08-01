@@ -12,6 +12,7 @@
 
 package com.algorand.wallet.wealth.asset.data.repository
 
+import com.algorand.wallet.asset.data.utils.AssetIdQueryNormalizer.getSafeAssetIdForRequest
 import com.algorand.wallet.foundation.PeraResult
 import com.algorand.wallet.wealth.asset.data.api.AssetBalanceHistoryApiService
 import com.algorand.wallet.wealth.asset.data.mapper.AssetBalanceHistoryMapper
@@ -44,8 +45,12 @@ internal class DefaultAssetBalanceHistoryRepository @Inject constructor(
         assetId: Long,
         period: WalletWealthPeriod
     ): PeraResult<AssetBalanceHistory> {
-        val results =
-            assetBalanceHistoryApiService.getAssetBalanceHistory(address, assetId, periodRequestMapper(period))
+        val safeAssetId = getSafeAssetIdForRequest(assetId)
+        val results = assetBalanceHistoryApiService.getAssetBalanceHistory(
+            address,
+            safeAssetId,
+            periodRequestMapper(period)
+        )
         return PeraResult.Success(assetBalanceHistoryMapper.map(results))
     }
 }

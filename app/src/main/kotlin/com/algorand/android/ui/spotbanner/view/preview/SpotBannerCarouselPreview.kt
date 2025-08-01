@@ -30,7 +30,6 @@ fun SpotBannerCarouselPreview(
 private class SpotBannerCarouselPreviewProvider : PreviewParameterProvider<List<SpotBanner>> {
 
     override val values: Sequence<List<SpotBanner>> = listOf(
-        listOf(SpotBanner.BackupPassphrase),
         listOf(createGenericBanner(), createGenericBanner())
     ).asSequence()
 

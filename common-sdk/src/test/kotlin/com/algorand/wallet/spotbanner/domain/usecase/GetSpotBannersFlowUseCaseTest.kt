@@ -15,10 +15,7 @@ package com.algorand.wallet.spotbanner.domain.usecase
 import com.algorand.test.peraFixture
 import com.algorand.test.test
 import com.algorand.wallet.account.detail.domain.model.AccountType.Algo25
-import com.algorand.wallet.account.detail.domain.model.AccountType.HdKey
-import com.algorand.wallet.account.detail.domain.model.AccountType.LedgerBle
 import com.algorand.wallet.account.detail.domain.model.AccountType.NoAuth
-import com.algorand.wallet.account.detail.domain.model.AccountType.RekeyedAuth
 import com.algorand.wallet.spotbanner.domain.model.SpotBanner
 import com.algorand.wallet.spotbanner.domain.model.SpotBannerFlowData
 import com.algorand.wallet.spotbanner.domain.repository.SpotBannerRepository
@@ -28,7 +25,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.math.BigDecimal
-import java.math.BigDecimal.ONE
 
 class GetSpotBannersFlowUseCaseTest {
 
@@ -38,7 +34,7 @@ class GetSpotBannersFlowUseCaseTest {
 
     @Test
     fun `EXPECT banners without backup passphrase WHEN there is not any auth address with balance`() = runTest {
-        val cacheFlow = MutableStateFlow<List<SpotBanner>>(listOf(BANNER_1, BANNER_2))
+        val cacheFlow = MutableStateFlow(listOf(BANNER_1, BANNER_2))
         val data = listOf(
             SpotBannerFlowData("address1", type = null, primaryBalance = null),
             SpotBannerFlowData("address1", type = null, primaryBalance = null),
@@ -55,26 +51,6 @@ class GetSpotBannersFlowUseCaseTest {
         testObserver.assertValueHistory(
             listOf(BANNER_1, BANNER_2),
             listOf(BANNER_2)
-        )
-    }
-
-    @Test
-    fun `EXPECT banners with backup passphrase WHEN there is not backed up auth address with balance`() = runTest {
-        val cacheFlow = MutableStateFlow<List<SpotBanner>>(emptyList())
-        val data = listOf(
-            SpotBannerFlowData("address1", type = Algo25, primaryBalance = ONE),
-            SpotBannerFlowData("address1", type = HdKey, primaryBalance = ONE),
-            SpotBannerFlowData("address1", type = LedgerBle, primaryBalance = ONE),
-            SpotBannerFlowData("address1", type = RekeyedAuth, primaryBalance = ONE),
-        )
-        coEvery { spotBannerRepository.getSpotBannerFlow() } returns cacheFlow
-
-        val testObserver = sut(data).test()
-        cacheFlow.value = listOf(BANNER_2)
-
-        testObserver.assertValueHistory(
-            listOf(SpotBanner.BackupPassphrase),
-            listOf(SpotBanner.BackupPassphrase, BANNER_2)
         )
     }
 

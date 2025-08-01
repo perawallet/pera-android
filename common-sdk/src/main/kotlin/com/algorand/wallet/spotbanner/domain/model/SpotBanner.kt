@@ -13,9 +13,6 @@
 package com.algorand.wallet.spotbanner.domain.model
 
 interface SpotBanner {
-
-    data object BackupPassphrase : SpotBanner
-
     data class Generic(
         val id: Long,
         val text: String,

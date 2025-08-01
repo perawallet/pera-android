@@ -40,7 +40,8 @@ class CustomAccountInfoEntityMapperImplTest {
         val expectedEntity = CustomAccountInfoEntity(
             algoAddress = "TESTADDRESS123456789",
             customName = "Test Account",
-            orderIndex = 3
+            orderIndex = 3,
+            isBackedUp = false
         )
         assertEquals(expectedEntity, result)
     }

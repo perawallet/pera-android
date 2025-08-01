@@ -17,6 +17,7 @@ import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem.PartialErrorPortfolioValueItem
 import com.algorand.android.modules.accounts.domain.model.BasePortfolioValueItem.SuccessPortfolioValueItem
 import com.algorand.android.modules.accounts.lite.domain.model.AccountLite
+import com.algorand.android.ui.accounts.usecase.GetFilteredPortfolioAccountLites
 import com.algorand.android.ui.common.amount.AmountRenderer
 import com.algorand.android.ui.common.amount.PeraAmount
 import com.algorand.android.ui.common.amount.domain.GetCompactPrimaryAmountRenderer
@@ -32,7 +33,8 @@ class AccountsPreviewPortfolioItemProcessor @Inject constructor(
     private val isThereAnyCachedSuccessAccount: IsThereAnyCachedSuccessAccount,
     private val portfolioValueItemMapper: PortfolioValueItemMapper,
     private val getCompactPrimaryAmountRenderer: GetCompactPrimaryAmountRenderer,
-    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer
+    private val getCompactSecondaryAmountRenderer: GetCompactSecondaryAmountRenderer,
+    private val getFilteredPortfolioAccountLites: GetFilteredPortfolioAccountLites
 ) {
 
     suspend fun getPortfolioItem(
@@ -75,11 +77,9 @@ class AccountsPreviewPortfolioItemProcessor @Inject constructor(
         var totalPrimaryValue = BigDecimal.ZERO
         var totalSecondaryValue = BigDecimal.ZERO
 
-        accountLite.values.forEach { account ->
-            if (account.registrationType.hasSignerDetails) {
-                totalPrimaryValue += account.cachedInfo?.primaryAccountValue ?: BigDecimal.ZERO
-                totalSecondaryValue += account.cachedInfo?.secondaryAccountValue ?: BigDecimal.ZERO
-            }
+        getFilteredPortfolioAccountLites(accountLite).values.forEach { account ->
+            totalPrimaryValue += account.cachedInfo?.primaryAccountValue ?: BigDecimal.ZERO
+            totalSecondaryValue += account.cachedInfo?.secondaryAccountValue ?: BigDecimal.ZERO
         }
 
         return Pair(PeraAmount(totalPrimaryValue), PeraAmount(totalSecondaryValue))
